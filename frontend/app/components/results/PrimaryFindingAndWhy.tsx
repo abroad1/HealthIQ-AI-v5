@@ -21,6 +21,8 @@ export interface PrimaryFindingAndWhyProps {
   report: ClinicianReportV1 | null | undefined;
   /** When true, hides the lead + “what this means” blocks (hero already surfaced them). */
   omitIntroDuplicate?: boolean;
+  /** FE-R3 — omit confirmatory test bullets when the next-steps section surfaces them. */
+  omitConfirmatoryInClarify?: boolean;
   /** LC-S7 — evidence chains / raw ranking rationale only when user enables technical detail. */
   showTechnicalDetail?: boolean;
 }
@@ -31,6 +33,7 @@ export interface PrimaryFindingAndWhyProps {
 export function PrimaryFindingAndWhy({
   report,
   omitIntroDuplicate = false,
+  omitConfirmatoryInClarify = false,
   showTechnicalDetail = false,
 }: PrimaryFindingAndWhyProps) {
   if (!report) {
@@ -70,7 +73,8 @@ export function PrimaryFindingAndWhy({
   const gaps = (hyp0?.missing_data ?? []).slice(0, 2);
   const hypConfirmatory = (hyp0?.confirmatory_tests ?? []).slice(0, 2);
   const confirmatoryShort = confirmatory.slice(0, 2);
-  const clarifyTests = confirmatoryShort.length > 0 ? confirmatoryShort : hypConfirmatory;
+  const clarifyTestsRaw = confirmatoryShort.length > 0 ? confirmatoryShort : hypConfirmatory;
+  const clarifyTests = omitConfirmatoryInClarify ? [] : clarifyTestsRaw;
 
   const hasRootNarrative = Boolean(hyp0);
   const showSupportsComplicates = hasRootNarrative && (supports.length > 0 || against.length > 0);

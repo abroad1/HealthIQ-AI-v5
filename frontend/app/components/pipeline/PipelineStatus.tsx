@@ -11,6 +11,8 @@ import type { ClinicianConfirmatoryTestItem, ClinicianReportV1 } from '@/types/a
 export interface PipelineStatusProps {
   dataQuality: ClinicianReportV1['data_quality'] | null | undefined;
   confirmatoryTests?: ClinicianConfirmatoryTestItem[] | null;
+  /** FE-R3 — when confirmatory tests are surfaced in the next-steps journey, hide them here to avoid duplication. */
+  hideConfirmatoryTests?: boolean;
   /** Line 2 cue only when Missing Chapter threshold met (computed by results page) */
   missingChapterLine?: string | null;
   className?: string;
@@ -28,6 +30,7 @@ function truncateText(text: string, maxLen: number): string {
 export default function PipelineStatus({
   dataQuality,
   confirmatoryTests,
+  hideConfirmatoryTests = false,
   missingChapterLine,
   className = '',
 }: PipelineStatusProps) {
@@ -139,8 +142,8 @@ export default function PipelineStatus({
               </div>
             )}
 
-            {tests.length > 0 ? (
-              <div>
+            {tests.length > 0 && !hideConfirmatoryTests ? (
+              <div data-testid="pipeline-confirmatory-tests">
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
                   <ClipboardList className="h-4 w-4" />
                   Confirmatory tests to discuss with your clinician

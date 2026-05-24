@@ -238,31 +238,43 @@ function BiomarkerDetailZones({
   data: BiomarkerDialEntry;
 }) {
   const displayName = BIOMARKER_NAMES[biomarkerKey] || biomarkerKey.replace(/_/g, ' ');
-  const layer2Body = data.educationalExplainer?.body?.trim();
+  const interpretation = data.interpretation?.trim();
+  const eduTitle = data.educationalExplainer?.title?.trim();
+  const eduBody = data.educationalExplainer?.body?.trim();
   const factual = data.contributionContext?.factual_statement?.trim();
   const patternLine = data.patternRelevanceLine?.trim();
-  const hasLayer3 =
+  const hasPatternContext =
     !!(patternLine || factual || (data.relatedSystemGroupNames && data.relatedSystemGroupNames.length > 0));
 
   return (
-    <div className="space-y-4 text-left border-t border-gray-200 pt-4 mt-3">
+    <div
+      className="space-y-4 text-left border-t border-gray-200 pt-4 mt-3"
+      data-testid="biomarker-expansion-detail"
+    >
       <h4 className="text-base font-semibold text-gray-900">{displayName}</h4>
 
-      {layer2Body ? (
-        <div>
-          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Why this marker matters</h5>
-          <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{layer2Body}</p>
+      {interpretation ? (
+        <div data-testid="biomarker-detail-interpretation">
+          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">
+            What this result means now
+          </h5>
+          <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{interpretation}</p>
         </div>
       ) : null}
 
-      {hasLayer3 ? (
-        <div className="space-y-3">
-          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500">How it connects to your wider pattern</h5>
+      {hasPatternContext ? (
+        <div className="space-y-3" data-testid="biomarker-detail-pattern-context">
+          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            How it connects to your wider pattern
+          </h5>
           {patternLine ? (
             <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{patternLine}</p>
           ) : null}
           {factual ? (
-            <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{factual}</p>
+            <div data-testid="biomarker-detail-contribution-context">
+              <p className="text-xs font-medium text-gray-600 mb-1">How this fits the wider pattern</p>
+              <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{factual}</p>
+            </div>
           ) : null}
           {data.relatedSystemGroupNames && data.relatedSystemGroupNames.length > 0 ? (
             <ul className="flex flex-wrap gap-2 list-none p-0 m-0">
@@ -277,12 +289,33 @@ function BiomarkerDetailZones({
           ) : null}
         </div>
       ) : null}
+
+      {eduBody ? (
+        <details
+          className="rounded-md border border-slate-200 bg-slate-50/60 px-3 py-2 group"
+          data-testid="biomarker-detail-educational-explainer"
+        >
+          <summary className="text-xs font-semibold uppercase tracking-wide text-slate-600 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
+            <span className="inline-flex items-center gap-1">
+              General marker education
+              <span className="font-normal normal-case text-slate-500">(not a personalised diagnosis)</span>
+            </span>
+          </summary>
+          <div className="mt-3 space-y-2 border-t border-slate-200 pt-3">
+            {eduTitle && eduTitle.toLowerCase() !== 'general marker education' ? (
+              <p className="text-sm font-medium text-slate-800">{eduTitle}</p>
+            ) : null}
+            <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{eduBody}</p>
+          </div>
+        </details>
+      ) : null}
     </div>
   );
 }
 
 function hasExpandableLayers(d: BiomarkerDialEntry): boolean {
   return !!(
+    (d.interpretation && String(d.interpretation).trim()) ||
     (d.educationalExplainer?.body && String(d.educationalExplainer.body).trim()) ||
     (d.contributionContext?.factual_statement && String(d.contributionContext.factual_statement).trim()) ||
     (d.patternRelevanceLine && String(d.patternRelevanceLine).trim()) ||

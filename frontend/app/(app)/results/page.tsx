@@ -35,6 +35,11 @@ import {
   triggerBrowserDownload,
 } from '@/components/results/ResultsHeroBlocks';
 import { Wave1DomainCards } from '@/components/results/Wave1DomainCards';
+import { ConfirmatoryTestsNextSteps } from '@/components/results/ConfirmatoryTestsNextSteps';
+import {
+  dedupeActionCardsAgainstNarrative,
+  hasGovernedConfirmatoryTests,
+} from '@/lib/feR3NextStepsLayout';
 import { AnalysisService } from '@/services/analysis';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -210,17 +215,20 @@ export default function ResultsPage() {
     return pickTopDriverBiomarkers(biomarkers, primaryDriver);
   }, [biomarkers, primaryDriver, wave1DriverKeys]);
 
-  const actionCards = useMemo(
-    () =>
-      buildActionCardModels(clusters, currentAnalysis?.recommendations, {
-        maxItems: 5,
-        narrativeNextStepsNarrative: narrativeReport?.next_steps_narrative ?? null,
-        omitNarrativeNextStepsFromCards: Boolean(
-          (narrativeReport?.next_steps_narrative || '').trim().length > 0
-        ),
-      }),
-    [clusters, currentAnalysis?.recommendations, narrativeReport?.next_steps_narrative]
-  );
+  const narrativeNextStepsText = narrativeReport?.next_steps_narrative ?? null;
+
+  const confirmatoryTestsForJourney = clinicianReport?.sections?.confirmatory_tests ?? [];
+
+  const showConfirmatoryInNextSteps = hasGovernedConfirmatoryTests(confirmatoryTestsForJourney);
+
+  const actionCards = useMemo(() => {
+    const built = buildActionCardModels(clusters, currentAnalysis?.recommendations, {
+      maxItems: 5,
+      narrativeNextStepsNarrative: narrativeNextStepsText,
+      omitNarrativeNextStepsFromCards: Boolean((narrativeNextStepsText || '').trim().length > 0),
+    });
+    return dedupeActionCardsAgainstNarrative(built, narrativeNextStepsText);
+  }, [clusters, currentAnalysis?.recommendations, narrativeNextStepsText]);
 
   const showInsightsPanelSection = legacyInsightsDebugEnabled() || consumerInsights.length > 0;
 
@@ -694,6 +702,7 @@ export default function ResultsPage() {
             <PrimaryFindingAndWhy
               report={clinicianReport}
               omitIntroDuplicate
+              omitConfirmatoryInClarify={showConfirmatoryInNextSteps}
               showTechnicalDetail={showDetails}
             />
           </div>
@@ -709,7 +718,8 @@ export default function ResultsPage() {
             <WhyThisLeadWonSection report={clinicianReport} />
             <PipelineStatus
               dataQuality={clinicianReport?.data_quality}
-              confirmatoryTests={clinicianReport?.sections?.confirmatory_tests}
+              confirmatoryTests={confirmatoryTestsForJourney}
+              hideConfirmatoryTests={showConfirmatoryInNextSteps}
               missingChapterLine={missingChapterLine}
             />
           </section>
@@ -740,6 +750,9 @@ export default function ResultsPage() {
               What to do next
             </h2>
             <NarrativeLongitudinalAndNextSteps narrative={narrativeReport} />
+            {showConfirmatoryInNextSteps ? (
+              <ConfirmatoryTestsNextSteps tests={confirmatoryTestsForJourney} />
+            ) : null}
             <div className="space-y-4">
               <p className="text-sm text-slate-700">
                 <Link

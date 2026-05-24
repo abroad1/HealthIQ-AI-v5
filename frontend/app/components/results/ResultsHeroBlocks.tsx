@@ -204,7 +204,6 @@ export function ResultsActionCardsBlock({ actions }: { actions: ResultActionCard
             </div>
           </div>
           <p className="text-sm text-slate-700 mt-2 leading-relaxed">{a.paragraph}</p>
-          <p className="text-xs text-slate-500 mt-2">Source: {a.sourceLabel}</p>
         </li>
       ))}
     </ul>

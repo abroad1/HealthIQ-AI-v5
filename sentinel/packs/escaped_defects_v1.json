@@ -420,6 +420,70 @@
       "test_file": "backend/tests/regression/test_fe_r2_results_journey_restructure.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "biomarker_contribution_context_not_surfaced": {
+      "description": "FE-R3 — contribution_context factual_statement not surfaced in biomarker expansion when present.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "biomarker_educational_explainer_not_surfaced": {
+      "description": "FE-R3 — biomarker_educational_explainer not shown in expansion as general education.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "biomarker_expansion_placeholder_visible": {
+      "description": "FE-R3 — placeholder filler copy shown when governed biomarker depth fields are absent.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "biomarker_display_unit_regression": {
+      "description": "FE-R3 — display_value/display_unit/display_label fidelity regressed or frontend conversion added.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "action_rationale_missing_when_available": {
+      "description": "FE-R3 — confirmatory test rationale not renderable in next-steps journey when DTO provides it.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "next_steps_duplicate_visible": {
+      "description": "FE-R3 — duplicate next-step or confirmatory content visible across journey sections.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "frontend_clinical_inference_added": {
+      "description": "FE-R3 — frontend adds clinical inference or mis-labels education as personalised interpretation.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "fe_r2_journey_order_regressed": {
+      "description": "FE-R3 — FE-R2 Phase 1 retail journey section order regressed.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }
