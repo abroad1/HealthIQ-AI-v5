@@ -114,7 +114,7 @@ def test_next_steps_narrative_from_functional_when_lead_signal_fires():
     }
     rep = compile_narrative_report_v1(analysis_id="a7", meta={}, insight_graph=ig, idl_bundle=None)
     assert rep.next_steps_narrative
-    assert "Prioritised follow-up" in rep.next_steps_narrative
+    assert "Suggested follow-up" in rep.next_steps_narrative
     assert "• " in rep.next_steps_narrative
 
 

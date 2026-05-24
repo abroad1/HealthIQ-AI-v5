@@ -30,7 +30,7 @@ def test_compiler_emits_lead_when_homocysteine_signal_fires():
     assert "homocysteine" in rep.lead_narrative.lower() or "one-carbon" in rep.lead_narrative.lower()
     assert rep.body_overview
     assert "vascular" in rep.body_overview.lower()
-    assert "Related interpretation themes" in rep.body_overview
+    assert "functional read —" not in rep.body_overview.lower()
     assert "Benchmark interpretation themes" not in rep.body_overview
     assert "governed functional titles" not in rep.body_overview
 
