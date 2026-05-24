@@ -1,10 +1,9 @@
 {
-  "branch": "frontend/fe-r5a-limited-idl-pattern-surface",
+  "branch": "frontend/fe-r6a-fresh-uat-defect-cleanup",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-24T20:44:58Z",
-  "cursor_started_utc": "2026-05-24T20:39:33Z",
-  "head_sha": "3af75558fe6d39850cb316b395109334a282f7a7",
+  "cursor_started_utc": "2026-05-24T21:57:40Z",
+  "head_sha": "c15f903e046c72c80fd6d09b6e02d5e7fee8a482",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "FE-R5A"
+  "status": "IN_PROGRESS",
+  "work_id": "FE-R6A"
 }
