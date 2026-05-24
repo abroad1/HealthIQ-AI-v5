@@ -1,123 +1,111 @@
 {
-  "work_id": "LC-SCAFFOLD-CLOSEOUT",
+  "work_id": "LC-S18A",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-24T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
-  "blocker_count": 0,
-  "warning_count": 0,
-  "informational_count": 1,
   "changes": [
     {
-      "check": "Front matter — work_id",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: LC-SCAFFOLD-CLOSEOUT"
+      "type": "WARNING",
+      "field": "Phase 1 — Known likely files/paths",
+      "finding": "Prompt lists inventory path as 'knowledge_bus/package_estate_KB-S49_v1.yaml'. This path does NOT exist. Actual runtime path (confirmed at backend/core/knowledge/kb_lifecycle_contract_v1.py lines 55-57, ESTATE_INVENTORY_PATH constant) is 'knowledge_bus/governance/package_estate_KB-S49_v1.yaml'. File confirmed present at correct location via Glob. Cursor MUST use the governance sub-path when reading or updating the inventory. Using the Phase 1 hint path would either fail silently or create a duplicate authority source at the wrong location — a non-negotiable violation.",
+      "resolution": "Cursor must derive the inventory path from kb_lifecycle_contract_v1.py:55-57, not from the Phase 1 text. The correct path is 'knowledge_bus/governance/package_estate_KB-S49_v1.yaml'."
     },
     {
-      "check": "Front matter — branch",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: scaffold/lc-scaffold-closeout-transition-review"
+      "type": "WARNING",
+      "field": "change_type: CONTENT",
+      "finding": "The sprint scope includes potential modification of backend/core/knowledge/kb_lifecycle_contract_v1.py and backend/scripts/validate_kb_package_estate_orphans_v1.py — both are Python executable code. Under SOP v1.3 definitions, CONTENT covers 'non-executable data, docs-only'. Python code modifications would technically require MIXED. However, neither file touches the Intelligence Core (no signal evaluator, root cause compiler, or analytical pipeline logic interaction), so BEHAVIOUR controls are not triggered. Risk is governance tooling only.",
+      "resolution": "Prompt author is aware. CONTENT classification is accepted with the constraint that no Intelligence Core files are touched. If Cursor finds it must modify kb_lifecycle_contract_v1.py, the change_type risk is contained to governance tooling. Cursor must not extend scope to analytical engine files."
     },
     {
-      "check": "Front matter — risk_level",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD. Confirmed correct — sprint produces docs/audit-papers/ and docs/planning-papers/ artefacts only; no runtime, test, sentinel, SSOT, or backend changes authorised."
+      "type": "ANNOTATION",
+      "field": "KBP-0001 directory",
+      "finding": "Directory 'knowledge_bus/packages/KBP-0001/' exists on disk and uses the legacy KBP naming convention (not pkg_* prefix). The runtime list_package_dirs() function (kb_lifecycle_contract_v1.py:70-77) only counts directories starting with 'pkg_', so KBP-0001 is invisible to the orphan reporter. This sprint does not cover KBP-0001; Cursor should note its existence but not act on it without explicit GPT authority.",
+      "resolution": "Document KBP-0001 as out-of-scope for this sprint's orphan accounting. It should appear in the notes as a governance residual."
     },
     {
-      "check": "Front matter — execution_model",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH"
+      "type": "CONFIRMED",
+      "field": "Mandatory controlling authority files",
+      "finding": "All three files required by the 'STOP if missing' rule are present.",
+      "citations": [
+        "docs/audit-papers/LC_SCAFFOLD_CLOSEOUT_transition_review.md — PRESENT (Glob confirmed)",
+        "docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md — PRESENT (Glob confirmed, content read at lines 1-60)",
+        "docs/audit-papers/LC-S17_knowledge_bus_lifecycle_framework.md — PRESENT (Glob confirmed)"
+      ]
     },
     {
-      "check": "Front matter — change_type",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: CONTENT. Confirmed correct — only docs/audit-papers/ and docs/planning-papers/ are in scope; no code execution or behavioural surface involved."
+      "type": "CONFIRMED",
+      "field": "Estate inventory file — correct path and content",
+      "finding": "Package estate inventory is present at the runtime-authoritative path.",
+      "citations": [
+        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml — PRESENT (Glob + Read confirmed)",
+        "backend/core/knowledge/kb_lifecycle_contract_v1.py lines 55-57: ESTATE_INVENTORY_PATH = 'knowledge_bus/governance/package_estate_KB-S49_v1.yaml'",
+        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 1-8: work_id KB-S49, generated_date 2026-03-28, governed_packages_in_inventory: 73, pkg_directories_total: 74 (73 governed + 1 excluded placeholder pkg_example)"
+      ]
     },
     {
-      "check": "Stage 2A — Authority path: HealthIQ_AI_core_scaffold_completion_definition_v1.md",
-      "result": "CONFIRMED",
-      "citation": "docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md — present on disk. Content verified: 437 lines, all 15 sections present. §5 lists all 7 compressed scaffold sprints. §14 defines 10 KB-WAVE transition criteria. §6 defines Gates A–D."
+      "type": "CONFIRMED",
+      "field": "Drift reality check — no-op protection satisfied",
+      "finding": "Estate drift is real, measurable, and confirmed by independent evidence. Sprint has genuine work to do.",
+      "citations": [
+        "docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md lines 39-41: ~109 package directories on disk not in inventory, 0 inventory entries missing on disk, measured 2026-05-23",
+        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 1-8: inventory generated_date 2026-03-28 — stale by ~57 days",
+        "Glob on knowledge_bus/packages/*/package_manifest.yaml: returns >73 entries including pkg_kb52c_* batch absent from inventory"
+      ]
     },
     {
-      "check": "Stage 2A — Authority path: HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md",
-      "result": "CONFIRMED",
-      "citation": "docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md — present on disk. Content verified: 1300 lines. §9 final compressed sequence confirmed. §8 KB-WAVE-1 through KB-WAVE-10 list confirmed."
+      "type": "CONFIRMED",
+      "field": "Phase 1 scripts — present and compatible",
+      "finding": "Both Phase 1 scripts exist and function as described.",
+      "citations": [
+        "backend/core/knowledge/kb_lifecycle_contract_v1.py — PRESENT (Read lines 1-145: LIFECYCLE_STATES, PACKAGE_TYPES, detect_orphan_packages, list_package_dirs, load_estate_inventory_package_ids, classify_package_type all implemented)",
+        "backend/scripts/validate_kb_package_estate_orphans_v1.py — PRESENT (Read lines 1-25: calls detect_orphan_packages(ROOT), emits JSON to stdout, exits 1 if has_orphans)"
+      ]
     },
     {
-      "check": "Stage 2A — Authority path: LC-S12B_core_scaffold_definition_notes.md",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md — present on disk. Content verified: Gate A approval record table (line ~110) is EMPTY — all three reviewer slots (Claude Code, GPT Architecture, Human) blank. Sprint programme proceeded per explicit user directive without formal Gate A sign-off. This is a residual state the review must address."
+      "type": "CONFIRMED",
+      "field": "No Intelligence Core interaction",
+      "finding": "Sprint scope does not touch signal_evaluator.py, root_cause_compiler_v1.py, root_cause_registry_v1.py, pipeline logic, InsightGraph, or output assembly. Lifecycle contract is a governance utility only.",
+      "citations": [
+        "backend/core/knowledge/kb_lifecycle_contract_v1.py lines 70-145: governance classification functions only — no analytical logic, no signal activation",
+        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 15-23: stage_1c_intelligence_preflight confirms 'estate_tier_distinction_in_runtime: none_observed'"
+      ]
     },
     {
-      "check": "Stage 2A — Authority path: LC-S13_lifestyle_coherence_narrative_notes.md",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md — present on disk. Content verified: status implementation complete. Lifestyle propagation wired via lifestyle_consumer_surface_v1.py. Bridges fire (alcohol, renal, fasting). No LC-S13A/B split required."
+      "type": "CONFIRMED",
+      "field": "No runtime auto-discovery risk",
+      "finding": "Validator script only reports; it does not load or activate packages. Forbidden file list correctly excludes knowledge_bus/packages/**/* from edits.",
+      "citations": [
+        "backend/scripts/validate_kb_package_estate_orphans_v1.py lines 14-25: detect_orphan_packages returns report only, no package loading or activation",
+        "automation_bus/latest_cursor_prompt.md lines 41-45: 'Do not auto-load orphan packages' — non-negotiable rule"
+      ]
     },
     {
-      "check": "Stage 2A — Authority path: LC-S14_direction_aware_scoring_notes.md",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S14_direction_aware_scoring_notes.md — present on disk. Content verified: status implementation complete. ALT hardcoded bypass replaced by direction-aware scoring policy."
+      "type": "CONFIRMED",
+      "field": "LDL/ApoB/lipid packages — KB-WAVE-1 relevance established",
+      "finding": "Lipid-relevant packages exist in multiple tiers on disk, including orphan packages from post-KB-S49 batches. Inventory refresh will materially inform KB-WAVE-1 lipid scoping.",
+      "citations": [
+        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 820-836: pkg_lipid_transport (legacy_thin_pre_v3_context, no PSI)",
+        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 1092-1108: pkg_s24_ldl_high_dyslipidaemia (structured_translation_batch_no_psi)",
+        "Glob: pkg_kb52c_apob_high_atherogenic_particle_excess, pkg_kb52c_apob_apoa1_ratio_high_atherogenic_particle_imbalance visible on disk as unregistered orphans"
+      ]
     },
     {
-      "check": "Stage 2A — Authority path: LC-S16_17_19_kb_surface_payload_contract_notes.md",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S16_17_19_kb_surface_payload_contract_notes.md — present on disk. Content verified: Gate B PASS WITH GAPS — not triggered; KB lifecycle defined; orphan drift ~109 packages deferred."
+      "type": "CONFIRMED",
+      "field": "Front matter — all 5 required fields valid",
+      "finding": "work_id: LC-S18A, branch: kb-wave/lc-s18a-package-estate-inventory-refresh, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: CONTENT — all present and valid per SOP v1.3.1 schema.",
+      "citations": [
+        "automation_bus/latest_cursor_prompt.md lines 2-7: front matter block (all 5 fields verified)"
+      ]
     },
     {
-      "check": "Stage 2A — Authority path: LC-S18_root_cause_why_registration_generalisation_notes.md",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md — present on disk. Content verified: Sprint 5 complete. 41 root-cause targets in ROOT_CAUSE_TARGET_SPECS. Hybrid registry + validation pattern. Before/after fingerprints equivalent (all hypothesis_asset_fingerprint values match). LC-S18A (package estate inventory refresh) deferred as explicit residual risk."
-    },
-    {
-      "check": "Stage 2A — Authority path: LC-S20_22_persisted_replay_sentinel_phase2_notes.md",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md — present on disk. Content verified: Sprint 6 complete. Hybrid stale-result policy (Option C). 16 regression tests. No Playwright render verification; no stale frontend banner; no regeneration path — all documented residual risks."
-    },
-    {
-      "check": "Stage 2A — Authority path: LC-S21_23_23B_orchestrator_docs_ssot_notes.md",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S21_23_23B_orchestrator_docs_ssot_notes.md — present on disk. Content verified: Sprint 7 complete. 3 phases extracted to orchestrator_phases_v1.py; derived-marker phase still monolithic in run(). Tier 1 SSOT (21 biomarkers) complete. Tier 2 carry-forward. Split rule not triggered."
-    },
-    {
-      "check": "Stage 2A — Optional inspect files (all 10)",
-      "result": "CONFIRMED",
-      "citation": "All 10 optional files confirmed present on disk: LC-S16_knowledge_asset_frontend_surface_audit.md, LC-S17_knowledge_bus_lifecycle_framework.md, LC-S19_payload_contract_hardening_notes.md, LC-S20_persisted_replay_stale_result_strategy.md, LC-S22_sentinel_phase2_scaffold_notes.md, LC-S21_orchestrator_phase_decomposition_notes.md, LC-S23_scaffold_documentation_onboarding_notes.md, LC-S23B_ssot_metadata_completion_notes.md, docs/architecture/HealthIQ_AI_runtime_architecture_map_v1.md, docs/developer-guides/healthiq_scaffold_guardrails_v1.md."
-    },
-    {
-      "check": "Stage 2A — Output target pre-existence check",
-      "result": "CONFIRMED ABSENT (correct)",
-      "citation": "docs/audit-papers/LC_SCAFFOLD_CLOSEOUT_transition_review.md — does not exist on disk. Cursor creates it. Correct. Optional output docs/planning-papers/HealthIQ_AI_KB_WAVE_transition_decision_v1.md also does not exist — also correct."
-    },
-    {
-      "check": "Stage 2A — Duplicate authority check",
-      "result": "PASS",
-      "citation": "Single controlling scaffold-completion definition confirmed. Single FINAL strategic plan confirmed. No competing FINAL scaffold authority. LC-S12B notes explicitly record this check was run at Sprint 1."
-    },
-    {
-      "check": "Stage 2A — Smoke pack test files (all 12)",
-      "result": "CONFIRMED",
-      "citation": "All 12 smoke pack test files confirmed present on disk: backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py, test_lc_s8g_uploaded_unit_display_fidelity.py, test_lc_s8d_unit_governance_sentinel.py, test_lc_s10b_launch_core_protection.py, test_lc_s11a_trust_blocker_correction.py, test_lc_s13_lifestyle_coherence_narrative.py, test_lc_s14_direction_aware_scoring.py, test_lc_s16_17_19_kb_surface_payload_contract.py, test_lc_s18_root_cause_why_registration.py, test_lc_s20_22_persisted_replay_sentinel_phase2.py, test_lc_s21_23_23b_orchestrator_docs_ssot.py; backend/tests/unit/test_scoring_rules.py. No substitution required."
-    },
-    {
-      "check": "Stage 2A — STOP condition: scaffold definition missing",
-      "result": "PASS — not triggered",
-      "citation": "HealthIQ_AI_core_scaffold_completion_definition_v1.md present. Prompt mandatory STOP condition not triggered."
-    },
-    {
-      "check": "Stage 2A — Forbidden file boundary: no runtime files in CONTENT scope",
-      "result": "PASS",
-      "citation": "Prompt forbidden section (lines 232-246) explicitly excludes backend/**, frontend/**, knowledge_bus/**, sentinel/**, backend/ssot/**, automation_bus/state/*, control-plane scripts. Allowed output is two docs/ files only. CONTENT/STANDARD classification is correctly applied and correctly bounded."
-    },
-    {
-      "check": "Stage 2B — Behavioural hardening",
-      "result": "NOT APPLICABLE",
-      "citation": "change_type CONTENT. No Intelligence Core, scoring, pipeline, evaluator, signal, or DTO changes in scope. Stage 2B not required per SOP v1.3.1 §2B."
-    },
-    {
-      "check": "Informational — Residual risks surfaced by source content review",
-      "result": "INFORMATIONAL — no STOP condition",
-      "citation": "Four residual risks documented across sprint notes: (1) Gate A approval record empty in LC-S12B notes — programme ran without formal three-party sign-off; review must assess whether this constitutes a process gap. (2) LC-S18A package estate inventory refresh deferred — ~109 orphan packages not in KB-S49 inventory; metadata-driven WHY discovery blocked until resolved. (3) No Playwright render verification or stale UI banner (LC-S20/22 residual); render-level coverage is documentation-only, not machine-enforced. (4) Derived-marker orchestrator phase still monolithic (LC-S21 residual) — partial decomposition only. None of these are CONTENT-sprint blockers; they form the evidence base for the GO/GO WITH CONDITIONS/NO-GO transition decision."
+      "type": "CONFIRMED",
+      "field": "STOP conditions — comprehensive",
+      "finding": "STOP conditions cover inventory schema clarity, unvalidated medical content in orphans, runtime loader impact, and LDL/ApoB state. Mandatory preflight includes kernel token verification and cross-sprint guard runner.",
+      "citations": [
+        "automation_bus/latest_cursor_prompt.md lines 201-213: STOP conditions block",
+        "automation_bus/latest_cursor_prompt.md lines 99-149: mandatory preflight and scaffold smoke-pack guard commands"
+      ]
     }
-  ],
-  "verdict": "HARDENED. No blockers. All five front-matter fields valid. risk_level STANDARD and change_type CONTENT correctly classified. All 9 mandatory authority paths confirmed present and content-verified. All 10 optional inspect files confirmed present. All 12 smoke pack test files confirmed present on disk. Output target correctly absent. Forbidden file boundary intact. Stage 2B not applicable. Four residual risks documented from source content review — not blockers for this documentation sprint; they constitute the evidence base for the transition review decision. Cursor may proceed to Stage 3 kernel start."
+  ]
 }
