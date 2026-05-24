@@ -1,9 +1,10 @@
 {
   "branch": "frontend/fe-r6a-fresh-uat-defect-cleanup",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-24T22:02:47Z",
   "cursor_started_utc": "2026-05-24T21:57:40Z",
-  "head_sha": "c15f903e046c72c80fd6d09b6e02d5e7fee8a482",
+  "head_sha": "9cb9a1409e394865a5a511722ea16f9e4de97598",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "FE-R6A"
 }
