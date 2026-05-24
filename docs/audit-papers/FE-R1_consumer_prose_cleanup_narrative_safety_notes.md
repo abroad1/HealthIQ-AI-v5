@@ -98,3 +98,31 @@ Added to `sentinel/packs/escaped_defects_v1.json`:
 ## 13. Recommendation for FE-R2
 
 Proceed with results journey restructure only after FE-R1 merge: consumer prose is bounded and internal-token guarded; FE-R2 should focus on section order, progressive disclosure, and deduplicated domain/hero presentation without reintroducing compiler dumps.
+
+## GPT retrospective boundary approval
+
+GPT Architecture has reviewed the FE-R1 boundary deviations identified by Claude audit and retrospectively approves them as bounded, necessary, and architecturally appropriate for FE-R1.
+
+Approved boundary change 1:
+backend/core/pipeline/orchestrator.py
+- Approved only for the two call-site changes passing biomarker_name=biomarker_name into frontend_status_from_lab_reference().
+- Rationale: this is the minimal bridge needed for the ALP direction-aware frontend status correction. It does not alter orchestration order, pipeline phase ownership, DTO shape, or analytical routing.
+
+Approved boundary change 2:
+backend/core/analytics/consumer_prose_safety_v1.py
+- Approved as the central consumer prose safety module.
+- Rationale: centralised safety and sanitisation is preferable to scattered string handling across compilers.
+
+Approved boundary change 3:
+backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py
+- Approved only for wiring bounded consumer-safe narrative builders into the LC-S3 narrative assembly path.
+
+Approved boundary change 4:
+backend/core/analytics/primitives.py
+- Approved only for extending frontend_status_from_lab_reference() with biomarker-aware directionality correction using existing LC-S14 scoring directionality policy.
+
+Approved boundary change 5:
+backend/core/dto/builders.py
+- Approved only for passing consumer_domain_scores into balanced_systems compilation so the false empty-state behaviour can be corrected.
+
+This approval does not authorise any further pipeline, DTO, scoring, or compiler expansion beyond the changes already present in the FE-R1 branch.
