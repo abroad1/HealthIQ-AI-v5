@@ -1,9 +1,10 @@
 {
   "branch": "frontend/fe-r4-patterns-layer-gate",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-24T14:48:49Z",
   "cursor_started_utc": "2026-05-24T14:46:27Z",
-  "head_sha": "cd13d81cdfb93311647fc407ff453b644958976a",
+  "head_sha": "d0720478219b3371d26875cb96f17db569f40edc",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "FE-R4"
 }
