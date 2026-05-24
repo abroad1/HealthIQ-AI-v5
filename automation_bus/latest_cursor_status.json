@@ -2,7 +2,7 @@
   "branch": "frontend/fe-r2-results-journey-restructure",
   "bus_version": "1.2",
   "cursor_started_utc": "2026-05-24T12:19:54Z",
-  "head_sha": "b628b09ae0aba6d54d7760881aef29b14e5ab856",
+  "head_sha": "0348d1764004158bcfc5e0f4cca3214b7c98e80f",
   "raw_stop_condition": null,
   "status": "IN_PROGRESS",
   "work_id": "FE-R2"
