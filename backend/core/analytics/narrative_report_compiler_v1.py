@@ -23,6 +23,7 @@ from core.analytics.intervention_annotation_formatter_v1 import (
     format_intervention_annotation_consumer_cv_suffix_v1,
     format_intervention_annotation_narrative_appendix_v1,
 )
+from core.analytics.consumer_prose_safety_v1 import sanitize_retail_display_label
 from core.analytics.lifestyle_consumer_surface_v1 import (
     ALCOHOL_ONE_CARBON_LIFESTYLE_BODY_OVERVIEW_V1,
     build_lifestyle_consumer_overview_paragraphs_v1,
@@ -154,7 +155,7 @@ def _benchmark_domain_display_titles(
         if not domain:
             continue
         title = str(domain.get("display_title", "")).strip()
-        if not title:
+        if not title or "functional read" in title.lower():
             continue
         if role == "benchmark_lead_domain" and include_lead:
             titles.append(title)
@@ -249,7 +250,7 @@ def _build_retail_summary(idl_bundle: Any, compiler_meta: Dict[str, Any]) -> str
             continue
         if _rec_get(rec, "frontend_allowed_term", "") != "phenotype_allowed":
             continue
-        label = _rec_get(rec, "retail_display_label", "").strip()
+        label = sanitize_retail_display_label(_rec_get(rec, "retail_display_label", ""))
         subtitle = _rec_get(rec, "subtitle", "").strip()
         why = _rec_get(rec, "why_it_matters", "").strip()
         sphr = sev_phrase.get(sev, sev.replace("_", " "))
@@ -402,7 +403,7 @@ def _collect_next_steps(
         compiler_meta["skipped"].append("next_steps_no_clarification_paths")
         return ""
     compiler_meta["assets_resolved"].append("next_steps_from_functional_domains")
-    return "Prioritised follow-up (governed assets):\n\n" + _join_blocks(blocks)
+    return "Suggested follow-up themes:\n\n" + _join_blocks(blocks)
 
 
 def _clinician_functional_tail(domain: Mapping[str, Any]) -> str:
@@ -516,9 +517,6 @@ def _functional_section(domain: Mapping[str, Any]) -> str:
     parts: List[str] = []
     for k in keys:
         if k == "confidence_grade_label":
-            label = domain.get("confidence_grade_label")
-            if label:
-                parts.append(f"Confidence framing (governed label): {label}")
             continue
         v = domain.get(k)
         if isinstance(v, str) and v.strip():

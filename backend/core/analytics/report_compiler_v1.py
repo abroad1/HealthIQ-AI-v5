@@ -37,6 +37,11 @@ from core.analytics.intervention_annotation_formatter_v1 import (
 from core.analytics.medication_caveat_assembler_v1 import (
     build_medication_supplement_interpretation_caveat,
 )
+from core.analytics.consumer_prose_safety_v1 import (
+    format_confidence_consumer,
+    format_runner_up_topic_consumer,
+    format_runner_up_why_consumer,
+)
 from core.analytics.root_cause_compiler_v1 import compile_root_cause_v1
 from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_tests_registry_v1
 
@@ -83,7 +88,7 @@ def _state_consumer_phrase(state: str) -> str:
     key = str(state or "").strip().lower()
     return {
         "at_risk": "warrants attention on this panel",
-        "suboptimal": "is outside the optimal range on this panel",
+        "suboptimal": "also stood out on this panel",
         "optimal": "looks favourable on this panel",
         "unknown": "is not fully characterised from this panel alone",
     }.get(key, f"is described as {key.replace('_', ' ')} on this panel")
@@ -242,29 +247,13 @@ def _build_runner_up_page1_fields(
         return "", "", ""
     pri_sid = str(primary.get("signal_id", "")).strip()
     st = str(secondary.get("signal_state", "unknown")).strip() or "unknown"
-    topic = f"{_humanize_signal_id(sec_sid)}: {_state_consumer_phrase(st)}"[:220]
+    topic = format_runner_up_topic_consumer(_humanize_signal_id(sec_sid), st)[:220]
     pc = _safe_float(primary.get("confidence"))
     sc = _safe_float(secondary.get("confidence"))
     pri_label = _humanize_signal_id(pri_sid) if pri_sid else "the lead pattern"
     sec_label = _humanize_signal_id(sec_sid)
-
-    if concern_mode == "technical_tiebreak_lead":
-        why = (
-            f"{sec_label} sits in the same scored tier as {pri_label}. "
-            f"A fixed ordering rule lists the headline topic first so the summary has one clear entry point "
-            f"(scores {pc:.2f} vs {sc:.2f})."
-        )[:280]
-    else:
-        if abs(pc - sc) <= 0.05:
-            why = (
-                f"{pri_label} and {sec_label} are similarly strong on this panel ({pc:.2f} vs {sc:.2f}); "
-                f"the headline shows one pattern first so the discussion has a single starting point."
-            )[:280]
-        else:
-            why = (
-                f"{pri_label} shows a slightly stronger signal than {sec_label} on this panel "
-                f"({pc:.2f} vs {sc:.2f}). Both patterns are still important to consider."
-            )[:280]
+    near_tie = concern_mode == "technical_tiebreak_lead" or abs(pc - sc) <= 0.05
+    why = format_runner_up_why_consumer(pri_label, sec_label, near_tie=near_tie)[:280]
     return sec_sid[:120], topic, why
 
 
@@ -287,12 +276,10 @@ def _load_safety_contract_version() -> str:
 def _why_template(signal_id: str, signal_state: str, primary_metric: str) -> str:
     topic = _humanize_signal_id(signal_id)
     metric = str(primary_metric or "").strip().replace("_", " ")
+    metric_label = metric.title() if metric else ""
     state_phrase = _state_consumer_phrase(signal_state)
-    if metric:
-        text = (
-            f"{topic} {state_phrase}. The main lab anchor on this panel for this thread is "
-            f"{metric.replace('_', ' ')}."
-        )
+    if metric_label:
+        text = f"{topic} {state_phrase}, with {metric_label.lower()} as the main marker on this panel."
     else:
         text = f"{topic} {state_phrase}."
     return text[:200]
@@ -569,10 +556,9 @@ def compile_clinician_report_v1(
         )
         missing_count = sum(len(h.missing_data) for h in primary_root.hypotheses)
 
-    pc_conf = round(float(primary_confidence), 2)
-    confidence_missing_line = (
-        f"Overall confidence for this lead pattern: {pc_conf:.2f}. "
-        f"{'Some expected confirmatory markers are not on this panel, which limits how specific the story can be.' if missing_count else 'No critical marker gaps were flagged for this lead thread in this report scope.'}"
+    confidence_missing_line = format_confidence_consumer(
+        missing_markers=bool(missing_count),
+        near_tie=concern_mode in ("near_tie_ambiguity", "technical_tiebreak_lead"),
     )
 
     chain_lines = []

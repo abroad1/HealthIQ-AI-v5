@@ -704,7 +704,7 @@ export default function ResultsPage() {
             <NarrativeLongitudinalAndNextSteps narrative={narrativeReport} />
             <section aria-labelledby="root-cause-heading">
               <h3 id="root-cause-heading" className="text-sm font-semibold text-slate-800 mb-2">
-                Clinician-structured &ldquo;why&rdquo; and evidence
+                Primary finding — clinical detail
               </h3>
               <PrimaryFindingAndWhy report={clinicianReport} omitIntroDuplicate showTechnicalDetail={showDetails} />
             </section>

@@ -292,6 +292,54 @@
       "test_file": "backend/tests/regression/test_lc_s18a_package_estate_inventory.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "consumer_prose_internal_compiler_leakage": {
+      "description": "FE-R1 — internal compiler tokens (governed label, ranked lead pattern, lab anchor, functional read headers) visible on retail narrative/IDL surfaces.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "consumer_prose_unbounded_kb_dump": {
+      "description": "FE-R1 — lead/secondary narrative exceeds consumer bounds or dumps raw KB mechanism/hypothesis blocks.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "consumer_retail_label_template_suffix": {
+      "description": "FE-R1 — IDL retail_display_label still uses ': is outside the optimal range on this panel' template suffix.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "consumer_confidence_raw_numeric_leakage": {
+      "description": "FE-R1 — runner-up/confidence consumer lines expose raw numeric confidence comparisons (e.g. 0.90 vs 0.90).",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "consumer_balanced_systems_empty_when_domains_stable": {
+      "description": "FE-R1 — balanced_systems_v1 null/empty while multiple consumer domain scores are stable (>=80).",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "consumer_biomarker_status_direction_mismatch": {
+      "description": "FE-R1 — direction-aware biomarkers (e.g. ALP low at lab floor) labelled critical on retail biomarker rows.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

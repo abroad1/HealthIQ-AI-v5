@@ -85,6 +85,61 @@ def _supporting_systems_list(meta: Dict[str, Any]) -> List[str]:
     return sorted({str(x).strip() for x in sup if str(x).strip()})
 
 
+def _fallback_from_consumer_domain_scores(
+    meta: Dict[str, Any],
+    primary_driver_system_id: str,
+) -> Optional[Dict[str, Any]]:
+    """When insight_graph has no system_stable_normal, surface strong domain cards (FE-R1)."""
+    rows = meta.get("consumer_domain_scores")
+    if not isinstance(rows, list):
+        return None
+    stable: List[Dict[str, Any]] = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        try:
+            score = float(row.get("score", 0))
+        except (TypeError, ValueError):
+            continue
+        threshold = 0.8 if score <= 1.5 else 80.0
+        if score < threshold:
+            continue
+        domain_id = str(row.get("domain_id", "")).strip()
+        if primary_driver_system_id and domain_id == "cardiovascular":
+            continue
+        stable.append(row)
+    if not stable:
+        return None
+    items: List[Dict[str, str]] = []
+    for row in sorted(stable, key=lambda r: str(r.get("domain_id", "")))[:3]:
+        topic = str(row.get("domain_id", "system")).replace("_", " ").title()
+        band = str(row.get("band_label", "stable")).strip()
+        raw_score = float(row.get("score", 0))
+        score_display = int(round(raw_score * 100)) if raw_score <= 1.5 else int(round(raw_score))
+        items.append(
+            {
+                "system_topic": topic[:160],
+                "evidence_line": (
+                    f"On this panel, your {topic.lower()} domain score reads as {band} "
+                    f"({score_display}/100), based on the markers in that group."
+                )[:420],
+                "capacity_note": "",
+            }
+        )
+    return {
+        "intro_line": (
+            "Several health domains on this panel look broadly stable or well-supported, "
+            "which helps balance the main finding."
+        )[:360],
+        "items": items,
+        "context_line": (
+            "These stable areas do not remove the need to discuss the lead pattern with your clinician, "
+            "but they show the panel is not uniformly off track."
+        )[:520],
+        "source": "consumer_domain_scores_fallback_v1",
+    }
+
+
 def compile_balanced_systems_v1(
     *,
     meta: Dict[str, Any],
@@ -129,7 +184,7 @@ def compile_balanced_systems_v1(
 
     stable_rows = sorted(stable_rows, key=lambda r: r["system_id"])
     if not stable_rows:
-        return None
+        return _fallback_from_consumer_domain_scores(meta, primary_driver_system_id)
 
     capacities = _capacity_scores_map(meta)
     supporting = set(_supporting_systems_list(meta))

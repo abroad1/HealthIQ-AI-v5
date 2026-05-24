@@ -97,10 +97,28 @@ def frontend_status_from_lab_reference(
     value: float,
     min_val: Optional[float],
     max_val: Optional[float],
+    *,
+    biomarker_name: Optional[str] = None,
 ) -> str:
     """
     Frontend status from lab reference, including one-sided commercial ranges.
+
+    When ``biomarker_name`` is set, applies the same direction-aware position override
+    as scoring (LC-S14) so low enzyme values are not labelled critical on retail surfaces.
     """
+    if biomarker_name:
+        from core.scoring.rules import ScoringRules
+
+        rules = ScoringRules()
+        direction_pos = rules._directionality_position_override(
+            biomarker_name,
+            float(value),
+            float(min_val) if isinstance(min_val, (int, float)) else None,
+            float(max_val) if isinstance(max_val, (int, float)) else None,
+        )
+        if direction_pos is not None:
+            has_status = map_position_to_status(direction_pos)
+            return has_status_to_frontend(has_status)
     pos = position_in_one_sided_lab_range(value, min_val, max_val)
     if pos is None:
         return "unknown"

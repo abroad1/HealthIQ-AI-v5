@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 import yaml
 
+from core.analytics.consumer_prose_safety_v1 import sanitize_retail_display_label
 from core.contracts.interpretation_display_layer_v1 import (
     InterpretationDisplayLayerBundleV1,
     InterpretationDisplayRecordV1,
@@ -169,7 +170,9 @@ def publish_interpretation_display_layer_v1(
             internal_id=internal_id,
             scientific_class=row["scientific_class"],
             clinical_display_label=str(row.get("clinical_display_label", "")),
-            retail_display_label=str(row.get("retail_display_label", "")),
+            retail_display_label=sanitize_retail_display_label(
+                str(row.get("retail_display_label", ""))
+            ),
             subtitle=str(row.get("subtitle", "")),
             why_it_matters=str(row.get("why_it_matters", "")),
             severity_state=sev,

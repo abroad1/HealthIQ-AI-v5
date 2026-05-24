@@ -133,6 +133,8 @@ def _met_story_conflicts_with_stable_headline(contributor: str, consequence: str
     t = _narrative_lowercased(contributor, consequence)
     if not t:
         return False
+    if "not included" in t or "were not included" in t or "not on this panel" in t:
+        return False
     needles = (
         "glyc",
         "insulin",
@@ -140,14 +142,15 @@ def _met_story_conflicts_with_stable_headline(contributor: str, consequence: str
         "impaired",
         "hba1c",
         "strain",
-        "glucose",
-        "sugar",
         "metabolic stress",
         "triglyceride",
         "sustained",
         "prediabet",
         "diabet",
+        "active signals",
     )
+    if "glucose" in t and "within range" in t:
+        return False
     return any(n in t for n in needles)
 
 

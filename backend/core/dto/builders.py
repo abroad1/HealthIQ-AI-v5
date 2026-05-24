@@ -52,8 +52,17 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
         medical_history=mh_snap,
         intervention_annotations_v1=ia_v1,
     )
+    meta_for_balanced = dict(meta)
+    cds = result.get("consumer_domain_scores")
+    if cds is not None:
+        if hasattr(cds, "__iter__") and not isinstance(cds, (str, dict)):
+            meta_for_balanced["consumer_domain_scores"] = [
+                row.model_dump() if hasattr(row, "model_dump") else row for row in cds
+            ]
+        else:
+            meta_for_balanced["consumer_domain_scores"] = cds
     balanced = compile_balanced_systems_v1(
-        meta=meta,
+        meta=meta_for_balanced,
         primary_driver_system_id=str(result.get("primary_driver_system_id", "") or ""),
     )
 

@@ -9,6 +9,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
+from core.analytics.consumer_prose_safety_v1 import (
+    build_consumer_lead_narrative,
+    build_consumer_next_steps,
+    build_consumer_retail_summary,
+    build_consumer_secondary_narratives,
+    consumer_body_overview_opener,
+    sanitize_consumer_prose,
+)
 from core.contracts.narrative_payload_v1 import NarrativeClaimBoundaryV1, NarrativePayloadV1
 from core.contracts.report_v1 import ReportTopFindingV1
 
@@ -291,25 +299,27 @@ def assemble_lc_s3_sections(
 
     boundaries = payload.claim_boundaries
 
-    retail_raw = _retail_from_payload(payload, idl_retail_block)
+    retail_raw = build_consumer_retail_summary(payload, idl_retail_block="")
     retail_summary = _apply_boundary(retail_raw, boundaries)
 
-    rc_block = _root_cause_block(payload)
-    lead_narrative_raw = "\n\n".join(p for p in [lead_yaml_block.strip(), rc_block.strip()] if p)
+    lead_narrative_raw = build_consumer_lead_narrative(
+        payload,
+        pathway_excerpt=lead_yaml_block,
+    )
     lead_narrative = _apply_boundary(lead_narrative_raw, boundaries)
 
     bo_raw = "\n\n".join(
         p
         for p in [
-            _body_overview_payload_sentence(payload).strip(),
+            consumer_body_overview_opener(payload).strip(),
             alcohol_lifestyle_body_overview.strip(),
-            body_overview_for_consumer.strip(),
+            sanitize_consumer_prose(body_overview_for_consumer.strip()),
         ]
         if p
     )
     body_overview = _apply_boundary(bo_raw, boundaries)
 
-    ns_raw = _next_steps_from_payload(payload, clarification_paths_block)
+    ns_raw = build_consumer_next_steps(payload, clarification_paths_block)
     next_steps_narrative = _apply_boundary(ns_raw, boundaries)
 
     clin_raw = "\n\n".join(
@@ -317,11 +327,10 @@ def assemble_lc_s3_sections(
     )
     clinician_synthesis = _apply_boundary(clin_raw, boundaries)
 
-    secondary_raw = _secondary_ranked(payload)
-    if secondary_yaml_block.strip():
-        secondary_raw = "\n\n".join(
-            p for p in [secondary_yaml_block.strip(), secondary_raw.strip()] if p
-        )
+    secondary_raw = build_consumer_secondary_narratives(
+        payload,
+        secondary_yaml_block=secondary_yaml_block,
+    )
     secondary_narratives = _apply_boundary(secondary_raw, boundaries)
 
     return LcS3AssembledSections(

@@ -1858,6 +1858,7 @@ class AnalysisOrchestrator:
                             float(value),
                             float(mn) if isinstance(mn, (int, float)) else None,
                             float(mx) if isinstance(mx, (int, float)) else None,
+                            biomarker_name=biomarker_name,
                         )
                     else:
                         status = "unknown"
@@ -2024,6 +2025,7 @@ class AnalysisOrchestrator:
                                 float(value),
                                 float(mn) if isinstance(mn, (int, float)) else None,
                                 float(mx) if isinstance(mx, (int, float)) else None,
+                                biomarker_name=biomarker_name,
                             )
                             score_raw, _, unscored_r = self.scoring_engine.rules.calculate_biomarker_score(
                                 biomarker_name,
