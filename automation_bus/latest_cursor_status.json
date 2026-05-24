@@ -1,10 +1,9 @@
 {
-  "branch": "scaffold/lc-scaffold-closeout-transition-review",
+  "branch": "kb-wave/lc-s18a-package-estate-inventory-refresh",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-24T07:00:36Z",
-  "cursor_started_utc": "2026-05-24T06:54:01Z",
-  "head_sha": "0bd18651a1bb2922efcf279693bea8fb542c05d1",
+  "cursor_started_utc": "2026-05-24T07:43:59Z",
+  "head_sha": "7782cc43bcd3f4cc38cd2113932749d09228e153",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-SCAFFOLD-CLOSEOUT"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S18A"
 }
