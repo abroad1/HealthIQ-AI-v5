@@ -41,7 +41,7 @@ The integrity of this system directly determines the clinical defensibility of e
 |--------|-----------|-----------|
 | GPT | Architecture design and intelligence governance | Cannot modify repository |
 | Claude | Prompt hardening and audit validation | Cannot merge or implement code |
-| Cursor | Code implementation and closure execution | Cannot self-certify correctness or self-authorise merge |
+| Cursor | Code implementation only | Cannot self-certify correctness |
 | Kernel | State enforcement and execution gating | Cannot modify evidence |
 | Gate | Deterministic verification | Cannot override results |
 | Human | Final merge authority | Cannot bypass system safeguards |
@@ -129,13 +129,222 @@ All artifacts must remain consistent and aligned at all times.
 
 Artifacts are runtime state and are gitignored unless explicitly versioned.
 
+## 5.1 Kernel Status Artifact Versioning Policy
+
+`automation_bus/latest_cursor_status.json` is kernel-owned lifecycle state. Cursor must never manually edit this file.
+
+However, the kernel may legitimately write this file during:
+
+- `python backend/scripts/run_work_package.py start`
+- `python backend/scripts/run_work_package.py finish`
+
+Because the repository currently versions this artifact during governed work-package branches, the standard policy is:
+
+- implementation commits must not include `automation_bus/latest_cursor_status.json` unless the work package explicitly modifies Automation Bus behaviour
+- after `finish`, if `automation_bus/latest_cursor_status.json` is the only dirty file and it reflects kernel-generated `COMPLETE` status for the active `work_id`, Cursor must commit it as a separate final bus-status commit
+- the standard commit message is `chore(bus): <work_id> kernel COMPLETE status`
+- if any other Automation Bus artifact is dirty after `finish`, Cursor must STOP and escalate
+- if `latest_cursor_status.json` content does not match the active `work_id`, branch, or expected kernel lifecycle status, Cursor must STOP and escalate
+
+This policy removes the need to decide sprint-by-sprint whether the finish-status snapshot should be committed.
+
 ---
 
-# 6. Work Package Lifecycle
+
+# 6. Post-Implementation Closure Protocol
+
+This stage is mandatory for every governed work package after implementation is complete and before `run_work_package.py finish` is executed.
+
+Its purpose is to prevent:
+- accidental inclusion of out-of-scope files
+- hidden dirty working trees
+- stray tooling files entering governed sprint branches
+- ambiguous stash state
+- branch confusion during closure
+- false claims of merge readiness
+
+## 6.1 Ownership
+
+Cursor owns post-implementation repo hygiene and closure preparation.
+
+The user must not perform routine manual Git housekeeping during normal sprint closure unless:
+- recovery is required
+- Cursor is blocked by tooling failure
+- explicit architectural review instructs otherwise
+
+Cursor may not treat its own summary as proof.
+Repo state must be demonstrated through command output.
+
+## 6.2 Mandatory Closure Audit
+
+Before `python backend/scripts/run_work_package.py finish`, Cursor must run and report:
+
+```powershell
+git branch --show-current
+git status --short
+git log --oneline -n 5
+git diff --name-only
+git diff --cached --name-only
+git stash list
+```
+
+If relevant to closure readiness, Cursor must also report:
+- untracked files
+- ignored files that may affect repo hygiene
+- HEAD vs `main` diff summary
+
+## 6.3 Required Classification
+
+Cursor must explicitly classify:
+
+- tracked modified files
+- staged files
+- untracked files
+- tooling files
+- out-of-scope files
+- stash entries potentially related to the active sprint
+
+Tooling files include at minimum:
+- `.codex/`
+- `.vscode/`
+- `AGENTS.md`
+- local helper/config files not explicitly in sprint scope
+
+## 6.4 Tooling File Isolation Rule
+
+Tooling files must not ride along inside a governed sprint branch unless the sprint explicitly covers tooling or control-plane/tooling changes.
+
+If tooling files are present in a non-tooling sprint, Cursor must STOP and report the issue as a closure blocker.
+
+Tooling changes must be isolated into:
+- a dedicated tooling branch
+- or a dedicated tooling sprint
+
+## 6.5 Stash Rule
+
+Stash is emergency-only during sprint closure.
+
+Cursor must not use stash during normal closure unless it first states:
+
+- exactly why stash is required
+- exactly which files will enter the stash
+- whether untracked files are involved
+- whether ignored files are involved
+- the exact recovery command needed to restore the stash contents
+
+If ignored files are involved, Cursor must explicitly state that standard stash behaviour does not include ignored files unless handled with the correct mode.
+
+No stash creation, pop, apply, or drop is permitted without explicit user approval once closure has entered stash-remediation territory.
+
+## 6.6 Finish Readiness Gate
+
+Cursor must not run:
+
+```powershell
+python backend/scripts/run_work_package.py finish
+```
+
+until it has explicitly confirmed all of the following:
+
+- current branch matches the sprint branch
+- working tree is clean
+- no unrelated tracked modifications remain
+- no stray untracked files remain that matter to closure
+- no tooling files are leaking into sprint scope
+- no ambiguous or forgotten stash exists for the sprint
+- latest commit contains only in-scope work
+
+If any condition fails, Cursor must STOP and produce a remediation plan.
+
+## 6.7 Closure vs Merge Authority
+
+Finish readiness is not merge authority.
+
+After finish succeeds, Cursor may report merge readiness, but must not merge unless the human explicitly authorises it.
+
+Human remains the final merge authority.
+
+## 6.8 Post-Finish Confirmation
+
+After successful finish, Cursor must re-run and report:
+
+```powershell
+git branch --show-current
+git status --short
+git log --oneline -n 5
+git stash list
+```
+
+Cursor must explicitly state:
+
+- whether the branch is closure-clean
+- whether any stash entries remain from the sprint
+- whether any tooling or out-of-scope files remain
+- whether the repo is ready for merge review
+
+### 6.8.1 Kernel Status Artifact Handling After Finish
+
+After `finish`, Cursor must inspect `automation_bus/latest_cursor_status.json` if it appears in `git status --short`.
+
+If all of the following are true:
+
+- `automation_bus/latest_cursor_status.json` is the only dirty file
+- the file content reflects kernel-generated `COMPLETE` status
+- the `work_id` matches the active work package
+- the branch matches the active work package branch
+- no other Automation Bus artifact is dirty
+
+then Cursor must commit it separately using:
+
+```text
+chore(bus): <work_id> kernel COMPLETE status
+```
+
+After committing, Cursor must re-run:
+
+```powershell
+git status --short
+git log --oneline -n 5
+```
+
+and confirm the branch is clean before reporting merge readiness.
+
+If any other Automation Bus artifact is dirty, or if `latest_cursor_status.json` does not clearly reflect expected kernel output, Cursor must STOP and escalate.
+
+Cursor must not manually edit `latest_cursor_status.json` to make it match expectations.
+
+## 6.9 Local Merge Execution Rule
+
+If the human explicitly authorises local merge, Cursor may execute the local merge workflow.
+
+Before merge, Cursor must confirm:
+- finish has succeeded
+- branch is clean
+- no unresolved stash ambiguity remains
+- no tooling-file leakage remains
+
+After merge, Cursor must report:
+- final `main` HEAD SHA
+- whether the sprint branch still exists locally
+- whether the sprint branch still exists remotely, if relevant
+- whether any stash entries remain from the sprint
+- whether the working tree is clean on `main`
+
+## 6.10 Forbidden Closure Behaviour
+
+The following are prohibited:
+
+- claiming repo cleanliness without command evidence
+- using stash as routine closure convenience
+- mixing tooling files into governed sprint branches
+- running finish against a dirty or ambiguous repo state
+- merging without explicit human approval
+- asking the user to perform routine manual Git housekeeping unless recovery is unavoidable
+
+
+# 7. Work Package Lifecycle
 
 ## Stage 0 — Branch Alignment
-
-Operational ownership for achieving branch alignment before implementation begins sits with Cursor during normal execution, unless recovery or tooling failure requires human intervention.
 
 * A dedicated branch must exist for the work package
 * The current branch must match the declared `branch` in front matter
@@ -433,13 +642,6 @@ Kernel must not run the gate during `start`.
 
 ## Stage 4 — Cursor Execution
 
-Before modifying any repository files, Cursor owns branch-preparation and repo-readiness verification for the active work package.
-
-Cursor must:
-- ensure the current branch matches the prompt branch, including performing the branch checkout if needed
-- ensure the working tree is clean before implementation begins
-- STOP and report if branch correction or repo cleanup cannot be completed safely within scope
-
 Cursor reads the hardened prompt and performs the implementation work.
 
 Before modifying any repository files, Cursor must verify:
@@ -463,218 +665,9 @@ Cursor must not:
 
 * Reinterpret requirements
 * Self-certify success
-* Modify `latest_cursor_status.json`
+* Manually modify `latest_cursor_status.json`
 
----
-
-## Test Execution Discipline
-
-Cursor must not default to running the full repository test suite.
-
-For each work package, test execution must be proportionate to the approved scope and run in the following order:
-
-1. targeted tests for newly added or modified files
-2. directly related existing unit / integration / regression tests for touched runtime paths
-3. explicitly required golden, smoke, or acceptance tests relevant to the sprint
-
-Before running tests, Cursor must state:
-- which tests will be run
-- why they are relevant
-- which broader test suites are being deliberately excluded
-
-Full repository-wide test execution is permitted only when:
-- the active work package explicitly requires it, or
-- a targeted failure provides concrete evidence of likely wider regression
-
-Cursor must not run unrelated legacy, archived, or historically broad test suites by default.
-
-If broader testing appears necessary, Cursor must justify that need before running it.
-
----
-
-## Stage 4A — Post-Implementation Closure Protocol
-
-This stage is mandatory for every governed work package after implementation is complete and before `run_work_package.py finish` is executed.
-
-Its purpose is to prevent:
-- accidental inclusion of out-of-scope files
-- hidden dirty working trees
-- stray tooling files entering governed sprint branches
-- ambiguous stash state
-- branch confusion during closure
-- false claims of finish readiness or merge readiness
-
-### 4A.1 Ownership
-
-Cursor owns post-implementation repo hygiene and closure preparation.
-
-The user must not perform routine manual Git housekeeping during normal sprint closure unless:
-- recovery is required
-- Cursor is blocked by tooling failure
-- explicit architectural review instructs otherwise
-
-Cursor may not treat its own summary as proof.
-Repo state must be demonstrated through command output.
-
-### 4A.2 Mandatory Closure Audit
-
-Before `python backend/scripts/run_work_package.py finish`, Cursor must run and report:
-
-```powershell
-git branch --show-current
-git status --short
-git log --oneline -n 5
-git diff --name-only
-git diff --cached --name-only
-git stash list
-```
-
-If relevant to closure readiness, Cursor must also report:
-- untracked files
-- ignored files that may affect repo hygiene
-- HEAD vs `main` diff summary
-
-### 4A.3 Required Classification
-
-Cursor must explicitly classify:
-
-- tracked modified files
-- staged files
-- untracked files
-- tooling files
-- out-of-scope files
-- stash entries potentially related to the active sprint
-
-Tooling files include at minimum:
-- `.codex/`
-- `.vscode/`
-- `AGENTS.md`
-- local helper/config files not explicitly in sprint scope
-
-### 4A.4 Tooling File Isolation Rule
-
-Tooling files must not ride along inside a governed sprint branch unless the sprint explicitly covers tooling or control-plane/tooling changes.
-
-If tooling files are present in a non-tooling sprint, Cursor must STOP and report the issue as a closure blocker.
-
-Tooling changes must be isolated into:
-- a dedicated tooling branch
-- or a dedicated tooling sprint
-
-### 4A.5 Stash Rule
-
-Stash is emergency-only during sprint closure.
-
-Cursor must not use stash during normal closure unless it first states:
-
-- exactly why stash is required
-- exactly which files will enter the stash
-- whether untracked files are involved
-- whether ignored files are involved
-- the exact recovery command needed to restore the stash contents
-
-If ignored files are involved, Cursor must explicitly state that standard stash behaviour does not include ignored files unless handled with the correct mode.
-
-No stash creation, pop, apply, or drop is permitted without explicit user approval once closure has entered stash-remediation territory.
-
-#### Stash Resolution Requirement
-
-Any stash created during a work package lifecycle is considered a tracked closure artifact.
-
-Cursor must explicitly track and resolve every stash created during the active sprint.
-
-A stash is only considered resolved if it is:
-
-- restored and fully consumed into the working tree
-- explicitly retained with human approval and a stated reason
-- explicitly dropped with human approval
-
-Cursor must not leave any stash in an unresolved state at the end of closure.
-
-Creation of a stash introduces a mandatory resolution obligation before closure can be declared complete.
-
-### 4A.6 Finish Readiness Gate
-
-Cursor must not run:
-
-```powershell
-python backend/scripts/run_work_package.py finish
-```
-
-until it has explicitly confirmed all of the following:
-
-- current branch matches the sprint branch
-- working tree is clean
-- no unrelated tracked modifications remain
-- no stray untracked files remain that matter to closure
-- no tooling files are leaking into sprint scope
-- no ambiguous or forgotten stash exists for the sprint
-- no unresolved stash entries exist that were created during this sprint
-- latest commit contains only in-scope work
-
-If any condition fails, Cursor must STOP and produce a remediation plan.
-
-### 4A.7 Closure vs Merge Authority
-
-Finish readiness is not merge authority.
-
-After finish succeeds, Cursor may report merge readiness, but must not merge unless the human explicitly authorises it.
-
-Human remains the final merge authority.
-
-### 4A.8 Post-Finish Confirmation
-
-After successful finish, Cursor must re-run and report:
-
-```powershell
-git branch --show-current
-git status --short
-git log --oneline -n 5
-git stash list
-```
-
-Cursor must explicitly state:
-
-- whether the branch is closure-clean
-- whether any stash entries remain from the sprint, and explicit classification of each as:
-  - resolved (restored)
-  - retained with approval
-  - dropped
-- whether any tooling or out-of-scope files remain
-- whether the repo is ready for merge review
-
-Any unresolved stash entry blocks closure completeness.
-
-### 4A.9 Local Merge Execution Rule
-
-If the human explicitly authorises local merge, Cursor may execute the local merge workflow. Local merge execution does not override HIGH-risk governance requirements.
-If the work package is classified as HIGH risk under Section 10, dual approval (Claude audit + GPT architectural approval) is still mandatory before merge.
-
-Before merge, Cursor must confirm:
-- finish has succeeded
-- branch is clean
-- no unresolved stash ambiguity remains
-- no tooling-file leakage remains
-
-After merge, Cursor must report:
-- final `main` HEAD SHA
-- whether the sprint branch still exists locally
-- whether the sprint branch still exists remotely, if relevant
-- confirmation that no unresolved stash entries from the sprint remain
-- whether the working tree is clean on `main`
-
-Merge must not proceed if any stash created during the sprint remains unresolved.
-
-### 4A.10 Forbidden Closure Behaviour
-
-The following are prohibited:
-
-- claiming repo cleanliness without command evidence
-- using stash as routine closure convenience
-- mixing tooling files into governed sprint branches
-- running finish against a dirty or ambiguous repo state
-- merging without explicit human approval
-- asking the user to perform routine manual Git housekeeping unless recovery is unavoidable
+Kernel-generated changes to `latest_cursor_status.json` are permitted only through the approved `start` and `finish` commands and must be handled under Section 5.1 and Section 6.8.1.
 
 ---
 
@@ -732,7 +725,7 @@ This closes the execution authority window.
 
 ---
 
-# 7. No-op Sprint Protection
+# 8. No-op Sprint Protection
 
 If preflight determines:
 
@@ -749,7 +742,7 @@ No-op remediation work is prohibited unless explicitly re-authorised.
 
 ---
 
-# 8. Evidence Immutability
+# 9. Evidence Immutability
 
 The following artifacts must never be modified by control-plane scripts after creation:
 
@@ -768,7 +761,7 @@ Evidence schema versioning is independent of SOP versioning.
 
 ---
 
-# 9. Audit Summary Requirements
+# 10. Audit Summary Requirements
 
 After kernel finish, Claude reads:
 
@@ -820,7 +813,7 @@ For Intelligence Core work, the audit must explicitly confirm:
 
 ---
 
-# 10. HIGH Risk Rules
+# 11. HIGH Risk Rules
 
 A work package is HIGH risk if:
 
@@ -844,7 +837,7 @@ HIGH risk requires:
 
 ---
 
-# 11. Docs-Only Bypass
+# 12. Docs-Only Bypass
 
 Docs-only bypass is allowed only when all changes are under `/docs/`.
 
@@ -858,12 +851,9 @@ If any file outside `/docs/` is present, the Automation Bus is required.
 
 No human judgment exception exists.
 
-Docs-only bypass does not apply to automation runtime artifacts under `automation_bus/`.
-Any change affecting lifecycle state, audit artifacts, or execution evidence is governed and must follow the Automation Bus.
-
 ---
 
-# 12. Infrastructure / Control-Plane Execution Deferral
+# 13. Infrastructure / Control-Plane Execution Deferral
 
 If a work package modifies any enforcement script:
 
@@ -885,7 +875,7 @@ Control-plane scripts must not execute themselves mid-refactor.
 
 ---
 
-# 13. Determinism Rules
+# 14. Determinism Rules
 
 All JSON written by control-plane scripts must:
 
@@ -913,7 +903,7 @@ Kernel must:
 
 ---
 
-# 14. Non-Negotiable Rules
+# 15. Non-Negotiable Rules
 
 The following rules cannot be violated:
 
@@ -934,14 +924,13 @@ The following rules cannot be violated:
 * No "CONFIRMED" claim in a hardening JSON without a cited file path and line number
 * No inheritance of prior task findings without an artifact or independent re-verification
 * No source file treated as compatible without its content having been read and cross-referenced against schema and runtime
-* No `run_work_package.py finish` without passing Stage 4A — Post-Implementation Closure Protocol
+* No `run_work_package.py finish` without passing the mandatory Post-Implementation Closure Protocol
 * No tooling-file leakage (`.codex/`, `.vscode/`, `AGENTS.md`, or equivalent local tooling assets) into governed sprint branches unless explicitly in scope
 * No stash use as routine sprint-closure convenience
-* No sprint may reach closure-complete or merge-ready state while a stash created during that sprint remains unresolved
 
 ---
 
-# 15. Design Philosophy
+# 16. Design Philosophy
 
 The Automation Bus is:
 
@@ -958,10 +947,9 @@ It enforces:
 
 GPT defines architecture.
 Claude enforces discipline.
-Cursor implements and closes.
+Cursor implements.
 Kernel validates state.
 Gate verifies deterministically.
-Human authorises merge.
 
 The system guarantees integrity.
 
@@ -970,3 +958,6 @@ The system guarantees integrity.
 **Version:** v1.3.1
 **Edition:** Intelligence Governance Edition — Hardening Evidence Standard
 **Status:** LOCKED
+
+```
+```
