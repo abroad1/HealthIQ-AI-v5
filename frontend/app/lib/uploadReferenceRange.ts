@@ -408,12 +408,37 @@ export function referenceRangeToPayload(
   };
 }
 
+/** Strip trailing lab abnormal markers before frontend key normalisation (defence-in-depth). */
+export function stripAbnormalLabMarkerSuffix(displayName: string): string {
+  let s = displayName.trim();
+  let changed = true;
+  while (changed && s.length > 0) {
+    changed = false;
+    if (s.endsWith('*')) {
+      s = s.slice(0, -1).trimEnd();
+      changed = true;
+      continue;
+    }
+    if (s.endsWith('†')) {
+      s = s.slice(0, -1).trimEnd();
+      changed = true;
+      continue;
+    }
+    const hl = s.match(/^(.*\))\s+([HL])\s*$/i);
+    if (hl) {
+      s = hl[1].trimEnd();
+      changed = true;
+    }
+  }
+  return s;
+}
+
 /**
  * Stable biomarker key for analysis payload. Aligns with backend alias normalisation
  * (spaces → underscores). Maps known frontend slug variants to canonical IDs.
  */
 export function analysisBiomarkerKey(displayName: string): string {
-  const base = displayName.trim().toLowerCase().replace(/\s+/g, '_');
+  const base = stripAbnormalLabMarkerSuffix(displayName).toLowerCase().replace(/\s+/g, '_');
   // Backend SSOT aliases include `apolipoprotein_ratio` and normalized "Apolipoprotein ratio (Venous)".
   if (base === 'apolipoprotein_ratio_(venous)' || base === 'apolipoprotein_ratio_venous') {
     return 'apob_apoa1_ratio';

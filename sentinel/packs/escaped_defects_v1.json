@@ -604,6 +604,30 @@
       "test_file": "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "canonical_mapping_star_suffix_failure": {
+      "description": "MAP-R1A — trailing lab abnormal markers (e.g. *) prevent specimen suffix stripping and canonical alias resolution.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_canonical_mapping_star_suffix_failure.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "canonical_mapping_specimen_suffix_truncation": {
+      "description": "MAP-R1A — punctuation strip must not truncate specimen keys such as homocysteine_(venous.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_canonical_mapping_star_suffix_failure.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "canonical_mapping_known_marker_unmapped_after_star_suffix": {
+      "description": "MAP-R1A — d8-style starred venous labels for known biomarkers must not resolve to unmapped_*.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_canonical_mapping_star_suffix_failure.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

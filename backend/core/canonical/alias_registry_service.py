@@ -264,8 +264,35 @@ class AliasRegistryService:
             insert_alias(alias.upper(), canonical, alias)
     
     @staticmethod
+    def _strip_abnormal_lab_marker_suffix(value: str) -> str:
+        """
+        Strip trailing lab abnormal markers before normalisation and specimen suffix removal.
+
+        Must run on the raw display label so `*` does not block `_(venous)` matching or
+        truncate keys when surrounding punctuation is stripped.
+        """
+        s = (value or "").strip()
+        changed = True
+        while changed and s:
+            changed = False
+            if s.endswith("*"):
+                s = s[:-1].rstrip()
+                changed = True
+                continue
+            if s.endswith("†"):
+                s = s[:-1].rstrip()
+                changed = True
+                continue
+            # High/low flags only when clearly appended after a closed specimen paren.
+            hl_match = re.search(r"^(.*\))\s+([HL])\s*$", s, flags=re.IGNORECASE)
+            if hl_match:
+                s = hl_match.group(1).rstrip()
+                changed = True
+        return s
+
+    @staticmethod
     def _strip_surrounding_punctuation(value: str) -> str:
-        strip_chars = string.punctuation.replace("_", "")
+        strip_chars = string.punctuation.replace("_", "").replace("(", "").replace(")", "")
         return value.strip(strip_chars)
 
     @staticmethod
@@ -314,12 +341,15 @@ class AliasRegistryService:
             self._build_alias_mapping()
         
         raw = name or ""
-        base = self._normalize_special_patterns(self._normalize_key(raw))
+        cleaned = self._strip_abnormal_lab_marker_suffix(raw)
+        base = self._normalize_special_patterns(self._normalize_key(cleaned))
         norm = self._strip_surrounding_punctuation(base)
         norm_stripped = self._strip_surrounding_punctuation(self._strip_specimen_suffix(base))
 
         # Direct lookup (case-insensitive)
-        canonical = self._alias_to_canonical.get(raw.lower())
+        canonical = self._alias_to_canonical.get(cleaned.lower())
+        if not canonical:
+            canonical = self._alias_to_canonical.get(raw.lower())
         if canonical:
             return canonical
 

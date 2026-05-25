@@ -1,5 +1,6 @@
 import {
   analysisBiomarkerKey,
+  stripAbnormalLabMarkerSuffix,
   buildReferenceRangeFromParserRow,
   deriveReviewReferenceType,
   formatReferenceRangeDisplay,
@@ -272,6 +273,26 @@ describe('analysisBiomarkerKey', () => {
   it('maps apolipoprotein venous slug variants to canonical apob_apoa1_ratio', () => {
     expect(analysisBiomarkerKey('Apolipoprotein ratio (Venous)')).toBe('apob_apoa1_ratio');
     expect(analysisBiomarkerKey('apolipoprotein_ratio_venous')).toBe('apob_apoa1_ratio');
+  });
+
+  it('strips trailing star abnormal markers before key normalisation (MAP-R1A)', () => {
+    expect(analysisBiomarkerKey('Homocysteine (venous)*')).toBe('homocysteine_(venous)');
+    expect(analysisBiomarkerKey('Apolipoprotein B (venous)*')).toBe('apolipoprotein_b_(venous)');
+    expect(analysisBiomarkerKey('Apolipoprotein A1 (venous)*')).toBe('apolipoprotein_a1_(venous)');
+    expect(analysisBiomarkerKey('Lipoprotein (a) (venous)*')).toBe('lipoprotein_(a)_(venous)');
+    expect(analysisBiomarkerKey('Corrected Calcium (venous)*')).toBe('corrected_calcium_(venous)');
+  });
+
+  it('leaves clean labels unchanged aside from normal slugs', () => {
+    expect(analysisBiomarkerKey('Homocysteine (venous)')).toBe('homocysteine_(venous)');
+    expect(analysisBiomarkerKey('Creatinine (venous)')).toBe('creatinine_(venous)');
+  });
+});
+
+describe('stripAbnormalLabMarkerSuffix', () => {
+  it('removes trailing star and dagger markers', () => {
+    expect(stripAbnormalLabMarkerSuffix('Homocysteine (venous)*')).toBe('Homocysteine (venous)');
+    expect(stripAbnormalLabMarkerSuffix('TSH (venous)†')).toBe('TSH (venous)');
   });
 });
 
