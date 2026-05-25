@@ -1,10 +1,9 @@
 {
-  "branch": "frontend/fe-r6a-fresh-uat-defect-cleanup",
+  "branch": "mapping/map-r1a-star-suffix-canonical-fix",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-24T22:02:47Z",
-  "cursor_started_utc": "2026-05-24T21:57:40Z",
-  "head_sha": "9cb9a1409e394865a5a511722ea16f9e4de97598",
+  "cursor_started_utc": "2026-05-25T09:12:28Z",
+  "head_sha": "69621cc038e68fd15818d744c7f20f464ae6fce4",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "FE-R6A"
+  "status": "IN_PROGRESS",
+  "work_id": "MAP-R1A"
 }
