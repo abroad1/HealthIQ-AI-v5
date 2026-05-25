@@ -1,8 +1,8 @@
 {
-  "work_id": "FE-R6A",
+  "work_id": "MAP-R1A",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-24T00:00:00Z",
+  "hardened_utc": "2026-05-25T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "changes": [
     {
@@ -10,152 +10,146 @@
       "field": "Front matter — all 5 required SOP v1.3.1 fields valid",
       "finding": "All five mandatory front matter fields present and correctly valued.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 2-7: work_id: FE-R6A, branch: frontend/fe-r6a-fresh-uat-defect-cleanup, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED"
+        "automation_bus/latest_cursor_prompt.md lines 2-7: work_id: MAP-R1A, branch: mapping/map-r1a-star-suffix-canonical-fix, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: BEHAVIOUR"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "HIGH / MIXED classification correct",
-      "finding": "MIXED is correct: sprint touches frontend rendering, potentially DTO field exposure, limited backend analytics compiler sanitisation, regression tests, Sentinel packs, and documentation. MIXED is always governed using BEHAVIOUR controls (SOP §4). HIGH is mandatory: backend analytics files permitted (narrative_report_compiler_v1.py, report_compiler_v1.py, balanced_systems_presentation_v1.py, consumer_prose_safety_v1.py) are Intelligence Core output-assembly components (SOP §3 and §10).",
+      "field": "HIGH / BEHAVIOUR classification correct",
+      "finding": "BEHAVIOUR is correct: sprint changes canonical biomarker mapping in alias_registry_service.py and analysisBiomarkerKey() — both directly affect which biomarkers enter scoring and signal evaluation (Intelligence Core, SOP §3). HIGH is mandatory: alias_registry_service.py is the canonical mapping layer whose output determines every downstream analytical operation — signal evaluation, root-cause arbitration, and narrative generation. Any change to resolve() is an Intelligence Core interaction regardless of file path (SOP §10).",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 12-22: 'This is a HIGH-risk MIXED sprint. Reason: this sprint fixes defects found during fresh human UAT...'",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §4: MIXED = any work involving both; MIXED is always governed using BEHAVIOUR controls",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §3: Intelligence Core includes output assembly mechanisms",
+        "automation_bus/latest_cursor_prompt.md lines 10-15: 'This is a HIGH-risk BEHAVIOUR sprint. Reason: this sprint changes canonical biomarker mapping behaviour...'",
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §3: Intelligence Core includes signal evaluators and analytical pipeline logic",
         "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §10: HIGH if touches Intelligence Core — regardless of file path"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Both UAT authority reports present at stated paths",
-      "finding": "STOP condition at prompt line 58 ('If either fresh UAT report is missing, STOP') is correctly placed. Both reports confirmed on disk.",
+      "field": "All mandatory controlling authority files present at stated paths (Stage 2A)",
+      "finding": "All four mandatory authority files confirmed on disk. STOP condition at prompt line 64 ('If the MAP-R1 investigation report is missing, STOP') is correctly placed and satisfiable.",
       "citations": [
-        "docs/audit-papers/FRESH_UAT_results_journey_quality_audit_f2dcb58f.md — CONFIRMED at docs/audit-papers/ (ls output 2026-05-24)",
-        "docs/audit-papers/FRESH_UAT_cursor_crosscheck_f2dcb58f.md — CONFIRMED at docs/audit-papers/ (ls output 2026-05-24)"
+        "docs/audit-papers/MAP-R1_fresh_upload_canonical_mapping_regression_investigation.md — CONFIRMED (file read 2026-05-25)",
+        "docs/audit-papers/Post-FE-R6A_Fresh_UAT_Investigation_d8cfe1a8.md — CONFIRMED (Glob 2026-05-25)",
+        "docs/audit-papers/FE-R6A_fresh_uat_defect_cleanup_notes.md — CONFIRMED (Glob 2026-05-25)",
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — CONFIRMED (Glob 2026-05-25)"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "All controlling authority files present at stated paths (Stage 2A)",
-      "finding": "All 8 files named in the 'Read before doing anything' block confirmed on disk.",
+      "field": "Optional authority files present (Stage 2A)",
+      "finding": "All three optional 'also inspect if present' files confirmed on disk.",
       "citations": [
-        "docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md — CONFIRMED",
-        "docs/audit-papers/FE-R2_results_journey_restructure_notes.md — CONFIRMED",
-        "docs/audit-papers/FE-R3_evidence_depth_ux_quality_pass_notes.md — CONFIRMED",
-        "docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md — CONFIRMED",
-        "docs/audit-papers/FE-R5A_limited_idl_pattern_surface_notes.md — CONFIRMED",
-        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md — CONFIRMED at docs/frontend/ (ls output 2026-05-24)",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — CONFIRMED"
+        "docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md — CONFIRMED (Glob 2026-05-25)"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Backend implementation file content cross-referenced against prompt root cause (Stage 2A)",
+      "finding": "File read and root cause verified. alias_registry_service.py resolve() at line 303 has no trailing abnormal-marker stripping. _strip_surrounding_punctuation() at line 267 strips string.punctuation minus underscore — this includes '*', '†', '(', ')' — confirming the truncation bug where '*' is stripped then ')' is stripped, producing 'homocysteine_(venous' instead of 'homocysteine_(venous)'. _strip_specimen_suffix() at line 285 checks string.endswith(f'_({suffix})') — fails when string ends in '*'. All three lookup paths in resolve() (lines 321-336) therefore miss. Prompt root cause description is accurate.",
+      "citations": [
+        "backend/core/canonical/alias_registry_service.py line 303: def resolve(self, name: str) -> str:",
+        "backend/core/canonical/alias_registry_service.py line 317: base = self._normalize_special_patterns(self._normalize_key(raw)) — no * stripping",
+        "backend/core/canonical/alias_registry_service.py lines 267-269: _strip_surrounding_punctuation strips string.punctuation.replace('_', '') — includes * and )",
+        "backend/core/canonical/alias_registry_service.py lines 285-301: _strip_specimen_suffix checks endswith('_(venous)') etc. — fails when * is trailing",
+        "backend/core/canonical/alias_registry_service.py lines 321-336: three lookup paths, all fail for *-suffixed keys"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Frontend implementation file content cross-referenced against prompt fix requirement (Stage 2A)",
+      "finding": "File read and fix target verified. analysisBiomarkerKey() at line 415 converts spaces to underscores and lowercases but does not strip trailing '*'. Defence-in-depth fix (Section B of prompt) is correctly scoped to this function only.",
+      "citations": [
+        "frontend/app/lib/uploadReferenceRange.ts lines 415-422: analysisBiomarkerKey() — base = displayName.trim().toLowerCase().replace(/\\s+/g, '_') — no * stripping"
       ]
     },
     {
       "type": "CONFIRMED",
       "field": "Cross-sprint guard regression tests confirmed present (Stage 2A)",
-      "finding": "All 7 test modules named in cross-sprint guard preflight and required validation commands confirmed on disk.",
+      "finding": "All six test modules named in cross-sprint guard preflight confirmed on disk.",
       "citations": [
-        "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — CONFIRMED (ls output 2026-05-24)",
-        "backend/tests/regression/test_fe_r2_results_journey_restructure.py — CONFIRMED",
-        "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py — CONFIRMED",
-        "backend/tests/regression/test_fe_r5a_limited_idl_pattern_surface.py — CONFIRMED",
-        "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py — CONFIRMED",
-        "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — CONFIRMED",
-        "backend/tests/unit/test_scoring_rules.py — CONFIRMED"
+        "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — CONFIRMED (Glob 2026-05-25)",
+        "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py — CONFIRMED (Glob 2026-05-25)",
+        "backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py — CONFIRMED (Glob 2026-05-25)",
+        "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py — CONFIRMED (Glob 2026-05-25)",
+        "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — CONFIRMED (Glob 2026-05-25)",
+        "backend/tests/unit/test_scoring_rules.py — CONFIRMED (Glob 2026-05-25)"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "test_fe_r6a_fresh_uat_defect_cleanup.py correctly absent pre-sprint",
-      "finding": "This test file does not exist — correct pre-sprint state. Sprint must create it. No pre-existing test file will be overwritten.",
+      "field": "New test files correctly absent pre-sprint (Stage 2A)",
+      "finding": "Both test files the sprint must create are absent from disk — correct pre-sprint state. No existing test file will be overwritten.",
       "citations": [
-        "backend/tests/regression/ directory listing 2026-05-24 — test_fe_r6a_fresh_uat_defect_cleanup.py absent"
+        "backend/tests/unit/test_alias_service_star_suffix_stripping.py — ABSENT (Glob 2026-05-25, no results)",
+        "backend/tests/regression/test_canonical_mapping_star_suffix_failure.py — ABSENT (Glob 2026-05-25, no results)"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "FE-R4 merge evidence path correct",
-      "finding": "FE-R4 had no code implementation sprint (it was an architectural gate-and-decision document). No test_fe_r4_*.py exists — this is correct. Prompt correctly provides alternative evidence: audit notes and main ancestry commits. The merge precondition is satisfiable through those evidence paths.",
+      "field": "Sentinel pack — current state correct for MAP-R1A (Stage 2A)",
+      "finding": "sentinel/packs/escaped_defects_v1.json confirmed present with 48 existing defect classes. No 'canonical_mapping_star_suffix_failure' class exists — correct pre-sprint state. Sprint must add the Sentinel class pointing to an active deterministic test. No placeholder entries permitted.",
       "citations": [
-        "docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md — CONFIRMED at docs/audit-papers/",
-        "backend/tests/regression/ listing 2026-05-24 — no test_fe_r4_*.py present (by design)"
+        "sentinel/packs/escaped_defects_v1.json — CONFIRMED present, 48 existing defect classes, no canonical_mapping_* class (file read 2026-05-25)",
+        "automation_bus/latest_cursor_prompt.md lines 282-299: Required Sentinel obligations"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Sentinel pack — current state correct for FE-R6A",
-      "finding": "sentinel/packs/escaped_defects_v1.json confirmed present. It does not yet contain the 9 fresh-UAT FE-R6A defect classes — correct pre-sprint state. Sprint must add all 9 classes, each pointing to an active deterministic test. No placeholder entries permitted.",
+      "field": "Behavioural scope defined and bounded (Stage 2B)",
+      "finding": "Sprint scope is explicitly bounded to canonical alias resolution only: strip trailing abnormal markers before alias lookup. Section C explicitly prohibits touching scoring thresholds, severity labels, unit conversion, clinical interpretation, Knowledge Bus assets, or root-cause rules. Forbidden files list is comprehensive: backend/core/scoring/, backend/core/units/, backend/core/pipeline/, backend/core/analytics/, backend/core/dto/, backend/ssot/, knowledge_bus/, Gemini, KB-WAVE-1, PATTERN-C1.",
       "citations": [
-        "sentinel/packs/escaped_defects_v1.json — CONFIRMED present, 34 existing defect classes, no FE-R6A fresh_uat_* classes (reviewed 2026-05-24)",
-        "automation_bus/latest_cursor_prompt.md lines 409-421: 9 required Sentinel defect classes listed"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Frontend component surface confirmed present (Stage 2A)",
-      "finding": "frontend/app/components/results/ and frontend/app/components/biomarkers/ directories confirmed. Key components present: ResultsHeroBlocks.tsx, PrimaryFindingAndWhy.tsx, BalancedSystemsSummary.tsx, ConfirmatoryTestsNextSteps.tsx, InterpretationPatternsSection.tsx, UploadedPanelFidelity.tsx, and others — all within allowed file scope.",
-      "citations": [
-        "frontend/app/components/results/ — CONFIRMED with 18 component files (ls output 2026-05-24)",
-        "automation_bus/latest_cursor_prompt.md lines 323-333: Potentially allowed frontend files"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Forbidden files list complete and correct (Stage 2A)",
-      "finding": "Forbidden list explicitly covers backend/core/scoring/, backend/core/units/, backend/core/pipeline/, backend/ssot/, knowledge_bus/, Gemini/LLM activation, PATTERN-C1, KB-WAVE-1, broad visual redesign, automation_bus/state/*, and all three control-plane scripts. No gaps detected.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 352-369: Forbidden unless GPT explicitly approves — explicit list"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Behavioural scope defined — defects A-I all bounded (Stage 2B)",
-      "finding": "Each defect (A through I) has explicit scoped required outcomes with defined boundaries. 'Do not turn FE-R6A into KB-WAVE-1' and 'Do not edit Knowledge Bus medical content' are explicit. 'Do not change actual scoring logic unless separately required and tested' is explicit for defect G.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 167-315: Defects A-I with required outcomes",
-        "automation_bus/latest_cursor_prompt.md line 316: 'Do not turn FE-R6A into KB-WAVE-1'",
-        "automation_bus/latest_cursor_prompt.md lines 267-268: 'do not change actual scoring logic unless separately required and tested'"
+        "automation_bus/latest_cursor_prompt.md lines 195-199: 'Section C — Do not modify scoring policy'",
+        "automation_bus/latest_cursor_prompt.md lines 315-339: Forbidden unless GPT explicitly approves"
       ]
     },
     {
       "type": "CONFIRMED",
       "field": "Regression targets defined — existing and new (Stage 2B)",
-      "finding": "7 existing cross-sprint guard modules in preflight. 9 new FE-R6A test assertions required. 9 new Sentinel defect classes required. Required validation commands include full guard suite plus new test_fe_r6a_fresh_uat_defect_cleanup.py.",
+      "finding": "6 existing cross-sprint guard modules in preflight. 2 new test files required (unit + regression). 1+ new Sentinel defect class required. Required validation commands include full guard suite plus new test files. Existing clean-label paths must continue to resolve.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 136-143: Cross-sprint guard preflight — 7 test modules",
-        "automation_bus/latest_cursor_prompt.md lines 381-421: Required tests and Sentinel obligations",
-        "automation_bus/latest_cursor_prompt.md lines 432-443: Required validation commands"
+        "automation_bus/latest_cursor_prompt.md lines 120-130: Cross-sprint guard preflight — 6 test modules",
+        "automation_bus/latest_cursor_prompt.md lines 244-279: Required tests — backend alias, frontend key, integration, regression",
+        "automation_bus/latest_cursor_prompt.md lines 281-299: Sentinel obligations",
+        "automation_bus/latest_cursor_prompt.md lines 343-361: Required validation commands"
       ]
     },
     {
       "type": "CONFIRMED",
       "field": "STOP conditions complete (Stage 2B)",
-      "finding": "Token missing/mismatched → STOP. Missing UAT reports → STOP. Guard failures → STOP unless GPT/human re-authorises. KB medical content edit → STOP that part. FE-R1 through FE-R5A not on main → STOP.",
+      "finding": "Token missing/mismatched → STOP (lines 108-112). MAP-R1 report missing → STOP (line 64). Guard failures → STOP unless GPT/human re-authorises (line 130). Forbidden path required → STOP and report (line 338).",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 107-111: token STOP condition",
-        "automation_bus/latest_cursor_prompt.md line 58: UAT STOP condition",
-        "automation_bus/latest_cursor_prompt.md lines 143-144: guard failure STOP condition",
-        "automation_bus/latest_cursor_prompt.md lines 128-130: merge precondition STOP condition",
-        "automation_bus/latest_cursor_prompt.md line 371: 'If Homocysteine educational depth requires new medical content, STOP that part'"
+        "automation_bus/latest_cursor_prompt.md lines 108-112: token STOP condition",
+        "automation_bus/latest_cursor_prompt.md line 64: MAP-R1 report STOP condition",
+        "automation_bus/latest_cursor_prompt.md lines 129-130: guard failure STOP condition",
+        "automation_bus/latest_cursor_prompt.md lines 337-338: forbidden path STOP condition"
       ]
     },
     {
       "type": "CONFIRMED",
       "field": "PowerShell compatibility verified",
-      "finding": "All commands in the prompt use python -m pytest, npm run type-check, git, Test-Path, and Read operations. No bash-only constructs. Compatible with Windows PowerShell.",
+      "finding": "All commands in the prompt use python -m pytest, npm run type-check, git, and Test-Path. No bash-only constructs. Compatible with Windows PowerShell.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 89-94: preflight PowerShell commands",
-        "automation_bus/latest_cursor_prompt.md lines 432-463: validation commands"
+        "automation_bus/latest_cursor_prompt.md lines 93-98: preflight PowerShell commands",
+        "automation_bus/latest_cursor_prompt.md lines 343-361: validation commands"
       ]
     },
     {
       "type": "HARDENING_NOTE",
-      "field": "Intelligence Core analytics files — no output fingerprint backstop (Stage 2B)",
-      "finding": "Four permitted backend analytics files are Intelligence Core output-assembly components. Any change to them affects ALL results renders — not only the f2dcb58f test panel. The validation commands run deterministic test suites and regression guards, which catch named defect classes. However, no full analytical output fingerprint verification (equivalent to golden_gate_local.py or an AB baseline diff) is required post-modification. This leaves a gap: a subtle change to conditional assembly logic in narrative_report_compiler_v1.py could alter output for panels not covered by named defect-class tests. Risk mitigation: Cursor must treat all changes to these four files as exclusively string-substitution or boolean display-gate operations (e.g. 'if string contains X, replace with Y'; 'if field value equals Z, suppress label'). If any change would add a new conditional branch, modify scoring weighting, restructure output assembly, or introduce new logic paths, Cursor must STOP that sub-item and escalate. The prompt's forbidden-files constraint and existing Sentinel suite are the primary backstops. This note makes the constraint explicit for the executor.",
-      "resolution": "Non-blocking. Does not require prompt revision. Cursor must self-enforce the string-substitution-only rule for these four files."
+      "field": "Risk level under-classification in MAP-R1 investigation paper — non-blocking",
+      "finding": "MAP-R1 investigation report Section 10 recommends risk_level: STANDARD for the proposed MAP-R1A sprint. The prompt correctly elevates this to HIGH. alias_registry_service.py is the canonical mapping layer that directly gates all downstream Intelligence Core operations. Any change to resolve() is an Intelligence Core interaction (SOP §3 and §10). The investigation's STANDARD recommendation appears to have under-weighted the canonical mapping layer's role in the analytical pipeline. HIGH in the prompt is correct and more conservative.",
+      "resolution": "Non-blocking. The prompt risk level is correct. Cursor uses the prompt, not the investigation recommendation."
     },
     {
-      "type": "ADVISORY",
-      "field": "Invocation work_id discrepancy — LC-S18 suffix",
-      "finding": "Hardening was invoked as 'harden work_id: FE-R6A: LC-S18'. The active prompt has work_id: FE-R6A only. The ': LC-S18' suffix appears to be a stale reference to a previous sprint. Hardening applies to FE-R6A as written. No action required from Cursor.",
-      "resolution": "Non-blocking. Noted for traceability."
+      "type": "HARDENING_NOTE",
+      "field": "H/L stripping risk — safe constraint documented (Stage 2B)",
+      "finding": "Prompt correctly flags H and L abnormal markers as ambiguous (they appear in canonical names: HDL, LDL, HbA1c). The safe implementation is to strip only '*' and '†' from the end of raw names before normalization. These characters never appear in any canonical biomarker name or alias. Implementation must NOT strip H or L. Prompt language 'only strip if clearly appended as a lab abnormal marker' is sound guidance; in practice this means '*' and '†' only.",
+      "resolution": "Non-blocking. Implementation constraint for Cursor: strip only ['*', '†'] as trailing abnormal markers. Do not attempt to strip H or L."
+    },
+    {
+      "type": "HARDENING_NOTE",
+      "field": "Execution model discrepancy — investigation vs prompt — non-blocking",
+      "finding": "MAP-R1 investigation report Section 10 recommends execution_model: SINGLE_PHASE. The prompt uses TWO_PHASE_START_FINISH. TWO_PHASE is more conservative and is always valid for HIGH risk work (SOP §4). No action required.",
+      "resolution": "Non-blocking. TWO_PHASE_START_FINISH is correct for a HIGH risk sprint."
     }
   ]
 }

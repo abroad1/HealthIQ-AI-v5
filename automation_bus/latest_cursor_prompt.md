@@ -1,86 +1,90 @@
 ---
-work_id: FE-R6A
-branch: frontend/fe-r6a-fresh-uat-defect-cleanup
+work_id: MAP-R1A
+branch: mapping/map-r1a-star-suffix-canonical-fix
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: BEHAVIOUR
 ---
 
-# FE-R6A — Fresh UAT Defect Cleanup and Evidence Surface Readiness
+# MAP-R1A — Star-Suffix Canonical Mapping Fix
 
 ## Classification
 
-This is a HIGH-risk MIXED sprint.
+This is a HIGH-risk BEHAVIOUR sprint.
 
-Reason: this sprint fixes defects found during fresh human UAT after FE-R1 through FE-R5A. It may touch frontend rendering, limited DTO field consumption, limited backend compiler/output sanitisation if required, tests, Sentinel packs and audit documentation.
+Reason: this sprint changes canonical biomarker mapping behaviour in the upload/analysis path. It affects whether uploaded markers enter the scored biomarker set, signal evaluation, root-cause selection, narrative generation and frontend results.
 
-This is not a broad redesign sprint.  
+This is not a frontend UX sprint.  
 This is not KB-WAVE-1.  
 This is not PATTERN-C1.  
-This is not a Knowledge Bus expansion sprint.  
-This is not a Gemini/LLM sprint.  
-This is not a scoring/unit-governance sprint unless explicitly required for a documented display defect.
+This is not a Knowledge Bus content sprint.  
+This is not a scoring policy sprint.  
+This is not a unit conversion sprint.  
+This is not a Gemini/LLM sprint.
 
 ## Purpose
 
-Resolve the remaining retail-surface defects that prevent the current results page from being commercially credible and ready to display future KB-WAVE intelligence.
+Fix the proven canonical marker mapping failure caused by trailing lab abnormal markers such as `*` in extracted biomarker names.
 
-The fresh UAT and Cursor cross-check both concluded:
-
-- the page is materially better than FE-R0
-- the guided journey broadly works
-- FE-R5A pattern surfacing is safe
-- but the page still feels prototype-like in key places
-- KB-WAVE-1 should not start until the evidence surface is more reliable
-
-The goal of FE-R6A is:
+The MAP-R1 investigation proved that labels such as:
 
 ```text
-Clean up the remaining fresh-UAT defects and prove the biomarker evidence surface is ready before adding new Knowledge Bus intelligence.
+Homocysteine (venous)*
+Apolipoprotein B (venous)*
+Lipoprotein (a) (venous)*
 ````
+
+fall through as `unmapped_*` because the trailing `*` prevents specimen suffix stripping. This caused the d8 fresh UAT run to score 63 biomarkers instead of 77 and changed the lead finding from Homocysteine-led to Total Cholesterol-led.
+
+The goal is:
+
+```text
+Known biomarkers with trailing abnormal markers must resolve to their canonical IDs before scoring and signal evaluation.
+```
 
 ## Controlling authority
 
 Read before doing anything:
 
 ```text
-docs/audit-papers/FRESH_UAT_results_journey_quality_audit_f2dcb58f.md
-docs/audit-papers/FRESH_UAT_cursor_crosscheck_f2dcb58f.md
-docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md
-docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md
-docs/audit-papers/FE-R2_results_journey_restructure_notes.md
-docs/audit-papers/FE-R3_evidence_depth_ux_quality_pass_notes.md
-docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md
-docs/audit-papers/FE-R5A_limited_idl_pattern_surface_notes.md
+docs/audit-papers/MAP-R1_fresh_upload_canonical_mapping_regression_investigation.md
+docs/audit-papers/Post-FE-R6A_Fresh_UAT_Investigation_d8cfe1a8.md
+docs/audit-papers/FE-R6A_fresh_uat_defect_cleanup_notes.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
 ```
 
-If either fresh UAT report is missing, STOP.
+Also inspect if present:
+
+```text
+docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md
+docs/audit-papers/LC-S16_knowledge_asset_frontend_surface_audit.md
+docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md
+```
+
+If the MAP-R1 investigation report is missing, STOP.
 
 ## Required output documentation
 
 Create:
 
 ```text
-docs/audit-papers/FE-R6A_fresh_uat_defect_cleanup_notes.md
+docs/audit-papers/MAP-R1A_star_suffix_canonical_mapping_fix_notes.md
 ```
 
 This document must include:
 
 1. preflight results
-2. FE-R1 through FE-R5A merge confirmation
-3. fresh UAT defects addressed
-4. fresh UAT defects deferred
-5. exact files changed
-6. before/after examples for visible text changes
-7. biomarker expansion diagnosis
-8. Homocysteine / Transferrin DTO-field diagnosis
-9. whether fixes were frontend, DTO, compiler, or deferred content/asset work
-10. tests added/updated
-11. Sentinel updates
-12. browser/manual UAT result if performed
-13. residual risks
-14. recommendation on whether KB-WAVE-1 can start next
+2. MAP-R1 root-cause summary
+3. exact mapping fix implemented
+4. frontend defence-in-depth implemented, if any
+5. affected markers tested
+6. before/after alias examples
+7. whether scored biomarker count is restored for the d8 fixture/input
+8. signal/arbitration impact
+9. tests added/updated
+10. Sentinel updates
+11. residual risks
+12. explicit recommendation on KB-WAVE-1 readiness
 
 ## Mandatory preflight
 
@@ -101,8 +105,8 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `FE-R6A`
-* branch is `frontend/fe-r6a-fresh-uat-defect-cleanup`
+* `work_id` is `MAP-R1A`
+* branch is `mapping/map-r1a-star-suffix-canonical-fix`
 
 If token is missing or mismatched, STOP:
 
@@ -110,32 +114,14 @@ If token is missing or mismatched, STOP:
 Kernel start not executed or work package mismatch.
 ```
 
-## Merge precondition
-
-Before implementation, confirm FE-R1, FE-R2, FE-R3, FE-R4 and FE-R5A are merged to `main`.
-
-Evidence may include:
-
-```text
-test_fe_r1_consumer_prose_cleanup.py
-test_fe_r2_results_journey_restructure.py
-test_fe_r3_evidence_depth_ux_quality.py
-test_fe_r5a_limited_idl_pattern_surface.py
-FE-R1/2/3/4/5A audit notes
-main ancestry commits
-```
-
-If these are not on main, STOP.
-
 ## Cross-sprint guard preflight
 
-Run current FE/scaffold guards before implementation:
+Run current relevant guards before implementation:
 
 ```powershell
 python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
-python -m pytest backend/tests/regression/test_fe_r2_results_journey_restructure.py -q
-python -m pytest backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py -q
-python -m pytest backend/tests/regression/test_fe_r5a_limited_idl_pattern_surface.py -q
+python -m pytest backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py -q
+python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
 python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
 python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
@@ -143,210 +129,188 @@ python -m pytest backend/tests/unit/test_scoring_rules.py -q
 
 If a guard fails, STOP unless GPT/human explicitly authorises continuation.
 
-## Target test page
+## Proven root cause
 
-Fresh UAT result:
+The MAP-R1 investigation proved:
 
 ```text
-http://localhost:3000/results?analysis_id=f2dcb58f-e816-4ff6-9011-e93c5d48b82c
+Homocysteine (venous)* → homocysteine_(venous)* → unmapped_homocysteine_(venous)*
 ```
 
-Login:
+Correct behaviour should be:
 
 ```text
-test-user3@example.com
-Subaru@555
+Homocysteine (venous)* → Homocysteine (venous) → homocysteine
 ```
 
-Do not assume this persisted result will regenerate backend prose. Use it for rendering/UI verification. If a defect depends on newly generated analysis output, document that and test through deterministic fixtures instead.
+The failure occurs because:
 
----
+* frontend `analysisBiomarkerKey()` does not strip trailing `*`
+* backend alias resolver does not strip trailing abnormal markers before suffix stripping
+* `_strip_surrounding_punctuation()` can strip `*` and then strip `)`, producing a truncated key such as `homocysteine_(venous`
+* `_strip_specimen_suffix()` cannot match `_(venous)` when the key ends in `*`
 
-# Required defect cleanup scope
+## Required implementation
 
-## A. Remove/demote “How to read this page” wrapper
+### A. Backend canonical alias fix
 
-Problem:
-The fresh UAT found that the hero/body overview are nested under an h2 labelled “How to read this page”, making the page feel like an instruction guide rather than a results journey.
-
-Required outcome:
-
-* “Your body overview” should be the first named journey section
-* the “how to read this page” text should be demoted to a small framing note inside or near the body overview
-* the hero should not appear as child content under an instructional heading
-* do not remove useful orientation copy; reposition it correctly
-
-## B. Remove duplicate Summary section
-
-Problem:
-The Summary section repeats the hero/body overview without adding value.
-
-Required outcome:
-
-* remove the standalone Summary section from the main retail journey
-* do not remove the source field from backend unless required
-* do not remove clinically important information unless already present elsewhere
-* verify no duplicate homocysteine-centred summary appears in adjacent sections
-
-## C. Fix or remove contradictory pattern counter
-
-Problem:
-The page shows “Needs attention: 0” while the same page presents a Strong Signal / homocysteine concern.
-
-Required outcome:
-
-Choose one safe approach:
-
-1. fix the counter logic if it can be made consistent with the lead pattern, or
-2. remove/hide the counter from retail view if it is not trustworthy, or
-3. gate it behind technical detail if it is useful only internally
-
-Do not show a counter that contradicts the lead finding.
-
-## D. Hide technical confidence text in “What’s working well”
-
-Problem:
-Stable systems contain:
+Implement a small, deterministic fix in:
 
 ```text
-interpretation confidence for this read: insufficient
+backend/core/canonical/alias_registry_service.py
 ```
 
-Required outcome:
+Expected behaviour:
 
-* do not show this phrase in retail view
-* if needed, show only behind Show technical detail
-* stable-system copy should remain reassuring but not overstate certainty
+* strip trailing lab abnormal markers before alias lookup and specimen suffix stripping
+* at minimum support trailing `*`
+* preferably support common abnormal-marker suffixes such as `†`
+* be careful with `H` / `L`: only strip if clearly appended as a lab abnormal marker, not if part of the biomarker name
 
-## E. Remove “Linked to …” internal labels
-
-Problem:
-Uploaded panel values show strings such as:
+Safe examples that must resolve:
 
 ```text
-Linked to hba1c
-Linked to tc hdl ratio
+Homocysteine (venous)*
+Apolipoprotein B (venous)*
+Apolipoprotein A1 (venous)*
+Lipoprotein (a) (venous)*
+Corrected Calcium (venous)*
+TSH (venous)*
 ```
 
-Required outcome:
+Do not weaken alias matching in a way that creates false positives.
 
-* remove these internal labels from retail-facing Uploaded panel values
-* if equivalence needs to be shown, use consumer-friendly wording or omit
-* do not break uploaded-panel fidelity or canonical-linked behaviour
+### B. Frontend defence-in-depth
 
-## F. Fix “What to do next” rendering
-
-Problems:
-
-* bullets are rendered as a single text block
-* “Suggested follow-up themes:” appears as a dangling label
-* fallback text appears: “No separate checklist of follow-up lines was packaged...”
-* MMA appears both in narrative bullets and confirmatory test section
-
-Required outcome:
-
-* render next steps as proper list items where possible
-* suppress dangling headings
-* remove raw fallback packaging text from retail view
-* avoid obvious duplication between narrative bullets and confirmatory-test cards
-* preserve clinically useful next-step content
-
-## G. Replace raw technical scoring/unit error text
-
-Problem:
-Biomarker cards may show raw technical messages such as:
+Implement defence-in-depth in:
 
 ```text
-Not scored - result unit and lab reference range unit cannot be aligned for this marker (incompatible units); check units on the report.
+frontend/app/lib/uploadReferenceRange.ts
 ```
 
-Required outcome:
+Specifically, update `analysisBiomarkerKey()` so trailing lab abnormal markers are stripped before lowercasing / underscore conversion.
 
-* do not expose raw engineering/scoring errors in retail card text
-* replace with consumer-safe wording such as “This result is shown for reference, but HealthIQ could not score it reliably because the units or reference range need review.”
-* preserve technical detail somewhere only if appropriate and gated
-* do not change actual scoring logic unless separately required and tested
+This does not replace the backend fix. Backend must remain authoritative.
 
-## H. Align finding labels across hero and Primary finding section
+### C. Do not modify scoring policy
 
-Problem:
-Hero says:
+Do not change scoring thresholds, severity labels, unit conversion, clinical interpretation, Knowledge Bus assets, or root-cause rules.
+
+This sprint is mapping only.
+
+## Affected markers that must be tested
+
+At minimum, tests must cover:
 
 ```text
-Homocysteine Elevation Context
+Homocysteine (venous)*
+Creatinine (venous)*
+TSH (venous)*
+Vitamin B12 (venous)*
+Active Vitamin B12 (venous)*
+Apolipoprotein A1 (venous)*
+Apolipoprotein B (venous)*
+Apolipoprotein Ratio (venous)*
+Lipoprotein (a) (venous)*
+Corrected Calcium (venous)*
+Vitamin D (venous)*
+Zinc (venous)*
+Non HDL Cholesterol Calculation (venous)*
+Total Cholesterol/HDL Ratio Calculation (venous)*
 ```
 
-Primary finding says:
+Expected canonical IDs:
 
 ```text
-B12-associated pattern
+homocysteine
+creatinine
+tsh
+vitamin_b12
+active_b12
+apoa1
+apob
+apob_apoa1_ratio
+lipoprotein_a
+corrected_calcium
+vitamin_d
+zinc
+non_hdl_cholesterol
+tc_hdl_ratio
 ```
 
-Required outcome:
+Also test clean labels without `*` still resolve exactly as before.
 
-* either align labels where they represent the same finding, or
-* clarify relationship if one is the lead pattern and the other is a hypothesis
-* do not misrepresent the hypothesis
-* do not invent clinical labels in frontend
+## Required tests
 
-## I. Diagnose biomarker expansion richness gap
+Add or update deterministic tests for:
 
-Problem:
-Homocysteine and Transferrin show thin expansion content because DTO fields are absent or generic:
+### Backend alias resolution
+
+* `resolve("Homocysteine (venous)*") == "homocysteine"`
+* all affected marker examples above resolve to expected canonical IDs
+* same labels without `*` still resolve
+* specimen suffix stripping still works
+* `*` stripping does not produce truncated keys such as `homocysteine_(venous`
+* unknown markers with `*` remain unmapped safely
+
+### Frontend key generation
+
+* `analysisBiomarkerKey("Homocysteine (venous)*") == "homocysteine_(venous)"`
+* same for representative ApoB/ApoA1/Lp(a)/Corrected Calcium examples
+* clean labels still generate unchanged keys
+
+### Integration / regression fixture
+
+Create a deterministic fixture or test from the d8-style input keys proving:
+
+* Group A affected markers no longer become `unmapped_*`
+* Homocysteine enters the canonical/scored biomarker path
+* ApoB, ApoA1 and Lipoprotein(a) resolve
+* Creatinine resolves so dependent derived ratio logic can run where applicable
+* existing f2 clean-label path still passes
+
+If full end-to-end scored biomarker count restoration is too large for this sprint, document why and prove alias/canonical resolution at the lowest deterministic layer.
+
+### Regression preservation
+
+* uploaded unit display fidelity still passes
+* FE-R6A fresh UAT retail guards still pass
+* LC-S16/17/19 DTO surface guards still pass
+* LC-S20/22 persisted replay guards still pass
+
+## Required Sentinel obligations
+
+Add or update Sentinel defect class:
 
 ```text
-Scored using lab reference range
+canonical_mapping_star_suffix_failure
 ```
 
-Cursor cross-check found:
+It must point to an active deterministic test.
 
-* Homocysteine: `contribution_context` absent from DTO
-* Homocysteine: `biomarker_educational_explainer` absent from DTO
-* Haemoglobin: richer expansion works when fields are supplied
-
-Required outcome:
-
-* diagnose whether the gap is frontend, DTO, compiler, SSOT, or content/asset coverage
-* do not fabricate explanation in frontend
-* if safe existing metadata can be surfaced without new medical logic, implement it
-* if this requires new Knowledge Bus/SSOT content, document as deferred to KB-WAVE or a content sprint
-* ensure generic `Scored using lab reference range` does not appear as the only expanded insight for a lead marker if avoidable
-* if no richer content exists, show a consumer-safe limited-state message rather than method-only text
-
-Do not turn FE-R6A into KB-WAVE-1.
-
----
-
-# Potentially allowed files
+If more specific classes are useful, allowed examples:
 
 ```text
-frontend/app/(app)/results/page.tsx
-frontend/app/components/biomarkers/**/*
-frontend/app/components/results/**/*
-frontend/app/components/pipeline/**/*
-frontend/app/lib/**/*
-frontend/app/types/**/*
-frontend/tests/**/*
-backend/tests/regression/**/*
+canonical_mapping_abnormal_marker_suffix_failure
+canonical_mapping_specimen_suffix_truncation
+canonical_mapping_known_marker_unmapped_after_star_suffix
+```
+
+No placeholder Sentinel entries.
+
+## Potentially allowed files
+
+```text
+backend/core/canonical/alias_registry_service.py
+frontend/app/lib/uploadReferenceRange.ts
 backend/tests/unit/**/*
+backend/tests/regression/**/*
+frontend/tests/**/*
 sentinel/packs/**/*
-docs/audit-papers/FE-R6A_fresh_uat_defect_cleanup_notes.md
+docs/audit-papers/MAP-R1A_star_suffix_canonical_mapping_fix_notes.md
 ```
 
-Backend DTO files are allowed only if an already-existing field is present in backend data but not exposed to frontend type/DTO:
-
-```text
-backend/core/dto/**/*
-```
-
-Backend analytics files are allowed only for tightly scoped consumer-prose sanitisation or retail-display cleanup identified above:
-
-```text
-backend/core/analytics/narrative_report_compiler_v1.py
-backend/core/analytics/report_compiler_v1.py
-backend/core/analytics/balanced_systems_presentation_v1.py
-backend/core/analytics/consumer_prose_safety_v1.py
-```
+If existing alias tests live elsewhere, update the correct existing test file.
 
 ## Forbidden unless GPT explicitly approves
 
@@ -354,12 +318,14 @@ backend/core/analytics/consumer_prose_safety_v1.py
 backend/core/scoring/**/*
 backend/core/units/**/*
 backend/core/pipeline/**/*
+backend/core/analytics/**/*
+backend/core/dto/**/*
 backend/ssot/**/*
 knowledge_bus/**/*
 Gemini / LLM activation
-PATTERN-C1 backend/content contract work
 KB-WAVE-1 content expansion
-broad frontend visual redesign
+PATTERN-C1 backend/content contract work
+frontend results-page UX changes
 automation_bus/state/*
 backend/scripts/run_work_package.py
 backend/scripts/golden_gate_local.py
@@ -368,120 +334,57 @@ backend/scripts/update_cursor_status.py
 
 Do not edit Knowledge Bus medical content.
 
-If Homocysteine educational depth requires new medical content, STOP that part and document it as a deferred KB-WAVE/content issue.
+Do not alter root-cause, arbitration, signal ranking, or clinical scoring.
 
----
+If implementation requires touching forbidden paths, STOP and report.
 
-# Required tests
-
-Add or update deterministic tests for:
-
-## Fresh UAT defect fixes
-
-* “How to read this page” is not the parent h2 wrapping hero/body overview
-* standalone duplicate Summary section is absent from the main retail journey
-* pattern counter does not show `Needs attention: 0` when a lead Strong Signal / attention pattern is present
-* “interpretation confidence for this read” does not appear in retail visible text
-* “Linked to hba1c” / “Linked to tc hdl ratio” / raw `Linked to` labels do not appear in retail view
-* next steps render as list items or clearly separated lines, not raw concatenated blob
-* “No separate checklist of follow-up lines was packaged” does not appear in retail view
-* raw `Not scored - result unit...` text does not appear in retail biomarker cards
-* hero/primary-finding labels are aligned or relationship clarified
-
-## Biomarker expansion readiness
-
-* lead-marker expansion does not show only `Scored using lab reference range` as the sole insight
-* if contribution_context is present, it renders
-* if biomarker_educational_explainer is present, it renders
-* if no richer content exists, limited-state text is consumer-safe
-* no frontend clinical inference is introduced
-
-## Regression preservation
-
-* FE-R1 prose safety still passes
-* FE-R2 journey order still passes
-* FE-R3 evidence depth still passes or is updated to the corrected standard
-* FE-R5A pattern surface still passes
-* uploaded unit display fidelity still passes
-
-## Required Sentinel obligations
-
-Add or update defect classes such as:
-
-```text
-fresh_uat_instruction_wrapper_visible
-fresh_uat_duplicate_summary_visible
-fresh_uat_pattern_counter_contradiction
-fresh_uat_interpretation_confidence_leak
-fresh_uat_linked_to_internal_label_visible
-fresh_uat_next_steps_rendering_artifact
-fresh_uat_raw_scoring_error_visible
-fresh_uat_thin_lead_marker_expansion
-fresh_uat_finding_label_mismatch
-```
-
-Each must point to an active deterministic test.
-
-No placeholder Sentinel entries.
-
----
-
-# Required validation commands
+## Required validation commands
 
 Run:
 
 ```powershell
-python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
-python -m pytest backend/tests/regression/test_fe_r2_results_journey_restructure.py -q
-python -m pytest backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py -q
-python -m pytest backend/tests/regression/test_fe_r5a_limited_idl_pattern_surface.py -q
-python -m pytest backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py -q
+python -m pytest backend/tests/unit/test_alias_service_star_suffix_stripping.py -q
+python -m pytest backend/tests/regression/test_canonical_mapping_star_suffix_failure.py -q
 python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
+python -m pytest backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py -q
+python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
 python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
 ```
 
-If frontend files changed:
+If frontend file changed:
 
 ```powershell
 npm run type-check
 ```
 
-If browser tools are available, inspect:
+If frontend tests exist for `uploadReferenceRange.ts`, run/update them.
 
-```text
-http://localhost:3000/results?analysis_id=f2dcb58f-e816-4ff6-9011-e93c5d48b82c
-```
+## Optional manual verification
 
-Login:
+If practical, run the same d8-style upload input through the analysis path and confirm:
 
-```text
-test-user3@example.com
-Subaru@555
-```
+* Homocysteine is mapped/scored
+* ApoB/ApoA1/Lp(a) are mapped/scored
+* scored biomarker count increases compared with the broken d8 result
+* homocysteine signals can fire again when the value is present
+* lead finding becomes analytically plausible for the full marker set
 
-Do not claim browser UAT passed unless actually inspected.
+Do not claim this verification if not actually run.
 
----
+## Acceptance criteria
 
-# Acceptance criteria
+Complete only if:
 
-This sprint is complete only if:
-
-* FE-R1 through FE-R5A are confirmed merged before start
-* all confirmed fresh UAT high-severity retail defects are fixed or explicitly deferred with rationale
-* “How to read this page” no longer wraps the hero/body overview
-* duplicate Summary section is removed from the main journey
-* contradictory pattern counter is fixed, hidden, or gated
-* internal labels and technical strings are removed from retail view
-* What to do next renders cleanly
-* biomarker expansion gap is diagnosed and improved or clearly classified as content/DTO backlog
-* no new clinical reasoning is added in frontend
-* no Knowledge Bus content is edited
-* FE-R1/2/3/5A guards still pass
-* Sentinel guards are active and deterministic
-* browser/manual UAT is performed if available, or limitation documented
-* recommendation on KB-WAVE-1 readiness is included
+* backend alias resolver strips trailing abnormal markers before specimen suffix resolution
+* frontend `analysisBiomarkerKey()` strips trailing abnormal markers as defence-in-depth
+* all listed affected markers resolve to expected canonical IDs
+* clean labels without `*` still resolve
+* unknown starred labels remain safely unmapped
+* no scoring/unit/root-cause/Knowledge Bus logic is changed
+* uploaded display fidelity remains intact
+* Sentinel guard is active and deterministic
+* MAP-R1A notes document whether KB-WAVE-1 remains blocked or can proceed after merge
 
 ## Closure requirements
 
@@ -503,8 +406,8 @@ python backend/scripts/run_work_package.py finish
 
 After finish, follow SOP v1.3.1:
 
-* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `FE-R6A`, commit it automatically as:
-  `chore(bus): FE-R6A kernel COMPLETE status`
+* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `MAP-R1A`, commit it automatically as:
+  `chore(bus): MAP-R1A kernel COMPLETE status`
 * if any other Automation Bus artefact is dirty, STOP and escalate
 
 Do not merge.
@@ -513,9 +416,9 @@ Do not claim KB-WAVE-1 authorisation.
 
 ## Cursor completion statement
 
-Cursor implements fresh UAT defect cleanup only.
+Cursor implements canonical mapping fix only.
 
-Cursor may not self-certify commercial readiness, clinical correctness, KB-WAVE-1 readiness, merge readiness, or permission to begin the next sprint.
+Cursor may not self-certify clinical correctness, KB-WAVE-1 readiness, merge readiness, or permission to begin the next sprint.
 
 ```
 ```
