@@ -138,7 +138,10 @@ def test_health_system_card_subsystem_placeholder_visible_sentinel() -> None:
     """Sentinel: health_system_card_subsystem_placeholder_visible."""
     cards = _read(_WAVE1_CARDS)
     assert "coming soon" not in cards.lower()
-    assert "subsystem" not in cards.lower()
+    # DOMAIN-UX1D: subsystem rendering is now delegated to a dedicated child component.
+    assert "Wave1SubsystemEvidenceSection" in cards
+    for term in ("included_marker_ids", "missing_marker_ids", "Lipid transport", "wave1_cv_lipid_transport"):
+        assert term not in cards
 
 
 @pytest.mark.regression

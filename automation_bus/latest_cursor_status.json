@@ -1,10 +1,9 @@
 {
-  "branch": "domain-ux/domain-ux1c-governed-subsystem-evidence",
+  "branch": "domain-ux/domain-ux1d-full-wave1-expanded-card",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-26T20:26:55Z",
-  "cursor_started_utc": "2026-05-26T20:24:25Z",
-  "head_sha": "bd953cb62ad82343f5f8e4575d8a1296514bf496",
+  "cursor_started_utc": "2026-05-26T21:12:58Z",
+  "head_sha": "772064f5552c7fe6c97fd803c669f68812f79eed",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "DOMAIN-UX1C"
+  "status": "IN_PROGRESS",
+  "work_id": "DOMAIN-UX1D"
 }
