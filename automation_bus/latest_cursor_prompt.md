@@ -1,90 +1,96 @@
+Use this as:
+
+```text
+automation_bus/latest_cursor_prompt.md
+```
+
+````md
 ---
-work_id: MAP-R1A
-branch: mapping/map-r1a-star-suffix-canonical-fix
-risk_level: HIGH
+work_id: DOMAIN-UX1A
+branch: domain-ux/domain-ux1a-wave1-card-scaffold-contract
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
-change_type: BEHAVIOUR
+change_type: MIXED
 ---
 
-# MAP-R1A — Star-Suffix Canonical Mapping Fix
+# DOMAIN-UX1A — Wave 1 Health Systems Card Scaffold + Contract Hardening
 
 ## Classification
 
-This is a HIGH-risk BEHAVIOUR sprint.
+This is a STANDARD-risk MIXED sprint.
 
-Reason: this sprint changes canonical biomarker mapping behaviour in the upload/analysis path. It affects whether uploaded markers enter the scored biomarker set, signal evaluation, root-cause selection, narrative generation and frontend results.
+Reason: this sprint surfaces existing Wave 1 Health Systems Card outputs in the main results journey and adds light DTO/contract hardening for evidence completeness and card display fields.
 
-This is not a frontend UX sprint.  
-This is not KB-WAVE-1.  
-This is not PATTERN-C1.  
-This is not a Knowledge Bus content sprint.  
-This is not a scoring policy sprint.  
-This is not a unit conversion sprint.  
-This is not a Gemini/LLM sprint.
+This sprint must not alter clinical scoring logic, signal activation, root-cause reasoning, Knowledge Bus content, IDL records, or subsystem interpretation logic.
+
+Escalate to HIGH and STOP if implementation requires changing:
+
+- expected marker sets
+- scoring policy
+- missing-marker logic
+- reliability/confidence rules
+- domain scoring behaviour
+- signal evaluation
+- root-cause/arbitration
+- Knowledge Bus assets
+- IDL records
+- pipeline output construction beyond adding explicit DTO fields for existing domain-card evidence
 
 ## Purpose
 
-Fix the proven canonical marker mapping failure caused by trailing lab abnormal markers such as `*` in extracted biomarker names.
+Build the first working slice of the Health Systems Card scaffold for the three Wave 1 domains already supported by the repo:
 
-The MAP-R1 investigation proved that labels such as:
+1. Cardiovascular health
+2. Blood sugar control
+3. Liver health
 
-```text
-Homocysteine (venous)*
-Apolipoprotein B (venous)*
-Lipoprotein (a) (venous)*
-````
+This is not a quick hidden-card exposure sprint.
 
-fall through as `unmapped_*` because the trailing `*` prevents specimen suffix stripping. This caused the d8 fresh UAT run to score 63 biomarkers instead of 77 and changed the lead finding from Homocysteine-led to Total Cholesterol-led.
+The purpose is to begin implementing the agreed Health Systems Card architecture by:
 
-The goal is:
-
-```text
-Known biomarkers with trailing abnormal markers must resolve to their canonical IDs before scoring and signal evaluation.
-```
+- surfacing the existing Wave 1 cards in the main results journey
+- hardening the DTO contract for evidence completeness
+- aligning frontend wording with the agreed card model
+- ensuring frontend remains renderer-only
+- preventing fake subsystem evidence or frontend-invented biological grouping
 
 ## Controlling authority
 
 Read before doing anything:
 
 ```text
-docs/audit-papers/MAP-R1_fresh_upload_canonical_mapping_regression_investigation.md
-docs/audit-papers/Post-FE-R6A_Fresh_UAT_Investigation_d8cfe1a8.md
-docs/audit-papers/FE-R6A_fresh_uat_defect_cleanup_notes.md
+docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md
+docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md
+docs/architecture/User Health to Systems Map_FINAL.md
+docs/audit-papers/DOMAIN-UX1_health_systems_card_codebase_reality_audit.md
+docs/audit-papers/DOMAIN-R1_launch_core_health_domain_readiness_audit.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
-```
+````
 
-Also inspect if present:
-
-```text
-docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md
-docs/audit-papers/LC-S16_knowledge_asset_frontend_surface_audit.md
-docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md
-```
-
-If the MAP-R1 investigation report is missing, STOP.
+If any of the first four files are missing, STOP.
 
 ## Required output documentation
 
 Create:
 
 ```text
-docs/audit-papers/MAP-R1A_star_suffix_canonical_mapping_fix_notes.md
+docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md
 ```
 
 This document must include:
 
 1. preflight results
-2. MAP-R1 root-cause summary
-3. exact mapping fix implemented
-4. frontend defence-in-depth implemented, if any
-5. affected markers tested
-6. before/after alias examples
-7. whether scored biomarker count is restored for the d8 fixture/input
-8. signal/arbitration impact
-9. tests added/updated
-10. Sentinel updates
-11. residual risks
-12. explicit recommendation on KB-WAVE-1 readiness
+2. source documents reviewed
+3. exact DTO fields added or confirmed
+4. exact frontend components changed
+5. evidence completeness implementation
+6. card placement decision
+7. label/wording changes
+8. prose quality gate findings
+9. explicit confirmation that no subsystem labels/groupings were invented
+10. tests added/updated
+11. residual gaps deferred to DOMAIN-UX1B / DOMAIN-UX1C
+12. recommendation for next sprint
 
 ## Mandatory preflight
 
@@ -105,8 +111,8 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `MAP-R1A`
-* branch is `mapping/map-r1a-star-suffix-canonical-fix`
+* `work_id` is `DOMAIN-UX1A`
+* branch is `domain-ux/domain-ux1a-wave1-card-scaffold-contract`
 
 If token is missing or mismatched, STOP:
 
@@ -114,277 +120,305 @@ If token is missing or mismatched, STOP:
 Kernel start not executed or work package mismatch.
 ```
 
-## Cross-sprint guard preflight
+## Baseline verification
 
-Run current relevant guards before implementation:
+Before implementation, confirm current repo reality:
 
-```powershell
-python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
-python -m pytest backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py -q
-python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
-python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
-python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
-python -m pytest backend/tests/unit/test_scoring_rules.py -q
-```
+* `Wave1DomainCards.tsx` exists
+* `consumer_domain_scores` exists in frontend type contract
+* existing Wave 1 domains are present:
 
-If a guard fails, STOP unless GPT/human explicitly authorises continuation.
+  * `wave1_cardiovascular`
+  * `wave1_blood_sugar`
+  * `wave1_liver`
+* existing cards are currently hidden, buried, or not prominent in the main results journey
+* existing backend assembler is `backend/core/analytics/domain_score_assembler.py`
 
-## Proven root cause
+If any of these assumptions are false, STOP and report.
 
-The MAP-R1 investigation proved:
+## Implementation scope
 
-```text
-Homocysteine (venous)* → homocysteine_(venous)* → unmapped_homocysteine_(venous)*
-```
+### A. Surface Wave 1 Health Systems Cards in the main journey
 
-Correct behaviour should be:
+Move or reposition the existing Wave 1 Health Systems Cards so they are visible in the main results journey without the user needing to open a low-priority disclosure section.
 
-```text
-Homocysteine (venous)* → Homocysteine (venous) → homocysteine
-```
+The placement should make them feel like part of the primary results experience, not a supplementary technical section.
 
-The failure occurs because:
+Do not redesign the whole results page.
 
-* frontend `analysisBiomarkerKey()` does not strip trailing `*`
-* backend alias resolver does not strip trailing abnormal markers before suffix stripping
-* `_strip_surrounding_punctuation()` can strip `*` and then strip `)`, producing a truncated key such as `homocysteine_(venous`
-* `_strip_specimen_suffix()` cannot match `_(venous)` when the key ends in `*`
+Do not move clinician-facing content upward.
 
-## Required implementation
+### B. Add / confirm plain-English domain descriptor
 
-### A. Backend canonical alias fix
+Each Wave 1 card should have a short descriptor:
 
-Implement a small, deterministic fix in:
+* Cardiovascular health → Heart, arteries and circulation
+* Blood sugar control → Sugar and insulin balance
+* Liver health → Liver strain and processing load
 
-```text
-backend/core/canonical/alias_registry_service.py
-```
+This may be implemented as backend DTO field or a small frontend display map if kept strictly presentational.
 
-Expected behaviour:
+If implemented in frontend, it must be limited to these fixed Wave 1 domain IDs and must not become interpretation logic.
 
-* strip trailing lab abnormal markers before alias lookup and specimen suffix stripping
-* at minimum support trailing `*`
-* preferably support common abnormal-marker suffixes such as `†`
-* be careful with `H` / `L`: only strip if clearly appended as a lab abnormal marker, not if part of the biomarker name
+### C. Add evidence completeness fields
 
-Safe examples that must resolve:
+Add backend-emitted evidence completeness fields to the Wave 1 domain card DTO.
+
+Required fields:
 
 ```text
-Homocysteine (venous)*
-Apolipoprotein B (venous)*
-Apolipoprotein A1 (venous)*
-Lipoprotein (a) (venous)*
-Corrected Calcium (venous)*
-TSH (venous)*
+evidence_completeness_numerator
+evidence_completeness_denominator
 ```
 
-Do not weaken alias matching in a way that creates false positives.
+These must be emitted by the backend.
 
-### B. Frontend defence-in-depth
+The frontend must not calculate expected marker sets, included marker counts, or missing marker counts.
 
-Implement defence-in-depth in:
+Implementation should derive these only from existing Wave 1 rail marker sets and existing missing-marker logic.
+
+Expected principle:
 
 ```text
-frontend/app/lib/uploadReferenceRange.ts
+denominator = expected marker count for the domain rail
+numerator = denominator - missing marker count
 ```
 
-Specifically, update `analysisBiomarkerKey()` so trailing lab abnormal markers are stripped before lowercasing / underscore conversion.
+Only use existing governed rail/assembler state. Do not change expected marker sets.
 
-This does not replace the backend fix. Backend must remain authoritative.
+### D. Reliability wording
 
-### C. Do not modify scoring policy
+Map current confidence wording into the agreed score reliability vocabulary.
 
-Do not change scoring thresholds, severity labels, unit conversion, clinical interpretation, Knowledge Bus assets, or root-cause rules.
-
-This sprint is mapping only.
-
-## Affected markers that must be tested
-
-At minimum, tests must cover:
+Allowed examples:
 
 ```text
-Homocysteine (venous)*
-Creatinine (venous)*
-TSH (venous)*
-Vitamin B12 (venous)*
-Active Vitamin B12 (venous)*
-Apolipoprotein A1 (venous)*
-Apolipoprotein B (venous)*
-Apolipoprotein Ratio (venous)*
-Lipoprotein (a) (venous)*
-Corrected Calcium (venous)*
-Vitamin D (venous)*
-Zinc (venous)*
-Non HDL Cholesterol Calculation (venous)*
-Total Cholesterol/HDL Ratio Calculation (venous)*
+high → Good reliability
+medium → Moderate reliability
+low → Limited reliability
 ```
 
-Expected canonical IDs:
+Do not change backend confidence logic.
+
+Do not reinterpret confidence as evidence completeness.
+
+### E. Band wording
+
+Align consumer-facing band wording with the agreed UX language.
+
+Target vocabulary:
 
 ```text
-homocysteine
-creatinine
-tsh
-vitamin_b12
-active_b12
-apoa1
-apob
-apob_apoa1_ratio
-lipoprotein_a
-corrected_calcium
-vitamin_d
-zinc
-non_hdl_cholesterol
-tc_hdl_ratio
+Strong
+Stable
+Watch / Worth watching
+Needs attention
 ```
 
-Also test clean labels without `*` still resolve exactly as before.
+Use the existing backend band values. Do not change scoring thresholds.
 
-## Required tests
+### F. Prose quality gate
 
-Add or update deterministic tests for:
+Because these cards will become more prominent, inspect the visible card text, especially:
 
-### Backend alias resolution
+* `headline_sentence`
+* `contributor_sentence`
+* `confidence_sentence`
+* `consequence_sentence`
+* `next_step_sentence`
 
-* `resolve("Homocysteine (venous)*") == "homocysteine"`
-* all affected marker examples above resolve to expected canonical IDs
-* same labels without `*` still resolve
-* specimen suffix stripping still works
-* `*` stripping does not produce truncated keys such as `homocysteine_(venous`
-* unknown markers with `*` remain unmapped safely
+Remove or improve obviously mechanical consumer-facing wording only if it can be done safely in the existing domain narrative assembly without changing clinical meaning.
 
-### Frontend key generation
-
-* `analysisBiomarkerKey("Homocysteine (venous)*") == "homocysteine_(venous)"`
-* same for representative ApoB/ApoA1/Lp(a)/Corrected Calcium examples
-* clean labels still generate unchanged keys
-
-### Integration / regression fixture
-
-Create a deterministic fixture or test from the d8-style input keys proving:
-
-* Group A affected markers no longer become `unmapped_*`
-* Homocysteine enters the canonical/scored biomarker path
-* ApoB, ApoA1 and Lipoprotein(a) resolve
-* Creatinine resolves so dependent derived ratio logic can run where applicable
-* existing f2 clean-label path still passes
-
-If full end-to-end scored biomarker count restoration is too large for this sprint, document why and prove alias/canonical resolution at the lowest deterministic layer.
-
-### Regression preservation
-
-* uploaded unit display fidelity still passes
-* FE-R6A fresh UAT retail guards still pass
-* LC-S16/17/19 DTO surface guards still pass
-* LC-S20/22 persisted replay guards still pass
-
-## Required Sentinel obligations
-
-Add or update Sentinel defect class:
+Specifically check for repetitive or weak language such as:
 
 ```text
-canonical_mapping_star_suffix_failure
+on this panel
+main pattern to discuss first
+mechanical compiler phrasing
+internal/model/process language
 ```
 
-It must point to an active deterministic test.
+If safe copy cleanup requires backend narrative file changes within the existing Wave 1 domain narrative layer, this is allowed only if tightly scoped and regression-tested.
 
-If more specific classes are useful, allowed examples:
+Do not author new medical claims.
+
+Do not expand Knowledge Bus content.
+
+### G. Forward-compatible subsystem placeholder
+
+If a forward-compatible subsystem field is added, it must be nullable/empty only and not rendered as a visible “coming soon” UI.
+
+Allowed:
 
 ```text
-canonical_mapping_abnormal_marker_suffix_failure
-canonical_mapping_specimen_suffix_truncation
-canonical_mapping_known_marker_unmapped_after_star_suffix
+subsystems?: null
+subsystems?: []
 ```
 
-No placeholder Sentinel entries.
+Forbidden:
+
+```text
+Visible placeholder subsystem section
+"More subsystem detail coming soon"
+Frontend-hardcoded subsystem chips
+Frontend-invented marker groupings
+```
+
+## Explicitly forbidden in this sprint
+
+Do not implement:
+
+* subsystem chips unless backend-governed subsystem data already exists
+* per-subsystem biomarker grouping
+* greyed-out biomarker cards
+* domain score dial/gauge
+* compact biomarker card variant
+* Wave 2 domains
+* frontend-invented biological groupings
+* subsystem score/status
+* Knowledge Bus content changes
+* scoring policy changes
+* IDL content changes
+* root-cause/arbitration changes
+* clinician report redesign
 
 ## Potentially allowed files
 
 ```text
-backend/core/canonical/alias_registry_service.py
-frontend/app/lib/uploadReferenceRange.ts
-backend/tests/unit/**/*
-backend/tests/regression/**/*
+frontend/app/(app)/results/page.tsx
+frontend/app/components/results/Wave1DomainCards.tsx
+frontend/app/components/results/**/*
+frontend/app/types/analysis.ts
 frontend/tests/**/*
+backend/core/models/results.py
+backend/core/analytics/domain_score_assembler.py
+backend/core/analytics/domain_narrative_wave1.py
+backend/tests/regression/**/*
+backend/tests/unit/**/*
 sentinel/packs/**/*
-docs/audit-papers/MAP-R1A_star_suffix_canonical_mapping_fix_notes.md
+docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md
 ```
 
-If existing alias tests live elsewhere, update the correct existing test file.
+Only touch `domain_narrative_wave1.py` if needed for tightly scoped prose cleanup of existing Wave 1 card sentences.
 
 ## Forbidden unless GPT explicitly approves
 
 ```text
-backend/core/scoring/**/*
-backend/core/units/**/*
-backend/core/pipeline/**/*
-backend/core/analytics/**/*
-backend/core/dto/**/*
 backend/ssot/**/*
+backend/core/scoring/**/*
+backend/core/pipeline/**/*
+backend/core/units/**/*
+backend/core/analytics/root_cause*
+backend/core/analytics/report_compiler*
+backend/core/analytics/narrative_report_compiler*
 knowledge_bus/**/*
-Gemini / LLM activation
-KB-WAVE-1 content expansion
-PATTERN-C1 backend/content contract work
-frontend results-page UX changes
+frontend clinician report components
 automation_bus/state/*
 backend/scripts/run_work_package.py
 backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
 ```
 
-Do not edit Knowledge Bus medical content.
+## Required tests
 
-Do not alter root-cause, arbitration, signal ranking, or clinical scoring.
+Add or update deterministic tests proving:
 
-If implementation requires touching forbidden paths, STOP and report.
+### Backend contract
+
+* each Wave 1 domain emits `evidence_completeness_numerator`
+* each Wave 1 domain emits `evidence_completeness_denominator`
+* numerator and denominator are integers
+* numerator is not greater than denominator
+* missing-marker IDs remain backend-emitted
+* evidence completeness is derived from existing rail/missing-marker data
+* no score, threshold, marker-set or confidence rule changed
+
+### Frontend rendering
+
+* Wave 1 Health Systems Cards render in the main results journey
+* cards are not hidden only behind a low-priority closed disclosure
+* card displays consumer label
+* card displays plain-English descriptor
+* card displays score and band
+* card displays score reliability wording
+* card displays evidence completeness using backend-supplied fields
+* card does not render clinical label in consumer view
+* card does not render subsystem placeholder UI
+* card does not invent subsystem chips or marker groupings
+
+### Prose safety
+
+* visible card copy does not include obvious internal/process language
+* no raw signal IDs are visible
+* no internal cluster names are visible
+* no “Functional read —” style labels leak
+* no “governed”, “compiler”, “model”, or “structured ranking” language appears in the consumer card
+
+### Regression preservation
+
+* FE-R1 prose safety still passes
+* FE-R6A fresh UAT guard still passes
+* MAP-R1A mapping guard still passes
+* existing domain score assembler tests still pass, if present
+
+## Required Sentinel obligations
+
+Add or update active deterministic Sentinel defect classes as appropriate, for example:
+
+```text
+health_system_card_hidden_from_main_journey
+health_system_card_frontend_calculates_evidence_completeness
+health_system_card_clinical_label_visible
+health_system_card_subsystem_placeholder_visible
+health_system_card_internal_language_visible
+```
+
+Each Sentinel class must point to an active deterministic test.
+
+No placeholder Sentinel entries.
 
 ## Required validation commands
 
 Run:
 
 ```powershell
-python -m pytest backend/tests/unit/test_alias_service_star_suffix_stripping.py -q
-python -m pytest backend/tests/regression/test_canonical_mapping_star_suffix_failure.py -q
-python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
+python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
 python -m pytest backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py -q
+python -m pytest backend/tests/regression/test_canonical_mapping_star_suffix_failure.py -q
 python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
 python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
 ```
 
-If frontend file changed:
+Also run any new DOMAIN-UX1A tests added by this sprint.
+
+If frontend files changed:
 
 ```powershell
 npm run type-check
 ```
 
-If frontend tests exist for `uploadReferenceRange.ts`, run/update them.
+If browser tools are available, inspect a fresh or current result page and confirm the Wave 1 cards are visible in the main journey.
 
-## Optional manual verification
-
-If practical, run the same d8-style upload input through the analysis path and confirm:
-
-* Homocysteine is mapped/scored
-* ApoB/ApoA1/Lp(a) are mapped/scored
-* scored biomarker count increases compared with the broken d8 result
-* homocysteine signals can fire again when the value is present
-* lead finding becomes analytically plausible for the full marker set
-
-Do not claim this verification if not actually run.
+Do not claim browser UAT passed unless actually inspected.
 
 ## Acceptance criteria
 
-Complete only if:
+This sprint is complete only if:
 
-* backend alias resolver strips trailing abnormal markers before specimen suffix resolution
-* frontend `analysisBiomarkerKey()` strips trailing abnormal markers as defence-in-depth
-* all listed affected markers resolve to expected canonical IDs
-* clean labels without `*` still resolve
-* unknown starred labels remain safely unmapped
-* no scoring/unit/root-cause/Knowledge Bus logic is changed
-* uploaded display fidelity remains intact
-* Sentinel guard is active and deterministic
-* MAP-R1A notes document whether KB-WAVE-1 remains blocked or can proceed after merge
+* Wave 1 Health Systems Cards are visible in the main results journey
+* backend emits evidence completeness numerator/denominator
+* frontend uses backend-supplied completeness values
+* frontend does not calculate governed evidence logic
+* score reliability wording is aligned
+* band wording is aligned
+* plain-English descriptors are present
+* `clinical_label` is not shown in the consumer card
+* no visible subsystem placeholder UI is rendered
+* no subsystem labels or biomarker groupings are invented in frontend
+* newly prominent prose passes consumer-quality safety checks
+* all required regression tests pass
+* notes document what remains for DOMAIN-UX1B and DOMAIN-UX1C
 
 ## Closure requirements
 
@@ -406,19 +440,19 @@ python backend/scripts/run_work_package.py finish
 
 After finish, follow SOP v1.3.1:
 
-* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `MAP-R1A`, commit it automatically as:
-  `chore(bus): MAP-R1A kernel COMPLETE status`
+* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `DOMAIN-UX1A`, commit it automatically as:
+  `chore(bus): DOMAIN-UX1A kernel COMPLETE status`
 * if any other Automation Bus artefact is dirty, STOP and escalate
 
 Do not merge.
 
-Do not claim KB-WAVE-1 authorisation.
+Do not start DOMAIN-UX1B.
 
 ## Cursor completion statement
 
-Cursor implements canonical mapping fix only.
+Cursor implements DOMAIN-UX1A only.
 
-Cursor may not self-certify clinical correctness, KB-WAVE-1 readiness, merge readiness, or permission to begin the next sprint.
+Cursor may not self-certify clinical correctness, merge readiness, or permission to begin DOMAIN-UX1B.
 
 ```
 ```
