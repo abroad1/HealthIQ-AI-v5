@@ -1,10 +1,9 @@
 {
-  "branch": "domain-ux/domain-ux1d-full-wave1-expanded-card",
+  "branch": "domain-ux/domain-label1-governed-biomarker-display-labels",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-26T21:22:26Z",
-  "cursor_started_utc": "2026-05-26T21:12:58Z",
-  "head_sha": "923326face635cd4421d20da03e09e6fd7f2af3f",
+  "cursor_started_utc": "2026-05-26T21:53:07Z",
+  "head_sha": "561285ec318a40bc96ac3d1ba00a125d7476bb38",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "DOMAIN-UX1D"
+  "status": "IN_PROGRESS",
+  "work_id": "DOMAIN-LABEL1"
 }

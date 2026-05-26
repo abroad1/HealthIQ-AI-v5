@@ -164,6 +164,15 @@ class InsightResult(BaseModel):
 ConfidenceTierV1 = Literal["high", "medium", "low"]
 
 
+class MarkerDisplayLabelV1(BaseModel):
+    """Governed marker identity + consumer-safe display label."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    id: str = Field(..., description="Canonical biomarker id")
+    display_label: str = Field(..., description="Consumer-safe biomarker display label")
+
+
 class SubsystemEvidenceV1(BaseModel):
     """
     DOMAIN-UX1C — governed subsystem evidence beneath a Wave 1 health-system card.
@@ -181,6 +190,14 @@ class SubsystemEvidenceV1(BaseModel):
     missing_marker_ids: List[str] = Field(
         default_factory=list,
         description="Expected subsystem markers not present on this panel",
+    )
+    included_markers: Optional[List[MarkerDisplayLabelV1]] = Field(
+        default=None,
+        description="Included markers with governed consumer-safe labels",
+    )
+    missing_markers: Optional[List[MarkerDisplayLabelV1]] = Field(
+        default=None,
+        description="Missing markers with governed consumer-safe labels",
     )
     status_label: Optional[str] = Field(
         default=None,

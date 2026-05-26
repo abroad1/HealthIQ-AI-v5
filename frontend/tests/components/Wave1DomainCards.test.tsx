@@ -44,6 +44,11 @@ describe('Wave1DomainCards', () => {
             subsystem_label: 'Liver processing context',
             included_marker_ids: ['total_bilirubin'],
             missing_marker_ids: ['ast', 'ggt'],
+            included_markers: [{ id: 'total_bilirubin', display_label: 'Total bilirubin' }],
+            missing_markers: [
+              { id: 'ast', display_label: 'AST (aspartate aminotransferase)' },
+              { id: 'ggt', display_label: 'GGT (gamma-glutamyl transferase)' },
+            ],
             status_label: null,
             evidence_role: null,
             source_trace: 'Wave 1 governed subsystem map',
@@ -155,6 +160,11 @@ describe('Wave1DomainCards', () => {
                 subsystem_label: 'Liver processing context',
                 included_marker_ids: ['alt', 'alp'],
                 missing_marker_ids: ['ggt'],
+                included_markers: [
+                  { id: 'alt', display_label: 'ALT (alanine aminotransferase)' },
+                  { id: 'alp', display_label: 'ALP (alkaline phosphatase)' },
+                ],
+                missing_markers: [{ id: 'ggt', display_label: 'GGT (gamma-glutamyl transferase)' }],
                 status_label: null,
                 evidence_role: null,
                 source_trace: 'Wave 1 governed subsystem map',
@@ -176,6 +186,9 @@ describe('Wave1DomainCards', () => {
     expect(screen.getByText('Not uploaded')).toBeInTheDocument();
     expect(screen.queryByTestId('wave1-subsystem-status')).not.toBeInTheDocument();
     expect(screen.queryByText(/mg\/dl/i)).not.toBeInTheDocument();
+    expect(screen.queryByText('Ldl Cholesterol')).not.toBeInTheDocument();
+    expect(screen.queryByText('Hdl Cholesterol')).not.toBeInTheDocument();
+    expect(screen.queryByText('Tc Hdl Ratio')).not.toBeInTheDocument();
   });
 
   it('keeps subsystem rendering isolated from Wave1DomainCards implementation (DOMAIN-UX1D)', () => {
@@ -187,5 +200,15 @@ describe('Wave1DomainCards', () => {
     expect(src).not.toContain('missing_marker_ids');
     expect(src).not.toContain('wave1_cv_lipid_transport');
     expect(src).not.toContain('Lipid transport');
+  });
+
+  it('does not expand wave1ConfidenceMarkerLabels as primary subsystem label fix (DOMAIN-LABEL1)', () => {
+    const labelsPath = path.join(process.cwd(), 'app/lib/wave1ConfidenceMarkerLabels.ts');
+    const src = fs.readFileSync(labelsPath, 'utf8');
+    expect(src).not.toContain("hba1c:");
+    expect(src).not.toContain("crp:");
+    expect(src).not.toContain("tc_hdl_ratio:");
+    expect(src).not.toContain("ldl_cholesterol:");
+    expect(src).not.toContain("hdl_cholesterol:");
   });
 });

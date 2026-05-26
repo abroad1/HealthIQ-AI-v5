@@ -15,6 +15,10 @@ class BiomarkerDefinition(BaseModel):
     aliases: List[str] = Field(default_factory=list, description="Alternative names/aliases")
     unit: str = Field(default="", description="Standard unit of measurement")
     description: str = Field(default="", description="Human-readable description")
+    consumer_display_name: Optional[str] = Field(
+        default=None,
+        description="Governed consumer-safe display label for UI surfaces",
+    )
     category: str = Field(default="", description="Biomarker category")
     data_type: str = Field(default="numeric", description="Data type (numeric, categorical, etc.)")
 

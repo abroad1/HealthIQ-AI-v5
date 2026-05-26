@@ -8,9 +8,11 @@ Wave 1 domains only: cardiovascular, blood sugar, liver.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Dict, FrozenSet, List, Sequence, Set, Tuple
 
-from core.models.results import SubsystemEvidenceV1
+from core.canonical.resolver import CanonicalResolver
+from core.models.results import MarkerDisplayLabelV1, SubsystemEvidenceV1
 
 # --- Subsystem definitions (stable ids + consumer labels + expected canonical markers) ---
 
@@ -86,6 +88,25 @@ WAVE1_DOMAIN_SUBSYSTEM_DEFS: Dict[str, Tuple[_Wave1SubsystemDef, ...]] = {
 WAVE1_DOMAIN_IDS: FrozenSet[str] = frozenset(WAVE1_DOMAIN_SUBSYSTEM_DEFS.keys())
 
 
+@lru_cache(maxsize=1)
+def _marker_display_label_map() -> Dict[str, str]:
+    resolver = CanonicalResolver()
+    out: Dict[str, str] = {}
+    for canonical_id, definition in resolver.load_biomarkers().items():
+        preferred = (definition.consumer_display_name or "").strip()
+        out[canonical_id] = preferred if preferred else canonical_id
+    return out
+
+
+def _labels_for_marker_ids(marker_ids: Sequence[str]) -> List[MarkerDisplayLabelV1]:
+    labels = _marker_display_label_map()
+    rows: List[MarkerDisplayLabelV1] = []
+    for marker_id in marker_ids:
+        display_label = labels.get(marker_id, marker_id)
+        rows.append(MarkerDisplayLabelV1(id=marker_id, display_label=display_label))
+    return rows
+
+
 def _scored_marker_ids_on_rail(rail_biomarker_scores: object) -> Set[str]:
     if not isinstance(rail_biomarker_scores, list):
         return set()
@@ -141,6 +162,8 @@ def assemble_wave1_subsystem_evidence(
                 subsystem_label=spec.subsystem_label,
                 included_marker_ids=included,
                 missing_marker_ids=missing,
+                included_markers=_labels_for_marker_ids(included),
+                missing_markers=_labels_for_marker_ids(missing),
                 status_label=None,
                 evidence_role=None,
                 source_trace=spec.source_trace,

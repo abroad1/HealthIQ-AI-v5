@@ -1,10 +1,20 @@
 import React from 'react';
 import type { SubsystemEvidenceV1 } from '@/types/analysis';
-import { wave1ConfidenceMarkerDisplayLabel } from '@/lib/wave1ConfidenceMarkerLabels';
 
 type Props = {
   subsystems: SubsystemEvidenceV1[];
 };
+
+function defensiveFallbackLabel(markerId: string): string {
+  const s = markerId.trim();
+  if (!s) return markerId;
+  if (!s.includes('_')) return s;
+  return s
+    .split('_')
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
 
 function isConsumerSafeSourceTrace(value: string | null | undefined): boolean {
   if (!value) return false;
@@ -43,10 +53,15 @@ export function Wave1SubsystemEvidenceSection({ subsystems }: Props) {
               <div className="space-y-1.5">
                 <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Included markers</p>
                 <ul className="flex flex-wrap gap-1.5 list-none p-0 m-0" data-testid="wave1-subsystem-included">
-                  {subsystem.included_marker_ids.map((markerId) => (
-                    <li key={markerId}>
+                  {(subsystem.included_markers && subsystem.included_markers.length > 0
+                    ? subsystem.included_markers
+                    : subsystem.included_marker_ids.map((id) => ({
+                        id,
+                        display_label: defensiveFallbackLabel(id),
+                      }))).map((marker) => (
+                    <li key={marker.id}>
                       <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs text-emerald-800">
-                        {wave1ConfidenceMarkerDisplayLabel(markerId)}
+                        {marker.display_label}
                       </span>
                     </li>
                   ))}
@@ -58,10 +73,15 @@ export function Wave1SubsystemEvidenceSection({ subsystems }: Props) {
               <div className="space-y-1.5">
                 <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Missing markers</p>
                 <ul className="flex flex-wrap gap-1.5 list-none p-0 m-0" data-testid="wave1-subsystem-missing">
-                  {subsystem.missing_marker_ids.map((markerId) => (
-                    <li key={markerId}>
+                  {(subsystem.missing_markers && subsystem.missing_markers.length > 0
+                    ? subsystem.missing_markers
+                    : subsystem.missing_marker_ids.map((id) => ({
+                        id,
+                        display_label: defensiveFallbackLabel(id),
+                      }))).map((marker) => (
+                    <li key={marker.id}>
                       <span className="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
-                        <span>{wave1ConfidenceMarkerDisplayLabel(markerId)}</span>
+                        <span>{marker.display_label}</span>
                         <span className="text-[10px] uppercase tracking-wide">Not uploaded</span>
                       </span>
                     </li>
