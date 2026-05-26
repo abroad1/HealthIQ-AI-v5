@@ -1,10 +1,9 @@
 {
-  "branch": "domain-ux/domain-ux1a-card-labels-low-evidence",
+  "branch": "domain-ux/domain-ux1b-premium-card-visuals",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-26T18:13:30Z",
-  "cursor_started_utc": "2026-05-26T18:05:26Z",
-  "head_sha": "b16b2f93aa2c3afce68543d4ac8e210a96608a62",
+  "cursor_started_utc": "2026-05-26T20:01:03Z",
+  "head_sha": "c0bfc789e545134f1c71f63e999a168d5c62e03a",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "DOMAIN-UX1A-PATCH"
+  "status": "IN_PROGRESS",
+  "work_id": "DOMAIN-UX1B"
 }
