@@ -24,6 +24,10 @@ function minimalLiverDomain(overrides: Partial<ConsumerDomainScoreV1> = {}): Con
     confidence_sentence: 'Medium confidence',
     consequence_sentence: 'Neutral.',
     next_step_sentence: 'Discuss with a clinician.',
+    plain_english_descriptor: 'Liver strain and processing load',
+    evidence_completeness_numerator: 2,
+    evidence_completeness_denominator: 5,
+    subsystems: null,
     ...overrides,
   };
 }
@@ -32,7 +36,7 @@ describe('Wave1DomainCards', () => {
   it('renders user-safe labels for missing markers (D-7)', async () => {
     const domains: ConsumerDomainScoreV1[] = [minimalLiverDomain()];
     const user = userEvent.setup();
-    render(<Wave1DomainCards domains={domains} />);
+    render(<Wave1DomainCards domains={domains} embedInJourney />);
 
     await user.click(screen.getByRole('button', { name: /more detail/i }));
 
@@ -42,5 +46,17 @@ describe('Wave1DomainCards', () => {
     expect(screen.queryByText('total_bilirubin')).not.toBeInTheDocument();
     expect(screen.queryByText(/^ast$/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/^ggt$/i)).not.toBeInTheDocument();
+  });
+
+  it('shows DOMAIN-UX1A consumer fields without clinical label (DOMAIN-UX1A)', () => {
+    render(<Wave1DomainCards domains={[minimalLiverDomain()]} embedInJourney />);
+    expect(screen.getByTestId('fe-domain-ux1a-health-systems-cards')).toBeInTheDocument();
+    expect(screen.getByTestId('wave1-plain-english-descriptor')).toHaveTextContent(
+      'Liver strain and processing load'
+    );
+    expect(screen.getByTestId('wave1-score-reliability')).toHaveTextContent('Moderate reliability');
+    expect(screen.getByTestId('wave1-band-label')).toHaveTextContent('Stable');
+    expect(screen.getByTestId('wave1-evidence-completeness')).toHaveTextContent('2 of 5');
+    expect(screen.queryByText('Hepatic')).not.toBeInTheDocument();
   });
 });

@@ -74,7 +74,10 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         assert r.confidence_sentence
         assert r.consequence_sentence
         assert r.next_step_sentence
-        assert r.card_schema_version == "1.1"
+        assert r.card_schema_version == "1.2"
+        assert r.evidence_completeness_denominator >= r.evidence_completeness_numerator
+        assert r.plain_english_descriptor
+        assert r.subsystems is None
 
 
 def test_wave1_next_step_sentences_are_domain_distinct_without_insights():

@@ -306,10 +306,10 @@ def evidence_anchor_sentence(
         if rec is not None and (rec.retail_display_label or "").strip():
             return f"Based mainly on: {str(rec.retail_display_label).strip()}"
     if domain == "cv":
-        return "Based mainly on: your cardiovascular signals and patterns on this panel."
+        return "Based mainly on: your cardiovascular signals and patterns from your markers."
     if domain == "met":
-        return "Based mainly on: your blood sugar and metabolic markers on this panel."
-    return "Based mainly on: your liver-related markers on this panel."
+        return "Based mainly on: your blood sugar and metabolic markers from your panel."
+    return "Based mainly on: your liver-related markers from your panel."
 
 
 def confidence_sentence_for(tier: str, domain: str) -> str:

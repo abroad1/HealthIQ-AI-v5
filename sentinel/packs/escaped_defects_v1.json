@@ -628,6 +628,46 @@
       "test_file": "backend/tests/regression/test_canonical_mapping_star_suffix_failure.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "health_system_card_hidden_from_main_journey": {
+      "description": "DOMAIN-UX1A — Wave 1 health system cards only in closed disclosure, not main journey.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_card_frontend_calculates_evidence_completeness": {
+      "description": "DOMAIN-UX1A — frontend derives evidence completeness instead of backend DTO fields.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_card_clinical_label_visible": {
+      "description": "DOMAIN-UX1A — clinical_label shown on consumer Wave 1 cards.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_card_subsystem_placeholder_visible": {
+      "description": "DOMAIN-UX1A — visible subsystem placeholder or coming-soon UI on Wave 1 cards.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_card_internal_language_visible": {
+      "description": "DOMAIN-UX1A — governed/compiler/internal language on consumer Wave 1 cards.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

@@ -241,6 +241,24 @@ class ConsumerDomainScoreV1(BaseModel):
         default="",
         description="D-4: compact based-on / traceability line for the collapsed card (IDL retail label or safe fallback)",
     )
+    plain_english_descriptor: str = Field(
+        default="",
+        description="DOMAIN-UX1A: short consumer descriptor (e.g. Heart, arteries and circulation)",
+    )
+    evidence_completeness_numerator: int = Field(
+        default=0,
+        ge=0,
+        description="DOMAIN-UX1A: rail markers with values on this panel (backend-derived)",
+    )
+    evidence_completeness_denominator: int = Field(
+        default=0,
+        ge=0,
+        description="DOMAIN-UX1A: expected rail marker count for this domain (present + missing)",
+    )
+    subsystems: Optional[List[Any]] = Field(
+        default=None,
+        description="DOMAIN-UX1A: forward-compatible subsystem slot; null/empty until governed data exists",
+    )
 
 
 class AnalysisDTO(BaseModel):

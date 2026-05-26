@@ -348,6 +348,11 @@ export interface ConsumerDomainScoreV1 {
   next_step_sentence: string;
   /** D-4: compact "based on" traceability line (collapsed card) */
   evidence_anchor_sentence?: string;
+  /** DOMAIN-UX1A — plain-English descriptor (backend-emitted) */
+  plain_english_descriptor?: string;
+  evidence_completeness_numerator?: number;
+  evidence_completeness_denominator?: number;
+  subsystems?: unknown[] | null;
 }
 
 export interface AnalysisResult {

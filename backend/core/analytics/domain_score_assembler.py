@@ -329,6 +329,47 @@ def _missing_for_rail(hss: Dict[str, Any], system_key: str) -> List[str]:
     return sorted({str(x) for x in mb if str(x).strip()})
 
 
+_WAVE1_PLAIN_DESCRIPTOR: Dict[str, str] = {
+    "wave1_cardiovascular": "Heart, arteries and circulation",
+    "wave1_blood_sugar": "Sugar and insulin balance",
+    "wave1_liver": "Liver strain and processing load",
+}
+
+
+def _evidence_completeness_for_rail(
+    hss: Dict[str, Any],
+    system_key: str,
+    missing_marker_ids: List[str],
+) -> Tuple[int, int]:
+    """
+    DOMAIN-UX1A: derive completeness from existing rail scored markers + missing list.
+    denominator = scored on rail + missing; numerator = scored on rail.
+    """
+    data = _system_rail_data(hss, system_key)
+    bs = data.get("biomarker_scores")
+    scored_count = len(bs) if isinstance(bs, list) else 0
+    missing_count = len(missing_marker_ids)
+    denominator = scored_count + missing_count
+    numerator = scored_count
+    return numerator, denominator
+
+
+def _wave1_card_contract_extras(
+    *,
+    domain_id: str,
+    hss: Dict[str, Any],
+    system_key: str,
+    missing_marker_ids: List[str],
+) -> Dict[str, Any]:
+    num, den = _evidence_completeness_for_rail(hss, system_key, missing_marker_ids)
+    return {
+        "plain_english_descriptor": _WAVE1_PLAIN_DESCRIPTOR.get(domain_id, ""),
+        "evidence_completeness_numerator": num,
+        "evidence_completeness_denominator": den,
+        "subsystems": None,
+    }
+
+
 def _wave1_aligned_drivers_meta(
     rows: List[ConsumerDomainScoreV1],
     sig_rows: List[Dict[str, Any]],
@@ -426,7 +467,7 @@ def assemble_consumer_domain_scores_v1(
         _primary_rec = idl_record(by_id, idl) if idl else None
         return ConsumerDomainScoreV1(
             domain_id="wave1_cardiovascular",
-            card_schema_version="1.1",
+            card_schema_version="1.2",
             consumer_label="Cardiovascular health",
             clinical_label="Cardiometabolic / Vascular Risk Status",
             score=score_01,
@@ -448,6 +489,12 @@ def assemble_consumer_domain_scores_v1(
                 narrative_report_v1,
             ),
             evidence_anchor_sentence=evidence_anchor_sentence("cv", by_id, idl),
+            **_wave1_card_contract_extras(
+                domain_id="wave1_cardiovascular",
+                hss=hss,
+                system_key=_RAIL_CARDIOVASCULAR,
+                missing_marker_ids=missing,
+            ),
         )
 
     def met_block() -> ConsumerDomainScoreV1:
@@ -478,7 +525,7 @@ def assemble_consumer_domain_scores_v1(
         _m_primary_rec = idl_record(by_id, idl) if idl else None
         return ConsumerDomainScoreV1(
             domain_id="wave1_blood_sugar",
-            card_schema_version="1.1",
+            card_schema_version="1.2",
             consumer_label="Blood sugar control",
             clinical_label="Glycaemic Regulation / Insulin Resistance Status",
             score=score_01,
@@ -500,6 +547,12 @@ def assemble_consumer_domain_scores_v1(
                 narrative_report_v1,
             ),
             evidence_anchor_sentence=evidence_anchor_sentence("met", by_id, idl),
+            **_wave1_card_contract_extras(
+                domain_id="wave1_blood_sugar",
+                hss=hss,
+                system_key=_RAIL_METABOLIC,
+                missing_marker_ids=missing,
+            ),
         )
 
     def liv_block() -> ConsumerDomainScoreV1:
@@ -553,7 +606,7 @@ def assemble_consumer_domain_scores_v1(
         )
         return ConsumerDomainScoreV1(
             domain_id="wave1_liver",
-            card_schema_version="1.1",
+            card_schema_version="1.2",
             consumer_label="Liver health",
             clinical_label="Hepatic-Metabolic Strain Status",
             score=score_01,
@@ -578,6 +631,12 @@ def assemble_consumer_domain_scores_v1(
                 narrative_report_v1,
             ),
             evidence_anchor_sentence=evidence_anchor_sentence("liver", by_id, idl),
+            **_wave1_card_contract_extras(
+                domain_id="wave1_liver",
+                hss=hss,
+                system_key=_RAIL_LIVER,
+                missing_marker_ids=missing,
+            ),
         )
 
     out_rows = [cv_block(), met_block(), liv_block()]

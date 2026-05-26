@@ -6,6 +6,11 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { ConsumerDomainScoreV1 } from '@/types/analysis';
 import { wave1ConfidenceMarkerDisplayLabel } from '@/lib/wave1ConfidenceMarkerLabels';
+import {
+  wave1BandLabelDisplay,
+  wave1EvidenceCompletenessLine,
+  wave1ScoreReliabilityLabel,
+} from '@/lib/wave1HealthSystemCardDisplay';
 
 const WAVE1_ORDER: readonly string[] = [
   'wave1_cardiovascular',
@@ -13,27 +18,13 @@ const WAVE1_ORDER: readonly string[] = [
   'wave1_liver',
 ];
 
-function bandLabelDisplay(band: string): string {
-  const m: Record<string, string> = {
-    strong: 'Strong',
-    stable: 'Stable',
-    watch: 'Worth watching',
-    review: 'Needs review',
-  };
-  return m[band] ?? band;
-}
-
-function tierLabel(t: string): string {
-  if (t === 'high') return 'High confidence';
-  if (t === 'medium') return 'Medium confidence';
-  return 'Limited confidence';
-}
-
 type Props = {
   domains: ConsumerDomainScoreV1[] | null | undefined;
+  /** When true, render as main-journey section with primary heading */
+  embedInJourney?: boolean;
 };
 
-export function Wave1DomainCards({ domains }: Props) {
+export function Wave1DomainCards({ domains, embedInJourney = false }: Props) {
   const [open, setOpen] = useState<Record<string, boolean>>({});
 
   if (!domains || domains.length === 0) {
@@ -50,30 +41,46 @@ export function Wave1DomainCards({ domains }: Props) {
     return null;
   }
 
+  const headingId = embedInJourney ? 'fe-domain-ux1a-health-systems-heading' : 'wave1-domain-cards-heading';
+
   return (
-    <section aria-labelledby="wave1-domain-cards-heading" className="space-y-4">
+    <section
+      aria-labelledby={headingId}
+      className="space-y-4"
+      data-testid="fe-domain-ux1a-health-systems-cards"
+    >
       <div>
-        <h2 id="wave1-domain-cards-heading" className="text-lg font-semibold text-slate-900">
-          Your health domains
+        <h2
+          id={headingId}
+          className={
+            embedInJourney ? 'text-xl font-semibold text-gray-900' : 'text-lg font-semibold text-slate-900'
+          }
+        >
+          Your health systems
         </h2>
         <p className="text-sm text-slate-600 mt-1">
-          High-level scores for three focus areas. Open a card for detail — not a diagnosis.
+          How three focus areas look on your panel — scores from your markers, not a diagnosis. Open a card for
+          detail.
         </p>
       </div>
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
         {ordered.map((d) => {
           const expanded = !!open[d.domain_id];
           const scorePct = Math.round(Math.max(0, Math.min(1, d.score)) * 100);
-          const shortExpl = d.contributor_sentence
-            ? d.contributor_sentence.length > 140
-              ? `${d.contributor_sentence.slice(0, 137)}…`
-              : d.contributor_sentence
-            : d.clinical_label;
+          const descriptor = d.plain_english_descriptor?.trim();
+          const shortExpl = descriptor || d.headline_sentence || d.contributor_sentence;
+          const num = d.evidence_completeness_numerator ?? 0;
+          const den = d.evidence_completeness_denominator ?? 0;
 
           return (
-            <Card key={d.domain_id} className="border-slate-200 shadow-sm">
+            <Card key={d.domain_id} className="border-slate-200 shadow-sm" data-testid={`wave1-card-${d.domain_id}`}>
               <CardHeader className="pb-2">
                 <CardTitle className="text-base font-semibold text-slate-900">{d.consumer_label}</CardTitle>
+                {descriptor ? (
+                  <p className="text-xs text-slate-500 mt-0.5" data-testid="wave1-plain-english-descriptor">
+                    {descriptor}
+                  </p>
+                ) : null}
                 <CardDescription className="text-xs text-slate-600 line-clamp-3">{shortExpl}</CardDescription>
                 {d.evidence_anchor_sentence ? (
                   <p className="text-xs text-slate-500 mt-1.5 border-l-2 border-indigo-200 pl-2">
@@ -85,9 +92,19 @@ export function Wave1DomainCards({ domains }: Props) {
                 <div className="flex flex-wrap items-baseline gap-2">
                   <span className="text-3xl font-bold text-indigo-700 tabular-nums">{scorePct}</span>
                   <span className="text-sm text-slate-500">/ 100</span>
-                  <span className="ml-auto text-sm font-medium text-slate-700">{bandLabelDisplay(d.band_label)}</span>
+                  <span
+                    className="ml-auto text-sm font-medium text-slate-700"
+                    data-testid="wave1-band-label"
+                  >
+                    {wave1BandLabelDisplay(d.band_label)}
+                  </span>
                 </div>
-                <p className="text-xs font-medium text-slate-600">{tierLabel(d.confidence_tier)}</p>
+                <p className="text-xs font-medium text-slate-600" data-testid="wave1-score-reliability">
+                  {wave1ScoreReliabilityLabel(d.confidence_tier)}
+                </p>
+                <p className="text-xs text-slate-600" data-testid="wave1-evidence-completeness">
+                  {wave1EvidenceCompletenessLine(num, den)}
+                </p>
                 <p className="text-sm text-slate-800 border-t border-slate-100 pt-2">{d.headline_sentence}</p>
                 <Button
                   type="button"

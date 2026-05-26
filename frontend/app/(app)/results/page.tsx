@@ -711,6 +711,11 @@ export default function ResultsPage() {
             />
           </section>
 
+          <Wave1DomainCards
+            domains={currentAnalysis?.consumer_domain_scores}
+            embedInJourney
+          />
+
           <div data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[2]}>
             <PrimaryFindingAndWhy
               report={clinicianReport}
@@ -803,15 +808,6 @@ export default function ResultsPage() {
               <ResultsActionCardsBlock actions={actionCards} />
             </div>
           </section>
-
-          <ResultsDisclosureSection
-            title="Health domains"
-            description="High-level domain scores — supplementary to the main journey above."
-            data-testid="section-patterns-secondary"
-            defaultOpen={false}
-          >
-            <Wave1DomainCards domains={currentAnalysis?.consumer_domain_scores} />
-          </ResultsDisclosureSection>
 
           <ResultsDisclosureSection
             title="Additional interpretation context"
