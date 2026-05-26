@@ -1,143 +1,120 @@
 {
-  "work_id": "DOMAIN-UX1A-PATCH",
   "bus_version": "1.3.1",
+  "work_id": "DOMAIN-UX1B",
   "status": "HARDENED",
   "hardened_utc": "2026-05-26T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "changes": [
     {
+      "type": "PREFLIGHT_BLOCKER",
+      "field": "Stale kernel token — DOMAIN-UX1A-PATCH token not removed",
+      "finding": "automation_bus/state/work_package_active.json contains work_id=DOMAIN-UX1A-PATCH with status=STARTED. Git log shows commit 3c22d0f 'chore(bus): DOMAIN-UX1A-PATCH kernel COMPLETE status' was committed, but the SOP §5 rule is that the token file is deleted on successful kernel finish. The file still exists and still reads DOMAIN-UX1A-PATCH. This is a pre-condition failure. Cursor's Stage 4 token verification at run time will read DOMAIN-UX1A-PATCH and halt. The kernel start for DOMAIN-UX1B cannot be run until this is resolved. Resolution required before Stage 3: either run 'python backend/scripts/run_work_package.py finish' if the PATCH implementation is complete and committed, or investigate why the token was not removed and resolve it. Do not manually delete the token file without running the kernel finish.",
+      "resolution": "BLOCKER — must be resolved before Stage 3 (kernel start for DOMAIN-UX1B).",
+      "cited_path": "automation_bus/state/work_package_active.json:1"
+    },
+    {
       "type": "CONFIRMED",
       "field": "Front matter — all 5 required SOP v1.3.1 fields valid",
-      "finding": "All five mandatory front matter fields present and correctly valued. work_id, branch, risk_level, execution_model, and change_type all present. MIXED/STANDARD is correct: this sprint modifies frontend display semantics (BEHAVIOUR surface) and string/label content (CONTENT surface) with no scoring, signal evaluation, root-cause, or Knowledge Bus assets touched. TWO_PHASE_START_FINISH is appropriate.",
+      "finding": "All five mandatory front matter fields present and correctly valued.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md line 2: work_id: DOMAIN-UX1A-PATCH",
-        "automation_bus/latest_cursor_prompt.md line 3: branch: domain-ux/domain-ux1a-card-labels-low-evidence",
-        "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD",
-        "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH",
-        "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED"
+        "automation_bus/latest_cursor_prompt.md line 2: work_id: DOMAIN-UX1B — CONFIRMED",
+        "automation_bus/latest_cursor_prompt.md line 3: branch: domain-ux/domain-ux1b-premium-card-visuals — CONFIRMED",
+        "automation_bus/latest_cursor_prompt.md line 4: risk_level: LOW — CONFIRMED",
+        "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH — CONFIRMED",
+        "automation_bus/latest_cursor_prompt.md line 6: change_type: CONTENT — CONFIRMED (see note)"
+      ]
+    },
+    {
+      "type": "HARDENING_NOTE",
+      "field": "change_type: CONTENT applied to executable .tsx/.ts frontend files — edge case",
+      "finding": "SOP §4 defines CONTENT as 'SSOT updates, YAML modifications, knowledge expansion, non-executable data, docs-only'. The sprint modifies Wave1DomainCards.tsx and wave1HealthSystemCardDisplay.ts which are executable code. However, these files do not touch any Intelligence Core component. They only present already-governed DTO values with visual enhancement. DOMAIN-UX1A-PATCH set direct precedent with the same classification for equivalent frontend-only presentational work. Accepted on that precedent. If implementation requires any code path that affects analytical output, emitted reasoning, or DTO structure, Cursor must STOP and escalate to at least STANDARD.",
+      "resolution": "Non-blocking. Accepted per DOMAIN-UX1A-PATCH precedent. Cursor must escalate if scope changes.",
+      "cited_path": "automation_bus/latest_cursor_prompt.md:6"
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "All 5 controlling authority files present (Stage 2A)",
+      "finding": "All authority files in the prompt 'Read before doing anything' block confirmed present on disk.",
+      "citations": [
+        "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md — CONFIRMED present. Sprint 2 (DOMAIN-UX1B) defined at line 217. Scope matches prompt exactly.",
+        "docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md — CONFIRMED present.",
+        "docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md — CONFIRMED present.",
+        "docs/audit-papers/DOMAIN-UX1A_PATCH_card_labels_low_evidence_notes.md — CONFIRMED present. Residual gap for DOMAIN-UX1B documented at line 88.",
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — CONFIRMED present."
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "MIXED/STANDARD risk classification correct — escalation boundary verified",
-      "finding": "Sprint modifies label strings (CONTENT) and conditional rendering logic (BEHAVIOUR) in frontend only. No Intelligence Core components touched. The escalation STOP conditions at prompt lines 19-29 correctly guard against scope creep into scoring, signal evaluation, root-cause, KB assets, IDL records, domain confidence rules, marker-to-subsystem grouping, or analytical pipeline behaviour. STANDARD holds unless an escalation trigger fires during implementation.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 12-29: Classification and escalation STOP conditions",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §3: Intelligence Core definition",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §10: HIGH risk triggers"
-      ]
+      "field": "Source component exists and baseline matches expected pre-sprint state (Stage 2A cross-ref)",
+      "finding": "frontend/app/components/results/Wave1DomainCards.tsx confirmed present. Current state: score rendered as plain {scorePct} + '/ 100' large text (line 107) — no premium score visual. Score reliability label block confirmed at lines 118-120. Evidence completeness label block confirmed at lines 123-125. Zero-evidence state shows 'Not enough data' from DOMAIN-UX1A-PATCH (line 99). No subsystem chips present. Component reads score/reliability/evidence from DTO without recalculating (lines 75-77). Baseline is consistent with DOMAIN-UX1A-PATCH notes — sprint is not a no-op.",
+      "cited_path": "frontend/app/components/results/Wave1DomainCards.tsx:107"
     },
     {
       "type": "CONFIRMED",
-      "field": "All 4 controlling authority files present including STOP-condition file (Stage 2A)",
-      "finding": "All four authority files in the prompt 'Read before doing anything' block confirmed on disk. The STOP condition 'If the DOMAIN-UX1A notes file is missing, STOP' (prompt line 62) is satisfiable — file is present.",
-      "citations": [
-        "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md — CONFIRMED (Glob 2026-05-26)",
-        "docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md — CONFIRMED (Glob 2026-05-26)",
-        "docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md — CONFIRMED (Glob 2026-05-26)",
-        "docs/audit-papers/DOMAIN-UX1_health_systems_card_codebase_reality_audit.md — CONFIRMED (Glob 2026-05-26)"
-      ]
+      "field": "Source lib file exists (Stage 2A)",
+      "finding": "frontend/app/lib/wave1HealthSystemCardDisplay.ts confirmed present. Contains wave1IsZeroEvidenceState, wave1ScoreReliabilityLabel, wave1EvidenceCompletenessLine, wave1BandLabelDisplay.",
+      "cited_path": "frontend/app/lib/wave1HealthSystemCardDisplay.ts"
     },
     {
       "type": "CONFIRMED",
-      "field": "Defect 1 — Score reliability label absent: CONFIRMED in source (Stage 2A cross-ref)",
-      "finding": "Wave1DomainCards.tsx renders wave1ScoreReliabilityLabel(d.confidence_tier) with no label prefix. The rendered output is a bare value: 'Limited reliability'. No 'Score reliability:' label text exists anywhere in the component. Defect is genuine — sprint is not a no-op for this item.",
+      "field": "All required test and sentinel files present (Stage 2A)",
+      "finding": "All test files named in Required Validation Commands and Required Tests sections confirmed on disk.",
       "citations": [
-        "frontend/app/components/results/Wave1DomainCards.tsx lines 102-104: <p data-testid=\"wave1-score-reliability\">{wave1ScoreReliabilityLabel(d.confidence_tier)}</p> — value-only, no label",
-        "frontend/app/lib/wave1HealthSystemCardDisplay.ts lines 6-10: wave1ScoreReliabilityLabel() returns bare string 'Good reliability' / 'Moderate reliability' / 'Limited reliability' — no prefix"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Defect 2 — Evidence completeness label absent: CONFIRMED in source (Stage 2A cross-ref)",
-      "finding": "wave1EvidenceCompletenessLine() returns 'Based on X of Y expected markers on your panel' — no 'Evidence completeness:' label prefix. The component renders this string value-only at lines 105-107. Sprint must add the label either by updating the function return value or adding a label element in JSX.",
-      "citations": [
-        "frontend/app/lib/wave1HealthSystemCardDisplay.ts lines 22-27: wave1EvidenceCompletenessLine() returns 'Based on {numerator} of {denominator} expected markers on your panel' — no label prefix",
-        "frontend/app/components/results/Wave1DomainCards.tsx lines 105-107: <p data-testid=\"wave1-evidence-completeness\">{wave1EvidenceCompletenessLine(num, den)}</p> — value-only, no label"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Defect 3 — Zero-evidence cards show 0/100 and Needs attention: CONFIRMED in source (Stage 2A cross-ref)",
-      "finding": "No conditional branch exists for the case evidence_completeness_numerator === 0 AND evidence_completeness_denominator > 0. scorePct is computed unconditionally as Math.round(Math.max(0, Math.min(1, d.score)) * 100) and rendered. band_label is displayed unconditionally via wave1BandLabelDisplay(). When backend emits score=0 and band_label='review' with zero evidence, card shows '0 / 100' and 'Needs attention'. No insufficient-data state exists.",
-      "citations": [
-        "frontend/app/components/results/Wave1DomainCards.tsx line 69: scorePct = Math.round(Math.max(0, Math.min(1, d.score)) * 100) — unconditional",
-        "frontend/app/components/results/Wave1DomainCards.tsx lines 92-101: score and band_label rendered unconditionally, no zero-evidence guard",
-        "frontend/app/components/results/Wave1DomainCards.tsx lines 72-73: num and den read from DTO — data is available for a zero-evidence conditional"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "DTO fields evidence_completeness_numerator and evidence_completeness_denominator already present — no backend changes required (Stage 2A cross-ref)",
-      "finding": "DOMAIN-UX1A already added both fields to the TypeScript interface and the Pydantic model. The component already reads them at lines 72-73. The data pipeline is complete. This sprint requires NO new DTO fields. All defects are fixable with frontend-only changes to Wave1DomainCards.tsx and wave1HealthSystemCardDisplay.ts only. Backend files results.py and domain_score_assembler.py need not be touched.",
-      "citations": [
-        "frontend/app/types/analysis.ts lines 353-354: evidence_completeness_numerator?: number; evidence_completeness_denominator?: number; — ALREADY PRESENT",
-        "frontend/app/components/results/Wave1DomainCards.tsx lines 72-73: const num = d.evidence_completeness_numerator ?? 0; const den = d.evidence_completeness_denominator ?? 0; — ALREADY READS DTO"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "All regression test files and Sentinel pack present (Stage 2A)",
-      "finding": "All test files named in Required Validation Commands confirmed on disk. Sentinel pack confirmed present.",
-      "citations": [
-        "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py — CONFIRMED",
         "frontend/tests/components/Wave1DomainCards.test.tsx — CONFIRMED",
-        "backend/tests/unit/test_domain_score_assembler_v1.py — CONFIRMED",
+        "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py — CONFIRMED",
         "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — CONFIRMED",
         "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py — CONFIRMED",
         "backend/tests/regression/test_canonical_mapping_star_suffix_failure.py — CONFIRMED",
         "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py — CONFIRMED",
         "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — CONFIRMED",
         "backend/tests/unit/test_scoring_rules.py — CONFIRMED",
-        "sentinel/packs/escaped_defects_v1.json — CONFIRMED"
+        "backend/tests/unit/test_domain_score_assembler_v1.py — CONFIRMED",
+        "sentinel/packs/escaped_defects_v1.json — CONFIRMED present. No DOMAIN-UX1B classes present yet — must be added this sprint."
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Forbidden file boundary verified — no overlap with required implementation paths (Stage 2B)",
-      "finding": "Required implementation touches only Wave1DomainCards.tsx and wave1HealthSystemCardDisplay.ts (plus test files and Sentinel pack). These are fully disjoint from the forbidden list. Backend DTO files (results.py, domain_score_assembler.py) are NOT required for this sprint — the DTO fields already exist.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 213-247: Potentially allowed files",
-        "automation_bus/latest_cursor_prompt.md lines 249-260: Forbidden unless GPT explicitly approves"
-      ]
+      "field": "Forbidden file boundary verified — no overlap with required implementation scope (Stage 2A)",
+      "finding": "Required implementation scope is entirely within frontend/app/components/results/, frontend/app/lib/, frontend/tests/, and sentinel/packs/. These are fully disjoint from the forbidden list. No backend DTO, scoring, pipeline, analytics, or SSOT files need to be touched.",
+      "cited_path": "automation_bus/latest_cursor_prompt.md:237"
     },
     {
       "type": "CONFIRMED",
-      "field": "STOP conditions complete, actionable, and non-blocking to a correct implementation (Stage 2B)",
-      "finding": "Token missing/mismatched → STOP. Authority notes file missing → STOP. Baseline issues not found in code → STOP with no-op risk. Implementation requires any of nine listed escalation triggers → escalate HIGH + STOP. All STOP conditions are well-defined and unambiguous.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 107-114: kernel token STOP",
-        "automation_bus/latest_cursor_prompt.md line 62: DOMAIN-UX1A notes file STOP",
-        "automation_bus/latest_cursor_prompt.md lines 119-124: baseline no-op STOP",
-        "automation_bus/latest_cursor_prompt.md lines 19-29: escalation STOP conditions"
-      ]
+      "field": "No subsystem work required — planning paper and prompt in agreement (Stage 2A cross-ref)",
+      "finding": "Planning paper §Sprint2 lines 240-244 and prompt §F both prohibit subsystem chips, groupings, and labels. These remain deferred to DOMAIN-UX1C. No DTO or backend changes are required to implement this sprint.",
+      "cited_path": "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md:240"
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "STOP conditions present, actionable, and complete (Stage 2B)",
+      "finding": "Token missing/mismatch → STOP (line 98-102). Planning doc or PATCH notes missing → STOP (line 51). Baseline verification fails → STOP (line 115). Implementation requires any of nine escalation triggers → escalate HIGH + STOP (lines 18-29). All STOP conditions are unambiguous.",
+      "cited_path": "automation_bus/latest_cursor_prompt.md:18"
     },
     {
       "type": "CONFIRMED",
       "field": "PowerShell compatibility verified",
       "finding": "All preflight, validation, and closure commands use Python, npm, git, and Test-Path — no bash-only syntax.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 91-96: preflight PowerShell commands",
-        "automation_bus/latest_cursor_prompt.md lines 325-358: validation commands"
-      ]
+      "cited_path": "automation_bus/latest_cursor_prompt.md:80"
     },
     {
       "type": "HARDENING_NOTE",
-      "field": "wave1EvidenceCompletenessLine() string format change will break existing test assertions",
-      "finding": "The existing Wave1DomainCards.test.tsx assertions almost certainly assert on the current value-only output of wave1EvidenceCompletenessLine() ('Based on X of Y expected markers on your panel'). Sprint must update these test assertions when changing the function output or adding a label element. If Cursor adds the label in JSX rather than in the function, test queries by text content will also need updating. Required tests section explicitly calls for label + value testing — but existing passing tests must be updated rather than deleted.",
-      "resolution": "Non-blocking. Cursor must update Wave1DomainCards.test.tsx assertions in sync with any change to label rendering. Required tests must verify label + value together, not just value."
+      "field": "Premium score visual must not show for zero-evidence cards",
+      "finding": "Prompt §A explicitly states: 'For zero-evidence cards, do not show a score visual implying a true 0/100 health score.' The zero-evidence gate is already in the component (lines 74, 96-104 of Wave1DomainCards.tsx). Cursor must ensure any premium score visual (radial arc, gauge) is rendered only inside the non-zero-evidence branch. The zero-evidence branch must continue to show only the 'Not enough data' state without a score device.",
+      "resolution": "Non-blocking. Implementation constraint. Required test 'zero-evidence cards do not render the score visual as a true health score' covers this."
     },
     {
       "type": "HARDENING_NOTE",
-      "field": "Zero-evidence conditional must use num === 0 AND den > 0, not score === 0",
-      "finding": "The prompt correctly specifies the gate as evidence_completeness_numerator === 0 AND evidence_completeness_denominator > 0 (prompt lines 153-156). Cursor must not substitute score === 0 as the gate condition, since a score of zero is a legitimate backend output even with partial evidence. The DTO fields num and den are already read at lines 72-73 and are available for the conditional. When den === 0, the current wave1EvidenceCompletenessLine fallback 'Evidence coverage not available' applies — this edge case must remain handled.",
-      "resolution": "Non-blocking. Cursor instruction: gate the zero-evidence display branch on num === 0 && den > 0. Leave the den <= 0 fallback in wave1EvidenceCompletenessLine() unchanged."
+      "field": "Score value for premium visual must come from DTO — not recalculated",
+      "finding": "Current scorePct at line 75 of Wave1DomainCards.tsx correctly reads from d.score. The premium visual must use this same value. No frontend score calculation is permitted.",
+      "resolution": "Non-blocking. Required tests include 'score value still comes from DTO'.",
+      "cited_path": "frontend/app/components/results/Wave1DomainCards.tsx:75"
     },
     {
       "type": "HARDENING_NOTE",
-      "field": "Sentinel classes must each point to an active test — not a placeholder",
-      "finding": "The four required Sentinel defect classes (health_system_card_reliability_label_missing, health_system_card_evidence_completeness_label_missing, health_system_card_zero_evidence_shows_needs_attention, health_system_card_zero_evidence_shows_primary_zero_score) must each reference a real test function. The existing escaped_defects_v1.json structure uses a test_ref or equivalent pointer field. No Sentinel entry may be added without a corresponding active deterministic test in this sprint.",
-      "resolution": "Non-blocking. Cursor must add the required test cases first, then reference them in Sentinel entries. Review existing escaped_defects_v1.json schema before adding entries to match the established schema."
+      "field": "Sentinel classes must each reference an active deterministic test — no placeholders",
+      "finding": "Four Sentinel defect classes are required. Each must reference a test_file pointing to a real test function in this sprint. Review escaped_defects_v1.json schema (lines 1-10) before adding entries. All four classes named in the prompt must be added: health_system_card_score_visual_missing, health_system_card_zero_evidence_score_visual_visible, health_system_card_partial_evidence_overconfidence, health_system_card_frontend_invents_subsystem_chips.",
+      "resolution": "Non-blocking. Implementation obligation.",
+      "cited_path": "sentinel/packs/escaped_defects_v1.json:1"
     }
   ]
 }
