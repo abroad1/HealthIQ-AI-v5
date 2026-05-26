@@ -1,10 +1,9 @@
 {
-  "branch": "domain-ux/domain-ux1b-premium-card-visuals",
+  "branch": "domain-ux/domain-ux1c-governed-subsystem-evidence",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-26T20:04:41Z",
-  "cursor_started_utc": "2026-05-26T20:01:03Z",
-  "head_sha": "b8843301509b36742c61e1e1cf3a8935893bb3bb",
+  "cursor_started_utc": "2026-05-26T20:24:25Z",
+  "head_sha": "f7772315cdbd4a46ea87d0325f7def1611e38dc2",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "DOMAIN-UX1B"
+  "status": "IN_PROGRESS",
+  "work_id": "DOMAIN-UX1C"
 }
