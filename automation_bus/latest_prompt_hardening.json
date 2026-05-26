@@ -1,120 +1,124 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "DOMAIN-UX1B",
+  "work_id": "DOMAIN-UX1C",
   "status": "HARDENED",
   "hardened_utc": "2026-05-26T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "changes": [
     {
-      "type": "PREFLIGHT_BLOCKER",
-      "field": "Stale kernel token — DOMAIN-UX1A-PATCH token not removed",
-      "finding": "automation_bus/state/work_package_active.json contains work_id=DOMAIN-UX1A-PATCH with status=STARTED. Git log shows commit 3c22d0f 'chore(bus): DOMAIN-UX1A-PATCH kernel COMPLETE status' was committed, but the SOP §5 rule is that the token file is deleted on successful kernel finish. The file still exists and still reads DOMAIN-UX1A-PATCH. This is a pre-condition failure. Cursor's Stage 4 token verification at run time will read DOMAIN-UX1A-PATCH and halt. The kernel start for DOMAIN-UX1B cannot be run until this is resolved. Resolution required before Stage 3: either run 'python backend/scripts/run_work_package.py finish' if the PATCH implementation is complete and committed, or investigate why the token was not removed and resolve it. Do not manually delete the token file without running the kernel finish.",
-      "resolution": "BLOCKER — must be resolved before Stage 3 (kernel start for DOMAIN-UX1B).",
-      "cited_path": "automation_bus/state/work_package_active.json:1"
-    },
-    {
       "type": "CONFIRMED",
       "field": "Front matter — all 5 required SOP v1.3.1 fields valid",
-      "finding": "All five mandatory front matter fields present and correctly valued.",
+      "finding": "All five mandatory front matter fields present and correctly valued. Classification is correct: MIXED is required because the sprint adds a new governed Pydantic model (SubsystemEvidenceV1) consumed by the domain score assembler, and the emitted DTO content changes. HIGH risk is correct per SOP §10 (MIXED touching Intelligence Core-adjacent DTO assembly; any work that changes emitted analytical output structure defaults to HIGH).",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md line 2: work_id: DOMAIN-UX1B — CONFIRMED",
-        "automation_bus/latest_cursor_prompt.md line 3: branch: domain-ux/domain-ux1b-premium-card-visuals — CONFIRMED",
-        "automation_bus/latest_cursor_prompt.md line 4: risk_level: LOW — CONFIRMED",
+        "automation_bus/latest_cursor_prompt.md line 2: work_id: DOMAIN-UX1C — CONFIRMED",
+        "automation_bus/latest_cursor_prompt.md line 3: branch: domain-ux/domain-ux1c-governed-subsystem-evidence — CONFIRMED",
+        "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH — CONFIRMED",
         "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH — CONFIRMED",
-        "automation_bus/latest_cursor_prompt.md line 6: change_type: CONTENT — CONFIRMED (see note)"
-      ]
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "field": "change_type: CONTENT applied to executable .tsx/.ts frontend files — edge case",
-      "finding": "SOP §4 defines CONTENT as 'SSOT updates, YAML modifications, knowledge expansion, non-executable data, docs-only'. The sprint modifies Wave1DomainCards.tsx and wave1HealthSystemCardDisplay.ts which are executable code. However, these files do not touch any Intelligence Core component. They only present already-governed DTO values with visual enhancement. DOMAIN-UX1A-PATCH set direct precedent with the same classification for equivalent frontend-only presentational work. Accepted on that precedent. If implementation requires any code path that affects analytical output, emitted reasoning, or DTO structure, Cursor must STOP and escalate to at least STANDARD.",
-      "resolution": "Non-blocking. Accepted per DOMAIN-UX1A-PATCH precedent. Cursor must escalate if scope changes.",
-      "cited_path": "automation_bus/latest_cursor_prompt.md:6"
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "All 5 controlling authority files present (Stage 2A)",
-      "finding": "All authority files in the prompt 'Read before doing anything' block confirmed present on disk.",
-      "citations": [
-        "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md — CONFIRMED present. Sprint 2 (DOMAIN-UX1B) defined at line 217. Scope matches prompt exactly.",
-        "docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md — CONFIRMED present.",
-        "docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md — CONFIRMED present.",
-        "docs/audit-papers/DOMAIN-UX1A_PATCH_card_labels_low_evidence_notes.md — CONFIRMED present. Residual gap for DOMAIN-UX1B documented at line 88.",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — CONFIRMED present."
+        "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED — CONFIRMED"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Source component exists and baseline matches expected pre-sprint state (Stage 2A cross-ref)",
-      "finding": "frontend/app/components/results/Wave1DomainCards.tsx confirmed present. Current state: score rendered as plain {scorePct} + '/ 100' large text (line 107) — no premium score visual. Score reliability label block confirmed at lines 118-120. Evidence completeness label block confirmed at lines 123-125. Zero-evidence state shows 'Not enough data' from DOMAIN-UX1A-PATCH (line 99). No subsystem chips present. Component reads score/reliability/evidence from DTO without recalculating (lines 75-77). Baseline is consistent with DOMAIN-UX1A-PATCH notes — sprint is not a no-op.",
-      "cited_path": "frontend/app/components/results/Wave1DomainCards.tsx:107"
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Source lib file exists (Stage 2A)",
-      "finding": "frontend/app/lib/wave1HealthSystemCardDisplay.ts confirmed present. Contains wave1IsZeroEvidenceState, wave1ScoreReliabilityLabel, wave1EvidenceCompletenessLine, wave1BandLabelDisplay.",
-      "cited_path": "frontend/app/lib/wave1HealthSystemCardDisplay.ts"
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "All required test and sentinel files present (Stage 2A)",
-      "finding": "All test files named in Required Validation Commands and Required Tests sections confirmed on disk.",
+      "field": "All 7 controlling authority documents present (Stage 2A)",
+      "finding": "All authority files in the prompt 'Read before doing anything' block confirmed present on disk via Glob.",
       "citations": [
-        "frontend/tests/components/Wave1DomainCards.test.tsx — CONFIRMED",
+        "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md — CONFIRMED present",
+        "docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md — CONFIRMED present",
+        "docs/architecture/User Health to Systems Map_FINAL.md — CONFIRMED present",
+        "docs/audit-papers/DOMAIN-UX1_health_systems_card_codebase_reality_audit.md — CONFIRMED present",
+        "docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md — CONFIRMED present",
+        "docs/audit-papers/DOMAIN-UX1A_PATCH_card_labels_low_evidence_notes.md — CONFIRMED present",
+        "docs/audit-papers/DOMAIN-UX1B_premium_health_systems_card_visuals_notes.md — CONFIRMED present",
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — CONFIRMED present"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Subsystem slot exists in backend model — null, untyped (Stage 2A cross-ref)",
+      "finding": "backend/core/models/results.py line 258: subsystems: Optional[List[Any]] field exists on ConsumerDomainScoreV1, currently typed as Any and defaulting to None. Sprint will replace List[Any] with List[SubsystemEvidenceV1]. ConsumerDomainScoreV1 uses frozen=True, extra='forbid' (line 174). The new SubsystemEvidenceV1 must therefore be a proper Pydantic BaseModel with extra='forbid' — a plain TypedDict or dict will not satisfy the schema contract.",
+      "cited_path": "backend/core/models/results.py:258"
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Assembler hard-codes subsystems=None — change is fully isolated (Stage 2A cross-ref)",
+      "finding": "backend/core/analytics/domain_score_assembler.py line 369: _wave1_card_contract_extras() returns 'subsystems': None for all three Wave 1 domains. Sprint must populate this for all three domains. The function is called from cv_block() line 492, met_block() line 550, and liv_block() line 634. All three are within the allowed file scope. Scoring thresholds, signal state logic, confidence tier computation, narrative assembly, and IDL selection are all separate functions and must not be modified.",
+      "cited_path": "backend/core/analytics/domain_score_assembler.py:369"
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Frontend type is untyped — needs tightening (Stage 2A cross-ref)",
+      "finding": "frontend/app/types/analysis.ts line 355: subsystems?: unknown[] | null — current type is unknown[]. Sprint must replace this with a typed interface matching SubsystemEvidenceV1 (subsystem_id, subsystem_label, included_marker_ids, missing_marker_ids, status_label, evidence_role, source_trace). This is a type-only change with no rendering logic.",
+      "cited_path": "frontend/app/types/analysis.ts:355"
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Wave1DomainCards.tsx has zero subsystem references — no frontend invention confirmed (Stage 2A cross-ref)",
+      "finding": "Grep of frontend/app/components/results/Wave1DomainCards.tsx for 'subsystem' returns zero matches. Baseline is clean: no frontend subsystem logic, no labels, no chips, no groupings. Sprint must NOT add visible subsystem rendering to this file.",
+      "cited_path": "frontend/app/components/results/Wave1DomainCards.tsx"
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "All required test and Sentinel files present (Stage 2A)",
+      "finding": "All test files named in Required Validation Commands confirmed present on disk.",
+      "citations": [
         "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py — CONFIRMED",
-        "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — CONFIRMED",
-        "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py — CONFIRMED",
-        "backend/tests/regression/test_canonical_mapping_star_suffix_failure.py — CONFIRMED",
-        "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py — CONFIRMED",
-        "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — CONFIRMED",
-        "backend/tests/unit/test_scoring_rules.py — CONFIRMED",
         "backend/tests/unit/test_domain_score_assembler_v1.py — CONFIRMED",
-        "sentinel/packs/escaped_defects_v1.json — CONFIRMED present. No DOMAIN-UX1B classes present yet — must be added this sprint."
+        "frontend/tests/components/Wave1DomainCards.test.tsx — CONFIRMED",
+        "sentinel/packs/escaped_defects_v1.json — CONFIRMED"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Forbidden file boundary verified — no overlap with required implementation scope (Stage 2A)",
-      "finding": "Required implementation scope is entirely within frontend/app/components/results/, frontend/app/lib/, frontend/tests/, and sentinel/packs/. These are fully disjoint from the forbidden list. No backend DTO, scoring, pipeline, analytics, or SSOT files need to be touched.",
-      "cited_path": "automation_bus/latest_cursor_prompt.md:237"
+      "field": "No kernel token active — expected at hardening stage",
+      "finding": "automation_bus/state/work_package_active.json does not exist. This is correct: kernel start (Stage 3) has not been run yet. Token will be created by kernel on python backend/scripts/run_work_package.py start.",
+      "cited_path": "automation_bus/state/work_package_active.json"
     },
     {
       "type": "CONFIRMED",
-      "field": "No subsystem work required — planning paper and prompt in agreement (Stage 2A cross-ref)",
-      "finding": "Planning paper §Sprint2 lines 240-244 and prompt §F both prohibit subsystem chips, groupings, and labels. These remain deferred to DOMAIN-UX1C. No DTO or backend changes are required to implement this sprint.",
-      "cited_path": "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md:240"
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "STOP conditions present, actionable, and complete (Stage 2B)",
-      "finding": "Token missing/mismatch → STOP (line 98-102). Planning doc or PATCH notes missing → STOP (line 51). Baseline verification fails → STOP (line 115). Implementation requires any of nine escalation triggers → escalate HIGH + STOP (lines 18-29). All STOP conditions are unambiguous.",
-      "cited_path": "automation_bus/latest_cursor_prompt.md:18"
+      "field": "STOP conditions are present, unambiguous, and protect scope (Stage 2B)",
+      "finding": "Token missing/mismatch → STOP (lines 101-105). Any required authority document missing → STOP (line 52). Any baseline assumption false (subsystems not null, frontend renders subsystems, Wave 1 cards broken) → STOP (line 122). Forbidden files (ssot, scoring, pipeline, root_cause, report_compiler, KB, automation_bus/state, kernel scripts) → must not be touched. STOP conditions are complete and unambiguous.",
+      "cited_path": "automation_bus/latest_cursor_prompt.md:52"
     },
     {
       "type": "CONFIRMED",
       "field": "PowerShell compatibility verified",
-      "finding": "All preflight, validation, and closure commands use Python, npm, git, and Test-Path — no bash-only syntax.",
-      "cited_path": "automation_bus/latest_cursor_prompt.md:80"
+      "finding": "All preflight, validation, and closure commands use Python, npm, git, Test-Path — no bash-only syntax. PowerShell compatible.",
+      "cited_path": "automation_bus/latest_cursor_prompt.md:83"
     },
     {
       "type": "HARDENING_NOTE",
-      "field": "Premium score visual must not show for zero-evidence cards",
-      "finding": "Prompt §A explicitly states: 'For zero-evidence cards, do not show a score visual implying a true 0/100 health score.' The zero-evidence gate is already in the component (lines 74, 96-104 of Wave1DomainCards.tsx). Cursor must ensure any premium score visual (radial arc, gauge) is rendered only inside the non-zero-evidence branch. The zero-evidence branch must continue to show only the 'Not enough data' state without a score device.",
-      "resolution": "Non-blocking. Implementation constraint. Required test 'zero-evidence cards do not render the score visual as a true health score' covers this."
+      "field": "SENTINEL REGRESSION RISK — existing subsystem Sentinel tests must be reviewed before implementation",
+      "finding": "sentinel/packs/escaped_defects_v1.json line 656 has 'health_system_card_subsystem_placeholder_visible'. backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py line 137-141 implements this as: assert 'subsystem' not in cards.lower(). After DOMAIN-UX1C, the backend DTO will contain populated subsystem fields. If 'cards' in that test includes serialised DTO JSON, the string 'subsystem' will appear and the assert will FAIL. Cursor must read this test before implementing and determine whether 'cards' refers to (a) raw DTO JSON or (b) rendered frontend card HTML. If (a), the test must be updated to a narrower assertion ('no visible subsystem UI') before committing. If (b), the test will still pass. This must be resolved before any implementation commit.",
+      "resolution": "REQUIRED PREFLIGHT — Cursor must read test at line 137-141 and verify what 'cards' refers to before implementing.",
+      "cited_path": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py:137"
     },
     {
       "type": "HARDENING_NOTE",
-      "field": "Score value for premium visual must come from DTO — not recalculated",
-      "finding": "Current scorePct at line 75 of Wave1DomainCards.tsx correctly reads from d.score. The premium visual must use this same value. No frontend score calculation is permitted.",
-      "resolution": "Non-blocking. Required tests include 'score value still comes from DTO'.",
-      "cited_path": "frontend/app/components/results/Wave1DomainCards.tsx:75"
+      "field": "Pydantic frozen + extra=forbid constraint on SubsystemEvidenceV1",
+      "finding": "ConsumerDomainScoreV1 uses ConfigDict(frozen=True, extra='forbid') at results.py line 174. Any nested SubsystemEvidenceV1 passed as a list element must itself be a properly defined Pydantic BaseModel with extra='forbid'. A plain dict, TypedDict, or dataclass will not satisfy this schema enforcement. The new model must be defined in backend/core/models/results.py (or imported from a narrowly scoped analytics helper) and must pass Pydantic v2 model validation before being included in the subsystems field.",
+      "resolution": "Non-blocking — implementation constraint for Cursor to follow.",
+      "cited_path": "backend/core/models/results.py:174"
     },
     {
       "type": "HARDENING_NOTE",
-      "field": "Sentinel classes must each reference an active deterministic test — no placeholders",
-      "finding": "Four Sentinel defect classes are required. Each must reference a test_file pointing to a real test function in this sprint. Review escaped_defects_v1.json schema (lines 1-10) before adding entries. All four classes named in the prompt must be added: health_system_card_score_visual_missing, health_system_card_zero_evidence_score_visual_visible, health_system_card_partial_evidence_overconfidence, health_system_card_frontend_invents_subsystem_chips.",
-      "resolution": "Non-blocking. Implementation obligation.",
-      "cited_path": "sentinel/packs/escaped_defects_v1.json:1"
+      "field": "Subsystem mapping authority does not yet exist — Cursor must create and document it",
+      "finding": "No existing subsystem-to-marker mapping was found in any backend analytics file. The prompt correctly anticipates this and instructs Cursor to create a narrowly scoped mapping helper under backend/core/analytics/ if none exists. Cursor must: (1) create the mapping in one clearly named file, (2) document it in the required audit-paper notes, (3) not scatter the mapping across multiple files. The prompt's suggested subsystem label set (Lipid transport, Homocysteine pathway, Vascular strain context, Glycaemic control, Insulin and metabolic context, Liver enzyme pattern, Liver processing context) is a starting point — Cursor must verify each label is safely supported by existing backend evidence before emitting.",
+      "resolution": "Non-blocking — expected gap. Implementation obligation.",
+      "cited_path": "automation_bus/latest_cursor_prompt.md:184"
+    },
+    {
+      "type": "HARDENING_NOTE",
+      "field": "Wave 2 subsystem suppression must be tested explicitly",
+      "finding": "Required tests include: 'no Wave 2 domains emit subsystem evidence unless explicitly supported and authorised'. The assembler currently only builds three blocks (cv_block, met_block, liv_block). But if future waves are added, the mapping must not auto-emit for them. Cursor should add a test asserting that only wave1_cardiovascular, wave1_blood_sugar, and wave1_liver emit non-null subsystems in the current sprint.",
+      "resolution": "Non-blocking — test coverage obligation.",
+      "cited_path": "automation_bus/latest_cursor_prompt.md:329"
+    },
+    {
+      "type": "HARDENING_NOTE",
+      "field": "Sentinel — 5 new defect classes required; 2 existing classes may need updating",
+      "finding": "The prompt requires adding 5 new Sentinel classes: health_system_subsystems_missing_from_dto, health_system_subsystem_labels_frontend_defined, health_system_subsystem_marker_grouping_frontend_defined, health_system_subsystem_fake_status_emitted, health_system_wave2_subsystems_prematurely_emitted. Additionally, existing class 'health_system_card_frontend_invents_subsystem_chips' (line 728 of escaped_defects_v1.json) should be reviewed — it may need its description updated to clarify its scope post-UX1C. No placeholder Sentinel entries permitted; each must reference an active deterministic test function.",
+      "resolution": "Non-blocking — implementation obligation.",
+      "cited_path": "sentinel/packs/escaped_defects_v1.json:728"
     }
   ]
 }
