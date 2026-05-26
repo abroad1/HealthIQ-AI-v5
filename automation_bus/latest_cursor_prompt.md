@@ -1,10 +1,3 @@
-Use this as:
-
-```text
-automation_bus/latest_cursor_prompt.md
-```
-
-````md
 ---
 work_id: DOMAIN-UX1A
 branch: domain-ux/domain-ux1a-wave1-card-scaffold-contract
@@ -65,7 +58,7 @@ docs/architecture/User Health to Systems Map_FINAL.md
 docs/audit-papers/DOMAIN-UX1_health_systems_card_codebase_reality_audit.md
 docs/audit-papers/DOMAIN-R1_launch_core_health_domain_readiness_audit.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
-````
+```
 
 If any of the first four files are missing, STOP.
 
@@ -453,6 +446,3 @@ Do not start DOMAIN-UX1B.
 Cursor implements DOMAIN-UX1A only.
 
 Cursor may not self-certify clinical correctness, merge readiness, or permission to begin DOMAIN-UX1B.
-
-```
-```
