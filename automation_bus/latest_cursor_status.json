@@ -1,9 +1,10 @@
 {
   "branch": "domain-ux/domain-ux1b-premium-card-visuals",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-26T20:04:41Z",
   "cursor_started_utc": "2026-05-26T20:01:03Z",
-  "head_sha": "c0bfc789e545134f1c71f63e999a168d5c62e03a",
+  "head_sha": "b8843301509b36742c61e1e1cf3a8935893bb3bb",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "DOMAIN-UX1B"
 }
