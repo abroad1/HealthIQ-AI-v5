@@ -54,9 +54,38 @@ describe('Wave1DomainCards', () => {
     expect(screen.getByTestId('wave1-plain-english-descriptor')).toHaveTextContent(
       'Liver strain and processing load'
     );
+    expect(screen.getByText('Score reliability')).toBeInTheDocument();
     expect(screen.getByTestId('wave1-score-reliability')).toHaveTextContent('Moderate reliability');
     expect(screen.getByTestId('wave1-band-label')).toHaveTextContent('Stable');
-    expect(screen.getByTestId('wave1-evidence-completeness')).toHaveTextContent('2 of 5');
+    expect(screen.getByText('Evidence completeness')).toBeInTheDocument();
+    expect(screen.getByTestId('wave1-evidence-completeness')).toHaveTextContent(
+      '2 of 5 expected markers included'
+    );
     expect(screen.queryByText('Hepatic')).not.toBeInTheDocument();
+  });
+
+  it('shows insufficient-data state for zero-evidence cards (DOMAIN-UX1A-PATCH)', () => {
+    render(
+      <Wave1DomainCards
+        domains={[
+          minimalLiverDomain({
+            score: 0,
+            band_label: 'review',
+            evidence_completeness_numerator: 0,
+            evidence_completeness_denominator: 3,
+            confidence_tier: 'low',
+          }),
+        ]}
+        embedInJourney
+      />
+    );
+
+    expect(screen.getByTestId('wave1-insufficient-data-state')).toHaveTextContent('Not enough data');
+    expect(screen.queryByText('/ 100')).not.toBeInTheDocument();
+    expect(screen.queryByText('Needs attention')).not.toBeInTheDocument();
+    expect(screen.getByTestId('wave1-score-reliability')).toHaveTextContent('Limited reliability');
+    expect(screen.getByTestId('wave1-evidence-completeness')).toHaveTextContent(
+      '0 of 3 expected markers included'
+    );
   });
 });

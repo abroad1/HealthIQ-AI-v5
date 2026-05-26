@@ -668,6 +668,38 @@
       "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "health_system_card_reliability_label_missing": {
+      "description": "DOMAIN-UX1A-PATCH — collapsed card reliability field renders value only without visible Score reliability label.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_card_evidence_completeness_label_missing": {
+      "description": "DOMAIN-UX1A-PATCH — collapsed card evidence completeness renders value only without visible label.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_card_zero_evidence_shows_needs_attention": {
+      "description": "DOMAIN-UX1A-PATCH — zero-evidence cards show Needs attention instead of insufficient-data state.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_card_zero_evidence_shows_primary_zero_score": {
+      "description": "DOMAIN-UX1A-PATCH — zero-evidence cards show 0/100 as primary score instead of not-enough-data state.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

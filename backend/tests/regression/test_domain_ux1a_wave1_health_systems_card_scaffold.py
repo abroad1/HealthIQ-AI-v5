@@ -7,6 +7,10 @@ Sentinel classes:
   health_system_card_clinical_label_visible
   health_system_card_subsystem_placeholder_visible
   health_system_card_internal_language_visible
+  health_system_card_reliability_label_missing
+  health_system_card_evidence_completeness_label_missing
+  health_system_card_zero_evidence_shows_needs_attention
+  health_system_card_zero_evidence_shows_primary_zero_score
 """
 
 from __future__ import annotations
@@ -144,6 +148,42 @@ def test_health_system_card_internal_language_visible_sentinel() -> None:
     for term in ("governed", "compiler", "structured ranking", "Functional read"):
         assert term not in cards
     assert "wave1ScoreReliabilityLabel" in cards
+
+
+@pytest.mark.regression
+def test_health_system_card_reliability_label_missing_sentinel() -> None:
+    """Sentinel: health_system_card_reliability_label_missing."""
+    cards = _read(_WAVE1_CARDS)
+    assert "Score reliability" in cards
+    assert 'data-testid="wave1-score-reliability"' in cards
+
+
+@pytest.mark.regression
+def test_health_system_card_evidence_completeness_label_missing_sentinel() -> None:
+    """Sentinel: health_system_card_evidence_completeness_label_missing."""
+    cards = _read(_WAVE1_CARDS)
+    assert "Evidence completeness" in cards
+    assert 'data-testid="wave1-evidence-completeness"' in cards
+    display = _read(_DISPLAY_LIB)
+    assert "expected markers included" in display
+
+
+@pytest.mark.regression
+def test_health_system_card_zero_evidence_shows_needs_attention_sentinel() -> None:
+    """Sentinel: health_system_card_zero_evidence_shows_needs_attention."""
+    cards = _read(_WAVE1_CARDS)
+    assert "wave1-insufficient-data-state" in cards
+    assert "Not enough data" in cards
+    assert "This area needs more marker evidence before HealthIQ can score it meaningfully." in cards
+
+
+@pytest.mark.regression
+def test_health_system_card_zero_evidence_shows_primary_zero_score_sentinel() -> None:
+    """Sentinel: health_system_card_zero_evidence_shows_primary_zero_score."""
+    cards = _read(_WAVE1_CARDS)
+    assert "wave1IsZeroEvidenceState" in cards
+    assert "{isZeroEvidence ? (" in cards
+    assert "{scorePct}" in cards
 
 
 @pytest.mark.regression
