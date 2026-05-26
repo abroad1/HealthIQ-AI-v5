@@ -1,9 +1,10 @@
 {
   "branch": "domain-ux/domain-ux1a-card-labels-low-evidence",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-26T18:13:30Z",
   "cursor_started_utc": "2026-05-26T18:05:26Z",
-  "head_sha": "fe7ea939450adb7efc2ad2b8f7d00293c165e8b2",
+  "head_sha": "b16b2f93aa2c3afce68543d4ac8e210a96608a62",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "DOMAIN-UX1A-PATCH"
 }
