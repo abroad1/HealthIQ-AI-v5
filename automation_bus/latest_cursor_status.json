@@ -1,10 +1,9 @@
 {
-  "branch": "mapping/map-r1a-star-suffix-canonical-fix",
+  "branch": "domain-ux/domain-ux1a-wave1-card-scaffold-contract",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-25T09:18:18Z",
-  "cursor_started_utc": "2026-05-25T09:12:28Z",
-  "head_sha": "c813fefab27ae2de8cd40b92e39ef0ca83864d19",
+  "cursor_started_utc": "2026-05-26T10:13:42Z",
+  "head_sha": "a2170427a9063d8e3edb22523d70748ab888f378",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "MAP-R1A"
+  "status": "IN_PROGRESS",
+  "work_id": "DOMAIN-UX1A"
 }
