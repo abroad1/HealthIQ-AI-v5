@@ -1,9 +1,10 @@
 {
   "branch": "domain-ux/domain-ux1c-governed-subsystem-evidence",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-26T20:26:55Z",
   "cursor_started_utc": "2026-05-26T20:24:25Z",
-  "head_sha": "f7772315cdbd4a46ea87d0325f7def1611e38dc2",
+  "head_sha": "bd953cb62ad82343f5f8e4575d8a1296514bf496",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "DOMAIN-UX1C"
 }
