@@ -1,5 +1,5 @@
 {
-  "work_id": "DOMAIN-UX1A",
+  "work_id": "DOMAIN-UX1A-PATCH",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-26T00:00:00Z",
@@ -8,173 +8,136 @@
     {
       "type": "CONFIRMED",
       "field": "Front matter — all 5 required SOP v1.3.1 fields valid",
-      "finding": "All five mandatory front matter fields present and correctly valued. MIXED/STANDARD classification is correct: sprint adds DTO fields derived from existing deterministic rail state and makes frontend surface/label changes only — no scoring logic, signal evaluation, root-cause, or Knowledge Bus assets touched. TWO_PHASE_START_FINISH is appropriate for a STANDARD MIXED sprint.",
+      "finding": "All five mandatory front matter fields present and correctly valued. work_id, branch, risk_level, execution_model, and change_type all present. MIXED/STANDARD is correct: this sprint modifies frontend display semantics (BEHAVIOUR surface) and string/label content (CONTENT surface) with no scoring, signal evaluation, root-cause, or Knowledge Bus assets touched. TWO_PHASE_START_FINISH is appropriate.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 2-7: work_id: DOMAIN-UX1A, branch: domain-ux/domain-ux1a-wave1-card-scaffold-contract, risk_level: STANDARD, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED"
+        "automation_bus/latest_cursor_prompt.md line 2: work_id: DOMAIN-UX1A-PATCH",
+        "automation_bus/latest_cursor_prompt.md line 3: branch: domain-ux/domain-ux1a-card-labels-low-evidence",
+        "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD",
+        "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH",
+        "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED"
       ]
     },
     {
       "type": "CONFIRMED",
       "field": "MIXED/STANDARD risk classification correct — escalation boundary verified",
-      "finding": "This sprint extends the ConsumerDomainScoreV1 DTO with two integer fields derived from existing rail/missing-marker data, remaps frontend label strings, and repositions a hidden component. None of these actions modify Intelligence Core components (scoring logic, signal evaluators, root-cause, Knowledge Bus, IDL records, pipeline output construction beyond the explicit DTO additions). The STANDARD classification holds. Escalation to HIGH is required only if any of the nine explicit STOP conditions in the prompt are triggered during implementation.",
+      "finding": "Sprint modifies label strings (CONTENT) and conditional rendering logic (BEHAVIOUR) in frontend only. No Intelligence Core components touched. The escalation STOP conditions at prompt lines 19-29 correctly guard against scope creep into scoring, signal evaluation, root-cause, KB assets, IDL records, domain confidence rules, marker-to-subsystem grouping, or analytical pipeline behaviour. STANDARD holds unless an escalation trigger fires during implementation.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 18-37: Classification and escalation conditions",
+        "automation_bus/latest_cursor_prompt.md lines 12-29: Classification and escalation STOP conditions",
         "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §3: Intelligence Core definition",
         "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §10: HIGH risk triggers"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "All 5 mandatory controlling authority files present (Stage 2A)",
-      "finding": "All five authority files listed in the prompt's 'Read before doing anything' block confirmed on disk. The STOP condition at prompt line 70 ('If any of the first four files are missing, STOP') is satisfiable.",
+      "field": "All 4 controlling authority files present including STOP-condition file (Stage 2A)",
+      "finding": "All four authority files in the prompt 'Read before doing anything' block confirmed on disk. The STOP condition 'If the DOMAIN-UX1A notes file is missing, STOP' (prompt line 62) is satisfiable — file is present.",
       "citations": [
-        "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md — CONFIRMED (file read 2026-05-26)",
+        "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md — CONFIRMED (Glob 2026-05-26)",
         "docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md — CONFIRMED (Glob 2026-05-26)",
-        "docs/architecture/User Health to Systems Map_FINAL.md — CONFIRMED (file read 2026-05-26)",
-        "docs/audit-papers/DOMAIN-UX1_health_systems_card_codebase_reality_audit.md — CONFIRMED (file read 2026-05-26)",
-        "docs/audit-papers/DOMAIN-R1_launch_core_health_domain_readiness_audit.md — CONFIRMED (file read 2026-05-26)"
+        "docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md — CONFIRMED (Glob 2026-05-26)",
+        "docs/audit-papers/DOMAIN-UX1_health_systems_card_codebase_reality_audit.md — CONFIRMED (Glob 2026-05-26)"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Frontend component at stated path — content verified (Stage 2A)",
-      "finding": "Wave1DomainCards.tsx exists and content cross-referenced against sprint requirements. Key findings: bandLabelDisplay() at line 16 maps 'review' → 'Needs review' (sprint must change to 'Needs attention' per agreed vocabulary). tierLabel() at line 26 maps 'high' → 'High confidence' (sprint must change to 'Good reliability'). No evidence_completeness fields rendered. No plain_english_descriptor rendered. Component renders consumer_label (line 76), score as percentage (line 66), band_label via bandLabelDisplay() (line 88), confidence_tier via tierLabel() (line 90), headline_sentence (line 91). Card correctly does NOT render clinical_label in the consumer view.",
+      "field": "Defect 1 — Score reliability label absent: CONFIRMED in source (Stage 2A cross-ref)",
+      "finding": "Wave1DomainCards.tsx renders wave1ScoreReliabilityLabel(d.confidence_tier) with no label prefix. The rendered output is a bare value: 'Limited reliability'. No 'Score reliability:' label text exists anywhere in the component. Defect is genuine — sprint is not a no-op for this item.",
       "citations": [
-        "frontend/app/components/results/Wave1DomainCards.tsx line 16: bandLabelDisplay() — 'review' maps to 'Needs review', not 'Needs attention'",
-        "frontend/app/components/results/Wave1DomainCards.tsx line 27: tierLabel() — 'high' maps to 'High confidence', not 'Good reliability'",
-        "frontend/app/components/results/Wave1DomainCards.tsx line 76: consumer_label rendered correctly",
-        "frontend/app/components/results/Wave1DomainCards.tsx line 91: headline_sentence rendered correctly",
-        "frontend/app/components/results/Wave1DomainCards.tsx line 105: expand button text is 'More detail' (sprint may change to 'See what shaped this score')"
+        "frontend/app/components/results/Wave1DomainCards.tsx lines 102-104: <p data-testid=\"wave1-score-reliability\">{wave1ScoreReliabilityLabel(d.confidence_tier)}</p> — value-only, no label",
+        "frontend/app/lib/wave1HealthSystemCardDisplay.ts lines 6-10: wave1ScoreReliabilityLabel() returns bare string 'Good reliability' / 'Moderate reliability' / 'Limited reliability' — no prefix"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Frontend results page — card placement confirmed (Stage 2A)",
-      "finding": "Wave1DomainCards is wrapped in a ResultsDisclosureSection with defaultOpen={false} at the bottom of the consumer journey, after the actions section. DOMAIN-UX1 audit confirmed it is the second-to-last section before clinician summary. Prompt Section A correctly requires repositioning to the main journey. The placement change requires modifying results/page.tsx.",
+      "field": "Defect 2 — Evidence completeness label absent: CONFIRMED in source (Stage 2A cross-ref)",
+      "finding": "wave1EvidenceCompletenessLine() returns 'Based on X of Y expected markers on your panel' — no 'Evidence completeness:' label prefix. The component renders this string value-only at lines 105-107. Sprint must add the label either by updating the function return value or adding a label element in JSX.",
       "citations": [
-        "frontend/app/(app)/results/page.tsx lines 807-814: Wave1DomainCards wrapped in ResultsDisclosureSection, defaultOpen={false}, title='Health domains', description='High-level domain scores — supplementary to the main journey above.'"
+        "frontend/app/lib/wave1HealthSystemCardDisplay.ts lines 22-27: wave1EvidenceCompletenessLine() returns 'Based on {numerator} of {denominator} expected markers on your panel' — no label prefix",
+        "frontend/app/components/results/Wave1DomainCards.tsx lines 105-107: <p data-testid=\"wave1-evidence-completeness\">{wave1EvidenceCompletenessLine(num, den)}</p> — value-only, no label"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Backend Python DTO model — pre-sprint state verified (Stage 2A)",
-      "finding": "ConsumerDomainScoreV1 Pydantic model confirmed at results.py:167. Model uses frozen=True, extra='forbid'. Evidence completeness fields (evidence_completeness_numerator, evidence_completeness_denominator) are ABSENT — correct pre-sprint state. plain_english_descriptor field is ABSENT — correct pre-sprint state. Model already has evidence_anchor_sentence with default='' (line 240) which is the correct pattern for new fields with defaults. All existing fields confirmed: domain_id, consumer_label, clinical_label, score (ge=0.0, le=1.0), band_label, confidence_tier (ConfidenceTierV1 Literal), active_signal_ids, primary_idl_record_id, missing_marker_ids, source_track, caveat_flags, contributing_system_keys, raw_evidence_refs, headline_sentence, contributor_sentence, confidence_sentence, consequence_sentence, next_step_sentence, evidence_anchor_sentence.",
+      "field": "Defect 3 — Zero-evidence cards show 0/100 and Needs attention: CONFIRMED in source (Stage 2A cross-ref)",
+      "finding": "No conditional branch exists for the case evidence_completeness_numerator === 0 AND evidence_completeness_denominator > 0. scorePct is computed unconditionally as Math.round(Math.max(0, Math.min(1, d.score)) * 100) and rendered. band_label is displayed unconditionally via wave1BandLabelDisplay(). When backend emits score=0 and band_label='review' with zero evidence, card shows '0 / 100' and 'Needs attention'. No insufficient-data state exists.",
       "citations": [
-        "backend/core/models/results.py line 167: class ConsumerDomainScoreV1(BaseModel):",
-        "backend/core/models/results.py line 174: model_config = ConfigDict(frozen=True, extra='forbid')",
-        "backend/core/models/results.py line 240: evidence_anchor_sentence: str = Field(default='', ...) — pattern for new default fields"
+        "frontend/app/components/results/Wave1DomainCards.tsx line 69: scorePct = Math.round(Math.max(0, Math.min(1, d.score)) * 100) — unconditional",
+        "frontend/app/components/results/Wave1DomainCards.tsx lines 92-101: score and band_label rendered unconditionally, no zero-evidence guard",
+        "frontend/app/components/results/Wave1DomainCards.tsx lines 72-73: num and den read from DTO — data is available for a zero-evidence conditional"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "TypeScript DTO interface — pre-sprint state verified (Stage 2A)",
-      "finding": "ConsumerDomainScoreV1 TypeScript interface confirmed at analysis.ts:328. Evidence completeness fields are ABSENT — correct pre-sprint state. plain_english_descriptor is ABSENT — correct pre-sprint state. Interface must be updated in sync with the Python model change. Interface correctly has evidence_anchor_sentence as optional (?: string at line 350) matching the backend default.",
+      "field": "DTO fields evidence_completeness_numerator and evidence_completeness_denominator already present — no backend changes required (Stage 2A cross-ref)",
+      "finding": "DOMAIN-UX1A already added both fields to the TypeScript interface and the Pydantic model. The component already reads them at lines 72-73. The data pipeline is complete. This sprint requires NO new DTO fields. All defects are fixable with frontend-only changes to Wave1DomainCards.tsx and wave1HealthSystemCardDisplay.ts only. Backend files results.py and domain_score_assembler.py need not be touched.",
       "citations": [
-        "frontend/app/types/analysis.ts line 328: export interface ConsumerDomainScoreV1",
-        "frontend/app/types/analysis.ts line 349-350: evidence_anchor_sentence?: string — pattern for optional new fields",
-        "frontend/app/types/analysis.ts line 379: consumer_domain_scores?: ConsumerDomainScoreV1[] | null — correct AnalysisResult field"
+        "frontend/app/types/analysis.ts lines 353-354: evidence_completeness_numerator?: number; evidence_completeness_denominator?: number; — ALREADY PRESENT",
+        "frontend/app/components/results/Wave1DomainCards.tsx lines 72-73: const num = d.evidence_completeness_numerator ?? 0; const den = d.evidence_completeness_denominator ?? 0; — ALREADY READS DTO"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Assembler rail constants and block functions — content verified (Stage 2A)",
-      "finding": "All three block functions and critical constants confirmed in domain_score_assembler.py. _CV_RAIL_BIOMARKERS at line 56 contains exactly 5 markers: total_cholesterol, ldl_cholesterol, hdl_cholesterol, triglycerides, tc_hdl_ratio. _MET_CORE at line 65: (glucose, hba1c). _MET_ENHANCERS at line 66: (insulin, triglycerides). _HEP_CONFIDENCE_POOL at line 68: 9 markers (alt, ast, ggt, alp, albumin, total_bilirubin, bilirubin, total_protein, globulin). _missing_for_rail() at line 324 reads hss[system_key]['missing_biomarkers'] from the scoring engine. cv_block() at line 400, met_block() at line 453, liv_block() at line 505. All three blocks call ConsumerDomainScoreV1(...) directly and must be updated to include new fields.",
+      "field": "All regression test files and Sentinel pack present (Stage 2A)",
+      "finding": "All test files named in Required Validation Commands confirmed on disk. Sentinel pack confirmed present.",
       "citations": [
-        "backend/core/analytics/domain_score_assembler.py lines 56-62: _CV_RAIL_BIOMARKERS = 5 markers",
-        "backend/core/analytics/domain_score_assembler.py lines 65-66: _MET_CORE, _MET_ENHANCERS (no single _MET_RAIL_BIOMARKERS constant exists)",
-        "backend/core/analytics/domain_score_assembler.py lines 68-79: _HEP_CONFIDENCE_POOL = 9 markers",
-        "backend/core/analytics/domain_score_assembler.py line 324: def _missing_for_rail(hss, system_key) -> List[str]",
-        "backend/core/analytics/domain_score_assembler.py line 400: def cv_block()",
-        "backend/core/analytics/domain_score_assembler.py line 453: def met_block()",
-        "backend/core/analytics/domain_score_assembler.py line 505: def liv_block()"
+        "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py — CONFIRMED",
+        "frontend/tests/components/Wave1DomainCards.test.tsx — CONFIRMED",
+        "backend/tests/unit/test_domain_score_assembler_v1.py — CONFIRMED",
+        "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — CONFIRMED",
+        "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py — CONFIRMED",
+        "backend/tests/regression/test_canonical_mapping_star_suffix_failure.py — CONFIRMED",
+        "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py — CONFIRMED",
+        "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — CONFIRMED",
+        "backend/tests/unit/test_scoring_rules.py — CONFIRMED",
+        "sentinel/packs/escaped_defects_v1.json — CONFIRMED"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Regression test files present (Stage 2A)",
-      "finding": "All six cross-sprint guard regression test modules named in the Required Validation Commands block confirmed on disk.",
+      "field": "Forbidden file boundary verified — no overlap with required implementation paths (Stage 2B)",
+      "finding": "Required implementation touches only Wave1DomainCards.tsx and wave1HealthSystemCardDisplay.ts (plus test files and Sentinel pack). These are fully disjoint from the forbidden list. Backend DTO files (results.py, domain_score_assembler.py) are NOT required for this sprint — the DTO fields already exist.",
       "citations": [
-        "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — CONFIRMED (Glob 2026-05-26)",
-        "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py — CONFIRMED (Glob 2026-05-26)",
-        "backend/tests/regression/test_canonical_mapping_star_suffix_failure.py — CONFIRMED (Glob 2026-05-26)",
-        "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py — CONFIRMED (Glob 2026-05-26)",
-        "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — CONFIRMED (Glob 2026-05-26)",
-        "backend/tests/unit/test_scoring_rules.py — CONFIRMED (Glob 2026-05-26)"
+        "automation_bus/latest_cursor_prompt.md lines 213-247: Potentially allowed files",
+        "automation_bus/latest_cursor_prompt.md lines 249-260: Forbidden unless GPT explicitly approves"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Sentinel pack present (Stage 2A)",
-      "finding": "sentinel/packs/escaped_defects_v1.json confirmed present. Sprint must add the five named Sentinel defect classes (health_system_card_hidden_from_main_journey, health_system_card_frontend_calculates_evidence_completeness, health_system_card_clinical_label_visible, health_system_card_subsystem_placeholder_visible, health_system_card_internal_language_visible). No placeholder Sentinel entries permitted — each class must point to an active deterministic test.",
+      "field": "STOP conditions complete, actionable, and non-blocking to a correct implementation (Stage 2B)",
+      "finding": "Token missing/mismatched → STOP. Authority notes file missing → STOP. Baseline issues not found in code → STOP with no-op risk. Implementation requires any of nine listed escalation triggers → escalate HIGH + STOP. All STOP conditions are well-defined and unambiguous.",
       "citations": [
-        "sentinel/packs/escaped_defects_v1.json — CONFIRMED present (Glob 2026-05-26)",
-        "automation_bus/latest_cursor_prompt.md lines 366-376: Required Sentinel obligations"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Forbidden file boundaries verified — distinct from allowed paths (Stage 2B)",
-      "finding": "Forbidden list includes backend/ssot/, backend/core/scoring/, backend/core/pipeline/, backend/core/units/, backend/core/analytics/root_cause*, backend/core/analytics/report_compiler*, knowledge_bus/, automation_bus/state/*, and the three control-plane scripts. Allowed files are correctly scoped: results/page.tsx (placement), Wave1DomainCards.tsx (labels, fields), analysis.ts (DTO type), backend/core/models/results.py (Pydantic model), domain_score_assembler.py (new fields in three block functions), domain_narrative_wave1.py (prose cleanup only if tightly scoped). Allowed and forbidden sets are disjoint. No overlap detected.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 285-300: Potentially allowed files",
-        "automation_bus/latest_cursor_prompt.md lines 302-320: Forbidden unless GPT explicitly approves"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "STOP conditions complete and actionable (Stage 2B)",
-      "finding": "Token missing/mismatched → STOP with exact error text. Any controlling authority file missing → STOP. Baseline assumptions false (Wave1DomainCards.tsx absent, consumer_domain_scores absent, Wave 1 domain IDs absent, cards already prominent) → STOP and report. Escalation trigger conditions (marker sets, scoring policy, confidence rules, Intelligence Core outputs beyond explicit DTO additions) → escalate to HIGH and STOP. Forbidden path required → STOP.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 108-122: token STOP conditions",
-        "automation_bus/latest_cursor_prompt.md line 70: authority file STOP",
-        "automation_bus/latest_cursor_prompt.md lines 127-137: baseline verification STOPs",
-        "automation_bus/latest_cursor_prompt.md lines 26-37: escalation STOP conditions"
+        "automation_bus/latest_cursor_prompt.md lines 107-114: kernel token STOP",
+        "automation_bus/latest_cursor_prompt.md line 62: DOMAIN-UX1A notes file STOP",
+        "automation_bus/latest_cursor_prompt.md lines 119-124: baseline no-op STOP",
+        "automation_bus/latest_cursor_prompt.md lines 19-29: escalation STOP conditions"
       ]
     },
     {
       "type": "CONFIRMED",
       "field": "PowerShell compatibility verified",
-      "finding": "All commands use python -m pytest, npm run type-check, git, and Test-Path. No bash-only constructs. Compatible with Windows PowerShell.",
+      "finding": "All preflight, validation, and closure commands use Python, npm, git, and Test-Path — no bash-only syntax.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 99-103: preflight PowerShell commands",
-        "automation_bus/latest_cursor_prompt.md lines 383-400: validation commands"
+        "automation_bus/latest_cursor_prompt.md lines 91-96: preflight PowerShell commands",
+        "automation_bus/latest_cursor_prompt.md lines 325-358: validation commands"
       ]
     },
     {
       "type": "HARDENING_NOTE",
-      "field": "Evidence completeness denominator: no _MET_RAIL_BIOMARKERS constant exists — Cursor must create it",
-      "finding": "_CV_RAIL_BIOMARKERS exists as a 5-element tuple at line 56. No equivalent _MET_RAIL_BIOMARKERS constant exists — the metabolic domain uses separate _MET_CORE (glucose, hba1c) and _MET_ENHANCERS (insulin, triglycerides). Cursor must define _MET_RAIL_BIOMARKERS = _MET_CORE + _MET_ENHANCERS (4 markers) as a new constant above the block functions, use len(_MET_RAIL_BIOMARKERS) as the metabolic denominator, and use (len(_MET_RAIL_BIOMARKERS) - len(missing)) as the numerator. This is derivable entirely from existing constants — no expected marker sets may be changed.",
-      "resolution": "Non-blocking. Cursor instruction: add _MET_RAIL_BIOMARKERS = _MET_CORE + _MET_ENHANCERS immediately after line 66. denominator = len(_MET_RAIL_BIOMARKERS). numerator = denominator - len(missing_for_met)."
+      "field": "wave1EvidenceCompletenessLine() string format change will break existing test assertions",
+      "finding": "The existing Wave1DomainCards.test.tsx assertions almost certainly assert on the current value-only output of wave1EvidenceCompletenessLine() ('Based on X of Y expected markers on your panel'). Sprint must update these test assertions when changing the function output or adding a label element. If Cursor adds the label in JSX rather than in the function, test queries by text content will also need updating. Required tests section explicitly calls for label + value testing — but existing passing tests must be updated rather than deleted.",
+      "resolution": "Non-blocking. Cursor must update Wave1DomainCards.test.tsx assertions in sync with any change to label rendering. Required tests must verify label + value together, not just value."
     },
     {
       "type": "HARDENING_NOTE",
-      "field": "Evidence completeness denominator: liver domain expected set is augmented beyond scoring rail — Cursor must define explicit constant",
-      "finding": "For liver, _missing_for_rail(hss, _RAIL_LIVER) reads from scoring_policy.yaml liver rail (audit confirms: alt, ast only). But liv_block() at lines 518-527 manually augments the missing list with ast, ggt, alp, albumin, and bilirubin when absent from panel. The effective expected set used by the assembler is therefore {alt, ast, ggt, alp, albumin, bilirubin} — 6 markers. If Cursor derives the denominator from the scoring rail alone (2 markers: alt, ast), it will be too narrow and inconsistent with the actual missing_marker_ids list emitted. Cursor must define _LIV_DOMAIN_BIOMARKERS as a new constant representing the effective expected set: ('alt', 'ast', 'ggt', 'alp', 'albumin', 'bilirubin'). Use len(_LIV_DOMAIN_BIOMARKERS) = 6 as the denominator. Numerator = denominator - number of _LIV_DOMAIN_BIOMARKERS markers absent from panel.",
-      "resolution": "Non-blocking. Cursor instruction: add _LIV_DOMAIN_BIOMARKERS = ('alt', 'ast', 'ggt', 'alp', 'albumin', 'bilirubin') near _HEP_CONFIDENCE_POOL at line 68. Do NOT use len(_HEP_CONFIDENCE_POOL) = 9 — that includes total_bilirubin, total_protein, globulin which are not universally expected. denominator = len(_LIV_DOMAIN_BIOMARKERS) = 6. numerator = 6 - len([m for m in _LIV_DOMAIN_BIOMARKERS if m not in panel_biomarker_ids])."
+      "field": "Zero-evidence conditional must use num === 0 AND den > 0, not score === 0",
+      "finding": "The prompt correctly specifies the gate as evidence_completeness_numerator === 0 AND evidence_completeness_denominator > 0 (prompt lines 153-156). Cursor must not substitute score === 0 as the gate condition, since a score of zero is a legitimate backend output even with partial evidence. The DTO fields num and den are already read at lines 72-73 and are available for the conditional. When den === 0, the current wave1EvidenceCompletenessLine fallback 'Evidence coverage not available' applies — this edge case must remain handled.",
+      "resolution": "Non-blocking. Cursor instruction: gate the zero-evidence display branch on num === 0 && den > 0. Leave the den <= 0 fallback in wave1EvidenceCompletenessLine() unchanged."
     },
     {
       "type": "HARDENING_NOTE",
-      "field": "ConsumerDomainScoreV1 uses extra='forbid' — new fields must have defaults to avoid breaking test fixtures",
-      "finding": "The Pydantic model has extra='forbid' and frozen=True. Adding required fields (Field(...)) will break all existing instantiation sites including tests. New fields must use Field(default=None) with Optional[int] type, or Field(default=0) with int type. Optional[int] = Field(default=None) is recommended: the frontend can suppress evidence completeness display when both values are None, and existing test data will not fail. The TypeScript interface must use the optional pattern (evidence_completeness_numerator?: number | null) to match.",
-      "resolution": "Non-blocking. Cursor instruction: declare evidence_completeness_numerator: Optional[int] = Field(default=None, ...) and evidence_completeness_denominator: Optional[int] = Field(default=None, ...) in the Pydantic model. Match with evidence_completeness_numerator?: number | null in the TypeScript interface. Frontend must render the evidence completeness display only when both values are non-null integers."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "field": "plain_english_descriptor — frontend static map is lower-risk than backend DTO addition",
-      "finding": "The DOMAIN-UX1 audit (section 9, 'Frontend-only safe now') explicitly recommends implementing plain_english_descriptor as a frontend DOMAIN_DESCRIPTOR constant map since there are exactly three fixed Wave 1 domain IDs. This avoids a DTO/Pydantic/TypeScript update for a purely presentational field. The prompt allows either approach. The frontend static map approach is correct governance: it is strictly presentational, the domain IDs are fixed constants for Wave 1, and it does not become interpretation logic. If Cursor chooses the backend field approach, it must add the field to both the Pydantic model and the TypeScript interface and populate it in all three block functions.",
-      "resolution": "Non-blocking. Recommendation: use frontend DOMAIN_DESCRIPTOR constant map in Wave1DomainCards.tsx. If backend DTO field is chosen, ensure both Pydantic model and TypeScript interface are updated and all three blocks emit the value."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "field": "band_label 'review' vocabulary: backend value vs frontend display string",
-      "finding": "Backend _band_label_from_0_100() at line 87 returns 'review' for scores below 45. The agreed UX vocabulary is 'Needs attention'. Current frontend bandLabelDisplay() at line 22 maps 'review' → 'Needs review'. Sprint must change this to 'review' → 'Needs attention'. This is a frontend-only string change — the backend band value 'review' must NOT be changed. No backend change required.",
-      "resolution": "Non-blocking. Cursor instruction: in Wave1DomainCards.tsx line 22, change review: 'Needs review' to review: 'Needs attention'. Backend unchanged."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "field": "DTO sync requirement — Pydantic and TypeScript must be updated in the same sprint",
-      "finding": "The backend ConsumerDomainScoreV1 Pydantic model (backend/core/models/results.py:167) and the TypeScript interface (frontend/app/types/analysis.ts:328) must remain in sync. If Cursor adds evidence_completeness_numerator and evidence_completeness_denominator to the Pydantic model but forgets to update the TypeScript interface (or vice versa), type-check will pass on one side but the frontend will receive untyped data and evidence completeness cannot be rendered safely. Both files must be updated together.",
-      "resolution": "Non-blocking. Cursor must treat both files as a single atomic update for any DTO field addition."
+      "field": "Sentinel classes must each point to an active test — not a placeholder",
+      "finding": "The four required Sentinel defect classes (health_system_card_reliability_label_missing, health_system_card_evidence_completeness_label_missing, health_system_card_zero_evidence_shows_needs_attention, health_system_card_zero_evidence_shows_primary_zero_score) must each reference a real test function. The existing escaped_defects_v1.json structure uses a test_ref or equivalent pointer field. No Sentinel entry may be added without a corresponding active deterministic test in this sprint.",
+      "resolution": "Non-blocking. Cursor must add the required test cases first, then reference them in Sentinel entries. Review existing escaped_defects_v1.json schema before adding entries to match the established schema."
     }
   ]
 }

@@ -1,51 +1,42 @@
 ---
-work_id: DOMAIN-UX1A
-branch: domain-ux/domain-ux1a-wave1-card-scaffold-contract
+work_id: DOMAIN-UX1A-PATCH
+branch: domain-ux/domain-ux1a-card-labels-low-evidence
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# DOMAIN-UX1A — Wave 1 Health Systems Card Scaffold + Contract Hardening
+# DOMAIN-UX1A-PATCH — Health Systems Card Label Hierarchy and Low-Evidence State
 
 ## Classification
 
 This is a STANDARD-risk MIXED sprint.
 
-Reason: this sprint surfaces existing Wave 1 Health Systems Card outputs in the main results journey and adds light DTO/contract hardening for evidence completeness and card display fields.
+Reason: this sprint corrects the consumer-facing presentation of the Wave 1 Health Systems Cards after DOMAIN-UX1A. It should update frontend display semantics and, only if required, add tightly scoped DTO/display fields to distinguish insufficient evidence from true adverse scoring.
 
-This sprint must not alter clinical scoring logic, signal activation, root-cause reasoning, Knowledge Bus content, IDL records, or subsystem interpretation logic.
+This sprint must not alter scoring thresholds, signal activation, Knowledge Bus content, IDL records, root-cause logic, clinical interpretation logic, or subsystem grouping.
 
-Escalate to HIGH and STOP if implementation requires changing:
+Escalate to HIGH and STOP if implementation requires changes to:
 
-- expected marker sets
 - scoring policy
-- missing-marker logic
-- reliability/confidence rules
-- domain scoring behaviour
+- expected marker sets
 - signal evaluation
 - root-cause/arbitration
 - Knowledge Bus assets
 - IDL records
-- pipeline output construction beyond adding explicit DTO fields for existing domain-card evidence
+- domain confidence/reliability rules
+- marker-to-subsystem grouping
+- analytical pipeline behaviour
 
 ## Purpose
 
-Build the first working slice of the Health Systems Card scaffold for the three Wave 1 domains already supported by the repo:
+DOMAIN-UX1A successfully surfaced the Wave 1 Health Systems Cards, but post-merge UAT showed three presentation problems:
 
-1. Cardiovascular health
-2. Blood sugar control
-3. Liver health
+1. `Limited reliability` is visible, but the field label `Score reliability` is not.
+2. evidence completeness is visible, but the field label `Evidence completeness` is not.
+3. cards with `0 of N` expected markers currently show `0 / 100` and `Needs attention`, which looks like a poor result rather than insufficient evidence.
 
-This is not a quick hidden-card exposure sprint.
-
-The purpose is to begin implementing the agreed Health Systems Card architecture by:
-
-- surfacing the existing Wave 1 cards in the main results journey
-- hardening the DTO contract for evidence completeness
-- aligning frontend wording with the agreed card model
-- ensuring frontend remains renderer-only
-- preventing fake subsystem evidence or frontend-invented biological grouping
+The purpose of this patch is to make the Health Systems Card scaffold more truthful and legible before visual polish begins.
 
 ## Controlling authority
 
@@ -54,35 +45,43 @@ Read before doing anything:
 ```text
 docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md
 docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md
-docs/architecture/User Health to Systems Map_FINAL.md
+docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md
 docs/audit-papers/DOMAIN-UX1_health_systems_card_codebase_reality_audit.md
-docs/audit-papers/DOMAIN-R1_launch_core_health_domain_readiness_audit.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
+````
+
+Also use the post-merge verification finding from the user:
+
+```text
+Cards are mounted and schema 1.2 is present, but UX hierarchy is incomplete.
+Reliability renders value-only: “Limited reliability”.
+Evidence completeness renders value-only: “Based on X of Y expected markers on your panel”.
+Blood sugar and liver show 0 / 100 + Needs attention when evidence completeness is 0 of N.
 ```
 
-If any of the first four files are missing, STOP.
+If the DOMAIN-UX1A notes file is missing, STOP.
 
 ## Required output documentation
 
 Create:
 
 ```text
-docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md
+docs/audit-papers/DOMAIN-UX1A_PATCH_card_labels_low_evidence_notes.md
 ```
 
 This document must include:
 
 1. preflight results
 2. source documents reviewed
-3. exact DTO fields added or confirmed
-4. exact frontend components changed
-5. evidence completeness implementation
-6. card placement decision
-7. label/wording changes
-8. prose quality gate findings
-9. explicit confirmation that no subsystem labels/groupings were invented
-10. tests added/updated
-11. residual gaps deferred to DOMAIN-UX1B / DOMAIN-UX1C
+3. exact visible issue confirmed
+4. label hierarchy changes made
+5. low-evidence state rule implemented
+6. files changed
+7. tests added/updated
+8. Sentinel updates
+9. confirmation that scoring logic was not changed
+10. residual gaps for DOMAIN-UX1B and DOMAIN-UX1C
+11. browser/UAT status if performed
 12. recommendation for next sprint
 
 ## Mandatory preflight
@@ -104,8 +103,8 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `DOMAIN-UX1A`
-* branch is `domain-ux/domain-ux1a-wave1-card-scaffold-contract`
+* `work_id` is `DOMAIN-UX1A-PATCH`
+* branch is `domain-ux/domain-ux1a-card-labels-low-evidence`
 
 If token is missing or mismatched, STOP:
 
@@ -115,184 +114,120 @@ Kernel start not executed or work package mismatch.
 
 ## Baseline verification
 
-Before implementation, confirm current repo reality:
+Before implementation, confirm the current issue exists in code and/or test fixture:
 
-* `Wave1DomainCards.tsx` exists
-* `consumer_domain_scores` exists in frontend type contract
-* existing Wave 1 domains are present:
+* `Wave1DomainCards.tsx` renders reliability value without visible `Score reliability` label
+* `Wave1DomainCards.tsx` renders evidence completeness without visible `Evidence completeness` label
+* zero-evidence cards can render `0 / 100` and `Needs attention`
+* there is no current insufficient-data display state for cards with `evidence_completeness_numerator === 0` and `evidence_completeness_denominator > 0`
 
-  * `wave1_cardiovascular`
-  * `wave1_blood_sugar`
-  * `wave1_liver`
-* existing cards are currently hidden, buried, or not prominent in the main results journey
-* existing backend assembler is `backend/core/analytics/domain_score_assembler.py`
+If these issues are not present, STOP and report no-op risk.
 
-If any of these assumptions are false, STOP and report.
+## Required implementation
 
-## Implementation scope
+### A. Add visible field labels
 
-### A. Surface Wave 1 Health Systems Cards in the main journey
+Update the collapsed Health Systems Card so reliability and evidence completeness are clearly labelled.
 
-Move or reposition the existing Wave 1 Health Systems Cards so they are visible in the main results journey without the user needing to open a low-priority disclosure section.
-
-The placement should make them feel like part of the primary results experience, not a supplementary technical section.
-
-Do not redesign the whole results page.
-
-Do not move clinician-facing content upward.
-
-### B. Add / confirm plain-English domain descriptor
-
-Each Wave 1 card should have a short descriptor:
-
-* Cardiovascular health → Heart, arteries and circulation
-* Blood sugar control → Sugar and insulin balance
-* Liver health → Liver strain and processing load
-
-This may be implemented as backend DTO field or a small frontend display map if kept strictly presentational.
-
-If implemented in frontend, it must be limited to these fixed Wave 1 domain IDs and must not become interpretation logic.
-
-### C. Add evidence completeness fields
-
-Add backend-emitted evidence completeness fields to the Wave 1 domain card DTO.
-
-Required fields:
+Required visible wording:
 
 ```text
-evidence_completeness_numerator
-evidence_completeness_denominator
+Score reliability: Limited reliability
+Evidence completeness: 0 of 3 expected markers included
 ```
 
-These must be emitted by the backend.
-
-The frontend must not calculate expected marker sets, included marker counts, or missing marker counts.
-
-Implementation should derive these only from existing Wave 1 rail marker sets and existing missing-marker logic.
-
-Expected principle:
+or equivalent wording that clearly includes both labels:
 
 ```text
-denominator = expected marker count for the domain rail
-numerator = denominator - missing marker count
+Score reliability
+Limited reliability
+
+Evidence completeness
+0 of 3 expected markers included
 ```
 
-Only use existing governed rail/assembler state. Do not change expected marker sets.
+Do not rely on value-only lines.
 
-### D. Reliability wording
+### B. Correct zero-evidence state
 
-Map current confidence wording into the agreed score reliability vocabulary.
-
-Allowed examples:
+If:
 
 ```text
-high → Good reliability
-medium → Moderate reliability
-low → Limited reliability
+evidence_completeness_numerator === 0
+and evidence_completeness_denominator > 0
 ```
 
-Do not change backend confidence logic.
+the card must not present this as a true adverse score.
 
-Do not reinterpret confidence as evidence completeness.
+Required behaviour:
 
-### E. Band wording
+* do not show `0 / 100` as the primary score
+* do not show `Needs attention` as the primary band
+* show a clear insufficient-evidence state, for example:
 
-Align consumer-facing band wording with the agreed UX language.
+  * `Not enough data`
+  * `Insufficient marker evidence`
+  * `More markers needed`
+* retain evidence completeness, e.g.:
 
-Target vocabulary:
+  * `Evidence completeness: 0 of 3 expected markers included`
+* show a short consumer-safe explanation, for example:
+
+  * `This area needs more marker evidence before HealthIQ can score it meaningfully.`
+
+The exact wording can be refined, but it must clearly distinguish absent evidence from a poor health-system score.
+
+### C. Partial-evidence state
+
+If numerator is greater than zero but reliability is limited, such as:
 
 ```text
-Strong
-Stable
-Watch / Worth watching
-Needs attention
+100 / 100
+Limited reliability
+1 of 5 expected markers included
 ```
 
-Use the existing backend band values. Do not change scoring thresholds.
+the card may still show the score, but reliability and evidence completeness must be visually clear enough to avoid overconfidence.
 
-### F. Prose quality gate
+Do not suppress partial-evidence scores in this sprint unless a clear safety issue is found.
 
-Because these cards will become more prominent, inspect the visible card text, especially:
+### D. No subsystem work
 
-* `headline_sentence`
-* `contributor_sentence`
-* `confidence_sentence`
-* `consequence_sentence`
-* `next_step_sentence`
+Do not add supporting-system chips, subsystem sections, or marker-to-subsystem grouping in this patch.
 
-Remove or improve obviously mechanical consumer-facing wording only if it can be done safely in the existing domain narrative assembly without changing clinical meaning.
+The current `Based mainly on...` evidence anchor may remain, but do not pretend it is a governed subsystem preview.
 
-Specifically check for repetitive or weak language such as:
+Subsystem work remains DOMAIN-UX1C.
 
-```text
-on this panel
-main pattern to discuss first
-mechanical compiler phrasing
-internal/model/process language
-```
+### E. No scoring changes
 
-If safe copy cleanup requires backend narrative file changes within the existing Wave 1 domain narrative layer, this is allowed only if tightly scoped and regression-tested.
+Do not alter the backend score itself.
 
-Do not author new medical claims.
+This sprint changes presentation semantics only.
 
-Do not expand Knowledge Bus content.
-
-### G. Forward-compatible subsystem placeholder
-
-If a forward-compatible subsystem field is added, it must be nullable/empty only and not rendered as a visible “coming soon” UI.
-
-Allowed:
-
-```text
-subsystems?: null
-subsystems?: []
-```
-
-Forbidden:
-
-```text
-Visible placeholder subsystem section
-"More subsystem detail coming soon"
-Frontend-hardcoded subsystem chips
-Frontend-invented marker groupings
-```
-
-## Explicitly forbidden in this sprint
-
-Do not implement:
-
-* subsystem chips unless backend-governed subsystem data already exists
-* per-subsystem biomarker grouping
-* greyed-out biomarker cards
-* domain score dial/gauge
-* compact biomarker card variant
-* Wave 2 domains
-* frontend-invented biological groupings
-* subsystem score/status
-* Knowledge Bus content changes
-* scoring policy changes
-* IDL content changes
-* root-cause/arbitration changes
-* clinician report redesign
+If backend emits `score = 0` because no biomarkers contributed, frontend may render that as insufficient data. The backend score calculation must remain unchanged.
 
 ## Potentially allowed files
 
 ```text
-frontend/app/(app)/results/page.tsx
 frontend/app/components/results/Wave1DomainCards.tsx
-frontend/app/components/results/**/*
+frontend/app/lib/wave1HealthSystemCardDisplay.ts
 frontend/app/types/analysis.ts
-frontend/tests/**/*
-backend/core/models/results.py
-backend/core/analytics/domain_score_assembler.py
-backend/core/analytics/domain_narrative_wave1.py
+frontend/tests/components/Wave1DomainCards.test.tsx
 backend/tests/regression/**/*
 backend/tests/unit/**/*
-sentinel/packs/**/*
-docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md
+sentinel/packs/escaped_defects_v1.json
+docs/audit-papers/DOMAIN-UX1A_PATCH_card_labels_low_evidence_notes.md
 ```
 
-Only touch `domain_narrative_wave1.py` if needed for tightly scoped prose cleanup of existing Wave 1 card sentences.
+Backend model/assembler files are allowed only if a tiny display-state field is strictly necessary and justified:
+
+```text
+backend/core/models/results.py
+backend/core/analytics/domain_score_assembler.py
+```
+
+Prefer frontend presentation handling using existing backend-emitted `evidence_completeness_numerator` and `evidence_completeness_denominator`.
 
 ## Forbidden unless GPT explicitly approves
 
@@ -316,54 +251,67 @@ backend/scripts/update_cursor_status.py
 
 Add or update deterministic tests proving:
 
-### Backend contract
+### Label hierarchy
 
-* each Wave 1 domain emits `evidence_completeness_numerator`
-* each Wave 1 domain emits `evidence_completeness_denominator`
-* numerator and denominator are integers
-* numerator is not greater than denominator
-* missing-marker IDs remain backend-emitted
-* evidence completeness is derived from existing rail/missing-marker data
-* no score, threshold, marker-set or confidence rule changed
+* collapsed card renders `Score reliability`
+* collapsed card renders reliability value
+* collapsed card renders `Evidence completeness`
+* collapsed card renders backend-supplied numerator/denominator
+* tests verify label + value, not just value
 
-### Frontend rendering
+### Zero-evidence state
 
-* Wave 1 Health Systems Cards render in the main results journey
-* cards are not hidden only behind a low-priority closed disclosure
-* card displays consumer label
-* card displays plain-English descriptor
-* card displays score and band
-* card displays score reliability wording
-* card displays evidence completeness using backend-supplied fields
-* card does not render clinical label in consumer view
-* card does not render subsystem placeholder UI
-* card does not invent subsystem chips or marker groupings
+Given a domain card with:
 
-### Prose safety
+```text
+evidence_completeness_numerator = 0
+evidence_completeness_denominator > 0
+score = 0
+band_label = review
+```
 
-* visible card copy does not include obvious internal/process language
-* no raw signal IDs are visible
-* no internal cluster names are visible
-* no “Functional read —” style labels leak
-* no “governed”, “compiler”, “model”, or “structured ranking” language appears in the consumer card
+the rendered card must:
 
-### Regression preservation
+* show insufficient-data wording
+* not show `0 / 100` as the primary score
+* not show `Needs attention` as the primary band
+* show evidence completeness
+* show a short explanation that more marker evidence is needed
 
-* FE-R1 prose safety still passes
-* FE-R6A fresh UAT guard still passes
-* MAP-R1A mapping guard still passes
-* existing domain score assembler tests still pass, if present
+### Partial-evidence state
+
+Given:
+
+```text
+evidence_completeness_numerator = 1
+evidence_completeness_denominator = 5
+score = 1.0
+band_label = strong
+confidence_tier = low
+```
+
+the rendered card may show `100 / 100` and `Strong`, but must also clearly show:
+
+* `Score reliability: Limited reliability`
+* `Evidence completeness: 1 of 5 expected markers included`
+
+### Guard preservation
+
+* `clinical_label` is not shown in consumer card
+* frontend does not calculate evidence completeness from `missing_marker_ids`
+* no subsystem placeholder UI appears
+* no frontend-invented subsystem chips appear
+* no raw signal IDs or internal process language appears
 
 ## Required Sentinel obligations
 
-Add or update active deterministic Sentinel defect classes as appropriate, for example:
+Add or update active deterministic Sentinel defect classes as appropriate:
 
 ```text
-health_system_card_hidden_from_main_journey
-health_system_card_frontend_calculates_evidence_completeness
-health_system_card_clinical_label_visible
-health_system_card_subsystem_placeholder_visible
-health_system_card_internal_language_visible
+health_system_card_reliability_label_missing
+health_system_card_evidence_completeness_label_missing
+health_system_card_zero_evidence_shows_needs_attention
+health_system_card_zero_evidence_shows_primary_zero_score
 ```
 
 Each Sentinel class must point to an active deterministic test.
@@ -375,15 +323,17 @@ No placeholder Sentinel entries.
 Run:
 
 ```powershell
+python -m pytest backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py -q
 python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
 python -m pytest backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py -q
 python -m pytest backend/tests/regression/test_canonical_mapping_star_suffix_failure.py -q
 python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
 python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
+python -m pytest backend/tests/unit/test_domain_score_assembler_v1.py -q
 ```
 
-Also run any new DOMAIN-UX1A tests added by this sprint.
+Also run any new DOMAIN-UX1A-PATCH tests added by this sprint.
 
 If frontend files changed:
 
@@ -391,27 +341,37 @@ If frontend files changed:
 npm run type-check
 ```
 
-If browser tools are available, inspect a fresh or current result page and confirm the Wave 1 cards are visible in the main journey.
+If frontend component tests are available, run them.
+
+If browser tools are available, inspect:
+
+```text
+http://localhost:3000/results?analysis_id=d7417288-7e11-48da-8716-d0f63f77c491
+```
+
+Confirm:
+
+* `Score reliability` label is visible
+* `Evidence completeness` label is visible
+* Blood sugar and Liver no longer present `0 / 100 Needs attention` as if this were a true adverse score when evidence completeness is 0 of N
 
 Do not claim browser UAT passed unless actually inspected.
 
 ## Acceptance criteria
 
-This sprint is complete only if:
+This patch is complete only if:
 
-* Wave 1 Health Systems Cards are visible in the main results journey
-* backend emits evidence completeness numerator/denominator
-* frontend uses backend-supplied completeness values
-* frontend does not calculate governed evidence logic
-* score reliability wording is aligned
-* band wording is aligned
-* plain-English descriptors are present
-* `clinical_label` is not shown in the consumer card
-* no visible subsystem placeholder UI is rendered
-* no subsystem labels or biomarker groupings are invented in frontend
-* newly prominent prose passes consumer-quality safety checks
-* all required regression tests pass
-* notes document what remains for DOMAIN-UX1B and DOMAIN-UX1C
+* reliability label and value are both visible
+* evidence completeness label and value are both visible
+* zero-evidence cards render as insufficient-data / not-enough-marker-evidence state
+* zero-evidence cards do not show `0 / 100` as primary score
+* zero-evidence cards do not show `Needs attention` as primary band
+* partial-evidence score remains allowed but reliability/completeness are clear
+* frontend still does not calculate evidence completeness
+* no subsystem labels or marker groupings are invented
+* clinical label remains hidden in consumer view
+* Sentinel guards are active
+* regression tests pass
 
 ## Closure requirements
 
@@ -433,8 +393,8 @@ python backend/scripts/run_work_package.py finish
 
 After finish, follow SOP v1.3.1:
 
-* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `DOMAIN-UX1A`, commit it automatically as:
-  `chore(bus): DOMAIN-UX1A kernel COMPLETE status`
+* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `DOMAIN-UX1A-PATCH`, commit it automatically as:
+  `chore(bus): DOMAIN-UX1A-PATCH kernel COMPLETE status`
 * if any other Automation Bus artefact is dirty, STOP and escalate
 
 Do not merge.
@@ -443,6 +403,9 @@ Do not start DOMAIN-UX1B.
 
 ## Cursor completion statement
 
-Cursor implements DOMAIN-UX1A only.
+Cursor implements DOMAIN-UX1A-PATCH only.
 
-Cursor may not self-certify clinical correctness, merge readiness, or permission to begin DOMAIN-UX1B.
+Cursor may not self-certify merge readiness, clinical correctness, or permission to begin DOMAIN-UX1B.
+
+```
+```
