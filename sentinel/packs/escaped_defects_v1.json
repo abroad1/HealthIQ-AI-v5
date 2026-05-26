@@ -700,6 +700,38 @@
       "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "health_system_card_score_visual_missing": {
+      "description": "DOMAIN-UX1B — scored Wave 1 cards lack premium score visual device.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_card_zero_evidence_score_visual_visible": {
+      "description": "DOMAIN-UX1B — zero-evidence cards render score visual implying a true health score.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_card_partial_evidence_overconfidence": {
+      "description": "DOMAIN-UX1B — partial-evidence cards lack visual de-emphasis for limited marker coverage.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_card_frontend_invents_subsystem_chips": {
+      "description": "DOMAIN-UX1B — frontend invents subsystem chip UI without governed DTO structure.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

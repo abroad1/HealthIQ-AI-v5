@@ -191,3 +191,47 @@ def test_assembler_emits_completeness_helper() -> None:
     src = _read(_ASSEMBLER)
     assert "_evidence_completeness_for_rail" in src
     assert "evidence_completeness_numerator" in _read(_MODEL)
+
+
+_SCORE_VISUAL = _REPO_ROOT / "frontend" / "app" / "components" / "results" / "Wave1HealthSystemScoreVisual.tsx"
+
+
+@pytest.mark.regression
+def test_health_system_card_score_visual_missing_sentinel() -> None:
+    """Sentinel: health_system_card_score_visual_missing."""
+    cards = _read(_WAVE1_CARDS)
+    visual = _read(_SCORE_VISUAL)
+    assert "Wave1HealthSystemScoreVisual" in cards
+    assert 'data-testid="wave1-score-visual"' in visual
+
+
+@pytest.mark.regression
+def test_health_system_card_zero_evidence_score_visual_visible_sentinel() -> None:
+    """Sentinel: health_system_card_zero_evidence_score_visual_visible."""
+    cards = _read(_WAVE1_CARDS)
+    assert "wave1-insufficient-data-state" in cards
+    assert "Wave1HealthSystemScoreVisual" in cards
+    zero_branch = cards.split("isZeroEvidence ? (")[1].split(") : (")[0]
+    assert "Wave1HealthSystemScoreVisual" not in zero_branch
+
+
+@pytest.mark.regression
+def test_health_system_card_partial_evidence_overconfidence_sentinel() -> None:
+    """Sentinel: health_system_card_partial_evidence_overconfidence."""
+    cards = _read(_WAVE1_CARDS)
+    display = _read(_DISPLAY_LIB)
+    assert "wave1IsPartialEvidenceState" in cards
+    assert "wave1IsPartialEvidenceState" in display
+    assert "wave1-limited-coverage-hint" in _read(_SCORE_VISUAL)
+    assert "wave1-coverage-panel" in cards
+
+
+@pytest.mark.regression
+def test_health_system_card_frontend_invents_subsystem_chips_sentinel() -> None:
+    """Sentinel: health_system_card_frontend_invents_subsystem_chips."""
+    cards = _read(_WAVE1_CARDS)
+    visual = _read(_SCORE_VISUAL)
+    for term in ("lipid transport", "vascular strain", "glycaemic regulation", "liver strain chip"):
+        assert term not in cards.lower()
+        assert term not in visual.lower()
+    assert "chip" not in cards.lower()

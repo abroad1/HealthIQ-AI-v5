@@ -9,9 +9,11 @@ import { wave1ConfidenceMarkerDisplayLabel } from '@/lib/wave1ConfidenceMarkerLa
 import {
   wave1BandLabelDisplay,
   wave1EvidenceCompletenessLine,
+  wave1IsPartialEvidenceState,
   wave1IsZeroEvidenceState,
   wave1ScoreReliabilityLabel,
 } from '@/lib/wave1HealthSystemCardDisplay';
+import { Wave1HealthSystemScoreVisual } from './Wave1HealthSystemScoreVisual';
 
 const WAVE1_ORDER: readonly string[] = [
   'wave1_cardiovascular',
@@ -64,7 +66,7 @@ export function Wave1DomainCards({ domains, embedInJourney = false }: Props) {
           detail.
         </p>
       </div>
-      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-3">
         {ordered.map((d) => {
           const expanded = !!open[d.domain_id];
           const descriptor = d.plain_english_descriptor?.trim();
@@ -72,61 +74,87 @@ export function Wave1DomainCards({ domains, embedInJourney = false }: Props) {
           const num = d.evidence_completeness_numerator ?? 0;
           const den = d.evidence_completeness_denominator ?? 0;
           const isZeroEvidence = wave1IsZeroEvidenceState(num, den);
+          const isPartialEvidence = wave1IsPartialEvidenceState(num, den);
           const scorePct = Math.round(Math.max(0, Math.min(1, d.score)) * 100);
           const scoreReliability = wave1ScoreReliabilityLabel(d.confidence_tier);
           const evidenceCompleteness = wave1EvidenceCompletenessLine(num, den);
+          const limitedCoverage =
+            isPartialEvidence || d.confidence_tier === 'low' || scoreReliability === 'Limited reliability';
 
           return (
-            <Card key={d.domain_id} className="border-slate-200 shadow-sm" data-testid={`wave1-card-${d.domain_id}`}>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base font-semibold text-slate-900">{d.consumer_label}</CardTitle>
+            <Card
+              key={d.domain_id}
+              className={`border shadow-sm overflow-hidden ${
+                isZeroEvidence
+                  ? 'border-amber-200/80 bg-gradient-to-b from-amber-50/40 to-white'
+                  : isPartialEvidence
+                    ? 'border-slate-200 bg-gradient-to-b from-slate-50/80 to-white'
+                    : 'border-slate-200 bg-white'
+              }`}
+              data-testid={`wave1-card-${d.domain_id}`}
+            >
+              <CardHeader className="pb-3 space-y-1">
+                <CardTitle className="text-base font-semibold text-slate-900 leading-snug">
+                  {d.consumer_label}
+                </CardTitle>
                 {descriptor ? (
-                  <p className="text-xs text-slate-500 mt-0.5" data-testid="wave1-plain-english-descriptor">
+                  <p className="text-xs text-slate-500" data-testid="wave1-plain-english-descriptor">
                     {descriptor}
                   </p>
                 ) : null}
-                <CardDescription className="text-xs text-slate-600 line-clamp-3">{shortExpl}</CardDescription>
                 {d.evidence_anchor_sentence ? (
-                  <p className="text-xs text-slate-500 mt-1.5 border-l-2 border-indigo-200 pl-2">
+                  <p className="text-xs text-slate-500 border-l-2 border-indigo-200 pl-2 line-clamp-2">
                     {d.evidence_anchor_sentence}
                   </p>
                 ) : null}
               </CardHeader>
               <CardContent className="space-y-3 pt-0">
                 {isZeroEvidence ? (
-                  <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 space-y-1">
-                    <p className="text-sm font-semibold text-amber-900" data-testid="wave1-insufficient-data-state">
-                      Not enough data
-                    </p>
-                    <p className="text-xs text-amber-800">
+                  <div
+                    className="rounded-lg border border-amber-200 bg-amber-50/90 px-3 py-3 space-y-1"
+                    data-testid="wave1-insufficient-data-state"
+                  >
+                    <p className="text-sm font-semibold text-amber-900">Not enough data</p>
+                    <p className="text-xs text-amber-800 leading-relaxed">
                       This area needs more marker evidence before HealthIQ can score it meaningfully.
                     </p>
                   </div>
                 ) : (
-                  <div className="flex flex-wrap items-baseline gap-2">
-                    <span className="text-3xl font-bold text-indigo-700 tabular-nums">{scorePct}</span>
-                    <span className="text-sm text-slate-500">/ 100</span>
-                    <span
-                      className="ml-auto text-sm font-medium text-slate-700"
-                      data-testid="wave1-band-label"
-                    >
-                      {wave1BandLabelDisplay(d.band_label)}
-                    </span>
-                  </div>
+                  <Wave1HealthSystemScoreVisual
+                    scorePct={scorePct}
+                    bandLabel={d.band_label}
+                    limitedCoverage={limitedCoverage}
+                  />
                 )}
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Score reliability</p>
-                  <p className="text-xs font-medium text-slate-700" data-testid="wave1-score-reliability">
-                    {scoreReliability}
-                  </p>
+
+                <div
+                  className={`rounded-lg border px-3 py-2.5 grid grid-cols-1 sm:grid-cols-2 gap-3 ${
+                    limitedCoverage && !isZeroEvidence
+                      ? 'border-amber-100 bg-amber-50/30'
+                      : 'border-slate-100 bg-slate-50/50'
+                  }`}
+                  data-testid="wave1-coverage-panel"
+                >
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
+                      Score reliability
+                    </p>
+                    <p className="text-xs font-medium text-slate-800" data-testid="wave1-score-reliability">
+                      {scoreReliability}
+                    </p>
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
+                      Evidence completeness
+                    </p>
+                    <p className="text-xs text-slate-800" data-testid="wave1-evidence-completeness">
+                      {evidenceCompleteness}
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Evidence completeness</p>
-                  <p className="text-xs text-slate-700" data-testid="wave1-evidence-completeness">
-                    {evidenceCompleteness}
-                  </p>
-                </div>
-                <p className="text-sm text-slate-800 border-t border-slate-100 pt-2">{d.headline_sentence}</p>
+
+                <p className="text-sm text-slate-800 leading-relaxed">{d.headline_sentence}</p>
+
                 <Button
                   type="button"
                   variant="ghost"
@@ -145,6 +173,7 @@ export function Wave1DomainCards({ domains, embedInJourney = false }: Props) {
                 </Button>
                 {expanded ? (
                   <div className="space-y-3 text-sm text-slate-700 border-t border-slate-100 pt-3">
+                    <CardDescription className="text-xs text-slate-600">{shortExpl}</CardDescription>
                     <div>
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Why this score</p>
                       <p>{d.contributor_sentence}</p>
@@ -163,13 +192,15 @@ export function Wave1DomainCards({ domains, embedInJourney = false }: Props) {
                     </div>
                     {d.missing_marker_ids.length > 0 ? (
                       <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
                           What would improve confidence
                         </p>
-                        <ul className="list-disc pl-4 space-y-1">
+                        <ul className="flex flex-wrap gap-1.5 list-none p-0 m-0" data-testid="wave1-missing-markers">
                           {d.missing_marker_ids.map((m) => (
-                            <li key={m} className="text-sm text-slate-700">
-                              {wave1ConfidenceMarkerDisplayLabel(m)}
+                            <li key={m}>
+                              <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100/80 px-2 py-0.5 text-xs text-slate-600">
+                                {wave1ConfidenceMarkerDisplayLabel(m)}
+                              </span>
                             </li>
                           ))}
                         </ul>

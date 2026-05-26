@@ -29,3 +29,8 @@ export function wave1EvidenceCompletenessLine(numerator: number, denominator: nu
 export function wave1IsZeroEvidenceState(numerator: number, denominator: number): boolean {
   return denominator > 0 && numerator === 0;
 }
+
+/** Partial evidence: some markers present but not full expected set (DTO fields only). */
+export function wave1IsPartialEvidenceState(numerator: number, denominator: number): boolean {
+  return denominator > 0 && numerator > 0 && numerator < denominator;
+}

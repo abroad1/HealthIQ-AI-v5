@@ -56,6 +56,7 @@ describe('Wave1DomainCards', () => {
     );
     expect(screen.getByText('Score reliability')).toBeInTheDocument();
     expect(screen.getByTestId('wave1-score-reliability')).toHaveTextContent('Moderate reliability');
+    expect(screen.getByTestId('wave1-score-visual')).toBeInTheDocument();
     expect(screen.getByTestId('wave1-band-label')).toHaveTextContent('Stable');
     expect(screen.getByText('Evidence completeness')).toBeInTheDocument();
     expect(screen.getByTestId('wave1-evidence-completeness')).toHaveTextContent(
@@ -87,5 +88,42 @@ describe('Wave1DomainCards', () => {
     expect(screen.getByTestId('wave1-evidence-completeness')).toHaveTextContent(
       '0 of 3 expected markers included'
     );
+    expect(screen.queryByTestId('wave1-score-visual')).not.toBeInTheDocument();
+  });
+
+  it('shows premium score visual for scored cards (DOMAIN-UX1B)', () => {
+    render(<Wave1DomainCards domains={[minimalLiverDomain()]} embedInJourney />);
+    expect(screen.getByTestId('wave1-score-visual')).toBeInTheDocument();
+    expect(screen.getByText('80')).toBeInTheDocument();
+  });
+
+  it('shows partial-evidence limited coverage hint (DOMAIN-UX1B)', () => {
+    render(
+      <Wave1DomainCards
+        domains={[
+          minimalLiverDomain({
+            domain_id: 'wave1_cardiovascular',
+            consumer_label: 'Cardiovascular health',
+            evidence_completeness_numerator: 1,
+            evidence_completeness_denominator: 5,
+            confidence_tier: 'low',
+            score: 1,
+            band_label: 'strong',
+          }),
+        ]}
+        embedInJourney
+      />
+    );
+    expect(screen.getByTestId('wave1-limited-coverage-hint')).toHaveTextContent(
+      'Limited marker coverage on this panel'
+    );
+    expect(screen.getByTestId('wave1-coverage-panel')).toBeInTheDocument();
+  });
+
+  it('renders missing markers as compact pills when expanded (DOMAIN-UX1B)', async () => {
+    const user = userEvent.setup();
+    render(<Wave1DomainCards domains={[minimalLiverDomain()]} embedInJourney />);
+    await user.click(screen.getByRole('button', { name: /more detail/i }));
+    expect(screen.getByTestId('wave1-missing-markers')).toBeInTheDocument();
   });
 });
