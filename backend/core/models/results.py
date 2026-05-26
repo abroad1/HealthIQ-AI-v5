@@ -164,6 +164,38 @@ class InsightResult(BaseModel):
 ConfidenceTierV1 = Literal["high", "medium", "low"]
 
 
+class SubsystemEvidenceV1(BaseModel):
+    """
+    DOMAIN-UX1C — governed subsystem evidence beneath a Wave 1 health-system card.
+    Backend-only mapping; frontend renders in DOMAIN-UX1D.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    subsystem_id: str = Field(..., description="Stable subsystem id, e.g. wave1_cv_lipid_transport")
+    subsystem_label: str = Field(..., description="Consumer-safe subsystem label")
+    included_marker_ids: List[str] = Field(
+        default_factory=list,
+        description="Canonical marker ids present or scored for this subsystem",
+    )
+    missing_marker_ids: List[str] = Field(
+        default_factory=list,
+        description="Expected subsystem markers not present on this panel",
+    )
+    status_label: Optional[str] = Field(
+        default=None,
+        description="Optional subsystem status; null when not safely derivable",
+    )
+    evidence_role: Optional[str] = Field(
+        default=None,
+        description="Optional role hint for future UI; null in DOMAIN-UX1C",
+    )
+    source_trace: str = Field(
+        ...,
+        description="Provenance string for why this subsystem appears",
+    )
+
+
 class ConsumerDomainScoreV1(BaseModel):
     """
     Wave 1 — deterministic customer domain translation (Strategy A).
@@ -255,9 +287,9 @@ class ConsumerDomainScoreV1(BaseModel):
         ge=0,
         description="DOMAIN-UX1A: expected rail marker count for this domain (present + missing)",
     )
-    subsystems: Optional[List[Any]] = Field(
+    subsystems: Optional[List[SubsystemEvidenceV1]] = Field(
         default=None,
-        description="DOMAIN-UX1A: forward-compatible subsystem slot; null/empty until governed data exists",
+        description="DOMAIN-UX1C: governed subsystem evidence rows; Wave 1 only",
     )
 
 

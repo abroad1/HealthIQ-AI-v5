@@ -33,6 +33,7 @@ from core.analytics.domain_narrative_wave1 import (
     next_step_liver,
 )
 from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayLayerBundleV1
+from core.analytics.wave1_subsystem_evidence import assemble_wave1_subsystem_evidence
 from core.models.results import ConfidenceTierV1, ConsumerDomainScoreV1
 
 # --- Scoring policy rails (authoritative names) ---
@@ -360,13 +361,20 @@ def _wave1_card_contract_extras(
     hss: Dict[str, Any],
     system_key: str,
     missing_marker_ids: List[str],
+    panel_biomarker_ids: Set[str],
 ) -> Dict[str, Any]:
     num, den = _evidence_completeness_for_rail(hss, system_key, missing_marker_ids)
+    rail_data = _system_rail_data(hss, system_key)
+    subsystems = assemble_wave1_subsystem_evidence(
+        domain_id=domain_id,
+        panel_biomarker_ids=panel_biomarker_ids,
+        rail_biomarker_scores=rail_data.get("biomarker_scores"),
+    )
     return {
         "plain_english_descriptor": _WAVE1_PLAIN_DESCRIPTOR.get(domain_id, ""),
         "evidence_completeness_numerator": num,
         "evidence_completeness_denominator": den,
-        "subsystems": None,
+        "subsystems": subsystems or None,
     }
 
 
@@ -494,6 +502,7 @@ def assemble_consumer_domain_scores_v1(
                 hss=hss,
                 system_key=_RAIL_CARDIOVASCULAR,
                 missing_marker_ids=missing,
+                panel_biomarker_ids=panel_biomarker_ids,
             ),
         )
 
@@ -552,6 +561,7 @@ def assemble_consumer_domain_scores_v1(
                 hss=hss,
                 system_key=_RAIL_METABOLIC,
                 missing_marker_ids=missing,
+                panel_biomarker_ids=panel_biomarker_ids,
             ),
         )
 
@@ -636,6 +646,7 @@ def assemble_consumer_domain_scores_v1(
                 hss=hss,
                 system_key=_RAIL_LIVER,
                 missing_marker_ids=missing,
+                panel_biomarker_ids=panel_biomarker_ids,
             ),
         )
 

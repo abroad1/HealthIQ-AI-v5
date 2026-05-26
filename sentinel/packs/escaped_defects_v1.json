@@ -732,6 +732,46 @@
       "test_file": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "health_system_subsystems_missing_from_dto": {
+      "description": "DOMAIN-UX1C — Wave 1 domains omit governed subsystem evidence on ConsumerDomainScoreV1.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_subsystem_labels_frontend_defined": {
+      "description": "DOMAIN-UX1C — frontend hardcodes subsystem labels or mapping authority.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_subsystem_marker_grouping_frontend_defined": {
+      "description": "DOMAIN-UX1C — frontend calculates subsystem included/missing marker sets.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_subsystem_fake_status_emitted": {
+      "description": "DOMAIN-UX1C — subsystem status_label emitted without safe backend derivation.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_wave2_subsystems_prematurely_emitted": {
+      "description": "DOMAIN-UX1C — non-Wave-1 domains emit subsystem evidence prematurely.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

@@ -77,7 +77,13 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         assert r.card_schema_version == "1.2"
         assert r.evidence_completeness_denominator >= r.evidence_completeness_numerator
         assert r.plain_english_descriptor
-        assert r.subsystems is None
+        assert r.subsystems is not None
+        assert len(r.subsystems) >= 1
+        sub0 = r.subsystems[0]
+        assert sub0.subsystem_id
+        assert sub0.subsystem_label
+        assert sub0.source_trace
+        assert sub0.status_label is None
 
 
 def test_wave1_next_step_sentences_are_domain_distinct_without_insights():

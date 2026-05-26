@@ -296,6 +296,17 @@ export interface Wave1AlignedDriversV1 {
   by_domain?: Record<string, string[]>;
 }
 
+/** DOMAIN-UX1C — governed subsystem evidence (mirrors Pydantic SubsystemEvidenceV1) */
+export interface SubsystemEvidenceV1 {
+  subsystem_id: string;
+  subsystem_label: string;
+  included_marker_ids: string[];
+  missing_marker_ids: string[];
+  status_label?: string | null;
+  evidence_role?: string | null;
+  source_trace: string;
+}
+
 /** D-1/D-2/D-3 — Wave 1 customer domain card contract (mirrors Pydantic ConsumerDomainScoreV1) */
 /** LC-S8D / FE-S8E — pre-arbitration upload row (Mode A fidelity). */
 export interface UploadPanelObservation {
@@ -352,7 +363,7 @@ export interface ConsumerDomainScoreV1 {
   plain_english_descriptor?: string;
   evidence_completeness_numerator?: number;
   evidence_completeness_denominator?: number;
-  subsystems?: unknown[] | null;
+  subsystems?: SubsystemEvidenceV1[] | null;
 }
 
 export interface AnalysisResult {
