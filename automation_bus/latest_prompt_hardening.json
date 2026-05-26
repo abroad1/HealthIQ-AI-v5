@@ -1,177 +1,79 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "DOMAIN-UX1D",
+  "work_id": "DOMAIN-LABEL1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-26T00:00:00Z",
-  "hardened_by": "Claude Code (claude-sonnet-4-6)",
+  "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
-      "type": "CONFIRMED",
-      "field": "Front matter — all 5 required SOP v1.3.1 fields valid",
-      "finding": "All five mandatory front matter fields present and correctly valued. STANDARD risk and CONTENT classification are appropriate for a frontend-only rendering sprint with no Intelligence Core contact.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md line 2: work_id: DOMAIN-UX1D — CONFIRMED",
-        "automation_bus/latest_cursor_prompt.md line 3: branch: domain-ux/domain-ux1d-full-wave1-expanded-card — CONFIRMED",
-        "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD — CONFIRMED",
-        "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH — CONFIRMED",
-        "automation_bus/latest_cursor_prompt.md line 6: change_type: CONTENT — CONFIRMED"
-      ]
+      "check": "front_matter_complete",
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=DOMAIN-LABEL1, branch=domain-ux/domain-label1-governed-biomarker-display-labels, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
     },
     {
-      "type": "CONFIRMED",
-      "field": "All controlling authority documents present and content verified",
-      "finding": "All four authority files read in full. DOMAIN-UX1C notes confirm: subsystem model is complete, status_label is null throughout, residual gap for UX1D is visible subsystem sections only. Sprint plan FINAL confirms UX1D scope: render subsystems, included and missing marker mini-cards, reliability and completeness explanation. Discussion FINAL confirms evidence-transparency rule: user must see what was used and what was missing. UX1B notes confirm component baseline: Wave1HealthSystemScoreVisual.tsx exists with data-testid='wave1-score-visual', wave1-limited-coverage-hint is in the score visual not Wave1DomainCards.tsx.",
-      "citations": [
-        "docs/audit-papers/DOMAIN-UX1C_governed_subsystem_evidence_model_notes.md line 78: 'Start DOMAIN-UX1D as frontend-only surfacing sprint' — CONFIRMED gate passed",
-        "docs/audit-papers/DOMAIN-UX1C_governed_subsystem_evidence_model_notes.md section 8: status_label deliberately null — CONFIRMED",
-        "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md lines 343-372: Sprint 4 scope — render subsystems, included markers, missing markers, reliability, completeness — CONFIRMED",
-        "docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md lines 40-56: evidence-transparency rule, prose-light design — CONFIRMED",
-        "docs/audit-papers/DOMAIN-UX1B_premium_health_systems_card_visuals_notes.md section 4: Wave1HealthSystemScoreVisual.tsx created with wave1-score-visual testid — CONFIRMED",
-        "docs/audit-papers/DOMAIN-UX1B_premium_health_systems_card_visuals_notes.md section 6: wave1-limited-coverage-hint is in score visual component, not Wave1DomainCards.tsx — CONFIRMED"
-      ]
+      "check": "authority_paths_verified",
+      "status": "CONFIRMED",
+      "citation": "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md — confirmed on disk; docs/audit-papers/DOMAIN-UX1C_governed_subsystem_evidence_model_notes.md — confirmed on disk; docs/audit-papers/DOMAIN-UX1D_full_wave1_expanded_health_systems_card_notes.md — confirmed on disk; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — confirmed on disk. NOTE: docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md — path contains a space; not glob-verifiable; Cursor must confirm it can be read at preflight."
     },
     {
-      "type": "CONFIRMED",
-      "field": "Backend SubsystemEvidenceV1 model — all 7 fields read directly",
-      "finding": "SubsystemEvidenceV1 Pydantic model read in full. frozen=True, extra=forbid. Fields: subsystem_id: str (required), subsystem_label: str (required), included_marker_ids: List[str] (default_factory=list), missing_marker_ids: List[str] (default_factory=list), status_label: Optional[str] (default=None), evidence_role: Optional[str] (default=None), source_trace: str (required). ConsumerDomainScoreV1.subsystems: Optional[List[SubsystemEvidenceV1]].",
-      "citations": [
-        "backend/core/models/results.py line 167: class SubsystemEvidenceV1(BaseModel) — CONFIRMED",
-        "backend/core/models/results.py lines 173: model_config frozen=True extra=forbid — CONFIRMED",
-        "backend/core/models/results.py lines 175-196: all 7 fields confirmed — CONFIRMED",
-        "backend/core/models/results.py line 290: subsystems: Optional[List[SubsystemEvidenceV1]] — CONFIRMED"
-      ]
+      "check": "label_problem_confirmed",
+      "status": "CONFIRMED",
+      "citation": "frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx:49,64 — both included and missing marker rendering call wave1ConfidenceMarkerDisplayLabel(markerId); frontend/app/lib/wave1ConfidenceMarkerLabels.ts:5-16 — CANONICAL_ID_TO_LABEL contains only 10 liver-domain entries; wave1ConfidenceMarkerLabels.ts:24-28 — fallback returns raw lowercase string for single-word ids (hba1c, crp, glucose, insulin, homocysteine) and title-case-split for multi-word ids (Ldl Cholesterol, Hdl Cholesterol, Tc Hdl Ratio)"
     },
     {
-      "type": "CONFIRMED",
-      "field": "Frontend type contract aligned with backend — no field drift",
-      "finding": "SubsystemEvidenceV1 TypeScript interface read directly. All 7 fields present and type-compatible with backend model. subsystems?: SubsystemEvidenceV1[] | null on ConsumerDomainScoreV1 at line 366. Frontend test fixture at Wave1DomainCards.test.tsx line 30 already uses subsystems: null — type is in active use.",
-      "citations": [
-        "frontend/app/types/analysis.ts lines 300-308: SubsystemEvidenceV1 interface — all 7 fields confirmed",
-        "frontend/app/types/analysis.ts line 366: subsystems?: SubsystemEvidenceV1[] | null — CONFIRMED",
-        "frontend/tests/components/Wave1DomainCards.test.tsx line 30: subsystems: null in fixture — CONFIRMED"
-      ]
+      "check": "dto_carries_string_arrays_only",
+      "status": "CONFIRMED",
+      "citation": "backend/core/models/results.py:177-182 — SubsystemEvidenceV1.included_marker_ids: List[str] (default_factory=list), missing_marker_ids: List[str] (default_factory=list); frontend/app/types/analysis.ts:303-304 — same shape. No label-bearing objects exist in current DTO contract."
     },
     {
-      "type": "CONFIRMED",
-      "field": "Subsystem mapping authority — 7 subsystems across 3 domains read directly",
-      "finding": "wave1_subsystem_evidence.py read in full. Seven subsystems confirmed: wave1_cv_lipid_transport ('Lipid transport', 5 markers: total_cholesterol, ldl_cholesterol, hdl_cholesterol, triglycerides, tc_hdl_ratio), wave1_cv_homocysteine_pathway ('Homocysteine pathway', 1 marker: homocysteine), wave1_cv_vascular_strain ('Vascular strain context', 1 marker: crp), wave1_met_glycaemic_control ('Glycaemic control', 2 markers: glucose, hba1c), wave1_met_insulin_metabolic ('Insulin and metabolic context', 2 markers: insulin, triglycerides), wave1_liv_enzyme_pattern ('Liver enzyme pattern', 3 markers: alt, ast, ggt), wave1_liv_processing_context ('Liver processing context', 4 markers: alp, albumin, bilirubin, total_bilirubin). Frontend must render exactly these labels and groupings from DTO only.",
-      "citations": [
-        "backend/core/analytics/wave1_subsystem_evidence.py lines 25-78: all 7 subsystem definitions — CONFIRMED",
-        "backend/core/analytics/wave1_subsystem_evidence.py line 80: WAVE1_DOMAIN_SUBSYSTEM_DEFS — single authority — CONFIRMED"
-      ]
+      "check": "ssot_has_no_display_label_field",
+      "status": "CONFIRMED",
+      "citation": "backend/ssot/biomarkers.yaml — grep for consumer_display_name, display_label, display_name returned no matches. All Wave 1 marker entries confirmed present (total_cholesterol, ldl_cholesterol, hdl_cholesterol, triglycerides, tc_hdl_ratio:line 92, apob:line 170, apoa1:line 189, lipoprotein_a:line 1626, homocysteine:line 1644, insulin:line 249, alt, ast, ggt, alp, albumin, bilirubin — confirmed). consumer_display_name field does not yet exist and must be added."
     },
     {
-      "type": "CONFIRMED",
-      "field": "Wave1DomainCards.tsx expanded section structure read in full",
-      "finding": "Component read in full (224 lines). Expanded reveal at lines 174-215 renders: shortExpl, contributor_sentence, confidence_sentence, consequence_sentence, next_step_sentence, missing_marker_ids chips (data-testid='wave1-missing-markers' at line 198 via wave1ConfidenceMarkerDisplayLabel), caveat_flags. No subsystem rendering present. wave1ConfidenceMarkerDisplayLabel imported from wave1ConfidenceMarkerLabels at line 8. wave1BandLabelDisplay imported but used only in Wave1HealthSystemScoreVisual.tsx not in this file.",
-      "citations": [
-        "frontend/app/components/results/Wave1DomainCards.tsx line 8: wave1ConfidenceMarkerDisplayLabel import — CONFIRMED",
-        "frontend/app/components/results/Wave1DomainCards.tsx line 174: expanded reveal div — CONFIRMED",
-        "frontend/app/components/results/Wave1DomainCards.tsx lines 193-208: top-level missing_marker_ids chip rendering — CONFIRMED",
-        "frontend/app/components/results/Wave1DomainCards.tsx line 198: data-testid='wave1-missing-markers' — CONFIRMED"
-      ]
+      "check": "biomarker_definition_model_must_be_updated",
+      "status": "CONFIRMED",
+      "citation": "backend/core/models/biomarker.py:12 — ConfigDict(frozen=True, extra='forbid'). BiomarkerDefinition fields at lines 14-19: name, aliases, unit, description, category, data_type only. consumer_display_name is absent. Adding to YAML alone is insufficient — the Pydantic model and resolver extraction must also be updated."
     },
     {
-      "type": "CONFIRMED",
-      "field": "wave1ConfidenceMarkerDisplayLabel utility read — incomplete coverage for CV and blood sugar markers",
-      "finding": "CANONICAL_ID_TO_LABEL in wave1ConfidenceMarkerLabels.ts covers only 10 liver-related markers (alt, ast, ggt, alp, alkaline_phosphatase, albumin, globulin, total_protein, total_bilirubin, bilirubin). All CV and blood sugar subsystem markers fall through to the generic fallback: split on underscore, titlecase each part. This produces 'Total Cholesterol' (acceptable), but 'Ldl Cholesterol', 'Hdl Cholesterol', 'Tc Hdl Ratio' (poor), and single-word markers with no underscore are returned as-is without capitalisation: 'homocysteine', 'crp', 'glucose', 'hba1c', 'insulin' (all lower-case, unacceptable in consumer UI). Cursor must extend this utility or create a new subsystem-marker display label function covering all 13 expected subsystem marker IDs.",
-      "citations": [
-        "frontend/app/lib/wave1ConfidenceMarkerLabels.ts lines 5-16: CANONICAL_ID_TO_LABEL — 10 liver markers only — CONFIRMED",
-        "frontend/app/lib/wave1ConfidenceMarkerLabels.ts lines 23-28: fallback — split underscore, no capitalisation for single-word ids — CONFIRMED"
-      ]
+      "check": "resolver_does_not_load_display_field",
+      "status": "CONFIRMED",
+      "citation": "backend/core/canonical/resolver.py:50-57 — load_biomarkers() extracts only name, aliases, unit, description, category, data_type. consumer_display_name extraction must be added here alongside the YAML and BiomarkerDefinition model changes."
     },
     {
-      "type": "CONFIRMED",
-      "field": "Wave1DomainCards call site — biomarker value data NOT passed in",
-      "finding": "Wave1DomainCards called at results/page.tsx lines 714-717 with only domains={currentAnalysis?.consumer_domain_scores} and embedInJourney. BiomarkerResult[] (currentAnalysis.biomarkers) is not passed. To show value/unit/range/status for included markers, Cursor must either (a) add biomarkers?: BiomarkerResult[] prop and thread from page.tsx (not a forbidden file), or (b) show display names only. Cursor must make this choice explicit and document it in the audit-paper notes.",
-      "citations": [
-        "frontend/app/(app)/results/page.tsx lines 714-717: Wave1DomainCards call — domains only, no biomarkers — CONFIRMED",
-        "frontend/app/types/analysis.ts line 371: AnalysisResult.biomarkers: BiomarkerResult[] — CONFIRMED",
-        "frontend/app/types/analysis.ts lines 88-111: BiomarkerResult interface — value, display_value, display_unit, display_reference_range, status all present — CONFIRMED"
-      ]
+      "check": "assembler_has_no_ssot_dependency",
+      "status": "CONFIRMED",
+      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:1-13 — imports: __future__, dataclasses, typing, core.models.results. No import of CanonicalResolver or any SSOT loader. Wiring the assembler to the SSOT is a new dependency that must be introduced without touching scoring or signal logic."
     },
     {
-      "type": "CONFIRMED",
-      "field": "All required validation test files present",
-      "finding": "All 9 backend test files named in Required Validation Commands confirmed present on disk.",
-      "citations": [
-        "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py — CONFIRMED",
-        "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py — CONFIRMED",
-        "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — CONFIRMED",
-        "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py — CONFIRMED",
-        "backend/tests/regression/test_canonical_mapping_star_suffix_failure.py — CONFIRMED",
-        "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py — CONFIRMED",
-        "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — CONFIRMED",
-        "backend/tests/unit/test_scoring_rules.py — CONFIRMED",
-        "backend/tests/unit/test_domain_score_assembler_v1.py — CONFIRMED"
-      ]
+      "check": "six_layer_coupling_risk",
+      "status": "FLAGGED",
+      "citation": "Display label chain spans six layers that must all be updated atomically: backend/ssot/biomarkers.yaml (add consumer_display_name) → backend/core/models/biomarker.py:9-19 (add field) → backend/core/canonical/resolver.py:50-57 (extract field) → backend/core/analytics/wave1_subsystem_evidence.py (wire resolver, emit label objects) → backend/core/models/results.py:167-196 (add included_markers/missing_markers fields to SubsystemEvidenceV1) → frontend/app/types/analysis.ts:300-308 (extend interface) → frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx:49,64 (render backend-supplied labels). A partial update degrades silently to poor labels with no error."
     },
     {
-      "type": "CONFIRMED",
-      "field": "No active kernel token — correct at hardening stage",
-      "finding": "automation_bus/state/work_package_active.json does not exist. Correct: kernel start (Stage 3) has not been executed. Token will be written by python backend/scripts/run_work_package.py start.",
-      "citations": [
-        "automation_bus/state/work_package_active.json — does not exist — CONFIRMED expected at this stage"
-      ]
+      "check": "section_e_scope_discrepancy",
+      "status": "FLAGGED",
+      "citation": "Prompt §E lists apob, apoa1, lipoprotein_a, hs_crp as required coverage. None of these appear in any expected_marker_ids tuple in backend/core/analytics/wave1_subsystem_evidence.py:25-78. Labels for these IDs cannot be emitted through the subsystem evidence DTO without adding new subsystem definitions — which would be a behaviour change requiring explicit declaration. Cursor must scope to existing assembler marker mappings only unless GPT explicitly approves new subsystem additions."
     },
     {
-      "type": "HARDENING_NOTE",
-      "field": "GATE-BLOCKING CONFLICT 1 — UX1A Sentinel test asserts 'subsystem' not in Wave1DomainCards.tsx",
-      "finding": "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py line 141 asserts: assert 'subsystem' not in cards.lower(). This is a case-insensitive substring match. The DTO field d.subsystems contains the substring 'subsystem'. Any reference to d.subsystems, sub.subsystem_id, sub.subsystem_label, or a prop named subsystems in Wave1DomainCards.tsx will cause this test to FAIL and the Gate will reject the sprint. This guard was written to prevent placeholder subsystem UI; it must now be updated by UX1D to permit governed rendering. Required action: Cursor must update this sentinel test BEFORE adding any subsystem reference to Wave1DomainCards.tsx. The updated assertion must still guard against frontend-invented subsystem labels and placeholder UI, but must permit the governed rendering introduced by UX1D. The updated test should reference the new UX1D regression test file as co-authority.",
-      "resolution": "REQUIRED — update test_domain_ux1a_wave1_health_systems_card_scaffold.py line 141 before implementation.",
-      "citations": [
-        "backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py line 137-141: test_health_system_card_subsystem_placeholder_visible_sentinel — assert 'subsystem' not in cards.lower() — CONFIRMED will fail"
-      ]
+      "check": "subsystem_evidence_model_extra_forbid",
+      "status": "CONFIRMED",
+      "citation": "backend/core/models/results.py:173 — SubsystemEvidenceV1 uses ConfigDict(frozen=True, extra='forbid'). Adding included_markers / missing_markers as new optional fields requires explicit field declarations with defaults; they cannot be passed as extra kwargs. Backward compatibility maintained if new fields have default=None."
     },
     {
-      "type": "HARDENING_NOTE",
-      "field": "GATE-BLOCKING CONFLICT 2 — UX1C Sentinel test asserts 'included_marker_ids' not in Wave1DomainCards.tsx",
-      "finding": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py line 139 asserts: assert 'included_marker_ids' not in cards. Lines 129-130 additionally assert: assert 'Lipid transport' not in cards and assert 'wave1_cv_lipid_transport' not in cards (all read from Wave1DomainCards.tsx). These guards prevent frontend-calculated marker groupings and hardcoded subsystem labels. They remain valid in principle but will conflict with UX1D if subsystem rendering is placed inline in Wave1DomainCards.tsx. Required action: Cursor MUST put all subsystem rendering in a dedicated sub-component (e.g. Wave1SubsystemSection.tsx). Wave1DomainCards.tsx passes the subsystems array via prop but contains none of the guarded strings directly. The UX1D regression test then scopes its own guards to the sub-component file. Note: even with a sub-component, the prop pass-through in Wave1DomainCards.tsx will contain 'subsystem' (from conflict 1 above) — both conflicts must be resolved together.",
-      "resolution": "REQUIRED — dedicated sub-component isolation mandatory. Inline rendering will fail the Gate.",
-      "citations": [
-        "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py line 129: assert 'Lipid transport' not in cards — CONFIRMED will fail if inline",
-        "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py line 130: assert 'wave1_cv_lipid_transport' not in cards — CONFIRMED will fail if inline",
-        "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py line 139: assert 'included_marker_ids' not in cards — CONFIRMED will fail if inline"
-      ]
+      "check": "regression_test_exists",
+      "status": "CONFIRMED",
+      "citation": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py — confirmed on disk. Must be updated to assert new DTO fields (included_markers / missing_markers with display_label). All other validation test files named in prompt §Required validation commands confirmed present."
     },
     {
-      "type": "HARDENING_NOTE",
-      "field": "Sentinel key collision — health_system_subsystem_labels_frontend_defined already exists",
-      "finding": "sentinel/packs/escaped_defects_v1.json line 744 already has key 'health_system_subsystem_labels_frontend_defined' pointing to the UX1C test file. The prompt requires adding this as a new UX1D class. JSON does not permit duplicate keys. Cursor must NOT create a second entry with this key. Required action: either update the existing entry to reference both test files, or create a distinct key such as 'health_system_subsystem_labels_rendered_from_dto' scoped to the new rendering guard.",
-      "resolution": "REQUIRED — no duplicate JSON key permitted.",
-      "citations": [
-        "sentinel/packs/escaped_defects_v1.json line 744: health_system_subsystem_labels_frontend_defined — CONFIRMED already exists"
-      ]
+      "check": "forbidden_files_clear",
+      "status": "CONFIRMED",
+      "citation": "Prompt §Forbidden — backend/core/scoring/**, backend/core/pipeline/**, root_cause*, report_compiler*, narrative_report_compiler*, knowledge_bus/**, automation_bus/state/*, run_work_package.py, golden_gate_local.py, update_cursor_status.py. None required by the display-label implementation direction. No Intelligence Core analytical logic changes needed."
     },
     {
-      "type": "HARDENING_NOTE",
-      "field": "wave1ConfidenceMarkerDisplayLabel must be extended for subsystem marker display",
-      "finding": "The existing utility in wave1ConfidenceMarkerLabels.ts covers only 10 liver markers. All 13 CV and blood sugar subsystem expected markers (total_cholesterol, ldl_cholesterol, hdl_cholesterol, triglycerides, tc_hdl_ratio, homocysteine, crp, glucose, hba1c, insulin and the liver markers already covered) will produce poor output from the generic fallback for markers without underscores (homocysteine, crp, glucose, hba1c, insulin returned as-is, lower-case) and misleading titlecase for acronym markers (Ldl Cholesterol, Hdl Cholesterol, Tc Hdl Ratio). Cursor must extend CANONICAL_ID_TO_LABEL or create a parallel subsystem display label function covering all expected marker IDs before rendering subsystem sections in the UI.",
-      "resolution": "REQUIRED for acceptable consumer presentation. Acceptable in wave1ConfidenceMarkerLabels.ts (extend the existing map) or in a new utility under frontend/app/lib/.",
-      "citations": [
-        "frontend/app/lib/wave1ConfidenceMarkerLabels.ts lines 5-16: CANONICAL_ID_TO_LABEL — liver markers only — CONFIRMED",
-        "backend/core/analytics/wave1_subsystem_evidence.py lines 25-78: full marker id set that needs display labels — CONFIRMED"
-      ]
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "field": "Sentinel near-duplicate — fake_status_visible vs fake_status_emitted can coexist",
-      "finding": "Prompt requires new class 'health_system_subsystem_fake_status_visible' (frontend renders a status not supplied by backend). UX1C has 'health_system_subsystem_fake_status_emitted' at line 760 (backend emits status without safe derivation). These guard different failure modes and can coexist. No conflict.",
-      "resolution": "Non-blocking — two distinct classes are legitimate.",
-      "citations": [
-        "sentinel/packs/escaped_defects_v1.json line 760: health_system_subsystem_fake_status_emitted — CONFIRMED existing, different scope"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "PowerShell compatibility and STOP conditions verified",
-      "finding": "All preflight, validation, and closure commands use git, python -m pytest, npm run type-check, Test-Path — no bash-only syntax. PowerShell compatible. STOP conditions are unambiguous: token missing/mismatch STOP, UX1C notes missing STOP, any baseline assumption false STOP, forbidden file modified escalate to HIGH and STOP.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 90-95: preflight — PowerShell compatible — CONFIRMED",
-        "automation_bus/latest_cursor_prompt.md lines 61-62: notes file missing STOP — CONFIRMED",
-        "automation_bus/latest_cursor_prompt.md lines 108-111: token mismatch STOP — CONFIRMED",
-        "automation_bus/latest_cursor_prompt.md lines 18-29: escalation STOP conditions — CONFIRMED"
-      ]
+      "check": "stop_conditions_present",
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:97-100 — STOP if token missing or work_id/branch mismatch; latest_cursor_prompt.md:116 — STOP before implementation until authority choice is explicit in notes. STOP conditions are unambiguous and PowerShell-compatible."
     }
   ]
 }
