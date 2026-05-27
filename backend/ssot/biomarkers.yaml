@@ -1575,6 +1575,28 @@ biomarkers:
     - haemolysis
     - liver_function
     clinical_weight: 0.5
+  total_bilirubin:
+    display_label_rail_only: true
+    aliases: []
+    unit: umol/L
+    description: Total bilirubin (subsystem/rail display key; canonical lab identity is bilirubin)
+    consumer_display_name: Total Bilirubin
+    category: Liver Function
+    data_type: numeric
+    system: hepatic
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - liver_disease
+    - haemolysis
+    - bile_duct_obstruction
+    - Gilberts_syndrome
+    key_risks_when_low: []
+    known_modifiers:
+    - fasting
+    - haemolysis
+    - liver_function
+    clinical_weight: 0.5
   albumin:
     unit: g/L
     description: Serum albumin - hepatic synthetic marker and nutritional proxy

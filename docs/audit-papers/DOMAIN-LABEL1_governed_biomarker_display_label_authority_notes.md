@@ -71,3 +71,56 @@
 ## 12. residual gaps
 - `consumer_display_name` currently added for Wave 1 subsystem marker coverage only in this sprint scope.
 - Broader biomarker namespace standardization should be addressed in a dedicated follow-up.
+
+## 13. pre-merge patch — total_bilirubin label gap (accepted)
+
+### 13.1 gap found (Claude/GPT audit)
+- `wave1_subsystem_evidence.py` lists `total_bilirubin` in `_WAVE1_LIV_PROCESSING.expected_marker_ids`.
+- `backend/ssot/biomarkers.yaml` had no governed row for marker id `total_bilirubin`.
+- `_marker_display_label_map()` therefore fell back to the raw id string `total_bilirubin` as the consumer display label.
+- Canonical lab identity for bilirubin remains `bilirubin` (see `biomarker_alias_registry.yaml` and `test_bilirubin_alias_regression.py`).
+
+### 13.2 fix applied
+| File | Change |
+|------|--------|
+| `backend/ssot/biomarkers.yaml` | Added `total_bilirubin` with `consumer_display_name: Total Bilirubin` and `display_label_rail_only: true` (empty `aliases`; mirrors liver metadata for resolver load only). |
+| `backend/core/canonical/alias_registry_service.py` | Skip SSOT alias registration when `display_label_rail_only: true` on a biomarker row. |
+| `backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py` | `test_total_bilirubin_emits_governed_display_label` asserts `Total Bilirubin`. |
+
+Preferred consumer label: **Total Bilirubin**.
+
+### 13.3 why `alias_registry_service.py` was required (outside original allowlist)
+- A plain top-level `total_bilirubin` SSOT row (without `display_label_rail_only`) auto-registers canonical key `total_bilirubin` from the row name.
+- That collides with governed bilirubin alias `Total Bilirubin` (normalized to `total_bilirubin`), producing `AliasCollisionError` and breaking canonical resolution tests.
+- Escalation: minimal alias-registry guard — rail-only display rows are excluded from SSOT-driven alias insertion; governed alias registry for bilirubin is unchanged.
+- `CanonicalResolver.load_biomarkers()` still loads `consumer_display_name` for label emission; no scoring or normalization behaviour change.
+
+### 13.4 scope confirmation (patch only)
+| Area | Changed? |
+|------|----------|
+| Scoring / domain scores | No |
+| Units / unit conversion | No |
+| Reference ranges (`ranges.yaml`) | No |
+| Subsystem mappings (`wave1_subsystem_evidence.py` defs) | No |
+| Signal logic | No |
+| Knowledge Bus / IDL | No |
+| Frontend label maps (`wave1ConfidenceMarkerLabels.ts`) | No |
+
+### 13.5 tests run (patch closure)
+Command (from `backend/`):
+
+```text
+python -m pytest tests/regression/test_domain_ux1c_governed_subsystem_evidence.py tests/regression/test_bilirubin_alias_regression.py tests/unit/test_wave1_liver_marker_mapping_fix.py -q
+```
+
+Result: **22 passed** (2026-05-27).
+
+### 13.6 commits (patch stack on branch)
+1. `fix(domain-label1): add governed total bilirubin display label` — SSOT row, alias-registry guard, regression test, this audit section.
+2. `chore(bus): DOMAIN-LABEL1 kernel COMPLETE status` — kernel status refresh after post-COMPLETE `finish` (see §14).
+
+## 14. post-COMPLETE kernel re-close
+- Prior kernel closure: `326dc78 chore(bus): DOMAIN-LABEL1 kernel COMPLETE status` (HEAD at feature commit `71da5ba`).
+- Uncommitted patch landed after that COMPLETE commit; SOP requires a clean tree and refreshed kernel status before merge review.
+- `run_work_package.py start` refuses re-run when `work_id` is already COMPLETE; status was reopened via `update_cursor_status.py IN_PROGRESS`, then `run_work_package.py finish` was executed on a clean branch after the patch commit.
+- Final `automation_bus/latest_cursor_status.json` must show `status: COMPLETE` and `head_sha` at the patch closure commit.

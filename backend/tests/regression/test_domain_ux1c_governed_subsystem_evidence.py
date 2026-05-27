@@ -122,6 +122,20 @@ def test_subsystem_marker_ids_are_canonical_and_partitioned() -> None:
 
 
 @pytest.mark.regression
+def test_total_bilirubin_emits_governed_display_label() -> None:
+    liver = next(r for r in _minimal_rows() if r.domain_id == "wave1_liver")
+    processing = next(
+        s for s in liver.subsystems or [] if s.subsystem_id == "wave1_liv_processing_context"
+    )
+    label_map = {
+        m.id: m.display_label
+        for m in (processing.included_markers or []) + (processing.missing_markers or [])
+    }
+    assert "total_bilirubin" in label_map
+    assert label_map["total_bilirubin"] == "Total Bilirubin"
+
+
+@pytest.mark.regression
 def test_missing_markers_receive_governed_display_labels_even_when_absent_from_panel() -> None:
     rows = _minimal_rows(panel={"glucose"})
     sugar = next(r for r in rows if r.domain_id == "wave1_blood_sugar")

@@ -1,10 +1,10 @@
 {
+  "bus_version": "1.1",
+  "work_id": "DOMAIN-LABEL1",
+  "status": "IN_PROGRESS",
+  "cursor_started_utc": "2026-05-27T17:09:30Z",
+  "cursor_completed_utc": null,
   "branch": "domain-ux/domain-label1-governed-biomarker-display-labels",
-  "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-26T22:00:43Z",
-  "cursor_started_utc": "2026-05-26T21:53:07Z",
-  "head_sha": "71da5ba755c130368894884dea2240b2c2eceea9",
-  "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "DOMAIN-LABEL1"
+  "head_sha": "7c80526ab0f53b0907eed9a4f67220d46c2abb9a",
+  "raw_stop_condition": null
 }
