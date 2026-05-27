@@ -116,11 +116,12 @@ python -m pytest tests/regression/test_domain_ux1c_governed_subsystem_evidence.p
 Result: **22 passed** (2026-05-27).
 
 ### 13.6 commits (patch stack on branch)
-1. `fix(domain-label1): add governed total bilirubin display label` — SSOT row, alias-registry guard, regression test, this audit section.
-2. `chore(bus): DOMAIN-LABEL1 kernel COMPLETE status` — kernel status refresh after post-COMPLETE `finish` (see §14).
+1. `b2bd76e` — `fix(domain-label1): add governed total bilirubin display label` — SSOT row, alias-registry guard, regression test, audit §13 (includes interim `IN_PROGRESS` kernel status required for finish porcelain gate; see §14).
+2. `58d8c13` — `chore(bus): DOMAIN-LABEL1 kernel COMPLETE status` — kernel `finish` refresh (`head_sha` = `b2bd76e`, `cursor_completed_utc` = `2026-05-27T17:11:07Z`).
 
 ## 14. post-COMPLETE kernel re-close
-- Prior kernel closure: `326dc78 chore(bus): DOMAIN-LABEL1 kernel COMPLETE status` (HEAD at feature commit `71da5ba`).
-- Uncommitted patch landed after that COMPLETE commit; SOP requires a clean tree and refreshed kernel status before merge review.
-- `run_work_package.py start` refuses re-run when `work_id` is already COMPLETE; status was reopened via `update_cursor_status.py IN_PROGRESS`, then `run_work_package.py finish` was executed on a clean branch after the patch commit.
-- Final `automation_bus/latest_cursor_status.json` must show `status: COMPLETE` and `head_sha` at the patch closure commit.
+- Prior kernel closure: `326dc78 chore(bus): DOMAIN-LABEL1 kernel COMPLETE status` (feature HEAD `71da5ba`).
+- Accepted pre-merge patch was committed after that closure; SOP requires refreshed kernel `COMPLETE` on the new HEAD before merge review.
+- `run_work_package.py start` refused re-run (`work_id` already COMPLETE). Status reopened with `python backend/scripts/update_cursor_status.py IN_PROGRESS`, embedded in the patch commit so `finish` could run on a clean tree.
+- `python backend/scripts/run_work_package.py finish` — golden gate PASS, namespace validator PASS (2026-05-27).
+- Final `automation_bus/latest_cursor_status.json`: `status: COMPLETE`, `work_id: DOMAIN-LABEL1`, `head_sha: b2bd76e`.
