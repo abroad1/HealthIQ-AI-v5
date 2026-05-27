@@ -5,15 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { ConsumerDomainScoreV1 } from '@/types/analysis';
-import { wave1ConfidenceMarkerDisplayLabel } from '@/lib/wave1ConfidenceMarkerLabels';
 import {
-  wave1BandLabelDisplay,
   wave1EvidenceCompletenessLine,
   wave1IsPartialEvidenceState,
   wave1IsZeroEvidenceState,
   wave1ScoreReliabilityLabel,
 } from '@/lib/wave1HealthSystemCardDisplay';
 import { Wave1HealthSystemScoreVisual } from './Wave1HealthSystemScoreVisual';
+import { Wave1SubsystemEvidenceSection } from './Wave1SubsystemEvidenceSection';
 
 const WAVE1_ORDER: readonly string[] = [
   'wave1_cardiovascular',
@@ -190,26 +189,13 @@ export function Wave1DomainCards({ domains, embedInJourney = false }: Props) {
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">What to do next</p>
                       <p>{d.next_step_sentence}</p>
                     </div>
-                    {d.missing_marker_ids.length > 0 ? (
-                      <div>
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
-                          What would improve confidence
-                        </p>
-                        <ul className="flex flex-wrap gap-1.5 list-none p-0 m-0" data-testid="wave1-missing-markers">
-                          {d.missing_marker_ids.map((m) => (
-                            <li key={m}>
-                              <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100/80 px-2 py-0.5 text-xs text-slate-600">
-                                {wave1ConfidenceMarkerDisplayLabel(m)}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : null}
                     {d.caveat_flags.length > 0 ? (
                       <p className="text-xs text-amber-800 bg-amber-50 rounded px-2 py-1">
                         {d.caveat_flags.join(' · ')}
                       </p>
+                    ) : null}
+                    {d.subsystems && d.subsystems.length > 0 ? (
+                      <Wave1SubsystemEvidenceSection subsystems={d.subsystems} />
                     ) : null}
                   </div>
                 ) : null}

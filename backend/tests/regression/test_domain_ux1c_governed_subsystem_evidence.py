@@ -97,6 +97,10 @@ def test_subsystem_rows_have_required_fields() -> None:
             assert sub.subsystem_label.strip()
             assert isinstance(sub.included_marker_ids, list)
             assert isinstance(sub.missing_marker_ids, list)
+            assert isinstance(sub.included_markers, list)
+            assert isinstance(sub.missing_markers, list)
+            assert all(m.id and m.display_label for m in sub.included_markers or [])
+            assert all(m.id and m.display_label for m in sub.missing_markers or [])
             assert sub.source_trace.startswith("wave1_subsystem_evidence_v1:")
             assert sub.status_label is None
 
@@ -110,6 +114,35 @@ def test_subsystem_marker_ids_are_canonical_and_partitioned() -> None:
     for mid in lipid.included_marker_ids + lipid.missing_marker_ids:
         assert mid == mid.lower()
         assert " " not in mid
+    included_map = {m.id: m.display_label for m in lipid.included_markers or []}
+    missing_map = {m.id: m.display_label for m in lipid.missing_markers or []}
+    assert included_map["ldl_cholesterol"] == "LDL Cholesterol"
+    assert included_map["hdl_cholesterol"] == "HDL Cholesterol"
+    assert missing_map["tc_hdl_ratio"] == "TC:HDL ratio"
+
+
+@pytest.mark.regression
+def test_total_bilirubin_emits_governed_display_label() -> None:
+    liver = next(r for r in _minimal_rows() if r.domain_id == "wave1_liver")
+    processing = next(
+        s for s in liver.subsystems or [] if s.subsystem_id == "wave1_liv_processing_context"
+    )
+    label_map = {
+        m.id: m.display_label
+        for m in (processing.included_markers or []) + (processing.missing_markers or [])
+    }
+    assert "total_bilirubin" in label_map
+    assert label_map["total_bilirubin"] == "Total Bilirubin"
+
+
+@pytest.mark.regression
+def test_missing_markers_receive_governed_display_labels_even_when_absent_from_panel() -> None:
+    rows = _minimal_rows(panel={"glucose"})
+    sugar = next(r for r in rows if r.domain_id == "wave1_blood_sugar")
+    insulin_context = next(s for s in sugar.subsystems or [] if s.subsystem_id == "wave1_met_insulin_metabolic")
+    missing_map = {m.id: m.display_label for m in insulin_context.missing_markers or []}
+    assert "insulin" in insulin_context.missing_marker_ids
+    assert missing_map["insulin"] == "Insulin"
 
 
 @pytest.mark.regression

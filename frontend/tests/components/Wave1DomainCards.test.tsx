@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import fs from 'fs';
+import path from 'path';
 import { Wave1DomainCards } from '../../app/components/results/Wave1DomainCards';
 import type { ConsumerDomainScoreV1 } from '../../app/types/analysis';
 
@@ -34,7 +36,26 @@ function minimalLiverDomain(overrides: Partial<ConsumerDomainScoreV1> = {}): Con
 
 describe('Wave1DomainCards', () => {
   it('renders user-safe labels for missing markers (D-7)', async () => {
-    const domains: ConsumerDomainScoreV1[] = [minimalLiverDomain()];
+    const domains: ConsumerDomainScoreV1[] = [
+      minimalLiverDomain({
+        subsystems: [
+          {
+            subsystem_id: 'wave1_liver_processing',
+            subsystem_label: 'Liver processing context',
+            included_marker_ids: ['total_bilirubin'],
+            missing_marker_ids: ['ast', 'ggt'],
+            included_markers: [{ id: 'total_bilirubin', display_label: 'Total bilirubin' }],
+            missing_markers: [
+              { id: 'ast', display_label: 'AST (aspartate aminotransferase)' },
+              { id: 'ggt', display_label: 'GGT (gamma-glutamyl transferase)' },
+            ],
+            status_label: null,
+            evidence_role: null,
+            source_trace: 'Wave 1 governed subsystem map',
+          },
+        ],
+      }),
+    ];
     const user = userEvent.setup();
     render(<Wave1DomainCards domains={domains} embedInJourney />);
 
@@ -120,10 +141,74 @@ describe('Wave1DomainCards', () => {
     expect(screen.getByTestId('wave1-coverage-panel')).toBeInTheDocument();
   });
 
-  it('renders missing markers as compact pills when expanded (DOMAIN-UX1B)', async () => {
+  it('keeps legacy missing-marker pill list out of parent card body (DOMAIN-UX1D)', async () => {
     const user = userEvent.setup();
     render(<Wave1DomainCards domains={[minimalLiverDomain()]} embedInJourney />);
     await user.click(screen.getByRole('button', { name: /more detail/i }));
-    expect(screen.getByTestId('wave1-missing-markers')).toBeInTheDocument();
+    expect(screen.queryByTestId('wave1-missing-markers')).not.toBeInTheDocument();
+  });
+
+  it('renders subsystem evidence section from backend DTO when expanded (DOMAIN-UX1D)', async () => {
+    const user = userEvent.setup();
+    render(
+      <Wave1DomainCards
+        domains={[
+          minimalLiverDomain({
+            subsystems: [
+              {
+                subsystem_id: 'wave1_liver_processing',
+                subsystem_label: 'Liver processing context',
+                included_marker_ids: ['alt', 'alp'],
+                missing_marker_ids: ['ggt'],
+                included_markers: [
+                  { id: 'alt', display_label: 'ALT (alanine aminotransferase)' },
+                  { id: 'alp', display_label: 'ALP (alkaline phosphatase)' },
+                ],
+                missing_markers: [{ id: 'ggt', display_label: 'GGT (gamma-glutamyl transferase)' }],
+                status_label: null,
+                evidence_role: null,
+                source_trace: 'Wave 1 governed subsystem map',
+              },
+            ],
+          }),
+        ]}
+        embedInJourney
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: /more detail/i }));
+
+    expect(screen.getByTestId('wave1-subsystems-section')).toBeInTheDocument();
+    expect(screen.getByText('Liver processing context')).toBeInTheDocument();
+    expect(screen.getByText(/ALT \(alanine aminotransferase\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/ALP \(alkaline phosphatase\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/GGT \(gamma-glutamyl transferase\)/i)).toBeInTheDocument();
+    expect(screen.getByText('Not uploaded')).toBeInTheDocument();
+    expect(screen.queryByTestId('wave1-subsystem-status')).not.toBeInTheDocument();
+    expect(screen.queryByText(/mg\/dl/i)).not.toBeInTheDocument();
+    expect(screen.queryByText('Ldl Cholesterol')).not.toBeInTheDocument();
+    expect(screen.queryByText('Hdl Cholesterol')).not.toBeInTheDocument();
+    expect(screen.queryByText('Tc Hdl Ratio')).not.toBeInTheDocument();
+  });
+
+  it('keeps subsystem rendering isolated from Wave1DomainCards implementation (DOMAIN-UX1D)', () => {
+    const cardsPath = path.join(process.cwd(), 'app/components/results/Wave1DomainCards.tsx');
+    const src = fs.readFileSync(cardsPath, 'utf8');
+
+    expect(src).toContain('Wave1SubsystemEvidenceSection');
+    expect(src).not.toContain('included_marker_ids');
+    expect(src).not.toContain('missing_marker_ids');
+    expect(src).not.toContain('wave1_cv_lipid_transport');
+    expect(src).not.toContain('Lipid transport');
+  });
+
+  it('does not expand wave1ConfidenceMarkerLabels as primary subsystem label fix (DOMAIN-LABEL1)', () => {
+    const labelsPath = path.join(process.cwd(), 'app/lib/wave1ConfidenceMarkerLabels.ts');
+    const src = fs.readFileSync(labelsPath, 'utf8');
+    expect(src).not.toContain("hba1c:");
+    expect(src).not.toContain("crp:");
+    expect(src).not.toContain("tc_hdl_ratio:");
+    expect(src).not.toContain("ldl_cholesterol:");
+    expect(src).not.toContain("hdl_cholesterol:");
   });
 });

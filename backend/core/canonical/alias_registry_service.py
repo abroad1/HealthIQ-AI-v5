@@ -166,6 +166,8 @@ class AliasRegistryService:
         ssot_biomarkers = self._load_ssot_biomarkers()
         if ssot_biomarkers:
             for canonical_name, definition in ssot_biomarkers.items():
+                if isinstance(definition, dict) and definition.get("display_label_rail_only"):
+                    continue
                 if isinstance(definition, dict) and 'aliases' in definition:
                     # Map canonical name to itself
                     _insert_alias(canonical_name.lower(), canonical_name, canonical_name)

@@ -1,38 +1,44 @@
 ---
-work_id: DOMAIN-UX1C
-branch: domain-ux/domain-ux1c-governed-subsystem-evidence
+work_id: DOMAIN-LABEL1
+branch: domain-ux/domain-label1-governed-biomarker-display-labels
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# DOMAIN-UX1C — Governed Subsystem Evidence Model
+# DOMAIN-LABEL1 — Governed Biomarker Display Label Authority
 
 ## Classification
 
 This is a HIGH-risk MIXED sprint.
 
-Reason: this sprint introduces backend-governed subsystem evidence for the Health Systems Cards. It may affect emitted DTO structure and user-facing interpretation surfaces. It must remain deterministic and must not create frontend-invented biological groupings.
+Reason: this sprint resolves biomarker display-name authority across the HealthIQ frontend/backend boundary. It may touch SSOT, DTO emission, subsystem evidence, and frontend rendering. It must prevent the frontend from becoming a parallel biomarker naming authority.
 
-This sprint must not change scoring thresholds, signal activation, root-cause arbitration, Knowledge Bus medical content, IDL records, or clinical scoring behaviour unless explicitly re-authorised.
+This sprint must not change scoring, signal activation, reference ranges, clinical interpretation, root-cause logic, Knowledge Bus content, or IDL records.
 
 ## Purpose
 
-DOMAIN-UX1A surfaced the Wave 1 Health Systems Cards.  
-DOMAIN-UX1A-PATCH fixed label hierarchy and low-evidence display.  
-DOMAIN-UX1B added premium score visuals and improved presentation.
+DOMAIN-UX1D exposed a structural label-authority problem.
 
-The remaining major gap is that the cards do not yet show the evidence chain beneath each health system.
+Subsystem evidence currently renders marker names through:
 
-This sprint creates the governed backend DTO structure needed to support subsystem evidence in future card expansion.
+```text
+frontend/app/lib/wave1ConfidenceMarkerLabels.ts
+````
 
-The goal is to allow the frontend to render, without inventing:
+This creates poor labels such as:
 
-- supporting subsystem labels
-- included/scored marker IDs per subsystem
-- missing marker IDs per subsystem
-- optional subsystem status where safely supported
-- source trace for why the subsystem appears
+```text
+hba1c
+crp
+Ldl Cholesterol
+Hdl Cholesterol
+Tc Hdl Ratio
+```
+
+The label-authority trace confirmed there is no single governed consumer-safe biomarker display-name authority today, and that extending `wave1ConfidenceMarkerLabels.ts` would deepen frontend label fragmentation. 
+
+The purpose of this sprint is to resolve the problem permanently by creating or wiring a governed biomarker display-label authority and emitting consumer-safe marker labels through the DTO used by Health Systems Card subsystem evidence.
 
 ## Controlling authority
 
@@ -41,40 +47,35 @@ Read before doing anything:
 ```text
 docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md
 docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md
-docs/architecture/User Health to Systems Map_FINAL.md
-docs/audit-papers/DOMAIN-UX1_health_systems_card_codebase_reality_audit.md
-docs/audit-papers/DOMAIN-UX1A_wave1_health_systems_card_scaffold_notes.md
-docs/audit-papers/DOMAIN-UX1A_PATCH_card_labels_low_evidence_notes.md
-docs/audit-papers/DOMAIN-UX1B_premium_health_systems_card_visuals_notes.md
+docs/audit-papers/DOMAIN-UX1C_governed_subsystem_evidence_model_notes.md
+docs/audit-papers/DOMAIN-UX1D_full_wave1_expanded_health_systems_card_notes.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
-````
+```
 
-If any required UX/domain authority document is missing, STOP.
+Also use the DOMAIN-UX1D Biomarker Label Authority Trace supplied by GPT/user as controlling context.
 
 ## Required output documentation
 
 Create:
 
 ```text
-docs/audit-papers/DOMAIN-UX1C_governed_subsystem_evidence_model_notes.md
+docs/audit-papers/DOMAIN-LABEL1_governed_biomarker_display_label_authority_notes.md
 ```
 
 This document must include:
 
 1. preflight results
 2. source documents reviewed
-3. subsystem model implemented
-4. domains covered
-5. subsystem-to-marker mapping source
-6. included-marker logic
-7. missing-marker logic
-8. whether subsystem status is emitted or deliberately omitted
-9. DTO/model changes
-10. frontend type changes, if any
-11. tests added/updated
-12. Sentinel updates
-13. confirmation that scoring thresholds/signals/KB/IDL/root-cause were not changed
-14. residual gaps for DOMAIN-UX1D
+3. current label-authority problem
+4. chosen authority source
+5. SSOT/backend changes made
+6. DTO changes made
+7. frontend changes made
+8. migration/deprecation decision for frontend label helpers
+9. tests added/updated
+10. Sentinel updates
+11. confirmation that scoring/clinical interpretation did not change
+12. residual gaps
 
 ## Mandatory preflight
 
@@ -95,204 +96,194 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `DOMAIN-UX1C`
-* branch is `domain-ux/domain-ux1c-governed-subsystem-evidence`
+* `work_id` is `DOMAIN-LABEL1`
+* branch is `domain-ux/domain-label1-governed-biomarker-display-labels`
 
-If token is missing or mismatched, STOP:
+If token is missing or mismatched, STOP.
 
-```text
-Kernel start not executed or work package mismatch.
-```
+## Required investigation before implementation
 
-## Baseline verification
+Before changing code, trace and document:
 
-Before implementation, confirm:
+1. all existing frontend biomarker label maps/helpers
+2. all existing backend/SSOT biomarker identity fields
+3. where uploaded `display_label` is used
+4. where main biomarker cards get their labels
+5. where subsystem evidence currently gets labels
+6. whether `backend/ssot/biomarkers.yaml` can safely hold `consumer_display_name`
+7. whether any existing SSOT field already fulfils this role
 
-* `ConsumerDomainScoreV1.subsystems` currently exists but is null/empty
-* frontend does not currently render subsystem chips or subsystem sections
-* existing Wave 1 cards still render:
+Do not implement until the authority choice is explicit in the notes.
 
-  * Cardiovascular health
-  * Blood sugar control
-  * Liver health
-* zero-evidence cards still show “Not enough data”
-* score reliability and evidence completeness labels still render
-* no subsystem mapping currently exists as structured DTO output
+## Required implementation direction
 
-If any assumption is false, STOP and report.
+### A. Establish governed biomarker display-label authority
 
-## Required implementation
-
-### A. Define a governed subsystem DTO model
-
-Add a typed subsystem structure beneath `ConsumerDomainScoreV1`.
-
-Suggested structure:
+Preferred architecture:
 
 ```text
-SubsystemEvidenceV1:
-- subsystem_id
-- subsystem_label
-- included_marker_ids
-- missing_marker_ids
-- status_label optional/null
-- evidence_role optional/null
-- source_trace
+backend/SSOT biomarker definition
+→ resolver/model layer
+→ DTO
+→ frontend renderer
 ```
 
-Naming may vary if repo conventions require it, but the structure must clearly distinguish:
+Add or wire a consumer-safe biomarker display label field in the governed backend/SSOT layer.
 
-* subsystem identity
-* consumer-safe label
-* markers present/scored
-* markers missing
-* provenance/source trace
-
-### B. Populate subsystem evidence for Wave 1 domains only
-
-In scope:
+Preferred field name:
 
 ```text
-wave1_cardiovascular
-wave1_blood_sugar
-wave1_liver
+consumer_display_name
 ```
 
-Out of scope:
+or repo-consistent equivalent.
+
+This field should be short, retail-safe and suitable for card labels.
+
+Examples:
 
 ```text
-blood_iron_oxygen
-thyroid_energy
-kidney_function
-silent_inflammation
-hormone_balance
+hba1c → HbA1c
+crp → CRP
+hs_crp → hs-CRP
+ldl_cholesterol → LDL Cholesterol
+hdl_cholesterol → HDL Cholesterol
+tc_hdl_ratio → TC:HDL ratio
+apob → ApoB
+apoa1 → ApoA1
+lipoprotein_a → Lipoprotein(a)
 ```
 
-### C. Use backend-governed mappings only
+Do not use long SSOT clinical descriptions directly as UI labels.
 
-Define subsystem-to-marker mapping in backend code or governed config in one clear authority location.
+### B. Emit labels through subsystem evidence DTO
 
-The frontend must not define this mapping.
+Update subsystem evidence so frontend receives marker display labels directly from backend output.
 
-Do not scatter mapping across multiple files.
-
-If there is already an appropriate authority source, use it.
-If not, create a small clearly named backend mapping helper/module and document it.
-
-### D. Conservative Wave 1 subsystem set
-
-Use only safe, already-supported subsystem labels.
-
-Suggested starting set, subject to repo evidence:
-
-#### Cardiovascular health
-
-* Lipid transport
-* Homocysteine pathway
-* Vascular strain context
-
-#### Blood sugar control
-
-* Glycaemic control
-* Insulin and metabolic context
-
-#### Liver health
-
-* Liver enzyme pattern
-* Liver processing context
-
-Do not introduce decorative or over-specific labels unless the backend evidence supports them.
-
-If any proposed label is not safely supported, omit it and document why.
-
-### E. Included and missing marker logic
-
-For each subsystem:
-
-* `included_marker_ids` must contain markers present/scored for that subsystem
-* `missing_marker_ids` must contain expected markers for that subsystem that were not present
-* both must be backend-emitted
-* neither may be calculated in frontend
-
-Use existing scored marker and missing marker sources where possible.
-
-Do not change domain-level evidence completeness logic.
-
-### F. Subsystem status rule
-
-Subsystem status is optional.
-
-Only emit subsystem status if it can be derived safely from existing governed backend values without new scoring logic.
-
-Allowed:
+Preferred DTO shape:
 
 ```text
-status_label: null
+included_markers: [
+  {
+    id: "hba1c",
+    display_label: "HbA1c"
+  }
+]
+
+missing_markers: [
+  {
+    id: "hs_crp",
+    display_label: "hs-CRP"
+  }
+]
 ```
 
-Forbidden:
+Maintain backward compatibility if existing `included_marker_ids` / `missing_marker_ids` are still needed.
+
+Acceptable approach:
 
 ```text
-frontend-generated subsystem status
-fake subsystem score
-new subsystem scoring thresholds
+- keep included_marker_ids / missing_marker_ids
+- add included_markers / missing_markers as richer display objects
 ```
 
-If status cannot be safely supported, leave it null and document deferral.
+or replace only if tests prove no downstream breakage.
 
-### G. Frontend type support
+### C. Frontend must render backend-supplied labels
 
-Update frontend TypeScript types to include the new subsystem structure.
+Update:
 
-Do not render full subsystem sections in this sprint unless minimal non-visual test rendering is required for type safety.
+```text
+Wave1SubsystemEvidenceSection.tsx
+```
 
-DOMAIN-UX1D will implement the full expanded card UI.
+so it renders backend-supplied marker `display_label`.
 
-### H. No visible frontend subsystem UI unless explicitly safe
+Frontend must not resolve subsystem marker labels through `wave1ConfidenceMarkerLabels.ts`.
 
-This sprint is primarily model/DTO scaffold.
+Frontend may only use fallback formatting as a defensive last resort if backend label is absent, and such fallback must be guarded/tested as a defect path, not normal behaviour.
 
-Allowed:
+### D. Do not expand the frontend label map
 
-* type support
-* tests proving frontend does not invent subsystem labels
-* optional hidden/non-rendered data availability checks
+Do not fix this by adding more entries to:
 
-Forbidden:
+```text
+frontend/app/lib/wave1ConfidenceMarkerLabels.ts
+```
 
-* visually adding subsystem chips to cards
-* visually adding subsystem sections
-* grouping biomarker cards by subsystem
+That is explicitly forbidden as the primary fix.
 
-Those are DOMAIN-UX1D.
+You may deprecate it, route it to the governed label source if feasible, or leave it untouched if no longer used by subsystem evidence.
+
+### E. Scope marker coverage
+
+At minimum, the governed label authority must cover all Wave 1 subsystem marker IDs:
+
+```text
+total_cholesterol
+ldl_cholesterol
+hdl_cholesterol
+triglycerides
+tc_hdl_ratio
+apob
+apoa1
+lipoprotein_a
+homocysteine
+crp
+hs_crp
+hba1c
+glucose
+insulin
+alt
+ast
+ggt
+alp
+bilirubin
+albumin
+```
+
+If the current subsystem mappings contain additional marker IDs, include them too.
+
+### F. No clinical interpretation changes
+
+This sprint is naming/display authority only.
+
+Do not change:
+
+* scoring thresholds
+* evidence completeness
+* marker inclusion rules
+* subsystem mappings
+* confidence logic
+* signal logic
+* root-cause logic
+* IDL/KB content
 
 ## Potentially allowed files
 
 ```text
+backend/ssot/biomarkers.yaml
+backend/core/canonical/**/*
 backend/core/models/results.py
+backend/core/analytics/wave1_subsystem_evidence.py
 backend/core/analytics/domain_score_assembler.py
-backend/core/analytics/domain_narrative_wave1.py
 backend/tests/regression/**/*
 backend/tests/unit/**/*
 frontend/app/types/analysis.ts
+frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx
 frontend/app/components/results/Wave1DomainCards.tsx
+frontend/app/lib/wave1ConfidenceMarkerLabels.ts
+frontend/tests/components/Wave1SubsystemEvidenceSection.test.tsx
 frontend/tests/components/Wave1DomainCards.test.tsx
 sentinel/packs/escaped_defects_v1.json
-docs/audit-papers/DOMAIN-UX1C_governed_subsystem_evidence_model_notes.md
+docs/audit-papers/DOMAIN-LABEL1_governed_biomarker_display_label_authority_notes.md
 ```
 
-If a new backend helper is needed, keep it narrowly scoped under:
-
-```text
-backend/core/analytics/
-```
-
-and document why.
+Touch only the minimum necessary files.
 
 ## Forbidden unless GPT explicitly approves
 
 ```text
-backend/ssot/**/*
 backend/core/scoring/**/*
 backend/core/pipeline/**/*
 backend/core/units/**/*
@@ -311,55 +302,50 @@ backend/scripts/update_cursor_status.py
 
 Add or update deterministic tests proving:
 
-### Backend DTO
+### SSOT/backend authority
 
-* each Wave 1 domain emits `subsystems`
-* each subsystem has:
+* each Wave 1 subsystem marker has a governed consumer display label
+* labels are loaded from backend/SSOT or backend-governed source
+* missing markers receive display labels even when not present in `analysis.biomarkers[]`
+* subsystem evidence emits marker display labels
 
-  * `subsystem_id`
-  * `subsystem_label`
-  * `included_marker_ids`
-  * `missing_marker_ids`
-  * `source_trace`
-* subsystem IDs are stable strings
-* subsystem labels are consumer-safe
-* subsystem marker IDs are canonical biomarker IDs
-* subsystem marker IDs are backend-emitted
+### DTO contract
 
-### No frontend invention
+* subsystem evidence includes marker objects or equivalent label-bearing structure
+* included markers include `id` and `display_label`
+* missing markers include `id` and `display_label`
+* legacy ID arrays are preserved if required
 
-* frontend does not define subsystem labels
-* frontend does not define subsystem marker mappings
-* frontend does not calculate included/missing subsystem markers
-* frontend does not render visible subsystem chips in this sprint
+### Frontend rendering
 
-### Scope protection
+* `Wave1SubsystemEvidenceSection` renders backend-supplied labels
+* it does not call `wave1ConfidenceMarkerDisplayLabel` for normal subsystem marker display
+* it does not render poor fallback labels:
 
-* no Wave 2 domains emit subsystem evidence unless explicitly supported and authorised
-* no subsystem score/status is emitted unless safely supported
-* no score thresholds changed
-* no Knowledge Bus / IDL content changed
-* no scoring policy changed
+  * `hba1c`
+  * `crp`
+  * `Ldl Cholesterol`
+  * `Hdl Cholesterol`
+  * `Tc Hdl Ratio`
+* missing markers render proper labels and `Not uploaded`
 
-### Regression preservation
+### Authority protection
 
-* DOMAIN-UX1A tests still pass
-* DOMAIN-UX1A-PATCH tests still pass
-* DOMAIN-UX1B score visual tests still pass
-* FE-R1 prose safety still passes
-* FE-R6A guard still passes
-* MAP-R1A mapping guard still passes
+* no new frontend biomarker label map is introduced
+* `wave1ConfidenceMarkerLabels.ts` is not expanded as the primary fix
+* frontend does not define biomarker naming authority
+* frontend fallback is defensive only
 
 ## Required Sentinel obligations
 
 Add or update active deterministic Sentinel defect classes as appropriate:
 
 ```text
-health_system_subsystems_missing_from_dto
-health_system_subsystem_labels_frontend_defined
-health_system_subsystem_marker_grouping_frontend_defined
-health_system_subsystem_fake_status_emitted
-health_system_wave2_subsystems_prematurely_emitted
+biomarker_display_label_frontend_authority_expansion
+subsystem_marker_display_label_missing_from_dto
+subsystem_marker_poor_fallback_label_visible
+subsystem_missing_marker_label_not_governed
+wave1_confidence_marker_labels_expanded_as_primary_fix
 ```
 
 Each Sentinel class must point to an active deterministic test.
@@ -371,6 +357,7 @@ No placeholder Sentinel entries.
 Run:
 
 ```powershell
+python -m pytest backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py -q
 python -m pytest backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py -q
 python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
 python -m pytest backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py -q
@@ -381,32 +368,47 @@ python -m pytest backend/tests/unit/test_scoring_rules.py -q
 python -m pytest backend/tests/unit/test_domain_score_assembler_v1.py -q
 ```
 
-Also run any new DOMAIN-UX1C tests.
-
 Run frontend validation:
 
 ```powershell
 npm run type-check
 ```
 
-If frontend component tests exist, run them.
+Run frontend component tests if available.
+
+If browser tools are available, inspect:
+
+```text
+http://localhost:3000/results?analysis_id=d7417288-7e11-48da-8716-d0f63f77c491
+```
+
+Confirm expanded subsystem evidence shows proper labels such as:
+
+```text
+HbA1c
+CRP
+LDL Cholesterol
+HDL Cholesterol
+TC:HDL ratio
+Homocysteine
+```
+
+Do not claim browser UAT passed unless actually inspected.
 
 ## Acceptance criteria
 
 This sprint is complete only if:
 
-* `ConsumerDomainScoreV1` has a governed subsystem evidence structure
-* Wave 1 domains emit backend-supplied subsystem evidence
-* subsystem labels are backend-governed and consumer-safe
-* included/missing marker IDs are backend-supplied
-* frontend types are updated
-* frontend does not invent subsystem labels or groupings
-* no visible subsystem UI is introduced prematurely
-* no subsystem score/status is emitted unless safely supported
-* no scoring, signal, KB, IDL, root-cause or pipeline logic is changed
-* all regression tests pass
+* biomarker display labels have a governed backend/SSOT authority
+* subsystem evidence DTO carries display labels or equivalent backend-supplied label objects
+* frontend renders backend-supplied labels
+* poor fallback labels no longer appear in subsystem evidence
+* missing markers have proper display labels
+* `wave1ConfidenceMarkerLabels.ts` is not expanded as the primary fix
+* no scoring, interpretation, KB, IDL, root-cause or pipeline logic is changed
+* tests pass
 * Sentinel guards are active
-* notes document what DOMAIN-UX1D should render next
+* notes clearly document remaining frontend label helpers and deprecation path
 
 ## Closure requirements
 
@@ -428,19 +430,19 @@ python backend/scripts/run_work_package.py finish
 
 After finish, follow SOP v1.3.1:
 
-* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `DOMAIN-UX1C`, commit it automatically as:
-  `chore(bus): DOMAIN-UX1C kernel COMPLETE status`
+* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `DOMAIN-LABEL1`, commit it automatically as:
+  `chore(bus): DOMAIN-LABEL1 kernel COMPLETE status`
 * if any other Automation Bus artefact is dirty, STOP and escalate
 
 Do not merge.
 
-Do not start DOMAIN-UX1D.
+Do not start another sprint.
 
 ## Cursor completion statement
 
-Cursor implements DOMAIN-UX1C only.
+Cursor implements DOMAIN-LABEL1 only.
 
-Cursor may not self-certify merge readiness, clinical correctness, or permission to begin DOMAIN-UX1D.
+Cursor may not self-certify merge readiness, clinical correctness, or permission to begin the next sprint.
 
 ```
 ```

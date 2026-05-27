@@ -772,6 +772,94 @@
       "test_file": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "health_system_subsystem_sections_not_rendered": {
+      "description": "DOMAIN-UX1D — expanded Wave 1 cards fail to render governed subsystem evidence sections when DTO subsystems are present.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "frontend/tests/components/Wave1DomainCards.test.tsx",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_included_markers_not_rendered": {
+      "description": "DOMAIN-UX1D — subsystem included marker IDs are present in DTO but not surfaced as consumer-safe names in expanded card evidence.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "frontend/tests/components/Wave1DomainCards.test.tsx",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_missing_markers_not_rendered": {
+      "description": "DOMAIN-UX1D — subsystem missing marker IDs are not shown as muted Not uploaded evidence requirements.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "frontend/tests/components/Wave1DomainCards.test.tsx",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_subsystem_fake_status_visible": {
+      "description": "DOMAIN-UX1D — frontend shows subsystem status badges when backend status_label is null.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "frontend/tests/components/Wave1DomainCards.test.tsx",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_subsystem_rendering_not_isolated": {
+      "description": "DOMAIN-UX1D — subsystem rendering details leak into Wave1DomainCards instead of dedicated child component.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "frontend/tests/components/Wave1DomainCards.test.tsx",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "health_system_subsystem_marker_values_invented": {
+      "description": "DOMAIN-UX1D — frontend invents biomarker values, units, ranges, or statuses in subsystem marker lists.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "frontend/tests/components/Wave1DomainCards.test.tsx",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "biomarker_display_label_frontend_authority_expansion": {
+      "description": "DOMAIN-LABEL1 — frontend expands local subsystem biomarker label authority instead of consuming governed backend labels.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "subsystem_marker_display_label_missing_from_dto": {
+      "description": "DOMAIN-LABEL1 — subsystem DTO omits included/missing marker display labels required for consumer-safe rendering.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "subsystem_marker_poor_fallback_label_visible": {
+      "description": "DOMAIN-LABEL1 — poor fallback labels (e.g. hba1c, crp, Ldl Cholesterol, Tc Hdl Ratio) visible in subsystem evidence.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "frontend/tests/components/Wave1SubsystemEvidenceSection.test.tsx",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "subsystem_missing_marker_label_not_governed": {
+      "description": "DOMAIN-LABEL1 — missing subsystem markers lack governed backend-provided display labels.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "wave1_confidence_marker_labels_expanded_as_primary_fix": {
+      "description": "DOMAIN-LABEL1 — wave1ConfidenceMarkerLabels expanded as primary subsystem label fix instead of backend-governed label authority.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "frontend/tests/components/Wave1DomainCards.test.tsx",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

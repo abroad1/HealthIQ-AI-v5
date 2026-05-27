@@ -297,11 +297,18 @@ export interface Wave1AlignedDriversV1 {
 }
 
 /** DOMAIN-UX1C — governed subsystem evidence (mirrors Pydantic SubsystemEvidenceV1) */
+export interface MarkerDisplayLabelV1 {
+  id: string;
+  display_label: string;
+}
+
 export interface SubsystemEvidenceV1 {
   subsystem_id: string;
   subsystem_label: string;
   included_marker_ids: string[];
   missing_marker_ids: string[];
+  included_markers?: MarkerDisplayLabelV1[] | null;
+  missing_markers?: MarkerDisplayLabelV1[] | null;
   status_label?: string | null;
   evidence_role?: string | null;
   source_trace: string;

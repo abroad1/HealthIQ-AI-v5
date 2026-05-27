@@ -1,10 +1,10 @@
 {
-  "branch": "domain-ux/domain-ux1c-governed-subsystem-evidence",
+  "branch": "domain-ux/domain-label1-governed-biomarker-display-labels",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-26T20:26:55Z",
-  "cursor_started_utc": "2026-05-26T20:24:25Z",
-  "head_sha": "bd953cb62ad82343f5f8e4575d8a1296514bf496",
+  "cursor_completed_utc": "2026-05-27T17:11:07Z",
+  "cursor_started_utc": "2026-05-27T17:09:30Z",
+  "head_sha": "b2bd76e055cedebc3d8aee0499396090c6e9f1cf",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "DOMAIN-UX1C"
+  "work_id": "DOMAIN-LABEL1"
 }

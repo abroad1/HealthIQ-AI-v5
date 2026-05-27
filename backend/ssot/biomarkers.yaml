@@ -6,6 +6,7 @@ biomarkers:
     - chol_total
     unit: mmol/L
     description: Total cholesterol level
+    consumer_display_name: Total Cholesterol
     category: cardiovascular
     data_type: numeric
     system: cardiovascular
@@ -29,6 +30,7 @@ biomarkers:
     - bad_cholesterol
     unit: mmol/L
     description: Low-density lipoprotein cholesterol
+    consumer_display_name: LDL Cholesterol
     category: cardiovascular
     data_type: numeric
     system: cardiovascular
@@ -51,6 +53,7 @@ biomarkers:
     - good_cholesterol
     unit: mmol/L
     description: High-density lipoprotein cholesterol
+    consumer_display_name: HDL Cholesterol
     category: cardiovascular
     data_type: numeric
     system: cardiovascular
@@ -73,6 +76,7 @@ biomarkers:
     - triglycerides_(venous)
     unit: mmol/L
     description: Triglyceride level
+    consumer_display_name: Triglycerides
     category: cardiovascular
     data_type: numeric
     system: cardiovascular
@@ -93,6 +97,7 @@ biomarkers:
     aliases: []
     unit: ratio
     description: Total cholesterol / HDL ratio
+    consumer_display_name: TC:HDL ratio
     category: cardiovascular
     data_type: numeric
     system: cardiovascular
@@ -173,6 +178,7 @@ biomarkers:
     - apolipoprotein_b
     unit: g/L
     description: Apolipoprotein B
+    consumer_display_name: ApoB
     category: cardiovascular
     data_type: numeric
     system: cardiovascular
@@ -192,6 +198,7 @@ biomarkers:
     - apolipoprotein_a1
     unit: g/L
     description: Apolipoprotein A1
+    consumer_display_name: ApoA1
     category: cardiovascular
     data_type: numeric
     system: cardiovascular
@@ -213,6 +220,7 @@ biomarkers:
     - sugar
     unit: mmol/L
     description: Blood glucose level
+    consumer_display_name: Glucose
     category: metabolic
     data_type: numeric
     system: metabolic
@@ -230,6 +238,7 @@ biomarkers:
     - glycated_hemoglobin
     unit: mmol/mol
     description: Hemoglobin A1c (IFCC mmol/mol, UK primary)
+    consumer_display_name: HbA1c
     category: metabolic
     data_type: numeric
     system: metabolic
@@ -252,6 +261,7 @@ biomarkers:
     - serum_insulin
     unit: μU/mL
     description: Fasting insulin level
+    consumer_display_name: Insulin
     category: metabolic
     data_type: numeric
     system: metabolic
@@ -433,6 +443,7 @@ biomarkers:
     - sgpt
     unit: U/L
     description: Alanine aminotransferase
+    consumer_display_name: ALT
     category: liver
     data_type: numeric
     system: hepatic
@@ -452,6 +463,7 @@ biomarkers:
     - sgot
     unit: U/L
     description: Aspartate aminotransferase
+    consumer_display_name: AST
     category: liver
     data_type: numeric
     system: hepatic
@@ -612,6 +624,7 @@ biomarkers:
     - c-reactive_protein_crp_(venous)
     unit: mg/L
     description: C-reactive protein
+    consumer_display_name: CRP
     category: inflammatory
     data_type: numeric
     system: immune
@@ -1500,6 +1513,7 @@ biomarkers:
   ggt:
     unit: U/L
     description: Gamma-glutamyl transferase
+    consumer_display_name: GGT
     category: Liver Function
     data_type: numeric
     system: hepatic
@@ -1520,6 +1534,7 @@ biomarkers:
   alp:
     unit: U/L
     description: Alkaline phosphatase
+    consumer_display_name: ALP
     category: Liver Function
     data_type: numeric
     system: hepatic
@@ -1543,6 +1558,29 @@ biomarkers:
   bilirubin:
     unit: umol/L
     description: Total bilirubin
+    consumer_display_name: Bilirubin
+    category: Liver Function
+    data_type: numeric
+    system: hepatic
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - liver_disease
+    - haemolysis
+    - bile_duct_obstruction
+    - Gilberts_syndrome
+    key_risks_when_low: []
+    known_modifiers:
+    - fasting
+    - haemolysis
+    - liver_function
+    clinical_weight: 0.5
+  total_bilirubin:
+    display_label_rail_only: true
+    aliases: []
+    unit: umol/L
+    description: Total bilirubin (subsystem/rail display key; canonical lab identity is bilirubin)
+    consumer_display_name: Total Bilirubin
     category: Liver Function
     data_type: numeric
     system: hepatic
@@ -1562,6 +1600,7 @@ biomarkers:
   albumin:
     unit: g/L
     description: Serum albumin - hepatic synthetic marker and nutritional proxy
+    consumer_display_name: Albumin
     category: Liver Function / Nutrition
     data_type: numeric
     system: hepatic
@@ -1626,6 +1665,7 @@ biomarkers:
   lipoprotein_a:
     unit: g/L
     description: Lipoprotein(a) - genetically determined cardiovascular risk marker
+    consumer_display_name: Lipoprotein(a)
     category: Lipids
     data_type: numeric
     system: cardiovascular
@@ -1644,6 +1684,7 @@ biomarkers:
   homocysteine:
     unit: umol/L
     description: Homocysteine - methylation and cardiovascular risk marker
+    consumer_display_name: Homocysteine
     category: Cardiovascular / Methylation
     data_type: numeric
     system: cardiovascular

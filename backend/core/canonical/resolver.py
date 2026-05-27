@@ -52,6 +52,7 @@ class CanonicalResolver:
                 aliases=definition.get("aliases", []),
                 unit=definition.get("unit", ""),
                 description=definition.get("description", ""),
+                consumer_display_name=definition.get("consumer_display_name"),
                 category=definition.get("category", ""),
                 data_type=definition.get("data_type", "numeric")
             )
@@ -126,6 +127,7 @@ class CanonicalResolver:
                 "name": definition.name,
                 "unit": definition.unit,
                 "description": definition.description,
+                "consumer_display_name": definition.consumer_display_name,
                 "category": definition.category,
                 "data_type": definition.data_type,
                 "aliases": definition.aliases
