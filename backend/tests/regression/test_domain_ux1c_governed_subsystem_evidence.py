@@ -122,17 +122,30 @@ def test_subsystem_marker_ids_are_canonical_and_partitioned() -> None:
 
 
 @pytest.mark.regression
-def test_total_bilirubin_emits_governed_display_label() -> None:
-    liver = next(r for r in _minimal_rows() if r.domain_id == "wave1_liver")
+def test_liver_processing_bilirubin_canonical_not_total_bilirubin_false_missing() -> None:
+    """Canonical bilirubin satisfies liver processing; total_bilirubin is rail-only."""
+    panel = {
+        "total_cholesterol",
+        "glucose",
+        "hba1c",
+        "alt",
+        "ast",
+        "ldl_cholesterol",
+        "hdl_cholesterol",
+        "triglycerides",
+        "bilirubin",
+        "alp",
+        "albumin",
+    }
+    liver = next(r for r in _minimal_rows(panel=panel) if r.domain_id == "wave1_liver")
     processing = next(
         s for s in liver.subsystems or [] if s.subsystem_id == "wave1_liv_processing_context"
     )
-    label_map = {
-        m.id: m.display_label
-        for m in (processing.included_markers or []) + (processing.missing_markers or [])
-    }
-    assert "total_bilirubin" in label_map
-    assert label_map["total_bilirubin"] == "Total Bilirubin"
+    assert "bilirubin" in processing.included_marker_ids
+    assert "total_bilirubin" not in processing.missing_marker_ids
+    assert "total_bilirubin" not in processing.included_marker_ids
+    included_map = {m.id: m.display_label for m in processing.included_markers or []}
+    assert included_map["bilirubin"] == "Bilirubin"
 
 
 @pytest.mark.regression

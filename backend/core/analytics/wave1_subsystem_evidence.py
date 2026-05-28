@@ -75,7 +75,7 @@ _WAVE1_LIV_ENZYMES = _Wave1SubsystemDef(
 _WAVE1_LIV_PROCESSING = _Wave1SubsystemDef(
     subsystem_id="wave1_liv_processing_context",
     subsystem_label="Liver processing context",
-    expected_marker_ids=("alp", "albumin", "bilirubin", "total_bilirubin"),
+    expected_marker_ids=("alp", "albumin", "bilirubin"),
     source_trace="wave1_subsystem_evidence_v1:wave1_liver:processing_context",
 )
 
