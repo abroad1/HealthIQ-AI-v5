@@ -1,10 +1,9 @@
 {
-  "branch": "work/WAVE1-EQUIV1-total-bilirubin-false-missing-fix",
+  "branch": "work/ARCH-RT-0-inventory-and-identity-decisions",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-28T21:40:00Z",
-  "cursor_started_utc": "2026-05-28T21:38:06Z",
-  "head_sha": "f6c4b5068c2c287dd732f60a40009083d66985b2",
+  "cursor_started_utc": "2026-05-28T21:59:43Z",
+  "head_sha": "007e6964c3ec2f3d2950e4427905b424419fa4ff",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "WAVE1-EQUIV1_total_bilirubin_false_missing_fix"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-RT-0_inventory_and_identity_decisions"
 }
