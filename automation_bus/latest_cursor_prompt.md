@@ -1,267 +1,494 @@
 ---
-work_id: WAVE1-EQUIV1_total_bilirubin_false_missing_fix
-branch: work/WAVE1-EQUIV1-total-bilirubin-false-missing-fix
-risk_level: HIGH
+work_id: ARCH-RT-0_inventory_and_identity_decisions
+branch: work/ARCH-RT-0-inventory-and-identity-decisions
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
-change_type: BEHAVIOUR
+change_type: CONTENT
 ---
 
-# WAVE1-EQUIV1 — total_bilirubin false-missing fix
+# ARCH-RT-0 — Inventory and Identity Decisions
 
 ## Purpose
 
-Fix the confirmed Wave 1 liver-card subsystem false-missing defect where `total_bilirubin` is treated as an expected missing marker even though canonical SSOT identifies `total_bilirubin` as a display/rail label and canonical lab identity is `bilirubin`.
+Produce the authoritative inventory and architecture decision set required before any further day-one architecture implementation work begins.
 
-This is a narrow defect-remediation sprint. It must not become part of the wider day-one architecture rework.
+This sprint combines the confirmed-safe WP0 and WP1 work:
 
-## Risk classification
+1. inventory and authority trace
+2. identity / ADR / registry policy decisions
 
-This work is classified as:
+This is a documentation and architecture-decision sprint only.
 
-```yaml
-risk_level: HIGH
-change_type: BEHAVIOUR
+No runtime code, schema, package, compiler, validator, frontend, or control-plane changes are authorised.
+
+## Current baseline
+
+Start from clean `main`.
+
+Expected latest confirmed baseline:
+
+```text
+main == origin/main at eb44cf4
+WAVE1-EQUIV1_total_bilirubin_false_missing_fix merged and closed
 ````
 
-Reason:
-
-```text
-backend/core/analytics/wave1_subsystem_evidence.py
-```
-
-is under `backend/core/analytics/`, which is an unconditional HIGH-risk path under Automation Bus SOP v1.3.1.
-
-HIGH-risk process applies:
-
-* Claude hardening required before kernel start
-* Cursor implementation only after kernel start
-* Claude audit after implementation
-* GPT architectural review before merge
-* dual approval before merge
-
-## Pre-branch preservation requirement
-
-Before creating or switching to the sprint branch, verify the current `main` working tree.
-
-There are known untracked planning and architecture documents across:
-
-```text
-docs/planning-papers/
-docs/architecture/
-docs/audit-papers/
-docs/sprints/
-```
-
-Run and report:
+Before creating the sprint branch, run and report:
 
 ```powershell
 git branch --show-current
 git status --short
-git diff --name-only
-git diff --cached --name-only
+git log --oneline -n 5
+git rev-parse HEAD
+git rev-parse origin/main
 ```
 
-If any newly created or modified planning/audit/sprint documents are present, STOP before creating the sprint branch.
+STOP if:
 
-Those files must be preserved separately before this sprint begins.
+* current branch is not `main`
+* local `main` does not equal `origin/main`
+* working tree is not clean
+* HEAD is not at or after `eb44cf4`
+* unresolved untracked planning, audit, sprint, or architecture documents remain
 
-Expected action:
-
-```text
-Create a separate docs-only preservation commit before creating the WAVE1-EQUIV1 sprint branch.
-```
-
-Do not allow sprint implementation changes to mix with uncommitted planning documents.
-
-## Confirmed defect
-
-Hardening confirmed:
-
-```text
-backend/core/analytics/wave1_subsystem_evidence.py
-```
-
-contains liver processing expected markers equivalent to:
-
-```python
-expected_marker_ids=("alp", "albumin", "bilirubin", "total_bilirubin")
-```
-
-Hardening also confirmed:
-
-```text
-backend/ssot/biomarkers.yaml
-```
-
-marks `total_bilirubin` as:
+## Governance classification
 
 ```yaml
-display_label_rail_only: true
+risk_level: STANDARD
+change_type: CONTENT
+execution_model: TWO_PHASE_START_FINISH
 ```
 
-with description indicating canonical lab identity is `bilirubin`.
+Reason:
 
-Therefore, the correct fix is to remove `total_bilirubin` from the liver subsystem expected-marker tuple and preserve `bilirubin` as the canonical expected marker.
+This sprint creates documentation and ADR outputs only under `docs/architecture/`.
 
-## Existing assembler workaround
+It must not modify files consumed by the Intelligence Core.
 
-Do not modify the domain-level workaround in:
+If Cursor determines that any required work would touch:
 
 ```text
-backend/core/analytics/domain_score_assembler.py
+backend/core/**
+backend/ssot/**
+knowledge_bus/**
+automation_bus/**
+frontend/**
+sentinel/**
 ```
 
-Hardening identified that this file already compensates at the domain-level missing list.
+then STOP and report. Do not widen the sprint.
 
-That workaround is out of scope.
+## Authoritative planning inputs
 
-The live defect is at the subsystem evidence partition visible through `SubsystemEvidenceV1` / frontend card evidence.
+Read the following planning/audit documents before producing outputs:
+
+```text
+docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md
+docs/planning-papers/HealthIQ_As-Is_to_Day-One_Architecture_Transition_Plan_v3.md
+docs/planning-papers/HealthIQ_As-Is_to_Day-One_Architecture_Transition_Plan_v3_review_cursor.md
+docs/planning-papers/HealthIQ_As-Is_to_Day-One_Architecture_Transition_Plan_v3_review_claude.md
+docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md
+docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review.md
+docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
+docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
+```
+
+If any file is missing, STOP and report the missing path.
+
+If equivalent files exist under a different path, report the candidate path and STOP for human/GPT confirmation before proceeding.
 
 ## Authority preflight
 
-Before editing, verify and report:
+Before authoring documents, inspect the repository and report the actual locations for:
 
-1. The current liver subsystem expected-marker tuple in `wave1_subsystem_evidence.py`.
-2. The SSOT entry for `total_bilirubin`.
-3. The SSOT / canonical identity for `bilirubin`.
-4. The existing domain-level workaround in `domain_score_assembler.py`, confirming it will not be changed.
-5. The existing test currently asserting `total_bilirubin` appears in governed display-label output.
+1. investigation spec corpus
+2. Knowledge Bus package directories
+3. package manifest files
+4. promoted signal intelligence schema / translator / loader
+5. existing PSI artefacts
+6. root-cause hypothesis YAML files
+7. root_cause_registry implementation
+8. Wave 1 subsystem evidence implementation
+9. SignalRegistry / SignalEvaluator implementation
+10. SignalResult model
+11. Health Systems Card DTO models
+12. frontend Health Systems Card components
+13. IDL / retail explainer assets
+14. interaction map / phenotype map / calibration / confirmatory-test registry assets
 
-If any of these cannot be verified, STOP and report the missing authority.
+This preflight is read-only.
+
+Do not edit any of those files.
 
 ## Scope
 
-Allowed scope:
+Produce a complete repo-reality inventory and decisive architecture decision set.
 
-* Remove `total_bilirubin` from the liver subsystem expected-marker tuple.
-* Preserve `bilirubin` as the canonical expected marker.
-* Update the conflicting regression test that currently asserts `total_bilirubin` appears in the label map.
-* Add or amend regression coverage proving:
+### Inventory scope
 
-  * `bilirubin` is the expected canonical marker
-  * `total_bilirubin` is not reported as missing in subsystem evidence when `bilirubin` is present
-  * domain-level behaviour remains unchanged
-  * no broader SSOT/canonicalisation policy is changed
+Inventory must cover:
 
-Likely files:
+* investigation spec corpus
+* package generations
+* all package-generation prefixes found, including but not limited to:
+
+  * legacy
+  * s24
+  * kb45
+  * kb47
+  * kb52
+  * kb52c
+  * kb52d
+  * kb58
+  * kb59
+  * kb60
+  * kb61
+  * any other package generations found in the repository
+* package `source_document` values
+* packages with individual investigation spec provenance
+* packages sourcing from batch JSON
+* packages with `source_spec_id` if present
+* packages without source provenance
+* packages requiring `legacy_retained`, `deferred_for_regeneration`, or `blocked_pending_spec_extraction` classification later
+* PSI artefacts on disk
+* PSI package-manifest opt-ins
+* confirmation that PSI is runtime-dead, or correction if that is no longer true
+* root-cause hypothesis YAML files
+* root_cause_registry registrations
+* duplicate `signal_id` collisions
+* current retained/discarded package behaviour where detectable
+* Health Systems Card hard-coded evidence
+* IDL / retail explainer dependencies
+* interaction map / phenotype map / calibration / confirmatory-test registry dependencies
+* DTO/frontend traceability for user-facing claims
+* whether existing translators/compilers have been tested against candidate inventory entries
+* activation compile gap:
+
+  * whether governed `investigation_spec → signal_library.yaml` compile exists
+  * whether governed `investigation_spec → research_brief.yaml` compile exists
+  * whether governed `investigation_spec → package_manifest.yaml` compile exists
+  * how this differs from PSI translation
+
+### ADR / decision scope
+
+Produce architecture decisions covering:
+
+* ADR-008 acceptance
+* PSI scope confirmation
+* compiled hypothesis artefact boundary
+* one-frame versus multi-frame runtime policy
+* registry keying policy
+* whether `activation_key` is required
+* SignalResult provenance requirements
+* interaction map / phenotype map / root-cause registry family-vs-frame policy
+* package provenance policy
+* activation compile policy:
+
+  * `investigation_spec → signal_library.yaml`
+  * `investigation_spec → research_brief.yaml`
+  * `investigation_spec → package_manifest.yaml`
+* root_cause_registry transition direction
+* compile manifest convention
+
+## Required deliverables
+
+Create the following files only:
 
 ```text
-backend/core/analytics/wave1_subsystem_evidence.py
-backend/tests/**/test_domain_ux1c_governed_subsystem_evidence.py
+docs/architecture/research_to_runtime_traceability_matrix.md
+docs/architecture/intelligence_authority_inventory.md
+docs/architecture/package_generation_inventory.md
+docs/architecture/psi_coverage_and_manifest_opt_in_report.md
+docs/architecture/root_cause_registry_inventory.md
+docs/architecture/signal_id_collision_inventory.md
+docs/architecture/legacy_package_retirement_candidates.md
+docs/architecture/activation_compile_gap_report.md
+docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
+docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md
+docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md
+docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md
 ```
 
-Final touched files must be justified by the preflight findings.
+No other committed files are allowed unless explicitly justified and approved before implementation.
+
+## Deliverable requirements
+
+### 1. `research_to_runtime_traceability_matrix.md`
+
+Must map, as far as repo evidence allows:
+
+```text
+investigation spec → package
+investigation spec → PSI
+investigation spec → root-cause YAML
+investigation spec → card evidence
+package → SignalRegistry
+signal → DTO
+DTO → frontend component
+```
+
+Where traceability is missing, state one of:
+
+```text
+MISSING
+UNKNOWN
+BATCH_JSON_ONLY
+LEGACY_RETAINED_CANDIDATE
+BLOCKED_PENDING_SPEC_EXTRACTION
+```
+
+Do not guess.
+
+### 2. `intelligence_authority_inventory.md`
+
+Must list current active and candidate authorities for:
+
+* research source
+* signal activation
+* signal semantics / PSI
+* hypothesis / WHY
+* Health Systems Card evidence
+* IDL / presentation safety
+* DTO boundary
+* frontend rendering
+
+For each authority, state:
+
+```text
+current role
+runtime consumed: YES/NO/UNKNOWN
+source provenance status
+duplicate authority risk
+target-state recommendation
+```
+
+### 3. `package_generation_inventory.md`
+
+Must include exact counts by package generation/prefix.
+
+Must include at minimum:
+
+```text
+generation/prefix
+count
+source_document pattern
+schema_version if available
+PSI on disk count
+PSI manifest opt-in count
+source_spec_id present count
+batch JSON source count
+individual spec source count
+unknown source count
+```
+
+Do not rely on approximate counts from planning papers.
+
+### 4. `psi_coverage_and_manifest_opt_in_report.md`
+
+Must confirm:
+
+* PSI schema path
+* PSI translator path
+* PSI loader path
+* number of PSI artefacts on disk
+* number of packages with PSI manifest opt-in
+* whether PSI is consumed by runtime analytics paths
+* where PSI is used today, if anywhere
+* which packages/specs are candidates for PSI gap closure
+* whether PSI runtime wiring is required for launch-critical claims or can be deferred
+
+### 5. `root_cause_registry_inventory.md`
+
+Must include:
+
+* root-cause YAML file count
+* registered root-cause target count
+* registry implementation path
+* loader paths
+* signal IDs registered
+* duplicate or shared YAML usage
+* missing source_spec_id / provenance issues
+* proposed transition direction:
+
+  * manual tuple retained temporarily
+  * generated registry
+  * manifest-backed registry
+  * compiled hypothesis loader
+
+### 6. `signal_id_collision_inventory.md`
+
+Must include:
+
+* every duplicate `signal_id` found across packages
+* package paths involved
+* current retained/discarded behaviour where detectable
+* whether collision affects live runtime
+* whether collision is single-frame duplicate or multi-frame medical case
+* specific explicit row for ALT high collision
+* homocysteine-related cases if present
+* recommended handling category:
+
+  * hard error
+  * governed arbitration
+  * multi-frame support
+  * legacy duplicate retirement
+
+### 7. `legacy_package_retirement_candidates.md`
+
+Must classify packages as far as evidence allows:
+
+```text
+active_current
+legacy_retained_candidate
+deferred_for_regeneration
+blocked_pending_spec_extraction
+retire_candidate
+unknown_requires_review
+```
+
+Must identify packages lacking sufficient provenance.
+
+### 8. `activation_compile_gap_report.md`
+
+Must answer:
+
+1. Does a governed `investigation_spec → signal_library.yaml` compiler exist?
+2. Does a governed `investigation_spec → research_brief.yaml` compiler exist?
+3. Does a governed `investigation_spec → package_manifest.yaml` compiler exist?
+4. What scripts currently generate or ingest package artefacts?
+5. How do those differ from the PSI translator?
+6. What is missing before full estate regeneration can be governed?
+7. Which later sprint should own activation compile implementation?
+
+### 9. `ADR-RT-001_research_to_runtime_day_one_architecture.md`
+
+Must decide:
+
+* canonical research authority
+* compiled runtime artefact model
+* accepted target pipeline
+* no raw research runtime reads
+* no frontend medical inference
+* relationship to final sprint plan
+
+### 10. `ADR-RT-002_signal_spec_identity_and_registry_policy.md`
+
+This ADR must be decisive.
+
+It must choose one:
+
+```text
+ONE_FRAME_PER_DIRECTION
+MULTI_FRAME_PER_DIRECTION
+```
+
+It must not leave both options open.
+
+It must also decide:
+
+* registry keying policy
+* whether `activation_key` is required
+* whether `signal_id + spec_id` is sufficient
+* SignalResult provenance requirements
+* how interaction map / phenotype map / root-cause registry relate to signal family versus frame identity
+* implications for Sprint 3 identity runtime pilot
+
+If evidence is insufficient to choose, STOP and report exactly what evidence is missing. Do not write an indecisive ADR.
+
+### 11. `ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md`
+
+Must decide:
+
+* ADR-008 accepted or challenged
+* PSI remains signal-layer only or not
+* hypothesis artefact boundary
+* relationship between investigation spec hypotheses and root-cause YAML
+* whether compiled hypothesis artefact should be consumed directly or emit root-cause-compatible view
+* root_cause_registry transition direction
+
+### 12. `ADR-RT-004_compile_manifest_and_package_provenance_policy.md`
+
+Must decide:
+
+* compile manifest convention
+* per-run / per-artefact / estate index approach
+* required provenance fields
+* `source_spec_id` policy
+* `legacy_retained` classification policy
+* batch JSON source handling
+* package promotion / traceability expectations
 
 ## Out of scope
 
 Do not:
 
-* Modify `backend/core/analytics/domain_score_assembler.py`.
-* Change biomarker canonicalisation policy.
-* Change `backend/ssot/biomarkers.yaml`.
-* Change unit conversion policy.
-* Change biomarker reference ranges.
-* Change scoring rails.
-* Change domain scoring.
-* Change Health Systems Card design.
-* Change frontend components.
-* Start the day-one architecture rework.
-* Create card evidence schemas.
-* Create compiled card evidence artefacts.
-* Modify root-cause YAML.
-* Modify PSI.
-* Modify SignalRegistry or SignalEvaluator.
-* Modify package files.
-* Modify investigation specs.
-* Modify control-plane scripts.
-* Introduce fallback parsers.
+* modify runtime code
+* modify package files
+* modify investigation specs
+* modify PSI artefacts
+* modify root-cause YAML
+* modify schemas
+* modify validators
+* modify Sentinel packs
+* modify frontend
+* modify `wave1_subsystem_evidence.py`
+* modify `SignalRegistry`
+* modify `SignalEvaluator`
+* run package regeneration
+* run compiler implementation
+* create new runtime artefacts
+* create helper scripts committed to the repository
+* introduce fallback parsers
 
-## Required implementation
+Read-only shell/Python commands are allowed for inventory if they do not modify the repository.
 
-If the defect exists as confirmed:
+If temporary helper scripts are needed, create them outside the repository or remove them before closure. Do not commit tooling files.
 
-1. Remove `total_bilirubin` from the liver subsystem expected-marker set.
-2. Preserve `bilirubin`.
-3. Replace the existing conflicting test:
-
-```text
-test_total_bilirubin_emits_governed_display_label
-```
-
-or equivalent test currently asserting `total_bilirubin` appears in `label_map`.
-
-4. The replacement test must assert the corrected behaviour:
-
-```text
-bilirubin is the expected canonical marker
-total_bilirubin is absent from missing subsystem markers when bilirubin is present
-```
-
-5. Ensure existing domain-level tests still pass.
-6. Do not modify the assembler workaround.
-
-## Required tests
-
-Run the narrowest relevant tests first.
-
-At minimum, run the test file containing:
-
-```text
-test_total_bilirubin_emits_governed_display_label
-```
-
-Expected likely path:
-
-```text
-backend/tests/**/test_domain_ux1c_governed_subsystem_evidence.py
-```
-
-Also run any existing tests covering:
-
-```text
-Wave 1 subsystem evidence
-liver subsystem included/missing marker partitioning
-domain-level missing marker behaviour
-```
-
-If no suitable regression exists after updating the conflicting test, create a targeted regression test.
-
-## STOP conditions
-
-STOP and report without implementing if:
-
-1. `total_bilirubin` is not present in the liver subsystem expected-marker logic.
-2. The defect has already been fixed.
-3. The issue is not local to Wave 1 subsystem evidence and instead exposes a broader canonical resolver defect.
-4. Fixing the issue would require changing canonical biomarker policy.
-5. Fixing the issue would require changing scoring/domain logic.
-6. Fixing the issue would require modifying `domain_score_assembler.py`.
-7. Regression coverage cannot be added or updated.
-8. Any uncommitted planning documents are still present on `main` and have not been safely preserved before branch creation.
-9. The current branch does not match the declared sprint branch after branch setup.
-10. `automation_bus/state/work_package_active.json` is missing or does not match this work_id after kernel start.
-
-## Evidence required from Cursor
+## Required evidence from Cursor
 
 Cursor must report:
 
-1. Pre-branch preservation check output.
-2. Confirmation that docs-only preservation was completed before sprint branch creation, if required.
-3. Authority preflight findings.
-4. Exact file(s) changed.
-5. Exact defect found.
-6. Exact fix applied.
-7. Regression test added or updated.
-8. Test commands run.
-9. Test results.
-10. Confirmation that `domain_score_assembler.py` was not modified.
-11. Confirmation that `backend/ssot/biomarkers.yaml` was not modified.
-12. Confirmation that no broader architecture files were modified.
-13. Confirmation that the Sprint 0 fix does not introduce new card-evidence authority.
+1. Baseline branch/status/HEAD evidence.
+2. Authority preflight findings.
+3. File/path evidence for all inventoried authorities.
+4. Exact commands used for package counts and collision detection.
+5. Exact counts found.
+6. Confirmation that no runtime/code/schema/package files were modified.
+7. Confirmation that all deliverables were created under `docs/architecture/`.
+8. Any uncertainty or missing evidence.
+9. Whether ADR-RT-002 was able to make a decisive one-frame versus multi-frame decision.
+
+## STOP conditions
+
+STOP and report without completing if:
+
+1. The repository baseline is not clean.
+2. `main` does not equal `origin/main`.
+3. Required planning/audit source documents are missing.
+4. Inventory cannot distinguish package generations.
+5. PSI runtime consumption status cannot be verified.
+6. Duplicate `signal_id` collision detection cannot be performed.
+7. ADR-RT-002 cannot decisively choose one-frame or multi-frame.
+8. Work would require editing code, schemas, packages, PSI, root-cause YAML, frontend, or control-plane files.
+9. Work would require creating committed helper scripts.
+10. Any deliverable would require unsupported assumptions instead of repo evidence.
+
+## Tests / validation
+
+Because this is documentation-only, no runtime test suite is required.
+
+However, Cursor must validate the documentation outputs by checking:
+
+```powershell
+git diff --name-only
+```
+
+Only the approved `docs/architecture/*.md` deliverables should appear.
+
+If read-only scripts/commands are used for counts, include command output summaries in the relevant documents.
 
 ## Closure requirements
 
-Before `run_work_package.py finish`, Cursor must complete the Automation Bus post-implementation closure protocol.
+Before `run_work_package.py finish`, complete the Automation Bus post-implementation closure protocol.
 
 Run and report:
 
@@ -274,39 +501,41 @@ git diff --cached --name-only
 git stash list
 ```
 
-Cursor must explicitly classify:
+Classify:
 
 * tracked modified files
 * staged files
 * untracked files
 * tooling files
 * out-of-scope files
-* any stash entries
+* stash entries
 
 Do not run finish unless:
 
-* current branch matches `work/WAVE1-EQUIV1-total-bilirubin-false-missing-fix`
-* working tree is clean except intended staged sprint changes
-* no unrelated planning documents are included
+* current branch matches `work/ARCH-RT-0-inventory-and-identity-decisions`
+* only approved `docs/architecture/*.md` deliverables are changed
+* no runtime/code/schema/package files are changed
 * no tooling files are included
 * no ambiguous stash exists
-* latest commit contains only in-scope work
+* latest commit contains only in-scope documentation outputs
 
 ## Success criteria
 
 This sprint is complete only if:
 
-1. The false-missing `total_bilirubin` defect is fixed.
-2. `bilirubin` remains the canonical expected marker for the relevant liver subsystem evidence.
-3. `total_bilirubin` is not falsely reported missing when `bilirubin` is present.
-4. Existing domain-level workaround behaviour is preserved.
-5. Existing liver-card behaviour is otherwise preserved.
-6. Regression coverage proves the fix.
-7. `domain_score_assembler.py` is unchanged.
-8. `backend/ssot/biomarkers.yaml` is unchanged.
-9. No architecture rework is included.
-10. No unmerged planning documents are mixed into the sprint branch.
-11. Automation Bus gate passes.
+1. All required inventory documents are created.
+2. All required ADR documents are created.
+3. Package generations are exactly counted from repo evidence.
+4. PSI coverage, manifest opt-in and runtime consumption status are documented.
+5. Root-cause registry and YAML inventory is documented.
+6. Duplicate `signal_id` collisions are documented.
+7. ALT high collision is explicitly addressed.
+8. Activation compile gap is explicitly documented.
+9. ADR-RT-002 decisively chooses one-frame or multi-frame.
+10. Package provenance policy is defined.
+11. Root-cause transition direction is defined.
+12. No runtime/code/schema/package files are modified.
+13. Automation Bus gate passes.
 
 ```
 ```
