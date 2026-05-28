@@ -1,448 +1,312 @@
 ---
-work_id: DOMAIN-LABEL1
-branch: domain-ux/domain-label1-governed-biomarker-display-labels
+work_id: WAVE1-EQUIV1_total_bilirubin_false_missing_fix
+branch: work/WAVE1-EQUIV1-total-bilirubin-false-missing-fix
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: BEHAVIOUR
 ---
 
-# DOMAIN-LABEL1 — Governed Biomarker Display Label Authority
-
-## Classification
-
-This is a HIGH-risk MIXED sprint.
-
-Reason: this sprint resolves biomarker display-name authority across the HealthIQ frontend/backend boundary. It may touch SSOT, DTO emission, subsystem evidence, and frontend rendering. It must prevent the frontend from becoming a parallel biomarker naming authority.
-
-This sprint must not change scoring, signal activation, reference ranges, clinical interpretation, root-cause logic, Knowledge Bus content, or IDL records.
+# WAVE1-EQUIV1 — total_bilirubin false-missing fix
 
 ## Purpose
 
-DOMAIN-UX1D exposed a structural label-authority problem.
+Fix the confirmed Wave 1 liver-card subsystem false-missing defect where `total_bilirubin` is treated as an expected missing marker even though canonical SSOT identifies `total_bilirubin` as a display/rail label and canonical lab identity is `bilirubin`.
 
-Subsystem evidence currently renders marker names through:
+This is a narrow defect-remediation sprint. It must not become part of the wider day-one architecture rework.
 
-```text
-frontend/app/lib/wave1ConfidenceMarkerLabels.ts
+## Risk classification
+
+This work is classified as:
+
+```yaml
+risk_level: HIGH
+change_type: BEHAVIOUR
 ````
 
-This creates poor labels such as:
+Reason:
 
 ```text
-hba1c
-crp
-Ldl Cholesterol
-Hdl Cholesterol
-Tc Hdl Ratio
-```
-
-The label-authority trace confirmed there is no single governed consumer-safe biomarker display-name authority today, and that extending `wave1ConfidenceMarkerLabels.ts` would deepen frontend label fragmentation. 
-
-The purpose of this sprint is to resolve the problem permanently by creating or wiring a governed biomarker display-label authority and emitting consumer-safe marker labels through the DTO used by Health Systems Card subsystem evidence.
-
-## Controlling authority
-
-Read before doing anything:
-
-```text
-docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md
-docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md
-docs/audit-papers/DOMAIN-UX1C_governed_subsystem_evidence_model_notes.md
-docs/audit-papers/DOMAIN-UX1D_full_wave1_expanded_health_systems_card_notes.md
-docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
-```
-
-Also use the DOMAIN-UX1D Biomarker Label Authority Trace supplied by GPT/user as controlling context.
-
-## Required output documentation
-
-Create:
-
-```text
-docs/audit-papers/DOMAIN-LABEL1_governed_biomarker_display_label_authority_notes.md
-```
-
-This document must include:
-
-1. preflight results
-2. source documents reviewed
-3. current label-authority problem
-4. chosen authority source
-5. SSOT/backend changes made
-6. DTO changes made
-7. frontend changes made
-8. migration/deprecation decision for frontend label helpers
-9. tests added/updated
-10. Sentinel updates
-11. confirmation that scoring/clinical interpretation did not change
-12. residual gaps
-
-## Mandatory preflight
-
-Run and record:
-
-```powershell
-git branch --show-current
-git status --short
-git log --oneline -n 12
-git stash list
-```
-
-Verify work-package token:
-
-```powershell
-Test-Path automation_bus/state/work_package_active.json
-```
-
-Read `automation_bus/state/work_package_active.json` and confirm:
-
-* `work_id` is `DOMAIN-LABEL1`
-* branch is `domain-ux/domain-label1-governed-biomarker-display-labels`
-
-If token is missing or mismatched, STOP.
-
-## Required investigation before implementation
-
-Before changing code, trace and document:
-
-1. all existing frontend biomarker label maps/helpers
-2. all existing backend/SSOT biomarker identity fields
-3. where uploaded `display_label` is used
-4. where main biomarker cards get their labels
-5. where subsystem evidence currently gets labels
-6. whether `backend/ssot/biomarkers.yaml` can safely hold `consumer_display_name`
-7. whether any existing SSOT field already fulfils this role
-
-Do not implement until the authority choice is explicit in the notes.
-
-## Required implementation direction
-
-### A. Establish governed biomarker display-label authority
-
-Preferred architecture:
-
-```text
-backend/SSOT biomarker definition
-→ resolver/model layer
-→ DTO
-→ frontend renderer
-```
-
-Add or wire a consumer-safe biomarker display label field in the governed backend/SSOT layer.
-
-Preferred field name:
-
-```text
-consumer_display_name
-```
-
-or repo-consistent equivalent.
-
-This field should be short, retail-safe and suitable for card labels.
-
-Examples:
-
-```text
-hba1c → HbA1c
-crp → CRP
-hs_crp → hs-CRP
-ldl_cholesterol → LDL Cholesterol
-hdl_cholesterol → HDL Cholesterol
-tc_hdl_ratio → TC:HDL ratio
-apob → ApoB
-apoa1 → ApoA1
-lipoprotein_a → Lipoprotein(a)
-```
-
-Do not use long SSOT clinical descriptions directly as UI labels.
-
-### B. Emit labels through subsystem evidence DTO
-
-Update subsystem evidence so frontend receives marker display labels directly from backend output.
-
-Preferred DTO shape:
-
-```text
-included_markers: [
-  {
-    id: "hba1c",
-    display_label: "HbA1c"
-  }
-]
-
-missing_markers: [
-  {
-    id: "hs_crp",
-    display_label: "hs-CRP"
-  }
-]
-```
-
-Maintain backward compatibility if existing `included_marker_ids` / `missing_marker_ids` are still needed.
-
-Acceptable approach:
-
-```text
-- keep included_marker_ids / missing_marker_ids
-- add included_markers / missing_markers as richer display objects
-```
-
-or replace only if tests prove no downstream breakage.
-
-### C. Frontend must render backend-supplied labels
-
-Update:
-
-```text
-Wave1SubsystemEvidenceSection.tsx
-```
-
-so it renders backend-supplied marker `display_label`.
-
-Frontend must not resolve subsystem marker labels through `wave1ConfidenceMarkerLabels.ts`.
-
-Frontend may only use fallback formatting as a defensive last resort if backend label is absent, and such fallback must be guarded/tested as a defect path, not normal behaviour.
-
-### D. Do not expand the frontend label map
-
-Do not fix this by adding more entries to:
-
-```text
-frontend/app/lib/wave1ConfidenceMarkerLabels.ts
-```
-
-That is explicitly forbidden as the primary fix.
-
-You may deprecate it, route it to the governed label source if feasible, or leave it untouched if no longer used by subsystem evidence.
-
-### E. Scope marker coverage
-
-At minimum, the governed label authority must cover all Wave 1 subsystem marker IDs:
-
-```text
-total_cholesterol
-ldl_cholesterol
-hdl_cholesterol
-triglycerides
-tc_hdl_ratio
-apob
-apoa1
-lipoprotein_a
-homocysteine
-crp
-hs_crp
-hba1c
-glucose
-insulin
-alt
-ast
-ggt
-alp
-bilirubin
-albumin
-```
-
-If the current subsystem mappings contain additional marker IDs, include them too.
-
-### F. No clinical interpretation changes
-
-This sprint is naming/display authority only.
-
-Do not change:
-
-* scoring thresholds
-* evidence completeness
-* marker inclusion rules
-* subsystem mappings
-* confidence logic
-* signal logic
-* root-cause logic
-* IDL/KB content
-
-## Potentially allowed files
-
-```text
-backend/ssot/biomarkers.yaml
-backend/core/canonical/**/*
-backend/core/models/results.py
 backend/core/analytics/wave1_subsystem_evidence.py
-backend/core/analytics/domain_score_assembler.py
-backend/tests/regression/**/*
-backend/tests/unit/**/*
-frontend/app/types/analysis.ts
-frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx
-frontend/app/components/results/Wave1DomainCards.tsx
-frontend/app/lib/wave1ConfidenceMarkerLabels.ts
-frontend/tests/components/Wave1SubsystemEvidenceSection.test.tsx
-frontend/tests/components/Wave1DomainCards.test.tsx
-sentinel/packs/escaped_defects_v1.json
-docs/audit-papers/DOMAIN-LABEL1_governed_biomarker_display_label_authority_notes.md
 ```
 
-Touch only the minimum necessary files.
+is under `backend/core/analytics/`, which is an unconditional HIGH-risk path under Automation Bus SOP v1.3.1.
 
-## Forbidden unless GPT explicitly approves
+HIGH-risk process applies:
+
+* Claude hardening required before kernel start
+* Cursor implementation only after kernel start
+* Claude audit after implementation
+* GPT architectural review before merge
+* dual approval before merge
+
+## Pre-branch preservation requirement
+
+Before creating or switching to the sprint branch, verify the current `main` working tree.
+
+There are known untracked planning and architecture documents across:
 
 ```text
-backend/core/scoring/**/*
-backend/core/pipeline/**/*
-backend/core/units/**/*
-backend/core/analytics/root_cause*
-backend/core/analytics/report_compiler*
-backend/core/analytics/narrative_report_compiler*
-knowledge_bus/**/*
-frontend clinician report components
-automation_bus/state/*
-backend/scripts/run_work_package.py
-backend/scripts/golden_gate_local.py
-backend/scripts/update_cursor_status.py
+docs/planning-papers/
+docs/architecture/
+docs/audit-papers/
+docs/sprints/
 ```
 
-## Required tests
-
-Add or update deterministic tests proving:
-
-### SSOT/backend authority
-
-* each Wave 1 subsystem marker has a governed consumer display label
-* labels are loaded from backend/SSOT or backend-governed source
-* missing markers receive display labels even when not present in `analysis.biomarkers[]`
-* subsystem evidence emits marker display labels
-
-### DTO contract
-
-* subsystem evidence includes marker objects or equivalent label-bearing structure
-* included markers include `id` and `display_label`
-* missing markers include `id` and `display_label`
-* legacy ID arrays are preserved if required
-
-### Frontend rendering
-
-* `Wave1SubsystemEvidenceSection` renders backend-supplied labels
-* it does not call `wave1ConfidenceMarkerDisplayLabel` for normal subsystem marker display
-* it does not render poor fallback labels:
-
-  * `hba1c`
-  * `crp`
-  * `Ldl Cholesterol`
-  * `Hdl Cholesterol`
-  * `Tc Hdl Ratio`
-* missing markers render proper labels and `Not uploaded`
-
-### Authority protection
-
-* no new frontend biomarker label map is introduced
-* `wave1ConfidenceMarkerLabels.ts` is not expanded as the primary fix
-* frontend does not define biomarker naming authority
-* frontend fallback is defensive only
-
-## Required Sentinel obligations
-
-Add or update active deterministic Sentinel defect classes as appropriate:
-
-```text
-biomarker_display_label_frontend_authority_expansion
-subsystem_marker_display_label_missing_from_dto
-subsystem_marker_poor_fallback_label_visible
-subsystem_missing_marker_label_not_governed
-wave1_confidence_marker_labels_expanded_as_primary_fix
-```
-
-Each Sentinel class must point to an active deterministic test.
-
-No placeholder Sentinel entries.
-
-## Required validation commands
-
-Run:
-
-```powershell
-python -m pytest backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py -q
-python -m pytest backend/tests/regression/test_domain_ux1a_wave1_health_systems_card_scaffold.py -q
-python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
-python -m pytest backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py -q
-python -m pytest backend/tests/regression/test_canonical_mapping_star_suffix_failure.py -q
-python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
-python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
-python -m pytest backend/tests/unit/test_scoring_rules.py -q
-python -m pytest backend/tests/unit/test_domain_score_assembler_v1.py -q
-```
-
-Run frontend validation:
-
-```powershell
-npm run type-check
-```
-
-Run frontend component tests if available.
-
-If browser tools are available, inspect:
-
-```text
-http://localhost:3000/results?analysis_id=d7417288-7e11-48da-8716-d0f63f77c491
-```
-
-Confirm expanded subsystem evidence shows proper labels such as:
-
-```text
-HbA1c
-CRP
-LDL Cholesterol
-HDL Cholesterol
-TC:HDL ratio
-Homocysteine
-```
-
-Do not claim browser UAT passed unless actually inspected.
-
-## Acceptance criteria
-
-This sprint is complete only if:
-
-* biomarker display labels have a governed backend/SSOT authority
-* subsystem evidence DTO carries display labels or equivalent backend-supplied label objects
-* frontend renders backend-supplied labels
-* poor fallback labels no longer appear in subsystem evidence
-* missing markers have proper display labels
-* `wave1ConfidenceMarkerLabels.ts` is not expanded as the primary fix
-* no scoring, interpretation, KB, IDL, root-cause or pipeline logic is changed
-* tests pass
-* Sentinel guards are active
-* notes clearly document remaining frontend label helpers and deprecation path
-
-## Closure requirements
-
-Before finish, run:
+Run and report:
 
 ```powershell
 git branch --show-current
 git status --short
 git diff --name-only
-git log --oneline -n 8
+git diff --cached --name-only
+```
+
+If any newly created or modified planning/audit/sprint documents are present, STOP before creating the sprint branch.
+
+Those files must be preserved separately before this sprint begins.
+
+Expected action:
+
+```text
+Create a separate docs-only preservation commit before creating the WAVE1-EQUIV1 sprint branch.
+```
+
+Do not allow sprint implementation changes to mix with uncommitted planning documents.
+
+## Confirmed defect
+
+Hardening confirmed:
+
+```text
+backend/core/analytics/wave1_subsystem_evidence.py
+```
+
+contains liver processing expected markers equivalent to:
+
+```python
+expected_marker_ids=("alp", "albumin", "bilirubin", "total_bilirubin")
+```
+
+Hardening also confirmed:
+
+```text
+backend/ssot/biomarkers.yaml
+```
+
+marks `total_bilirubin` as:
+
+```yaml
+display_label_rail_only: true
+```
+
+with description indicating canonical lab identity is `bilirubin`.
+
+Therefore, the correct fix is to remove `total_bilirubin` from the liver subsystem expected-marker tuple and preserve `bilirubin` as the canonical expected marker.
+
+## Existing assembler workaround
+
+Do not modify the domain-level workaround in:
+
+```text
+backend/core/analytics/domain_score_assembler.py
+```
+
+Hardening identified that this file already compensates at the domain-level missing list.
+
+That workaround is out of scope.
+
+The live defect is at the subsystem evidence partition visible through `SubsystemEvidenceV1` / frontend card evidence.
+
+## Authority preflight
+
+Before editing, verify and report:
+
+1. The current liver subsystem expected-marker tuple in `wave1_subsystem_evidence.py`.
+2. The SSOT entry for `total_bilirubin`.
+3. The SSOT / canonical identity for `bilirubin`.
+4. The existing domain-level workaround in `domain_score_assembler.py`, confirming it will not be changed.
+5. The existing test currently asserting `total_bilirubin` appears in governed display-label output.
+
+If any of these cannot be verified, STOP and report the missing authority.
+
+## Scope
+
+Allowed scope:
+
+* Remove `total_bilirubin` from the liver subsystem expected-marker tuple.
+* Preserve `bilirubin` as the canonical expected marker.
+* Update the conflicting regression test that currently asserts `total_bilirubin` appears in the label map.
+* Add or amend regression coverage proving:
+
+  * `bilirubin` is the expected canonical marker
+  * `total_bilirubin` is not reported as missing in subsystem evidence when `bilirubin` is present
+  * domain-level behaviour remains unchanged
+  * no broader SSOT/canonicalisation policy is changed
+
+Likely files:
+
+```text
+backend/core/analytics/wave1_subsystem_evidence.py
+backend/tests/**/test_domain_ux1c_governed_subsystem_evidence.py
+```
+
+Final touched files must be justified by the preflight findings.
+
+## Out of scope
+
+Do not:
+
+* Modify `backend/core/analytics/domain_score_assembler.py`.
+* Change biomarker canonicalisation policy.
+* Change `backend/ssot/biomarkers.yaml`.
+* Change unit conversion policy.
+* Change biomarker reference ranges.
+* Change scoring rails.
+* Change domain scoring.
+* Change Health Systems Card design.
+* Change frontend components.
+* Start the day-one architecture rework.
+* Create card evidence schemas.
+* Create compiled card evidence artefacts.
+* Modify root-cause YAML.
+* Modify PSI.
+* Modify SignalRegistry or SignalEvaluator.
+* Modify package files.
+* Modify investigation specs.
+* Modify control-plane scripts.
+* Introduce fallback parsers.
+
+## Required implementation
+
+If the defect exists as confirmed:
+
+1. Remove `total_bilirubin` from the liver subsystem expected-marker set.
+2. Preserve `bilirubin`.
+3. Replace the existing conflicting test:
+
+```text
+test_total_bilirubin_emits_governed_display_label
+```
+
+or equivalent test currently asserting `total_bilirubin` appears in `label_map`.
+
+4. The replacement test must assert the corrected behaviour:
+
+```text
+bilirubin is the expected canonical marker
+total_bilirubin is absent from missing subsystem markers when bilirubin is present
+```
+
+5. Ensure existing domain-level tests still pass.
+6. Do not modify the assembler workaround.
+
+## Required tests
+
+Run the narrowest relevant tests first.
+
+At minimum, run the test file containing:
+
+```text
+test_total_bilirubin_emits_governed_display_label
+```
+
+Expected likely path:
+
+```text
+backend/tests/**/test_domain_ux1c_governed_subsystem_evidence.py
+```
+
+Also run any existing tests covering:
+
+```text
+Wave 1 subsystem evidence
+liver subsystem included/missing marker partitioning
+domain-level missing marker behaviour
+```
+
+If no suitable regression exists after updating the conflicting test, create a targeted regression test.
+
+## STOP conditions
+
+STOP and report without implementing if:
+
+1. `total_bilirubin` is not present in the liver subsystem expected-marker logic.
+2. The defect has already been fixed.
+3. The issue is not local to Wave 1 subsystem evidence and instead exposes a broader canonical resolver defect.
+4. Fixing the issue would require changing canonical biomarker policy.
+5. Fixing the issue would require changing scoring/domain logic.
+6. Fixing the issue would require modifying `domain_score_assembler.py`.
+7. Regression coverage cannot be added or updated.
+8. Any uncommitted planning documents are still present on `main` and have not been safely preserved before branch creation.
+9. The current branch does not match the declared sprint branch after branch setup.
+10. `automation_bus/state/work_package_active.json` is missing or does not match this work_id after kernel start.
+
+## Evidence required from Cursor
+
+Cursor must report:
+
+1. Pre-branch preservation check output.
+2. Confirmation that docs-only preservation was completed before sprint branch creation, if required.
+3. Authority preflight findings.
+4. Exact file(s) changed.
+5. Exact defect found.
+6. Exact fix applied.
+7. Regression test added or updated.
+8. Test commands run.
+9. Test results.
+10. Confirmation that `domain_score_assembler.py` was not modified.
+11. Confirmation that `backend/ssot/biomarkers.yaml` was not modified.
+12. Confirmation that no broader architecture files were modified.
+13. Confirmation that the Sprint 0 fix does not introduce new card-evidence authority.
+
+## Closure requirements
+
+Before `run_work_package.py finish`, Cursor must complete the Automation Bus post-implementation closure protocol.
+
+Run and report:
+
+```powershell
+git branch --show-current
+git status --short
+git log --oneline -n 5
+git diff --name-only
+git diff --cached --name-only
 git stash list
 ```
 
-Then run:
+Cursor must explicitly classify:
 
-```powershell
-python backend/scripts/run_work_package.py finish
-```
+* tracked modified files
+* staged files
+* untracked files
+* tooling files
+* out-of-scope files
+* any stash entries
 
-After finish, follow SOP v1.3.1:
+Do not run finish unless:
 
-* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `DOMAIN-LABEL1`, commit it automatically as:
-  `chore(bus): DOMAIN-LABEL1 kernel COMPLETE status`
-* if any other Automation Bus artefact is dirty, STOP and escalate
+* current branch matches `work/WAVE1-EQUIV1-total-bilirubin-false-missing-fix`
+* working tree is clean except intended staged sprint changes
+* no unrelated planning documents are included
+* no tooling files are included
+* no ambiguous stash exists
+* latest commit contains only in-scope work
 
-Do not merge.
+## Success criteria
 
-Do not start another sprint.
+This sprint is complete only if:
 
-## Cursor completion statement
-
-Cursor implements DOMAIN-LABEL1 only.
-
-Cursor may not self-certify merge readiness, clinical correctness, or permission to begin the next sprint.
+1. The false-missing `total_bilirubin` defect is fixed.
+2. `bilirubin` remains the canonical expected marker for the relevant liver subsystem evidence.
+3. `total_bilirubin` is not falsely reported missing when `bilirubin` is present.
+4. Existing domain-level workaround behaviour is preserved.
+5. Existing liver-card behaviour is otherwise preserved.
+6. Regression coverage proves the fix.
+7. `domain_score_assembler.py` is unchanged.
+8. `backend/ssot/biomarkers.yaml` is unchanged.
+9. No architecture rework is included.
+10. No unmerged planning documents are mixed into the sprint branch.
+11. Automation Bus gate passes.
 
 ```
 ```

@@ -1,79 +1,84 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "DOMAIN-LABEL1",
+  "work_id": "WAVE1-EQUIV1_total_bilirubin_false_missing_fix",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-26T00:00:00Z",
+  "hardened_utc": "2026-05-28T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "front_matter_complete",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=DOMAIN-LABEL1, branch=domain-ux/domain-label1-governed-biomarker-display-labels, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=WAVE1-EQUIV1_total_bilirubin_false_missing_fix, branch=work/WAVE1-EQUIV1-total-bilirubin-false-missing-fix, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR"
+    },
+    {
+      "check": "risk_level_correct",
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level=HIGH. Correct: backend/core/analytics/wave1_subsystem_evidence.py is inside backend/core/analytics/, triggering HIGH unconditionally per SOP v1.3.1 §10. HIGH controls apply: Claude audit + GPT architectural review + dual approval before merge."
+    },
+    {
+      "check": "change_type_correct",
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type=BEHAVIOUR. Correct: removing total_bilirubin from expected_marker_ids changes the subsystem evidence included/missing marker partition emitted to the frontend SubsystemEvidenceV1 DTO. Behavioural controls apply."
     },
     {
       "check": "authority_paths_verified",
       "status": "CONFIRMED",
-      "citation": "docs/planning-papers/DOMAIN_UX_health_systems_card_scaffold_sprint_plan_FINAL.md — confirmed on disk; docs/audit-papers/DOMAIN-UX1C_governed_subsystem_evidence_model_notes.md — confirmed on disk; docs/audit-papers/DOMAIN-UX1D_full_wave1_expanded_health_systems_card_notes.md — confirmed on disk; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — confirmed on disk. NOTE: docs/discussion documents/healthiq_health_systems_card_discussion_FINAL.md — path contains a space; not glob-verifiable; Cursor must confirm it can be read at preflight."
+      "citation": "backend/core/analytics/wave1_subsystem_evidence.py — confirmed on disk. backend/ssot/biomarkers.yaml — confirmed on disk. backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py — confirmed on disk. backend/tests/unit/test_wave1_liver_marker_mapping_fix.py — confirmed on disk. backend/tests/regression/test_bilirubin_alias_regression.py — confirmed on disk."
     },
     {
-      "check": "label_problem_confirmed",
+      "check": "defect_confirmed_at_authority_location",
       "status": "CONFIRMED",
-      "citation": "frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx:49,64 — both included and missing marker rendering call wave1ConfidenceMarkerDisplayLabel(markerId); frontend/app/lib/wave1ConfidenceMarkerLabels.ts:5-16 — CANONICAL_ID_TO_LABEL contains only 10 liver-domain entries; wave1ConfidenceMarkerLabels.ts:24-28 — fallback returns raw lowercase string for single-word ids (hba1c, crp, glucose, insulin, homocysteine) and title-case-split for multi-word ids (Ldl Cholesterol, Hdl Cholesterol, Tc Hdl Ratio)"
+      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:78 — expected_marker_ids=(\"alp\", \"albumin\", \"bilirubin\", \"total_bilirubin\"). total_bilirubin present alongside bilirubin as an independent expected marker. backend/ssot/biomarkers.yaml:1579 — total_bilirubin has display_label_rail_only: true and description: 'Total bilirubin (subsystem/rail display key; canonical lab identity is bilirubin)'. total_bilirubin is not a canonical lab identity and must not appear in expected_marker_ids."
     },
     {
-      "check": "dto_carries_string_arrays_only",
+      "check": "ssot_canonical_policy_verified",
       "status": "CONFIRMED",
-      "citation": "backend/core/models/results.py:177-182 — SubsystemEvidenceV1.included_marker_ids: List[str] (default_factory=list), missing_marker_ids: List[str] (default_factory=list); frontend/app/types/analysis.ts:303-304 — same shape. No label-bearing objects exist in current DTO contract."
+      "citation": "backend/ssot/biomarkers.yaml:1558 — bilirubin is the canonical entry: unit=umol/L, category=Liver Function, system=hepatic. backend/ssot/biomarkers.yaml:1578-1583 — total_bilirubin has display_label_rail_only: true, aliases: []. backend/tests/regression/test_bilirubin_alias_regression.py:30 — EXPECTED_CANONICAL = 'bilirubin'. Fix requires no SSOT policy change."
     },
     {
-      "check": "ssot_has_no_display_label_field",
+      "check": "2b_behavioural_scope_defined",
       "status": "CONFIRMED",
-      "citation": "backend/ssot/biomarkers.yaml — grep for consumer_display_name, display_label, display_name returned no matches. All Wave 1 marker entries confirmed present (total_cholesterol, ldl_cholesterol, hdl_cholesterol, triglycerides, tc_hdl_ratio:line 92, apob:line 170, apoa1:line 189, lipoprotein_a:line 1626, homocysteine:line 1644, insulin:line 249, alt, ast, ggt, alp, albumin, bilirubin — confirmed). consumer_display_name field does not yet exist and must be added."
+      "citation": "automation_bus/latest_cursor_prompt.md:123-133 — behavioural scope is explicit: remove total_bilirubin from liver processing expected_marker_ids, ensure bilirubin remains, ensure included/missing partition no longer reports total_bilirubin missing when bilirubin is present. Scope is narrow and bounded to one tuple on one line."
     },
     {
-      "check": "biomarker_definition_model_must_be_updated",
+      "check": "2b_regression_targets_included",
       "status": "CONFIRMED",
-      "citation": "backend/core/models/biomarker.py:12 — ConfigDict(frozen=True, extra='forbid'). BiomarkerDefinition fields at lines 14-19: name, aliases, unit, description, category, data_type only. consumer_display_name is absent. Adding to YAML alone is insufficient — the Pydantic model and resolver extraction must also be updated."
+      "citation": "automation_bus/latest_cursor_prompt.md:127-133 — four regression cases required: (1) panel includes bilirubin → total_bilirubin not missing, (2) panel does not include total_bilirubin → no false-missing, (3) liver subsystem does not report total_bilirubin missing when bilirubin available, (4) existing liver markers continue as expected. backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py — confirmed on disk as canonical regression target. backend/tests/unit/test_wave1_liver_marker_mapping_fix.py:61-87 — test_wave1_liver_missing_does_not_flag_bilirubin_when_canonical_bilirubin_present already asserts total_bilirubin not in liver.missing_marker_ids at domain level."
     },
     {
-      "check": "resolver_does_not_load_display_field",
+      "check": "2b_no_scope_creep",
       "status": "CONFIRMED",
-      "citation": "backend/core/canonical/resolver.py:50-57 — load_biomarkers() extracts only name, aliases, unit, description, category, data_type. consumer_display_name extraction must be added here alongside the YAML and BiomarkerDefinition model changes."
+      "citation": "automation_bus/latest_cursor_prompt.md:96-118 — out-of-scope list is comprehensive: canonicalisation policy, unit conversion, reference ranges, scoring rails, domain scoring, SignalRegistry, SignalEvaluator, root-cause YAML, PSI, package files, investigation specs, control-plane scripts. Fix requires only: wave1_subsystem_evidence.py:78 (one tuple edit) and test_domain_ux1c_governed_subsystem_evidence.py:125-135 (one test update). No other files required."
     },
     {
-      "check": "assembler_has_no_ssot_dependency",
+      "check": "2b_determinism_risks",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:1-13 — imports: __future__, dataclasses, typing, core.models.results. No import of CanonicalResolver or any SSOT loader. Wiring the assembler to the SSOT is a new dependency that must be introduced without touching scoring or signal logic."
+      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:75-80 — _WAVE1_LIV_PROCESSING is a static module-level constant; removing total_bilirubin from the tuple is a deterministic change with no runtime branching, no ordering dependency, and no cross-subsystem effect. Expected output change is precisely: total_bilirubin absent from missing_marker_ids in wave1_liv_processing_context when panel contains bilirubin. All other subsystem behaviour unchanged."
     },
     {
-      "check": "six_layer_coupling_risk",
+      "check": "conflicting_test_identified",
+      "status": "CONFIRMED",
+      "citation": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py:125-135 — test_total_bilirubin_emits_governed_display_label asserts 'total_bilirubin' in label_map and label_map['total_bilirubin'] == 'Total Bilirubin'. This test validates the defective state and will fail after the fix. Cursor must replace this test with regression coverage asserting: bilirubin in included_marker_ids when panel contains bilirubin, total_bilirubin not in missing_marker_ids when bilirubin is present. This update is explicitly within allowed scope."
+    },
+    {
+      "check": "assembler_workaround_out_of_scope",
+      "status": "CONFIRMED",
+      "citation": "backend/core/analytics/domain_score_assembler.py:82-85 — _liver_panel_has_bilirubin_coverage() and domain_score_assembler.py:582-589 — compensating workaround at domain-level missing list. This is a separate layer from the subsystem evidence fix. Workaround must not be modified in this sprint. test_wave1_liver_marker_mapping_fix.py — domain-level tests passing."
+    },
+    {
+      "check": "pre_branch_preservation_flagged",
       "status": "FLAGGED",
-      "citation": "Display label chain spans six layers that must all be updated atomically: backend/ssot/biomarkers.yaml (add consumer_display_name) → backend/core/models/biomarker.py:9-19 (add field) → backend/core/canonical/resolver.py:50-57 (extract field) → backend/core/analytics/wave1_subsystem_evidence.py (wire resolver, emit label objects) → backend/core/models/results.py:167-196 (add included_markers/missing_markers fields to SubsystemEvidenceV1) → frontend/app/types/analysis.ts:300-308 (extend interface) → frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx:49,64 (render backend-supplied labels). A partial update degrades silently to poor labels with no error."
-    },
-    {
-      "check": "section_e_scope_discrepancy",
-      "status": "FLAGGED",
-      "citation": "Prompt §E lists apob, apoa1, lipoprotein_a, hs_crp as required coverage. None of these appear in any expected_marker_ids tuple in backend/core/analytics/wave1_subsystem_evidence.py:25-78. Labels for these IDs cannot be emitted through the subsystem evidence DTO without adding new subsystem definitions — which would be a behaviour change requiring explicit declaration. Cursor must scope to existing assembler marker mappings only unless GPT explicitly approves new subsystem additions."
-    },
-    {
-      "check": "subsystem_evidence_model_extra_forbid",
-      "status": "CONFIRMED",
-      "citation": "backend/core/models/results.py:173 — SubsystemEvidenceV1 uses ConfigDict(frozen=True, extra='forbid'). Adding included_markers / missing_markers as new optional fields requires explicit field declarations with defaults; they cannot be passed as extra kwargs. Backward compatibility maintained if new fields have default=None."
-    },
-    {
-      "check": "regression_test_exists",
-      "status": "CONFIRMED",
-      "citation": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py — confirmed on disk. Must be updated to assert new DTO fields (included_markers / missing_markers with display_label). All other validation test files named in prompt §Required validation commands confirmed present."
+      "citation": "git status (session snapshot) shows ?? untracked files: docs/planning-papers/ (5 files), docs/architecture/ (2 files), docs/audit-papers/ (6 files including POST_DOMAIN_LABEL1 UAT), docs/sprints/ (1 file). automation_bus/latest_cursor_prompt.md:40-45 and STOP condition 7 — Cursor must run pre-branch check and commit or otherwise preserve these files in a separate docs-only step before creating the sprint branch. Hardening does not block on this; it is Cursor's Stage 4 preflight responsibility."
     },
     {
       "check": "forbidden_files_clear",
       "status": "CONFIRMED",
-      "citation": "Prompt §Forbidden — backend/core/scoring/**, backend/core/pipeline/**, root_cause*, report_compiler*, narrative_report_compiler*, knowledge_bus/**, automation_bus/state/*, run_work_package.py, golden_gate_local.py, update_cursor_status.py. None required by the display-label implementation direction. No Intelligence Core analytical logic changes needed."
+      "citation": "Prompt out-of-scope list verified against fix path. backend/core/scoring/**, backend/core/pipeline/**, root_cause*, report_compiler*, SignalRegistry, SignalEvaluator, knowledge_bus/**, automation_bus/state/*, run_work_package.py, golden_gate_local.py, update_cursor_status.py — none required. Fix is contained to wave1_subsystem_evidence.py:78 and one test file update."
     },
     {
-      "check": "stop_conditions_present",
+      "check": "stop_conditions_unambiguous",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:97-100 — STOP if token missing or work_id/branch mismatch; latest_cursor_prompt.md:116 — STOP before implementation until authority choice is explicit in notes. STOP conditions are unambiguous and PowerShell-compatible."
+      "citation": "automation_bus/latest_cursor_prompt.md:157-169 — nine STOP conditions present and unambiguous. Conditions 1-2: defect IS present at wave1_subsystem_evidence.py:78 and is NOT fixed — proceed. Conditions 3-6: issue is local, no SSOT policy change required, no scoring change required, regression coverage achievable — proceed. Conditions 7-9: pre-branch preservation check, branch match, and token verification are Cursor's responsibility at Stage 4."
     }
   ]
 }
