@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-RT-0-inventory-and-identity-decisions",
+  "branch": "work/ARCH-RT-1-contracts-and-compile-foundation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-28T22:09:17Z",
-  "cursor_started_utc": "2026-05-28T21:59:43Z",
-  "head_sha": "f446707a8351ff2add38bf3dff910eb9d5ccbd03",
+  "cursor_started_utc": "2026-05-28T22:23:11Z",
+  "head_sha": "e26f9f8e206c18545795f7abbbd11957599f3f3d",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-0_inventory_and_identity_decisions"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-RT-1_contracts_and_compile_foundation"
 }
