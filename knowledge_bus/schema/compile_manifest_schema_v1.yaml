@@ -1,0 +1,240 @@
+schema_name: "HealthIQ Compile Manifest"
+schema_version: "1.0.0"
+status: "DRAFT"
+authority: "ADR-RT-004, ARCH-RT-1"
+
+description: >
+  Deterministic schema for compile_manifest.yaml emitted by governed Knowledge Bus
+  compile pipelines (activation, PSI, hypothesis, card evidence). Records input
+  investigation-spec provenance, output artefact hashes, and activation identity.
+  Does not define runtime behaviour — manifests are audit and promotion evidence only.
+
+root_required_fields:
+  - compile_id
+  - compiler_name
+  - compiler_version
+  - compile_mode
+  - source_contract_version
+  - source_specs
+  - outputs
+  - translation_rules_version
+  - compiled_at_utc
+  - compiled_by
+  - provenance_status
+
+root_optional_fields:
+  - remap_contract_version
+  - validator_results
+  - policy_version
+  - compile_run_id
+  - activation_keys_emitted
+  - collisions_detected
+  - estate_index_ref
+
+field_rules:
+
+  compile_id:
+    type: string
+    min_length: 1
+    description: Unique id for this compile run (UUID or deterministic content hash).
+
+  compile_run_id:
+    type: string
+    description: Alias compatible with ADR-RT-004; when present must equal compile_id.
+
+  compiler_name:
+    type: string
+    min_length: 1
+    description: e.g. activation_compile_v1, psi_compile_v1, hypothesis_compile_v1.
+
+  compiler_version:
+    type: string
+    min_length: 1
+    description: Semver or git SHA of the compiler implementation.
+
+  compile_mode:
+    type: string
+    enum:
+      - activation
+      - psi
+      - hypothesis
+      - card_evidence
+      - estate_index
+      - pilot
+    description: Which compile pipeline produced this manifest.
+
+  source_contract_version:
+    type: string
+    pattern: '^\d+\.\d+\.\d+$'
+    description: Investigation spec contract version (e.g. 3.0.0).
+
+  translation_rules_version:
+    type: string
+    pattern: '^\d+\.\d+\.\d+$'
+    description: Rules file version used (e.g. signal_intelligence_translation_rules_v1).
+
+  remap_contract_version:
+    type: string
+    pattern: '^\d+\.\d+\.\d+$'
+    description: Optional biomarker remap contract when canonicalisation applied at compile.
+
+  compiled_at_utc:
+    type: string
+    min_length: 1
+    description: ISO-8601 UTC timestamp.
+
+  compiled_by:
+    type: string
+    min_length: 1
+    description: Actor or automation id (e.g. cursor, kb_s47_batch2_ingest).
+
+  provenance_status:
+    type: string
+    enum:
+      - complete
+      - partial
+      - legacy_retained
+      - blocked_pending_spec_extraction
+      - pilot_evidence_only
+    description: Whether all required provenance fields were populated.
+
+  policy_version:
+    type: string
+    description: ADR-RT-002 / ADR-RT-004 policy tag (e.g. ADR-RT-004-v1).
+
+  estate_index_ref:
+    type: string
+    description: Relative path to compile_estate_index.yaml when aggregated.
+
+  activation_keys_emitted:
+    type: list
+    description: Full list of activation_key values emitted (collision audit).
+
+  collisions_detected:
+    type: list
+    description: Empty when clean; otherwise collision records (compile must hard-fail in production).
+
+source_specs_rules:
+  type: list
+  min_items: 1
+
+source_spec_required_fields:
+  - source_spec_id
+  - source_path
+  - source_hash
+  - source_hash_algorithm
+
+source_spec_field_rules:
+
+  source_spec_id:
+    type: string
+    pattern: '^[a-z][a-z0-9_]*$'
+    description: Investigation spec frame id (spec_id).
+
+  source_path:
+    type: string
+    min_length: 1
+    description: Repo-relative path to source investigation spec or batch JSON.
+
+  source_hash:
+    type: string
+    min_length: 1
+    description: Hex digest of source file bytes.
+
+  source_hash_algorithm:
+    type: string
+    enum:
+      - sha256
+    description: Hash algorithm used for source_hash.
+
+  legacy_retained:
+    type: boolean
+    description: True when source is retained legacy without full spec extraction.
+
+outputs_rules:
+  type: list
+  min_items: 1
+
+output_required_fields:
+  - output_type
+  - output_path
+  - output_hash
+  - output_hash_algorithm
+
+output_optional_fields:
+  - package_id
+  - signal_id
+  - activation_key
+  - source_spec_id
+
+output_field_rules:
+
+  output_type:
+    type: string
+    enum:
+      - signal_library
+      - research_brief
+      - package_manifest
+      - promoted_signal_intelligence
+      - hypothesis_artefact
+      - card_evidence_artefact
+      - compile_estate_index
+    description: Artefact class emitted.
+
+  output_path:
+    type: string
+    min_length: 1
+    description: Repo-relative path to emitted file.
+
+  output_hash:
+    type: string
+    min_length: 1
+
+  output_hash_algorithm:
+    type: string
+    enum:
+      - sha256
+
+  package_id:
+    type: string
+    pattern: '^pkg_[a-z0-9_]+$'
+
+  signal_id:
+    type: string
+    pattern: '^signal_[a-z0-9_]+$'
+    description: Signal family id (not sufficient alone for multi-frame registry).
+
+  activation_key:
+    type: string
+    pattern: '^signal_[a-z0-9_]+::[a-z][a-z0-9_]*$'
+    description: Required on activation outputs per ADR-RT-002 (signal_id::spec_id).
+
+  source_spec_id:
+    type: string
+    pattern: '^[a-z][a-z0-9_]*$'
+    description: Required for research-derived activation outputs.
+
+validator_results_rules:
+  type: list
+  description: Optional per-validator outcomes from post-compile validation.
+
+validator_result_field_rules:
+
+  validator_name:
+    type: string
+
+  status:
+    type: string
+    enum:
+      - PASS
+      - FAIL
+      - SKIPPED
+
+  exit_code:
+    type: integer
+
+identity_model_notes: >
+  activation_key is required for activation compile outputs.
+  signal_id is retained as the signal family identifier.
+  source_spec_id is required for research-derived artefacts.
+  legacy_retained may be true only when explicitly justified in provenance_status.
