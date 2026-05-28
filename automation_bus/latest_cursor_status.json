@@ -1,9 +1,10 @@
 {
   "branch": "work/WAVE1-EQUIV1-total-bilirubin-false-missing-fix",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-28T21:40:00Z",
   "cursor_started_utc": "2026-05-28T21:38:06Z",
-  "head_sha": "7c380a44982f63ad7b7996f03f0a0bbfe34f6bb0",
+  "head_sha": "f6c4b5068c2c287dd732f60a40009083d66985b2",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "WAVE1-EQUIV1_total_bilirubin_false_missing_fix"
 }
