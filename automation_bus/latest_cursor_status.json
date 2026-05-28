@@ -1,10 +1,9 @@
 {
-  "branch": "domain-ux/domain-label1-governed-biomarker-display-labels",
+  "branch": "work/WAVE1-EQUIV1-total-bilirubin-false-missing-fix",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-27T17:11:07Z",
-  "cursor_started_utc": "2026-05-27T17:09:30Z",
-  "head_sha": "b2bd76e055cedebc3d8aee0499396090c6e9f1cf",
+  "cursor_started_utc": "2026-05-28T21:38:06Z",
+  "head_sha": "7c380a44982f63ad7b7996f03f0a0bbfe34f6bb0",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "DOMAIN-LABEL1"
+  "status": "IN_PROGRESS",
+  "work_id": "WAVE1-EQUIV1_total_bilirubin_false_missing_fix"
 }
