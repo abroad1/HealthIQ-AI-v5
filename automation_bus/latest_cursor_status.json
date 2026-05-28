@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-RT-0-inventory-and-identity-decisions",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-28T22:09:17Z",
   "cursor_started_utc": "2026-05-28T21:59:43Z",
-  "head_sha": "007e6964c3ec2f3d2950e4427905b424419fa4ff",
+  "head_sha": "f446707a8351ff2add38bf3dff910eb9d5ccbd03",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-RT-0_inventory_and_identity_decisions"
 }
