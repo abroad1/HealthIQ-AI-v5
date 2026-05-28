@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-RT-1-contracts-and-compile-foundation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-28T22:27:14Z",
   "cursor_started_utc": "2026-05-28T22:23:11Z",
-  "head_sha": "e26f9f8e206c18545795f7abbbd11957599f3f3d",
+  "head_sha": "f13df66a59e172f6cda4598403680309247a0c62",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-RT-1_contracts_and_compile_foundation"
 }
