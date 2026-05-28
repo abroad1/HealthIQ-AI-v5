@@ -1,89 +1,154 @@
 {
+  "work_id": "ARCH-RT-1_contracts_and_compile_foundation",
   "bus_version": "1.3.1",
-  "work_id": "ARCH-RT-0_inventory_and_identity_decisions",
   "status": "HARDENED",
   "hardened_utc": "2026-05-28T00:00:00Z",
-  "hardened_by": "claude-sonnet-4-6",
+  "hardened_by": "Claude Code (Stage 2 / SOP v1.3.1)",
   "changes": [
     {
       "check": "front_matter_complete",
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-0_inventory_and_identity_decisions, branch=work/ARCH-RT-0-inventory-and-identity-decisions, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT"
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-1_contracts_and_compile_foundation, branch=work/ARCH-RT-1-contracts-and-compile-foundation, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
     },
     {
-      "check": "risk_level_correct",
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level=STANDARD. Correct for a docs-only sprint: all deliverables are under docs/architecture/. No backend/core/analytics/, backend/core/pipeline/, backend/ssot/, or Intelligence Core files are modified. STOP condition 8 (latest_cursor_prompt.md:468-472) prohibits any work touching backend/core/**, backend/ssot/**, knowledge_bus/**, automation_bus/**, frontend/**, sentinel/**."
+      "check": "risk_level_HIGH_correct",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Sprint introduces governed compile manifest schema (knowledge_bus/schema/) and contract artefacts that downstream Intelligence Core compile pipelines will depend on. SOP §10: any work adding governed content consumed by Intelligence Core = HIGH."
     },
     {
-      "check": "change_type_correct",
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type=CONTENT. Correct: sprint produces 12 documentation and ADR files under docs/architecture/ only. No executable or analytical logic changes. CONTENT controls apply."
+      "check": "change_type_MIXED_correct",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED. Sprint adds new schema artefact (compile_manifest_schema_v1.yaml) plus docs. Schema is governed content consumed by future compilers that feed Intelligence Core. MIXED is correct; BEHAVIOUR controls apply per SOP §4."
     },
     {
-      "check": "2a_authority_paths_verified",
-      "status": "CONFIRMED",
-      "citation": "All 8 planning/audit input documents confirmed on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md, docs/planning-papers/HealthIQ_As-Is_to_Day-One_Architecture_Transition_Plan_v3.md, docs/planning-papers/HealthIQ_As-Is_to_Day-One_Architecture_Transition_Plan_v3_review_cursor.md, docs/planning-papers/HealthIQ_As-Is_to_Day-One_Architecture_Transition_Plan_v3_review_claude.md, docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md, docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review.md, docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md, docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — all confirmed present."
+      "check": "execution_model_TWO_PHASE_correct",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct for HIGH/MIXED."
     },
     {
-      "check": "2a_baseline_verified",
-      "status": "CONFIRMED",
-      "citation": "git branch --show-current: main. git rev-parse HEAD: eb44cf4b651c27eecb7dc2d9109222de32f8d898. git rev-parse origin/main: eb44cf4b651c27eecb7dc2d9109222de32f8d898. HEAD == origin/main. Latest commit is 'Merge branch work/WAVE1-EQUIV1-total-bilirubin-false-missing-fix' — WAVE1-EQUIV1 is merged. Baseline matches prompt requirement (main == origin/main at eb44cf4). Working tree: only automation_bus/latest_cursor_prompt.md modified — expected bus artifact, does not constitute dirty sprint state."
+      "check": "2a_all_authoritative_inputs_exist",
+      "result": "CONFIRMED",
+      "citation": "All 14 required input files verified on disk via glob/read: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md; docs/architecture/research_to_runtime_traceability_matrix.md; docs/architecture/intelligence_authority_inventory.md; docs/architecture/package_generation_inventory.md; docs/architecture/psi_coverage_and_manifest_opt_in_report.md; docs/architecture/root_cause_registry_inventory.md; docs/architecture/signal_id_collision_inventory.md; docs/architecture/legacy_package_retirement_candidates.md; docs/architecture/activation_compile_gap_report.md; docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md; docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md; docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md; docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md; docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md"
     },
     {
-      "check": "2a_investigation_spec_corpus",
-      "status": "CONFIRMED",
-      "citation": "knowledge_bus/research/investigation_specs/ — 38 individual YAML specs confirmed. 28 batch JSON files confirmed (6 legacy batch1-56 collection JSONs at root + multi_llm_research batches including archived Pass_1/Pass_2 variants). Schema versions: v1, v2, v3.0.0 at knowledge_bus/research/investigation_specs/investigation_spec_schema_v3.0.0.yaml. Investigation spec corpus is accessible for inventory."
+      "check": "2a_stop1_ARCH-RT-0_deliverables_present",
+      "result": "CONFIRMED — STOP 1 not triggered",
+      "citation": "All 4 ADRs (docs/architecture/ADR-RT-00[1-4]*.md) and 8 inventory/analysis docs confirmed on disk via glob output"
     },
     {
-      "check": "2a_package_estate_counted",
-      "status": "CONFIRMED",
-      "citation": "knowledge_bus/packages/ — 187 total package directories. Prefix/generation breakdown: pkg_named(88 hand-authored named packages), s24(31), kb58(22), kb47(20), kb45(10), kb60(7), kb59(4), kb61(3), example(1), KBP-0001(1 legacy). 186 package_manifest.yaml present, 187 signal_library.yaml present, 186 research_brief.yaml present (1 package missing research_brief.yaml — Cursor must identify which). Note: pkg_named group requires sub-classification; includes pkg_b12_deficiency_context, pkg_chronic_inflammation, pkg_hepatic_alt_context, pkg_insulin_resistance, etc."
+      "check": "2a_stop2_ADR-RT-002_MULTI_FRAME_decisive",
+      "result": "CONFIRMED — STOP 2 not triggered",
+      "citation": "docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md:19-26 — Decision 1 header states 'MULTI_FRAME_PER_DIRECTION'; body: 'HealthIQ will support multiple governed activation frames per biomarker direction at runtime. ONE_FRAME_PER_DIRECTION is rejected as the target policy.' Field header: 'Decisive: Yes — one-frame vs multi-frame resolved below'"
     },
     {
-      "check": "2a_source_spec_id_absent",
-      "status": "CONFIRMED",
-      "citation": "grep -rl 'source_spec_id' knowledge_bus/packages/: 0 packages have source_spec_id. This is a material finding: ALL 187 packages lack the source_spec_id field. This is the key input for ADR-RT-004 provenance policy. Cursor must document this explicitly in package_generation_inventory.md and ADR-RT-004."
+      "check": "2a_stop3_activation_key_required",
+      "result": "CONFIRMED — STOP 3 not triggered",
+      "citation": "docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md:43-50 — Decision 3: 'Is activation_key required? YES. Required on: Compiled signal_library entries (or sidecar index), SignalResult at runtime, Compile manifest rows'"
     },
     {
-      "check": "2a_source_document_patterns",
-      "status": "CONFIRMED",
-      "citation": "grep source_document across package_manifest.yaml: 184 of 187 packages have source_document (3 packages missing — Cursor must identify). Dominant patterns: multi_llm_research batch JSONs account for majority (Batch_2-7 Pass_3 series = ~118 packages). Legacy batch1-10 JSON = 10 packages. Individual YAML spec sources = ~7 packages. FLAGGED: 8 packages list source_document as 'docs/architecture/HealthIQ_Investigation_Layer.md' — a documentation file, not a proper investigation spec. These are candidates for blocked_pending_spec_extraction in legacy_package_retirement_candidates.md."
+      "check": "2a_stop4_compile_manifest_schema_does_not_already_exist",
+      "result": "CONFIRMED — STOP 4 not triggered",
+      "citation": "Glob knowledge_bus/schema/compile_manifest* — no files found. No duplication risk."
     },
     {
-      "check": "2a_psi_artefacts",
-      "status": "CONFIRMED",
-      "citation": "find knowledge_bus/packages -name 'promoted_signal_intelligence.yaml': 20 PSI files on disk. grep -rl 'promoted_signal_intelligence' in package_manifest.yaml: 20 packages with PSI manifest opt-in (100% match — all PSI packages have opt-in). PSI loader: backend/core/knowledge/load_promoted_signal_intelligence.py confirmed on disk. PSI translator: backend/core/knowledge/investigation_spec_to_promoted_signal.py confirmed on disk. RUNTIME CONSUMPTION: grep against backend/core/pipeline/ and backend/core/analytics/ for load_promoted_signal/PromotedSignal/psi_ returned no output — PSI appears runtime-dead as of current codebase. Cursor must verify and document in psi_coverage_and_manifest_opt_in_report.md."
+      "check": "2a_stop5_activation_compile_contract_does_not_already_exist",
+      "result": "CONFIRMED — STOP 5 not triggered",
+      "citation": "Glob docs/architecture/activation_compile* — only docs/architecture/activation_compile_gap_report.md found (an ARCH-RT-0 analysis doc, not a contract doc). No duplication risk for activation_compile_contract.md."
     },
     {
-      "check": "2a_root_cause_yaml",
-      "status": "CONFIRMED",
-      "citation": "knowledge_bus/root_cause/hypotheses/: 40 hypothesis YAML files confirmed (alp_high, alp_low, alt, apoa1_cardio_risk, bilirubin_high, creatinine_high, ferritin_high, ferritin_low, free_t3_high, free_t3_low, and others). Loader: backend/core/knowledge/load_root_cause_hypotheses.py:_hypotheses_root() = knowledge_bus/root_cause/hypotheses/. Registry: backend/core/knowledge/root_cause_registry_v1.py — manual tuple of RootCauseTargetSpec entries (~35+ signal IDs registered). Note: registry does not auto-discover from KB packages. Duplicate YAML sharing confirmed: signal_homocysteine_elevation_context and signal_homocysteine_high share hcy_hypotheses_v1.yaml."
+      "check": "2a_kb_schema_directory_and_schemas",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/schema/ exists; contains: research_brief_schema.yaml (v1.1.0 LOCKED), package_manifest_schema.yaml (v1.0.0 LOCKED), signal_library_schema.yaml (v1.3.0 LOCKED), promoted_signal_intelligence_schema_v1.yaml (v1.0.0 LOCKED), signal_intelligence_translation_rules_v1.yaml (v1.0.0 LOCKED), intelligence_model_schema_v1.yaml, and 3 others"
     },
     {
-      "check": "2a_signal_id_collisions",
-      "status": "CONFIRMED",
-      "citation": "grep signal_id across signal_library.yaml + uniq count: duplicates confirmed. signal_alt_high appears in 4 packages (highest collision count), signal_mcv_high/signal_homocysteine_high/signal_ggt_high/signal_albumin_low in 3 packages each, signal_wbc_high/signal_vitamin_b12_low/signal_urea_high/signal_urate_high/signal_tsh_low/signal_tsh_high/signal_triglycerides_high/signal_transferrin_low/signal_tpo_ab_high/signal_total_cholesterol_high/signal_tgab_high/signal_rdw_sd_high/signal_rdw_cv_high/signal_rbc_low/signal_rbc_high in 2 packages each. Total distinct collision cases: 20+. ALT high collision (4 packages) explicitly confirmed. Homocysteine-related: signal_homocysteine_high in 3 packages confirmed. Collision detection is performable — STOP condition 6 not triggered."
+      "check": "2a_package_manifest_schema_current_required_fields",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/schema/package_manifest_schema.yaml:9-14 — required_fields: [package_id, package_version, research_brief, signal_library]. Does NOT include source_spec_id, activation_key, or compile_run_id. These are provenance gaps the sprint addresses via the new compile manifest schema and provenance policy docs."
     },
     {
-      "check": "2a_authority_preflight_paths",
-      "status": "CONFIRMED",
-      "citation": "SignalEvaluator: backend/core/analytics/signal_evaluator.py confirmed. SignalResult model: backend/core/models/signal.py confirmed. Health Systems Card DTO: backend/core/models/results.py confirmed. root_cause_registry: backend/core/knowledge/root_cause_registry_v1.py confirmed. Interaction map: knowledge_bus/interaction_maps/interaction_map_v1.yaml confirmed. Phenotype map: knowledge_bus/phenotypes/phenotype_map_v1.yaml confirmed. Confirmatory tests: knowledge_bus/registries/confirmatory_tests_v1.yaml confirmed. IDL: knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml confirmed. Functional interpretation: knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml confirmed. No separate SignalRegistry file found — signal registration is embedded in signal_evaluator and insight_graph_builder."
+      "check": "2a_signal_library_schema_current_shape",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/schema/signal_library_schema.yaml:1-3 — v1.3.0 LOCKED. Signal required fields include signal_id, name, system, primary_metric, thresholds, activation_logic, output. trigger_direction optional. activation_key NOT present in schema — field is absent from current signal_library schema."
     },
     {
-      "check": "2a_activation_compile_gap",
-      "status": "CONFIRMED",
-      "citation": "investigation_spec_to_promoted_signal.py exists at backend/core/knowledge/investigation_spec_to_promoted_signal.py — PSI translator, not a general compile chain. No governed investigation_spec → signal_library.yaml compiler found. No governed investigation_spec → research_brief.yaml compiler found. No governed investigation_spec → package_manifest.yaml compiler found. Compile gap is real and documentable. Source data for activation_compile_gap_report.md is accessible."
+      "check": "2a_research_brief_schema_current_fields",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/schema/research_brief_schema.yaml:1-3 — v1.1.0 LOCKED. Root required fields: research_domain, sources, biomarkers, physiological_claim, evidence_strength."
     },
     {
-      "check": "stop_conditions_assessed",
-      "status": "CONFIRMED",
-      "citation": "1: baseline clean — PASS (only bus prompt modified). 2: main==origin/main — PASS (eb44cf4). 3: planning docs present — PASS (all 8 confirmed). 4: package generations distinguishable — PASS (prefix patterns confirmed). 5: PSI consumption verifiable — PASS (no runtime consumption found in pipeline/analytics). 6: signal_id collision detection performable — PASS (grep confirmed). 7: ADR-RT-002 evidence available — PASS (20+ distinct collision cases documented, multi-frame vs single-frame evidence accessible — decisive choice is Cursor's authoring responsibility). 8-10: scope/tooling/assumption — protected by STOP conditions in prompt."
+      "check": "2a_promoted_signal_intelligence_schema",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml:14-15 — schema_version: 1.0.0 LOCKED. signal required fields include signal_id, trigger_direction, activation, states, evidence, override_rules. Explicitly forbidden root keys: hypotheses, hypothesis_ranking, narrative, rendering."
+    },
+    {
+      "check": "2a_psi_translator_path",
+      "result": "CONFIRMED",
+      "citation": "backend/core/knowledge/investigation_spec_to_promoted_signal.py — EXISTS. Entry function: translate_investigation_spec_v3_to_promoted_signals (confirmed via kb_s47_batch2_ingest.py:26 import). Translation contract: knowledge_bus/schema/signal_intelligence_translation_rules_v1.yaml:1 — 'Implemented by: backend/core/knowledge/investigation_spec_to_promoted_signal.py'"
+    },
+    {
+      "check": "2a_psi_validator_path",
+      "result": "CONFIRMED",
+      "citation": "backend/scripts/validate_promoted_signal_intelligence.py — EXISTS"
+    },
+    {
+      "check": "2a_investigation_spec_validator_path",
+      "result": "CONFIRMED",
+      "citation": "backend/scripts/validate_investigation_spec.py:6 — supports contract version 3.0.0; validates spec_id field (line 88)"
+    },
+    {
+      "check": "2a_package_validator_path",
+      "result": "CONFIRMED",
+      "citation": "backend/scripts/validate_knowledge_package.py — EXISTS"
+    },
+    {
+      "check": "2a_no_estate_wide_investigation_spec_compiler",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/activation_compile_gap_report.md:8-17 — 'No single governed CLI named in repo'; 'No estate-wide, manifest-emitting governed activation compiler with provenance and collision policy'. Partial scripts: generate_kb_s45d_batch1_packages.py (batch JSON only), kb_s47_batch2_ingest.py (KB-S47 batches only). PSI translator backend/core/knowledge/investigation_spec_to_promoted_signal.py is signal-layer only, not a package activation compiler."
+    },
+    {
+      "check": "2a_psi_runtime_dead_confirmed",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/activation_compile_gap_report.md:46-50 — PSI runtime consumption column: 'Not consumed'. ARCH-RT-0 hardening JSON also confirmed: 'grep against backend/core/pipeline/ and backend/core/analytics/ for load_promoted_signal/PromotedSignal/psi_ returned no output — PSI appears runtime-dead'"
+    },
+    {
+      "check": "2a_no_package_provenance_policy_outside_ADR-RT-004",
+      "result": "CONFIRMED",
+      "citation": "Glob docs/architecture/package_provenance* — no files found. ADR-RT-004 (docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md) is sole existing authority. Sprint creates derived policy document."
+    },
+    {
+      "check": "2b_behavioural_scope_no_runtime_code",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:371-399 — explicit out-of-scope list prohibits: runtime analytics, SignalRegistry, SignalEvaluator, SignalResult, InsightGraph, package files, investigation specs, PSI artefacts, root-cause YAML, frontend, IDL. Sprint is schema + documentation creation only."
+    },
+    {
+      "check": "2b_no_runtime_behaviour_change",
+      "result": "CONFIRMED",
+      "citation": "All 8 deliverables are new files under knowledge_bus/schema/ and docs/architecture/. No existing runtime code, no existing governed artefacts modified. Runtime behaviour cannot change from this sprint."
+    },
+    {
+      "check": "2b_regression_targets",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:411-419 — required validation: YAML syntax for new schema/docs; schema validation test if pattern exists; run existing compile manifest/schema validation tests if present; PSI translator determinism test if run. No regression suite required (no runtime code changed)."
+    },
+    {
+      "check": "HARDENING_NOTE_compile_id_vs_compile_run_id_naming",
+      "result": "CURSOR MUST RESOLVE",
+      "citation": "automation_bus/latest_cursor_prompt.md:178 proposes schema field 'compile_id'. docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md:26 uses 'compile_run_id'. ADR-RT-004 is authoritative. Cursor must use 'compile_run_id' in the schema OR explicitly document that 'compile_id' is the YAML field name mapping to the ADR policy concept 'compile_run_id'."
+    },
+    {
+      "check": "HARDENING_NOTE_ADR-RT-004_fields_missing_from_prompt_schema_draft",
+      "result": "CURSOR MUST INCLUDE",
+      "citation": "docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md:36-38 Decision 1 requires: 'activation_keys_emitted' (full list for collision audit), 'collisions_detected', 'policy_version'. None of these appear in the prompt's schema field list (automation_bus/latest_cursor_prompt.md:178-202). Cursor must include all three fields in compile_manifest_schema_v1.yaml."
+    },
+    {
+      "check": "HARDENING_NOTE_signal_library_schema_package_id_pattern_stale",
+      "result": "DOCUMENT_IN_PILOT_EVIDENCE — do not fix in this sprint",
+      "citation": "knowledge_bus/schema/signal_library_schema.yaml:33 — package_id pattern '^KBP-\\d{4}$' but current packages use pkg_* naming. Out of scope to fix in ARCH-RT-1. Must be noted in docs/architecture/ARCH-RT-1_pilot_compile_provenance_evidence.md as an observed schema drift gap."
     },
     {
       "check": "forbidden_files_clear",
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:68-78 — STOP if work touches backend/core/**, backend/ssot/**, knowledge_bus/**, automation_bus/**, frontend/**, sentinel/**. automation_bus/latest_cursor_prompt.md:423-444 — explicit out-of-scope list. All 12 deliverables are docs/architecture/*.md only. No code, schema, package, PSI, root-cause YAML, or control-plane file modifications authorised."
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:371-399 — explicit out-of-scope list covers all runtime/code/package/PSI/root-cause/frontend files. All 8 allowed deliverables are new files in knowledge_bus/schema/ or docs/architecture/. No existing governed artefacts are modified."
     }
   ]
 }

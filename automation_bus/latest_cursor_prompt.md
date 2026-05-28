@@ -1,199 +1,73 @@
 ---
-work_id: ARCH-RT-0_inventory_and_identity_decisions
-branch: work/ARCH-RT-0-inventory-and-identity-decisions
-risk_level: STANDARD
+work_id: ARCH-RT-1_contracts_and_compile_foundation
+branch: work/ARCH-RT-1-contracts-and-compile-foundation
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: MIXED
 ---
 
-# ARCH-RT-0 — Inventory and Identity Decisions
+# ARCH-RT-1 — Contracts and Compile Foundation
 
 ## Purpose
 
-Produce the authoritative inventory and architecture decision set required before any further day-one architecture implementation work begins.
+Create the minimum governance contracts and compile/provenance foundation needed for the HealthIQ day-one research-to-runtime architecture.
 
-This sprint combines the confirmed-safe WP0 and WP1 work:
+This sprint follows the completed and merged `ARCH-RT-0_inventory_and_identity_decisions` sprint.
 
-1. inventory and authority trace
-2. identity / ADR / registry policy decisions
+It must use the ARCH-RT-0 inventory and ADR outputs as authority.
 
-This is a documentation and architecture-decision sprint only.
+This sprint must not perform runtime wiring.
 
-No runtime code, schema, package, compiler, validator, frontend, or control-plane changes are authorised.
-
-## Current baseline
+## Baseline requirement
 
 Start from clean `main`.
 
-Expected latest confirmed baseline:
-
-```text
-main == origin/main at eb44cf4
-WAVE1-EQUIV1_total_bilirubin_false_missing_fix merged and closed
-````
-
-Before creating the sprint branch, run and report:
+Before creating or switching to the sprint branch, run and report:
 
 ```powershell
 git branch --show-current
 git status --short
-git log --oneline -n 5
+git log --oneline -n 8
 git rev-parse HEAD
 git rev-parse origin/main
-```
+````
 
 STOP if:
 
 * current branch is not `main`
 * local `main` does not equal `origin/main`
 * working tree is not clean
-* HEAD is not at or after `eb44cf4`
-* unresolved untracked planning, audit, sprint, or architecture documents remain
+* ARCH-RT-0 is not merged
+* untracked or uncommitted files are present
 
 ## Governance classification
 
 ```yaml
-risk_level: STANDARD
-change_type: CONTENT
+risk_level: HIGH
+change_type: MIXED
 execution_model: TWO_PHASE_START_FINISH
 ```
 
 Reason:
 
-This sprint creates documentation and ADR outputs only under `docs/architecture/`.
+This sprint may introduce or update governed Knowledge Bus schema / contract artefacts and compile-provenance foundations that downstream Intelligence Core work will rely on.
 
-It must not modify files consumed by the Intelligence Core.
+It must be treated as HIGH risk even though runtime behaviour must not change in this sprint.
 
-If Cursor determines that any required work would touch:
+HIGH-risk controls apply:
 
-```text
-backend/core/**
-backend/ssot/**
-knowledge_bus/**
-automation_bus/**
-frontend/**
-sentinel/**
-```
+* Claude hardening required before kernel start
+* Cursor implementation only after kernel start
+* Claude audit after implementation
+* GPT architectural review before merge
+* dual approval before merge
 
-then STOP and report. Do not widen the sprint.
+## Authoritative inputs
 
-## Authoritative planning inputs
-
-Read the following planning/audit documents before producing outputs:
+Read these files before making any changes:
 
 ```text
 docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md
-docs/planning-papers/HealthIQ_As-Is_to_Day-One_Architecture_Transition_Plan_v3.md
-docs/planning-papers/HealthIQ_As-Is_to_Day-One_Architecture_Transition_Plan_v3_review_cursor.md
-docs/planning-papers/HealthIQ_As-Is_to_Day-One_Architecture_Transition_Plan_v3_review_claude.md
-docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md
-docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review.md
-docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
-docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
-```
-
-If any file is missing, STOP and report the missing path.
-
-If equivalent files exist under a different path, report the candidate path and STOP for human/GPT confirmation before proceeding.
-
-## Authority preflight
-
-Before authoring documents, inspect the repository and report the actual locations for:
-
-1. investigation spec corpus
-2. Knowledge Bus package directories
-3. package manifest files
-4. promoted signal intelligence schema / translator / loader
-5. existing PSI artefacts
-6. root-cause hypothesis YAML files
-7. root_cause_registry implementation
-8. Wave 1 subsystem evidence implementation
-9. SignalRegistry / SignalEvaluator implementation
-10. SignalResult model
-11. Health Systems Card DTO models
-12. frontend Health Systems Card components
-13. IDL / retail explainer assets
-14. interaction map / phenotype map / calibration / confirmatory-test registry assets
-
-This preflight is read-only.
-
-Do not edit any of those files.
-
-## Scope
-
-Produce a complete repo-reality inventory and decisive architecture decision set.
-
-### Inventory scope
-
-Inventory must cover:
-
-* investigation spec corpus
-* package generations
-* all package-generation prefixes found, including but not limited to:
-
-  * legacy
-  * s24
-  * kb45
-  * kb47
-  * kb52
-  * kb52c
-  * kb52d
-  * kb58
-  * kb59
-  * kb60
-  * kb61
-  * any other package generations found in the repository
-* package `source_document` values
-* packages with individual investigation spec provenance
-* packages sourcing from batch JSON
-* packages with `source_spec_id` if present
-* packages without source provenance
-* packages requiring `legacy_retained`, `deferred_for_regeneration`, or `blocked_pending_spec_extraction` classification later
-* PSI artefacts on disk
-* PSI package-manifest opt-ins
-* confirmation that PSI is runtime-dead, or correction if that is no longer true
-* root-cause hypothesis YAML files
-* root_cause_registry registrations
-* duplicate `signal_id` collisions
-* current retained/discarded package behaviour where detectable
-* Health Systems Card hard-coded evidence
-* IDL / retail explainer dependencies
-* interaction map / phenotype map / calibration / confirmatory-test registry dependencies
-* DTO/frontend traceability for user-facing claims
-* whether existing translators/compilers have been tested against candidate inventory entries
-* activation compile gap:
-
-  * whether governed `investigation_spec → signal_library.yaml` compile exists
-  * whether governed `investigation_spec → research_brief.yaml` compile exists
-  * whether governed `investigation_spec → package_manifest.yaml` compile exists
-  * how this differs from PSI translation
-
-### ADR / decision scope
-
-Produce architecture decisions covering:
-
-* ADR-008 acceptance
-* PSI scope confirmation
-* compiled hypothesis artefact boundary
-* one-frame versus multi-frame runtime policy
-* registry keying policy
-* whether `activation_key` is required
-* SignalResult provenance requirements
-* interaction map / phenotype map / root-cause registry family-vs-frame policy
-* package provenance policy
-* activation compile policy:
-
-  * `investigation_spec → signal_library.yaml`
-  * `investigation_spec → research_brief.yaml`
-  * `investigation_spec → package_manifest.yaml`
-* root_cause_registry transition direction
-* compile manifest convention
-
-## Required deliverables
-
-Create the following files only:
-
-```text
 docs/architecture/research_to_runtime_traceability_matrix.md
 docs/architecture/intelligence_authority_inventory.md
 docs/architecture/package_generation_inventory.md
@@ -206,285 +80,378 @@ docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md
 docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md
 docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md
+docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
+docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
 ```
 
-No other committed files are allowed unless explicitly justified and approved before implementation.
+STOP if any file is missing.
+
+## Critical decisions inherited from ARCH-RT-0
+
+The following decisions are binding for this sprint:
+
+```text
+ADR-RT-002 selected MULTI_FRAME_PER_DIRECTION.
+activation_key is required.
+signal_id alone is not sufficient as runtime identity.
+source_spec_id is absent from current active packages.
+PSI exists but is runtime-dead.
+PSI is signal-layer semantics only.
+PSI must not be expanded to contain full hypothesis graphs.
+Activation compile is distinct from PSI compile.
+No governed investigation_spec → signal_library / research_brief / package_manifest compiler currently exists for the full estate.
+```
+
+Do not reopen these decisions.
+
+If repository evidence contradicts any of these decisions, STOP and report the contradiction.
+
+## Authority preflight
+
+Before editing, verify and report:
+
+1. Existing Knowledge Bus schema directory.
+2. Existing package manifest schema location and current required fields.
+3. Existing signal library schema location and current version/shape.
+4. Existing research brief schema location and current required fields.
+5. Existing promoted signal intelligence schema location.
+6. Existing PSI translator path.
+7. Existing PSI validator path.
+8. Existing investigation spec validator path.
+9. Existing package validator path.
+10. Whether any compile manifest schema already exists.
+11. Whether any activation compile contract already exists.
+12. Whether any package provenance policy already exists outside ADR-RT-004.
+13. Whether any script currently claims to compile `investigation_spec` into:
+
+    * `signal_library.yaml`
+    * `research_brief.yaml`
+    * `package_manifest.yaml`
+
+This preflight is mandatory.
+
+If any existing authority already covers a proposed deliverable, extend or reference that authority rather than creating a duplicate.
+
+## Scope
+
+This sprint creates the contract foundation for later compile work.
+
+Allowed scope:
+
+1. Create compile manifest schema.
+2. Create or update architecture documentation for compile manifest contract.
+3. Create or update package provenance policy documentation.
+4. Create activation compile contract documentation.
+5. Create PSI gap closure mechanics documentation.
+6. Create PSI runtime wiring design documentation only.
+7. Create pilot compile/provenance evidence documentation using one inventory-selected single-frame candidate.
+8. Add narrowly scoped schema tests or validation tests only if required to prove new schemas parse/validate.
+9. Add narrowly scoped validator support only if necessary to validate the new compile manifest schema, provided this is explicitly justified and does not touch runtime behaviour.
+
+## Required deliverables
+
+Create or update the following deliverables:
+
+```text
+knowledge_bus/schema/compile_manifest_schema_v1.yaml
+docs/architecture/compile_manifest_contract.md
+docs/architecture/package_provenance_policy.md
+docs/architecture/activation_compile_contract.md
+docs/architecture/psi_gap_closure_mechanics.md
+docs/architecture/psi_runtime_wiring_design.md
+docs/architecture/ARCH-RT-1_single_frame_pilot_selection.md
+docs/architecture/ARCH-RT-1_pilot_compile_provenance_evidence.md
+```
+
+If adding tests or validator support, justify them explicitly in the implementation summary.
+
+No other deliverables are allowed without STOP and approval.
 
 ## Deliverable requirements
 
-### 1. `research_to_runtime_traceability_matrix.md`
+### 1. `knowledge_bus/schema/compile_manifest_schema_v1.yaml`
 
-Must map, as far as repo evidence allows:
+Must define a schema for compile manifests covering at minimum:
 
-```text
-investigation spec → package
-investigation spec → PSI
-investigation spec → root-cause YAML
-investigation spec → card evidence
-package → SignalRegistry
-signal → DTO
-DTO → frontend component
+```yaml
+compile_id:
+compiler_name:
+compiler_version:
+compile_mode:
+source_contract_version:
+source_specs:
+  - source_spec_id:
+    source_path:
+    source_hash:
+    source_hash_algorithm:
+outputs:
+  - output_type:
+    output_path:
+    output_hash:
+    output_hash_algorithm:
+    package_id:
+    signal_id:
+    activation_key:
+    source_spec_id:
+translation_rules_version:
+remap_contract_version:
+compiled_at_utc:
+compiled_by:
+validator_results:
+provenance_status:
 ```
 
-Where traceability is missing, state one of:
+Must support the day-one identity model:
 
 ```text
-MISSING
-UNKNOWN
-BATCH_JSON_ONLY
-LEGACY_RETAINED_CANDIDATE
-BLOCKED_PENDING_SPEC_EXTRACTION
+activation_key required for activation artefacts
+signal_id retained as signal family
+source_spec_id required for research-derived artefacts
+legacy_retained classification permitted only when explicitly justified
 ```
 
-Do not guess.
+Must not introduce runtime logic.
 
-### 2. `intelligence_authority_inventory.md`
+### 2. `docs/architecture/compile_manifest_contract.md`
 
-Must list current active and candidate authorities for:
+Must explain:
 
-* research source
-* signal activation
-* signal semantics / PSI
-* hypothesis / WHY
-* Health Systems Card evidence
-* IDL / presentation safety
-* DTO boundary
-* frontend rendering
+* manifest purpose
+* per-run versus per-artefact versus estate-index approach
+* where manifests should be stored
+* required fields
+* hash rules
+* deterministic ordering expectations
+* how manifests support package promotion
+* how manifests support later launch-readiness audit
+* how manifests relate to `latest_knowledge_status.json`
+* how manifests relate to legacy-retained artefacts
 
-For each authority, state:
+Must align with ADR-RT-004.
+
+### 3. `docs/architecture/package_provenance_policy.md`
+
+Must define:
+
+* `source_spec_id` requirement for new generated packages
+* `activation_key` requirement for new generated activation artefacts
+* handling of existing packages with no `source_spec_id`
+* permitted classifications:
+
+  * `active_current`
+  * `legacy_retained`
+  * `deferred_for_regeneration`
+  * `blocked_pending_spec_extraction`
+  * `retire_candidate`
+  * `unknown_requires_review`
+* rules for batch JSON source packages
+* rules for architecture-doc-sourced packages
+* rules for packages with PSI
+* rules for packages without PSI
+* how provenance must be validated before launch
+
+### 4. `docs/architecture/activation_compile_contract.md`
+
+Must define the target governed activation compile path:
 
 ```text
-current role
-runtime consumed: YES/NO/UNKNOWN
-source provenance status
-duplicate authority risk
-target-state recommendation
+investigation_spec
+→ signal_library.yaml
+→ research_brief.yaml
+→ package_manifest.yaml
 ```
 
-### 3. `package_generation_inventory.md`
-
-Must include exact counts by package generation/prefix.
-
-Must include at minimum:
+Must explicitly distinguish this from PSI:
 
 ```text
-generation/prefix
-count
-source_document pattern
-schema_version if available
-PSI on disk count
-PSI manifest opt-in count
-source_spec_id present count
-batch JSON source count
-individual spec source count
-unknown source count
+investigation_spec → promoted_signal_intelligence
 ```
 
-Do not rely on approximate counts from planning papers.
+Must define expected output responsibilities:
 
-### 4. `psi_coverage_and_manifest_opt_in_report.md`
+| Output                              | Responsibility                                                               |
+| ----------------------------------- | ---------------------------------------------------------------------------- |
+| `signal_library.yaml`               | activation / firing / thresholds / dependencies / overrides / activation_key |
+| `research_brief.yaml`               | evidence traceability / biomarker context                                    |
+| `package_manifest.yaml`             | package identity / source_spec_id / compile manifest reference / PSI opt-in  |
+| `promoted_signal_intelligence.yaml` | signal-layer semantics only                                                  |
 
-Must confirm:
+Must state that no activation compiler currently exists for full estate regeneration unless implementation discovers otherwise.
 
-* PSI schema path
-* PSI translator path
-* PSI loader path
-* number of PSI artefacts on disk
-* number of packages with PSI manifest opt-in
-* whether PSI is consumed by runtime analytics paths
-* where PSI is used today, if anywhere
-* which packages/specs are candidates for PSI gap closure
-* whether PSI runtime wiring is required for launch-critical claims or can be deferred
+Must define what a future activation compiler must prove:
 
-### 5. `root_cause_registry_inventory.md`
+* deterministic output
+* source hash preservation
+* source_spec_id propagation
+* activation_key propagation
+* no silent signal_id collapse
+* package validator compatibility
+* no PSI/hypothesis/card evidence conflation
+
+### 5. `docs/architecture/psi_gap_closure_mechanics.md`
+
+Must define:
+
+* current PSI coverage state from ARCH-RT-0
+* what PSI already does
+* what PSI does not do
+* why PSI is not the activation compiler
+* how PSI opt-in should be validated
+* how PSI coverage gaps should be classified
+* how PSI should join later runtime outputs
+* how PSI remains separate from hypothesis artefacts and card evidence artefacts
+
+### 6. `docs/architecture/psi_runtime_wiring_design.md`
+
+Design only.
+
+Must define:
+
+* where PSI could be loaded in the future
+* whether PSI should be package-scoped or estate-indexed
+* how PSI should join to runtime fired results using:
+
+  * activation_key
+  * source_spec_id
+  * signal_id family
+  * package_id where needed
+* which future sprint should implement PSI runtime wiring
+* what must not happen:
+
+  * no raw research runtime reads
+  * no PSI expansion into hypothesis graph
+  * no frontend PSI inference
+  * no runtime wiring in this sprint
+
+### 7. `docs/architecture/ARCH-RT-1_single_frame_pilot_selection.md`
+
+Must select one pilot candidate for this sprint’s compile/provenance evidence.
+
+Candidate must be selected from ARCH-RT-0 inventory evidence.
+
+Preferred candidate characteristics:
+
+```text
+single-frame
+valid investigation spec
+no duplicate signal_id collision
+existing or expected package relationship
+PSI missing or manifest opt-in gap useful to test
+activation package relationship is clear
+low runtime blast radius
+```
+
+The document must justify the selected candidate and explicitly reject unsuitable candidates such as ALT, CRP, or homocysteine if they remain unsuitable.
+
+If no safe candidate exists, STOP and report.
+
+### 8. `docs/architecture/ARCH-RT-1_pilot_compile_provenance_evidence.md`
+
+This sprint must not implement a full compiler.
+
+This document should provide pilot evidence using existing translators/scripts where available and read-only/manual evidence where implementation is not yet available.
 
 Must include:
 
-* root-cause YAML file count
-* registered root-cause target count
-* registry implementation path
-* loader paths
-* signal IDs registered
-* duplicate or shared YAML usage
-* missing source_spec_id / provenance issues
-* proposed transition direction:
+* selected source spec
+* related package, if any
+* current manifest provenance
+* whether PSI exists
+* whether activation package exists
+* whether source_spec_id exists
+* whether activation_key exists
+* whether compile manifest could represent the required provenance
+* what exact future implementation gap remains
+* whether the PSI translator output is deterministic if run
+* whether activation compile is currently manual/scripted/missing
 
-  * manual tuple retained temporarily
-  * generated registry
-  * manifest-backed registry
-  * compiled hypothesis loader
+If running existing translator or validator commands, report command and output summary.
 
-### 6. `signal_id_collision_inventory.md`
-
-Must include:
-
-* every duplicate `signal_id` found across packages
-* package paths involved
-* current retained/discarded behaviour where detectable
-* whether collision affects live runtime
-* whether collision is single-frame duplicate or multi-frame medical case
-* specific explicit row for ALT high collision
-* homocysteine-related cases if present
-* recommended handling category:
-
-  * hard error
-  * governed arbitration
-  * multi-frame support
-  * legacy duplicate retirement
-
-### 7. `legacy_package_retirement_candidates.md`
-
-Must classify packages as far as evidence allows:
-
-```text
-active_current
-legacy_retained_candidate
-deferred_for_regeneration
-blocked_pending_spec_extraction
-retire_candidate
-unknown_requires_review
-```
-
-Must identify packages lacking sufficient provenance.
-
-### 8. `activation_compile_gap_report.md`
-
-Must answer:
-
-1. Does a governed `investigation_spec → signal_library.yaml` compiler exist?
-2. Does a governed `investigation_spec → research_brief.yaml` compiler exist?
-3. Does a governed `investigation_spec → package_manifest.yaml` compiler exist?
-4. What scripts currently generate or ingest package artefacts?
-5. How do those differ from the PSI translator?
-6. What is missing before full estate regeneration can be governed?
-7. Which later sprint should own activation compile implementation?
-
-### 9. `ADR-RT-001_research_to_runtime_day_one_architecture.md`
-
-Must decide:
-
-* canonical research authority
-* compiled runtime artefact model
-* accepted target pipeline
-* no raw research runtime reads
-* no frontend medical inference
-* relationship to final sprint plan
-
-### 10. `ADR-RT-002_signal_spec_identity_and_registry_policy.md`
-
-This ADR must be decisive.
-
-It must choose one:
-
-```text
-ONE_FRAME_PER_DIRECTION
-MULTI_FRAME_PER_DIRECTION
-```
-
-It must not leave both options open.
-
-It must also decide:
-
-* registry keying policy
-* whether `activation_key` is required
-* whether `signal_id + spec_id` is sufficient
-* SignalResult provenance requirements
-* how interaction map / phenotype map / root-cause registry relate to signal family versus frame identity
-* implications for Sprint 3 identity runtime pilot
-
-If evidence is insufficient to choose, STOP and report exactly what evidence is missing. Do not write an indecisive ADR.
-
-### 11. `ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md`
-
-Must decide:
-
-* ADR-008 accepted or challenged
-* PSI remains signal-layer only or not
-* hypothesis artefact boundary
-* relationship between investigation spec hypotheses and root-cause YAML
-* whether compiled hypothesis artefact should be consumed directly or emit root-cause-compatible view
-* root_cause_registry transition direction
-
-### 12. `ADR-RT-004_compile_manifest_and_package_provenance_policy.md`
-
-Must decide:
-
-* compile manifest convention
-* per-run / per-artefact / estate index approach
-* required provenance fields
-* `source_spec_id` policy
-* `legacy_retained` classification policy
-* batch JSON source handling
-* package promotion / traceability expectations
+Do not create committed generated runtime artefacts unless explicitly in scope and validated.
 
 ## Out of scope
 
 Do not:
 
-* modify runtime code
+* modify runtime analytics code
+* modify SignalRegistry
+* modify SignalEvaluator
+* modify SignalResult model
+* modify InsightGraph runtime contracts
 * modify package files
+* modify existing package manifests
 * modify investigation specs
 * modify PSI artefacts
 * modify root-cause YAML
-* modify schemas
-* modify validators
-* modify Sentinel packs
+* modify root_cause_registry
+* modify Health Systems Card runtime assembler
 * modify frontend
-* modify `wave1_subsystem_evidence.py`
-* modify `SignalRegistry`
-* modify `SignalEvaluator`
-* run package regeneration
-* run compiler implementation
-* create new runtime artefacts
-* create helper scripts committed to the repository
+* modify IDL content
+* wire PSI into runtime
+* create full activation compiler implementation
+* regenerate packages
+* create card evidence artefacts
+* create compiled hypothesis artefacts
+* change biomarker canonicalisation
+* change scoring logic
 * introduce fallback parsers
+* commit local helper scripts
 
-Read-only shell/Python commands are allowed for inventory if they do not modify the repository.
+## Existing translator / validator commands
 
-If temporary helper scripts are needed, create them outside the repository or remove them before closure. Do not commit tooling files.
+Cursor may run existing validation/translation commands only if they are read-only or write to a temporary location that is removed before closure.
 
-## Required evidence from Cursor
+If a command writes generated artefacts into governed directories, STOP unless the output path is explicitly in the allowed deliverables.
+
+If temporary output is needed, use a clearly temporary path and delete it before closure.
+
+## Required tests / validation
+
+At minimum:
+
+1. Validate YAML syntax for the new schema/docs where applicable.
+2. If a schema validation test pattern exists, add or run the narrowest relevant test.
+3. If no test exists, document validation method in implementation summary.
+4. Run any existing compile manifest / schema validation tests if present.
+5. If the existing PSI translator is run for pilot evidence, run it at least twice and confirm deterministic output, or document why this cannot be done safely.
+
+Do not run broad test suites unless required by touched files.
+
+## STOP conditions
+
+STOP and report if:
+
+1. ARCH-RT-0 deliverables are missing.
+2. ADR-RT-002 does not decisively select `MULTI_FRAME_PER_DIRECTION`.
+3. `activation_key` requirement is not confirmed in ADR-RT-002.
+4. Existing repository already contains a compile manifest schema that would be duplicated.
+5. Existing repository already contains an activation compile contract that would be duplicated.
+6. A safe single-frame pilot cannot be selected.
+7. Pilot evidence would require runtime wiring.
+8. Pilot evidence would require modifying package files or generated artefacts outside allowed deliverables.
+9. PSI translator is non-deterministic.
+10. Activation compile cannot be described separately from PSI.
+11. Any runtime/code/package/frontend/root-cause changes appear necessary.
+12. Any helper scripts would need to be committed.
+13. Scope expands into ARCH-RT-2 identity runtime pilot, ARCH-RT-3 card evidence, or ARCH-RT-4 root-cause work.
+
+## Evidence required from Cursor
 
 Cursor must report:
 
 1. Baseline branch/status/HEAD evidence.
 2. Authority preflight findings.
-3. File/path evidence for all inventoried authorities.
-4. Exact commands used for package counts and collision detection.
-5. Exact counts found.
-6. Confirmation that no runtime/code/schema/package files were modified.
-7. Confirmation that all deliverables were created under `docs/architecture/`.
-8. Any uncertainty or missing evidence.
-9. Whether ADR-RT-002 was able to make a decisive one-frame versus multi-frame decision.
-
-## STOP conditions
-
-STOP and report without completing if:
-
-1. The repository baseline is not clean.
-2. `main` does not equal `origin/main`.
-3. Required planning/audit source documents are missing.
-4. Inventory cannot distinguish package generations.
-5. PSI runtime consumption status cannot be verified.
-6. Duplicate `signal_id` collision detection cannot be performed.
-7. ADR-RT-002 cannot decisively choose one-frame or multi-frame.
-8. Work would require editing code, schemas, packages, PSI, root-cause YAML, frontend, or control-plane files.
-9. Work would require creating committed helper scripts.
-10. Any deliverable would require unsupported assumptions instead of repo evidence.
-
-## Tests / validation
-
-Because this is documentation-only, no runtime test suite is required.
-
-However, Cursor must validate the documentation outputs by checking:
-
-```powershell
-git diff --name-only
-```
-
-Only the approved `docs/architecture/*.md` deliverables should appear.
-
-If read-only scripts/commands are used for counts, include command output summaries in the relevant documents.
+3. Existing schema/validator/translator paths found.
+4. Whether compile manifest schema already existed.
+5. Whether activation compile contract already existed.
+6. Files changed.
+7. Pilot candidate selected and rationale.
+8. Commands run.
+9. Validation/test results.
+10. Confirmation that no runtime wiring occurred.
+11. Confirmation that no package/investigation spec/PSI/root-cause YAML files were modified.
+12. Confirmation that no helper scripts were committed.
+13. Confirmation that activation compile and PSI compile are treated separately.
 
 ## Closure requirements
 
@@ -512,30 +479,34 @@ Classify:
 
 Do not run finish unless:
 
-* current branch matches `work/ARCH-RT-0-inventory-and-identity-decisions`
-* only approved `docs/architecture/*.md` deliverables are changed
-* no runtime/code/schema/package files are changed
+* current branch matches `work/ARCH-RT-1-contracts-and-compile-foundation`
+* only approved files are changed
+* no runtime/code/package/frontend/root-cause files are changed
 * no tooling files are included
 * no ambiguous stash exists
-* latest commit contains only in-scope documentation outputs
+* latest commit contains only in-scope contract/foundation work
 
 ## Success criteria
 
 This sprint is complete only if:
 
-1. All required inventory documents are created.
-2. All required ADR documents are created.
-3. Package generations are exactly counted from repo evidence.
-4. PSI coverage, manifest opt-in and runtime consumption status are documented.
-5. Root-cause registry and YAML inventory is documented.
-6. Duplicate `signal_id` collisions are documented.
-7. ALT high collision is explicitly addressed.
-8. Activation compile gap is explicitly documented.
-9. ADR-RT-002 decisively chooses one-frame or multi-frame.
-10. Package provenance policy is defined.
-11. Root-cause transition direction is defined.
-12. No runtime/code/schema/package files are modified.
-13. Automation Bus gate passes.
+1. Compile manifest schema exists and aligns with ADR-RT-004.
+2. Compile manifest contract documentation exists.
+3. Package provenance policy exists.
+4. Activation compile contract exists.
+5. PSI gap closure mechanics document exists.
+6. PSI runtime wiring design exists as design-only.
+7. Single-frame pilot selection is evidence-based.
+8. Pilot compile/provenance evidence is documented.
+9. Activation compile and PSI compile are explicitly separated.
+10. No runtime wiring occurs.
+11. No package files are modified.
+12. No investigation specs are modified.
+13. No PSI artefacts are modified.
+14. No root-cause YAML is modified.
+15. No frontend is modified.
+16. No helper scripts are committed.
+17. Automation Bus gate passes.
 
 ```
 ```
