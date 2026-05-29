@@ -1,26 +1,32 @@
 ---
-work_id: ARCH-RT-1_contracts_and_compile_foundation
-branch: work/ARCH-RT-1-contracts-and-compile-foundation
+work_id: ARCH-RT-2_identity_runtime_pilot
+branch: work/ARCH-RT-2-identity-runtime-pilot
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: BEHAVIOUR
 ---
 
-# ARCH-RT-1 — Contracts and Compile Foundation
+# ARCH-RT-2 — Identity Runtime Pilot
 
 ## Purpose
 
-Create the minimum governance contracts and compile/provenance foundation needed for the HealthIQ day-one research-to-runtime architecture.
+Implement the approved multi-frame runtime identity policy from `ADR-RT-002` using one controlled pilot.
 
-This sprint follows the completed and merged `ARCH-RT-0_inventory_and_identity_decisions` sprint.
+This sprint addresses the live defect where multiple medically distinct packages can share the same `signal_id`, causing valid research frames to be silently collapsed by current registry behaviour.
 
-It must use the ARCH-RT-0 inventory and ADR outputs as authority.
-
-This sprint must not perform runtime wiring.
+The sprint must prove the new identity model on one governed multi-frame case before any full estate regeneration.
 
 ## Baseline requirement
 
 Start from clean `main`.
+
+Expected prior completed work:
+
+```text
+WAVE1-EQUIV1_total_bilirubin_false_missing_fix — merged
+ARCH-RT-0_inventory_and_identity_decisions — merged
+ARCH-RT-1_contracts_and_compile_foundation — merged
+````
 
 Before creating or switching to the sprint branch, run and report:
 
@@ -30,29 +36,35 @@ git status --short
 git log --oneline -n 8
 git rev-parse HEAD
 git rev-parse origin/main
-````
+```
 
 STOP if:
 
 * current branch is not `main`
 * local `main` does not equal `origin/main`
 * working tree is not clean
-* ARCH-RT-0 is not merged
+* ARCH-RT-1 is not merged
 * untracked or uncommitted files are present
 
 ## Governance classification
 
 ```yaml
 risk_level: HIGH
-change_type: MIXED
+change_type: BEHAVIOUR
 execution_model: TWO_PHASE_START_FINISH
 ```
 
 Reason:
 
-This sprint may introduce or update governed Knowledge Bus schema / contract artefacts and compile-provenance foundations that downstream Intelligence Core work will rely on.
+This sprint is expected to touch Intelligence Core runtime identity behaviour, likely including:
 
-It must be treated as HIGH risk even though runtime behaviour must not change in this sprint.
+```text
+SignalRegistry
+SignalEvaluator
+SignalResult / fired signal model
+InsightGraph-facing signal result payloads
+tests / persisted fixtures where required
+```
 
 HIGH-risk controls apply:
 
@@ -62,378 +74,260 @@ HIGH-risk controls apply:
 * GPT architectural review before merge
 * dual approval before merge
 
+## Mandatory inherited decisions from ARCH-RT-0
+
+The following decisions are binding and must not be reopened:
+
+```text
+ADR-RT-002 selected MULTI_FRAME_PER_DIRECTION.
+ONE_FRAME_PER_DIRECTION was rejected.
+activation_key is required.
+signal_id alone is not sufficient as runtime identity.
+signal_id must remain the signal family identifier.
+activation_key must identify the runtime activation frame.
+SignalResult must carry sufficient provenance to distinguish frames.
+ALT high is the preferred multi-frame pilot unless preflight proves a better/safer candidate.
+```
+
+If repository evidence contradicts any of these decisions, STOP and report.
+
+## Mandatory inherited conditions from ARCH-RT-1 GPT review
+
+These conditions must be carried forward into this sprint context.
+
+They are not optional and must not be lost:
+
+1. `compile_id` is the canonical compile identifier.
+2. `compile_run_id` is transitional only.
+3. If both `compile_id` and `compile_run_id` are present anywhere this sprint touches or validates, enforce or preserve the rule:
+
+```text
+compile_run_id == compile_id
+```
+
+4. The following compile manifest fields may remain optional only while the schema is DRAFT:
+
+```text
+activation_keys_emitted
+collisions_detected
+policy_version
+```
+
+5. Before any production compiler use, schema lock, or launch-critical compile manifest use, ADR-required manifest fields must become required.
+
+6. The reference to `ARCH-RT-2b` should be normalised to `ARCH-RT-2` unless a formal split is later approved.
+
+7. This sprint must not treat `compile_manifest_schema_v1.yaml` as locked or production-ready.
+
+8. If this sprint touches compile manifest validation, compile manifest schema, or package provenance logic, it must apply the above decisions or STOP.
+
+These carry-forward items do not expand the sprint into compile-manifest work. They are mandatory constraints if the sprint encounters or touches that area.
+
 ## Authoritative inputs
 
 Read these files before making any changes:
 
 ```text
 docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md
-docs/architecture/research_to_runtime_traceability_matrix.md
-docs/architecture/intelligence_authority_inventory.md
-docs/architecture/package_generation_inventory.md
-docs/architecture/psi_coverage_and_manifest_opt_in_report.md
-docs/architecture/root_cause_registry_inventory.md
-docs/architecture/signal_id_collision_inventory.md
-docs/architecture/legacy_package_retirement_candidates.md
-docs/architecture/activation_compile_gap_report.md
 docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md
 docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md
 docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md
+docs/architecture/signal_id_collision_inventory.md
+docs/architecture/package_generation_inventory.md
+docs/architecture/activation_compile_gap_report.md
+docs/architecture/compile_manifest_contract.md
+docs/architecture/package_provenance_policy.md
+docs/architecture/activation_compile_contract.md
+docs/architecture/ARCH-RT-1_single_frame_pilot_selection.md
+docs/architecture/ARCH-RT-1_pilot_compile_provenance_evidence.md
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
 ```
 
-STOP if any file is missing.
-
-## Critical decisions inherited from ARCH-RT-0
-
-The following decisions are binding for this sprint:
-
-```text
-ADR-RT-002 selected MULTI_FRAME_PER_DIRECTION.
-activation_key is required.
-signal_id alone is not sufficient as runtime identity.
-source_spec_id is absent from current active packages.
-PSI exists but is runtime-dead.
-PSI is signal-layer semantics only.
-PSI must not be expanded to contain full hypothesis graphs.
-Activation compile is distinct from PSI compile.
-No governed investigation_spec → signal_library / research_brief / package_manifest compiler currently exists for the full estate.
-```
-
-Do not reopen these decisions.
-
-If repository evidence contradicts any of these decisions, STOP and report the contradiction.
+STOP if any required file is missing.
 
 ## Authority preflight
 
-Before editing, verify and report:
+Before editing, verify and report the actual repository paths and current behaviour for:
 
-1. Existing Knowledge Bus schema directory.
-2. Existing package manifest schema location and current required fields.
-3. Existing signal library schema location and current version/shape.
-4. Existing research brief schema location and current required fields.
-5. Existing promoted signal intelligence schema location.
-6. Existing PSI translator path.
-7. Existing PSI validator path.
-8. Existing investigation spec validator path.
-9. Existing package validator path.
-10. Whether any compile manifest schema already exists.
-11. Whether any activation compile contract already exists.
-12. Whether any package provenance policy already exists outside ADR-RT-004.
-13. Whether any script currently claims to compile `investigation_spec` into:
+1. SignalRegistry implementation.
+2. SignalEvaluator implementation.
+3. Current duplicate `signal_id` handling logic.
+4. SignalResult model.
+5. InsightGraph or result payload structure that receives fired signals.
+6. Root-cause compiler code path that consumes signal IDs.
+7. Interaction map code path that consumes signal IDs.
+8. Phenotype / IDL code path that consumes signal IDs.
+9. Existing tests covering SignalRegistry / SignalEvaluator.
+10. Existing persisted/golden fixtures affected by fired signal identity.
+11. ALT high package paths and current lexicographic winner.
+12. Whether ALT remains the safest multi-frame pilot.
 
-    * `signal_library.yaml`
-    * `research_brief.yaml`
-    * `package_manifest.yaml`
+If any authority path cannot be verified, STOP and report.
 
-This preflight is mandatory.
+## Pilot scope
 
-If any existing authority already covers a proposed deliverable, extend or reference that authority rather than creating a duplicate.
+Preferred pilot:
+
+```text
+signal_alt_high
+```
+
+Known expected multi-frame family from ARCH-RT-0:
+
+```text
+ALT high hepatocellular frame
+ALT high metabolic / steatotic frame
+ALT high muscle-source / exertional frame
+other ALT high duplicates identified in collision inventory
+```
+
+The pilot must focus on preventing silent collapse and proving multi-frame runtime identity.
 
 ## Scope
 
-This sprint creates the contract foundation for later compile work.
+Allowed implementation scope:
 
-Allowed scope:
+1. Replace silent duplicate `signal_id` collapse with governed multi-frame support.
+2. Introduce or wire `activation_key` as the runtime activation-frame identity, as required by ADR-RT-002.
+3. Preserve `signal_id` as the signal-family identifier.
+4. Update SignalRegistry so duplicate `signal_id` entries are allowed only when activation keys are distinct.
+5. Prevent duplicate `activation_key` collisions.
+6. Update SignalEvaluator so all valid activation frames can be evaluated.
+7. Update SignalResult / fired signal output to carry required provenance.
+8. Add regression coverage proving ALT high no longer silently collapses to one lexicographic winner.
+9. Add tests proving duplicate `activation_key` conflicts fail closed.
+10. Update downstream test expectations only where required by the new identity contract.
+11. Produce a downstream impact report documenting affected or unaffected paths.
 
-1. Create compile manifest schema.
-2. Create or update architecture documentation for compile manifest contract.
-3. Create or update package provenance policy documentation.
-4. Create activation compile contract documentation.
-5. Create PSI gap closure mechanics documentation.
-6. Create PSI runtime wiring design documentation only.
-7. Create pilot compile/provenance evidence documentation using one inventory-selected single-frame candidate.
-8. Add narrowly scoped schema tests or validation tests only if required to prove new schemas parse/validate.
-9. Add narrowly scoped validator support only if necessary to validate the new compile manifest schema, provided this is explicitly justified and does not touch runtime behaviour.
+## Required runtime identity model
+
+Unless preflight finds a contradiction and STOPs, implement the ADR-approved shape:
+
+```text
+activation_key = runtime activation-frame identity
+signal_id = signal family
+source_spec_id = research provenance where available
+package_id = package provenance where available
+```
+
+SignalResult or equivalent fired signal payload must expose enough information for downstream systems to distinguish:
+
+```text
+which signal family fired
+which frame fired
+which package/spec produced the frame
+```
+
+Do not remove `signal_id`.
+
+Do not rename existing signal families as a workaround.
+
+## Required behaviour
+
+After the sprint:
+
+1. Multiple packages with the same `signal_id` must not silently overwrite each other.
+2. Multiple medically distinct frames must be able to exist under one signal family.
+3. ALT high pilot frames must be visible to the evaluator/registry as distinct activation frames.
+4. Duplicate `activation_key` must fail closed.
+5. Existing single-frame signals must continue to behave as before except for additional provenance fields.
+6. Downstream systems that still consume signal family identity must be protected or explicitly documented.
+7. Runtime must remain deterministic.
 
 ## Required deliverables
 
-Create or update the following deliverables:
+Create or update:
 
 ```text
-knowledge_bus/schema/compile_manifest_schema_v1.yaml
-docs/architecture/compile_manifest_contract.md
-docs/architecture/package_provenance_policy.md
-docs/architecture/activation_compile_contract.md
-docs/architecture/psi_gap_closure_mechanics.md
-docs/architecture/psi_runtime_wiring_design.md
-docs/architecture/ARCH-RT-1_single_frame_pilot_selection.md
-docs/architecture/ARCH-RT-1_pilot_compile_provenance_evidence.md
+docs/architecture/ARCH-RT-2_identity_runtime_pilot_report.md
 ```
 
-If adding tests or validator support, justify them explicitly in the implementation summary.
+The report must include:
 
-No other deliverables are allowed without STOP and approval.
+* pilot selected
+* package paths involved
+* previous runtime behaviour
+* new runtime behaviour
+* activation_key format used
+* SignalResult provenance fields added or confirmed
+* tests added/updated
+* downstream impact assessment
+* remaining risks
+* explicit statement that compile manifest carry-forward decisions were observed and not modified unless in scope
 
-## Deliverable requirements
+## Likely touched areas
 
-### 1. `knowledge_bus/schema/compile_manifest_schema_v1.yaml`
-
-Must define a schema for compile manifests covering at minimum:
-
-```yaml
-compile_id:
-compiler_name:
-compiler_version:
-compile_mode:
-source_contract_version:
-source_specs:
-  - source_spec_id:
-    source_path:
-    source_hash:
-    source_hash_algorithm:
-outputs:
-  - output_type:
-    output_path:
-    output_hash:
-    output_hash_algorithm:
-    package_id:
-    signal_id:
-    activation_key:
-    source_spec_id:
-translation_rules_version:
-remap_contract_version:
-compiled_at_utc:
-compiled_by:
-validator_results:
-provenance_status:
-```
-
-Must support the day-one identity model:
+Final file list must be established by preflight, but likely areas include:
 
 ```text
-activation_key required for activation artefacts
-signal_id retained as signal family
-source_spec_id required for research-derived artefacts
-legacy_retained classification permitted only when explicitly justified
+backend/core/analytics/**/*
+backend/core/models/**/*
+backend/tests/**/*
+docs/architecture/ARCH-RT-2_identity_runtime_pilot_report.md
 ```
 
-Must not introduce runtime logic.
-
-### 2. `docs/architecture/compile_manifest_contract.md`
-
-Must explain:
-
-* manifest purpose
-* per-run versus per-artefact versus estate-index approach
-* where manifests should be stored
-* required fields
-* hash rules
-* deterministic ordering expectations
-* how manifests support package promotion
-* how manifests support later launch-readiness audit
-* how manifests relate to `latest_knowledge_status.json`
-* how manifests relate to legacy-retained artefacts
-
-Must align with ADR-RT-004.
-
-### 3. `docs/architecture/package_provenance_policy.md`
-
-Must define:
-
-* `source_spec_id` requirement for new generated packages
-* `activation_key` requirement for new generated activation artefacts
-* handling of existing packages with no `source_spec_id`
-* permitted classifications:
-
-  * `active_current`
-  * `legacy_retained`
-  * `deferred_for_regeneration`
-  * `blocked_pending_spec_extraction`
-  * `retire_candidate`
-  * `unknown_requires_review`
-* rules for batch JSON source packages
-* rules for architecture-doc-sourced packages
-* rules for packages with PSI
-* rules for packages without PSI
-* how provenance must be validated before launch
-
-### 4. `docs/architecture/activation_compile_contract.md`
-
-Must define the target governed activation compile path:
-
-```text
-investigation_spec
-→ signal_library.yaml
-→ research_brief.yaml
-→ package_manifest.yaml
-```
-
-Must explicitly distinguish this from PSI:
-
-```text
-investigation_spec → promoted_signal_intelligence
-```
-
-Must define expected output responsibilities:
-
-| Output                              | Responsibility                                                               |
-| ----------------------------------- | ---------------------------------------------------------------------------- |
-| `signal_library.yaml`               | activation / firing / thresholds / dependencies / overrides / activation_key |
-| `research_brief.yaml`               | evidence traceability / biomarker context                                    |
-| `package_manifest.yaml`             | package identity / source_spec_id / compile manifest reference / PSI opt-in  |
-| `promoted_signal_intelligence.yaml` | signal-layer semantics only                                                  |
-
-Must state that no activation compiler currently exists for full estate regeneration unless implementation discovers otherwise.
-
-Must define what a future activation compiler must prove:
-
-* deterministic output
-* source hash preservation
-* source_spec_id propagation
-* activation_key propagation
-* no silent signal_id collapse
-* package validator compatibility
-* no PSI/hypothesis/card evidence conflation
-
-### 5. `docs/architecture/psi_gap_closure_mechanics.md`
-
-Must define:
-
-* current PSI coverage state from ARCH-RT-0
-* what PSI already does
-* what PSI does not do
-* why PSI is not the activation compiler
-* how PSI opt-in should be validated
-* how PSI coverage gaps should be classified
-* how PSI should join later runtime outputs
-* how PSI remains separate from hypothesis artefacts and card evidence artefacts
-
-### 6. `docs/architecture/psi_runtime_wiring_design.md`
-
-Design only.
-
-Must define:
-
-* where PSI could be loaded in the future
-* whether PSI should be package-scoped or estate-indexed
-* how PSI should join to runtime fired results using:
-
-  * activation_key
-  * source_spec_id
-  * signal_id family
-  * package_id where needed
-* which future sprint should implement PSI runtime wiring
-* what must not happen:
-
-  * no raw research runtime reads
-  * no PSI expansion into hypothesis graph
-  * no frontend PSI inference
-  * no runtime wiring in this sprint
-
-### 7. `docs/architecture/ARCH-RT-1_single_frame_pilot_selection.md`
-
-Must select one pilot candidate for this sprint’s compile/provenance evidence.
-
-Candidate must be selected from ARCH-RT-0 inventory evidence.
-
-Preferred candidate characteristics:
-
-```text
-single-frame
-valid investigation spec
-no duplicate signal_id collision
-existing or expected package relationship
-PSI missing or manifest opt-in gap useful to test
-activation package relationship is clear
-low runtime blast radius
-```
-
-The document must justify the selected candidate and explicitly reject unsuitable candidates such as ALT, CRP, or homocysteine if they remain unsuitable.
-
-If no safe candidate exists, STOP and report.
-
-### 8. `docs/architecture/ARCH-RT-1_pilot_compile_provenance_evidence.md`
-
-This sprint must not implement a full compiler.
-
-This document should provide pilot evidence using existing translators/scripts where available and read-only/manual evidence where implementation is not yet available.
-
-Must include:
-
-* selected source spec
-* related package, if any
-* current manifest provenance
-* whether PSI exists
-* whether activation package exists
-* whether source_spec_id exists
-* whether activation_key exists
-* whether compile manifest could represent the required provenance
-* what exact future implementation gap remains
-* whether the PSI translator output is deterministic if run
-* whether activation compile is currently manual/scripted/missing
-
-If running existing translator or validator commands, report command and output summary.
-
-Do not create committed generated runtime artefacts unless explicitly in scope and validated.
+Do not assume these are the only files. Justify every touched file.
 
 ## Out of scope
 
 Do not:
 
-* modify runtime analytics code
-* modify SignalRegistry
-* modify SignalEvaluator
-* modify SignalResult model
-* modify InsightGraph runtime contracts
-* modify package files
-* modify existing package manifests
-* modify investigation specs
-* modify PSI artefacts
-* modify root-cause YAML
-* modify root_cause_registry
-* modify Health Systems Card runtime assembler
-* modify frontend
-* modify IDL content
-* wire PSI into runtime
-* create full activation compiler implementation
-* regenerate packages
-* create card evidence artefacts
-* create compiled hypothesis artefacts
-* change biomarker canonicalisation
-* change scoring logic
-* introduce fallback parsers
-* commit local helper scripts
+* Regenerate packages.
+* Modify package files.
+* Modify investigation specs.
+* Modify PSI artefacts.
+* Modify root-cause YAML.
+* Modify Health Systems Card evidence.
+* Create card evidence schemas.
+* Create compiled hypothesis artefacts.
+* Implement PSI runtime wiring.
+* Implement activation compiler.
+* Modify compile manifest schema unless unavoidable; if unavoidable, STOP first.
+* Modify compile manifest validator unless unavoidable; if unavoidable, STOP first.
+* Modify frontend.
+* Modify IDL content.
+* Modify biomarker SSOT.
+* Modify reference ranges.
+* Modify unit conversion policy.
+* Modify scoring rails.
+* Modify clinical thresholds.
+* Introduce fallback parsers.
+* Commit helper scripts.
 
-## Existing translator / validator commands
-
-Cursor may run existing validation/translation commands only if they are read-only or write to a temporary location that is removed before closure.
-
-If a command writes generated artefacts into governed directories, STOP unless the output path is explicitly in the allowed deliverables.
-
-If temporary output is needed, use a clearly temporary path and delete it before closure.
-
-## Required tests / validation
+## Tests required
 
 At minimum:
 
-1. Validate YAML syntax for the new schema/docs where applicable.
-2. If a schema validation test pattern exists, add or run the narrowest relevant test.
-3. If no test exists, document validation method in implementation summary.
-4. Run any existing compile manifest / schema validation tests if present.
-5. If the existing PSI translator is run for pilot evidence, run it at least twice and confirm deterministic output, or document why this cannot be done safely.
+1. Existing SignalRegistry / SignalEvaluator tests.
+2. New regression test proving duplicate `signal_id` frames no longer silently collapse.
+3. New regression test proving duplicate `activation_key` fails closed.
+4. ALT high pilot test proving more than one valid frame can be represented/evaluated under the same `signal_id`.
+5. Existing tests for single-frame signal evaluation.
+6. Any root-cause / interaction / IDL tests needed if fired signal payload shape affects those paths.
+7. Any persisted/golden fixture tests required by changed output structure.
 
-Do not run broad test suites unless required by touched files.
+Use narrow tests first.
+
+Run broader tests only if changed contracts require them.
 
 ## STOP conditions
 
-STOP and report if:
+STOP and report without implementing if:
 
-1. ARCH-RT-0 deliverables are missing.
-2. ADR-RT-002 does not decisively select `MULTI_FRAME_PER_DIRECTION`.
-3. `activation_key` requirement is not confirmed in ADR-RT-002.
-4. Existing repository already contains a compile manifest schema that would be duplicated.
-5. Existing repository already contains an activation compile contract that would be duplicated.
-6. A safe single-frame pilot cannot be selected.
-7. Pilot evidence would require runtime wiring.
-8. Pilot evidence would require modifying package files or generated artefacts outside allowed deliverables.
-9. PSI translator is non-deterministic.
-10. Activation compile cannot be described separately from PSI.
-11. Any runtime/code/package/frontend/root-cause changes appear necessary.
-12. Any helper scripts would need to be committed.
-13. Scope expands into ARCH-RT-2 identity runtime pilot, ARCH-RT-3 card evidence, or ARCH-RT-4 root-cause work.
+1. ADR-RT-002 is missing or does not clearly select `MULTI_FRAME_PER_DIRECTION`.
+2. `activation_key` requirement is not clear.
+3. ALT high collision no longer exists.
+4. A safer pilot is required but cannot be justified from inventory.
+5. Registry/evaluator changes require package regeneration.
+6. Runtime identity cannot be changed without modifying package files.
+7. Downstream breakage requires broad root-cause, card, frontend, or IDL changes.
+8. Compile manifest schema or validator changes appear necessary.
+9. Any carry-forward ARCH-RT-1 condition would be violated.
+10. Deterministic ordering of evaluated frames cannot be guaranteed.
+11. Test coverage cannot prove no silent collapse.
+12. Scope expands into card evidence, root-cause replacement, PSI wiring, or full estate regeneration.
 
 ## Evidence required from Cursor
 
@@ -441,17 +335,19 @@ Cursor must report:
 
 1. Baseline branch/status/HEAD evidence.
 2. Authority preflight findings.
-3. Existing schema/validator/translator paths found.
-4. Whether compile manifest schema already existed.
-5. Whether activation compile contract already existed.
+3. Exact current duplicate-collapse behaviour found.
+4. Pilot selected and rationale.
+5. Activation key format used.
 6. Files changed.
-7. Pilot candidate selected and rationale.
-8. Commands run.
-9. Validation/test results.
-10. Confirmation that no runtime wiring occurred.
-11. Confirmation that no package/investigation spec/PSI/root-cause YAML files were modified.
-12. Confirmation that no helper scripts were committed.
-13. Confirmation that activation compile and PSI compile are treated separately.
+7. Exact implementation changes.
+8. Tests added/updated.
+9. Test commands run.
+10. Test results.
+11. Downstream impact assessment.
+12. Confirmation that package files were not modified.
+13. Confirmation that PSI/root-cause/card/frontend files were not modified.
+14. Confirmation that compile manifest carry-forward constraints were not violated.
+15. Confirmation that no helper scripts were committed.
 
 ## Closure requirements
 
@@ -479,34 +375,33 @@ Classify:
 
 Do not run finish unless:
 
-* current branch matches `work/ARCH-RT-1-contracts-and-compile-foundation`
-* only approved files are changed
-* no runtime/code/package/frontend/root-cause files are changed
+* current branch matches `work/ARCH-RT-2-identity-runtime-pilot`
+* only in-scope files are changed
+* no package files are changed
+* no investigation specs are changed
+* no PSI artefacts are changed
+* no root-cause YAML is changed
+* no frontend files are changed unless explicitly approved by hardening
 * no tooling files are included
 * no ambiguous stash exists
-* latest commit contains only in-scope contract/foundation work
+* latest commit contains only in-scope work
 
 ## Success criteria
 
 This sprint is complete only if:
 
-1. Compile manifest schema exists and aligns with ADR-RT-004.
-2. Compile manifest contract documentation exists.
-3. Package provenance policy exists.
-4. Activation compile contract exists.
-5. PSI gap closure mechanics document exists.
-6. PSI runtime wiring design exists as design-only.
-7. Single-frame pilot selection is evidence-based.
-8. Pilot compile/provenance evidence is documented.
-9. Activation compile and PSI compile are explicitly separated.
-10. No runtime wiring occurs.
-11. No package files are modified.
-12. No investigation specs are modified.
-13. No PSI artefacts are modified.
-14. No root-cause YAML is modified.
-15. No frontend is modified.
-16. No helper scripts are committed.
-17. Automation Bus gate passes.
+1. Silent duplicate `signal_id` collapse is eliminated for the pilot.
+2. Multi-frame runtime identity is implemented according to ADR-RT-002.
+3. `activation_key` is present where required.
+4. `signal_id` remains available as signal-family identity.
+5. ALT high or approved pilot frames no longer silently overwrite each other.
+6. Duplicate `activation_key` collisions fail closed.
+7. Single-frame signal behaviour remains stable.
+8. Downstream impact is documented.
+9. Tests prove the new identity behaviour.
+10. No package/spec/PSI/root-cause/card/frontend scope is included.
+11. ARCH-RT-1 carry-forward conditions are preserved.
+12. Automation Bus gate passes.
 
 ```
 ```
