@@ -12,6 +12,7 @@ import yaml
 
 from core.contracts.signal_contract import STATE_RANK as _STATE_RANK_IMPORT
 from core.analytics.signal_confidence_builder import calculate_signal_confidence
+from core.knowledge.signal_activation_identity_v1 import resolve_activation_identity
 from core.models.signal import SignalResult
 
 
@@ -19,7 +20,7 @@ class SignalRegistry:
     """Load authoritative package signal libraries deterministically."""
 
     def __init__(self) -> None:
-        self._signals_by_id: Dict[str, Dict[str, Any]] = {}
+        self._signals_by_activation_key: Dict[str, Dict[str, Any]] = {}
         self.version: str = ""
         self.package_hash: str = ""
         self._load()
@@ -39,7 +40,7 @@ class SignalRegistry:
         return payload
 
     def _load(self) -> None:
-        signals_by_id: Dict[str, Dict[str, Any]] = {}
+        signals_by_activation_key: Dict[str, Dict[str, Any]] = {}
         for path in self._iter_signal_library_paths():
             payload = self._load_yaml(path)
             signal_items = payload.get("signals")
@@ -51,26 +52,37 @@ class SignalRegistry:
                 signal_id = str(item.get("signal_id", "")).strip()
                 if not signal_id:
                     continue
-                if signal_id in signals_by_id:
-                    existing_source = str(signals_by_id[signal_id].get("_source_path", ""))
-                    # Deterministic duplicate policy: when the same signal_id appears in
-                    # multiple package files, keep the definition from the lexicographically
-                    # later path and overwrite the earlier one.
-                    if str(path) <= existing_source:
-                        continue
+                activation_key, source_spec_id, package_id = resolve_activation_identity(
+                    signal_id=signal_id,
+                    signal_library_path=path,
+                )
+                if activation_key in signals_by_activation_key:
+                    existing = signals_by_activation_key[activation_key].get("_source_path", "")
+                    raise ValueError(
+                        "Duplicate activation_key collision: "
+                        f"{activation_key!r} at {path} and {existing}"
+                    )
                 compiled = dict(item)
                 compiled["_source_path"] = str(path)
-                signals_by_id[signal_id] = compiled
+                compiled["activation_key"] = activation_key
+                compiled["source_spec_id"] = source_spec_id
+                compiled["package_id"] = package_id
+                signals_by_activation_key[activation_key] = compiled
 
-        ordered_ids = sorted(signals_by_id.keys())
-        joined = "|".join(ordered_ids)
+        ordered_keys = sorted(signals_by_activation_key.keys())
+        joined = "|".join(ordered_keys)
         digest = hashlib.sha256(joined.encode("utf-8")).hexdigest()[:12]
         self.version = digest
         self.package_hash = digest
-        self._signals_by_id = {sid: signals_by_id[sid] for sid in ordered_ids}
+        self._signals_by_activation_key = {
+            key: signals_by_activation_key[key] for key in ordered_keys
+        }
 
     def get_all_signals(self) -> List[Dict[str, Any]]:
-        return [dict(self._signals_by_id[sid]) for sid in sorted(self._signals_by_id.keys())]
+        return [
+            dict(self._signals_by_activation_key[key])
+            for key in sorted(self._signals_by_activation_key.keys())
+        ]
 
 
 class SignalEvaluator:
@@ -448,6 +460,9 @@ class SignalEvaluator:
 
             result = SignalResult(
                 signal_id=str(signal.get("signal_id", "")).strip(),
+                activation_key=str(signal.get("activation_key", "")).strip(),
+                source_spec_id=str(signal.get("source_spec_id", "")).strip(),
+                package_id=str(signal.get("package_id", "")).strip(),
                 system=str(signal.get("system", "")).strip(),
                 signal_state=signal_state,
                 signal_value=primary_value,
@@ -465,5 +480,5 @@ class SignalEvaluator:
             )
             results.append(result)
 
-        results.sort(key=lambda r: r.signal_id)
+        results.sort(key=lambda r: (r.signal_id, r.activation_key))
         return results

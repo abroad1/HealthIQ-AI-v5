@@ -1,10 +1,10 @@
 {
-  "branch": "work/ARCH-RT-1-contracts-and-compile-foundation",
+  "branch": "work/ARCH-RT-2-identity-runtime-pilot",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-28T22:27:14Z",
-  "cursor_started_utc": "2026-05-28T22:23:11Z",
-  "head_sha": "f13df66a59e172f6cda4598403680309247a0c62",
+  "cursor_completed_utc": "2026-05-29T11:20:56Z",
+  "cursor_started_utc": "2026-05-29T11:09:50Z",
+  "head_sha": "d1adcc5affdbbb65bfebace9e0026946de423943",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "ARCH-RT-1_contracts_and_compile_foundation"
+  "work_id": "ARCH-RT-2_identity_runtime_pilot"
 }

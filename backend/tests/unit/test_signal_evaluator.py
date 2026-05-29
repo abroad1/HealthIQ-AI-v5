@@ -81,16 +81,73 @@ def test_signal_registry_is_deterministic_across_instances():
     assert a.package_hash == b.package_hash
 
 
-def test_signal_registry_duplicate_signal_ids_resolve_deterministically(monkeypatch, tmp_path):
-    p1 = tmp_path / "a.yaml"
-    p2 = tmp_path / "b.yaml"
+def test_signal_registry_alt_high_multi_frame_pilot():
+    """ARCH-RT-2: ALT high frames must not silently collapse to one lexicographic winner."""
+    registry = SignalRegistry()
+    alt_frames = [row for row in registry.get_all_signals() if row["signal_id"] == "signal_alt_high"]
+    assert len(alt_frames) == 4
+    activation_keys = {row["activation_key"] for row in alt_frames}
+    assert len(activation_keys) == 4
+    assert "signal_alt_high::inv_alt_high_hepatocellular_injury" in activation_keys
+    assert "signal_alt_high::inv_alt_high_hepatocellular_injury_pattern" in activation_keys
+    assert "signal_alt_high::inv_alt_high_metabolic_steatotic_liver_pattern" in activation_keys
+    assert "signal_alt_high::inv_alt_high_muscle_source_or_exertional_pattern" in activation_keys
+
+
+def test_signal_registry_multi_frame_preserves_distinct_signal_ids(monkeypatch, tmp_path):
+    pkg_a = tmp_path / "pkg_frame_a"
+    pkg_b = tmp_path / "pkg_frame_b"
+    pkg_a.mkdir()
+    pkg_b.mkdir()
+    p1 = pkg_a / "signal_library.yaml"
+    p2 = pkg_b / "signal_library.yaml"
     _write_signal_library(p1, signal_id="dup_signal")
     _write_signal_library(p2, signal_id="dup_signal", primary_metric="insulin")
-    monkeypatch.setattr(SignalRegistry, "_iter_signal_library_paths", lambda self: [p1, p2])
+    (pkg_a / "package_manifest.yaml").write_text(
+        "package_id: pkg_frame_a\nsource_document: knowledge_bus/research/investigation_specs/inv_frame_a_v1.yaml\n",
+        encoding="utf-8",
+    )
+    (pkg_b / "package_manifest.yaml").write_text(
+        "package_id: pkg_frame_b\nsource_document: knowledge_bus/research/investigation_specs/inv_frame_b_v1.yaml\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        SignalRegistry,
+        "_iter_signal_library_paths",
+        lambda self: sorted([p1, p2]),
+    )
 
     registry = SignalRegistry()
-    loaded = {row["signal_id"]: row for row in registry.get_all_signals()}
-    assert loaded["dup_signal"]["primary_metric"] == "insulin"
+    loaded = [row for row in registry.get_all_signals() if row["signal_id"] == "dup_signal"]
+    assert len(loaded) == 2
+    metrics = {row["primary_metric"] for row in loaded}
+    assert metrics == {"glucose", "insulin"}
+    keys = {row["activation_key"] for row in loaded}
+    assert len(keys) == 2
+
+
+def test_signal_registry_duplicate_activation_key_fails_closed(monkeypatch, tmp_path):
+    pkg_a = tmp_path / "pkg_dup_a"
+    pkg_b = tmp_path / "pkg_dup_b"
+    pkg_a.mkdir()
+    pkg_b.mkdir()
+    p1 = pkg_a / "signal_library.yaml"
+    p2 = pkg_b / "signal_library.yaml"
+    _write_signal_library(p1, signal_id="dup_signal")
+    _write_signal_library(p2, signal_id="dup_signal")
+    same_source = "knowledge_bus/research/investigation_specs/inv_same_frame_v1.yaml"
+    (pkg_a / "package_manifest.yaml").write_text(
+        f"package_id: pkg_dup_a\nsource_document: {same_source}\n",
+        encoding="utf-8",
+    )
+    (pkg_b / "package_manifest.yaml").write_text(
+        f"package_id: pkg_dup_b\nsource_document: {same_source}\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(SignalRegistry, "_iter_signal_library_paths", lambda self: sorted([p1, p2]))
+
+    with pytest.raises(ValueError, match="Duplicate activation_key"):
+        SignalRegistry()
 
 
 class _StubRegistry:
@@ -102,6 +159,9 @@ class _StubRegistry:
         return [
             {
                 "signal_id": "signal_alpha",
+                "activation_key": "signal_alpha::inv_alpha",
+                "source_spec_id": "inv_alpha",
+                "package_id": "pkg_alpha",
                 "system": "metabolic",
                 "primary_metric": "tyg_index",
                 "supporting_metrics": ["insulin", "glucose"],
@@ -680,11 +740,23 @@ def test_no_threshold_match_omits_signal():
 
 
 def test_duplicate_loading_keeps_deterministic_override_behavior(monkeypatch, tmp_path):
-    p1 = tmp_path / "a.yaml"
-    p2 = tmp_path / "b.yaml"
+    pkg_a = tmp_path / "pkg_override_a"
+    pkg_b = tmp_path / "pkg_override_b"
+    pkg_a.mkdir()
+    pkg_b.mkdir()
+    p1 = pkg_a / "signal_library.yaml"
+    p2 = pkg_b / "signal_library.yaml"
     _write_signal_library(p1, signal_id="dup_signal", primary_metric="glucose", override_threshold=200.0)
     _write_signal_library(p2, signal_id="dup_signal", primary_metric="glucose", override_threshold=100.0)
-    monkeypatch.setattr(SignalRegistry, "_iter_signal_library_paths", lambda self: [p1, p2])
+    (pkg_a / "package_manifest.yaml").write_text(
+        "package_id: pkg_override_a\nsource_document: knowledge_bus/research/investigation_specs/inv_override_a_v1.yaml\n",
+        encoding="utf-8",
+    )
+    (pkg_b / "package_manifest.yaml").write_text(
+        "package_id: pkg_override_b\nsource_document: knowledge_bus/research/investigation_specs/inv_override_b_v1.yaml\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(SignalRegistry, "_iter_signal_library_paths", lambda self: sorted([p1, p2]))
 
     registry_a = SignalRegistry()
     registry_b = SignalRegistry()
@@ -701,8 +773,10 @@ def test_duplicate_loading_keeps_deterministic_override_behavior(monkeypatch, tm
         signal_derived={},
         lab_ranges={"glucose": {"min": 70.0, "max": 99.0}},
     )
-    assert len(out_a) == len(out_b) == 1
+    assert len(out_a) == len(out_b) == 2
     assert out_a[0].signal_state == out_b[0].signal_state == "at_risk"
+    assert {r.activation_key for r in out_a} == {r.activation_key for r in out_b}
+    assert len({r.activation_key for r in out_a}) == 2
 
 
 def test_lab_normal_but_flagged_recomputed_after_override_paths():
@@ -1586,10 +1660,13 @@ _KB_S24_SIGNAL_CASES = {
 
 def _load_signal_definition(signal_id: str) -> dict:
     registry = SignalRegistry()
-    for signal in registry.get_all_signals():
-        if signal.get("signal_id") == signal_id:
-            return dict(signal)
-    raise AssertionError(f"Signal not found in registry: {signal_id}")
+    matches = [dict(signal) for signal in registry.get_all_signals() if signal.get("signal_id") == signal_id]
+    if not matches:
+        raise AssertionError(f"Signal not found in registry: {signal_id}")
+    s24_matches = [row for row in matches if str(row.get("package_id", "")).startswith("pkg_s24_")]
+    if s24_matches:
+        return s24_matches[0]
+    return matches[0]
 
 
 def _single_signal_evaluator(signal_id: str) -> SignalEvaluator:

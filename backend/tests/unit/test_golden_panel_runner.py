@@ -679,6 +679,9 @@ def test_golden_panel_signal_results_carry_explanation_metadata(tmp_path, monkey
         return [
             SignalResult(
                 signal_id="signal_homocysteine_elevation_context",
+                activation_key="signal_homocysteine_elevation_context::inv_homocysteine_elevation_context",
+                source_spec_id="inv_homocysteine_elevation_context",
+                package_id="pkg_homocysteine_elevation_context",
                 system="vascular",
                 signal_state="suboptimal",
                 signal_value=12.4,
