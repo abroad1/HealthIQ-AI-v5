@@ -5,6 +5,7 @@ Orchestrator.run() must reject input without unit normalisation.
 """
 
 import pytest
+from types import SimpleNamespace
 from uuid import UUID
 from unittest.mock import patch
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
@@ -133,11 +134,17 @@ class TestOrchestratorUnitNormalisationInvariant:
             "overall_score": 0.0,
             "health_system_scores": {},
         }
-        orchestrator.create_analysis_context = lambda *args, **kwargs: object()
+        orchestrator.create_analysis_context = lambda *args, **kwargs: SimpleNamespace(
+            user=SimpleNamespace(age=35, gender="male", lifestyle_factors={}),
+            analysis_id="test-analysis",
+        )
         orchestrator.cluster_biomarkers = lambda *args, **kwargs: {"clusters": []}
         orchestrator.signal_evaluator.evaluate_all = lambda *args, **kwargs: [
             SignalResult(
                 signal_id="signal_alpha",
+                activation_key="signal_alpha::inv_alpha",
+                source_spec_id="inv_alpha",
+                package_id="pkg_alpha",
                 system="metabolic",
                 signal_state="suboptimal",
                 signal_value=8.9,
@@ -161,12 +168,17 @@ class TestOrchestratorUnitNormalisationInvariant:
         assert captured["signal_results"] == [
             {
                 "signal_id": "signal_alpha",
+                "activation_key": "signal_alpha::inv_alpha",
+                "source_spec_id": "inv_alpha",
+                "package_id": "pkg_alpha",
                 "system": "metabolic",
                 "signal_state": "suboptimal",
                 "signal_value": 8.9,
                 "confidence": None,
+                "confidence_reasons": None,
                 "primary_metric": "tyg_index",
                 "lab_normal_but_flagged": False,
                 "supporting_markers": ["insulin"],
+                "explanation": None,
             }
         ]

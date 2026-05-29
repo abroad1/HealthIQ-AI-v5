@@ -9,6 +9,9 @@ from pydantic import BaseModel, Field
 
 class SignalResult(BaseModel):
     signal_id: str
+    activation_key: str
+    source_spec_id: str
+    package_id: str
     system: str
     signal_state: str
     signal_value: float
