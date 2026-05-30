@@ -1091,6 +1091,13 @@ These items must be resolved before the day-one architecture can be declared ful
 6. Hypothesis runtime promotion remains unresolved and belongs to ARCH-RT-5C.
 7. PSI runtime consumption remains deferred unless mandated.
 
+### From ARCH-RT-5C - Hypothesis Runtime Promotion
+
+1. source_spec_provenance: source_document_derived remains pilot-only, not canonical explicit provenance.
+2. compile_manifest_ref hashes remain pending_inventory_refresh and must be refreshed before final estate lock.
+3. Full root-cause estate migration remains deferred; 40 legacy YAML signals remain on the legacy path.
+4. Multi-frame root-cause compiler policy remains unresolved; no multi-frame promotion is allowed until explicitly governed.
+
 ## 6. Final note
 
 This is the fewest sensible sprint sequence currently recommended.
