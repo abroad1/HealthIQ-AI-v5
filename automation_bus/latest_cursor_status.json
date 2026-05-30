@@ -1,9 +1,10 @@
 {
   "branch": "work/LAUNCH-CORE-5-results-page-narrative-hierarchy-and-score-rationalisation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-30T17:21:31Z",
   "cursor_started_utc": "2026-05-30T17:18:53Z",
-  "head_sha": "674d9f919c68035ee6b651e81fa43066cc40e87c",
+  "head_sha": "3d556bb93e9f822cb3069f582da573886c08847d",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation"
 }
