@@ -1,124 +1,114 @@
 {
-  "work_id": "ARCH-RT-5B_card_evidence_estate_and_required_provenance",
+  "work_id": "ARCH-RT-5C_hypothesis_runtime_promotion",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-30T00:00:00Z",
+  "hardened_utc": "2026-05-30T12:00:00Z",
   "hardened_by": "Claude Code (Stage 2 / SOP v1.3.1)",
   "changes": [
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-5B_card_evidence_estate_and_required_provenance, branch=work/ARCH-RT-5B-card-evidence-estate-and-required-provenance, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-5C_hypothesis_runtime_promotion, branch=work/ARCH-RT-5C-hypothesis-runtime-promotion, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
     },
     {
       "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "backend/core/knowledge/health_system_card_evidence.py:26 — PILOT_COMPILED_SUBSYSTEM_IDS controls assembler routing. backend/core/analytics/wave1_subsystem_evidence.py:158 — checks PILOT_COMPILED_SUBSYSTEM_IDS at runtime to route each subsystem to compiled or legacy path. Both files are in the Intelligence Core adjacent loader/assembler surface. Expanding PILOT_COMPILED_SUBSYSTEM_IDS directly changes which subsystems emit compiled vs. hard-coded SubsystemEvidenceV1 output. HIGH is mandatory."
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py:403 — compile_root_cause_v1() is the Intelligence Core output assembly function. backend/core/knowledge/compiled_hypothesis.py:247 — runtime_summary_for_hypothesis() governs the presentation-layer wording emitted from compiled hypotheses. Both files are within the Intelligence Core (SOP §3: analytical pipeline logic, output assembly mechanisms). HIGH is mandatory per SOP §10."
     },
     {
       "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED. Sprint adds governed content (compiled YAML card artefacts, compile manifests, audit docs) AND behaviour changes (PILOT_COMPILED_SUBSYSTEM_IDS expansion changes assembler routing, emitted SubsystemEvidenceV1 structure changes for promoted subsystems). MIXED governed under BEHAVIOUR controls per SOP §4."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED. Sprint adds governed content (compiled hypothesis schema enforcement, audit artefacts, runtime promotion report) AND behavioural changes (runtime_summary_for_hypothesis() hardened from fail-open to fail-closed; compile_root_cause_v1() gains pilot-gated compiled routing for signal_vitamin_d_low). Compiled hypothesis content is consumed by the wired compiler path. MIXED governed under BEHAVIOUR controls per SOP §4."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct for HIGH/MIXED sprint with mandatory internal checkpoint (artefact validation + classification plan) before backend/DTO/frontend wiring at lines 214-227."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: mandatory internal checkpoint (15-point authority preflight + 8-point promotion checkpoint at lines 199-210) must complete before runtime compiler wiring. Kernel start enforces the boundary between preflight and implementation."
     },
     {
       "check": "2a_all_authoritative_inputs_exist",
       "result": "CONFIRMED",
-      "citation": "All 17 required authority files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md (modified in working tree); docs/architecture/ADR-RT-001 through ADR-RT-004 (all confirmed); docs/architecture/card_evidence_role_translation_policy.md; docs/architecture/card_visibility_tier_policy.md; docs/architecture/ARCH-RT-3_card_evidence_vertical_slice_report.md; docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md; docs/audit-papers/ARCH-RT-5_M2_card_evidence_estate_audit.md; docs/audit-papers/day_one_architecture_launch_readiness_audit.md; docs/audit-papers/research_to_runtime_traceability_audit.md; docs/audit-papers/active_intelligence_authority_manifest.md; docs/architecture/ARCH-RT-5_full_regeneration_and_launch_gate_report.md; docs/architecture/ARCH-RT-5_split_recommendation.md; knowledge_bus/schema/health_system_card_evidence_schema_v1.yaml; knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml; knowledge_bus/compiled/estate_index_v1.yaml; docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — all present."
+      "citation": "All 16 required authority files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md ✓; docs/architecture/ADR-RT-001 through ADR-RT-004 (all four) ✓; docs/architecture/compiled_hypothesis_contract.md ✓; docs/architecture/compiled_hypothesis_presentation_mapping.md ✓; docs/architecture/ARCH-RT-4_compiled_hypothesis_root_cause_slice_report.md ✓; docs/architecture/ARCH-RT-4_root_cause_divergence_report.md ✓; docs/audit-papers/ARCH-RT-5_M3_hypothesis_root_cause_estate_audit.md ✓; docs/audit-papers/day_one_architecture_launch_readiness_audit.md ✓; docs/audit-papers/active_intelligence_authority_manifest.md ✓; docs/architecture/ARCH-RT-5_full_regeneration_and_launch_gate_report.md ✓; docs/architecture/ARCH-RT-5_split_recommendation.md ✓; knowledge_bus/schema/compiled_hypothesis_schema_v1.yaml ✓; knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml ✓; knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml ✓; docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md ✓; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md ✓"
     },
     {
-      "check": "2a_ARCH-RT-5_on_main_confirmed",
+      "check": "2a_pilot_artefact_summary_template_present",
       "result": "CONFIRMED",
-      "citation": "git log: commit a6b0b4e 'chore(bus): ARCH-RT-5_full_regeneration_and_launch_gate kernel COMPLETE status' is on main. Implementation commit 832b266 present. Estate index knowledge_bus/compiled/estate_index_v1.yaml confirmed present and readable. ARCH-RT-5 M2 audit, split recommendation, active authority manifest all confirmed present."
+      "citation": "knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml:16-18 — summary_template field is present and populated: '25-hydroxyvitamin D is low relative to the lab reference on this panel, consistent with a nutritional sufficiency context worth clarifying on follow-up testing.' Non-empty. Promotion checkpoint item 3 (summary_template must exist) is pre-satisfied by the existing artefact."
     },
     {
-      "check": "2a_PILOT_COMPILED_SUBSYSTEM_IDS_gating_mechanism_confirmed",
-      "result": "CONFIRMED — primary behaviour change target",
-      "citation": "backend/core/knowledge/health_system_card_evidence.py:25-26 — PILOT_SUBSYSTEM_ID = 'wave1_met_glycaemic_control'; PILOT_COMPILED_SUBSYSTEM_IDS: frozenset[str] = frozenset({PILOT_SUBSYSTEM_ID}). Line 264 — get_card_evidence_artefact() raises CardEvidenceValidationError if subsystem_id not in PILOT_COMPILED_SUBSYSTEM_IDS. backend/core/analytics/wave1_subsystem_evidence.py:14-17 imports PILOT_COMPILED_SUBSYSTEM_IDS; line 158 checks it. Expanding this frozenset is the primary behaviour change for promoted subsystems. Checkpoint must complete before this expansion."
+      "check": "2a_compile_manifest_resolves",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml:14 — output_path: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml — file confirmed present. activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency matches artefact activation_key at signal_vitamin_d_low.yaml:5. Manifest resolves; compile_manifest_ref round-trips correctly."
     },
     {
-      "check": "2a_bilirubin_protection_double_enforced_confirmed",
-      "result": "CONFIRMED — dual enforcement active",
-      "citation": "Layer 1: backend/core/knowledge/health_system_card_evidence.py:55 — _FORBIDDEN_MARKER_IDS = frozenset({'total_bilirubin'}). Validator at line 155-159 rejects total_bilirubin at artefact load time with explicit WAVE1-EQUIV1 citation in error message. Layer 2: backend/core/analytics/wave1_subsystem_evidence.py:79-83 — _WAVE1_LIV_PROCESSING uses expected_marker_ids=('alp', 'albumin', 'bilirubin') — NOT total_bilirubin. The compiled artefact for wave1_liv_processing_context MUST use marker_id: bilirubin, not total_bilirubin."
+      "check": "2a_vitamin_d_is_single_frame",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml:11-39 — hypotheses list has exactly one entry (hypothesis_id: vitamin_d_nutritional_status_context_v1). One activation_key. No multi-frame selection required. ADR-RT-002 MULTI_FRAME_PER_DIRECTION constraint does not block this pilot. Safe to promote without frame-selection policy."
     },
     {
-      "check": "2a_per_marker_provenance_map_confirmed",
-      "result": "CONFIRMED — gaps identified and classified",
-      "citation": "CONFIRMED investigation specs for: ldl_cholesterol via inv_ldl_high_dyslipidaemia_v1.yaml (pkg_s24_ldl_high_dyslipidaemia:source_document confirmed); hdl_cholesterol via inv_hdl_high_cardiovascular.yaml + inv_hdl_low_cardiovascular.yaml (pkg_s24_hdl_high/low_cardiovascular:source_document confirmed); triglycerides via inv_triglycerides_high_metabolic_v1.yaml (pkg_s24_triglycerides_high_metabolic:source_document confirmed); homocysteine via inv_homocysteine_high_metabolic.yaml (file present; pkg_homocysteine_elevation_context:source_document points to architecture doc not spec — provenance inferred); crp via inv_crp_high_inflammation_v1.yaml (pkg_s24_crp_high_inflammation:source_document confirmed); alt via inv_alt_high_hepatocellular_injury_v1.yaml (pkg_s24_alt_high_hepatocellular_injury:source_document confirmed); ggt via inv_ggt_high_hepatic.yaml (pkg_s24_ggt_high_hepatic:source_document confirmed); alp via inv_alp_high_bone_biliary.yaml (pkg_s24_alp_high_bone_biliary:source_document confirmed); albumin via inv_albumin_low_nutritional.yaml (pkg_s24_albumin_low_nutritional:source_document confirmed). GAPS — no investigation spec for: total_cholesterol, tc_hdl_ratio, insulin, ast, bilirubin. These markers must use inferred_from_package_manifest provenance."
+      "check": "2a_physiological_claim_blocked_by_presentation_mapping",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/compiled_hypothesis_presentation_mapping.md:10-11 — mapping table: physiological_claim → '(not mapped directly)'. summary_template → RootCauseHypothesisV1.summary as PRIMARY runtime wording. Presentation mapping is LOCKED for ARCH-RT-5 pilot (line 2). physiological_claim must not appear as emitted runtime summary text."
     },
     {
-      "check": "2a_pkg_lipid_transport_provenance_gap_confirmed",
-      "result": "CONFIRMED — must not be used as provenance",
-      "citation": "knowledge_bus/packages/pkg_lipid_transport/package_manifest.yaml — package_id: pkg_lipid_transport, NO source_document field present. Classified provenance_gap in ARCH-RT-5 M1 audit. For wave1_cv_lipid_transport card artefact, provenance must reference pkg_s24_ldl_high_dyslipidaemia (inv_ldl_high_dyslipidaemia_v1.yaml), pkg_s24_hdl_high_cardiovascular (inv_hdl_high_cardiovascular.yaml), pkg_s24_hdl_low_cardiovascular (inv_hdl_low_cardiovascular.yaml), pkg_s24_triglycerides_high_metabolic (inv_triglycerides_high_metabolic_v1.yaml). Do NOT reference pkg_lipid_transport as a provenance source."
+      "check": "2a_cross_load_fail_closed_confirmed",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/compiled_hypothesis_contract.md:23-26 — legacy loader rejects semver 1.0.0; compiled loader rejects v1 string. backend/core/knowledge/compiled_hypothesis.py:78-79 — validator asserts schema_version == '1.0.0' (SCHEMA_VERSION constant). backend/tests/unit/test_compiled_hypothesis_arch_rt4.py:45-55 — test_loader_fail_closed_invalid_artefact confirms cross-rejection for both directions. Contract preserved."
     },
     {
-      "check": "2a_estate_index_update_required",
-      "result": "CONFIRMED — must be updated",
-      "citation": "knowledge_bus/compiled/estate_index_v1.yaml:20-28 — all six unresolved subsystems listed under wave1_subsystems_legacy_hard_coded. As subsystems are promoted to compiled evidence, they must be moved from wave1_subsystems_legacy_hard_coded to card_evidence_artefacts. Any subsystem remaining legacy must stay in the list with updated launch_classification. The estate index is the authoritative ledger; it must reflect the actual estate state after the sprint."
-    },
-    {
-      "check": "2a_existing_card_evidence_loader_compatibility",
-      "result": "CONFIRMED — additive expansion only required",
-      "citation": "backend/core/knowledge/health_system_card_evidence.py:244-267 — load_card_evidence_artefact() loads by filename convention knowledge_bus/compiled/health_system_cards/{subsystem_id}.yaml. get_card_evidence_artefact() enforces PILOT_COMPILED_SUBSYSTEM_IDS membership guard. assemble_subsystem_from_compiled_card_evidence() at line 301 is already generic — works for any subsystem_id, not pilot-specific. To extend to new subsystems: (1) create YAML artefacts, (2) expand PILOT_COMPILED_SUBSYSTEM_IDS, (3) add to estate index. No structural loader changes required. PILOT_SUBSYSTEM_ID constant (line 25) is used only in the PILOT_COMPILED_SUBSYSTEM_IDS initialisation and should remain or be generalised — either is safe."
-    },
-    {
-      "check": "2a_schema_draft_status_acceptable",
-      "result": "CONFIRMED — no schema lock required",
-      "citation": "knowledge_bus/schema/health_system_card_evidence_schema_v1.yaml:3 — status: 'DRAFT'. The prompt does not require schema status promotion. DRAFT status is acceptable for continued pilot manual compilation. Schema already defines all required field types, enums, and validation rules adequate for all six subsystems. No schema change required for this sprint."
+      "check": "2a_shadow_registry_separate_from_production_confirmed",
+      "result": "CONFIRMED",
+      "citation": "backend/core/knowledge/compiled_hypothesis_registry_v1.py:32-38 — COMPILED_HYPOTHESIS_PILOT_SPECS is a separate tuple, never added to ROOT_CAUSE_TARGET_SPECS. load_shadow_compiled_hypothesis() at line 48 returns None for non-pilot signal_ids. backend/core/knowledge/root_cause_registry_v1.py:28 — ROOT_CAUSE_TARGET_SPECS is the production registry; it does not import compiled_hypothesis_registry_v1. Separation is enforced."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:229-264 — scope items 1-10 define allowed surface: compiled artefact generation, manifests, estate index, schema extension only if backward-compatible, loader/assembler extension for multi-subsystem, legacy path preservation for retained subsystems, DTO/frontend only if required for existing design, audit and provenance reports, regression tests. Out-of-scope list (lines 340-359) prohibits root-cause, hypothesis, PSI, SignalRegistry, SignalEvaluator, full package backfill, investigation spec modification, SSOT, scoring, thresholds, helper scripts."
+      "citation": "automation_bus/latest_cursor_prompt.md:217-232 — scope items 1-10 define allowed surface: compiled hypothesis presentation mapping hardening, summary_template mandatory enforcement, runtime_summary_for_hypothesis() fail-closed, compiled hypothesis loader/helper functions, one pilot signal wired into root-cause runtime, legacy YAML fallback preserved, production registry not broadly replaced, shadow comparison / regression tests, direct cross-load / fail-closed boundary tests, runtime promotion report and audit evidence. Out-of-scope list (lines 289-311) prohibits full estate migration, multi-frame promotion, SignalRegistry, SignalEvaluator, PSI, card evidence, frontend, packages, investigation specs, SSOT, thresholds, scoring."
     },
     {
       "check": "2b_regression_targets_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:363-376 — 12 test categories: schema validation per artefact, manifest resolution per artefact, estate index covering all Wave 1 subsystems, loader success per promoted artefact, loader fail-closed, assembler test for compiled path, assembler test for retained legacy path, bilirubin regression, DTO serialisation if touched, frontend render-only if touched, source_trace not consumer-rendered, no marker role inference from name. Adequate coverage of all behaviour change surfaces."
+      "citation": "automation_bus/latest_cursor_prompt.md:314-328 — 12 required tests covering: artefact validation, manifest resolution, runtime promotion uses summary_template, missing summary_template fails closed, physiological_claim not emitted, legacy YAML loader still works, compiled loader rejects legacy YAML, legacy loader rejects compiled YAML, pilot root-cause runtime output matches expected, non-pilot pathways unchanged, multi-frame promotion blocked, no raw investigation spec runtime reads. Adequate."
     },
     {
       "check": "2b_determinism_risks_surfaced",
       "result": "CONFIRMED",
-      "citation": "Primary risk: PILOT_COMPILED_SUBSYSTEM_IDS expansion changes which subsystems emit SubsystemEvidenceV1 from compiled artefact vs. hard-coded path. For retained subsystems, hard-coded _Wave1SubsystemDef entries (wave1_subsystem_evidence.py:31-83) remain unchanged — their output is deterministic as before. For promoted subsystems, compiled artefact content becomes the deterministic authority. Internal checkpoint (draft artefact validation before expansion) is the determinism gate. No IntelligenceGraph, no scoring, no PSI, no root-cause involved."
+      "citation": "Risk 1: runtime_summary_for_hypothesis() hardening (compiled_hypothesis.py:247-254) changes fail-open to fail-closed. Currently this function is called in the SHADOW path (artefact_as_shadow_dict at line 273). After hardening, shadow path must not regress — vitamin D artefact has summary_template so no test breakage. Risk 2: compile_root_cause_v1() pilot-gated routing must be strictly gated on signal_id == PILOT_SIGNAL_ID (compiled_hypothesis.py:17). Any signal that is not in the pilot list must continue through legacy loader path unchanged. Risk 3: compiled hypothesis hypotheses have no evidence_for_rules / evidence_against_rules (investigation spec fields used by _compile_finding()); the runtime promotion must emit evidence_for/against from the pre-evaluated string lists in the artefact, not re-run rule evaluation. This requires a new compiler bridge function rather than passing compiled artefact through _compile_finding() as-is."
     },
     {
       "check": "2b_STOP_conditions_comprehensive",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:381-395 — 12 STOP conditions covering: missing authority files (#1), subsystem classification failure (#2), artefact validation failure (#3), manifest ref unresolvable (#4), provenance unclassifiable (#5), PSI required (#6), root-cause text required (#7), raw investigation spec runtime reads (#8), frontend medical inference (#9), bilirubin reintroduction (#10), scope creep into forbidden areas (#11), compiled/legacy separation unprovable (#12). Adequate."
+      "citation": "automation_bus/latest_cursor_prompt.md:333-346 — 12 STOP conditions covering: missing authority files (#1), pilot artefact fails validation (#2), compile manifest doesn't resolve (#3), summary_template missing and cannot be added from governed source (#4), runtime mapping would use physiological_claim (#5), silent fallback to physiological_claim (#6), requires broad compiler redesign (#7), requires multi-frame policy (#8), requires package/spec/PSI/card/frontend changes (#9), legacy YAML unavailable (#10), non-pilot stability unprovable (#11), scope expands to full estate migration (#12). Adequate."
     },
     {
-      "check": "HARDENING_FLAG_dirty_working_tree_pre_kernel_blocker",
-      "result": "CURSOR_MUST_ADDRESS_BEFORE_KERNEL_START",
-      "citation": "git status shows ' M automation_bus/latest_cursor_prompt.md' and ' M docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md' — both unstaged modified files. Prompt STOP condition: 'working tree is not clean' — STOP. Commit both files to main as activation commit ('chore(bus): activate ARCH-RT-5B work package') before running run_work_package.py start. Then verify working tree is clean before branching to work/ARCH-RT-5B-card-evidence-estate-and-required-provenance."
+      "check": "HARDENING_FLAG_runtime_summary_fail_open_must_be_hardened",
+      "result": "CURSOR_MUST_ADDRESS_BEFORE_RUNTIME_PROMOTION",
+      "citation": "backend/core/knowledge/compiled_hypothesis.py:247-254 — runtime_summary_for_hypothesis() currently returns row.physiological_claim.strip()[:200] when summary_template is absent (fail-OPEN). Carry-forward from ARCH-RT-5 GPT review (prompt lines 146-149) requires: 'runtime_summary_for_hypothesis() fail-safe must fail closed before any compiled hypothesis is promoted. If summary_template is missing, do not silently degrade to physiological_claim.' CURSOR MUST harden this function to raise CompiledHypothesisValidationError (or equivalent fail-closed exception) when summary_template is absent in the promoted runtime context — or refactor the promoted path to call a separate fail-closed function that never touches physiological_claim. The shadow path (artefact_as_shadow_dict) may continue to use a softer surface for comparison purposes. This hardening MUST precede any wiring of compile_root_cause_v1()."
     },
     {
-      "check": "HARDENING_FLAG_PILOT_COMPILED_SUBSYSTEM_IDS_expansion_is_behaviour_gate",
+      "check": "HARDENING_FLAG_schema_summary_template_not_required",
       "result": "CURSOR_MUST_ADDRESS",
-      "citation": "backend/core/knowledge/health_system_card_evidence.py:26 — PILOT_COMPILED_SUBSYSTEM_IDS is the sole routing gate. For every subsystem to be promoted to compiled evidence, its subsystem_id must be added to this frozenset. This change must happen AFTER the internal checkpoint confirms all promoted artefacts validate against schema. It must NOT happen before checkpoint. If any artefact fails validation, the corresponding subsystem_id must NOT be added to the set until the artefact is corrected."
+      "citation": "knowledge_bus/schema/compiled_hypothesis_schema_v1.yaml:83-88 — summary_template is listed in hypothesis_optional_fields, with no runtime_promotion enforcement rule. Prompt scope item 2 (lines 218-219) and schema requirements (lines 276-284) require: 'mark summary_template as required for runtime-promoted hypotheses, or introduce an explicit promotion_requirements / runtime_promotion rule.' CURSOR MUST update the schema to enforce summary_template for promoted artefacts (e.g., add a promotion_requirements block or move summary_template to hypothesis_required_fields with a note). The existing vitamin D artefact already has summary_template so this change is non-breaking for the current artefact."
     },
     {
-      "check": "HARDENING_FLAG_inferred_provenance_must_be_declared",
+      "check": "HARDENING_FLAG_compile_root_cause_has_no_compiled_routing",
       "result": "CURSOR_MUST_ADDRESS",
-      "citation": "No investigation spec exists for: total_cholesterol and tc_hdl_ratio (wave1_cv_lipid_transport); insulin (wave1_met_insulin_metabolic); ast (wave1_liv_enzyme_pattern); bilirubin (wave1_liv_processing_context). For each compiled card artefact that includes these markers: (1) source_spec_ids must NOT claim explicit provenance for these markers, (2) provenance.source_spec_provenance must be set to 'inferred_from_package_manifest', (3) provenance.notes must explicitly state which markers have inferred vs. spec-backed provenance. Do not treat inferred provenance as explicit. Prompt requirement confirmed at lines 286-299."
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py:423-438 — compile_root_cause_v1() iterates _ROOT_CAUSE_TARGETS (legacy YAML loaders only) and calls _compile_finding() for each. There is no compiled hypothesis routing. CURSOR MUST add pilot-gated routing: before or after the legacy loop, detect if target_signal_id is in COMPILED_HYPOTHESIS_PILOT_SPECS (via is_compiled_hypothesis_pilot_signal()), and if so, route to a new compiled bridge function rather than _compile_finding(). The bridge must: (a) load the artefact via get_compiled_hypothesis_artefact(), (b) call the hardened runtime_summary_for_hypothesis() (or equivalent), (c) map artefact hypothesis fields to RootCauseFindingV1/RootCauseHypothesisV1 using the presentation mapping policy (compiled_hypothesis_presentation_mapping.md:8-16), (d) NOT call _compile_finding() which expects legacy evidence_for_rules / evidence_against_rules dict format. Non-pilot signals must continue through the legacy _compile_finding() path unchanged."
     },
     {
-      "check": "HARDENING_FLAG_pkg_lipid_transport_must_not_be_provenance_source",
+      "check": "HARDENING_FLAG_compile_finding_evidence_format_incompatibility",
       "result": "CURSOR_MUST_ADDRESS",
-      "citation": "knowledge_bus/packages/pkg_lipid_transport/package_manifest.yaml — NO source_document field, classified provenance_gap in M1 audit. Must NOT appear in package_refs or be used as source authority for wave1_cv_lipid_transport card artefact. Valid provenance sources for that artefact are: pkg_s24_ldl_high_dyslipidaemia (source: inv_ldl_high_dyslipidaemia_v1.yaml), pkg_s24_hdl_high_cardiovascular (source: inv_hdl_high_cardiovascular.yaml), pkg_s24_hdl_low_cardiovascular (source: inv_hdl_low_cardiovascular.yaml), pkg_s24_triglycerides_high_metabolic (source: inv_triglycerides_high_metabolic_v1.yaml). total_cholesterol and tc_hdl_ratio have no backing spec — declare them as inferred."
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py:234-252 — _compile_finding() consumes evidence_for_rules (list of rule dicts with direction/markers_any/markers_all/signals_any keys) and evaluates them via _evaluate_rule(). backend/core/knowledge/compiled_hypothesis.py:CompiledHypothesisRow — evidence_for and evidence_against are Tuple[str, ...] (pre-evaluated string items, not rule dicts). Passing a compiled artefact through _compile_finding() would produce empty evidence lists. The compiled runtime bridge must map CompiledHypothesisRow.evidence_for strings directly to RootCauseEvidenceItemV1(item=..., marker_refs=[]) — pre-evaluated, no rule re-evaluation. This is an architectural incompatibility that requires a separate bridge function, not a workaround inside _compile_finding()."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:340-359 — non-goals explicitly prohibit: hypothesis/root-cause runtime promotion or modification, SignalRegistry modification, SignalEvaluator modification, PSI runtime wiring, full 186-package provenance backfill, investigation spec modification, package file modification (unless hardening explicitly approves narrow manifest-only change), biomarker SSOT modification, scoring rails, clinical thresholds, unit conversion, fallback parsers, consumer-visible source trace, helper scripts."
+      "citation": "automation_bus/latest_cursor_prompt.md:289-311 — out-of-scope prohibits: full estate migration, legacy YAML deletion, multi-frame promotion, SignalRegistry, SignalEvaluator, PSI artefacts, card evidence artefacts/loader, frontend, package files, investigation specs, biomarker SSOT, clinical thresholds, scoring rails, unit conversion, physiological_claim as retail summary, fallback parsers, helper scripts. Non-negotiable."
     },
     {
       "check": "no_duplicate_authority_source",
       "result": "CONFIRMED",
-      "citation": "Each compiled card artefact covers one subsystem only (artefact requirement, prompt line 271). PILOT_COMPILED_SUBSYSTEM_IDS frozenset ensures one compiled path per subsystem_id — no duplicate routing. Legacy hard-coded path at wave1_subsystem_evidence.py:168-185 only runs for subsystems NOT in the compiled set — no dual-authority conflict. Estate index is the authoritative ledger of which path each subsystem uses."
+      "citation": "backend/core/knowledge/root_cause_registry_v1.py:28 — ROOT_CAUSE_TARGET_SPECS is the sole production registry. backend/core/knowledge/compiled_hypothesis_registry_v1.py:33 — COMPILED_HYPOTHESIS_PILOT_SPECS is the separate pilot set. Prompt scope item 7 (line 226) requires: 'Ensure production registry is not broadly replaced.' The pilot-gated routing in compile_root_cause_v1() must query compiled_hypothesis_registry_v1 only for the pilot signal; it must not merge or replace ROOT_CAUSE_TARGET_SPECS."
     }
   ]
 }

@@ -1,30 +1,28 @@
 ---
-work_id: ARCH-RT-5B_card_evidence_estate_and_required_provenance
-branch: work/ARCH-RT-5B-card-evidence-estate-and-required-provenance
+work_id: ARCH-RT-5C_hypothesis_runtime_promotion
+branch: work/ARCH-RT-5C-hypothesis-runtime-promotion
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# ARCH-RT-5B — Card Evidence Estate and Required Provenance
+# ARCH-RT-5C — Hypothesis Runtime Promotion
 
 ## Purpose
 
-Extend the successful ARCH-RT-3 card evidence vertical slice across the remaining Wave 1 Health Systems Card subsystems, or explicitly classify any subsystem that cannot safely move to compiled card evidence yet.
+Promote the compiled hypothesis architecture from shadow-only pilot into a governed runtime path for one carefully selected root-cause pathway, while preserving legacy YAML fallback and proving presentation-safe summary behaviour.
 
-This sprint must resolve the card-evidence estate position for Wave 1:
+This sprint must resolve the key ARCH-RT-4 / ARCH-RT-5 carry-forward:
 
 ```text
-compiled card evidence artefacts
-→ governed backend loader
-→ DTO v2 / schema-versioned DTO
-→ frontend render-only display
-→ launch classification for every Wave 1 subsystem
+compiled hypothesis artefact
+→ compiled hypothesis loader
+→ governed presentation mapping
+→ root-cause runtime output
+→ shadow comparison / regression evidence
 ````
 
-This sprint also includes the minimum package/source provenance work required to support the Wave 1 card evidence estate.
-
-It must not attempt full 186-package provenance backfill unless required for Wave 1 card evidence.
+This sprint must not migrate the full root-cause estate.
 
 ## Baseline requirement
 
@@ -40,6 +38,7 @@ ARCH-RT-2_identity_runtime_pilot — merged
 ARCH-RT-3_card_evidence_vertical_slice — merged
 ARCH-RT-4_compiled_hypothesis_root_cause_slice — merged
 ARCH-RT-5_full_regeneration_and_launch_gate — merged
+ARCH-RT-5B_card_evidence_estate_and_required_provenance — merged
 ```
 
 Before creating or switching to the sprint branch, run and report:
@@ -57,7 +56,7 @@ STOP if:
 * current branch is not `main`
 * local `main` does not equal `origin/main`
 * working tree is not clean
-* ARCH-RT-5 is not merged
+* ARCH-RT-5B is not merged
 * untracked or uncommitted files are present
 
 ## Governance classification
@@ -70,7 +69,7 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This sprint may touch compiled Knowledge Bus artefacts, schema/validator surfaces, Health Systems Card backend loader/assembler paths, DTOs, frontend render-only card components, tests and audit artefacts. It may touch `backend/core/analytics/`, which is an unconditional HIGH-risk path.
+This sprint may touch root-cause compiler/runtime WHY output, compiled hypothesis loaders, contracts, DTO-adjacent output, tests and audit artefacts. It affects user-facing interpretation and is therefore HIGH risk.
 
 HIGH-risk controls apply:
 
@@ -90,19 +89,18 @@ docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md
 docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md
 docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md
-docs/architecture/card_evidence_role_translation_policy.md
-docs/architecture/card_visibility_tier_policy.md
-docs/architecture/ARCH-RT-3_card_evidence_vertical_slice_report.md
-docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md
-docs/audit-papers/ARCH-RT-5_M2_card_evidence_estate_audit.md
+docs/architecture/compiled_hypothesis_contract.md
+docs/architecture/compiled_hypothesis_presentation_mapping.md
+docs/architecture/ARCH-RT-4_compiled_hypothesis_root_cause_slice_report.md
+docs/architecture/ARCH-RT-4_root_cause_divergence_report.md
+docs/audit-papers/ARCH-RT-5_M3_hypothesis_root_cause_estate_audit.md
 docs/audit-papers/day_one_architecture_launch_readiness_audit.md
-docs/audit-papers/research_to_runtime_traceability_audit.md
 docs/audit-papers/active_intelligence_authority_manifest.md
 docs/architecture/ARCH-RT-5_full_regeneration_and_launch_gate_report.md
 docs/architecture/ARCH-RT-5_split_recommendation.md
-knowledge_bus/schema/health_system_card_evidence_schema_v1.yaml
-knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml
-knowledge_bus/compiled/estate_index_v1.yaml
+knowledge_bus/schema/compiled_hypothesis_schema_v1.yaml
+knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml
+knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
 ```
@@ -116,310 +114,274 @@ If the updated sprint plan has a different path, locate it and report the path b
 The following are binding:
 
 ```text
-Health Systems Card evidence is separate from hypothesis/root-cause artefacts.
-PSI remains signal-layer semantics only and must not be used directly as card evidence authority.
-Frontend must render backend-provided card evidence only.
-Frontend must not infer clinical role from marker name or marker id.
-Raw internal source_trace strings must not be displayed directly to consumers.
-compile_id is canonical.
-compile_run_id is transitional only.
-If both compile_id and compile_run_id are present, they must be equal.
-activation_key is required for runtime activation identity.
+ADR-008 is accepted.
+PSI remains signal-layer semantics only.
+Hypothesis graphs must not be placed into PSI.
+ADR-RT-002 selected MULTI_FRAME_PER_DIRECTION.
+activation_key is required.
 signal_id remains signal-family identity.
+Root-cause compiler is not fully multi-frame aware.
 ```
 
-Carry-forward from WAVE1-EQUIV1:
+Carry-forward from ARCH-RT-4 / ARCH-RT-5:
 
 ```text
-The bilirubin / total_bilirubin false-missing fix must be preserved.
-No compiled card evidence artefact may reintroduce total_bilirubin as an independent required missing marker where bilirubin is canonical.
+Compiled hypotheses are currently shadow-only.
+compile_root_cause_v1() has not yet been wired to consume compiled hypothesis artefacts.
+ARCH-RT-5C must decide when and how compiled hypotheses begin influencing runtime RootCauseV1 output.
+physiological_claim must not be treated as direct retail/runtime summary text.
+summary_template remains the presentation/runtime wording field unless superseded by explicit mapping policy.
+Before runtime promotion, compiled hypothesis → RootCauseHypothesisV1 presentation mapping must be enforced.
+The compiled hypothesis artefact must carry a presentation-safe summary_template or emit a root-cause-compatible view that preserves runtime summary semantics.
+Root-cause compiler remains not fully multi-frame aware.
+Multi-frame root-cause selection must be explicitly governed before any multi-frame hypothesis path is promoted.
+Strong direct cross-load / fail-closed boundary tests should be added if legacy and compiled loaders remain side-by-side.
+compile_manifest_ref must resolve to a real manifest file or governed estate index entry for promoted artefacts.
+source_spec_provenance: source_document_derived is acceptable for pilot only and is not canonical explicit provenance.
 ```
 
-Carry-forward from ARCH-RT-3:
+Carry-forward from ARCH-RT-5 GPT review:
 
 ```text
-wave1_met_glycaemic_control is already on the compiled card evidence path.
-The compiled card evidence loader and DTO v2 path already exist.
-Non-pilot subsystems remained on legacy hard-coded evidence after ARCH-RT-3.
-```
-
-Carry-forward from ARCH-RT-5:
-
-```text
-Six hard-coded Wave 1 card subsystems remained launch-classified legacy, not resolved.
-ARCH-RT-5B must complete or further classify the remaining card evidence estate.
-compile_manifest_ref must resolve to a real manifest file or governed estate index entry for any promoted compiled artefact.
-Inferred source_spec_ids are acceptable only if explicitly declared as inferred, not explicit canonical provenance.
+runtime_summary_for_hypothesis() fail-safe must fail closed before any compiled hypothesis is promoted.
+If summary_template is missing, do not silently degrade to physiological_claim.
+physiological_claim must not be used as fallback runtime summary text in promoted output.
 ```
 
 Do not reopen these decisions.
 
 If repository evidence contradicts any inherited decision, STOP and report.
 
-## Current estate to resolve
+## Pilot selection
 
-ARCH-RT-5 identified seven Wave 1 subsystems.
-
-One is already compiled:
+Preferred pilot:
 
 ```text
-wave1_met_glycaemic_control
+signal_vitamin_d_low
 ```
 
-Six remained hard-coded legacy at ARCH-RT-5:
+Reason:
 
-```text
-wave1_cv_lipid_transport
-wave1_cv_homocysteine_pathway
-wave1_cv_vascular_strain
-wave1_met_insulin_metabolic
-wave1_liv_enzyme_pattern
-wave1_liv_processing_context
-```
+* compiled hypothesis artefact already exists
+* compile manifest exists
+* divergence report exists
+* single-frame pathway
+* legacy YAML remains available
+* avoids unresolved multi-frame root-cause selection risk
 
-This sprint must resolve each of those six as one of:
+This sprint should use `signal_vitamin_d_low` unless preflight proves it is unsafe.
 
-```text
-compiled_card_evidence
-contextual_evidence
-hidden_v1
-legacy_retained_with_justification
-blocked_pending_provenance
-blocked_pending_medical_review
-```
-
-No subsystem may remain unclassified.
+STOP if a different pilot appears necessary and report the reason before implementation.
 
 ## Authority preflight
 
 Before implementation, verify and report:
 
-1. Current compiled card evidence artefacts.
-2. Current health system card evidence schema.
-3. Current card evidence loader.
-4. Current Wave 1 subsystem hard-coded definitions.
-5. Current DTO model for subsystem evidence.
-6. Current frontend component rendering subsystem evidence.
-7. Current estate index and compile manifest structure.
-8. Current source trace display behaviour.
-9. Current bilirubin / total_bilirubin regression tests.
-10. Current test coverage for ARCH-RT-3 compiled card evidence.
-11. Current package/source provenance for each marker in the six unresolved subsystems.
-12. Whether any unresolved subsystem requires PSI runtime to produce safe card evidence.
-13. Whether any unresolved subsystem requires root-cause/hypothesis output to produce safe card evidence.
+1. Current compiled hypothesis schema.
+2. Current compiled vitamin D hypothesis artefact.
+3. Current compile manifest for vitamin D hypothesis.
+4. Current compiled hypothesis loader.
+5. Current compiled hypothesis shadow registry.
+6. Current root_cause_registry_v1 production registry.
+7. Current load_root_cause_hypotheses legacy loader.
+8. Current root_cause_compiler_v1 implementation.
+9. Current RootCauseHypothesisV1 / RootCauseFindingV1 contracts.
+10. Current report/result path consuming root-cause output.
+11. Current tests for compiled hypothesis pilot.
+12. Current tests for legacy root-cause YAML loader.
+13. Current behaviour when summary_template is missing.
+14. Current behaviour for root-cause compiler signal_id matching.
+15. Whether vitamin D remains single-frame and safe to promote.
 
 If any authority path cannot be verified, STOP and report.
 
 ## Mandatory internal checkpoint
 
-Before backend/DTO/frontend changes, complete and validate the compiled artefact/classification plan.
+Before runtime promotion:
 
-Checkpoint requirements:
+1. Confirm selected pilot artefact validates.
+2. Confirm selected pilot compile manifest resolves.
+3. Confirm selected pilot has `summary_template`.
+4. Confirm runtime mapping uses `summary_template`, not `physiological_claim`.
+5. Confirm missing `summary_template` fails closed.
+6. Confirm legacy YAML remains available.
+7. Confirm divergence is acceptable and already documented.
+8. Confirm pilot is single-frame or has explicit frame-selection policy.
 
-1. Each of the six unresolved Wave 1 subsystems has a proposed classification.
-2. Any subsystem moving to compiled card evidence has a draft artefact.
-3. Draft artefacts validate against schema.
-4. Required compile_manifest_ref values are either real or explicitly classified.
-5. Required provenance is explicit or clearly marked inferred.
-6. No artefact reintroduces the bilirubin / total_bilirubin defect.
-7. No artefact depends on PSI runtime unless explicitly justified.
-
-If this checkpoint fails, STOP before implementation wiring.
+If any checkpoint fails, STOP before modifying runtime compiler behaviour.
 
 ## Scope
 
 Allowed scope:
 
-1. Generate compiled card evidence artefacts for remaining Wave 1 subsystems where safe.
-2. Create real compile manifests for promoted card evidence artefacts.
-3. Update estate index for promoted card evidence artefacts.
-4. Extend or adjust card evidence schema only if required and backward-compatible.
-5. Extend loader/assembler only as needed to support multiple compiled subsystems.
-6. Preserve legacy hard-coded path only for classified retained subsystems.
-7. Update DTO/frontend only if required to handle estate-wide card evidence fields already designed in ARCH-RT-3.
-8. Produce card evidence estate audit.
-9. Produce required provenance classification for card-related sources/packages only.
-10. Add regression and boundary tests.
+1. Harden compiled hypothesis presentation mapping.
+2. Make `summary_template` mandatory for promoted runtime use.
+3. Ensure `runtime_summary_for_hypothesis()` fails closed if `summary_template` is absent in promoted path.
+4. Add or update compiled hypothesis loader / helper functions as needed.
+5. Wire exactly one pilot signal into root-cause runtime output through a governed compiled path.
+6. Preserve legacy YAML fallback or comparison path.
+7. Ensure production registry is not broadly replaced.
+8. Add shadow comparison / regression tests.
+9. Add direct cross-load / fail-closed boundary tests between legacy and compiled loaders.
+10. Produce runtime promotion report and audit evidence.
 
 ## Required deliverables
 
 Create or update:
 
 ```text
-knowledge_bus/compiled/health_system_cards/*.yaml
-knowledge_bus/compiled/manifests/*.yaml
-knowledge_bus/compiled/estate_index_v1.yaml
-docs/audit-papers/ARCH-RT-5B_card_evidence_estate_audit.md
-docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md
-docs/architecture/ARCH-RT-5B_card_evidence_estate_report.md
+docs/audit-papers/ARCH-RT-5C_hypothesis_runtime_promotion_audit.md
+docs/architecture/ARCH-RT-5C_hypothesis_runtime_promotion_report.md
 ```
 
 Implementation files may be updated only as required for:
 
 ```text
-card evidence loader multi-subsystem support
-Wave 1 subsystem assembler compiled-path expansion
-DTO/front-end render-only support if required
+compiled hypothesis presentation mapping
+compiled hypothesis runtime loader/helper
+root-cause compiler pilot routing
+root-cause registry pilot selection
 targeted tests
 ```
 
-## Artefact requirements
+## Runtime promotion requirements
 
-Each compiled card evidence artefact must:
+If the pilot is promoted:
 
-* validate against `health_system_card_evidence_schema_v1.yaml`
-* include one subsystem only
-* declare `domain_id`
-* declare `subsystem_id`
-* declare `visibility_tier`
-* include marker roles
-* include relationship kinds where available
-* include source/provenance status
-* include `compile_manifest_ref`
-* not use raw internal source trace as consumer-facing copy
-* not use PSI as direct card authority
-* not use root-cause/hypothesis text as card authority
-* not claim explicit `source_spec_id` where provenance is inferred
-* not include `total_bilirubin` as an independent required missing marker where `bilirubin` is canonical
+* promotion must be limited to `signal_vitamin_d_low`
+* compiled artefact must validate
+* compile manifest must resolve
+* `summary_template` must exist
+* runtime summary must use `summary_template`
+* `physiological_claim` must not be emitted as runtime summary text
+* missing `summary_template` must fail closed
+* legacy YAML must remain available
+* non-pilot root-cause pathways must remain unchanged
+* no multi-frame signal may be promoted unless explicit frame policy exists
 
-## Provenance requirements
+## Root-cause compiler requirements
 
-For each card artefact, classify source provenance as one of:
+If `root_cause_compiler_v1.py` is modified:
 
-```text
-explicit_source_spec_id
-source_document_derived
-package_manifest_inferred
-package_id_inferred
-legacy_retained_with_justification
-blocked_pending_spec_extraction
-blocked_pending_medical_review
-```
-
-If provenance is inferred, it must be explicitly declared as inferred.
-
-Do not treat inferred provenance as canonical explicit provenance.
-
-## Compile manifest requirements
-
-For every promoted compiled card artefact:
-
-* `compile_manifest_ref` must resolve to a real manifest file or governed estate index entry.
-* Manifest must include `compile_id`.
-* If `compile_run_id` exists, it must equal `compile_id`.
-* Manifest must include or explicitly classify:
-
-  * `activation_keys_emitted`
-  * `collisions_detected`
-  * `policy_version`
-* Any DRAFT permissiveness must be documented and justified.
-
-## Backend behaviour requirements
-
-If compiled evidence is promoted for a subsystem:
-
-* backend loader must load from compiled artefact path
-* invalid artefact must fail closed
-* assembler must route that subsystem through compiled path
-* non-promoted subsystems must either remain legacy with classification or be hidden/contextual
+* change must be pilot-gated
+* non-pilot behaviour must remain unchanged
+* existing root-cause output contract must remain stable unless explicitly justified
+* no global switch from YAML to compiled hypotheses
+* no signal-family first-match multi-frame promotion
 * no raw investigation spec runtime reads
-* no role inference from marker id or marker name
-* no PSI runtime dependency unless justified
+* no PSI dependency
 
-## DTO/frontend requirements
+## Schema requirements
 
-If touched:
+If `compiled_hypothesis_schema_v1.yaml` is updated:
 
-* DTO fields must remain backward-compatible
-* frontend must render backend-provided fields only
-* frontend must not infer clinical meaning
-* frontend must not display raw internal `source_trace`
-* consumer-facing wording must remain retail-safe
-* optional fields must be handled safely
+* do not make breaking changes to existing valid pilot artefact unless updated consistently
+* mark `summary_template` as required for runtime-promoted hypotheses, or introduce an explicit `promotion_requirements` / `runtime_promotion` rule
+* preserve distinction between:
+
+  * physiological_claim
+  * summary_template
+  * evidence fields
+  * provenance fields
 
 ## Out of scope
 
 Do not:
 
-* perform hypothesis/root-cause runtime promotion
-* modify root-cause YAML
-* modify compiled hypothesis runtime behaviour
+* migrate full root-cause estate
+* delete or rewrite existing root-cause YAML
+* promote multi-frame root-cause pathways
 * modify SignalRegistry
 * modify SignalEvaluator
-* implement PSI runtime wiring unless a STOP condition proves card evidence cannot proceed without it
-* perform full 186-package provenance backfill
+* modify PSI artefacts
+* implement PSI runtime wiring
+* modify card evidence artefacts
+* modify card evidence loader
+* modify frontend
+* modify package files
 * modify investigation specs
-* modify package files unless hardening explicitly approves a narrow manifest-only change
 * modify biomarker SSOT
-* change scoring rails
 * change clinical thresholds
+* change scoring rails
 * change unit conversion
-* add fallback parsers
-* expose raw source trace to consumers
+* expose physiological_claim as retail summary text
+* introduce fallback parsers
 * commit helper scripts
 
 ## Required tests
 
 At minimum:
 
-1. Schema validation for every promoted card artefact.
-2. Manifest resolution test for every promoted card artefact.
-3. Estate index test covering all Wave 1 subsystems.
-4. Loader success path for every promoted artefact.
-5. Loader fail-closed path for invalid artefact.
-6. Assembler test proving promoted subsystems use compiled path.
-7. Assembler test proving retained legacy subsystems remain classified and stable.
-8. Regression that `total_bilirubin` false-missing is not reintroduced.
-9. DTO serialisation tests if DTO touched.
-10. Frontend render-only tests if frontend touched.
-11. Test that raw internal source trace is not consumer-rendered.
-12. Test that frontend/backend does not infer marker roles from names.
+1. Compiled hypothesis artefact still validates.
+2. Compile manifest resolves.
+3. Runtime promotion path uses `summary_template`.
+4. Missing `summary_template` fails closed for promoted runtime use.
+5. `physiological_claim` is not emitted as runtime summary.
+6. Legacy YAML loader still works.
+7. Compiled loader rejects legacy YAML directly.
+8. Legacy loader rejects compiled YAML directly or fails closed.
+9. Pilot root-cause runtime output matches expected safe summary.
+10. Non-pilot root-cause pathways remain unchanged.
+11. Multi-frame root-cause promotion is blocked or not in scope.
+12. No raw investigation spec runtime reads.
 
-Run narrow tests first. Run broader tests if touched contracts require them.
+Run narrow tests first. Run broader root-cause/report tests if touched contracts require them.
 
 ## STOP conditions
 
 STOP and report if:
 
 1. Required authority files are missing.
-2. Any of the six unresolved Wave 1 subsystems cannot be classified.
-3. Artefact validation fails.
-4. Compile manifest refs cannot resolve and cannot be explicitly classified.
-5. Provenance cannot be classified.
-6. Card evidence requires unresolved PSI runtime wiring.
-7. Card evidence requires root-cause/hypothesis text.
-8. Backend changes would require raw investigation spec runtime reads.
-9. Frontend changes would infer medical meaning.
-10. The bilirubin / total_bilirubin fix would be reintroduced.
-11. Scope expands into root-cause, PSI, SignalRegistry or full package backfill.
-12. Tests cannot prove compiled/legacy separation.
+2. Vitamin D pilot artefact no longer validates.
+3. Vitamin D compile manifest does not resolve.
+4. `summary_template` is missing and cannot be safely added from governed/presentation-safe source.
+5. Runtime mapping would use `physiological_claim` as summary text.
+6. Missing summary_template would silently fall back to physiological_claim.
+7. Runtime promotion requires broad root-cause compiler redesign.
+8. Runtime promotion requires multi-frame root-cause policy.
+9. Runtime promotion requires package/spec/PSI/card/frontend changes.
+10. Legacy YAML would no longer be available.
+11. Tests cannot prove non-pilot root-cause stability.
+12. Scope expands into full root-cause estate migration.
 
-## Required reports
+## Required report
 
 Create:
 
 ```text
-docs/audit-papers/ARCH-RT-5B_card_evidence_estate_audit.md
-docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md
-docs/architecture/ARCH-RT-5B_card_evidence_estate_report.md
+docs/architecture/ARCH-RT-5C_hypothesis_runtime_promotion_report.md
 ```
 
-The estate audit must include every Wave 1 subsystem and classify it.
+The report must include:
 
-The provenance audit must classify every source/provenance dependency used for promoted card evidence.
+* pilot selected and rationale
+* artefact path
+* manifest path
+* runtime mapping decision
+* summary_template policy
+* physiological_claim boundary
+* compiler/registry changes
+* legacy YAML preservation evidence
+* tests added/updated
+* test commands and results
+* non-pilot stability evidence
+* remaining risks and carry-forwards
 
-The architecture report must include:
+Create:
 
-* subsystems promoted
-* subsystems retained/classified
-* artefacts created
-* manifests created
-* estate index changes
-* backend changes
-* DTO/frontend changes, if any
-* tests run
-* remaining risks
-* carry-forwards
+```text
+docs/audit-papers/ARCH-RT-5C_hypothesis_runtime_promotion_audit.md
+```
+
+The audit must classify:
+
+* pilot promoted or not promoted
+* runtime behaviour changed or unchanged
+* legacy YAML retained
+* summary_template enforced
+* physiological_claim blocked from runtime summary
+* multi-frame promotion status
+* remaining root-cause estate status
 
 ## Evidence required from Cursor
 
@@ -427,20 +389,18 @@ Cursor must report:
 
 1. Baseline branch/status/HEAD evidence.
 2. Authority preflight findings.
-3. Subsystem classification table.
-4. Internal checkpoint result.
-5. Files changed.
-6. Artefacts created/updated.
-7. Manifests created/updated.
-8. Estate index changes.
-9. Backend/DTO/frontend changes.
-10. Tests added/updated.
-11. Test commands run.
-12. Test results.
-13. Confirmation that bilirubin fix is preserved.
-14. Confirmation that no PSI/root-cause/SignalRegistry/SignalEvaluator work was included.
-15. Confirmation that no raw source trace is consumer-rendered.
-16. Confirmation that no helper scripts were committed.
+3. Internal checkpoint result.
+4. Files changed.
+5. Exact runtime promotion mechanism.
+6. Exact summary_template enforcement behaviour.
+7. Tests added/updated.
+8. Test commands run.
+9. Test results.
+10. Confirmation that legacy YAML remains available.
+11. Confirmation that non-pilot root-cause pathways are unchanged.
+12. Confirmation that physiological_claim is not runtime summary text.
+13. Confirmation that no package/spec/PSI/card/frontend work was included.
+14. Confirmation that no helper scripts were committed.
 
 ## Closure requirements
 
@@ -468,30 +428,27 @@ Classify:
 
 Do not run finish unless:
 
-* current branch matches `work/ARCH-RT-5B-card-evidence-estate-and-required-provenance`
+* current branch matches `work/ARCH-RT-5C-hypothesis-runtime-promotion`
 * all changed files are tied to this sprint
-* no package/spec/PSI/root-cause/SignalRegistry/SignalEvaluator files are changed unless explicitly approved by hardening
+* no package/spec/PSI/card/frontend/SignalRegistry/SignalEvaluator files are changed
 * no helper scripts are included
 * no ambiguous stash exists
-* all six unresolved Wave 1 subsystems are classified
 * latest commit contains only in-scope work
 
 ## Success criteria
 
 This sprint is complete only if:
 
-1. All seven Wave 1 subsystems are classified.
-2. Promoted subsystems are powered by compiled governed card evidence.
-3. Retained/non-promoted subsystems are explicitly classified.
-4. No unclassified hard-coded card evidence remains.
-5. Required compile manifests resolve or are explicitly classified.
-6. Required provenance is explicit or clearly marked inferred.
-7. Bilirubin / total_bilirubin fix remains protected.
-8. Frontend remains render-only.
-9. Raw internal source trace is not consumer-rendered.
-10. No PSI/root-cause/SignalRegistry/SignalEvaluator work is included.
-11. Tests prove compiled/legacy separation and card estate classification.
-12. Automation Bus gate passes.
+1. One compiled hypothesis path is promoted or explicitly classified as not ready.
+2. If promoted, runtime output uses `summary_template`.
+3. Missing `summary_template` fails closed for promoted output.
+4. `physiological_claim` is not used as runtime summary text.
+5. Legacy YAML remains available.
+6. Non-pilot root-cause pathways remain unchanged.
+7. Multi-frame root-cause promotion is not introduced without explicit policy.
+8. Tests prove pilot runtime behaviour and legacy preservation.
+9. No package/spec/PSI/card/frontend scope is included.
+10. Automation Bus gate passes.
 
 ```
 ```
