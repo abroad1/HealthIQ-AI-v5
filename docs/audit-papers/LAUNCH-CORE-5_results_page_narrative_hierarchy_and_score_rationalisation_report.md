@@ -2,6 +2,7 @@
 
 **Work package:** `LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation`  
 **Generated:** 2026-05-30  
+**Updated:** 2026-05-30 (closure evidence — validator output + manual UAT)  
 **Reference audit:** `docs/audit-papers/LAUNCH-CORE-4_results_page_narrative_hierarchy_and_score_rationalisation_audit.md`
 
 ## Issues addressed
@@ -70,17 +71,68 @@ No clinically meaningful analysis removed from DTOs or collapsed sections. Chang
 
 ## Tests run
 
+### ARCH-RT-6 validator (closure re-run — 2026-05-30)
+
 ```text
-python backend/scripts/validate_day_one_architecture.py
-python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
+> python backend/scripts/validate_day_one_architecture.py
+day_one_architecture_validation: PASS
+
+> python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
+....                                                                     [100%]
+4 passed in 7.40s
+```
+
+### Sprint regression (implementation commit)
+
+```text
 python -m pytest backend/tests/regression/test_fe_r2_results_journey_restructure.py -q
 python -m pytest backend/tests/regression/test_launch_core5_results_page_hierarchy.py -q
 cd frontend && npm test -- tests/components/StaleResultBanner.test.tsx tests/lib/feR6aRetailCopy.lc5.test.ts tests/lib/resultsHeroAlignment.test.ts
 ```
 
+(All passed at implementation time; not re-run for this doc-only closure patch.)
+
 ## Manual validation
 
-Target: `http://localhost:3000/results?analysis_id=746f2b0a-b470-4d87-8ed8-e2c3d1e68c02` — **deferred to post-merge UAT** (requires running stack + test-user3 credentials).
+**Target:** `http://localhost:3000/results?analysis_id=746f2b0a-b470-4d87-8ed8-e2c3d1e68c02`  
+**Account:** `test-user3@example.com`  
+**Date:** 2026-05-30  
+**Stack:** backend `uvicorn` @ `:8000`, frontend `next dev` @ `:3000`, sprint branch `work/LAUNCH-CORE-5-results-page-narrative-hierarchy-and-score-rationalisation`
+
+### API pre-check (authenticated)
+
+```text
+POST /api/auth/login → 200
+GET /api/analysis/result?analysis_id=746f2b0a-b470-4d87-8ed8-e2c3d1e68c02 → 200
+result_versioning.result_status: incompatible
+result_versioning.regeneration_available: false
+result_versioning.user_message: "This saved result cannot be displayed with the current results page contract."
+```
+
+### Browser inspection checklist
+
+| Criterion | Result | Evidence |
+|-----------|--------|----------|
+| Main story clearer within first 30s | **Pass (improved)** | Hero shows “Raised homocysteine pattern…” + “Needs attention” + “Most relevant area: …” above fold; primary finding section follows hero before system cards |
+| Primary finding before Health Systems Cards | **Pass** | DOM `data-testid` order: `fe-r2-journey-primary-finding` (top ≈1817px) before `fe-r2-journey-health-systems` (top ≈2837px) |
+| Repeated lead-pattern copy reduced | **Partial** | Reorder + relabels reduce competing urgency signals; hero + body overview still share homocysteine framing (known carry-forward — see risks) |
+| Stale/incompatible banner correct | **Pass** | `stale-result-banner` visible; title “This saved result uses an older format”; body shows API `user_message`; matches `result_status: incompatible` |
+| No regenerate button | **Pass** | No button/link matching `/regenerat/i` in page controls |
+| Marker numeric scores not noisy by default | **Pass** | Zero `Scored N/100` matches in default page text / marker section; after Expand on a marker card, detail shows `Scored 100.0/100` in `biomarker-detail-interpretation` |
+| Technical detail remains available | **Pass** | “Show technical detail” control present; `section-advanced` disclosure present (collapsed) |
+| No internal IDs/traces visible | **Pass** | Page text scan: no `wave1_subsystem`, `source_trace`, `health_system_card_evidence`, `pkg_`, or `signal_` substrings |
+| Consumer label renames | **Pass** | “Data quality” present; “How confident is this read?” present; “Needs attention” present; “Strong Signal” / “Trust strip” / “Why this lead won” absent from retail surface |
+
+### Representative retail copy observed
+
+```text
+This saved result uses an older format
+… PRIMARY FINDING … Raised homocysteine pattern …
+Most relevant area: Vascular Inflammation Risk
+Needs attention
+… Primary finding and why … (before Health Systems Cards)
+… Data quality … How confident is this read? …
+```
 
 ## Remaining risks / carry-forwards
 
@@ -92,4 +144,4 @@ Target: `http://localhost:3000/results?analysis_id=746f2b0a-b470-4d87-8ed8-e2c3d
 
 ## ARCH-RT-6
 
-Validator expected **PASS** — no core clinical logic touched.
+Validator **PASS** (see closure re-run output above) — no core clinical logic touched.
