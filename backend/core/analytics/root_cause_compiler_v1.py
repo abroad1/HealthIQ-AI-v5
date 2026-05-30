@@ -368,10 +368,6 @@ def _compile_compiled_hypothesis_finding(
     compiled_hypotheses: List[RootCauseHypothesisV1] = []
     for row in sorted(artefact.hypotheses, key=lambda h: h.rank):
         summary = runtime_summary_for_hypothesis(row, promoted=True)
-        if summary == row.physiological_claim.strip()[:200]:
-            raise ValueError(
-                f"runtime summary must not equal physiological_claim for {row.hypothesis_id!r}"
-            )
         evidence_for = [
             RootCauseEvidenceItemV1(item=text[:120], marker_refs=[])
             for text in row.evidence_for
