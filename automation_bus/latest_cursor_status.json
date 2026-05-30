@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-RT-5-full-regeneration-and-launch-gate",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-30T07:54:09Z",
   "cursor_started_utc": "2026-05-30T07:51:55Z",
-  "head_sha": "832b2664666ac9b3c286a5e83bbd1bd589c9d75b",
+  "head_sha": "44f517b8e8b32e0822c7d09f584c17b8923a65c2",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-RT-5_full_regeneration_and_launch_gate"
 }
