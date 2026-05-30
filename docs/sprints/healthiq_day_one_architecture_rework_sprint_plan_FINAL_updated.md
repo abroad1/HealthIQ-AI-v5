@@ -1,4 +1,4 @@
-# HealthIQ AI — Day-One Architecture Rework Sprint Plan FINAL
+﻿# HealthIQ AI — Day-One Architecture Rework Sprint Plan FINAL
 
 **Updated status note:** This version includes delivered-sprint status notes and the carry-forward register created after ARCH-RT-2 GPT architectural review.
 
@@ -1104,6 +1104,13 @@ These items must be resolved before the day-one architecture can be declared ful
 2. No inferred provenance may be treated as explicit provenance in future compile or launch decisions.
 3. Any future production compiler must continue enforcing compile_run_id == compile_id where both exist.
 4. PSI runtime wiring remains the only remaining optional follow-on stream, and only if mandated by launch-critical claims.
+
+### From ARCH-RT-5E - PSI Runtime Wiring Decision
+
+1. PSI launch status is **`deferred_non_launch_blocker`** — no runtime wiring added.
+2. Launch-critical Intelligence Core paths (card evidence, root-cause, report compiler, orchestrator) do not import the PSI loader.
+3. Unresolved provenance (ARCH-RT-5D register) would block safe narrow PSI join if a future sprint mandates Outcome B wiring.
+4. Day-one architecture rework PSI stream is **closed** unless a new launch-critical claim is evidenced.
 
 ## 6. Final note
 

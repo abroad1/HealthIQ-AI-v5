@@ -1,6 +1,6 @@
 # Active Intelligence Authority Manifest
 
-**Version:** 1.1.0 (ARCH-RT-5D)  
+**Version:** 1.2.0 (ARCH-RT-5E)  
 **Updated:** 2026-05-30
 
 ## Wave 1 card evidence
@@ -31,11 +31,13 @@ Legacy hard-coded Wave 1 card path: **none remaining** (estate index `wave1_subs
 | Runtime activation frames | `signal_activation_identity_v1.py` (ARCH-RT-2) |
 | Signal evaluation | `SignalEvaluator` (unchanged) |
 
-## PSI
+## PSI (ARCH-RT-5E decision)
 
-| Layer | Authority | Runtime |
-|-------|-----------|---------|
-| Signal semantics | `promoted_signal_intelligence.yaml` per package | **Not consumed** (deferred) |
+| Layer | Authority | Runtime | Launch classification |
+|-------|-----------|---------|------------------------|
+| Signal semantics | `promoted_signal_intelligence.yaml` per package (20× `pkg_kb47_*` opt-in) | **Not consumed** | **`deferred_non_launch_blocker`** |
+
+Evidence: `docs/audit-papers/ARCH-RT-5E_psi_runtime_wiring_decision_audit.md`. Loader exists (`load_promoted_signal_intelligence.py`) for validation/ingest only; no orchestrator, card, root-cause, or report compiler import.
 
 ## Estate index
 

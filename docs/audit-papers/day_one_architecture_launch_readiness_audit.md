@@ -11,7 +11,8 @@
 | M1 Provenance + collision | `ARCH-RT-5_M1_package_provenance_and_collision_audit.md` | **Complete** |
 | M2 Card evidence estate | `ARCH-RT-5_M2_card_evidence_estate_audit.md` | **Complete** |
 | M3 Hypothesis / root-cause | `ARCH-RT-5_M3_hypothesis_root_cause_estate_audit.md` | **Complete** |
-| M4 PSI wiring | `ARCH-RT-5_M4_psi_runtime_wiring_audit.md` | **Complete** |
+| M4 PSI wiring | `ARCH-RT-5_M4_psi_runtime_wiring_audit.md` | **Complete** (provisional deferral) |
+| M4b PSI decision (ARCH-RT-5E) | `ARCH-RT-5E_psi_runtime_wiring_decision_audit.md` | **Complete** |
 | M5 Launch gate | This document + traceability + authority manifest | **Complete** |
 
 ## Carry-forward classification register
@@ -32,7 +33,7 @@
 | ARCH-RT-4 presentation mapping | **resolved** — `compiled_hypothesis_presentation_mapping.md` |
 | ARCH-RT-4 `physiological_claim` not retail summary | **resolved** — `summary_template` added |
 | kb52c / batch JSON packages | **blocked_pending_spec_extraction** |
-| PSI runtime wiring | **deferred_non_launch_blocker** |
+| PSI runtime wiring | **deferred_non_launch_blocker** (ARCH-RT-5E confirmed; no runtime wiring) |
 
 ## Launch blockers found
 
