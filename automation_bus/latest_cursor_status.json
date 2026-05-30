@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-RT-5-full-regeneration-and-launch-gate",
+  "branch": "work/ARCH-RT-5B-card-evidence-estate-and-required-provenance",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-30T07:54:09Z",
-  "cursor_started_utc": "2026-05-30T07:51:55Z",
-  "head_sha": "44f517b8e8b32e0822c7d09f584c17b8923a65c2",
+  "cursor_started_utc": "2026-05-30T08:18:34Z",
+  "head_sha": "c4338b299705e1c7c892981cf859dd7c5a1a8c89",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-5_full_regeneration_and_launch_gate"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-RT-5B_card_evidence_estate_and_required_provenance"
 }
