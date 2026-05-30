@@ -1,5 +1,5 @@
 {
-  "work_id": "LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy",
+  "work_id": "LAUNCH-CORE-2_multi_panel_launch_readiness_uat",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-30T00:00:00Z",
@@ -8,132 +8,77 @@
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy, branch=work/LAUNCH-CORE-1-results-page-card-coherence-and-consumer-copy, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=LAUNCH-CORE-2_multi_panel_launch_readiness_uat (line 2), branch=work/LAUNCH-CORE-2-multi-panel-launch-readiness-uat (line 3), risk_level=STANDARD (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=CONTENT (line 6)"
     },
     {
-      "check": "risk_level_HIGH_correct",
+      "check": "change_type_CONTENT_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:61-70 — sprint touches backend/core/analytics/domain_score_assembler.py (Intelligence Core: output assembly mechanism), frontend results rendering, narrative sanitisation. HIGH is mandatory per SOP §3 and §10 for any work package interacting with Intelligence Core regardless of file path. Correctly assigned."
+      "citation": "automation_bus/latest_cursor_prompt.md:15-17 — 'This is an investigation/audit sprint only. Do not modify production code, compiled artefacts, backend logic, frontend components, schemas, packages, investigation specs, or tests unless explicitly approved after the audit.' Sole deliverable: docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md (line 152). Screenshots under docs/audit-papers/assets/ consistent with LAUNCH-CORE-1B pattern. All changes under /docs/ — CONTENT is correct. BEHAVIOUR controls not required."
     },
     {
-      "check": "change_type_MIXED_correct",
+      "check": "risk_level_STANDARD_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:65 — MIXED. Backend completeness derivation change (BEHAVIOUR: emitted DTO output fields change), frontend consumer-copy changes (BEHAVIOUR: rendered chip labels, marker display names, narrative scrub), and any YAML artefact or copy content updates (CONTENT). MIXED governed under BEHAVIOUR controls per SOP §4 is correct."
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — STANDARD. Sprint only reads from the app, runs existing validators, and produces an audit document. No modifications to backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, or update_cursor_status.py. No Intelligence Core interaction (SOP §3). No HIGH-risk trigger applies. STANDARD is correct."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: authority preflight (UAT investigation must be read, ARCH-RT-6 guardrails must be confirmed, baseline branch/status evidence required) must complete before any file modification. Kernel start enforces the boundary."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: baseline preflight (branch check, working tree, LAUNCH-CORE-1 confirmation) must complete before any file creation; kernel start enforces boundary between investigation and report authoring."
     },
     {
-      "check": "2a_all_authoritative_inputs_exist",
+      "check": "2a_authority_path_validator_1",
       "result": "CONFIRMED",
-      "citation": "All 8 sprint-specific authority input files verified on disk: docs/audit-papers/LAUNCH-CORE-0_results_page_human_uat_investigation.md ✓; docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md ✓; docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md ✓; docs/audit-papers/active_intelligence_authority_manifest.md ✓; docs/audit-papers/day_one_architecture_launch_readiness_audit.md ✓; docs/architecture/card_evidence_role_translation_policy.md ✓; docs/architecture/card_visibility_tier_policy.md ✓; backend/scripts/validate_day_one_architecture.py ✓. STOP condition 'UAT investigation file missing' does NOT trigger."
+      "citation": "backend/scripts/validate_day_one_architecture.py — file exists on disk (glob confirmed). Referenced at automation_bus/latest_cursor_prompt.md:139."
     },
     {
-      "check": "2a_all_implementation_authority_files_exist",
+      "check": "2a_authority_path_validator_2",
       "result": "CONFIRMED",
-      "citation": "All 14 implementation authority files verified on disk: backend/core/analytics/domain_score_assembler.py ✓; backend/core/knowledge/health_system_card_evidence.py ✓; backend/core/models/results.py ✓; frontend/app/components/results/Wave1DomainCards.tsx ✓; frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx ✓; frontend/app/components/results/ResultsHeroBlocks.tsx ✓; frontend/app/components/results/DeterministicNarrativeSurface.tsx ✓; frontend/app/components/results/ResultsBodyOverview.tsx ✓; frontend/app/components/results/PrimaryFindingAndWhy.tsx ✓; frontend/app/lib/retailNarrativeSanitize.ts ✓; frontend/app/lib/resultsPageLayout.ts ✓; frontend/app/lib/wave1HealthSystemCardDisplay.ts ✓; frontend/app/types/analysis.ts ✓"
+      "citation": "backend/tests/architecture/test_day_one_architecture_guardrails.py — file exists on disk (glob confirmed). Referenced at automation_bus/latest_cursor_prompt.md:140."
     },
     {
-      "check": "2a_arch_rt6_merged_confirmed",
+      "check": "2a_launch_core_1_merged",
       "result": "CONFIRMED",
-      "citation": "git log: commit 8be6959 — 'chore(bus): ARCH-RT-6_day_one_architecture_guardrails_and_acceptance_gate kernel COMPLETE status' is the current HEAD on main. All ARCH-RT-1 through ARCH-RT-6 programme commits confirmed present. Baseline requirement satisfied."
+      "citation": "git log: commit 48b078b — 'chore(bus): LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy kernel COMPLETE status' is the current HEAD on main. Baseline STOP condition 'LAUNCH-CORE-1 is not merged' does NOT trigger."
     },
     {
-      "check": "2a_no_duplicate_authority_source",
+      "check": "2a_main_aligned_with_remote",
       "result": "CONFIRMED",
-      "citation": "No duplicate authority sources for completeness calculation: _evidence_completeness_for_rail() exists only in backend/core/analytics/domain_score_assembler.py:340-355. No second completeness source found. wave1EvidenceCompletenessLine() in frontend/app/lib/wave1HealthSystemCardDisplay.ts:22-28 is a display formatter only — it accepts numerator/denominator from DTO; it performs no independent clinical computation. This split is correct and must be preserved."
+      "citation": "git rev-parse HEAD = 48b078b095ab736b5c15659b45becab65fcbbc90; git rev-parse origin/main = 48b078b095ab736b5c15659b45becab65fcbbc90. Main is aligned with remote. Baseline STOP condition 'local main does not equal origin/main' does NOT trigger."
     },
     {
-      "check": "2b_completeness_mismatch_root_cause_confirmed",
+      "check": "2a_no_active_kernel_token",
       "result": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_score_assembler.py:340-355 — _evidence_completeness_for_rail() uses: numerator=len(rail_data['biomarker_scores']), denominator=scored_count+len(missing_marker_ids). For blood sugar on analysis 18e14232: rail biomarker_scores contains HbA1c only (1); _missing_for_rail(hss, _RAIL_METABOLIC) returns [glucose, insulin] (2); result = 1 of 3. Compiled subsystem union via assemble_wave1_subsystem_evidence() (line 368): glycaemic_control={hba1c included, glucose missing}, insulin_metabolic={triglycerides included, insulin missing} → union included={hba1c, triglycerides}, union missing={glucose, insulin} → 2 of 4. Mismatch confirmed: rail-based = 1/3, subsystem-union = 2/4."
+      "citation": "automation_bus/state/work_package_active.json — does not exist (glob returned no results). No prior sprint is open. Kernel start is clear to proceed once working tree is resolved."
     },
     {
-      "check": "2b_completeness_fix_direction_constrained",
-      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 1",
-      "citation": "The fix must reorder _wave1_card_contract_extras() (domain_score_assembler.py:358-378): assemble subsystems first, then derive (numerator, denominator) from the union of SubsystemEvidenceV1.included_marker_ids and SubsystemEvidenceV1.missing_marker_ids across all returned rows. Do NOT read 'missing_biomarkers' from the scoring rail for completeness derivation. The domain-level missing_marker_ids field on ConsumerDomainScoreV1 (used for domain copy) is separate and must remain unchanged. The change affects evidence_completeness_numerator and evidence_completeness_denominator only. REGRESSION RISK: completeness values will change for all three domains on all analyses — cardiovascular and liver completeness will also shift. Targeted before/after tests required for all three domains on reference analysis 18e14232."
-    },
-    {
-      "check": "2b_scrub_gap_homocysteine_confirmed",
+      "check": "2a_no_preexisting_deliverable",
       "result": "CONFIRMED",
-      "citation": "frontend/app/lib/retailNarrativeSanitize.ts:77 — current scrub: s.replace(/\\bsignal_homocysteine_elevation_context\\b/gi, 'homocysteine-related pattern'). This only scrubs the snake_case slug form. LAUNCH-CORE-0 §6 A1 confirms the backend narrative compiler emits 'Homocysteine Elevation Context' (Title Case) from knowledge_bus/packages/pkg_homocysteine_elevation_context/signal_library.yaml display name. Title Case form passes through scrub unchanged. Scrub gap confirmed at retailNarrativeSanitize.ts:77."
+      "citation": "docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md — does not exist (glob returned no results). No no-op risk."
     },
     {
-      "check": "2b_scrub_homocysteine_fix_constrained",
-      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 2",
-      "citation": "Add case-insensitive replacement for Title Case form in scrubConsumerRetailNarrative() at retailNarrativeSanitize.ts, e.g.: s.replace(/\\bhomocysteine\\s+elevation\\s+context\\b/gi, 'Raised homocysteine pattern'). Final consumer wording must be intentionally consumer-facing. This is an interim surface scrub — the deeper narrative compiler fix (R2 in LAUNCH-CORE-0 §12) is explicitly deferred. Both the snake_case slug replacement and the Title Case replacement must be present in the final function."
+      "check": "2a_analysis_ids_runtime_not_verifiable",
+      "result": "NOTED — expected limitation",
+      "citation": "automation_bus/latest_cursor_prompt.md:69-73 — analysis IDs 18e14232-9f93-45e6-820c-004ab5a16235 and 746f2b0a-b470-4d87-8ed8-e2c3d1e68c02 are runtime database entries; cannot be verified from repo. This is expected for a UAT sprint. Cursor must confirm these render correctly at execution time and apply the STOP condition (line 201) if API payload cannot be fetched."
     },
     {
-      "check": "2b_role_chip_raw_enum_confirmed",
+      "check": "stop_conditions_coverage",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx:19-23 — markerRoleChipLabel() uses: return role.replace(/_/g, ' '). This produces 'score contributor', 'confidence contributor', 'contextual marker', etc. — raw engineering enum vocabulary. card_evidence_role_translation_policy.md defines 8 authoritative enum values with card-surface meanings. The policy Frontend rules section states: 'Render marker_role when provided on DTO marker rows' — but does not specify consumer-safe label substitution text. Sprint prompt provides the required consumer-safe mapping."
+      "citation": "automation_bus/latest_cursor_prompt.md:200-210 — 8 explicit STOP conditions: (1) app inaccessible, (2) login failure, (3) API payload fetch failure, (4) results page render failure, (5) ARCH-RT-6 validator failure, (6) launch-blocking clinical display defect, (7) false-missing marker defect, (8) raw internal IDs/source traces visible. Coverage is comprehensive. No STOP gaps identified."
     },
     {
-      "check": "2b_role_chip_fix_constrained",
-      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 3",
-      "citation": "Replace markerRoleChipLabel() in Wave1SubsystemEvidenceSection.tsx with a static lookup map covering all 8 role enums from card_evidence_role_translation_policy.md. Any role not in the map must return null (suppress chip) — not fall through to raw rendering. Do not infer from marker_id or display_label. Minimum mapping per prompt: score_contributor→'Used in this score'; confidence_contributor→'Supports confidence'; contextual_marker→'Context marker'; mechanism_marker→'Helps explain mechanism'; differential_marker→'Helps distinguish causes'; exclusion_marker→'Helps rule out alternatives'; missing_for_confidence→'Missing for confidence'; optional_deeper_marker→'Optional deeper marker'. Final wording may differ from prompt examples but must be intentionally consumer-facing."
-    },
-    {
-      "check": "2b_mcv_formatting_root_cause_confirmed",
+      "check": "scope_protection",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/results/PrimaryFindingAndWhy.tsx:8-10 — formatMarkerRef() uses: id.replace(/_/g, ' ').replace(/\\b\\w/g, (c) => c.toUpperCase()). This generic title-casing produces 'Mcv' from 'mcv'. LC_S7_BIOMARKER_LABELS map at frontend/app/lib/resultsPageLayout.ts:94-110 already contains mcv:'MCV'. formatBiomarkerDisplayName() is exported from resultsPageLayout.ts:112 and performs the SSOT-backed lookup with fallback."
+      "citation": "automation_bus/latest_cursor_prompt.md:191-198 — explicit out-of-scope prohibitions: no production code, frontend components, backend logic, compiled artefacts, package files, investigation specs, schemas, tests, scoring logic, clinical thresholds, copy changes. Closure requirements (lines 229-245) enforce a final git-status check before finish and prohibit helper-script commits and ambiguous stash."
     },
     {
-      "check": "2b_mcv_fix_constrained",
-      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 4",
-      "citation": "Replace formatMarkerRef() in PrimaryFindingAndWhy.tsx to call formatBiomarkerDisplayName() imported from '@/lib/resultsPageLayout'. Do not re-implement the label map independently in PrimaryFindingAndWhy.tsx. The SSOT for biomarker display labels is LC_S7_BIOMARKER_LABELS in resultsPageLayout.ts — a single authority source must be maintained. The fallback title-case logic in formatBiomarkerDisplayName() handles unlisted IDs."
-    },
-    {
-      "check": "2b_mojibake_source_assessment",
-      "result": "CONFIRMED — bounded mitigation path",
-      "citation": "LAUNCH-CORE-0 §8 C3: narrative mojibake 'â' replacement chars confirmed in lead_narrative field. Root cause: UTF-8 text passed through a Latin-1 hop at compile or persist time (narrative_report_compiler_v1.py is the likely boundary). If mojibake strings are in historically persisted analysis records, they cannot be retroactively corrected at record level without reprocessing. Bounded fix: add frontend display sanitisation in scrubConsumerRetailNarrative() for known mojibake substitutions (e.g. â→', â→—, â→\", â→\"). Document the limitation in the sprint report. If source is confirmed as live compile path (not persisted), fix at compile boundary in narrative_report_compiler_v1.py instead. Cursor must investigate before choosing path."
-    },
-    {
-      "check": "2b_score_coverage_presentation",
-      "result": "CONFIRMED — bounded scope",
-      "citation": "LAUNCH-CORE-0 §8 C1: blood sugar 100/100 score with confidence_tier=low and evidence_completeness 1/3 (→2/4 after fix). Frontend renders both faithfully but no gating ties score display to evidence completeness. Sprint scope allows: qualify score visually when evidence coverage is limited, 'Score based on available markers' wording, ensure reliability/completeness text is visually close to score. Must NOT change clinical scoring thresholds. This is a frontend visual/copy change only (wave1HealthSystemCardDisplay.ts and Wave1DomainCards.tsx). Backend domain score value is authoritative and must not change."
-    },
-    {
-      "check": "2b_upload_fidelity_wording",
-      "result": "CONFIRMED — bounded scope",
-      "citation": "LAUNCH-CORE-0 §7.3 point 3: HbA1c upload fidelity section shows 'Uploaded representation of HbA1c — not scored separately' while health card treats HbA1c as scored contributor. LAUNCH-CORE-0 classified as parallel surface disagreement, not a partition bug. Sprint scope item 8 allows aligning upload-fidelity wording where a marker is scored in one context but described as 'not scored separately'. This is a frontend copy or backend fidelity flag change — must not affect scoring or clinical output."
-    },
-    {
-      "check": "2b_behavioural_scope_defined",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:139-149 — allowed scope: 10 items, all bounded to results-page coherence and consumer copy. automation_bus/latest_cursor_prompt.md:265-279 — out of scope: clinical thresholds, scoring rail calculations (unless needed only for completeness display alignment), biomarker SSOT, unit conversion, package clinical content, investigation specs, PSI runtime status, SignalRegistry, SignalEvaluator, root-cause pathways, compiled card evidence clinical meaning, ARCH-RT-6 guardrails, forbidden DTO field exposures, fallback parsers."
-    },
-    {
-      "check": "2b_arch_rt6_guardrails_must_still_pass",
-      "result": "CONFIRMED — regression protection",
-      "citation": "docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md — 26 guardrails implemented. Key guardrails relevant to this sprint: Guardrail 5 (no total_bilirubin in compiled artefacts), Guardrails 6-7 (frontend render-only; source_trace filter — Wave1SubsystemEvidenceSection.tsx isConsumerSafeSourceTrace at line 25-31 must remain intact), Guardrail 8-10 (vitamin D compiled promotion). Sprint must run python backend/scripts/validate_day_one_architecture.py and pytest backend/tests/architecture/test_day_one_architecture_guardrails.py after all changes."
-    },
-    {
-      "check": "2b_regression_targets_present",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:281-304 — 10 required test targets enumerated. Existing test infrastructure confirmed: backend/scripts/validate_day_one_architecture.py ✓; backend/tests/architecture/test_day_one_architecture_guardrails.py ✓. Cursor must add targeted tests for: (1) blood sugar completeness aligns with compiled subsystem evidence, (2) completeness num/den no longer disagrees with expanded subsystem chips for all three domains, (3) role chips use consumer-safe labels, (4) Homocysteine Elevation Context does not render to consumer page, (5) mcv formats as MCV, (6) mojibake sanitised, (7) upload-fidelity wording corrected for HbA1c, (8) raw internal IDs/traces not rendered."
-    },
-    {
-      "check": "2b_determinism_preserved",
-      "result": "CONFIRMED",
-      "citation": "Completeness fix: deterministic — same inputs (panel_biomarker_ids, compiled subsystem rows) produce same (numerator, denominator) on every run. No randomness introduced. Scrub fixes: deterministic regex replacements. Role chip mapping: static lookup table, deterministic. MCV fix: static label map lookup, deterministic. No hidden side effects on scoring, signals, clinical thresholds, or analytical output structure. Output structure (DTO fields) unchanged except evidence_completeness_numerator and evidence_completeness_denominator, which change intentionally as declared."
-    },
-    {
-      "check": "2b_STOP_conditions_assessment",
-      "result": "NO STOP CONDITIONS TRIGGERED IN HARDENING",
-      "citation": "STOP 1 (required files missing): NOT triggered — all authority files confirmed present. STOP 2 (completeness requires broad clinical scoring redesign): NOT triggered — fix is post-assembly completeness derivation, no clinical scoring change. STOP 3 (prose fix requires broad narrative compiler rewrite): NOT triggered — interim scrub approach is bounded. STOP 4 (weakens ARCH-RT-6 guardrails): NOT triggered — all guardrails remain intact. STOP 5 (frontend infers clinical meaning): NOT triggered — role chip fix is a static display map, not clinical inference. STOP 6 (backend reads raw investigation specs): NOT triggered — domain_score_assembler.py does not read investigation specs. STOP 7 (PSI/root-cause/card authority blurred): NOT triggered — no PSI or root-cause changes. STOP 8 (tests cannot prove defects fixed): NOT triggered — all defects are testable. STOP 9 (scope expands beyond results-page coherence): NOT triggered."
-    },
-    {
-      "check": "HARDENING_FLAG_preflight_working_tree",
-      "result": "CURSOR_MUST_RESOLVE_BEFORE_BRANCHING",
-      "citation": "git status shows: (M) automation_bus/latest_cursor_prompt.md — expected (new sprint prompt); (M) frontend/.env.local.example — binary 2-byte change (cause unknown, must be investigated before proceeding — do not commit unless understood); (??) docs/audit-papers/LAUNCH-CORE-0_results_page_human_uat_investigation.md — MUST be committed to main before creating sprint branch; (??) docs/audit-papers/assets/ — MUST be committed to main before creating sprint branch. The prompt STOP condition 'working tree is not clean / untracked or uncommitted files present' will trigger at Cursor baseline preflight unless these are resolved. LAUNCH-CORE-0 artefacts are mandatory sprint inputs and must be committed. frontend/.env.local.example must be investigated and either committed or stashed with justification."
+      "check": "HARDENING_FLAG_dirty_working_tree",
+      "result": "CURSOR_MUST_RESOLVE_BEFORE_KERNEL_START",
+      "citation": "git status shows untracked files: docs/audit-papers/LAUNCH-CORE-1B_results_page_post_fix_uat_audit.md, docs/audit-papers/assets/lc1b-health-systems-expanded.png, docs/audit-papers/assets/lc1b-hero.png. Also: automation_bus/latest_cursor_prompt.md is modified (expected — new sprint prompt). The baseline STOP condition at automation_bus/latest_cursor_prompt.md:39 ('untracked or uncommitted files are present') will fire unless resolved. Cursor must commit or obtain explicit user instruction to discard the LAUNCH-CORE-1B artefacts before running 'python backend/scripts/run_work_package.py start'. The latest_cursor_prompt.md modification is acceptable sprint-setup state."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "Out-of-scope prohibits: clinical thresholds (automation_bus/latest_cursor_prompt.md:265), scoring rail calculations (line 266), biomarker SSOT (line 267), unit conversion (line 268), package clinical content (line 269), investigation specs (line 270), PSI runtime status (line 271), SignalRegistry or SignalEvaluator (lines 272-273), root-cause promotion (line 274), compiled card evidence clinical meaning (line 275), ARCH-RT-6 guardrails weakening (line 276), forbidden DTO field exposure (line 277-278), fallback parsers (line 279). None of the allowed deliverables reference these files or operations."
+      "citation": "Sprint deliverable is docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md only. Out-of-scope list (automation_bus/latest_cursor_prompt.md:191-198) and closure requirements (lines 229-245) prohibit all production code, tooling scripts, and helper files. No .codex/, .vscode/, or AGENTS.md artefacts expected."
     }
   ]
 }

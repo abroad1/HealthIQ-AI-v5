@@ -1,72 +1,42 @@
 ---
-work_id: LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy
-branch: work/LAUNCH-CORE-1-results-page-card-coherence-and-consumer-copy
-risk_level: HIGH
+work_id: LAUNCH-CORE-2_multi_panel_launch_readiness_uat
+branch: work/LAUNCH-CORE-2-multi-panel-launch-readiness-uat
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 ---
 
-# LAUNCH-CORE-1 — Results Page Card Coherence and Consumer Copy
+# LAUNCH-CORE-2 — Multi-Panel Launch Readiness UAT
 
 ## Purpose
 
-Fix the human UAT issues found on the results page after the ARCH-RT programme.
+Run a broader launch-readiness UAT pass across multiple analysis results to confirm the post-ARCH-RT and LAUNCH-CORE-1 results page is stable across different blood panels.
 
-This sprint must improve the consumer-facing results page by resolving:
+This is an investigation/audit sprint only.
 
-```text
-1. Health Systems Card completeness mismatch
-2. misleading score/coverage presentation
-3. internal/generated names surfacing in prose
-4. raw engineering marker-role labels appearing in chips
-5. poor biomarker display labels such as Mcv instead of MCV
-6. narrative encoding/mojibake artefacts
-7. upload-fidelity wording inconsistencies
-````
-
-This sprint must preserve the ARCH-RT architecture guardrails. It must not weaken compiled evidence, provenance, PSI isolation, root-cause promotion safety, or frontend render-only principles.
+Do not modify production code, compiled artefacts, backend logic, frontend components, schemas, packages, investigation specs, or tests unless explicitly approved after the audit.
 
 ## Baseline requirement
 
 Start from clean `main`.
 
-Expected prior completed work:
-
-```text
-ARCH-RT programme fully merged through ARCH-RT-6
-ARCH-RT-6 guardrails active
-ARCH-RT-5E PSI classified deferred_non_launch_blocker
-```
-
-Before creating or switching to the sprint branch, run and report:
+Before creating or switching branch, run and report:
 
 ```powershell
 git branch --show-current
 git status --short
-git log --oneline -n 16
+git log --oneline -n 10
 git rev-parse HEAD
 git rev-parse origin/main
-```
+````
 
 STOP if:
 
 * current branch is not `main`
 * local `main` does not equal `origin/main`
 * working tree is not clean
-* ARCH-RT-6 is not merged
+* LAUNCH-CORE-1 is not merged
 * untracked or uncommitted files are present
-
-## Governance classification
-
-```yaml
-risk_level: HIGH
-change_type: MIXED
-execution_model: TWO_PHASE_START_FINISH
-```
-
-Reason:
-
-This sprint may touch backend domain-card assembly, DTO fields, frontend results rendering, narrative sanitisation, and tests. It affects user-facing health interpretation, even if the intention is clarity rather than clinical logic change.
 
 ## Standard rules
 
@@ -74,296 +44,189 @@ This work remains governed by the standard Knowledge Bus and Automation Bus SOPs
 
 Do not re-read SOPs unless the applicable governance requirement cannot be located.
 
-## Authoritative inputs
+## Context
 
-Read these sprint-specific files before making changes:
+Recent UAT confirmed LAUNCH-CORE-1 fixed the main results-page defects:
 
-```text
-docs/audit-papers/LAUNCH-CORE-0_results_page_human_uat_investigation.md
-docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md
-docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md
-docs/audit-papers/active_intelligence_authority_manifest.md
-docs/audit-papers/day_one_architecture_launch_readiness_audit.md
-docs/architecture/card_evidence_role_translation_policy.md
-docs/architecture/card_visibility_tier_policy.md
-backend/scripts/validate_day_one_architecture.py
-```
+* card summary completeness now aligns with expanded subsystem detail
+* role chips use consumer-safe wording
+* “Homocysteine Elevation Context” no longer appears in the UI
+* MCV displays correctly
+* mojibake is not visible in rendered body text
+* ARCH-RT-6 validator passes
 
-Also inspect as implementation authority:
+Remaining reservations are mostly polish/hygiene:
 
-```text
-backend/core/analytics/domain_score_assembler.py
-backend/core/knowledge/health_system_card_evidence.py
-backend/core/models/results.py
-frontend/app/components/results/Wave1DomainCards.tsx
-frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx
-frontend/app/components/results/ResultsHeroBlocks.tsx
-frontend/app/components/results/DeterministicNarrativeSurface.tsx
-frontend/app/components/results/ResultsBodyOverview.tsx
-frontend/app/components/results/PrimaryFindingAndWhy.tsx
-frontend/app/lib/retailNarrativeSanitize.ts
-frontend/app/lib/resultsPageLayout.ts
-frontend/app/lib/wave1HealthSystemCardDisplay.ts
-frontend/app/types/analysis.ts
-```
+* “Vascular Inflammation Risk” may still read like an internal construct
+* “Strong Signal” may feel mechanical
+* raw Homocysteine wording and mojibake still exist in API payload but are scrubbed from UI
+* 100/100 score with limited reliability remains a product judgement issue
+* HbA1c upload-fidelity wording may need softer alignment
 
-STOP if the UAT investigation file is missing.
+## Target analyses
 
-## UAT findings to fix
-
-The investigation confirmed that marker presence itself is backend-correct for analysis `18e14232-9f93-45e6-820c-004ab5a16235`, but several user-facing issues remain. The key architectural UX defect is that card summary completeness uses legacy rail counting while expanded subsystem evidence uses the new compiled subsystem model, causing the Blood sugar card to show “1 of 3 expected markers included” while the expanded detail shows 2 included and 2 missing. 
-
-The investigation also confirmed internal/generated prose leaks, raw enum role labels, poor marker display formatting, score/coverage dissonance, and mojibake artefacts. 
-
-## Mandatory inherited guardrails
-
-The following must remain true:
+Use the following known analysis IDs first:
 
 ```text
-1. No raw investigation spec runtime reads.
-2. No frontend medical inference.
-3. Frontend renders backend-provided evidence fields only.
-4. PSI remains deferred and must not be used as card/root-cause/hypothesis authority.
-5. All Wave 1 card subsystems remain on compiled card evidence.
-6. total_bilirubin must not be reintroduced as an independent required marker.
-7. signal_vitamin_d_low remains compiled-promoted with summary_template enforcement.
-8. No raw internal source_trace strings are rendered to consumers.
-9. Day-one architecture validator must still pass.
+18e14232-9f93-45e6-820c-004ab5a16235
+746f2b0a-b470-4d87-8ed8-e2c3d1e68c02
 ```
 
-Do not weaken these.
+Also identify and test at least one additional recent analysis result if available locally.
 
-## Scope
+If no additional analysis is available, report that and continue with the two known analyses.
 
-Allowed scope:
-
-1. Change Health Systems Card evidence completeness so summary counts align with compiled subsystem evidence.
-2. Improve score/completeness presentation so high scores with limited evidence are not misleading.
-3. Add consumer-safe marker-role labels for card chips.
-4. Stop rendering raw marker-role enum vocabulary such as `score_contributor` as “score contributor” unless explicitly approved as consumer copy.
-5. Fix biomarker display formatting such as `mcv` → `MCV`.
-6. Add an interim consumer-safe replacement for known generated/internal names, especially “Homocysteine Elevation Context”.
-7. Fix narrative mojibake/encoding artefacts if the source is traceable and bounded.
-8. Align upload-fidelity wording where a marker is scored in one context but described as “not scored separately”.
-9. Add targeted regression tests.
-10. Produce a launch defect resolution report.
-
-## Primary backend fix required
-
-The Health Systems Card summary evidence completeness must be reconciled with compiled subsystem evidence.
-
-Current defect:
+Login:
 
 ```text
-Blood sugar summary:
-1 of 3 expected markers included
-
-Blood sugar expanded subsystems:
-HbA1c included
-Triglycerides included
-Glucose missing
-Insulin missing
-= 2 of 4 subsystem-expected markers included
+test-user3@example.com
+Subaru@555
 ```
 
-Required direction:
+Base URL:
 
 ```text
-Derive domain/card evidence completeness from the union of compiled subsystem included/missing markers, or from one backend-owned field derived from that union.
+http://localhost:3000/results?analysis_id=<analysis_id>
 ```
 
-Expected result for the observed analysis, subject to implementation details:
+## Required checks per analysis
 
-```text
-Blood sugar evidence completeness should read 2 of 4 expected markers included
-```
+For each analysis:
 
-Do not let the frontend independently recompute clinical completeness. Backend should remain authoritative.
+1. Open the results page in browser.
+2. Capture screenshots of:
 
-## Score/coverage presentation rule
+   * hero / main summary
+   * all expanded Health Systems Cards
+   * primary finding / why section
+   * interpretation patterns if present
+3. Inspect console errors/warnings.
+4. Fetch and inspect API payload:
 
-If a card has a very high score but low confidence or low evidence completeness, the UI must avoid implying “perfect health certainty”.
+   * `GET /api/analysis/result?analysis_id=<analysis_id>`
+5. Confirm all Health Systems Cards:
 
-Acceptable approaches include:
+   * render correctly
+   * show summary completeness matching expanded subsystem included/missing markers
+   * do not show false-missing markers
+   * do not show raw internal IDs
+   * do not show raw source traces
+   * do not show raw marker-role enums
+6. Confirm all Wave 1 subsystems use compiled card evidence.
+7. Confirm `total_bilirubin` is not reintroduced as an expected missing marker.
+8. Confirm consumer-facing text does not show:
 
-```text
-- qualify the score visually/copy-wise when evidence coverage is limited
-- show “Score based on available markers” wording
-- ensure reliability/completeness text is visually close to the score
-- avoid unqualified celebratory interpretation when confidence_tier is low
-```
+   * `signal_*`
+   * `pkg_*`
+   * `wave1_*`
+   * `source_trace`
+   * `compile_manifest_ref`
+   * `artefact_id`
+   * `source_spec_id`
+   * `activation_key`
+   * raw snake_case marker roles
+9. Confirm known copy fixes:
 
-Do not change clinical scoring thresholds unless specifically justified and approved by hardening.
+   * no visible “Homocysteine Elevation Context”
+   * MCV displays as `MCV`
+   * no mojibake characters such as `â`
+   * role chips use consumer-safe wording
+10. Record any remaining visible wording that feels mechanical, confusing, contradictory, or unlaunchworthy.
 
-## Consumer copy fixes
+## Required validator checks
 
-### Marker role chips
-
-Replace raw role enum display with consumer-safe labels.
-
-Examples:
-
-```text
-score_contributor       → Used in this score
-confidence_contributor  → Supports confidence
-contextual_marker       → Context marker
-mechanism_marker        → Helps explain mechanism
-differential_marker     → Helps distinguish causes
-exclusion_marker        → Helps rule out alternatives
-missing_for_confidence  → Missing for confidence
-optional_deeper_marker  → Optional deeper marker
-```
-
-Final wording can differ, but must be intentionally consumer-facing.
-
-### Internal/generated names
-
-At minimum, prevent this consumer-facing phrase:
-
-```text
-Homocysteine Elevation Context
-```
-
-from appearing as the hero/prose label.
-
-Use a safer consumer-facing replacement, for example:
-
-```text
-Raised homocysteine pattern
-```
-
-or an equivalent governed wording.
-
-This may be an interim scrub if the deeper narrative compiler fix is too broad.
-
-### Marker display labels
-
-Use governed display-name mapping where available.
-
-Known defect:
-
-```text
-Mcv → MCV
-```
-
-Do not use naive title-casing where a biomarker label map exists.
-
-### Mojibake
-
-Fix visible narrative mojibake such as:
-
-```text
-â
-```
-
-where this can be corrected safely at compile/render/persist boundary.
-
-If the source is persisted historical data and cannot be safely corrected for existing records, add frontend/backend display sanitisation and document the limitation.
-
-## Out of scope
-
-Do not:
-
-* change clinical thresholds
-* change scoring rail calculations unless needed only for completeness display alignment
-* change biomarker SSOT
-* change unit conversion
-* change package clinical content
-* change investigation specs
-* change PSI runtime status
-* modify SignalRegistry or SignalEvaluator
-* promote additional root-cause pathways
-* alter compiled card evidence clinical meaning
-* weaken ARCH-RT-6 guardrails
-* expose source_trace, compile_manifest_ref, artefact_id, package_id, source_spec_id or activation_key to consumers
-* introduce fallback parsers
-
-## Required tests
-
-Add or update targeted tests for:
-
-1. Blood sugar completeness aligns with compiled subsystem evidence.
-2. Domain/card summary completeness no longer disagrees with expanded subsystem chips.
-3. Role chips use consumer-safe labels, not raw enum strings.
-4. `Homocysteine Elevation Context` does not render to the consumer page.
-5. `mcv` formats as `MCV`.
-6. Mojibake is removed or sanitised from consumer-visible narrative.
-7. Upload-fidelity wording does not contradict scored-marker status for HbA1c, if fixed.
-8. Raw internal IDs/traces are not rendered.
-9. ARCH-RT-6 validator still passes.
-10. Existing card evidence and root-cause tests still pass.
-
-At minimum run:
+Run:
 
 ```powershell
 python backend/scripts/validate_day_one_architecture.py
 python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
 ```
 
-Also run targeted backend/frontend tests relevant to touched files.
+If frontend tests are available and quick, also run the relevant results-page/component tests from LAUNCH-CORE-1.
 
-If frontend tests exist, run the relevant test command. If no frontend tests exist for the touched components, document manual/browser validation steps.
+## Required deliverable
+
+Create:
+
+```text
+docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md
+```
+
+The report must include:
+
+* overall verdict:
+
+  * `PASS`
+  * `PASS_WITH_RESERVATIONS`
+  * `FAIL`
+* analysis IDs tested
+* screenshots or screenshot references
+* console/network findings
+* card completeness table per analysis
+* subsystem included/missing comparison per analysis
+* false-missing marker check
+* internal ID visibility check
+* copy/prose issues found
+* severity of each issue:
+
+  * blocker
+  * launch polish
+  * post-launch hygiene
+* recommended next action:
+
+  * no fix needed
+  * fix before launch
+  * post-launch backlog
+  * needs product decision
+* tests/validators run and results
+
+## Out of scope
+
+Do not:
+
+* modify production code
+* modify frontend components
+* modify backend logic
+* modify compiled artefacts
+* modify package files
+* modify investigation specs
+* modify schemas
+* modify tests
+* change scoring logic
+* change clinical thresholds
+* change copy unless explicitly approved later
 
 ## STOP conditions
 
 STOP and report if:
 
-1. Required investigation or architecture files are missing.
-2. Fixing completeness requires broad clinical scoring redesign.
-3. Fixing prose requires rewriting the narrative compiler broadly.
-4. Any fix would weaken ARCH-RT-6 guardrails.
-5. Frontend would need to infer clinical meaning.
-6. Backend would need raw investigation spec runtime reads.
-7. PSI/root-cause/card authority boundaries would be blurred.
-8. Tests cannot prove the observed UAT defects are fixed.
-9. The fix scope expands beyond results-page coherence and consumer copy.
-
-## Required deliverables
-
-Create:
-
-```text
-docs/audit-papers/LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy_report.md
-```
-
-The report must include:
-
-* UAT issues addressed
-* files changed
-* backend changes
-* frontend changes
-* exact before/after for Blood sugar completeness
-* exact before/after for role chip labels
-* exact before/after for generated/internal prose labels
-* exact before/after for MCV formatting
-* encoding/mojibake outcome
-* tests run
-* results
-* remaining risks or carry-forwards
+1. app cannot be accessed
+2. login fails
+3. API payload cannot be fetched
+4. results page fails to render
+5. ARCH-RT-6 validator fails
+6. a launch-blocking clinical display defect is found
+7. a false-missing marker defect is found
+8. raw internal IDs/source traces are visible to users
 
 ## Evidence required from Cursor
 
 Cursor must report:
 
-1. Baseline branch/status/HEAD evidence.
-2. Authority preflight findings.
-3. Root cause confirmation for the completeness mismatch.
-4. Exact completeness calculation change.
-5. Exact consumer-copy changes.
-6. Files changed.
-7. Tests added/updated.
-8. Test commands run.
-9. Test results.
-10. Manual browser validation result for the target analysis page.
-11. Confirmation ARCH-RT-6 validator still passes.
-12. Confirmation no raw internal IDs/traces are visible.
-13. Confirmation no PSI/root-cause/SignalRegistry/SignalEvaluator changes were included.
+1. baseline branch/status evidence
+2. analyses tested
+3. browser screenshots captured
+4. console/network findings
+5. API payload inspection summary
+6. card-by-card findings
+7. defects found and severity
+8. validator/test commands run
+9. validator/test results
+10. final launch-readiness recommendation
 
 ## Closure requirements
 
-Before `run_work_package.py finish`, complete the Automation Bus post-implementation closure protocol.
-
-Run and report:
+Before finish, run and report:
 
 ```powershell
 git branch --show-current
@@ -374,38 +237,25 @@ git diff --cached --name-only
 git stash list
 ```
 
-Classify:
-
-* tracked modified files
-* staged files
-* untracked files
-* tooling files
-* out-of-scope files
-* stash entries
-
 Do not run finish unless:
 
-* current branch matches `work/LAUNCH-CORE-1-results-page-card-coherence-and-consumer-copy`
-* all changed files are tied to this sprint
-* architecture validator passes
-* targeted tests pass
+* current branch matches `work/LAUNCH-CORE-2-multi-panel-launch-readiness-uat`
+* only the audit report and expected screenshot/API artefacts are changed
+* no production code is changed
+* no helper scripts are committed
 * no ambiguous stash exists
-* latest commit contains only in-scope work
 
 ## Success criteria
 
 This sprint is complete only if:
 
-1. Blood sugar summary completeness matches compiled subsystem evidence.
-2. Health card summary and expanded detail no longer present contradictory marker counts.
-3. Raw marker-role enums are not surfaced as consumer chip text.
-4. Known internal/generated prose labels are not surfaced to consumers.
-5. Biomarker labels use governed display names where available.
-6. Mojibake is fixed or safely sanitised.
-7. No internal source_trace / compile_manifest_ref / artefact_id / source_spec_id / activation_key is visible to consumers.
-8. ARCH-RT-6 guardrails still pass.
-9. Tests prove the fixes.
-10. Automation Bus gate passes.
+1. at least two analyses are manually audited
+2. card completeness matches expanded subsystem evidence on tested analyses
+3. no false-missing marker defects are found
+4. no raw internal IDs/source traces are visible
+5. ARCH-RT-6 validator passes
+6. findings are classified by severity
+7. clear launch-readiness recommendation is produced
 
 ```
 ```
