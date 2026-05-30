@@ -19,13 +19,6 @@ from core.knowledge.package_provenance_scan_v1 import (
     refresh_compile_manifest_hashes,
     scan_all_package_provenance,
 )
-import importlib.util
-
-_validate_spec = importlib.util.spec_from_file_location("validate_compile_manifest", _VALIDATOR)
-_validate_mod = importlib.util.module_from_spec(_validate_spec)
-assert _validate_spec.loader is not None
-_validate_spec.loader.exec_module(_validate_mod)
-validate_compile_manifest = _validate_mod.validate_compile_manifest
 
 _REPO = Path(__file__).resolve().parents[3]
 _SCHEMA = _REPO / "knowledge_bus" / "schema" / "compile_manifest_schema_v1.yaml"
@@ -40,6 +33,14 @@ _LAUNCH_MANIFESTS = (
     "arch_rt5b_enzyme_pattern_card_evidence.yaml",
     "arch_rt5b_processing_context_card_evidence.yaml",
 )
+
+import importlib.util
+
+_validate_spec = importlib.util.spec_from_file_location("validate_compile_manifest", _VALIDATOR)
+_validate_mod = importlib.util.module_from_spec(_validate_spec)
+assert _validate_spec.loader is not None
+_validate_spec.loader.exec_module(_validate_mod)
+validate_compile_manifest = _validate_mod.validate_compile_manifest
 
 
 def test_all_packages_classified():
