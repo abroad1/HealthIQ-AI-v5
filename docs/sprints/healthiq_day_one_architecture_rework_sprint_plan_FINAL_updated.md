@@ -1051,6 +1051,22 @@ These items must be resolved before the day-one architecture can be declared ful
 - Full estate compile must resolve explicit versus inferred provenance before launch-critical use.
 - Remaining Wave 1 subsystems still on the hard-coded evidence path must be addressed in ARCH-RT-5 or explicitly launch-classified.
 
+### From ARCH-RT-4 — Compiled Hypothesis / Root-Cause Slice
+
+- Compiled hypotheses are currently shadow-only.
+- `compile_root_cause_v1()` has not yet been wired to consume compiled hypothesis artefacts.
+- ARCH-RT-5 must decide when and how compiled hypotheses begin influencing runtime `RootCauseV1` output.
+- `physiological_claim` must not be treated as direct retail/runtime summary text.
+- `physiological_claim` is the governed clinical reasoning claim.
+- `summary_template` remains the presentation/runtime wording field unless superseded by an explicit mapping policy.
+- Before estate migration, ARCH-RT-5 must define the compiled hypothesis → `RootCauseHypothesisV1` presentation mapping.
+- The compiled hypothesis artefact must either carry a separate presentation-safe `summary_template` field or emit a root-cause-compatible view that preserves runtime summary semantics.
+- Root-cause compiler remains not fully multi-frame aware.
+- Multi-frame root-cause selection must be explicitly governed before any multi-frame hypothesis path is promoted.
+- Stronger direct cross-load / fail-closed boundary tests should be added before full migration if legacy and compiled loaders remain side-by-side.
+- `compile_manifest_ref` remains pilot/manual only until real manifest linkage is implemented.
+- `source_spec_provenance: source_document_derived` remains acceptable for pilot only and is not canonical explicit provenance.
+
 ## 6. Final note
 
 This is the fewest sensible sprint sequence currently recommended.
