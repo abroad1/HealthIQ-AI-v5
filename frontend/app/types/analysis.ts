@@ -356,7 +356,27 @@ export interface DisplayUnitPolicyMeta {
 export interface AnalysisResultMetaV1 {
   upload_panel_observations?: Record<string, UploadPanelObservation | Record<string, unknown>>;
   display_unit_policy?: DisplayUnitPolicyMeta;
+  completeness_policy_id?: string;
+  result_versioning_policy_id?: string;
   [key: string]: unknown;
+}
+
+export interface ResultVersioningMetadataV1 {
+  immutable_snapshot: boolean;
+  result_status: 'current' | 'stale' | 'incompatible';
+  stale_reasons: string[];
+  result_version?: string | null;
+  current_result_version?: string;
+  completeness_policy_id?: string | null;
+  current_completeness_policy_id?: string;
+  result_versioning_policy_id?: string;
+  regeneration_policy?: string;
+  regeneration_available?: boolean;
+  launch_user_behaviour?: string;
+  planned_user_behaviour?: string;
+  user_message?: string | null;
+  render_blockers?: string[];
+  compatible?: boolean;
 }
 
 export interface ConsumerDomainScoreV1 {
@@ -422,6 +442,8 @@ export interface AnalysisResult {
   burden_hash?: string;
   derived_markers?: unknown;
   replay_manifest?: unknown;
+  /** LAUNCH-CORE-3 — persisted snapshot status (read-only; no in-place mutation). */
+  result_versioning?: ResultVersioningMetadataV1 | null;
 }
 
 

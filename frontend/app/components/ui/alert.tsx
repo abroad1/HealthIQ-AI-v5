@@ -23,6 +23,19 @@ export function Alert({ variant = "default", className = "", children, ...props 
   );
 }
 
+export interface AlertTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  className?: string;
+  children: React.ReactNode;
+}
+
+export function AlertTitle({ className = "", children, ...props }: AlertTitleProps) {
+  return (
+    <h5 className={`mb-1 font-medium leading-none tracking-tight ${className}`} {...props}>
+      {children}
+    </h5>
+  );
+}
+
 export interface AlertDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
   className?: string;
   children: React.ReactNode;

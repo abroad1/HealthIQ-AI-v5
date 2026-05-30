@@ -63,7 +63,7 @@ from app.analysis_payload import (
 from config.database import get_db_optional
 from app.analysis_pdf_export import build_summary_pdf_bytes
 from app.billing_entitlement import enforce_new_analysis_entitlement
-from services.storage.persistence_service import PersistenceService, CLIENT_RESULT_SHAPE_V1
+from core.dto.result_versioning_policy_v1 import build_result_versioning_metadata, stamp_current_policy_meta
 from repositories import AnalysisRepository, AnalysisResultRepository
 from sqlalchemy.orm import Session
 
@@ -203,6 +203,7 @@ async def start_analysis(
         meta["lab_origin"] = lab_origin_meta
         meta["display_unit_policy"] = build_display_policy_meta()
         meta["upload_panel_observations"] = upload_panel_observations
+        meta = stamp_current_policy_meta(meta)
         stored = {
             "analysis_id": dto.analysis_id,
             "meta": meta,
@@ -380,7 +381,9 @@ async def get_analysis_result(
     """
     try:
         raw = _raw_result_payload_for_analysis_id(analysis_id, db, auth_user)
-        return build_analysis_result_dto(raw)
+        dto = build_analysis_result_dto(raw)
+        dto["result_versioning"] = build_result_versioning_metadata(raw)
+        return dto
     except HTTPException:
         raise
     except Exception as e:

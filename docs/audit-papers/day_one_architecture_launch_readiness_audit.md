@@ -15,6 +15,7 @@
 | M4b PSI decision (ARCH-RT-5E) | `ARCH-RT-5E_psi_runtime_wiring_decision_audit.md` | **Complete** |
 | M5 Launch gate | This document + traceability + authority manifest | **Complete** |
 | M6 Guardrails & acceptance (ARCH-RT-6) | `ARCH-RT-6_day_one_architecture_acceptance_audit.md` | **Complete** |
+| M7 Result versioning policy (LAUNCH-CORE-3) | `LAUNCH-CORE-3_result_versioning_replay_and_regeneration_audit.md` | **Complete** |
 
 ## Carry-forward classification register
 
@@ -35,6 +36,7 @@
 | ARCH-RT-4 `physiological_claim` not retail summary | **resolved** — `summary_template` added |
 | kb52c / batch JSON packages | **blocked_pending_spec_extraction** |
 | PSI runtime wiring | **deferred_non_launch_blocker** (ARCH-RT-5E confirmed; no runtime wiring) |
+| Persisted result immutability | **policy_locked** (LAUNCH-CORE-3; stale warning on GET) |
 
 ## Launch blockers found
 

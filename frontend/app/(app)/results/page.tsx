@@ -35,6 +35,7 @@ import {
   triggerBrowserDownload,
 } from '@/components/results/ResultsHeroBlocks';
 import { Wave1DomainCards } from '@/components/results/Wave1DomainCards';
+import { StaleResultBanner } from '@/components/results/StaleResultBanner';
 import { ConfirmatoryTestsNextSteps } from '@/components/results/ConfirmatoryTestsNextSteps';
 import {
   dedupeActionCardsAgainstNarrative,
@@ -659,6 +660,8 @@ export default function ResultsPage() {
               <AlertDescription className="text-slate-800 text-sm">{LC_S4_MOCK_MODE_HONESTY_DISCLOSURE}</AlertDescription>
             </Alert>
           ) : null}
+
+          <StaleResultBanner versioning={currentAnalysis?.result_versioning} />
 
           {/* FE-R2 Phase 1 journey — section order must match FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS */}
           <section
