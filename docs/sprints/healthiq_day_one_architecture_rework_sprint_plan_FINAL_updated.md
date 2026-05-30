@@ -1028,8 +1028,30 @@ source research → compiled artefact → runtime loader → DTO → frontend co
 
 for every launch-critical user-facing clinical claim.
 
+## 5. Active Carry-Forward Register
 
-## 5. Final note
+These items must be resolved before the day-one architecture can be declared fully delivered.
+
+### From ARCH-RT-2 — Identity Runtime Pilot
+
+- Directory-derived `source_spec_id` is acceptable only as interim runtime identity fallback.
+- It is not canonical research provenance.
+- Future provenance work must distinguish explicit `source_spec_id` from inferred `source_spec_id`.
+- Root-cause compiler remains signal-family-only and is not yet multi-frame aware.
+- Root-cause first-match behaviour is acceptable temporarily only.
+- The compiled hypothesis / root-cause transition sprint must make root-cause multi-frame aware or explicitly govern frame selection.
+
+### From ARCH-RT-3 — Card Evidence Vertical Slice
+
+- Raw internal `source_trace` strings must not be shown directly to consumers.
+- Any future consumer-facing source/evidence label must be separately designed and retail-safe.
+- `compile_manifest_ref` is acceptable as a pilot audit string only.
+- Before estate-wide regeneration, `compile_manifest_ref` must resolve to a real manifest file or governed estate index entry.
+- Inferred `source_spec_ids` are acceptable for pilot only.
+- Full estate compile must resolve explicit versus inferred provenance before launch-critical use.
+- Remaining Wave 1 subsystems still on the hard-coded evidence path must be addressed in ARCH-RT-5 or explicitly launch-classified.
+
+## 6. Final note
 
 This is the fewest sensible sprint sequence currently recommended.
 
