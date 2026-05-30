@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-RT-5D-package-provenance-backfill",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-30T09:33:12Z",
   "cursor_started_utc": "2026-05-30T09:28:50Z",
-  "head_sha": "088f9aab1cf283726317150599aef210a73af488",
+  "head_sha": "c8e7846b4f34c88854ebe479e5f806612c11c630",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-RT-5D_package_provenance_backfill"
 }
