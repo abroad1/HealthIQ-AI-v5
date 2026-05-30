@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-RT-5D-package-provenance-backfill",
+  "branch": "work/ARCH-RT-5E-psi-runtime-wiring-decision",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-30T09:33:12Z",
-  "cursor_started_utc": "2026-05-30T09:28:50Z",
-  "head_sha": "c8e7846b4f34c88854ebe479e5f806612c11c630",
+  "cursor_started_utc": "2026-05-30T10:12:52Z",
+  "head_sha": "9a0c277d2e674f339a08161036b269c310a4115a",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-5D_package_provenance_backfill"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-RT-5E_psi_runtime_wiring_decision"
 }
