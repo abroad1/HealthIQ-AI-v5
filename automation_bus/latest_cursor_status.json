@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-RT-5E-psi-runtime-wiring-decision",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-30T10:15:27Z",
   "cursor_started_utc": "2026-05-30T10:12:52Z",
-  "head_sha": "9a0c277d2e674f339a08161036b269c310a4115a",
+  "head_sha": "d28a8343353dd1ecee08473c112131e6638a1afd",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-RT-5E_psi_runtime_wiring_decision"
 }
