@@ -1,0 +1,42 @@
+schema_version: "1.0.0"
+artefact_id: wave1_liv_processing_context_v1
+domain_id: wave1_liver
+subsystem_id: wave1_liv_processing_context
+subsystem_label: Liver processing context
+visibility_tier: scored_subsystem
+source_spec_ids:
+  - inv_alp_high_bone_biliary
+  - inv_albumin_low_nutritional
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_processing_context_card_evidence.yaml
+missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
+mechanism_line: ALP, albumin, and bilirubin describe processing and synthetic liver context.
+markers:
+  - marker_id: alp
+    display_label: ALP
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Bone and biliary processing enzyme marker.
+    presence_policy: required_for_subsystem
+  - marker_id: albumin
+    display_label: Albumin
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Synthetic function and nutritional context marker.
+    presence_policy: required_for_subsystem
+  - marker_id: bilirubin
+    display_label: Bilirubin
+    marker_role: contextual_marker
+    relationship_kind: contextual_support
+    rationale_short: Processing context marker; canonical id bilirubin (not total_bilirubin).
+    presence_policy: required_for_subsystem
+provenance:
+  artefact_kind: health_system_card_evidence_v1
+  compile_status: pilot_manual
+  source_spec_provenance: inferred_from_package_manifest
+  package_refs:
+    - pkg_s24_alp_high_bone_biliary
+    - pkg_s24_albumin_low_nutritional
+  notes: >
+    ARCH-RT-5B estate promotion. bilirubin has no investigation spec — marker inclusion
+    inferred from legacy Wave 1 subsystem definition. WAVE1-EQUIV1: bilirubin canonical;
+    total_bilirubin forbidden. No PSI runtime.

@@ -126,27 +126,26 @@ def test_pilot_subsystem_assembly_uses_compiled_roles():
     assert "hba1c" in glycaemic.included_marker_ids
 
 
-def test_non_pilot_subsystem_unchanged_legacy_trace():
+def test_non_pilot_subsystem_uses_compiled_path_after_rt5b():
     rows = _assemble_rows()
     cv = next(r for r in rows if r.domain_id == "wave1_cardiovascular")
     lipid = next(s for s in cv.subsystems or [] if s.subsystem_id == "wave1_cv_lipid_transport")
-    assert lipid.source_trace.startswith("wave1_subsystem_evidence_v1:")
-    assert lipid.card_evidence_schema_version is None
-    assert lipid.marker_evidence is None
+    assert lipid.source_trace.startswith("health_system_card_evidence_v1:")
+    assert lipid.card_evidence_schema_version == "1.0.0"
+    assert lipid.marker_evidence is not None
 
 
-def test_direct_assembly_pilot_vs_non_pilot_separation():
-    panel = {"glucose", "hba1c", "total_cholesterol"}
+def test_direct_assembly_all_wave1_subsystems_use_compiled_path():
+    panel = {"glucose", "hba1c", "total_cholesterol", "insulin"}
     rail = [{"biomarker_name": "glucose"}, {"biomarker_name": "total_cholesterol"}]
     sugar_rows = assemble_wave1_subsystem_evidence(
         domain_id="wave1_blood_sugar",
         panel_biomarker_ids=panel,
         rail_biomarker_scores=rail,
     )
-    glycaemic = next(r for r in sugar_rows if r.subsystem_id == PILOT_SUBSYSTEM_ID)
-    insulin = next(r for r in sugar_rows if r.subsystem_id == "wave1_met_insulin_metabolic")
-    assert glycaemic.source_trace.startswith("health_system_card_evidence_v1:")
-    assert insulin.source_trace.startswith("wave1_subsystem_evidence_v1:")
+    for row in sugar_rows:
+        assert row.source_trace.startswith("health_system_card_evidence_v1:")
+        assert row.marker_evidence is not None
 
 
 def test_dto_serialisation_new_optional_fields():

@@ -1,0 +1,34 @@
+schema_version: "1.0.0"
+artefact_id: wave1_met_insulin_metabolic_v1
+domain_id: wave1_blood_sugar
+subsystem_id: wave1_met_insulin_metabolic
+subsystem_label: Insulin and metabolic context
+visibility_tier: scored_subsystem
+source_spec_ids:
+  - inv_triglycerides_high_metabolic_v1
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_insulin_metabolic_card_evidence.yaml
+missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
+mechanism_line: Insulin and triglycerides together describe metabolic load beyond glycaemic markers.
+markers:
+  - marker_id: insulin
+    display_label: Insulin
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Primary insulin resistance context marker; no dedicated investigation spec.
+    presence_policy: required_for_subsystem
+  - marker_id: triglycerides
+    display_label: Triglycerides
+    marker_role: contextual_marker
+    relationship_kind: contextual_support
+    rationale_short: Supporting metabolic lipid marker paired with insulin context.
+    presence_policy: required_for_subsystem
+provenance:
+  artefact_kind: health_system_card_evidence_v1
+  compile_status: pilot_manual
+  source_spec_provenance: inferred_from_package_manifest
+  package_refs:
+    - pkg_s24_triglycerides_high_metabolic
+  notes: >
+    ARCH-RT-5B estate promotion. insulin has no investigation spec — marker inclusion
+    inferred from legacy Wave 1 subsystem definition. triglycerides spec-backed via
+    pkg_s24_triglycerides_high_metabolic. No PSI runtime.

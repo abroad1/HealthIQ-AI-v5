@@ -26,9 +26,9 @@ _REPO = Path(__file__).resolve().parents[3]
 def test_estate_index_loads():
     payload = yaml.safe_load(estate_index_path().read_text(encoding="utf-8"))
     assert payload["estate_id"] == "healthiq_launch_estate_v1"
-    assert len(payload["card_evidence_artefacts"]) == 1
+    assert len(payload["card_evidence_artefacts"]) == 7
     assert len(payload["compiled_hypothesis_artefacts"]) == 1
-    assert len(payload["wave1_subsystems_legacy_hard_coded"]["subsystem_ids"]) == 6
+    assert len(payload["wave1_subsystems_legacy_hard_coded"]["subsystem_ids"]) == 0
 
 
 def test_compile_manifest_refs_resolve():
@@ -58,8 +58,8 @@ def test_wave1_subsystems_classified():
     assert len(rows) == 7
     compiled = [r for r in rows if r["active_authority"] == "compiled_card_evidence"]
     legacy = [r for r in rows if r["active_authority"] == "hard_coded_python"]
-    assert len(compiled) == 1
-    assert len(legacy) == 6
+    assert len(compiled) == 7
+    assert len(legacy) == 0
 
 
 def test_package_scan_returns_rows():

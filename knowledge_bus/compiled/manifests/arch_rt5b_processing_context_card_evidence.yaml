@@ -1,0 +1,30 @@
+compile_id: arch-rt-5b-processing-context-card-evidence-001
+compile_run_id: arch-rt-5b-processing-context-card-evidence-001
+compiler_name: card_evidence_compile_pilot_v1
+compiler_version: 1.0.0
+compile_mode: card_evidence
+source_contract_version: 1.0.0
+source_specs:
+  - source_spec_id: inv_alp_high_bone_biliary
+    source_path: knowledge_bus/research/investigation_specs/inv_alp_high_bone_biliary.yaml
+    source_hash: pending_inventory_refresh
+    source_hash_algorithm: sha256
+  - source_spec_id: inv_albumin_low_nutritional
+    source_path: knowledge_bus/research/investigation_specs/inv_albumin_low_nutritional.yaml
+    source_hash: pending_inventory_refresh
+    source_hash_algorithm: sha256
+outputs:
+  - output_type: health_system_card_evidence
+    output_path: knowledge_bus/compiled/health_system_cards/wave1_liv_processing_context.yaml
+    output_hash: pending_inventory_refresh
+    output_hash_algorithm: sha256
+    subsystem_id: wave1_liv_processing_context
+    domain_id: wave1_liver
+translation_rules_version: 1.0.0
+compiled_at_utc: "2026-05-30T08:20:00Z"
+compiled_by: arch-rt-5b-estate-promotion
+provenance_status: pilot_evidence_only
+policy_version: ADR-RT-004-v1
+activation_keys_emitted: []
+collisions_detected: []
+estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml

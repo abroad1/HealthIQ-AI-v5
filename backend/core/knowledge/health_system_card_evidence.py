@@ -23,7 +23,18 @@ from core.models.results import (
 
 SCHEMA_VERSION = "1.0.0"
 PILOT_SUBSYSTEM_ID = "wave1_met_glycaemic_control"
-PILOT_COMPILED_SUBSYSTEM_IDS: frozenset[str] = frozenset({PILOT_SUBSYSTEM_ID})
+WAVE1_COMPILED_SUBSYSTEM_IDS: frozenset[str] = frozenset(
+    {
+        "wave1_met_glycaemic_control",
+        "wave1_cv_lipid_transport",
+        "wave1_cv_homocysteine_pathway",
+        "wave1_cv_vascular_strain",
+        "wave1_met_insulin_metabolic",
+        "wave1_liv_enzyme_pattern",
+        "wave1_liv_processing_context",
+    }
+)
+PILOT_COMPILED_SUBSYSTEM_IDS = WAVE1_COMPILED_SUBSYSTEM_IDS
 
 _MARKER_ROLES = frozenset(
     {

@@ -1,0 +1,58 @@
+schema_version: "1.0.0"
+artefact_id: wave1_cv_lipid_transport_v1
+domain_id: wave1_cardiovascular
+subsystem_id: wave1_cv_lipid_transport
+subsystem_label: Lipid transport
+visibility_tier: scored_subsystem
+source_spec_ids:
+  - inv_ldl_high_dyslipidaemia_v1
+  - inv_hdl_high_cardiovascular
+  - inv_hdl_low_cardiovascular
+  - inv_triglycerides_high_metabolic_v1
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_lipid_transport_card_evidence.yaml
+missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
+mechanism_line: Lipid markers together describe transport and balance patterns on this panel.
+markers:
+  - marker_id: ldl_cholesterol
+    display_label: LDL cholesterol
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Primary atherogenic lipoprotein marker on most panels.
+    presence_policy: required_for_subsystem
+  - marker_id: hdl_cholesterol
+    display_label: HDL cholesterol
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Protective lipoprotein fraction marker.
+    presence_policy: required_for_subsystem
+  - marker_id: triglycerides
+    display_label: Triglycerides
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Circulating lipid load marker paired with lipoprotein fractions.
+    presence_policy: required_for_subsystem
+  - marker_id: total_cholesterol
+    display_label: Total cholesterol
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Panel aggregate cholesterol marker without dedicated investigation spec.
+    presence_policy: required_for_subsystem
+  - marker_id: tc_hdl_ratio
+    display_label: TC/HDL ratio
+    marker_role: confidence_contributor
+    relationship_kind: confidence_input
+    rationale_short: Derived ratio supporting lipid balance context when present.
+    presence_policy: optional_on_panel
+provenance:
+  artefact_kind: health_system_card_evidence_v1
+  compile_status: pilot_manual
+  source_spec_provenance: inferred_from_package_manifest
+  package_refs:
+    - pkg_s24_ldl_high_dyslipidaemia
+    - pkg_s24_hdl_high_cardiovascular
+    - pkg_s24_hdl_low_cardiovascular
+    - pkg_s24_triglycerides_high_metabolic
+  notes: >
+    ARCH-RT-5B estate promotion. total_cholesterol and tc_hdl_ratio have no investigation
+    spec — inclusion inferred from legacy Wave 1 subsystem definition. NOT sourced from
+    pkg_lipid_transport (provenance_gap). No PSI runtime.

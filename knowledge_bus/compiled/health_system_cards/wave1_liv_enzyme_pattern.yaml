@@ -1,0 +1,41 @@
+schema_version: "1.0.0"
+artefact_id: wave1_liv_enzyme_pattern_v1
+domain_id: wave1_liver
+subsystem_id: wave1_liv_enzyme_pattern
+subsystem_label: Liver enzyme pattern
+visibility_tier: scored_subsystem
+source_spec_ids:
+  - inv_alt_high_hepatocellular_injury_v1
+  - inv_ggt_high_hepatic
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_enzyme_pattern_card_evidence.yaml
+missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
+mechanism_line: ALT, AST, and GGT together describe hepatocellular and cholestatic enzyme patterns.
+markers:
+  - marker_id: alt
+    display_label: ALT
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Primary hepatocellular injury enzyme marker.
+    presence_policy: required_for_subsystem
+  - marker_id: ast
+    display_label: AST
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Hepatocellular enzyme marker without dedicated investigation spec.
+    presence_policy: required_for_subsystem
+  - marker_id: ggt
+    display_label: GGT
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Cholestatic and hepatic strain enzyme marker.
+    presence_policy: required_for_subsystem
+provenance:
+  artefact_kind: health_system_card_evidence_v1
+  compile_status: pilot_manual
+  source_spec_provenance: inferred_from_package_manifest
+  package_refs:
+    - pkg_s24_alt_high_hepatocellular_injury
+    - pkg_s24_ggt_high_hepatic
+  notes: >
+    ARCH-RT-5B estate promotion. ast has no investigation spec — marker inclusion
+    inferred from legacy Wave 1 subsystem definition. No PSI runtime.

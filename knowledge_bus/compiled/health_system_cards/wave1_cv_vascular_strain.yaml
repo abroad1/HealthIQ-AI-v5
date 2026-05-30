@@ -1,0 +1,27 @@
+schema_version: "1.0.0"
+artefact_id: wave1_cv_vascular_strain_v1
+domain_id: wave1_cardiovascular
+subsystem_id: wave1_cv_vascular_strain
+subsystem_label: Vascular strain context
+visibility_tier: contextual_evidence
+source_spec_ids:
+  - inv_crp_high_inflammation_v1
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_vascular_strain_card_evidence.yaml
+missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
+mechanism_line: CRP provides inflammatory context for vascular strain on this panel.
+markers:
+  - marker_id: crp
+    display_label: CRP
+    marker_role: contextual_marker
+    relationship_kind: contextual_support
+    rationale_short: Inflammatory context marker for vascular strain subsystem.
+    presence_policy: required_for_subsystem
+provenance:
+  artefact_kind: health_system_card_evidence_v1
+  compile_status: pilot_manual
+  source_spec_provenance: inferred_from_package_manifest
+  package_refs:
+    - pkg_s24_crp_high_inflammation
+  notes: >
+    ARCH-RT-5B estate promotion. Contextual evidence tier retained from legacy classification.
+    source_spec_ids inferred from package manifest. No PSI runtime.
