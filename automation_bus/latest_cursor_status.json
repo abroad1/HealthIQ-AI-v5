@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-RT-5B-card-evidence-estate-and-required-provenance",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-30T08:22:41Z",
   "cursor_started_utc": "2026-05-30T08:18:34Z",
-  "head_sha": "c4338b299705e1c7c892981cf859dd7c5a1a8c89",
+  "head_sha": "12ba0bdf169437c2b1481d319a1fcc242e46d8ac",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-RT-5B_card_evidence_estate_and_required_provenance"
 }
