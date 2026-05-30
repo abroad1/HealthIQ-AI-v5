@@ -1098,6 +1098,13 @@ These items must be resolved before the day-one architecture can be declared ful
 3. Full root-cause estate migration remains deferred; 40 legacy YAML signals remain on the legacy path.
 4. Multi-frame root-cause compiler policy remains unresolved; no multi-frame promotion is allowed until explicitly governed.
 
+### From ARCH-RT-5D - Package Provenance Backfill
+
+1. Package provenance is now classified, but unresolved/deferred items remain governed by the ARCH-RT-5D unresolved provenance register.
+2. No inferred provenance may be treated as explicit provenance in future compile or launch decisions.
+3. Any future production compiler must continue enforcing compile_run_id == compile_id where both exist.
+4. PSI runtime wiring remains the only remaining optional follow-on stream, and only if mandated by launch-critical claims.
+
 ## 6. Final note
 
 This is the fewest sensible sprint sequence currently recommended.
