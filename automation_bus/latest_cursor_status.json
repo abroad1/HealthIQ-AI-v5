@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-RT-2-identity-runtime-pilot",
+  "branch": "work/ARCH-RT-3-card-evidence-vertical-slice",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-29T11:20:56Z",
-  "cursor_started_utc": "2026-05-29T11:09:50Z",
-  "head_sha": "d1adcc5affdbbb65bfebace9e0026946de423943",
+  "cursor_started_utc": "2026-05-30T06:52:46Z",
+  "head_sha": "af29b50f84a63949931270a64b062cf5a169e47f",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-2_identity_runtime_pilot"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-RT-3_card_evidence_vertical_slice"
 }
