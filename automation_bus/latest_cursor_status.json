@@ -1,10 +1,9 @@
 {
-  "branch": "work/LAUNCH-CORE-1-results-page-card-coherence-and-consumer-copy",
+  "branch": "work/LAUNCH-CORE-2-multi-panel-launch-readiness-uat",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-30T11:29:35Z",
-  "cursor_started_utc": "2026-05-30T11:26:39Z",
-  "head_sha": "24311f1a49941ffff08e879d0bda8588f1ee4131",
+  "cursor_started_utc": "2026-05-30T12:50:51Z",
+  "head_sha": "6dd54b22cd3879990966509494e6529bb99c85ce",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy"
+  "status": "IN_PROGRESS",
+  "work_id": "LAUNCH-CORE-2_multi_panel_launch_readiness_uat"
 }
