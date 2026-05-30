@@ -164,3 +164,13 @@ provenance_field_rules:
     enum:
       - pilot_manual
       - compile_pipeline
+
+runtime_promotion:
+  description: >
+    Signals on the runtime-promoted compiled path must supply summary_template on every
+    hypothesis row. physiological_claim must not substitute for runtime summary text.
+  promoted_signal_ids:
+    - signal_vitamin_d_low
+  required_hypothesis_fields_for_promoted:
+    - summary_template
+  multi_frame_promotion: prohibited_without_explicit_frame_policy

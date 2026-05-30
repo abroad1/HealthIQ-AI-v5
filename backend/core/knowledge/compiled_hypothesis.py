@@ -15,6 +15,7 @@ import yaml
 
 SCHEMA_VERSION = "1.0.0"
 PILOT_SIGNAL_ID = "signal_vitamin_d_low"
+RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS: frozenset[str] = frozenset({PILOT_SIGNAL_ID})
 
 _SOURCE_PROVENANCE = frozenset(
     {"explicit", "source_document_derived", "package_id_inferred", "manual_pilot"}
@@ -129,6 +130,15 @@ def validate_compiled_hypothesis_payload(payload: Mapping[str, Any], *, path: st
             summary = row.get("summary_template")
             if summary is not None and (not isinstance(summary, str) or not summary.strip()):
                 _err(errors, f"hypotheses[{idx}].summary_template must be non-empty when present")
+            signal_id = str(payload.get("signal_id", "")).strip()
+            if (
+                signal_id in RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS
+                and (not isinstance(summary, str) or not summary.strip())
+            ):
+                _err(
+                    errors,
+                    f"hypotheses[{idx}].summary_template required for runtime-promoted signal {signal_id!r}",
+                )
             strength = row.get("evidence_strength")
             if strength not in _EVIDENCE_STRENGTH:
                 _err(errors, f"hypotheses[{idx}].evidence_strength invalid")
@@ -244,14 +254,39 @@ def validate_confirmatory_test_refs(artefact: CompiledHypothesisArtefact) -> Non
             )
 
 
-def runtime_summary_for_hypothesis(row: CompiledHypothesisRow) -> str:
+def runtime_summary_for_hypothesis(
+    row: CompiledHypothesisRow,
+    *,
+    promoted: bool = False,
+) -> str:
     """
-    ARCH-RT-5 presentation mapping: summary_template is runtime wording;
+    ARCH-RT-5C presentation mapping: summary_template is runtime wording;
     physiological_claim is governed clinical reasoning (not direct retail text).
+
+    When promoted=True (runtime compiler path), missing summary_template fails closed.
+    Shadow comparison may use promoted=False for fail-safe display only.
     """
     if row.summary_template and row.summary_template.strip():
         return row.summary_template.strip()[:200]
+    if promoted:
+        raise CompiledHypothesisValidationError(
+            f"summary_template required for runtime-promoted hypothesis {row.hypothesis_id!r}; "
+            "physiological_claim must not be used as runtime summary text"
+        )
     return row.physiological_claim.strip()[:200]
+
+
+def validate_runtime_promoted_artefact(artefact: CompiledHypothesisArtefact) -> None:
+    """Fail-closed gate before wiring compiled hypotheses into compile_root_cause_v1."""
+    if artefact.signal_id not in RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS:
+        return
+    if len(artefact.hypotheses) != 1:
+        raise CompiledHypothesisValidationError(
+            f"runtime promotion requires single-frame artefact; got {len(artefact.hypotheses)} "
+            f"hypotheses for {artefact.signal_id!r}"
+        )
+    for row in artefact.hypotheses:
+        runtime_summary_for_hypothesis(row, promoted=True)
 
 
 def artefact_as_shadow_dict(artefact: CompiledHypothesisArtefact) -> Dict[str, Any]:

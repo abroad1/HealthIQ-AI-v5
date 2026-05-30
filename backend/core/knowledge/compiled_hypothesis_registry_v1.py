@@ -12,6 +12,7 @@ from typing import Any, Dict, Optional, Tuple
 
 from core.knowledge.compiled_hypothesis import (
     PILOT_SIGNAL_ID,
+    RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS,
     CompiledHypothesisValidationError,
     artefact_as_shadow_dict,
     get_compiled_hypothesis_artefact,
@@ -43,6 +44,10 @@ _PILOT_BY_SIGNAL = {spec.signal_id: spec for spec in COMPILED_HYPOTHESIS_PILOT_S
 
 def is_compiled_hypothesis_pilot_signal(signal_id: str) -> bool:
     return signal_id.strip() in _PILOT_BY_SIGNAL
+
+
+def is_runtime_promoted_compiled_signal(signal_id: str) -> bool:
+    return signal_id.strip() in RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS
 
 
 def load_shadow_compiled_hypothesis(signal_id: str) -> Optional[Dict[str, Any]]:

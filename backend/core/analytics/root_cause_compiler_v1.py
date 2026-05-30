@@ -29,11 +29,27 @@ from core.contracts.root_cause_v1 import (
     RootCauseMissingItemV1,
     RootCauseV1,
 )
+from core.knowledge.compiled_hypothesis import (
+    CompiledHypothesisArtefact,
+    CompiledHypothesisRow,
+    get_compiled_hypothesis_artefact,
+    runtime_summary_for_hypothesis,
+    validate_confirmatory_test_refs,
+    validate_runtime_promoted_artefact,
+)
+from core.knowledge.compiled_hypothesis_registry_v1 import is_runtime_promoted_compiled_signal
 from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_tests_registry_v1
 from core.knowledge.root_cause_registry_v1 import get_root_cause_targets
 
 # LC-S18: validated registry replaces inline manual table (same targets, loud validation).
 _ROOT_CAUSE_TARGETS = get_root_cause_targets()
+
+_EVIDENCE_STRENGTH_CONFIDENCE = {
+    "strong": 0.75,
+    "moderate": 0.60,
+    "weak": 0.40,
+    "contextual": 0.50,
+}
 
 
 def _clamp01(value: float) -> float:
@@ -328,6 +344,92 @@ def _compile_finding(
     )
 
 
+def _compiled_hypothesis_confidence(row: CompiledHypothesisRow, signal_confidence: float) -> float:
+    base = _EVIDENCE_STRENGTH_CONFIDENCE.get(row.evidence_strength, 0.50)
+    return _clamp01(max(base, signal_confidence))
+
+
+def _compile_compiled_hypothesis_finding(
+    *,
+    target: Dict[str, Any],
+    artefact: CompiledHypothesisArtefact,
+    tests_by_id: Dict[str, Dict[str, Any]],
+    marker_present: Set[str],
+) -> RootCauseFindingV1:
+    """
+    ARCH-RT-5C — Map compiled hypothesis artefact to RootCauseFindingV1 without rule re-evaluation.
+    Pre-evaluated evidence strings and summary_template-only runtime wording.
+    """
+    validate_runtime_promoted_artefact(artefact)
+    validate_confirmatory_test_refs(artefact)
+    signal_confidence = float(
+        target.get("confidence", 0.0) if isinstance(target.get("confidence"), (int, float)) else 0.0
+    )
+    compiled_hypotheses: List[RootCauseHypothesisV1] = []
+    for row in sorted(artefact.hypotheses, key=lambda h: h.rank):
+        summary = runtime_summary_for_hypothesis(row, promoted=True)
+        if summary == row.physiological_claim.strip()[:200]:
+            raise ValueError(
+                f"runtime summary must not equal physiological_claim for {row.hypothesis_id!r}"
+            )
+        evidence_for = [
+            RootCauseEvidenceItemV1(item=text[:120], marker_refs=[])
+            for text in row.evidence_for
+            if text.strip()
+        ]
+        evidence_against = [
+            RootCauseEvidenceItemV1(item=text[:120], marker_refs=[])
+            for text in row.evidence_against
+            if text.strip()
+        ]
+        confirmatory_tests: List[RootCauseConfirmatoryTestV1] = []
+        for test_id in row.confirmatory_tests:
+            tid = str(test_id).strip()
+            if not tid:
+                continue
+            if tid not in tests_by_id:
+                raise ValueError(
+                    f"Unknown confirmatory test_id={tid!r} referenced by compiled hypothesis "
+                    f"{row.hypothesis_id!r}"
+                )
+            test_row = tests_by_id[tid]
+            mapped_biomarkers = [
+                str(x).strip()
+                for x in (test_row.get("maps_to_biomarkers") or [])
+                if str(x).strip()
+            ]
+            is_repeat_test = bool(test_row.get("is_repeat_test", False))
+            if not is_repeat_test and mapped_biomarkers and all(m in marker_present for m in mapped_biomarkers):
+                continue
+            confirmatory_tests.append(
+                RootCauseConfirmatoryTestV1(
+                    test_id=tid,
+                    display_name=str(test_row.get("display_name", "")).strip(),
+                    rationale=str(test_row.get("rationale_template", "")).strip()[:120],
+                )
+            )
+        compiled_hypotheses.append(
+            RootCauseHypothesisV1(
+                hypothesis_id=row.hypothesis_id,
+                title=row.title[:120],
+                summary=summary,
+                hypothesis_confidence=_compiled_hypothesis_confidence(row, signal_confidence),
+                evidence_for=evidence_for,
+                evidence_against=evidence_against,
+                missing_data=[],
+                confirmatory_tests=confirmatory_tests,
+                safety_class="monitoring",
+            )
+        )
+    return RootCauseFindingV1(
+        signal_id=str(target.get("signal_id", "")).strip(),
+        primary_metric=str(target.get("primary_metric", "")).strip(),
+        signal_state=str(target.get("signal_state", "unknown")).strip() or "unknown",
+        signal_confidence=signal_confidence,
+        hypotheses=compiled_hypotheses,
+    )
+
+
 _WHY_FALLBACK_HYPOTHESIS_ID = "why_engine_fallback_v1"
 
 
@@ -423,6 +525,17 @@ def compile_root_cause_v1(
     for target_signal_id, hypotheses_loader in _ROOT_CAUSE_TARGETS:
         target = next((r for r in rows if str(r.get("signal_id", "")).strip() == target_signal_id), None)
         if target is None:
+            continue
+        if is_runtime_promoted_compiled_signal(target_signal_id):
+            artefact = get_compiled_hypothesis_artefact(target_signal_id)
+            findings.append(
+                _compile_compiled_hypothesis_finding(
+                    target=target,
+                    artefact=artefact,
+                    tests_by_id=tests_by_id,
+                    marker_present=marker_present,
+                )
+            )
             continue
         hypotheses_payload = hypotheses_loader()["hypotheses"]
         findings.append(

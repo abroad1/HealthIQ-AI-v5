@@ -38,8 +38,8 @@ compiled_hypothesis_artefacts:
     activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
     artefact_path: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml
     compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml
-    runtime_authority: shadow_only
-    launch_classification: pilot_shadow_retained
+    runtime_authority: runtime_promoted_compiled
+    launch_classification: launch_included_compiled
 
 wave1_subsystems_legacy_hard_coded:
   subsystem_ids: []

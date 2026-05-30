@@ -17,15 +17,17 @@
 
 ## Runtime helper
 
-`compiled_hypothesis.runtime_summary_for_hypothesis()` returns `summary_template` when present, else truncated `physiological_claim` (fail-safe only — launch promotion must supply `summary_template`).
+`compiled_hypothesis.runtime_summary_for_hypothesis(row, promoted=True)` returns `summary_template` only and **fails closed** when absent.
 
-## ARCH-RT-5 decision
+`runtime_summary_for_hypothesis(row, promoted=False)` may fall back to truncated `physiological_claim` for shadow comparison only.
+
+## ARCH-RT-5C decision
 
 | Path | Status |
 |------|--------|
-| `signal_vitamin_d_low` compiled artefact | **shadow_only** — mapping defined, **not** wired into `compile_root_cause_v1()` |
-| Legacy YAML | Remains production authority |
-| Estate promotion | **deferred_non_launch_blocker** pending M3 compiler wiring follow-on |
+| `signal_vitamin_d_low` compiled artefact | **runtime_promoted_compiled** — wired into `compile_root_cause_v1()` via `_compile_compiled_hypothesis_finding()` |
+| Legacy YAML | **Retained** — `load_vitamin_d_low_hypotheses_v1()` unchanged; not called for promoted signal at runtime |
+| Non-pilot root-cause | Unchanged — legacy `_compile_finding()` path only |
 
 ## Multi-frame
 
