@@ -1,9 +1,10 @@
 {
   "branch": "work/LAUNCH-CORE-3-result-versioning-replay-and-regeneration-policy",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-30T13:30:47Z",
   "cursor_started_utc": "2026-05-30T13:26:40Z",
-  "head_sha": "0ef08aee023274045b938f113704748b5792f17a",
+  "head_sha": "87125089a6e87c634c0913ff7afab27aac365002",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy"
 }
