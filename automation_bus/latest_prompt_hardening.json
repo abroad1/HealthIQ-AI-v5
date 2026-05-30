@@ -1,5 +1,5 @@
 {
-  "work_id": "LAUNCH-CORE-2_multi_panel_launch_readiness_uat",
+  "work_id": "LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-30T00:00:00Z",
@@ -8,77 +8,152 @@
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=LAUNCH-CORE-2_multi_panel_launch_readiness_uat (line 2), branch=work/LAUNCH-CORE-2-multi-panel-launch-readiness-uat (line 3), risk_level=STANDARD (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=CONTENT (line 6)"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy (line 2), branch=work/LAUNCH-CORE-3-result-versioning-replay-and-regeneration-policy (line 3), risk_level=HIGH (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=MIXED (line 6)"
     },
     {
-      "check": "change_type_CONTENT_correct",
+      "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:15-17 — 'This is an investigation/audit sprint only. Do not modify production code, compiled artefacts, backend logic, frontend components, schemas, packages, investigation specs, or tests unless explicitly approved after the audit.' Sole deliverable: docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md (line 152). Screenshots under docs/audit-papers/assets/ consistent with LAUNCH-CORE-1B pattern. All changes under /docs/ — CONTENT is correct. BEHAVIOUR controls not required."
+      "citation": "automation_bus/latest_cursor_prompt.md:60-68 — sprint may touch backend/core/pipeline/ (Intelligence Core: orchestrator, orchestrator_phases_v1.py), backend/core/analytics/ (Intelligence Core), backend/core/models/results.py (AnalysisDTO/AnalysisResult DTO structure), backend/core/contracts/replay_manifest_v1.py, backend/repositories/ (persistence layer), and frontend stale-result UI. Result immutability and deterministic replay touch the core product integrity surface. HIGH is mandatory per SOP §3 and §10 for any work package interacting with Intelligence Core components regardless of file path. Correctly assigned."
     },
     {
-      "check": "risk_level_STANDARD_correct",
+      "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — STANDARD. Sprint only reads from the app, runs existing validators, and produces an audit document. No modifications to backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, or update_cursor_status.py. No Intelligence Core interaction (SOP §3). No HIGH-risk trigger applies. STANDARD is correct."
+      "citation": "automation_bus/latest_cursor_prompt.md:184-197 — MIXED. CONTENT: two docs deliverables (docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md + docs/audit-papers/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_audit.md). BEHAVIOUR: bounded implementation allowed — stale-result detection helper (BEHAVIOUR: new classification logic), API metadata field for stale flag (BEHAVIOUR: output field change), frontend stale-result warning/banner (BEHAVIOUR: new rendered output). MIXED governed under BEHAVIOUR controls per SOP §4 is correct."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: baseline preflight (branch check, working tree, LAUNCH-CORE-1 confirmation) must complete before any file creation; kernel start enforces boundary between investigation and report authoring."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: baseline preflight (branch, working tree, LAUNCH-CORE-1, LAUNCH-CORE-2 audit report) must complete before any file modification; HIGH risk designation requires phased control."
     },
     {
-      "check": "2a_authority_path_validator_1",
+      "check": "2a_baseline_working_tree_clean",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_day_one_architecture.py — file exists on disk (glob confirmed). Referenced at automation_bus/latest_cursor_prompt.md:139."
-    },
-    {
-      "check": "2a_authority_path_validator_2",
-      "result": "CONFIRMED",
-      "citation": "backend/tests/architecture/test_day_one_architecture_guardrails.py — file exists on disk (glob confirmed). Referenced at automation_bus/latest_cursor_prompt.md:140."
+      "citation": "git status --short shows only: M automation_bus/latest_cursor_prompt.md (expected sprint-setup modification). No untracked files. Working tree is clean. All baseline STOP conditions in automation_bus/latest_cursor_prompt.md:49-56 pass: branch=main, HEAD=origin/main=5eb8aed615cd47485c6181521fb9f78260227025, no untracked/uncommitted files."
     },
     {
       "check": "2a_launch_core_1_merged",
       "result": "CONFIRMED",
-      "citation": "git log: commit 48b078b — 'chore(bus): LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy kernel COMPLETE status' is the current HEAD on main. Baseline STOP condition 'LAUNCH-CORE-1 is not merged' does NOT trigger."
+      "citation": "git log: commit 48b078b — 'chore(bus): LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy kernel COMPLETE status' present on main. Baseline STOP condition 'LAUNCH-CORE-1 is not merged' does NOT trigger."
     },
     {
-      "check": "2a_main_aligned_with_remote",
+      "check": "2a_launch_core_2_audit_report_exists",
       "result": "CONFIRMED",
-      "citation": "git rev-parse HEAD = 48b078b095ab736b5c15659b45becab65fcbbc90; git rev-parse origin/main = 48b078b095ab736b5c15659b45becab65fcbbc90. Main is aligned with remote. Baseline STOP condition 'local main does not equal origin/main' does NOT trigger."
+      "citation": "docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md — file exists on disk (glob confirmed). Committed in commit a472a23 ('docs(audit): LAUNCH-CORE-2 multi-panel launch readiness UAT report'), kernel COMPLETE at commit 5eb8aed (current HEAD). Baseline STOP condition 'LAUNCH-CORE-2 audit report is missing' does NOT trigger."
+    },
+    {
+      "check": "2a_authority_doc_1",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md — exists (verified above)"
+    },
+    {
+      "check": "2a_authority_doc_2",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy_report.md — exists on disk (glob confirmed)"
+    },
+    {
+      "check": "2a_authority_doc_3",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md — exists on disk (glob confirmed)"
+    },
+    {
+      "check": "2a_authority_doc_4",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/active_intelligence_authority_manifest.md — exists on disk (glob confirmed)"
+    },
+    {
+      "check": "2a_authority_doc_5",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/day_one_architecture_launch_readiness_audit.md — exists on disk (glob confirmed)"
+    },
+    {
+      "check": "2a_authority_doc_6",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md — exists on disk (glob confirmed)"
+    },
+    {
+      "check": "2a_authority_doc_7",
+      "result": "CONFIRMED",
+      "citation": "backend/scripts/validate_day_one_architecture.py — exists on disk (glob confirmed)"
+    },
+    {
+      "check": "2a_path_discrepancy_backend_api",
+      "result": "CURSOR_MUST_RESOLVE — PATH DOES NOT EXIST",
+      "citation": "automation_bus/latest_cursor_prompt.md:93 — prompt lists 'backend/api/**' as implementation authority. This directory DOES NOT EXIST in the repository. Actual API route path is backend/app/routes/ (confirmed: backend/app/routes/health.py, backend/app/routes/questionnaire.py). Prompt acknowledges this at line 104: 'If actual persistence/API paths differ, locate and report them.' Cursor must: (1) locate all API route files under backend/app/routes/ and any other route registration points, (2) identify the result retrieval endpoint(s) for analysis_id lookup, (3) report actual paths in the audit document."
+    },
+    {
+      "check": "2a_path_discrepancy_backend_db",
+      "result": "CURSOR_MUST_RESOLVE — PATH DOES NOT EXIST",
+      "citation": "automation_bus/latest_cursor_prompt.md:98 — prompt lists 'backend/db/**' as implementation authority. This directory DOES NOT EXIST in the repository. Actual persistence layer is backend/repositories/ (BaseRepository using SQLAlchemy ORM, confirmed: backend/repositories/base.py, backend/repositories/export_repository.py). DB models are at backend/core/models/database.py. Migrations are at backend/migrations/versions/. Cursor must identify the specific repository that handles analysis_results retrieval."
+    },
+    {
+      "check": "2a_sprint9_replay_infrastructure_exists",
+      "result": "CURSOR_MUST_READ_BEFORE_PROPOSING — CRITICAL PRE-EXISTING FOUNDATION",
+      "citation": "Sprint 9 replay infrastructure confirmed on disk: (1) backend/core/contracts/replay_manifest_v1.py — ReplayManifestV1 Pydantic model with 30+ version/hash fields (unit_registry_version, ratio_registry_version, cluster_schema_hash, insight_graph_version, confidence_model_version, scoring_policy_hash, evidence_registry_hash, state_transition_hash, causal_layer_hash, calibration_hash, arbitration_hash, explainability_hash, burden_hash, lifestyle_input_hash, schema_hashes dict, analysis_result_version); (2) backend/core/models/results.py:99-102 — AnalysisResult.replay_manifest: Optional[Dict[str,Any]] 'Sprint 9: ReplayManifestV1 for determinism/replay'; (3) backend/core/models/results.py:399-402 — AnalysisDTO.replay_manifest: Optional[Dict[str,Any]] 'Sprint 9: ReplayManifestV1 for determinism/replay (version stamps + schema hashes)'; (4) backend/migrations/versions/add_replay_manifest_column.py — Alembic migration adding replay_manifest JSON column to analysis_results table (Sprint 9, 2025-02-15). Cursor MUST read replay_manifest_v1.py in full before proposing or evaluating which Required metadata fields are missing vs. already captured inside the replay_manifest JSON blob."
+    },
+    {
+      "check": "2a_sprint9_replay_manifest_frozen_flag",
+      "result": "CURSOR_MUST_ASSESS — ARCHITECTURAL FLAG",
+      "citation": "backend/core/contracts/replay_manifest_v1.py:21 — ReplayManifestV1 uses ConfigDict(frozen=False, extra='forbid'). All other governed contracts (BiomarkerScore, AnalysisResult, AnalysisDTO, ConsumerDomainScoreV1) use frozen=True. The immutability principle in this sprint (automation_bus/latest_cursor_prompt.md:16-20) requires that generated result payloads be immutable. frozen=False on ReplayManifestV1 is inconsistent with the immutability principle. Cursor must assess whether this is intentional (mutable during assembly, then serialised as JSON into the immutable DTO) or a contract defect, and document the finding in the audit report."
+    },
+    {
+      "check": "2a_required_metadata_gaps",
+      "result": "CONFIRMED — PARTIAL FOUNDATION, GAPS IDENTIFIED",
+      "citation": "Comparing automation_bus/latest_cursor_prompt.md:155-176 (Required metadata model) against existing models: PRESENT (may be inside replay_manifest JSON): engine component versions (unit_registry_version, ratio_registry_version, etc.), analysis_result_version, lifestyle_input_hash, schema_hashes dict. NOT PRESENT in any current model or contract: result_version_id (distinct from analysis_id), parent_analysis_id / source_analysis_id (lineage link), raw_input_hash, parsed_biomarker_payload_hash, questionnaire_hash, single engine_version / pipeline_version fields, knowledge_estate_version, active_authority_manifest_hash, compiled_estate_index_hash, compile_manifest_hashes (schema_hashes exists but scope differs), supersedes_result_version_id, superseded_by_result_version_id, regeneration_reason, result_payload_hash. Cursor must map each proposed field against the existing replay_manifest_v1.py content before proposing additions or migration."
+    },
+    {
+      "check": "2a_no_preexisting_deliverables",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md — does not exist (glob returned no results). docs/audit-papers/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_audit.md — does not exist (glob returned no results). No no-op risk. Sprint has real work to produce."
     },
     {
       "check": "2a_no_active_kernel_token",
       "result": "CONFIRMED",
-      "citation": "automation_bus/state/work_package_active.json — does not exist (glob returned no results). No prior sprint is open. Kernel start is clear to proceed once working tree is resolved."
+      "citation": "automation_bus/state/work_package_active.json — does not exist. No prior sprint is open. Kernel start is clear to proceed."
     },
     {
-      "check": "2a_no_preexisting_deliverable",
+      "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md — does not exist (glob returned no results). No no-op risk."
+      "citation": "automation_bus/latest_cursor_prompt.md:184-197 — 12 scope items, all bounded. Items 1-8 are investigation/definition only (no code). Items 9-12 allow bounded implementation: 'minimal metadata/stale detection only if safely bounded' (item 9), 'add tests if implementation occurs' (item 10), 'produce design/audit report' (item 11), 'update launch-readiness audit' (item 12). Implementation boundary (lines 202-215) enumerates allowed bounded examples: classification helper, stale-detection function, API metadata field, frontend warning/banner, classification-only tests. Scope is defined."
     },
     {
-      "check": "2a_analysis_ids_runtime_not_verifiable",
-      "result": "NOTED — expected limitation",
-      "citation": "automation_bus/latest_cursor_prompt.md:69-73 — analysis IDs 18e14232-9f93-45e6-820c-004ab5a16235 and 746f2b0a-b470-4d87-8ed8-e2c3d1e68c02 are runtime database entries; cannot be verified from repo. This is expected for a UAT sprint. Cursor must confirm these render correctly at execution time and apply the STOP condition (line 201) if API payload cannot be fetched."
+      "check": "2b_intelligence_core_surface",
+      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 1",
+      "citation": "backend/core/pipeline/orchestrator.py and backend/core/pipeline/orchestrator_phases_v1.py are Intelligence Core (SOP §3: pipeline logic). If Cursor modifies any file under backend/core/pipeline/, the HIGH risk controls apply — no silent behavioural drift, determinism must be preserved, ARCH-RT guardrails must still pass. The sprint STOP conditions (automation_bus/latest_cursor_prompt.md:329-339) items 6 and 7 protect this surface: STOP if implementation touches clinical interpretation logic or weakens ARCH-RT guardrails. Cursor must NOT modify orchestrator behaviour as part of stale-result classification — classification logic must live in a new helper, not inside the pipeline itself."
     },
     {
-      "check": "stop_conditions_coverage",
+      "check": "2b_no_destructive_refresh_enforcement",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:200-210 — 8 explicit STOP conditions: (1) app inaccessible, (2) login failure, (3) API payload fetch failure, (4) results page render failure, (5) ARCH-RT-6 validator failure, (6) launch-blocking clinical display defect, (7) false-missing marker defect, (8) raw internal IDs/source traces visible. Coverage is comprehensive. No STOP gaps identified."
+      "citation": "automation_bus/latest_cursor_prompt.md:121-127 — non-negotiable architectural rule: 'Generated result payloads are immutable. Do not silently mutate or overwrite old generated results.' automation_bus/latest_cursor_prompt.md:212-215 — explicit prohibitions: 'Do not implement full destructive refresh. Do not implement broad database migration unless hardening confirms it is safe and bounded.' STOP conditions (lines 333-334): 'STOP if: regeneration would overwrite old results / implementation would require broad schema migration.' Closure requirements (lines 375-376) enforce: 'no destructive refresh logic is included.' These protections are comprehensive."
     },
     {
-      "check": "scope_protection",
+      "check": "2b_replay_manifest_as_investigation_anchor",
+      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 2",
+      "citation": "backend/core/contracts/replay_manifest_v1.py:14-174 — ReplayManifestV1 captures 30+ deterministic version/hash fields. Cursor must: (1) read the full contract before the investigation begins; (2) map each Required metadata field (automation_bus/latest_cursor_prompt.md:155-176) against existing replay_manifest_v1.py fields and produce a gap table in the audit report; (3) not propose new DB columns or contract fields for data that is already captured inside the replay_manifest JSON blob without explaining why a structured top-level field is required instead. Rationale: Sprint 9 already built substantial replay infrastructure; the audit must characterise what exists before proposing additions, per the prompt's own instruction at line 177: 'Do not invent fields blindly. First inspect current persistence model.'"
+    },
+    {
+      "check": "2b_regression_targets_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:191-198 — explicit out-of-scope prohibitions: no production code, frontend components, backend logic, compiled artefacts, package files, investigation specs, schemas, tests, scoring logic, clinical thresholds, copy changes. Closure requirements (lines 229-245) enforce a final git-status check before finish and prohibit helper-script commits and ambiguous stash."
+      "citation": "automation_bus/latest_cursor_prompt.md:320-325 — always run: python backend/scripts/validate_day_one_architecture.py + python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q. If implementation occurs, also run stale-result classification tests, immutable snapshot policy tests, result version metadata serialisation tests, API stale flag tests if added, frontend stale banner tests if added, no-destructive-overwrite tests (lines 310-317). Regression coverage is defined."
     },
     {
-      "check": "HARDENING_FLAG_dirty_working_tree",
-      "result": "CURSOR_MUST_RESOLVE_BEFORE_KERNEL_START",
-      "citation": "git status shows untracked files: docs/audit-papers/LAUNCH-CORE-1B_results_page_post_fix_uat_audit.md, docs/audit-papers/assets/lc1b-health-systems-expanded.png, docs/audit-papers/assets/lc1b-hero.png. Also: automation_bus/latest_cursor_prompt.md is modified (expected — new sprint prompt). The baseline STOP condition at automation_bus/latest_cursor_prompt.md:39 ('untracked or uncommitted files are present') will fire unless resolved. Cursor must commit or obtain explicit user instruction to discard the LAUNCH-CORE-1B artefacts before running 'python backend/scripts/run_work_package.py start'. The latest_cursor_prompt.md modification is acceptable sprint-setup state."
+      "check": "2b_determinism_preserved",
+      "result": "CONFIRMED — bounded by STOP conditions",
+      "citation": "Sprint goal is to EXTEND deterministic replay capability, not change it. Allowed bounded implementation (classification helper, stale flag, UI banner) adds new output fields but does not alter existing analytical computation. STOP condition 5 (automation_bus/latest_cursor_prompt.md:336): 'STOP if deterministic replay cannot be supported with current metadata' — exits to design-only if implementation would compromise determinism. STOP condition 4 (line 335): 'STOP if regeneration would overwrite old results' — prevents destructive state mutation. Determinism is protected."
+    },
+    {
+      "check": "2b_stop_conditions_assessment",
+      "result": "NO STOP CONDITIONS TRIGGERED IN HARDENING",
+      "citation": "Hardening review: (1) raw input availability — cannot be determined pre-execution (runtime DB state), correctly deferred to Cursor investigation; (2) persistence model unclear — NOT unclear, backend/core/models/results.py and replay_manifest_v1.py are well-defined; (3) broad schema migration — NOT required at this stage; the replay_manifest JSON column already exists from Sprint 9; (4) destructive overwrite — NOT included, explicitly prohibited; (5) deterministic replay feasibility — Sprint 9 infrastructure exists, replay_manifest_v1.py captures extensive version/hash fields; (6) clinical interpretation — NOT touched by allowed bounded scope; (7) ARCH-RT guardrails — validators will be run; (8) stale-result UI product decision — correctly scoped as a decision to define (option A-D), not as an implementation requirement; (9) test provability — classification logic is testable. No hardening STOP triggered."
+    },
+    {
+      "check": "2b_scope_creep_risk",
+      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 3",
+      "citation": "automation_bus/latest_cursor_prompt.md:194 — 'Implement minimal metadata/stale detection only if safely bounded.' automation_bus/latest_cursor_prompt.md:213-215 — 'Do not implement full regeneration job unless explicitly approved after investigation.' The sprint's STOP condition 3 (line 333): 'STOP if implementation would require broad schema migration.' Sprint 9 already added replay_manifest JSON column — any new metadata fields Cursor proposes must either: (a) be stored inside the existing replay_manifest JSON blob (no migration required), or (b) require a new Alembic migration only if the field cannot be stored inside the blob AND the migration is narrow and safe. Cursor must not implement a new DB migration without declaring it as a bounded change and confirming it does not touch existing column values."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "Sprint deliverable is docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md only. Out-of-scope list (automation_bus/latest_cursor_prompt.md:191-198) and closure requirements (lines 229-245) prohibit all production code, tooling scripts, and helper files. No .codex/, .vscode/, or AGENTS.md artefacts expected."
+      "citation": "Out-of-scope list (automation_bus/latest_cursor_prompt.md:289-304) prohibits: overwriting persisted result payloads, deleting historical results, destructive refresh, clinical scoring logic, card evidence logic, root-cause logic, PSI status, SignalRegistry, SignalEvaluator, biomarker SSOT, unit conversion, frontend interpretation logic beyond stale messaging, fallback parsers, broad regeneration jobs without approval. Closure requirements (lines 372-377) enforce: no destructive refresh, no clinical interpretation changes, no ambiguous stash, only in-scope files."
     }
   ]
 }
