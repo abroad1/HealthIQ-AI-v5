@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-RT-3-card-evidence-vertical-slice",
+  "branch": "work/ARCH-RT-4-compiled-hypothesis-root-cause-slice",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-30T06:53:56Z",
-  "cursor_started_utc": "2026-05-30T06:52:46Z",
-  "head_sha": "bcd30df3e9c83bd49d4aa501c13993ef4ed2ebeb",
+  "cursor_started_utc": "2026-05-30T07:28:51Z",
+  "head_sha": "6b9786956642f319c58e9e8605f6140f5eb394ef",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-3_card_evidence_vertical_slice"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-RT-4_compiled_hypothesis_root_cause_slice"
 }
