@@ -1,129 +1,144 @@
 {
-  "work_id": "ARCH-RT-2_identity_runtime_pilot",
+  "work_id": "ARCH-RT-3_card_evidence_vertical_slice",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-29T00:00:00Z",
+  "hardened_utc": "2026-05-30T00:00:00Z",
   "hardened_by": "Claude Code (Stage 2 / SOP v1.3.1)",
   "changes": [
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-2_identity_runtime_pilot, branch=work/ARCH-RT-2-identity-runtime-pilot, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-3_card_evidence_vertical_slice, branch=work/ARCH-RT-3-card-evidence-vertical-slice, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
     },
     {
       "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Sprint touches Intelligence Core directly: SignalRegistry (backend/core/analytics/signal_evaluator.py:18), SignalEvaluator (signal_evaluator.py:76), SignalResult (backend/core/models/signal.py:10). SOP §10: any work touching Intelligence Core = HIGH regardless of file path."
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Sprint touches backend/core/analytics/ (domain_score_assembler.py, wave1_subsystem_evidence.py path), backend/core/models/results.py (DTO), and output generation for card evidence. SOP §10: any component directly influencing analytical reasoning or output generation = HIGH. Wave 1 card subsystem evidence affects user-facing analytical output."
     },
     {
-      "check": "change_type_BEHAVIOUR_correct",
+      "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — BEHAVIOUR. Sprint changes: (1) SignalRegistry key from signal_id to activation_key; (2) SignalEvaluator evaluate_all() to emit multiple frames; (3) SignalResult model fields. These are pipeline behaviour, output generation, and emitted reasoning changes. BEHAVIOUR controls apply per SOP §4."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED. Sprint adds governed content (knowledge_bus/schema/, knowledge_bus/compiled/ YAML artefacts) AND behaviour changes (backend loader, assembler integration, DTO v2 extension, frontend render-only update if required). MIXED is correct per SOP §4: governed content consumed by assembler/loader that affects emitted card evidence output. MIXED is governed using BEHAVIOUR controls."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct for HIGH/BEHAVIOUR sprint."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct for HIGH/MIXED sprint."
     },
     {
       "check": "2a_all_authoritative_inputs_exist",
       "result": "CONFIRMED",
-      "citation": "All 15 required input files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md; docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md; docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md; docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md; docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md; docs/architecture/signal_id_collision_inventory.md; docs/architecture/package_generation_inventory.md; docs/architecture/activation_compile_gap_report.md; docs/architecture/compile_manifest_contract.md; docs/architecture/package_provenance_policy.md; docs/architecture/activation_compile_contract.md; docs/architecture/ARCH-RT-1_single_frame_pilot_selection.md; docs/architecture/ARCH-RT-1_pilot_compile_provenance_evidence.md; docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — all present."
+      "citation": "All 20 required input files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md; docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md; docs/architecture/research_to_runtime_traceability_matrix.md; docs/architecture/intelligence_authority_inventory.md; docs/architecture/package_generation_inventory.md; docs/architecture/psi_coverage_and_manifest_opt_in_report.md; docs/architecture/root_cause_registry_inventory.md; docs/architecture/signal_id_collision_inventory.md; docs/architecture/legacy_package_retirement_candidates.md; docs/architecture/activation_compile_gap_report.md; docs/architecture/ADR-RT-001 through ADR-RT-004 (all present); docs/architecture/compile_manifest_contract.md; docs/architecture/package_provenance_policy.md; docs/architecture/activation_compile_contract.md; docs/architecture/psi_gap_closure_mechanics.md; docs/architecture/psi_runtime_wiring_design.md; docs/architecture/ARCH-RT-1_single_frame_pilot_selection.md; docs/architecture/ARCH-RT-1_pilot_compile_provenance_evidence.md; docs/architecture/ARCH-RT-2_identity_runtime_pilot_report.md; docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — all present."
     },
     {
-      "check": "2a_ARCH-RT-1_merged_confirmed",
+      "check": "2a_ARCH-RT-2_merged_confirmed",
       "result": "CONFIRMED",
-      "citation": "git log --oneline -n 8: commit 072345c 'Merge branch work/ARCH-RT-1-contracts-and-compile-foundation' is at HEAD on main. ARCH-RT-0 merge also confirmed (commit fa50888). Both prerequisite sprints merged before ARCH-RT-2."
+      "citation": "git log --oneline -n 8: HEAD commit ac48d29 'Merge branch work/ARCH-RT-2-identity-runtime-pilot'. ARCH-RT-2 is merged. ARCH-RT-1 merge also confirmed at commit 072345c. ARCH-RT-0 and WAVE1-EQUIV1 confirmed in prior sprint history. All four required prerequisite sprints merged."
     },
     {
-      "check": "2a_ADR-RT-002_MULTI_FRAME_decisive",
-      "result": "CONFIRMED — STOP 1 not triggered",
-      "citation": "docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md:8 — 'Decisive: Yes — one-frame vs multi-frame resolved below'. Line 22: 'HealthIQ will support multiple governed activation frames per biomarker direction at runtime.' Line 24: 'ONE_FRAME_PER_DIRECTION is rejected as the target policy.' Status field line 6: ACCEPTED. Decision is unambiguous."
+      "check": "2a_compiled_card_evidence_dir_absent",
+      "result": "CONFIRMED — expected deliverable",
+      "citation": "knowledge_bus/compiled/ — directory does not exist. knowledge_bus/schema/health_system_card_evidence_schema_v1.yaml — file does not exist. Both are deliverables of this sprint, not authority sources. knowledge_bus/schema/ directory exists with 10 other schema files — correct parent directory for new schema. Cursor must create knowledge_bus/compiled/health_system_cards/ directory and the pilot YAML artefact."
     },
     {
-      "check": "2a_activation_key_required",
-      "result": "CONFIRMED — STOP 2 not triggered",
-      "citation": "docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md:44-50 — Decision 3: 'Is activation_key required? YES. Required on: Compiled signal_library entries (or sidecar index), SignalResult at runtime, Compile manifest rows.' Format defined at lines 38-40: 'signal_id::spec_id where spec_id is the investigation-spec frame identifier.'"
-    },
-    {
-      "check": "2a_ALT_high_collision_still_exists",
-      "result": "CONFIRMED — STOP 3 not triggered",
-      "citation": "knowledge_bus/packages/ directory listing: 4 packages confirmed present — pkg_kb52c_alt_high_hepatocellular_injury_pattern, pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern, pkg_kb52c_alt_high_muscle_source_or_exertional_pattern, pkg_s24_alt_high_hepatocellular_injury. Collision inventory docs/architecture/signal_id_collision_inventory.md:36-46 confirms: signal_alt_high is a multi-frame medical case with 4 packages, lexicographic winner is pkg_s24_alt_high_hepatocellular_injury, 3 kb52c frames discarded."
-    },
-    {
-      "check": "2a_silent_overwrite_code_confirmed",
+      "check": "2a_hard_coded_card_evidence_source_confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/core/analytics/signal_evaluator.py:54-63 — SignalRegistry._load() dict keyed by signal_id. Lines 54-60: 'if signal_id in signals_by_id: existing_source = str(signals_by_id[signal_id].get(_source_path, \"\")); if str(path) <= existing_source: continue' — deterministic lexicographic overwrite policy. No error, no multi-frame retention. SignalResult emitted once per signal_id maximum."
+      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:1 — confirmed reading full file. Hard-coded subsystem definitions at lines 27-85: 7 _Wave1SubsystemDef instances across 3 domains (wave1_cardiovascular: 3 subsystems, wave1_blood_sugar: 2 subsystems, wave1_liver: 2 subsystems). WAVE1_DOMAIN_SUBSYSTEM_DEFS dict at line 82. assemble_wave1_subsystem_evidence() at line 137 is the single assembly function called by domain_score_assembler.py."
     },
     {
-      "check": "2a_SignalResult_current_shape_lacks_provenance",
+      "check": "2a_pilot_glycaemic_control_definition_confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/core/models/signal.py:10-20 — SignalResult Pydantic model has fields: signal_id, system, signal_state, signal_value, confidence, confidence_reasons, primary_metric, lab_normal_but_flagged, supporting_markers, explanation. Fields activation_key, spec_id, package_id, source_document are ALL ABSENT. ADR-RT-002 Decision 5 (line 59-68) requires all four fields on SignalResult."
+      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:54-59 — _WAVE1_MET_GLYCAEMIC: subsystem_id='wave1_met_glycaemic_control', subsystem_label='Glycaemic control', expected_marker_ids=('glucose', 'hba1c'), source_trace='wave1_subsystem_evidence_v1:wave1_blood_sugar:glycaemic_control'. Two-marker subsystem. No ratio/derived markers. No PSI dependency. Knowledge Bus package: pkg_s24_hba1c_high_glycaemia — manifest present at knowledge_bus/packages/pkg_s24_hba1c_high_glycaemic/package_manifest.yaml (s24 governed tier). No pending clinical sign-off found."
     },
     {
-      "check": "2a_ALT_signal_library_no_activation_key",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_s24_alt_high_hepatocellular_injury/signal_library.yaml — library.package_id: KBP-2401, signal_id: signal_alt_high. No activation_key field present. No spec_id field present. This is expected — activation_key is a runtime/compile target not yet present in YAML."
+      "check": "2a_pilot_lipid_transport_risk_flag",
+      "result": "RISK NOTE — recommend glycaemic control as pilot",
+      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:27-38 — _WAVE1_CV_LIPID: 5 markers including tc_hdl_ratio (a ratio/derived marker). knowledge_bus/packages/pkg_lipid_transport/package_manifest.yaml:3-7 — description states 'threshold decision mandatory before implementation' and 'Clinical sign-off required'. tc_hdl_ratio requires ratio registry. More complex authority chain with multiple packages (pkg_lipid_transport, pkg_s24_ldl_high_dyslipidaemia, pkg_s24_triglycerides_high_metabolic). Glycaemic control is the safer, cleaner pilot choice."
     },
     {
-      "check": "2a_ARCH-RT-1_carry_forward_compile_id_canonical",
+      "check": "2a_dto_SubsystemEvidenceV1_confirmed",
       "result": "CONFIRMED",
-      "citation": "docs/architecture/ARCH-RT-1_pilot_compile_provenance_evidence.md:65 — synthetic manifest uses compile_id field. automation_bus/latest_cursor_prompt.md:101-107 states: 'compile_id is the canonical compile identifier. compile_run_id is transitional only. If both are present, enforce compile_run_id == compile_id.' ARCH-RT-2 must not invert this if sprint touches compile manifest areas."
+      "citation": "backend/core/models/results.py:176-213 — SubsystemEvidenceV1 Pydantic model with ConfigDict(frozen=True, extra='forbid'). Current fields: subsystem_id (required), subsystem_label (required), included_marker_ids (default=[]), missing_marker_ids (default=[]), included_markers (Optional), missing_markers (Optional), status_label (Optional), evidence_role (Optional), source_trace (required). Fields required by card evidence schema (marker_role, relationship_kind, rationale_short, presence_policy, visibility_tier, mechanism_line, missing_policy_line, source_spec_ids, compile_manifest_ref) are ALL ABSENT — must be added as Optional with defaults in v2 DTO approach."
     },
     {
-      "check": "2a_ARCH-RT-1_carry_forward_schema_draft",
+      "check": "2a_ConsumerDomainScoreV1_subsystems_field_confirmed",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:120 — 'This sprint must not treat compile_manifest_schema_v1.yaml as locked or production-ready.' ARCH-RT-1 hardening JSON confirmed DRAFT status. Optional fields (activation_keys_emitted, collisions_detected, policy_version) may remain optional while DRAFT. Carry-forward intact."
+      "citation": "backend/core/models/results.py:307 — subsystems: Optional[List[SubsystemEvidenceV1]] = Field(default=None, description='DOMAIN-UX1C: governed subsystem evidence rows; Wave 1 only'). Field is already present. Sprint will populate it from compiled artefact for pilot subsystem only."
+    },
+    {
+      "check": "2a_frontend_type_confirmed",
+      "result": "CONFIRMED",
+      "citation": "frontend/app/types/analysis.ts:305 — SubsystemEvidenceV1 interface mirrors Pydantic model. Line 373: subsystems?: SubsystemEvidenceV1[] | null on ConsumerDomainScoreV1 equivalent. frontend/app/components/results/Wave1DomainCards.tsx — confirmed present. If DTO adds new optional fields, frontend type must be updated to include them as optional; existing render-only behaviour must not change."
+    },
+    {
+      "check": "2a_bilirubin_fix_preserved_confirmed",
+      "result": "CONFIRMED",
+      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:79 — _WAVE1_LIV_PROCESSING.expected_marker_ids = ('alp', 'albumin', 'bilirubin'). total_bilirubin is absent. Fix is preserved. Regression coverage at: backend/tests/regression/test_bilirubin_alias_regression.py; backend/tests/unit/test_wave1_liver_marker_mapping_fix.py; backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py. Sprint must not reintroduce total_bilirubin as expected marker in any compiled artefact or loader path."
+    },
+    {
+      "check": "2a_psi_runtime_dead_confirmed",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/ARCH-RT-2_identity_runtime_pilot_report.md — carry-forward: 'PSI is runtime-dead unless separately wired later.' automation_bus/latest_cursor_prompt.md:121 — 'Card evidence pilot must not depend on PSI runtime unless explicitly justified.' Neither glycaemic nor lipid pilot candidate depends on PSI runtime. No PSI wiring introduced."
+    },
+    {
+      "check": "2a_compile_manifest_carry_forward_confirmed",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/ARCH-RT-2_identity_runtime_pilot_report.md:112-124 — compile_manifest_schema_v1.yaml untouched in ARCH-RT-2. Carry-forward: compile_id is canonical; compile_run_id is transitional only; if both present they must be equal; compile_manifest_schema_v1 remains DRAFT. ARCH-RT-3 must not tighten or modify compile_manifest_schema_v1 — only create the new health_system_card_evidence_schema_v1.yaml."
+    },
+    {
+      "check": "2a_knowledge_bus_schema_dir_confirmed",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/schema/ — directory confirmed present with 10 existing schema files including compile_manifest_schema_v1.yaml, signal_library_schema.yaml, package_manifest_schema.yaml. Correct parent directory for new health_system_card_evidence_schema_v1.yaml deliverable."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:189-211 — scope items 1-11 define exactly: replace silent collapse; introduce activation_key; preserve signal_id; update SignalRegistry; prevent duplicate activation_key collisions; update SignalEvaluator for multi-frame; update SignalResult provenance; add regression tests; downstream impact report. Scope is bounded and not open-ended."
+      "citation": "automation_bus/latest_cursor_prompt.md:209-226 — scope items 1-12 define exactly: define card evidence schema; define card role translation policy; define visibility-tier policy; compile/create one pilot card evidence artefact; validate the pilot artefact; add backend loader; wire only selected pilot subsystem; add DTO v2 or schema-versioned DTO extension; update frontend only to render backend-provided fields; add regression coverage; add legacy comparison evidence; preserve existing behaviour outside pilot path. Scope is bounded to one subsystem vertical slice."
     },
     {
       "check": "2b_regression_targets_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:300-313 — 7 test categories listed: (1) existing SignalRegistry/SignalEvaluator tests; (2) new regression for no silent collapse; (3) new regression for duplicate activation_key fails closed; (4) ALT high pilot multi-frame test; (5) existing single-frame tests; (6) root-cause/interaction/IDL tests if payload shape affected; (7) golden fixture tests if output structure changed. Existing test file: backend/tests/unit/test_signal_evaluator.py confirmed on disk."
+      "citation": "automation_bus/latest_cursor_prompt.md:387-402 — 10 test categories listed: (1) schema validation for card evidence artefact; (2) pilot artefact validation; (3) backend loader success path; (4) backend loader fail-closed behaviour; (5) pilot subsystem assembly using compiled evidence; (6) non-pilot subsystem behaviour unchanged; (7) DTO serialisation for new fields; (8) frontend render-only behaviour if touched; (9) regression that total_bilirubin not falsely reported missing; (10) regression that frontend/backend does not infer marker roles from names. Existing regression tests confirmed on disk."
     },
     {
-      "check": "2b_determinism_risk_flagged_in_stop_conditions",
+      "check": "2b_determinism_risks_surfaced",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:330 — STOP #10: 'Deterministic ordering of evaluated frames cannot be guaranteed.' Sprint STOP conditions protect against non-determinism. Cursor must guarantee frame ordering is deterministic (not just path-dependent after registry key change)."
+      "citation": "STOP condition #4 (automation_bus/latest_cursor_prompt.md:413): 'Pilot artefact cannot validate' — schema validation is a hard gate before any backend/DTO/frontend work. STOP #8 prohibits frontend clinical inference. STOP #12 prohibits failing to prove pilot/non-pilot separation. Determinism is preserved: compiled YAML artefact is static, loader reads it at startup, no runtime LLM, no dynamic inference. Non-pilot subsystem behaviour unchanged by design (only pilot path wired through new loader)."
     },
     {
-      "check": "2b_STOP_conditions_protect_out_of_scope",
+      "check": "2b_no_scope_creep_STOP_conditions_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:316-332 — 12 STOP conditions. Explicit STOPs for: compile manifest schema changes (#8), ARCH-RT-1 carry-forward violation (#9), package regeneration (#5), runtime identity requiring package file modification (#6), scope expansion (#12). Coverage is comprehensive."
+      "citation": "automation_bus/latest_cursor_prompt.md:405-421 — 14 STOP conditions cover all key creep vectors: missing authority files (#1), no safe pilot (#2), unresolved medical policy (#3), artefact validation failure (#4), raw investigation spec reads at runtime (#5), PSI runtime dependency (#6), broad contract redesign (#7), clinical inference in frontend (#8), bilirubin fix reintroduction (#9), root-cause/SignalRegistry changes (#10), scope beyond one pilot (#11), failing pilot/non-pilot separation (#12), helper script commits (#13), compile manifest carry-forward violations (#14)."
     },
     {
-      "check": "HARDENING_FLAG_activation_key_sourcing_without_package_file_modification",
-      "result": "CURSOR_MUST_VERIFY_AT_PREFLIGHT",
-      "citation": "ADR-RT-002:38-40 requires activation_key format signal_id::spec_id. pkg_s24_alt_high_hepatocellular_injury/signal_library.yaml contains NO spec_id or activation_key fields. Sprint scope item 2 says 'Introduce or wire activation_key as runtime activation-frame identity'. Sprint out-of-scope explicitly prohibits modifying package files. STOP #6 covers this: 'Runtime identity cannot be changed without modifying package files.' Cursor MUST evaluate at authority preflight whether activation_key can be derived at runtime (e.g., from package_id or directory name) or via sidecar index WITHOUT touching package YAMLs. If STOP #6 fires, implementation must halt and report."
+      "check": "2b_intelligence_core_impact_scoped",
+      "result": "CONFIRMED",
+      "citation": "Sprint touches domain_score_assembler.py (assembler integration) and adds backend card evidence loader — both are Intelligence Core components per SOP §3. Sprint explicitly prohibits modifying: root_cause_compiler_v1.py, signal_evaluator.py, SignalRegistry, scoring rails, insight_graph_builder.py, report_compiler_v1.py, signal_interaction_builder.py. The new loader is an additive path, not a mutation of existing engines. Non-pilot subsystems continue through existing assemble_wave1_subsystem_evidence() code path."
     },
     {
-      "check": "HARDENING_FLAG_SignalResult_consumers_blast_radius",
-      "result": "CURSOR_MUST_IDENTIFY",
-      "citation": "backend/core/models/signal.py:10 — SignalResult is consumed by downstream pipeline. Adding activation_key, spec_id, package_id fields changes the model contract. evaluate_all() at signal_evaluator.py:386 currently returns List[SignalResult] with one entry per signal_id. After sprint, multiple entries may share signal_id (different activation_key). Any downstream code that deduplicates by signal_id will silently collapse frames again. Cursor must identify all SignalResult consumers and confirm no post-evaluation deduplication by signal_id exists."
-    },
-    {
-      "check": "HARDENING_FLAG_evaluate_all_sort_key",
+      "check": "HARDENING_FLAG_dto_extension_must_use_optional_fields",
       "result": "CURSOR_MUST_ADDRESS",
-      "citation": "backend/core/analytics/signal_evaluator.py:468 — 'results.sort(key=lambda r: r.signal_id)'. After sprint, multiple SignalResult rows may share signal_id (distinct activation_key). Sort by signal_id alone is non-deterministic for same-signal_id frames. Sort key must become (signal_id, activation_key) or equivalent to guarantee deterministic frame ordering. STOP #10 requires this be addressed."
+      "citation": "backend/core/models/results.py:176 — SubsystemEvidenceV1 has ConfigDict(frozen=True, extra='forbid'). Any new fields added in DTO v2 extension MUST be Optional with safe defaults. Required new fields (marker_role, relationship_kind, rationale_short, presence_policy, visibility_tier, mechanism_line, missing_policy_line, source_spec_ids, compile_manifest_ref) must all be Optional[str/list] = Field(default=None, ...) to avoid breaking existing serialisation. Existing test backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py at line 18 imports SubsystemEvidenceV1 and tests existing fields — must remain passing."
     },
     {
-      "check": "HARDENING_FLAG_kb52c_packages_have_spec_id_in_batch_json",
+      "check": "HARDENING_FLAG_loader_must_not_read_investigation_specs_at_runtime",
       "result": "CURSOR_MUST_VERIFY",
-      "citation": "docs/architecture/signal_id_collision_inventory.md:120-122 — 'Per-package spec_id inside batch JSON was not denormalised into this table; frame identity is inferred from package directory suffix and PSI investigation_spec_id (kb47 only).' Cursor must verify whether kb52c signal_library.yaml files contain spec_id fields that can be used as activation_key components, or whether only package directory suffix is available. This determines activation_key derivation strategy."
+      "citation": "automation_bus/latest_cursor_prompt.md:333-340 — backend loader requirements: 'not read raw investigation specs at runtime'. STOP #5: 'Backend implementation would require raw investigation spec runtime reads.' Loader must read only compiled YAML artefact from knowledge_bus/compiled/health_system_cards/. No imports of investigation spec path or loader at runtime. Cursor must confirm loader implementation has no reference to knowledge_bus/research/investigation_specs/ at runtime."
+    },
+    {
+      "check": "HARDENING_FLAG_pilot_non_pilot_separation_must_be_testable",
+      "result": "CURSOR_MUST_ADDRESS",
+      "citation": "STOP #12 (automation_bus/latest_cursor_prompt.md:420): 'Tests cannot prove pilot/non-pilot separation.' The assembler integration must wire the compiled evidence path ONLY for the selected pilot subsystem_id. All other subsystems (e.g. wave1_cv_lipid_transport, wave1_cv_homocysteine_pathway, wave1_liv_enzyme_pattern, etc.) must continue using assemble_wave1_subsystem_evidence() unchanged. A test must confirm that a non-pilot domain (e.g. wave1_cardiovascular or wave1_liver) returns identical SubsystemEvidenceV1 rows before and after the sprint. STOP condition fires if this cannot be proven."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:274-299 — out-of-scope list prohibits: package files; investigation specs; PSI artefacts; root-cause YAML; health systems card evidence; compiled hypothesis artefacts; PSI runtime wiring; activation compiler; compile manifest schema/validator (unless unavoidable with STOP first); frontend; IDL; biomarker SSOT; reference ranges; scoring rails; clinical thresholds; fallback parsers; helper scripts. All STOP conditions also protect against scope drift."
+      "citation": "automation_bus/latest_cursor_prompt.md:363-386 — out-of-scope list explicitly prohibits: full card evidence estate regeneration; wiring all subsystems; modifying root-cause compiler; modifying root-cause YAML; modifying PSI artefacts; implementing PSI runtime wiring; modifying SignalRegistry; modifying SignalEvaluator; modifying SignalResult unless strictly required; modifying package files; modifying investigation specs; modifying biomarker SSOT; modifying scoring rails; modifying unit conversion; modifying clinical thresholds; creating compiled hypothesis artefacts; changing IDL copy; introducing fallback parsers; committing helper scripts."
     },
     {
       "check": "no_duplicate_authority_source",
       "result": "CONFIRMED",
-      "citation": "ADR-RT-002 is the sole identity policy authority. ARCH-RT-1 contracts (compile_manifest_contract.md, activation_compile_contract.md, package_provenance_policy.md, activation_compile_contract.md) are complementary, not competing. No duplicate authority for signal identity policy detected."
+      "citation": "New schema knowledge_bus/schema/health_system_card_evidence_schema_v1.yaml is a new authority, not a duplicate. wave1_subsystem_evidence.py remains the authority for non-pilot subsystems; compiled artefact becomes the authority for the pilot subsystem only — these are additive, not competing, authorities at this stage. ARCH-RT-3 pilot is a controlled vertical slice, not an estate-wide replacement."
     }
   ]
 }
