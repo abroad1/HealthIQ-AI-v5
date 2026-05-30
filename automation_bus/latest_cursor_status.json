@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-RT-5B-card-evidence-estate-and-required-provenance",
+  "branch": "work/ARCH-RT-5C-hypothesis-runtime-promotion",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-30T08:22:41Z",
-  "cursor_started_utc": "2026-05-30T08:18:34Z",
-  "head_sha": "12ba0bdf169437c2b1481d319a1fcc242e46d8ac",
+  "cursor_started_utc": "2026-05-30T08:45:03Z",
+  "head_sha": "92ba099cde6c2486613752880e90463210de1a5b",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-5B_card_evidence_estate_and_required_provenance"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-RT-5C_hypothesis_runtime_promotion"
 }
