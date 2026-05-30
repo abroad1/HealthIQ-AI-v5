@@ -693,14 +693,24 @@ export default function ResultsPage() {
               sectionHeading="Your body overview"
             />
             <p className="text-sm text-slate-600 leading-relaxed max-w-3xl border-l-2 border-slate-200 pl-3">
-              Sections below build on each other: what looks stable, your main finding and why it led, how confident we
-              are, patterns across your body when available, marker evidence, and suggested follow-up.
+              Sections below build on each other: your main finding and why, what looks stable, health system scores,
+              how confident we are, patterns across your body when available, marker evidence, and suggested follow-up.
             </p>
           </section>
 
+          <div data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[1]}>
+            <PrimaryFindingAndWhy
+              report={clinicianReport}
+              omitIntroDuplicate
+              omitConfirmatoryInClarify={showConfirmatoryInNextSteps}
+              leadPatternLabel={heroStory.heroTitle}
+              showTechnicalDetail={showDetails}
+            />
+          </div>
+
           <section
             aria-labelledby="fe-r2-working-well-heading"
-            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[1]}
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[2]}
           >
             <h2 id="fe-r2-working-well-heading" className="sr-only">
               What&apos;s working well
@@ -714,28 +724,20 @@ export default function ResultsPage() {
             />
           </section>
 
-          <Wave1DomainCards
-            domains={currentAnalysis?.consumer_domain_scores}
-            embedInJourney
-          />
-
-          <div data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[2]}>
-            <PrimaryFindingAndWhy
-              report={clinicianReport}
-              omitIntroDuplicate
-              omitConfirmatoryInClarify={showConfirmatoryInNextSteps}
-              leadPatternLabel={heroStory.heroTitle}
-              showTechnicalDetail={showDetails}
+          <section data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[3]}>
+            <Wave1DomainCards
+              domains={currentAnalysis?.consumer_domain_scores}
+              embedInJourney
             />
-          </div>
+          </section>
 
           <section
             className="space-y-4"
             aria-labelledby="fe-r2-uncertainty-heading"
-            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[3]}
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[4]}
           >
             <h2 id="fe-r2-uncertainty-heading" className="sr-only">
-              Why this lead won and uncertainty
+              How confident is this read
             </h2>
             <WhyThisLeadWonSection report={clinicianReport} />
             <PipelineStatus
@@ -750,7 +752,7 @@ export default function ResultsPage() {
             <section
               className="space-y-4"
               aria-labelledby="fe-r5a-patterns-heading"
-              data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[4]}
+              data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[5]}
             >
               <h2 id="fe-r5a-patterns-heading" className="text-xl font-semibold text-gray-900">
                 Patterns across your body
@@ -766,7 +768,7 @@ export default function ResultsPage() {
             id={BIOMARKER_DIALS_SECTION_ID}
             className="space-y-4"
             aria-labelledby="biomarkers-heading"
-            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[5]}
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[6]}
           >
             <h2 id="biomarkers-heading" className="text-xl font-semibold text-gray-900">
               Marker-level evidence
@@ -782,7 +784,7 @@ export default function ResultsPage() {
           <section
             className="space-y-4"
             aria-labelledby="fe-r2-next-steps-heading"
-            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[6]}
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[7]}
           >
             <h2 id="fe-r2-next-steps-heading" className="text-xl font-semibold text-gray-900">
               What to do next
@@ -831,7 +833,7 @@ export default function ResultsPage() {
           <ResultsDisclosureSection
             title="Clinician summary"
             description="Professional handoff, export-oriented synthesis, and technical detail for clinical review."
-            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[7]}
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[8]}
             defaultOpen={false}
           >
             <ClinicianReportRenderer

@@ -9,13 +9,21 @@ type Props = {
 };
 
 export function StaleResultBanner({ versioning }: Props) {
-  if (!versioning || versioning.result_status !== 'stale') {
+  const status = versioning?.result_status;
+  if (!versioning || (status !== 'stale' && status !== 'incompatible')) {
     return null;
   }
 
+  const isIncompatible = status === 'incompatible';
+  const title = isIncompatible
+    ? 'This saved result uses an older format'
+    : 'Generated using an older engine';
+
   const message =
     versioning.user_message ||
-    'This result was generated with an older analysis engine. Marker counts and labels may differ from current HealthIQ rules.';
+    (isIncompatible
+      ? 'This saved result cannot be displayed with the current results page contract. Some sections may be missing or out of date.'
+      : 'This result was generated with an older analysis engine. Marker counts and labels may differ from current HealthIQ rules.');
 
   return (
     <Alert
@@ -24,7 +32,7 @@ export function StaleResultBanner({ versioning }: Props) {
       data-testid="stale-result-banner"
     >
       <AlertCircle className="h-4 w-4 text-amber-700" />
-      <AlertTitle className="text-amber-900">Generated using an older engine</AlertTitle>
+      <AlertTitle className="text-amber-900">{title}</AlertTitle>
       <AlertDescription className="text-sm text-amber-900/90 leading-relaxed">
         {message}
         {versioning.regeneration_available

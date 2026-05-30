@@ -123,7 +123,7 @@ describe('results hero alignment', () => {
     const idl = idlRecord({ retail_display_label: 'Metabolic stress pattern' });
     const pack = resolveHeroPrimaryStory(report, 'Metabolic stress pattern', idl);
     expect(pack.heroTitle).toContain('LDL');
-    expect(pack.systemContextLine).toContain('Main system context');
+    expect(pack.systemContextLine).toContain('Most relevant area');
     expect(pack.bridgeExplanation).toBeNull();
   });
 

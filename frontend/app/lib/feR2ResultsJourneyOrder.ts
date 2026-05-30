@@ -1,11 +1,12 @@
 /**
- * FE-R2 / FE-R5A — canonical retail journey section order (v6 Phase 1 + patterns bridge).
+ * FE-R2 / FE-R5A / LC-5 — canonical retail journey section order.
  * Used by page layout and regression guards.
  */
 export const FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS = [
   'fe-r2-journey-body-overview',
-  'fe-r2-journey-working-well',
   'fe-r2-journey-primary-finding',
+  'fe-r2-journey-working-well',
+  'fe-r2-journey-health-systems',
   'fe-r2-journey-uncertainty',
   'fe-r5a-journey-patterns-across-body',
   'fe-r2-journey-marker-evidence',

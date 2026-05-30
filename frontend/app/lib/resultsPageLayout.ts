@@ -31,10 +31,16 @@ export function takeUpToNSentences(text: string, maxSentences: number): string {
 }
 
 function formatImlSeverity(sev: InterpretationDisplayRecordV1['severity_state']): string {
+  if (sev === 'strong_signal') return 'Needs attention';
   return sev
     .split('_')
     .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
     .join(' ');
+}
+
+/** Shared consumer-safe severity labels for hero and IDL pattern surfaces. */
+export function formatConsumerSeverityLabel(sev: InterpretationDisplayRecordV1['severity_state']): string {
+  return formatImlSeverity(sev);
 }
 
 function clusterSeverityLabel(sev: string | null | undefined): string {
@@ -154,7 +160,7 @@ export function resolveHeroPrimaryStory(
   }
   return {
     heroTitle: concernLead,
-    systemContextLine: `Main system context: ${phenotypeLabel}`,
+    systemContextLine: `Most relevant area: ${phenotypeLabel}`,
     bridgeExplanation: null,
   };
 }

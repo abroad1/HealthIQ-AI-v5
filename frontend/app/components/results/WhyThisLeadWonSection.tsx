@@ -47,7 +47,7 @@ export function WhyThisLeadWonSection({ report }: WhyThisLeadWonSectionProps) {
       <Card className="border-violet-100 bg-white shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle id="why-lead-won-heading" className="text-xl font-semibold text-gray-900">
-            Why this lead won · uncertainty
+            How confident is this read?
           </CardTitle>
           <p className="text-sm text-gray-600 pt-1">
             How the headline was chosen, what else was close, and how much room for doubt remains on this panel.
@@ -56,7 +56,9 @@ export function WhyThisLeadWonSection({ report }: WhyThisLeadWonSectionProps) {
         <CardContent className="space-y-6 text-sm text-gray-800">
           {showWhyWon ? (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-violet-900/80 mb-1">Why this lead won</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-violet-900/80 mb-1">
+                How we chose this headline
+              </p>
               <p className="leading-relaxed text-gray-900">{runnerWhy}</p>
             </div>
           ) : null}

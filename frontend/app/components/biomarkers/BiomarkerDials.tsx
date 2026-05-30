@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Info, ChevronDown, ChevronRight } from 'lucide-react';
 import {
   BIOMARKER_LIMITED_STATE_MESSAGE,
+  biomarkerInterpretationForDetail,
   retailInterpretationForExpansion,
   sanitizeBiomarkerInterpretationForRetail,
 } from '@/lib/feR6aRetailCopy';
@@ -335,7 +336,7 @@ function hasExpandableLayers(d: BiomarkerDialEntry): boolean {
   );
   if (hasDeeper) return true;
   if (sanitizeBiomarkerInterpretationForRetail(d.interpretation)) return true;
-  return !!(d.interpretation && String(d.interpretation).trim());
+  return !!biomarkerInterpretationForDetail(d.interpretation);
 }
 
 export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker evidence' }: BiomarkerDialsProps) {

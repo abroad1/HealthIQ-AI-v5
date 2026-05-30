@@ -1,15 +1,4 @@
-"""
-FE-R2 — Results journey restructure regression.
-
-Sentinel defect classes (escaped_defects_v1.json):
-  retail_results_journey_wrong_order
-  body_overview_not_first
-  working_well_section_missing_or_late
-  biomarker_evidence_hidden_in_advanced_only
-  clinician_language_in_retail_flow
-  results_page_accordion_dominated
-  duplicate_what_this_means_heading
-"""
+"""Update FE-R2 journey regression for LC-5 section order (9 journey anchors)."""
 
 from __future__ import annotations
 
@@ -24,8 +13,9 @@ _JOURNEY_ORDER_MODULE = _REPO_ROOT / "frontend" / "app" / "lib" / "feR2ResultsJo
 
 _EXPECTED_JOURNEY_IDS = [
     "fe-r2-journey-body-overview",
-    "fe-r2-journey-working-well",
     "fe-r2-journey-primary-finding",
+    "fe-r2-journey-working-well",
+    "fe-r2-journey-health-systems",
     "fe-r2-journey-uncertainty",
     "fe-r5a-journey-patterns-across-body",
     "fe-r2-journey-marker-evidence",
@@ -78,17 +68,17 @@ def test_fe_r2_results_page_section_order() -> None:
 
 @pytest.mark.regression
 def test_fe_r2_working_well_before_primary_finding() -> None:
-    """Sentinel: working_well_section_missing_or_late."""
+    """LC-5: primary finding now precedes working well (updated hierarchy)."""
     src = _page_src()
     positions = _journey_index_positions(src)
-    assert positions[1] < positions[2] < positions[3] < positions[4] < positions[5]
+    assert positions[1] < positions[2] < positions[3] < positions[4] < positions[5] < positions[6]
 
 
 @pytest.mark.regression
 def test_fe_r2_biomarker_evidence_not_advanced_only() -> None:
     """Sentinel: biomarker_evidence_hidden_in_advanced_only."""
     src = _page_src()
-    marker_journey = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[5]")
+    marker_journey = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[6]")
     advanced = src.index('data-testid="section-advanced"')
     assert marker_journey < advanced, "marker evidence must appear before advanced disclosure"
     assert "<BiomarkerDials" in src[marker_journey:advanced]
@@ -101,7 +91,7 @@ def test_fe_r2_biomarker_evidence_not_advanced_only() -> None:
 def test_fe_r2_no_clinician_structured_retail_heading() -> None:
     """Sentinel: clinician_language_in_retail_flow."""
     src = _page_src()
-    clinician_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[7]")
+    clinician_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[8]")
     retail = src[:clinician_idx]
     low = retail.lower()
     for banned in _RETAIL_BANNED_HEADINGS:
@@ -115,7 +105,7 @@ def test_fe_r2_no_duplicate_what_this_means_accordion() -> None:
     assert 'data-testid="section-what-this-means"' not in src
     assert src.count('title="What this means"') == 0
     assert "FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS" in src
-    clinician_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[7]")
+    clinician_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[8]")
     retail = src[:clinician_idx]
     assert not re.search(r"defaultOpen(?!\s*=\s*\{false\})", retail), (
         "retail journey must not use open-by-default accordions"

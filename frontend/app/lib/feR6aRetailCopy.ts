@@ -5,6 +5,9 @@
 const SCORING_ONLY_INTERPRETATION_RE =
   /^(Scored using|Not scored\b|Insufficient numeric bounds)/i;
 
+/** LC-5 — hide noisy per-marker score lines from default card view; show in expanded detail. */
+const MARKER_NUMERIC_SCORE_INTERPRETATION_RE = /^Scored\s+\d+(?:\.\d+)?\/100\b/i;
+
 const RAW_SCORING_ERROR_RE =
   /^Not scored\s*[-–—]\s*result unit and lab reference range unit cannot be aligned/i;
 
@@ -20,7 +23,23 @@ export function isScoringMechanicsInterpretation(text: string | null | undefined
   return SCORING_ONLY_INTERPRETATION_RE.test(t) || RAW_SCORING_ERROR_RE.test(t);
 }
 
+export function isMarkerNumericScoreInterpretation(text: string | null | undefined): boolean {
+  const t = (text || '').trim();
+  if (!t.length) return false;
+  return MARKER_NUMERIC_SCORE_INTERPRETATION_RE.test(t);
+}
+
 export function sanitizeBiomarkerInterpretationForRetail(text: string | null | undefined): string | null {
+  const t = (text || '').trim();
+  if (!t.length) return null;
+  if (RAW_SCORING_ERROR_RE.test(t)) return BIOMARKER_UNSCORED_CONSUMER_MESSAGE;
+  if (isScoringMechanicsInterpretation(t)) return null;
+  if (isMarkerNumericScoreInterpretation(t)) return null;
+  return t;
+}
+
+/** Expanded marker detail — may include numeric score lines hidden on the default card. */
+export function biomarkerInterpretationForDetail(text: string | null | undefined): string | null {
   const t = (text || '').trim();
   if (!t.length) return null;
   if (RAW_SCORING_ERROR_RE.test(t)) return BIOMARKER_UNSCORED_CONSUMER_MESSAGE;
@@ -32,6 +51,10 @@ export function retailInterpretationForExpansion(
   interpretation: string | null | undefined,
   hasDeeperLayers: boolean
 ): { showInterpretationBlock: boolean; interpretationText: string | null; showLimitedState: boolean } {
+  const detailText = biomarkerInterpretationForDetail(interpretation);
+  if (detailText) {
+    return { showInterpretationBlock: true, interpretationText: detailText, showLimitedState: false };
+  }
   const sanitized = sanitizeBiomarkerInterpretationForRetail(interpretation);
   if (sanitized) {
     return { showInterpretationBlock: true, interpretationText: sanitized, showLimitedState: false };

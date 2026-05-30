@@ -25,7 +25,7 @@ function truncateText(text: string, maxLen: number): string {
 }
 
 /**
- * Trust strip — max 2 plain-language lines by default; detail behind reveal (wireframe §3).
+ * Data quality — max 2 plain-language lines by default; detail behind reveal (wireframe §3).
  */
 export default function PipelineStatus({
   dataQuality,
@@ -40,7 +40,7 @@ export default function PipelineStatus({
     return (
       <Card className={`border-slate-200 ${className}`}>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">Trust strip</CardTitle>
+          <CardTitle className="text-base">Data quality</CardTitle>
           <CardDescription>No data-quality summary was returned for this analysis.</CardDescription>
         </CardHeader>
       </Card>
@@ -69,7 +69,7 @@ export default function PipelineStatus({
     <Card className={`border-slate-200 shadow-sm ${className}`}>
       <CardHeader className="pb-2">
         <div className="flex flex-wrap items-center gap-2">
-          <CardTitle className="text-lg">Trust strip</CardTitle>
+          <CardTitle className="text-lg">Data quality</CardTitle>
           <Badge variant={checksPassed ? 'default' : 'destructive'} className="font-normal">
             {checksPassed ? 'Quality checks passed' : 'Review quality notes'}
           </Badge>

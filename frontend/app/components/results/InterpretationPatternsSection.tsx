@@ -9,6 +9,7 @@ import {
   isGenericIdlSupportingSummary,
   selectSafeIdlPatternRecords,
 } from '@/lib/feR5aIdlPatternGuards';
+import { formatConsumerSeverityLabel } from '@/lib/resultsPageLayout';
 
 /** @deprecated Use selectSafeIdlPatternRecords — retained for tests importing this symbol. */
 export function selectVisibleIdlRecords(
@@ -32,10 +33,7 @@ function severityBadgeClass(severity: InterpretationDisplayRecordV1['severity_st
 }
 
 function formatSeverityLabel(severity: InterpretationDisplayRecordV1['severity_state']): string {
-  return severity
-    .split('_')
-    .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
-    .join(' ');
+  return formatConsumerSeverityLabel(severity);
 }
 
 export interface InterpretationPatternsSectionProps {
