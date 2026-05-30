@@ -1,114 +1,114 @@
 {
-  "work_id": "ARCH-RT-5D_package_provenance_backfill",
+  "work_id": "ARCH-RT-5E_psi_runtime_wiring_decision",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-30T13:00:00Z",
+  "hardened_utc": "2026-05-30T15:30:00Z",
   "hardened_by": "Claude Code (Stage 2 / SOP v1.3.1)",
   "changes": [
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-5D_package_provenance_backfill, branch=work/ARCH-RT-5D-package-provenance-backfill, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-5E_psi_runtime_wiring_decision, branch=work/ARCH-RT-5E-psi-runtime-wiring-decision, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
     },
     {
       "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:74-76 — sprint touches Knowledge Bus package manifests (186), compile manifests (8), compile manifest validator (backend/scripts/validate_compile_manifest.py), compile manifest schema (knowledge_bus/schema/compile_manifest_schema_v1.yaml), estate index, and authority manifest. Package/provenance authority is foundational to runtime safety and promotion chain. HIGH is mandatory."
+      "citation": "automation_bus/latest_cursor_prompt.md:77-82 — reason: sprint may touch PSI loader/validator paths, runtime join logic, DTO-adjacent semantics, tests, launch audit artefacts, and authority manifests. If Outcome B (runtime wiring), Intelligence Core output semantics are affected. HIGH is mandatory and correctly assigned regardless of outcome."
     },
     {
       "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED. Sprint adds governed content (provenance classifications in package manifests, refreshed hashes in compile manifests, audit docs, estate index) AND behaviour changes (validate_compile_manifest.py tightened with compile_run_id == compile_id check; compile_manifest_schema_v1.yaml enum extended). MIXED governed under BEHAVIOUR controls per SOP §4."
+      "citation": "automation_bus/latest_cursor_prompt.md:76 — MIXED. Deliverables include governed audit/authority documents (CONTENT) and potential runtime wiring or guard/test code (BEHAVIOUR). Even Outcome A (deferred) requires updating active_intelligence_authority_manifest.md and day_one_architecture_launch_readiness_audit.md, plus optional guard tests. MIXED governed under BEHAVIOUR controls per SOP §4 is correct."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: mandatory authority preflight (13-point checklist at lines 346-362) must complete before classification work and validator changes. Kernel start enforces the boundary."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: mandatory 12-point authority preflight at lines 185-201 must complete before implementation. PSI decision must be reached from repo evidence before any code or document is written. Kernel start enforces the boundary."
     },
     {
       "check": "2a_all_authoritative_inputs_exist",
       "result": "CONFIRMED",
-      "citation": "All 14 required authority files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md ✓; docs/architecture/ADR-RT-001 through ADR-RT-004 ✓; docs/architecture/package_provenance_policy.md ✓; docs/architecture/activation_compile_contract.md ✓; docs/architecture/compile_manifest_contract.md ✓; docs/architecture/activation_compile_gap_report.md ✓; docs/architecture/package_generation_inventory.md ✓; docs/architecture/legacy_package_retirement_candidates.md ✓; docs/architecture/signal_id_collision_inventory.md ✓; docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md ✓; docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md ✓; docs/audit-papers/ARCH-RT-5C_hypothesis_runtime_promotion_audit.md ✓; docs/audit-papers/active_intelligence_authority_manifest.md ✓; docs/audit-papers/research_to_runtime_traceability_audit.md ✓; docs/audit-papers/day_one_architecture_launch_readiness_audit.md ✓; knowledge_bus/compiled/estate_index_v1.yaml ✓; knowledge_bus/schema/compile_manifest_schema_v1.yaml ✓; backend/scripts/validate_compile_manifest.py ✓; docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md ✓; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md ✓"
+      "citation": "All 15 required authority files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md ✓; docs/architecture/psi_coverage_and_manifest_opt_in_report.md ✓; docs/architecture/psi_gap_closure_mechanics.md ✓; docs/architecture/psi_runtime_wiring_design.md ✓; docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md ✓; docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md ✓; docs/architecture/package_provenance_policy.md ✓; docs/audit-papers/ARCH-RT-5_M4_psi_runtime_wiring_audit.md ✓; docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md ✓; docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md ✓; docs/audit-papers/active_intelligence_authority_manifest.md ✓; docs/audit-papers/day_one_architecture_launch_readiness_audit.md ✓; knowledge_bus/compiled/estate_index_v1.yaml ✓; backend/core/knowledge/load_promoted_signal_intelligence.py ✓; knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml ✓"
     },
     {
-      "check": "2a_package_count_confirmed",
+      "check": "2a_psi_schema_confirmed",
       "result": "CONFIRMED",
-      "citation": "Python count: 186 package_manifest.yaml files in knowledge_bus/packages/. Matches ARCH-RT-5 M1 audit (docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md:7) and package_generation_inventory.md:5. Baseline is stable."
+      "citation": "knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml:14-15 — schema_name: 'HealthIQ Promoted Signal Intelligence', schema_version: '1.0.0', status: 'LOCKED' (line 16). Root required fields include promoted_signal_intelligence_contract_version, schema_version, package_id, signals (lines 23-27). Forbidden root keys include hypotheses, hypothesis_ranking, narrative, rendering (lines 31-40). Schema is LOCKED — sprint must not modify it."
     },
     {
-      "check": "2a_compile_manifests_enumerated",
+      "check": "2a_psi_loader_confirmed",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/compiled/manifests/ contains 8 files: arch_rt3_glycaemic_card_evidence.yaml, arch_rt4_vitamin_d_hypothesis.yaml, arch_rt5b_enzyme_pattern_card_evidence.yaml, arch_rt5b_homocysteine_pathway_card_evidence.yaml, arch_rt5b_insulin_metabolic_card_evidence.yaml, arch_rt5b_lipid_transport_card_evidence.yaml, arch_rt5b_processing_context_card_evidence.yaml, arch_rt5b_vascular_strain_card_evidence.yaml. All 8 are launch-relevant. All 8 require hash refresh and validator pass."
+      "citation": "backend/core/knowledge/load_promoted_signal_intelligence.py:15 — function load_promoted_signal_intelligence_for_package(package_dir: Path) -> dict[str, Any] | None. Loader reads package_manifest.yaml (line 21), checks for promoted_signal_intelligence key (line 30), loads and returns PSI YAML or None. Loader is complete and standalone. It is NOT imported by orchestrator, SignalEvaluator, SignalRegistry, report_compiler_v1, or domain_score_assembler. Runtime call chain confirmed dead."
     },
     {
-      "check": "2a_prior_provenance_classification_state_confirmed",
+      "check": "2a_psi_artefact_count_confirmed",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md:18-24 — 71 blocked_pending_spec_extraction; 82 source_document_unparsed; 31 source_document_derived; 2 provenance_gap; 1 legacy_retained_with_justification. docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md:14-53 — five inferred card markers (total_cholesterol, tc_hdl_ratio, insulin, ast, bilirubin) all classified package_manifest_inferred with explicit notes. These classifications are the starting baseline for ARCH-RT-5D."
+      "citation": "docs/architecture/psi_coverage_and_manifest_opt_in_report.md:19 — promoted_signal_intelligence.yaml on disk: 20. Packages with manifest PSI opt-in: 20. All are pkg_kb47_* generation. Remaining 166 packages have no PSI artefact."
     },
     {
-      "check": "2a_five_inferred_card_markers_classified_in_ARCH-RT-5B",
-      "result": "CONFIRMED — sprint must confirm or update, not reclassify silently",
-      "citation": "docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md:14-53 — total_cholesterol: package_manifest_inferred; tc_hdl_ratio: package_manifest_inferred; insulin: package_manifest_inferred; ast: package_manifest_inferred; bilirubin: package_manifest_inferred (WAVE1-EQUIV1 canonical id). All declared compliant at ARCH-RT-5B. Sprint must confirm these classifications remain accurate and record them in the unresolved provenance register with explicit reason and future-action statement per the prompt requirement."
+      "check": "2a_psi_runtime_consumption_confirmed_dead",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/psi_coverage_and_manifest_opt_in_report.md:38-42 — runtime consumption scan: SignalRegistry/SignalEvaluator: NO (signal_evaluator.py loads signal_library.yaml only); orchestrator.py: NO (no PSI loader import on pipeline path); domain_score_assembler.py / report_compiler_v1.py: NO; backend/core usage: validators, lifecycle, translator only. Conclusion: 'PSI is runtime-dead for analytical output construction today.' Python file grep confirms load_promoted_signal_intelligence.py is referenced only in: validate_knowledge_package.py, validate_package_manifest.py, validate_promoted_signal_intelligence.py, kb_lifecycle_contract_v1.py, investigation_spec_to_promoted_signal.py, kb_s47_batch2_ingest.py, test_promoted_signal_intelligence_kb_s47d.py. No orchestrator or report-path files."
     },
     {
-      "check": "2a_validator_does_not_enforce_compile_run_id_equality",
-      "result": "CONFIRMED — gap to be filled by scope item 8",
-      "citation": "backend/scripts/validate_compile_manifest.py:89-143 — validate_compile_manifest() function contains no check for compile_run_id. knowledge_bus/schema/compile_manifest_schema_v1.yaml:42-43 — schema description states 'Alias compatible with ADR-RT-004; when present must equal compile_id.' Sprint scope item 8 requires Cursor to add this check. All existing compile manifests have compile_run_id == compile_id (verified: arch_rt3 line 2 and arch_rt5b_lipid_transport line 2 both match compile_id), so the check is non-breaking."
+      "check": "2a_psi_frontend_confirmed_clear",
+      "result": "CONFIRMED",
+      "citation": "Frontend grep for 'promoted_signal_intelligence|psi|PSI' across *.ts/*.tsx/*.js returned 4 files (AppSidebar.tsx, InsightsPanel.tsx, sidebar.tsx, collapsible.tsx) — all false positives matching 'collapsible' as a substring of the pattern 'psi'. No actual PSI reference, PSI loader import, or PSI field access exists in any frontend code."
     },
     {
-      "check": "2a_active_authority_manifest_stale",
-      "result": "CONFIRMED — must be refreshed",
-      "citation": "docs/audit-papers/active_intelligence_authority_manifest.md:11-18 — Wave 1 card evidence table shows only wave1_met_glycaemic_control as compiled; all other Wave 1 subsystems shown as hard-coded. This reflects ARCH-RT-3/ARCH-RT-5 state, not ARCH-RT-5B (which promoted all 7 subsystems). Root-cause/hypothesis table shows vitamin_d_low as shadow-only, not runtime-promoted (ARCH-RT-5C promoted it). Sprint deliverable list (prompt line 224) requires refreshing active_intelligence_authority_manifest.md. This is a required update, not optional."
+      "check": "2a_launch_critical_claims_not_requiring_psi",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/psi_coverage_and_manifest_opt_in_report.md:46-53 — launch assessment: signal activation (No — uses signal_library.yaml via SignalRegistry); signal-layer semantics (Partially deferred — PSI holds richer semantics, not wired); Hypothesis/WHY (No — ADR-008 excludes from PSI; root-cause YAML + compiler separate); Health Systems Card evidence (No — from wave1_subsystem_evidence.py). Conclusion: 'Full PSI runtime wiring is not launch-blocking.' estate_index_v1.yaml:8-51 — 7 card evidence artefacts and 1 compiled hypothesis artefact listed, none reference PSI. active_intelligence_authority_manifest.md:38 — PSI layer: 'Not consumed (deferred)'. day_one_architecture_launch_readiness_audit.md:35 — 'PSI runtime wiring: deferred_non_launch_blocker'."
+    },
+    {
+      "check": "2a_prior_m4_audit_classification_confirmed",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/ARCH-RT-5_M4_psi_runtime_wiring_audit.md:12-13 — 'PSI runtime consumed for launch-critical card/report claims: Not required for Wave 1 launch slice.' Line 27: gap classification 'PSI runtime wiring for launch-critical claims: deferred_non_launch_blocker'. Line 31: 'M4 outcome: COMPLETE. PSI wiring explicitly deferred_non_launch_blocker with justification: Wave 1 launch path does not require PSI runtime for governed card/root-cause pilots completed in ARCH-RT-3/4.'"
+    },
+    {
+      "check": "2a_prior_sprint_arch_rt_5d_merged",
+      "result": "CONFIRMED",
+      "citation": "git log: commit ada84f1 — 'chore(bus): ARCH-RT-5D_package_provenance_backfill kernel COMPLETE status' is present on main. All prerequisite sprints confirmed merged per git log: ARCH-RT-5C (commit 0a83c3b), ARCH-RT-5B (commit b819d4d), ARCH-RT-5D (commit ada84f1)."
+    },
+    {
+      "check": "2a_unresolved_provenance_does_not_block_psi",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md:43-46 — RT5D-EXP-001: All 186 manifests have no explicit source_spec_id field (field absent by design until backfill). 'No for current pilots' — not a launch blocker. This means source_spec_id-based PSI join cannot be verified estate-wide, but (a) PSI is being deferred, and (b) this constraint is consistent with Outcome A. If Outcome B were required, this would surface as a STOP per authority preflight item #12."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:199-213 — scope items 1-13 define allowed surface: package manifest scan and classification, simple provenance resolution, provenance metadata additions where verifiable, hash refresh on launch-relevant manifests, compile_run_id == compile_id enforcement, schema strictness decision, estate index refresh, authority manifest refresh, provenance backfill audit, unresolved register. Out-of-scope list (lines 322-342) prohibits runtime behaviour changes, SignalRegistry, SignalEvaluator, root-cause compiler, card evidence loader, frontend, PSI wiring, activation compiler, package regeneration, batch JSON spec extraction (unless bounded), clinical content."
+      "citation": "automation_bus/latest_cursor_prompt.md:203-218 — allowed scope: PSI runtime decision audit; update authority manifest and launch audit with final PSI classification; if deferred, optional guard/test; if wired, narrow runtime loader/join integration, DTO-safe backend fields, tests. Out-of-scope (lines 253-272): no hypotheses added to PSI, no root-cause/WHY authority, no card evidence authority, no card/compiled hypothesis artefact modification, no package clinical content, no investigation spec modification, no SignalRegistry/SignalEvaluator identity policy changes, no clinical thresholds, no scoring rails, no biomarker SSOT, no frontend inference, no raw PSI IDs exposed to consumers, no fallback parsers."
     },
     {
       "check": "2b_regression_targets_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:365-378 — 9 required test categories: compile_run_id == compile_id enforcement; launch-relevant manifests validate; manifest refs resolve from compiled artefacts; estate index resolves launch artefacts; package provenance classification output complete; no unclassified package; inferred not treated as explicit; kb52c packages classified correctly; five inferred card markers classified. Existing test: backend/tests/unit/test_compile_manifest_schema_v1.py:58-79 — covers schema load and minimal pilot manifest acceptance only. All 9 required test categories are new coverage."
+      "citation": "automation_bus/latest_cursor_prompt.md:277-293 — if deferred: guard/test proving no launch-critical output requires PSI (if practical); confirm existing card/root-cause/report tests pass. If wired (Outcome B): PSI loader tests; runtime join tests (activation_key/source_spec_id); test PSI does not change signal firing; test PSI does not populate hypotheses; test PSI does not populate card evidence authority; DTO serialisation if touched; regression tests for card evidence and root-cause paths. Closure requirements (lines 395-399) mandate prior card/root-cause/provenance protections intact."
     },
     {
       "check": "2b_determinism_risks_surfaced",
       "result": "CONFIRMED",
-      "citation": "Risk 1: compile manifest hash refresh — computed SHA-256 hashes are deterministic from file bytes at sprint time but will become stale if files change post-sprint. This is acceptable for a provenance audit sprint; hashes serve as evidence-at-time-of-audit, not live assertions. Risk 2: validate_compile_manifest.py tightening — adding compile_run_id == compile_id check is non-breaking against existing manifests (all 8 have matching values). Risk 3: schema enum extension — adding health_system_card_evidence to output_type enum is additive/non-breaking. No Intelligence Core files are modified; runtime behaviour cannot change from this sprint's scope."
+      "citation": "Risk 1 (LOW): Outcome A (deferred) — document-only changes to authority manifest and launch audit. No Intelligence Core files touched. Runtime behaviour cannot change. Risk 2 (LOW): Optional guard/test if Outcome A — proves PSI absence from launch-critical paths. Non-invasive. Risk 3 (HIGH if triggered): Outcome B (narrow wiring) — any runtime join implementation touches Intelligence Core and must use activation_key::source_spec_id identity only. Determinism risk is fully protected by 11 STOP conditions (lines 297-311). Risk 4 (ADVISORY): psi_coverage_and_manifest_opt_in_report.md:64 notes API routes outside backend/core were not exhaustively scanned at ARCH-RT-0. Authority preflight item #5 assigns this check to Cursor at sprint start — correct assignment; not a hardening gap."
     },
     {
       "check": "2b_STOP_conditions_comprehensive",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:380-394 — 11 STOP conditions covering: missing authority files (#1), package manifest scan failure (#2), unclassifiable package (#3), explicit/inferred indistinguishable (#4), kb52c extraction requires compiler (#5), hash refresh unclassifiable (#6), schema changes break launch-relevant manifests (#7), package changes alter runtime signal behaviour (#8), package clinical content modification required (#9), scope expands into runtime surfaces (#10), tests cannot prove completeness (#11)."
+      "citation": "automation_bus/latest_cursor_prompt.md:297-311 — 11 STOP conditions: (1) required authority files missing; (2) PSI already runtime-consumed contrary to audit state; (3) PSI required but safe narrow wiring impossible; (4) wiring requires hypothesis/root-cause/card-evidence conflation; (5) wiring requires frontend inference; (6) wiring requires modifying package clinical content; (7) wiring requires modifying investigation specs; (8) wiring requires changing SignalRegistry or SignalEvaluator identity policy; (9) unresolved provenance blocks safe PSI join; (10) tests cannot prove PSI separation from hypotheses/card/root-cause; (11) scope expands beyond PSI decision/wiring. Conditions are sufficient and non-overlapping."
     },
     {
-      "check": "HARDENING_FLAG_output_type_enum_gap_must_be_resolved_first",
-      "result": "CURSOR_MUST_ADDRESS_BEFORE_VALIDATOR_TIGHTENING",
-      "citation": "knowledge_bus/schema/compile_manifest_schema_v1.yaml:172-183 — output_type enum contains: signal_library, research_brief, package_manifest, promoted_signal_intelligence, hypothesis_artefact, card_evidence_artefact, compile_estate_index. BUT: all 7 card evidence compile manifests (arch_rt3_glycaemic_card_evidence.yaml:13; arch_rt5b_lipid_transport_card_evidence.yaml:25 and all other arch_rt5b_* manifests) use output_type: health_system_card_evidence — which is NOT in the schema enum. The validator currently does not enforce output_type against the schema enum for non-activation compile_modes, so existing manifests PASS. If Cursor tightens the validator to enforce output_type enum strictly without first adding health_system_card_evidence to the enum, ALL 7 card evidence manifests will fail validation — triggering STOP condition 7 ('manifest validator changes would break existing launch-relevant manifests'). CURSOR MUST: (1) add health_system_card_evidence to the schema output_type enum, (2) then tighten the validator, (3) confirm all 8 manifests still pass. The schema extension is non-breaking (additive)."
-    },
-    {
-      "check": "HARDENING_FLAG_compile_run_id_equality_not_enforced",
-      "result": "CURSOR_MUST_ADDRESS",
-      "citation": "backend/scripts/validate_compile_manifest.py:89-143 — validate_compile_manifest() has no compile_run_id check. knowledge_bus/schema/compile_manifest_schema_v1.yaml:42-43 — schema description requires equality when both present. Sprint scope item 8 (prompt line 208) requires this enforcement. Implementation: in validate_compile_manifest(), after extracting compile_id, check if compile_run_id is present; if so, assert equality and add an error if they differ. All 8 existing compile manifests have matching values (arch_rt3: compile_id == compile_run_id == 'arch-rt-3-glycaemic-card-evidence-001'; arch_rt5b_lipid_transport: both equal 'arch-rt-5b-lipid-transport-card-evidence-001') — change is non-breaking."
-    },
-    {
-      "check": "HARDENING_FLAG_all_compile_manifest_hashes_are_pending",
-      "result": "CURSOR_MUST_ADDRESS",
-      "citation": "All 8 launch-relevant compile manifests have source_hash: pending_inventory_refresh and output_hash: pending_inventory_refresh (confirmed: arch_rt5b_lipid_transport_card_evidence.yaml:10,14,18,22,28; arch_rt3_glycaemic_card_evidence.yaml:9,14). Sprint scope item 7 (prompt line 207) requires hash refresh where source/output files are stable. Cursor must compute SHA-256 hashes for each referenced source_path and output_path file. Referenced source files (investigation specs) and output files (card evidence artefacts, hypothesis artefact) are confirmed present. If any file is not found, Cursor must STOP on that manifest and classify the gap rather than leaving pending_inventory_refresh in place. arch_rt4_vitamin_d_hypothesis.yaml was also using pending_inventory_refresh hashes (confirmed from prior audit)."
-    },
-    {
-      "check": "HARDENING_FLAG_active_authority_manifest_does_not_reflect_ARCH-RT-5B_or_5C",
-      "result": "CURSOR_MUST_ADDRESS",
-      "citation": "docs/audit-papers/active_intelligence_authority_manifest.md:11 — Wave 1 card evidence table lists only wave1_met_glycaemic_control as compiled; other 6 subsystems shown as hard-coded. ARCH-RT-5B promoted all 7 subsystems (estate_index_v1.yaml confirms 7 compiled card artefacts). active_intelligence_authority_manifest.md:16-18 — root-cause table shows vitamin_d_low as shadow-only; ARCH-RT-5C promoted it to runtime. This document is a required deliverable (prompt line 224) and must be updated to reflect the post-ARCH-RT-5C authority state. Required updates: (1) expand Wave 1 card evidence table to show all 7 compiled subsystems; (2) update root-cause/hypothesis table to show signal_vitamin_d_low as runtime_promoted_compiled authority."
+      "check": "2b_no_scope_creep_risk",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:141-148 — inherited decisions are binding and must not be reopened: PSI signal-layer semantics only; no hypothesis graphs; no card evidence authority; no root-cause WHY authority; no frontend PSI inference; activation_key required for activation-frame identity; signal_id for family-level only; source_spec_id distinguishes explicit from inferred. All are confirmed consistent with PSI schema forbidden_root_keys (schema lines 31-40). Prompt's carry-forward constraints prevent scope drift in both Outcome A and B."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:322-342 — out-of-scope prohibits: runtime behaviour changes, SignalRegistry, SignalEvaluator, root-cause compiler runtime logic, card evidence loader runtime logic, frontend, PSI runtime wiring, activation compiler implementation, package regeneration, batch JSON spec extraction (unless hardening confirms bounded scope), clinical thresholds, scoring rails, biomarker SSOT, investigation specs, PSI artefacts, root-cause YAML, card evidence clinical content, fallback parsers."
+      "citation": "automation_bus/latest_cursor_prompt.md:253-272 — out-of-scope list prohibits modification of: card evidence artefacts, compiled hypothesis artefacts, package clinical content, investigation specs, SignalRegistry identity policy, SignalEvaluator identity behaviour, clinical thresholds, scoring rails, biomarker SSOT, unit conversion, frontend clinical inference. Estate index and authority manifest are explicitly ALLOWED in scope (lines 207-208) only as required updates. No duplicate authority sources would be created."
     },
     {
       "check": "no_duplicate_authority_source",
       "result": "CONFIRMED",
-      "citation": "compile_manifest_schema_v1.yaml is the sole schema authority. validate_compile_manifest.py is the sole validator. estate_index_v1.yaml is the sole estate ledger. package_generation_inventory.md is the sole package-count authority. No duplicate sources exist. Sprint must not create duplicate schema files or parallel validators."
+      "citation": "promoted_signal_intelligence_schema_v1.yaml is the sole PSI schema (LOCKED). load_promoted_signal_intelligence.py is the sole PSI loader. active_intelligence_authority_manifest.md is the sole authority manifest. estate_index_v1.yaml is the sole estate ledger. Sprint deliverables create new audit docs (ARCH-RT-5E_psi_runtime_wiring_decision_audit.md, ARCH-RT-5E_psi_runtime_wiring_decision_report.md) but update, not duplicate, the authority manifest and launch readiness audit. No parallel authority sources would be created."
     }
   ]
 }

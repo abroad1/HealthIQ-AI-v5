@@ -1,30 +1,35 @@
 ---
-work_id: ARCH-RT-5D_package_provenance_backfill
-branch: work/ARCH-RT-5D-package-provenance-backfill
+work_id: ARCH-RT-5E_psi_runtime_wiring_decision
+branch: work/ARCH-RT-5E-psi-runtime-wiring-decision
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# ARCH-RT-5D — Package Provenance Backfill
+# ARCH-RT-5E — PSI Runtime Wiring Decision
 
 ## Purpose
 
-Resolve or explicitly classify the remaining package/source provenance gaps that prevent the HealthIQ day-one architecture from being fully provenance-complete.
+Close the remaining PSI question for the day-one architecture.
 
-This sprint must address the unresolved provenance estate identified across ARCH-RT-0 through ARCH-RT-5C:
+This sprint must decide, with repo evidence, whether Promoted Signal Intelligence / PSI must be runtime-consumed for any launch-critical claim.
+
+If PSI is not required for launch-critical output, classify it as:
 
 ```text
-package inventory
-→ source_document/source_spec_id classification
-→ explicit vs inferred provenance distinction
-→ kb52c / batch JSON resolution or classification
-→ activation_key/source_spec_id provenance quality
-→ compile manifest hash refresh
-→ estate index / authority manifest refresh
+deferred_non_launch_blocker
 ````
 
-This sprint must not change clinical runtime behaviour.
+If PSI is required, implement the narrowest safe runtime wiring using the governed identity model:
+
+```text
+activation_key
+source_spec_id
+signal_id family
+package_id where needed
+```
+
+This sprint must not expand PSI into hypotheses, card evidence, or frontend inference.
 
 ## Baseline requirement
 
@@ -42,6 +47,7 @@ ARCH-RT-4_compiled_hypothesis_root_cause_slice — merged
 ARCH-RT-5_full_regeneration_and_launch_gate — merged
 ARCH-RT-5B_card_evidence_estate_and_required_provenance — merged
 ARCH-RT-5C_hypothesis_runtime_promotion — merged
+ARCH-RT-5D_package_provenance_backfill — merged
 ```
 
 Before creating or switching to the sprint branch, run and report:
@@ -59,7 +65,7 @@ STOP if:
 * current branch is not `main`
 * local `main` does not equal `origin/main`
 * working tree is not clean
-* ARCH-RT-5C is not merged
+* ARCH-RT-5D is not merged
 * untracked or uncommitted files are present
 
 ## Governance classification
@@ -72,397 +78,293 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This sprint may touch Knowledge Bus package manifests, compiled estate index/provenance artefacts, compile manifests, provenance validators, audit papers and package governance policy. Package/provenance authority is foundational to runtime safety, even if runtime behaviour must not change.
+This sprint may touch PSI loader/validator paths, runtime join logic, DTO-adjacent semantics, tests, launch audit artefacts, and authority manifests. If runtime wiring is required, this touches Intelligence Core output semantics and must be HIGH risk.
 
-HIGH-risk controls apply:
+## Standard rules
 
-* Claude hardening required before kernel start
-* Cursor implementation only after kernel start
-* Claude audit after implementation
-* GPT architectural review before merge
-* dual approval before merge
+This work remains governed by the standard Knowledge Bus and Automation Bus SOPs already active in the repository.
+
+Do not re-read SOPs unless the applicable governance requirement cannot be located.
 
 ## Authoritative inputs
 
-Read these files before making changes:
+Read these sprint-specific files before making changes:
 
 ```text
 docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md
+docs/architecture/psi_coverage_and_manifest_opt_in_report.md
+docs/architecture/psi_gap_closure_mechanics.md
+docs/architecture/psi_runtime_wiring_design.md
 docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md
-docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md
-docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md
 docs/architecture/package_provenance_policy.md
-docs/architecture/activation_compile_contract.md
-docs/architecture/compile_manifest_contract.md
-docs/architecture/activation_compile_gap_report.md
-docs/architecture/package_generation_inventory.md
-docs/architecture/legacy_package_retirement_candidates.md
-docs/architecture/signal_id_collision_inventory.md
-docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md
-docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md
-docs/audit-papers/ARCH-RT-5C_hypothesis_runtime_promotion_audit.md
+docs/audit-papers/ARCH-RT-5_M4_psi_runtime_wiring_audit.md
+docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md
+docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md
 docs/audit-papers/active_intelligence_authority_manifest.md
-docs/audit-papers/research_to_runtime_traceability_audit.md
 docs/audit-papers/day_one_architecture_launch_readiness_audit.md
 knowledge_bus/compiled/estate_index_v1.yaml
-knowledge_bus/schema/compile_manifest_schema_v1.yaml
-backend/scripts/validate_compile_manifest.py
-docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
-docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
+```
+
+Also inspect, as code authority:
+
+```text
+backend/core/knowledge/load_promoted_signal_intelligence.py
+knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml
 ```
 
 STOP if any required authority file is missing.
 
-If the updated sprint plan has a different path, locate it and report the path before proceeding.
-
-## Mandatory inherited decisions and carry-forwards
+## Mandatory inherited decisions and constraints
 
 The following are binding:
 
 ```text
-compile_id is canonical.
-compile_run_id is transitional only.
-If both compile_id and compile_run_id are present, they must be equal.
+PSI is signal-layer semantics only.
+PSI must not contain hypothesis graphs.
+PSI must not become Health Systems Card evidence authority.
+PSI must not become root-cause WHY authority.
+Frontend must not infer PSI semantics.
 activation_key is required for runtime activation identity.
 signal_id remains signal-family identity.
-source_spec_id must distinguish explicit provenance from inferred provenance.
-Directory-derived source_spec_id is not canonical research provenance.
-Inferred provenance may not be silently upgraded to explicit provenance.
-PSI remains signal-layer semantics only.
-Hypothesis graphs must not be placed into PSI.
-Frontend must not infer clinical meaning.
+source_spec_id must distinguish explicit from inferred provenance.
+No inferred provenance may be treated as explicit provenance.
 ```
 
-Carry-forward from ARCH-RT-1:
+Carry-forward from ARCH-RT-5:
 
 ```text
-compile_manifest_schema_v1 was initially DRAFT.
-activation_keys_emitted, collisions_detected and policy_version were optional only while DRAFT.
-Before production compiler use, schema lock, or launch-critical compile manifest use, ADR-required manifest fields must become required or explicitly classified.
+PSI runtime wiring was deferred unless mandated by launch-critical claims.
 ```
 
-Carry-forward from ARCH-RT-2:
+Carry-forward from ARCH-RT-5D:
 
 ```text
-source_spec_id inferred from package_id is interim identity fallback only.
-Future provenance work must distinguish explicit source_spec_id from inferred source_spec_id.
-```
-
-Carry-forward from ARCH-RT-3 / ARCH-RT-5B:
-
-```text
-Compiled card artefacts may contain inferred source_spec_ids only if explicitly declared.
-Five card markers remained inferred provenance after ARCH-RT-5B:
-- total_cholesterol
-- tc_hdl_ratio
-- insulin
-- ast
-- bilirubin
-```
-
-Carry-forward from ARCH-RT-5 / ARCH-RT-5C:
-
-```text
-Some compile manifest hashes were pending_inventory_refresh.
-kb52c / batch JSON packages remained blocked_pending_spec_extraction.
-Full 186-package provenance backfill remained unresolved.
+Package provenance is classified.
+Unresolved/deferred provenance items remain governed by the unresolved provenance register.
 ```
 
 Do not reopen these decisions.
 
-If repository evidence contradicts any inherited decision, STOP and report.
+If repo evidence contradicts any inherited decision, STOP and report.
 
-## Main objective
+## Main decision
 
-This sprint must produce a complete, repo-grounded provenance classification for all active package manifests and launch-relevant compiled artefacts.
-
-For each package / artefact, classify provenance as one of:
+This sprint must answer one question:
 
 ```text
-explicit_source_spec_id
-source_document_derived
-package_manifest_inferred
-package_id_inferred
-batch_json_blocked_pending_spec_extraction
-architecture_doc_source_blocked
-legacy_retained_with_justification
-deferred_for_regeneration
-retire_candidate
-provenance_gap
-unknown_requires_review
+Is PSI runtime wiring required for launch-critical claims?
 ```
 
-No active package may remain unclassified.
+Permitted outcomes:
+
+### Outcome A — PSI deferred
+
+If PSI is not required for launch-critical claims:
+
+* do not wire PSI into runtime
+* classify PSI as `deferred_non_launch_blocker`
+* update launch/audit/authority documents accordingly
+* ensure no current user-facing claim incorrectly depends on PSI
+* create tests/audit checks only as needed
+
+### Outcome B — narrow PSI runtime wiring
+
+If PSI is required for launch-critical claims:
+
+* wire PSI narrowly
+* join PSI to runtime results by governed identity
+* keep PSI signal-layer only
+* expose semantics only through backend-controlled DTO fields
+* no frontend inference
+* no hypothesis/root-cause/card-evidence conflation
+
+If the required runtime wiring is broader than a narrow identity-safe join, STOP and propose a split.
+
+## Authority preflight
+
+Before implementation, verify and report:
+
+1. PSI schema path and current version.
+2. PSI loader path and current behaviour.
+3. PSI artefact count.
+4. PSI manifest opt-in count.
+5. Whether PSI is currently runtime-consumed anywhere.
+6. Which launch-included outputs currently rely on PSI, if any.
+7. Which launch-included card evidence artefacts rely on PSI, if any.
+8. Which root-cause outputs rely on PSI, if any.
+9. Whether report compiler / DTO output has PSI fields today.
+10. Whether frontend renders or infers PSI semantics today.
+11. Whether activation_key/source_spec_id/package_id are sufficient to join PSI safely.
+12. Whether unresolved provenance items block safe PSI wiring.
+
+If PSI runtime consumption is already present, document exact paths and STOP if that contradicts current architecture assumptions.
 
 ## Scope
 
 Allowed scope:
 
-1. Scan all package manifests.
-2. Classify each package by provenance status.
-3. Resolve simple `source_document` → explicit/spec-derived provenance where the source file exists and is unambiguous.
-4. Add or update provenance metadata in package manifests only where safe, explicit and mechanically verifiable.
-5. Do not fabricate source_spec_id.
-6. Do not turn inferred IDs into explicit IDs.
-7. Refresh compile manifest hashes for launch-relevant compiled artefacts where source/output files are stable.
-8. Tighten compile manifest validator to enforce `compile_run_id == compile_id` when both are present.
-9. Decide whether manifest fields currently optional remain DRAFT-only or should become required for launch-relevant manifests.
-10. Refresh `estate_index_v1.yaml` provenance status where needed.
-11. Update active authority manifest and traceability audit.
-12. Produce package provenance backfill audit.
-13. Produce unresolved provenance register for remaining blocked/deferred items.
+1. Produce PSI runtime decision audit.
+2. Update active authority manifest and launch audit with final PSI classification.
+3. If deferred, add a guard/test proving PSI is not required for launch-critical output, if practical.
+4. If wired, add narrowly scoped runtime loader/join integration.
+5. If wired, add DTO-safe backend fields only where required.
+6. If wired, add tests proving:
+
+   * activation_key/source_spec_id join
+   * no hypothesis graph use
+   * no card evidence authority use
+   * no frontend inference
+7. Update estate index / authority manifest only as needed.
+8. Preserve all prior sprint behaviours.
 
 ## Required deliverables
 
 Create or update:
 
 ```text
-docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md
-docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md
-docs/audit-papers/ARCH-RT-5D_compile_manifest_refresh_audit.md
+docs/audit-papers/ARCH-RT-5E_psi_runtime_wiring_decision_audit.md
+docs/architecture/ARCH-RT-5E_psi_runtime_wiring_decision_report.md
 docs/audit-papers/active_intelligence_authority_manifest.md
-docs/audit-papers/research_to_runtime_traceability_audit.md
-knowledge_bus/compiled/estate_index_v1.yaml
+docs/audit-papers/day_one_architecture_launch_readiness_audit.md
 ```
 
-May update only if justified by scope:
+If PSI is deferred, these documents must clearly state why it is non-launch-blocking.
+
+If PSI is wired, also update relevant implementation/tests and document the exact runtime join contract.
+
+## PSI wiring requirements if implemented
+
+If wiring is required, the runtime join must use:
 
 ```text
-knowledge_bus/packages/**/package_manifest.yaml
-knowledge_bus/compiled/manifests/*.yaml
-knowledge_bus/schema/compile_manifest_schema_v1.yaml
-backend/scripts/validate_compile_manifest.py
-backend/tests/**/*compile_manifest*provenance*.py
+activation_key as primary activation-frame identity where available
+source_spec_id for provenance validation
+signal_id for family-level grouping only
+package_id for package provenance/debugging where needed
 ```
 
-Do not create broad helper scripts unless they are permanent governed validators and explicitly justified.
+PSI must remain signal-layer semantics only.
 
-## Package manifest rules
+Do not expose raw PSI artefact content to frontend.
 
-Allowed package manifest changes:
-
-* add `source_spec_id` only where directly verified from an actual investigation spec field or inv YAML source path
-* add `source_spec_id_source` or equivalent field to distinguish:
-
-  * explicit
-  * source_document_derived
-  * package_id_inferred
-  * batch_json_unresolved
-* add `activation_key` only if it follows ADR-RT-002 and can be generated deterministically from verified frame identity
-* add `provenance_classification`
-* add `compile_manifest_ref` only if a real manifest exists and resolves
-
-Forbidden package manifest changes:
-
-* do not add explicit `source_spec_id` based only on package directory name
-* do not add explicit `source_spec_id` for batch JSON packages unless the exact spec record is extracted or verified
-* do not modify signal thresholds
-* do not modify clinical criteria
-* do not modify signal_id to avoid collision
-* do not modify package evidence content
-* do not regenerate packages
-* do not change PSI opt-in unless directly justified and validated
-
-## kb52c / batch JSON rule
-
-For kb52c / batch JSON packages:
-
-* attempt to determine whether the exact source spec record can be identified from batch JSON content
-* if exact extraction is not safe or not in scope, classify as:
-
-```text
-batch_json_blocked_pending_spec_extraction
-```
-
-* do not infer explicit source_spec_id from package directory
-* do not fabricate canonical provenance
-* produce a list of all affected packages
-
-If extraction would require a broad batch parser/compiler, STOP and classify rather than implementing that compiler in this sprint.
-
-## Five inferred card marker rule
-
-For the five known inferred card markers:
-
-```text
-total_cholesterol
-tc_hdl_ratio
-insulin
-ast
-bilirubin
-```
-
-This sprint must either:
-
-* find explicit provenance, or
-* confirm the current inferred classification, or
-* mark blocked_pending_spec_extraction / blocked_pending_medical_review
-
-Do not silently treat them as fully resolved.
-
-## Compile manifest rules
-
-For launch-relevant compile manifests:
-
-* `compile_id` is canonical
-* if `compile_run_id` exists, validator must enforce equality with `compile_id`
-* refresh hashes if previous value was `pending_inventory_refresh`
-* do not leave manifest hash fields stale if the referenced artefact is launch-relevant
-* if hash cannot be refreshed, classify why
-* manifest refs in compiled artefacts must resolve to real manifest files or estate index entries
-
-If changing schema strictness:
-
-* do not break existing non-launch draft manifests without classification
-* document whether schema remains DRAFT or is partially launch-locked
-* add tests for validator behaviour
+Do not allow frontend to derive marker roles, hypotheses, card labels or root-cause claims from PSI.
 
 ## Out of scope
 
 Do not:
 
-* change runtime behaviour
-* modify SignalRegistry
-* modify SignalEvaluator
-* modify root-cause compiler runtime logic
-* modify card evidence loader runtime logic
-* modify frontend
-* implement PSI runtime wiring
-* implement activation compiler
-* regenerate packages
-* extract all batch JSON specs unless hardening confirms safe bounded scope
-* modify clinical thresholds
-* modify scoring rails
-* modify biomarker SSOT
+* add hypotheses to PSI
+* use PSI as root-cause WHY authority
+* use PSI as Health Systems Card evidence authority
+* modify card evidence artefacts
+* modify compiled hypothesis artefacts
+* modify package clinical content
 * modify investigation specs
-* modify PSI artefacts
-* modify root-cause YAML
-* modify card evidence clinical content
+* modify SignalRegistry identity policy
+* modify SignalEvaluator identity behaviour
+* change clinical thresholds
+* change scoring rails
+* change biomarker SSOT
+* change unit conversion
+* change frontend to infer clinical meaning
+* expose raw internal source traces or PSI IDs to consumers
 * introduce fallback parsers
-
-## Authority preflight
-
-Before implementation, verify and report:
-
-1. total package manifest count
-2. package generation counts
-3. current package fields available for provenance
-4. count of packages with source_spec_id
-5. count of packages with activation_key
-6. count of batch JSON source packages
-7. count of architecture-doc-sourced packages
-8. count of package_id-inferred provenance candidates
-9. current compile manifest files and validation status
-10. current pending_inventory_refresh occurrences
-11. current estate index entries
-12. current five inferred card marker provenance status
-13. current unresolved provenance classifications from ARCH-RT-5 audits
-
-If the scope is too broad to resolve safely, STOP and propose a split.
 
 ## Required tests
 
-At minimum, add or update tests covering:
+If PSI is deferred:
 
-1. compile manifest validator enforces `compile_run_id == compile_id` when both exist
-2. launch-relevant compile manifests validate
-3. manifest refs resolve from compiled artefacts
-4. estate index resolves launch-relevant artefacts
-5. package provenance classification output includes all package manifests
-6. no package remains unclassified in the audit output
-7. inferred provenance is not treated as explicit
-8. kb52c / batch JSON packages are classified correctly
-9. five inferred card markers are classified
+1. Add or update audit/test coverage proving no launch-critical output requires PSI, if this can be tested without brittle assertions.
+2. Confirm existing card/root-cause/report tests still pass where relevant.
 
-If tests are implemented as script-level audit tests, they must be permanent and justified.
+If PSI is wired:
+
+1. PSI loader tests.
+2. Runtime join tests using activation_key/source_spec_id.
+3. Test that PSI does not change signal firing.
+4. Test that PSI does not populate hypotheses.
+5. Test that PSI does not populate card evidence authority.
+6. DTO serialisation tests if DTO touched.
+7. Frontend render-only tests if frontend touched.
+8. Regression tests for card evidence and root-cause paths.
+
+Run narrow tests first. Run broader tests only if touched contracts require them.
 
 ## STOP conditions
 
 STOP and report if:
 
-1. required authority files are missing
-2. package manifest scan cannot be performed
-3. any package cannot be classified
-4. explicit source_spec_id cannot be distinguished from inferred
-5. kb52c extraction would require broad compiler work
-6. compile manifest hashes cannot be refreshed or classified
-7. manifest validator changes would break existing launch-relevant manifests
-8. package changes would alter runtime signal behaviour
-9. work requires modifying package clinical content
-10. scope expands into PSI wiring, card runtime, root-cause runtime, frontend or activation compiler
-11. tests cannot prove provenance classification completeness
+1. Required authority files are missing.
+2. PSI is already runtime-consumed contrary to current audit state.
+3. PSI is required for launch-critical claims but safe narrow wiring cannot be implemented.
+4. PSI wiring would require hypothesis/root-cause/card-evidence conflation.
+5. PSI wiring would require frontend inference.
+6. PSI wiring would require modifying package clinical content.
+7. PSI wiring would require modifying investigation specs.
+8. PSI wiring would require changing SignalRegistry or SignalEvaluator identity policy.
+9. Unresolved provenance blocks safe PSI join.
+10. Tests cannot prove PSI separation from hypotheses/card/root-cause.
+11. Scope expands beyond PSI decision/wiring.
 
-## Required reports
-
-Create:
-
-```text
-docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md
-```
-
-Must include:
-
-* total package count
-* classification counts
-* table or grouped listing by classification
-* packages updated
-* packages not updated and why
-* batch JSON/kb52c status
-* architecture-doc-sourced package status
-* explicit vs inferred source_spec_id status
-* activation_key status
-* remaining launch blockers, if any
+## Required report
 
 Create:
 
 ```text
-docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md
+docs/architecture/ARCH-RT-5E_psi_runtime_wiring_decision_report.md
 ```
 
-Must include every unresolved/deferred provenance item, with:
+The report must include:
 
-* item id
-* package/artefact/marker
-* classification
-* reason
-* required future action
-* launch blocker status
+* decision: deferred or wired
+* rationale
+* launch-critical claim assessment
+* PSI artefact coverage
+* runtime consumption status
+* identity join assessment
+* implementation changes, if any
+* DTO/frontend impact, if any
+* tests run
+* remaining risks
+* final carry-forward classification
 
 Create:
 
 ```text
-docs/audit-papers/ARCH-RT-5D_compile_manifest_refresh_audit.md
+docs/audit-papers/ARCH-RT-5E_psi_runtime_wiring_decision_audit.md
 ```
 
-Must include:
+The audit must classify PSI as one of:
 
-* manifests checked
-* hashes refreshed
-* hashes still pending
-* validator changes
-* schema strictness decision
-* manifest refs resolved
-* unresolved manifest issues
+```text
+runtime_consumed_launch_required
+deferred_non_launch_blocker
+launch_blocker
+blocked_pending_provenance
+blocked_pending_identity_join
+```
+
+No ambiguous PSI status is allowed.
 
 ## Evidence required from Cursor
 
 Cursor must report:
 
-1. baseline branch/status/HEAD evidence
-2. authority preflight findings
-3. package classification counts
-4. exact package manifests modified, if any
-5. exact compile manifests modified, if any
-6. validator/schema changes, if any
-7. estate index changes
-8. tests added/updated
-9. test commands run
-10. test results
-11. unresolved provenance register summary
-12. confirmation no runtime behaviour changed
-13. confirmation no clinical package content changed
-14. confirmation no PSI/card/root-cause/frontend work included
+1. Baseline branch/status/HEAD evidence.
+2. Authority preflight findings.
+3. PSI decision outcome.
+4. Files changed.
+5. Runtime implementation changes, if any.
+6. DTO/frontend impact, if any.
+7. Tests added/updated.
+8. Test commands run.
+9. Test results.
+10. Confirmation PSI remains signal-layer only.
+11. Confirmation PSI is not used for hypotheses/root-cause/card evidence.
+12. Confirmation frontend does not infer PSI semantics.
+13. Confirmation prior card/root-cause/provenance behaviours remain protected.
+14. Confirmation no helper scripts were committed.
 
 ## Closure requirements
 
@@ -490,31 +392,28 @@ Classify:
 
 Do not run finish unless:
 
-* current branch matches `work/ARCH-RT-5D-package-provenance-backfill`
-* all changed files are tied to provenance scope
-* no runtime/code clinical behaviour files are modified unless explicitly approved by hardening
-* no helper scripts are included unless permanent and justified
+* current branch matches `work/ARCH-RT-5E-psi-runtime-wiring-decision`
+* all changed files are tied to PSI decision/wiring scope
+* no package/spec/card/root-cause/frontend files are changed unless explicitly justified by hardening
+* no helper scripts are included
 * no ambiguous stash exists
-* all packages are classified
+* PSI status is not ambiguous
 * latest commit contains only in-scope work
 
 ## Success criteria
 
 This sprint is complete only if:
 
-1. all active packages are classified by provenance status
-2. explicit vs inferred source_spec_id is distinguished
-3. kb52c / batch JSON packages are resolved or classified
-4. five inferred card markers are resolved or classified
-5. compile manifest refs resolve or are classified
-6. pending_inventory_refresh hashes are refreshed or classified
-7. validator enforces compile_run_id == compile_id when both exist
-8. estate index and authority manifest are refreshed
-9. no runtime behaviour changes occur
-10. no package clinical content changes occur
-11. unresolved provenance register exists
-12. tests prove provenance classification and manifest validation
-13. Automation Bus gate passes
+1. PSI launch status is decisively classified.
+2. If deferred, rationale is evidence-based and non-launch-blocking.
+3. If wired, runtime join is identity-safe and narrow.
+4. PSI remains signal-layer semantics only.
+5. PSI is not used as hypothesis/root-cause/card evidence authority.
+6. Frontend does not infer PSI semantics.
+7. Active authority manifest and launch audit reflect final PSI status.
+8. Tests/audit evidence support the decision.
+9. Prior card/root-cause/provenance protections remain intact.
+10. Automation Bus gate passes.
 
 ```
 ```
