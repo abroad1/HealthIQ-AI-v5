@@ -1,0 +1,161 @@
+schema_name: "HealthIQ Compiled Hypothesis"
+schema_version: "1.0.0"
+status: "DRAFT"
+authority: "ADR-RT-003, ARCH-RT-4"
+
+description: >
+  Deterministic schema for compiled hypothesis artefacts translated from investigation-spec
+  narrative/evidence content. Distinct from legacy root-cause YAML schema_version "v1".
+  Consumed by compiled hypothesis loader only; legacy loaders remain on v1.
+
+root_required_fields:
+  - schema_version
+  - artefact_id
+  - hypothesis_set_id
+  - signal_id
+  - activation_key
+  - source_spec_ids
+  - source_spec_provenance
+  - compile_manifest_ref
+  - hypotheses
+  - provenance
+
+root_optional_fields:
+  - source_document
+
+field_rules:
+
+  schema_version:
+    type: string
+    pattern: '^1\.0\.0$'
+
+  artefact_id:
+    type: string
+    min_length: 1
+
+  hypothesis_set_id:
+    type: string
+    min_length: 1
+
+  signal_id:
+    type: string
+    min_length: 1
+
+  activation_key:
+    type: string
+    min_length: 1
+    description: Frame identity per ADR-RT-002; required even for single-frame pilots.
+
+  source_spec_ids:
+    type: list
+    min_items: 1
+    item_type: string
+
+  source_spec_provenance:
+    type: string
+    enum:
+      - explicit
+      - source_document_derived
+      - package_id_inferred
+      - manual_pilot
+
+  source_document:
+    type: string
+    description: Optional path to investigation spec used at compile time (audit only).
+
+  compile_manifest_ref:
+    type: string
+    min_length: 1
+
+  hypotheses:
+    type: list
+    min_items: 1
+    unique_by: hypothesis_id
+
+hypothesis_required_fields:
+  - hypothesis_id
+  - rank
+  - title
+  - physiological_claim
+  - evidence_strength
+  - missing_data_policy
+
+hypothesis_optional_fields:
+  - evidence_for
+  - evidence_against
+  - contradiction_markers
+  - caveats
+  - confirmatory_tests
+  - legacy_hypothesis_id
+
+hypothesis_field_rules:
+
+  hypothesis_id:
+    type: string
+    min_length: 1
+
+  rank:
+    type: integer
+    minimum: 1
+
+  title:
+    type: string
+    min_length: 1
+
+  physiological_claim:
+    type: string
+    min_length: 1
+
+  evidence_strength:
+    type: string
+    enum:
+      - strong
+      - moderate
+      - weak
+      - contextual
+
+  evidence_for:
+    type: list
+    item_type: string
+
+  evidence_against:
+    type: list
+    item_type: string
+
+  contradiction_markers:
+    type: list
+    item_type: string
+
+  missing_data_policy:
+    type: string
+    min_length: 1
+
+  caveats:
+    type: list
+    item_type: string
+
+  confirmatory_tests:
+    type: list
+    item_type: string
+    description: Registry test_id values; must exist in confirmatory_tests_v1 when non-empty.
+
+  legacy_hypothesis_id:
+    type: string
+    description: Optional link to legacy YAML hypothesis_id for divergence mapping.
+
+provenance_required_fields:
+  - artefact_kind
+  - compile_status
+
+provenance_field_rules:
+
+  artefact_kind:
+    type: string
+    enum:
+      - compiled_hypothesis_v1
+
+  compile_status:
+    type: string
+    enum:
+      - pilot_manual
+      - compile_pipeline

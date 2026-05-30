@@ -1,0 +1,36 @@
+schema_version: "1.0.0"
+artefact_id: compiled_hypothesis_signal_vitamin_d_low_v1
+hypothesis_set_id: signal_vitamin_d_low_set_v1
+signal_id: signal_vitamin_d_low
+activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
+source_spec_ids:
+  - inv_vitamin_d_low_deficiency
+source_spec_provenance: source_document_derived
+source_document: knowledge_bus/research/investigation_specs/inv_vitamin_d_low_deficiency_v1.yaml
+compile_manifest_ref: arch-rt-4-pilot-vitamin-d-manual-001
+hypotheses:
+  - hypothesis_id: vitamin_d_nutritional_status_context_v1
+    legacy_hypothesis_id: vitamin_d_nutritional_status_context_v1
+    rank: 1
+    title: Low 25-hydroxyvitamin D (nutritional status) context
+    physiological_claim: >
+      Vitamin D is converted to its active form (1,25-OH) in the kidneys, where it promotes
+      calcium and phosphate absorption.
+    evidence_strength: strong
+    evidence_for:
+      - 25-hydroxyvitamin D is below the lab reference range on this panel, supporting a low status pattern.
+      - A vitamin-D-low signal fired, anchoring governed vitamin-D WHY on this run.
+    evidence_against:
+      - 25-hydroxyvitamin D appears within range, arguing against a low sufficiency pattern.
+    contradiction_markers: []
+    missing_data_policy: >
+      Serum calcium can add bone-mineral context when vitamin D is low; absence reduces contextual depth only.
+    caveats:
+      - Confirmatory repeat 25(OH)D not yet mapped to confirmatory_tests_v1 for this pilot.
+    confirmatory_tests: []
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: pilot_manual
+  notes: >
+    Manual translation from inv_vitamin_d_low_deficiency_v1.yaml evidence and narrative blocks.
+    Not runtime extraction from investigation spec. Shadow/pilot only; legacy YAML remains authority.
