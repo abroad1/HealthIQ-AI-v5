@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-RT-4-compiled-hypothesis-root-cause-slice",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-30T07:31:23Z",
   "cursor_started_utc": "2026-05-30T07:28:51Z",
-  "head_sha": "6b9786956642f319c58e9e8605f6140f5eb394ef",
+  "head_sha": "00a585c86574172ebd4b1a84f2b892589bf77e41",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-RT-4_compiled_hypothesis_root_cause_slice"
 }
