@@ -1,114 +1,114 @@
 {
-  "work_id": "ARCH-RT-5C_hypothesis_runtime_promotion",
+  "work_id": "ARCH-RT-5D_package_provenance_backfill",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-30T12:00:00Z",
+  "hardened_utc": "2026-05-30T13:00:00Z",
   "hardened_by": "Claude Code (Stage 2 / SOP v1.3.1)",
   "changes": [
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-5C_hypothesis_runtime_promotion, branch=work/ARCH-RT-5C-hypothesis-runtime-promotion, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-5D_package_provenance_backfill, branch=work/ARCH-RT-5D-package-provenance-backfill, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
     },
     {
       "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "backend/core/analytics/root_cause_compiler_v1.py:403 — compile_root_cause_v1() is the Intelligence Core output assembly function. backend/core/knowledge/compiled_hypothesis.py:247 — runtime_summary_for_hypothesis() governs the presentation-layer wording emitted from compiled hypotheses. Both files are within the Intelligence Core (SOP §3: analytical pipeline logic, output assembly mechanisms). HIGH is mandatory per SOP §10."
+      "citation": "automation_bus/latest_cursor_prompt.md:74-76 — sprint touches Knowledge Bus package manifests (186), compile manifests (8), compile manifest validator (backend/scripts/validate_compile_manifest.py), compile manifest schema (knowledge_bus/schema/compile_manifest_schema_v1.yaml), estate index, and authority manifest. Package/provenance authority is foundational to runtime safety and promotion chain. HIGH is mandatory."
     },
     {
       "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED. Sprint adds governed content (compiled hypothesis schema enforcement, audit artefacts, runtime promotion report) AND behavioural changes (runtime_summary_for_hypothesis() hardened from fail-open to fail-closed; compile_root_cause_v1() gains pilot-gated compiled routing for signal_vitamin_d_low). Compiled hypothesis content is consumed by the wired compiler path. MIXED governed under BEHAVIOUR controls per SOP §4."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED. Sprint adds governed content (provenance classifications in package manifests, refreshed hashes in compile manifests, audit docs, estate index) AND behaviour changes (validate_compile_manifest.py tightened with compile_run_id == compile_id check; compile_manifest_schema_v1.yaml enum extended). MIXED governed under BEHAVIOUR controls per SOP §4."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: mandatory internal checkpoint (15-point authority preflight + 8-point promotion checkpoint at lines 199-210) must complete before runtime compiler wiring. Kernel start enforces the boundary between preflight and implementation."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: mandatory authority preflight (13-point checklist at lines 346-362) must complete before classification work and validator changes. Kernel start enforces the boundary."
     },
     {
       "check": "2a_all_authoritative_inputs_exist",
       "result": "CONFIRMED",
-      "citation": "All 16 required authority files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md ✓; docs/architecture/ADR-RT-001 through ADR-RT-004 (all four) ✓; docs/architecture/compiled_hypothesis_contract.md ✓; docs/architecture/compiled_hypothesis_presentation_mapping.md ✓; docs/architecture/ARCH-RT-4_compiled_hypothesis_root_cause_slice_report.md ✓; docs/architecture/ARCH-RT-4_root_cause_divergence_report.md ✓; docs/audit-papers/ARCH-RT-5_M3_hypothesis_root_cause_estate_audit.md ✓; docs/audit-papers/day_one_architecture_launch_readiness_audit.md ✓; docs/audit-papers/active_intelligence_authority_manifest.md ✓; docs/architecture/ARCH-RT-5_full_regeneration_and_launch_gate_report.md ✓; docs/architecture/ARCH-RT-5_split_recommendation.md ✓; knowledge_bus/schema/compiled_hypothesis_schema_v1.yaml ✓; knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml ✓; knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml ✓; docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md ✓; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md ✓"
+      "citation": "All 14 required authority files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md ✓; docs/architecture/ADR-RT-001 through ADR-RT-004 ✓; docs/architecture/package_provenance_policy.md ✓; docs/architecture/activation_compile_contract.md ✓; docs/architecture/compile_manifest_contract.md ✓; docs/architecture/activation_compile_gap_report.md ✓; docs/architecture/package_generation_inventory.md ✓; docs/architecture/legacy_package_retirement_candidates.md ✓; docs/architecture/signal_id_collision_inventory.md ✓; docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md ✓; docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md ✓; docs/audit-papers/ARCH-RT-5C_hypothesis_runtime_promotion_audit.md ✓; docs/audit-papers/active_intelligence_authority_manifest.md ✓; docs/audit-papers/research_to_runtime_traceability_audit.md ✓; docs/audit-papers/day_one_architecture_launch_readiness_audit.md ✓; knowledge_bus/compiled/estate_index_v1.yaml ✓; knowledge_bus/schema/compile_manifest_schema_v1.yaml ✓; backend/scripts/validate_compile_manifest.py ✓; docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md ✓; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md ✓"
     },
     {
-      "check": "2a_pilot_artefact_summary_template_present",
+      "check": "2a_package_count_confirmed",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml:16-18 — summary_template field is present and populated: '25-hydroxyvitamin D is low relative to the lab reference on this panel, consistent with a nutritional sufficiency context worth clarifying on follow-up testing.' Non-empty. Promotion checkpoint item 3 (summary_template must exist) is pre-satisfied by the existing artefact."
+      "citation": "Python count: 186 package_manifest.yaml files in knowledge_bus/packages/. Matches ARCH-RT-5 M1 audit (docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md:7) and package_generation_inventory.md:5. Baseline is stable."
     },
     {
-      "check": "2a_compile_manifest_resolves",
+      "check": "2a_compile_manifests_enumerated",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml:14 — output_path: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml — file confirmed present. activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency matches artefact activation_key at signal_vitamin_d_low.yaml:5. Manifest resolves; compile_manifest_ref round-trips correctly."
+      "citation": "knowledge_bus/compiled/manifests/ contains 8 files: arch_rt3_glycaemic_card_evidence.yaml, arch_rt4_vitamin_d_hypothesis.yaml, arch_rt5b_enzyme_pattern_card_evidence.yaml, arch_rt5b_homocysteine_pathway_card_evidence.yaml, arch_rt5b_insulin_metabolic_card_evidence.yaml, arch_rt5b_lipid_transport_card_evidence.yaml, arch_rt5b_processing_context_card_evidence.yaml, arch_rt5b_vascular_strain_card_evidence.yaml. All 8 are launch-relevant. All 8 require hash refresh and validator pass."
     },
     {
-      "check": "2a_vitamin_d_is_single_frame",
+      "check": "2a_prior_provenance_classification_state_confirmed",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml:11-39 — hypotheses list has exactly one entry (hypothesis_id: vitamin_d_nutritional_status_context_v1). One activation_key. No multi-frame selection required. ADR-RT-002 MULTI_FRAME_PER_DIRECTION constraint does not block this pilot. Safe to promote without frame-selection policy."
+      "citation": "docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md:18-24 — 71 blocked_pending_spec_extraction; 82 source_document_unparsed; 31 source_document_derived; 2 provenance_gap; 1 legacy_retained_with_justification. docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md:14-53 — five inferred card markers (total_cholesterol, tc_hdl_ratio, insulin, ast, bilirubin) all classified package_manifest_inferred with explicit notes. These classifications are the starting baseline for ARCH-RT-5D."
     },
     {
-      "check": "2a_physiological_claim_blocked_by_presentation_mapping",
-      "result": "CONFIRMED",
-      "citation": "docs/architecture/compiled_hypothesis_presentation_mapping.md:10-11 — mapping table: physiological_claim → '(not mapped directly)'. summary_template → RootCauseHypothesisV1.summary as PRIMARY runtime wording. Presentation mapping is LOCKED for ARCH-RT-5 pilot (line 2). physiological_claim must not appear as emitted runtime summary text."
+      "check": "2a_five_inferred_card_markers_classified_in_ARCH-RT-5B",
+      "result": "CONFIRMED — sprint must confirm or update, not reclassify silently",
+      "citation": "docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md:14-53 — total_cholesterol: package_manifest_inferred; tc_hdl_ratio: package_manifest_inferred; insulin: package_manifest_inferred; ast: package_manifest_inferred; bilirubin: package_manifest_inferred (WAVE1-EQUIV1 canonical id). All declared compliant at ARCH-RT-5B. Sprint must confirm these classifications remain accurate and record them in the unresolved provenance register with explicit reason and future-action statement per the prompt requirement."
     },
     {
-      "check": "2a_cross_load_fail_closed_confirmed",
-      "result": "CONFIRMED",
-      "citation": "docs/architecture/compiled_hypothesis_contract.md:23-26 — legacy loader rejects semver 1.0.0; compiled loader rejects v1 string. backend/core/knowledge/compiled_hypothesis.py:78-79 — validator asserts schema_version == '1.0.0' (SCHEMA_VERSION constant). backend/tests/unit/test_compiled_hypothesis_arch_rt4.py:45-55 — test_loader_fail_closed_invalid_artefact confirms cross-rejection for both directions. Contract preserved."
+      "check": "2a_validator_does_not_enforce_compile_run_id_equality",
+      "result": "CONFIRMED — gap to be filled by scope item 8",
+      "citation": "backend/scripts/validate_compile_manifest.py:89-143 — validate_compile_manifest() function contains no check for compile_run_id. knowledge_bus/schema/compile_manifest_schema_v1.yaml:42-43 — schema description states 'Alias compatible with ADR-RT-004; when present must equal compile_id.' Sprint scope item 8 requires Cursor to add this check. All existing compile manifests have compile_run_id == compile_id (verified: arch_rt3 line 2 and arch_rt5b_lipid_transport line 2 both match compile_id), so the check is non-breaking."
     },
     {
-      "check": "2a_shadow_registry_separate_from_production_confirmed",
-      "result": "CONFIRMED",
-      "citation": "backend/core/knowledge/compiled_hypothesis_registry_v1.py:32-38 — COMPILED_HYPOTHESIS_PILOT_SPECS is a separate tuple, never added to ROOT_CAUSE_TARGET_SPECS. load_shadow_compiled_hypothesis() at line 48 returns None for non-pilot signal_ids. backend/core/knowledge/root_cause_registry_v1.py:28 — ROOT_CAUSE_TARGET_SPECS is the production registry; it does not import compiled_hypothesis_registry_v1. Separation is enforced."
+      "check": "2a_active_authority_manifest_stale",
+      "result": "CONFIRMED — must be refreshed",
+      "citation": "docs/audit-papers/active_intelligence_authority_manifest.md:11-18 — Wave 1 card evidence table shows only wave1_met_glycaemic_control as compiled; all other Wave 1 subsystems shown as hard-coded. This reflects ARCH-RT-3/ARCH-RT-5 state, not ARCH-RT-5B (which promoted all 7 subsystems). Root-cause/hypothesis table shows vitamin_d_low as shadow-only, not runtime-promoted (ARCH-RT-5C promoted it). Sprint deliverable list (prompt line 224) requires refreshing active_intelligence_authority_manifest.md. This is a required update, not optional."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:217-232 — scope items 1-10 define allowed surface: compiled hypothesis presentation mapping hardening, summary_template mandatory enforcement, runtime_summary_for_hypothesis() fail-closed, compiled hypothesis loader/helper functions, one pilot signal wired into root-cause runtime, legacy YAML fallback preserved, production registry not broadly replaced, shadow comparison / regression tests, direct cross-load / fail-closed boundary tests, runtime promotion report and audit evidence. Out-of-scope list (lines 289-311) prohibits full estate migration, multi-frame promotion, SignalRegistry, SignalEvaluator, PSI, card evidence, frontend, packages, investigation specs, SSOT, thresholds, scoring."
+      "citation": "automation_bus/latest_cursor_prompt.md:199-213 — scope items 1-13 define allowed surface: package manifest scan and classification, simple provenance resolution, provenance metadata additions where verifiable, hash refresh on launch-relevant manifests, compile_run_id == compile_id enforcement, schema strictness decision, estate index refresh, authority manifest refresh, provenance backfill audit, unresolved register. Out-of-scope list (lines 322-342) prohibits runtime behaviour changes, SignalRegistry, SignalEvaluator, root-cause compiler, card evidence loader, frontend, PSI wiring, activation compiler, package regeneration, batch JSON spec extraction (unless bounded), clinical content."
     },
     {
       "check": "2b_regression_targets_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:314-328 — 12 required tests covering: artefact validation, manifest resolution, runtime promotion uses summary_template, missing summary_template fails closed, physiological_claim not emitted, legacy YAML loader still works, compiled loader rejects legacy YAML, legacy loader rejects compiled YAML, pilot root-cause runtime output matches expected, non-pilot pathways unchanged, multi-frame promotion blocked, no raw investigation spec runtime reads. Adequate."
+      "citation": "automation_bus/latest_cursor_prompt.md:365-378 — 9 required test categories: compile_run_id == compile_id enforcement; launch-relevant manifests validate; manifest refs resolve from compiled artefacts; estate index resolves launch artefacts; package provenance classification output complete; no unclassified package; inferred not treated as explicit; kb52c packages classified correctly; five inferred card markers classified. Existing test: backend/tests/unit/test_compile_manifest_schema_v1.py:58-79 — covers schema load and minimal pilot manifest acceptance only. All 9 required test categories are new coverage."
     },
     {
       "check": "2b_determinism_risks_surfaced",
       "result": "CONFIRMED",
-      "citation": "Risk 1: runtime_summary_for_hypothesis() hardening (compiled_hypothesis.py:247-254) changes fail-open to fail-closed. Currently this function is called in the SHADOW path (artefact_as_shadow_dict at line 273). After hardening, shadow path must not regress — vitamin D artefact has summary_template so no test breakage. Risk 2: compile_root_cause_v1() pilot-gated routing must be strictly gated on signal_id == PILOT_SIGNAL_ID (compiled_hypothesis.py:17). Any signal that is not in the pilot list must continue through legacy loader path unchanged. Risk 3: compiled hypothesis hypotheses have no evidence_for_rules / evidence_against_rules (investigation spec fields used by _compile_finding()); the runtime promotion must emit evidence_for/against from the pre-evaluated string lists in the artefact, not re-run rule evaluation. This requires a new compiler bridge function rather than passing compiled artefact through _compile_finding() as-is."
+      "citation": "Risk 1: compile manifest hash refresh — computed SHA-256 hashes are deterministic from file bytes at sprint time but will become stale if files change post-sprint. This is acceptable for a provenance audit sprint; hashes serve as evidence-at-time-of-audit, not live assertions. Risk 2: validate_compile_manifest.py tightening — adding compile_run_id == compile_id check is non-breaking against existing manifests (all 8 have matching values). Risk 3: schema enum extension — adding health_system_card_evidence to output_type enum is additive/non-breaking. No Intelligence Core files are modified; runtime behaviour cannot change from this sprint's scope."
     },
     {
       "check": "2b_STOP_conditions_comprehensive",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:333-346 — 12 STOP conditions covering: missing authority files (#1), pilot artefact fails validation (#2), compile manifest doesn't resolve (#3), summary_template missing and cannot be added from governed source (#4), runtime mapping would use physiological_claim (#5), silent fallback to physiological_claim (#6), requires broad compiler redesign (#7), requires multi-frame policy (#8), requires package/spec/PSI/card/frontend changes (#9), legacy YAML unavailable (#10), non-pilot stability unprovable (#11), scope expands to full estate migration (#12). Adequate."
+      "citation": "automation_bus/latest_cursor_prompt.md:380-394 — 11 STOP conditions covering: missing authority files (#1), package manifest scan failure (#2), unclassifiable package (#3), explicit/inferred indistinguishable (#4), kb52c extraction requires compiler (#5), hash refresh unclassifiable (#6), schema changes break launch-relevant manifests (#7), package changes alter runtime signal behaviour (#8), package clinical content modification required (#9), scope expands into runtime surfaces (#10), tests cannot prove completeness (#11)."
     },
     {
-      "check": "HARDENING_FLAG_runtime_summary_fail_open_must_be_hardened",
-      "result": "CURSOR_MUST_ADDRESS_BEFORE_RUNTIME_PROMOTION",
-      "citation": "backend/core/knowledge/compiled_hypothesis.py:247-254 — runtime_summary_for_hypothesis() currently returns row.physiological_claim.strip()[:200] when summary_template is absent (fail-OPEN). Carry-forward from ARCH-RT-5 GPT review (prompt lines 146-149) requires: 'runtime_summary_for_hypothesis() fail-safe must fail closed before any compiled hypothesis is promoted. If summary_template is missing, do not silently degrade to physiological_claim.' CURSOR MUST harden this function to raise CompiledHypothesisValidationError (or equivalent fail-closed exception) when summary_template is absent in the promoted runtime context — or refactor the promoted path to call a separate fail-closed function that never touches physiological_claim. The shadow path (artefact_as_shadow_dict) may continue to use a softer surface for comparison purposes. This hardening MUST precede any wiring of compile_root_cause_v1()."
+      "check": "HARDENING_FLAG_output_type_enum_gap_must_be_resolved_first",
+      "result": "CURSOR_MUST_ADDRESS_BEFORE_VALIDATOR_TIGHTENING",
+      "citation": "knowledge_bus/schema/compile_manifest_schema_v1.yaml:172-183 — output_type enum contains: signal_library, research_brief, package_manifest, promoted_signal_intelligence, hypothesis_artefact, card_evidence_artefact, compile_estate_index. BUT: all 7 card evidence compile manifests (arch_rt3_glycaemic_card_evidence.yaml:13; arch_rt5b_lipid_transport_card_evidence.yaml:25 and all other arch_rt5b_* manifests) use output_type: health_system_card_evidence — which is NOT in the schema enum. The validator currently does not enforce output_type against the schema enum for non-activation compile_modes, so existing manifests PASS. If Cursor tightens the validator to enforce output_type enum strictly without first adding health_system_card_evidence to the enum, ALL 7 card evidence manifests will fail validation — triggering STOP condition 7 ('manifest validator changes would break existing launch-relevant manifests'). CURSOR MUST: (1) add health_system_card_evidence to the schema output_type enum, (2) then tighten the validator, (3) confirm all 8 manifests still pass. The schema extension is non-breaking (additive)."
     },
     {
-      "check": "HARDENING_FLAG_schema_summary_template_not_required",
+      "check": "HARDENING_FLAG_compile_run_id_equality_not_enforced",
       "result": "CURSOR_MUST_ADDRESS",
-      "citation": "knowledge_bus/schema/compiled_hypothesis_schema_v1.yaml:83-88 — summary_template is listed in hypothesis_optional_fields, with no runtime_promotion enforcement rule. Prompt scope item 2 (lines 218-219) and schema requirements (lines 276-284) require: 'mark summary_template as required for runtime-promoted hypotheses, or introduce an explicit promotion_requirements / runtime_promotion rule.' CURSOR MUST update the schema to enforce summary_template for promoted artefacts (e.g., add a promotion_requirements block or move summary_template to hypothesis_required_fields with a note). The existing vitamin D artefact already has summary_template so this change is non-breaking for the current artefact."
+      "citation": "backend/scripts/validate_compile_manifest.py:89-143 — validate_compile_manifest() has no compile_run_id check. knowledge_bus/schema/compile_manifest_schema_v1.yaml:42-43 — schema description requires equality when both present. Sprint scope item 8 (prompt line 208) requires this enforcement. Implementation: in validate_compile_manifest(), after extracting compile_id, check if compile_run_id is present; if so, assert equality and add an error if they differ. All 8 existing compile manifests have matching values (arch_rt3: compile_id == compile_run_id == 'arch-rt-3-glycaemic-card-evidence-001'; arch_rt5b_lipid_transport: both equal 'arch-rt-5b-lipid-transport-card-evidence-001') — change is non-breaking."
     },
     {
-      "check": "HARDENING_FLAG_compile_root_cause_has_no_compiled_routing",
+      "check": "HARDENING_FLAG_all_compile_manifest_hashes_are_pending",
       "result": "CURSOR_MUST_ADDRESS",
-      "citation": "backend/core/analytics/root_cause_compiler_v1.py:423-438 — compile_root_cause_v1() iterates _ROOT_CAUSE_TARGETS (legacy YAML loaders only) and calls _compile_finding() for each. There is no compiled hypothesis routing. CURSOR MUST add pilot-gated routing: before or after the legacy loop, detect if target_signal_id is in COMPILED_HYPOTHESIS_PILOT_SPECS (via is_compiled_hypothesis_pilot_signal()), and if so, route to a new compiled bridge function rather than _compile_finding(). The bridge must: (a) load the artefact via get_compiled_hypothesis_artefact(), (b) call the hardened runtime_summary_for_hypothesis() (or equivalent), (c) map artefact hypothesis fields to RootCauseFindingV1/RootCauseHypothesisV1 using the presentation mapping policy (compiled_hypothesis_presentation_mapping.md:8-16), (d) NOT call _compile_finding() which expects legacy evidence_for_rules / evidence_against_rules dict format. Non-pilot signals must continue through the legacy _compile_finding() path unchanged."
+      "citation": "All 8 launch-relevant compile manifests have source_hash: pending_inventory_refresh and output_hash: pending_inventory_refresh (confirmed: arch_rt5b_lipid_transport_card_evidence.yaml:10,14,18,22,28; arch_rt3_glycaemic_card_evidence.yaml:9,14). Sprint scope item 7 (prompt line 207) requires hash refresh where source/output files are stable. Cursor must compute SHA-256 hashes for each referenced source_path and output_path file. Referenced source files (investigation specs) and output files (card evidence artefacts, hypothesis artefact) are confirmed present. If any file is not found, Cursor must STOP on that manifest and classify the gap rather than leaving pending_inventory_refresh in place. arch_rt4_vitamin_d_hypothesis.yaml was also using pending_inventory_refresh hashes (confirmed from prior audit)."
     },
     {
-      "check": "HARDENING_FLAG_compile_finding_evidence_format_incompatibility",
+      "check": "HARDENING_FLAG_active_authority_manifest_does_not_reflect_ARCH-RT-5B_or_5C",
       "result": "CURSOR_MUST_ADDRESS",
-      "citation": "backend/core/analytics/root_cause_compiler_v1.py:234-252 — _compile_finding() consumes evidence_for_rules (list of rule dicts with direction/markers_any/markers_all/signals_any keys) and evaluates them via _evaluate_rule(). backend/core/knowledge/compiled_hypothesis.py:CompiledHypothesisRow — evidence_for and evidence_against are Tuple[str, ...] (pre-evaluated string items, not rule dicts). Passing a compiled artefact through _compile_finding() would produce empty evidence lists. The compiled runtime bridge must map CompiledHypothesisRow.evidence_for strings directly to RootCauseEvidenceItemV1(item=..., marker_refs=[]) — pre-evaluated, no rule re-evaluation. This is an architectural incompatibility that requires a separate bridge function, not a workaround inside _compile_finding()."
+      "citation": "docs/audit-papers/active_intelligence_authority_manifest.md:11 — Wave 1 card evidence table lists only wave1_met_glycaemic_control as compiled; other 6 subsystems shown as hard-coded. ARCH-RT-5B promoted all 7 subsystems (estate_index_v1.yaml confirms 7 compiled card artefacts). active_intelligence_authority_manifest.md:16-18 — root-cause table shows vitamin_d_low as shadow-only; ARCH-RT-5C promoted it to runtime. This document is a required deliverable (prompt line 224) and must be updated to reflect the post-ARCH-RT-5C authority state. Required updates: (1) expand Wave 1 card evidence table to show all 7 compiled subsystems; (2) update root-cause/hypothesis table to show signal_vitamin_d_low as runtime_promoted_compiled authority."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:289-311 — out-of-scope prohibits: full estate migration, legacy YAML deletion, multi-frame promotion, SignalRegistry, SignalEvaluator, PSI artefacts, card evidence artefacts/loader, frontend, package files, investigation specs, biomarker SSOT, clinical thresholds, scoring rails, unit conversion, physiological_claim as retail summary, fallback parsers, helper scripts. Non-negotiable."
+      "citation": "automation_bus/latest_cursor_prompt.md:322-342 — out-of-scope prohibits: runtime behaviour changes, SignalRegistry, SignalEvaluator, root-cause compiler runtime logic, card evidence loader runtime logic, frontend, PSI runtime wiring, activation compiler implementation, package regeneration, batch JSON spec extraction (unless hardening confirms bounded scope), clinical thresholds, scoring rails, biomarker SSOT, investigation specs, PSI artefacts, root-cause YAML, card evidence clinical content, fallback parsers."
     },
     {
       "check": "no_duplicate_authority_source",
       "result": "CONFIRMED",
-      "citation": "backend/core/knowledge/root_cause_registry_v1.py:28 — ROOT_CAUSE_TARGET_SPECS is the sole production registry. backend/core/knowledge/compiled_hypothesis_registry_v1.py:33 — COMPILED_HYPOTHESIS_PILOT_SPECS is the separate pilot set. Prompt scope item 7 (line 226) requires: 'Ensure production registry is not broadly replaced.' The pilot-gated routing in compile_root_cause_v1() must query compiled_hypothesis_registry_v1 only for the pilot signal; it must not merge or replace ROOT_CAUSE_TARGET_SPECS."
+      "citation": "compile_manifest_schema_v1.yaml is the sole schema authority. validate_compile_manifest.py is the sole validator. estate_index_v1.yaml is the sole estate ledger. package_generation_inventory.md is the sole package-count authority. No duplicate sources exist. Sprint must not create duplicate schema files or parallel validators."
     }
   ]
 }

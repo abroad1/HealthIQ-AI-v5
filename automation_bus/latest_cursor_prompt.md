@@ -1,28 +1,30 @@
 ---
-work_id: ARCH-RT-5C_hypothesis_runtime_promotion
-branch: work/ARCH-RT-5C-hypothesis-runtime-promotion
+work_id: ARCH-RT-5D_package_provenance_backfill
+branch: work/ARCH-RT-5D-package-provenance-backfill
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# ARCH-RT-5C — Hypothesis Runtime Promotion
+# ARCH-RT-5D — Package Provenance Backfill
 
 ## Purpose
 
-Promote the compiled hypothesis architecture from shadow-only pilot into a governed runtime path for one carefully selected root-cause pathway, while preserving legacy YAML fallback and proving presentation-safe summary behaviour.
+Resolve or explicitly classify the remaining package/source provenance gaps that prevent the HealthIQ day-one architecture from being fully provenance-complete.
 
-This sprint must resolve the key ARCH-RT-4 / ARCH-RT-5 carry-forward:
+This sprint must address the unresolved provenance estate identified across ARCH-RT-0 through ARCH-RT-5C:
 
 ```text
-compiled hypothesis artefact
-→ compiled hypothesis loader
-→ governed presentation mapping
-→ root-cause runtime output
-→ shadow comparison / regression evidence
+package inventory
+→ source_document/source_spec_id classification
+→ explicit vs inferred provenance distinction
+→ kb52c / batch JSON resolution or classification
+→ activation_key/source_spec_id provenance quality
+→ compile manifest hash refresh
+→ estate index / authority manifest refresh
 ````
 
-This sprint must not migrate the full root-cause estate.
+This sprint must not change clinical runtime behaviour.
 
 ## Baseline requirement
 
@@ -39,6 +41,7 @@ ARCH-RT-3_card_evidence_vertical_slice — merged
 ARCH-RT-4_compiled_hypothesis_root_cause_slice — merged
 ARCH-RT-5_full_regeneration_and_launch_gate — merged
 ARCH-RT-5B_card_evidence_estate_and_required_provenance — merged
+ARCH-RT-5C_hypothesis_runtime_promotion — merged
 ```
 
 Before creating or switching to the sprint branch, run and report:
@@ -46,7 +49,7 @@ Before creating or switching to the sprint branch, run and report:
 ```powershell
 git branch --show-current
 git status --short
-git log --oneline -n 12
+git log --oneline -n 14
 git rev-parse HEAD
 git rev-parse origin/main
 ```
@@ -56,7 +59,7 @@ STOP if:
 * current branch is not `main`
 * local `main` does not equal `origin/main`
 * working tree is not clean
-* ARCH-RT-5B is not merged
+* ARCH-RT-5C is not merged
 * untracked or uncommitted files are present
 
 ## Governance classification
@@ -69,7 +72,7 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This sprint may touch root-cause compiler/runtime WHY output, compiled hypothesis loaders, contracts, DTO-adjacent output, tests and audit artefacts. It affects user-facing interpretation and is therefore HIGH risk.
+This sprint may touch Knowledge Bus package manifests, compiled estate index/provenance artefacts, compile manifests, provenance validators, audit papers and package governance policy. Package/provenance authority is foundational to runtime safety, even if runtime behaviour must not change.
 
 HIGH-risk controls apply:
 
@@ -89,18 +92,22 @@ docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md
 docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md
 docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md
-docs/architecture/compiled_hypothesis_contract.md
-docs/architecture/compiled_hypothesis_presentation_mapping.md
-docs/architecture/ARCH-RT-4_compiled_hypothesis_root_cause_slice_report.md
-docs/architecture/ARCH-RT-4_root_cause_divergence_report.md
-docs/audit-papers/ARCH-RT-5_M3_hypothesis_root_cause_estate_audit.md
-docs/audit-papers/day_one_architecture_launch_readiness_audit.md
+docs/architecture/package_provenance_policy.md
+docs/architecture/activation_compile_contract.md
+docs/architecture/compile_manifest_contract.md
+docs/architecture/activation_compile_gap_report.md
+docs/architecture/package_generation_inventory.md
+docs/architecture/legacy_package_retirement_candidates.md
+docs/architecture/signal_id_collision_inventory.md
+docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md
+docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md
+docs/audit-papers/ARCH-RT-5C_hypothesis_runtime_promotion_audit.md
 docs/audit-papers/active_intelligence_authority_manifest.md
-docs/architecture/ARCH-RT-5_full_regeneration_and_launch_gate_report.md
-docs/architecture/ARCH-RT-5_split_recommendation.md
-knowledge_bus/schema/compiled_hypothesis_schema_v1.yaml
-knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml
-knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml
+docs/audit-papers/research_to_runtime_traceability_audit.md
+docs/audit-papers/day_one_architecture_launch_readiness_audit.md
+knowledge_bus/compiled/estate_index_v1.yaml
+knowledge_bus/schema/compile_manifest_schema_v1.yaml
+backend/scripts/validate_compile_manifest.py
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
 ```
@@ -114,293 +121,348 @@ If the updated sprint plan has a different path, locate it and report the path b
 The following are binding:
 
 ```text
-ADR-008 is accepted.
+compile_id is canonical.
+compile_run_id is transitional only.
+If both compile_id and compile_run_id are present, they must be equal.
+activation_key is required for runtime activation identity.
+signal_id remains signal-family identity.
+source_spec_id must distinguish explicit provenance from inferred provenance.
+Directory-derived source_spec_id is not canonical research provenance.
+Inferred provenance may not be silently upgraded to explicit provenance.
 PSI remains signal-layer semantics only.
 Hypothesis graphs must not be placed into PSI.
-ADR-RT-002 selected MULTI_FRAME_PER_DIRECTION.
-activation_key is required.
-signal_id remains signal-family identity.
-Root-cause compiler is not fully multi-frame aware.
+Frontend must not infer clinical meaning.
 ```
 
-Carry-forward from ARCH-RT-4 / ARCH-RT-5:
+Carry-forward from ARCH-RT-1:
 
 ```text
-Compiled hypotheses are currently shadow-only.
-compile_root_cause_v1() has not yet been wired to consume compiled hypothesis artefacts.
-ARCH-RT-5C must decide when and how compiled hypotheses begin influencing runtime RootCauseV1 output.
-physiological_claim must not be treated as direct retail/runtime summary text.
-summary_template remains the presentation/runtime wording field unless superseded by explicit mapping policy.
-Before runtime promotion, compiled hypothesis → RootCauseHypothesisV1 presentation mapping must be enforced.
-The compiled hypothesis artefact must carry a presentation-safe summary_template or emit a root-cause-compatible view that preserves runtime summary semantics.
-Root-cause compiler remains not fully multi-frame aware.
-Multi-frame root-cause selection must be explicitly governed before any multi-frame hypothesis path is promoted.
-Strong direct cross-load / fail-closed boundary tests should be added if legacy and compiled loaders remain side-by-side.
-compile_manifest_ref must resolve to a real manifest file or governed estate index entry for promoted artefacts.
-source_spec_provenance: source_document_derived is acceptable for pilot only and is not canonical explicit provenance.
+compile_manifest_schema_v1 was initially DRAFT.
+activation_keys_emitted, collisions_detected and policy_version were optional only while DRAFT.
+Before production compiler use, schema lock, or launch-critical compile manifest use, ADR-required manifest fields must become required or explicitly classified.
 ```
 
-Carry-forward from ARCH-RT-5 GPT review:
+Carry-forward from ARCH-RT-2:
 
 ```text
-runtime_summary_for_hypothesis() fail-safe must fail closed before any compiled hypothesis is promoted.
-If summary_template is missing, do not silently degrade to physiological_claim.
-physiological_claim must not be used as fallback runtime summary text in promoted output.
+source_spec_id inferred from package_id is interim identity fallback only.
+Future provenance work must distinguish explicit source_spec_id from inferred source_spec_id.
+```
+
+Carry-forward from ARCH-RT-3 / ARCH-RT-5B:
+
+```text
+Compiled card artefacts may contain inferred source_spec_ids only if explicitly declared.
+Five card markers remained inferred provenance after ARCH-RT-5B:
+- total_cholesterol
+- tc_hdl_ratio
+- insulin
+- ast
+- bilirubin
+```
+
+Carry-forward from ARCH-RT-5 / ARCH-RT-5C:
+
+```text
+Some compile manifest hashes were pending_inventory_refresh.
+kb52c / batch JSON packages remained blocked_pending_spec_extraction.
+Full 186-package provenance backfill remained unresolved.
 ```
 
 Do not reopen these decisions.
 
 If repository evidence contradicts any inherited decision, STOP and report.
 
-## Pilot selection
+## Main objective
 
-Preferred pilot:
+This sprint must produce a complete, repo-grounded provenance classification for all active package manifests and launch-relevant compiled artefacts.
+
+For each package / artefact, classify provenance as one of:
 
 ```text
-signal_vitamin_d_low
+explicit_source_spec_id
+source_document_derived
+package_manifest_inferred
+package_id_inferred
+batch_json_blocked_pending_spec_extraction
+architecture_doc_source_blocked
+legacy_retained_with_justification
+deferred_for_regeneration
+retire_candidate
+provenance_gap
+unknown_requires_review
 ```
 
-Reason:
-
-* compiled hypothesis artefact already exists
-* compile manifest exists
-* divergence report exists
-* single-frame pathway
-* legacy YAML remains available
-* avoids unresolved multi-frame root-cause selection risk
-
-This sprint should use `signal_vitamin_d_low` unless preflight proves it is unsafe.
-
-STOP if a different pilot appears necessary and report the reason before implementation.
-
-## Authority preflight
-
-Before implementation, verify and report:
-
-1. Current compiled hypothesis schema.
-2. Current compiled vitamin D hypothesis artefact.
-3. Current compile manifest for vitamin D hypothesis.
-4. Current compiled hypothesis loader.
-5. Current compiled hypothesis shadow registry.
-6. Current root_cause_registry_v1 production registry.
-7. Current load_root_cause_hypotheses legacy loader.
-8. Current root_cause_compiler_v1 implementation.
-9. Current RootCauseHypothesisV1 / RootCauseFindingV1 contracts.
-10. Current report/result path consuming root-cause output.
-11. Current tests for compiled hypothesis pilot.
-12. Current tests for legacy root-cause YAML loader.
-13. Current behaviour when summary_template is missing.
-14. Current behaviour for root-cause compiler signal_id matching.
-15. Whether vitamin D remains single-frame and safe to promote.
-
-If any authority path cannot be verified, STOP and report.
-
-## Mandatory internal checkpoint
-
-Before runtime promotion:
-
-1. Confirm selected pilot artefact validates.
-2. Confirm selected pilot compile manifest resolves.
-3. Confirm selected pilot has `summary_template`.
-4. Confirm runtime mapping uses `summary_template`, not `physiological_claim`.
-5. Confirm missing `summary_template` fails closed.
-6. Confirm legacy YAML remains available.
-7. Confirm divergence is acceptable and already documented.
-8. Confirm pilot is single-frame or has explicit frame-selection policy.
-
-If any checkpoint fails, STOP before modifying runtime compiler behaviour.
+No active package may remain unclassified.
 
 ## Scope
 
 Allowed scope:
 
-1. Harden compiled hypothesis presentation mapping.
-2. Make `summary_template` mandatory for promoted runtime use.
-3. Ensure `runtime_summary_for_hypothesis()` fails closed if `summary_template` is absent in promoted path.
-4. Add or update compiled hypothesis loader / helper functions as needed.
-5. Wire exactly one pilot signal into root-cause runtime output through a governed compiled path.
-6. Preserve legacy YAML fallback or comparison path.
-7. Ensure production registry is not broadly replaced.
-8. Add shadow comparison / regression tests.
-9. Add direct cross-load / fail-closed boundary tests between legacy and compiled loaders.
-10. Produce runtime promotion report and audit evidence.
+1. Scan all package manifests.
+2. Classify each package by provenance status.
+3. Resolve simple `source_document` → explicit/spec-derived provenance where the source file exists and is unambiguous.
+4. Add or update provenance metadata in package manifests only where safe, explicit and mechanically verifiable.
+5. Do not fabricate source_spec_id.
+6. Do not turn inferred IDs into explicit IDs.
+7. Refresh compile manifest hashes for launch-relevant compiled artefacts where source/output files are stable.
+8. Tighten compile manifest validator to enforce `compile_run_id == compile_id` when both are present.
+9. Decide whether manifest fields currently optional remain DRAFT-only or should become required for launch-relevant manifests.
+10. Refresh `estate_index_v1.yaml` provenance status where needed.
+11. Update active authority manifest and traceability audit.
+12. Produce package provenance backfill audit.
+13. Produce unresolved provenance register for remaining blocked/deferred items.
 
 ## Required deliverables
 
 Create or update:
 
 ```text
-docs/audit-papers/ARCH-RT-5C_hypothesis_runtime_promotion_audit.md
-docs/architecture/ARCH-RT-5C_hypothesis_runtime_promotion_report.md
+docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md
+docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md
+docs/audit-papers/ARCH-RT-5D_compile_manifest_refresh_audit.md
+docs/audit-papers/active_intelligence_authority_manifest.md
+docs/audit-papers/research_to_runtime_traceability_audit.md
+knowledge_bus/compiled/estate_index_v1.yaml
 ```
 
-Implementation files may be updated only as required for:
+May update only if justified by scope:
 
 ```text
-compiled hypothesis presentation mapping
-compiled hypothesis runtime loader/helper
-root-cause compiler pilot routing
-root-cause registry pilot selection
-targeted tests
+knowledge_bus/packages/**/package_manifest.yaml
+knowledge_bus/compiled/manifests/*.yaml
+knowledge_bus/schema/compile_manifest_schema_v1.yaml
+backend/scripts/validate_compile_manifest.py
+backend/tests/**/*compile_manifest*provenance*.py
 ```
 
-## Runtime promotion requirements
+Do not create broad helper scripts unless they are permanent governed validators and explicitly justified.
 
-If the pilot is promoted:
+## Package manifest rules
 
-* promotion must be limited to `signal_vitamin_d_low`
-* compiled artefact must validate
-* compile manifest must resolve
-* `summary_template` must exist
-* runtime summary must use `summary_template`
-* `physiological_claim` must not be emitted as runtime summary text
-* missing `summary_template` must fail closed
-* legacy YAML must remain available
-* non-pilot root-cause pathways must remain unchanged
-* no multi-frame signal may be promoted unless explicit frame policy exists
+Allowed package manifest changes:
 
-## Root-cause compiler requirements
+* add `source_spec_id` only where directly verified from an actual investigation spec field or inv YAML source path
+* add `source_spec_id_source` or equivalent field to distinguish:
 
-If `root_cause_compiler_v1.py` is modified:
+  * explicit
+  * source_document_derived
+  * package_id_inferred
+  * batch_json_unresolved
+* add `activation_key` only if it follows ADR-RT-002 and can be generated deterministically from verified frame identity
+* add `provenance_classification`
+* add `compile_manifest_ref` only if a real manifest exists and resolves
 
-* change must be pilot-gated
-* non-pilot behaviour must remain unchanged
-* existing root-cause output contract must remain stable unless explicitly justified
-* no global switch from YAML to compiled hypotheses
-* no signal-family first-match multi-frame promotion
-* no raw investigation spec runtime reads
-* no PSI dependency
+Forbidden package manifest changes:
 
-## Schema requirements
+* do not add explicit `source_spec_id` based only on package directory name
+* do not add explicit `source_spec_id` for batch JSON packages unless the exact spec record is extracted or verified
+* do not modify signal thresholds
+* do not modify clinical criteria
+* do not modify signal_id to avoid collision
+* do not modify package evidence content
+* do not regenerate packages
+* do not change PSI opt-in unless directly justified and validated
 
-If `compiled_hypothesis_schema_v1.yaml` is updated:
+## kb52c / batch JSON rule
 
-* do not make breaking changes to existing valid pilot artefact unless updated consistently
-* mark `summary_template` as required for runtime-promoted hypotheses, or introduce an explicit `promotion_requirements` / `runtime_promotion` rule
-* preserve distinction between:
+For kb52c / batch JSON packages:
 
-  * physiological_claim
-  * summary_template
-  * evidence fields
-  * provenance fields
+* attempt to determine whether the exact source spec record can be identified from batch JSON content
+* if exact extraction is not safe or not in scope, classify as:
+
+```text
+batch_json_blocked_pending_spec_extraction
+```
+
+* do not infer explicit source_spec_id from package directory
+* do not fabricate canonical provenance
+* produce a list of all affected packages
+
+If extraction would require a broad batch parser/compiler, STOP and classify rather than implementing that compiler in this sprint.
+
+## Five inferred card marker rule
+
+For the five known inferred card markers:
+
+```text
+total_cholesterol
+tc_hdl_ratio
+insulin
+ast
+bilirubin
+```
+
+This sprint must either:
+
+* find explicit provenance, or
+* confirm the current inferred classification, or
+* mark blocked_pending_spec_extraction / blocked_pending_medical_review
+
+Do not silently treat them as fully resolved.
+
+## Compile manifest rules
+
+For launch-relevant compile manifests:
+
+* `compile_id` is canonical
+* if `compile_run_id` exists, validator must enforce equality with `compile_id`
+* refresh hashes if previous value was `pending_inventory_refresh`
+* do not leave manifest hash fields stale if the referenced artefact is launch-relevant
+* if hash cannot be refreshed, classify why
+* manifest refs in compiled artefacts must resolve to real manifest files or estate index entries
+
+If changing schema strictness:
+
+* do not break existing non-launch draft manifests without classification
+* document whether schema remains DRAFT or is partially launch-locked
+* add tests for validator behaviour
 
 ## Out of scope
 
 Do not:
 
-* migrate full root-cause estate
-* delete or rewrite existing root-cause YAML
-* promote multi-frame root-cause pathways
+* change runtime behaviour
 * modify SignalRegistry
 * modify SignalEvaluator
-* modify PSI artefacts
-* implement PSI runtime wiring
-* modify card evidence artefacts
-* modify card evidence loader
+* modify root-cause compiler runtime logic
+* modify card evidence loader runtime logic
 * modify frontend
-* modify package files
-* modify investigation specs
+* implement PSI runtime wiring
+* implement activation compiler
+* regenerate packages
+* extract all batch JSON specs unless hardening confirms safe bounded scope
+* modify clinical thresholds
+* modify scoring rails
 * modify biomarker SSOT
-* change clinical thresholds
-* change scoring rails
-* change unit conversion
-* expose physiological_claim as retail summary text
+* modify investigation specs
+* modify PSI artefacts
+* modify root-cause YAML
+* modify card evidence clinical content
 * introduce fallback parsers
-* commit helper scripts
+
+## Authority preflight
+
+Before implementation, verify and report:
+
+1. total package manifest count
+2. package generation counts
+3. current package fields available for provenance
+4. count of packages with source_spec_id
+5. count of packages with activation_key
+6. count of batch JSON source packages
+7. count of architecture-doc-sourced packages
+8. count of package_id-inferred provenance candidates
+9. current compile manifest files and validation status
+10. current pending_inventory_refresh occurrences
+11. current estate index entries
+12. current five inferred card marker provenance status
+13. current unresolved provenance classifications from ARCH-RT-5 audits
+
+If the scope is too broad to resolve safely, STOP and propose a split.
 
 ## Required tests
 
-At minimum:
+At minimum, add or update tests covering:
 
-1. Compiled hypothesis artefact still validates.
-2. Compile manifest resolves.
-3. Runtime promotion path uses `summary_template`.
-4. Missing `summary_template` fails closed for promoted runtime use.
-5. `physiological_claim` is not emitted as runtime summary.
-6. Legacy YAML loader still works.
-7. Compiled loader rejects legacy YAML directly.
-8. Legacy loader rejects compiled YAML directly or fails closed.
-9. Pilot root-cause runtime output matches expected safe summary.
-10. Non-pilot root-cause pathways remain unchanged.
-11. Multi-frame root-cause promotion is blocked or not in scope.
-12. No raw investigation spec runtime reads.
+1. compile manifest validator enforces `compile_run_id == compile_id` when both exist
+2. launch-relevant compile manifests validate
+3. manifest refs resolve from compiled artefacts
+4. estate index resolves launch-relevant artefacts
+5. package provenance classification output includes all package manifests
+6. no package remains unclassified in the audit output
+7. inferred provenance is not treated as explicit
+8. kb52c / batch JSON packages are classified correctly
+9. five inferred card markers are classified
 
-Run narrow tests first. Run broader root-cause/report tests if touched contracts require them.
+If tests are implemented as script-level audit tests, they must be permanent and justified.
 
 ## STOP conditions
 
 STOP and report if:
 
-1. Required authority files are missing.
-2. Vitamin D pilot artefact no longer validates.
-3. Vitamin D compile manifest does not resolve.
-4. `summary_template` is missing and cannot be safely added from governed/presentation-safe source.
-5. Runtime mapping would use `physiological_claim` as summary text.
-6. Missing summary_template would silently fall back to physiological_claim.
-7. Runtime promotion requires broad root-cause compiler redesign.
-8. Runtime promotion requires multi-frame root-cause policy.
-9. Runtime promotion requires package/spec/PSI/card/frontend changes.
-10. Legacy YAML would no longer be available.
-11. Tests cannot prove non-pilot root-cause stability.
-12. Scope expands into full root-cause estate migration.
+1. required authority files are missing
+2. package manifest scan cannot be performed
+3. any package cannot be classified
+4. explicit source_spec_id cannot be distinguished from inferred
+5. kb52c extraction would require broad compiler work
+6. compile manifest hashes cannot be refreshed or classified
+7. manifest validator changes would break existing launch-relevant manifests
+8. package changes would alter runtime signal behaviour
+9. work requires modifying package clinical content
+10. scope expands into PSI wiring, card runtime, root-cause runtime, frontend or activation compiler
+11. tests cannot prove provenance classification completeness
 
-## Required report
-
-Create:
-
-```text
-docs/architecture/ARCH-RT-5C_hypothesis_runtime_promotion_report.md
-```
-
-The report must include:
-
-* pilot selected and rationale
-* artefact path
-* manifest path
-* runtime mapping decision
-* summary_template policy
-* physiological_claim boundary
-* compiler/registry changes
-* legacy YAML preservation evidence
-* tests added/updated
-* test commands and results
-* non-pilot stability evidence
-* remaining risks and carry-forwards
+## Required reports
 
 Create:
 
 ```text
-docs/audit-papers/ARCH-RT-5C_hypothesis_runtime_promotion_audit.md
+docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md
 ```
 
-The audit must classify:
+Must include:
 
-* pilot promoted or not promoted
-* runtime behaviour changed or unchanged
-* legacy YAML retained
-* summary_template enforced
-* physiological_claim blocked from runtime summary
-* multi-frame promotion status
-* remaining root-cause estate status
+* total package count
+* classification counts
+* table or grouped listing by classification
+* packages updated
+* packages not updated and why
+* batch JSON/kb52c status
+* architecture-doc-sourced package status
+* explicit vs inferred source_spec_id status
+* activation_key status
+* remaining launch blockers, if any
+
+Create:
+
+```text
+docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md
+```
+
+Must include every unresolved/deferred provenance item, with:
+
+* item id
+* package/artefact/marker
+* classification
+* reason
+* required future action
+* launch blocker status
+
+Create:
+
+```text
+docs/audit-papers/ARCH-RT-5D_compile_manifest_refresh_audit.md
+```
+
+Must include:
+
+* manifests checked
+* hashes refreshed
+* hashes still pending
+* validator changes
+* schema strictness decision
+* manifest refs resolved
+* unresolved manifest issues
 
 ## Evidence required from Cursor
 
 Cursor must report:
 
-1. Baseline branch/status/HEAD evidence.
-2. Authority preflight findings.
-3. Internal checkpoint result.
-4. Files changed.
-5. Exact runtime promotion mechanism.
-6. Exact summary_template enforcement behaviour.
-7. Tests added/updated.
-8. Test commands run.
-9. Test results.
-10. Confirmation that legacy YAML remains available.
-11. Confirmation that non-pilot root-cause pathways are unchanged.
-12. Confirmation that physiological_claim is not runtime summary text.
-13. Confirmation that no package/spec/PSI/card/frontend work was included.
-14. Confirmation that no helper scripts were committed.
+1. baseline branch/status/HEAD evidence
+2. authority preflight findings
+3. package classification counts
+4. exact package manifests modified, if any
+5. exact compile manifests modified, if any
+6. validator/schema changes, if any
+7. estate index changes
+8. tests added/updated
+9. test commands run
+10. test results
+11. unresolved provenance register summary
+12. confirmation no runtime behaviour changed
+13. confirmation no clinical package content changed
+14. confirmation no PSI/card/root-cause/frontend work included
 
 ## Closure requirements
 
@@ -428,27 +490,31 @@ Classify:
 
 Do not run finish unless:
 
-* current branch matches `work/ARCH-RT-5C-hypothesis-runtime-promotion`
-* all changed files are tied to this sprint
-* no package/spec/PSI/card/frontend/SignalRegistry/SignalEvaluator files are changed
-* no helper scripts are included
+* current branch matches `work/ARCH-RT-5D-package-provenance-backfill`
+* all changed files are tied to provenance scope
+* no runtime/code clinical behaviour files are modified unless explicitly approved by hardening
+* no helper scripts are included unless permanent and justified
 * no ambiguous stash exists
+* all packages are classified
 * latest commit contains only in-scope work
 
 ## Success criteria
 
 This sprint is complete only if:
 
-1. One compiled hypothesis path is promoted or explicitly classified as not ready.
-2. If promoted, runtime output uses `summary_template`.
-3. Missing `summary_template` fails closed for promoted output.
-4. `physiological_claim` is not used as runtime summary text.
-5. Legacy YAML remains available.
-6. Non-pilot root-cause pathways remain unchanged.
-7. Multi-frame root-cause promotion is not introduced without explicit policy.
-8. Tests prove pilot runtime behaviour and legacy preservation.
-9. No package/spec/PSI/card/frontend scope is included.
-10. Automation Bus gate passes.
+1. all active packages are classified by provenance status
+2. explicit vs inferred source_spec_id is distinguished
+3. kb52c / batch JSON packages are resolved or classified
+4. five inferred card markers are resolved or classified
+5. compile manifest refs resolve or are classified
+6. pending_inventory_refresh hashes are refreshed or classified
+7. validator enforces compile_run_id == compile_id when both exist
+8. estate index and authority manifest are refreshed
+9. no runtime behaviour changes occur
+10. no package clinical content changes occur
+11. unresolved provenance register exists
+12. tests prove provenance classification and manifest validation
+13. Automation Bus gate passes
 
 ```
 ```
