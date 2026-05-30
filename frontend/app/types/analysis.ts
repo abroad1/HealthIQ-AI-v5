@@ -302,6 +302,15 @@ export interface MarkerDisplayLabelV1 {
   display_label: string;
 }
 
+export interface SubsystemMarkerEvidenceV1 {
+  marker_id: string;
+  display_label: string;
+  marker_role?: string | null;
+  relationship_kind?: string | null;
+  presence_policy?: string | null;
+  rationale_short?: string | null;
+}
+
 export interface SubsystemEvidenceV1 {
   subsystem_id: string;
   subsystem_label: string;
@@ -312,6 +321,13 @@ export interface SubsystemEvidenceV1 {
   status_label?: string | null;
   evidence_role?: string | null;
   source_trace: string;
+  card_evidence_schema_version?: string | null;
+  visibility_tier?: string | null;
+  source_spec_ids?: string[] | null;
+  compile_manifest_ref?: string | null;
+  mechanism_line?: string | null;
+  missing_policy_line?: string | null;
+  marker_evidence?: SubsystemMarkerEvidenceV1[] | null;
 }
 
 /** D-1/D-2/D-3 — Wave 1 customer domain card contract (mirrors Pydantic ConsumerDomainScoreV1) */

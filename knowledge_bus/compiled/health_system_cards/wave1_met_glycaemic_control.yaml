@@ -1,0 +1,33 @@
+schema_version: "1.0.0"
+artefact_id: wave1_met_glycaemic_control_v1
+domain_id: wave1_blood_sugar
+subsystem_id: wave1_met_glycaemic_control
+subsystem_label: Glycaemic control
+visibility_tier: scored_subsystem
+source_spec_ids:
+  - inv_hba1c_high_glycaemia_v1
+compile_manifest_ref: arch-rt-3-pilot-glycaemic-manual-001
+missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
+mechanism_line: Fasting glucose and HbA1c together describe glycaemic load on this panel.
+markers:
+  - marker_id: glucose
+    display_label: Glucose
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Primary glycaemic marker on most panels.
+    presence_policy: required_for_subsystem
+  - marker_id: hba1c
+    display_label: HbA1c
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Longer-window glycaemic exposure marker.
+    presence_policy: required_for_subsystem
+provenance:
+  artefact_kind: health_system_card_evidence_v1
+  compile_status: pilot_manual
+  source_spec_provenance: inferred_from_package_manifest
+  package_refs:
+    - pkg_s24_hba1c_high_glycaemia
+  notes: >
+    Pilot ARCH-RT-3 vertical slice. source_spec_ids inferred from package manifest
+    source_document; not canonical directory-derived runtime provenance. No PSI runtime.

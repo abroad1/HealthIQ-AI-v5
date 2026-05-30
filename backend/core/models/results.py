@@ -173,6 +173,31 @@ class MarkerDisplayLabelV1(BaseModel):
     display_label: str = Field(..., description="Consumer-safe biomarker display label")
 
 
+class SubsystemMarkerEvidenceV1(BaseModel):
+    """ARCH-RT-3 — governed per-marker card evidence fields (compile-time roles)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    marker_id: str = Field(..., description="Canonical biomarker id")
+    display_label: str = Field(..., description="Consumer-safe display label from compiled artefact")
+    marker_role: Optional[str] = Field(
+        default=None,
+        description="Card role vocabulary from compiled artefact (not inferred at runtime)",
+    )
+    relationship_kind: Optional[str] = Field(
+        default=None,
+        description="Relationship kind from compiled artefact",
+    )
+    presence_policy: Optional[str] = Field(
+        default=None,
+        description="Presence policy from compiled artefact",
+    )
+    rationale_short: Optional[str] = Field(
+        default=None,
+        description="Optional short compile-time rationale",
+    )
+
+
 class SubsystemEvidenceV1(BaseModel):
     """
     DOMAIN-UX1C — governed subsystem evidence beneath a Wave 1 health-system card.
@@ -210,6 +235,34 @@ class SubsystemEvidenceV1(BaseModel):
     source_trace: str = Field(
         ...,
         description="Provenance string for why this subsystem appears",
+    )
+    card_evidence_schema_version: Optional[str] = Field(
+        default=None,
+        description="ARCH-RT-3: card evidence schema version when row is compiled-backed",
+    )
+    visibility_tier: Optional[str] = Field(
+        default=None,
+        description="ARCH-RT-3: card visibility tier from compiled artefact",
+    )
+    source_spec_ids: Optional[List[str]] = Field(
+        default=None,
+        description="ARCH-RT-3: research spec ids from compile provenance (may be inferred)",
+    )
+    compile_manifest_ref: Optional[str] = Field(
+        default=None,
+        description="ARCH-RT-3: compile manifest or pilot compile reference",
+    )
+    mechanism_line: Optional[str] = Field(
+        default=None,
+        description="ARCH-RT-3: optional mechanism context line from artefact",
+    )
+    missing_policy_line: Optional[str] = Field(
+        default=None,
+        description="ARCH-RT-3: optional missing-marker policy line from artefact",
+    )
+    marker_evidence: Optional[List[SubsystemMarkerEvidenceV1]] = Field(
+        default=None,
+        description="ARCH-RT-3: per-marker governed roles (pilot compiled path)",
     )
 
 

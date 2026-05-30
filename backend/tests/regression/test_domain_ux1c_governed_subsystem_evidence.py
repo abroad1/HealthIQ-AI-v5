@@ -101,7 +101,14 @@ def test_subsystem_rows_have_required_fields() -> None:
             assert isinstance(sub.missing_markers, list)
             assert all(m.id and m.display_label for m in sub.included_markers or [])
             assert all(m.id and m.display_label for m in sub.missing_markers or [])
-            assert sub.source_trace.startswith("wave1_subsystem_evidence_v1:")
+            if sub.subsystem_id == "wave1_met_glycaemic_control":
+                assert sub.source_trace.startswith("health_system_card_evidence_v1:")
+                assert sub.card_evidence_schema_version == "1.0.0"
+                assert sub.visibility_tier == "scored_subsystem"
+                assert sub.marker_evidence is not None
+                assert len(sub.marker_evidence) == 2
+            else:
+                assert sub.source_trace.startswith("wave1_subsystem_evidence_v1:")
             assert sub.status_label is None
 
 

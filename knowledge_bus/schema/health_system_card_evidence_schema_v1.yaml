@@ -1,0 +1,174 @@
+schema_name: "HealthIQ Health System Card Evidence"
+schema_version: "1.0.0"
+status: "DRAFT"
+authority: "ARCH-RT-3, ADR-RT-001"
+
+description: >
+  Deterministic schema for compiled health-system card subsystem evidence artefacts.
+  Consumed at runtime by the backend card-evidence loader only (no raw investigation-spec reads).
+  One artefact file per subsystem vertical slice during pilot estate rollout.
+
+root_required_fields:
+  - schema_version
+  - artefact_id
+  - domain_id
+  - subsystem_id
+  - subsystem_label
+  - visibility_tier
+  - source_spec_ids
+  - compile_manifest_ref
+  - markers
+  - provenance
+
+root_optional_fields:
+  - missing_policy_line
+  - mechanism_line
+
+field_rules:
+
+  schema_version:
+    type: string
+    pattern: '^1\.0\.0$'
+    description: Card evidence contract version.
+
+  artefact_id:
+    type: string
+    min_length: 1
+    description: Stable id for this compiled artefact file.
+
+  domain_id:
+    type: string
+    min_length: 1
+    description: Parent Wave 1 domain id, e.g. wave1_blood_sugar.
+
+  subsystem_id:
+    type: string
+    min_length: 1
+    description: Stable subsystem id matching runtime registry, e.g. wave1_met_glycaemic_control.
+
+  subsystem_label:
+    type: string
+    min_length: 1
+    description: Consumer-safe subsystem label.
+
+  visibility_tier:
+    type: string
+    enum:
+      - scored_subsystem
+      - contextual_evidence
+      - hidden_v1
+
+  source_spec_ids:
+    type: list
+    min_items: 1
+    item_type: string
+    description: Research spec ids referenced at compile time (may be inferred; see provenance).
+
+  compile_manifest_ref:
+    type: string
+    min_length: 1
+    description: Reference to compile manifest or pilot compile record (audit only).
+
+  missing_policy_line:
+    type: string
+    description: Optional governed line describing missing-marker policy for the subsystem.
+
+  mechanism_line:
+    type: string
+    description: Optional short mechanism context line (non-retail-clinical; presentation-safe).
+
+  markers:
+    type: list
+    min_items: 1
+    unique_by: marker_id
+
+marker_required_fields:
+  - marker_id
+  - display_label
+  - marker_role
+  - relationship_kind
+  - presence_policy
+
+marker_optional_fields:
+  - rationale_short
+
+marker_field_rules:
+
+  marker_id:
+    type: string
+    min_length: 1
+    description: Canonical biomarker id (must not include total_bilirubin when bilirubin is canonical).
+
+  display_label:
+    type: string
+    min_length: 1
+    description: Consumer-safe display label from governed SSOT or compile translation.
+
+  marker_role:
+    type: string
+    enum:
+      - score_contributor
+      - confidence_contributor
+      - contextual_marker
+      - mechanism_marker
+      - differential_marker
+      - exclusion_marker
+      - missing_for_confidence
+      - optional_deeper_marker
+
+  relationship_kind:
+    type: string
+    enum:
+      - direct_score_input
+      - confidence_input
+      - contextual_support
+      - mechanism_context
+      - differential_context
+      - exclusion_gate
+      - optional_depth
+
+  rationale_short:
+    type: string
+    description: Optional short compile-time rationale (not clinical diagnosis).
+
+  presence_policy:
+    type: string
+    enum:
+      - required_for_subsystem
+      - optional_on_panel
+      - contextual_only
+
+provenance_required_fields:
+  - artefact_kind
+  - compile_status
+
+provenance_optional_fields:
+  - source_spec_provenance
+  - package_refs
+  - notes
+
+provenance_field_rules:
+
+  artefact_kind:
+    type: string
+    enum:
+      - health_system_card_evidence_v1
+
+  compile_status:
+    type: string
+    enum:
+      - pilot_manual
+      - compile_pipeline
+
+  source_spec_provenance:
+    type: string
+    enum:
+      - explicit
+      - inferred_from_package_manifest
+
+  package_refs:
+    type: list
+    item_type: string
+
+  notes:
+    type: string

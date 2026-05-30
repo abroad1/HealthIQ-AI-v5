@@ -12,6 +12,10 @@ from functools import lru_cache
 from typing import Dict, FrozenSet, List, Sequence, Set, Tuple
 
 from core.canonical.resolver import CanonicalResolver
+from core.knowledge.health_system_card_evidence import (
+    PILOT_COMPILED_SUBSYSTEM_IDS,
+    assemble_subsystem_from_compiled_card_evidence,
+)
 from core.models.results import MarkerDisplayLabelV1, SubsystemEvidenceV1
 
 # --- Subsystem definitions (stable ids + consumer labels + expected canonical markers) ---
@@ -151,6 +155,16 @@ def assemble_wave1_subsystem_evidence(
     scored = _scored_marker_ids_on_rail(rail_biomarker_scores)
     rows: List[SubsystemEvidenceV1] = []
     for spec in defs:
+        if spec.subsystem_id in PILOT_COMPILED_SUBSYSTEM_IDS:
+            compiled_row = assemble_subsystem_from_compiled_card_evidence(
+                subsystem_id=spec.subsystem_id,
+                panel_biomarker_ids=panel_biomarker_ids,
+                scored_on_rail=scored,
+            )
+            if compiled_row is not None:
+                rows.append(compiled_row)
+            continue
+
         included, missing = _partition_subsystem_markers(
             expected=spec.expected_marker_ids,
             panel_biomarker_ids=panel_biomarker_ids,

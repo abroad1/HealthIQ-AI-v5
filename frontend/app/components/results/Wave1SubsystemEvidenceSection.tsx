@@ -1,5 +1,5 @@
 import React from 'react';
-import type { SubsystemEvidenceV1 } from '@/types/analysis';
+import type { SubsystemEvidenceV1, SubsystemMarkerEvidenceV1 } from '@/types/analysis';
 
 type Props = {
   subsystems: SubsystemEvidenceV1[];
@@ -14,6 +14,12 @@ function defensiveFallbackLabel(markerId: string): string {
     .filter(Boolean)
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ');
+}
+
+function markerRoleChipLabel(marker: SubsystemMarkerEvidenceV1): string | null {
+  const role = marker.marker_role?.trim();
+  if (!role) return null;
+  return role.replace(/_/g, ' ');
 }
 
 function isConsumerSafeSourceTrace(value: string | null | undefined): boolean {
@@ -49,22 +55,50 @@ export function Wave1SubsystemEvidenceSection({ subsystems }: Props) {
               ) : null}
             </div>
 
+            {subsystem.mechanism_line ? (
+              <p className="text-xs text-slate-600" data-testid="wave1-subsystem-mechanism-line">
+                {subsystem.mechanism_line}
+              </p>
+            ) : null}
+
             {subsystem.included_marker_ids.length > 0 ? (
               <div className="space-y-1.5">
                 <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Included markers</p>
                 <ul className="flex flex-wrap gap-1.5 list-none p-0 m-0" data-testid="wave1-subsystem-included">
-                  {(subsystem.included_markers && subsystem.included_markers.length > 0
-                    ? subsystem.included_markers
-                    : subsystem.included_marker_ids.map((id) => ({
-                        id,
-                        display_label: defensiveFallbackLabel(id),
-                      }))).map((marker) => (
-                    <li key={marker.id}>
-                      <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs text-emerald-800">
-                        {marker.display_label}
-                      </span>
-                    </li>
-                  ))}
+                  {subsystem.marker_evidence && subsystem.marker_evidence.length > 0
+                    ? subsystem.marker_evidence
+                        .filter((m) => subsystem.included_marker_ids.includes(m.marker_id))
+                        .map((marker) => {
+                          const roleLabel = markerRoleChipLabel(marker);
+                          return (
+                            <li key={marker.marker_id}>
+                              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs text-emerald-800">
+                                <span>{marker.display_label}</span>
+                                {roleLabel ? (
+                                  <span
+                                    className="text-[10px] uppercase tracking-wide text-emerald-700"
+                                    data-testid="wave1-marker-role-chip"
+                                  >
+                                    {roleLabel}
+                                  </span>
+                                ) : null}
+                              </span>
+                            </li>
+                          );
+                        })
+                    : (subsystem.included_markers && subsystem.included_markers.length > 0
+                        ? subsystem.included_markers
+                        : subsystem.included_marker_ids.map((id) => ({
+                            id,
+                            display_label: defensiveFallbackLabel(id),
+                          }))
+                      ).map((marker) => (
+                        <li key={marker.id}>
+                          <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs text-emerald-800">
+                            {marker.display_label}
+                          </span>
+                        </li>
+                      ))}
                 </ul>
               </div>
             ) : null}
