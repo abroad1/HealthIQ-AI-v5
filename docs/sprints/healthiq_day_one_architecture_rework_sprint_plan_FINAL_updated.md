@@ -1081,6 +1081,16 @@ These items must be resolved before the day-one architecture can be declared ful
 - Package provenance backfill and kb52c extraction remain unresolved and belong to ARCH-RT-5D.
 - PSI runtime wiring remains deferred unless mandated by a launch-critical claim.
 
+### From ARCH-RT-5B - Card Evidence Estate and Required Provenance
+
+1. wave1_cv_vascular_strain contextual_evidence tier is approved.
+2. Ensure frontend/card logic renders contextual_evidence appropriately.
+3. PILOT_SUBSYSTEM_ID is stale historical naming; clean up later.
+4. Five inferred-provenance markers remain unresolved and must be handled in ARCH-RT-5D.
+5. Full 186-package provenance backfill remains unresolved.
+6. Hypothesis runtime promotion remains unresolved and belongs to ARCH-RT-5C.
+7. PSI runtime consumption remains deferred unless mandated.
+
 ## 6. Final note
 
 This is the fewest sensible sprint sequence currently recommended.
