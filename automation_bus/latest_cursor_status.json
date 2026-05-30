@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-RT-5E-psi-runtime-wiring-decision",
+  "branch": "work/ARCH-RT-6-day-one-architecture-guardrails-and-acceptance-gate",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-30T10:15:27Z",
-  "cursor_started_utc": "2026-05-30T10:12:52Z",
-  "head_sha": "d28a8343353dd1ecee08473c112131e6638a1afd",
+  "cursor_started_utc": "2026-05-30T10:35:20Z",
+  "head_sha": "185f56eb2daf9d8894f5e7960dd6e5712e661bc9",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-5E_psi_runtime_wiring_decision"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-RT-6_day_one_architecture_guardrails_and_acceptance_gate"
 }
