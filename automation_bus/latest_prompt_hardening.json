@@ -1,159 +1,144 @@
 {
-  "work_id": "LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy",
-  "bus_version": "1.3.1",
+  "work_id": "LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation",
   "status": "HARDENED",
+  "bus_version": "1.3.1",
   "hardened_utc": "2026-05-30T00:00:00Z",
-  "hardened_by": "Claude Code (Stage 2 / SOP v1.3.1)",
+  "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy (line 2), branch=work/LAUNCH-CORE-3-result-versioning-replay-and-regeneration-policy (line 3), risk_level=HIGH (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=MIXED (line 6)"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation (line 2), branch=work/LAUNCH-CORE-5-results-page-narrative-hierarchy-and-score-rationalisation (line 3), risk_level=HIGH (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=MIXED (line 6)"
     },
     {
       "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:60-68 — sprint may touch backend/core/pipeline/ (Intelligence Core: orchestrator, orchestrator_phases_v1.py), backend/core/analytics/ (Intelligence Core), backend/core/models/results.py (AnalysisDTO/AnalysisResult DTO structure), backend/core/contracts/replay_manifest_v1.py, backend/repositories/ (persistence layer), and frontend stale-result UI. Result immutability and deterministic replay touch the core product integrity surface. HIGH is mandatory per SOP §3 and §10 for any work package interacting with Intelligence Core components regardless of file path. Correctly assigned."
+      "citation": "automation_bus/latest_cursor_prompt.md:64-74 — sprint may touch domain_score_assembler.py and report_compiler_v1.py (Intelligence Core: output assembly mechanisms per SOP §3). Affects user-facing health interpretation. HIGH is mandatory per SOP §10 for any work interacting with Intelligence Core components."
     },
     {
       "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:184-197 — MIXED. CONTENT: two docs deliverables (docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md + docs/audit-papers/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_audit.md). BEHAVIOUR: bounded implementation allowed — stale-result detection helper (BEHAVIOUR: new classification logic), API metadata field for stale flag (BEHAVIOUR: output field change), frontend stale-result warning/banner (BEHAVIOUR: new rendered output). MIXED governed under BEHAVIOUR controls per SOP §4 is correct."
+      "citation": "automation_bus/latest_cursor_prompt.md:70-74 — MIXED correct: sprint touches both frontend Layer C (section reorder, banner guard, label changes, marker score hiding) and potentially backend Layer B (section ordering metadata, consumer-safe labels, deduplicated lead summary). Per SOP §4, MIXED always governed under BEHAVIOUR controls."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: baseline preflight (branch, working tree, LAUNCH-CORE-1, LAUNCH-CORE-2 audit report) must complete before any file modification; HIGH risk designation requires phased control."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: baseline preflight (branch=main, working tree clean, LAUNCH-CORE-3 merged, LAUNCH-CORE-4 audit report present) must complete before any file modification."
     },
     {
-      "check": "2a_baseline_working_tree_clean",
+      "check": "2a_launch_core_4_audit_exists",
       "result": "CONFIRMED",
-      "citation": "git status --short shows only: M automation_bus/latest_cursor_prompt.md (expected sprint-setup modification). No untracked files. Working tree is clean. All baseline STOP conditions in automation_bus/latest_cursor_prompt.md:49-56 pass: branch=main, HEAD=origin/main=5eb8aed615cd47485c6181521fb9f78260227025, no untracked/uncommitted files."
+      "citation": "docs/audit-papers/LAUNCH-CORE-4_results_page_narrative_hierarchy_and_score_rationalisation_audit.md — file exists on disk. Content verified: audit §8 (line 153) confirms Wave1DomainCards at results/page.tsx lines 717-729 is rendered before PrimaryFindingAndWhy. Audit §9 confirms StaleResultBanner does not render for result_status=incompatible. Audit references base commit ff83dbe on main."
     },
     {
-      "check": "2a_launch_core_1_merged",
+      "check": "2a_authority_doc_LAUNCH_CORE_2",
       "result": "CONFIRMED",
-      "citation": "git log: commit 48b078b — 'chore(bus): LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy kernel COMPLETE status' present on main. Baseline STOP condition 'LAUNCH-CORE-1 is not merged' does NOT trigger."
+      "citation": "docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md — file exists on disk."
     },
     {
-      "check": "2a_launch_core_2_audit_report_exists",
+      "check": "2a_authority_doc_LAUNCH_CORE_1",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md — file exists on disk (glob confirmed). Committed in commit a472a23 ('docs(audit): LAUNCH-CORE-2 multi-panel launch readiness UAT report'), kernel COMPLETE at commit 5eb8aed (current HEAD). Baseline STOP condition 'LAUNCH-CORE-2 audit report is missing' does NOT trigger."
+      "citation": "docs/audit-papers/LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy_report.md — file exists on disk."
     },
     {
-      "check": "2a_authority_doc_1",
+      "check": "2a_authority_doc_LAUNCH_CORE_3",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md — exists (verified above)"
+      "citation": "docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md — file exists on disk."
     },
     {
-      "check": "2a_authority_doc_2",
+      "check": "2a_authority_doc_ARCH_RT_6_audit",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy_report.md — exists on disk (glob confirmed)"
+      "citation": "docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md — file exists on disk."
     },
     {
-      "check": "2a_authority_doc_3",
+      "check": "2a_authority_doc_ARCH_RT_6_guardrails",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md — exists on disk (glob confirmed)"
+      "citation": "docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md — file exists on disk."
     },
     {
-      "check": "2a_authority_doc_4",
+      "check": "2a_authority_doc_validate_script",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/active_intelligence_authority_manifest.md — exists on disk (glob confirmed)"
+      "citation": "backend/scripts/validate_day_one_architecture.py — file exists on disk."
     },
     {
-      "check": "2a_authority_doc_5",
+      "check": "2a_implementation_authority_paths",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/day_one_architecture_launch_readiness_audit.md — exists on disk (glob confirmed)"
+      "citation": "All 13 listed paths confirmed present. backend/app/routes/analysis.py, backend/core/dto/result_versioning_policy_v1.py, backend/core/analytics/domain_score_assembler.py, backend/core/analytics/report_compiler_v1.py, backend/core/analytics/domain_narrative_wave1.py, frontend/app/(app)/results/page.tsx, frontend/app/types/analysis.ts, all 5 frontend lib files, all 18 results components including StaleResultBanner.tsx. backend/core/models/** (10 files) and backend/core/contracts/** (24 files) confirmed present."
     },
     {
-      "check": "2a_authority_doc_6",
+      "check": "2a_no_duplicate_authority_sources",
       "result": "CONFIRMED",
-      "citation": "docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md — exists on disk (glob confirmed)"
+      "citation": "StaleResultBanner.tsx is the sole frontend banner component. results/page.tsx is the sole layout authority. backend/core/dto/result_versioning_policy_v1.py is the sole backend versioning DTO source. frontend/app/lib/feR2ResultsJourneyOrder.ts is the sole canonical section-order test ID registry."
     },
     {
-      "check": "2a_authority_doc_7",
+      "check": "2a_banner_defect_source_cross_reference",
+      "result": "CONFIRMED — FRONTEND-ONLY FIX REQUIRED",
+      "citation": "frontend/app/components/results/StaleResultBanner.tsx:12 — guard reads `versioning.result_status !== 'stale'` causing the component to return null for ANY status other than 'stale', including 'incompatible'. frontend/app/types/analysis.ts:366 — ResultVersioningMetadataV1.result_status typed as 'current' | 'stale' | 'incompatible'. backend/core/dto/result_versioning_policy_v1.py:129-131 — user_message for incompatible status IS already populated: 'This saved result cannot be displayed with the current results page contract.' NO backend change is required for the banner fix. Fix is a single guard change in StaleResultBanner.tsx:12."
+    },
+    {
+      "check": "2a_section_order_defect_source_cross_reference",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_day_one_architecture.py — exists on disk (glob confirmed)"
+      "citation": "frontend/app/(app)/results/page.tsx:717-720 — Wave1DomainCards rendered outside any FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS-assigned section, immediately before PrimaryFindingAndWhy block at lines 722-730. frontend/app/lib/feR2ResultsJourneyOrder.ts:5-14 — Wave1DomainCards has NO entry in the canonical section test ID registry. Target hierarchy (prompt §Target default page hierarchy) places PrimaryFinding at step 2, WorkingWell at step 3, HealthSystems at step 4. Current order confirmed: [Hero/BodyOverview(670), WorkingWell(708), Wave1DomainCards(717), PrimaryFinding(722), Uncertainty(732), Patterns(749), Markers(765)]."
     },
     {
-      "check": "2a_path_discrepancy_backend_api",
-      "result": "CURSOR_MUST_RESOLVE — PATH DOES NOT EXIST",
-      "citation": "automation_bus/latest_cursor_prompt.md:93 — prompt lists 'backend/api/**' as implementation authority. This directory DOES NOT EXIST in the repository. Actual API route path is backend/app/routes/ (confirmed: backend/app/routes/health.py, backend/app/routes/questionnaire.py). Prompt acknowledges this at line 104: 'If actual persistence/API paths differ, locate and report them.' Cursor must: (1) locate all API route files under backend/app/routes/ and any other route registration points, (2) identify the result retrieval endpoint(s) for analysis_id lookup, (3) report actual paths in the audit document."
+      "check": "2b_section_reorder_full_scope_clarification",
+      "result": "HARDENING NOTE — CURSOR MUST IMPLEMENT FULL TARGET ORDER",
+      "citation": "Prompt §Target default page hierarchy requires: 1-Hero, 2-PrimaryFinding, 3-WorkingWell, 4-HealthSystems. Current page.tsx has WorkingWell (BalancedSystemsSummary) at line 708 BEFORE both Wave1DomainCards (717) and PrimaryFindingAndWhy (722). Fully implementing the target hierarchy requires moving PrimaryFindingAndWhy BEFORE BalancedSystemsSummary, not merely before Wave1DomainCards. Cursor must implement the complete target sequence and update feR2ResultsJourneyOrder.ts consistently. A partial fix moving only Wave1DomainCards after PrimaryFinding while leaving WorkingWell ahead of PrimaryFinding does NOT satisfy the target hierarchy in the prompt."
     },
     {
-      "check": "2a_path_discrepancy_backend_db",
-      "result": "CURSOR_MUST_RESOLVE — PATH DOES NOT EXIST",
-      "citation": "automation_bus/latest_cursor_prompt.md:98 — prompt lists 'backend/db/**' as implementation authority. This directory DOES NOT EXIST in the repository. Actual persistence layer is backend/repositories/ (BaseRepository using SQLAlchemy ORM, confirmed: backend/repositories/base.py, backend/repositories/export_repository.py). DB models are at backend/core/models/database.py. Migrations are at backend/migrations/versions/. Cursor must identify the specific repository that handles analysis_results retrieval."
+      "check": "2b_journey_order_registry_consistency",
+      "result": "HARDENING NOTE — CURSOR MUST RESOLVE",
+      "citation": "frontend/app/lib/feR2ResultsJourneyOrder.ts:5-14 — 8 canonical section test IDs (indices 0-7). Wave1DomainCards currently has NO entry. After the reorder Cursor must either: (a) add a test ID entry for Wave1DomainCards in the registry and assign it via data-testid in page.tsx, OR (b) explicitly confirm Wave1DomainCards intentionally has no journey-order tracking ID and document why. The section order test (required test #1: 'Primary finding before Health Systems Cards') must reference either these test IDs or the component render order — Cursor must ensure the test is reliable and not dependent on text matching or DOM structure that could change."
     },
     {
-      "check": "2a_sprint9_replay_infrastructure_exists",
-      "result": "CURSOR_MUST_READ_BEFORE_PROPOSING — CRITICAL PRE-EXISTING FOUNDATION",
-      "citation": "Sprint 9 replay infrastructure confirmed on disk: (1) backend/core/contracts/replay_manifest_v1.py — ReplayManifestV1 Pydantic model with 30+ version/hash fields (unit_registry_version, ratio_registry_version, cluster_schema_hash, insight_graph_version, confidence_model_version, scoring_policy_hash, evidence_registry_hash, state_transition_hash, causal_layer_hash, calibration_hash, arbitration_hash, explainability_hash, burden_hash, lifestyle_input_hash, schema_hashes dict, analysis_result_version); (2) backend/core/models/results.py:99-102 — AnalysisResult.replay_manifest: Optional[Dict[str,Any]] 'Sprint 9: ReplayManifestV1 for determinism/replay'; (3) backend/core/models/results.py:399-402 — AnalysisDTO.replay_manifest: Optional[Dict[str,Any]] 'Sprint 9: ReplayManifestV1 for determinism/replay (version stamps + schema hashes)'; (4) backend/migrations/versions/add_replay_manifest_column.py — Alembic migration adding replay_manifest JSON column to analysis_results table (Sprint 9, 2025-02-15). Cursor MUST read replay_manifest_v1.py in full before proposing or evaluating which Required metadata fields are missing vs. already captured inside the replay_manifest JSON blob."
-    },
-    {
-      "check": "2a_sprint9_replay_manifest_frozen_flag",
-      "result": "CURSOR_MUST_ASSESS — ARCHITECTURAL FLAG",
-      "citation": "backend/core/contracts/replay_manifest_v1.py:21 — ReplayManifestV1 uses ConfigDict(frozen=False, extra='forbid'). All other governed contracts (BiomarkerScore, AnalysisResult, AnalysisDTO, ConsumerDomainScoreV1) use frozen=True. The immutability principle in this sprint (automation_bus/latest_cursor_prompt.md:16-20) requires that generated result payloads be immutable. frozen=False on ReplayManifestV1 is inconsistent with the immutability principle. Cursor must assess whether this is intentional (mutable during assembly, then serialised as JSON into the immutable DTO) or a contract defect, and document the finding in the audit report."
-    },
-    {
-      "check": "2a_required_metadata_gaps",
-      "result": "CONFIRMED — PARTIAL FOUNDATION, GAPS IDENTIFIED",
-      "citation": "Comparing automation_bus/latest_cursor_prompt.md:155-176 (Required metadata model) against existing models: PRESENT (may be inside replay_manifest JSON): engine component versions (unit_registry_version, ratio_registry_version, etc.), analysis_result_version, lifestyle_input_hash, schema_hashes dict. NOT PRESENT in any current model or contract: result_version_id (distinct from analysis_id), parent_analysis_id / source_analysis_id (lineage link), raw_input_hash, parsed_biomarker_payload_hash, questionnaire_hash, single engine_version / pipeline_version fields, knowledge_estate_version, active_authority_manifest_hash, compiled_estate_index_hash, compile_manifest_hashes (schema_hashes exists but scope differs), supersedes_result_version_id, superseded_by_result_version_id, regeneration_reason, result_payload_hash. Cursor must map each proposed field against the existing replay_manifest_v1.py content before proposing additions or migration."
-    },
-    {
-      "check": "2a_no_preexisting_deliverables",
-      "result": "CONFIRMED",
-      "citation": "docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md — does not exist (glob returned no results). docs/audit-papers/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_audit.md — does not exist (glob returned no results). No no-op risk. Sprint has real work to produce."
-    },
-    {
-      "check": "2a_no_active_kernel_token",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/state/work_package_active.json — does not exist. No prior sprint is open. Kernel start is clear to proceed."
+      "check": "2b_existing_test_coverage_gap",
+      "result": "CONFIRMED — TWO GAPS TO FILL",
+      "citation": "frontend/tests/components/StaleResultBanner.test.tsx — exists with 2 tests covering 'current' (renders null) and 'stale' (shows banner). Missing test for 'incompatible' (sprint test requirement #3). No FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS referenced in any test file — no existing section order test (sprint test requirement #1: 'Results page renders Primary finding before Health Systems Cards'). Both gaps must be filled in this sprint."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:184-197 — 12 scope items, all bounded. Items 1-8 are investigation/definition only (no code). Items 9-12 allow bounded implementation: 'minimal metadata/stale detection only if safely bounded' (item 9), 'add tests if implementation occurs' (item 10), 'produce design/audit report' (item 11), 'update launch-readiness audit' (item 12). Implementation boundary (lines 202-215) enumerates allowed bounded examples: classification helper, stale-detection function, API metadata field, frontend warning/banner, classification-only tests. Scope is defined."
+      "citation": "automation_bus/latest_cursor_prompt.md:248-278 — allowed Layer B changes enumerated (section ordering metadata, consumer-safe labels, result versioning display state, presentation metadata, deduplicated lead summary). Allowed Layer C changes enumerated (reorder rendered sections, banner, hide marker numeric scores, approved static UI labels). STOP condition #3 (line 420) protects against scope creep into broad backend narrative compiler redesign. Scope is clearly bounded."
     },
     {
-      "check": "2b_intelligence_core_surface",
-      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 1",
-      "citation": "backend/core/pipeline/orchestrator.py and backend/core/pipeline/orchestrator_phases_v1.py are Intelligence Core (SOP §3: pipeline logic). If Cursor modifies any file under backend/core/pipeline/, the HIGH risk controls apply — no silent behavioural drift, determinism must be preserved, ARCH-RT guardrails must still pass. The sprint STOP conditions (automation_bus/latest_cursor_prompt.md:329-339) items 6 and 7 protect this surface: STOP if implementation touches clinical interpretation logic or weakens ARCH-RT guardrails. Cursor must NOT modify orchestrator behaviour as part of stale-result classification — classification logic must live in a new helper, not inside the pipeline itself."
+      "check": "2b_intelligence_core_boundary",
+      "result": "CONFIRMED — STOP CONDITIONS ACTIVE",
+      "citation": "Sprint is explicitly prohibited from touching: SignalEvaluator, SignalRegistry, root-cause compiler logic, clinical scoring thresholds, rail score calculations, PSI status (automation_bus/latest_cursor_prompt.md:341-359). Allowed Layer B changes are DTO/presentation metadata additions only — not analytical logic changes. STOP condition #2 (line 419): STOP if completing the sprint requires frontend clinical inference. STOP condition #3 (line 420): STOP if completing the sprint requires broad backend narrative compiler redesign. These protections are comprehensive."
     },
     {
-      "check": "2b_no_destructive_refresh_enforcement",
+      "check": "2b_determinism_preserved",
+      "result": "CONFIRMED — no analytical logic touched",
+      "citation": "Section reorder is Layer C JSX order — no determinism impact. Banner guard change is a boolean condition change — no determinism impact. Label changes ('Strong Signal'→'Needs attention' etc.) are static UI string substitutions — no determinism impact. Marker score visibility is a display toggle — no determinism impact. Any Layer B DTO additions add new fields without modifying existing score calculations. Determinism is not at risk for the defined scope."
+    },
+    {
+      "check": "2b_no_frontend_clinical_inference",
+      "result": "CONFIRMED with active STOP condition",
+      "citation": "All label changes in prompt §Scope item 5 are static string substitutions: 'Trust strip'→'Data quality', 'Why this lead won'→'How confident is this read?', 'Strong Signal'→'Needs attention'. These are display-layer renames, not clinical priority decisions. Backend-decided fields must drive any ordering. STOP condition #2 (automation_bus/latest_cursor_prompt.md:419) fires if frontend must derive clinical priority from raw marker data, signal IDs, score values, or string matching. Cursor must confirm at sprint close that no clinical inference was added."
+    },
+    {
+      "check": "2b_regeneration_flow_prohibited",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:121-127 — non-negotiable architectural rule: 'Generated result payloads are immutable. Do not silently mutate or overwrite old generated results.' automation_bus/latest_cursor_prompt.md:212-215 — explicit prohibitions: 'Do not implement full destructive refresh. Do not implement broad database migration unless hardening confirms it is safe and bounded.' STOP conditions (lines 333-334): 'STOP if: regeneration would overwrite old results / implementation would require broad schema migration.' Closure requirements (lines 375-376) enforce: 'no destructive refresh logic is included.' These protections are comprehensive."
-    },
-    {
-      "check": "2b_replay_manifest_as_investigation_anchor",
-      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 2",
-      "citation": "backend/core/contracts/replay_manifest_v1.py:14-174 — ReplayManifestV1 captures 30+ deterministic version/hash fields. Cursor must: (1) read the full contract before the investigation begins; (2) map each Required metadata field (automation_bus/latest_cursor_prompt.md:155-176) against existing replay_manifest_v1.py fields and produce a gap table in the audit report; (3) not propose new DB columns or contract fields for data that is already captured inside the replay_manifest JSON blob without explaining why a structured top-level field is required instead. Rationale: Sprint 9 already built substantial replay infrastructure; the audit must characterise what exists before proposing additions, per the prompt's own instruction at line 177: 'Do not invent fields blindly. First inspect current persistence model.'"
+      "citation": "automation_bus/latest_cursor_prompt.md:341-342 — explicitly prohibited: 'do not add a regenerate button in this sprint, do not implement regeneration flow'. Sprint test requirement #4: 'No regenerate button is introduced.' StaleResultBanner.tsx:30-32 existing conditional for regeneration_available must be preserved as-is. Cursor must not introduce any regeneration UI or backend hooks."
     },
     {
       "check": "2b_regression_targets_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:320-325 — always run: python backend/scripts/validate_day_one_architecture.py + python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q. If implementation occurs, also run stale-result classification tests, immutable snapshot policy tests, result version metadata serialisation tests, API stale flag tests if added, frontend stale banner tests if added, no-destructive-overwrite tests (lines 310-317). Regression coverage is defined."
-    },
-    {
-      "check": "2b_determinism_preserved",
-      "result": "CONFIRMED — bounded by STOP conditions",
-      "citation": "Sprint goal is to EXTEND deterministic replay capability, not change it. Allowed bounded implementation (classification helper, stale flag, UI banner) adds new output fields but does not alter existing analytical computation. STOP condition 5 (automation_bus/latest_cursor_prompt.md:336): 'STOP if deterministic replay cannot be supported with current metadata' — exits to design-only if implementation would compromise determinism. STOP condition 4 (line 335): 'STOP if regeneration would overwrite old results' — prevents destructive state mutation. Determinism is protected."
+      "citation": "automation_bus/latest_cursor_prompt.md:374-379 — minimum required commands: python backend/scripts/validate_day_one_architecture.py + python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q. Plus 9 enumerated test requirements (lines 362-373) covering section order, banner for stale, banner for incompatible, no regenerate button, marker scores hidden, completeness display, consumer-safe chips, internal traces hidden, ARCH-RT-6 validator pass."
     },
     {
       "check": "2b_stop_conditions_assessment",
       "result": "NO STOP CONDITIONS TRIGGERED IN HARDENING",
-      "citation": "Hardening review: (1) raw input availability — cannot be determined pre-execution (runtime DB state), correctly deferred to Cursor investigation; (2) persistence model unclear — NOT unclear, backend/core/models/results.py and replay_manifest_v1.py are well-defined; (3) broad schema migration — NOT required at this stage; the replay_manifest JSON column already exists from Sprint 9; (4) destructive overwrite — NOT included, explicitly prohibited; (5) deterministic replay feasibility — Sprint 9 infrastructure exists, replay_manifest_v1.py captures extensive version/hash fields; (6) clinical interpretation — NOT touched by allowed bounded scope; (7) ARCH-RT guardrails — validators will be run; (8) stale-result UI product decision — correctly scoped as a decision to define (option A-D), not as an implementation requirement; (9) test provability — classification logic is testable. No hardening STOP triggered."
+      "citation": "Pre-hardening assessment: (1) required audit files all exist — no STOP; (2) banner fix and section reorder do not require frontend clinical inference — no STOP; (3) banner fix is frontend-only, section reorder is layout-only — no broad narrative compiler redesign required — no STOP; (4) reorder/hide/rename does not remove clinically meaningful analysis — no STOP; (5) hiding marker numeric scores does not change clinical scoring semantics — no STOP; (6) banner fix does not require implementing regeneration flow — no STOP; (7) ARCH-RT-6 validator passed at LAUNCH-CORE-4 audit time, scope does not touch guardrail targets — no STOP; (8) test requirements are achievable (banner tests via unit test, section order via component or integration test) — no STOP. All STOP conditions clear."
     },
     {
       "check": "2b_scope_creep_risk",
-      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 3",
-      "citation": "automation_bus/latest_cursor_prompt.md:194 — 'Implement minimal metadata/stale detection only if safely bounded.' automation_bus/latest_cursor_prompt.md:213-215 — 'Do not implement full regeneration job unless explicitly approved after investigation.' The sprint's STOP condition 3 (line 333): 'STOP if implementation would require broad schema migration.' Sprint 9 already added replay_manifest JSON column — any new metadata fields Cursor proposes must either: (a) be stored inside the existing replay_manifest JSON blob (no migration required), or (b) require a new Alembic migration only if the field cannot be stored inside the blob AND the migration is narrow and safe. Cursor must not implement a new DB migration without declaring it as a bounded change and confirming it does not touch existing column values."
+      "result": "LOW — bounded by STOP conditions",
+      "citation": "Primary scope creep risk: Cursor may be tempted to implement backend DTO changes that require modifying report_compiler_v1.py or domain_score_assembler.py analytical logic rather than adding new presentation-only fields. STOP condition #3 (automation_bus/latest_cursor_prompt.md:420) prohibits broad narrative compiler redesign. Cursor must limit Layer B changes to additive presentation metadata — if a DTO change requires modifying existing score or narrative assembly logic, STOP and report."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "Out-of-scope list (automation_bus/latest_cursor_prompt.md:289-304) prohibits: overwriting persisted result payloads, deleting historical results, destructive refresh, clinical scoring logic, card evidence logic, root-cause logic, PSI status, SignalRegistry, SignalEvaluator, biomarker SSOT, unit conversion, frontend interpretation logic beyond stale messaging, fallback parsers, broad regeneration jobs without approval. Closure requirements (lines 372-377) enforce: no destructive refresh, no clinical interpretation changes, no ambiguous stash, only in-scope files."
+      "citation": "Out-of-scope list (automation_bus/latest_cursor_prompt.md:341-359) prohibits: regenerate button, regeneration backend flow, clinical scoring thresholds, rail score calculations, biomarker SSOT, unit conversion, SignalRegistry, SignalEvaluator, PSI status, root-cause compiler logic, compiled artefact clinical content, package clinical content, frontend clinical inference, raw internal IDs/source traces, fallback parsers. Closure requirements (lines 483-490) enforce: no clinical interpretation logic changed, no meaningful analysis removed, no helper scripts committed."
     }
   ]
 }
