@@ -1,114 +1,129 @@
 {
-  "work_id": "ARCH-RT-5E_psi_runtime_wiring_decision",
+  "work_id": "ARCH-RT-6_day_one_architecture_guardrails_and_acceptance_gate",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-30T15:30:00Z",
+  "hardened_utc": "2026-05-30T17:00:00Z",
   "hardened_by": "Claude Code (Stage 2 / SOP v1.3.1)",
   "changes": [
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-5E_psi_runtime_wiring_decision, branch=work/ARCH-RT-5E-psi-runtime-wiring-decision, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-6_day_one_architecture_guardrails_and_acceptance_gate, branch=work/ARCH-RT-6-day-one-architecture-guardrails-and-acceptance-gate, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
     },
     {
       "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:77-82 — reason: sprint may touch PSI loader/validator paths, runtime join logic, DTO-adjacent semantics, tests, launch audit artefacts, and authority manifests. If Outcome B (runtime wiring), Intelligence Core output semantics are affected. HIGH is mandatory and correctly assigned regardless of outcome."
+      "citation": "automation_bus/latest_cursor_prompt.md:78-81 — reason: sprint adds permanent architecture tests, validators, Sentinel guard packs, launch-gate enforcement scripts and final authority manifests. These are control-plane / governance enforcement surfaces. HIGH is mandatory and correctly assigned."
     },
     {
       "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:76 — MIXED. Deliverables include governed audit/authority documents (CONTENT) and potential runtime wiring or guard/test code (BEHAVIOUR). Even Outcome A (deferred) requires updating active_intelligence_authority_manifest.md and day_one_architecture_launch_readiness_audit.md, plus optional guard tests. MIXED governed under BEHAVIOUR controls per SOP §4 is correct."
+      "citation": "automation_bus/latest_cursor_prompt.md:73-76 — MIXED. Sprint adds new Python test/validator code (BEHAVIOUR surface: programmatic guardrail enforcement) and updates governed authority documents (CONTENT surface: active_intelligence_authority_manifest.md, day_one_architecture_launch_readiness_audit.md, acceptance audit). MIXED governed under BEHAVIOUR controls per SOP §4 is correct."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: mandatory 12-point authority preflight at lines 185-201 must complete before implementation. PSI decision must be reached from repo evidence before any code or document is written. Kernel start enforces the boundary."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: mandatory authority preflight and Sentinel integration point check must complete before implementation. Kernel start enforces the boundary. Guardrail tests and validator must not be written before preflight confirms all 16 authority files are present and Sentinel structure is located."
     },
     {
       "check": "2a_all_authoritative_inputs_exist",
       "result": "CONFIRMED",
-      "citation": "All 15 required authority files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md ✓; docs/architecture/psi_coverage_and_manifest_opt_in_report.md ✓; docs/architecture/psi_gap_closure_mechanics.md ✓; docs/architecture/psi_runtime_wiring_design.md ✓; docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md ✓; docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md ✓; docs/architecture/package_provenance_policy.md ✓; docs/audit-papers/ARCH-RT-5_M4_psi_runtime_wiring_audit.md ✓; docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md ✓; docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md ✓; docs/audit-papers/active_intelligence_authority_manifest.md ✓; docs/audit-papers/day_one_architecture_launch_readiness_audit.md ✓; knowledge_bus/compiled/estate_index_v1.yaml ✓; backend/core/knowledge/load_promoted_signal_intelligence.py ✓; knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml ✓"
+      "citation": "All 16 required authority files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md ✓; docs/audit-papers/active_intelligence_authority_manifest.md ✓; docs/audit-papers/day_one_architecture_launch_readiness_audit.md ✓; docs/audit-papers/research_to_runtime_traceability_audit.md ✓; docs/audit-papers/ARCH-RT-5B_card_evidence_estate_audit.md ✓; docs/audit-papers/ARCH-RT-5C_hypothesis_runtime_promotion_audit.md ✓; docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md ✓; docs/audit-papers/ARCH-RT-5E_psi_runtime_wiring_decision_audit.md ✓; docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md ✓; docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md ✓; docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md ✓; docs/architecture/compiled_hypothesis_presentation_mapping.md ✓; docs/architecture/card_evidence_role_translation_policy.md ✓; docs/architecture/card_visibility_tier_policy.md ✓; knowledge_bus/compiled/estate_index_v1.yaml ✓; knowledge_bus/schema/compile_manifest_schema_v1.yaml ✓"
     },
     {
-      "check": "2a_psi_schema_confirmed",
+      "check": "2a_all_implementation_authority_files_exist",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml:14-15 — schema_name: 'HealthIQ Promoted Signal Intelligence', schema_version: '1.0.0', status: 'LOCKED' (line 16). Root required fields include promoted_signal_intelligence_contract_version, schema_version, package_id, signals (lines 23-27). Forbidden root keys include hypotheses, hypothesis_ranking, narrative, rendering (lines 31-40). Schema is LOCKED — sprint must not modify it."
+      "citation": "All 7 implementation authority files verified on disk: backend/core/knowledge/health_system_card_evidence.py ✓; backend/core/knowledge/compiled_hypothesis.py ✓; backend/core/analytics/root_cause_compiler_v1.py ✓; backend/core/analytics/wave1_subsystem_evidence.py ✓; backend/core/analytics/signal_evaluator.py ✓; backend/scripts/validate_compile_manifest.py ✓; backend/core/knowledge/package_provenance_scan_v1.py ✓"
     },
     {
-      "check": "2a_psi_loader_confirmed",
+      "check": "2a_all_regression_test_files_exist",
       "result": "CONFIRMED",
-      "citation": "backend/core/knowledge/load_promoted_signal_intelligence.py:15 — function load_promoted_signal_intelligence_for_package(package_dir: Path) -> dict[str, Any] | None. Loader reads package_manifest.yaml (line 21), checks for promoted_signal_intelligence key (line 30), loads and returns PSI YAML or None. Loader is complete and standalone. It is NOT imported by orchestrator, SignalEvaluator, SignalRegistry, report_compiler_v1, or domain_score_assembler. Runtime call chain confirmed dead."
+      "citation": "All 5 required regression test files confirmed on disk: backend/tests/unit/test_arch_rt5_launch_gate.py ✓; backend/tests/unit/test_health_system_card_evidence_arch_rt5b.py ✓; backend/tests/unit/test_compiled_hypothesis_arch_rt5c.py ✓; backend/tests/unit/test_arch_rt5d_package_provenance.py ✓; backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py ✓"
     },
     {
-      "check": "2a_psi_artefact_count_confirmed",
-      "result": "CONFIRMED",
-      "citation": "docs/architecture/psi_coverage_and_manifest_opt_in_report.md:19 — promoted_signal_intelligence.yaml on disk: 20. Packages with manifest PSI opt-in: 20. All are pkg_kb47_* generation. Remaining 166 packages have no PSI artefact."
+      "check": "2a_sentinel_structure_exists_and_format_confirmed",
+      "result": "CONFIRMED — with HARDENING FLAG on pack format",
+      "citation": "sentinel/packs/ directory exists with 4 pack files: escaped_defects_v1.json, lc_s8d_unit_governance_v1.json, lc_s10b_launch_core_protection_v1.json, scaffold_lc_s20_22_replay_render_v1.json. All 4 are .json format. sentinel/sentinel_runner.py exists. Sentinel STOP condition is NOT triggered — structure is present and located. See HARDENING_FLAG_sentinel_pack_format_must_be_json for format issue."
     },
     {
-      "check": "2a_psi_runtime_consumption_confirmed_dead",
+      "check": "2a_frontend_target_paths_exist",
       "result": "CONFIRMED",
-      "citation": "docs/architecture/psi_coverage_and_manifest_opt_in_report.md:38-42 — runtime consumption scan: SignalRegistry/SignalEvaluator: NO (signal_evaluator.py loads signal_library.yaml only); orchestrator.py: NO (no PSI loader import on pipeline path); domain_score_assembler.py / report_compiler_v1.py: NO; backend/core usage: validators, lifecycle, translator only. Conclusion: 'PSI is runtime-dead for analytical output construction today.' Python file grep confirms load_promoted_signal_intelligence.py is referenced only in: validate_knowledge_package.py, validate_package_manifest.py, validate_promoted_signal_intelligence.py, kb_lifecycle_contract_v1.py, investigation_spec_to_promoted_signal.py, kb_s47_batch2_ingest.py, test_promoted_signal_intelligence_kb_s47d.py. No orchestrator or report-path files."
+      "citation": "Both launch-critical frontend files confirmed on disk: frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx ✓; frontend/app/types/analysis.ts ✓"
     },
     {
-      "check": "2a_psi_frontend_confirmed_clear",
+      "check": "2a_existing_guardrail_constants_cross_referenced",
       "result": "CONFIRMED",
-      "citation": "Frontend grep for 'promoted_signal_intelligence|psi|PSI' across *.ts/*.tsx/*.js returned 4 files (AppSidebar.tsx, InsightsPanel.tsx, sidebar.tsx, collapsible.tsx) — all false positives matching 'collapsible' as a substring of the pattern 'psi'. No actual PSI reference, PSI loader import, or PSI field access exists in any frontend code."
+      "citation": "Rule 5 (_FORBIDDEN_MARKER_IDS): backend/core/knowledge/health_system_card_evidence.py:66 — _FORBIDDEN_MARKER_IDS = frozenset({'total_bilirubin'}). Guardrail test must verify this constant is intact and that compiled card artefacts contain no 'total_bilirubin' marker_id. Rule 8 (vitamin D compiled promotion): backend/core/knowledge/compiled_hypothesis.py:17-18 — PILOT_SIGNAL_ID = 'signal_vitamin_d_low'; RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS = frozenset({PILOT_SIGNAL_ID}). Guardrail test must verify this frozenset is intact. Rule 13 (duplicate signal_id): backend/core/analytics/signal_evaluator.py:59 — existing guard: if activation_key in signals_by_activation_key: [collision handling]. Guardrail test should confirm this path raises/fails closed."
     },
     {
-      "check": "2a_launch_critical_claims_not_requiring_psi",
-      "result": "CONFIRMED",
-      "citation": "docs/architecture/psi_coverage_and_manifest_opt_in_report.md:46-53 — launch assessment: signal activation (No — uses signal_library.yaml via SignalRegistry); signal-layer semantics (Partially deferred — PSI holds richer semantics, not wired); Hypothesis/WHY (No — ADR-008 excludes from PSI; root-cause YAML + compiler separate); Health Systems Card evidence (No — from wave1_subsystem_evidence.py). Conclusion: 'Full PSI runtime wiring is not launch-blocking.' estate_index_v1.yaml:8-51 — 7 card evidence artefacts and 1 compiled hypothesis artefact listed, none reference PSI. active_intelligence_authority_manifest.md:38 — PSI layer: 'Not consumed (deferred)'. day_one_architecture_launch_readiness_audit.md:35 — 'PSI runtime wiring: deferred_non_launch_blocker'."
+      "check": "2a_investigation_spec_runtime_reads_confirmed_absent",
+      "result": "CONFIRMED — rules 25-26 satisfied",
+      "citation": "Grep for 'investigation_spec' across backend/core/*.py found 4 files: (1) package_provenance_scan_v1.py — read-only audit scan tool; reads package_manifest.yaml files only, infers spec IDs from path strings; does not read investigation spec file content. (2) launch_estate_v1.py:1-5 — docstring: 'Read-only scans for audit generation; does not modify packages or investigation specs.' Reads manifests for provenance classification; no spec file reads. (3) signal_activation_identity_v1.py — derives activation_key from package manifests and package paths; reads package_manifest.yaml only; no investigation spec reads. (4) investigation_spec_to_promoted_signal.py — compile-time translator only; not on runtime path. Conclusion: zero launch-critical runtime modules read investigation spec file content."
     },
     {
-      "check": "2a_prior_m4_audit_classification_confirmed",
+      "check": "2a_prior_sprint_arch_rt_5e_merged",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/ARCH-RT-5_M4_psi_runtime_wiring_audit.md:12-13 — 'PSI runtime consumed for launch-critical card/report claims: Not required for Wave 1 launch slice.' Line 27: gap classification 'PSI runtime wiring for launch-critical claims: deferred_non_launch_blocker'. Line 31: 'M4 outcome: COMPLETE. PSI wiring explicitly deferred_non_launch_blocker with justification: Wave 1 launch path does not require PSI runtime for governed card/root-cause pilots completed in ARCH-RT-3/4.'"
+      "citation": "git log: commit e251899 — 'chore(bus): ARCH-RT-5E_psi_runtime_wiring_decision kernel COMPLETE status' is present on main. All prerequisite sprints confirmed merged: ARCH-RT-5B through ARCH-RT-5E all present in git log."
     },
     {
-      "check": "2a_prior_sprint_arch_rt_5d_merged",
-      "result": "CONFIRMED",
-      "citation": "git log: commit ada84f1 — 'chore(bus): ARCH-RT-5D_package_provenance_backfill kernel COMPLETE status' is present on main. All prerequisite sprints confirmed merged per git log: ARCH-RT-5C (commit 0a83c3b), ARCH-RT-5B (commit b819d4d), ARCH-RT-5D (commit ada84f1)."
+      "check": "2a_backend_tests_architecture_dir_does_not_exist",
+      "result": "CONFIRMED — directory must be created",
+      "citation": "Glob for 'backend/tests/architecture/**' returned no results. Cursor must create backend/tests/architecture/ and place test_day_one_architecture_guardrails.py within it. No __init__.py required — backend/tests/unit/ has no __init__.py and pytest discovers tests via directory scan. This is an expected new directory, not a gap."
     },
     {
-      "check": "2a_unresolved_provenance_does_not_block_psi",
+      "check": "2a_no_duplicate_authority_source",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md:43-46 — RT5D-EXP-001: All 186 manifests have no explicit source_spec_id field (field absent by design until backfill). 'No for current pilots' — not a launch blocker. This means source_spec_id-based PSI join cannot be verified estate-wide, but (a) PSI is being deferred, and (b) this constraint is consistent with Outcome A. If Outcome B were required, this would surface as a STOP per authority preflight item #12."
+      "citation": "validate_day_one_architecture.py is a new script with no existing equivalent on disk. active_intelligence_authority_manifest.md and day_one_architecture_launch_readiness_audit.md are the sole authority manifest and launch audit respectively. No parallel authority sources would be created. estate_index_v1.yaml is the sole estate ledger."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:203-218 — allowed scope: PSI runtime decision audit; update authority manifest and launch audit with final PSI classification; if deferred, optional guard/test; if wired, narrow runtime loader/join integration, DTO-safe backend fields, tests. Out-of-scope (lines 253-272): no hypotheses added to PSI, no root-cause/WHY authority, no card evidence authority, no card/compiled hypothesis artefact modification, no package clinical content, no investigation spec modification, no SignalRegistry/SignalEvaluator identity policy changes, no clinical thresholds, no scoring rails, no biomarker SSOT, no frontend inference, no raw PSI IDs exposed to consumers, no fallback parsers."
+      "citation": "automation_bus/latest_cursor_prompt.md:186-197 — allowed scope: add permanent architecture guardrail tests, add or update permanent architecture validation script, add Sentinel guard pack (if structure exists — confirmed), add launch acceptance audit, refresh active authority manifest if required, add fail-closed checks only where needed, preserve all existing runtime behaviour unless guard is enforcing already-approved architecture, add tests for architectural drift prevention. Out-of-scope (lines 279-295): no new card evidence content, no clinical thresholds, no scoring rails, no biomarker SSOT, no unit conversion, no package clinical content, no investigation specs, no PSI runtime wiring, no additional root-cause pathways, no SignalRegistry identity policy changes, no SignalEvaluator behaviour changes, no frontend design changes beyond guard/test needs, no fallback parsers, no broad runtime behaviour changes."
+    },
+    {
+      "check": "2b_guardrail_rules_enumerated_and_testable",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:127-183 — 26 mandatory architectural rules across 5 categories. Cross-referenced against repo state: Rules 1-7 (card evidence) — health_system_card_evidence.py:26-66 provides WAVE1_COMPILED_SUBSYSTEM_IDS (7 subsystems) and _FORBIDDEN_MARKER_IDS constants; estate_index_v1.yaml provides compile_manifest_refs; all testable programmatically. Rules 8-12 (root-cause/hypothesis) — compiled_hypothesis.py:17-18 provides RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS; root_cause_compiler_v1.py imports compiled_hypothesis_registry_v1; all testable. Rules 13-15 (signal identity) — signal_evaluator.py:59 has collision guard; all testable. Rules 16-20 (provenance/manifest) — package_provenance_scan_v1.py provides scan logic and ARCH_RT5D_CLASSIFICATIONS; compile manifests have no pending_inventory_refresh hashes (ARCH-RT-5D completed); all testable. Rules 21-24 (PSI) — confirmed guarded by ARCH-RT-5E test at test_arch_rt5e_psi_runtime_wiring_decision.py; validator can reuse/extend. Rules 25-26 (raw spec reads) — confirmed absent from runtime modules; testable via grep/import check in validator."
     },
     {
       "check": "2b_regression_targets_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:277-293 — if deferred: guard/test proving no launch-critical output requires PSI (if practical); confirm existing card/root-cause/report tests pass. If wired (Outcome B): PSI loader tests; runtime join tests (activation_key/source_spec_id); test PSI does not change signal firing; test PSI does not populate hypotheses; test PSI does not populate card evidence authority; DTO serialisation if touched; regression tests for card evidence and root-cause paths. Closure requirements (lines 395-399) mandate prior card/root-cause/provenance protections intact."
+      "citation": "automation_bus/latest_cursor_prompt.md:350-363 — required regression test runs: pytest backend/tests/architecture/test_day_one_architecture_guardrails.py; python backend/scripts/validate_day_one_architecture.py; plus 4 prior-sprint regression files (test_health_system_card_evidence_arch_rt5b.py, test_compiled_hypothesis_arch_rt5c.py, test_arch_rt5d_package_provenance.py, test_arch_rt5e_psi_runtime_wiring_decision.py). All prior-sprint test files confirmed present on disk."
     },
     {
       "check": "2b_determinism_risks_surfaced",
       "result": "CONFIRMED",
-      "citation": "Risk 1 (LOW): Outcome A (deferred) — document-only changes to authority manifest and launch audit. No Intelligence Core files touched. Runtime behaviour cannot change. Risk 2 (LOW): Optional guard/test if Outcome A — proves PSI absence from launch-critical paths. Non-invasive. Risk 3 (HIGH if triggered): Outcome B (narrow wiring) — any runtime join implementation touches Intelligence Core and must use activation_key::source_spec_id identity only. Determinism risk is fully protected by 11 STOP conditions (lines 297-311). Risk 4 (ADVISORY): psi_coverage_and_manifest_opt_in_report.md:64 notes API routes outside backend/core were not exhaustively scanned at ARCH-RT-0. Authority preflight item #5 assigns this check to Cursor at sprint start — correct assignment; not a hardening gap."
+      "citation": "Risk 1 (LOW): validate_day_one_architecture.py must not mutate files (prompt line 239). Static read-only checks are inherently deterministic. Risk 2 (LOW-MEDIUM): guardrail tests against WAVE1_COMPILED_SUBSYSTEM_IDS and RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS must avoid brittle assertions (prompt line 245) — test against the frozenset constants from source, not hardcoded string lists, to survive future additions. Risk 3 (MEDIUM): STOP condition 10 (prompt line 309) — any guard that produces unstable false positives must not be implemented without a better path. Risk 4 (LOW): No Intelligence Core files are modified; runtime behaviour cannot change. All guardrail code is test/validation-only."
     },
     {
       "check": "2b_STOP_conditions_comprehensive",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:297-311 — 11 STOP conditions: (1) required authority files missing; (2) PSI already runtime-consumed contrary to audit state; (3) PSI required but safe narrow wiring impossible; (4) wiring requires hypothesis/root-cause/card-evidence conflation; (5) wiring requires frontend inference; (6) wiring requires modifying package clinical content; (7) wiring requires modifying investigation specs; (8) wiring requires changing SignalRegistry or SignalEvaluator identity policy; (9) unresolved provenance blocks safe PSI join; (10) tests cannot prove PSI separation from hypotheses/card/root-cause; (11) scope expands beyond PSI decision/wiring. Conditions are sufficient and non-overlapping."
+      "citation": "automation_bus/latest_cursor_prompt.md:297-310 — 10 STOP conditions: (1) required authority files missing — pre-verified clear; (2) Sentinel structure cannot be located — pre-verified clear; (3) guardrails require broad runtime refactoring — must not trigger; (4) validator cannot detect key drift programmatically — must not trigger; (5) any launch-active authority remains ambiguous — pre-verified clear; (6) tests would need to rely only on documentation — not acceptable; (7) raw investigation spec runtime reads found and cannot be resolved — pre-verified clear; (8) frontend inference patterns found and cannot be safely resolved — must verify; (9) package provenance classification incomplete — pre-verified complete (186/186 from ARCH-RT-5D); (10) guard produces unstable false positives without better path — must not trigger."
     },
     {
-      "check": "2b_no_scope_creep_risk",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:141-148 — inherited decisions are binding and must not be reopened: PSI signal-layer semantics only; no hypothesis graphs; no card evidence authority; no root-cause WHY authority; no frontend PSI inference; activation_key required for activation-frame identity; signal_id for family-level only; source_spec_id distinguishes explicit from inferred. All are confirmed consistent with PSI schema forbidden_root_keys (schema lines 31-40). Prompt's carry-forward constraints prevent scope drift in both Outcome A and B."
+      "check": "HARDENING_FLAG_sentinel_pack_format_must_be_json",
+      "result": "CURSOR_MUST_ADDRESS_BEFORE_CREATING_SENTINEL_PACK",
+      "citation": "The prompt prescribes 'sentinel/packs/day_one_architecture_guardrails.yaml' (YAML format). However: (1) All 4 existing sentinel packs are .json: escaped_defects_v1.json, lc_s8d_unit_governance_v1.json, lc_s10b_launch_core_protection_v1.json, scaffold_lc_s20_22_replay_render_v1.json. (2) sentinel/sentinel_runner.py:207 — pack loading uses json.load() only: 'with open(ESCAPED_DEFECTS_PACK, encoding=\"utf-8\") as f: return json.load(f)'. No YAML loading exists in the runner. (3) Creating a .yaml file would be non-functional — the runner cannot load it and the established convention is .json. CURSOR MUST: Create sentinel/packs/day_one_architecture_guardrails_v1.json (JSON format, matching convention of escaped_defects_v1.json). Do not create a .yaml file."
+    },
+    {
+      "check": "HARDENING_FLAG_sentinel_runner_defect_class_routing",
+      "result": "CURSOR_MUST_ADDRESS",
+      "citation": "sentinel/sentinel_runner.py:47-69 — DEFECT_CLASS_TESTS is a hardcoded dict in the runner source, not loaded from the pack JSON files. The pack JSON files are reference documents; actual test routing for sentinel_runner.py --defect-class runs requires entries in DEFECT_CLASS_TESTS. Modifying sentinel_runner.py is a HIGH-risk control-plane action (per SOP and CLAUDE.md §7 and §13). Cursor must choose one of: (a) Create a reference-only JSON pack documenting the guardrail defect classes but do NOT modify sentinel_runner.py — document that runner integration is a follow-on task; (b) If modifying sentinel_runner.py, classify this as HIGH-risk boundary-file modification and document it explicitly in the sprint closure report. Option (a) is the safe path that does not require control-plane modification. The sprint prompt says the Sentinel pack should allow 'Sentinel to fail before merge' — this is achievable via the architecture guardrail pytest tests directly, without sentinel_runner.py modification."
+    },
+    {
+      "check": "HARDENING_FLAG_validate_day_one_architecture_must_fail_nonzero",
+      "result": "CURSOR_MUST_ADDRESS",
+      "citation": "automation_bus/latest_cursor_prompt.md:237 — 'The script must fail non-zero on guardrail violation. It must not mutate files.' The validator must use sys.exit(1) or equivalent on any violation. It must also be runnable standalone: 'python backend/scripts/validate_day_one_architecture.py'. Cursor must verify the validator's main() follows this contract and test it. The guardrail rules 1-26 from the prompt must map to explicit validator checks — not just print statements."
+    },
+    {
+      "check": "HARDENING_FLAG_frontend_inference_pattern_check",
+      "result": "CURSOR_MUST_VERIFY_BEFORE_PROCEEDING",
+      "citation": "automation_bus/latest_cursor_prompt.md:232-234 — validator must check 'frontend does not contain marker-role inference patterns'. STOP condition 8 applies if 'frontend inference patterns are found and cannot be safely resolved'. Both frontend target files confirmed present: frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx ✓; frontend/app/types/analysis.ts ✓. Cursor must grep both files (and the broader frontend/app/ tree) for patterns like: hardcoded marker role assignment, clinical threshold comparisons, score calculations from raw values, or derived clinical labels. If found, STOP. The existing escaped_defects_v1.json has 'health_system_card_frontend_calculates_evidence_completeness' (test_domain_ux1a) and 'health_system_subsystem_marker_grouping_frontend_defined' (test_domain_ux1c) already guarded — validator should reference these existing tests rather than re-implementing the check."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:253-272 — out-of-scope list prohibits modification of: card evidence artefacts, compiled hypothesis artefacts, package clinical content, investigation specs, SignalRegistry identity policy, SignalEvaluator identity behaviour, clinical thresholds, scoring rails, biomarker SSOT, unit conversion, frontend clinical inference. Estate index and authority manifest are explicitly ALLOWED in scope (lines 207-208) only as required updates. No duplicate authority sources would be created."
-    },
-    {
-      "check": "no_duplicate_authority_source",
-      "result": "CONFIRMED",
-      "citation": "promoted_signal_intelligence_schema_v1.yaml is the sole PSI schema (LOCKED). load_promoted_signal_intelligence.py is the sole PSI loader. active_intelligence_authority_manifest.md is the sole authority manifest. estate_index_v1.yaml is the sole estate ledger. Sprint deliverables create new audit docs (ARCH-RT-5E_psi_runtime_wiring_decision_audit.md, ARCH-RT-5E_psi_runtime_wiring_decision_report.md) but update, not duplicate, the authority manifest and launch readiness audit. No parallel authority sources would be created."
+      "citation": "automation_bus/latest_cursor_prompt.md:279-295 — out-of-scope prohibits: card evidence clinical content, clinical thresholds, scoring rails, biomarker SSOT, unit conversion, package clinical content, investigation specs, PSI runtime wiring, additional root-cause promotion, SignalRegistry identity policy, SignalEvaluator behaviour, broad frontend changes, fallback parsers. None of these are referenced in the allowed deliverables. Tests and validators are read-only checks against existing runtime behaviour."
     }
   ]
 }
