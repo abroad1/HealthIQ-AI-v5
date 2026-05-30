@@ -1,129 +1,139 @@
 {
-  "work_id": "ARCH-RT-6_day_one_architecture_guardrails_and_acceptance_gate",
+  "work_id": "LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-30T17:00:00Z",
+  "hardened_utc": "2026-05-30T00:00:00Z",
   "hardened_by": "Claude Code (Stage 2 / SOP v1.3.1)",
   "changes": [
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=ARCH-RT-6_day_one_architecture_guardrails_and_acceptance_gate, branch=work/ARCH-RT-6-day-one-architecture-guardrails-and-acceptance-gate, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy, branch=work/LAUNCH-CORE-1-results-page-card-coherence-and-consumer-copy, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
     },
     {
       "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:78-81 — reason: sprint adds permanent architecture tests, validators, Sentinel guard packs, launch-gate enforcement scripts and final authority manifests. These are control-plane / governance enforcement surfaces. HIGH is mandatory and correctly assigned."
+      "citation": "automation_bus/latest_cursor_prompt.md:61-70 — sprint touches backend/core/analytics/domain_score_assembler.py (Intelligence Core: output assembly mechanism), frontend results rendering, narrative sanitisation. HIGH is mandatory per SOP §3 and §10 for any work package interacting with Intelligence Core regardless of file path. Correctly assigned."
     },
     {
       "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:73-76 — MIXED. Sprint adds new Python test/validator code (BEHAVIOUR surface: programmatic guardrail enforcement) and updates governed authority documents (CONTENT surface: active_intelligence_authority_manifest.md, day_one_architecture_launch_readiness_audit.md, acceptance audit). MIXED governed under BEHAVIOUR controls per SOP §4 is correct."
+      "citation": "automation_bus/latest_cursor_prompt.md:65 — MIXED. Backend completeness derivation change (BEHAVIOUR: emitted DTO output fields change), frontend consumer-copy changes (BEHAVIOUR: rendered chip labels, marker display names, narrative scrub), and any YAML artefact or copy content updates (CONTENT). MIXED governed under BEHAVIOUR controls per SOP §4 is correct."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: mandatory authority preflight and Sentinel integration point check must complete before implementation. Kernel start enforces the boundary. Guardrail tests and validator must not be written before preflight confirms all 16 authority files are present and Sentinel structure is located."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: authority preflight (UAT investigation must be read, ARCH-RT-6 guardrails must be confirmed, baseline branch/status evidence required) must complete before any file modification. Kernel start enforces the boundary."
     },
     {
       "check": "2a_all_authoritative_inputs_exist",
       "result": "CONFIRMED",
-      "citation": "All 16 required authority files verified on disk: docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md ✓; docs/audit-papers/active_intelligence_authority_manifest.md ✓; docs/audit-papers/day_one_architecture_launch_readiness_audit.md ✓; docs/audit-papers/research_to_runtime_traceability_audit.md ✓; docs/audit-papers/ARCH-RT-5B_card_evidence_estate_audit.md ✓; docs/audit-papers/ARCH-RT-5C_hypothesis_runtime_promotion_audit.md ✓; docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md ✓; docs/audit-papers/ARCH-RT-5E_psi_runtime_wiring_decision_audit.md ✓; docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md ✓; docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md ✓; docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md ✓; docs/architecture/compiled_hypothesis_presentation_mapping.md ✓; docs/architecture/card_evidence_role_translation_policy.md ✓; docs/architecture/card_visibility_tier_policy.md ✓; knowledge_bus/compiled/estate_index_v1.yaml ✓; knowledge_bus/schema/compile_manifest_schema_v1.yaml ✓"
+      "citation": "All 8 sprint-specific authority input files verified on disk: docs/audit-papers/LAUNCH-CORE-0_results_page_human_uat_investigation.md ✓; docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md ✓; docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md ✓; docs/audit-papers/active_intelligence_authority_manifest.md ✓; docs/audit-papers/day_one_architecture_launch_readiness_audit.md ✓; docs/architecture/card_evidence_role_translation_policy.md ✓; docs/architecture/card_visibility_tier_policy.md ✓; backend/scripts/validate_day_one_architecture.py ✓. STOP condition 'UAT investigation file missing' does NOT trigger."
     },
     {
       "check": "2a_all_implementation_authority_files_exist",
       "result": "CONFIRMED",
-      "citation": "All 7 implementation authority files verified on disk: backend/core/knowledge/health_system_card_evidence.py ✓; backend/core/knowledge/compiled_hypothesis.py ✓; backend/core/analytics/root_cause_compiler_v1.py ✓; backend/core/analytics/wave1_subsystem_evidence.py ✓; backend/core/analytics/signal_evaluator.py ✓; backend/scripts/validate_compile_manifest.py ✓; backend/core/knowledge/package_provenance_scan_v1.py ✓"
+      "citation": "All 14 implementation authority files verified on disk: backend/core/analytics/domain_score_assembler.py ✓; backend/core/knowledge/health_system_card_evidence.py ✓; backend/core/models/results.py ✓; frontend/app/components/results/Wave1DomainCards.tsx ✓; frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx ✓; frontend/app/components/results/ResultsHeroBlocks.tsx ✓; frontend/app/components/results/DeterministicNarrativeSurface.tsx ✓; frontend/app/components/results/ResultsBodyOverview.tsx ✓; frontend/app/components/results/PrimaryFindingAndWhy.tsx ✓; frontend/app/lib/retailNarrativeSanitize.ts ✓; frontend/app/lib/resultsPageLayout.ts ✓; frontend/app/lib/wave1HealthSystemCardDisplay.ts ✓; frontend/app/types/analysis.ts ✓"
     },
     {
-      "check": "2a_all_regression_test_files_exist",
+      "check": "2a_arch_rt6_merged_confirmed",
       "result": "CONFIRMED",
-      "citation": "All 5 required regression test files confirmed on disk: backend/tests/unit/test_arch_rt5_launch_gate.py ✓; backend/tests/unit/test_health_system_card_evidence_arch_rt5b.py ✓; backend/tests/unit/test_compiled_hypothesis_arch_rt5c.py ✓; backend/tests/unit/test_arch_rt5d_package_provenance.py ✓; backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py ✓"
-    },
-    {
-      "check": "2a_sentinel_structure_exists_and_format_confirmed",
-      "result": "CONFIRMED — with HARDENING FLAG on pack format",
-      "citation": "sentinel/packs/ directory exists with 4 pack files: escaped_defects_v1.json, lc_s8d_unit_governance_v1.json, lc_s10b_launch_core_protection_v1.json, scaffold_lc_s20_22_replay_render_v1.json. All 4 are .json format. sentinel/sentinel_runner.py exists. Sentinel STOP condition is NOT triggered — structure is present and located. See HARDENING_FLAG_sentinel_pack_format_must_be_json for format issue."
-    },
-    {
-      "check": "2a_frontend_target_paths_exist",
-      "result": "CONFIRMED",
-      "citation": "Both launch-critical frontend files confirmed on disk: frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx ✓; frontend/app/types/analysis.ts ✓"
-    },
-    {
-      "check": "2a_existing_guardrail_constants_cross_referenced",
-      "result": "CONFIRMED",
-      "citation": "Rule 5 (_FORBIDDEN_MARKER_IDS): backend/core/knowledge/health_system_card_evidence.py:66 — _FORBIDDEN_MARKER_IDS = frozenset({'total_bilirubin'}). Guardrail test must verify this constant is intact and that compiled card artefacts contain no 'total_bilirubin' marker_id. Rule 8 (vitamin D compiled promotion): backend/core/knowledge/compiled_hypothesis.py:17-18 — PILOT_SIGNAL_ID = 'signal_vitamin_d_low'; RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS = frozenset({PILOT_SIGNAL_ID}). Guardrail test must verify this frozenset is intact. Rule 13 (duplicate signal_id): backend/core/analytics/signal_evaluator.py:59 — existing guard: if activation_key in signals_by_activation_key: [collision handling]. Guardrail test should confirm this path raises/fails closed."
-    },
-    {
-      "check": "2a_investigation_spec_runtime_reads_confirmed_absent",
-      "result": "CONFIRMED — rules 25-26 satisfied",
-      "citation": "Grep for 'investigation_spec' across backend/core/*.py found 4 files: (1) package_provenance_scan_v1.py — read-only audit scan tool; reads package_manifest.yaml files only, infers spec IDs from path strings; does not read investigation spec file content. (2) launch_estate_v1.py:1-5 — docstring: 'Read-only scans for audit generation; does not modify packages or investigation specs.' Reads manifests for provenance classification; no spec file reads. (3) signal_activation_identity_v1.py — derives activation_key from package manifests and package paths; reads package_manifest.yaml only; no investigation spec reads. (4) investigation_spec_to_promoted_signal.py — compile-time translator only; not on runtime path. Conclusion: zero launch-critical runtime modules read investigation spec file content."
-    },
-    {
-      "check": "2a_prior_sprint_arch_rt_5e_merged",
-      "result": "CONFIRMED",
-      "citation": "git log: commit e251899 — 'chore(bus): ARCH-RT-5E_psi_runtime_wiring_decision kernel COMPLETE status' is present on main. All prerequisite sprints confirmed merged: ARCH-RT-5B through ARCH-RT-5E all present in git log."
-    },
-    {
-      "check": "2a_backend_tests_architecture_dir_does_not_exist",
-      "result": "CONFIRMED — directory must be created",
-      "citation": "Glob for 'backend/tests/architecture/**' returned no results. Cursor must create backend/tests/architecture/ and place test_day_one_architecture_guardrails.py within it. No __init__.py required — backend/tests/unit/ has no __init__.py and pytest discovers tests via directory scan. This is an expected new directory, not a gap."
+      "citation": "git log: commit 8be6959 — 'chore(bus): ARCH-RT-6_day_one_architecture_guardrails_and_acceptance_gate kernel COMPLETE status' is the current HEAD on main. All ARCH-RT-1 through ARCH-RT-6 programme commits confirmed present. Baseline requirement satisfied."
     },
     {
       "check": "2a_no_duplicate_authority_source",
       "result": "CONFIRMED",
-      "citation": "validate_day_one_architecture.py is a new script with no existing equivalent on disk. active_intelligence_authority_manifest.md and day_one_architecture_launch_readiness_audit.md are the sole authority manifest and launch audit respectively. No parallel authority sources would be created. estate_index_v1.yaml is the sole estate ledger."
+      "citation": "No duplicate authority sources for completeness calculation: _evidence_completeness_for_rail() exists only in backend/core/analytics/domain_score_assembler.py:340-355. No second completeness source found. wave1EvidenceCompletenessLine() in frontend/app/lib/wave1HealthSystemCardDisplay.ts:22-28 is a display formatter only — it accepts numerator/denominator from DTO; it performs no independent clinical computation. This split is correct and must be preserved."
+    },
+    {
+      "check": "2b_completeness_mismatch_root_cause_confirmed",
+      "result": "CONFIRMED",
+      "citation": "backend/core/analytics/domain_score_assembler.py:340-355 — _evidence_completeness_for_rail() uses: numerator=len(rail_data['biomarker_scores']), denominator=scored_count+len(missing_marker_ids). For blood sugar on analysis 18e14232: rail biomarker_scores contains HbA1c only (1); _missing_for_rail(hss, _RAIL_METABOLIC) returns [glucose, insulin] (2); result = 1 of 3. Compiled subsystem union via assemble_wave1_subsystem_evidence() (line 368): glycaemic_control={hba1c included, glucose missing}, insulin_metabolic={triglycerides included, insulin missing} → union included={hba1c, triglycerides}, union missing={glucose, insulin} → 2 of 4. Mismatch confirmed: rail-based = 1/3, subsystem-union = 2/4."
+    },
+    {
+      "check": "2b_completeness_fix_direction_constrained",
+      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 1",
+      "citation": "The fix must reorder _wave1_card_contract_extras() (domain_score_assembler.py:358-378): assemble subsystems first, then derive (numerator, denominator) from the union of SubsystemEvidenceV1.included_marker_ids and SubsystemEvidenceV1.missing_marker_ids across all returned rows. Do NOT read 'missing_biomarkers' from the scoring rail for completeness derivation. The domain-level missing_marker_ids field on ConsumerDomainScoreV1 (used for domain copy) is separate and must remain unchanged. The change affects evidence_completeness_numerator and evidence_completeness_denominator only. REGRESSION RISK: completeness values will change for all three domains on all analyses — cardiovascular and liver completeness will also shift. Targeted before/after tests required for all three domains on reference analysis 18e14232."
+    },
+    {
+      "check": "2b_scrub_gap_homocysteine_confirmed",
+      "result": "CONFIRMED",
+      "citation": "frontend/app/lib/retailNarrativeSanitize.ts:77 — current scrub: s.replace(/\\bsignal_homocysteine_elevation_context\\b/gi, 'homocysteine-related pattern'). This only scrubs the snake_case slug form. LAUNCH-CORE-0 §6 A1 confirms the backend narrative compiler emits 'Homocysteine Elevation Context' (Title Case) from knowledge_bus/packages/pkg_homocysteine_elevation_context/signal_library.yaml display name. Title Case form passes through scrub unchanged. Scrub gap confirmed at retailNarrativeSanitize.ts:77."
+    },
+    {
+      "check": "2b_scrub_homocysteine_fix_constrained",
+      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 2",
+      "citation": "Add case-insensitive replacement for Title Case form in scrubConsumerRetailNarrative() at retailNarrativeSanitize.ts, e.g.: s.replace(/\\bhomocysteine\\s+elevation\\s+context\\b/gi, 'Raised homocysteine pattern'). Final consumer wording must be intentionally consumer-facing. This is an interim surface scrub — the deeper narrative compiler fix (R2 in LAUNCH-CORE-0 §12) is explicitly deferred. Both the snake_case slug replacement and the Title Case replacement must be present in the final function."
+    },
+    {
+      "check": "2b_role_chip_raw_enum_confirmed",
+      "result": "CONFIRMED",
+      "citation": "frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx:19-23 — markerRoleChipLabel() uses: return role.replace(/_/g, ' '). This produces 'score contributor', 'confidence contributor', 'contextual marker', etc. — raw engineering enum vocabulary. card_evidence_role_translation_policy.md defines 8 authoritative enum values with card-surface meanings. The policy Frontend rules section states: 'Render marker_role when provided on DTO marker rows' — but does not specify consumer-safe label substitution text. Sprint prompt provides the required consumer-safe mapping."
+    },
+    {
+      "check": "2b_role_chip_fix_constrained",
+      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 3",
+      "citation": "Replace markerRoleChipLabel() in Wave1SubsystemEvidenceSection.tsx with a static lookup map covering all 8 role enums from card_evidence_role_translation_policy.md. Any role not in the map must return null (suppress chip) — not fall through to raw rendering. Do not infer from marker_id or display_label. Minimum mapping per prompt: score_contributor→'Used in this score'; confidence_contributor→'Supports confidence'; contextual_marker→'Context marker'; mechanism_marker→'Helps explain mechanism'; differential_marker→'Helps distinguish causes'; exclusion_marker→'Helps rule out alternatives'; missing_for_confidence→'Missing for confidence'; optional_deeper_marker→'Optional deeper marker'. Final wording may differ from prompt examples but must be intentionally consumer-facing."
+    },
+    {
+      "check": "2b_mcv_formatting_root_cause_confirmed",
+      "result": "CONFIRMED",
+      "citation": "frontend/app/components/results/PrimaryFindingAndWhy.tsx:8-10 — formatMarkerRef() uses: id.replace(/_/g, ' ').replace(/\\b\\w/g, (c) => c.toUpperCase()). This generic title-casing produces 'Mcv' from 'mcv'. LC_S7_BIOMARKER_LABELS map at frontend/app/lib/resultsPageLayout.ts:94-110 already contains mcv:'MCV'. formatBiomarkerDisplayName() is exported from resultsPageLayout.ts:112 and performs the SSOT-backed lookup with fallback."
+    },
+    {
+      "check": "2b_mcv_fix_constrained",
+      "result": "CURSOR_MUST_FOLLOW — MANDATORY CONDITION 4",
+      "citation": "Replace formatMarkerRef() in PrimaryFindingAndWhy.tsx to call formatBiomarkerDisplayName() imported from '@/lib/resultsPageLayout'. Do not re-implement the label map independently in PrimaryFindingAndWhy.tsx. The SSOT for biomarker display labels is LC_S7_BIOMARKER_LABELS in resultsPageLayout.ts — a single authority source must be maintained. The fallback title-case logic in formatBiomarkerDisplayName() handles unlisted IDs."
+    },
+    {
+      "check": "2b_mojibake_source_assessment",
+      "result": "CONFIRMED — bounded mitigation path",
+      "citation": "LAUNCH-CORE-0 §8 C3: narrative mojibake 'â' replacement chars confirmed in lead_narrative field. Root cause: UTF-8 text passed through a Latin-1 hop at compile or persist time (narrative_report_compiler_v1.py is the likely boundary). If mojibake strings are in historically persisted analysis records, they cannot be retroactively corrected at record level without reprocessing. Bounded fix: add frontend display sanitisation in scrubConsumerRetailNarrative() for known mojibake substitutions (e.g. â→', â→—, â→\", â→\"). Document the limitation in the sprint report. If source is confirmed as live compile path (not persisted), fix at compile boundary in narrative_report_compiler_v1.py instead. Cursor must investigate before choosing path."
+    },
+    {
+      "check": "2b_score_coverage_presentation",
+      "result": "CONFIRMED — bounded scope",
+      "citation": "LAUNCH-CORE-0 §8 C1: blood sugar 100/100 score with confidence_tier=low and evidence_completeness 1/3 (→2/4 after fix). Frontend renders both faithfully but no gating ties score display to evidence completeness. Sprint scope allows: qualify score visually when evidence coverage is limited, 'Score based on available markers' wording, ensure reliability/completeness text is visually close to score. Must NOT change clinical scoring thresholds. This is a frontend visual/copy change only (wave1HealthSystemCardDisplay.ts and Wave1DomainCards.tsx). Backend domain score value is authoritative and must not change."
+    },
+    {
+      "check": "2b_upload_fidelity_wording",
+      "result": "CONFIRMED — bounded scope",
+      "citation": "LAUNCH-CORE-0 §7.3 point 3: HbA1c upload fidelity section shows 'Uploaded representation of HbA1c — not scored separately' while health card treats HbA1c as scored contributor. LAUNCH-CORE-0 classified as parallel surface disagreement, not a partition bug. Sprint scope item 8 allows aligning upload-fidelity wording where a marker is scored in one context but described as 'not scored separately'. This is a frontend copy or backend fidelity flag change — must not affect scoring or clinical output."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:186-197 — allowed scope: add permanent architecture guardrail tests, add or update permanent architecture validation script, add Sentinel guard pack (if structure exists — confirmed), add launch acceptance audit, refresh active authority manifest if required, add fail-closed checks only where needed, preserve all existing runtime behaviour unless guard is enforcing already-approved architecture, add tests for architectural drift prevention. Out-of-scope (lines 279-295): no new card evidence content, no clinical thresholds, no scoring rails, no biomarker SSOT, no unit conversion, no package clinical content, no investigation specs, no PSI runtime wiring, no additional root-cause pathways, no SignalRegistry identity policy changes, no SignalEvaluator behaviour changes, no frontend design changes beyond guard/test needs, no fallback parsers, no broad runtime behaviour changes."
+      "citation": "automation_bus/latest_cursor_prompt.md:139-149 — allowed scope: 10 items, all bounded to results-page coherence and consumer copy. automation_bus/latest_cursor_prompt.md:265-279 — out of scope: clinical thresholds, scoring rail calculations (unless needed only for completeness display alignment), biomarker SSOT, unit conversion, package clinical content, investigation specs, PSI runtime status, SignalRegistry, SignalEvaluator, root-cause pathways, compiled card evidence clinical meaning, ARCH-RT-6 guardrails, forbidden DTO field exposures, fallback parsers."
     },
     {
-      "check": "2b_guardrail_rules_enumerated_and_testable",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:127-183 — 26 mandatory architectural rules across 5 categories. Cross-referenced against repo state: Rules 1-7 (card evidence) — health_system_card_evidence.py:26-66 provides WAVE1_COMPILED_SUBSYSTEM_IDS (7 subsystems) and _FORBIDDEN_MARKER_IDS constants; estate_index_v1.yaml provides compile_manifest_refs; all testable programmatically. Rules 8-12 (root-cause/hypothesis) — compiled_hypothesis.py:17-18 provides RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS; root_cause_compiler_v1.py imports compiled_hypothesis_registry_v1; all testable. Rules 13-15 (signal identity) — signal_evaluator.py:59 has collision guard; all testable. Rules 16-20 (provenance/manifest) — package_provenance_scan_v1.py provides scan logic and ARCH_RT5D_CLASSIFICATIONS; compile manifests have no pending_inventory_refresh hashes (ARCH-RT-5D completed); all testable. Rules 21-24 (PSI) — confirmed guarded by ARCH-RT-5E test at test_arch_rt5e_psi_runtime_wiring_decision.py; validator can reuse/extend. Rules 25-26 (raw spec reads) — confirmed absent from runtime modules; testable via grep/import check in validator."
+      "check": "2b_arch_rt6_guardrails_must_still_pass",
+      "result": "CONFIRMED — regression protection",
+      "citation": "docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md — 26 guardrails implemented. Key guardrails relevant to this sprint: Guardrail 5 (no total_bilirubin in compiled artefacts), Guardrails 6-7 (frontend render-only; source_trace filter — Wave1SubsystemEvidenceSection.tsx isConsumerSafeSourceTrace at line 25-31 must remain intact), Guardrail 8-10 (vitamin D compiled promotion). Sprint must run python backend/scripts/validate_day_one_architecture.py and pytest backend/tests/architecture/test_day_one_architecture_guardrails.py after all changes."
     },
     {
       "check": "2b_regression_targets_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:350-363 — required regression test runs: pytest backend/tests/architecture/test_day_one_architecture_guardrails.py; python backend/scripts/validate_day_one_architecture.py; plus 4 prior-sprint regression files (test_health_system_card_evidence_arch_rt5b.py, test_compiled_hypothesis_arch_rt5c.py, test_arch_rt5d_package_provenance.py, test_arch_rt5e_psi_runtime_wiring_decision.py). All prior-sprint test files confirmed present on disk."
+      "citation": "automation_bus/latest_cursor_prompt.md:281-304 — 10 required test targets enumerated. Existing test infrastructure confirmed: backend/scripts/validate_day_one_architecture.py ✓; backend/tests/architecture/test_day_one_architecture_guardrails.py ✓. Cursor must add targeted tests for: (1) blood sugar completeness aligns with compiled subsystem evidence, (2) completeness num/den no longer disagrees with expanded subsystem chips for all three domains, (3) role chips use consumer-safe labels, (4) Homocysteine Elevation Context does not render to consumer page, (5) mcv formats as MCV, (6) mojibake sanitised, (7) upload-fidelity wording corrected for HbA1c, (8) raw internal IDs/traces not rendered."
     },
     {
-      "check": "2b_determinism_risks_surfaced",
+      "check": "2b_determinism_preserved",
       "result": "CONFIRMED",
-      "citation": "Risk 1 (LOW): validate_day_one_architecture.py must not mutate files (prompt line 239). Static read-only checks are inherently deterministic. Risk 2 (LOW-MEDIUM): guardrail tests against WAVE1_COMPILED_SUBSYSTEM_IDS and RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS must avoid brittle assertions (prompt line 245) — test against the frozenset constants from source, not hardcoded string lists, to survive future additions. Risk 3 (MEDIUM): STOP condition 10 (prompt line 309) — any guard that produces unstable false positives must not be implemented without a better path. Risk 4 (LOW): No Intelligence Core files are modified; runtime behaviour cannot change. All guardrail code is test/validation-only."
+      "citation": "Completeness fix: deterministic — same inputs (panel_biomarker_ids, compiled subsystem rows) produce same (numerator, denominator) on every run. No randomness introduced. Scrub fixes: deterministic regex replacements. Role chip mapping: static lookup table, deterministic. MCV fix: static label map lookup, deterministic. No hidden side effects on scoring, signals, clinical thresholds, or analytical output structure. Output structure (DTO fields) unchanged except evidence_completeness_numerator and evidence_completeness_denominator, which change intentionally as declared."
     },
     {
-      "check": "2b_STOP_conditions_comprehensive",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:297-310 — 10 STOP conditions: (1) required authority files missing — pre-verified clear; (2) Sentinel structure cannot be located — pre-verified clear; (3) guardrails require broad runtime refactoring — must not trigger; (4) validator cannot detect key drift programmatically — must not trigger; (5) any launch-active authority remains ambiguous — pre-verified clear; (6) tests would need to rely only on documentation — not acceptable; (7) raw investigation spec runtime reads found and cannot be resolved — pre-verified clear; (8) frontend inference patterns found and cannot be safely resolved — must verify; (9) package provenance classification incomplete — pre-verified complete (186/186 from ARCH-RT-5D); (10) guard produces unstable false positives without better path — must not trigger."
+      "check": "2b_STOP_conditions_assessment",
+      "result": "NO STOP CONDITIONS TRIGGERED IN HARDENING",
+      "citation": "STOP 1 (required files missing): NOT triggered — all authority files confirmed present. STOP 2 (completeness requires broad clinical scoring redesign): NOT triggered — fix is post-assembly completeness derivation, no clinical scoring change. STOP 3 (prose fix requires broad narrative compiler rewrite): NOT triggered — interim scrub approach is bounded. STOP 4 (weakens ARCH-RT-6 guardrails): NOT triggered — all guardrails remain intact. STOP 5 (frontend infers clinical meaning): NOT triggered — role chip fix is a static display map, not clinical inference. STOP 6 (backend reads raw investigation specs): NOT triggered — domain_score_assembler.py does not read investigation specs. STOP 7 (PSI/root-cause/card authority blurred): NOT triggered — no PSI or root-cause changes. STOP 8 (tests cannot prove defects fixed): NOT triggered — all defects are testable. STOP 9 (scope expands beyond results-page coherence): NOT triggered."
     },
     {
-      "check": "HARDENING_FLAG_sentinel_pack_format_must_be_json",
-      "result": "CURSOR_MUST_ADDRESS_BEFORE_CREATING_SENTINEL_PACK",
-      "citation": "The prompt prescribes 'sentinel/packs/day_one_architecture_guardrails.yaml' (YAML format). However: (1) All 4 existing sentinel packs are .json: escaped_defects_v1.json, lc_s8d_unit_governance_v1.json, lc_s10b_launch_core_protection_v1.json, scaffold_lc_s20_22_replay_render_v1.json. (2) sentinel/sentinel_runner.py:207 — pack loading uses json.load() only: 'with open(ESCAPED_DEFECTS_PACK, encoding=\"utf-8\") as f: return json.load(f)'. No YAML loading exists in the runner. (3) Creating a .yaml file would be non-functional — the runner cannot load it and the established convention is .json. CURSOR MUST: Create sentinel/packs/day_one_architecture_guardrails_v1.json (JSON format, matching convention of escaped_defects_v1.json). Do not create a .yaml file."
-    },
-    {
-      "check": "HARDENING_FLAG_sentinel_runner_defect_class_routing",
-      "result": "CURSOR_MUST_ADDRESS",
-      "citation": "sentinel/sentinel_runner.py:47-69 — DEFECT_CLASS_TESTS is a hardcoded dict in the runner source, not loaded from the pack JSON files. The pack JSON files are reference documents; actual test routing for sentinel_runner.py --defect-class runs requires entries in DEFECT_CLASS_TESTS. Modifying sentinel_runner.py is a HIGH-risk control-plane action (per SOP and CLAUDE.md §7 and §13). Cursor must choose one of: (a) Create a reference-only JSON pack documenting the guardrail defect classes but do NOT modify sentinel_runner.py — document that runner integration is a follow-on task; (b) If modifying sentinel_runner.py, classify this as HIGH-risk boundary-file modification and document it explicitly in the sprint closure report. Option (a) is the safe path that does not require control-plane modification. The sprint prompt says the Sentinel pack should allow 'Sentinel to fail before merge' — this is achievable via the architecture guardrail pytest tests directly, without sentinel_runner.py modification."
-    },
-    {
-      "check": "HARDENING_FLAG_validate_day_one_architecture_must_fail_nonzero",
-      "result": "CURSOR_MUST_ADDRESS",
-      "citation": "automation_bus/latest_cursor_prompt.md:237 — 'The script must fail non-zero on guardrail violation. It must not mutate files.' The validator must use sys.exit(1) or equivalent on any violation. It must also be runnable standalone: 'python backend/scripts/validate_day_one_architecture.py'. Cursor must verify the validator's main() follows this contract and test it. The guardrail rules 1-26 from the prompt must map to explicit validator checks — not just print statements."
-    },
-    {
-      "check": "HARDENING_FLAG_frontend_inference_pattern_check",
-      "result": "CURSOR_MUST_VERIFY_BEFORE_PROCEEDING",
-      "citation": "automation_bus/latest_cursor_prompt.md:232-234 — validator must check 'frontend does not contain marker-role inference patterns'. STOP condition 8 applies if 'frontend inference patterns are found and cannot be safely resolved'. Both frontend target files confirmed present: frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx ✓; frontend/app/types/analysis.ts ✓. Cursor must grep both files (and the broader frontend/app/ tree) for patterns like: hardcoded marker role assignment, clinical threshold comparisons, score calculations from raw values, or derived clinical labels. If found, STOP. The existing escaped_defects_v1.json has 'health_system_card_frontend_calculates_evidence_completeness' (test_domain_ux1a) and 'health_system_subsystem_marker_grouping_frontend_defined' (test_domain_ux1c) already guarded — validator should reference these existing tests rather than re-implementing the check."
+      "check": "HARDENING_FLAG_preflight_working_tree",
+      "result": "CURSOR_MUST_RESOLVE_BEFORE_BRANCHING",
+      "citation": "git status shows: (M) automation_bus/latest_cursor_prompt.md — expected (new sprint prompt); (M) frontend/.env.local.example — binary 2-byte change (cause unknown, must be investigated before proceeding — do not commit unless understood); (??) docs/audit-papers/LAUNCH-CORE-0_results_page_human_uat_investigation.md — MUST be committed to main before creating sprint branch; (??) docs/audit-papers/assets/ — MUST be committed to main before creating sprint branch. The prompt STOP condition 'working tree is not clean / untracked or uncommitted files present' will trigger at Cursor baseline preflight unless these are resolved. LAUNCH-CORE-0 artefacts are mandatory sprint inputs and must be committed. frontend/.env.local.example must be investigated and either committed or stashed with justification."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:279-295 — out-of-scope prohibits: card evidence clinical content, clinical thresholds, scoring rails, biomarker SSOT, unit conversion, package clinical content, investigation specs, PSI runtime wiring, additional root-cause promotion, SignalRegistry identity policy, SignalEvaluator behaviour, broad frontend changes, fallback parsers. None of these are referenced in the allowed deliverables. Tests and validators are read-only checks against existing runtime behaviour."
+      "citation": "Out-of-scope prohibits: clinical thresholds (automation_bus/latest_cursor_prompt.md:265), scoring rail calculations (line 266), biomarker SSOT (line 267), unit conversion (line 268), package clinical content (line 269), investigation specs (line 270), PSI runtime status (line 271), SignalRegistry or SignalEvaluator (lines 272-273), root-cause promotion (line 274), compiled card evidence clinical meaning (line 275), ARCH-RT-6 guardrails weakening (line 276), forbidden DTO field exposure (line 277-278), fallback parsers (line 279). None of the allowed deliverables reference these files or operations."
     }
   ]
 }
