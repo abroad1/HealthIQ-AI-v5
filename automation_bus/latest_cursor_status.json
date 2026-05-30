@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-RT-6-day-one-architecture-guardrails-and-acceptance-gate",
+  "branch": "work/LAUNCH-CORE-1-results-page-card-coherence-and-consumer-copy",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-30T10:37:52Z",
-  "cursor_started_utc": "2026-05-30T10:35:20Z",
-  "head_sha": "d9c7cde081200b154cd83e3f9ff2ae1bcc91cc44",
+  "cursor_started_utc": "2026-05-30T11:26:39Z",
+  "head_sha": "70eb275525d29718b6e24435a6ba3fb3c1ad73b8",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-6_day_one_architecture_guardrails_and_acceptance_gate"
+  "status": "IN_PROGRESS",
+  "work_id": "LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy"
 }
