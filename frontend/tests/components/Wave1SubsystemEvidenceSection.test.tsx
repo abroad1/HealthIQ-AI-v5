@@ -81,6 +81,35 @@ describe('Wave1SubsystemEvidenceSection', () => {
     expect(screen.queryByTestId('wave1-subsystem-source-trace')).not.toBeInTheDocument();
   });
 
+  it('renders consumer-safe marker role chips from backend enum', () => {
+    render(
+      <Wave1SubsystemEvidenceSection
+        subsystems={[
+          {
+            subsystem_id: 'wave1_cv_lipid',
+            subsystem_label: 'Lipid transport',
+            included_marker_ids: ['ldl_cholesterol'],
+            missing_marker_ids: [],
+            marker_evidence: [
+              {
+                marker_id: 'ldl_cholesterol',
+                display_label: 'LDL cholesterol',
+                marker_role: 'score_contributor',
+                relationship_kind: 'direct_score_input',
+                presence_policy: 'required_for_subsystem',
+              },
+            ],
+            status_label: null,
+            evidence_role: null,
+            source_trace: 'Wave 1 governed subsystem map',
+          },
+        ]}
+      />
+    );
+    expect(screen.getByText('Used in this score')).toBeInTheDocument();
+    expect(screen.queryByText(/score contributor/i)).not.toBeInTheDocument();
+  });
+
   it('renders from backend marker display labels, not local wave1Confidence map', () => {
     const sectionPath = path.join(process.cwd(), 'app/components/results/Wave1SubsystemEvidenceSection.tsx');
     const src = fs.readFileSync(sectionPath, 'utf8');

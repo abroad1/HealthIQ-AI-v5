@@ -44,6 +44,8 @@ describe('uploadPanelFidelity', () => {
     expect(hba1cPct?.linkedCanonicalId).toBe('hba1c');
     expect(hba1cPct?.value).toBe(6);
     expect(hba1cPct?.unit).toBe('%');
+    expect(hba1cPct?.equivalenceNote).toContain('same marker on your lab report');
+    expect(hba1cPct?.equivalenceNote).not.toContain('not scored separately');
   });
 
   it('returns empty when upload panel is absent', () => {

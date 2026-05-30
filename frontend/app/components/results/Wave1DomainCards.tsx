@@ -9,6 +9,7 @@ import {
   wave1EvidenceCompletenessLine,
   wave1IsPartialEvidenceState,
   wave1IsZeroEvidenceState,
+  wave1ScoreQualificationLine,
   wave1ScoreReliabilityLabel,
 } from '@/lib/wave1HealthSystemCardDisplay';
 import { Wave1HealthSystemScoreVisual } from './Wave1HealthSystemScoreVisual';
@@ -79,6 +80,7 @@ export function Wave1DomainCards({ domains, embedInJourney = false }: Props) {
           const evidenceCompleteness = wave1EvidenceCompletenessLine(num, den);
           const limitedCoverage =
             isPartialEvidence || d.confidence_tier === 'low' || scoreReliability === 'Limited reliability';
+          const scoreQualification = wave1ScoreQualificationLine(scorePct, limitedCoverage, d.confidence_tier);
 
           return (
             <Card
@@ -119,11 +121,21 @@ export function Wave1DomainCards({ domains, embedInJourney = false }: Props) {
                     </p>
                   </div>
                 ) : (
-                  <Wave1HealthSystemScoreVisual
-                    scorePct={scorePct}
-                    bandLabel={d.band_label}
-                    limitedCoverage={limitedCoverage}
-                  />
+                  <div className="space-y-1">
+                    <Wave1HealthSystemScoreVisual
+                      scorePct={scorePct}
+                      bandLabel={d.band_label}
+                      limitedCoverage={limitedCoverage}
+                    />
+                    {scoreQualification ? (
+                      <p
+                        className="text-[11px] text-amber-800 leading-snug"
+                        data-testid="wave1-score-qualification"
+                      >
+                        {scoreQualification}
+                      </p>
+                    ) : null}
+                  </div>
                 )}
 
                 <div

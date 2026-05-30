@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { scrubConsumerRetailNarrative, stripSimpleMarkdownDecorators } from '@/lib/retailNarrativeSanitize';
+import { scrubConsumerRetailNarrative, scrubMojibakeArtifacts, stripSimpleMarkdownDecorators } from '@/lib/retailNarrativeSanitize';
 
 describe('retailNarrativeSanitize LC-S6', () => {
   it('stripSimpleMarkdownDecorators removes bold markers', () => {
@@ -21,11 +21,13 @@ describe('retailNarrativeSanitize LC-S6', () => {
     expect(s).not.toContain('signal_homocysteine_elevation_context');
   });
 
-  it('scrubConsumerRetailNarrative replaces long bridge slugs', () => {
-    const slug =
-      'alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence and homocysteine';
-    const s = scrubConsumerRetailNarrative(slug);
-    expect(s).toContain('this related pattern');
-    expect(s).not.toContain('alcohol_intake_moderate');
+  it('scrubConsumerRetailNarrative replaces homocysteine elevation context title', () => {
+    const s = scrubConsumerRetailNarrative('Homocysteine Elevation Context: warrants attention on this panel');
+    expect(s).toContain('Raised homocysteine pattern');
+    expect(s).not.toMatch(/Homocysteine Elevation Context/i);
+  });
+
+  it('scrubMojibakeArtifacts repairs common dash mojibake', () => {
+    expect(scrubMojibakeArtifacts('Marker Aâ€”Marker B')).toBe('Marker A—Marker B');
   });
 });

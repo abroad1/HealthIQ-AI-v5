@@ -34,3 +34,15 @@ export function wave1IsZeroEvidenceState(numerator: number, denominator: number)
 export function wave1IsPartialEvidenceState(numerator: number, denominator: number): boolean {
   return denominator > 0 && numerator > 0 && numerator < denominator;
 }
+
+/** Qualify high scores when evidence coverage or confidence is limited (presentation only). */
+export function wave1ScoreQualificationLine(
+  scorePct: number,
+  limitedCoverage: boolean,
+  confidenceTier: string
+): string | null {
+  if (!limitedCoverage && confidenceTier !== 'low') return null;
+  if (scorePct >= 90) return 'Score based on available markers only';
+  if (limitedCoverage || confidenceTier === 'low') return 'Score based on available markers';
+  return null;
+}

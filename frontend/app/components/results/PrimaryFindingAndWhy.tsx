@@ -3,10 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ClinicianEvidenceItem, ClinicianReportV1 } from '@/types/analysis';
 import { buildSection3LeadStatement, buildWhatThisMeansBlock, firstSentence } from '@/lib/primaryFindingShaping';
+import { formatBiomarkerDisplayName } from '@/lib/resultsPageLayout';
 import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
 
 function formatMarkerRef(id: string): string {
-  return id.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  return formatBiomarkerDisplayName(id);
 }
 
 function evidenceLine(ev: ClinicianEvidenceItem): string {

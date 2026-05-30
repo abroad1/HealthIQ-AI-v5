@@ -3,6 +3,8 @@
  * Strips markdown decorators and replaces known internal vocabulary; does not change analytical data.
  */
 
+import { scrubKnownInternalPatternNames } from '@/lib/cardEvidenceConsumerCopy';
+
 export function stripSimpleMarkdownDecorators(text: string): string {
   if (!text) return '';
   let s = text;
@@ -56,7 +58,17 @@ export function scrubInternalArchitecturePhrases(text: string): string {
   return scrubLongInternalSlugs(s);
 }
 
-/** Full pipeline for default consumer narrative blocks. */
+/** Fix common UTF-8 mojibake sequences in persisted narrative text. */
+export function scrubMojibakeArtifacts(text: string): string {
+  return text
+    .replace(/\uFFFD/g, '')
+    .replace(/â€./g, '—')
+    .replace(/â€™/g, "'")
+    .replace(/â€œ/g, '"')
+    .replace(/\s*â\s*(?=[,.;:!?]|$)/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
 /** FE-R6A — retail-only strips for fresh UAT defects (presentation layer). */
 export function scrubFeR6aRetailSurfacePhrases(text: string): string {
   let s = text;
@@ -74,6 +86,8 @@ export function scrubConsumerRetailNarrative(text: string): string {
   const stripped = stripSimpleMarkdownDecorators(text);
   let s = scrubInternalArchitecturePhrases(stripped);
   s = scrubFeR6aRetailSurfacePhrases(s);
+  s = scrubMojibakeArtifacts(s);
+  s = scrubKnownInternalPatternNames(s);
   s = s.replace(/\bsignal_homocysteine_elevation_context\b/gi, 'homocysteine-related pattern');
   s = s.replace(/\bhcy_b12_pattern_v1\b/gi, 'B12–homocysteine pattern');
   return s;

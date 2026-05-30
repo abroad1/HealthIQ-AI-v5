@@ -1,3 +1,5 @@
+import { scrubKnownInternalPatternNames } from '@/lib/cardEvidenceConsumerCopy';
+
 /**
  * Backend `compile_clinician_report_v1` may emit these strings as real `page1` fields.
  * They are implementation placeholders and must not be shown as user-facing prose.
@@ -24,5 +26,5 @@ export function sanitizePrimaryConcernForDisplay(raw: string | null | undefined)
   if (INTERNAL_WHY_FALLBACK_RE.test(t)) {
     return 'A lead pattern was identified, but a deeper causal explanation is not yet available on this panel.';
   }
-  return t;
+  return scrubKnownInternalPatternNames(t);
 }

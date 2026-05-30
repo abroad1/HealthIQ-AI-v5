@@ -11,7 +11,7 @@ Liver: scoring key is ``liver`` (scoring_policy.yaml); burden/capacity key is ``
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Set, Tuple, cast
+from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, cast
 
 from core.analytics.domain_narrative_wave1 import (
     confidence_sentence_cv_coherent,
@@ -345,6 +345,9 @@ def _evidence_completeness_for_rail(
     """
     DOMAIN-UX1A: derive completeness from existing rail scored markers + missing list.
     denominator = scored on rail + missing; numerator = scored on rail.
+
+    LAUNCH-CORE-1: prefer ``_evidence_completeness_from_subsystems`` when Wave 1
+    compiled subsystem rows are available (card summary must match expanded detail).
     """
     data = _system_rail_data(hss, system_key)
     bs = data.get("biomarker_scores")
@@ -355,6 +358,27 @@ def _evidence_completeness_for_rail(
     return numerator, denominator
 
 
+def _evidence_completeness_from_subsystems(subsystems: Sequence[Any]) -> Tuple[int, int]:
+    """
+    LAUNCH-CORE-1: union of compiled subsystem included + missing marker ids.
+
+    Card summary completeness must match expanded subsystem evidence (no frontend recompute).
+    """
+    included: Set[str] = set()
+    expected: Set[str] = set()
+    for row in subsystems:
+        for mid in getattr(row, "included_marker_ids", []) or []:
+            if str(mid).strip():
+                included.add(str(mid).strip())
+                expected.add(str(mid).strip())
+        for mid in getattr(row, "missing_marker_ids", []) or []:
+            if str(mid).strip():
+                expected.add(str(mid).strip())
+    if not expected:
+        return 0, 0
+    return len(included), len(expected)
+
+
 def _wave1_card_contract_extras(
     *,
     domain_id: str,
@@ -363,13 +387,16 @@ def _wave1_card_contract_extras(
     missing_marker_ids: List[str],
     panel_biomarker_ids: Set[str],
 ) -> Dict[str, Any]:
-    num, den = _evidence_completeness_for_rail(hss, system_key, missing_marker_ids)
     rail_data = _system_rail_data(hss, system_key)
     subsystems = assemble_wave1_subsystem_evidence(
         domain_id=domain_id,
         panel_biomarker_ids=panel_biomarker_ids,
         rail_biomarker_scores=rail_data.get("biomarker_scores"),
     )
+    if subsystems:
+        num, den = _evidence_completeness_from_subsystems(subsystems)
+    else:
+        num, den = _evidence_completeness_for_rail(hss, system_key, missing_marker_ids)
     return {
         "plain_english_descriptor": _WAVE1_PLAIN_DESCRIPTOR.get(domain_id, ""),
         "evidence_completeness_numerator": num,

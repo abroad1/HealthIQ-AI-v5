@@ -1,5 +1,6 @@
 import React from 'react';
 import type { SubsystemEvidenceV1, SubsystemMarkerEvidenceV1 } from '@/types/analysis';
+import { consumerMarkerRoleLabel } from '@/lib/cardEvidenceConsumerCopy';
 
 type Props = {
   subsystems: SubsystemEvidenceV1[];
@@ -17,9 +18,7 @@ function defensiveFallbackLabel(markerId: string): string {
 }
 
 function markerRoleChipLabel(marker: SubsystemMarkerEvidenceV1): string | null {
-  const role = marker.marker_role?.trim();
-  if (!role) return null;
-  return role.replace(/_/g, ' ');
+  return consumerMarkerRoleLabel(marker.marker_role);
 }
 
 function isConsumerSafeSourceTrace(value: string | null | undefined): boolean {

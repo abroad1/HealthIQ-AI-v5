@@ -135,7 +135,7 @@ export function buildUploadedPanelFidelityRows(
     const canonicalLabel = displayNameFor(linkedCanonicalId);
     let equivalenceNote: string | null = null;
     if (isEquivalentObservation) {
-      equivalenceNote = `Uploaded representation of ${canonicalLabel} — not scored separately.`;
+      equivalenceNote = `Uploaded representation of ${canonicalLabel} — same marker on your lab report (may use a different unit or format).`;
     } else if (canonical && normalizeUnitToken(obs.unit) !== normalizeUnitToken(canonical.unit)) {
       equivalenceNote = `Uploaded as reported on your panel; analytical review uses ${canonical.value} ${canonical.unit}.`;
     }
