@@ -2,7 +2,7 @@
 
 **Work package:** ARCH-RT-5_full_regeneration_and_launch_gate  
 **Generated:** 2026-05-30  
-**Verdict:** **Launch-ready for governed Wave 1 pilot slice** with documented deferred items
+**Verdict:** **Launch-ready for governed Wave 1 pilot slice** with documented deferred items and programmatic guardrails (ARCH-RT-6)
 
 ## Milestone completion
 
@@ -14,6 +14,7 @@
 | M4 PSI wiring | `ARCH-RT-5_M4_psi_runtime_wiring_audit.md` | **Complete** (provisional deferral) |
 | M4b PSI decision (ARCH-RT-5E) | `ARCH-RT-5E_psi_runtime_wiring_decision_audit.md` | **Complete** |
 | M5 Launch gate | This document + traceability + authority manifest | **Complete** |
+| M6 Guardrails & acceptance (ARCH-RT-6) | `ARCH-RT-6_day_one_architecture_acceptance_audit.md` | **Complete** |
 
 ## Carry-forward classification register
 

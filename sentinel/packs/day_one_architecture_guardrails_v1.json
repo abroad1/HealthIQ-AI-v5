@@ -1,0 +1,57 @@
+{
+  "pack_version": "1.0.0",
+  "pack_id": "day_one_architecture_guardrails_v1",
+  "description": "ARCH-RT-6 — Day-one research-to-runtime architecture guardrails (card evidence, hypothesis, provenance, PSI, compile manifests)",
+  "validator_script": "backend/scripts/validate_day_one_architecture.py",
+  "defect_classes": {
+    "day_one_wave1_compiled_card_authority": {
+      "description": "All launch-active Wave 1 card subsystems must use compiled card evidence with resolving manifests; no total_bilirubin in artefacts; no legacy hard-coded activation.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/architecture/test_day_one_architecture_guardrails.py",
+      "first_seen": "2026-05"
+    },
+    "day_one_compiled_hypothesis_promotion": {
+      "description": "signal_vitamin_d_low uses runtime-promoted compiled path with summary_template; single-frame only.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/architecture/test_day_one_architecture_guardrails.py",
+      "first_seen": "2026-05"
+    },
+    "day_one_package_provenance_classification": {
+      "description": "All 186 packages classified; no unknown_requires_review; inferred provenance not written as explicit manifest source_spec_id.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/architecture/test_day_one_architecture_guardrails.py",
+      "first_seen": "2026-05"
+    },
+    "day_one_psi_runtime_isolation": {
+      "description": "PSI loader must not be imported on launch-critical Intelligence Core paths.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py",
+      "first_seen": "2026-05"
+    },
+    "day_one_no_runtime_investigation_spec_reads": {
+      "description": "Launch-critical runtime modules must not read raw investigation specs.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/architecture/test_day_one_architecture_guardrails.py",
+      "first_seen": "2026-05"
+    },
+    "day_one_frontend_render_only": {
+      "description": "Wave1SubsystemEvidenceSection filters internal source traces; no marker-role inference helpers.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/architecture/test_day_one_architecture_guardrails.py",
+      "first_seen": "2026-05"
+    },
+    "day_one_compile_manifest_integrity": {
+      "description": "Launch compile manifests: compile_run_id equals compile_id; no pending_inventory_refresh hashes.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/architecture/test_day_one_architecture_guardrails.py",
+      "first_seen": "2026-05"
+    }
+  }
+}

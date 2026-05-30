@@ -1112,6 +1112,14 @@ These items must be resolved before the day-one architecture can be declared ful
 3. Unresolved provenance (ARCH-RT-5D register) would block safe narrow PSI join if a future sprint mandates Outcome B wiring.
 4. Day-one architecture rework PSI stream is **closed** unless a new launch-critical claim is evidenced.
 
+### From ARCH-RT-6 - Day-One Architecture Guardrails and Acceptance Gate
+
+1. Final acceptance classification: **`accepted_for_wave1_launch`**.
+2. Permanent validator: `backend/scripts/validate_day_one_architecture.py` (fail-closed, read-only).
+3. Architecture tests: `backend/tests/architecture/test_day_one_architecture_guardrails.py`.
+4. Sentinel pack: `sentinel/packs/day_one_architecture_guardrails_v1.json`.
+5. Day-one architecture rework programme guardrail stream is **complete**; future drift must fail validator/Sentinel before merge.
+
 ## 6. Final note
 
 This is the fewest sensible sprint sequence currently recommended.

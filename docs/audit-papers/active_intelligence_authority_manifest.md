@@ -1,6 +1,6 @@
 # Active Intelligence Authority Manifest
 
-**Version:** 1.2.0 (ARCH-RT-5E)  
+**Version:** 1.3.0 (ARCH-RT-6)  
 **Updated:** 2026-05-30
 
 ## Wave 1 card evidence
@@ -52,3 +52,14 @@ Evidence: `docs/audit-papers/ARCH-RT-5E_psi_runtime_wiring_decision_audit.md`. L
 | Launch-relevant compile manifest hashes | Refreshed (8 manifests) |
 
 See `docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md`.
+
+## Architecture guardrails (ARCH-RT-6)
+
+| Surface | Enforcement |
+|---------|-------------|
+| Day-one architecture acceptance | `accepted_for_wave1_launch` |
+| Validator | `backend/scripts/validate_day_one_architecture.py` |
+| Tests | `backend/tests/architecture/test_day_one_architecture_guardrails.py` |
+| Sentinel pack | `sentinel/packs/day_one_architecture_guardrails_v1.json` |
+
+Evidence: `docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md`.
