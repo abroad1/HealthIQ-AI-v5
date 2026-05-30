@@ -1,5 +1,7 @@
 # HealthIQ AI — Day-One Architecture Rework Sprint Plan FINAL
 
+**Updated status note:** This version includes delivered-sprint status notes and the carry-forward register created after ARCH-RT-2 GPT architectural review.
+
 **Intended repository location:**  
 `C:\Users\abroa\HealthIQ-AI-v5\docs\sprints\healthiq_day_one_architecture_rework_sprint_plan_FINAL.md`
 
@@ -74,13 +76,13 @@ The sequence keeps the sprint count low while preserving the key safety boundari
 ## 3. Sprint sequence overview
 
 ```text
-0. WAVE1-EQUIV1_total_bilirubin_false_missing_fix
-1. ARCH-RT-0_inventory_and_identity_decisions
-2. ARCH-RT-1_contracts_and_compile_foundation
-3. ARCH-RT-2_identity_runtime_pilot
-4. ARCH-RT-3_card_evidence_vertical_slice
-5. ARCH-RT-4_compiled_hypothesis_root_cause_slice
-6. ARCH-RT-5_full_regeneration_and_launch_gate
+0. WAVE1-EQUIV1_total_bilirubin_false_missing_fix        [DELIVERED]
+1. ARCH-RT-0_inventory_and_identity_decisions            [DELIVERED]
+2. ARCH-RT-1_contracts_and_compile_foundation            [DELIVERED AS DRAFT FOUNDATION]
+3. ARCH-RT-2_identity_runtime_pilot                      [AUDIT PASSED / GPT APPROVED; MERGE STATUS TO CONFIRM]
+4. ARCH-RT-3_card_evidence_vertical_slice                [NEXT IMPLEMENTATION STREAM]
+5. ARCH-RT-4_compiled_hypothesis_root_cause_slice        [PENDING]
+6. ARCH-RT-5_full_regeneration_and_launch_gate           [PENDING]
 ```
 
 Sprint 0 is deliberately separate because it fixes a known false-missing defect that would otherwise pollute the evidence baseline.
@@ -88,6 +90,20 @@ Sprint 0 is deliberately separate because it fixes a known false-missing defect 
 ---
 
 # Sprint 0 — WAVE1-EQUIV1_total_bilirubin_false_missing_fix
+
+## Delivery status
+
+**Delivered and merged.**
+
+The original plan classified this sprint as STANDARD / BEHAVIOUR because the change was narrow. During hardening this was correctly escalated to HIGH because `backend/core/analytics/wave1_subsystem_evidence.py` is an unconditional HIGH-risk path under the Automation Bus SOP.
+
+Outcome:
+
+- `total_bilirubin` was removed from the Wave 1 liver processing expected-marker tuple.
+- `bilirubin` remains the canonical expected marker.
+- Regression coverage was updated so `total_bilirubin` is not falsely reported missing when `bilirubin` is present.
+- `domain_score_assembler.py` and `backend/ssot/biomarkers.yaml` were intentionally not modified.
+- This correction must be preserved by Sprint 4 when hard-coded card evidence is replaced.
 
 ## Purpose
 
@@ -128,10 +144,12 @@ backend/tests/**/*
 ## Classification
 
 ```yaml
-risk_level: STANDARD
+risk_level: HIGH
 change_type: BEHAVIOUR
 execution_model: TWO_PHASE_START_FINISH
 ```
+
+Note: HIGH applies by path because `backend/core/analytics/` was touched.
 
 ## STOP conditions
 
@@ -150,6 +168,23 @@ execution_model: TWO_PHASE_START_FINISH
 ---
 
 # Sprint 1 — ARCH-RT-0_inventory_and_identity_decisions
+
+## Delivery status
+
+**Delivered and merged.**
+
+Outcome:
+
+- All 12 required inventory and ADR artefacts were delivered under `docs/architecture/`.
+- `ADR-RT-002` decisively selected `MULTI_FRAME_PER_DIRECTION`.
+- `activation_key` was confirmed as required.
+- `signal_id` remains signal-family identity and is not sufficient as runtime frame identity.
+- PSI was confirmed as runtime-dead.
+- All 186 packages were inventoried and `source_spec_id` was confirmed absent across the active package estate.
+- The collision estate was inventoried: 45 duplicate `signal_id` families / 96 package rows, including explicit ALT and homocysteine cases.
+- The activation compile gap was confirmed: no governed estate-wide `investigation_spec → signal_library / research_brief / package_manifest` compiler exists.
+
+These outputs are authoritative inputs for all later ARCH-RT work.
 
 ## Purpose
 
@@ -283,6 +318,28 @@ execution_model: TWO_PHASE_START_FINISH
 
 # Sprint 2 — ARCH-RT-1_contracts_and_compile_foundation
 
+## Delivery status
+
+**Delivered and merged as DRAFT foundation work.**
+
+Outcome:
+
+- `compile_manifest_schema_v1.yaml` was created as a DRAFT schema.
+- Compile manifest, package provenance, activation compile, PSI gap closure, and PSI runtime wiring design documents were delivered.
+- `validate_compile_manifest.py` and unit smoke tests were added as narrow validation support.
+- The pilot selection changed from the earlier possible LDL candidate to `pkg_s24_vitamin_d_low_deficiency` / `inv_vitamin_d_low_deficiency_v1.yaml`, based on repository evidence.
+- No runtime wiring occurred.
+- No package, investigation spec, PSI, root-cause YAML, frontend, or runtime behaviour files were modified.
+
+Carry-forward decisions from GPT review:
+
+- `compile_id` is canonical.
+- `compile_run_id` is transitional only.
+- If both `compile_id` and `compile_run_id` are present, the validator must enforce equality.
+- `activation_keys_emitted`, `collisions_detected`, and `policy_version` may remain optional only while the schema is DRAFT.
+- Before production compiler use, schema lock, or launch-critical compile manifest use, ADR-required manifest fields must become required.
+- Any `ARCH-RT-2b` reference should be normalised to `ARCH-RT-2` unless a formal split is approved.
+
 ## Purpose
 
 Create the minimum governance contracts and compile/provenance foundation needed for the day-one architecture.
@@ -405,6 +462,27 @@ execution_model: TWO_PHASE_START_FINISH
 ---
 
 # Sprint 3 — ARCH-RT-2_identity_runtime_pilot
+
+## Delivery status
+
+**Audit passed and GPT approved for merge. Merge status must be confirmed in the repository before later sprints rely on it.**
+
+Outcome from audit/GPT review:
+
+- Silent lexicographic `signal_id` overwrite was removed for the ALT pilot.
+- Runtime registry identity was changed to use `activation_key`.
+- Four ALT-high frames are loaded without collapse in the pilot.
+- Duplicate `activation_key` now fails closed.
+- `SignalResult` now carries `activation_key`, `source_spec_id`, and `package_id`.
+- Single-frame signal behaviour remained stable in tests.
+- No package files, investigation specs, PSI artefacts, root-cause YAML, card evidence, frontend, IDL, or compile manifest files were modified.
+
+Carry-forward constraints from GPT review:
+
+- Directory-derived `source_spec_id` is acceptable only as an interim runtime identity fallback. It is not canonical research provenance.
+- Future provenance work must distinguish explicit source-spec provenance from inferred source-spec provenance.
+- Root-cause compiler remains signal-family-only and is not multi-frame aware.
+- Root-cause first-match behaviour is acceptable temporarily but must be fixed in the compiled hypothesis / root-cause transition stream.
 
 ## Purpose
 
@@ -810,6 +888,146 @@ ARCH-RT-0_inventory_and_identity_decisions
 Do not author Sprint 2+ until Sprint 1 closes and the identity/provenance ADRs are approved.
 
 ---
+
+---
+
+# Addendum — Day-One Architecture Carry-Forward Register
+
+This section captures decisions, residual risks and completion conditions that must not be lost between sprint agents.
+
+The day-one architecture must not be declared fully delivered until every item below is either completed, deliberately retired, or explicitly classified as non-launch-critical in the launch-readiness audit.
+
+## A. Provenance and compile-manifest carry-forwards
+
+1. `compile_id` is the canonical compile identifier.
+2. `compile_run_id` is transitional only.
+3. If both `compile_id` and `compile_run_id` are present, validation must enforce:
+
+```text
+compile_run_id == compile_id
+```
+
+4. The following fields are allowed to remain optional only while `compile_manifest_schema_v1.yaml` is DRAFT:
+
+```text
+activation_keys_emitted
+collisions_detected
+policy_version
+```
+
+5. Before any production compiler use, schema lock, or launch-critical compile-manifest use, ADR-required manifest fields must become required.
+6. Any stale `ARCH-RT-2b` reference must be normalised to `ARCH-RT-2` unless a formal sprint split is approved.
+7. Compile manifests must support activation-frame identity and package provenance, not merely file-level hashing.
+
+## B. Source provenance carry-forwards
+
+1. `source_spec_id` inferred from package directory names is only an interim identity fallback.
+2. Inferred `source_spec_id` must not be treated as canonical research provenance.
+3. Later provenance work must distinguish provenance source, for example:
+
+```text
+explicit_manifest
+source_document_inv_path
+inferred_package_id
+batch_json_source
+unknown
+```
+
+4. All active packages must eventually have either:
+
+```text
+source_spec_id with source hash / compile manifest evidence
+```
+
+or an explicit classification:
+
+```text
+legacy_retained
+deferred_for_regeneration
+blocked_pending_spec_extraction
+retire_candidate
+```
+
+5. The kb52c / batch JSON package estate must be resolved or classified before launch readiness can pass.
+
+## C. Runtime identity carry-forwards
+
+1. `MULTI_FRAME_PER_DIRECTION` is the selected runtime policy.
+2. `activation_key` is required as runtime activation-frame identity.
+3. `signal_id` remains signal-family identity and must not be overloaded as frame identity.
+4. Duplicate `activation_key` must fail closed.
+5. Duplicate `signal_id` across distinct activation frames is valid in the target architecture.
+6. Downstream consumers must be reviewed and updated where they assume one fired result per `signal_id`.
+7. Interaction map, phenotype map, root-cause compiler and reporting paths must be explicitly reviewed for family-vs-frame semantics.
+
+## D. Root-cause carry-forwards
+
+1. Root-cause compiler remains signal-family-only after ARCH-RT-2.
+2. Root-cause first-match behaviour is a temporary tolerated gap, not target architecture.
+3. Root-cause must become multi-frame aware or consume compiled hypothesis artefacts using activation-frame identity.
+4. Hand-authored root-cause YAML remains a duplicate authority until replaced or explicitly classified.
+5. The compiled hypothesis / root-cause sprint must preserve useful existing root-cause content through divergence review before retirement.
+
+## E. PSI carry-forwards
+
+1. PSI exists but was confirmed runtime-dead during ARCH-RT-0.
+2. PSI is signal-layer semantics only.
+3. PSI must not be expanded to carry full hypothesis graphs.
+4. PSI runtime wiring remains pending after ARCH-RT-2.
+5. PSI must either be runtime-consumed where needed for launch-critical claims or explicitly classified as non-launch-critical before launch.
+
+## F. Activation compile carry-forwards
+
+1. PSI translation is not activation compile.
+2. The governed activation compile path is still required:
+
+```text
+investigation_spec
+→ signal_library.yaml
+→ research_brief.yaml
+→ package_manifest.yaml
+```
+
+3. Activation compile must propagate:
+
+```text
+activation_key
+signal_id
+source_spec_id
+package_id
+compile_manifest_ref
+```
+
+4. No full estate regeneration can be considered governed until this activation compile path exists or exceptions are classified.
+
+## G. Card evidence carry-forwards
+
+1. Sprint 0 bilirubin correction must not be reintroduced when card evidence is replaced.
+2. Hard-coded `wave1_subsystem_evidence.py` remains active until Sprint 4 replaces the pilot path and later Sprint 6 retires or classifies the estate.
+3. Card evidence must be compiled from governed research/domain policy artefacts, not hand-authored as a new authority.
+4. Frontend must remain render-only and must not infer marker roles, rationales or clinical meaning.
+5. DTO versioning is mandatory before card marker-role / relationship-kind / rationale fields can be safely surfaced.
+
+## H. Day-one completion criteria
+
+The day-one architecture is not complete until:
+
+1. Active package provenance is explicit or classified.
+2. Compile manifest schema is locked or explicitly approved for launch use.
+3. Activation compile exists or all exceptions are classified.
+4. Multi-frame runtime identity is accepted by all affected downstream consumers.
+5. PSI runtime use is implemented or classified non-launch-critical.
+6. Card evidence is compiled/governed or manual paths are hidden/classified.
+7. Root-cause/hypothesis authority is compiled/governed or legacy YAML is classified.
+8. kb52c / batch JSON source packages are resolved or classified.
+9. Launch-readiness audit proves:
+
+```text
+source research → compiled artefact → runtime loader → DTO → frontend component
+```
+
+for every launch-critical user-facing clinical claim.
+
 
 ## 5. Final note
 
