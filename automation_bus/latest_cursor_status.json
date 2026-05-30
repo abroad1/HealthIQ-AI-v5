@@ -1,10 +1,9 @@
 {
-  "branch": "work/LAUNCH-CORE-2-multi-panel-launch-readiness-uat",
+  "branch": "work/LAUNCH-CORE-3-result-versioning-replay-and-regeneration-policy",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-30T12:58:14Z",
-  "cursor_started_utc": "2026-05-30T12:50:51Z",
-  "head_sha": "4bf2787623cf1721bb8a0f6ab29cc325919f8d28",
+  "cursor_started_utc": "2026-05-30T13:26:40Z",
+  "head_sha": "0ef08aee023274045b938f113704748b5792f17a",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LAUNCH-CORE-2_multi_panel_launch_readiness_uat"
+  "status": "IN_PROGRESS",
+  "work_id": "LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy"
 }
