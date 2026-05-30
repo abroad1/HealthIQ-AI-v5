@@ -64,7 +64,7 @@ from config.database import get_db_optional
 from app.analysis_pdf_export import build_summary_pdf_bytes
 from app.billing_entitlement import enforce_new_analysis_entitlement
 from core.dto.result_versioning_policy_v1 import build_result_versioning_metadata, stamp_current_policy_meta
-from services.storage.persistence_service import PersistenceService
+from services.storage.persistence_service import CLIENT_RESULT_SHAPE_V1, PersistenceService
 from repositories import AnalysisRepository, AnalysisResultRepository
 from sqlalchemy.orm import Session
 
