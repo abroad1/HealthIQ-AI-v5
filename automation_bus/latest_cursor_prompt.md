@@ -1,31 +1,30 @@
 ---
-work_id: ARCH-RT-5_full_regeneration_and_launch_gate
-branch: work/ARCH-RT-5-full-regeneration-and-launch-gate
+work_id: ARCH-RT-5B_card_evidence_estate_and_required_provenance
+branch: work/ARCH-RT-5B-card-evidence-estate-and-required-provenance
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# ARCH-RT-5 — Full Regeneration and Launch Gate
+# ARCH-RT-5B — Card Evidence Estate and Required Provenance
 
 ## Purpose
 
-Scale the proven day-one architecture across the active intelligence estate and produce launch-readiness evidence.
+Extend the successful ARCH-RT-3 card evidence vertical slice across the remaining Wave 1 Health Systems Card subsystems, or explicitly classify any subsystem that cannot safely move to compiled card evidence yet.
 
-This sprint must move HealthIQ from isolated pilots to a governed launch posture, or explicitly classify anything not ready for launch.
-
-The target architecture remains:
+This sprint must resolve the card-evidence estate position for Wave 1:
 
 ```text
-canonical research authority
-→ deterministic compile / translation
-→ governed runtime artefacts
-→ runtime loaders
-→ structured DTOs
-→ frontend render-only
+compiled card evidence artefacts
+→ governed backend loader
+→ DTO v2 / schema-versioned DTO
+→ frontend render-only display
+→ launch classification for every Wave 1 subsystem
 ````
 
-This sprint must not smuggle unresolved architecture risk into launch. If the full scope proves too wide, split cleanly along the milestone boundaries defined below.
+This sprint also includes the minimum package/source provenance work required to support the Wave 1 card evidence estate.
+
+It must not attempt full 186-package provenance backfill unless required for Wave 1 card evidence.
 
 ## Baseline requirement
 
@@ -40,6 +39,7 @@ ARCH-RT-1_contracts_and_compile_foundation — merged
 ARCH-RT-2_identity_runtime_pilot — merged
 ARCH-RT-3_card_evidence_vertical_slice — merged
 ARCH-RT-4_compiled_hypothesis_root_cause_slice — merged
+ARCH-RT-5_full_regeneration_and_launch_gate — merged
 ```
 
 Before creating or switching to the sprint branch, run and report:
@@ -57,7 +57,7 @@ STOP if:
 * current branch is not `main`
 * local `main` does not equal `origin/main`
 * working tree is not clean
-* ARCH-RT-4 is not merged
+* ARCH-RT-5 is not merged
 * untracked or uncommitted files are present
 
 ## Governance classification
@@ -70,7 +70,7 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This sprint may touch Knowledge Bus packages, compiled artefacts, schema/validator surfaces, analytics runtime loaders, root-cause pathways, Health Systems Card evidence, DTOs, Sentinel guards, launch audit artefacts and estate manifests.
+This sprint may touch compiled Knowledge Bus artefacts, schema/validator surfaces, Health Systems Card backend loader/assembler paths, DTOs, frontend render-only card components, tests and audit artefacts. It may touch `backend/core/analytics/`, which is an unconditional HIGH-risk path.
 
 HIGH-risk controls apply:
 
@@ -86,32 +86,23 @@ Read these files before making changes:
 
 ```text
 docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md
-docs/architecture/research_to_runtime_traceability_matrix.md
-docs/architecture/intelligence_authority_inventory.md
-docs/architecture/package_generation_inventory.md
-docs/architecture/psi_coverage_and_manifest_opt_in_report.md
-docs/architecture/root_cause_registry_inventory.md
-docs/architecture/signal_id_collision_inventory.md
-docs/architecture/legacy_package_retirement_candidates.md
-docs/architecture/activation_compile_gap_report.md
 docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md
 docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md
 docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md
-docs/architecture/compile_manifest_contract.md
-docs/architecture/package_provenance_policy.md
-docs/architecture/activation_compile_contract.md
-docs/architecture/psi_gap_closure_mechanics.md
-docs/architecture/psi_runtime_wiring_design.md
-docs/architecture/ARCH-RT-1_single_frame_pilot_selection.md
-docs/architecture/ARCH-RT-1_pilot_compile_provenance_evidence.md
-docs/architecture/ARCH-RT-2_identity_runtime_pilot_report.md
-docs/architecture/ARCH-RT-3_card_evidence_vertical_slice_report.md
-docs/architecture/ARCH-RT-4_compiled_hypothesis_root_cause_slice_report.md
-docs/architecture/ARCH-RT-4_root_cause_divergence_report.md
 docs/architecture/card_evidence_role_translation_policy.md
 docs/architecture/card_visibility_tier_policy.md
-docs/architecture/compiled_hypothesis_contract.md
+docs/architecture/ARCH-RT-3_card_evidence_vertical_slice_report.md
+docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md
+docs/audit-papers/ARCH-RT-5_M2_card_evidence_estate_audit.md
+docs/audit-papers/day_one_architecture_launch_readiness_audit.md
+docs/audit-papers/research_to_runtime_traceability_audit.md
+docs/audit-papers/active_intelligence_authority_manifest.md
+docs/architecture/ARCH-RT-5_full_regeneration_and_launch_gate_report.md
+docs/architecture/ARCH-RT-5_split_recommendation.md
+knowledge_bus/schema/health_system_card_evidence_schema_v1.yaml
+knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml
+knowledge_bus/compiled/estate_index_v1.yaml
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
 ```
@@ -120,372 +111,336 @@ STOP if any required authority file is missing.
 
 If the updated sprint plan has a different path, locate it and report the path before proceeding.
 
-## Mandatory inherited decisions
+## Mandatory inherited decisions and carry-forwards
 
-The following decisions are binding:
+The following are binding:
 
 ```text
-ADR-008 is accepted.
-PSI remains signal-layer semantics only.
-Hypothesis graphs must not be placed into PSI.
-Health Systems Card evidence remains separate from hypothesis/root-cause artefacts.
-ADR-RT-002 selected MULTI_FRAME_PER_DIRECTION.
-activation_key is required.
-signal_id remains signal-family identity.
+Health Systems Card evidence is separate from hypothesis/root-cause artefacts.
+PSI remains signal-layer semantics only and must not be used directly as card evidence authority.
+Frontend must render backend-provided card evidence only.
+Frontend must not infer clinical role from marker name or marker id.
+Raw internal source_trace strings must not be displayed directly to consumers.
 compile_id is canonical.
 compile_run_id is transitional only.
 If both compile_id and compile_run_id are present, they must be equal.
+activation_key is required for runtime activation identity.
+signal_id remains signal-family identity.
 ```
 
-## Mandatory carry-forwards to resolve or explicitly classify
-
-This sprint must resolve, implement, or explicitly launch-classify the following carry-forwards.
-
-### From ARCH-RT-1
-
-* `compile_manifest_schema_v1.yaml` was DRAFT.
-* `compile_id` is canonical.
-* `compile_run_id` is transitional only.
-* If both are present, validator must enforce `compile_run_id == compile_id`.
-* `activation_keys_emitted`, `collisions_detected`, and `policy_version` were permitted as optional only while DRAFT.
-* Before production compiler use, schema lock, or launch-critical compile manifest use, ADR-required manifest fields must become required.
-* Any stale `ARCH-RT-2b` reference must be normalised to `ARCH-RT-2` unless a formal split exists.
-
-### From ARCH-RT-2
-
-* Directory-derived `source_spec_id` is interim identity fallback only.
-* Directory-derived `source_spec_id` is not canonical research provenance.
-* Future provenance work must distinguish explicit `source_spec_id` from inferred `source_spec_id`.
-* Root-cause compiler signal-family first-match behaviour was temporarily accepted only.
-* Root-cause compiler is not fully multi-frame aware.
-* Multi-frame root-cause frame selection must be explicitly governed before any multi-frame hypothesis path is promoted.
-
-### From ARCH-RT-3
-
-* Raw internal `source_trace` strings must not be shown directly to consumers.
-* Any future consumer-facing source/evidence label must be separately designed and retail-safe.
-* `compile_manifest_ref` was pilot audit string only.
-* Before estate-wide regeneration, `compile_manifest_ref` must resolve to a real manifest file or governed estate index entry.
-* Inferred `source_spec_ids` were acceptable for pilot only.
-* Full estate compile must resolve explicit versus inferred provenance before launch-critical use.
-* Remaining Wave 1 subsystems still on hard-coded evidence path must be addressed or explicitly launch-classified.
-
-### From ARCH-RT-4
-
-* Compiled hypotheses are currently shadow-only.
-* `compile_root_cause_v1()` has not yet been wired to consume compiled hypothesis artefacts.
-* ARCH-RT-5 must decide when and how compiled hypotheses begin influencing runtime `RootCauseV1` output.
-* `physiological_claim` must not be treated as direct retail/runtime summary text.
-* `physiological_claim` is the governed clinical reasoning claim.
-* `summary_template` remains the presentation/runtime wording field unless superseded by explicit mapping policy.
-* Before estate migration, define the compiled hypothesis → `RootCauseHypothesisV1` presentation mapping.
-* The compiled hypothesis artefact must either carry a separate presentation-safe `summary_template` field or emit a root-cause-compatible view that preserves runtime summary semantics.
-* Stronger direct cross-load / fail-closed boundary tests should be added if legacy and compiled loaders remain side-by-side.
-* `compile_manifest_ref` remains pilot/manual only until real manifest linkage is implemented.
-* `source_spec_provenance: source_document_derived` remains acceptable for pilot only and is not canonical explicit provenance.
-
-If any carry-forward cannot be resolved in this sprint, it must be explicitly classified in the launch-readiness audit as:
+Carry-forward from WAVE1-EQUIV1:
 
 ```text
-resolved
-deferred_non_launch_blocker
-launch_blocker
+The bilirubin / total_bilirubin false-missing fix must be preserved.
+No compiled card evidence artefact may reintroduce total_bilirubin as an independent required missing marker where bilirubin is canonical.
+```
+
+Carry-forward from ARCH-RT-3:
+
+```text
+wave1_met_glycaemic_control is already on the compiled card evidence path.
+The compiled card evidence loader and DTO v2 path already exist.
+Non-pilot subsystems remained on legacy hard-coded evidence after ARCH-RT-3.
+```
+
+Carry-forward from ARCH-RT-5:
+
+```text
+Six hard-coded Wave 1 card subsystems remained launch-classified legacy, not resolved.
+ARCH-RT-5B must complete or further classify the remaining card evidence estate.
+compile_manifest_ref must resolve to a real manifest file or governed estate index entry for any promoted compiled artefact.
+Inferred source_spec_ids are acceptable only if explicitly declared as inferred, not explicit canonical provenance.
+```
+
+Do not reopen these decisions.
+
+If repository evidence contradicts any inherited decision, STOP and report.
+
+## Current estate to resolve
+
+ARCH-RT-5 identified seven Wave 1 subsystems.
+
+One is already compiled:
+
+```text
+wave1_met_glycaemic_control
+```
+
+Six remained hard-coded legacy at ARCH-RT-5:
+
+```text
+wave1_cv_lipid_transport
+wave1_cv_homocysteine_pathway
+wave1_cv_vascular_strain
+wave1_met_insulin_metabolic
+wave1_liv_enzyme_pattern
+wave1_liv_processing_context
+```
+
+This sprint must resolve each of those six as one of:
+
+```text
+compiled_card_evidence
+contextual_evidence
+hidden_v1
 legacy_retained_with_justification
-blocked_pending_spec_extraction
+blocked_pending_provenance
+blocked_pending_medical_review
 ```
 
-Do not leave carry-forwards ambiguous.
-
-## Required internal milestones
-
-This sprint must be governed by these milestones.
-
-```text
-M1 — provenance + collision-safe packages
-M2 — card evidence estate
-M3 — hypothesis / root-cause estate
-M4 — PSI opt-in + runtime wiring
-M5 — launch gate
-```
-
-Do not run the launch gate until M1–M4 are complete or explicitly classified.
-
-## Required split criteria
-
-Split rather than smuggle scope if any milestone becomes too large for one governed package.
-
-Mandatory split triggers:
-
-* kb52c / batch JSON source resolution cannot be completed or classified.
-* package provenance cannot be resolved or classified.
-* compile manifest schema tightening causes broad validator fallout.
-* card evidence estate cannot be generated safely.
-* hypothesis/root-cause estate migration requires unresolved clinical/presentation adjudication.
-* PSI runtime wiring requires broader DTO/frontend/report changes than expected.
-* root-cause multi-frame policy requires broader compiler redesign.
-* launch audit cannot prove source → artefact → runtime → DTO → frontend traceability.
-
-If a split is required, STOP and report the proposed split boundary.
-
-## Scope
-
-Allowed scope:
-
-1. Tighten compile manifest schema and validator where required for launch-critical use.
-2. Create real compile manifest files or governed estate index entries where generated artefacts require them.
-3. Resolve or classify package provenance gaps.
-4. Resolve or classify kb52c / batch JSON packages.
-5. Regenerate or classify activation packages according to provenance policy.
-6. Complete or classify PSI coverage.
-7. Implement PSI runtime wiring only if required for launch-critical card/report claims.
-8. Generate card evidence artefacts for launch-included Wave 1 subsystems.
-9. Retire, bypass, or classify hard-coded card evidence by subsystem.
-10. Generate compiled hypothesis artefacts for launch-included root-cause pathways.
-11. Define and implement compiled hypothesis → runtime summary mapping where promoted.
-12. Add or update root-cause registry/compiler path where explicitly governed.
-13. Add fail-closed loader boundary tests.
-14. Produce active authority manifest.
-15. Produce launch-readiness audit.
-16. Produce research-to-runtime traceability audit.
-17. Add required Sentinel / regression guards where necessary for launch gate.
-18. Preserve prior fixes and pilot behaviour.
-
-## Explicit non-goals
-
-Do not:
-
-* change clinical thresholds
-* change reference ranges
-* change unit conversion policy
-* change biomarker canonicalisation policy
-* change scoring rails unless an explicit launch blocker proves they are structurally incompatible
-* change IDL copy/content unless required for safety mapping and explicitly documented
-* introduce fallback parsers
-* hide unresolved provenance by treating inferred IDs as explicit
-* remove legacy YAML without divergence/adjudication evidence
-* expose raw internal source trace strings to consumers
-
-## Milestone M1 — provenance + collision-safe packages
-
-M1 must address:
-
-* all active packages have `source_spec_id` or an explicit classification
-* activation_key is present or derivable according to ADR-RT-002
-* no silent `signal_id` collapse exists in active runtime
-* duplicate activation_key conflicts fail closed
-* kb52c / batch JSON packages are resolved or classified
-* architecture-doc-sourced packages are resolved or classified
-* compile_manifest_ref is real or the package is not launch-critical
-
-Required output:
-
-```text
-docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md
-```
-
-## Milestone M2 — card evidence estate
-
-M2 must address:
-
-* each launch-included Wave 1 subsystem is either:
-
-  * powered by compiled card evidence
-  * hidden_v1
-  * contextual_evidence only
-  * or explicitly legacy_retained with launch justification
-* hard-coded Python card evidence is not an unclassified active authority
-* bilirubin / total_bilirubin fix remains protected
-* raw internal source_trace is not shown directly to consumers
-* compile_manifest_ref resolves or is explicitly classified
-
-Required output:
-
-```text
-docs/audit-papers/ARCH-RT-5_M2_card_evidence_estate_audit.md
-```
-
-## Milestone M3 — hypothesis / root-cause estate
-
-M3 must address:
-
-* compiled hypothesis artefacts for promoted root-cause pathways
-* legacy YAML retained only where explicitly justified
-* divergence report for each promoted replacement or grouped evidence where safe
-* compiled hypothesis → `RootCauseHypothesisV1` presentation mapping
-* `physiological_claim` not used as direct retail summary text unless explicitly transformed
-* root-cause multi-frame policy defined before any multi-frame hypothesis path is promoted
-* shadow-only compiled hypotheses either promoted or classified
-
-Required output:
-
-```text
-docs/audit-papers/ARCH-RT-5_M3_hypothesis_root_cause_estate_audit.md
-```
-
-## Milestone M4 — PSI opt-in + runtime wiring
-
-M4 must address:
-
-* PSI remains signal-layer semantics only
-* PSI runtime wiring implemented only where required for launch-critical claims
-* PSI not used as hypothesis graph
-* PSI not used as card evidence authority directly
-* runtime joins use activation_key/source_spec_id/signal family as governed
-* DTO/frontend does not infer PSI semantics
-* PSI gaps classified
-
-Required output:
-
-```text
-docs/audit-papers/ARCH-RT-5_M4_psi_runtime_wiring_audit.md
-```
-
-If PSI is not required for launch-critical claims, explicitly document that and classify PSI wiring as deferred_non_launch_blocker.
-
-## Milestone M5 — launch gate
-
-M5 must produce:
-
-```text
-docs/audit-papers/day_one_architecture_launch_readiness_audit.md
-docs/audit-papers/research_to_runtime_traceability_audit.md
-docs/audit-papers/active_intelligence_authority_manifest.md
-```
-
-The launch gate must prove:
-
-* every user-facing clinical interpretation traces to research/source authority
-* compiled artefacts have manifest/provenance linkage or explicit classification
-* no raw research runtime reads
-* no frontend medical inference
-* no duplicate unclassified active authority
-* no unclassified legacy card evidence
-* no unclassified legacy root-cause authority
-* no unresolved silent signal collapse
-* PSI either runtime-consumed where needed or classified non-launch-critical
-* all carry-forwards are resolved or classified
-
-## Likely touched areas
-
-Final list must be established by hardening/preflight, but likely areas may include:
-
-```text
-knowledge_bus/schema/**/*
-knowledge_bus/compiled/**/*
-knowledge_bus/packages/**/*
-backend/core/knowledge/**/*
-backend/core/analytics/**/*
-backend/core/models/**/*
-backend/scripts/**/*
-backend/tests/**/*
-frontend/app/components/results/**/*
-frontend/app/types/**/*
-docs/audit-papers/**/*
-docs/architecture/**/*
-sentinel/**/*
-```
-
-Every touched file must be justified by milestone.
+No subsystem may remain unclassified.
 
 ## Authority preflight
 
 Before implementation, verify and report:
 
-1. current package count and provenance status
-2. current activation_key/runtime identity state
-3. current compile manifest schema and validator state
-4. current card evidence compiled artefacts
-5. current hard-coded card evidence remaining
-6. current compiled hypothesis artefacts
-7. current root-cause YAML and registry state
-8. current PSI artefacts and runtime usage
-9. current frontend render surface for card evidence
-10. current source trace display behaviour
-11. current Sentinel guards relevant to this architecture
-12. current test coverage for each milestone
-13. exact scope required to complete each milestone
+1. Current compiled card evidence artefacts.
+2. Current health system card evidence schema.
+3. Current card evidence loader.
+4. Current Wave 1 subsystem hard-coded definitions.
+5. Current DTO model for subsystem evidence.
+6. Current frontend component rendering subsystem evidence.
+7. Current estate index and compile manifest structure.
+8. Current source trace display behaviour.
+9. Current bilirubin / total_bilirubin regression tests.
+10. Current test coverage for ARCH-RT-3 compiled card evidence.
+11. Current package/source provenance for each marker in the six unresolved subsystems.
+12. Whether any unresolved subsystem requires PSI runtime to produce safe card evidence.
+13. Whether any unresolved subsystem requires root-cause/hypothesis output to produce safe card evidence.
 
-If preflight shows this sprint cannot safely cover all milestones, STOP and propose the split.
+If any authority path cannot be verified, STOP and report.
+
+## Mandatory internal checkpoint
+
+Before backend/DTO/frontend changes, complete and validate the compiled artefact/classification plan.
+
+Checkpoint requirements:
+
+1. Each of the six unresolved Wave 1 subsystems has a proposed classification.
+2. Any subsystem moving to compiled card evidence has a draft artefact.
+3. Draft artefacts validate against schema.
+4. Required compile_manifest_ref values are either real or explicitly classified.
+5. Required provenance is explicit or clearly marked inferred.
+6. No artefact reintroduces the bilirubin / total_bilirubin defect.
+7. No artefact depends on PSI runtime unless explicitly justified.
+
+If this checkpoint fails, STOP before implementation wiring.
+
+## Scope
+
+Allowed scope:
+
+1. Generate compiled card evidence artefacts for remaining Wave 1 subsystems where safe.
+2. Create real compile manifests for promoted card evidence artefacts.
+3. Update estate index for promoted card evidence artefacts.
+4. Extend or adjust card evidence schema only if required and backward-compatible.
+5. Extend loader/assembler only as needed to support multiple compiled subsystems.
+6. Preserve legacy hard-coded path only for classified retained subsystems.
+7. Update DTO/frontend only if required to handle estate-wide card evidence fields already designed in ARCH-RT-3.
+8. Produce card evidence estate audit.
+9. Produce required provenance classification for card-related sources/packages only.
+10. Add regression and boundary tests.
+
+## Required deliverables
+
+Create or update:
+
+```text
+knowledge_bus/compiled/health_system_cards/*.yaml
+knowledge_bus/compiled/manifests/*.yaml
+knowledge_bus/compiled/estate_index_v1.yaml
+docs/audit-papers/ARCH-RT-5B_card_evidence_estate_audit.md
+docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md
+docs/architecture/ARCH-RT-5B_card_evidence_estate_report.md
+```
+
+Implementation files may be updated only as required for:
+
+```text
+card evidence loader multi-subsystem support
+Wave 1 subsystem assembler compiled-path expansion
+DTO/front-end render-only support if required
+targeted tests
+```
+
+## Artefact requirements
+
+Each compiled card evidence artefact must:
+
+* validate against `health_system_card_evidence_schema_v1.yaml`
+* include one subsystem only
+* declare `domain_id`
+* declare `subsystem_id`
+* declare `visibility_tier`
+* include marker roles
+* include relationship kinds where available
+* include source/provenance status
+* include `compile_manifest_ref`
+* not use raw internal source trace as consumer-facing copy
+* not use PSI as direct card authority
+* not use root-cause/hypothesis text as card authority
+* not claim explicit `source_spec_id` where provenance is inferred
+* not include `total_bilirubin` as an independent required missing marker where `bilirubin` is canonical
+
+## Provenance requirements
+
+For each card artefact, classify source provenance as one of:
+
+```text
+explicit_source_spec_id
+source_document_derived
+package_manifest_inferred
+package_id_inferred
+legacy_retained_with_justification
+blocked_pending_spec_extraction
+blocked_pending_medical_review
+```
+
+If provenance is inferred, it must be explicitly declared as inferred.
+
+Do not treat inferred provenance as canonical explicit provenance.
+
+## Compile manifest requirements
+
+For every promoted compiled card artefact:
+
+* `compile_manifest_ref` must resolve to a real manifest file or governed estate index entry.
+* Manifest must include `compile_id`.
+* If `compile_run_id` exists, it must equal `compile_id`.
+* Manifest must include or explicitly classify:
+
+  * `activation_keys_emitted`
+  * `collisions_detected`
+  * `policy_version`
+* Any DRAFT permissiveness must be documented and justified.
+
+## Backend behaviour requirements
+
+If compiled evidence is promoted for a subsystem:
+
+* backend loader must load from compiled artefact path
+* invalid artefact must fail closed
+* assembler must route that subsystem through compiled path
+* non-promoted subsystems must either remain legacy with classification or be hidden/contextual
+* no raw investigation spec runtime reads
+* no role inference from marker id or marker name
+* no PSI runtime dependency unless justified
+
+## DTO/frontend requirements
+
+If touched:
+
+* DTO fields must remain backward-compatible
+* frontend must render backend-provided fields only
+* frontend must not infer clinical meaning
+* frontend must not display raw internal `source_trace`
+* consumer-facing wording must remain retail-safe
+* optional fields must be handled safely
+
+## Out of scope
+
+Do not:
+
+* perform hypothesis/root-cause runtime promotion
+* modify root-cause YAML
+* modify compiled hypothesis runtime behaviour
+* modify SignalRegistry
+* modify SignalEvaluator
+* implement PSI runtime wiring unless a STOP condition proves card evidence cannot proceed without it
+* perform full 186-package provenance backfill
+* modify investigation specs
+* modify package files unless hardening explicitly approves a narrow manifest-only change
+* modify biomarker SSOT
+* change scoring rails
+* change clinical thresholds
+* change unit conversion
+* add fallback parsers
+* expose raw source trace to consumers
+* commit helper scripts
 
 ## Required tests
 
-Run targeted tests for each touched area.
+At minimum:
 
-At minimum, where applicable:
+1. Schema validation for every promoted card artefact.
+2. Manifest resolution test for every promoted card artefact.
+3. Estate index test covering all Wave 1 subsystems.
+4. Loader success path for every promoted artefact.
+5. Loader fail-closed path for invalid artefact.
+6. Assembler test proving promoted subsystems use compiled path.
+7. Assembler test proving retained legacy subsystems remain classified and stable.
+8. Regression that `total_bilirubin` false-missing is not reintroduced.
+9. DTO serialisation tests if DTO touched.
+10. Frontend render-only tests if frontend touched.
+11. Test that raw internal source trace is not consumer-rendered.
+12. Test that frontend/backend does not infer marker roles from names.
 
-* compile manifest schema/validator tests
-* package provenance validation tests
-* SignalRegistry / activation_key regression tests
-* card evidence loader/schema/assembler/frontend tests
-* bilirubin regression tests
-* compiled hypothesis loader/schema/registry tests
-* root-cause compiler/report tests if runtime path changes
-* PSI loader/runtime wiring tests if PSI is wired
-* DTO serialisation tests
-* Sentinel tests if guards added
-* launch audit generation tests if scripted
-
-Do not rely only on narrow unit tests if runtime output contracts are changed.
+Run narrow tests first. Run broader tests if touched contracts require them.
 
 ## STOP conditions
 
-STOP if:
+STOP and report if:
 
-1. any required authority file is missing
-2. preflight shows full scope is too broad and needs split
-3. package provenance cannot be resolved or classified
-4. kb52c / batch JSON packages cannot be resolved or classified
-5. compile manifest schema cannot be tightened without unresolved ADR conflict
-6. card evidence estate cannot replace/classify hard-coded authority
-7. root-cause mapping from compiled hypothesis to runtime summary cannot be governed
-8. multi-frame root-cause selection remains unresolved for any promoted multi-frame path
-9. PSI wiring is needed but cannot be implemented safely
-10. launch audit cannot prove traceability
-11. frontend would need to infer medical meaning
-12. raw internal source_trace would be exposed to consumers
-13. regression coverage cannot prove prior fixes are preserved
-14. any carry-forward remains unclassified
+1. Required authority files are missing.
+2. Any of the six unresolved Wave 1 subsystems cannot be classified.
+3. Artefact validation fails.
+4. Compile manifest refs cannot resolve and cannot be explicitly classified.
+5. Provenance cannot be classified.
+6. Card evidence requires unresolved PSI runtime wiring.
+7. Card evidence requires root-cause/hypothesis text.
+8. Backend changes would require raw investigation spec runtime reads.
+9. Frontend changes would infer medical meaning.
+10. The bilirubin / total_bilirubin fix would be reintroduced.
+11. Scope expands into root-cause, PSI, SignalRegistry or full package backfill.
+12. Tests cannot prove compiled/legacy separation.
 
 ## Required reports
 
-Create/update the following:
+Create:
 
 ```text
-docs/audit-papers/ARCH-RT-5_M1_package_provenance_and_collision_audit.md
-docs/audit-papers/ARCH-RT-5_M2_card_evidence_estate_audit.md
-docs/audit-papers/ARCH-RT-5_M3_hypothesis_root_cause_estate_audit.md
-docs/audit-papers/ARCH-RT-5_M4_psi_runtime_wiring_audit.md
-docs/audit-papers/day_one_architecture_launch_readiness_audit.md
-docs/audit-papers/research_to_runtime_traceability_audit.md
-docs/audit-papers/active_intelligence_authority_manifest.md
-docs/architecture/ARCH-RT-5_full_regeneration_and_launch_gate_report.md
+docs/audit-papers/ARCH-RT-5B_card_evidence_estate_audit.md
+docs/audit-papers/ARCH-RT-5B_card_evidence_provenance_audit.md
+docs/architecture/ARCH-RT-5B_card_evidence_estate_report.md
 ```
 
-If sprint splits before completion, produce:
+The estate audit must include every Wave 1 subsystem and classify it.
 
-```text
-docs/architecture/ARCH-RT-5_split_recommendation.md
-```
+The provenance audit must classify every source/provenance dependency used for promoted card evidence.
 
-instead of incomplete launch-gate artefacts.
+The architecture report must include:
+
+* subsystems promoted
+* subsystems retained/classified
+* artefacts created
+* manifests created
+* estate index changes
+* backend changes
+* DTO/frontend changes, if any
+* tests run
+* remaining risks
+* carry-forwards
 
 ## Evidence required from Cursor
 
 Cursor must report:
 
-1. baseline branch/status/HEAD evidence
-2. authority preflight findings
-3. milestone-by-milestone implementation summary
-4. files changed by milestone
-5. tests run by milestone
-6. test results
-7. unresolved carry-forwards and their classification
-8. launch blockers found
-9. whether sprint completed or split
-10. confirmation that no raw research runtime reads were introduced
-11. confirmation that no frontend medical inference was introduced
-12. confirmation that no internal source trace strings are exposed to consumers
-13. confirmation that prior bilirubin/card/identity pilots remain protected
+1. Baseline branch/status/HEAD evidence.
+2. Authority preflight findings.
+3. Subsystem classification table.
+4. Internal checkpoint result.
+5. Files changed.
+6. Artefacts created/updated.
+7. Manifests created/updated.
+8. Estate index changes.
+9. Backend/DTO/frontend changes.
+10. Tests added/updated.
+11. Test commands run.
+12. Test results.
+13. Confirmation that bilirubin fix is preserved.
+14. Confirmation that no PSI/root-cause/SignalRegistry/SignalEvaluator work was included.
+15. Confirmation that no raw source trace is consumer-rendered.
+16. Confirmation that no helper scripts were committed.
 
 ## Closure requirements
 
@@ -513,30 +468,30 @@ Classify:
 
 Do not run finish unless:
 
-* current branch matches `work/ARCH-RT-5-full-regeneration-and-launch-gate`
-* all changed files are tied to a milestone
+* current branch matches `work/ARCH-RT-5B-card-evidence-estate-and-required-provenance`
+* all changed files are tied to this sprint
+* no package/spec/PSI/root-cause/SignalRegistry/SignalEvaluator files are changed unless explicitly approved by hardening
+* no helper scripts are included
 * no ambiguous stash exists
-* no helper scripts are committed unless explicitly in scope
-* no unresolved carry-forward is left unclassified
+* all six unresolved Wave 1 subsystems are classified
 * latest commit contains only in-scope work
 
 ## Success criteria
 
 This sprint is complete only if:
 
-1. M1 package provenance and collision-safe package evidence is complete.
-2. M2 card evidence estate evidence is complete.
-3. M3 hypothesis/root-cause estate evidence is complete.
-4. M4 PSI wiring/classification evidence is complete.
-5. M5 launch-readiness audit is complete.
-6. all carry-forwards are resolved or explicitly classified.
-7. no duplicate unclassified active authority remains.
-8. no raw research runtime reads exist.
-9. no frontend medical inference exists.
-10. no unresolved signal collapse exists.
-11. compile manifests/provenance are real or non-launch-critical exceptions are classified.
-12. prior WAVE1-EQUIV1, ARCH-RT-2, ARCH-RT-3 and ARCH-RT-4 protections remain intact.
-13. Automation Bus gate passes.
+1. All seven Wave 1 subsystems are classified.
+2. Promoted subsystems are powered by compiled governed card evidence.
+3. Retained/non-promoted subsystems are explicitly classified.
+4. No unclassified hard-coded card evidence remains.
+5. Required compile manifests resolve or are explicitly classified.
+6. Required provenance is explicit or clearly marked inferred.
+7. Bilirubin / total_bilirubin fix remains protected.
+8. Frontend remains render-only.
+9. Raw internal source trace is not consumer-rendered.
+10. No PSI/root-cause/SignalRegistry/SignalEvaluator work is included.
+11. Tests prove compiled/legacy separation and card estate classification.
+12. Automation Bus gate passes.
 
 ```
 ```

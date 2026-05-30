@@ -1067,6 +1067,20 @@ These items must be resolved before the day-one architecture can be declared ful
 - `compile_manifest_ref` remains pilot/manual only until real manifest linkage is implemented.
 - `source_spec_provenance: source_document_derived` remains acceptable for pilot only and is not canonical explicit provenance.
 
+### From ARCH-RT-5 — Launch Governance Gate
+
+- Follow-on sequence accepted:
+  - ARCH-RT-5B — card evidence estate
+  - ARCH-RT-5C — hypothesis runtime promotion
+  - ARCH-RT-5D — package provenance backfill
+  - ARCH-RT-5E — PSI runtime wiring if mandated
+- Six hard-coded Wave 1 card subsystems remain launch-classified legacy, not resolved.
+- ARCH-RT-5B must complete or further classify the remaining card evidence estate.
+- Compiled hypothesis runtime promotion must fail closed if `summary_template` is absent.
+- `physiological_claim` must not be used as fallback runtime summary text in promoted output.
+- Package provenance backfill and kb52c extraction remain unresolved and belong to ARCH-RT-5D.
+- PSI runtime wiring remains deferred unless mandated by a launch-critical claim.
+
 ## 6. Final note
 
 This is the fewest sensible sprint sequence currently recommended.
