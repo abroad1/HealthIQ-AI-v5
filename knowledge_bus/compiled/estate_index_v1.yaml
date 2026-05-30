@@ -1,0 +1,31 @@
+schema_version: "1.0.0"
+estate_id: healthiq_launch_estate_v1
+updated_at_utc: "2026-05-30T08:00:00Z"
+authority: "ARCH-RT-5"
+
+card_evidence_artefacts:
+  - subsystem_id: wave1_met_glycaemic_control
+    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml
+    compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt3_glycaemic_card_evidence.yaml
+    launch_classification: launch_included_compiled
+
+compiled_hypothesis_artefacts:
+  - signal_id: signal_vitamin_d_low
+    activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
+    artefact_path: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml
+    compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml
+    runtime_authority: shadow_only
+    launch_classification: pilot_shadow_retained
+
+wave1_subsystems_legacy_hard_coded:
+  subsystem_ids:
+    - wave1_cv_lipid_transport
+    - wave1_cv_homocysteine_pathway
+    - wave1_cv_vascular_strain
+    - wave1_met_insulin_metabolic
+    - wave1_liv_enzyme_pattern
+    - wave1_liv_processing_context
+  launch_classification: legacy_retained_with_justification
+
+package_provenance_policy_ref: docs/architecture/package_provenance_policy.md
+compile_manifest_schema_ref: knowledge_bus/schema/compile_manifest_schema_v1.yaml

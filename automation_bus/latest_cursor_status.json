@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-RT-4-compiled-hypothesis-root-cause-slice",
+  "branch": "work/ARCH-RT-5-full-regeneration-and-launch-gate",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-30T07:31:23Z",
-  "cursor_started_utc": "2026-05-30T07:28:51Z",
-  "head_sha": "00a585c86574172ebd4b1a84f2b892589bf77e41",
+  "cursor_started_utc": "2026-05-30T07:49:41Z",
+  "head_sha": "688a7389e64aae32d59282b577ff320221c3c5c9",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-4_compiled_hypothesis_root_cause_slice"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-RT-5_full_regeneration_and_launch_gate"
 }

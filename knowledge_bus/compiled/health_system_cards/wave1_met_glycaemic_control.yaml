@@ -6,7 +6,7 @@ subsystem_label: Glycaemic control
 visibility_tier: scored_subsystem
 source_spec_ids:
   - inv_hba1c_high_glycaemia_v1
-compile_manifest_ref: arch-rt-3-pilot-glycaemic-manual-001
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt3_glycaemic_card_evidence.yaml
 missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
 mechanism_line: Fasting glucose and HbA1c together describe glycaemic load on this panel.
 markers:

@@ -35,6 +35,7 @@ class CompiledHypothesisRow:
     contradiction_markers: Tuple[str, ...]
     caveats: Tuple[str, ...]
     confirmatory_tests: Tuple[str, ...]
+    summary_template: Optional[str] = None
     legacy_hypothesis_id: Optional[str] = None
 
 
@@ -125,6 +126,9 @@ def validate_compiled_hypothesis_payload(payload: Mapping[str, Any], *, path: st
                 v = row.get(req)
                 if not isinstance(v, str) or not str(v).strip():
                     _err(errors, f"hypotheses[{idx}].{req} required")
+            summary = row.get("summary_template")
+            if summary is not None and (not isinstance(summary, str) or not summary.strip()):
+                _err(errors, f"hypotheses[{idx}].summary_template must be non-empty when present")
             strength = row.get("evidence_strength")
             if strength not in _EVIDENCE_STRENGTH:
                 _err(errors, f"hypotheses[{idx}].evidence_strength invalid")
@@ -166,6 +170,9 @@ def parse_compiled_hypothesis_payload(payload: Mapping[str, Any]) -> CompiledHyp
                 physiological_claim=str(row["physiological_claim"]).strip(),
                 evidence_strength=str(row["evidence_strength"]).strip(),
                 missing_data_policy=str(row["missing_data_policy"]).strip(),
+                summary_template=(
+                    str(row["summary_template"]).strip() if row.get("summary_template") else None
+                ),
                 evidence_for=tuple(str(x).strip() for x in (row.get("evidence_for") or [])),
                 evidence_against=tuple(str(x).strip() for x in (row.get("evidence_against") or [])),
                 contradiction_markers=tuple(
@@ -237,6 +244,16 @@ def validate_confirmatory_test_refs(artefact: CompiledHypothesisArtefact) -> Non
             )
 
 
+def runtime_summary_for_hypothesis(row: CompiledHypothesisRow) -> str:
+    """
+    ARCH-RT-5 presentation mapping: summary_template is runtime wording;
+    physiological_claim is governed clinical reasoning (not direct retail text).
+    """
+    if row.summary_template and row.summary_template.strip():
+        return row.summary_template.strip()[:200]
+    return row.physiological_claim.strip()[:200]
+
+
 def artefact_as_shadow_dict(artefact: CompiledHypothesisArtefact) -> Dict[str, Any]:
     """Shadow payload shape for registry comparison (not legacy v1 YAML schema)."""
     return {
@@ -252,6 +269,8 @@ def artefact_as_shadow_dict(artefact: CompiledHypothesisArtefact) -> Dict[str, A
                 "hypothesis_id": h.hypothesis_id,
                 "title": h.title,
                 "physiological_claim": h.physiological_claim,
+                "summary_template": h.summary_template,
+                "runtime_summary": runtime_summary_for_hypothesis(h),
                 "evidence_strength": h.evidence_strength,
                 "evidence_for": list(h.evidence_for),
                 "evidence_against": list(h.evidence_against),

@@ -1,0 +1,28 @@
+compile_id: arch-rt-4-vitamin-d-hypothesis-001
+compile_run_id: arch-rt-4-vitamin-d-hypothesis-001
+compiler_name: hypothesis_compile_pilot_v1
+compiler_version: 1.0.0
+compile_mode: hypothesis
+source_contract_version: 3.0.0
+source_specs:
+  - source_spec_id: inv_vitamin_d_low_deficiency
+    source_path: knowledge_bus/research/investigation_specs/inv_vitamin_d_low_deficiency_v1.yaml
+    source_hash: pending_inventory_refresh
+    source_hash_algorithm: sha256
+outputs:
+  - output_type: compiled_hypothesis
+    output_path: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml
+    output_hash: pending_inventory_refresh
+    output_hash_algorithm: sha256
+    signal_id: signal_vitamin_d_low
+    activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
+    source_spec_id: inv_vitamin_d_low_deficiency
+translation_rules_version: 1.0.0
+compiled_at_utc: "2026-05-30T08:00:00Z"
+compiled_by: arch-rt-5-estate-linkage
+provenance_status: pilot_evidence_only
+policy_version: ADR-RT-004-v1
+activation_keys_emitted:
+  - signal_vitamin_d_low::inv_vitamin_d_low_deficiency
+collisions_detected: []
+estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml

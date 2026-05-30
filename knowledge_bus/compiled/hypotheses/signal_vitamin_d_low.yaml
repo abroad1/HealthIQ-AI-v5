@@ -7,12 +7,15 @@ source_spec_ids:
   - inv_vitamin_d_low_deficiency
 source_spec_provenance: source_document_derived
 source_document: knowledge_bus/research/investigation_specs/inv_vitamin_d_low_deficiency_v1.yaml
-compile_manifest_ref: arch-rt-4-pilot-vitamin-d-manual-001
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml
 hypotheses:
   - hypothesis_id: vitamin_d_nutritional_status_context_v1
     legacy_hypothesis_id: vitamin_d_nutritional_status_context_v1
     rank: 1
     title: Low 25-hydroxyvitamin D (nutritional status) context
+    summary_template: >
+      25-hydroxyvitamin D is low relative to the lab reference on this panel, consistent with a
+      nutritional sufficiency context worth clarifying on follow-up testing.
     physiological_claim: >
       Vitamin D is converted to its active form (1,25-OH) in the kidneys, where it promotes
       calcium and phosphate absorption.

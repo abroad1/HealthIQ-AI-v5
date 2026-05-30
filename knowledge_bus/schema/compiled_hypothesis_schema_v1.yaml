@@ -81,6 +81,7 @@ hypothesis_required_fields:
   - missing_data_policy
 
 hypothesis_optional_fields:
+  - summary_template
   - evidence_for
   - evidence_against
   - contradiction_markers
@@ -101,6 +102,10 @@ hypothesis_field_rules:
   title:
     type: string
     min_length: 1
+
+  summary_template:
+    type: string
+    description: Presentation-safe runtime summary; must not substitute for physiological_claim in governance.
 
   physiological_claim:
     type: string
