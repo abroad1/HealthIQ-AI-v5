@@ -63,7 +63,19 @@ def _validate_source_spec(item: Any, index: int, errors: list[str]) -> None:
         errors.append(f"source_specs[{index}] unsupported source_hash_algorithm: {algo}")
 
 
-def _validate_output(item: Any, index: int, errors: list[str], compile_mode: str) -> None:
+def _output_type_enum(schema: dict[str, Any]) -> list[str]:
+    rules = (schema.get("output_field_rules") or {}).get("output_type") or {}
+    return list(rules.get("enum") or [])
+
+
+def _validate_output(
+    item: Any,
+    index: int,
+    errors: list[str],
+    compile_mode: str,
+    *,
+    output_type_enum: list[str] | None = None,
+) -> None:
     if not isinstance(item, dict):
         errors.append(f"outputs[{index}] must be a map")
         return
@@ -71,6 +83,15 @@ def _validate_output(item: Any, index: int, errors: list[str], compile_mode: str
         if key not in item:
             errors.append(f"outputs[{index}] missing {key}")
     out_type = item.get("output_type")
+    if (
+        output_type_enum
+        and isinstance(out_type, str)
+        and out_type not in output_type_enum
+        and compile_mode in ("card_evidence", "hypothesis", "estate_index", "pilot")
+    ):
+        errors.append(
+            f"outputs[{index}] output_type '{out_type}' not in schema enum {output_type_enum}"
+        )
     if compile_mode == "activation" and out_type in (
         "signal_library",
         "research_brief",
@@ -103,6 +124,14 @@ def validate_compile_manifest(manifest: dict[str, Any], schema: dict[str, Any]) 
         enum=(schema.get("field_rules") or {}).get("compile_mode", {}).get("enum"),
     )
     _require_str(manifest, "compile_id", errors)
+    compile_id = manifest.get("compile_id")
+    compile_run_id = manifest.get("compile_run_id")
+    if isinstance(compile_run_id, str) and compile_run_id.strip():
+        if not isinstance(compile_id, str) or compile_run_id.strip() != compile_id.strip():
+            errors.append(
+                f"compile_run_id must equal compile_id when present; "
+                f"got compile_run_id={compile_run_id!r} compile_id={compile_id!r}"
+            )
     _require_str(manifest, "compiler_name", errors)
     _require_str(manifest, "compiler_version", errors)
     _require_str(
@@ -137,8 +166,15 @@ def validate_compile_manifest(manifest: dict[str, Any], schema: dict[str, Any]) 
     if not isinstance(outputs, list) or not outputs:
         errors.append("outputs must be a non-empty list")
     elif isinstance(outputs, list) and isinstance(compile_mode, str):
+        output_enum = _output_type_enum(schema)
         for idx, item in enumerate(outputs):
-            _validate_output(item, idx, errors, compile_mode)
+            _validate_output(
+                item,
+                idx,
+                errors,
+                compile_mode,
+                output_type_enum=output_enum,
+            )
 
     return errors
 

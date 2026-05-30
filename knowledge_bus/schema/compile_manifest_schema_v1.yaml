@@ -1,7 +1,7 @@
 schema_name: "HealthIQ Compile Manifest"
 schema_version: "1.0.0"
 status: "DRAFT"
-authority: "ADR-RT-004, ARCH-RT-1"
+authority: "ADR-RT-004, ARCH-RT-1, ARCH-RT-5D"
 
 description: >
   Deterministic schema for compile_manifest.yaml emitted by governed Knowledge Bus
@@ -177,7 +177,9 @@ output_field_rules:
       - package_manifest
       - promoted_signal_intelligence
       - hypothesis_artefact
+      - compiled_hypothesis
       - card_evidence_artefact
+      - health_system_card_evidence
       - compile_estate_index
     description: Artefact class emitted.
 
@@ -213,6 +215,12 @@ output_field_rules:
     type: string
     pattern: '^[a-z][a-z0-9_]*$'
     description: Required for research-derived activation outputs.
+
+launch_relevant_manifest_rules:
+  description: >
+    Launch-relevant manifests (card evidence, hypothesis pilots) must set compile_run_id
+    equal to compile_id when compile_run_id is present, and use real sha256 hashes.
+  compile_run_id_must_equal_compile_id: true
 
 validator_results_rules:
   type: list

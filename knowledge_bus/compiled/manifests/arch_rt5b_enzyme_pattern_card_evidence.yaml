@@ -1,30 +1,30 @@
-compile_id: arch-rt-5b-enzyme-pattern-card-evidence-001
-compile_run_id: arch-rt-5b-enzyme-pattern-card-evidence-001
-compiler_name: card_evidence_compile_pilot_v1
-compiler_version: 1.0.0
-compile_mode: card_evidence
-source_contract_version: 1.0.0
-source_specs:
-  - source_spec_id: inv_alt_high_hepatocellular_injury_v1
-    source_path: knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml
-    source_hash: pending_inventory_refresh
-    source_hash_algorithm: sha256
-  - source_spec_id: inv_ggt_high_hepatic
-    source_path: knowledge_bus/research/investigation_specs/inv_ggt_high_hepatic.yaml
-    source_hash: pending_inventory_refresh
-    source_hash_algorithm: sha256
-outputs:
-  - output_type: health_system_card_evidence
-    output_path: knowledge_bus/compiled/health_system_cards/wave1_liv_enzyme_pattern.yaml
-    output_hash: pending_inventory_refresh
-    output_hash_algorithm: sha256
-    subsystem_id: wave1_liv_enzyme_pattern
-    domain_id: wave1_liver
-translation_rules_version: 1.0.0
-compiled_at_utc: "2026-05-30T08:20:00Z"
-compiled_by: arch-rt-5b-estate-promotion
-provenance_status: pilot_evidence_only
-policy_version: ADR-RT-004-v1
 activation_keys_emitted: []
 collisions_detected: []
+compile_id: arch-rt-5b-enzyme-pattern-card-evidence-001
+compile_mode: card_evidence
+compile_run_id: arch-rt-5b-enzyme-pattern-card-evidence-001
+compiled_at_utc: '2026-05-30T08:20:00Z'
+compiled_by: arch-rt-5b-estate-promotion
+compiler_name: card_evidence_compile_pilot_v1
+compiler_version: 1.0.0
 estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml
+outputs:
+- domain_id: wave1_liver
+  output_hash: a1b29738481cb552c2dcc681bd102a73f2ce342f59ff8ea4881d57163e10daa8
+  output_hash_algorithm: sha256
+  output_path: knowledge_bus/compiled/health_system_cards/wave1_liv_enzyme_pattern.yaml
+  output_type: health_system_card_evidence
+  subsystem_id: wave1_liv_enzyme_pattern
+policy_version: ADR-RT-004-v1
+provenance_status: pilot_evidence_only
+source_contract_version: 1.0.0
+source_specs:
+- source_hash: 7189a0761558937d4dd4397e823bbe06c7bee0b13ef9bbe0b3afc70a73b7413a
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml
+  source_spec_id: inv_alt_high_hepatocellular_injury_v1
+- source_hash: 3e2cc6cf074dcb73b825e9a97fe93b43c4f50dc874a0c85cbaa34b754d46c8a1
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/inv_ggt_high_hepatic.yaml
+  source_spec_id: inv_ggt_high_hepatic
+translation_rules_version: 1.0.0

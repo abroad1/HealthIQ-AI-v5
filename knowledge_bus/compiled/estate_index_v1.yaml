@@ -1,7 +1,9 @@
 schema_version: "1.0.0"
 estate_id: healthiq_launch_estate_v1
-updated_at_utc: "2026-05-30T08:20:00Z"
-authority: "ARCH-RT-5B"
+updated_at_utc: "2026-05-30T09:30:00Z"
+authority: "ARCH-RT-5D"
+provenance_audit_ref: docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md
+compile_manifest_hash_status: refreshed_arch_rt5d
 
 card_evidence_artefacts:
   - subsystem_id: wave1_met_glycaemic_control

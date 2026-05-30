@@ -1,26 +1,26 @@
-compile_id: arch-rt-5b-homocysteine-pathway-card-evidence-001
-compile_run_id: arch-rt-5b-homocysteine-pathway-card-evidence-001
-compiler_name: card_evidence_compile_pilot_v1
-compiler_version: 1.0.0
-compile_mode: card_evidence
-source_contract_version: 1.0.0
-source_specs:
-  - source_spec_id: inv_homocysteine_high_metabolic
-    source_path: knowledge_bus/research/investigation_specs/inv_homocysteine_high_metabolic.yaml
-    source_hash: pending_inventory_refresh
-    source_hash_algorithm: sha256
-outputs:
-  - output_type: health_system_card_evidence
-    output_path: knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml
-    output_hash: pending_inventory_refresh
-    output_hash_algorithm: sha256
-    subsystem_id: wave1_cv_homocysteine_pathway
-    domain_id: wave1_cardiovascular
-translation_rules_version: 1.0.0
-compiled_at_utc: "2026-05-30T08:20:00Z"
-compiled_by: arch-rt-5b-estate-promotion
-provenance_status: pilot_evidence_only
-policy_version: ADR-RT-004-v1
 activation_keys_emitted: []
 collisions_detected: []
+compile_id: arch-rt-5b-homocysteine-pathway-card-evidence-001
+compile_mode: card_evidence
+compile_run_id: arch-rt-5b-homocysteine-pathway-card-evidence-001
+compiled_at_utc: '2026-05-30T08:20:00Z'
+compiled_by: arch-rt-5b-estate-promotion
+compiler_name: card_evidence_compile_pilot_v1
+compiler_version: 1.0.0
 estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml
+outputs:
+- domain_id: wave1_cardiovascular
+  output_hash: d8620ac5b88e983f832b78ee3b7e9fce723c9aa5e3a664144137ed1f3a65d14b
+  output_hash_algorithm: sha256
+  output_path: knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml
+  output_type: health_system_card_evidence
+  subsystem_id: wave1_cv_homocysteine_pathway
+policy_version: ADR-RT-004-v1
+provenance_status: pilot_evidence_only
+source_contract_version: 1.0.0
+source_specs:
+- source_hash: fd85f0b02ef9d322f45d135aeaf65dabd2e727f5161f77a0d5071eecec0ce965
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/inv_homocysteine_high_metabolic.yaml
+  source_spec_id: inv_homocysteine_high_metabolic
+translation_rules_version: 1.0.0

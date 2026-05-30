@@ -1,26 +1,26 @@
-compile_id: arch-rt-3-glycaemic-card-evidence-001
-compile_run_id: arch-rt-3-glycaemic-card-evidence-001
-compiler_name: card_evidence_compile_pilot_v1
-compiler_version: 1.0.0
-compile_mode: card_evidence
-source_contract_version: 1.0.0
-source_specs:
-  - source_spec_id: inv_hba1c_high_glycaemia_v1
-    source_path: knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemia_v1.yaml
-    source_hash: pending_inventory_refresh
-    source_hash_algorithm: sha256
-outputs:
-  - output_type: health_system_card_evidence
-    output_path: knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml
-    output_hash: pending_inventory_refresh
-    output_hash_algorithm: sha256
-    subsystem_id: wave1_met_glycaemic_control
-    domain_id: wave1_blood_sugar
-translation_rules_version: 1.0.0
-compiled_at_utc: "2026-05-30T08:00:00Z"
-compiled_by: arch-rt-5-estate-linkage
-provenance_status: pilot_evidence_only
-policy_version: ADR-RT-004-v1
 activation_keys_emitted: []
 collisions_detected: []
+compile_id: arch-rt-3-glycaemic-card-evidence-001
+compile_mode: card_evidence
+compile_run_id: arch-rt-3-glycaemic-card-evidence-001
+compiled_at_utc: '2026-05-30T08:00:00Z'
+compiled_by: arch-rt-5-estate-linkage
+compiler_name: card_evidence_compile_pilot_v1
+compiler_version: 1.0.0
 estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml
+outputs:
+- domain_id: wave1_blood_sugar
+  output_hash: 06b3f317dbbbfc84b3a3a073f087eae826499618cabd43296a83cf430f08f75c
+  output_hash_algorithm: sha256
+  output_path: knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml
+  output_type: health_system_card_evidence
+  subsystem_id: wave1_met_glycaemic_control
+policy_version: ADR-RT-004-v1
+provenance_status: pilot_evidence_only
+source_contract_version: 1.0.0
+source_specs:
+- source_hash: 2cfa335debba2f430c12e2f0605823b9752a3ad78389f32a7d978b8286501247
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemia_v1.yaml
+  source_spec_id: inv_hba1c_high_glycaemia_v1
+translation_rules_version: 1.0.0

@@ -1,38 +1,38 @@
-compile_id: arch-rt-5b-lipid-transport-card-evidence-001
-compile_run_id: arch-rt-5b-lipid-transport-card-evidence-001
-compiler_name: card_evidence_compile_pilot_v1
-compiler_version: 1.0.0
-compile_mode: card_evidence
-source_contract_version: 1.0.0
-source_specs:
-  - source_spec_id: inv_ldl_high_dyslipidaemia_v1
-    source_path: knowledge_bus/research/investigation_specs/inv_ldl_high_dyslipidaemia_v1.yaml
-    source_hash: pending_inventory_refresh
-    source_hash_algorithm: sha256
-  - source_spec_id: inv_hdl_high_cardiovascular
-    source_path: knowledge_bus/research/investigation_specs/inv_hdl_high_cardiovascular.yaml
-    source_hash: pending_inventory_refresh
-    source_hash_algorithm: sha256
-  - source_spec_id: inv_hdl_low_cardiovascular
-    source_path: knowledge_bus/research/investigation_specs/inv_hdl_low_cardiovascular.yaml
-    source_hash: pending_inventory_refresh
-    source_hash_algorithm: sha256
-  - source_spec_id: inv_triglycerides_high_metabolic_v1
-    source_path: knowledge_bus/research/investigation_specs/inv_triglycerides_high_metabolic_v1.yaml
-    source_hash: pending_inventory_refresh
-    source_hash_algorithm: sha256
-outputs:
-  - output_type: health_system_card_evidence
-    output_path: knowledge_bus/compiled/health_system_cards/wave1_cv_lipid_transport.yaml
-    output_hash: pending_inventory_refresh
-    output_hash_algorithm: sha256
-    subsystem_id: wave1_cv_lipid_transport
-    domain_id: wave1_cardiovascular
-translation_rules_version: 1.0.0
-compiled_at_utc: "2026-05-30T08:20:00Z"
-compiled_by: arch-rt-5b-estate-promotion
-provenance_status: pilot_evidence_only
-policy_version: ADR-RT-004-v1
 activation_keys_emitted: []
 collisions_detected: []
+compile_id: arch-rt-5b-lipid-transport-card-evidence-001
+compile_mode: card_evidence
+compile_run_id: arch-rt-5b-lipid-transport-card-evidence-001
+compiled_at_utc: '2026-05-30T08:20:00Z'
+compiled_by: arch-rt-5b-estate-promotion
+compiler_name: card_evidence_compile_pilot_v1
+compiler_version: 1.0.0
 estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml
+outputs:
+- domain_id: wave1_cardiovascular
+  output_hash: 45f9b9bdc2d44438818d254115f2b9e39f11ace1054e7a7819718481650f0364
+  output_hash_algorithm: sha256
+  output_path: knowledge_bus/compiled/health_system_cards/wave1_cv_lipid_transport.yaml
+  output_type: health_system_card_evidence
+  subsystem_id: wave1_cv_lipid_transport
+policy_version: ADR-RT-004-v1
+provenance_status: pilot_evidence_only
+source_contract_version: 1.0.0
+source_specs:
+- source_hash: c5b9045b827c758676e33e925899b7cfefae57fffff5ceef6c04ffdec675b989
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/inv_ldl_high_dyslipidaemia_v1.yaml
+  source_spec_id: inv_ldl_high_dyslipidaemia_v1
+- source_hash: 5c8ec0887327438154b8ef19b9a41de5b78fa68eb018b4b6edd7604fbbb3783c
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/inv_hdl_high_cardiovascular.yaml
+  source_spec_id: inv_hdl_high_cardiovascular
+- source_hash: d4f6124ea701bcba2d57055441d8c81eee1ac3c6c3cc9e6df5b808827d2ae8c0
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/inv_hdl_low_cardiovascular.yaml
+  source_spec_id: inv_hdl_low_cardiovascular
+- source_hash: fe41f9abacc9f2bdb98ed58bd894bcada0f6b2fc35f4e0f48faf1f82802e6986
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/inv_triglycerides_high_metabolic_v1.yaml
+  source_spec_id: inv_triglycerides_high_metabolic_v1
+translation_rules_version: 1.0.0
