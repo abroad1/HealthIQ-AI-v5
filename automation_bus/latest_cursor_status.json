@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-RT-5C-hypothesis-runtime-promotion",
+  "branch": "work/ARCH-RT-5D-package-provenance-backfill",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-30T08:48:49Z",
-  "cursor_started_utc": "2026-05-30T08:45:03Z",
-  "head_sha": "795831b26c5e171120446affbcbcd85c2bf8dc37",
+  "cursor_started_utc": "2026-05-30T09:28:50Z",
+  "head_sha": "088f9aab1cf283726317150599aef210a73af488",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-5C_hypothesis_runtime_promotion"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-RT-5D_package_provenance_backfill"
 }
