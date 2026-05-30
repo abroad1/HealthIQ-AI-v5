@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-RT-5C-hypothesis-runtime-promotion",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-30T08:48:49Z",
   "cursor_started_utc": "2026-05-30T08:45:03Z",
-  "head_sha": "92ba099cde6c2486613752880e90463210de1a5b",
+  "head_sha": "795831b26c5e171120446affbcbcd85c2bf8dc37",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-RT-5C_hypothesis_runtime_promotion"
 }
