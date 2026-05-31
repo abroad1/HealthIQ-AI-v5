@@ -1,10 +1,9 @@
 {
-  "branch": "work/MED-REV-2-wave1-domain-card-copy-alignment-and-result-regeneration-ux",
+  "branch": "work/KB-UTIL-1-pass3-card-evidence-compile-and-consume",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-31T09:30:05Z",
-  "cursor_started_utc": "2026-05-31T09:24:38Z",
-  "head_sha": "59ae41378e42d38f9529b36d73343d6caf6ad95c",
+  "cursor_started_utc": "2026-05-31T10:12:23Z",
+  "head_sha": "3a6e7ae3f114dec9fe83589e3bbf2b45235748c3",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux"
+  "status": "IN_PROGRESS",
+  "work_id": "KB-UTIL-1_pass3_card_evidence_compile_and_consume"
 }
