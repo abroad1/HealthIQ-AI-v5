@@ -1,33 +1,32 @@
 ---
-work_id: KB-UTIL-1_pass3_card_evidence_compile_and_consume
-branch: work/KB-UTIL-1-pass3-card-evidence-compile-and-consume
+work_id: LAYER-B-1_narrative_brief_maturity
+branch: work/LAYER-B-1-narrative-brief-maturity
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# KB-UTIL-1 — Pass 3 Card Evidence Compile and Consume
+# LAYER-B-1 — Narrative Brief Maturity
 
 ## Purpose
 
-Now that MED-REV-1 and MED-REV-2 have stabilised the visible Wave 1 subsystem model, begin using the richer Pass 3 / package medical intelligence properly in the Health Systems Card evidence layer.
+Build the governed Layer B narrative brief needed to turn HealthIQ’s deterministic analysis into a coherent, ordered, auditable health report.
 
-The consolidation audits concluded that Pass 3 and package intelligence is only partially utilised. Signal activation uses governed packages, but much of the richer medical intelligence remains stranded:
+MED-REV-1, MED-REV-2 and KB-UTIL-1 have stabilised the visible Wave 1 medical model and enriched the card evidence. The remaining report problem is that the application still does not consistently produce a single coherent narrative plan across:
 
 ```text
-- hypotheses
-- contradiction markers
-- relationship_kind
-- marker role/rationale detail
-- mechanism prose
-- missing-data policy
-- confirmatory test rationale
-- explanation.* fields
+- primary finding
+- why it matters
+- confidence
+- supporting evidence
+- missing evidence
+- health system context
+- next steps
 ````
 
-This sprint must compile and consume relevant Pass 3 / package richness into governed Layer B card/subsystem DTO fields.
+This sprint must mature the Layer B narrative brief. It must not wire LLM narrative generation yet.
 
-It must not introduce raw Pass 3 runtime reads.
+The goal is to create a governed structured brief that a deterministic renderer or future LLM translation layer can safely consume.
 
 ## Baseline requirement
 
@@ -37,9 +36,11 @@ Expected prior completed work:
 
 ```text
 ARCH-RT programme fully merged through ARCH-RT-6
+LAUNCH-CORE-5 merged
 MED-REV-1 merged
 MED-REV-2 merged
-LAUNCH-CORE carry-forward register created
+KB-UTIL-1 merged
+docs/sprints/launch_core_carry_forward_register.md present and updated
 ```
 
 Before creating or switching branch, run and report:
@@ -57,7 +58,7 @@ STOP if:
 * current branch is not `main`
 * local `main` does not equal `origin/main`
 * working tree is not clean
-* MED-REV-2 is not merged
+* KB-UTIL-1 is not merged
 * `docs/sprints/launch_core_carry_forward_register.md` is missing
 * untracked or uncommitted files are present
 
@@ -71,7 +72,7 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This sprint may touch Knowledge Bus compiled card artefacts, package-to-card evidence compilation, Layer B card evidence DTOs, health system card assembly, validators and tests. It affects user-facing medical explanation and must remain strictly governed.
+This sprint may touch Layer B narrative payload contracts, narrative payload builders, report assembly, deterministic narrative surfaces, validation rules and tests. It affects user-facing health interpretation and future LLM readiness.
 
 ## Standard rules
 
@@ -79,7 +80,7 @@ This work remains governed by the standard Knowledge Bus and Automation Bus SOPs
 
 Do not re-read SOPs unless the applicable governance requirement cannot be located.
 
-## Required carry-forward register handling
+## Carry-forward register handling
 
 Before implementation, read:
 
@@ -91,7 +92,13 @@ If this sprint resolves any carry-forward, update the register.
 
 If this sprint creates new carry-forwards, add them to the register.
 
-Do not let sprint-level carry-forwards remain only in chat, reports, or audit summaries.
+Pay particular attention to:
+
+```text
+CF-KBUTIL1-002 — Hypothesis, contradiction marker and confirmatory test surfacing
+```
+
+This sprint may prepare the narrative brief structure needed for that future surfacing, but it must not expose unsafe hypothesis/contradiction/confirmatory-test content unless explicitly governed and tested.
 
 ## Authoritative inputs
 
@@ -100,28 +107,30 @@ Read these sprint-specific files before making changes:
 ```text
 docs/sprints/launch_core_carry_forward_register.md
 docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md
-docs/audit-papers/PASS3_research_asset_utilisation_investigation_cursor.md
-docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md
-docs/audit-papers/healthiq_wave1_health_systems_subsystem_medical_review.md
-docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md
+docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md
 docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md
-docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md
-docs/audit-papers/active_intelligence_authority_manifest.md
+docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md
+docs/audit-papers/LAUNCH-CORE-4_results_page_narrative_hierarchy_and_score_rationalisation_audit.md
+docs/audit-papers/LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation_report.md
+docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md
+docs/planning-papers/healthiq_pre_sprint3_closure_pack_FINAL.md
+docs/architecture/ADR_WP2_layer_b_layer_c_contract_path_b.md
+docs/intelligence/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md
 backend/scripts/validate_day_one_architecture.py
 ```
 
 Also inspect as implementation authority:
 
 ```text
-knowledge_bus/research/investigation_specs/multi_llm_research/*_Pass_3.json
-knowledge_bus/packages/**
-knowledge_bus/compiled/health_system_cards/*.yaml
-knowledge_bus/compiled/estate_index_v1.yaml
-backend/core/knowledge/health_system_card_evidence.py
-backend/core/analytics/wave1_subsystem_evidence.py
+backend/core/contracts/narrative_payload_v1.py
+backend/core/analytics/narrative_payload_builder_v1.py
+backend/core/analytics/domain_narrative_wave1.py
+backend/core/analytics/report_compiler_v1.py
 backend/core/analytics/domain_score_assembler.py
-frontend/app/components/results/Wave1DomainCards.tsx
-frontend/app/components/results/Wave1SubsystemEvidenceSection.tsx
+backend/core/llm/validator_v2.py
+backend/core/models/results.py
+frontend/app/(app)/results/page.tsx
+frontend/app/components/results/*
 frontend/app/types/analysis.ts
 ```
 
@@ -129,89 +138,98 @@ If paths differ, locate and report the actual paths.
 
 ## Problem statement
 
-Programme consolidation found:
+The current system has many useful deterministic outputs, but the report-level narrative is still not sufficiently governed.
+
+Known issues:
 
 ```text
-Pass 3 → packages:
-- moderate utilisation for signal activation
-- limited utilisation for rich explanatory intelligence
-
-Packages → runtime:
-- activation and overrides are used
-- explanation.* is stored but largely not consumed by cards/reports
-- relationship_kind is not consumed
-- contradiction markers and hypothesis ranking are not surfaced
-- SubsystemEvidenceV1.evidence_role is usually null
+1. Multiple surfaces can still compete to explain the same lead finding.
+2. The page can expose too many score families without a clear precedence model.
+3. Primary finding, health system cards, patterns and marker evidence are not always governed by one shared narrative plan.
+4. Layer B does not yet produce a complete narrative brief with section-specific intent, evidence boundaries and wording constraints.
+5. LLM translation cannot safely proceed until this brief exists.
 ```
 
-The Health Systems Cards now have a medically safer visible subsystem model after MED-REV-1 / MED-REV-2. The next step is to enrich those visible cards and evidence groups using governed research/package intelligence.
+This sprint should not try to make the final consumer prose perfect. It should build the structured narrative plan underneath it.
 
 ## Architectural principle
 
-Preserve the HealthIQ architecture:
+Preserve the HealthIQ layer architecture:
 
 ```text
 Layer A = governed medical intelligence inputs and compiled artefacts
-Layer B = interpretation, prioritisation, card evidence DTO shaping
+Layer B = interpretation, prioritisation, narrative planning, DTO shaping
 Layer C = presentation/rendering only
 ```
 
-This sprint must compile or consume richer evidence into Layer A/B governed artefacts and DTOs.
-
-Frontend must not mine packages, Pass 3 JSON, signal IDs, or marker IDs to infer meaning.
-
-## Non-negotiable rule: no raw Pass 3 runtime reads
-
-Runtime must not read raw `*_Pass_3.json` files.
-
-Allowed:
+Layer B must own:
 
 ```text
-Pass 3 / packages → governed compile artefact → Layer B loader/assembler → DTO → frontend render
+- report story ordering
+- primary finding hierarchy
+- section intent
+- evidence selection boundaries
+- confidence / limitation framing
+- what should be visible by default vs detail
+- what should never be said
+- what future LLM translation may and may not do
 ```
 
-Forbidden:
+Layer C must not infer clinical meaning or decide narrative priority.
+
+## LLM boundary
+
+Do not wire LLM narrative generation in this sprint.
+
+The future LLM role remains:
 
 ```text
-runtime orchestrator / API / frontend → raw Pass 3 JSON
-runtime orchestrator / API / frontend → package file scraping for prose
-frontend → marker-ID inference
+LLM translates a governed Layer B brief.
+LLM does not reason.
+LLM does not inspect raw biomarkers independently.
+LLM does not decide findings, hierarchy, confidence or next steps.
+Layer C does not call the LLM.
 ```
+
+This sprint may update `validator_v2` or narrative validation scaffolds if needed, but it must not enable production LLM narrative generation.
 
 ## Scope
 
 Allowed scope:
 
-1. Audit which Pass 3/package richness is available for the current visible Wave 1 card model.
-2. Define the minimal governed enrichment fields needed for card/subsystem DTOs.
-3. Extend compiled card evidence artefacts or create a bounded compiled enrichment artefact if needed.
-4. Populate only medically reviewed, consumer-safe evidence fields for visible Wave 1 card surfaces.
-5. Wire Layer B card evidence assembly to consume those compiled/governed fields.
-6. Add tests proving enriched evidence is compiled/governed and consumed without raw runtime reads.
-7. Update validator/guardrails if needed.
-8. Update carry-forward register.
-9. Produce sprint report.
+1. Audit current `NarrativePayloadV1` and builder coverage against the desired Layer B brief.
+2. Extend the narrative payload contract if necessary.
+3. Add section-specific narrative intent fields.
+4. Add evidence-boundary fields that define what each section may cite.
+5. Add confidence/limitation framing fields.
+6. Add forbidden-claim / must-not-say constraints where appropriate.
+7. Add report-level priority ordering metadata.
+8. Add fields needed for future LLM translation safety.
+9. Wire deterministic report assembly to consume the improved brief where safe.
+10. Add validation/tests for narrative brief integrity.
+11. Update carry-forward register.
+12. Produce sprint report.
 
 ## Out of scope
 
 Do not:
 
 ```text
-- read raw Pass 3 JSON at runtime
-- implement full estate Pass 3 compiler
-- wire all 153 specs
-- change signal activation thresholds
-- change scoring rails
+- wire Gemini or any LLM into the report
+- implement LLM translation
+- change clinical scoring thresholds
+- change signal activation
 - change biomarker SSOT
 - change unit conversion
-- modify SignalEvaluator
-- modify SignalRegistry
+- change SignalEvaluator or SignalRegistry
 - change PSI runtime status
-- implement LLM narrative translation
+- modify root-cause compiler promotion policy
+- expose raw Pass 3 hypotheses directly to users
+- expose contradiction markers directly to users unless governed and tested
+- expose confirmatory tests directly unless governed and tested
+- perform broad UX redesign
 - implement regeneration lineage hardening
-- implement frontend clinical inference
-- re-surface hidden MED-REV-1 support subsystems as scored findings
-- reverse MED-REV-1 visibility decisions
+- introduce frontend clinical inference
 - introduce fallback parsers
 ```
 
@@ -220,179 +238,137 @@ Do not:
 Before implementation, verify and report:
 
 ```text
-1. Which visible Wave 1 card/subsystem surfaces remain after MED-REV-1:
-   - Atherogenic lipid pattern
-   - Long-term blood sugar
-   - flattened liver card / evidence model
-
-2. Which Pass 3/package assets correspond to those visible surfaces.
-
-3. Which useful fields already exist in packages:
-   - explanation.*
-   - supporting_metrics roles/rationales
-   - mechanism/pathway/implications text
-   - contradiction markers
-   - missing data policy
-   - confirmatory tests
-   - relationship_kind
-
-4. Which of those fields are already present in compiled card artefacts.
-
-5. Which of those fields are already present in DTOs.
-
-6. Which fields are safe for consumer-facing use without LLM rewriting.
-
-7. Which fields should remain internal until Layer B narrative brief maturity work.
-
-8. Whether the implementation can be bounded to Wave 1 launch surfaces.
+1. Current NarrativePayloadV1 fields.
+2. Current NarrativePayload builder logic.
+3. Which result-page sections currently consume narrative payload fields.
+4. Which sections still use separate narrative sources instead of the shared payload.
+5. Whether primary finding, body overview, health systems, patterns and next steps have explicit section intent.
+6. Whether evidence boundaries exist per section.
+7. Whether forbidden-claim constraints exist.
+8. Whether current LLM validator can validate against the narrative payload.
+9. Which gaps map directly to the §3.9 Layer B/Layer C contract.
+10. Whether implementation can be bounded without rewriting the report compiler.
 ```
 
-STOP if the available evidence is too broad or ambiguous to compile safely in one sprint.
+STOP if the brief cannot be matured safely without broad report compiler redesign.
 
-## Target enrichment model
+## Target narrative brief model
 
-Prefer a minimal, explicit model.
-
-Candidate fields to consider, subject to current schema and medical safety:
+The exact schema should follow repo conventions, but the target concept is:
 
 ```text
-marker_role
-relationship_kind
-consumer_rationale
-mechanism_summary
-why_this_marker_matters
-missing_marker_reason
-confidence_contribution
-contradiction_note
-confirmatory_follow_up
-evidence_limitations
+NarrativeBriefV1 / improved NarrativePayloadV1:
+- report_story_priority
+- primary_finding
+- primary_finding_reason
+- confidence_summary
+- evidence_for
+- evidence_against
+- missing_or_limiting_evidence
+- system_context
+- marker_context
+- next_step_intent
+- section_intents
+- section_visibility
+- allowed_claims
+- forbidden_claims
+- required_caveats
+- evidence_boundaries
+- future_llm_translation_constraints
 ```
 
-Do not add all fields blindly.
+Do not add fields blindly.
 
-Only add fields that:
+Only add fields that are:
 
 ```text
-- are grounded in existing Pass 3/package content
-- can be validated
-- are suitable for Layer B DTO output
-- do not require frontend interpretation
-- do not contradict MED-REV-1 visibility decisions
+- useful to Layer B
+- testable
+- grounded in existing outputs
+- safe for deterministic renderer or future LLM translator
+- not duplicating existing DTO fields unnecessarily
 ```
 
-## Visible surface rules
+## Required narrative sections
 
-### Atherogenic lipid pattern
-
-Allowed enrichment direction:
+At minimum, the brief should be able to govern these sections:
 
 ```text
-- explain why LDL, HDL, triglycerides, total cholesterol and TC/HDL ratio matter together
-- use role/rationale from packages where available
-- avoid claiming CRP/homocysteine are the card score basis
-- do not reintroduce vascular strain as visible scored subsystem
+1. Hero / main finding
+2. Primary finding and why
+3. What’s working well
+4. Health systems context
+5. Patterns across your body
+6. Marker evidence
+7. Missing evidence / confidence limitations
+8. What to do next
+9. Technical / clinician detail
 ```
 
-### Long-term blood sugar
-
-Allowed enrichment direction:
+For each section, define:
 
 ```text
-- explain HbA1c as long-term glycaemic exposure
-- explain glucose as useful when present but optional/missing for confidence
-- avoid implying insulin resistance when insulin context is hidden
-- keep insulin/TG support context internal unless medically reviewed for display
+- purpose
+- allowed evidence sources
+- default visibility
+- claim boundaries
+- caveats
+- whether future LLM translation may rewrite it
 ```
 
-### Liver flat model
+## Score hierarchy requirement
 
-Allowed enrichment direction:
+The brief should define score hierarchy guidance.
+
+At minimum:
 
 ```text
-- explain available liver markers without re-splitting into scored subsystems
-- avoid over-claiming MASLD/fibrosis risk from thin evidence
-- use missing-marker logic accurately
-- preserve alcohol/medication/liver-history caveats
+- system scores are domain-level summaries
+- marker scores should not dominate the main narrative
+- evidence completeness qualifies score confidence
+- limited coverage must be surfaced when relevant
+- hidden/support evidence must not be presented as score basis
+- overall score, if present, must not compete with primary finding
 ```
 
-## Schema / artefact rules
+Do not change the score calculations in this sprint.
 
-If compiled card YAML is extended:
+## Relationship to KB-UTIL-1 carry-forward
+
+This sprint may prepare structured locations for:
 
 ```text
-- update schema if required
-- update validator if required
-- update compile manifest hashes if repository policy requires
-- preserve existing marker IDs and clinical thresholds
-- preserve `total_bilirubin` prohibition
-- do not alter visibility tiers unless medical review requires it
+- hypotheses
+- contradiction markers
+- confirmatory test rationale
 ```
 
-If creating a new compiled enrichment artefact:
+But it must not surface those directly unless:
 
 ```text
-- add it to estate index / authority manifest if required
-- add validation tests
-- ensure Layer B consumes it, not frontend
+- Layer B has a governed field
+- wording boundaries are defined
+- tests prove no unsafe exposure
+- frontend remains render-only
 ```
 
-## Layer B consumption rules
-
-Layer B may:
-
-```text
-- attach enriched evidence text to card/subsystem DTO fields
-- expose consumer-safe rationales
-- expose evidence limitations
-- expose confidence contribution notes
-```
-
-Layer B must not:
-
-```text
-- expose raw package prose without review
-- expose internal IDs
-- expose raw source traces
-- expose unreviewed Pass 3 hypotheses directly
-- turn hidden support subsystems back into primary card findings
-```
-
-## Layer C rendering rules
-
-Frontend may:
-
-```text
-- render backend-provided enriched fields
-- collapse detail by default if needed
-- display approved labels
-```
-
-Frontend must not:
-
-```text
-- read packages
-- read Pass 3 files
-- infer marker roles
-- infer clinical hierarchy
-- map hidden subsystem meaning from IDs
-```
+It is acceptable to leave CF-KBUTIL1-002 open if safe surfacing requires a future sprint.
 
 ## Required tests
 
 Add or update tests proving:
 
 ```text
-1. No raw Pass 3 JSON runtime reads are introduced.
-2. Enriched card evidence is loaded from governed compiled artefacts or packages through an approved Layer B path.
-3. Visible Wave 1 card surfaces receive enriched evidence where implemented.
-4. Hidden MED-REV-1 subsystems remain hidden.
-5. Atherogenic lipid pattern does not use homocysteine/CRP as card score basis.
-6. Long-term blood sugar does not imply insulin resistance from hidden context.
-7. Liver enrichment does not re-split liver into scored subsystems.
-8. Frontend remains render-only.
-9. Internal IDs/source traces/package IDs are not exposed.
-10. `total_bilirubin` protection remains intact.
-11. ARCH-RT-6 validator still passes.
+1. Narrative brief has section-specific intent for required sections.
+2. Primary finding and health systems context have distinct purposes.
+3. Evidence boundaries prevent hidden/support subsystems being described as score basis.
+4. Missing evidence / confidence limitations are represented.
+5. Score hierarchy guidance exists in Layer B, not frontend.
+6. Future LLM translation constraints exist and prohibit reasoning.
+7. Frontend does not infer narrative priority.
+8. No raw Pass 3 runtime reads are introduced.
+9. No internal IDs/source traces are exposed.
+10. ARCH-RT-6 validator still passes.
 ```
 
 Always run:
@@ -405,19 +381,19 @@ python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails
 Also run targeted tests for:
 
 ```text
-health_system_card_evidence
-wave1_subsystem_evidence
-domain_score_assembler
-MED-REV-1
-MED-REV-2
-relevant frontend card components if touched
+narrative_payload_v1
+narrative_payload_builder_v1
+domain_narrative_wave1
+report_compiler_v1
+validator_v2 if touched
+frontend result components if touched
 ```
 
 ## Manual validation target
 
-After implementation, inspect a regenerated latest-engine result, not an immutable stale snapshot.
+After implementation, inspect a latest-engine regenerated result.
 
-Use either the most recent regenerated analysis or regenerate from:
+Use either the latest regenerated analysis or regenerate from:
 
 ```text
 http://localhost:3000/results?analysis_id=746f2b0a-b470-4d87-8ed8-e2c3d1e68c02
@@ -433,28 +409,29 @@ Subaru@555
 Confirm:
 
 ```text
-- enriched evidence appears only where medically safe
-- hidden support subsystems remain hidden
-- card text feels more clinically informative without becoming noisy
-- frontend is not exposing internal IDs/traces
-- no old stale snapshot is mistaken for current engine output
+- the page still renders
+- no internal IDs/traces visible
+- no stale snapshot is mistaken for latest output
+- primary finding and health system cards no longer feel like independent competing narratives
+- any changed narrative fields improve coherence without deleting useful analysis
 ```
+
+If this sprint is mostly contract/brief scaffolding and not intended to visibly change the UI, state that clearly in the report.
 
 ## STOP conditions
 
 STOP and report if:
 
 ```text
-1. Pass 3/package evidence cannot be mapped safely to visible Wave 1 surfaces.
-2. Implementation would require raw Pass 3 runtime reads.
-3. Implementation would require a broad full-estate compiler.
-4. Implementation would re-open MED-REV-1 hidden subsystems as scored findings.
-5. Implementation would require frontend clinical inference.
-6. Evidence fields are not consumer-safe without LLM narrative translation.
-7. Schema extension is too broad for one sprint.
-8. Compile manifest / estate index updates cannot be safely performed.
-9. ARCH-RT-6 validator fails.
-10. Sprint drifts into LLM translation or UX redesign.
+1. Narrative brief maturity requires broad report compiler redesign.
+2. Current payload contracts are too unstable to extend safely.
+3. Implementation would require frontend clinical inference.
+4. Implementation would wire LLM translation.
+5. Implementation would expose raw Pass 3 hypotheses/contradictions unsafely.
+6. Score hierarchy requires changing clinical score calculations.
+7. Hidden/support subsystems would be reintroduced as score basis.
+8. ARCH-RT-6 validator fails.
+9. Sprint drifts into full UX redesign.
 ```
 
 ## Required deliverable
@@ -462,21 +439,19 @@ STOP and report if:
 Create:
 
 ```text
-docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md
+docs/audit-papers/LAYER-B-1_narrative_brief_maturity_report.md
 ```
 
 The report must include:
 
 ```text
 - preflight findings
-- Pass 3/package fields assessed
-- fields selected for consumption
-- fields deferred and why
-- artefacts changed or created
-- Layer B consumption changes
-- Layer C rendering changes, if any
-- evidence preservation confirmation
-- hidden subsystem protection confirmation
+- current narrative payload gaps
+- fields added or deferred
+- Layer B changes
+- Layer C changes, if any
+- LLM boundary confirmation
+- score hierarchy handling
 - carry-forward register updates
 - tests run
 - manual validation result
@@ -490,16 +465,16 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. carry-forward register read/update evidence
-3. Pass 3/package asset mapping
-4. selected enrichment model
-5. exact artefact changes
-6. exact Layer B changes
-7. exact frontend changes, if any
+3. narrative payload preflight findings
+4. schema/contract changes
+5. builder changes
+6. validation changes
+7. frontend changes, if any
 8. tests added/updated
 9. test commands run
 10. test results
 11. manual browser validation result
-12. confirmation no raw Pass 3 runtime reads were introduced
+12. confirmation no LLM translation was wired
 13. confirmation frontend did not infer clinical meaning
 14. confirmation ARCH-RT-6 validator still passes
 ```
@@ -520,13 +495,13 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/KB-UTIL-1-pass3-card-evidence-compile-and-consume
+- current branch matches work/LAYER-B-1-narrative-brief-maturity
 - all changed files are tied to this sprint
 - carry-forward register has been updated if required
-- no raw Pass 3 runtime reads are introduced
+- no LLM translation is wired
 - no frontend clinical inference is introduced
-- no clinical thresholds or scoring rails are changed
-- no hidden subsystem is reintroduced as a visible scored finding
+- no raw Pass 3 runtime reads are introduced
+- no scoring rails or thresholds are changed
 - no ambiguous stash exists
 - latest commit contains only in-scope work
 ```
@@ -536,15 +511,15 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. Pass 3/package richness utilisation for visible Wave 1 cards is materially improved or explicitly bounded/deferred.
-2. Enrichment is governed through Layer A/B, not frontend inference.
-3. No raw Pass 3 runtime reads are introduced.
-4. MED-REV-1/2 visible subsystem model remains intact.
-5. Hidden support subsystems remain hidden.
-6. Useful evidence is preserved.
+1. Narrative brief maturity is materially improved or explicitly bounded/deferred.
+2. Section-specific intent and evidence boundaries are represented in Layer B.
+3. Future LLM translation constraints are clearer.
+4. Frontend remains render-only.
+5. Hidden/support evidence is not misrepresented as score basis.
+6. Score hierarchy is clarified at the brief/contract level.
 7. Carry-forward register is updated.
 8. ARCH-RT-6 validator passes.
-9. Tests prove the new evidence consumption path.
+9. Tests prove the narrative brief contract.
 10. Automation Bus gate passes.
 ```
 

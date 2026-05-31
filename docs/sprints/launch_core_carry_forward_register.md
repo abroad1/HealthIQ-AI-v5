@@ -37,8 +37,7 @@ This register should be read before each new launch, architecture, medical revie
 | CF-MEDREV2-003 | MED-REV-2 | Clean up dead cardiovascular contributor and homocysteine bridge logic | Some older cardiovascular helper paths remain in code. They are not currently causing the card issue, but keeping them increases drift and accidental reuse risk. | No | ARCH-LEGACY cleanup | Open | Includes legacy `cv_contributor` and limited homocysteine bridge edge-case logic. |
 | CF-MEDREV2-004 | MED-REV-2 | Strengthen liver confidence test assertion | The implementation works, but one test is weaker than ideal. It should strictly prove that present markers such as GGT, ALP and albumin are never described as missing. | No | Test-hardening sprint | Open | Improves regression confidence without changing product behaviour. |
 | CF-KBUTIL1-001 | KB-UTIL-1 | Automated Pass 3 → card evidence compile pipeline | KB-UTIL-1 enriched visible Wave 1 artefacts manually from package `explanation.*` and supporting_metrics at compile time. A governed compile pipeline should replace pilot_manual / kb_util1_package_enrichment for estate-wide rollout. | No | KB-UTIL-2 or ARCH-RT compile hardening | Open | Deferred hypotheses, contradictions, confirmatory tests remain out of card scope. |
-| CF-KBUTIL1-002 | KB-UTIL-1 | Surface Pass 3 hypotheses and contradiction markers on cards | Requires Layer B narrative brief maturity and medical review before consumer display. | No | Narrative / KB enrichment sprint | Open | Not blocked for Wave 1 launch card enrichment v1. |
-
+| CF-KBUTIL1-002 | KB-UTIL-1 | Hypothesis, contradiction marker and confirmatory test surfacing | Rich Pass 3 intelligence such as ranked hypotheses, contradiction markers and confirmatory test rationale is still not safely surfaced. Depends on Layer B narrative brief maturity before user-facing exposure. | No | LAYER-B-1 / research intelligence surfacing sprint | In progress | LAYER-B-1 prepares brief structure; direct surfacing remains deferred until governed and tested. |
 ---
 
 ## How to use this register in future sprint prompts
@@ -73,4 +72,4 @@ When resolving an item:
 
 ## Current summary
 
-As of KB-UTIL-1 closure, there are no known launch-blocking carry-forwards in this register. Open items are compile automation, narrative maturity, lineage, cleanup and test-hardening improvements.
+As of LAYER-B-1 activation, there are no known launch-blocking carry-forwards. Open items include compile automation, hypothesis surfacing (in progress via brief maturity), lineage, cleanup and test-hardening improvements.

@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "KB-UTIL-1_pass3_card_evidence_compile_and_consume",
+  "work_id": "LAYER-B-1_narrative_brief_maturity",
   "status": "HARDENED",
   "hardened_utc": "2026-05-31T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,172 +8,112 @@
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 2-6 — all five required fields present: work_id=KB-UTIL-1_pass3_card_evidence_compile_and_consume (line 2), branch=work/KB-UTIL-1-pass3-card-evidence-compile-and-consume (line 3), risk_level=HIGH (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=MIXED (line 6)"
+      "citation": "automation_bus/latest_cursor_prompt.md lines 2-6 — all five required fields present: work_id=LAYER-B-1_narrative_brief_maturity (line 2), branch=work/LAYER-B-1-narrative-brief-maturity (line 3), risk_level=HIGH (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=MIXED (line 6)"
     },
     {
       "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level=HIGH. Justified: sprint touches backend/core/knowledge/health_system_card_evidence.py (Intelligence Core — output assembly mechanism, governed-content loader) and backend/core/models/results.py SubsystemEvidenceV1/SubsystemMarkerEvidenceV1 (API DTO output). HIGH is mandatory per SOP §10 for any work interacting with Intelligence Core or affecting output generation."
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level=HIGH. Justified per SOP §10: sprint touches backend/core/contracts/narrative_payload_v1.py (Intelligence Core contract), backend/core/analytics/narrative_payload_builder_v1.py (Intelligence Core — output assembly mechanism), backend/core/analytics/report_compiler_v1.py (Intelligence Core — ranking/filtering/prioritisation logic). HIGH is mandatory for any work interacting with Intelligence Core."
     },
     {
       "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type=MIXED. Content = compiled YAML card artefact extension (knowledge_bus/compiled/health_system_cards/*.yaml, Layer A). Behaviour = CardEvidenceArtefact dataclass extension, validate_card_evidence_payload() logic, SubsystemEvidenceV1 Pydantic model extension, Layer B assembly path changes. MIXED governed under BEHAVIOUR controls per SOP §4."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type=MIXED. CONTENT = narrative contract schema extension (governed Layer B data structures). BEHAVIOUR = narrative_payload_builder_v1 assembly logic, report_compiler_v1 consumption of improved brief, validator_v2 if touched. MIXED governed under BEHAVIOUR controls per SOP §4."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model=TWO_PHASE_START_FINISH. Correct — sprint requires baseline preflight with branch/status verification and preflight findings before any implementation."
+      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model=TWO_PHASE_START_FINISH. Correct — sprint requires baseline preflight with branch/status verification and preflight findings (10 required items at lines 240-251) before implementation."
     },
     {
-      "check": "2a_authority_path_carry_forward_register",
-      "result": "CONFIRMED EXISTS — ADVISORY: FILE IS UNTRACKED ON MAIN",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md confirmed present and readable. Contains 4 open carry-forward items (CF-MEDREV2-001 through CF-MEDREV2-004 at lines 35-38). ADVISORY (execution preflight, not hardening blocker): git status shows '?? docs/sprints/launch_core_carry_forward_register.md' — file is untracked on main. Cursor must inspect working tree before running run_work_package.py start and must not proceed if working tree is not clean. Resolution (commit, stash, or stop) is Cursor's responsibility under the Automation Bus start protocol."
+      "check": "2a_working_tree_stop_condition",
+      "result": "RISK — STOP CONDITION APPLIES",
+      "citation": "git diff --name-only confirms two unstaged modified files on main: automation_bus/latest_cursor_prompt.md and docs/sprints/launch_core_carry_forward_register.md. Prompt STOP conditions (lines 58-63) require: working tree is clean before branching. Cursor must resolve these modifications (commit or stash) before creating work/LAYER-B-1-narrative-brief-maturity. This is a Cursor preflight obligation; it does not block hardening."
     },
     {
-      "check": "2a_authority_path_programme_status_1",
+      "check": "2a_authority_paths_all_exist",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md — file confirmed present on disk"
+      "citation": "All 12 authoritative input paths verified present: docs/sprints/launch_core_carry_forward_register.md:CONFIRMED, docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md:CONFIRMED, docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md:CONFIRMED, docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md:CONFIRMED, docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md:CONFIRMED, docs/audit-papers/LAUNCH-CORE-4_results_page_narrative_hierarchy_and_score_rationalisation_audit.md:CONFIRMED, docs/audit-papers/LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation_report.md:CONFIRMED, docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md:CONFIRMED, docs/planning-papers/healthiq_pre_sprint3_closure_pack_FINAL.md:CONFIRMED, docs/architecture/ADR_WP2_layer_b_layer_c_contract_path_b.md:CONFIRMED, docs/intelligence/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md:CONFIRMED, backend/scripts/validate_day_one_architecture.py:CONFIRMED"
     },
     {
-      "check": "2a_authority_path_pass3_utilisation",
+      "check": "2a_implementation_authority_paths_all_exist",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/PASS3_research_asset_utilisation_investigation_cursor.md — file confirmed present on disk"
-    },
-    {
-      "check": "2a_authority_path_arch_r1",
-      "result": "CONFIRMED",
-      "citation": "docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md — file confirmed present on disk"
-    },
-    {
-      "check": "2a_authority_path_medical_review",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/healthiq_wave1_health_systems_subsystem_medical_review.md — file confirmed present on disk"
-    },
-    {
-      "check": "2a_authority_path_med_rev_1",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md — file confirmed present on disk"
-    },
-    {
-      "check": "2a_authority_path_med_rev_2",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md — file confirmed present on disk"
-    },
-    {
-      "check": "2a_authority_path_arch_rt6",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md — file confirmed present on disk"
-    },
-    {
-      "check": "2a_authority_path_intelligence_manifest",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/active_intelligence_authority_manifest.md — file confirmed present on disk"
-    },
-    {
-      "check": "2a_authority_path_validator",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_day_one_architecture.py — file confirmed present on disk"
-    },
-    {
-      "check": "2a_implementation_authority_health_system_card_evidence",
-      "result": "CONFIRMED — CONTENT READ",
-      "citation": "backend/core/knowledge/health_system_card_evidence.py — file read in full. CardEvidenceArtefact dataclass lines 80-101: fields marker_role, relationship_kind, presence_policy, rationale_short already present in CardEvidenceMarkerDef (lines 82-88); mechanism_line and missing_policy_line already present at artefact level (lines 100-101). validate_card_evidence_payload() lines 137-220: enforces strict schema — no extra-key rejection but parse_card_evidence_payload() lines 223-263 only maps declared fields. WAVE1_MED_REV1_HIDDEN_SUBSYSTEM_IDS frozenset lines 45-47. Hidden guard: assemble_subsystem_from_compiled_card_evidence() lines 334-335: if visibility_tier == 'hidden_v1': return None."
-    },
-    {
-      "check": "2a_implementation_authority_wave1_subsystem_evidence",
-      "result": "CONFIRMED — CONTENT READ",
-      "citation": "backend/core/analytics/wave1_subsystem_evidence.py — file read in full. assemble_wave1_subsystem_evidence() lines 141-186: routes all PILOT_COMPILED_SUBSYSTEM_IDS through assemble_subsystem_from_compiled_card_evidence() (line 158-165). All 7 compiled subsystems already use compiled path. Non-compiled fallback path lines 168-185 is Wave 2 protection — must not be touched."
-    },
-    {
-      "check": "2a_implementation_authority_subsystem_evidence_v1_dto",
-      "result": "CONFIRMED — CONTENT READ — CRITICAL FINDING",
-      "citation": "backend/core/models/results.py SubsystemEvidenceV1 lines 201-266: extra='forbid' (line 207). mechanism_line (line 255), missing_policy_line (line 259), marker_evidence (line 263) are ALREADY declared as Optional fields. SubsystemMarkerEvidenceV1 lines 176-198: marker_role, relationship_kind, presence_policy, rationale_short ALREADY declared. These are already in the DTO contract. Any new enrichment fields require explicit addition to this model — extra='forbid' means undeclared fields in API serialization will raise validation errors."
-    },
-    {
-      "check": "2a_compiled_card_yaml_current_state",
-      "result": "CONFIRMED — CONTENT READ — RICHNESS ALREADY PRESENT",
-      "citation": "knowledge_bus/compiled/health_system_cards/wave1_cv_lipid_transport.yaml: mechanism_line (line 13), missing_policy_line (line 14), rationale_short populated for all 5 markers (lines 20, 26, 31, 36, 41). knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml: mechanism_line (line 10), missing_policy_line (line 11), rationale_short on both markers (lines 16, 20). knowledge_bus/compiled/health_system_cards/wave1_liv_enzyme_pattern.yaml: visibility_tier: hidden_v1 (line 6) — correctly hidden. These fields are already compiled into Layer A artefacts and flow through to the DTO. The 'stranded richness' may be a rendering gap, not a schema gap."
-    },
-    {
-      "check": "2a_pass3_source_files",
-      "result": "CONFIRMED — 5 BATCH FILES PRESENT",
-      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/: Batch_3_Pass_3.json, Batch_4_Pass_3.json, Batch_5_Pass_3.json, Batch_6_Pass_3.json, Batch_7_Pass_3.json — all confirmed present. Runtime reads of these files are prohibited per architecture rule (automation_bus/latest_cursor_prompt.md lines 163-179) and STOP condition #2 (line 447). Cursor must not open these files at runtime."
-    },
-    {
-      "check": "2a_packages_estate",
-      "result": "CONFIRMED — RELEVANT PACKAGES PRESENT",
-      "citation": "knowledge_bus/packages/: pkg_lipid_transport/signal_library.yaml read — signal_lipid_transport_dysfunction defined with supporting_metrics and mechanism prose. pkg_hepatic_metabolic_stress, pkg_insulin_resistance, pkg_glucose_dysregulation_hba1c_context, pkg_s24_ldl_high_dyslipidaemia, pkg_s24_hba1c_high_glycaemia, pkg_s24_alt_high_hepatocellular_injury, pkg_s24_ggt_high_hepatic all confirmed present. Packages are Layer A inputs for compile step only — not runtime reads."
+      "citation": "All 7 implementation authority paths verified present: backend/core/contracts/narrative_payload_v1.py:CONFIRMED, backend/core/analytics/narrative_payload_builder_v1.py:CONFIRMED, backend/core/analytics/domain_narrative_wave1.py:CONFIRMED, backend/core/analytics/report_compiler_v1.py:CONFIRMED, backend/core/analytics/domain_score_assembler.py:CONFIRMED, backend/core/llm/validator_v2.py:CONFIRMED, backend/core/models/results.py:CONFIRMED. Frontend paths: frontend/app/(app)/results/page.tsx:CONFIRMED, frontend/app/types/analysis.ts:CONFIRMED, frontend/app/components/results/ (18 component files):CONFIRMED"
     },
     {
       "check": "2a_no_duplicate_authority_sources",
       "result": "CONFIRMED",
-      "citation": "health_system_card_evidence.py is the sole compiled card evidence loader (confirmed single module). SubsystemEvidenceV1 in results.py is the sole DTO for subsystem evidence. compiled_cards_dir() at line 118-119 is the sole YAML source path. No duplicate authority sources detected."
+      "citation": "Sole contract file: backend/core/contracts/narrative_payload_v1.py. Sole builder: backend/core/analytics/narrative_payload_builder_v1.py. Two architectural authority docs exist (ADR_WP2_layer_b_layer_c_contract_path_b.md and DOMAIN_NARRATIVE_CONTRACT_WAVE1.md) but these are distinct documents — one is the ADR decision record, the other the Wave 1 domain contract. No duplicate authority source conflict detected."
+    },
+    {
+      "check": "2a_narrative_payload_v1_current_content",
+      "result": "CONFIRMED — CONTENT READ — GAP ANALYSIS COMPLETE",
+      "citation": "backend/core/contracts/narrative_payload_v1.py lines 69-79 (NarrativePayloadV1): 8 fields present — payload_schema_version (line 72), analysis_id (line 73), report_v1 (line 74), top_findings (line 75), root_cause_v1 (line 76), intervention_annotations_v1 (line 77), section_intents (line 78), claim_boundaries (line 79). Target brief requires 16 fields. 11 absent: report_story_priority, primary_finding_reason, confidence_summary, evidence_for, evidence_against, missing_or_limiting_evidence, system_context, marker_context, next_step_intent, section_visibility, required_caveats, future_llm_translation_constraints. Partial: allowed_claims (line 56-57), forbidden_claims (lines 65-79), evidence_boundaries (via section_intents.permitted_source_fields line 49)."
+    },
+    {
+      "check": "2a_section_intents_coverage_gap",
+      "result": "CONFIRMED — CONTENT READ — GAP IDENTIFIED",
+      "citation": "backend/core/contracts/narrative_payload_v1.py lines 30-35 (NarrativeSectionIdV1): 5 sections — retail_summary, lead_narrative, body_overview, next_steps_narrative, clinician_synthesis. Required sections: 9 (hero/main finding, primary finding and why, what is working well, health systems context, patterns across body, marker evidence, missing evidence/confidence limitations, what to do next, technical/clinician detail). 4 sections have no current enum ID: health_systems_context (conflated into body_overview), patterns_across_body, marker_evidence, missing_evidence_confidence_limitations. Sprint must add new section IDs or defer with rationale."
+    },
+    {
+      "check": "2a_builder_current_content",
+      "result": "CONFIRMED — CONTENT READ",
+      "citation": "backend/core/analytics/narrative_payload_builder_v1.py lines 22-65 (_default_section_intents): builds 5 NarrativeSectionIntentV1 objects. Each carries only section_id, intent_code, permitted_source_fields. No per-section evidence_boundary, visibility, forbidden_claim, or caveat fields — these are report-level only in NarrativeClaimBoundaryV1. Builder does not carry: report_story_priority, confidence_summary, score_hierarchy_guidance, future_llm_translation_constraints. Full extension needed for the target brief model."
+    },
+    {
+      "check": "2a_extra_forbid_risk",
+      "result": "CONFIRMED — CRITICAL IMPLEMENTATION CONSTRAINT",
+      "citation": "backend/core/contracts/narrative_payload_v1.py line 45: NarrativeSectionIntentV1 uses model_config = ConfigDict(extra='forbid'). backend/core/contracts/narrative_payload_v1.py line 69 context: NarrativePayloadV1 also uses ConfigDict(extra='forbid'). Any new fields added to NarrativePayloadV1 or NarrativeSectionIntentV1 must be Optional with defaults or all construction sites must be updated in lockstep. Missing defaults will cause Pydantic validation errors at all existing instantiation sites. Cursor must audit all NarrativePayloadV1 and NarrativeSectionIntentV1 construction sites before extending the schema."
+    },
+    {
+      "check": "2a_carry_forward_register_duplicate",
+      "result": "CONFIRMED — REGISTER HAS DUPLICATE ROWS",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md lines 39-42: CF-KBUTIL1-001 and CF-KBUTIL1-002 each appear twice (lines 39+41 for CF-KBUTIL1-001, lines 40+42 for CF-KBUTIL1-002). CF-KBUTIL1-002 (line 40) directly names this sprint as its target. Cursor must deduplicate the register when updating it and set CF-KBUTIL1-002 status appropriately."
+    },
+    {
+      "check": "2a_existing_test_coverage",
+      "result": "CONFIRMED",
+      "citation": "backend/tests/unit/ narrative-related tests confirmed: test_narrative_payload_wp2.py, test_lc_s3_narrative_payload_compiler.py, test_narrative_report_compiler_v1.py, test_report_compiler_v1.py, test_domain_narrative_wave1.py, test_narrative_runtime_policy.py, test_investigation_narrative_contract.py. All must remain passing after sprint changes."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 185-248 (allowed scope: 8 items), lines 199-216 (out of scope: 15 explicit prohibitions), lines 443-458 (10 STOP conditions). Scope is well-bounded. Cursor must produce preflight findings before ANY schema extension. STOP condition #7 (schema extension too broad) and STOP condition #1 (evidence not safely mappable) are active guards."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 198-234: 12 allowed scope items, 21 explicit out-of-scope prohibitions. Scope bounded to contract extension, builder extension, section intent governance, evidence boundary governance, validation and tests. STOP conditions lines 430-435: 9 explicit stops covering report compiler redesign, unstable contracts, frontend clinical inference, LLM wiring, raw Pass 3 exposure, score calculation changes, hidden/support subsystem reintroduction, ARCH-RT-6 failure, UX redesign."
     },
     {
       "check": "2b_intelligence_core_boundary",
       "result": "CONFIRMED — STOP CONDITIONS ACTIVE",
-      "citation": "automation_bus/latest_cursor_prompt.md STOP conditions lines 443-458: (1) Pass 3 evidence not safely mappable, (2) raw Pass 3 runtime reads required, (3) full-estate compiler required, (4) MED-REV-1 hidden subsystems re-opened, (5) frontend clinical inference required, (6) evidence not consumer-safe without LLM, (7) schema extension too broad, (8) compile manifest updates unsafe, (9) ARCH-RT-6 validator fails, (10) sprint drifts to LLM/UX. These comprehensively protect the Intelligence Core boundary."
-    },
-    {
-      "check": "2b_hidden_v1_guard_must_be_preserved",
-      "result": "CONFIRMED INTACT — MUST NOT BE TOUCHED",
-      "citation": "backend/core/knowledge/health_system_card_evidence.py lines 334-335: if artefact.visibility_tier == 'hidden_v1': return None. This is the sole mechanical enforcement of MED-REV-1 hidden subsystem suppression. Any sprint change that removes or bypasses this guard violates STOP condition #4 (re-opening hidden subsystems as scored findings). Must remain unchanged."
-    },
-    {
-      "check": "2b_total_bilirubin_prohibition_preserved",
-      "result": "CONFIRMED INTACT — MUST NOT BE TOUCHED",
-      "citation": "backend/core/knowledge/health_system_card_evidence.py lines 77-78: _FORBIDDEN_MARKER_IDS = frozenset({'total_bilirubin'}). Lines 177-181: validator raises CardEvidenceValidationError if total_bilirubin appears as a marker_id in any compiled YAML. Must remain intact. Confirmed as test #10 in required tests (automation_bus/latest_cursor_prompt.md line 394)."
-    },
-    {
-      "check": "2b_schema_extension_lockstep_risk",
-      "result": "RISK SURFACED — IMPLEMENTATION ORDERING CRITICAL",
-      "citation": "If new enrichment fields are added to compiled YAML: (1) add to CardEvidenceArtefact dataclass (health_system_card_evidence.py lines 80-101), (2) add to validate_card_evidence_payload() if validation required (lines 137-220), (3) add to parse_card_evidence_payload() (lines 223-263), (4) add to SubsystemEvidenceV1 or SubsystemMarkerEvidenceV1 in results.py (lines 176-266), (5) populate in all 7 compiled YAML files or accept None defaults, (6) update frontend TypeScript types in analysis.ts. Out-of-order changes cause CardEvidenceValidationError on load or Pydantic validation errors on API serialization. Cursor must implement in this declared order."
-    },
-    {
-      "check": "2b_stranded_richness_may_be_rendering_gap",
-      "result": "HARDENING NOTE — PREFLIGHT FINDING REQUIRED BEFORE SCHEMA EXTENSION",
-      "citation": "marker_role, relationship_kind, rationale_short fields are already in compiled YAML (confirmed), already in CardEvidenceArtefact (health_system_card_evidence.py lines 82-88), already in SubsystemMarkerEvidenceV1 DTO (results.py lines 176-198), and already assembled into SubsystemEvidenceV1.marker_evidence (health_system_card_evidence.py lines 344-357). mechanism_line and missing_policy_line are already in the artefact and DTO. Cursor must check Wave1SubsystemEvidenceSection.tsx to confirm whether these fields are currently rendered before deciding schema extension is needed. If the frontend is not consuming already-present DTO fields, the fix is rendering — not schema extension — and scope narrows significantly."
-    },
-    {
-      "check": "2b_no_raw_pass3_runtime_reads",
-      "result": "CONFIRMED — STOP CONDITION ACTIVE",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 163-179: runtime reads of *_Pass_3.json files prohibited. STOP condition #2 (line 447): 'Implementation would require raw Pass 3 runtime reads.' Current loader (health_system_card_evidence.py line 270) reads only compiled YAML files from compiled_cards_dir() — confirmed no Pass 3 reads at runtime. Must remain so."
+      "citation": "report_compiler_v1.py is listed as implementation authority (prompt line 129). Scope item 9 allows 'wire deterministic report assembly to consume the improved brief where safe.' Backend/core/analytics/report_compiler_v1.py lines 67-70 define TOP_FINDINGS_RANKING_POLICY_VERSION = 'PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1'. This anchor must not be changed unless a new policy sprint explicitly authorises it. Cursor changes to this file must be confined to consuming new brief fields only."
     },
     {
       "check": "2b_determinism_preserved",
       "result": "CONFIRMED",
-      "citation": "health_system_card_evidence.py assembly function lines 323-381 is stateless and deterministic — all output derived from compiled YAML fields only. validate_card_evidence_payload() is fail-closed. Any schema extension that adds Optional fields with None defaults preserves backward determinism for existing YAML files. No randomness. No LLM path. Architecture constraint confirmed: LLM reasoning must never enter Layer B (CLAUDE.md §4)."
+      "citation": "All new fields in NarrativePayloadV1 must be deterministically assigned from governed Layer B inputs. No LLM path, no randomness. future_llm_translation_constraints field is a governed data structure defining what LLM may/may not do — it must not enable LLM calls. Architecture rule: LLM reasoning must never enter Layer B (CLAUDE.md §4)."
+    },
+    {
+      "check": "2b_no_raw_pass3_runtime_reads",
+      "result": "CONFIRMED — STOP CONDITION ACTIVE",
+      "citation": "Prompt out-of-scope: 'expose raw Pass 3 hypotheses directly to users' (line 228). STOP condition 5: 'Implementation would expose raw Pass 3 hypotheses/contradictions unsafely.' CF-KBUTIL1-002 is permitted to remain Open if safe surfacing requires a future sprint (prompt lines 354-355). No Pass 3 runtime reads permitted."
     },
     {
       "check": "2b_regression_targets_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 383-396: 11 required tests enumerated. Mandatory commands lines 399-403: python backend/scripts/validate_day_one_architecture.py and python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q. Additional targeted tests for health_system_card_evidence, wave1_subsystem_evidence, domain_score_assembler, MED-REV-1, MED-REV-2."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 374-390: 10 required tests. Mandatory commands lines 375-380: python backend/scripts/validate_day_one_architecture.py and python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q. Additional targeted tests for narrative_payload_v1, narrative_payload_builder_v1, domain_narrative_wave1, report_compiler_v1, validator_v2, frontend result components if touched."
     },
     {
       "check": "2b_no_op_protection",
       "result": "CONFIRMED — NOT A NO-OP",
-      "citation": "PASS3_research_asset_utilisation_investigation_cursor.md and PROGRAMME-STATUS-1 consolidation audit establish that Pass 3/package richness is only partially utilised. The preflight analysis and enrichment work are genuine. Sprint is not a no-op."
+      "citation": "11 absent or incomplete fields in NarrativePayloadV1 confirmed from source content read. 4 section IDs missing from NarrativeSectionIdV1. Builder has no per-section visibility, evidence boundary, or forbidden-claim governance. Sprint is genuine substantive work."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 199-216 explicitly prohibits: raw Pass 3 runtime reads, full estate compiler, all 153 specs, signal activation thresholds, scoring rails, biomarker SSOT, unit conversion, SignalEvaluator, SignalRegistry, PSI runtime status, LLM narrative translation, regeneration lineage hardening, frontend clinical inference, re-surfacing hidden MED-REV-1 subsystems, fallback parsers. None of these are in the sprint's implementation authority target list."
+      "citation": "Explicit prohibitions confirmed in scope: no changes to backend/ssot/, SignalEvaluator, SignalRegistry, PSI runtime, root-cause compiler promotion policy, clinical score calculations, unit conversion. No LLM wiring. No broad UX redesign. No regeneration lineage hardening. No fallback parsers. No frontend clinical inference."
     },
     {
       "check": "tooling_leakage_check",
       "result": "CONFIRMED CLEAR",
       "citation": "Sprint prompt references no .codex/, .vscode/, or AGENTS.md files. No tooling leakage risk identified."
-    },
-    {
-      "check": "execution_advisories",
-      "result": "ADVISORY — FOR CURSOR EXECUTION",
-      "citation": "(1) Cursor must inspect working tree before run_work_package.py start; must not proceed if not clean — resolution is Cursor's responsibility under Automation Bus start protocol. (2) Cursor must inspect Wave1SubsystemEvidenceSection.tsx rendering before deciding schema extension is necessary — marker_role, relationship_kind, rationale_short, mechanism_line, missing_policy_line are already in the DTO and may simply not be rendered. (3) If schema extension is required, Cursor must follow lockstep order: CardEvidenceArtefact dataclass → validate_card_evidence_payload() → parse_card_evidence_payload() → SubsystemEvidenceV1/SubsystemMarkerEvidenceV1 → compiled YAML → frontend TypeScript types — out-of-order changes cause CardEvidenceValidationError or Pydantic serialization failures."
     }
   ]
 }
