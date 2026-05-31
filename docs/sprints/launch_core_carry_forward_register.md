@@ -58,7 +58,7 @@ Add this instruction to future HealthIQ AI sprint prompts when relevant:
 
 ```text
 Before implementation, read:
-docs/audit-papers/launch_core_carry_forward_register.md
+docs/sprints/launch_core_carry_forward_register.md
 
 Do not ignore unresolved carry-forwards relevant to this work.
 If this sprint resolves any item, update the register.
