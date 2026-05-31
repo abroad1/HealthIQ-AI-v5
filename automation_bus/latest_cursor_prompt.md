@@ -1,12 +1,12 @@
 ---
-work_id: LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation
-branch: work/LAUNCH-CORE-5-results-page-narrative-hierarchy-and-score-rationalisation
+work_id: MED-REV-1_wave1_subsystem_visibility_and_label_alignment
+branch: work/MED-REV-1-wave1-subsystem-visibility-and-label-alignment
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# LAUNCH-CORE-5 — Results Page Narrative Hierarchy and Score Rationalisation
+# MED-REV-1 — Wave 1 Subsystem Visibility and Label Alignment
 
 ## Purpose
 
