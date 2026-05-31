@@ -1,32 +1,33 @@
 ---
-work_id: LAYER-B-1_narrative_brief_maturity
-branch: work/LAYER-B-1-narrative-brief-maturity
-risk_level: HIGH
+work_id: ARCH-LEGACY-1_pathway_retirement_audit
+branch: work/ARCH-LEGACY-1-pathway-retirement-audit
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 ---
 
-# LAYER-B-1 — Narrative Brief Maturity
+# ARCH-LEGACY-1 — Legacy Pathway Retirement Audit
 
 ## Purpose
 
-Build the governed Layer B narrative brief needed to turn HealthIQ’s deterministic analysis into a coherent, ordered, auditable health report.
+Audit remaining legacy / dual-authority pathways now that the core Wave 1 architecture, medical subsystem visibility model, card evidence enrichment and Layer B narrative brief have been stabilised.
 
-MED-REV-1, MED-REV-2 and KB-UTIL-1 have stabilised the visible Wave 1 medical model and enriched the card evidence. The remaining report problem is that the application still does not consistently produce a single coherent narrative plan across:
+This is an audit-only sprint.
+
+Do not modify production code, compiled artefacts, schemas, tests, packages, frontend components, backend logic, or medical content.
+
+The goal is to classify which old architecture paths can be:
 
 ```text
-- primary finding
-- why it matters
-- confidence
-- supporting evidence
-- missing evidence
-- health system context
-- next steps
+- retired
+- retained but unreachable
+- retained and explicitly classified
+- deferred
+- migrated in a later sprint
+- removed only after a dependency is complete
 ````
 
-This sprint must mature the Layer B narrative brief. It must not wire LLM narrative generation yet.
-
-The goal is to create a governed structured brief that a deterministic renderer or future LLM translation layer can safely consume.
+This sprint must not remove code yet.
 
 ## Baseline requirement
 
@@ -36,10 +37,10 @@ Expected prior completed work:
 
 ```text
 ARCH-RT programme fully merged through ARCH-RT-6
-LAUNCH-CORE-5 merged
 MED-REV-1 merged
 MED-REV-2 merged
 KB-UTIL-1 merged
+LAYER-B-1 merged
 docs/sprints/launch_core_carry_forward_register.md present and updated
 ```
 
@@ -55,24 +56,26 @@ git rev-parse origin/main
 
 STOP if:
 
-* current branch is not `main`
-* local `main` does not equal `origin/main`
-* working tree is not clean
-* KB-UTIL-1 is not merged
-* `docs/sprints/launch_core_carry_forward_register.md` is missing
-* untracked or uncommitted files are present
+```text
+- current branch is not main
+- local main does not equal origin/main
+- working tree is not clean
+- LAYER-B-1 is not merged
+- docs/sprints/launch_core_carry_forward_register.md is missing
+- untracked or uncommitted files are present
+```
 
 ## Governance classification
 
 ```yaml
-risk_level: HIGH
-change_type: MIXED
+risk_level: STANDARD
+change_type: CONTENT
 execution_model: TWO_PHASE_START_FINISH
 ```
 
 Reason:
 
-This sprint may touch Layer B narrative payload contracts, narrative payload builders, report assembly, deterministic narrative surfaces, validation rules and tests. It affects user-facing health interpretation and future LLM readiness.
+This is an audit-only sprint. It must not change production behaviour. It may produce recommendations for future HIGH-risk implementation work.
 
 ## Standard rules
 
@@ -82,380 +85,323 @@ Do not re-read SOPs unless the applicable governance requirement cannot be locat
 
 ## Carry-forward register handling
 
-Before implementation, read:
+Before investigation, read:
 
 ```text
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-If this sprint resolves any carry-forward, update the register.
+If this audit resolves, reclassifies, or creates carry-forwards, update the register.
 
-If this sprint creates new carry-forwards, add them to the register.
-
-Pay particular attention to:
-
-```text
-CF-KBUTIL1-002 — Hypothesis, contradiction marker and confirmatory test surfacing
-```
-
-This sprint may prepare the narrative brief structure needed for that future surfacing, but it must not expose unsafe hypothesis/contradiction/confirmatory-test content unless explicitly governed and tested.
+Do not leave carry-forwards only in chat, audit summaries, or sprint reports.
 
 ## Authoritative inputs
 
-Read these sprint-specific files before making changes:
+Read these sprint-specific files before investigation:
 
 ```text
 docs/sprints/launch_core_carry_forward_register.md
 docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md
-docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md
-docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md
+docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md
+docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md
+docs/audit-papers/active_intelligence_authority_manifest.md
+docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md
 docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md
-docs/audit-papers/LAUNCH-CORE-4_results_page_narrative_hierarchy_and_score_rationalisation_audit.md
-docs/audit-papers/LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation_report.md
-docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md
-docs/planning-papers/healthiq_pre_sprint3_closure_pack_FINAL.md
-docs/architecture/ADR_WP2_layer_b_layer_c_contract_path_b.md
-docs/intelligence/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md
+docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md
+docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md
+docs/audit-papers/LAYER-B-1_narrative_brief_maturity_report.md
 backend/scripts/validate_day_one_architecture.py
 ```
 
-Also inspect as implementation authority:
+Also inspect likely legacy / dual-authority implementation areas:
 
 ```text
-backend/core/contracts/narrative_payload_v1.py
-backend/core/analytics/narrative_payload_builder_v1.py
-backend/core/analytics/domain_narrative_wave1.py
-backend/core/analytics/report_compiler_v1.py
+backend/core/analytics/wave1_subsystem_evidence.py
+backend/core/knowledge/health_system_card_evidence.py
+backend/core/knowledge/domain_flat_card_evidence.py
 backend/core/analytics/domain_score_assembler.py
-backend/core/llm/validator_v2.py
-backend/core/models/results.py
-frontend/app/(app)/results/page.tsx
-frontend/app/components/results/*
-frontend/app/types/analysis.ts
+backend/core/analytics/domain_narrative_wave1.py
+backend/core/analytics/root_cause_compiler_v1.py
+backend/core/knowledge/compiled_hypothesis.py
+backend/core/knowledge/load_root_cause_hypotheses.py
+backend/core/analytics/signal_evaluator.py
+backend/core/analytics/report_compiler_v1.py
+backend/core/analytics/narrative_payload_builder_v1.py
+knowledge_bus/packages/**
+knowledge_bus/compiled/**
+sentinel/packs/day_one_architecture_guardrails_v1.json
 ```
 
 If paths differ, locate and report the actual paths.
 
 ## Problem statement
 
-The current system has many useful deterministic outputs, but the report-level narrative is still not sufficiently governed.
+The ARCH-RT programme added strong programmatic guardrails, but did not delete every old pathway.
 
-Known issues:
-
-```text
-1. Multiple surfaces can still compete to explain the same lead finding.
-2. The page can expose too many score families without a clear precedence model.
-3. Primary finding, health system cards, patterns and marker evidence are not always governed by one shared narrative plan.
-4. Layer B does not yet produce a complete narrative brief with section-specific intent, evidence boundaries and wording constraints.
-5. LLM translation cannot safely proceed until this brief exists.
-```
-
-This sprint should not try to make the final consumer prose perfect. It should build the structured narrative plan underneath it.
-
-## Architectural principle
-
-Preserve the HealthIQ layer architecture:
+Known or suspected legacy / dual-authority areas include:
 
 ```text
-Layer A = governed medical intelligence inputs and compiled artefacts
-Layer B = interpretation, prioritisation, narrative planning, DTO shaping
-Layer C = presentation/rendering only
+- legacy root-cause YAML path for non-promoted signals
+- hard-coded fallback subsystem definitions in wave1_subsystem_evidence.py
+- old CV contributor / homocysteine bridge helper paths
+- legacy s24 CRP package route
+- inferred provenance package/card markers
+- batch JSON packages blocked pending extraction
+- dead or semi-dead narrative/card helper functions
+- old completeness / rail paths that may still exist but should not govern new visible surfaces
 ```
 
-Layer B must own:
+The audit must determine which of these are safe, guarded, still reachable, or risky.
+
+## Required investigation questions
+
+For each identified legacy or dual-authority path, answer:
 
 ```text
-- report story ordering
-- primary finding hierarchy
-- section intent
-- evidence selection boundaries
-- confidence / limitation framing
-- what should be visible by default vs detail
-- what should never be said
-- what future LLM translation may and may not do
+1. What is it?
+2. Where is it located?
+3. What originally used it?
+4. Is it still reachable at runtime?
+5. If reachable, under what conditions?
+6. Is it launch-critical?
+7. Is it guarded by ARCH-RT-6 validator / Sentinel / regression tests?
+8. Does it conflict with MED-REV-1/2, KB-UTIL-1 or LAYER-B-1?
+9. Should it be:
+   - deleted
+   - retained temporarily
+   - retained indefinitely
+   - migrated
+   - hidden behind explicit classification
+   - deferred
+10. What future sprint should handle it?
 ```
 
-Layer C must not infer clinical meaning or decide narrative priority.
+## Classification model
 
-## LLM boundary
-
-Do not wire LLM narrative generation in this sprint.
-
-The future LLM role remains:
+Use this classification table:
 
 ```text
-LLM translates a governed Layer B brief.
-LLM does not reason.
-LLM does not inspect raw biomarkers independently.
-LLM does not decide findings, hierarchy, confidence or next steps.
-Layer C does not call the LLM.
+deleted
+retained_unreachable_guarded
+retained_reachable_classified
+retained_reachable_unguarded
+migration_required
+retirement_candidate
+deferred_non_launch_blocker
+launch_blocker
 ```
 
-This sprint may update `validator_v2` or narrative validation scaffolds if needed, but it must not enable production LLM narrative generation.
+No item may remain unclassified.
 
-## Scope
+## Specific areas to audit
 
-Allowed scope:
+### 1. Wave 1 hard-coded subsystem fallback
 
-1. Audit current `NarrativePayloadV1` and builder coverage against the desired Layer B brief.
-2. Extend the narrative payload contract if necessary.
-3. Add section-specific narrative intent fields.
-4. Add evidence-boundary fields that define what each section may cite.
-5. Add confidence/limitation framing fields.
-6. Add forbidden-claim / must-not-say constraints where appropriate.
-7. Add report-level priority ordering metadata.
-8. Add fields needed for future LLM translation safety.
-9. Wire deterministic report assembly to consume the improved brief where safe.
-10. Add validation/tests for narrative brief integrity.
-11. Update carry-forward register.
-12. Produce sprint report.
+Investigate:
+
+```text
+backend/core/analytics/wave1_subsystem_evidence.py
+```
+
+Questions:
+
+```text
+- Are hard-coded _Wave1SubsystemDef labels still stale?
+- Are they reachable after compiled card evidence routing?
+- Could they reintroduce old labels like “Lipid transport” or “Glycaemic control”?
+- Are they guarded by validator or tests?
+- Should they be removed, updated, or classified?
+```
+
+### 2. Legacy cardiovascular narrative helpers
+
+Investigate old CV contributor / homocysteine bridge logic.
+
+Questions:
+
+```text
+- Which functions are now dead or only edge-case reachable?
+- Could they reintroduce inflammation/homocysteine as score basis?
+- Are MED-REV-2 / KB-UTIL-1 tests sufficient?
+- Should they be removed or retained for non-card surfaces?
+```
+
+### 3. Root-cause legacy YAML path
+
+Investigate:
+
+```text
+load_root_cause_hypotheses.py
+compiled_hypothesis.py
+root_cause_compiler_v1.py
+```
+
+Questions:
+
+```text
+- Which signals still use legacy YAML root-cause?
+- Which signals use compiled promoted hypothesis?
+- Is the boundary explicit and guarded?
+- What would be required to migrate more signals?
+- Is multi-frame root-cause still blocked?
+```
+
+### 4. Legacy / inferred provenance packages
+
+Investigate unresolved provenance items.
+
+Questions:
+
+```text
+- Which package cohorts remain inferred-only?
+- Which are batch JSON blocked?
+- Which affect launch-visible Wave 1 surfaces?
+- Which can stay deferred?
+- Which should be elevated after KB-UTIL-1?
+```
+
+### 5. CRP / s24 legacy path
+
+Investigate whether CRP still depends on legacy `pkg_s24_crp_high_inflammation`.
+
+Questions:
+
+```text
+- Is CRP still active in SignalEvaluator?
+- Is it visible to users after MED-REV-1/2?
+- Does it affect hero/pattern surfaces?
+- Is it safe to defer, or should a dedicated Pass 3 CRP spec migration be prioritised?
+```
+
+### 6. Old completeness / rail logic
+
+Investigate whether old completeness methods can still contradict visible evidence.
+
+Questions:
+
+```text
+- Are rail completeness paths still used anywhere user-facing?
+- Are flat liver completeness and subsystem union completeness now protected?
+- Could future domains reintroduce 1-of-3 vs 2-of-4 style mismatch?
+```
+
+### 7. Frontend legacy inference / rendering risks
+
+Investigate frontend result components for old inferred clinical logic.
+
+Questions:
+
+```text
+- Does frontend still infer marker role, clinical priority, score meaning or subsystem importance?
+- Are new flat evidence components render-only?
+- Are source traces/internal IDs protected?
+```
+
+## Required validator / Sentinel assessment
+
+Assess whether current guardrails cover:
+
+```text
+- domain_flat_card_evidence.py
+- hidden_v1 enforcement
+- no raw Pass 3 runtime reads
+- PSI isolation
+- no frontend clinical inference
+- no old card evidence reactivation
+- total_bilirubin prohibition
+- MED-REV-1 visibility partition
+- KB-UTIL-1 manifest hash integrity
+- LAYER-B-1 hidden/support evidence boundaries
+```
+
+Identify any missing guardrails.
+
+Do not implement guardrails in this sprint unless explicitly approved later.
+
+## Required output
+
+Create:
+
+```text
+docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md
+```
+
+The report must include:
+
+```text
+- executive verdict
+- legacy pathway inventory
+- classification table
+- reachability assessment
+- guardrail coverage assessment
+- launch-risk assessment
+- recommended retirement / migration order
+- proposed future sprint list
+- carry-forward register updates
+```
+
+## Recommended roadmap output
+
+The report must recommend the next action after this audit.
+
+Potential follow-on sprint types:
+
+```text
+ARCH-LEGACY-2_targeted_retirement_implementation
+KB-UTIL-2_hypothesis_contradiction_confirmatory_surface_design
+LLM-NAR-0_translation_design_audit
+LAUNCH-UX-2_results_hierarchy_polish
+REGEN-1_result_lineage_hardening
+```
+
+The audit must not assume all legacy paths should be deleted. It must justify each recommendation.
 
 ## Out of scope
 
 Do not:
 
 ```text
-- wire Gemini or any LLM into the report
+- delete legacy files
+- modify backend logic
+- modify frontend components
+- change compiled artefacts
+- change packages
+- change schemas
+- change tests
+- change validators
+- change scoring
+- change medical content
+- implement migration
 - implement LLM translation
-- change clinical scoring thresholds
-- change signal activation
-- change biomarker SSOT
-- change unit conversion
-- change SignalEvaluator or SignalRegistry
-- change PSI runtime status
-- modify root-cause compiler promotion policy
-- expose raw Pass 3 hypotheses directly to users
-- expose contradiction markers directly to users unless governed and tested
-- expose confirmatory tests directly unless governed and tested
-- perform broad UX redesign
-- implement regeneration lineage hardening
-- introduce frontend clinical inference
-- introduce fallback parsers
+- implement UX redesign
 ```
 
-## Required preflight
+## Required checks
 
-Before implementation, verify and report:
-
-```text
-1. Current NarrativePayloadV1 fields.
-2. Current NarrativePayload builder logic.
-3. Which result-page sections currently consume narrative payload fields.
-4. Which sections still use separate narrative sources instead of the shared payload.
-5. Whether primary finding, body overview, health systems, patterns and next steps have explicit section intent.
-6. Whether evidence boundaries exist per section.
-7. Whether forbidden-claim constraints exist.
-8. Whether current LLM validator can validate against the narrative payload.
-9. Which gaps map directly to the §3.9 Layer B/Layer C contract.
-10. Whether implementation can be bounded without rewriting the report compiler.
-```
-
-STOP if the brief cannot be matured safely without broad report compiler redesign.
-
-## Target narrative brief model
-
-The exact schema should follow repo conventions, but the target concept is:
-
-```text
-NarrativeBriefV1 / improved NarrativePayloadV1:
-- report_story_priority
-- primary_finding
-- primary_finding_reason
-- confidence_summary
-- evidence_for
-- evidence_against
-- missing_or_limiting_evidence
-- system_context
-- marker_context
-- next_step_intent
-- section_intents
-- section_visibility
-- allowed_claims
-- forbidden_claims
-- required_caveats
-- evidence_boundaries
-- future_llm_translation_constraints
-```
-
-Do not add fields blindly.
-
-Only add fields that are:
-
-```text
-- useful to Layer B
-- testable
-- grounded in existing outputs
-- safe for deterministic renderer or future LLM translator
-- not duplicating existing DTO fields unnecessarily
-```
-
-## Required narrative sections
-
-At minimum, the brief should be able to govern these sections:
-
-```text
-1. Hero / main finding
-2. Primary finding and why
-3. What’s working well
-4. Health systems context
-5. Patterns across your body
-6. Marker evidence
-7. Missing evidence / confidence limitations
-8. What to do next
-9. Technical / clinician detail
-```
-
-For each section, define:
-
-```text
-- purpose
-- allowed evidence sources
-- default visibility
-- claim boundaries
-- caveats
-- whether future LLM translation may rewrite it
-```
-
-## Score hierarchy requirement
-
-The brief should define score hierarchy guidance.
-
-At minimum:
-
-```text
-- system scores are domain-level summaries
-- marker scores should not dominate the main narrative
-- evidence completeness qualifies score confidence
-- limited coverage must be surfaced when relevant
-- hidden/support evidence must not be presented as score basis
-- overall score, if present, must not compete with primary finding
-```
-
-Do not change the score calculations in this sprint.
-
-## Relationship to KB-UTIL-1 carry-forward
-
-This sprint may prepare structured locations for:
-
-```text
-- hypotheses
-- contradiction markers
-- confirmatory test rationale
-```
-
-But it must not surface those directly unless:
-
-```text
-- Layer B has a governed field
-- wording boundaries are defined
-- tests prove no unsafe exposure
-- frontend remains render-only
-```
-
-It is acceptable to leave CF-KBUTIL1-002 open if safe surfacing requires a future sprint.
-
-## Required tests
-
-Add or update tests proving:
-
-```text
-1. Narrative brief has section-specific intent for required sections.
-2. Primary finding and health systems context have distinct purposes.
-3. Evidence boundaries prevent hidden/support subsystems being described as score basis.
-4. Missing evidence / confidence limitations are represented.
-5. Score hierarchy guidance exists in Layer B, not frontend.
-6. Future LLM translation constraints exist and prohibit reasoning.
-7. Frontend does not infer narrative priority.
-8. No raw Pass 3 runtime reads are introduced.
-9. No internal IDs/source traces are exposed.
-10. ARCH-RT-6 validator still passes.
-```
-
-Always run:
+Run:
 
 ```powershell
 python backend/scripts/validate_day_one_architecture.py
 python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
 ```
 
-Also run targeted tests for:
+If they fail, STOP and report.
 
-```text
-narrative_payload_v1
-narrative_payload_builder_v1
-domain_narrative_wave1
-report_compiler_v1
-validator_v2 if touched
-frontend result components if touched
-```
+## Manual validation
 
-## Manual validation target
-
-After implementation, inspect a latest-engine regenerated result.
-
-Use either the latest regenerated analysis or regenerate from:
-
-```text
-http://localhost:3000/results?analysis_id=746f2b0a-b470-4d87-8ed8-e2c3d1e68c02
-```
-
-Login:
-
-```text
-test-user3@example.com
-Subaru@555
-```
-
-Confirm:
-
-```text
-- the page still renders
-- no internal IDs/traces visible
-- no stale snapshot is mistaken for latest output
-- primary finding and health system cards no longer feel like independent competing narratives
-- any changed narrative fields improve coherence without deleting useful analysis
-```
-
-If this sprint is mostly contract/brief scaffolding and not intended to visibly change the UI, state that clearly in the report.
+No browser UAT is required unless the audit identifies a live runtime concern that needs confirmation.
 
 ## STOP conditions
 
 STOP and report if:
 
 ```text
-1. Narrative brief maturity requires broad report compiler redesign.
-2. Current payload contracts are too unstable to extend safely.
-3. Implementation would require frontend clinical inference.
-4. Implementation would wire LLM translation.
-5. Implementation would expose raw Pass 3 hypotheses/contradictions unsafely.
-6. Score hierarchy requires changing clinical score calculations.
-7. Hidden/support subsystems would be reintroduced as score basis.
-8. ARCH-RT-6 validator fails.
-9. Sprint drifts into full UX redesign.
-```
-
-## Required deliverable
-
-Create:
-
-```text
-docs/audit-papers/LAYER-B-1_narrative_brief_maturity_report.md
-```
-
-The report must include:
-
-```text
-- preflight findings
-- current narrative payload gaps
-- fields added or deferred
-- Layer B changes
-- Layer C changes, if any
-- LLM boundary confirmation
-- score hierarchy handling
-- carry-forward register updates
-- tests run
-- manual validation result
-- remaining risks / carry-forwards
+1. authoritative reports are missing
+2. carry-forward register is missing
+3. validator fails
+4. working tree is not clean
+5. investigation reveals a launch blocker
+6. audit cannot determine reachability of a critical legacy path
 ```
 
 ## Evidence required from Cursor
@@ -465,18 +411,15 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. carry-forward register read/update evidence
-3. narrative payload preflight findings
-4. schema/contract changes
-5. builder changes
-6. validation changes
-7. frontend changes, if any
-8. tests added/updated
-9. test commands run
+3. files inspected
+4. legacy pathway classification table
+5. reachability findings
+6. guardrail coverage findings
+7. launch-risk findings
+8. recommended next sprint
+9. tests/validators run
 10. test results
-11. manual browser validation result
-12. confirmation no LLM translation was wired
-13. confirmation frontend did not infer clinical meaning
-14. confirmation ARCH-RT-6 validator still passes
+11. confirmation no production code was changed
 ```
 
 ## Closure requirements
@@ -495,15 +438,12 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/LAYER-B-1-narrative-brief-maturity
-- all changed files are tied to this sprint
-- carry-forward register has been updated if required
-- no LLM translation is wired
-- no frontend clinical inference is introduced
-- no raw Pass 3 runtime reads are introduced
-- no scoring rails or thresholds are changed
+- current branch matches work/ARCH-LEGACY-1-pathway-retirement-audit
+- only audit documentation and carry-forward register updates are changed
+- no production code is changed
+- no helper scripts are committed
 - no ambiguous stash exists
-- latest commit contains only in-scope work
+- latest commit contains only in-scope audit work
 ```
 
 ## Success criteria
@@ -511,16 +451,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. Narrative brief maturity is materially improved or explicitly bounded/deferred.
-2. Section-specific intent and evidence boundaries are represented in Layer B.
-3. Future LLM translation constraints are clearer.
-4. Frontend remains render-only.
-5. Hidden/support evidence is not misrepresented as score basis.
-6. Score hierarchy is clarified at the brief/contract level.
-7. Carry-forward register is updated.
-8. ARCH-RT-6 validator passes.
-9. Tests prove the narrative brief contract.
-10. Automation Bus gate passes.
+1. legacy / dual-authority pathways are inventoried
+2. every identified item is classified
+3. runtime reachability is assessed
+4. guardrail coverage is assessed
+5. launch blockers, if any, are identified
+6. future retirement / migration order is recommended
+7. carry-forward register is updated
+8. ARCH-RT-6 validator passes
+9. no production code is changed
+10. Automation Bus gate passes
 ```
 
 ```

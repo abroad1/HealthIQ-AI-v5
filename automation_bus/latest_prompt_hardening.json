@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "LAYER-B-1_narrative_brief_maturity",
+  "work_id": "ARCH-LEGACY-1_pathway_retirement_audit",
   "status": "HARDENED",
   "hardened_utc": "2026-05-31T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,112 +8,87 @@
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 2-6 — all five required fields present: work_id=LAYER-B-1_narrative_brief_maturity (line 2), branch=work/LAYER-B-1-narrative-brief-maturity (line 3), risk_level=HIGH (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=MIXED (line 6)"
+      "citation": "automation_bus/latest_cursor_prompt.md lines 2-6 — all five required fields present: work_id=ARCH-LEGACY-1_pathway_retirement_audit (line 2), branch=work/ARCH-LEGACY-1-pathway-retirement-audit (line 3), risk_level=STANDARD (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=CONTENT (line 6)"
     },
     {
-      "check": "risk_level_HIGH_correct",
+      "check": "risk_level_STANDARD_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level=HIGH. Justified per SOP §10: sprint touches backend/core/contracts/narrative_payload_v1.py (Intelligence Core contract), backend/core/analytics/narrative_payload_builder_v1.py (Intelligence Core — output assembly mechanism), backend/core/analytics/report_compiler_v1.py (Intelligence Core — ranking/filtering/prioritisation logic). HIGH is mandatory for any work interacting with Intelligence Core."
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level=STANDARD. Correct: this sprint reads but does not modify Intelligence Core files. HIGH risk triggers (SOP §10) require modification of backend/ssot/, backend/core/pipeline/, backend/core/analytics/, or the kernel/gate scripts — none are modified here. Audit-only sprint; only output is docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md and carry-forward register updates."
     },
     {
-      "check": "change_type_MIXED_correct",
+      "check": "change_type_CONTENT_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type=MIXED. CONTENT = narrative contract schema extension (governed Layer B data structures). BEHAVIOUR = narrative_payload_builder_v1 assembly logic, report_compiler_v1 consumption of improved brief, validator_v2 if touched. MIXED governed under BEHAVIOUR controls per SOP §4."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type=CONTENT. Correct: sprint output is documentation only (docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md) plus carry-forward register updates (docs/sprints/launch_core_carry_forward_register.md). No production code, compiled artefacts, schemas, tests, or medical content are modified. Explicit prohibition confirmed at prompt lines 360-378 (Out of scope)."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model=TWO_PHASE_START_FINISH. Correct — sprint requires baseline preflight with branch/status verification and preflight findings (10 required items at lines 240-251) before implementation."
+      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model=TWO_PHASE_START_FINISH. Correct — sprint requires baseline branch/status preflight (10 evidence items) before investigation begins, and closure requirements before finish (6-item checklist). Two-phase model appropriate."
     },
     {
-      "check": "2a_working_tree_stop_condition",
-      "result": "RISK — STOP CONDITION APPLIES",
-      "citation": "git diff --name-only confirms two unstaged modified files on main: automation_bus/latest_cursor_prompt.md and docs/sprints/launch_core_carry_forward_register.md. Prompt STOP conditions (lines 58-63) require: working tree is clean before branching. Cursor must resolve these modifications (commit or stash) before creating work/LAYER-B-1-narrative-brief-maturity. This is a Cursor preflight obligation; it does not block hardening."
+      "check": "2a_working_tree_pre_execution_note",
+      "result": "RISK — STOP CONDITION APPLIES — RESOLUTION PATH DEFINED",
+      "citation": "git status --short: M automation_bus/latest_cursor_prompt.md. Prompt STOP conditions require working tree clean before branching (prompt lines 58-66). This is the GPT-authored sprint prompt in unpushed state — standard sprint activation. Resolution: Cursor must commit automation_bus/latest_cursor_prompt.md to main as chore(bus): activate ARCH-LEGACY-1 before checking out work/ARCH-LEGACY-1-pathway-retirement-audit. This is a Cursor preflight obligation, not a hardening blocker."
     },
     {
-      "check": "2a_authority_paths_all_exist",
+      "check": "2a_origin_main_alignment",
       "result": "CONFIRMED",
-      "citation": "All 12 authoritative input paths verified present: docs/sprints/launch_core_carry_forward_register.md:CONFIRMED, docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md:CONFIRMED, docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md:CONFIRMED, docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md:CONFIRMED, docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md:CONFIRMED, docs/audit-papers/LAUNCH-CORE-4_results_page_narrative_hierarchy_and_score_rationalisation_audit.md:CONFIRMED, docs/audit-papers/LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation_report.md:CONFIRMED, docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md:CONFIRMED, docs/planning-papers/healthiq_pre_sprint3_closure_pack_FINAL.md:CONFIRMED, docs/architecture/ADR_WP2_layer_b_layer_c_contract_path_b.md:CONFIRMED, docs/intelligence/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md:CONFIRMED, backend/scripts/validate_day_one_architecture.py:CONFIRMED"
+      "citation": "git rev-parse HEAD=0dfe1ade06ef835a3647a6dad491b3a0f2194613, git rev-parse origin/main=0dfe1ade06ef835a3647a6dad491b3a0f2194613. Local main is in sync with remote — no divergence."
     },
     {
-      "check": "2a_implementation_authority_paths_all_exist",
+      "check": "2a_prerequisite_merges_confirmed",
       "result": "CONFIRMED",
-      "citation": "All 7 implementation authority paths verified present: backend/core/contracts/narrative_payload_v1.py:CONFIRMED, backend/core/analytics/narrative_payload_builder_v1.py:CONFIRMED, backend/core/analytics/domain_narrative_wave1.py:CONFIRMED, backend/core/analytics/report_compiler_v1.py:CONFIRMED, backend/core/analytics/domain_score_assembler.py:CONFIRMED, backend/core/llm/validator_v2.py:CONFIRMED, backend/core/models/results.py:CONFIRMED. Frontend paths: frontend/app/(app)/results/page.tsx:CONFIRMED, frontend/app/types/analysis.ts:CONFIRMED, frontend/app/components/results/ (18 component files):CONFIRMED"
+      "citation": "git log --oneline -n 12: HEAD=0dfe1ad 'docs: update carry-forward register for LAYER-B-1 closure'. LAYER-B-1 confirmed merged (commits: 954df60 feat(core): LAYER-B-1 narrative brief maturity, 798e57e chore(bus): LAYER-B-1_narrative_brief_maturity kernel COMPLETE status). KB-UTIL-1 confirmed merged (f9cb7a6 chore(bus): KB-UTIL-1 kernel COMPLETE status, f37d39d feat(kb): KB-UTIL-1). All required prior merges confirmed."
+    },
+    {
+      "check": "2a_carry_forward_register_exists",
+      "result": "CONFIRMED",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md: EXISTS (verified via filesystem check). Required per prompt STOP condition line 64."
+    },
+    {
+      "check": "2a_authoritative_input_paths_all_exist",
+      "result": "CONFIRMED",
+      "citation": "All 11 authoritative input paths verified present: docs/sprints/launch_core_carry_forward_register.md:CONFIRMED, docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md:CONFIRMED, docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md:CONFIRMED, docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md:CONFIRMED, docs/audit-papers/active_intelligence_authority_manifest.md:CONFIRMED, docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md:CONFIRMED, docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md:CONFIRMED, docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md:CONFIRMED, docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md:CONFIRMED, docs/audit-papers/LAYER-B-1_narrative_brief_maturity_report.md:CONFIRMED, backend/scripts/validate_day_one_architecture.py:CONFIRMED"
+    },
+    {
+      "check": "2a_legacy_inspection_paths_all_exist",
+      "result": "CONFIRMED",
+      "citation": "All 12 legacy/dual-authority inspection targets verified present: backend/core/analytics/wave1_subsystem_evidence.py:CONFIRMED, backend/core/knowledge/health_system_card_evidence.py:CONFIRMED, backend/core/knowledge/domain_flat_card_evidence.py:CONFIRMED, backend/core/analytics/domain_score_assembler.py:CONFIRMED, backend/core/analytics/domain_narrative_wave1.py:CONFIRMED, backend/core/analytics/root_cause_compiler_v1.py:CONFIRMED, backend/core/knowledge/compiled_hypothesis.py:CONFIRMED, backend/core/knowledge/load_root_cause_hypotheses.py:CONFIRMED, backend/core/analytics/signal_evaluator.py:CONFIRMED, backend/core/analytics/report_compiler_v1.py:CONFIRMED, backend/core/analytics/narrative_payload_builder_v1.py:CONFIRMED, sentinel/packs/day_one_architecture_guardrails_v1.json:CONFIRMED"
+    },
+    {
+      "check": "2a_knowledge_bus_packages_and_compiled_present",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/packages/: populated with pkg_s24_crp_high_inflammation (package_manifest.yaml + research_brief.yaml + signal_library.yaml:CONFIRMED), plus pkg_insulin_resistance, pkg_lipid_transport, pkg_hepatic_metabolic_stress, pkg_chronic_inflammation, pkg_homocysteine_elevation_context and 30+ additional packages. knowledge_bus/compiled/: manifests (kb_util1_liver_flat_card_evidence.yaml, kb_util1_glycaemic_card_evidence.yaml, kb_util1_lipid_transport_card_evidence.yaml:CONFIRMED), health_system_cards (wave1_cv_homocysteine_pathway.yaml, wave1_cv_vascular_strain.yaml, wave1_liv_enzyme_pattern.yaml, wave1_met_insulin_metabolic.yaml:CONFIRMED). CRP legacy path investigation target confirmed reachable via pkg_s24_crp_high_inflammation."
     },
     {
       "check": "2a_no_duplicate_authority_sources",
       "result": "CONFIRMED",
-      "citation": "Sole contract file: backend/core/contracts/narrative_payload_v1.py. Sole builder: backend/core/analytics/narrative_payload_builder_v1.py. Two architectural authority docs exist (ADR_WP2_layer_b_layer_c_contract_path_b.md and DOMAIN_NARRATIVE_CONTRACT_WAVE1.md) but these are distinct documents — one is the ADR decision record, the other the Wave 1 domain contract. No duplicate authority source conflict detected."
+      "citation": "No duplicate authority sources detected. Authoritative input files are distinct documents covering different scopes (ARCH-RT-6 acceptance vs guardrails report, MED-REV-1 vs MED-REV-2, KB-UTIL-1 vs LAYER-B-1). No two files claim authority over the same surface."
     },
     {
-      "check": "2a_narrative_payload_v1_current_content",
-      "result": "CONFIRMED — CONTENT READ — GAP ANALYSIS COMPLETE",
-      "citation": "backend/core/contracts/narrative_payload_v1.py lines 69-79 (NarrativePayloadV1): 8 fields present — payload_schema_version (line 72), analysis_id (line 73), report_v1 (line 74), top_findings (line 75), root_cause_v1 (line 76), intervention_annotations_v1 (line 77), section_intents (line 78), claim_boundaries (line 79). Target brief requires 16 fields. 11 absent: report_story_priority, primary_finding_reason, confidence_summary, evidence_for, evidence_against, missing_or_limiting_evidence, system_context, marker_context, next_step_intent, section_visibility, required_caveats, future_llm_translation_constraints. Partial: allowed_claims (line 56-57), forbidden_claims (lines 65-79), evidence_boundaries (via section_intents.permitted_source_fields line 49)."
+      "check": "2b_behavioural_hardening",
+      "result": "NOT_APPLICABLE",
+      "citation": "change_type=CONTENT. This sprint modifies no production code, no compiled artefacts, no schemas, no tests, no validators, and no medical content (prompt lines 360-378). Intelligence Core is inspected only (read-only audit). Stage 2B behavioural hardening is not required per SOP."
     },
     {
-      "check": "2a_section_intents_coverage_gap",
-      "result": "CONFIRMED — CONTENT READ — GAP IDENTIFIED",
-      "citation": "backend/core/contracts/narrative_payload_v1.py lines 30-35 (NarrativeSectionIdV1): 5 sections — retail_summary, lead_narrative, body_overview, next_steps_narrative, clinician_synthesis. Required sections: 9 (hero/main finding, primary finding and why, what is working well, health systems context, patterns across body, marker evidence, missing evidence/confidence limitations, what to do next, technical/clinician detail). 4 sections have no current enum ID: health_systems_context (conflated into body_overview), patterns_across_body, marker_evidence, missing_evidence_confidence_limitations. Sprint must add new section IDs or defer with rationale."
-    },
-    {
-      "check": "2a_builder_current_content",
-      "result": "CONFIRMED — CONTENT READ",
-      "citation": "backend/core/analytics/narrative_payload_builder_v1.py lines 22-65 (_default_section_intents): builds 5 NarrativeSectionIntentV1 objects. Each carries only section_id, intent_code, permitted_source_fields. No per-section evidence_boundary, visibility, forbidden_claim, or caveat fields — these are report-level only in NarrativeClaimBoundaryV1. Builder does not carry: report_story_priority, confidence_summary, score_hierarchy_guidance, future_llm_translation_constraints. Full extension needed for the target brief model."
-    },
-    {
-      "check": "2a_extra_forbid_risk",
-      "result": "CONFIRMED — CRITICAL IMPLEMENTATION CONSTRAINT",
-      "citation": "backend/core/contracts/narrative_payload_v1.py line 45: NarrativeSectionIntentV1 uses model_config = ConfigDict(extra='forbid'). backend/core/contracts/narrative_payload_v1.py line 69 context: NarrativePayloadV1 also uses ConfigDict(extra='forbid'). Any new fields added to NarrativePayloadV1 or NarrativeSectionIntentV1 must be Optional with defaults or all construction sites must be updated in lockstep. Missing defaults will cause Pydantic validation errors at all existing instantiation sites. Cursor must audit all NarrativePayloadV1 and NarrativeSectionIntentV1 construction sites before extending the schema."
-    },
-    {
-      "check": "2a_carry_forward_register_duplicate",
-      "result": "CONFIRMED — REGISTER HAS DUPLICATE ROWS",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md lines 39-42: CF-KBUTIL1-001 and CF-KBUTIL1-002 each appear twice (lines 39+41 for CF-KBUTIL1-001, lines 40+42 for CF-KBUTIL1-002). CF-KBUTIL1-002 (line 40) directly names this sprint as its target. Cursor must deduplicate the register when updating it and set CF-KBUTIL1-002 status appropriately."
-    },
-    {
-      "check": "2a_existing_test_coverage",
+      "check": "stop_conditions_complete_and_measurable",
       "result": "CONFIRMED",
-      "citation": "backend/tests/unit/ narrative-related tests confirmed: test_narrative_payload_wp2.py, test_lc_s3_narrative_payload_compiler.py, test_narrative_report_compiler_v1.py, test_report_compiler_v1.py, test_domain_narrative_wave1.py, test_narrative_runtime_policy.py, test_investigation_narrative_contract.py. All must remain passing after sprint changes."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 398-407: 6 STOP conditions all measurable — (1) authoritative reports missing, (2) carry-forward register missing, (3) validator fails, (4) working tree not clean, (5) investigation reveals launch blocker, (6) reachability of critical path cannot be determined. All can be verified without ambiguity."
     },
     {
-      "check": "2b_behavioural_scope_defined",
+      "check": "success_criteria_complete_and_measurable",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 198-234: 12 allowed scope items, 21 explicit out-of-scope prohibitions. Scope bounded to contract extension, builder extension, section intent governance, evidence boundary governance, validation and tests. STOP conditions lines 430-435: 9 explicit stops covering report compiler redesign, unstable contracts, frontend clinical inference, LLM wiring, raw Pass 3 exposure, score calculation changes, hidden/support subsystem reintroduction, ARCH-RT-6 failure, UX redesign."
-    },
-    {
-      "check": "2b_intelligence_core_boundary",
-      "result": "CONFIRMED — STOP CONDITIONS ACTIVE",
-      "citation": "report_compiler_v1.py is listed as implementation authority (prompt line 129). Scope item 9 allows 'wire deterministic report assembly to consume the improved brief where safe.' Backend/core/analytics/report_compiler_v1.py lines 67-70 define TOP_FINDINGS_RANKING_POLICY_VERSION = 'PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1'. This anchor must not be changed unless a new policy sprint explicitly authorises it. Cursor changes to this file must be confined to consuming new brief fields only."
-    },
-    {
-      "check": "2b_determinism_preserved",
-      "result": "CONFIRMED",
-      "citation": "All new fields in NarrativePayloadV1 must be deterministically assigned from governed Layer B inputs. No LLM path, no randomness. future_llm_translation_constraints field is a governed data structure defining what LLM may/may not do — it must not enable LLM calls. Architecture rule: LLM reasoning must never enter Layer B (CLAUDE.md §4)."
-    },
-    {
-      "check": "2b_no_raw_pass3_runtime_reads",
-      "result": "CONFIRMED — STOP CONDITION ACTIVE",
-      "citation": "Prompt out-of-scope: 'expose raw Pass 3 hypotheses directly to users' (line 228). STOP condition 5: 'Implementation would expose raw Pass 3 hypotheses/contradictions unsafely.' CF-KBUTIL1-002 is permitted to remain Open if safe surfacing requires a future sprint (prompt lines 354-355). No Pass 3 runtime reads permitted."
-    },
-    {
-      "check": "2b_regression_targets_present",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 374-390: 10 required tests. Mandatory commands lines 375-380: python backend/scripts/validate_day_one_architecture.py and python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q. Additional targeted tests for narrative_payload_v1, narrative_payload_builder_v1, domain_narrative_wave1, report_compiler_v1, validator_v2, frontend result components if touched."
-    },
-    {
-      "check": "2b_no_op_protection",
-      "result": "CONFIRMED — NOT A NO-OP",
-      "citation": "11 absent or incomplete fields in NarrativePayloadV1 confirmed from source content read. 4 section IDs missing from NarrativeSectionIdV1. Builder has no per-section visibility, evidence boundary, or forbidden-claim governance. Sprint is genuine substantive work."
-    },
-    {
-      "check": "forbidden_files_clear",
-      "result": "CONFIRMED",
-      "citation": "Explicit prohibitions confirmed in scope: no changes to backend/ssot/, SignalEvaluator, SignalRegistry, PSI runtime, root-cause compiler promotion policy, clinical score calculations, unit conversion. No LLM wiring. No broad UX redesign. No regeneration lineage hardening. No fallback parsers. No frontend clinical inference."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 451-464: 10 success criteria all measurable — inventory complete, every item classified, reachability assessed, guardrail coverage assessed, launch blockers identified, retirement order recommended, carry-forward register updated, ARCH-RT-6 validator passes, no production code changed, Automation Bus gate passes."
     },
     {
       "check": "tooling_leakage_check",
       "result": "CONFIRMED CLEAR",
-      "citation": "Sprint prompt references no .codex/, .vscode/, or AGENTS.md files. No tooling leakage risk identified."
+      "citation": "Sprint prompt references no .codex/, .vscode/, or AGENTS.md files. Out-of-scope list (prompt lines 360-378) prohibits all code modification. No tooling leakage risk identified."
+    },
+    {
+      "check": "forbidden_files_clear",
+      "result": "CONFIRMED",
+      "citation": "Explicit prohibitions per prompt lines 360-378: no delete of legacy files, no modify backend logic, no modify frontend components, no change compiled artefacts, packages, schemas, tests, validators, scoring, medical content, no implement migration, no implement LLM translation, no implement UX redesign. All Intelligence Core files listed are inspection targets only."
     }
   ]
 }
