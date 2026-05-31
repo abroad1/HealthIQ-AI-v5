@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-LEGACY-2-targeted-retirement-implementation",
+  "branch": "work/CRP-PASS3-MIGRATION-crp-legacy-s24-package-and-signal-naming-alignment",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-31T16:16:50Z",
-  "cursor_started_utc": "2026-05-31T16:14:36Z",
-  "head_sha": "97fbf558e6583fc2904a9bb72d6886bb1056d989",
+  "cursor_started_utc": "2026-05-31T16:39:54Z",
+  "head_sha": "69575594df11ab4f541688f174d419b7df8aac29",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-LEGACY-2_targeted_retirement_implementation"
+  "status": "IN_PROGRESS",
+  "work_id": "CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment"
 }
