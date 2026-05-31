@@ -1,33 +1,20 @@
 ---
-work_id: ARCH-LEGACY-1_pathway_retirement_audit
-branch: work/ARCH-LEGACY-1-pathway-retirement-audit
-risk_level: STANDARD
+work_id: ARCH-LEGACY-2_targeted_retirement_implementation
+branch: work/ARCH-LEGACY-2-targeted-retirement-implementation
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: MIXED
 ---
 
-# ARCH-LEGACY-1 — Legacy Pathway Retirement Audit
+# ARCH-LEGACY-2 — Targeted Legacy Pathway Retirement Implementation
 
 ## Purpose
 
-Audit remaining legacy / dual-authority pathways now that the core Wave 1 architecture, medical subsystem visibility model, card evidence enrichment and Layer B narrative brief have been stabilised.
+Implement the targeted legacy-retirement actions recommended by ARCH-LEGACY-1.
 
-This is an audit-only sprint.
+ARCH-LEGACY-1 confirmed there are no launch blockers, but identified several dead, stale, or insufficiently guarded legacy pathways that should be cleaned up now that the Wave 1 medical model, card evidence, narrative brief, and guardrails are stable.
 
-Do not modify production code, compiled artefacts, schemas, tests, packages, frontend components, backend logic, or medical content.
-
-The goal is to classify which old architecture paths can be:
-
-```text
-- retired
-- retained but unreachable
-- retained and explicitly classified
-- deferred
-- migrated in a later sprint
-- removed only after a dependency is complete
-````
-
-This sprint must not remove code yet.
+This sprint must be targeted. It must not become broad cleanup.
 
 ## Baseline requirement
 
@@ -41,8 +28,9 @@ MED-REV-1 merged
 MED-REV-2 merged
 KB-UTIL-1 merged
 LAYER-B-1 merged
+ARCH-LEGACY-1 merged
 docs/sprints/launch_core_carry_forward_register.md present and updated
-```
+````
 
 Before creating or switching branch, run and report:
 
@@ -60,7 +48,7 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- LAYER-B-1 is not merged
+- ARCH-LEGACY-1 is not merged
 - docs/sprints/launch_core_carry_forward_register.md is missing
 - untracked or uncommitted files are present
 ```
@@ -68,14 +56,14 @@ STOP if:
 ## Governance classification
 
 ```yaml
-risk_level: STANDARD
-change_type: CONTENT
+risk_level: HIGH
+change_type: MIXED
 execution_model: TWO_PHASE_START_FINISH
 ```
 
 Reason:
 
-This is an audit-only sprint. It must not change production behaviour. It may produce recommendations for future HIGH-risk implementation work.
+This sprint may remove or alter legacy backend pathways and extend architectural validators. Even if the target code is dead or unreachable, this touches runtime-adjacent analytical code and guardrail enforcement.
 
 ## Standard rules
 
@@ -85,117 +73,99 @@ Do not re-read SOPs unless the applicable governance requirement cannot be locat
 
 ## Carry-forward register handling
 
-Before investigation, read:
+Before implementation, read:
 
 ```text
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-If this audit resolves, reclassifies, or creates carry-forwards, update the register.
+If this sprint resolves any carry-forward, update the register.
 
-Do not leave carry-forwards only in chat, audit summaries, or sprint reports.
+If this sprint creates new carry-forwards, add them to the register.
+
+Expected relevant carry-forwards include:
+
+```text
+CF-MEDREV2-003
+CF-ARCHLEG1-001
+CF-ARCHLEG1-002
+CF-ARCHLEG1-003
+CF-ARCHLEG1-004
+```
+
+Do not leave carry-forwards only in chat, audit reports, or status summaries.
 
 ## Authoritative inputs
 
-Read these sprint-specific files before investigation:
+Read these sprint-specific files before making changes:
 
 ```text
 docs/sprints/launch_core_carry_forward_register.md
+docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md
 docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md
-docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md
-docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md
-docs/audit-papers/active_intelligence_authority_manifest.md
-docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md
 docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md
 docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md
 docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md
 docs/audit-papers/LAYER-B-1_narrative_brief_maturity_report.md
+docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md
 backend/scripts/validate_day_one_architecture.py
 ```
 
-Also inspect likely legacy / dual-authority implementation areas:
+Inspect as implementation authority:
 
 ```text
 backend/core/analytics/wave1_subsystem_evidence.py
+backend/core/analytics/domain_narrative_wave1.py
+backend/core/analytics/domain_score_assembler.py
 backend/core/knowledge/health_system_card_evidence.py
 backend/core/knowledge/domain_flat_card_evidence.py
-backend/core/analytics/domain_score_assembler.py
-backend/core/analytics/domain_narrative_wave1.py
-backend/core/analytics/root_cause_compiler_v1.py
-backend/core/knowledge/compiled_hypothesis.py
-backend/core/knowledge/load_root_cause_hypotheses.py
-backend/core/analytics/signal_evaluator.py
-backend/core/analytics/report_compiler_v1.py
-backend/core/analytics/narrative_payload_builder_v1.py
-knowledge_bus/packages/**
-knowledge_bus/compiled/**
-sentinel/packs/day_one_architecture_guardrails_v1.json
+backend/scripts/validate_day_one_architecture.py
+backend/tests/architecture/test_day_one_architecture_guardrails.py
+backend/tests/regression/test_kb_util1_pass3_card_evidence_compile_and_consume.py
+backend/tests/regression/test_med_rev1_wave1_subsystem_visibility.py
+backend/tests/regression/test_med_rev2_domain_card_copy_and_regeneration.py
 ```
 
 If paths differ, locate and report the actual paths.
 
-## Problem statement
+## Scope
 
-The ARCH-RT programme added strong programmatic guardrails, but did not delete every old pathway.
-
-Known or suspected legacy / dual-authority areas include:
+Allowed scope:
 
 ```text
-- legacy root-cause YAML path for non-promoted signals
-- hard-coded fallback subsystem definitions in wave1_subsystem_evidence.py
-- old CV contributor / homocysteine bridge helper paths
-- legacy s24 CRP package route
-- inferred provenance package/card markers
-- batch JSON packages blocked pending extraction
-- dead or semi-dead narrative/card helper functions
-- old completeness / rail paths that may still exist but should not govern new visible surfaces
+1. Remove or neutralise confirmed dead legacy cardiovascular contributor helper code.
+2. Remove or neutralise unreachable hard-coded Wave 1 subsystem fallback definitions.
+3. Extend ARCH-RT-6 validator coverage for guardrail gaps identified by ARCH-LEGACY-1.
+4. Add/update regression tests proving the retired paths cannot re-enter user-facing output.
+5. Update carry-forward register for resolved/deferred items.
+6. Produce sprint report.
 ```
 
-The audit must determine which of these are safe, guarded, still reachable, or risky.
+## Specific implementation targets
 
-## Required investigation questions
+### Target 1 — Legacy cardiovascular contributor / homocysteine bridge cleanup
 
-For each identified legacy or dual-authority path, answer:
+Investigate and remove or neutralise dead / edge-case legacy helper paths identified by ARCH-LEGACY-1 and MED-REV-2.
+
+Known concern:
 
 ```text
-1. What is it?
-2. Where is it located?
-3. What originally used it?
-4. Is it still reachable at runtime?
-5. If reachable, under what conditions?
-6. Is it launch-critical?
-7. Is it guarded by ARCH-RT-6 validator / Sentinel / regression tests?
-8. Does it conflict with MED-REV-1/2, KB-UTIL-1 or LAYER-B-1?
-9. Should it be:
-   - deleted
-   - retained temporarily
-   - retained indefinitely
-   - migrated
-   - hidden behind explicit classification
-   - deferred
-10. What future sprint should handle it?
+Older CV helper logic can still refer to vascular inflammation / homocysteine framing in edge cases.
+Current visible card basis should remain Atherogenic lipid pattern where the visible scored subsystem is lipid-only.
 ```
 
-## Classification model
-
-Use this classification table:
+Allowed actions:
 
 ```text
-deleted
-retained_unreachable_guarded
-retained_reachable_classified
-retained_reachable_unguarded
-migration_required
-retirement_candidate
-deferred_non_launch_blocker
-launch_blocker
+- delete dead helper if genuinely unused
+- replace edge-case call path with governed current helper
+- keep function only if still required for non-card surfaces, but classify and guard it
+- add tests proving CV card copy cannot regress to inflammation/homocysteine score-basis when lipid is the visible scored subsystem
 ```
 
-No item may remain unclassified.
+STOP if removal would affect a live non-card surface in a way not covered by tests.
 
-## Specific areas to audit
-
-### 1. Wave 1 hard-coded subsystem fallback
+### Target 2 — Hard-coded Wave 1 subsystem fallback retirement
 
 Investigate:
 
@@ -203,205 +173,179 @@ Investigate:
 backend/core/analytics/wave1_subsystem_evidence.py
 ```
 
-Questions:
+Known concern:
 
 ```text
-- Are hard-coded _Wave1SubsystemDef labels still stale?
-- Are they reachable after compiled card evidence routing?
-- Could they reintroduce old labels like “Lipid transport” or “Glycaemic control”?
-- Are they guarded by validator or tests?
-- Should they be removed, updated, or classified?
+Legacy _Wave1SubsystemDef fallback labels are stale and should not be reachable for compiled Wave 1 card evidence.
 ```
 
-### 2. Legacy cardiovascular narrative helpers
-
-Investigate old CV contributor / homocysteine bridge logic.
-
-Questions:
+Allowed actions:
 
 ```text
-- Which functions are now dead or only edge-case reachable?
-- Could they reintroduce inflammation/homocysteine as score basis?
-- Are MED-REV-2 / KB-UTIL-1 tests sufficient?
-- Should they be removed or retained for non-card surfaces?
+- remove unreachable fallback partition if safe
+- reduce it to an explicit fail-closed path for Wave 1 compiled subsystems
+- update stale labels only if removal is unsafe
+- add tests proving compiled Wave 1 subsystems cannot fall back to hard-coded definitions
 ```
 
-### 3. Root-cause legacy YAML path
-
-Investigate:
+Required behaviour:
 
 ```text
-load_root_cause_hypotheses.py
-compiled_hypothesis.py
-root_cause_compiler_v1.py
+For launch-active Wave 1 compiled subsystems, absence of compiled evidence should fail closed or be explicitly classified. It must not silently fall back to stale hard-coded subsystem definitions.
 ```
 
-Questions:
+STOP if removing fallback requires broad assembler redesign.
+
+### Target 3 — Validator / Sentinel guardrail extension
+
+Extend `backend/scripts/validate_day_one_architecture.py` for ARCH-LEGACY-1 identified gaps where safely bounded.
+
+At minimum assess and implement if appropriate:
 
 ```text
-- Which signals still use legacy YAML root-cause?
-- Which signals use compiled promoted hypothesis?
-- Is the boundary explicit and guarded?
-- What would be required to migrate more signals?
-- Is multi-frame root-cause still blocked?
+- guard that launch-active Wave 1 subsystem evidence cannot use hard-coded fallback definitions
+- guard that dead/legacy CV contributor path is not used for visible card score basis
+- guard that domain_flat_card_evidence.py remains in launch-critical runtime path checks
+- guard that KB-UTIL-1 manifest hash integrity remains enforced
+- guard that hidden_v1 support subsystems cannot re-enter as visible scored card basis
 ```
 
-### 4. Legacy / inferred provenance packages
+Do not add brittle source-text checks unless they are the existing validator pattern or clearly justified.
 
-Investigate unresolved provenance items.
+### Target 4 — CRP / s24 legacy path
 
-Questions:
+ARCH-LEGACY-1 may identify CRP legacy package migration as a carry-forward.
+
+This sprint may inspect and classify, but should not implement CRP package migration unless it is genuinely small and already bounded.
+
+Default decision:
 
 ```text
-- Which package cohorts remain inferred-only?
-- Which are batch JSON blocked?
-- Which affect launch-visible Wave 1 surfaces?
-- Which can stay deferred?
-- Which should be elevated after KB-UTIL-1?
+Do not migrate CRP Pass 3 package path in this sprint unless hardening approves it as in scope.
 ```
 
-### 5. CRP / s24 legacy path
-
-Investigate whether CRP still depends on legacy `pkg_s24_crp_high_inflammation`.
-
-Questions:
-
-```text
-- Is CRP still active in SignalEvaluator?
-- Is it visible to users after MED-REV-1/2?
-- Does it affect hero/pattern surfaces?
-- Is it safe to defer, or should a dedicated Pass 3 CRP spec migration be prioritised?
-```
-
-### 6. Old completeness / rail logic
-
-Investigate whether old completeness methods can still contradict visible evidence.
-
-Questions:
-
-```text
-- Are rail completeness paths still used anywhere user-facing?
-- Are flat liver completeness and subsystem union completeness now protected?
-- Could future domains reintroduce 1-of-3 vs 2-of-4 style mismatch?
-```
-
-### 7. Frontend legacy inference / rendering risks
-
-Investigate frontend result components for old inferred clinical logic.
-
-Questions:
-
-```text
-- Does frontend still infer marker role, clinical priority, score meaning or subsystem importance?
-- Are new flat evidence components render-only?
-- Are source traces/internal IDs protected?
-```
-
-## Required validator / Sentinel assessment
-
-Assess whether current guardrails cover:
-
-```text
-- domain_flat_card_evidence.py
-- hidden_v1 enforcement
-- no raw Pass 3 runtime reads
-- PSI isolation
-- no frontend clinical inference
-- no old card evidence reactivation
-- total_bilirubin prohibition
-- MED-REV-1 visibility partition
-- KB-UTIL-1 manifest hash integrity
-- LAYER-B-1 hidden/support evidence boundaries
-```
-
-Identify any missing guardrails.
-
-Do not implement guardrails in this sprint unless explicitly approved later.
-
-## Required output
-
-Create:
-
-```text
-docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md
-```
-
-The report must include:
-
-```text
-- executive verdict
-- legacy pathway inventory
-- classification table
-- reachability assessment
-- guardrail coverage assessment
-- launch-risk assessment
-- recommended retirement / migration order
-- proposed future sprint list
-- carry-forward register updates
-```
-
-## Recommended roadmap output
-
-The report must recommend the next action after this audit.
-
-Potential follow-on sprint types:
-
-```text
-ARCH-LEGACY-2_targeted_retirement_implementation
-KB-UTIL-2_hypothesis_contradiction_confirmatory_surface_design
-LLM-NAR-0_translation_design_audit
-LAUNCH-UX-2_results_hierarchy_polish
-REGEN-1_result_lineage_hardening
-```
-
-The audit must not assume all legacy paths should be deleted. It must justify each recommendation.
+If not implemented, ensure the carry-forward register retains the item.
 
 ## Out of scope
 
 Do not:
 
 ```text
-- delete legacy files
-- modify backend logic
-- modify frontend components
-- change compiled artefacts
-- change packages
-- change schemas
-- change tests
-- change validators
-- change scoring
-- change medical content
-- implement migration
-- implement LLM translation
+- migrate root-cause YAML estate
+- implement multi-frame root-cause promotion
+- implement full Pass 3 estate compiler
+- surface hypotheses / contradiction markers / confirmatory tests
+- change signal activation
+- change scoring rails
+- change clinical thresholds
+- change biomarker SSOT
+- change unit conversion
+- change PSI runtime status
+- implement LLM narrative translation
 - implement UX redesign
+- change frontend rendering unless required by a removed backend field and approved
+- remove evidence from governed artefacts
+- introduce fallback parsers
 ```
 
-## Required checks
+## Required tests
 
-Run:
+Add or update tests proving:
+
+```text
+1. CV visible card copy cannot use inflammation/homocysteine as score basis when lipid is the only visible scored subsystem.
+2. Hidden MED-REV-1 subsystems remain hidden.
+3. Hard-coded Wave 1 subsystem fallback cannot re-enter launch-active compiled subsystem path.
+4. Removed/dead helper functions are not referenced.
+5. Validator catches any attempted reactivation of retired pathway where practical.
+6. domain_flat_card_evidence remains covered by launch-critical validator paths.
+7. KB-UTIL-1 manifest hash integrity still passes.
+8. total_bilirubin prohibition remains intact.
+9. ARCH-RT-6 validator still passes.
+```
+
+Always run:
 
 ```powershell
 python backend/scripts/validate_day_one_architecture.py
 python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
 ```
 
-If they fail, STOP and report.
+Also run targeted tests for:
+
+```text
+test_kb_util1_pass3_card_evidence_compile_and_consume.py
+test_med_rev1_wave1_subsystem_visibility.py
+test_med_rev2_domain_card_copy_and_regeneration.py
+any new ARCH-LEGACY-2 regression tests
+```
 
 ## Manual validation
 
-No browser UAT is required unless the audit identifies a live runtime concern that needs confirmation.
+Manual browser UAT is not required unless a user-facing output path is changed.
+
+If any user-facing output is changed, manually inspect a latest-engine regenerated result from:
+
+```text
+http://localhost:3000/results?analysis_id=746f2b0a-b470-4d87-8ed8-e2c3d1e68c02
+```
+
+Login:
+
+```text
+test-user3@example.com
+Subaru@555
+```
+
+Confirm no regression in:
+
+```text
+- cardiovascular card basis
+- blood sugar card copy
+- liver flat evidence
+- hidden subsystem suppression
+- internal ID/source-trace protection
+```
 
 ## STOP conditions
 
 STOP and report if:
 
 ```text
-1. authoritative reports are missing
-2. carry-forward register is missing
-3. validator fails
-4. working tree is not clean
-5. investigation reveals a launch blocker
-6. audit cannot determine reachability of a critical legacy path
+1. ARCH-LEGACY-1 report is missing.
+2. Carry-forward register is missing.
+3. Removing legacy code would affect live untested paths.
+4. Hard-coded fallback cannot be removed without broad redesign.
+5. Validator extension would be brittle or misleading.
+6. Any change would alter clinical thresholds, scoring, SignalEvaluator, or SSOT.
+7. Any hidden subsystem would be reintroduced.
+8. ARCH-RT-6 validator fails.
+9. Sprint drifts into Pass 3 estate compile, LLM translation, or UX redesign.
+```
+
+## Required deliverable
+
+Create:
+
+```text
+docs/audit-papers/ARCH-LEGACY-2_targeted_retirement_implementation_report.md
+```
+
+The report must include:
+
+```text
+- items retired
+- items retained and why
+- files changed
+- validator changes
+- tests added/updated
+- carry-forward register updates
+- confirmation no clinical/scoring logic changed
+- confirmation hidden subsystems remain hidden
+- confirmation no raw Pass 3 runtime reads introduced
+- tests run
+- results
+- remaining risks / carry-forwards
 ```
 
 ## Evidence required from Cursor
@@ -411,15 +355,15 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. carry-forward register read/update evidence
-3. files inspected
-4. legacy pathway classification table
-5. reachability findings
-6. guardrail coverage findings
-7. launch-risk findings
-8. recommended next sprint
-9. tests/validators run
-10. test results
-11. confirmation no production code was changed
+3. legacy paths targeted
+4. exact code removed/neutralised
+5. validator changes
+6. tests added/updated
+7. test commands run
+8. test results
+9. manual validation result if required
+10. confirmation no production-facing clinical behaviour changed except intended retirement protection
+11. confirmation ARCH-RT-6 validator still passes
 ```
 
 ## Closure requirements
@@ -438,12 +382,14 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/ARCH-LEGACY-1-pathway-retirement-audit
-- only audit documentation and carry-forward register updates are changed
-- no production code is changed
-- no helper scripts are committed
+- current branch matches work/ARCH-LEGACY-2-targeted-retirement-implementation
+- all changed files are tied to this sprint
+- carry-forward register has been updated if required
+- no clinical thresholds or scoring rails are changed
+- no SignalEvaluator / SignalRegistry / SSOT changes are included
+- no hidden subsystem is reintroduced
 - no ambiguous stash exists
-- latest commit contains only in-scope audit work
+- latest commit contains only in-scope work
 ```
 
 ## Success criteria
@@ -451,16 +397,15 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. legacy / dual-authority pathways are inventoried
-2. every identified item is classified
-3. runtime reachability is assessed
-4. guardrail coverage is assessed
-5. launch blockers, if any, are identified
-6. future retirement / migration order is recommended
-7. carry-forward register is updated
-8. ARCH-RT-6 validator passes
-9. no production code is changed
-10. Automation Bus gate passes
+1. Targeted legacy paths are removed, neutralised, or explicitly retained with rationale.
+2. Launch-active Wave 1 compiled subsystem path cannot silently fall back to stale hard-coded definitions.
+3. CV legacy narrative path cannot re-enter visible card score-basis copy.
+4. Validator/guardrail coverage is improved for identified gaps.
+5. Carry-forward register is updated.
+6. No clinical scoring or signal behaviour changes.
+7. ARCH-RT-6 validator passes.
+8. Tests prove the retirement protections.
+9. Automation Bus gate passes.
 ```
 
 ```
