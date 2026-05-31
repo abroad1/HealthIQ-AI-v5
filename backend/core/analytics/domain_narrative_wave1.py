@@ -7,7 +7,7 @@ signal ids, and optional narrative_report / insight recommendations. No LLM.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Set, Tuple, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayRecordV1
@@ -19,10 +19,24 @@ _ID_HBA1C = "ph_hba1c_metabolic_stress_v1"
 _ID_IR = "ph_metabolic_early_ir_v1"
 _ID_HEP = "ph_hepatic_alt_inflammatory_v1"
 
+# MED-REV-2 / KB-UTIL-1: visible scored subsystem ids (narrative authority follows card surface)
+_WAVE1_CV_LIPID_SUBSYSTEM_ID = "wave1_cv_lipid_transport"
+_WAVE1_MET_GLYCAEMIC_SUBSYSTEM_ID = "wave1_met_glycaemic_control"
+
 # LC-S11A: honest glycaemic copy when no active blood-sugar signals on the panel.
 _MET_NO_ACTIVE_SIGNAL_CONTRIBUTOR = (
     "HbA1c is within range on this panel. Glucose and insulin were not included, "
     "so a fuller glycaemic read would require those markers."
+)
+
+_MET_CONSEQUENCE_NEUTRAL_LIMITED_GLYCAEMIC = (
+    "HbA1c reflects longer-term blood sugar context on this panel. Glucose and insulin were not "
+    "included here, so they would add detail if you and your clinician choose to review them later."
+)
+
+_CV_CONSEQUENCE_NEUTRAL_LIPID_IN_RANGE = (
+    "Favourable lipid markers on this panel are supportive for cardiovascular context; "
+    "discuss trends with your clinician if you track lipids over time."
 )
 
 _CV_SIGNAL_PRIORITY: List[str] = [
@@ -129,12 +143,34 @@ def _cv_story_conflicts_with_stable_headline(contributor: str, consequence: str)
     return any(n in t for n in needles)
 
 
+def _met_contributor_reads_limited_coverage_reassuring(contributor: str) -> bool:
+    """True when glycaemic card contributor reflects HbA1c-only / in-range limited coverage."""
+    c = (contributor or "").lower()
+    if "not included" in c or "were not included" in c:
+        return True
+    if "within range" in c or "within their reference" in c:
+        return True
+    return False
+
+
 def _met_story_conflicts_with_stable_headline(contributor: str, consequence: str) -> bool:
     t = _narrative_lowercased(contributor, consequence)
     if not t:
         return False
     if "not included" in t or "were not included" in t or "not on this panel" in t:
         return False
+    if _met_contributor_reads_limited_coverage_reassuring(contributor):
+        active_strain_needles = (
+            "active signals",
+            "sustained glyc",
+            "glycaemic strain",
+            "glycemic strain",
+            "impaired",
+            "prediabet",
+            "insulin resistance",
+            "metabolic stress",
+        )
+        return any(n in t for n in active_strain_needles)
     needles = (
         "glyc",
         "insulin",
@@ -196,12 +232,29 @@ def _liver_contributor_implies_active_enzyme_strain(contributor: str) -> bool:
     return any(n in t for n in _LIVER_CONTRIBUTOR_STRAIN_NEEDLES_D7)
 
 
+def _liver_signal_ids_imply_enzyme_strain(active_liver_signal_ids: List[str]) -> bool:
+    """True only when listed liver signals reflect enzyme strain, not ancillary ids."""
+    strain_prefixes = (
+        "signal_alt",
+        "signal_ast",
+        "signal_ggt",
+        "signal_hepatic_alt",
+        "signal_hepatic",
+    )
+    for sid in active_liver_signal_ids:
+        s = str(sid).lower()
+        if any(s.startswith(p) for p in strain_prefixes):
+            return True
+    return False
+
+
 def _liver_use_neutral_consequence_instead_of_strain_copy(
     *,
     contributor_sentence: str,
     headline_sentence: str,
     primary_rec_for_hepatic: Any,
     active_liver_signal_ids: List[str],
+    band_label: str = "",
 ) -> bool:
     """
     D-7: Use proportionate neutral consequence instead of MASLD-style strain copy.
@@ -210,7 +263,7 @@ def _liver_use_neutral_consequence_instead_of_strain_copy(
 
     Strong strain consequence remains when:
     - resolved hepatic IDL is risk-/review-led (watch / attention / strong_signal), or
-    - Wave 1 hepatic signals are active on the panel, or
+    - Wave 1 hepatic enzyme-strain signals are active on the panel, or
     - contributor copy already reflects enzyme elevation / strain.
     """
     if not _liver_surface_reads_stable_or_in_range(contributor_sentence, headline_sentence):
@@ -219,7 +272,9 @@ def _liver_use_neutral_consequence_instead_of_strain_copy(
         return False
     if primary_rec_for_hepatic is not None and _idl_suggests_risk_or_review_led(primary_rec_for_hepatic):
         return False
-    if active_liver_signal_ids:
+    if active_liver_signal_ids and _liver_signal_ids_imply_enzyme_strain(active_liver_signal_ids):
+        return False
+    if active_liver_signal_ids and band_label not in ("strong", "stable"):
         return False
     return True
 
@@ -436,6 +491,148 @@ def _cv_contributor_signal_fallback(sset: Set[str], sig_rows: List[Dict[str, Any
     return "Your key cardiovascular markers are within their reference ranges."
 
 
+def _cv_contributor_lipid_only_signal_fallback(sset: Set[str], sig_rows: List[Dict[str, Any]]) -> str:
+    """Signal fallback for lipid-visible CV card — excludes homocysteine / vascular hidden pathways."""
+    lipid_priority = [p for p in _CV_SIGNAL_PRIORITY if not _is_hcy(p)]
+    for pref in lipid_priority:
+        if any(s.startswith(pref) or s == pref for s in sset):
+            return governed_signal_line(pref, "cv")
+    for r in sig_rows:
+        if not _active(r):
+            continue
+        sid = str(r.get("signal_id", ""))
+        if _is_hcy(sid):
+            continue
+        if any(sid.startswith(p) for p in lipid_priority):
+            return governed_signal_line(sid, "cv")
+    return "Your key cardiovascular markers are within their reference ranges."
+
+
+def _scored_visible_subsystems(subsystems: Sequence[Any] | None) -> List[Any]:
+    if not subsystems:
+        return []
+    return [
+        sub
+        for sub in subsystems
+        if getattr(sub, "visibility_tier", None) == "scored_subsystem"
+    ]
+
+
+def cv_uses_lipid_subsystem_narrative_authority(subsystems: Sequence[Any] | None) -> bool:
+    """MED-REV-2: when the card surface is lipid-only, narrative must not follow hidden vascular IDL."""
+    scored = _scored_visible_subsystems(subsystems)
+    if len(scored) != 1:
+        return False
+    return str(getattr(scored[0], "subsystem_id", "")).strip() == _WAVE1_CV_LIPID_SUBSYSTEM_ID
+
+
+def met_uses_glycaemic_subsystem_narrative_authority(subsystems: Sequence[Any] | None) -> bool:
+    """MED-REV-2: long-term blood sugar visible card — do not imply insulin/active strain without evidence."""
+    scored = _scored_visible_subsystems(subsystems)
+    if len(scored) != 1:
+        return False
+    return str(getattr(scored[0], "subsystem_id", "")).strip() == _WAVE1_MET_GLYCAEMIC_SUBSYSTEM_ID
+
+
+def cv_contributor_for_lipid_visible_card(
+    by_id: Dict[str, Any],
+    active_sids: List[str],
+    sig_rows: List[Dict[str, Any]],
+    lipid_idl: Optional[str],
+) -> str:
+    """Contributor when visible scored subsystem is Atherogenic lipid pattern only."""
+    if lipid_idl == _ID_LIPID:
+        rec = idl_record(by_id, lipid_idl)
+        if rec is not None and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.subtitle:
+            return rec.subtitle.strip()
+    return _cv_contributor_lipid_only_signal_fallback(set(active_sids), sig_rows)
+
+
+def cv_consequence_for_lipid_visible_card(
+    by_id: Dict[str, Any],
+    active_sids: List[str],
+    sig_rows: List[Dict[str, Any]],
+    lipid_idl: Optional[str],
+    *,
+    contributor_sentence: str = "",
+) -> str:
+    """Consequence aligned with lipid-visible CV card — never homocysteine/inflammation IDL copy."""
+    if lipid_idl == _ID_LIPID:
+        rec = idl_record(by_id, lipid_idl)
+        if rec and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.why_it_matters:
+            return str(rec.why_it_matters).strip()
+    if "within their reference ranges" in (contributor_sentence or "").lower():
+        return _CV_CONSEQUENCE_NEUTRAL_LIPID_IN_RANGE
+    lipid_only_sids = {s for s in active_sids if not _is_hcy(str(s))}
+    lipid_rows = [r for r in sig_rows if not _is_hcy(str(r.get("signal_id", "")))]
+    if _is_lipid_dominant(lipid_only_sids, lipid_rows):
+        t = governed_idl_field(_ID_LIPID, "why_it_matters")
+        if t:
+            return t
+    t = governed_idl_field(_ID_LIPID, "why_it_matters")
+    return t or _CV_CONSEQUENCE_NEUTRAL_LIPID_IN_RANGE
+
+
+def _met_has_active_glycaemic_strain_signals(
+    active_sids: Set[str],
+    sig_rows: List[Dict[str, Any]],
+) -> bool:
+    for r in sig_rows:
+        if not _active(r):
+            continue
+        sid = str(r.get("signal_id", ""))
+        if sid.startswith("signal_hba1c") or sid.startswith("signal_glucose"):
+            return True
+        if "insulin_resistance" in sid:
+            return True
+    for sid in active_sids:
+        s = str(sid)
+        if s.startswith("signal_hba1c") or s.startswith("signal_glucose") or "insulin_resistance" in s:
+            return True
+    return False
+
+
+def _met_use_neutral_consequence_for_limited_glycaemic(
+    *,
+    contributor_sentence: str,
+    band_label: str,
+    active_sids: Set[str],
+    sig_rows: List[Dict[str, Any]],
+    primary_idl: Optional[str],
+    by_id: Dict[str, Any],
+) -> bool:
+    if band_label not in ("strong", "stable"):
+        return False
+    primary_rec = idl_record(by_id, primary_idl) if primary_idl else None
+    if primary_rec is not None and _idl_suggests_risk_or_review_led(primary_rec):
+        return False
+    if _met_has_active_glycaemic_strain_signals(active_sids, sig_rows):
+        return False
+    return _met_contributor_reads_limited_coverage_reassuring(contributor_sentence)
+
+
+def met_consequence_for_glycaemic_visible_card(
+    by_id: Dict[str, Any],
+    active_sids: Set[str],
+    sig_rows: List[Dict[str, Any]],
+    primary_idl: Optional[str],
+    *,
+    contributor_sentence: str = "",
+    band_label: str = "",
+) -> str:
+    """Consequence for long-term blood sugar visible card — proportionate when HbA1c-only in range."""
+    if _met_use_neutral_consequence_for_limited_glycaemic(
+        contributor_sentence=contributor_sentence,
+        band_label=band_label,
+        active_sids=active_sids,
+        sig_rows=sig_rows,
+        primary_idl=primary_idl,
+        by_id=by_id,
+    ):
+        return _MET_CONSEQUENCE_NEUTRAL_LIMITED_GLYCAEMIC
+    return met_consequence_primary(by_id, active_sids, sig_rows, primary_idl)
+
+
 def governed_signal_line(signal_id: str, domain: str) -> str:
     """Narrow, non-diagnostic one-liners tied to known pattern ids (D-2)."""
     s = (signal_id or "").strip()
@@ -557,6 +754,7 @@ def liv_consequence_primary(
     contributor_sentence: str = "",
     headline_sentence: str = "",
     active_liver_signal_ids: Optional[List[str]] = None,
+    band_label: str = "",
 ) -> str:
     """D-7: Gate strain consequence against stable contributor/headline when evidence does not support it."""
     active_sids = list(active_liver_signal_ids or [])
@@ -568,6 +766,7 @@ def liv_consequence_primary(
                 headline_sentence=headline_sentence,
                 primary_rec_for_hepatic=rec,
                 active_liver_signal_ids=active_sids,
+                band_label=band_label,
             ):
                 return _LIV_CONSEQUENCE_NEUTRAL_WHEN_SURFACE_STABLE_D7
             return str(rec.why_it_matters).strip()
@@ -576,6 +775,7 @@ def liv_consequence_primary(
         contributor_sentence=contributor_sentence,
         headline_sentence=headline_sentence,
         active_liver_signal_ids=active_sids,
+        band_label=band_label,
     )
 
 
@@ -664,6 +864,7 @@ def liv_consequence(
     contributor_sentence: str = "",
     headline_sentence: str = "",
     active_liver_signal_ids: Optional[List[str]] = None,
+    band_label: str = "",
 ) -> str:
     """Fallback liver consequence path (non-primary-IDL); D-7 neutral gate applies to YAML/str copy."""
     active_sids = list(active_liver_signal_ids or [])
@@ -675,6 +876,7 @@ def liv_consequence(
                 headline_sentence=headline_sentence,
                 primary_rec_for_hepatic=rec,
                 active_liver_signal_ids=active_sids,
+                band_label=band_label,
             ):
                 return _LIV_CONSEQUENCE_NEUTRAL_WHEN_SURFACE_STABLE_D7
             return str(rec.why_it_matters).strip()
@@ -686,6 +888,7 @@ def liv_consequence(
             headline_sentence=headline_sentence,
             primary_rec_for_hepatic=None,
             active_liver_signal_ids=active_sids,
+            band_label=band_label,
         )
     ):
         return _LIV_CONSEQUENCE_NEUTRAL_WHEN_SURFACE_STABLE_D7

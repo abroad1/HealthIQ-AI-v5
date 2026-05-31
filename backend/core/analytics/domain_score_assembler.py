@@ -16,8 +16,11 @@ from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, cast
 from core.analytics.domain_narrative_wave1 import (
     confidence_sentence_cv_coherent,
     confidence_sentence_for,
+    cv_consequence_for_lipid_visible_card,
     cv_consequence_primary,
+    cv_contributor_for_lipid_visible_card,
     cv_contributor_primary,
+    cv_uses_lipid_subsystem_narrative_authority,
     evidence_anchor_sentence,
     headline_cv_coherent,
     headline_liv,
@@ -26,8 +29,10 @@ from core.analytics.domain_narrative_wave1 import (
     idl_records_index,
     liv_consequence_primary,
     liv_contributor_primary,
+    met_consequence_for_glycaemic_visible_card,
     met_consequence_primary,
     met_contributor_primary,
+    met_uses_glycaemic_subsystem_narrative_authority,
     next_step_blood_sugar,
     next_step_cardiovascular,
     next_step_liver,
@@ -382,6 +387,26 @@ def _evidence_completeness_from_subsystems(subsystems: Sequence[Any]) -> Tuple[i
     return len(included), len(expected)
 
 
+def _evidence_completeness_from_flat_domain(flat: Any) -> Tuple[int, int]:
+    """
+    KB-UTIL-1: liver flat card summary completeness must match flat_domain_evidence panel rows.
+    """
+    included = {
+        str(mid).strip()
+        for mid in (getattr(flat, "included_marker_ids", None) or [])
+        if str(mid).strip()
+    }
+    missing = {
+        str(mid).strip()
+        for mid in (getattr(flat, "missing_marker_ids", None) or [])
+        if str(mid).strip()
+    }
+    expected = included | missing
+    if not expected:
+        return 0, 0
+    return len(included), len(expected)
+
+
 def _evidence_anchor_from_visible_subsystems(
     subsystems: Sequence[Any] | None,
     *,
@@ -509,17 +534,11 @@ def assemble_consumer_domain_scores_v1(
         tier = _merge_tier_rail_and_domain(tier_rail, tier_doc)
         missing = _missing_for_rail(hss, _RAIL_CARDIOVASCULAR)
         sids = _collect_signal_ids(sig_rows, _is_wave1_cardiovascular)
-        idl = _select_primary_idl(idl_bundle, _IDL_ORDER_CV)
         ev: Dict[str, Any] = {
             "layer3_system_pressure_id": "cardiovascular__system_pressure",
             "burden_capacity_cardiovascular": cardio_cap,
             "derived_ratio_keys": sorted(ratios.keys()) if ratios else [],
         }
-        _contrib = cv_contributor_primary(by_id, sids, sig_rows, idl)
-        _cons = cv_consequence_primary(by_id, sids, sig_rows, idl)
-        _suffix = (intervention_cv_suffix or "").strip()
-        _cons_cv = (_cons + " " + _suffix).strip() if _suffix else _cons
-        _primary_rec = idl_record(by_id, idl) if idl else None
         _cv_extras = _wave1_card_contract_extras(
             domain_id="wave1_cardiovascular",
             hss=hss,
@@ -527,6 +546,20 @@ def assemble_consumer_domain_scores_v1(
             missing_marker_ids=missing,
             panel_biomarker_ids=panel_biomarker_ids,
         )
+        _lipid_visible = cv_uses_lipid_subsystem_narrative_authority(_cv_extras.get("subsystems"))
+        if _lipid_visible:
+            idl = _select_primary_idl(idl_bundle, (_IDL_ORDER_CV[0],))
+            _contrib = cv_contributor_for_lipid_visible_card(by_id, sids, sig_rows, idl)
+            _cons = cv_consequence_for_lipid_visible_card(
+                by_id, sids, sig_rows, idl, contributor_sentence=_contrib
+            )
+        else:
+            idl = _select_primary_idl(idl_bundle, _IDL_ORDER_CV)
+            _contrib = cv_contributor_primary(by_id, sids, sig_rows, idl)
+            _cons = cv_consequence_primary(by_id, sids, sig_rows, idl)
+        _suffix = (intervention_cv_suffix or "").strip()
+        _cons_cv = (_cons + " " + _suffix).strip() if _suffix else _cons
+        _primary_rec = idl_record(by_id, idl) if idl else None
         return ConsumerDomainScoreV1(
             domain_id="wave1_cardiovascular",
             card_schema_version="1.2",
@@ -582,9 +615,6 @@ def assemble_consumer_domain_scores_v1(
             "burden_capacity_metabolic": metabolic_cap,
         }
         sset = set(sids)
-        _m_contrib = met_contributor_primary(by_id, sset, sig_rows, idl)
-        _m_cons = met_consequence_primary(by_id, sset, sig_rows, idl)
-        _m_primary_rec = idl_record(by_id, idl) if idl else None
         _met_extras = _wave1_card_contract_extras(
             domain_id="wave1_blood_sugar",
             hss=hss,
@@ -592,6 +622,19 @@ def assemble_consumer_domain_scores_v1(
             missing_marker_ids=missing,
             panel_biomarker_ids=panel_biomarker_ids,
         )
+        _m_contrib = met_contributor_primary(by_id, sset, sig_rows, idl)
+        if met_uses_glycaemic_subsystem_narrative_authority(_met_extras.get("subsystems")):
+            _m_cons = met_consequence_for_glycaemic_visible_card(
+                by_id,
+                sset,
+                sig_rows,
+                idl,
+                contributor_sentence=_m_contrib,
+                band_label=band,
+            )
+        else:
+            _m_cons = met_consequence_primary(by_id, sset, sig_rows, idl)
+        _m_primary_rec = idl_record(by_id, idl) if idl else None
         return ConsumerDomainScoreV1(
             domain_id="wave1_blood_sugar",
             card_schema_version="1.2",
@@ -672,6 +715,7 @@ def assemble_consumer_domain_scores_v1(
             contributor_sentence=_l_contrib,
             headline_sentence=_l_head,
             active_liver_signal_ids=sids,
+            band_label=band,
         )
         _liv_extras = _wave1_card_contract_extras(
             domain_id="wave1_liver",
@@ -685,6 +729,10 @@ def assemble_consumer_domain_scores_v1(
             panel_biomarker_ids=panel_biomarker_ids,
             rail_biomarker_scores=_system_rail_data(hss, _RAIL_LIVER).get("biomarker_scores"),
         )
+        if _liv_flat is not None:
+            num, den = _evidence_completeness_from_flat_domain(_liv_flat)
+            _liv_extras["evidence_completeness_numerator"] = num
+            _liv_extras["evidence_completeness_denominator"] = den
         return ConsumerDomainScoreV1(
             domain_id="wave1_liver",
             card_schema_version="1.2",

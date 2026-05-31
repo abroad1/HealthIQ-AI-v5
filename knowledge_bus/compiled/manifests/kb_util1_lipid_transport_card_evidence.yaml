@@ -8,7 +8,7 @@ compiler_version: 1.0.0
 estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml
 outputs:
 - domain_id: wave1_cardiovascular
-  output_hash: pending_inventory_refresh
+  output_hash: 01e8be67a58120969280854df91f86b5f97fb04d595034068b4d12f2cd5e8ed0
   output_hash_algorithm: sha256
   output_path: knowledge_bus/compiled/health_system_cards/wave1_cv_lipid_transport.yaml
   output_type: health_system_card_evidence

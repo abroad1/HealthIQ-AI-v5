@@ -18,6 +18,7 @@ _REPO = Path(__file__).resolve().parents[2]
 
 _LAUNCH_CRITICAL_REL_PATHS: Sequence[str] = (
     "backend/core/knowledge/health_system_card_evidence.py",
+    "backend/core/knowledge/domain_flat_card_evidence.py",
     "backend/core/knowledge/compiled_hypothesis.py",
     "backend/core/knowledge/load_root_cause_hypotheses.py",
     "backend/core/analytics/root_cause_compiler_v1.py",
@@ -50,11 +51,17 @@ _LAUNCH_MANIFEST_NAMES: Sequence[str] = (
     "arch_rt5b_insulin_metabolic_card_evidence.yaml",
     "arch_rt5b_enzyme_pattern_card_evidence.yaml",
     "arch_rt5b_processing_context_card_evidence.yaml",
+    "kb_util1_lipid_transport_card_evidence.yaml",
+    "kb_util1_glycaemic_card_evidence.yaml",
+    "kb_util1_liver_flat_card_evidence.yaml",
 )
 
 _AUTHORITY_MANIFEST = _REPO / "docs/audit-papers/active_intelligence_authority_manifest.md"
 _FRONTEND_SUBSYSTEM = (
     _REPO / "frontend" / "app" / "components" / "results" / "Wave1SubsystemEvidenceSection.tsx"
+)
+_FRONTEND_FLAT = (
+    _REPO / "frontend" / "app" / "components" / "results" / "Wave1FlatDomainEvidenceSection.tsx"
 )
 
 
@@ -197,10 +204,15 @@ def validate_no_runtime_investigation_spec_reads(errors: List[str]) -> None:
 
 
 def validate_frontend_guards(errors: List[str]) -> None:
-    if not _FRONTEND_SUBSYSTEM.is_file():
-        _err(errors, f"missing frontend component: {_FRONTEND_SUBSYSTEM}")
-        return
+    for component in (_FRONTEND_SUBSYSTEM, _FRONTEND_FLAT):
+        if not component.is_file():
+            _err(errors, f"missing frontend component: {component}")
+            return
     src = _FRONTEND_SUBSYSTEM.read_text(encoding="utf-8")
+    flat_src = _FRONTEND_FLAT.read_text(encoding="utf-8")
+    for block in (src, flat_src):
+        if "knowledge_bus" in block or "packages/" in block or "Pass_3" in block:
+            _err(errors, "frontend card evidence components must not read packages or Pass 3")
     if "isConsumerSafeSourceTrace" not in src:
         _err(errors, "frontend must filter internal source_trace via isConsumerSafeSourceTrace")
     if "wave1_subsystem_evidence_v1:" in src:

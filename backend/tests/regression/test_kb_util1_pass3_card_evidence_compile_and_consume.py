@@ -7,6 +7,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+import yaml
 
 from core.analytics.domain_score_assembler import assemble_consumer_domain_scores_v1
 from core.analytics.wave1_subsystem_evidence import assemble_wave1_flat_domain_evidence
@@ -178,7 +179,242 @@ def test_frontend_render_only_no_package_reads():
 
 
 @pytest.mark.regression
-def test_visible_scored_subsystems_unchanged_after_med_rev1():
+def test_kb_util1_launch_manifests_have_resolved_output_hashes():
+    from core.knowledge.launch_estate_v1 import manifests_dir, sha256_file
+
+    names = (
+        "kb_util1_lipid_transport_card_evidence.yaml",
+        "kb_util1_glycaemic_card_evidence.yaml",
+        "kb_util1_liver_flat_card_evidence.yaml",
+    )
+    for name in names:
+        doc = yaml.safe_load((manifests_dir() / name).read_text(encoding="utf-8"))
+        for out in doc.get("outputs") or []:
+            path = _REPO / str(out["output_path"]).replace("\\", "/")
+            assert out.get("output_hash") != "pending_inventory_refresh", name
+            assert out.get("output_hash") == sha256_file(path), name
+
+
+@pytest.mark.regression
+def test_domain_flat_loader_in_launch_critical_validator_paths():
+    validator = (_REPO / "backend" / "scripts" / "validate_day_one_architecture.py").read_text(
+        encoding="utf-8"
+    )
+    assert "backend/core/knowledge/domain_flat_card_evidence.py" in validator
     assert WAVE1_MED_REV1_SCORED_VISIBLE_SUBSYSTEM_IDS == frozenset(
         {"wave1_cv_lipid_transport", "wave1_met_glycaemic_control"}
     )
+
+
+def _uata_rows(panel: set[str], *, scoring: dict | None = None, signals: list | None = None):
+    scoring = scoring or {
+        "health_system_scores": {
+            "cardiovascular": {
+                "overall_score": 85.0,
+                "missing_biomarkers": [],
+                "biomarker_scores": [
+                    {"biomarker_name": "total_cholesterol"},
+                    {"biomarker_name": "ldl_cholesterol"},
+                    {"biomarker_name": "hdl_cholesterol"},
+                    {"biomarker_name": "triglycerides"},
+                ],
+            },
+            "metabolic": {
+                "overall_score": 100.0,
+                "missing_biomarkers": ["glucose", "insulin"],
+                "biomarker_scores": [{"biomarker_name": "hba1c"}],
+            },
+            "liver": {
+                "overall_score": 78.0,
+                "missing_biomarkers": ["ast"],
+                "biomarker_scores": [
+                    {"biomarker_name": "alt"},
+                    {"biomarker_name": "ggt"},
+                    {"biomarker_name": "alp"},
+                    {"biomarker_name": "albumin"},
+                    {"biomarker_name": "bilirubin"},
+                ],
+            },
+        }
+    }
+    ig = InsightGraphV1(
+        analysis_id="kb-util-1-uat",
+        signal_results=signals or [
+            {
+                "signal_id": "signal_homocysteine_elevation",
+                "signal_state": "at_risk",
+                "system": "metabolic",
+                "primary_metric": "homocysteine",
+            },
+        ],
+        system_capacity_scores={"hepatic": 70, "cardiovascular": 80, "metabolic": 70},
+        confidence=ConfidenceModelV1(
+            cluster_confidence={"cardiovascular": 0.9, "metabolic": 0.7, "hepatic": 0.7}
+        ),
+    )
+    from core.contracts.interpretation_display_layer_v1 import (
+        InterpretationDisplayLayerBundleV1,
+        InterpretationDisplayRecordV1,
+    )
+
+    idl_bundle = InterpretationDisplayLayerBundleV1(
+        records=[
+            InterpretationDisplayRecordV1(
+                internal_id="ph_lipid_residual_ldl_favourable_transport_v1",
+                scientific_class="phenotype",
+                clinical_display_label="Lipid transport",
+                retail_display_label="Atherogenic lipid pattern",
+                subtitle="Favourable lipid transport pattern on this panel.",
+                why_it_matters="Residual LDL transport context shapes longer-term atherogenic load.",
+                severity_state="not_observed",
+                supporting_biomarkers_summary="lipids",
+                frontend_allowed_term="phenotype_allowed",
+                display_order_priority=1,
+                enabled_for_frontend=True,
+            ),
+            InterpretationDisplayRecordV1(
+                internal_id="ph_vascular_hcy_inflammation_v1",
+                scientific_class="risk_construct",
+                clinical_display_label="Vascular inflammation",
+                retail_display_label="Vascular Inflammation",
+                subtitle=(
+                    "A pattern combining inflammation and homocysteine signals associated with vascular risk"
+                ),
+                why_it_matters="Homocysteine and inflammation add vascular-stress context.",
+                severity_state="watch",
+                supporting_biomarkers_summary="hcy",
+                frontend_allowed_term="phenotype_allowed",
+                display_order_priority=2,
+                enabled_for_frontend=True,
+            ),
+            InterpretationDisplayRecordV1(
+                internal_id="ph_hba1c_metabolic_stress_v1",
+                scientific_class="phenotype",
+                clinical_display_label="HbA1c stress",
+                retail_display_label="Long-term blood sugar",
+                subtitle="HbA1c metabolic stress pattern.",
+                why_it_matters=(
+                    "Sustained glycaemic strain raises long-term metabolic and vascular risk"
+                ),
+                severity_state="not_observed",
+                supporting_biomarkers_summary="hba1c",
+                frontend_allowed_term="phenotype_allowed",
+                display_order_priority=3,
+                enabled_for_frontend=True,
+            ),
+            InterpretationDisplayRecordV1(
+                internal_id="ph_hepatic_alt_inflammatory_v1",
+                scientific_class="organ_pattern",
+                clinical_display_label="Hepatic inflammatory pattern",
+                retail_display_label="Liver Stress Pattern",
+                subtitle="A pattern suggesting metabolic or inflammatory strain in the liver",
+                why_it_matters=(
+                    "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored."
+                ),
+                severity_state="not_observed",
+                supporting_biomarkers_summary="ALT context",
+                frontend_allowed_term="clinical_only",
+                display_order_priority=4,
+                enabled_for_frontend=True,
+            ),
+        ]
+    )
+    return assemble_consumer_domain_scores_v1(
+        scoring_result=scoring,
+        insight_graph=ig,
+        idl_bundle=idl_bundle,
+        derived_ratios_meta=None,
+        panel_biomarker_ids=panel,
+    )[0]
+
+
+@pytest.mark.regression
+def test_cv_why_this_score_aligns_with_lipid_visible_subsystem_not_hcy_inflammation():
+    panel = {
+        "total_cholesterol",
+        "ldl_cholesterol",
+        "hdl_cholesterol",
+        "triglycerides",
+        "homocysteine",
+        "hba1c",
+        "alt",
+    }
+    cv = next(r for r in _uata_rows(panel) if r.domain_id == "wave1_cardiovascular")
+    assert cv.evidence_anchor_sentence == "Based mainly on: Atherogenic lipid pattern"
+    contrib = (cv.contributor_sentence or "").lower()
+    assert "inflammation" not in contrib
+    assert "homocysteine" not in contrib
+    cons = (cv.consequence_sentence or "").lower()
+    assert "inflammation" not in cons
+    assert "homocysteine" not in cons
+
+
+@pytest.mark.regression
+def test_blood_sugar_strong_hba1c_only_does_not_imply_active_glycaemic_strain():
+    panel = {
+        "total_cholesterol",
+        "ldl_cholesterol",
+        "hdl_cholesterol",
+        "triglycerides",
+        "homocysteine",
+        "hba1c",
+        "alt",
+        "ggt",
+        "alp",
+        "albumin",
+        "bilirubin",
+    }
+    met = next(r for r in _uata_rows(panel) if r.domain_id == "wave1_blood_sugar")
+    assert met.band_label == "strong"
+    headline = (met.headline_sentence or "").lower()
+    assert "active signals" not in headline
+    assert "glycaemic strain" not in headline
+    cons = (met.consequence_sentence or "").lower()
+    assert "sustained glyc" not in cons
+    assert "glycaemic strain" not in cons
+
+
+@pytest.mark.regression
+def test_liver_flat_completeness_matches_flat_marker_model():
+    panel = {
+        "total_cholesterol",
+        "ldl_cholesterol",
+        "hdl_cholesterol",
+        "triglycerides",
+        "homocysteine",
+        "hba1c",
+        "alt",
+        "ggt",
+        "alp",
+        "albumin",
+        "bilirubin",
+    }
+    liver = next(r for r in _uata_rows(panel) if r.domain_id == "wave1_liver")
+    assert liver.evidence_completeness_numerator == 5
+    assert liver.evidence_completeness_denominator == 6
+    flat = liver.flat_domain_evidence
+    assert flat is not None
+    assert len(flat.included_marker_ids or []) == 5
+    assert "ast" in (flat.missing_marker_ids or [])
+
+
+@pytest.mark.regression
+def test_liver_stable_limited_flat_card_does_not_overclaim_masld_fibrosis():
+    panel = {
+        "total_cholesterol",
+        "ldl_cholesterol",
+        "hdl_cholesterol",
+        "triglycerides",
+        "homocysteine",
+        "hba1c",
+        "alt",
+        "ggt",
+        "alp",
+        "albumin",
+        "bilirubin",
+    }
+    liver = next(r for r in _uata_rows(panel) if r.domain_id == "wave1_liver")
+    assert liver.band_label in ("strong", "stable")
+    cons = liver.consequence_sentence or ""
+    assert "MASLD" not in cons
+    assert "fibrosis risk if ignored" not in cons.lower()
