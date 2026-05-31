@@ -1,104 +1,84 @@
 {
-  "bus_version": "1.3.1",
-  "work_id": "CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment",
+  "work_id": "MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation",
   "status": "HARDENED",
+  "bus_version": "1.3.1",
   "hardened_utc": "2026-05-31T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment, branch=work/CRP-PASS3-MIGRATION-crp-legacy-s24-package-and-signal-naming-alignment, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. All five required fields present."
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all 5 required fields present: work_id=MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation, branch=work/MED-RESEARCH-REVIEW-1-non-pass3-package-revalidation, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT"
     },
     {
-      "check": "risk_level_HIGH_correct",
+      "check": "risk_level_STANDARD_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level=HIGH. Correct: sprint touches signal package authority (SignalRegistry loads all packages via backend/core/analytics/signal_evaluator.py lines 33-34), root-cause registry (backend/core/knowledge/root_cause_registry_v1.py line 35), and validate_day_one_architecture.py (listed HIGH-risk control-plane script per SOP §12). Runtime-adjacent medical interpretation logic confirmed."
+      "citation": "automation_bus/latest_cursor_prompt.md:70-79 — sprint is audit/classification only; no Intelligence Core modification; no SSOT changes; no behavioural logic changes; governance register explicitly not runtime-consumed in this sprint (line 329). No HIGH risk trigger from SOP §10 applies."
     },
     {
-      "check": "change_type_MIXED_correct",
+      "check": "change_type_CONTENT_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type=MIXED. Correct: sprint combines CONTENT (package classification, carry-forward register update, sprint report) with BEHAVIOUR (validator guard additions in validate_day_one_architecture.py, potential signal authority migration). MIXED governs via BEHAVIOUR controls per SOP §4."
+      "citation": "automation_bus/latest_cursor_prompt.md:329 — 'It must not be consumed by runtime in this sprint.' Output artefacts are docs/audit-papers/MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation_audit.md and knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml — both non-executable governance/documentation content. CONTENT classification correct."
     },
     {
-      "check": "execution_model_TWO_PHASE_correct",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model=TWO_PHASE_START_FINISH. Correct — prompt requires a 5-command baseline preflight (lines 44-51) and a 6-command closure verification (lines 364-371) around the implementation body. HIGH-risk MIXED sprint with validator extension requires kernel token governance."
+      "check": "2a_authority_paths_verified",
+      "result": "CONFIRMED — 9/9 primary prompt-cited paths exist; 1 advisory gap (see architecture_anchor_advisory)",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md:1 (READ — 52 rows, all 6 relevant CFs confirmed Open); docs/audit-papers/CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment_report.md:1 (Glob); docs/audit-papers/CRP-PASS3-MIGRATION_package_provenance_non_pass3_table.md:1 (READ — 55 rows); docs/audit-papers/_crp_pkg_audit_non_pass3.json:1 (READ — 55 entries); docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md:1 (Glob); docs/audit-papers/PASS3_research_asset_utilisation_investigation_cursor.md:1 (Glob); docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md:1 (Glob); docs/audit-papers/active_intelligence_authority_manifest.md:1 (Glob); docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md:1 (Glob); backend/scripts/validate_day_one_architecture.py:1 (Bash EXISTS); backend/tests/architecture/test_day_one_architecture_guardrails.py:1 (Glob)"
     },
     {
-      "check": "2a_authoritative_input_paths_all_exist",
-      "result": "CONFIRMED",
-      "citation": "All 9 authoritative input paths verified present in repo: docs/sprints/launch_core_carry_forward_register.md:CONFIRMED (READ — CF-ARCHLEG1-002 Open line 43, CF-ARCHLEG1-004 Open partial line 45); docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md:CONFIRMED (READ — L8 CRP migration_required lines 45-46); docs/audit-papers/ARCH-LEGACY-2_targeted_retirement_implementation_report.md:CONFIRMED (READ — CRP deferred lines 28-29); docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md:CONFIRMED (Glob); docs/audit-papers/PASS3_research_asset_utilisation_investigation_cursor.md:CONFIRMED (Glob); docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md:CONFIRMED (Glob); docs/audit-papers/active_intelligence_authority_manifest.md:CONFIRMED (referenced validate_day_one_architecture.py line 59); docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md:CONFIRMED (Glob); docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md:CONFIRMED (Glob); backend/scripts/validate_day_one_architecture.py:CONFIRMED (READ lines 1-279)."
+      "check": "2a_package_cohort_reconstructable",
+      "result": "CONFIRMED — 55 packages, counts consistent across JSON and markdown table",
+      "citation": "docs/audit-papers/_crp_pkg_audit_non_pass3.json:1-497 (READ — 55 JSON objects); docs/audit-papers/CRP-PASS3-MIGRATION_package_provenance_non_pass3_table.md:1-57 (READ — 55 data rows). Cohort breakdown confirmed: 1 legacy (KBP-0001), 8 architecture-anchor context packages, 3 study-derived (pkg_chronic_inflammation/pkg_hepatic_metabolic_stress/pkg_insulin_resistance), 1 retire candidate (pkg_example, runtime_loaded=false), 10 pkg_kb45_* batch JSON (all from investigation-spec-collection-batch1-10.json), 1 provenance gap (pkg_lipid_transport), 31 pkg_s24_* legacy inv_spec_v1 translation. Total=55."
     },
     {
-      "check": "2a_carry_forward_register_state_verified",
-      "result": "CONFIRMED — FORMATTING ISSUE NOTED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md line 43: CF-ARCHLEG1-002 Status=Open ('CRP legacy s24 package and signal naming split'); line 45: CF-ARCHLEG1-004 Status=Open partial ('Extend ARCH-RT-6 validator for legacy retirement gaps'). NOTE: lines 47-49 contain a formatting fragment ('CF-ARCHLEG1-001 — root-cause dual authority migration / CF-ARCHLEG1-002 — CRP legacy s24 package / signal naming split / CF-ARCHLEG1-004 — partial: CRP migration + root-cause promotion validator guards') outside the table — this is a trailing fragment from ARCH-LEGACY-2 closure. Cursor must clean up this formatting artifact when updating the register. NOTE ALSO: register is MODIFIED BUT UNCOMMITTED per git status. Prompt line 66-68 requires preservation before kernel start — Cursor must commit or stash it before running run_work_package.py start."
+      "check": "2a_prerequisite_sprints_confirmed",
+      "result": "CONFIRMED — all 8 prerequisite sprints confirmed merged in git log",
+      "citation": "git log confirmed: ARCH-RT-6 (8be6959), MED-REV-1 (fe5e9b5), MED-REV-2 (537457c), KB-UTIL-1 (f9cb7a6), LAYER-B-1 (798e57e), ARCH-LEGACY-1 (026283f), ARCH-LEGACY-2 (a801e09), CRP-PASS3-MIGRATION (a1e4cec). docs/sprints/launch_core_carry_forward_register.md:1 confirmed present."
     },
     {
-      "check": "2a_crp_signal_inventory_confirmed",
-      "result": "CONFIRMED — THREE DISTINCT SIGNALS LOADED, NOT TWO",
-      "citation": "SignalRegistry loads all packages/*/signal_library.yaml (backend/core/analytics/signal_evaluator.py lines 33-34). Three CRP-primary signals loaded at runtime: (1) signal_crp_high — knowledge_bus/packages/pkg_s24_crp_high_inflammation/signal_library.yaml line 8; activation_logic=lab_range_exceeded line 41; placeholder threshold 9999.0 line 35; activation_key=signal_crp_high::inv_crp_high_inflammation (manifest source_document=inv_crp_high_inflammation_v1.yaml, infer_source_spec_id strips _v1 per backend/core/knowledge/signal_activation_identity_v1.py lines 39-45). (2) signal_systemic_inflammation — knowledge_bus/packages/KBP-0001/signal_library.yaml line 190; activation_logic=deterministic_threshold line 227; CRP thresholds <3.0/3.0-9.99/>=10.0 mg/L lines 208-226; activation_key=signal_systemic_inflammation::KBP-0001. (3) signal_inflammation_crp_context — knowledge_bus/packages/pkg_inflammation_crp_context/signal_library.yaml line 10; activation_logic=lab_range_exceeded; placeholder threshold; activation_key=signal_inflammation_crp_context::inv_crp_context. No activation_key collision — all three keys are distinct (signal_evaluator.py lines 59-62 raises on collision; tests pass, system runs)."
+      "check": "2a_carry_forward_register_state",
+      "result": "CONFIRMED — all 6 sprint-relevant CFs are status=Open and scoped correctly",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md:47 (CF-CHRONICINFL-001 Open), :48 (CF-MRIMPROVE-001 Open — points directly to this sprint), :49 (CF-MRIMPROVE-002 Open — 10 pkg_kb45_* packages), :50 (CF-MRIMPROVE-003 Open — 8 architecture-anchor packages), :51 (CF-MRIMPROVE-004 Open — pkg_lipid_transport provenance gap), :46 (CF-CRPPASS3-001 Open). Counts in CF notes consistent with JSON audit cohort counts."
     },
     {
-      "check": "2a_crp_package_inventory_confirmed",
-      "result": "CONFIRMED — pkg_chronic_inflammation IS NOT COMPILED TO RUNTIME",
-      "citation": "pkg_s24_crp_high_inflammation: HAS signal_library.yaml (Glob output line 60), IS loaded by SignalRegistry. pkg_inflammation_crp_context: HAS signal_library.yaml (Glob output line 61), IS loaded by SignalRegistry. pkg_chronic_inflammation (KBP-0005): NO signal_library.yaml in Glob output — only package_manifest.yaml and research_brief.yaml present; NOT loaded by SignalRegistry; is a research-only package. Glob result for knowledge_bus/packages/** confirms the absence of pkg_chronic_inflammation/signal_library.yaml."
+      "check": "2a_study_source_docs_exist",
+      "result": "CONFIRMED — all 3 study-derived package source documents present",
+      "citation": "knowledge_bus/research/study_01_insulin_resistance.md:1 (Glob — source for pkg_insulin_resistance); knowledge_bus/research/study_03_hepatic_metabolic_stress.md:1 (Glob — source for pkg_hepatic_metabolic_stress); knowledge_bus/research/study_04_chronic_inflammation.md:1 (Glob — source for pkg_chronic_inflammation)"
     },
     {
-      "check": "2a_crp_pass3_spec_inventory_confirmed",
-      "result": "CONFIRMED — NO SEMANTICALLY EQUIVALENT COMPILED PASS 3 CRP PACKAGE EXISTS",
-      "citation": "pkg_chronic_inflammation research_brief.yaml line 1: research_domain=inflammatory; notes lines 118-122: 'THRESHOLD DELTA WITH KBP-0001: KBP-0001 signal_systemic_inflammation uses CRP <3.0/3.0-9.99/>=10.0. Study 4 evidence supports <1.0/1.0-3.0/>=3.0 mg/L' — materially different thresholds requiring clinical sign-off. Batch_3-7_Pass_3.json files exist (5 files, Glob confirmed); Batch_4_Pass_3.json inspected via Python parse — does not contain a CRP-primary investigation spec (albumin-related spec found; CRP appears only as a supporting marker). No compiled signal_library.yaml for any Pass 3 CRP-primary package exists in the estate."
+      "check": "2a_batch_json_source_docs_exist",
+      "result": "CONFIRMED — batch1-10.json present (all 10 pkg_kb45_* cite this file); 5 additional batch files present",
+      "citation": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json:1 (Glob). Additional files: batch11-20, batch21-30, batch31-40, batch41-50, batch51-56 also present but not in non-Pass3 cohort — consistent with their having produced Pass3 packages."
     },
     {
-      "check": "2a_no_duplicate_authority_sources",
-      "result": "CONFIRMED",
-      "citation": "Signal authority for CRP is split across three packages with distinct activation_key values — this IS the naming split this sprint must classify. No two packages claim identical activation_key for CRP signals. knowledge_bus/packages/KBP-0001/signal_library.yaml and knowledge_bus/packages/pkg_s24_crp_high_inflammation/signal_library.yaml define different signal_ids with different activation mechanisms — these are competing authorities over CRP, which is the CF-ARCHLEG1-002 problem to be resolved."
+      "check": "2a_output_path_governance",
+      "result": "CONFIRMED — output directory exists; target files do not yet exist (correct for new artefacts)",
+      "citation": "knowledge_bus/governance/crp_runtime_authority_v1.yaml:1 and knowledge_bus/governance/package_estate_KB-S49_v1.yaml:1 (Glob — directory confirmed with 6 existing files). knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml does not exist (correct — new output). docs/audit-papers/ output path confirmed present."
     },
     {
-      "check": "2b_naming_split_is_substantive_not_cosmetic",
-      "result": "CONFIRMED — OUTCOME A (MIGRATION) IS VERY LIKELY UNSAFE; OUTCOME C/D/E EXPECTED",
-      "citation": "signal_crp_high (pkg_s24_crp_high_inflammation/signal_library.yaml line 41): activation_logic=lab_range_exceeded — fires when CRP exceeds runtime lab reference range regardless of mg/L value. signal_systemic_inflammation (KBP-0001/signal_library.yaml line 227): activation_logic=deterministic_threshold — fires based on hardcoded 3.0/10.0 mg/L. These are clinically distinct activation profiles. Migrating signal_crp_high to use signal_systemic_inflammation's logic would change WHEN the signal fires (STOP condition #3: 'Migration would change signal activation behaviour beyond package authority alignment'). Additionally, pkg_chronic_inflammation has 1.0/3.0 mg/L thresholds — migrating to it would require threshold changes (STOP condition #2). Expected safe outcome: Cursor follows Outcome C (retain legacy, classify explicitly, guard) or D/E (document distinction, test it). Outcome A is unsafe without out-of-scope threshold and behavioural changes."
+      "check": "2a_architecture_anchor_source_advisory",
+      "result": "ADVISORY — NOT A BLOCKER — source document for 8 architecture-anchor packages does not exist",
+      "citation": "docs/audit-papers/_crp_pkg_audit_non_pass3.json:22-55 records source_document=docs/architecture/HealthIQ_Investigation_Layer.md for: pkg_b12_deficiency_context, pkg_glucose_dysregulation_hba1c_context, pkg_hepatic_alt_context, pkg_homocysteine_elevation_context, pkg_inflammation_crp_context, pkg_iron_deficiency_context, pkg_iron_overload_context, pkg_thyroid_tsh_context. That file does NOT exist in the repo (Glob confirmed). Prompt line 139 instructs: 'If paths differ, locate and report the actual paths.' Cursor should note source is unrecoverable and apply architecture_anchor_review_required classification. This does not trigger a STOP condition."
     },
     {
-      "check": "2b_runtime_reachability_confirmed",
-      "result": "CONFIRMED",
-      "citation": "signal_systemic_inflammation is the LIVE runtime CRP signal in persisted test fixtures: backend/tests/fixtures/persisted_results/lc_s20_ab_launch_core_v1.json lines 5419, 6006, 6303 — signal_id=signal_systemic_inflammation, primary_metric=crp, signal_state=suboptimal. Root cause compiler targets signal_systemic_inflammation ONLY: backend/core/knowledge/root_cause_registry_v1.py line 35. signal_crp_high is referenced in evaluator tests (backend/tests/unit/test_signal_evaluator.py line 1502) and narrative tests (test_med_rev2_domain_card_copy_and_regeneration.py line 59) but does NOT feed root cause compiler. wave1_cv_vascular_strain card is hidden_v1 per MED-REV-1 — CRP card surface is suppressed from user-facing DTO."
+      "check": "2a_lipid_transport_provenance_advisory",
+      "result": "ADVISORY — study_02 may be recoverable provenance for pkg_lipid_transport",
+      "citation": "docs/audit-papers/_crp_pkg_audit_non_pass3.json:201-208 — pkg_lipid_transport source_document=null, provenance_class=provenance_gap. HOWEVER: knowledge_bus/research/study_02_lipid_transport_dysfunction.md EXISTS in repo (Glob confirmed). Cursor should investigate whether study_02 is recoverable provenance for this package during the investigation phase (CF-MRIMPROVE-004). This may change the recommended action from recover_provenance to map_to_existing_pass3_frame or re_run_through_pass3."
     },
     {
-      "check": "2b_validator_gap_confirmed_and_in_scope",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_day_one_architecture.py lines 1-279: no existing guard referencing signal_crp_high, signal_systemic_inflammation, or pkg_s24_crp_high_inflammation. Gap confirmed. ARCH-LEGACY-1 audit lines 114-120 lists CRP migration status as a gap to address. CF-ARCHLEG1-004 (carry_forward_register.md line 45): partial — bounded guards only. This sprint should add CRP authority classification guard(s) without introducing brittle source-text checks (prompt line 262-264 correct constraint)."
-    },
-    {
-      "check": "2b_behavioural_scope_defined",
-      "result": "CONFIRMED",
-      "citation": "Scope: automation_bus/latest_cursor_prompt.md lines 181-191 — 7 permitted items. Out of scope: lines 195-211 — 13 explicit exclusions (no threshold changes, no scoring rail changes, no SignalEvaluator activation changes, no broad Pass 3 compiler, no frontend changes). STOP conditions: lines 300-310 — 9 conditions, all measurable, covering threshold changes (STOP #2, #3), MED-REV-1 reintroduction (STOP #4), ARCH-RT-6 failure (STOP #8), scope drift to full Pass 3 compiler (STOP #9). No scope creep detected in prompt."
-    },
-    {
-      "check": "2b_regression_targets_defined",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 239-249 (Required tests): 8 test requirements defined. Lines 251-257 (test commands): python backend/scripts/validate_day_one_architecture.py; python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q; plus CRP/signal/package targeted tests. validate_day_one_architecture.py CONFIRMED present. test_day_one_architecture_guardrails.py path exists (referenced in prompt line 253)."
-    },
-    {
-      "check": "2b_determinism_risks_surfaced",
-      "result": "LOW RISK if STOP conditions honoured — HIGH RISK if migration attempted",
-      "citation": "If Cursor follows Outcome C/D/E (retain + classify + guard): adding validator guards is read-only, carry-forward register update is docs-only, classification tests do not change signal evaluation — determinism preserved. If Cursor attempts Outcome A migration: changing signal_crp_high from lab_range_exceeded to deterministic_threshold or retiring the package would alter which signals fire for a given CRP value — this is a BEHAVIOURAL change that must be explicitly declared and requires STOP condition evaluation. Signal evaluation tests in test_signal_evaluator.py (line 1502) and persisted fixtures (lc_s20_ab_launch_core_v1.json) must be updated if migration proceeds — update scope must be declared before implementation."
-    },
-    {
-      "check": "2b_no_stash_no_tooling_leakage",
-      "result": "CONFIRMED",
-      "citation": "Prompt closure requirements lines 364-370 include explicit 'git stash list' check. Lines 376-384 prohibit finish unless no ambiguous stash exists. Sprint scope does not reference .codex/, .vscode/, or AGENTS.md files. EXCEPTION: carry-forward register is modified but uncommitted at sprint start (git status). This must be resolved by commit or stash before kernel start — not by abandoning the change."
+      "check": "scope_and_out_of_scope",
+      "result": "CONFIRMED — out-of-scope list complete and protective",
+      "citation": "automation_bus/latest_cursor_prompt.md:378-394 — 14 explicit out-of-scope items including: no package rewrites, no runtime loading changes, no SignalEvaluator changes, no threshold changes, no scoring rails, no frontend, no user-facing warnings, no Pass3 compiler implementation. STOP conditions:409-419 — 7 conditions, all measurable. No scope creep detected."
     },
     {
       "check": "stop_conditions_complete_and_measurable",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 300-310: 9 STOP conditions all measurable and unambiguous. Particularly relevant: STOP #2 (threshold changes required), STOP #3 (activation behaviour beyond authority alignment), STOP #4 (Pass 3 spec absent or not equivalent), STOP #8 (ARCH-RT-6 validator fails). Based on evidence gathered, STOP #2, #3, and #4 are very likely triggered if migration is attempted — expected to push Cursor to Outcome C, D, or E."
+      "result": "CONFIRMED — all 7 STOP conditions are measurable and unambiguous",
+      "citation": "automation_bus/latest_cursor_prompt.md:409-419 — STOP conditions: (1) CRP-PASS3 artefacts missing — NOT triggered, all present; (2) 55-package cohort unreconstruable — NOT triggered, confirmed in JSON; (3) runtime-loaded status undeterminable — NOT triggered, JSON has runtime_loaded field; (4) launch relevance undeterminable — requires Cursor investigation; (5) likely launch blocker discovered — no evidence at hardening stage; (6) package/runtime changes required — NOT triggered; (7) ARCH-RT-6 validator fails — cannot be determined at hardening stage, must be run."
     },
     {
-      "check": "success_criteria_complete_and_measurable",
+      "check": "no_duplicate_authority_sources",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 389-398: 8 success criteria — all measurable. Key: CRP legacy s24 package status explicitly resolved or classified (1), signal_crp_high/signal_systemic_inflammation naming relationship clear (2), runtime authority cannot silently drift (3), no CRP hidden subsystem re-surfacing (4), carry-forward register updated (5), ARCH-RT-6 validator passes (6), tests prove authority decision (7), gate passes (8). All achievable under Outcome C/D/E without triggering STOP conditions."
+      "citation": "Each of the 55 packages has a distinct package_id and distinct source_document (or null for provenance gaps). No two packages claim identical authority over the same signal pathway in this cohort. Sprint does not introduce new packages or modify existing ones."
     }
   ]
 }

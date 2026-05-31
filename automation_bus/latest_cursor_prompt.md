@@ -1,27 +1,31 @@
 ---
-work_id: CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment
-branch: work/CRP-PASS3-MIGRATION-crp-legacy-s24-package-and-signal-naming-alignment
-risk_level: HIGH
+work_id: MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation
+branch: work/MED-RESEARCH-REVIEW-1-non-pass3-package-revalidation
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 ---
 
-# CRP-PASS3-MIGRATION — CRP Legacy s24 Package and Signal Naming Alignment
+# MED-RESEARCH-REVIEW-1 — Non-Pass 3 Package Revalidation Audit
 
 ## Purpose
 
-Resolve the remaining CRP legacy package / signal naming carry-forward identified by ARCH-LEGACY-1 and ARCH-LEGACY-2.
+Audit and classify the non-Pass_3 / unclear-provenance Knowledge Bus packages discovered during CRP-PASS3-MIGRATION.
 
-ARCH-LEGACY-2 retired several stale Wave 1 pathways, but left open:
+This sprint must determine which runtime-active or governance-relevant packages need to be:
 
 ```text
-CF-ARCHLEG1-002 — CRP legacy s24 package / signal naming split
-CF-ARCHLEG1-004 — partial: CRP migration status and root-cause promotion inventory validator guards
+- accepted as currently valid
+- re-run through the current Knowledge Bus / Pass_3 medical research process
+- replaced
+- retired
+- deferred with rationale
+- escalated for clinical/medical review
 ````
 
-This sprint must investigate and, if safely bounded, align the CRP / systemic inflammation pathway with the current governed research-to-runtime architecture.
+This is an audit/classification sprint only.
 
-The goal is to remove or explicitly classify legacy CRP runtime dependency without destabilising signal activation or user-facing interpretation.
+Do not modify production code, runtime package logic, SignalEvaluator, SignalRegistry, thresholds, scoring, frontend, compiled artefacts, schemas, or medical content.
 
 ## Baseline requirement
 
@@ -37,6 +41,7 @@ KB-UTIL-1 merged
 LAYER-B-1 merged
 ARCH-LEGACY-1 merged
 ARCH-LEGACY-2 merged
+CRP-PASS3-MIGRATION merged
 docs/sprints/launch_core_carry_forward_register.md present and updated
 ```
 
@@ -55,30 +60,23 @@ STOP if:
 ```text
 - current branch is not main
 - local main does not equal origin/main
-- working tree contains unrelated changes
-- ARCH-LEGACY-2 is not merged
+- working tree is not clean
+- CRP-PASS3-MIGRATION is not merged
 - docs/sprints/launch_core_carry_forward_register.md is missing
-```
-
-Important:
-
-```text
-docs/sprints/launch_core_carry_forward_register.md may contain carry-forward updates made after ARCH-LEGACY-2 merge.
-
-Cursor must inspect it before starting. If it is modified but uncommitted, preserve it according to Automation Bus rules before running the work package. Do not discard it.
+- CRP-PASS3 non-Pass_3 package audit artefacts are missing
 ```
 
 ## Governance classification
 
 ```yaml
-risk_level: HIGH
-change_type: MIXED
+risk_level: STANDARD
+change_type: CONTENT
 execution_model: TWO_PHASE_START_FINISH
 ```
 
 Reason:
 
-This sprint may touch signal package authority, CRP/systemic inflammation signal naming, package provenance, runtime package references, validator guards and tests. This is runtime-adjacent medical interpretation logic.
+This is an audit/classification sprint only. It must not change runtime behaviour. It may recommend future HIGH-risk medical research or package migration work.
 
 ## Standard rules
 
@@ -88,253 +86,336 @@ Do not re-read SOPs unless the applicable governance requirement cannot be locat
 
 ## Carry-forward register handling
 
-Before implementation, read:
+Before investigation, read:
 
 ```text
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Relevant carry-forwards:
+Relevant carry-forwards include:
 
 ```text
-CF-ARCHLEG1-002 — CRP legacy s24 package / signal naming split
-CF-ARCHLEG1-004 — partial: CRP migration status and root-cause promotion inventory validator guards
+CF-MRIMPROVE-001 — Re-review non-Pass_3 runtime packages through Knowledge Bus
+CF-MRIMPROVE-002 — pkg_kb45_* pre–Pass 3 batch JSON lineage
+CF-MRIMPROVE-003 — architecture-doc anchor package cohort
+CF-MRIMPROVE-004 — pkg_lipid_transport provenance gap
+CF-CHRONICINFL-001 — Pass 3 frame for signal_systemic_inflammation
+CF-CRPPASS3-001 — Compile Batch_4 Pass_3 CRP frames into governed runtime package
 ```
 
-If this sprint resolves or reclassifies these items, update the register.
+If this sprint resolves, reclassifies, or creates carry-forwards, update the register.
 
-If this sprint creates new carry-forwards, add them to the register.
-
-Do not leave carry-forwards only in chat, audit reports or status summaries.
+Do not leave carry-forwards only in chat, audit summaries, or sprint reports.
 
 ## Authoritative inputs
 
-Read these sprint-specific files before making changes:
+Read these sprint-specific files before investigation:
 
 ```text
 docs/sprints/launch_core_carry_forward_register.md
-docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md
-docs/audit-papers/ARCH-LEGACY-2_targeted_retirement_implementation_report.md
+docs/audit-papers/CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment_report.md
+docs/audit-papers/CRP-PASS3-MIGRATION_package_provenance_non_pass3_table.md
+docs/audit-papers/_crp_pkg_audit_non_pass3.json
 docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md
 docs/audit-papers/PASS3_research_asset_utilisation_investigation_cursor.md
 docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md
 docs/audit-papers/active_intelligence_authority_manifest.md
 docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md
-docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md
 backend/scripts/validate_day_one_architecture.py
 ```
 
-Inspect as implementation authority:
+Also inspect as needed:
 
 ```text
 knowledge_bus/packages/**
-knowledge_bus/research/investigation_specs/multi_llm_research/*_Pass_3.json
-knowledge_bus/compiled/estate_index_v1.yaml
+knowledge_bus/research/**
+knowledge_bus/compiled/**
+knowledge_bus/governance/**
 backend/core/analytics/signal_evaluator.py
-backend/core/analytics/domain_score_assembler.py
-backend/core/analytics/domain_narrative_wave1.py
 backend/core/knowledge/**
 backend/scripts/validate_day_one_architecture.py
-backend/tests/**
 ```
 
 If paths differ, locate and report the actual paths.
 
 ## Problem statement
 
-Current audits indicate that CRP / systemic inflammation may still depend on a legacy package path:
+CRP-PASS3-MIGRATION discovered that not all runtime-active packages were generated through the current Pass_3 research process.
+
+Known estate summary from CRP-PASS3-MIGRATION:
 
 ```text
-pkg_s24_crp_high_inflammation
+Total packages: 187
+Pass_3-sourced: 132
+Not Pass_3-sourced: 55
+Runtime-loaded: 186
+Research/context-only: 0
 ```
 
-There may also be a naming split between:
+This does not mean the non-Pass_3 packages are wrong.
+
+It means they need internal Knowledge Bus re-review so HealthIQ can confirm, update, replace, retire, or defer them before treating them as mature launch intelligence.
+
+No user-facing disclosure is required or desired.
+
+## Key principle
+
+Do not overclaim internally or externally.
+
+Classify package maturity honestly, but do not create user-facing warnings.
+
+The intended internal position is:
 
 ```text
-signal_crp_high
-signal_systemic_inflammation
+Runtime-active does not automatically mean Pass_3-mature.
+Non-Pass_3 does not automatically mean clinically invalid.
+Non-Pass_3 runtime packages require Knowledge Bus re-review before being treated as mature launch intelligence.
 ```
 
-This needs to be resolved or explicitly classified so future work does not accidentally rely on stale package authority.
+## Required investigation
 
-## Required preflight
-
-Before making implementation changes, verify and report:
+Using the 55-row non-Pass_3 package audit as the starting point, classify each package by:
 
 ```text
-1. Which CRP-related signals exist.
-2. Which CRP-related packages exist.
-3. Which CRP-related Pass 3 specs exist.
-4. Which CRP package/signals are currently used at runtime.
-5. Whether pkg_s24_crp_high_inflammation is still active.
-6. Whether signal_crp_high and signal_systemic_inflammation are distinct, aliases, duplicates or different clinical concepts.
-7. Whether CRP is visible to users after MED-REV-1/2/KB-UTIL-1.
-8. Whether CRP affects hero, pattern, root-cause, health-system card or marker-level surfaces.
-9. Whether a dedicated Pass 3 CRP package/spec already exists and can replace the legacy s24 path.
-10. Whether migration can be safely bounded to CRP only.
+- package_id
+- signal_id(s)
+- source_type
+- source_document
+- has signal_library.yaml
+- runtime_loaded
+- current runtime or product use
+- provenance confidence
+- medical maturity tier
+- likely launch relevance
+- recommended action
+- future sprint/workstream
 ```
 
-STOP if CRP usage is broader than expected or cannot be safely classified.
+## Package cohort groups
 
-## Scope
+At minimum classify these cohorts:
 
-Allowed scope:
+### 1. Study-derived packages
+
+Known examples:
 
 ```text
-1. Classify CRP-related signals/packages/specs.
-2. Resolve or explicitly document signal_crp_high vs signal_systemic_inflammation naming.
-3. Migrate CRP runtime package pointer from legacy s24 to governed Pass 3 package only if a suitable governed package/spec exists.
-4. If migration is unsafe, classify the legacy path with validator/report evidence rather than forcing implementation.
-5. Add guardrails/tests preventing accidental ambiguity or duplicate CRP authority.
-6. Update carry-forward register.
-7. Produce sprint report.
+pkg_chronic_inflammation
+pkg_insulin_resistance
+pkg_hepatic_metabolic_stress
 ```
+
+Questions:
+
+```text
+- What study markdown or source document created them?
+- Which signals do they define?
+- Are they runtime-loaded?
+- Do they affect visible launch surfaces?
+- Do they need dedicated Pass_3 frames?
+- Should they remain temporarily classified or be prioritised for re-review?
+```
+
+### 2. `pkg_kb45_*` batch JSON packages
+
+Questions:
+
+```text
+- Which batch JSON files created them?
+- Are they pre-Pass_3 or equivalent to Pass_3?
+- Are they runtime-loaded?
+- Which signals do they define?
+- Are any launch-visible?
+- Should they be re-run through Pass_3 or mapped to existing Pass_3 frames?
+```
+
+### 3. Architecture-doc anchor packages
+
+Questions:
+
+```text
+- Which packages cite architecture documents rather than medical research specs?
+- Are they runtime-loaded?
+- Are they product-context packages or signal-driving packages?
+- Should they be reclassified as internal scaffolding, reworked through Pass_3, or retired?
+```
+
+### 4. `pkg_lipid_transport` provenance gap
+
+Questions:
+
+```text
+- What evidence exists for its source?
+- Is it runtime-loaded?
+- Does it affect the atherogenic lipid pattern card or other visible outputs?
+- Can provenance be recovered?
+- Should it be treated as medical research improvement required?
+```
+
+### 5. CRP / inflammation packages
+
+Questions:
+
+```text
+- Confirm distinction between signal_crp_high and signal_systemic_inflammation.
+- Confirm which packages define each.
+- Confirm which are Pass_3-derived, s24-derived, or study-derived.
+- Confirm what remains deferred after CRP-PASS3-MIGRATION.
+```
+
+## Classification model
+
+Use these maturity classifications:
+
+```text
+pass3_mature
+non_pass3_runtime_revalidation_required
+study_derived_revalidation_required
+batch_json_lineage_review_required
+architecture_anchor_review_required
+provenance_gap
+retire_candidate
+accepted_with_rationale
+deferred_non_launch_blocker
+launch_relevant_review_required
+```
+
+No package in the 55-row cohort may remain unclassified.
+
+## Recommended action model
+
+For each package, assign one recommended action:
+
+```text
+accept_as_currently_valid_with_rationale
+re_run_through_pass3
+map_to_existing_pass3_frame
+author_new_pass3_frame
+recover_provenance
+retire_package
+defer_with_reason
+escalate_for_medical_review
+```
+
+## Launch relevance assessment
+
+For each package, classify launch relevance:
+
+```text
+launch_visible
+runtime_active_not_visible
+internal_only
+unknown_requires_trace
+not_runtime_loaded
+```
+
+If a non-Pass_3 package is launch-visible, highlight it clearly.
+
+## Output artefacts
+
+Create:
+
+```text
+docs/audit-papers/MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation_audit.md
+```
+
+Also create or update a machine-readable classification file:
+
+```text
+knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml
+```
+
+This governance file should include the 55 non-Pass_3 / unclear-provenance packages and their classification.
+
+It must not be consumed by runtime in this sprint.
+
+## Required report content
+
+The audit report must include:
+
+```text
+- executive verdict
+- package cohort summary
+- full 55-package classification table
+- runtime-loaded package count
+- launch-visible package count
+- packages needing Pass_3 re-run
+- packages needing new Pass_3 frames
+- packages needing provenance recovery
+- packages safe to defer
+- packages that may be retired
+- package-level recommended actions
+- carry-forward register updates
+- recommended next sprint
+```
+
+## Required governance register fields
+
+For each package in `non_pass3_package_revalidation_register_v1.yaml`, include:
+
+```yaml
+package_id:
+signal_ids:
+source_type:
+source_document:
+pass3_sourced:
+has_signal_library:
+runtime_loaded:
+launch_relevance:
+maturity_classification:
+medical_research_revalidation_required:
+recommended_action:
+recommended_future_sprint:
+carry_forward_id:
+notes:
+```
+
+Optional fields may be added if useful, but do not overcomplicate.
 
 ## Out of scope
 
 Do not:
 
 ```text
-- change CRP clinical thresholds
-- change signal activation mathematics
+- rewrite packages
+- migrate packages
+- delete packages
+- change runtime package loading
+- change SignalEvaluator or SignalRegistry
+- change activation thresholds
 - change scoring rails
 - change biomarker SSOT
 - change unit conversion
-- change SignalEvaluator behaviour beyond package authority/naming alignment
-- implement broad Pass 3 estate compiler
-- implement hypothesis/contradiction/confirmatory test surfacing
-- change root-cause promotion policy
-- change PSI runtime status
-- change frontend UX
-- re-surface MED-REV-1 hidden subsystems as scored findings
-- introduce fallback parsers
+- change frontend
+- add user-facing warnings
+- implement medical research lifecycle process
+- implement full Pass_3 estate compiler
+- expose new hypothesis/contradiction/confirmatory-test content
 ```
 
-## Implementation guidance
+## Required checks
 
-Preferred outcomes in order:
-
-```text
-A. If governed Pass 3 CRP package/spec exists and is semantically equivalent:
-   migrate runtime authority to the governed package/spec and guard it.
-
-B. If governed Pass 3 CRP package/spec exists but is not semantically equivalent:
-   do not migrate; classify the distinction and retain legacy path explicitly.
-
-C. If no governed Pass 3 CRP package/spec exists:
-   retain legacy path temporarily but classify it as a migration target and guard against accidental user-facing over-surfacing.
-
-D. If signal_crp_high and signal_systemic_inflammation are actually different clinical concepts:
-   document and test the distinction.
-
-E. If they are duplicate/alias concepts:
-   define the canonical naming policy and guard against duplicate authority drift.
-```
-
-Do not guess. Base the decision on repo evidence.
-
-## Required tests
-
-Add or update tests proving:
-
-```text
-1. CRP package/signal authority is explicitly classified.
-2. signal_crp_high and signal_systemic_inflammation cannot silently drift as duplicate competing authorities.
-3. If migrated, runtime uses the governed CRP package/spec.
-4. If retained, legacy CRP path is explicitly classified and guarded.
-5. CRP does not re-enter hidden MED-REV-1 subsystem surfaces as a scored finding.
-6. No raw Pass 3 runtime reads are introduced.
-7. No clinical thresholds/scoring rails are changed.
-8. ARCH-RT-6 validator still passes.
-```
-
-Always run:
+Run:
 
 ```powershell
 python backend/scripts/validate_day_one_architecture.py
 python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
 ```
 
-Also run targeted tests for CRP/signal/package paths and any new regression tests.
-
-## Validator / guardrail requirements
-
-If the CRP authority decision is resolved, update `backend/scripts/validate_day_one_architecture.py` or an appropriate regression test so that:
-
-```text
-- CRP authority classification cannot silently regress
-- duplicate CRP/systemic-inflammation signal authority cannot silently reappear
-- hidden MED-REV-1 subsystem policy remains protected
-```
-
-Do not add brittle source-text checks unless this is already the repository pattern or clearly justified.
-
-## Manual validation
-
-Manual browser UAT is not required unless user-facing output changes.
-
-If user-facing output changes, inspect a latest-engine regenerated result from:
-
-```text
-http://localhost:3000/results?analysis_id=746f2b0a-b470-4d87-8ed8-e2c3d1e68c02
-```
-
-Login:
-
-```text
-test-user3@example.com
-Subaru@555
-```
-
-Confirm:
-
-```text
-- CRP/vascular strain is not surfaced as a scored subsystem
-- cardiovascular card remains lipid-led
-- no internal IDs/traces are visible
-- no stale snapshot is mistaken for latest output
-```
+If they fail, STOP and report.
 
 ## STOP conditions
 
 STOP and report if:
 
 ```text
-1. CRP-related authority cannot be determined from repo evidence.
-2. Migration would require clinical threshold changes.
-3. Migration would change signal activation behaviour beyond package authority alignment.
-4. CRP Pass 3 package/spec is absent or not semantically equivalent.
-5. Duplicate signal naming cannot be safely resolved in one sprint.
-6. Root-cause or PSI changes would be required.
-7. Frontend changes would be required.
-8. ARCH-RT-6 validator fails.
-9. Sprint drifts into full Pass 3 compiler, LLM, UX or regeneration work.
-```
-
-## Required deliverable
-
-Create:
-
-```text
-docs/audit-papers/CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment_report.md
-```
-
-The report must include:
-
-```text
-- CRP signal inventory
-- CRP package inventory
-- CRP Pass 3 spec inventory
-- current runtime authority
-- signal_crp_high vs signal_systemic_inflammation decision
-- migration performed or deferred
-- files changed
-- validator/test changes
-- carry-forward register updates
-- confirmation no thresholds/scoring rails changed
-- tests run
-- results
-- remaining risks / carry-forwards
+1. CRP-PASS3 provenance artefacts are missing.
+2. The 55-package cohort cannot be reconstructed.
+3. Runtime-loaded status cannot be determined.
+4. Launch relevance cannot be determined for a package that appears user-facing.
+5. The audit discovers a likely launch blocker.
+6. The audit would require package/runtime changes to complete.
+7. ARCH-RT-6 validator fails.
 ```
 
 ## Evidence required from Cursor
@@ -344,17 +425,14 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. carry-forward register read/update evidence
-3. CRP package/signal/spec inventory
-4. runtime reachability findings
-5. authority decision
-6. migration or deferral rationale
-7. files changed
-8. tests added/updated
-9. test commands run
-10. test results
-11. manual validation result if required
-12. confirmation no clinical thresholds/scoring rails changed
-13. confirmation ARCH-RT-6 validator still passes
+3. files inspected
+4. package cohort counts
+5. 55-package classification table
+6. launch-relevant package findings
+7. recommended future sprint(s)
+8. tests/validators run
+9. test results
+10. confirmation no production code was changed
 ```
 
 ## Closure requirements
@@ -373,14 +451,13 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/CRP-PASS3-MIGRATION-crp-legacy-s24-package-and-signal-naming-alignment
-- all changed files are tied to this sprint
-- carry-forward register has been updated if required
-- no clinical thresholds or scoring rails are changed
-- no SignalEvaluator behavioural changes are introduced beyond declared authority alignment
-- no hidden subsystem is reintroduced
+- current branch matches work/MED-RESEARCH-REVIEW-1-non-pass3-package-revalidation
+- only audit documentation, governance classification, and carry-forward register files are changed
+- no runtime package behaviour is changed
+- no production code is changed
+- no helper scripts are committed
 - no ambiguous stash exists
-- latest commit contains only in-scope work
+- latest commit contains only in-scope audit/classification work
 ```
 
 ## Success criteria
@@ -388,14 +465,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. CRP legacy s24 package status is explicitly resolved or classified.
-2. signal_crp_high / signal_systemic_inflammation naming relationship is clear.
-3. Runtime authority cannot silently drift.
-4. No CRP hidden subsystem re-surfacing occurs.
-5. Carry-forward register is updated.
-6. ARCH-RT-6 validator passes.
-7. Tests prove the authority decision.
-8. Automation Bus gate passes.
+1. all 55 non-Pass_3 / unclear-provenance packages are classified
+2. runtime-loaded status is recorded
+3. launch relevance is assessed
+4. packages needing Knowledge Bus re-review are clearly identified
+5. user-facing disclosure is not introduced
+6. future sprint recommendations are clear
+7. carry-forward register is updated
+8. ARCH-RT-6 validator passes
+9. no production code is changed
+10. Automation Bus gate passes
 ```
 
 ```
