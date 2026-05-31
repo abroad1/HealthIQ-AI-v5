@@ -1,0 +1,497 @@
+[
+  {
+    "package_id": "KBP-0001",
+    "source_document": null,
+    "provenance_class": "legacy_retained_with_justification",
+    "has_signal_library": true,
+    "signal_count": 7,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_b12_deficiency_context",
+    "source_document": "docs/architecture/HealthIQ_Investigation_Layer.md",
+    "provenance_class": "architecture_doc_blocked",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_chronic_inflammation",
+    "source_document": "knowledge_bus/research/study_04_chronic_inflammation.md",
+    "provenance_class": "research_study_markdown",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_example",
+    "source_document": null,
+    "provenance_class": "retire_candidate",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": false,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_glucose_dysregulation_hba1c_context",
+    "source_document": "docs/architecture/HealthIQ_Investigation_Layer.md",
+    "provenance_class": "architecture_doc_blocked",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_hepatic_alt_context",
+    "source_document": "docs/architecture/HealthIQ_Investigation_Layer.md",
+    "provenance_class": "architecture_doc_blocked",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_hepatic_metabolic_stress",
+    "source_document": "knowledge_bus/research/study_03_hepatic_metabolic_stress.md",
+    "provenance_class": "research_study_markdown",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_homocysteine_elevation_context",
+    "source_document": "docs/architecture/HealthIQ_Investigation_Layer.md",
+    "provenance_class": "architecture_doc_blocked",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_inflammation_crp_context",
+    "source_document": "docs/architecture/HealthIQ_Investigation_Layer.md",
+    "provenance_class": "architecture_doc_blocked",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_insulin_resistance",
+    "source_document": "knowledge_bus/research/study_01_insulin_resistance.md",
+    "provenance_class": "research_study_markdown",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_iron_deficiency_context",
+    "source_document": "docs/architecture/HealthIQ_Investigation_Layer.md",
+    "provenance_class": "architecture_doc_blocked",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_iron_overload_context",
+    "source_document": "docs/architecture/HealthIQ_Investigation_Layer.md",
+    "provenance_class": "architecture_doc_blocked",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_kb45_active_b12_low_deficiency",
+    "source_document": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json",
+    "provenance_class": "unknown_ambiguous",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_kb45_apoa1_low_cardio_risk",
+    "source_document": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json",
+    "provenance_class": "unknown_ambiguous",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_kb45_apob_apoa1_ratio_high_imbalance",
+    "source_document": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json",
+    "provenance_class": "unknown_ambiguous",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_kb45_apob_high_atherogenic",
+    "source_document": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json",
+    "provenance_class": "unknown_ambiguous",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_kb45_basophil_pct_high_basophilia",
+    "source_document": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json",
+    "provenance_class": "unknown_ambiguous",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_kb45_basophils_abs_high_basophilia",
+    "source_document": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json",
+    "provenance_class": "unknown_ambiguous",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_kb45_bilirubin_high_hyperbilirubinemia",
+    "source_document": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json",
+    "provenance_class": "unknown_ambiguous",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_kb45_chloride_high_hyperchloremia",
+    "source_document": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json",
+    "provenance_class": "unknown_ambiguous",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_kb45_corrected_calcium_high_hypercalcemia",
+    "source_document": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json",
+    "provenance_class": "unknown_ambiguous",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_kb45_cortisol_high_hypercortisolism",
+    "source_document": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json",
+    "provenance_class": "unknown_ambiguous",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_lipid_transport",
+    "source_document": null,
+    "provenance_class": "provenance_gap",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_albumin_low_nutritional",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_albumin_low_nutritional.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_alp_high_bone_biliary",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_alp_high_bone_biliary.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_alt_high_hepatocellular_injury",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_calcium_high_endocrine",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_calcium_high_endocrine.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_creatinine_high_renal",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_crp_high_inflammation",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_crp_high_inflammation_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_ferritin_high_overload",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_ferritin_high_overload_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_ferritin_low_iron_deficiency",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_ferritin_spec_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_folate_low_deficiency",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_folate_low_deficiency.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_ggt_high_hepatic",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_ggt_high_hepatic.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_hba1c_high_glycaemia",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemia_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_hdl_high_cardiovascular",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_hdl_high_cardiovascular.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_hdl_low_cardiovascular",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_hdl_low_cardiovascular.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_hgb_low_anemia",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_hgb_low_anemia.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_homocysteine_high_metabolic",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_homocysteine_high_metabolic.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_ldl_high_dyslipidaemia",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_ldl_high_dyslipidaemia_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_lym_high_lymphocytosis",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_lym_high_lymphocytosis.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_mcv_high_macrocytosis",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_mcv_high_macrocytosis.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_neutrophils_high_neutrophilia",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_neutrophils_high_neutrophilia.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_neutrophils_low_neutropenia",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_neutrophils_low_neutropenia.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_plt_high_thrombocytosis",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_plt_high_thrombocytosis.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_plt_low_thrombocytopenia",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_plt_low_thrombocytopenia.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_triglycerides_high_metabolic",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_triglycerides_high_metabolic_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_tsh_high_hypothyroidism",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_tsh_high_hypothyroidism_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_tsh_low_hyperthyroidism",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_tsh_low_hyperthyroidism_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_urate_high_metabolic",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_uric_acid_high_metabolic.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_urea_high_renal",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_urea_high_renal.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_vitamin_b12_low_deficiency",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_vitamin_b12_spec_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_vitamin_d_low_deficiency",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_vitamin_d_low_deficiency_v1.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_wbc_high_leukocytosis",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_wbc_high_leukocytosis.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_s24_wbc_low_leukopenia",
+    "source_document": "knowledge_bus/research/investigation_specs/inv_wbc_low_leukopenia.yaml",
+    "provenance_class": "investigation_spec_v1_yaml",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  },
+  {
+    "package_id": "pkg_thyroid_tsh_context",
+    "source_document": "docs/architecture/HealthIQ_Investigation_Layer.md",
+    "provenance_class": "architecture_doc_blocked",
+    "has_signal_library": true,
+    "signal_count": 1,
+    "runtime_loaded": true,
+    "research_context_only": false
+  }
+]
