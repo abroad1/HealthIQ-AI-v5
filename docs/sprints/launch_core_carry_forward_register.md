@@ -48,8 +48,7 @@ This register should be read before each new launch, architecture, medical revie
 | CF-MRIMPROVE-001 | CRP-PASS3-MIGRATION | Re-review non-Pass_3 runtime packages through Knowledge Bus | Some runtime-active packages were not generated through the current Pass_3 process. They should be internally flagged for Knowledge Bus re-review so we can confirm, update, replace or retire them before treating them as mature launch intelligence. No user-facing disclosure is required. | No | MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation | Open | CRP-PASS3-MIGRATION estate audit — 55 non–Pass 3 packages; includes `pkg_chronic_inflammation`. |
 | CF-MRIMPROVE-002 | CRP-PASS3-MIGRATION | `pkg_kb45_*` pre–Pass 3 batch JSON lineage | Ten `pkg_kb45_*` packages cite `investigation-spec-collection-batch*.json` (not Pass 3 JSON). Ambiguous provenance vs Pass 3 estate. | No | KB inventory / Pass 3 mapping sprint | Open | Estate audit 2026-05-31. |
 | CF-MRIMPROVE-003 | CRP-PASS3-MIGRATION | Architecture-doc anchor package cohort | Eight context packages cite `docs/architecture/HealthIQ_Investigation_Layer.md` only. Runtime-loaded thin context signals. | No | Investigation layer / Pass 3 extraction | Open | Estate audit 2026-05-31. |
-| CF-MRIMPROVE-004 | CRP-PASS3-MIGRATION | `pkg_lipid_transport` provenance gap | Package manifest lacks `source_document`; provenance_gap classification. | No | KB 
-hygiene | Open | Estate audit 2026-05-31. |
+| CF-MRIMPROVE-004 | CRP-PASS3-MIGRATION | `pkg_lipid_transport` provenance gap | Package manifest lacks `source_document`; provenance_gap classification. | No | KB hygiene | Open | Estate audit 2026-05-31. |
 
 ---
 
