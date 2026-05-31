@@ -1,10 +1,9 @@
 {
-  "branch": "work/MED-REV-1-wave1-subsystem-visibility-and-label-alignment",
+  "branch": "work/MED-REV-2-wave1-domain-card-copy-alignment-and-result-regeneration-ux",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-31T08:45:00Z",
-  "cursor_started_utc": "2026-05-31T08:42:12Z",
-  "head_sha": "b8217dd64d91d06c190ff57fb2fc0275284a1f7f",
+  "cursor_started_utc": "2026-05-31T09:24:38Z",
+  "head_sha": "2b45f4c05036572e21df1579a21a5be6759d6d8a",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "MED-REV-1_wave1_subsystem_visibility_and_label_alignment"
+  "status": "IN_PROGRESS",
+  "work_id": "MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux"
 }
