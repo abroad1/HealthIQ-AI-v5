@@ -9,6 +9,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, List, Sequence, Tuple
 
+from core.dto.analysis_regeneration_v1 import (
+    REGENERATION_POLICY_ID,
+    assess_regeneration_available,
+    regeneration_unavailable_reason,
+)
 from core.dto.persisted_replay_contract_v1 import (
     CURRENT_RESULT_VERSION,
     PersistedCompatibilityAssessment,
@@ -97,25 +102,34 @@ def detect_launch_core_stale_reasons(stored: Dict[str, Any]) -> List[str]:
     return list(dict.fromkeys(reasons))
 
 
-def assess_result_versioning(stored: Dict[str, Any]) -> ResultVersioningAssessment:
+def assess_result_versioning(
+    stored: Dict[str, Any],
+    *,
+    raw_biomarkers: Optional[Dict[str, Any]] = None,
+) -> ResultVersioningAssessment:
     base = assess_persisted_result_compatibility(stored)
     extra = detect_launch_core_stale_reasons(stored)
     merged = tuple(dict.fromkeys((*base.stale_reasons, *extra)))
     meta = stored.get("meta") if isinstance(stored.get("meta"), dict) else {}
     policy = str(meta.get("completeness_policy_id") or "").strip() or None
     stale = bool(merged)
+    regen = assess_regeneration_available(raw_biomarkers=raw_biomarkers)
     return ResultVersioningAssessment(
         base=base,
         stale_reasons=merged,
         stale=stale,
         completeness_policy_id=policy,
-        regeneration_available=False,
+        regeneration_available=regen,
     )
 
 
-def build_result_versioning_metadata(stored: Dict[str, Any]) -> Dict[str, Any]:
+def build_result_versioning_metadata(
+    stored: Dict[str, Any],
+    *,
+    raw_biomarkers: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
     """API-safe metadata block; does not alter persisted payload."""
-    assessment = assess_result_versioning(stored)
+    assessment = assess_result_versioning(stored, raw_biomarkers=raw_biomarkers)
     status = "stale" if assessment.stale else "current"
     if not assessment.base.compatible:
         status = "incompatible"
@@ -140,8 +154,9 @@ def build_result_versioning_metadata(stored: Dict[str, Any]) -> Dict[str, Any]:
         "completeness_policy_id": assessment.completeness_policy_id,
         "current_completeness_policy_id": CURRENT_COMPLETENESS_POLICY_ID,
         "result_versioning_policy_id": CURRENT_RESULT_VERSIONING_POLICY_ID,
-        "regeneration_policy": "versioned_regeneration_required",
+        "regeneration_policy": REGENERATION_POLICY_ID,
         "regeneration_available": assessment.regeneration_available,
+        "regeneration_unavailable_reason": regeneration_unavailable_reason(raw_biomarkers),
         "launch_user_behaviour": "display_stale_warning",
         "planned_user_behaviour": "regenerate_as_new_version",
         "user_message": user_message,

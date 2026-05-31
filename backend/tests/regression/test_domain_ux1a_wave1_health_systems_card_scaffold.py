@@ -98,8 +98,8 @@ def test_wave1_emits_evidence_completeness_fields() -> None:
 def test_wave1_plain_english_descriptors() -> None:
     by_id = {r.domain_id: r for r in _minimal_rows()}
     assert by_id["wave1_cardiovascular"].plain_english_descriptor == "Heart, arteries and circulation"
-    assert by_id["wave1_blood_sugar"].plain_english_descriptor == "Sugar and insulin balance"
-    assert by_id["wave1_liver"].plain_english_descriptor == "Liver strain and processing load"
+    assert by_id["wave1_blood_sugar"].plain_english_descriptor == "Long-term blood sugar pattern"
+    assert by_id["wave1_liver"].plain_english_descriptor == "Liver health from your blood markers"
 
 
 @pytest.mark.regression

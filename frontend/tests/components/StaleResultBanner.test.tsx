@@ -16,7 +16,23 @@ describe('StaleResultBanner', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('shows warning for stale results', () => {
+  it('shows regenerate button when regeneration is available', () => {
+    render(
+      <StaleResultBanner
+        analysisId="746f2b0a-b470-4d87-8ed8-e2c3d1e68c02"
+        versioning={{
+          immutable_snapshot: true,
+          result_status: 'stale',
+          stale_reasons: ['completeness_policy_missing'],
+          user_message: 'Generated using an older engine.',
+          regeneration_available: true,
+        }}
+      />
+    );
+    expect(screen.getByTestId('regenerate-result-button')).toBeInTheDocument();
+  });
+
+  it('shows warning for stale results without regenerate when unavailable', () => {
     render(
       <StaleResultBanner
         versioning={{

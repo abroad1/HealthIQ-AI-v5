@@ -661,7 +661,10 @@ export default function ResultsPage() {
             </Alert>
           ) : null}
 
-          <StaleResultBanner versioning={currentAnalysis?.result_versioning} />
+          <StaleResultBanner
+            versioning={currentAnalysis?.result_versioning}
+            analysisId={currentAnalysis?.analysis_id}
+          />
 
           {/* FE-R2 Phase 1 journey — section order must match FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS */}
           <section

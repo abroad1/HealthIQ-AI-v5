@@ -89,12 +89,12 @@ def headline_met(band: str) -> str:
 
 def headline_liv(band: str) -> str:
     if band == "strong":
-        return "Your liver health looks strong based on your current enzyme markers."
+        return "Your liver health looks strong based on your current blood markers."
     if band == "stable":
-        return "Your liver health looks broadly stable based on your current enzyme markers."
+        return "Your liver health looks broadly stable based on your current blood markers."
     if band == "watch":
-        return "Your liver enzyme pattern shows some signals worth watching."
-    return "Your liver enzyme pattern shows a pattern that deserves closer review."
+        return "Your liver health shows some signals worth watching based on your current markers."
+    return "Your liver health shows a pattern that deserves closer review based on your current markers."
 
 
 def _narrative_lowercased(contributor: str, consequence: str) -> str:
@@ -312,7 +312,12 @@ def evidence_anchor_sentence(
     return "Based mainly on: your liver-related markers from your panel."
 
 
-def confidence_sentence_for(tier: str, domain: str) -> str:
+def confidence_sentence_for(
+    tier: str,
+    domain: str,
+    *,
+    panel_biomarker_ids: Optional[Set[str]] = None,
+) -> str:
     t = tier if tier in ("high", "medium", "low") else "medium"
     if domain == "cv":
         if t == "high":
@@ -340,16 +345,21 @@ def confidence_sentence_for(tier: str, domain: str) -> str:
             )
         return "Confidence is limited — additional glycaemic markers would strengthen the read."
     # liver
+    panel = panel_biomarker_ids or set()
     if t == "high":
         return "Confidence is high — several liver function markers are present in this panel."
     if t == "medium":
         return (
             "Confidence is moderate — key enzymes are present; a fuller LFT would add context."
         )
-    return (
-        "Confidence is limited — a fuller liver function panel (including GGT, ALP, albumin) "
-        "would improve the read."
-    )
+    missing_labels: List[str] = []
+    for mid, label in (("ggt", "GGT"), ("alp", "ALP"), ("albumin", "albumin")):
+        if mid not in panel:
+            missing_labels.append(label)
+    if missing_labels:
+        joined = ", ".join(missing_labels)
+        return f"Confidence is limited — adding {joined} would strengthen this read."
+    return "Confidence is limited — additional liver markers would strengthen this read."
 
 
 def _is_hcy(sid: str) -> bool:
@@ -417,10 +427,6 @@ def _cv_contributor_signal_fallback(sset: Set[str], sig_rows: List[Dict[str, Any
     for pref in _CV_SIGNAL_PRIORITY:
         if any(s.startswith(pref) or s == pref for s in sset):
             return governed_signal_line(pref, "cv")
-    if any("homocysteine" in s for s in sset):
-        g = governed_idl_field(_ID_VASCULAR, "subtitle")
-        if g:
-            return g
     for r in sig_rows:
         if not _active(r):
             continue
@@ -496,20 +502,12 @@ def met_contributor_primary(
             return rec.subtitle.strip()
     if not active_sids:
         return _MET_NO_ACTIVE_SIGNAL_CONTRIBUTOR
-    for pref in ("signal_hba1c", "signal_insulin_resistance", "signal_glucose"):
+    for pref in ("signal_hba1c", "signal_glucose"):
         for r in sig_rows:
             if not _active(r):
                 continue
             if str(r.get("signal_id", "")).startswith(pref):
                 return governed_signal_line(str(r.get("signal_id", "")), "met")
-    rec_ir = idl_record(by_id, _ID_IR)
-    if (
-        rec_ir is not None
-        and rec_ir.severity_state != "not_observed"
-        and rec_ir.enabled_for_frontend
-        and rec_ir.subtitle
-    ):
-        return rec_ir.subtitle.strip()
     return "Your key blood sugar markers are within their reference ranges."
 
 

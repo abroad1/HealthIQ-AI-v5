@@ -372,6 +372,7 @@ export interface ResultVersioningMetadataV1 {
   result_versioning_policy_id?: string;
   regeneration_policy?: string;
   regeneration_available?: boolean;
+  regeneration_unavailable_reason?: string | null;
   launch_user_behaviour?: string;
   planned_user_behaviour?: string;
   user_message?: string | null;

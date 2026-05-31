@@ -35,6 +35,14 @@ class AnalysisStartResponse(BaseModel):
     status: str
     message: str
 
+
+class AnalysisRegenerateResponse(BaseModel):
+    """Response model for versioned regeneration."""
+    analysis_id: str
+    source_analysis_id: str
+    status: str
+    message: str
+
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.dto.builders import (
     analysis_route_biomarker_row_with_display,
@@ -63,6 +71,8 @@ from app.analysis_payload import (
 from config.database import get_db_optional
 from app.analysis_pdf_export import build_summary_pdf_bytes
 from app.billing_entitlement import enforce_new_analysis_entitlement
+from app.analysis_regeneration import build_client_result_shape_from_dto, run_pipeline_from_raw_biomarkers
+from core.dto.analysis_regeneration_v1 import assess_regeneration_available, regeneration_unavailable_reason
 from core.dto.result_versioning_policy_v1 import build_result_versioning_metadata, stamp_current_policy_meta
 from services.storage.persistence_service import CLIENT_RESULT_SHAPE_V1, PersistenceService
 from repositories import AnalysisRepository, AnalysisResultRepository
@@ -365,6 +375,25 @@ def _raw_result_payload_for_analysis_id(
     return stored
 
 
+def _analysis_row_for_owner(
+    analysis_id: str,
+    db: Session,
+    auth_user: CurrentUser,
+):
+    try:
+        analysis_uuid = UUID(analysis_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Invalid analysis_id") from exc
+    owner_uuid = UUID(auth_user.id)
+    analysis_repo = AnalysisRepository(db)
+    row = analysis_repo.get_by_id(analysis_uuid)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+    if row.user_id != owner_uuid:
+        raise HTTPException(status_code=403, detail="Not allowed to access this analysis")
+    return row
+
+
 @router.get("/result")
 async def get_analysis_result(
     analysis_id: str,
@@ -383,7 +412,14 @@ async def get_analysis_result(
     try:
         raw = _raw_result_payload_for_analysis_id(analysis_id, db, auth_user)
         dto = build_analysis_result_dto(raw)
-        dto["result_versioning"] = build_result_versioning_metadata(raw)
+        raw_biomarkers = None
+        if db is not None and auth_user is not None:
+            row = _analysis_row_for_owner(analysis_id, db, auth_user)
+            raw_biomarkers = row.raw_biomarkers if isinstance(row.raw_biomarkers, dict) else None
+        dto["result_versioning"] = build_result_versioning_metadata(
+            raw,
+            raw_biomarkers=raw_biomarkers,
+        )
         return dto
     except HTTPException:
         raise
@@ -462,6 +498,96 @@ async def get_analysis_history(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to load analysis history",
         ) from exc
+
+
+@router.post("/{analysis_id}/regenerate", response_model=AnalysisRegenerateResponse)
+async def regenerate_analysis(
+    analysis_id: str,
+    auth_user: CurrentUser = Depends(require_analysis_submitter),
+    db: Optional[Session] = Depends(get_db_optional),
+):
+    """
+    Regenerate an analysis using preserved stored biomarker input and the current engine.
+
+    Creates a new analysis_id; the source snapshot remains immutable.
+    """
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Regeneration requires database persistence",
+        )
+
+    source_row = _analysis_row_for_owner(analysis_id, db, auth_user)
+    raw_biomarkers = source_row.raw_biomarkers if isinstance(source_row.raw_biomarkers, dict) else None
+    if not assess_regeneration_available(raw_biomarkers=raw_biomarkers):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "error": "regeneration_unavailable",
+                "message": regeneration_unavailable_reason(raw_biomarkers),
+            },
+        )
+
+    enforce_new_analysis_entitlement(db, auth_user)
+    new_analysis_id = _generate_analysis_id()
+    questionnaire_data = (
+        source_row.questionnaire_data if isinstance(source_row.questionnaire_data, dict) else None
+    )
+    normalized_user = normalize_analysis_user_dict({"user_id": str(auth_user.id)})
+    apply_questionnaire_objective_waist_to_user(normalized_user, questionnaire_data)
+    apply_questionnaire_medication_representation_to_user(normalized_user, questionnaire_data)
+
+    try:
+        dto, upload_panel_observations, lab_origin_meta = run_pipeline_from_raw_biomarkers(
+            biomarkers=dict(raw_biomarkers or {}),
+            user=normalized_user,
+            questionnaire_data=questionnaire_data,
+            analysis_id=new_analysis_id,
+        )
+    except ValueError as exc:
+        if str(exc) == "canonical_collision":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"error_type": "canonical_collision"},
+            ) from exc
+        raise
+    except UnitConversionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unit conversion failed: {exc}",
+        ) from exc
+
+    stored = build_client_result_shape_from_dto(
+        dto,
+        analysis_id=new_analysis_id,
+        lab_origin_meta=lab_origin_meta,
+        upload_panel_observations=upload_panel_observations,
+        source_analysis_id=analysis_id,
+    )
+    _analysis_results[new_analysis_id] = stored
+
+    try:
+        owner_uuid = ensure_profile_for_auth_user(db, auth_user)
+        PersistenceService(db, enable_fallback=False).save_live_analysis_after_run(
+            owner_user_id=owner_uuid,
+            analysis_id=UUID(new_analysis_id),
+            client_result=stored,
+            raw_biomarkers=dict(raw_biomarkers or {}),
+            questionnaire_data=questionnaire_data,
+        )
+    except Exception as exc:
+        logger.exception("Failed to persist regenerated analysis for user %s", auth_user.id)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Regeneration completed but persistence failed",
+        ) from exc
+
+    return AnalysisRegenerateResponse(
+        analysis_id=new_analysis_id,
+        source_analysis_id=analysis_id,
+        status="completed",
+        message="Analysis regenerated successfully as a new result",
+    )
 
 
 @router.get("/events", deprecated=True, include_in_schema=True)

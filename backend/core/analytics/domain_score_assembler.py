@@ -48,9 +48,9 @@ _LIVER_CAVEAT_USER_LINES = (
     "Liver load is also interpreted with related metabolic (hepatic) context, not from the liver score line alone.",
 )
 
-# Wave 1 IDL selection order (per docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md)
-_IDL_ORDER_CV = ("ph_vascular_hcy_inflammation_v1", "ph_lipid_residual_ldl_favourable_transport_v1")
-_IDL_ORDER_MET = ("ph_hba1c_metabolic_stress_v1", "ph_metabolic_early_ir_v1")
+# Wave 1 IDL selection order (MED-REV-2: lipid/glycaemic anchors align with visible scored subsystems)
+_IDL_ORDER_CV = ("ph_lipid_residual_ldl_favourable_transport_v1", "ph_vascular_hcy_inflammation_v1")
+_IDL_ORDER_MET = ("ph_hba1c_metabolic_stress_v1",)
 _IDL_ORDER_LIV = ("ph_hepatic_alt_inflammatory_v1",)
 
 # Biomarker coverage: cardiovascular rail (ssot/scoring_policy systems.cardiovascular)
@@ -332,8 +332,8 @@ def _missing_for_rail(hss: Dict[str, Any], system_key: str) -> List[str]:
 
 _WAVE1_PLAIN_DESCRIPTOR: Dict[str, str] = {
     "wave1_cardiovascular": "Heart, arteries and circulation",
-    "wave1_blood_sugar": "Sugar and insulin balance",
-    "wave1_liver": "Liver strain and processing load",
+    "wave1_blood_sugar": "Long-term blood sugar pattern",
+    "wave1_liver": "Liver health from your blood markers",
 }
 
 
@@ -377,6 +377,23 @@ def _evidence_completeness_from_subsystems(subsystems: Sequence[Any]) -> Tuple[i
     if not expected:
         return 0, 0
     return len(included), len(expected)
+
+
+def _evidence_anchor_from_visible_subsystems(
+    subsystems: Sequence[Any] | None,
+    *,
+    domain: str,
+    by_id: Dict[str, Any],
+    primary_idl: Optional[str],
+) -> str:
+    """MED-REV-2: card anchor follows visible scored subsystem label when present."""
+    if subsystems:
+        for sub in subsystems:
+            tier = getattr(sub, "visibility_tier", None)
+            label = (getattr(sub, "subsystem_label", None) or "").strip()
+            if tier == "scored_subsystem" and label:
+                return f"Based mainly on: {label}"
+    return evidence_anchor_sentence(domain, by_id, primary_idl)
 
 
 def _wave1_card_contract_extras(
@@ -500,6 +517,13 @@ def assemble_consumer_domain_scores_v1(
         _suffix = (intervention_cv_suffix or "").strip()
         _cons_cv = (_cons + " " + _suffix).strip() if _suffix else _cons
         _primary_rec = idl_record(by_id, idl) if idl else None
+        _cv_extras = _wave1_card_contract_extras(
+            domain_id="wave1_cardiovascular",
+            hss=hss,
+            system_key=_RAIL_CARDIOVASCULAR,
+            missing_marker_ids=missing,
+            panel_biomarker_ids=panel_biomarker_ids,
+        )
         return ConsumerDomainScoreV1(
             domain_id="wave1_cardiovascular",
             card_schema_version="1.2",
@@ -523,14 +547,13 @@ def assemble_consumer_domain_scores_v1(
                 insight_results,
                 narrative_report_v1,
             ),
-            evidence_anchor_sentence=evidence_anchor_sentence("cv", by_id, idl),
-            **_wave1_card_contract_extras(
-                domain_id="wave1_cardiovascular",
-                hss=hss,
-                system_key=_RAIL_CARDIOVASCULAR,
-                missing_marker_ids=missing,
-                panel_biomarker_ids=panel_biomarker_ids,
+            evidence_anchor_sentence=_evidence_anchor_from_visible_subsystems(
+                _cv_extras.get("subsystems"),
+                domain="cv",
+                by_id=by_id,
+                primary_idl=idl,
             ),
+            **_cv_extras,
         )
 
     def met_block() -> ConsumerDomainScoreV1:
@@ -559,6 +582,13 @@ def assemble_consumer_domain_scores_v1(
         _m_contrib = met_contributor_primary(by_id, sset, sig_rows, idl)
         _m_cons = met_consequence_primary(by_id, sset, sig_rows, idl)
         _m_primary_rec = idl_record(by_id, idl) if idl else None
+        _met_extras = _wave1_card_contract_extras(
+            domain_id="wave1_blood_sugar",
+            hss=hss,
+            system_key=_RAIL_METABOLIC,
+            missing_marker_ids=missing,
+            panel_biomarker_ids=panel_biomarker_ids,
+        )
         return ConsumerDomainScoreV1(
             domain_id="wave1_blood_sugar",
             card_schema_version="1.2",
@@ -582,14 +612,13 @@ def assemble_consumer_domain_scores_v1(
                 insight_results,
                 narrative_report_v1,
             ),
-            evidence_anchor_sentence=evidence_anchor_sentence("met", by_id, idl),
-            **_wave1_card_contract_extras(
-                domain_id="wave1_blood_sugar",
-                hss=hss,
-                system_key=_RAIL_METABOLIC,
-                missing_marker_ids=missing,
-                panel_biomarker_ids=panel_biomarker_ids,
+            evidence_anchor_sentence=_evidence_anchor_from_visible_subsystems(
+                _met_extras.get("subsystems"),
+                domain="met",
+                by_id=by_id,
+                primary_idl=idl,
             ),
+            **_met_extras,
         )
 
     def liv_block() -> ConsumerDomainScoreV1:
@@ -641,6 +670,13 @@ def assemble_consumer_domain_scores_v1(
             headline_sentence=_l_head,
             active_liver_signal_ids=sids,
         )
+        _liv_extras = _wave1_card_contract_extras(
+            domain_id="wave1_liver",
+            hss=hss,
+            system_key=_RAIL_LIVER,
+            missing_marker_ids=missing,
+            panel_biomarker_ids=panel_biomarker_ids,
+        )
         return ConsumerDomainScoreV1(
             domain_id="wave1_liver",
             card_schema_version="1.2",
@@ -661,20 +697,16 @@ def assemble_consumer_domain_scores_v1(
             raw_evidence_refs=ev,
             headline_sentence=_l_head,
             contributor_sentence=_l_contrib,
-            confidence_sentence=confidence_sentence_for(tier, "liver"),
+            confidence_sentence=confidence_sentence_for(
+                tier, "liver", panel_biomarker_ids=panel_biomarker_ids
+            ),
             consequence_sentence=_l_cons,
             next_step_sentence=next_step_liver(
                 insight_results,
                 narrative_report_v1,
             ),
             evidence_anchor_sentence=evidence_anchor_sentence("liver", by_id, idl),
-            **_wave1_card_contract_extras(
-                domain_id="wave1_liver",
-                hss=hss,
-                system_key=_RAIL_LIVER,
-                missing_marker_ids=missing,
-                panel_biomarker_ids=panel_biomarker_ids,
-            ),
+            **_liv_extras,
         )
 
     out_rows = [cv_block(), met_block(), liv_block()]
