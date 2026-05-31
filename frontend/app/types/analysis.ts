@@ -327,6 +327,22 @@ export interface SubsystemEvidenceV1 {
   compile_manifest_ref?: string | null;
   mechanism_line?: string | null;
   missing_policy_line?: string | null;
+  subsystem_summary?: string | null;
+  evidence_limitations_line?: string | null;
+  marker_evidence?: SubsystemMarkerEvidenceV1[] | null;
+}
+
+export interface DomainFlatEvidenceV1 {
+  domain_id: string;
+  domain_label: string;
+  domain_summary_line?: string | null;
+  mechanism_line?: string | null;
+  missing_policy_line?: string | null;
+  evidence_limitations_line?: string | null;
+  included_marker_ids: string[];
+  missing_marker_ids: string[];
+  included_markers?: MarkerDisplayLabelV1[] | null;
+  missing_markers?: MarkerDisplayLabelV1[] | null;
   marker_evidence?: SubsystemMarkerEvidenceV1[] | null;
 }
 
@@ -408,6 +424,7 @@ export interface ConsumerDomainScoreV1 {
   evidence_completeness_numerator?: number;
   evidence_completeness_denominator?: number;
   subsystems?: SubsystemEvidenceV1[] | null;
+  flat_domain_evidence?: DomainFlatEvidenceV1 | null;
 }
 
 export interface AnalysisResult {

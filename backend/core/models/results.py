@@ -260,10 +260,39 @@ class SubsystemEvidenceV1(BaseModel):
         default=None,
         description="ARCH-RT-3: optional missing-marker policy line from artefact",
     )
+    subsystem_summary: Optional[str] = Field(
+        default=None,
+        description="KB-UTIL-1: optional consumer-safe subsystem summary from compiled artefact",
+    )
+    evidence_limitations_line: Optional[str] = Field(
+        default=None,
+        description="KB-UTIL-1: optional scope/limitations line from compiled artefact",
+    )
     marker_evidence: Optional[List[SubsystemMarkerEvidenceV1]] = Field(
         default=None,
         description="ARCH-RT-3: per-marker governed roles (pilot compiled path)",
     )
+
+
+class DomainFlatEvidenceV1(BaseModel):
+    """KB-UTIL-1 — flat domain evidence for cards without scored subsystem rows (Wave 1 liver)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    domain_id: str = Field(..., description="Wave 1 domain id, e.g. wave1_liver")
+    domain_label: str = Field(..., description="Consumer-safe domain label")
+    domain_summary_line: Optional[str] = Field(
+        default=None,
+        description="Optional flat-model summary compiled from governed packages",
+    )
+    mechanism_line: Optional[str] = Field(default=None)
+    missing_policy_line: Optional[str] = Field(default=None)
+    evidence_limitations_line: Optional[str] = Field(default=None)
+    included_marker_ids: List[str] = Field(default_factory=list)
+    missing_marker_ids: List[str] = Field(default_factory=list)
+    included_markers: Optional[List[MarkerDisplayLabelV1]] = Field(default=None)
+    missing_markers: Optional[List[MarkerDisplayLabelV1]] = Field(default=None)
+    marker_evidence: Optional[List[SubsystemMarkerEvidenceV1]] = Field(default=None)
 
 
 class ConsumerDomainScoreV1(BaseModel):
@@ -360,6 +389,10 @@ class ConsumerDomainScoreV1(BaseModel):
     subsystems: Optional[List[SubsystemEvidenceV1]] = Field(
         default=None,
         description="DOMAIN-UX1C: governed subsystem evidence rows; Wave 1 only",
+    )
+    flat_domain_evidence: Optional[DomainFlatEvidenceV1] = Field(
+        default=None,
+        description="KB-UTIL-1: flat domain evidence when scored subsystem rows are suppressed",
     )
 
 

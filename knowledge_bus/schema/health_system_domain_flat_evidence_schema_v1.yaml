@@ -1,0 +1,73 @@
+schema_name: "HealthIQ Health System Domain Flat Card Evidence"
+schema_version: "1.0.0"
+status: "DRAFT"
+authority: "KB-UTIL-1, ADR-RT-001"
+
+description: >
+  Compiled flat domain evidence for Wave 1 cards that do not expose scored subsystem rows
+  (MED-REV-1 liver flat model). Consumed by backend domain-flat loader only.
+
+root_required_fields:
+  - schema_version
+  - artefact_kind
+  - artefact_id
+  - domain_id
+  - domain_label
+  - compile_manifest_ref
+  - markers
+  - provenance
+
+root_optional_fields:
+  - domain_summary_line
+  - mechanism_line
+  - missing_policy_line
+  - evidence_limitations_line
+  - source_spec_ids
+
+field_rules:
+
+  schema_version:
+    type: string
+    pattern: '^1\.0\.0$'
+
+  artefact_kind:
+    type: string
+    enum:
+      - domain_flat_card_evidence_v1
+
+  artefact_id:
+    type: string
+    min_length: 1
+
+  domain_id:
+    type: string
+    min_length: 1
+
+  domain_label:
+    type: string
+    min_length: 1
+
+  compile_manifest_ref:
+    type: string
+    min_length: 1
+
+  domain_summary_line:
+    type: string
+
+  mechanism_line:
+    type: string
+
+  missing_policy_line:
+    type: string
+
+  evidence_limitations_line:
+    type: string
+
+  source_spec_ids:
+    type: list
+    item_type: string
+
+  markers:
+    type: list
+    min_items: 1
+    unique_by: marker_id

@@ -267,6 +267,29 @@ def validate_med_rev1_wave1_visibility(errors: List[str]) -> None:
         _err(errors, "MED-REV-1: visibility partition must cover all seven Wave 1 subsystems")
 
 
+def validate_kb_util1_wave1_card_enrichment(errors: List[str]) -> None:
+    """KB-UTIL-1: visible Wave 1 card surfaces must expose governed enrichment fields."""
+    sys.path.insert(0, str(_REPO / "backend"))
+    from core.knowledge.domain_flat_card_evidence import load_domain_flat_evidence_artefact  # noqa: PLC0415
+    from core.knowledge.health_system_card_evidence import get_card_evidence_artefact  # noqa: PLC0415
+
+    lipid = get_card_evidence_artefact("wave1_cv_lipid_transport")
+    if not lipid.subsystem_summary or not lipid.evidence_limitations_line:
+        _err(errors, "KB-UTIL-1: lipid artefact must include subsystem_summary and evidence_limitations_line")
+
+    glycaemic = get_card_evidence_artefact("wave1_met_glycaemic_control")
+    if not glycaemic.subsystem_summary or not glycaemic.evidence_limitations_line:
+        _err(errors, "KB-UTIL-1: glycaemic artefact must include enrichment summary/limitations")
+
+    liver_flat = load_domain_flat_evidence_artefact("wave1_liver")
+    if not liver_flat.domain_summary_line or not liver_flat.evidence_limitations_line:
+        _err(errors, "KB-UTIL-1: liver flat artefact must include summary and limitations")
+
+    assembler = _read("backend/core/analytics/domain_score_assembler.py")
+    if "flat_domain_evidence" not in assembler:
+        _err(errors, "KB-UTIL-1: domain_score_assembler must attach flat_domain_evidence for liver")
+
+
 def validate_wave1_assembler_routing(errors: List[str]) -> None:
     src = _read("backend/core/analytics/wave1_subsystem_evidence.py")
     if "PILOT_COMPILED_SUBSYSTEM_IDS" not in src:
@@ -329,6 +352,7 @@ def run_day_one_architecture_validation(*, repo_root: Path | None = None) -> Lis
     validate_authority_manifest(errors)
     validate_wave1_assembler_routing(errors)
     validate_med_rev1_wave1_visibility(errors)
+    validate_kb_util1_wave1_card_enrichment(errors)
     validate_signal_library_uniqueness(errors)
     return errors
 

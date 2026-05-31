@@ -36,6 +36,8 @@ This register should be read before each new launch, architecture, medical revie
 | CF-MEDREV2-002 | MED-REV-2 | Add a formal DB lineage table for regenerated results | Current v1 lineage uses `meta.regenerated_from_analysis_id`. This is acceptable for v1, but a proper lineage table is needed for long-term auditability and multi-version result history. | No | Versioned result lineage sprint | Open | Should support parent/child result relationships and supersession history. |
 | CF-MEDREV2-003 | MED-REV-2 | Clean up dead cardiovascular contributor and homocysteine bridge logic | Some older cardiovascular helper paths remain in code. They are not currently causing the card issue, but keeping them increases drift and accidental reuse risk. | No | ARCH-LEGACY cleanup | Open | Includes legacy `cv_contributor` and limited homocysteine bridge edge-case logic. |
 | CF-MEDREV2-004 | MED-REV-2 | Strengthen liver confidence test assertion | The implementation works, but one test is weaker than ideal. It should strictly prove that present markers such as GGT, ALP and albumin are never described as missing. | No | Test-hardening sprint | Open | Improves regression confidence without changing product behaviour. |
+| CF-KBUTIL1-001 | KB-UTIL-1 | Automated Pass 3 → card evidence compile pipeline | KB-UTIL-1 enriched visible Wave 1 artefacts manually from package `explanation.*` and supporting_metrics at compile time. A governed compile pipeline should replace pilot_manual / kb_util1_package_enrichment for estate-wide rollout. | No | KB-UTIL-2 or ARCH-RT compile hardening | Open | Deferred hypotheses, contradictions, confirmatory tests remain out of card scope. |
+| CF-KBUTIL1-002 | KB-UTIL-1 | Surface Pass 3 hypotheses and contradiction markers on cards | Requires Layer B narrative brief maturity and medical review before consumer display. | No | Narrative / KB enrichment sprint | Open | Not blocked for Wave 1 launch card enrichment v1. |
 
 ---
 
@@ -71,4 +73,4 @@ When resolving an item:
 
 ## Current summary
 
-As of MED-REV-2 closure, there are no known launch-blocking carry-forwards in this register. The open items are auditability, lineage, cleanup and test-hardening improvements.
+As of KB-UTIL-1 closure, there are no known launch-blocking carry-forwards in this register. Open items are compile automation, narrative maturity, lineage, cleanup and test-hardening improvements.

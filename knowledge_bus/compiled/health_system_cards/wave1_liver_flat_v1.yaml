@@ -1,0 +1,69 @@
+schema_version: "1.0.0"
+artefact_kind: domain_flat_card_evidence_v1
+artefact_id: wave1_liver_flat_v1
+domain_id: wave1_liver
+domain_label: Liver health from your blood markers
+source_spec_ids:
+  - inv_alt_high_hepatocellular_injury_v1
+  - inv_ggt_high_hepatic
+  - inv_alp_high_bone_biliary
+  - inv_albumin_low_nutritional
+compile_manifest_ref: knowledge_bus/compiled/manifests/kb_util1_liver_flat_card_evidence.yaml
+domain_summary_line: >
+  Available liver markers on this panel describe enzyme and processing context together,
+  without splitting into separate scored subsystems.
+mechanism_line: >
+  ALT and related enzymes reflect hepatocellular activity; ALP, albumin, and bilirubin
+  add processing and synthetic context when present.
+missing_policy_line: Missing markers reduce confidence; they are not treated as absent clinical results.
+evidence_limitations_line: >
+  This read uses only markers on your panel and does not diagnose MASLD, fibrosis, or advanced liver disease alone.
+markers:
+  - marker_id: alt
+    display_label: ALT
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Primary hepatocellular enzyme marker when present on the panel.
+    presence_policy: optional_on_panel
+  - marker_id: ast
+    display_label: AST
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Hepatocellular enzyme that supports liver strain context alongside ALT.
+    presence_policy: optional_on_panel
+  - marker_id: ggt
+    display_label: GGT
+    marker_role: confidence_contributor
+    relationship_kind: confidence_input
+    rationale_short: Cholestatic and hepatic strain enzyme that strengthens completeness when present.
+    presence_policy: optional_on_panel
+  - marker_id: alp
+    display_label: ALP
+    marker_role: confidence_contributor
+    relationship_kind: confidence_input
+    rationale_short: Bone and biliary processing marker that adds liver context when present.
+    presence_policy: optional_on_panel
+  - marker_id: albumin
+    display_label: Albumin
+    marker_role: confidence_contributor
+    relationship_kind: confidence_input
+    rationale_short: Synthetic function marker that supports processing context when present.
+    presence_policy: optional_on_panel
+  - marker_id: bilirubin
+    display_label: Bilirubin
+    marker_role: contextual_marker
+    relationship_kind: contextual_support
+    rationale_short: Processing context marker; canonical bilirubin only (not total_bilirubin).
+    presence_policy: optional_on_panel
+provenance:
+  artefact_kind: domain_flat_card_evidence_v1
+  compile_status: kb_util1_package_enrichment
+  source_spec_provenance: explicit
+  package_refs:
+    - pkg_s24_alt_high_hepatocellular_injury
+    - pkg_s24_ggt_high_hepatic
+    - pkg_s24_alp_high_bone_biliary
+    - pkg_s24_albumin_low_nutritional
+  notes: >
+    KB-UTIL-1 flat liver model. Merged from hidden wave1_liv_enzyme_pattern and
+    wave1_liv_processing_context compiled markers without reintroducing scored subsystem rows.

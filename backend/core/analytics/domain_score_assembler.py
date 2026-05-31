@@ -33,7 +33,10 @@ from core.analytics.domain_narrative_wave1 import (
     next_step_liver,
 )
 from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayLayerBundleV1
-from core.analytics.wave1_subsystem_evidence import assemble_wave1_subsystem_evidence
+from core.analytics.wave1_subsystem_evidence import (
+    assemble_wave1_flat_domain_evidence,
+    assemble_wave1_subsystem_evidence,
+)
 from core.models.results import ConfidenceTierV1, ConsumerDomainScoreV1
 
 # --- Scoring policy rails (authoritative names) ---
@@ -677,6 +680,11 @@ def assemble_consumer_domain_scores_v1(
             missing_marker_ids=missing,
             panel_biomarker_ids=panel_biomarker_ids,
         )
+        _liv_flat = assemble_wave1_flat_domain_evidence(
+            domain_id="wave1_liver",
+            panel_biomarker_ids=panel_biomarker_ids,
+            rail_biomarker_scores=_system_rail_data(hss, _RAIL_LIVER).get("biomarker_scores"),
+        )
         return ConsumerDomainScoreV1(
             domain_id="wave1_liver",
             card_schema_version="1.2",
@@ -706,6 +714,7 @@ def assemble_consumer_domain_scores_v1(
                 narrative_report_v1,
             ),
             evidence_anchor_sentence=evidence_anchor_sentence("liver", by_id, idl),
+            flat_domain_evidence=_liv_flat,
             **_liv_extras,
         )
 

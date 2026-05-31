@@ -1,0 +1,23 @@
+compile_id: kb-util-1-liver-flat-card-evidence-001
+compile_mode: domain_flat_card_evidence
+compile_run_id: kb-util-1-liver-flat-card-evidence-001
+compiled_at_utc: '2026-05-31T10:15:00Z'
+compiled_by: kb-util-1-pass3-enrichment
+compiler_name: kb_util1_domain_flat_evidence_v1
+compiler_version: 1.0.0
+estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml
+outputs:
+- domain_id: wave1_liver
+  output_hash: pending_inventory_refresh
+  output_hash_algorithm: sha256
+  output_path: knowledge_bus/compiled/health_system_cards/wave1_liver_flat_v1.yaml
+  output_type: domain_flat_card_evidence
+policy_version: KB-UTIL-1-v1
+provenance_status: kb_util1_package_enrichment
+source_contract_version: 1.0.0
+source_specs:
+- source_spec_id: inv_alt_high_hepatocellular_injury_v1
+- source_spec_id: inv_ggt_high_hepatic
+- source_spec_id: inv_alp_high_bone_biliary
+- source_spec_id: inv_albumin_low_nutritional
+translation_rules_version: 1.0.0

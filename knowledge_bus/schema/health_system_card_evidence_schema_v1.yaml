@@ -23,6 +23,8 @@ root_required_fields:
 root_optional_fields:
   - missing_policy_line
   - mechanism_line
+  - subsystem_summary
+  - evidence_limitations_line
 
 field_rules:
 
@@ -76,6 +78,17 @@ field_rules:
   mechanism_line:
     type: string
     description: Optional short mechanism context line (non-retail-clinical; presentation-safe).
+
+  subsystem_summary:
+    type: string
+    description: >
+      KB-UTIL-1 optional consumer-safe summary compiled from package explanation.supporting_marker_roles
+      or equivalent governed review text.
+
+  evidence_limitations_line:
+    type: string
+    description: >
+      KB-UTIL-1 optional scope/limitations line (e.g. what this card does not claim).
 
   markers:
     type: list

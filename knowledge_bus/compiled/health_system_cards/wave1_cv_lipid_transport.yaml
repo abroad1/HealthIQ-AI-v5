@@ -9,50 +9,54 @@ source_spec_ids:
   - inv_hdl_high_cardiovascular
   - inv_hdl_low_cardiovascular
   - inv_triglycerides_high_metabolic_v1
-compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_lipid_transport_card_evidence.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/kb_util1_lipid_transport_card_evidence.yaml
 missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
-mechanism_line: Lipid markers together describe atherogenic lipoprotein risk patterns on this panel.
+mechanism_line: LDL carries cholesterol to tissues; when lipoprotein balance is unfavourable, atherogenic risk patterns emerge on this panel.
+subsystem_summary: >
+  LDL, HDL, and triglycerides together describe atherogenic lipoprotein balance; total cholesterol
+  summarises the panel load and the TC/HDL ratio adds balance context when present.
+evidence_limitations_line: >
+  This card focuses on lipoprotein transport markers and does not treat inflammation or homocysteine as the score basis.
 markers:
   - marker_id: ldl_cholesterol
     display_label: LDL cholesterol
     marker_role: score_contributor
     relationship_kind: direct_score_input
-    rationale_short: Primary atherogenic lipoprotein marker on most panels.
+    rationale_short: Primary atherogenic lipoprotein marker; elevated levels drive ASCVD risk framing.
     presence_policy: required_for_subsystem
   - marker_id: hdl_cholesterol
     display_label: HDL cholesterol
     marker_role: score_contributor
     relationship_kind: direct_score_input
-    rationale_short: Protective lipoprotein fraction marker.
+    rationale_short: Protective lipoprotein fraction that balances atherogenic load on the panel.
     presence_policy: required_for_subsystem
   - marker_id: triglycerides
     display_label: Triglycerides
     marker_role: score_contributor
     relationship_kind: direct_score_input
-    rationale_short: Circulating lipid load marker paired with lipoprotein fractions.
+    rationale_short: Circulating lipid load marker; high levels often shift LDL toward denser, more atherogenic particles.
     presence_policy: required_for_subsystem
   - marker_id: total_cholesterol
     display_label: Total cholesterol
     marker_role: score_contributor
     relationship_kind: direct_score_input
-    rationale_short: Panel aggregate cholesterol marker without dedicated investigation spec.
+    rationale_short: Panel aggregate cholesterol marker supporting overall lipoprotein load context.
     presence_policy: required_for_subsystem
   - marker_id: tc_hdl_ratio
     display_label: TC/HDL ratio
     marker_role: confidence_contributor
     relationship_kind: confidence_input
-    rationale_short: Derived ratio supporting lipid balance context when present.
+    rationale_short: Derived ratio summarising balance between total and protective cholesterol fractions.
     presence_policy: optional_on_panel
 provenance:
   artefact_kind: health_system_card_evidence_v1
-  compile_status: pilot_manual
-  source_spec_provenance: inferred_from_package_manifest
+  compile_status: kb_util1_package_enrichment
+  source_spec_provenance: explicit
   package_refs:
     - pkg_s24_ldl_high_dyslipidaemia
     - pkg_s24_hdl_high_cardiovascular
     - pkg_s24_hdl_low_cardiovascular
     - pkg_s24_triglycerides_high_metabolic
   notes: >
-    ARCH-RT-5B estate promotion. total_cholesterol and tc_hdl_ratio have no investigation
-    spec — inclusion inferred from legacy Wave 1 subsystem definition. NOT sourced from
-    pkg_lipid_transport (provenance_gap). No PSI runtime.
+    KB-UTIL-1 enrichment from pkg_s24 explanation.* and supporting_marker_roles (compile-time only).
+    total_cholesterol and tc_hdl_ratio remain inferred markers. No PSI runtime.

@@ -101,6 +101,8 @@ class CardEvidenceArtefact:
     provenance: Mapping[str, Any]
     missing_policy_line: Optional[str] = None
     mechanism_line: Optional[str] = None
+    subsystem_summary: Optional[str] = None
+    evidence_limitations_line: Optional[str] = None
 
 
 class CardEvidenceValidationError(ValueError):
@@ -201,7 +203,11 @@ def validate_card_evidence_payload(payload: Mapping[str, Any], *, path: str = "<
         if kind and kind != "health_system_card_evidence_v1":
             errors.append("provenance.artefact_kind must be health_system_card_evidence_v1")
         status = _require_str(provenance, "compile_status", errors)
-        if status and status not in ("pilot_manual", "compile_pipeline"):
+        if status and status not in (
+            "pilot_manual",
+            "compile_pipeline",
+            "kb_util1_package_enrichment",
+        ):
             errors.append("provenance.compile_status invalid")
         spec_prov = provenance.get("source_spec_provenance")
         if spec_prov is not None and spec_prov not in (
@@ -210,7 +216,12 @@ def validate_card_evidence_payload(payload: Mapping[str, Any], *, path: str = "<
         ):
             errors.append("provenance.source_spec_provenance invalid")
 
-    for opt in ("missing_policy_line", "mechanism_line"):
+    for opt in (
+        "missing_policy_line",
+        "mechanism_line",
+        "subsystem_summary",
+        "evidence_limitations_line",
+    ):
         val = payload.get(opt)
         if val is not None and (not isinstance(val, str) or not val.strip()):
             errors.append(f"{opt} must be a non-empty string when present")
@@ -258,6 +269,16 @@ def parse_card_evidence_payload(payload: Mapping[str, Any]) -> CardEvidenceArtef
         mechanism_line=(
             str(payload["mechanism_line"]).strip()
             if payload.get("mechanism_line")
+            else None
+        ),
+        subsystem_summary=(
+            str(payload["subsystem_summary"]).strip()
+            if payload.get("subsystem_summary")
+            else None
+        ),
+        evidence_limitations_line=(
+            str(payload["evidence_limitations_line"]).strip()
+            if payload.get("evidence_limitations_line")
             else None
         ),
     )
@@ -377,5 +398,7 @@ def assemble_subsystem_from_compiled_card_evidence(
         compile_manifest_ref=artefact.compile_manifest_ref,
         mechanism_line=artefact.mechanism_line,
         missing_policy_line=artefact.missing_policy_line,
+        subsystem_summary=artefact.subsystem_summary,
+        evidence_limitations_line=artefact.evidence_limitations_line,
         marker_evidence=marker_evidence,
     )

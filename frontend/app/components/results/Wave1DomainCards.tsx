@@ -14,6 +14,7 @@ import {
 } from '@/lib/wave1HealthSystemCardDisplay';
 import { Wave1HealthSystemScoreVisual } from './Wave1HealthSystemScoreVisual';
 import { Wave1SubsystemEvidenceSection } from './Wave1SubsystemEvidenceSection';
+import { Wave1FlatDomainEvidenceSection } from './Wave1FlatDomainEvidenceSection';
 
 const WAVE1_ORDER: readonly string[] = [
   'wave1_cardiovascular',
@@ -208,6 +209,9 @@ export function Wave1DomainCards({ domains, embedInJourney = false }: Props) {
                     ) : null}
                     {d.subsystems && d.subsystems.length > 0 ? (
                       <Wave1SubsystemEvidenceSection subsystems={d.subsystems} />
+                    ) : null}
+                    {d.flat_domain_evidence ? (
+                      <Wave1FlatDomainEvidenceSection evidence={d.flat_domain_evidence} />
                     ) : null}
                   </div>
                 ) : null}

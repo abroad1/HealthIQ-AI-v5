@@ -54,21 +54,49 @@ export function Wave1SubsystemEvidenceSection({ subsystems }: Props) {
               ) : null}
             </div>
 
+            {subsystem.subsystem_summary ? (
+              <p className="text-xs text-slate-600" data-testid="wave1-subsystem-summary">
+                {subsystem.subsystem_summary}
+              </p>
+            ) : null}
+
             {subsystem.mechanism_line ? (
               <p className="text-xs text-slate-600" data-testid="wave1-subsystem-mechanism-line">
                 {subsystem.mechanism_line}
               </p>
             ) : null}
 
+            {subsystem.evidence_limitations_line ? (
+              <p className="text-xs text-slate-500 italic" data-testid="wave1-subsystem-limitations">
+                {subsystem.evidence_limitations_line}
+              </p>
+            ) : null}
+
             {subsystem.included_marker_ids.length > 0 ? (
               <div className="space-y-1.5">
                 <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Included markers</p>
-                <ul className="flex flex-wrap gap-1.5 list-none p-0 m-0" data-testid="wave1-subsystem-included">
+                <ul className="space-y-2 list-none p-0 m-0" data-testid="wave1-subsystem-included">
                   {subsystem.marker_evidence && subsystem.marker_evidence.length > 0
                     ? subsystem.marker_evidence
                         .filter((m) => subsystem.included_marker_ids.includes(m.marker_id))
                         .map((marker) => {
                           const roleLabel = markerRoleChipLabel(marker);
+                          const hasRationale = Boolean(marker.rationale_short?.trim());
+                          if (hasRationale) {
+                            return (
+                              <li key={marker.marker_id} className="text-xs text-slate-700">
+                                <span className="font-medium text-slate-900">{marker.display_label}</span>
+                                {roleLabel ? (
+                                  <span className="ml-1 text-[10px] uppercase tracking-wide text-emerald-700">
+                                    {roleLabel}
+                                  </span>
+                                ) : null}
+                                <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                                  {marker.rationale_short}
+                                </p>
+                              </li>
+                            );
+                          }
                           return (
                             <li key={marker.marker_id}>
                               <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs text-emerald-800">
@@ -104,6 +132,11 @@ export function Wave1SubsystemEvidenceSection({ subsystems }: Props) {
 
             {subsystem.missing_marker_ids.length > 0 ? (
               <div className="space-y-1.5">
+                {subsystem.missing_policy_line ? (
+                  <p className="text-[11px] text-slate-500" data-testid="wave1-subsystem-missing-policy">
+                    {subsystem.missing_policy_line}
+                  </p>
+                ) : null}
                 <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Missing markers</p>
                 <ul className="flex flex-wrap gap-1.5 list-none p-0 m-0" data-testid="wave1-subsystem-missing">
                   {(subsystem.missing_markers && subsystem.missing_markers.length > 0

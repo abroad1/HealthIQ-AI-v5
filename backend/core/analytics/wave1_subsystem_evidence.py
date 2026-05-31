@@ -16,7 +16,8 @@ from core.knowledge.health_system_card_evidence import (
     PILOT_COMPILED_SUBSYSTEM_IDS,
     assemble_subsystem_from_compiled_card_evidence,
 )
-from core.models.results import MarkerDisplayLabelV1, SubsystemEvidenceV1
+from core.knowledge.domain_flat_card_evidence import assemble_domain_flat_evidence
+from core.models.results import DomainFlatEvidenceV1, MarkerDisplayLabelV1, SubsystemEvidenceV1
 
 # --- Subsystem definitions (stable ids + consumer labels + expected canonical markers) ---
 
@@ -184,3 +185,20 @@ def assemble_wave1_subsystem_evidence(
             )
         )
     return rows
+
+
+def assemble_wave1_flat_domain_evidence(
+    *,
+    domain_id: str,
+    panel_biomarker_ids: Set[str],
+    rail_biomarker_scores: object,
+) -> DomainFlatEvidenceV1 | None:
+    """KB-UTIL-1 flat domain evidence (Wave 1 liver only)."""
+    if domain_id != "wave1_liver":
+        return None
+    scored = _scored_marker_ids_on_rail(rail_biomarker_scores)
+    return assemble_domain_flat_evidence(
+        domain_id=domain_id,
+        panel_biomarker_ids=panel_biomarker_ids,
+        scored_on_rail=scored,
+    )

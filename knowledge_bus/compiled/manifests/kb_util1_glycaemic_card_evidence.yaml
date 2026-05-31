@@ -1,0 +1,21 @@
+compile_id: kb-util-1-glycaemic-card-evidence-001
+compile_mode: card_evidence
+compile_run_id: kb-util-1-glycaemic-card-evidence-001
+compiled_at_utc: '2026-05-31T10:15:00Z'
+compiled_by: kb-util-1-pass3-enrichment
+compiler_name: kb_util1_card_evidence_enrichment_v1
+compiler_version: 1.0.0
+estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml
+outputs:
+- domain_id: wave1_blood_sugar
+  output_hash: pending_inventory_refresh
+  output_hash_algorithm: sha256
+  output_path: knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml
+  output_type: health_system_card_evidence
+  subsystem_id: wave1_met_glycaemic_control
+policy_version: KB-UTIL-1-v1
+provenance_status: kb_util1_package_enrichment
+source_contract_version: 1.0.0
+source_specs:
+- source_spec_id: inv_hba1c_high_glycaemia_v1
+translation_rules_version: 1.0.0
