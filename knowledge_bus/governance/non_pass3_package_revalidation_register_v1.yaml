@@ -31,6 +31,28 @@ packages:
   recommended_future_sprint: deferred
   carry_forward_id: null
   notes: KBP-0001 baseline library; ARCH-RT-5 retained with explicit justification.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_crp_high_active_inflammatory_or_infective_state
+  - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+  - inv_hgb_high_erythrocytosis_or_hypoxic_drive
+  - inv_hgb_low_iron_deficiency_or_blood_loss_anemia
+  - inv_hgb_low_normocytic_underproduction_context
+  - inv_non_hdl_high_atherogenic_lipoprotein_burden
+  - inv_non_hdl_low_reduced_atherogenic_lipoprotein_pool
+  - inv_tyg_index_high_insulin_resistance_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_crp_high
+  - signal_hgb_high
+  - signal_hgb_low
+  - signal_non_hdl_high
+  - signal_non_hdl_low
+  - signal_tyg_index_high
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_b12_deficiency_context
   signal_ids:
   - signal_b12_deficiency_context
@@ -46,6 +68,19 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-003
   carry_forward_id: CF-MRIMPROVE-003
   notes: Investigation-layer context; architecture doc anchor only.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_active_b12_low_b12_depletion
+  - inv_vitamin_b12_high_supplementation_or_secondary_elevation
+  - inv_vitamin_b12_low_b12_deficiency_context
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_active_b12_low
+  - signal_vitamin_b12_high
+  - signal_vitamin_b12_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_chronic_inflammation
   signal_ids:
   - signal_systemic_inflammation
@@ -61,6 +96,15 @@ packages:
   recommended_future_sprint: CF-CHRONICINFL-001
   carry_forward_id: CF-CHRONICINFL-001
   notes: signal_systemic_inflammation; distinct from signal_crp_high per crp_runtime_authority_v1.yaml.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_crp_high_active_inflammatory_or_infective_state
+  - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_crp_high
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_example
   signal_ids:
   - signal_example_metabolic
@@ -76,6 +120,15 @@ packages:
   recommended_future_sprint: deferred
   carry_forward_id: null
   notes: Example scaffold; not runtime-loaded.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_triglycerides_high_insulin_resistant_hypertriglyceridemia
+  - inv_triglycerides_high_severe_hypertriglyceridemia_context
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_triglycerides_high
+  cross_validation_recommendation: retire_candidate
 - package_id: pkg_glucose_dysregulation_hba1c_context
   signal_ids:
   - signal_glucose_dysregulation_hba1c_context
@@ -91,6 +144,22 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-003
   carry_forward_id: CF-MRIMPROVE-003
   notes: Investigation-layer context; architecture doc anchor only.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_hba1c_high_diabetes_range_hyperglycemia
+  - inv_hba1c_low_shortened_erythrocyte_lifespan_context
+  - inv_hba1c_pct_high_chronic_hyperglycemia_diabetes
+  - inv_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency
+  - inv_hba1c_pct_low_shortened_red_cell_survival_or_low_glycemia
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_hba1c_high
+  - signal_hba1c_low
+  - signal_hba1c_pct_high
+  - signal_hba1c_pct_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_hepatic_alt_context
   signal_ids:
   - signal_hepatic_alt_context
@@ -106,6 +175,16 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-003
   carry_forward_id: CF-MRIMPROVE-003
   notes: Investigation-layer context; architecture doc anchor only.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_alt_high_hepatocellular_injury_pattern
+  - inv_alt_high_metabolic_steatotic_liver_pattern
+  - inv_alt_high_muscle_source_or_exertional_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_alt_high
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_hepatic_metabolic_stress
   signal_ids:
   - signal_hepatic_metabolic_stress
@@ -121,6 +200,14 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: 'Study markdown source: knowledge_bus/research/study_03_hepatic_metabolic_stress.md'
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_tyg_index_high_insulin_resistance_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_tyg_index_high
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_homocysteine_elevation_context
   signal_ids:
   - signal_homocysteine_elevation_context
@@ -136,6 +223,15 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-003
   carry_forward_id: CF-MRIMPROVE-003
   notes: Investigation-layer context; architecture doc anchor only.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_homocysteine_high_b_vitamin_related_methylation_impairment
+  - inv_homocysteine_high_renal_clearance_reduction
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_homocysteine_high
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_inflammation_crp_context
   signal_ids:
   - signal_inflammation_crp_context
@@ -151,6 +247,15 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-003
   carry_forward_id: CF-MRIMPROVE-003
   notes: Investigation-layer context; architecture doc anchor only.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_crp_high_active_inflammatory_or_infective_state
+  - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_crp_high
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_insulin_resistance
   signal_ids:
   - signal_insulin_resistance
@@ -166,6 +271,14 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: 'Study markdown source: knowledge_bus/research/study_01_insulin_resistance.md'
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_tyg_index_high_insulin_resistance_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_tyg_index_high
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_iron_deficiency_context
   signal_ids:
   - signal_iron_deficiency_context
@@ -181,6 +294,17 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-003
   carry_forward_id: CF-MRIMPROVE-003
   notes: Investigation-layer context; architecture doc anchor only.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ferritin_high_inflammatory_hyperferritinemia
+  - inv_ferritin_high_iron_overload_context
+  - inv_ferritin_low_iron_store_depletion
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ferritin_high
+  - signal_ferritin_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_iron_overload_context
   signal_ids:
   - signal_iron_overload_context
@@ -196,6 +320,17 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-003
   carry_forward_id: CF-MRIMPROVE-003
   notes: Investigation-layer context; architecture doc anchor only.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ferritin_high_inflammatory_hyperferritinemia
+  - inv_ferritin_high_iron_overload_context
+  - inv_ferritin_low_iron_store_depletion
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ferritin_high
+  - signal_ferritin_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_kb45_active_b12_low_deficiency
   signal_ids:
   - signal_active_b12_deficiency
@@ -211,6 +346,14 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-002
   carry_forward_id: CF-MRIMPROVE-002
   notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_active_b12_low_b12_depletion
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_active_b12_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_kb45_apoa1_low_cardio_risk
   signal_ids:
   - signal_apoa1_cardio_risk
@@ -226,6 +369,15 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-002
   carry_forward_id: CF-MRIMPROVE-002
   notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_apoa1_low_atherogenic_hdl_deficiency
+  - inv_apoa1_low_severe_primary_hdl_deficiency_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_apoa1_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_kb45_apob_apoa1_ratio_high_imbalance
   signal_ids:
   - signal_lipid_imbalance
@@ -241,6 +393,15 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-002
   carry_forward_id: CF-MRIMPROVE-002
   notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_apob_apoa1_ratio_high_atherogenic_particle_imbalance
+  - inv_apob_apoa1_ratio_high_insulin_resistance_atherogenic_dyslipidemia
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_apob_apoa1_ratio_high
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_kb45_apob_high_atherogenic
   signal_ids:
   - signal_apob_atherogenic
@@ -256,6 +417,17 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-002
   carry_forward_id: CF-MRIMPROVE-002
   notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_apob_high_atherogenic_particle_excess
+  - inv_apob_high_familial_combined_hyperlipidemia_pattern
+  - inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_apob_high
+  - signal_apob_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_kb45_basophil_pct_high_basophilia
   signal_ids:
   - signal_basophilia_pct
@@ -271,6 +443,17 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-002
   carry_forward_id: CF-MRIMPROVE-002
   notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_basophil_pct_high_myeloproliferative_signal
+  - inv_basophil_pct_high_type2_hypersensitivity_inflammation
+  - inv_basophil_pct_low_glucocorticoid_or_acute_stress_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_basophil_pct_high
+  - signal_basophil_pct_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_kb45_basophils_abs_high_basophilia
   signal_ids:
   - signal_basophilia_abs
@@ -286,6 +469,17 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-002
   carry_forward_id: CF-MRIMPROVE-002
   notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_basophils_abs_high_myeloproliferative_signal
+  - inv_basophils_abs_high_type2_hypersensitivity_inflammation
+  - inv_basophils_abs_low_glucocorticoid_or_acute_stress_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_basophils_abs_high
+  - signal_basophils_abs_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_kb45_bilirubin_high_hyperbilirubinemia
   signal_ids:
   - signal_hyperbilirubinemia
@@ -301,6 +495,16 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-002
   carry_forward_id: CF-MRIMPROVE-002
   notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_bilirubin_high_gilbert_pattern
+  - inv_bilirubin_high_hemolytic_turnover_pattern
+  - inv_bilirubin_high_hepatobiliary_excretion_impairment
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_bilirubin_high
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_kb45_chloride_high_hyperchloremia
   signal_ids:
   - signal_hyperchloremia
@@ -316,6 +520,16 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-002
   carry_forward_id: CF-MRIMPROVE-002
   notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_chloride_high_hyperchloremic_metabolic_acidosis
+  - inv_chloride_low_chloride_depletion_metabolic_alkalosis
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_chloride_high
+  - signal_chloride_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_kb45_corrected_calcium_high_hypercalcemia
   signal_ids:
   - signal_hypercalcemia
@@ -331,6 +545,18 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-002
   carry_forward_id: CF-MRIMPROVE-002
   notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_corrected_calcium_high_malignancy_mediated_hypercalcemia
+  - inv_corrected_calcium_high_pth_mediated_hypercalcemia
+  - inv_corrected_calcium_low_hypoparathyroid_state
+  - inv_corrected_calcium_low_secondary_hyperparathyroid_context
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_corrected_calcium_high
+  - signal_corrected_calcium_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_kb45_cortisol_high_hypercortisolism
   signal_ids:
   - signal_hypercortisolism
@@ -346,6 +572,16 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-002
   carry_forward_id: CF-MRIMPROVE-002
   notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_cortisol_high_hypercortisolism
+  - inv_cortisol_low_adrenal_insufficiency
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_cortisol_high
+  - signal_cortisol_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_lipid_transport
   signal_ids:
   - signal_lipid_transport_dysfunction
@@ -361,6 +597,16 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-004
   carry_forward_id: CF-MRIMPROVE-004
   notes: Manifest lacks source_document; overlaps KBP-0001 thresholds for signal_lipid_transport_dysfunction.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_non_hdl_high_atherogenic_lipoprotein_burden
+  - inv_non_hdl_low_reduced_atherogenic_lipoprotein_pool
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_non_hdl_high
+  - signal_non_hdl_low
+  cross_validation_recommendation: provenance_recovery_needed
 - package_id: pkg_s24_albumin_low_nutritional
   signal_ids:
   - signal_albumin_low
@@ -376,6 +622,15 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_albumin_low_inflammatory_hypoalbuminemia
+  - inv_albumin_low_protein_loss_or_reduced_synthesis
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_albumin_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_alp_high_bone_biliary
   signal_ids:
   - signal_alp_high
@@ -391,6 +646,18 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_alp_high_cholestatic_pattern
+  - inv_alp_high_high_bone_turnover_pattern
+  - inv_alp_low_hypophosphatasia_pattern
+  - inv_alp_low_nutrient_or_cofactor_deficiency
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_alp_high
+  - signal_alp_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_alt_high_hepatocellular_injury
   signal_ids:
   - signal_alt_high
@@ -406,6 +673,16 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_alt_high_hepatocellular_injury_pattern
+  - inv_alt_high_metabolic_steatotic_liver_pattern
+  - inv_alt_high_muscle_source_or_exertional_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_alt_high
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_calcium_high_endocrine
   signal_ids:
   - signal_calcium_high
@@ -421,6 +698,18 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_calcium_high_primary_hyperparathyroid_pattern
+  - inv_calcium_high_pth_independent_hypercalcemia
+  - inv_calcium_low_hypoparathyroid_pattern
+  - inv_calcium_low_vitamin_d_or_magnesium_related_hypocalcemia
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_calcium_high
+  - signal_calcium_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_creatinine_high_renal
   signal_ids:
   - signal_creatinine_high
@@ -436,6 +725,16 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_creatinine_high_reduced_glomerular_filtration
+  - inv_creatinine_low_low_muscle_mass_or_low_generation
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_creatinine_high
+  - signal_creatinine_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_crp_high_inflammation
   signal_ids:
   - signal_crp_high
@@ -451,6 +750,15 @@ packages:
   recommended_future_sprint: CF-CRPPASS3-001
   carry_forward_id: CF-CRPPASS3-001
   notes: Retained s24 authority for signal_crp_high; Pass 3 compile deferred (CF-CRPPASS3-001).
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_crp_high_active_inflammatory_or_infective_state
+  - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_crp_high
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_ferritin_high_overload
   signal_ids:
   - signal_ferritin_high
@@ -466,6 +774,17 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ferritin_high_inflammatory_hyperferritinemia
+  - inv_ferritin_high_iron_overload_context
+  - inv_ferritin_low_iron_store_depletion
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ferritin_high
+  - signal_ferritin_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_ferritin_low_iron_deficiency
   signal_ids:
   - signal_ferritin_low
@@ -481,6 +800,17 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ferritin_high_inflammatory_hyperferritinemia
+  - inv_ferritin_high_iron_overload_context
+  - inv_ferritin_low_iron_store_depletion
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ferritin_high
+  - signal_ferritin_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_folate_low_deficiency
   signal_ids:
   - signal_folate_low
@@ -496,6 +826,16 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_folate_high_supplementation_or_excess_exposure
+  - inv_folate_low_folate_deficiency
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_folate_high
+  - signal_folate_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_ggt_high_hepatic
   signal_ids:
   - signal_ggt_high
@@ -511,6 +851,15 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ggt_high_alcohol_or_enzyme_induction_context
+  - inv_ggt_high_hepatobiliary_cholestatic_context
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ggt_high
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_hba1c_high_glycaemia
   signal_ids:
   - signal_hba1c_high
@@ -526,6 +875,22 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_hba1c_high_diabetes_range_hyperglycemia
+  - inv_hba1c_low_shortened_erythrocyte_lifespan_context
+  - inv_hba1c_pct_high_chronic_hyperglycemia_diabetes
+  - inv_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency
+  - inv_hba1c_pct_low_shortened_red_cell_survival_or_low_glycemia
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_hba1c_high
+  - signal_hba1c_low
+  - signal_hba1c_pct_high
+  - signal_hba1c_pct_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_hdl_high_cardiovascular
   signal_ids:
   - signal_hdl_cholesterol_high
@@ -541,6 +906,15 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_hdl_low_atherogenic_dyslipidemia
+  - inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_hdl_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_s24_hdl_low_cardiovascular
   signal_ids:
   - signal_hdl_cholesterol_low
@@ -556,6 +930,15 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_hdl_low_atherogenic_dyslipidemia
+  - inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_hdl_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_s24_hgb_low_anemia
   signal_ids:
   - signal_hemoglobin_low
@@ -571,6 +954,17 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_hgb_high_erythrocytosis_or_hypoxic_drive
+  - inv_hgb_low_iron_deficiency_or_blood_loss_anemia
+  - inv_hgb_low_normocytic_underproduction_context
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_hgb_high
+  - signal_hgb_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_s24_homocysteine_high_metabolic
   signal_ids:
   - signal_homocysteine_high
@@ -586,6 +980,15 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_homocysteine_high_b_vitamin_related_methylation_impairment
+  - inv_homocysteine_high_renal_clearance_reduction
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_homocysteine_high
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_ldl_high_dyslipidaemia
   signal_ids:
   - signal_ldl_cholesterol_high
@@ -601,6 +1004,15 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ldl_high_atherogenic_ldl_burden
+  - inv_ldl_high_familial_hypercholesterolemia_context
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ldl_high
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_s24_lym_high_lymphocytosis
   signal_ids:
   - signal_lymphocytes_high
@@ -616,6 +1028,21 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_lym_high_reactive_or_lymphoproliferative_lymphocytosis
+  - inv_lym_low_lymphopenia_stress_or_immunosuppression
+  - inv_lymphocytes_abs_high_reactive_lymphocytosis
+  - inv_lymphocytes_abs_low_true_lymphopenia
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_lym_high
+  - signal_lym_low
+  - signal_lymphocytes_abs_high
+  - signal_lymphocytes_abs_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_s24_mcv_high_macrocytosis
   signal_ids:
   - signal_mcv_high
@@ -631,6 +1058,17 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_mcv_high_megaloblastic_macrocytosis
+  - inv_mcv_high_nonmegaloblastic_macrocytosis
+  - inv_mcv_low_microcytosis_iron_deficiency
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_mcv_high
+  - signal_mcv_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_neutrophils_high_neutrophilia
   signal_ids:
   - signal_neutrophils_high
@@ -646,6 +1084,16 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_neutrophils_high_acute_bacterial_inflammatory_response
+  - inv_neutrophils_low_marrow_suppression_or_drug_effect
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_neutrophils_high
+  - signal_neutrophils_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_neutrophils_low_neutropenia
   signal_ids:
   - signal_neutrophils_low
@@ -661,6 +1109,16 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_neutrophils_high_acute_bacterial_inflammatory_response
+  - inv_neutrophils_low_marrow_suppression_or_drug_effect
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_neutrophils_high
+  - signal_neutrophils_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_plt_high_thrombocytosis
   signal_ids:
   - signal_platelets_high
@@ -676,6 +1134,18 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_plt_high_clonal_myeloproliferative_thrombocytosis
+  - inv_plt_high_reactive_thrombocytosis
+  - inv_plt_low_marrow_suppression_pattern
+  - inv_plt_low_peripheral_consumption_or_immune_destruction
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_plt_high
+  - signal_plt_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_s24_plt_low_thrombocytopenia
   signal_ids:
   - signal_platelets_low
@@ -691,6 +1161,18 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_plt_high_clonal_myeloproliferative_thrombocytosis
+  - inv_plt_high_reactive_thrombocytosis
+  - inv_plt_low_marrow_suppression_pattern
+  - inv_plt_low_peripheral_consumption_or_immune_destruction
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_plt_high
+  - signal_plt_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
 - package_id: pkg_s24_triglycerides_high_metabolic
   signal_ids:
   - signal_triglycerides_high
@@ -706,6 +1188,15 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_triglycerides_high_insulin_resistant_hypertriglyceridemia
+  - inv_triglycerides_high_severe_hypertriglyceridemia_context
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_triglycerides_high
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_tsh_high_hypothyroidism
   signal_ids:
   - signal_tsh_high
@@ -721,6 +1212,16 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_tsh_high_primary_hypothyroid_pattern
+  - inv_tsh_low_thyrotoxic_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_tsh_high
+  - signal_tsh_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_tsh_low_hyperthyroidism
   signal_ids:
   - signal_tsh_low
@@ -736,6 +1237,16 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_tsh_high_primary_hypothyroid_pattern
+  - inv_tsh_low_thyrotoxic_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_tsh_high
+  - signal_tsh_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_urate_high_metabolic
   signal_ids:
   - signal_urate_high
@@ -751,6 +1262,16 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_urate_high_gout_crystal_deposition_risk
+  - inv_urate_low_reduced_urate_pool_or_renal_loss
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_urate_high
+  - signal_urate_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_urea_high_renal
   signal_ids:
   - signal_urea_high
@@ -766,6 +1287,16 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+  - inv_urea_low_low_protein_or_reduced_urea_cycle_input
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_urea_high
+  - signal_urea_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_vitamin_b12_low_deficiency
   signal_ids:
   - signal_vitamin_b12_low
@@ -781,6 +1312,19 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_active_b12_low_b12_depletion
+  - inv_vitamin_b12_high_supplementation_or_secondary_elevation
+  - inv_vitamin_b12_low_b12_deficiency_context
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_active_b12_low
+  - signal_vitamin_b12_high
+  - signal_vitamin_b12_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_vitamin_d_low_deficiency
   signal_ids:
   - signal_vitamin_d_low
@@ -796,6 +1340,16 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_vitamin_d_high_vitamin_d_excess_context
+  - inv_vitamin_d_low_vitamin_d_deficiency
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_vitamin_d_high
+  - signal_vitamin_d_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_wbc_high_leukocytosis
   signal_ids:
   - signal_wbc_high
@@ -811,6 +1365,17 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_wbc_high_possible_clonal_leukocyte_proliferation
+  - inv_wbc_high_reactive_leukocytosis
+  - inv_wbc_low_global_leukopenic_suppression
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_wbc_high
+  - signal_wbc_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_s24_wbc_low_leukopenia
   signal_ids:
   - signal_wbc_low
@@ -826,6 +1391,17 @@ packages:
   recommended_future_sprint: KB-UTIL-2
   carry_forward_id: null
   notes: investigation_spec_v1_yaml cohort.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_wbc_high_possible_clonal_leukocyte_proliferation
+  - inv_wbc_high_reactive_leukocytosis
+  - inv_wbc_low_global_leukopenic_suppression
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_wbc_high
+  - signal_wbc_low
+  cross_validation_recommendation: needs_manual_review
 - package_id: pkg_thyroid_tsh_context
   signal_ids:
   - signal_thyroid_tsh_context
@@ -841,3 +1417,18 @@ packages:
   recommended_future_sprint: CF-MRIMPROVE-003
   carry_forward_id: CF-MRIMPROVE-003
   notes: Investigation-layer context; architecture doc anchor only.
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_tsh_high_primary_hypothyroid_pattern
+  - inv_tsh_low_thyrotoxic_pattern
+  pass3_primary_biomarker_match_files:
+  - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_tsh_high
+  - signal_tsh_low
+  cross_validation_recommendation: map_to_existing_pass3_frame
+pass3_cross_validation_utc: '2026-05-31'
+pass3_cross_validation_scope: knowledge_bus/research/investigation_specs/multi_llm_research/*Pass_3*.json (primary_marker.biomarker_id
+  only)
+pass3_primary_biomarker_match_count: 55
+pass3_primary_biomarker_no_match_count: 0

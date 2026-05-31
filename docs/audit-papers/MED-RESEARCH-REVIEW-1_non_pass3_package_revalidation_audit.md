@@ -20,6 +20,22 @@ This does not imply clinical invalidity and does not require user-facing disclos
 **pkg_chronic_inflammation** requires a dedicated Pass 3 frame (CF-CHRONICINFL-001).
 **pkg_s24_crp_high_inflammation** remains deferred per CRP authority (CF-CRPPASS3-001).
 
+### Pass 3 primary-biomarker cross-validation (closure)
+
+Repo-grounded scan of all Pass 3 files under `knowledge_bus/research/investigation_specs/multi_llm_research` (`primary_marker.biomarker_id` only). Detail: `docs/audit-papers/MED-RESEARCH-REVIEW-1_pass3_primary_biomarker_cross_validation_addendum.md`.
+
+| Finding | Result |
+|---|---:|
+| Non–Pass 3 packages with primary biomarker present in Pass 3 | **55 / 55** |
+| Packages missing Pass 3 primary biomarker coverage | **0 / 55** |
+
+**Conclusion:** The estate gap is **mostly mapping, compilation, and promotion** — not missing Pass 3 medical research at the primary-biomarker level. KB-UTIL-2 and related workstreams should prioritize governed compile/map from existing Pass 3 specs rather than net-new biomarker research for this cohort.
+
+**Exceptions (unchanged):**
+
+- **`pkg_chronic_inflammation`** — manual-review exception: primary `crp` matches Pass 3 CRP-primary frames (`signal_crp_high`), but those frames are **not equivalent** to runtime authority `signal_systemic_inflammation`. A dedicated Pass 3 frame remains required (CF-CHRONICINFL-001).
+- **`pkg_lipid_transport`** — **provenance recovery and mapping** (CF-MRIMPROVE-004): manifest gap; primary `non_hdl_cholesterol` already matches Pass 3 `non_hdl` specs — hygiene and promotion, not greenfield research.
+
 ---
 
 ## Package cohort summary
@@ -69,9 +85,9 @@ No package in this cohort is `launch_visible`. Visible Wave 1 subsystems use Pas
 
 ## Recommended next sprints
 
-1. **KB-UTIL-2** — Pass 3 compile/mapping for s24, kb45, and architecture cohorts.
-2. **KB hygiene** — `pkg_lipid_transport` provenance + `pkg_example` retirement.
-3. **Medical research** — Pass 3 frame for `signal_systemic_inflammation`.
+1. **KB-UTIL-2** — Pass 3 compile/mapping/promotion for s24, kb45, and architecture cohorts (primary biomarker coverage already exists in Pass 3).
+2. **KB hygiene** — `pkg_lipid_transport` provenance recovery + mapping to Pass 3 `non_hdl` frames; `pkg_example` retirement.
+3. **Medical research** — dedicated Pass 3 frame for `signal_systemic_inflammation` (not satisfied by CRP-primary Pass 3 specs).
 
 ---
 
