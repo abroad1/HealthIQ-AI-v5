@@ -1,9 +1,10 @@
 {
   "branch": "work/MED-REV-1-wave1-subsystem-visibility-and-label-alignment",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-31T08:45:00Z",
   "cursor_started_utc": "2026-05-31T08:42:12Z",
-  "head_sha": "0861b6a5471925b314db42f760511bc7a9a0e8ac",
+  "head_sha": "b8217dd64d91d06c190ff57fb2fc0275284a1f7f",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "MED-REV-1_wave1_subsystem_visibility_and_label_alignment"
 }
