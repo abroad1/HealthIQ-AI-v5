@@ -1,9 +1,10 @@
 {
   "branch": "work/MED-RESEARCH-REVIEW-1-non-pass3-package-revalidation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-31T20:05:56Z",
   "cursor_started_utc": "2026-05-31T20:02:02Z",
-  "head_sha": "231cf060a8ede071f7547805f6630377f07aa0b8",
+  "head_sha": "8b881a108f39bcdb4e76ed9440afb78cf0355341",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation"
 }
