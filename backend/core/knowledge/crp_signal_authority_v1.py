@@ -33,6 +33,9 @@ PASS3_CRP_FRAME_IDS: Tuple[str, ...] = (
 )
 
 
+CHRONIC_INFLAMMATION_RUNTIME_PACKAGE = "pkg_chronic_inflammation"
+
+
 @dataclass(frozen=True)
 class CrpSignalAuthorityRow:
     signal_id: str
@@ -42,7 +45,9 @@ class CrpSignalAuthorityRow:
     runtime_package_id: str | None
     runtime_package_ids: Tuple[str, ...]
     root_cause_target: bool
-    pass3_runtime_status: str
+    provenance_type: str
+    pass3_derived: bool
+    migration_re_review_status: str
 
 
 def authority_path() -> Path:
@@ -81,7 +86,9 @@ def signal_authority_rows() -> Tuple[CrpSignalAuthorityRow, ...]:
                 runtime_package_id=str(pkg_single).strip() if isinstance(pkg_single, str) and pkg_single.strip() else None,
                 runtime_package_ids=tuple(str(p).strip() for p in pkg_many if str(p).strip()),
                 root_cause_target=bool(spec.get("root_cause_target")),
-                pass3_runtime_status=str(spec.get("pass3_runtime_status") or ""),
+                provenance_type=str(spec.get("provenance_type") or ""),
+                pass3_derived=bool(spec.get("pass3_derived")),
+                migration_re_review_status=str(spec.get("migration_re_review_status") or ""),
             )
         )
     return tuple(rows)

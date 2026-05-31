@@ -13,6 +13,7 @@ from core.analytics.domain_score_assembler import assemble_consumer_domain_score
 from core.contracts.confidence_model_v1 import ConfidenceModelV1
 from core.contracts.insight_graph_v1 import InsightGraphV1
 from core.knowledge.crp_signal_authority_v1 import (
+    CHRONIC_INFLAMMATION_RUNTIME_PACKAGE,
     CRP_RUNTIME_PACKAGE_SIGNAL_CRP_HIGH,
     CRP_SIGNAL_IDS,
     ROOT_CAUSE_INFLAMMATION_SIGNAL_ID,
@@ -40,7 +41,8 @@ def _packages_defining_signal(signal_id: str) -> list[str]:
 @pytest.mark.regression
 def test_crp_authority_registry_covers_all_crp_signals() -> None:
     doc = load_crp_runtime_authority()
-    assert doc["migration_decision"] == "legacy_s24_retained_pass3_deferred"
+    assert doc["sprint_outcome"] == "classification_and_guardrail_complete"
+    assert doc["sprint_type"] == "classification_and_guardrail"
     assert set(authority_by_signal_id().keys()) == set(CRP_SIGNAL_IDS)
 
 
@@ -59,6 +61,20 @@ def test_signal_systemic_inflammation_distinct_from_crp_high() -> None:
     assert systemic.activation_logic == "deterministic_threshold"
     assert systemic.root_cause_target is True
     assert crp.root_cause_target is False
+    assert crp.pass3_derived is False
+    assert systemic.pass3_derived is False
+    assert CHRONIC_INFLAMMATION_RUNTIME_PACKAGE in systemic.runtime_package_ids
+
+
+@pytest.mark.regression
+def test_pkg_chronic_inflammation_documented_for_kb_rereview() -> None:
+    doc = load_crp_runtime_authority()
+    chronic = (doc.get("runtime_packages") or {}).get(CHRONIC_INFLAMMATION_RUNTIME_PACKAGE)
+    assert isinstance(chronic, dict)
+    assert chronic.get("runtime_loaded") is True
+    assert chronic.get("pass3_derived") is False
+    assert chronic.get("internal_kb_rereview_required") is True
+    assert chronic.get("drives_signal_id") == ROOT_CAUSE_INFLAMMATION_SIGNAL_ID
 
 
 @pytest.mark.regression

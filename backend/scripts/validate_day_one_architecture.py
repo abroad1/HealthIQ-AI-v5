@@ -353,8 +353,10 @@ def validate_crp_signal_authority(errors: List[str]) -> None:
     from core.knowledge.root_cause_registry_v1 import ROOT_CAUSE_TARGET_SPECS  # noqa: PLC0415
 
     doc = load_crp_runtime_authority()
-    if doc.get("migration_decision") != "legacy_s24_retained_pass3_deferred":
-        _err(errors, "CRP migration_decision must remain legacy_s24_retained_pass3_deferred")
+    if doc.get("sprint_outcome") != "classification_and_guardrail_complete":
+        _err(errors, "CRP sprint_outcome must be classification_and_guardrail_complete")
+    if doc.get("sprint_type") != "classification_and_guardrail":
+        _err(errors, "CRP sprint_type must be classification_and_guardrail")
 
     by_signal = authority_by_signal_id()
     if set(by_signal.keys()) != set(CRP_SIGNAL_IDS):
@@ -363,6 +365,8 @@ def validate_crp_signal_authority(errors: List[str]) -> None:
     crp_high = by_signal["signal_crp_high"]
     if crp_high.runtime_package_id != CRP_RUNTIME_PACKAGE_SIGNAL_CRP_HIGH:
         _err(errors, "signal_crp_high must remain bound to pkg_s24_crp_high_inflammation")
+    if crp_high.pass3_derived:
+        _err(errors, "signal_crp_high runtime package must not be Pass_3-derived")
     if crp_high.root_cause_target:
         _err(errors, "signal_crp_high must not be a root-cause registry target")
 
@@ -371,6 +375,21 @@ def validate_crp_signal_authority(errors: List[str]) -> None:
         _err(errors, "signal_systemic_inflammation must remain root-cause target")
     if systemic.activation_logic != "deterministic_threshold":
         _err(errors, "signal_systemic_inflammation must use deterministic_threshold activation")
+    if systemic.pass3_derived:
+        _err(errors, "signal_systemic_inflammation must not be Pass_3-derived")
+    if "pkg_chronic_inflammation" not in systemic.runtime_package_ids:
+        _err(errors, "signal_systemic_inflammation must retain pkg_chronic_inflammation runtime authority")
+    if systemic.migration_re_review_status != "internal_kb_rereview_required":
+        _err(errors, "signal_systemic_inflammation must be flagged for internal KB re-review")
+
+    runtime_pkgs = doc.get("runtime_packages") or {}
+    chronic = runtime_pkgs.get("pkg_chronic_inflammation") if isinstance(runtime_pkgs, dict) else None
+    if not isinstance(chronic, dict):
+        _err(errors, "crp_runtime_authority must document pkg_chronic_inflammation")
+    elif chronic.get("pass3_derived") is not False:
+        _err(errors, "pkg_chronic_inflammation must be recorded as pass3_derived: false")
+    elif chronic.get("internal_kb_rereview_required") is not True:
+        _err(errors, "pkg_chronic_inflammation must require internal_kb_rereview")
 
     registry_ids = {spec.signal_id for spec in ROOT_CAUSE_TARGET_SPECS}
     if ROOT_CAUSE_INFLAMMATION_SIGNAL_ID not in registry_ids:

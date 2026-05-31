@@ -1,7 +1,12 @@
-schema_version: "1.0.0"
+schema_version: "1.1.0"
 authority_id: crp_runtime_authority_v1
 classification_date_utc: "2026-05-31"
-migration_decision: legacy_s24_retained_pass3_deferred
+closure_date_utc: "2026-05-31"
+sprint_id: CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment
+sprint_type: classification_and_guardrail
+sprint_outcome: classification_and_guardrail_complete
+
+# CRP-PASS3-MIGRATION closed as classification/guardrail only — no runtime migration.
 
 signals:
   signal_crp_high:
@@ -9,13 +14,17 @@ signals:
     primary_metric: crp
     activation_logic: lab_range_exceeded
     distinct_from_signal_systemic_inflammation: true
+    must_not_conflate_with_signal_systemic_inflammation: true
     runtime_package_id: pkg_s24_crp_high_inflammation
-    runtime_package_tier: structured_translation_batch_no_psi
-    source_investigation_spec: inv_crp_high_inflammation_v1.yaml
-    pass3_research_frames:
+    runtime_loaded: true
+    provenance_type: investigation_spec_v1_yaml_translation
+    source_document: knowledge_bus/research/investigation_specs/inv_crp_high_inflammation_v1.yaml
+    pass3_derived: false
+    pass3_research_frames_in_batch_4:
       - inv_crp_high_active_inflammatory_or_infective_state
       - inv_crp_high_residual_cardiometabolic_inflammatory_risk
-    pass3_runtime_status: research_only_not_compiled
+    pass3_research_frames_apply_to_signal_crp_high_only: true
+    migration_re_review_status: pass3_compile_deferred_cf_crppass3_001
     root_cause_target: false
 
   signal_systemic_inflammation:
@@ -23,21 +32,44 @@ signals:
     primary_metric: crp
     activation_logic: deterministic_threshold
     distinct_from_signal_crp_high: true
+    must_not_conflate_with_signal_crp_high_or_batch_4_pass3_crp_frames: true
+    primary_runtime_authority_package: pkg_chronic_inflammation
     runtime_package_ids:
-      - KBP-0001
       - pkg_chronic_inflammation
+      - KBP-0001
+    runtime_loaded: true
+    provenance_type: research_study_translation
+    source_document: knowledge_bus/research/study_04_chronic_inflammation.md
+    pass3_derived: false
+    internal_kb_rereview_required: true
+    migration_re_review_status: internal_kb_rereview_required
     root_cause_hypothesis_asset: systemic_inflammation_hypotheses_v1.yaml
     root_cause_target: true
-    pass3_runtime_status: not_applicable
 
   signal_inflammation_crp_context:
     clinical_role: crp_context_escalation
     primary_metric: crp
     activation_logic: lab_range_exceeded
     runtime_package_id: pkg_inflammation_crp_context
+    runtime_loaded: true
+    provenance_type: manual_context_anchor
+    source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+    pass3_derived: false
+    migration_re_review_status: internal_kb_rereview_optional
     distinct_from_signal_crp_high: true
     distinct_from_signal_systemic_inflammation: true
     root_cause_target: false
+
+runtime_packages:
+  pkg_chronic_inflammation:
+    drives_signal_id: signal_systemic_inflammation
+    runtime_loaded: true
+    pass3_derived: false
+    provenance_type: research_study_translation
+    source_document: knowledge_bus/research/study_04_chronic_inflammation.md
+    governed_tier: legacy_thin_pre_v3_context
+    internal_kb_rereview_required: true
+    must_not_conflate_with_pkg_s24_crp_high_inflammation: true
 
 wave1_card_policy:
   vascular_strain_subsystem_id: wave1_cv_vascular_strain
