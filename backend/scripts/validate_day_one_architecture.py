@@ -308,6 +308,32 @@ def validate_wave1_assembler_routing(errors: List[str]) -> None:
         _err(errors, "wave1_subsystem_evidence must route compiled subsystems via PILOT_COMPILED_SUBSYSTEM_IDS")
     if "assemble_subsystem_from_compiled_card_evidence" not in src:
         _err(errors, "wave1_subsystem_evidence must call assemble_subsystem_from_compiled_card_evidence")
+    for forbidden in (
+        "_Wave1SubsystemDef",
+        "_partition_subsystem_markers",
+        "WAVE1_DOMAIN_SUBSYSTEM_DEFS",
+    ):
+        if forbidden in src:
+            _err(errors, f"wave1_subsystem_evidence must not retain hard-coded fallback ({forbidden!r})")
+
+
+def validate_arch_legacy2_retirement(errors: List[str]) -> None:
+    """ARCH-LEGACY-2: dead legacy CV helper and homocysteine confidence bridge must stay removed."""
+    narrative = _read("backend/core/analytics/domain_narrative_wave1.py")
+    if "def cv_contributor(" in narrative:
+        _err(errors, "domain_narrative_wave1 must not define dead cv_contributor helper")
+    if "homocysteine is elevated" in narrative and "confidence_sentence_cv_coherent" in narrative:
+        _err(errors, "confidence_sentence_cv_coherent must not bridge homocysteine copy")
+
+    assembler = _read("backend/core/analytics/domain_score_assembler.py")
+    if "cv_contributor_for_lipid_visible_card" not in assembler:
+        _err(errors, "domain_score_assembler must retain lipid-visible CV contributor path")
+    if "cv_uses_lipid_subsystem_narrative_authority" not in assembler:
+        _err(errors, "domain_score_assembler must gate CV narrative on lipid subsystem authority")
+
+    flat_src = _read("backend/core/knowledge/domain_flat_card_evidence.py")
+    if "assemble_domain_flat_evidence" not in flat_src:
+        _err(errors, "domain_flat_card_evidence loader must remain present for launch-critical path")
 
 
 def validate_signal_library_uniqueness(errors: List[str]) -> None:
@@ -363,6 +389,7 @@ def run_day_one_architecture_validation(*, repo_root: Path | None = None) -> Lis
     validate_frontend_guards(errors)
     validate_authority_manifest(errors)
     validate_wave1_assembler_routing(errors)
+    validate_arch_legacy2_retirement(errors)
     validate_med_rev1_wave1_visibility(errors)
     validate_kb_util1_wave1_card_enrichment(errors)
     validate_signal_library_uniqueness(errors)

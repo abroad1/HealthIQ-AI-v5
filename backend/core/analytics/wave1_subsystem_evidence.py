@@ -7,109 +7,33 @@ Wave 1 domains only: cardiovascular, blood sugar, liver.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from functools import lru_cache
-from typing import Dict, FrozenSet, List, Sequence, Set, Tuple
+from typing import Dict, FrozenSet, List, Set, Tuple
 
-from core.canonical.resolver import CanonicalResolver
 from core.knowledge.health_system_card_evidence import (
     PILOT_COMPILED_SUBSYSTEM_IDS,
     assemble_subsystem_from_compiled_card_evidence,
 )
 from core.knowledge.domain_flat_card_evidence import assemble_domain_flat_evidence
-from core.models.results import DomainFlatEvidenceV1, MarkerDisplayLabelV1, SubsystemEvidenceV1
+from core.models.results import DomainFlatEvidenceV1, SubsystemEvidenceV1
 
-# --- Subsystem definitions (stable ids + consumer labels + expected canonical markers) ---
-
-@dataclass(frozen=True)
-class _Wave1SubsystemDef:
-    subsystem_id: str
-    subsystem_label: str
-    expected_marker_ids: Tuple[str, ...]
-    source_trace: str
-
-
-_WAVE1_CV_LIPID = _Wave1SubsystemDef(
-    subsystem_id="wave1_cv_lipid_transport",
-    subsystem_label="Lipid transport",
-    expected_marker_ids=(
-        "total_cholesterol",
-        "ldl_cholesterol",
-        "hdl_cholesterol",
-        "triglycerides",
-        "tc_hdl_ratio",
+# Stable assembly order per domain (compiled card evidence only; no hard-coded fallback).
+_WAVE1_DOMAIN_SUBSYSTEM_ORDER: Dict[str, Tuple[str, ...]] = {
+    "wave1_cardiovascular": (
+        "wave1_cv_lipid_transport",
+        "wave1_cv_homocysteine_pathway",
+        "wave1_cv_vascular_strain",
     ),
-    source_trace="wave1_subsystem_evidence_v1:wave1_cardiovascular:lipid_transport",
-)
-
-_WAVE1_CV_HCY = _Wave1SubsystemDef(
-    subsystem_id="wave1_cv_homocysteine_pathway",
-    subsystem_label="Homocysteine pathway",
-    expected_marker_ids=("homocysteine",),
-    source_trace="wave1_subsystem_evidence_v1:wave1_cardiovascular:homocysteine_pathway",
-)
-
-_WAVE1_CV_VASCULAR = _Wave1SubsystemDef(
-    subsystem_id="wave1_cv_vascular_strain",
-    subsystem_label="Vascular strain context",
-    expected_marker_ids=("crp",),
-    source_trace="wave1_subsystem_evidence_v1:wave1_cardiovascular:vascular_strain",
-)
-
-_WAVE1_MET_GLYCAEMIC = _Wave1SubsystemDef(
-    subsystem_id="wave1_met_glycaemic_control",
-    subsystem_label="Glycaemic control",
-    expected_marker_ids=("glucose", "hba1c"),
-    source_trace="wave1_subsystem_evidence_v1:wave1_blood_sugar:glycaemic_control",
-)
-
-_WAVE1_MET_INSULIN = _Wave1SubsystemDef(
-    subsystem_id="wave1_met_insulin_metabolic",
-    subsystem_label="Insulin and metabolic context",
-    expected_marker_ids=("insulin", "triglycerides"),
-    source_trace="wave1_subsystem_evidence_v1:wave1_blood_sugar:insulin_metabolic",
-)
-
-_WAVE1_LIV_ENZYMES = _Wave1SubsystemDef(
-    subsystem_id="wave1_liv_enzyme_pattern",
-    subsystem_label="Liver enzyme pattern",
-    expected_marker_ids=("alt", "ast", "ggt"),
-    source_trace="wave1_subsystem_evidence_v1:wave1_liver:enzyme_pattern",
-)
-
-_WAVE1_LIV_PROCESSING = _Wave1SubsystemDef(
-    subsystem_id="wave1_liv_processing_context",
-    subsystem_label="Liver processing context",
-    expected_marker_ids=("alp", "albumin", "bilirubin"),
-    source_trace="wave1_subsystem_evidence_v1:wave1_liver:processing_context",
-)
-
-WAVE1_DOMAIN_SUBSYSTEM_DEFS: Dict[str, Tuple[_Wave1SubsystemDef, ...]] = {
-    "wave1_cardiovascular": (_WAVE1_CV_LIPID, _WAVE1_CV_HCY, _WAVE1_CV_VASCULAR),
-    "wave1_blood_sugar": (_WAVE1_MET_GLYCAEMIC, _WAVE1_MET_INSULIN),
-    "wave1_liver": (_WAVE1_LIV_ENZYMES, _WAVE1_LIV_PROCESSING),
+    "wave1_blood_sugar": (
+        "wave1_met_glycaemic_control",
+        "wave1_met_insulin_metabolic",
+    ),
+    "wave1_liver": (
+        "wave1_liv_enzyme_pattern",
+        "wave1_liv_processing_context",
+    ),
 }
 
-WAVE1_DOMAIN_IDS: FrozenSet[str] = frozenset(WAVE1_DOMAIN_SUBSYSTEM_DEFS.keys())
-
-
-@lru_cache(maxsize=1)
-def _marker_display_label_map() -> Dict[str, str]:
-    resolver = CanonicalResolver()
-    out: Dict[str, str] = {}
-    for canonical_id, definition in resolver.load_biomarkers().items():
-        preferred = (definition.consumer_display_name or "").strip()
-        out[canonical_id] = preferred if preferred else canonical_id
-    return out
-
-
-def _labels_for_marker_ids(marker_ids: Sequence[str]) -> List[MarkerDisplayLabelV1]:
-    labels = _marker_display_label_map()
-    rows: List[MarkerDisplayLabelV1] = []
-    for marker_id in marker_ids:
-        display_label = labels.get(marker_id, marker_id)
-        rows.append(MarkerDisplayLabelV1(id=marker_id, display_label=display_label))
-    return rows
+WAVE1_DOMAIN_IDS: FrozenSet[str] = frozenset(_WAVE1_DOMAIN_SUBSYSTEM_ORDER.keys())
 
 
 def _scored_marker_ids_on_rail(rail_biomarker_scores: object) -> Set[str]:
@@ -126,19 +50,6 @@ def _scored_marker_ids_on_rail(rail_biomarker_scores: object) -> Set[str]:
     return out
 
 
-def _partition_subsystem_markers(
-    *,
-    expected: Sequence[str],
-    panel_biomarker_ids: Set[str],
-    scored_on_rail: Set[str],
-) -> Tuple[List[str], List[str]]:
-    expected_set = set(expected)
-    present_or_scored = (panel_biomarker_ids | scored_on_rail) & expected_set
-    included = sorted(present_or_scored)
-    missing = sorted(expected_set - present_or_scored)
-    return included, missing
-
-
 def assemble_wave1_subsystem_evidence(
     *,
     domain_id: str,
@@ -149,41 +60,22 @@ def assemble_wave1_subsystem_evidence(
     Build governed subsystem rows for a Wave 1 domain.
     Returns empty list for unknown domain ids (Wave 2 protection).
     """
-    defs = WAVE1_DOMAIN_SUBSYSTEM_DEFS.get(domain_id)
-    if not defs:
+    subsystem_ids = _WAVE1_DOMAIN_SUBSYSTEM_ORDER.get(domain_id)
+    if not subsystem_ids:
         return []
 
     scored = _scored_marker_ids_on_rail(rail_biomarker_scores)
     rows: List[SubsystemEvidenceV1] = []
-    for spec in defs:
-        if spec.subsystem_id in PILOT_COMPILED_SUBSYSTEM_IDS:
-            compiled_row = assemble_subsystem_from_compiled_card_evidence(
-                subsystem_id=spec.subsystem_id,
-                panel_biomarker_ids=panel_biomarker_ids,
-                scored_on_rail=scored,
-            )
-            if compiled_row is not None:
-                rows.append(compiled_row)
+    for subsystem_id in subsystem_ids:
+        if subsystem_id not in PILOT_COMPILED_SUBSYSTEM_IDS:
             continue
-
-        included, missing = _partition_subsystem_markers(
-            expected=spec.expected_marker_ids,
+        compiled_row = assemble_subsystem_from_compiled_card_evidence(
+            subsystem_id=subsystem_id,
             panel_biomarker_ids=panel_biomarker_ids,
             scored_on_rail=scored,
         )
-        rows.append(
-            SubsystemEvidenceV1(
-                subsystem_id=spec.subsystem_id,
-                subsystem_label=spec.subsystem_label,
-                included_marker_ids=included,
-                missing_marker_ids=missing,
-                included_markers=_labels_for_marker_ids(included),
-                missing_markers=_labels_for_marker_ids(missing),
-                status_label=None,
-                evidence_role=None,
-                source_trace=spec.source_trace,
-            )
-        )
+        if compiled_row is not None:
+            rows.append(compiled_row)
     return rows
 
 

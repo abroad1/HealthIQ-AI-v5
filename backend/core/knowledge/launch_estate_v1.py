@@ -14,9 +14,11 @@ from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 import yaml
 
-from core.analytics.wave1_subsystem_evidence import WAVE1_DOMAIN_SUBSYSTEM_DEFS
 from core.knowledge.compiled_hypothesis_registry_v1 import list_compiled_hypothesis_pilot_signal_ids
-from core.knowledge.health_system_card_evidence import PILOT_COMPILED_SUBSYSTEM_IDS
+from core.knowledge.health_system_card_evidence import (
+    PILOT_COMPILED_SUBSYSTEM_IDS,
+    get_card_evidence_artefact,
+)
 
 
 @dataclass(frozen=True)
@@ -99,23 +101,17 @@ def scan_package_provenance() -> List[PackageProvenanceRow]:
 
 def wave1_subsystem_authority_rows() -> List[Dict[str, str]]:
     out: List[Dict[str, str]] = []
-    for domain_id, specs in WAVE1_DOMAIN_SUBSYSTEM_DEFS.items():
-        for spec in specs:
-            if spec.subsystem_id in PILOT_COMPILED_SUBSYSTEM_IDS:
-                authority = "compiled_card_evidence"
-                launch = "launch_included_compiled"
-            else:
-                authority = "hard_coded_python"
-                launch = "legacy_retained_with_justification"
-            out.append(
-                {
-                    "domain_id": domain_id,
-                    "subsystem_id": spec.subsystem_id,
-                    "subsystem_label": spec.subsystem_label,
-                    "active_authority": authority,
-                    "launch_classification": launch,
-                }
-            )
+    for subsystem_id in sorted(PILOT_COMPILED_SUBSYSTEM_IDS):
+        artefact = get_card_evidence_artefact(subsystem_id)
+        out.append(
+            {
+                "domain_id": artefact.domain_id,
+                "subsystem_id": subsystem_id,
+                "subsystem_label": artefact.subsystem_label,
+                "active_authority": "compiled_card_evidence",
+                "launch_classification": "launch_included_compiled",
+            }
+        )
     return out
 
 

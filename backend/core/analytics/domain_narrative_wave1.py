@@ -332,21 +332,8 @@ def headline_met_coherent(
 
 
 def confidence_sentence_cv_coherent(tier: str, contributor: str) -> str:
-    """
-    D-4: Bridge lipid-tier confidence with homocysteine-led story when both appear in the same card.
-    """
+    """D-4 / MED-REV-2: CV confidence uses governed lipid-tier copy only (no homocysteine bridge)."""
     t = tier if tier in ("high", "medium", "low") else "medium"
-    c = (contributor or "").lower()
-    if "homocysteine" in c and t != "high":
-        if t == "medium":
-            return (
-                "Confidence is good for the lipid data you have; where homocysteine is elevated, "
-                "it is read in the same vascular picture as those lipids, not as a second headline score."
-            )
-        return (
-            "Confidence is limited by an incomplete lipid picture; where homocysteine is elevated, "
-            "it is still interpreted with the markers available on this panel, not to inflate certainty."
-        )
     return confidence_sentence_for(t, "cv")
 
 
@@ -433,33 +420,6 @@ def _is_lipid_dominant(sids: Set[str], rows: List[Dict[str, Any]]) -> bool:
 
 def _active(r: Dict[str, Any]) -> bool:
     return str(r.get("signal_state", "")) in ("at_risk", "suboptimal")
-
-
-def cv_contributor(
-    by_id: Dict[str, Any],
-    active_sids: List[str],
-    sig_rows: List[Dict[str, Any]],
-) -> str:
-    for pid in (_ID_VASCULAR, _ID_LIPID):
-        rec = idl_record(by_id, pid)
-        if rec is not None and rec.severity_state != "not_observed" and rec.enabled_for_frontend:
-            if rec.subtitle:
-                return rec.subtitle.strip()
-    sset = set(active_sids)
-    for pref in _CV_SIGNAL_PRIORITY:
-        if any(s.startswith(pref) or s == pref for s in sset):
-            return governed_signal_line(pref, "cv")
-    if any("homocysteine" in s for s in sset):
-        g = governed_idl_field(_ID_VASCULAR, "subtitle")
-        if g:
-            return g
-    for r in sig_rows:
-        if not _active(r):
-            continue
-        sid = str(r.get("signal_id", ""))
-        if any(sid.startswith(p) for p in _CV_SIGNAL_PRIORITY):
-            return governed_signal_line(sid, "cv")
-    return "Your key cardiovascular markers are within their reference ranges."
 
 
 def cv_contributor_primary(

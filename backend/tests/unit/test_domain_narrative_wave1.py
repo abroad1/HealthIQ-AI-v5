@@ -67,10 +67,10 @@ def test_headline_cv_coherent_strong_band_blocked_when_primary_rec_is_risk_led()
     assert "looks strong" not in out.lower()
 
 
-def test_d4_confidence_cv_bridges_homocysteine_when_tier_not_high():
+def test_d4_confidence_cv_ignores_homocysteine_contributor_bridge():
     from core.analytics.domain_narrative_wave1 import confidence_sentence_cv_coherent, confidence_sentence_for
 
     contrib = "Homocysteine is elevated, adding vascular-stress context."
     s = confidence_sentence_cv_coherent("medium", contrib)
-    assert "homocysteine" in s.lower()
-    assert s != confidence_sentence_for("medium", "cv")
+    assert "homocysteine" not in s.lower()
+    assert s == confidence_sentence_for("medium", "cv")

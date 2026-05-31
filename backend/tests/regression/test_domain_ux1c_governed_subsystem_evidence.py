@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 
 from core.analytics.domain_score_assembler import assemble_consumer_domain_scores_v1
-from core.analytics.wave1_subsystem_evidence import WAVE1_DOMAIN_IDS, WAVE1_DOMAIN_SUBSYSTEM_DEFS
+from core.analytics.wave1_subsystem_evidence import WAVE1_DOMAIN_IDS
 from core.contracts.confidence_model_v1 import ConfidenceModelV1
 from core.contracts.insight_graph_v1 import InsightGraphV1
 from core.knowledge.health_system_card_evidence import get_card_evidence_artefact
@@ -170,6 +170,14 @@ def test_health_system_subsystems_missing_from_dto_sentinel() -> None:
     by_id = {r.domain_id: r for r in _minimal_rows()}
     assert by_id["wave1_cardiovascular"].subsystems
     assert by_id["wave1_blood_sugar"].subsystems
+
+
+@pytest.mark.regression
+def test_wave1_backend_module_has_no_hard_coded_subsystem_defs_sentinel() -> None:
+    """Sentinel: hard-coded Wave 1 subsystem fallback partition removed (ARCH-LEGACY-2)."""
+    src = _read(_SUBSYSTEM_MODULE)
+    assert "_Wave1SubsystemDef" not in src
+    assert "WAVE1_DOMAIN_SUBSYSTEM_DEFS" not in src
 
 
 @pytest.mark.regression
