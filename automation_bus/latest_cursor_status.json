@@ -1,9 +1,10 @@
 {
   "branch": "work/KB-MAP-1-pass3-to-legacy-package-mapping-and-promotion-plan",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-31T22:09:46Z",
   "cursor_started_utc": "2026-05-31T22:07:19Z",
-  "head_sha": "57ac7d5aaac1e9c4069d566d60be189af7882936",
+  "head_sha": "15485b680a0d033e268b5b9db51331d3eba690c2",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan"
 }
