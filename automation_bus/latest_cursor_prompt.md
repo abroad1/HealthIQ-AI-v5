@@ -1,31 +1,33 @@
 ---
-work_id: MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation
-branch: work/MED-RESEARCH-REVIEW-1-non-pass3-package-revalidation
+work_id: KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan
+branch: work/KB-MAP-1-pass3-to-legacy-package-mapping-and-promotion-plan
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: CONTENT
 ---
 
-# MED-RESEARCH-REVIEW-1 — Non-Pass 3 Package Revalidation Audit
+# KB-MAP-1 — Pass_3 to Legacy Package Mapping and Promotion Plan
 
 ## Purpose
 
-Audit and classify the non-Pass_3 / unclear-provenance Knowledge Bus packages discovered during CRP-PASS3-MIGRATION.
+Turn the 55 non-Pass_3 / unclear-provenance package audit into a practical promotion plan.
 
-This sprint must determine which runtime-active or governance-relevant packages need to be:
+This sprint must not promote, rewrite, delete, or change any runtime package.
+
+The aim is to map each legacy/runtime package to its best available Pass_3 / investigation-spec source and classify the safest future promotion route.
+
+The output should tell us:
 
 ```text
-- accepted as currently valid
-- re-run through the current Knowledge Bus / Pass_3 medical research process
-- replaced
-- retired
-- deferred with rationale
-- escalated for clinical/medical review
+- which packages are easy promotion candidates
+- which need compiler/promotion pilot testing
+- which need manual clinical/architecture review
+- which are provenance hygiene issues
+- which should be retired
+- which must remain deferred
 ````
 
-This is an audit/classification sprint only.
-
-Do not modify production code, runtime package logic, SignalEvaluator, SignalRegistry, thresholds, scoring, frontend, compiled artefacts, schemas, or medical content.
+This is a planning and classification sprint only.
 
 ## Baseline requirement
 
@@ -34,15 +36,12 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
-ARCH-RT programme fully merged through ARCH-RT-6
-MED-REV-1 merged
-MED-REV-2 merged
-KB-UTIL-1 merged
-LAYER-B-1 merged
-ARCH-LEGACY-1 merged
-ARCH-LEGACY-2 merged
 CRP-PASS3-MIGRATION merged
+MED-RESEARCH-REVIEW-1 merged
+KNOWLEDGE_BUS_SOP_v1.3.1 committed
+KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1 committed
 docs/sprints/launch_core_carry_forward_register.md present and updated
+knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml present
 ```
 
 Before creating or switching branch, run and report:
@@ -61,9 +60,10 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- CRP-PASS3-MIGRATION is not merged
-- docs/sprints/launch_core_carry_forward_register.md is missing
-- CRP-PASS3 non-Pass_3 package audit artefacts are missing
+- MED-RESEARCH-REVIEW-1 is not merged
+- Knowledge Bus SOP v1.3.1 is missing
+- Pass3 Promotion Protocol v1.1 is missing
+- non_pass3_package_revalidation_register_v1.yaml is missing
 ```
 
 ## Governance classification
@@ -76,321 +76,276 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This is an audit/classification sprint only. It must not change runtime behaviour. It may recommend future HIGH-risk medical research or package migration work.
+This is a mapping and planning sprint only. It must not change runtime behaviour.
 
-## Standard rules
+## Required governance inputs
 
-This work remains governed by the standard Knowledge Bus and Automation Bus SOPs already active in the repository.
-
-Do not re-read SOPs unless the applicable governance requirement cannot be located.
-
-## Carry-forward register handling
-
-Before investigation, read:
+Read before investigation:
 
 ```text
+KNOWLEDGE_BUS_SOP_v1.3.1.md
+KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 docs/sprints/launch_core_carry_forward_register.md
-```
-
-Relevant carry-forwards include:
-
-```text
-CF-MRIMPROVE-001 — Re-review non-Pass_3 runtime packages through Knowledge Bus
-CF-MRIMPROVE-002 — pkg_kb45_* pre–Pass 3 batch JSON lineage
-CF-MRIMPROVE-003 — architecture-doc anchor package cohort
-CF-MRIMPROVE-004 — pkg_lipid_transport provenance gap
-CF-CHRONICINFL-001 — Pass 3 frame for signal_systemic_inflammation
-CF-CRPPASS3-001 — Compile Batch_4 Pass_3 CRP frames into governed runtime package
-```
-
-If this sprint resolves, reclassifies, or creates carry-forwards, update the register.
-
-Do not leave carry-forwards only in chat, audit summaries, or sprint reports.
-
-## Authoritative inputs
-
-Read these sprint-specific files before investigation:
-
-```text
-docs/sprints/launch_core_carry_forward_register.md
+knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml
+docs/audit-papers/MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation_audit.md
+docs/audit-papers/MED-RESEARCH-REVIEW-1_pass3_primary_biomarker_cross_validation_addendum.md
 docs/audit-papers/CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment_report.md
 docs/audit-papers/CRP-PASS3-MIGRATION_package_provenance_non_pass3_table.md
-docs/audit-papers/_crp_pkg_audit_non_pass3.json
-docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md
-docs/audit-papers/PASS3_research_asset_utilisation_investigation_cursor.md
-docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md
-docs/audit-papers/active_intelligence_authority_manifest.md
-docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md
-backend/scripts/validate_day_one_architecture.py
 ```
 
-Also inspect as needed:
+Also inspect:
 
 ```text
 knowledge_bus/packages/**
-knowledge_bus/research/**
+knowledge_bus/research/investigation_specs/multi_llm_research/**/*Pass_3*.json
+knowledge_bus/research/investigation_specs/**/*.yaml
 knowledge_bus/compiled/**
 knowledge_bus/governance/**
-backend/core/analytics/signal_evaluator.py
-backend/core/knowledge/**
 backend/scripts/validate_day_one_architecture.py
 ```
 
 If paths differ, locate and report the actual paths.
 
-## Problem statement
+## Strategic framing
 
-CRP-PASS3-MIGRATION discovered that not all runtime-active packages were generated through the current Pass_3 research process.
+Do not treat the problem as “missing research”.
 
-Known estate summary from CRP-PASS3-MIGRATION:
+MED-RESEARCH-REVIEW-1 found that:
 
 ```text
-Total packages: 187
-Pass_3-sourced: 132
-Not Pass_3-sourced: 55
-Runtime-loaded: 186
-Research/context-only: 0
+55 / 55 non-Pass_3 packages have primary biomarker coverage in Pass_3 files.
+0 / 55 lacked Pass_3 primary biomarker coverage.
 ```
 
-This does not mean the non-Pass_3 packages are wrong.
-
-It means they need internal Knowledge Bus re-review so HealthIQ can confirm, update, replace, retire, or defer them before treating them as mature launch intelligence.
-
-No user-facing disclosure is required or desired.
-
-## Key principle
-
-Do not overclaim internally or externally.
-
-Classify package maturity honestly, but do not create user-facing warnings.
-
-The intended internal position is:
+Therefore the main problem is likely:
 
 ```text
-Runtime-active does not automatically mean Pass_3-mature.
-Non-Pass_3 does not automatically mean clinically invalid.
-Non-Pass_3 runtime packages require Knowledge Bus re-review before being treated as mature launch intelligence.
+research present
+→ not mapped
+→ not compiled
+→ not promoted
+→ legacy runtime package remains active
 ```
 
-## Required investigation
+This sprint must classify that state accurately for each package.
 
-Using the 55-row non-Pass_3 package audit as the starting point, classify each package by:
+## Required classification states
 
-```text
-- package_id
-- signal_id(s)
-- source_type
-- source_document
-- has signal_library.yaml
-- runtime_loaded
-- current runtime or product use
-- provenance confidence
-- medical maturity tier
-- likely launch relevance
-- recommended action
-- future sprint/workstream
-```
-
-## Package cohort groups
-
-At minimum classify these cohorts:
-
-### 1. Study-derived packages
-
-Known examples:
+Use the transition-state model from `KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md`:
 
 ```text
-pkg_chronic_inflammation
-pkg_insulin_resistance
-pkg_hepatic_metabolic_stress
-```
-
-Questions:
-
-```text
-- What study markdown or source document created them?
-- Which signals do they define?
-- Are they runtime-loaded?
-- Do they affect visible launch surfaces?
-- Do they need dedicated Pass_3 frames?
-- Should they remain temporarily classified or be prioritised for re-review?
-```
-
-### 2. `pkg_kb45_*` batch JSON packages
-
-Questions:
-
-```text
-- Which batch JSON files created them?
-- Are they pre-Pass_3 or equivalent to Pass_3?
-- Are they runtime-loaded?
-- Which signals do they define?
-- Are any launch-visible?
-- Should they be re-run through Pass_3 or mapped to existing Pass_3 frames?
-```
-
-### 3. Architecture-doc anchor packages
-
-Questions:
-
-```text
-- Which packages cite architecture documents rather than medical research specs?
-- Are they runtime-loaded?
-- Are they product-context packages or signal-driving packages?
-- Should they be reclassified as internal scaffolding, reworked through Pass_3, or retired?
-```
-
-### 4. `pkg_lipid_transport` provenance gap
-
-Questions:
-
-```text
-- What evidence exists for its source?
-- Is it runtime-loaded?
-- Does it affect the atherogenic lipid pattern card or other visible outputs?
-- Can provenance be recovered?
-- Should it be treated as medical research improvement required?
-```
-
-### 5. CRP / inflammation packages
-
-Questions:
-
-```text
-- Confirm distinction between signal_crp_high and signal_systemic_inflammation.
-- Confirm which packages define each.
-- Confirm which are Pass_3-derived, s24-derived, or study-derived.
-- Confirm what remains deferred after CRP-PASS3-MIGRATION.
-```
-
-## Classification model
-
-Use these maturity classifications:
-
-```text
-pass3_mature
-non_pass3_runtime_revalidation_required
-study_derived_revalidation_required
-batch_json_lineage_review_required
-architecture_anchor_review_required
-provenance_gap
-retire_candidate
+research_missing
+research_present_unmapped
+research_present_uncompiled
+compiled_not_promoted
+runtime_active_legacy
 accepted_with_rationale
-deferred_non_launch_blocker
-launch_relevant_review_required
+retired
 ```
 
-No package in the 55-row cohort may remain unclassified.
+Do not invent a new classification model unless absolutely required.
 
-## Recommended action model
+## Package cohort
 
-For each package, assign one recommended action:
-
-```text
-accept_as_currently_valid_with_rationale
-re_run_through_pass3
-map_to_existing_pass3_frame
-author_new_pass3_frame
-recover_provenance
-retire_package
-defer_with_reason
-escalate_for_medical_review
-```
-
-## Launch relevance assessment
-
-For each package, classify launch relevance:
-
-```text
-launch_visible
-runtime_active_not_visible
-internal_only
-unknown_requires_trace
-not_runtime_loaded
-```
-
-If a non-Pass_3 package is launch-visible, highlight it clearly.
-
-## Output artefacts
-
-Create:
-
-```text
-docs/audit-papers/MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation_audit.md
-```
-
-Also create or update a machine-readable classification file:
+The sprint must cover the full 55-package cohort from:
 
 ```text
 knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml
 ```
 
-This governance file should include the 55 non-Pass_3 / unclear-provenance packages and their classification.
+For each package, identify:
 
-It must not be consumed by runtime in this sprint.
+```text
+- package_id
+- package source_type
+- package signal_id(s)
+- package primary metric / biomarker
+- runtime_loaded status
+- launch_relevance
+- current maturity classification
+- matching Pass_3 primary biomarker spec(s)
+- exact Pass_3 signal_id match, if any
+- biomarker-only match, if signal_id differs
+- whether multiple Pass_3 frames exist for the same biomarker
+- whether the current package can be mapped to one or more Pass_3 specs
+- whether the current package should be regenerated, accepted, retired, deferred or manually reviewed
+```
+
+## Promotion route classification
+
+For each package, assign one future route:
+
+```text
+ROUTE_A_exact_signal_match_compile_candidate
+ROUTE_B_primary_biomarker_match_signal_mapping_needed
+ROUTE_C_multiple_pass3_frames_adjudication_needed
+ROUTE_D_legacy_accepted_with_rationale
+ROUTE_E_provenance_recovery_needed
+ROUTE_F_retire_candidate
+ROUTE_G_manual_medical_review_exception
+```
+
+Definitions:
+
+### ROUTE_A_exact_signal_match_compile_candidate
+
+Use where Pass_3 contains the same signal_id and same primary biomarker.
+
+Likely low-risk candidate for compiler/promotion pilot.
+
+### ROUTE_B_primary_biomarker_match_signal_mapping_needed
+
+Use where Pass_3 contains the same primary biomarker, but signal_id differs.
+
+Requires mapping decision before compile/promotion.
+
+### ROUTE_C_multiple_pass3_frames_adjudication_needed
+
+Use where several Pass_3 frames exist for the same primary biomarker and cannot safely collapse into one runtime signal without an identity decision.
+
+### ROUTE_D_legacy_accepted_with_rationale
+
+Use where legacy runtime package should remain active for now with explicit rationale.
+
+### ROUTE_E_provenance_recovery_needed
+
+Use where the package needs source/provenance recovery before promotion planning.
+
+### ROUTE_F_retire_candidate
+
+Use where the package appears unnecessary or scaffold-only.
+
+### ROUTE_G_manual_medical_review_exception
+
+Use where Pass_3 biomarker coverage exists but the package signal represents a different construct.
+
+Known likely example:
+
+```text
+pkg_chronic_inflammation / signal_systemic_inflammation
+```
+
+## Pilot selection
+
+Recommend a small pilot set for the next sprint.
+
+The pilot set should contain 5–6 packages representing:
+
+```text
+- one clean exact signal match
+- one s24 legacy package with Pass_3 equivalent
+- one kb45 batch lineage package
+- one architecture-anchor package
+- one provenance gap or hygiene item, if safe
+- one manual-review exception only as comparator, not for promotion
+```
+
+Do not choose only easy packages. The pilot must prove the promotion process across representative risk classes.
+
+## Required outputs
+
+Create:
+
+```text
+docs/audit-papers/KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan.md
+```
+
+Create or update:
+
+```text
+knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
+```
+
+Do not make this YAML runtime-consumed.
 
 ## Required report content
 
-The audit report must include:
+The report must include:
 
 ```text
 - executive verdict
-- package cohort summary
-- full 55-package classification table
-- runtime-loaded package count
-- launch-visible package count
-- packages needing Pass_3 re-run
-- packages needing new Pass_3 frames
-- packages needing provenance recovery
-- packages safe to defer
-- packages that may be retired
-- package-level recommended actions
+- summary of 55-package cohort
+- route classification counts
+- full 55-package mapping table
+- exact signal_id match count
+- primary biomarker-only match count
+- multiple-frame adjudication count
+- manual-review exceptions
+- provenance recovery items
+- retire candidates
+- recommended pilot set
+- recommended bulk-promotion wave
+- explicit items not suitable for bulk promotion
 - carry-forward register updates
 - recommended next sprint
 ```
 
-## Required governance register fields
+## Required YAML fields
 
-For each package in `non_pass3_package_revalidation_register_v1.yaml`, include:
+For each package in `pass3_legacy_package_mapping_plan_v1.yaml`, include:
 
 ```yaml
 package_id:
-signal_ids:
-source_type:
-source_document:
-pass3_sourced:
-has_signal_library:
+current_signal_ids:
+current_primary_biomarkers:
 runtime_loaded:
 launch_relevance:
-maturity_classification:
-medical_research_revalidation_required:
+current_source_type:
+current_maturity_classification:
+pass3_primary_biomarker_match:
+pass3_primary_biomarker_match_spec_ids:
+pass3_primary_biomarker_match_signal_ids:
+exact_pass3_signal_id_match:
+exact_pass3_signal_id_match_spec_ids:
+multiple_pass3_frames:
+promotion_route:
 recommended_action:
-recommended_future_sprint:
-carry_forward_id:
+recommended_pilot_candidate:
+manual_review_required:
 notes:
 ```
 
-Optional fields may be added if useful, but do not overcomplicate.
+## Carry-forward register
+
+Before finish, update:
+
+```text
+docs/sprints/launch_core_carry_forward_register.md
+```
+
+Only update carry-forwards if this sprint materially changes their meaning.
+
+Expected updates may include:
+
+```text
+CF-MRIMPROVE-001
+CF-MRIMPROVE-002
+CF-MRIMPROVE-003
+CF-MRIMPROVE-004
+CF-CRPPASS3-001
+CF-CHRONICINFL-001
+```
+
+Do not mark an item resolved unless this sprint actually resolves it. Mapping/classification alone may reframe an item but does not necessarily complete the future promotion work.
 
 ## Out of scope
 
 Do not:
 
 ```text
-- rewrite packages
-- migrate packages
-- delete packages
-- change runtime package loading
+- promote packages
+- regenerate packages
+- edit signal_library.yaml
+- edit package manifests
+- change thresholds
+- change activation logic
 - change SignalEvaluator or SignalRegistry
-- change activation thresholds
-- change scoring rails
-- change biomarker SSOT
-- change unit conversion
+- change scoring
 - change frontend
+- compile new artefacts
+- retire packages
+- alter runtime loading
 - add user-facing warnings
-- implement medical research lifecycle process
-- implement full Pass_3 estate compiler
-- expose new hypothesis/contradiction/confirmatory-test content
 ```
 
 ## Required checks
@@ -409,13 +364,13 @@ If they fail, STOP and report.
 STOP and report if:
 
 ```text
-1. CRP-PASS3 provenance artefacts are missing.
-2. The 55-package cohort cannot be reconstructed.
-3. Runtime-loaded status cannot be determined.
-4. Launch relevance cannot be determined for a package that appears user-facing.
-5. The audit discovers a likely launch blocker.
-6. The audit would require package/runtime changes to complete.
-7. ARCH-RT-6 validator fails.
+1. The 55-package register is missing or inconsistent.
+2. Pass_3 files cannot be located.
+3. Package signal IDs cannot be derived.
+4. Mapping cannot distinguish exact signal match from biomarker-only match.
+5. Any package appears launch-visible and risky.
+6. Any proposed route would require runtime change in this sprint.
+7. Validator fails.
 ```
 
 ## Evidence required from Cursor
@@ -424,15 +379,16 @@ Cursor must report:
 
 ```text
 1. baseline branch/status evidence
-2. carry-forward register read/update evidence
-3. files inspected
-4. package cohort counts
-5. 55-package classification table
-6. launch-relevant package findings
-7. recommended future sprint(s)
-8. tests/validators run
-9. test results
-10. confirmation no production code was changed
+2. governance documents read
+3. carry-forward register read/update evidence
+4. 55-package cohort count
+5. Pass_3 file count scanned
+6. route classification counts
+7. pilot set recommendation
+8. files changed
+9. validators/tests run
+10. test results
+11. confirmation no runtime/package/code/frontend changes were made
 ```
 
 ## Closure requirements
@@ -451,13 +407,13 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/MED-RESEARCH-REVIEW-1-non-pass3-package-revalidation
-- only audit documentation, governance classification, and carry-forward register files are changed
-- no runtime package behaviour is changed
+- current branch matches work/KB-MAP-1-pass3-to-legacy-package-mapping-and-promotion-plan
+- only docs/governance classification files are changed
+- no runtime package files are changed
 - no production code is changed
 - no helper scripts are committed
 - no ambiguous stash exists
-- latest commit contains only in-scope audit/classification work
+- latest commit contains only in-scope mapping/planning work
 ```
 
 ## Success criteria
@@ -465,16 +421,15 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. all 55 non-Pass_3 / unclear-provenance packages are classified
-2. runtime-loaded status is recorded
-3. launch relevance is assessed
-4. packages needing Knowledge Bus re-review are clearly identified
-5. user-facing disclosure is not introduced
-6. future sprint recommendations are clear
-7. carry-forward register is updated
-8. ARCH-RT-6 validator passes
-9. no production code is changed
-10. Automation Bus gate passes
+1. all 55 packages are mapped to Pass_3 coverage
+2. each package has a promotion route classification
+3. exact signal matches are separated from biomarker-only matches
+4. multi-frame/adjudication cases are identified
+5. a representative pilot set is recommended
+6. no runtime behaviour is changed
+7. carry-forward register is updated if needed
+8. validator passes
+9. Automation Bus gate passes
 ```
 
 ```

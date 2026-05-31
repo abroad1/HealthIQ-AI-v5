@@ -1,5 +1,5 @@
 {
-  "work_id": "MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation",
+  "work_id": "KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan",
   "status": "HARDENED",
   "bus_version": "1.3.1",
   "hardened_utc": "2026-05-31T00:00:00Z",
@@ -8,77 +8,67 @@
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all 5 required fields present: work_id=MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation, branch=work/MED-RESEARCH-REVIEW-1-non-pass3-package-revalidation, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all 5 required fields present: work_id=KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan, branch=work/KB-MAP-1-pass3-to-legacy-package-mapping-and-promotion-plan, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT"
     },
     {
       "check": "risk_level_STANDARD_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:70-79 — sprint is audit/classification only; no Intelligence Core modification; no SSOT changes; no behavioural logic changes; governance register explicitly not runtime-consumed in this sprint (line 329). No HIGH risk trigger from SOP §10 applies."
+      "citation": "automation_bus/latest_cursor_prompt.md:70-79 — planning/mapping sprint only; no Intelligence Core interaction; no SSOT changes; no behavioural logic changes; output YAML explicitly not runtime-consumed (line 259: 'Do not make this YAML runtime-consumed'). No HIGH risk trigger from SOP §10 applies."
     },
     {
       "check": "change_type_CONTENT_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:329 — 'It must not be consumed by runtime in this sprint.' Output artefacts are docs/audit-papers/MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation_audit.md and knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml — both non-executable governance/documentation content. CONTENT classification correct."
+      "citation": "automation_bus/latest_cursor_prompt.md:250-260 — output artefacts are docs/audit-papers/KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan.md and knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml. YAML explicitly not runtime-consumed. No behavioural or code change in scope. CONTENT classification correct."
     },
     {
       "check": "2a_authority_paths_verified",
-      "result": "CONFIRMED — 9/9 primary prompt-cited paths exist; 1 advisory gap (see architecture_anchor_advisory)",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md:1 (READ — 52 rows, all 6 relevant CFs confirmed Open); docs/audit-papers/CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment_report.md:1 (Glob); docs/audit-papers/CRP-PASS3-MIGRATION_package_provenance_non_pass3_table.md:1 (READ — 55 rows); docs/audit-papers/_crp_pkg_audit_non_pass3.json:1 (READ — 55 entries); docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md:1 (Glob); docs/audit-papers/PASS3_research_asset_utilisation_investigation_cursor.md:1 (Glob); docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md:1 (Glob); docs/audit-papers/active_intelligence_authority_manifest.md:1 (Glob); docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md:1 (Glob); backend/scripts/validate_day_one_architecture.py:1 (Bash EXISTS); backend/tests/architecture/test_day_one_architecture_guardrails.py:1 (Glob)"
+      "result": "CONFIRMED — 8/8 required governance input paths exist on disk",
+      "citation": "docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md:1 (Read — 647 lines, Status: APPROVED FOR USE); docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md:1 (Read — 538 lines, Status: DRAFT FOR GOVERNANCE REVIEW); docs/sprints/launch_core_carry_forward_register.md (Glob — EXISTS); knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml:1 (Read — package_count: 55, runtime_loaded_count: 54); docs/audit-papers/MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation_audit.md (Glob — EXISTS); docs/audit-papers/MED-RESEARCH-REVIEW-1_pass3_primary_biomarker_cross_validation_addendum.md:1 (Read — 55/55 packages confirmed Pass_3 primary biomarker coverage); docs/audit-papers/CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment_report.md (Glob — EXISTS); docs/audit-papers/CRP-PASS3-MIGRATION_package_provenance_non_pass3_table.md (Glob — EXISTS)"
+    },
+    {
+      "check": "2a_pass3_source_files_verified",
+      "result": "CONFIRMED — 6 Pass_3 batch files confirmed by glob; 4 additional lowercase-named files confirmed by addendum cross-reference",
+      "citation": "Glob knowledge_bus/research/investigation_specs/multi_llm_research/**/*Pass_3*.json: Batch_2_Pass_3_Rev1.json, Batch_3_Pass_3.json, Batch_4_Pass_3.json, Batch_5_Pass_3.json, Batch_6_Pass_3.json, Batch_7_Pass_3.json (6 files). docs/audit-papers/MED-RESEARCH-REVIEW-1_pass3_primary_biomarker_cross_validation_addendum.md:26-35 confirms 4 additional files (cbc_hematology_pass_3.json, lipid_derived_pass_3.json, thyroid_antibodies_pass_3.json, transferrin_pass_3.json) were scanned during MED-RESEARCH-REVIEW-1 — those use lowercase naming. Total: 10 Pass_3 files available to Cursor."
     },
     {
       "check": "2a_package_cohort_reconstructable",
-      "result": "CONFIRMED — 55 packages, counts consistent across JSON and markdown table",
-      "citation": "docs/audit-papers/_crp_pkg_audit_non_pass3.json:1-497 (READ — 55 JSON objects); docs/audit-papers/CRP-PASS3-MIGRATION_package_provenance_non_pass3_table.md:1-57 (READ — 55 data rows). Cohort breakdown confirmed: 1 legacy (KBP-0001), 8 architecture-anchor context packages, 3 study-derived (pkg_chronic_inflammation/pkg_hepatic_metabolic_stress/pkg_insulin_resistance), 1 retire candidate (pkg_example, runtime_loaded=false), 10 pkg_kb45_* batch JSON (all from investigation-spec-collection-batch1-10.json), 1 provenance gap (pkg_lipid_transport), 31 pkg_s24_* legacy inv_spec_v1 translation. Total=55."
+      "result": "CONFIRMED — 55-package register present and internally consistent",
+      "citation": "knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml:1-9 — schema_version 1.0.0, package_count: 55, runtime_loaded_count: 54, launch_visible_count: 0, medical_revalidation_required_count: 53. First entry KBP-0001 at line 13 includes pass3_primary_biomarker_match and cross_validation_recommendation fields — confirms register already contains the biomarker-match data this sprint needs for route classification."
     },
     {
-      "check": "2a_prerequisite_sprints_confirmed",
-      "result": "CONFIRMED — all 8 prerequisite sprints confirmed merged in git log",
-      "citation": "git log confirmed: ARCH-RT-6 (8be6959), MED-REV-1 (fe5e9b5), MED-REV-2 (537457c), KB-UTIL-1 (f9cb7a6), LAYER-B-1 (798e57e), ARCH-LEGACY-1 (026283f), ARCH-LEGACY-2 (a801e09), CRP-PASS3-MIGRATION (a1e4cec). docs/sprints/launch_core_carry_forward_register.md:1 confirmed present."
+      "check": "2a_prior_task_findings_MED-RESEARCH-REVIEW-1",
+      "result": "CONFIRMED — MED-RESEARCH-REVIEW-1 COMPLETE; required artefacts present",
+      "citation": "git log: commit c6017b2 'chore(bus): MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation kernel COMPLETE status'; commit 4fee684 'docs(audit): MED-RESEARCH-REVIEW-1 Pass 3 primary biomarker cross-validation'. docs/audit-papers/MED-RESEARCH-REVIEW-1_pass3_primary_biomarker_cross_validation_addendum.md:10-19 — executive summary: 55/55 packages have primary biomarker Pass_3 coverage, 0/55 lack coverage. Strategic framing in prompt lines 112-129 correctly reflects this finding."
     },
     {
-      "check": "2a_carry_forward_register_state",
-      "result": "CONFIRMED — all 6 sprint-relevant CFs are status=Open and scoped correctly",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md:47 (CF-CHRONICINFL-001 Open), :48 (CF-MRIMPROVE-001 Open — points directly to this sprint), :49 (CF-MRIMPROVE-002 Open — 10 pkg_kb45_* packages), :50 (CF-MRIMPROVE-003 Open — 8 architecture-anchor packages), :51 (CF-MRIMPROVE-004 Open — pkg_lipid_transport provenance gap), :46 (CF-CRPPASS3-001 Open). Counts in CF notes consistent with JSON audit cohort counts."
+      "check": "2a_transition_state_model_verified",
+      "result": "CONFIRMED — 7 transition-state classifications in prompt match KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md §10 exactly",
+      "citation": "docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md:355-401 — §10 defines: research_missing, research_present_unmapped, research_present_uncompiled, compiled_not_promoted, runtime_active_legacy, accepted_with_rationale, retired. automation_bus/latest_cursor_prompt.md:136-144 — identical 7 states, no invented additions. No improvisation detected."
     },
     {
-      "check": "2a_study_source_docs_exist",
-      "result": "CONFIRMED — all 3 study-derived package source documents present",
-      "citation": "knowledge_bus/research/study_01_insulin_resistance.md:1 (Glob — source for pkg_insulin_resistance); knowledge_bus/research/study_03_hepatic_metabolic_stress.md:1 (Glob — source for pkg_hepatic_metabolic_stress); knowledge_bus/research/study_04_chronic_inflammation.md:1 (Glob — source for pkg_chronic_inflammation)"
+      "check": "2a_route_classification_model_scope_check",
+      "result": "CONFIRMED — 7 ROUTE_* classifications are well-defined; ROUTE_G covers known manual-review exception",
+      "citation": "automation_bus/latest_cursor_prompt.md:178-227 — ROUTE_A through ROUTE_G defined with usage criteria. ROUTE_G note (lines 222-226) explicitly names pkg_chronic_inflammation / signal_systemic_inflammation as the known exception. This is consistent with docs/audit-papers/MED-RESEARCH-REVIEW-1_pass3_primary_biomarker_cross_validation_addendum.md:74-80 which records pkg_chronic_inflammation as requiring a new Pass_3 frame (CF-CHRONICINFL-001) even though CRP primary biomarker exists in Pass_3."
     },
     {
-      "check": "2a_batch_json_source_docs_exist",
-      "result": "CONFIRMED — batch1-10.json present (all 10 pkg_kb45_* cite this file); 5 additional batch files present",
-      "citation": "knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json:1 (Glob). Additional files: batch11-20, batch21-30, batch31-40, batch41-50, batch51-56 also present but not in non-Pass3 cohort — consistent with their having produced Pass3 packages."
+      "check": "2a_output_paths_clear",
+      "result": "CONFIRMED — output paths do not yet exist; target directories exist",
+      "citation": "Glob docs/audit-papers/KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan.md — NOT FOUND (correct: new artefact). Glob knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml — NOT FOUND (correct: new artefact). Target directories docs/audit-papers/ and knowledge_bus/governance/ both confirmed present."
     },
     {
-      "check": "2a_output_path_governance",
-      "result": "CONFIRMED — output directory exists; target files do not yet exist (correct for new artefacts)",
-      "citation": "knowledge_bus/governance/crp_runtime_authority_v1.yaml:1 and knowledge_bus/governance/package_estate_KB-S49_v1.yaml:1 (Glob — directory confirmed with 6 existing files). knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml does not exist (correct — new output). docs/audit-papers/ output path confirmed present."
+      "check": "2a_no_duplicate_authority",
+      "result": "CONFIRMED — pass3_legacy_package_mapping_plan_v1.yaml is a distinct governance planning artefact; not a replacement for non_pass3_package_revalidation_register_v1.yaml",
+      "citation": "automation_bus/latest_cursor_prompt.md:254-258 — output YAML is 'pass3_legacy_package_mapping_plan_v1.yaml'; existing register is 'non_pass3_package_revalidation_register_v1.yaml'. Different files serving different purposes: register = maturity classification (MED-RESEARCH-REVIEW-1 output); mapping plan = promotion route classification (KB-MAP-1 output). No duplication of authority."
     },
     {
-      "check": "2a_architecture_anchor_source_advisory",
-      "result": "ADVISORY — NOT A BLOCKER — source document for 8 architecture-anchor packages does not exist",
-      "citation": "docs/audit-papers/_crp_pkg_audit_non_pass3.json:22-55 records source_document=docs/architecture/HealthIQ_Investigation_Layer.md for: pkg_b12_deficiency_context, pkg_glucose_dysregulation_hba1c_context, pkg_hepatic_alt_context, pkg_homocysteine_elevation_context, pkg_inflammation_crp_context, pkg_iron_deficiency_context, pkg_iron_overload_context, pkg_thyroid_tsh_context. That file does NOT exist in the repo (Glob confirmed). Prompt line 139 instructs: 'If paths differ, locate and report the actual paths.' Cursor should note source is unrecoverable and apply architecture_anchor_review_required classification. This does not trigger a STOP condition."
+      "check": "scope_and_out_of_scope_complete",
+      "result": "CONFIRMED — 14 explicit out-of-scope items; STOP conditions measurable",
+      "citation": "automation_bus/latest_cursor_prompt.md:334-349 — 14 out-of-scope items including no package promotion, no regeneration, no signal_library edits, no SignalEvaluator/SignalRegistry changes, no runtime loading changes, no scoring changes, no frontend changes. STOP conditions lines 360-374 — 7 conditions, all independently verifiable."
     },
     {
-      "check": "2a_lipid_transport_provenance_advisory",
-      "result": "ADVISORY — study_02 may be recoverable provenance for pkg_lipid_transport",
-      "citation": "docs/audit-papers/_crp_pkg_audit_non_pass3.json:201-208 — pkg_lipid_transport source_document=null, provenance_class=provenance_gap. HOWEVER: knowledge_bus/research/study_02_lipid_transport_dysfunction.md EXISTS in repo (Glob confirmed). Cursor should investigate whether study_02 is recoverable provenance for this package during the investigation phase (CF-MRIMPROVE-004). This may change the recommended action from recover_provenance to map_to_existing_pass3_frame or re_run_through_pass3."
-    },
-    {
-      "check": "scope_and_out_of_scope",
-      "result": "CONFIRMED — out-of-scope list complete and protective",
-      "citation": "automation_bus/latest_cursor_prompt.md:378-394 — 14 explicit out-of-scope items including: no package rewrites, no runtime loading changes, no SignalEvaluator changes, no threshold changes, no scoring rails, no frontend, no user-facing warnings, no Pass3 compiler implementation. STOP conditions:409-419 — 7 conditions, all measurable. No scope creep detected."
-    },
-    {
-      "check": "stop_conditions_complete_and_measurable",
-      "result": "CONFIRMED — all 7 STOP conditions are measurable and unambiguous",
-      "citation": "automation_bus/latest_cursor_prompt.md:409-419 — STOP conditions: (1) CRP-PASS3 artefacts missing — NOT triggered, all present; (2) 55-package cohort unreconstruable — NOT triggered, confirmed in JSON; (3) runtime-loaded status undeterminable — NOT triggered, JSON has runtime_loaded field; (4) launch relevance undeterminable — requires Cursor investigation; (5) likely launch blocker discovered — no evidence at hardening stage; (6) package/runtime changes required — NOT triggered; (7) ARCH-RT-6 validator fails — cannot be determined at hardening stage, must be run."
-    },
-    {
-      "check": "no_duplicate_authority_sources",
-      "result": "CONFIRMED",
-      "citation": "Each of the 55 packages has a distinct package_id and distinct source_document (or null for provenance gaps). No two packages claim identical authority over the same signal pathway in this cohort. Sprint does not introduce new packages or modify existing ones."
+      "check": "hardening_addition_governance_docs_commit_status",
+      "result": "HARDENING NOTE — STOP condition as written ('is missing') understates the risk; governance docs exist on disk but are UNTRACKED",
+      "citation": "git status --short output: '?? docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.0.md', '?? docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md', '?? docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md'. These files exist on disk so the STOP condition 'is missing' would NOT trigger. However the prompt baseline (lines 40-45) requires these to be 'committed'. Cursor must run 'git status --short' and STOP if either file appears as '??' — file present on disk but untracked does NOT satisfy the baseline requirement. Commit these docs to main before creating the sprint branch."
     }
   ]
 }
