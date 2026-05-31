@@ -1,9 +1,10 @@
 {
   "branch": "work/CRP-PASS3-MIGRATION-crp-legacy-s24-package-and-signal-naming-alignment",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-31T16:41:53Z",
   "cursor_started_utc": "2026-05-31T16:39:54Z",
-  "head_sha": "69575594df11ab4f541688f174d419b7df8aac29",
+  "head_sha": "d600a9f894fb8ea11d61fd480dd5023c166cb033",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment"
 }
