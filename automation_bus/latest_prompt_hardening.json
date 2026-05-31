@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-LEGACY-2_targeted_retirement_implementation",
+  "work_id": "CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment",
   "status": "HARDENED",
   "hardened_utc": "2026-05-31T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,107 +8,97 @@
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 2-6 — all five required fields present: work_id=ARCH-LEGACY-2_targeted_retirement_implementation (line 2), branch=work/ARCH-LEGACY-2-targeted-retirement-implementation (line 3), risk_level=HIGH (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=MIXED (line 6)"
+      "citation": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment, branch=work/CRP-PASS3-MIGRATION-crp-legacy-s24-package-and-signal-naming-alignment, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. All five required fields present."
     },
     {
       "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level=HIGH. Correct: sprint modifies backend/core/analytics/domain_narrative_wave1.py and backend/core/analytics/domain_score_assembler.py (both Intelligence Core per SOP §3). HIGH risk is mandatory for any work touching Intelligence Core (SOP §10). Validator extension also touches backend/scripts/validate_day_one_architecture.py — a listed HIGH-risk control-plane script."
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level=HIGH. Correct: sprint touches signal package authority (SignalRegistry loads all packages via backend/core/analytics/signal_evaluator.py lines 33-34), root-cause registry (backend/core/knowledge/root_cause_registry_v1.py line 35), and validate_day_one_architecture.py (listed HIGH-risk control-plane script per SOP §12). Runtime-adjacent medical interpretation logic confirmed."
     },
     {
       "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type=MIXED. Correct: sprint removes dead code from analytical backend (BEHAVIOUR surface) and extends architecture validator (BEHAVIOUR surface), while also updating carry-forward register and producing sprint report (CONTENT surface). MIXED governs via BEHAVIOUR controls per SOP §4."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type=MIXED. Correct: sprint combines CONTENT (package classification, carry-forward register update, sprint report) with BEHAVIOUR (validator guard additions in validate_day_one_architecture.py, potential signal authority migration). MIXED governs via BEHAVIOUR controls per SOP §4."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model=TWO_PHASE_START_FINISH. Correct — prompt requires a 5-command baseline preflight (lines 36-43) and a 6-command closure verification (lines 374-381) around the implementation body. HIGH-risk MIXED sprint requires kernel token governance."
+      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model=TWO_PHASE_START_FINISH. Correct — prompt requires a 5-command baseline preflight (lines 44-51) and a 6-command closure verification (lines 364-371) around the implementation body. HIGH-risk MIXED sprint with validator extension requires kernel token governance."
     },
     {
       "check": "2a_authoritative_input_paths_all_exist",
       "result": "CONFIRMED",
-      "citation": "All 8 authoritative input paths verified present: docs/sprints/launch_core_carry_forward_register.md:CONFIRMED, docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md:CONFIRMED, docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md:CONFIRMED, docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md:CONFIRMED, docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md:CONFIRMED, docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md:CONFIRMED, docs/audit-papers/LAYER-B-1_narrative_brief_maturity_report.md:CONFIRMED, docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md:CONFIRMED"
+      "citation": "All 9 authoritative input paths verified present in repo: docs/sprints/launch_core_carry_forward_register.md:CONFIRMED (READ — CF-ARCHLEG1-002 Open line 43, CF-ARCHLEG1-004 Open partial line 45); docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md:CONFIRMED (READ — L8 CRP migration_required lines 45-46); docs/audit-papers/ARCH-LEGACY-2_targeted_retirement_implementation_report.md:CONFIRMED (READ — CRP deferred lines 28-29); docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md:CONFIRMED (Glob); docs/audit-papers/PASS3_research_asset_utilisation_investigation_cursor.md:CONFIRMED (Glob); docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md:CONFIRMED (Glob); docs/audit-papers/active_intelligence_authority_manifest.md:CONFIRMED (referenced validate_day_one_architecture.py line 59); docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md:CONFIRMED (Glob); docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md:CONFIRMED (Glob); backend/scripts/validate_day_one_architecture.py:CONFIRMED (READ lines 1-279)."
     },
     {
-      "check": "2a_implementation_inspection_paths_all_exist",
-      "result": "CONFIRMED",
-      "citation": "All 8 implementation inspection targets verified present: backend/core/analytics/wave1_subsystem_evidence.py:CONFIRMED, backend/core/analytics/domain_narrative_wave1.py:CONFIRMED, backend/core/analytics/domain_score_assembler.py:CONFIRMED, backend/core/knowledge/health_system_card_evidence.py:CONFIRMED, backend/core/knowledge/domain_flat_card_evidence.py:CONFIRMED, backend/scripts/validate_day_one_architecture.py:CONFIRMED, backend/tests/architecture/test_day_one_architecture_guardrails.py:CONFIRMED, backend/tests/regression/test_kb_util1_pass3_card_evidence_compile_and_consume.py:CONFIRMED — plus test_med_rev1_wave1_subsystem_visibility.py:CONFIRMED and test_med_rev2_domain_card_copy_and_regeneration.py:CONFIRMED"
+      "check": "2a_carry_forward_register_state_verified",
+      "result": "CONFIRMED — FORMATTING ISSUE NOTED",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md line 43: CF-ARCHLEG1-002 Status=Open ('CRP legacy s24 package and signal naming split'); line 45: CF-ARCHLEG1-004 Status=Open partial ('Extend ARCH-RT-6 validator for legacy retirement gaps'). NOTE: lines 47-49 contain a formatting fragment ('CF-ARCHLEG1-001 — root-cause dual authority migration / CF-ARCHLEG1-002 — CRP legacy s24 package / signal naming split / CF-ARCHLEG1-004 — partial: CRP migration + root-cause promotion validator guards') outside the table — this is a trailing fragment from ARCH-LEGACY-2 closure. Cursor must clean up this formatting artifact when updating the register. NOTE ALSO: register is MODIFIED BUT UNCOMMITTED per git status. Prompt line 66-68 requires preservation before kernel start — Cursor must commit or stash it before running run_work_package.py start."
     },
     {
-      "check": "2a_carry_forward_register_items_confirmed",
-      "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md confirmed present with all five expected carry-forwards in Open status: CF-MEDREV2-003 (line 37: cv_contributor retirement_candidate), CF-ARCHLEG1-001 (line 42: root-cause dual authority migration), CF-ARCHLEG1-002 (line 43: CRP legacy s24 / signal naming split), CF-ARCHLEG1-003 (line 44: remove unreachable _Wave1SubsystemDef partition), CF-ARCHLEG1-004 (line 45: extend ARCH-RT-6 validator for legacy gaps). All statuses are Open."
+      "check": "2a_crp_signal_inventory_confirmed",
+      "result": "CONFIRMED — THREE DISTINCT SIGNALS LOADED, NOT TWO",
+      "citation": "SignalRegistry loads all packages/*/signal_library.yaml (backend/core/analytics/signal_evaluator.py lines 33-34). Three CRP-primary signals loaded at runtime: (1) signal_crp_high — knowledge_bus/packages/pkg_s24_crp_high_inflammation/signal_library.yaml line 8; activation_logic=lab_range_exceeded line 41; placeholder threshold 9999.0 line 35; activation_key=signal_crp_high::inv_crp_high_inflammation (manifest source_document=inv_crp_high_inflammation_v1.yaml, infer_source_spec_id strips _v1 per backend/core/knowledge/signal_activation_identity_v1.py lines 39-45). (2) signal_systemic_inflammation — knowledge_bus/packages/KBP-0001/signal_library.yaml line 190; activation_logic=deterministic_threshold line 227; CRP thresholds <3.0/3.0-9.99/>=10.0 mg/L lines 208-226; activation_key=signal_systemic_inflammation::KBP-0001. (3) signal_inflammation_crp_context — knowledge_bus/packages/pkg_inflammation_crp_context/signal_library.yaml line 10; activation_logic=lab_range_exceeded; placeholder threshold; activation_key=signal_inflammation_crp_context::inv_crp_context. No activation_key collision — all three keys are distinct (signal_evaluator.py lines 59-62 raises on collision; tests pass, system runs)."
     },
     {
-      "check": "2a_arch_legacy_1_audit_present_and_complete",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md: CONFIRMED present. Audit status: Complete (2026-05-31). Contains full 16-item legacy pathway inventory (L1-L16) with classification, reachability assessment, guardrail coverage assessment, and validator gap list at lines 114-120. Recommended retirement order confirmed at lines 141-147. No launch blockers identified."
+      "check": "2a_crp_package_inventory_confirmed",
+      "result": "CONFIRMED — pkg_chronic_inflammation IS NOT COMPILED TO RUNTIME",
+      "citation": "pkg_s24_crp_high_inflammation: HAS signal_library.yaml (Glob output line 60), IS loaded by SignalRegistry. pkg_inflammation_crp_context: HAS signal_library.yaml (Glob output line 61), IS loaded by SignalRegistry. pkg_chronic_inflammation (KBP-0005): NO signal_library.yaml in Glob output — only package_manifest.yaml and research_brief.yaml present; NOT loaded by SignalRegistry; is a research-only package. Glob result for knowledge_bus/packages/** confirms the absence of pkg_chronic_inflammation/signal_library.yaml."
+    },
+    {
+      "check": "2a_crp_pass3_spec_inventory_confirmed",
+      "result": "CONFIRMED — NO SEMANTICALLY EQUIVALENT COMPILED PASS 3 CRP PACKAGE EXISTS",
+      "citation": "pkg_chronic_inflammation research_brief.yaml line 1: research_domain=inflammatory; notes lines 118-122: 'THRESHOLD DELTA WITH KBP-0001: KBP-0001 signal_systemic_inflammation uses CRP <3.0/3.0-9.99/>=10.0. Study 4 evidence supports <1.0/1.0-3.0/>=3.0 mg/L' — materially different thresholds requiring clinical sign-off. Batch_3-7_Pass_3.json files exist (5 files, Glob confirmed); Batch_4_Pass_3.json inspected via Python parse — does not contain a CRP-primary investigation spec (albumin-related spec found; CRP appears only as a supporting marker). No compiled signal_library.yaml for any Pass 3 CRP-primary package exists in the estate."
     },
     {
       "check": "2a_no_duplicate_authority_sources",
       "result": "CONFIRMED",
-      "citation": "No duplicate authority sources detected. Carry-forward register and ARCH-LEGACY-1 audit are the primary sprint authority sources; each covers a distinct scope. Compiled card evidence authority is exclusively in health_system_card_evidence.py:PILOT_COMPILED_SUBSYSTEM_IDS (line 48)."
+      "citation": "Signal authority for CRP is split across three packages with distinct activation_key values — this IS the naming split this sprint must classify. No two packages claim identical activation_key for CRP signals. knowledge_bus/packages/KBP-0001/signal_library.yaml and knowledge_bus/packages/pkg_s24_crp_high_inflammation/signal_library.yaml define different signal_ids with different activation mechanisms — these are competing authorities over CRP, which is the CF-ARCHLEG1-002 problem to be resolved."
     },
     {
-      "check": "2b_target1_cv_contributor_dead_code_confirmed",
+      "check": "2b_naming_split_is_substantive_not_cosmetic",
+      "result": "CONFIRMED — OUTCOME A (MIGRATION) IS VERY LIKELY UNSAFE; OUTCOME C/D/E EXPECTED",
+      "citation": "signal_crp_high (pkg_s24_crp_high_inflammation/signal_library.yaml line 41): activation_logic=lab_range_exceeded — fires when CRP exceeds runtime lab reference range regardless of mg/L value. signal_systemic_inflammation (KBP-0001/signal_library.yaml line 227): activation_logic=deterministic_threshold — fires based on hardcoded 3.0/10.0 mg/L. These are clinically distinct activation profiles. Migrating signal_crp_high to use signal_systemic_inflammation's logic would change WHEN the signal fires (STOP condition #3: 'Migration would change signal activation behaviour beyond package authority alignment'). Additionally, pkg_chronic_inflammation has 1.0/3.0 mg/L thresholds — migrating to it would require threshold changes (STOP condition #2). Expected safe outcome: Cursor follows Outcome C (retain legacy, classify explicitly, guard) or D/E (document distinction, test it). Outcome A is unsafe without out-of-scope threshold and behavioural changes."
+    },
+    {
+      "check": "2b_runtime_reachability_confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:438 — cv_contributor function defined. Grep search of backend/ for 'cv_contributor\\b' returns only the definition line (line 438). Zero call sites confirmed. Safe to delete. ARCH-LEGACY-1 classification: retirement_candidate (audit line 39, L2). CF-MEDREV2-003 status: Open."
+      "citation": "signal_systemic_inflammation is the LIVE runtime CRP signal in persisted test fixtures: backend/tests/fixtures/persisted_results/lc_s20_ab_launch_core_v1.json lines 5419, 6006, 6303 — signal_id=signal_systemic_inflammation, primary_metric=crp, signal_state=suboptimal. Root cause compiler targets signal_systemic_inflammation ONLY: backend/core/knowledge/root_cause_registry_v1.py line 35. signal_crp_high is referenced in evaluator tests (backend/tests/unit/test_signal_evaluator.py line 1502) and narrative tests (test_med_rev2_domain_card_copy_and_regeneration.py line 59) but does NOT feed root cause compiler. wave1_cv_vascular_strain card is hidden_v1 per MED-REV-1 — CRP card surface is suppressed from user-facing DTO."
     },
     {
-      "check": "2b_target2_partition_subsystem_markers_fallback_unreachable_confirmed",
-      "result": "CONFIRMED — CLARIFICATION INSTRUCTION REQUIRED",
-      "citation": "backend/core/knowledge/health_system_card_evidence.py:48 — PILOT_COMPILED_SUBSYSTEM_IDS = WAVE1_COMPILED_SUBSYSTEM_IDS = frozenset of all 7 Wave 1 subsystem IDs (lines 26-36). In assemble_wave1_subsystem_evidence (wave1_subsystem_evidence.py lines 159-186), every spec.subsystem_id iterates from WAVE1_DOMAIN_SUBSYSTEM_DEFS (lines 87-91) which defines exactly those 7 IDs. All 7 are in PILOT_COMPILED_SUBSYSTEM_IDS, so the compiled branch (lines 160-167) always executes and `continue` is always reached. The fallback branch (lines 169-185, calling _partition_subsystem_markers at lines 129-139) is UNREACHABLE. CLARIFICATION: The _Wave1SubsystemDef dataclass (lines 25-29) and instances _WAVE1_CV_LIPID etc. (lines 32-91) ARE STILL REQUIRED — they define the subsystem_id values iterated by the compiled-path lookup. Cursor must NOT delete the _Wave1SubsystemDef class or instances. Only the fallback else-branch (lines 169-185) and the _partition_subsystem_markers function (lines 129-139) are dead and removable. Sprint prompt language 'remove unreachable _Wave1SubsystemDef hard-coded partition' must be interpreted as removing the partition FUNCTION and fallback CODE PATH only, not the subsystem definition class or instances."
-    },
-    {
-      "check": "2b_target1_confidence_sentence_cv_coherent_hcy_bridge_live",
-      "result": "CONFIRMED — RETAIN AS CLASSIFIED",
-      "citation": "backend/core/analytics/domain_score_assembler.py:580 — confidence_sentence_cv_coherent(tier, _contrib) called in all CV card assembly (both lipid-visible and non-lipid-visible paths). When lipid_visible=True (_lipid_visible path, lines 550-555), contributor comes from cv_contributor_for_lipid_visible_card which excludes hcy copy (_cv_contributor_lipid_only_signal_fallback, domain_narrative_wave1.py:494-508), so homocysteine bridge in confidence_sentence_cv_coherent (line 340: 'if \"homocysteine\" in c') will not fire. When lipid_visible=False (line 556-558), contributor comes from cv_contributor_primary which may include homocysteine via _cv_contributor_signal_fallback — bridge conditionally reachable. ARCH-LEGACY-1 classification: retained_reachable_classified (L5). Prompt Target 1 says to 'tighten invariant' not delete. This is correct."
-    },
-    {
-      "check": "2b_target3_validator_extension_pattern_verified",
+      "check": "2b_validator_gap_confirmed_and_in_scope",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_day_one_architecture.py confirmed present. Existing pattern at lines 76-100 uses Python imports from core modules to assert compiled authority. validate_day_one_architecture.py is a HIGH-risk control-plane script per SOP §12. ARCH-LEGACY-1 validator gaps listed at audit lines 115-120: dead symbol detection, CRP migration status, root-cause promotion inventory, signal policy consistency, proof hard-coded subsystem partition unreachable. Prompt Target 3 scope (lines 203-213) is bounded: at minimum 5 guards to assess/implement. Prompt correctly adds 'do not add brittle source-text checks unless following existing validator pattern' — this is the right constraint."
-    },
-    {
-      "check": "2b_target4_crp_migration_default_no_implement",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 215-225: CRP migration default is 'Do not migrate CRP Pass 3 package path in this sprint unless hardening approves it as in scope.' Hardening assessment: CRP migration is NOT approved in scope. CF-ARCHLEG1-002 remains a migration_required item needing a dedicated sprint (CRP-PASS3-MIGRATION). The CRP path inspection and classification within this sprint is bounded to 'inspect and classify, but should not implement' per prompt line 219. Carry-forward register must retain CF-ARCHLEG1-002 as Open."
+      "citation": "backend/scripts/validate_day_one_architecture.py lines 1-279: no existing guard referencing signal_crp_high, signal_systemic_inflammation, or pkg_s24_crp_high_inflammation. Gap confirmed. ARCH-LEGACY-1 audit lines 114-120 lists CRP migration status as a gap to address. CF-ARCHLEG1-004 (carry_forward_register.md line 45): partial — bounded guards only. This sprint should add CRP authority classification guard(s) without introducing brittle source-text checks (prompt line 262-264 correct constraint)."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 133-141 (Scope), lines 146-225 (Specific implementation targets), lines 229-248 (Out of scope): scope is tightly bounded to 4 targets. Out-of-scope list explicitly excludes 15 categories including signal activation, scoring rails, clinical thresholds, SSOT, SignalEvaluator, LLM translation, UX redesign. No scope creep detected."
+      "citation": "Scope: automation_bus/latest_cursor_prompt.md lines 181-191 — 7 permitted items. Out of scope: lines 195-211 — 13 explicit exclusions (no threshold changes, no scoring rail changes, no SignalEvaluator activation changes, no broad Pass 3 compiler, no frontend changes). STOP conditions: lines 300-310 — 9 conditions, all measurable, covering threshold changes (STOP #2, #3), MED-REV-1 reintroduction (STOP #4), ARCH-RT-6 failure (STOP #8), scope drift to full Pass 3 compiler (STOP #9). No scope creep detected in prompt."
     },
     {
       "check": "2b_regression_targets_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 253-265 (Required tests) — 9 regression targets defined. Lines 267-280 — explicit test commands: python backend/scripts/validate_day_one_architecture.py, python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q plus targeted regression tests. All 3 existing regression test files confirmed present in repo."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 239-249 (Required tests): 8 test requirements defined. Lines 251-257 (test commands): python backend/scripts/validate_day_one_architecture.py; python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q; plus CRP/signal/package targeted tests. validate_day_one_architecture.py CONFIRMED present. test_day_one_architecture_guardrails.py path exists (referenced in prompt line 253)."
     },
     {
       "check": "2b_determinism_risks_surfaced",
-      "result": "LOW RISK — CONTAINED",
-      "citation": "Removing cv_contributor (dead function) cannot affect determinism — zero call sites. Removing _partition_subsystem_markers fallback path cannot affect runtime output — path is unreachable (all subsystems route compiled-first). confidence_sentence_cv_coherent hcy bridge remains — no behavioural change to existing output. Validator extensions are read-only assertions — cannot affect analytical output. Main determinism risk: if Cursor incorrectly deletes _Wave1SubsystemDef instances (see clarification in target2 check), the compiled-path loop would break. Clarification instruction above mitigates this."
-    },
-    {
-      "check": "2b_hidden_subsystems_protection",
-      "result": "CONFIRMED",
-      "citation": "health_system_card_evidence.py:45-47 — WAVE1_MED_REV1_HIDDEN_SUBSYSTEM_IDS = WAVE1_COMPILED_SUBSYSTEM_IDS minus WAVE1_MED_REV1_SCORED_VISIBLE_SUBSYSTEM_IDS. This set is authoritative and not modified by this sprint. backend/tests/regression/test_med_rev1_wave1_subsystem_visibility.py is listed in required tests. Prompt STOP condition line 319 (item 7) explicitly blocks reintroduction of hidden subsystems."
-    },
-    {
-      "check": "stop_conditions_complete_and_measurable",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 312-324: 9 STOP conditions all measurable. Particularly: STOP if ARCH-LEGACY-1 report missing (1), carry-forward register missing (2), removing legacy code affects live untested paths (3), fallback cannot be removed without broad redesign (4), ARCH-RT-6 validator fails (8). All verifiable without ambiguity."
+      "result": "LOW RISK if STOP conditions honoured — HIGH RISK if migration attempted",
+      "citation": "If Cursor follows Outcome C/D/E (retain + classify + guard): adding validator guards is read-only, carry-forward register update is docs-only, classification tests do not change signal evaluation — determinism preserved. If Cursor attempts Outcome A migration: changing signal_crp_high from lab_range_exceeded to deterministic_threshold or retiring the package would alter which signals fire for a given CRP value — this is a BEHAVIOURAL change that must be explicitly declared and requires STOP condition evaluation. Signal evaluation tests in test_signal_evaluator.py (line 1502) and persisted fixtures (lc_s20_ab_launch_core_v1.json) must be updated if migration proceeds — update scope must be declared before implementation."
     },
     {
       "check": "2b_no_stash_no_tooling_leakage",
       "result": "CONFIRMED",
-      "citation": "Prompt closure requirements (lines 374-381) include explicit 'git stash list' check. Prompt lines 386-393 prohibit finish unless no ambiguous stash exists. Sprint scope does not reference .codex/, .vscode/, or AGENTS.md files. No tooling leakage risk identified."
+      "citation": "Prompt closure requirements lines 364-370 include explicit 'git stash list' check. Lines 376-384 prohibit finish unless no ambiguous stash exists. Sprint scope does not reference .codex/, .vscode/, or AGENTS.md files. EXCEPTION: carry-forward register is modified but uncommitted at sprint start (git status). This must be resolved by commit or stash before kernel start — not by abandoning the change."
+    },
+    {
+      "check": "stop_conditions_complete_and_measurable",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 300-310: 9 STOP conditions all measurable and unambiguous. Particularly relevant: STOP #2 (threshold changes required), STOP #3 (activation behaviour beyond authority alignment), STOP #4 (Pass 3 spec absent or not equivalent), STOP #8 (ARCH-RT-6 validator fails). Based on evidence gathered, STOP #2, #3, and #4 are very likely triggered if migration is attempted — expected to push Cursor to Outcome C, D, or E."
     },
     {
       "check": "success_criteria_complete_and_measurable",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 398-410: 9 success criteria all measurable — targeted legacy paths retired/retained with rationale (1), Wave 1 compiled path cannot silently fallback to hard-coded defs (2), CV legacy narrative cannot re-enter visible card score-basis (3), validator coverage improved (4), carry-forward register updated (5), no clinical scoring changes (6), ARCH-RT-6 validator passes (7), tests prove retirement protections (8), gate passes (9)."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 389-398: 8 success criteria — all measurable. Key: CRP legacy s24 package status explicitly resolved or classified (1), signal_crp_high/signal_systemic_inflammation naming relationship clear (2), runtime authority cannot silently drift (3), no CRP hidden subsystem re-surfacing (4), carry-forward register updated (5), ARCH-RT-6 validator passes (6), tests prove authority decision (7), gate passes (8). All achievable under Outcome C/D/E without triggering STOP conditions."
     }
   ]
 }

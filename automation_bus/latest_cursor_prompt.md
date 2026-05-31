@@ -1,20 +1,27 @@
 ---
-work_id: ARCH-LEGACY-2_targeted_retirement_implementation
-branch: work/ARCH-LEGACY-2-targeted-retirement-implementation
+work_id: CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment
+branch: work/CRP-PASS3-MIGRATION-crp-legacy-s24-package-and-signal-naming-alignment
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# ARCH-LEGACY-2 — Targeted Legacy Pathway Retirement Implementation
+# CRP-PASS3-MIGRATION — CRP Legacy s24 Package and Signal Naming Alignment
 
 ## Purpose
 
-Implement the targeted legacy-retirement actions recommended by ARCH-LEGACY-1.
+Resolve the remaining CRP legacy package / signal naming carry-forward identified by ARCH-LEGACY-1 and ARCH-LEGACY-2.
 
-ARCH-LEGACY-1 confirmed there are no launch blockers, but identified several dead, stale, or insufficiently guarded legacy pathways that should be cleaned up now that the Wave 1 medical model, card evidence, narrative brief, and guardrails are stable.
+ARCH-LEGACY-2 retired several stale Wave 1 pathways, but left open:
 
-This sprint must be targeted. It must not become broad cleanup.
+```text
+CF-ARCHLEG1-002 — CRP legacy s24 package / signal naming split
+CF-ARCHLEG1-004 — partial: CRP migration status and root-cause promotion inventory validator guards
+````
+
+This sprint must investigate and, if safely bounded, align the CRP / systemic inflammation pathway with the current governed research-to-runtime architecture.
+
+The goal is to remove or explicitly classify legacy CRP runtime dependency without destabilising signal activation or user-facing interpretation.
 
 ## Baseline requirement
 
@@ -29,8 +36,9 @@ MED-REV-2 merged
 KB-UTIL-1 merged
 LAYER-B-1 merged
 ARCH-LEGACY-1 merged
+ARCH-LEGACY-2 merged
 docs/sprints/launch_core_carry_forward_register.md present and updated
-````
+```
 
 Before creating or switching branch, run and report:
 
@@ -47,10 +55,17 @@ STOP if:
 ```text
 - current branch is not main
 - local main does not equal origin/main
-- working tree is not clean
-- ARCH-LEGACY-1 is not merged
+- working tree contains unrelated changes
+- ARCH-LEGACY-2 is not merged
 - docs/sprints/launch_core_carry_forward_register.md is missing
-- untracked or uncommitted files are present
+```
+
+Important:
+
+```text
+docs/sprints/launch_core_carry_forward_register.md may contain carry-forward updates made after ARCH-LEGACY-2 merge.
+
+Cursor must inspect it before starting. If it is modified but uncommitted, preserve it according to Automation Bus rules before running the work package. Do not discard it.
 ```
 
 ## Governance classification
@@ -63,7 +78,7 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This sprint may remove or alter legacy backend pathways and extend architectural validators. Even if the target code is dead or unreachable, this touches runtime-adjacent analytical code and guardrail enforcement.
+This sprint may touch signal package authority, CRP/systemic inflammation signal naming, package provenance, runtime package references, validator guards and tests. This is runtime-adjacent medical interpretation logic.
 
 ## Standard rules
 
@@ -79,21 +94,18 @@ Before implementation, read:
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-If this sprint resolves any carry-forward, update the register.
+Relevant carry-forwards:
+
+```text
+CF-ARCHLEG1-002 — CRP legacy s24 package / signal naming split
+CF-ARCHLEG1-004 — partial: CRP migration status and root-cause promotion inventory validator guards
+```
+
+If this sprint resolves or reclassifies these items, update the register.
 
 If this sprint creates new carry-forwards, add them to the register.
 
-Expected relevant carry-forwards include:
-
-```text
-CF-MEDREV2-003
-CF-ARCHLEG1-001
-CF-ARCHLEG1-002
-CF-ARCHLEG1-003
-CF-ARCHLEG1-004
-```
-
-Do not leave carry-forwards only in chat, audit reports, or status summaries.
+Do not leave carry-forwards only in chat, audit reports or status summaries.
 
 ## Authoritative inputs
 
@@ -102,166 +114,138 @@ Read these sprint-specific files before making changes:
 ```text
 docs/sprints/launch_core_carry_forward_register.md
 docs/audit-papers/ARCH-LEGACY-1_pathway_retirement_audit.md
+docs/audit-papers/ARCH-LEGACY-2_targeted_retirement_implementation_report.md
 docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md
-docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md
-docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md
+docs/audit-papers/PASS3_research_asset_utilisation_investigation_cursor.md
+docs/architecture/ARCH-R1_research_asset_to_runtime_intelligence_architecture_review_cursor.md
+docs/audit-papers/active_intelligence_authority_manifest.md
+docs/audit-papers/ARCH-RT-5D_unresolved_provenance_register.md
 docs/audit-papers/KB-UTIL-1_pass3_card_evidence_compile_and_consume_report.md
-docs/audit-papers/LAYER-B-1_narrative_brief_maturity_report.md
-docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md
 backend/scripts/validate_day_one_architecture.py
 ```
 
 Inspect as implementation authority:
 
 ```text
-backend/core/analytics/wave1_subsystem_evidence.py
-backend/core/analytics/domain_narrative_wave1.py
+knowledge_bus/packages/**
+knowledge_bus/research/investigation_specs/multi_llm_research/*_Pass_3.json
+knowledge_bus/compiled/estate_index_v1.yaml
+backend/core/analytics/signal_evaluator.py
 backend/core/analytics/domain_score_assembler.py
-backend/core/knowledge/health_system_card_evidence.py
-backend/core/knowledge/domain_flat_card_evidence.py
+backend/core/analytics/domain_narrative_wave1.py
+backend/core/knowledge/**
 backend/scripts/validate_day_one_architecture.py
-backend/tests/architecture/test_day_one_architecture_guardrails.py
-backend/tests/regression/test_kb_util1_pass3_card_evidence_compile_and_consume.py
-backend/tests/regression/test_med_rev1_wave1_subsystem_visibility.py
-backend/tests/regression/test_med_rev2_domain_card_copy_and_regeneration.py
+backend/tests/**
 ```
 
 If paths differ, locate and report the actual paths.
+
+## Problem statement
+
+Current audits indicate that CRP / systemic inflammation may still depend on a legacy package path:
+
+```text
+pkg_s24_crp_high_inflammation
+```
+
+There may also be a naming split between:
+
+```text
+signal_crp_high
+signal_systemic_inflammation
+```
+
+This needs to be resolved or explicitly classified so future work does not accidentally rely on stale package authority.
+
+## Required preflight
+
+Before making implementation changes, verify and report:
+
+```text
+1. Which CRP-related signals exist.
+2. Which CRP-related packages exist.
+3. Which CRP-related Pass 3 specs exist.
+4. Which CRP package/signals are currently used at runtime.
+5. Whether pkg_s24_crp_high_inflammation is still active.
+6. Whether signal_crp_high and signal_systemic_inflammation are distinct, aliases, duplicates or different clinical concepts.
+7. Whether CRP is visible to users after MED-REV-1/2/KB-UTIL-1.
+8. Whether CRP affects hero, pattern, root-cause, health-system card or marker-level surfaces.
+9. Whether a dedicated Pass 3 CRP package/spec already exists and can replace the legacy s24 path.
+10. Whether migration can be safely bounded to CRP only.
+```
+
+STOP if CRP usage is broader than expected or cannot be safely classified.
 
 ## Scope
 
 Allowed scope:
 
 ```text
-1. Remove or neutralise confirmed dead legacy cardiovascular contributor helper code.
-2. Remove or neutralise unreachable hard-coded Wave 1 subsystem fallback definitions.
-3. Extend ARCH-RT-6 validator coverage for guardrail gaps identified by ARCH-LEGACY-1.
-4. Add/update regression tests proving the retired paths cannot re-enter user-facing output.
-5. Update carry-forward register for resolved/deferred items.
-6. Produce sprint report.
+1. Classify CRP-related signals/packages/specs.
+2. Resolve or explicitly document signal_crp_high vs signal_systemic_inflammation naming.
+3. Migrate CRP runtime package pointer from legacy s24 to governed Pass 3 package only if a suitable governed package/spec exists.
+4. If migration is unsafe, classify the legacy path with validator/report evidence rather than forcing implementation.
+5. Add guardrails/tests preventing accidental ambiguity or duplicate CRP authority.
+6. Update carry-forward register.
+7. Produce sprint report.
 ```
-
-## Specific implementation targets
-
-### Target 1 — Legacy cardiovascular contributor / homocysteine bridge cleanup
-
-Investigate and remove or neutralise dead / edge-case legacy helper paths identified by ARCH-LEGACY-1 and MED-REV-2.
-
-Known concern:
-
-```text
-Older CV helper logic can still refer to vascular inflammation / homocysteine framing in edge cases.
-Current visible card basis should remain Atherogenic lipid pattern where the visible scored subsystem is lipid-only.
-```
-
-Allowed actions:
-
-```text
-- delete dead helper if genuinely unused
-- replace edge-case call path with governed current helper
-- keep function only if still required for non-card surfaces, but classify and guard it
-- add tests proving CV card copy cannot regress to inflammation/homocysteine score-basis when lipid is the visible scored subsystem
-```
-
-STOP if removal would affect a live non-card surface in a way not covered by tests.
-
-### Target 2 — Hard-coded Wave 1 subsystem fallback retirement
-
-Investigate:
-
-```text
-backend/core/analytics/wave1_subsystem_evidence.py
-```
-
-Known concern:
-
-```text
-Legacy _Wave1SubsystemDef fallback labels are stale and should not be reachable for compiled Wave 1 card evidence.
-```
-
-Allowed actions:
-
-```text
-- remove unreachable fallback partition if safe
-- reduce it to an explicit fail-closed path for Wave 1 compiled subsystems
-- update stale labels only if removal is unsafe
-- add tests proving compiled Wave 1 subsystems cannot fall back to hard-coded definitions
-```
-
-Required behaviour:
-
-```text
-For launch-active Wave 1 compiled subsystems, absence of compiled evidence should fail closed or be explicitly classified. It must not silently fall back to stale hard-coded subsystem definitions.
-```
-
-STOP if removing fallback requires broad assembler redesign.
-
-### Target 3 — Validator / Sentinel guardrail extension
-
-Extend `backend/scripts/validate_day_one_architecture.py` for ARCH-LEGACY-1 identified gaps where safely bounded.
-
-At minimum assess and implement if appropriate:
-
-```text
-- guard that launch-active Wave 1 subsystem evidence cannot use hard-coded fallback definitions
-- guard that dead/legacy CV contributor path is not used for visible card score basis
-- guard that domain_flat_card_evidence.py remains in launch-critical runtime path checks
-- guard that KB-UTIL-1 manifest hash integrity remains enforced
-- guard that hidden_v1 support subsystems cannot re-enter as visible scored card basis
-```
-
-Do not add brittle source-text checks unless they are the existing validator pattern or clearly justified.
-
-### Target 4 — CRP / s24 legacy path
-
-ARCH-LEGACY-1 may identify CRP legacy package migration as a carry-forward.
-
-This sprint may inspect and classify, but should not implement CRP package migration unless it is genuinely small and already bounded.
-
-Default decision:
-
-```text
-Do not migrate CRP Pass 3 package path in this sprint unless hardening approves it as in scope.
-```
-
-If not implemented, ensure the carry-forward register retains the item.
 
 ## Out of scope
 
 Do not:
 
 ```text
-- migrate root-cause YAML estate
-- implement multi-frame root-cause promotion
-- implement full Pass 3 estate compiler
-- surface hypotheses / contradiction markers / confirmatory tests
-- change signal activation
+- change CRP clinical thresholds
+- change signal activation mathematics
 - change scoring rails
-- change clinical thresholds
 - change biomarker SSOT
 - change unit conversion
+- change SignalEvaluator behaviour beyond package authority/naming alignment
+- implement broad Pass 3 estate compiler
+- implement hypothesis/contradiction/confirmatory test surfacing
+- change root-cause promotion policy
 - change PSI runtime status
-- implement LLM narrative translation
-- implement UX redesign
-- change frontend rendering unless required by a removed backend field and approved
-- remove evidence from governed artefacts
+- change frontend UX
+- re-surface MED-REV-1 hidden subsystems as scored findings
 - introduce fallback parsers
 ```
+
+## Implementation guidance
+
+Preferred outcomes in order:
+
+```text
+A. If governed Pass 3 CRP package/spec exists and is semantically equivalent:
+   migrate runtime authority to the governed package/spec and guard it.
+
+B. If governed Pass 3 CRP package/spec exists but is not semantically equivalent:
+   do not migrate; classify the distinction and retain legacy path explicitly.
+
+C. If no governed Pass 3 CRP package/spec exists:
+   retain legacy path temporarily but classify it as a migration target and guard against accidental user-facing over-surfacing.
+
+D. If signal_crp_high and signal_systemic_inflammation are actually different clinical concepts:
+   document and test the distinction.
+
+E. If they are duplicate/alias concepts:
+   define the canonical naming policy and guard against duplicate authority drift.
+```
+
+Do not guess. Base the decision on repo evidence.
 
 ## Required tests
 
 Add or update tests proving:
 
 ```text
-1. CV visible card copy cannot use inflammation/homocysteine as score basis when lipid is the only visible scored subsystem.
-2. Hidden MED-REV-1 subsystems remain hidden.
-3. Hard-coded Wave 1 subsystem fallback cannot re-enter launch-active compiled subsystem path.
-4. Removed/dead helper functions are not referenced.
-5. Validator catches any attempted reactivation of retired pathway where practical.
-6. domain_flat_card_evidence remains covered by launch-critical validator paths.
-7. KB-UTIL-1 manifest hash integrity still passes.
-8. total_bilirubin prohibition remains intact.
-9. ARCH-RT-6 validator still passes.
+1. CRP package/signal authority is explicitly classified.
+2. signal_crp_high and signal_systemic_inflammation cannot silently drift as duplicate competing authorities.
+3. If migrated, runtime uses the governed CRP package/spec.
+4. If retained, legacy CRP path is explicitly classified and guarded.
+5. CRP does not re-enter hidden MED-REV-1 subsystem surfaces as a scored finding.
+6. No raw Pass 3 runtime reads are introduced.
+7. No clinical thresholds/scoring rails are changed.
+8. ARCH-RT-6 validator still passes.
 ```
 
 Always run:
@@ -271,20 +255,25 @@ python backend/scripts/validate_day_one_architecture.py
 python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
 ```
 
-Also run targeted tests for:
+Also run targeted tests for CRP/signal/package paths and any new regression tests.
+
+## Validator / guardrail requirements
+
+If the CRP authority decision is resolved, update `backend/scripts/validate_day_one_architecture.py` or an appropriate regression test so that:
 
 ```text
-test_kb_util1_pass3_card_evidence_compile_and_consume.py
-test_med_rev1_wave1_subsystem_visibility.py
-test_med_rev2_domain_card_copy_and_regeneration.py
-any new ARCH-LEGACY-2 regression tests
+- CRP authority classification cannot silently regress
+- duplicate CRP/systemic-inflammation signal authority cannot silently reappear
+- hidden MED-REV-1 subsystem policy remains protected
 ```
+
+Do not add brittle source-text checks unless this is already the repository pattern or clearly justified.
 
 ## Manual validation
 
-Manual browser UAT is not required unless a user-facing output path is changed.
+Manual browser UAT is not required unless user-facing output changes.
 
-If any user-facing output is changed, manually inspect a latest-engine regenerated result from:
+If user-facing output changes, inspect a latest-engine regenerated result from:
 
 ```text
 http://localhost:3000/results?analysis_id=746f2b0a-b470-4d87-8ed8-e2c3d1e68c02
@@ -297,14 +286,13 @@ test-user3@example.com
 Subaru@555
 ```
 
-Confirm no regression in:
+Confirm:
 
 ```text
-- cardiovascular card basis
-- blood sugar card copy
-- liver flat evidence
-- hidden subsystem suppression
-- internal ID/source-trace protection
+- CRP/vascular strain is not surfaced as a scored subsystem
+- cardiovascular card remains lipid-led
+- no internal IDs/traces are visible
+- no stale snapshot is mistaken for latest output
 ```
 
 ## STOP conditions
@@ -312,15 +300,15 @@ Confirm no regression in:
 STOP and report if:
 
 ```text
-1. ARCH-LEGACY-1 report is missing.
-2. Carry-forward register is missing.
-3. Removing legacy code would affect live untested paths.
-4. Hard-coded fallback cannot be removed without broad redesign.
-5. Validator extension would be brittle or misleading.
-6. Any change would alter clinical thresholds, scoring, SignalEvaluator, or SSOT.
-7. Any hidden subsystem would be reintroduced.
+1. CRP-related authority cannot be determined from repo evidence.
+2. Migration would require clinical threshold changes.
+3. Migration would change signal activation behaviour beyond package authority alignment.
+4. CRP Pass 3 package/spec is absent or not semantically equivalent.
+5. Duplicate signal naming cannot be safely resolved in one sprint.
+6. Root-cause or PSI changes would be required.
+7. Frontend changes would be required.
 8. ARCH-RT-6 validator fails.
-9. Sprint drifts into Pass 3 estate compile, LLM translation, or UX redesign.
+9. Sprint drifts into full Pass 3 compiler, LLM, UX or regeneration work.
 ```
 
 ## Required deliverable
@@ -328,21 +316,22 @@ STOP and report if:
 Create:
 
 ```text
-docs/audit-papers/ARCH-LEGACY-2_targeted_retirement_implementation_report.md
+docs/audit-papers/CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment_report.md
 ```
 
 The report must include:
 
 ```text
-- items retired
-- items retained and why
+- CRP signal inventory
+- CRP package inventory
+- CRP Pass 3 spec inventory
+- current runtime authority
+- signal_crp_high vs signal_systemic_inflammation decision
+- migration performed or deferred
 - files changed
-- validator changes
-- tests added/updated
+- validator/test changes
 - carry-forward register updates
-- confirmation no clinical/scoring logic changed
-- confirmation hidden subsystems remain hidden
-- confirmation no raw Pass 3 runtime reads introduced
+- confirmation no thresholds/scoring rails changed
 - tests run
 - results
 - remaining risks / carry-forwards
@@ -355,15 +344,17 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. carry-forward register read/update evidence
-3. legacy paths targeted
-4. exact code removed/neutralised
-5. validator changes
-6. tests added/updated
-7. test commands run
-8. test results
-9. manual validation result if required
-10. confirmation no production-facing clinical behaviour changed except intended retirement protection
-11. confirmation ARCH-RT-6 validator still passes
+3. CRP package/signal/spec inventory
+4. runtime reachability findings
+5. authority decision
+6. migration or deferral rationale
+7. files changed
+8. tests added/updated
+9. test commands run
+10. test results
+11. manual validation result if required
+12. confirmation no clinical thresholds/scoring rails changed
+13. confirmation ARCH-RT-6 validator still passes
 ```
 
 ## Closure requirements
@@ -382,11 +373,11 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/ARCH-LEGACY-2-targeted-retirement-implementation
+- current branch matches work/CRP-PASS3-MIGRATION-crp-legacy-s24-package-and-signal-naming-alignment
 - all changed files are tied to this sprint
 - carry-forward register has been updated if required
 - no clinical thresholds or scoring rails are changed
-- no SignalEvaluator / SignalRegistry / SSOT changes are included
+- no SignalEvaluator behavioural changes are introduced beyond declared authority alignment
 - no hidden subsystem is reintroduced
 - no ambiguous stash exists
 - latest commit contains only in-scope work
@@ -397,15 +388,14 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. Targeted legacy paths are removed, neutralised, or explicitly retained with rationale.
-2. Launch-active Wave 1 compiled subsystem path cannot silently fall back to stale hard-coded definitions.
-3. CV legacy narrative path cannot re-enter visible card score-basis copy.
-4. Validator/guardrail coverage is improved for identified gaps.
+1. CRP legacy s24 package status is explicitly resolved or classified.
+2. signal_crp_high / signal_systemic_inflammation naming relationship is clear.
+3. Runtime authority cannot silently drift.
+4. No CRP hidden subsystem re-surfacing occurs.
 5. Carry-forward register is updated.
-6. No clinical scoring or signal behaviour changes.
-7. ARCH-RT-6 validator passes.
-8. Tests prove the retirement protections.
-9. Automation Bus gate passes.
+6. ARCH-RT-6 validator passes.
+7. Tests prove the authority decision.
+8. Automation Bus gate passes.
 ```
 
 ```
