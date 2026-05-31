@@ -3,7 +3,7 @@ artefact_id: wave1_liv_processing_context_v1
 domain_id: wave1_liver
 subsystem_id: wave1_liv_processing_context
 subsystem_label: Liver processing context
-visibility_tier: scored_subsystem
+visibility_tier: hidden_v1
 source_spec_ids:
   - inv_alp_high_bone_biliary
   - inv_albumin_low_nutritional

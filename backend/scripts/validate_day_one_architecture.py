@@ -225,6 +225,48 @@ def validate_authority_manifest(errors: List[str]) -> None:
             _err(errors, f"authority manifest missing required token: {token!r}")
 
 
+def validate_med_rev1_wave1_visibility(errors: List[str]) -> None:
+    """MED-REV-1: compiled tier assignments must match medical review v1 visibility model."""
+    sys.path.insert(0, str(_REPO / "backend"))
+    from core.knowledge.health_system_card_evidence import (  # noqa: PLC0415
+        WAVE1_COMPILED_SUBSYSTEM_IDS,
+        WAVE1_MED_REV1_HIDDEN_SUBSYSTEM_IDS,
+        WAVE1_MED_REV1_SCORED_VISIBLE_SUBSYSTEM_IDS,
+        get_card_evidence_artefact,
+    )
+
+    for subsystem_id in WAVE1_MED_REV1_SCORED_VISIBLE_SUBSYSTEM_IDS:
+        tier = get_card_evidence_artefact(subsystem_id).visibility_tier
+        if tier != "scored_subsystem":
+            _err(
+                errors,
+                f"MED-REV-1: {subsystem_id} must be scored_subsystem, got {tier!r}",
+            )
+
+    for subsystem_id in WAVE1_MED_REV1_HIDDEN_SUBSYSTEM_IDS:
+        tier = get_card_evidence_artefact(subsystem_id).visibility_tier
+        if tier != "hidden_v1":
+            _err(
+                errors,
+                f"MED-REV-1: {subsystem_id} must be hidden_v1, got {tier!r}",
+            )
+
+    lipid = get_card_evidence_artefact("wave1_cv_lipid_transport")
+    if "atherogenic" not in lipid.subsystem_label.lower():
+        _err(errors, "MED-REV-1: lipid subsystem label must reference atherogenic lipid pattern")
+
+    glycaemic = get_card_evidence_artefact("wave1_met_glycaemic_control")
+    if glycaemic.subsystem_label != "Long-term blood sugar":
+        _err(errors, "MED-REV-1: glycaemic subsystem label must be 'Long-term blood sugar'")
+
+    glucose = next(m for m in glycaemic.markers if m.marker_id == "glucose")
+    if glucose.presence_policy != "optional_on_panel":
+        _err(errors, "MED-REV-1: glycaemic glucose must use optional_on_panel presence policy")
+
+    if WAVE1_MED_REV1_SCORED_VISIBLE_SUBSYSTEM_IDS | WAVE1_MED_REV1_HIDDEN_SUBSYSTEM_IDS != WAVE1_COMPILED_SUBSYSTEM_IDS:
+        _err(errors, "MED-REV-1: visibility partition must cover all seven Wave 1 subsystems")
+
+
 def validate_wave1_assembler_routing(errors: List[str]) -> None:
     src = _read("backend/core/analytics/wave1_subsystem_evidence.py")
     if "PILOT_COMPILED_SUBSYSTEM_IDS" not in src:
@@ -286,6 +328,7 @@ def run_day_one_architecture_validation(*, repo_root: Path | None = None) -> Lis
     validate_frontend_guards(errors)
     validate_authority_manifest(errors)
     validate_wave1_assembler_routing(errors)
+    validate_med_rev1_wave1_visibility(errors)
     validate_signal_library_uniqueness(errors)
     return errors
 

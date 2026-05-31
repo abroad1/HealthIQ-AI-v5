@@ -19,6 +19,7 @@ from core.analytics.domain_score_assembler import assemble_consumer_domain_score
 from core.analytics.wave1_subsystem_evidence import WAVE1_DOMAIN_IDS, WAVE1_DOMAIN_SUBSYSTEM_DEFS
 from core.contracts.confidence_model_v1 import ConfidenceModelV1
 from core.contracts.insight_graph_v1 import InsightGraphV1
+from core.knowledge.health_system_card_evidence import get_card_evidence_artefact
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _WAVE1_CARDS = _REPO_ROOT / "frontend" / "app" / "components" / "results" / "Wave1DomainCards.tsx"
@@ -83,10 +84,9 @@ def _minimal_rows(panel: set[str] | None = None):
 @pytest.mark.regression
 def test_wave1_domains_emit_subsystems() -> None:
     by_id = {r.domain_id: r for r in _minimal_rows()}
-    for domain_id in ("wave1_cardiovascular", "wave1_blood_sugar", "wave1_liver"):
-        row = by_id[domain_id]
-        assert row.subsystems is not None
-        assert len(row.subsystems) == len(WAVE1_DOMAIN_SUBSYSTEM_DEFS[domain_id])
+    assert len(by_id["wave1_cardiovascular"].subsystems or []) == 1
+    assert len(by_id["wave1_blood_sugar"].subsystems or []) == 1
+    assert by_id["wave1_liver"].subsystems in (None, [])
 
 
 @pytest.mark.regression
@@ -101,14 +101,16 @@ def test_subsystem_rows_have_required_fields() -> None:
             assert isinstance(sub.missing_markers, list)
             assert all(m.id and m.display_label for m in sub.included_markers or [])
             assert all(m.id and m.display_label for m in sub.missing_markers or [])
+            assert sub.source_trace.startswith("health_system_card_evidence_v1:")
             if sub.subsystem_id == "wave1_met_glycaemic_control":
                 assert sub.source_trace.startswith("health_system_card_evidence_v1:")
                 assert sub.card_evidence_schema_version == "1.0.0"
                 assert sub.visibility_tier == "scored_subsystem"
+                assert sub.subsystem_label == "Long-term blood sugar"
                 assert sub.marker_evidence is not None
                 assert len(sub.marker_evidence) == 2
-            else:
-                assert sub.source_trace.startswith("wave1_subsystem_evidence_v1:")
+            elif sub.subsystem_id == "wave1_cv_lipid_transport":
+                assert sub.subsystem_label == "Atherogenic lipid pattern"
             assert sub.status_label is None
 
 
@@ -130,39 +132,34 @@ def test_subsystem_marker_ids_are_canonical_and_partitioned() -> None:
 
 @pytest.mark.regression
 def test_liver_processing_bilirubin_canonical_not_total_bilirubin_false_missing() -> None:
-    """Canonical bilirubin satisfies liver processing; total_bilirubin is rail-only."""
-    panel = {
-        "total_cholesterol",
-        "glucose",
-        "hba1c",
-        "alt",
-        "ast",
-        "ldl_cholesterol",
-        "hdl_cholesterol",
-        "triglycerides",
-        "bilirubin",
-        "alp",
-        "albumin",
-    }
-    liver = next(r for r in _minimal_rows(panel=panel) if r.domain_id == "wave1_liver")
-    processing = next(
-        s for s in liver.subsystems or [] if s.subsystem_id == "wave1_liv_processing_context"
+    """Canonical bilirubin satisfies liver processing artefact; total_bilirubin is rail-only."""
+    from core.knowledge.health_system_card_evidence import assemble_subsystem_from_compiled_card_evidence
+
+    processing = assemble_subsystem_from_compiled_card_evidence(
+        subsystem_id="wave1_liv_processing_context",
+        panel_biomarker_ids={"bilirubin", "alp", "albumin"},
+        scored_on_rail=set(),
     )
-    assert "bilirubin" in processing.included_marker_ids
-    assert "total_bilirubin" not in processing.missing_marker_ids
-    assert "total_bilirubin" not in processing.included_marker_ids
-    included_map = {m.id: m.display_label for m in processing.included_markers or []}
-    assert included_map["bilirubin"] == "Bilirubin"
+    assert processing is None
+    artefact = get_card_evidence_artefact("wave1_liv_processing_context")
+    marker_ids = {m.marker_id for m in artefact.markers}
+    assert "bilirubin" in marker_ids
+    assert "total_bilirubin" not in marker_ids
 
 
 @pytest.mark.regression
 def test_missing_markers_receive_governed_display_labels_even_when_absent_from_panel() -> None:
-    rows = _minimal_rows(panel={"glucose"})
-    sugar = next(r for r in rows if r.domain_id == "wave1_blood_sugar")
-    insulin_context = next(s for s in sugar.subsystems or [] if s.subsystem_id == "wave1_met_insulin_metabolic")
-    missing_map = {m.id: m.display_label for m in insulin_context.missing_markers or []}
-    assert "insulin" in insulin_context.missing_marker_ids
-    assert missing_map["insulin"] == "Insulin"
+    from core.knowledge.health_system_card_evidence import assemble_subsystem_from_compiled_card_evidence
+
+    glycaemic = assemble_subsystem_from_compiled_card_evidence(
+        subsystem_id="wave1_met_glycaemic_control",
+        panel_biomarker_ids={"hba1c"},
+        scored_on_rail=set(),
+    )
+    assert glycaemic is not None
+    missing_map = {m.id: m.display_label for m in glycaemic.missing_markers or []}
+    assert "glucose" in glycaemic.missing_marker_ids
+    assert missing_map["glucose"] == "Glucose"
 
 
 @pytest.mark.regression
@@ -170,8 +167,9 @@ def test_health_system_subsystems_missing_from_dto_sentinel() -> None:
     """Sentinel: health_system_subsystems_missing_from_dto."""
     src = _read(_SUBSYSTEM_MODULE)
     assert "assemble_wave1_subsystem_evidence" in src
-    for row in _minimal_rows():
-        assert row.subsystems
+    by_id = {r.domain_id: r for r in _minimal_rows()}
+    assert by_id["wave1_cardiovascular"].subsystems
+    assert by_id["wave1_blood_sugar"].subsystems
 
 
 @pytest.mark.regression
