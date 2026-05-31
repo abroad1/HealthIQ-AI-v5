@@ -1,0 +1,843 @@
+schema_version: 1.0.0
+register_id: non_pass3_package_revalidation_register_v1
+audit_work_id: MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation
+generated_utc: '2026-05-31'
+source_cohort: docs/audit-papers/_crp_pkg_audit_non_pass3.json
+authority_cross_refs:
+- knowledge_bus/governance/crp_runtime_authority_v1.yaml
+package_count: 55
+runtime_loaded_count: 54
+launch_visible_count: 0
+medical_revalidation_required_count: 53
+packages:
+- package_id: KBP-0001
+  signal_ids:
+  - signal_insulin_resistance
+  - signal_lipid_transport_dysfunction
+  - signal_hepatic_metabolic_stress
+  - signal_systemic_inflammation
+  - signal_vascular_inflammatory_stress
+  - signal_renal_metabolic_stress
+  - signal_oxygen_transport_capacity
+  source_type: legacy_retained_with_justification
+  source_document: null
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: accepted_with_rationale
+  medical_research_revalidation_required: false
+  recommended_action: accept_as_currently_valid_with_rationale
+  recommended_future_sprint: deferred
+  carry_forward_id: null
+  notes: KBP-0001 baseline library; ARCH-RT-5 retained with explicit justification.
+- package_id: pkg_b12_deficiency_context
+  signal_ids:
+  - signal_b12_deficiency_context
+  source_type: architecture_doc_blocked
+  source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: internal_only
+  maturity_classification: architecture_anchor_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-003
+  carry_forward_id: CF-MRIMPROVE-003
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_chronic_inflammation
+  signal_ids:
+  - signal_systemic_inflammation
+  source_type: research_study_markdown
+  source_document: knowledge_bus/research/study_04_chronic_inflammation.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: study_derived_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: author_new_pass3_frame
+  recommended_future_sprint: CF-CHRONICINFL-001
+  carry_forward_id: CF-CHRONICINFL-001
+  notes: signal_systemic_inflammation; distinct from signal_crp_high per crp_runtime_authority_v1.yaml.
+- package_id: pkg_example
+  signal_ids:
+  - signal_example_metabolic
+  source_type: retire_candidate
+  source_document: null
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: false
+  launch_relevance: not_runtime_loaded
+  maturity_classification: retire_candidate
+  medical_research_revalidation_required: false
+  recommended_action: retire_package
+  recommended_future_sprint: deferred
+  carry_forward_id: null
+  notes: Example scaffold; not runtime-loaded.
+- package_id: pkg_glucose_dysregulation_hba1c_context
+  signal_ids:
+  - signal_glucose_dysregulation_hba1c_context
+  source_type: architecture_doc_blocked
+  source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: internal_only
+  maturity_classification: architecture_anchor_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-003
+  carry_forward_id: CF-MRIMPROVE-003
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_hepatic_alt_context
+  signal_ids:
+  - signal_hepatic_alt_context
+  source_type: architecture_doc_blocked
+  source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: internal_only
+  maturity_classification: architecture_anchor_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-003
+  carry_forward_id: CF-MRIMPROVE-003
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_hepatic_metabolic_stress
+  signal_ids:
+  - signal_hepatic_metabolic_stress
+  source_type: research_study_markdown
+  source_document: knowledge_bus/research/study_03_hepatic_metabolic_stress.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: study_derived_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: 'Study markdown source: knowledge_bus/research/study_03_hepatic_metabolic_stress.md'
+- package_id: pkg_homocysteine_elevation_context
+  signal_ids:
+  - signal_homocysteine_elevation_context
+  source_type: architecture_doc_blocked
+  source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: internal_only
+  maturity_classification: architecture_anchor_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-003
+  carry_forward_id: CF-MRIMPROVE-003
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_inflammation_crp_context
+  signal_ids:
+  - signal_inflammation_crp_context
+  source_type: architecture_doc_blocked
+  source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: internal_only
+  maturity_classification: architecture_anchor_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-003
+  carry_forward_id: CF-MRIMPROVE-003
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_insulin_resistance
+  signal_ids:
+  - signal_insulin_resistance
+  source_type: research_study_markdown
+  source_document: knowledge_bus/research/study_01_insulin_resistance.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: study_derived_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: 'Study markdown source: knowledge_bus/research/study_01_insulin_resistance.md'
+- package_id: pkg_iron_deficiency_context
+  signal_ids:
+  - signal_iron_deficiency_context
+  source_type: architecture_doc_blocked
+  source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: internal_only
+  maturity_classification: architecture_anchor_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-003
+  carry_forward_id: CF-MRIMPROVE-003
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_iron_overload_context
+  signal_ids:
+  - signal_iron_overload_context
+  source_type: architecture_doc_blocked
+  source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: internal_only
+  maturity_classification: architecture_anchor_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-003
+  carry_forward_id: CF-MRIMPROVE-003
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_kb45_active_b12_low_deficiency
+  signal_ids:
+  - signal_active_b12_deficiency
+  source_type: unknown_ambiguous
+  source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: batch_json_lineage_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-002
+  carry_forward_id: CF-MRIMPROVE-002
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_apoa1_low_cardio_risk
+  signal_ids:
+  - signal_apoa1_cardio_risk
+  source_type: unknown_ambiguous
+  source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: batch_json_lineage_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-002
+  carry_forward_id: CF-MRIMPROVE-002
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_apob_apoa1_ratio_high_imbalance
+  signal_ids:
+  - signal_lipid_imbalance
+  source_type: unknown_ambiguous
+  source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: batch_json_lineage_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-002
+  carry_forward_id: CF-MRIMPROVE-002
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_apob_high_atherogenic
+  signal_ids:
+  - signal_apob_atherogenic
+  source_type: unknown_ambiguous
+  source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: batch_json_lineage_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-002
+  carry_forward_id: CF-MRIMPROVE-002
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_basophil_pct_high_basophilia
+  signal_ids:
+  - signal_basophilia_pct
+  source_type: unknown_ambiguous
+  source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: batch_json_lineage_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-002
+  carry_forward_id: CF-MRIMPROVE-002
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_basophils_abs_high_basophilia
+  signal_ids:
+  - signal_basophilia_abs
+  source_type: unknown_ambiguous
+  source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: batch_json_lineage_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-002
+  carry_forward_id: CF-MRIMPROVE-002
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_bilirubin_high_hyperbilirubinemia
+  signal_ids:
+  - signal_hyperbilirubinemia
+  source_type: unknown_ambiguous
+  source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: batch_json_lineage_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-002
+  carry_forward_id: CF-MRIMPROVE-002
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_chloride_high_hyperchloremia
+  signal_ids:
+  - signal_hyperchloremia
+  source_type: unknown_ambiguous
+  source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: batch_json_lineage_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-002
+  carry_forward_id: CF-MRIMPROVE-002
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_corrected_calcium_high_hypercalcemia
+  signal_ids:
+  - signal_hypercalcemia
+  source_type: unknown_ambiguous
+  source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: batch_json_lineage_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-002
+  carry_forward_id: CF-MRIMPROVE-002
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_cortisol_high_hypercortisolism
+  signal_ids:
+  - signal_hypercortisolism
+  source_type: unknown_ambiguous
+  source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: batch_json_lineage_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-002
+  carry_forward_id: CF-MRIMPROVE-002
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_lipid_transport
+  signal_ids:
+  - signal_lipid_transport_dysfunction
+  source_type: provenance_gap
+  source_document: null
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: provenance_gap
+  medical_research_revalidation_required: true
+  recommended_action: recover_provenance
+  recommended_future_sprint: CF-MRIMPROVE-004
+  carry_forward_id: CF-MRIMPROVE-004
+  notes: Manifest lacks source_document; overlaps KBP-0001 thresholds for signal_lipid_transport_dysfunction.
+- package_id: pkg_s24_albumin_low_nutritional
+  signal_ids:
+  - signal_albumin_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_albumin_low_nutritional.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_alp_high_bone_biliary
+  signal_ids:
+  - signal_alp_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_alp_high_bone_biliary.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_alt_high_hepatocellular_injury
+  signal_ids:
+  - signal_alt_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_calcium_high_endocrine
+  signal_ids:
+  - signal_calcium_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_calcium_high_endocrine.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_creatinine_high_renal
+  signal_ids:
+  - signal_creatinine_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_crp_high_inflammation
+  signal_ids:
+  - signal_crp_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_crp_high_inflammation_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: defer_with_reason
+  recommended_future_sprint: CF-CRPPASS3-001
+  carry_forward_id: CF-CRPPASS3-001
+  notes: Retained s24 authority for signal_crp_high; Pass 3 compile deferred (CF-CRPPASS3-001).
+- package_id: pkg_s24_ferritin_high_overload
+  signal_ids:
+  - signal_ferritin_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_ferritin_high_overload_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_ferritin_low_iron_deficiency
+  signal_ids:
+  - signal_ferritin_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_ferritin_spec_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_folate_low_deficiency
+  signal_ids:
+  - signal_folate_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_folate_low_deficiency.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_ggt_high_hepatic
+  signal_ids:
+  - signal_ggt_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_ggt_high_hepatic.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_hba1c_high_glycaemia
+  signal_ids:
+  - signal_hba1c_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemia_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_hdl_high_cardiovascular
+  signal_ids:
+  - signal_hdl_cholesterol_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_hdl_high_cardiovascular.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_hdl_low_cardiovascular
+  signal_ids:
+  - signal_hdl_cholesterol_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_hdl_low_cardiovascular.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_hgb_low_anemia
+  signal_ids:
+  - signal_hemoglobin_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_hgb_low_anemia.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_homocysteine_high_metabolic
+  signal_ids:
+  - signal_homocysteine_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_homocysteine_high_metabolic.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_ldl_high_dyslipidaemia
+  signal_ids:
+  - signal_ldl_cholesterol_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_ldl_high_dyslipidaemia_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_lym_high_lymphocytosis
+  signal_ids:
+  - signal_lymphocytes_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_lym_high_lymphocytosis.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_mcv_high_macrocytosis
+  signal_ids:
+  - signal_mcv_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_mcv_high_macrocytosis.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_neutrophils_high_neutrophilia
+  signal_ids:
+  - signal_neutrophils_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_neutrophils_high_neutrophilia.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_neutrophils_low_neutropenia
+  signal_ids:
+  - signal_neutrophils_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_neutrophils_low_neutropenia.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_plt_high_thrombocytosis
+  signal_ids:
+  - signal_platelets_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_plt_high_thrombocytosis.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_plt_low_thrombocytopenia
+  signal_ids:
+  - signal_platelets_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_plt_low_thrombocytopenia.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_triglycerides_high_metabolic
+  signal_ids:
+  - signal_triglycerides_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_triglycerides_high_metabolic_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_tsh_high_hypothyroidism
+  signal_ids:
+  - signal_tsh_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_tsh_high_hypothyroidism_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_tsh_low_hyperthyroidism
+  signal_ids:
+  - signal_tsh_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_tsh_low_hyperthyroidism_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_urate_high_metabolic
+  signal_ids:
+  - signal_urate_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_uric_acid_high_metabolic.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_urea_high_renal
+  signal_ids:
+  - signal_urea_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_urea_high_renal.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_vitamin_b12_low_deficiency
+  signal_ids:
+  - signal_vitamin_b12_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_vitamin_b12_spec_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_vitamin_d_low_deficiency
+  signal_ids:
+  - signal_vitamin_d_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_vitamin_d_low_deficiency_v1.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_wbc_high_leukocytosis
+  signal_ids:
+  - signal_wbc_high
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_wbc_high_leukocytosis.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_wbc_low_leukopenia
+  signal_ids:
+  - signal_wbc_low
+  source_type: investigation_spec_v1_yaml
+  source_document: knowledge_bus/research/investigation_specs/inv_wbc_low_leukopenia.yaml
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  maturity_classification: non_pass3_runtime_revalidation_required
+  medical_research_revalidation_required: true
+  recommended_action: re_run_through_pass3
+  recommended_future_sprint: KB-UTIL-2
+  carry_forward_id: null
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_thyroid_tsh_context
+  signal_ids:
+  - signal_thyroid_tsh_context
+  source_type: architecture_doc_blocked
+  source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+  pass3_sourced: false
+  has_signal_library: true
+  runtime_loaded: true
+  launch_relevance: internal_only
+  maturity_classification: architecture_anchor_review_required
+  medical_research_revalidation_required: true
+  recommended_action: map_to_existing_pass3_frame
+  recommended_future_sprint: CF-MRIMPROVE-003
+  carry_forward_id: CF-MRIMPROVE-003
+  notes: Investigation-layer context; architecture doc anchor only.
