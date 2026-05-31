@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-LEGACY-1-pathway-retirement-audit",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-31T15:29:51Z",
   "cursor_started_utc": "2026-05-31T15:26:37Z",
-  "head_sha": "7fbe211aba5a0edf1bb6e630a4c7c877d8993f47",
+  "head_sha": "8d7498480bec5b04e3512e6e43d8a49c43b8ffa1",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-LEGACY-1_pathway_retirement_audit"
 }
