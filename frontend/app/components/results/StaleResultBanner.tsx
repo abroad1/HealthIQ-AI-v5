@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { AlertCircle } from 'lucide-react';
 import type { ResultVersioningMetadataV1 } from '@/types/analysis';
+import { API_BASE, getApiAuthHeaders } from '@/lib/api';
 
 type Props = {
   versioning: ResultVersioningMetadataV1 | null | undefined;
@@ -38,10 +39,17 @@ export function StaleResultBanner({ versioning, analysisId }: Props) {
     setPending(true);
     setError(null);
     try {
-      const res = await fetch(`/api/analysis/${encodeURIComponent(analysisId)}/regenerate`, {
-        method: 'POST',
-        credentials: 'include',
-      });
+      const res = await fetch(
+        `${API_BASE}/api/analysis/${encodeURIComponent(analysisId)}/regenerate`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            ...getApiAuthHeaders(),
+            'Content-Type': 'application/json',
+          },
+        }
+      );
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
         const msg =
