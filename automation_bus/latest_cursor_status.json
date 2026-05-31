@@ -1,10 +1,9 @@
 {
-  "branch": "work/KB-UTIL-1-pass3-card-evidence-compile-and-consume",
+  "branch": "work/LAYER-B-1-narrative-brief-maturity",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-31T10:16:12Z",
-  "cursor_started_utc": "2026-05-31T10:12:23Z",
-  "head_sha": "f37d39dc056a6385ab2e4af9bc09c8e785143145",
+  "cursor_started_utc": "2026-05-31T11:09:08Z",
+  "head_sha": "7d65a1501442c93e8c05e11afc8d245a4948238a",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "KB-UTIL-1_pass3_card_evidence_compile_and_consume"
+  "status": "IN_PROGRESS",
+  "work_id": "LAYER-B-1_narrative_brief_maturity"
 }
