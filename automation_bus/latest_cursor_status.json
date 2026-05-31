@@ -1,10 +1,9 @@
 {
-  "branch": "work/CRP-PASS3-MIGRATION-crp-legacy-s24-package-and-signal-naming-alignment",
+  "branch": "work/MED-RESEARCH-REVIEW-1-non-pass3-package-revalidation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-31T16:41:53Z",
-  "cursor_started_utc": "2026-05-31T16:39:54Z",
-  "head_sha": "d600a9f894fb8ea11d61fd480dd5023c166cb033",
+  "cursor_started_utc": "2026-05-31T20:02:02Z",
+  "head_sha": "231cf060a8ede071f7547805f6630377f07aa0b8",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "CRP-PASS3-MIGRATION_crp_legacy_s24_package_and_signal_naming_alignment"
+  "status": "IN_PROGRESS",
+  "work_id": "MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation"
 }
