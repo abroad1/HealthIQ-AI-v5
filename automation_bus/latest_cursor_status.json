@@ -1,9 +1,10 @@
 {
   "branch": "work/MED-REV-2-wave1-domain-card-copy-alignment-and-result-regeneration-ux",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-31T09:30:05Z",
   "cursor_started_utc": "2026-05-31T09:24:38Z",
-  "head_sha": "2b45f4c05036572e21df1579a21a5be6759d6d8a",
+  "head_sha": "59ae41378e42d38f9529b36d73343d6caf6ad95c",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux"
 }
