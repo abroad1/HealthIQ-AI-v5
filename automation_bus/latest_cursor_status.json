@@ -1,9 +1,10 @@
 {
   "branch": "work/KB-UTIL-1-pass3-card-evidence-compile-and-consume",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-31T10:16:12Z",
   "cursor_started_utc": "2026-05-31T10:12:23Z",
-  "head_sha": "3a6e7ae3f114dec9fe83589e3bbf2b45235748c3",
+  "head_sha": "f37d39dc056a6385ab2e4af9bc09c8e785143145",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "KB-UTIL-1_pass3_card_evidence_compile_and_consume"
 }
