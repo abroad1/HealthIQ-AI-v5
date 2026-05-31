@@ -1,0 +1,1516 @@
+schema_version: 1.0.0
+plan_id: pass3_legacy_package_mapping_plan_v1
+work_id: KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan
+generated_utc: '2026-05-31'
+pass3_files_scanned: 10
+package_count: 55
+route_counts:
+  ROUTE_D_legacy_accepted_with_rationale: 1
+  ROUTE_C_multiple_pass3_frames_adjudication_needed: 35
+  ROUTE_G_manual_medical_review_exception: 1
+  ROUTE_F_retire_candidate: 1
+  ROUTE_B_primary_biomarker_match_signal_mapping_needed: 3
+  ROUTE_E_provenance_recovery_needed: 1
+  ROUTE_A_exact_signal_match_compile_candidate: 13
+exact_pass3_signal_id_match_count: 24
+primary_biomarker_only_match_count: 31
+multiple_pass3_frames_count: 39
+recommended_pilot_package_ids:
+- pkg_s24_creatinine_high_renal
+- pkg_s24_ferritin_low_iron_deficiency
+- pkg_kb45_apob_high_atherogenic
+- pkg_hepatic_alt_context
+- pkg_lipid_transport
+- pkg_chronic_inflammation
+recommended_bulk_promotion_wave: ROUTE_A s24 single-signal packages after pilot gate
+not_suitable_for_bulk_promotion:
+- KBP-0001
+- pkg_b12_deficiency_context
+- pkg_chronic_inflammation
+- pkg_example
+- pkg_glucose_dysregulation_hba1c_context
+- pkg_hepatic_alt_context
+- pkg_homocysteine_elevation_context
+- pkg_inflammation_crp_context
+- pkg_iron_deficiency_context
+- pkg_iron_overload_context
+- pkg_kb45_apoa1_low_cardio_risk
+- pkg_kb45_apob_apoa1_ratio_high_imbalance
+- pkg_kb45_apob_high_atherogenic
+- pkg_kb45_basophil_pct_high_basophilia
+- pkg_kb45_basophils_abs_high_basophilia
+- pkg_kb45_bilirubin_high_hyperbilirubinemia
+- pkg_kb45_chloride_high_hyperchloremia
+- pkg_kb45_corrected_calcium_high_hypercalcemia
+- pkg_kb45_cortisol_high_hypercortisolism
+- pkg_s24_albumin_low_nutritional
+- pkg_s24_alp_high_bone_biliary
+- pkg_s24_alt_high_hepatocellular_injury
+- pkg_s24_calcium_high_endocrine
+- pkg_s24_crp_high_inflammation
+- pkg_s24_ferritin_high_overload
+- pkg_s24_ggt_high_hepatic
+- pkg_s24_hdl_high_cardiovascular
+- pkg_s24_hdl_low_cardiovascular
+- pkg_s24_hgb_low_anemia
+- pkg_s24_homocysteine_high_metabolic
+- pkg_s24_ldl_high_dyslipidaemia
+- pkg_s24_lym_high_lymphocytosis
+- pkg_s24_mcv_high_macrocytosis
+- pkg_s24_plt_high_thrombocytosis
+- pkg_s24_plt_low_thrombocytopenia
+- pkg_s24_triglycerides_high_metabolic
+- pkg_s24_wbc_high_leukocytosis
+- pkg_thyroid_tsh_context
+packages:
+- package_id: KBP-0001
+  current_signal_ids:
+  - signal_hepatic_metabolic_stress
+  - signal_insulin_resistance
+  - signal_lipid_transport_dysfunction
+  - signal_oxygen_transport_capacity
+  - signal_renal_metabolic_stress
+  - signal_systemic_inflammation
+  - signal_vascular_inflammatory_stress
+  current_primary_biomarkers:
+  - ast_alt_ratio
+  - crp
+  - hemoglobin
+  - non_hdl_cholesterol
+  - tyg_index
+  - urea_creatinine_ratio
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: legacy_retained_with_justification
+  current_maturity_classification: accepted_with_rationale
+  transition_state: accepted_with_rationale
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_crp_high_active_inflammatory_or_infective_state
+  - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+  - inv_hgb_high_erythrocytosis_or_hypoxic_drive
+  - inv_hgb_low_iron_deficiency_or_blood_loss_anemia
+  - inv_hgb_low_normocytic_underproduction_context
+  - inv_non_hdl_high_atherogenic_lipoprotein_burden
+  - inv_non_hdl_low_reduced_atherogenic_lipoprotein_pool
+  - inv_tyg_index_high_insulin_resistance_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_crp_high
+  - signal_hgb_high
+  - signal_hgb_low
+  - signal_non_hdl_high
+  - signal_non_hdl_low
+  - signal_tyg_index_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_D_legacy_accepted_with_rationale
+  recommended_action: accept_as_currently_valid_with_rationale
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: KBP-0001 baseline library; ARCH-RT-5 retained with explicit justification.
+- package_id: pkg_b12_deficiency_context
+  current_signal_ids:
+  - signal_b12_deficiency_context
+  current_primary_biomarkers:
+  - vitamin_b12
+  runtime_loaded: true
+  launch_relevance: internal_only
+  current_source_type: architecture_doc_blocked
+  current_maturity_classification: architecture_anchor_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_active_b12_low_b12_depletion
+  - inv_vitamin_b12_high_supplementation_or_secondary_elevation
+  - inv_vitamin_b12_low_b12_deficiency_context
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_active_b12_low
+  - signal_vitamin_b12_high
+  - signal_vitamin_b12_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_chronic_inflammation
+  current_signal_ids:
+  - signal_systemic_inflammation
+  current_primary_biomarkers:
+  - crp
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: research_study_markdown
+  current_maturity_classification: study_derived_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_crp_high_active_inflammatory_or_infective_state
+  - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_crp_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_G_manual_medical_review_exception
+  recommended_action: author_new_pass3_frame
+  recommended_pilot_candidate: true
+  manual_review_required: true
+  notes: signal_systemic_inflammation; distinct from signal_crp_high per crp_runtime_authority_v1.yaml.
+- package_id: pkg_example
+  current_signal_ids:
+  - signal_example_metabolic
+  current_primary_biomarkers:
+  - triglycerides
+  runtime_loaded: false
+  launch_relevance: not_runtime_loaded
+  current_source_type: retire_candidate
+  current_maturity_classification: retire_candidate
+  transition_state: retired
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_triglycerides_high_insulin_resistant_hypertriglyceridemia
+  - inv_triglycerides_high_severe_hypertriglyceridemia_context
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_triglycerides_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_F_retire_candidate
+  recommended_action: retire_package
+  recommended_pilot_candidate: false
+  manual_review_required: false
+  notes: Example scaffold; not runtime-loaded.
+- package_id: pkg_glucose_dysregulation_hba1c_context
+  current_signal_ids:
+  - signal_glucose_dysregulation_hba1c_context
+  current_primary_biomarkers:
+  - hba1c
+  runtime_loaded: true
+  launch_relevance: internal_only
+  current_source_type: architecture_doc_blocked
+  current_maturity_classification: architecture_anchor_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_hba1c_high_diabetes_range_hyperglycemia
+  - inv_hba1c_low_shortened_erythrocyte_lifespan_context
+  - inv_hba1c_pct_high_chronic_hyperglycemia_diabetes
+  - inv_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency
+  - inv_hba1c_pct_low_shortened_red_cell_survival_or_low_glycemia
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_hba1c_high
+  - signal_hba1c_low
+  - signal_hba1c_pct_high
+  - signal_hba1c_pct_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_hepatic_alt_context
+  current_signal_ids:
+  - signal_hepatic_alt_context
+  current_primary_biomarkers:
+  - alt
+  runtime_loaded: true
+  launch_relevance: internal_only
+  current_source_type: architecture_doc_blocked
+  current_maturity_classification: architecture_anchor_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_alt_high_hepatocellular_injury_pattern
+  - inv_alt_high_metabolic_steatotic_liver_pattern
+  - inv_alt_high_muscle_source_or_exertional_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_alt_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_hepatic_metabolic_stress
+  current_signal_ids:
+  - signal_hepatic_metabolic_stress
+  current_primary_biomarkers:
+  - tyg_index
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: research_study_markdown
+  current_maturity_classification: study_derived_revalidation_required
+  transition_state: research_present_unmapped
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_tyg_index_high_insulin_resistance_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_tyg_index_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_B_primary_biomarker_match_signal_mapping_needed
+  recommended_action: map_signal_id_then_compile
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: 'Study markdown source: knowledge_bus/research/study_03_hepatic_metabolic_stress.md'
+- package_id: pkg_homocysteine_elevation_context
+  current_signal_ids:
+  - signal_homocysteine_elevation_context
+  current_primary_biomarkers:
+  - homocysteine
+  runtime_loaded: true
+  launch_relevance: internal_only
+  current_source_type: architecture_doc_blocked
+  current_maturity_classification: architecture_anchor_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_homocysteine_high_b_vitamin_related_methylation_impairment
+  - inv_homocysteine_high_renal_clearance_reduction
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_homocysteine_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_inflammation_crp_context
+  current_signal_ids:
+  - signal_inflammation_crp_context
+  current_primary_biomarkers:
+  - crp
+  runtime_loaded: true
+  launch_relevance: internal_only
+  current_source_type: architecture_doc_blocked
+  current_maturity_classification: architecture_anchor_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_crp_high_active_inflammatory_or_infective_state
+  - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_crp_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_insulin_resistance
+  current_signal_ids:
+  - signal_insulin_resistance
+  current_primary_biomarkers:
+  - tyg_index
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: research_study_markdown
+  current_maturity_classification: study_derived_revalidation_required
+  transition_state: research_present_unmapped
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_tyg_index_high_insulin_resistance_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_tyg_index_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_B_primary_biomarker_match_signal_mapping_needed
+  recommended_action: map_signal_id_then_compile
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: 'Study markdown source: knowledge_bus/research/study_01_insulin_resistance.md'
+- package_id: pkg_iron_deficiency_context
+  current_signal_ids:
+  - signal_iron_deficiency_context
+  current_primary_biomarkers:
+  - ferritin
+  runtime_loaded: true
+  launch_relevance: internal_only
+  current_source_type: architecture_doc_blocked
+  current_maturity_classification: architecture_anchor_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ferritin_high_inflammatory_hyperferritinemia
+  - inv_ferritin_high_iron_overload_context
+  - inv_ferritin_low_iron_store_depletion
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ferritin_high
+  - signal_ferritin_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_iron_overload_context
+  current_signal_ids:
+  - signal_iron_overload_context
+  current_primary_biomarkers:
+  - ferritin
+  runtime_loaded: true
+  launch_relevance: internal_only
+  current_source_type: architecture_doc_blocked
+  current_maturity_classification: architecture_anchor_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ferritin_high_inflammatory_hyperferritinemia
+  - inv_ferritin_high_iron_overload_context
+  - inv_ferritin_low_iron_store_depletion
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ferritin_high
+  - signal_ferritin_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: Investigation-layer context; architecture doc anchor only.
+- package_id: pkg_kb45_active_b12_low_deficiency
+  current_signal_ids:
+  - signal_active_b12_deficiency
+  current_primary_biomarkers:
+  - active_b12
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: unknown_ambiguous
+  current_maturity_classification: batch_json_lineage_review_required
+  transition_state: research_present_unmapped
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_active_b12_low_b12_depletion
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_active_b12_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_B_primary_biomarker_match_signal_mapping_needed
+  recommended_action: map_signal_id_then_compile
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_apoa1_low_cardio_risk
+  current_signal_ids:
+  - signal_apoa1_cardio_risk
+  current_primary_biomarkers:
+  - apoa1
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: unknown_ambiguous
+  current_maturity_classification: batch_json_lineage_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_apoa1_low_atherogenic_hdl_deficiency
+  - inv_apoa1_low_severe_primary_hdl_deficiency_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_apoa1_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_apob_apoa1_ratio_high_imbalance
+  current_signal_ids:
+  - signal_lipid_imbalance
+  current_primary_biomarkers:
+  - apob_apoa1_ratio
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: unknown_ambiguous
+  current_maturity_classification: batch_json_lineage_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_apob_apoa1_ratio_high_atherogenic_particle_imbalance
+  - inv_apob_apoa1_ratio_high_insulin_resistance_atherogenic_dyslipidemia
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_apob_apoa1_ratio_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_apob_high_atherogenic
+  current_signal_ids:
+  - signal_apob_atherogenic
+  current_primary_biomarkers:
+  - apob
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: unknown_ambiguous
+  current_maturity_classification: batch_json_lineage_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_apob_high_atherogenic_particle_excess
+  - inv_apob_high_familial_combined_hyperlipidemia_pattern
+  - inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_apob_high
+  - signal_apob_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_basophil_pct_high_basophilia
+  current_signal_ids:
+  - signal_basophilia_pct
+  current_primary_biomarkers:
+  - basophil_pct
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: unknown_ambiguous
+  current_maturity_classification: batch_json_lineage_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_basophil_pct_high_myeloproliferative_signal
+  - inv_basophil_pct_high_type2_hypersensitivity_inflammation
+  - inv_basophil_pct_low_glucocorticoid_or_acute_stress_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_basophil_pct_high
+  - signal_basophil_pct_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_basophils_abs_high_basophilia
+  current_signal_ids:
+  - signal_basophilia_abs
+  current_primary_biomarkers:
+  - basophils_abs
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: unknown_ambiguous
+  current_maturity_classification: batch_json_lineage_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_basophils_abs_high_myeloproliferative_signal
+  - inv_basophils_abs_high_type2_hypersensitivity_inflammation
+  - inv_basophils_abs_low_glucocorticoid_or_acute_stress_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_basophils_abs_high
+  - signal_basophils_abs_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_bilirubin_high_hyperbilirubinemia
+  current_signal_ids:
+  - signal_hyperbilirubinemia
+  current_primary_biomarkers:
+  - bilirubin
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: unknown_ambiguous
+  current_maturity_classification: batch_json_lineage_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_bilirubin_high_gilbert_pattern
+  - inv_bilirubin_high_hemolytic_turnover_pattern
+  - inv_bilirubin_high_hepatobiliary_excretion_impairment
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_bilirubin_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_chloride_high_hyperchloremia
+  current_signal_ids:
+  - signal_hyperchloremia
+  current_primary_biomarkers:
+  - chloride
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: unknown_ambiguous
+  current_maturity_classification: batch_json_lineage_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_chloride_high_hyperchloremic_metabolic_acidosis
+  - inv_chloride_low_chloride_depletion_metabolic_alkalosis
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_chloride_high
+  - signal_chloride_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_corrected_calcium_high_hypercalcemia
+  current_signal_ids:
+  - signal_hypercalcemia
+  current_primary_biomarkers:
+  - corrected_calcium
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: unknown_ambiguous
+  current_maturity_classification: batch_json_lineage_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_corrected_calcium_high_malignancy_mediated_hypercalcemia
+  - inv_corrected_calcium_high_pth_mediated_hypercalcemia
+  - inv_corrected_calcium_low_hypoparathyroid_state
+  - inv_corrected_calcium_low_secondary_hyperparathyroid_context
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_corrected_calcium_high
+  - signal_corrected_calcium_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_kb45_cortisol_high_hypercortisolism
+  current_signal_ids:
+  - signal_hypercortisolism
+  current_primary_biomarkers:
+  - cortisol
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: unknown_ambiguous
+  current_maturity_classification: batch_json_lineage_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_cortisol_high_hypercortisolism
+  - inv_cortisol_low_adrenal_insufficiency
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_cortisol_high
+  - signal_cortisol_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: pkg_kb45_* batch JSON lineage; map or Pass 3 re-run.
+- package_id: pkg_lipid_transport
+  current_signal_ids:
+  - signal_lipid_transport_dysfunction
+  current_primary_biomarkers:
+  - non_hdl_cholesterol
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: provenance_gap
+  current_maturity_classification: provenance_gap
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_non_hdl_high_atherogenic_lipoprotein_burden
+  - inv_non_hdl_low_reduced_atherogenic_lipoprotein_pool
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_non_hdl_high
+  - signal_non_hdl_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_E_provenance_recovery_needed
+  recommended_action: recover_provenance_then_map
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: Manifest lacks source_document; overlaps KBP-0001 thresholds for signal_lipid_transport_dysfunction.
+- package_id: pkg_s24_albumin_low_nutritional
+  current_signal_ids:
+  - signal_albumin_low
+  current_primary_biomarkers:
+  - albumin
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_albumin_low_inflammatory_hypoalbuminemia
+  - inv_albumin_low_protein_loss_or_reduced_synthesis
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_albumin_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_albumin_low_inflammatory_hypoalbuminemia
+  - inv_albumin_low_protein_loss_or_reduced_synthesis
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_compile
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_alp_high_bone_biliary
+  current_signal_ids:
+  - signal_alp_high
+  current_primary_biomarkers:
+  - alp
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_alp_high_cholestatic_pattern
+  - inv_alp_high_high_bone_turnover_pattern
+  - inv_alp_low_hypophosphatasia_pattern
+  - inv_alp_low_nutrient_or_cofactor_deficiency
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_alp_high
+  - signal_alp_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_alp_high_cholestatic_pattern
+  - inv_alp_high_high_bone_turnover_pattern
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_compile
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_alt_high_hepatocellular_injury
+  current_signal_ids:
+  - signal_alt_high
+  current_primary_biomarkers:
+  - alt
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_alt_high_hepatocellular_injury_pattern
+  - inv_alt_high_metabolic_steatotic_liver_pattern
+  - inv_alt_high_muscle_source_or_exertional_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_alt_high
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_alt_high_hepatocellular_injury_pattern
+  - inv_alt_high_metabolic_steatotic_liver_pattern
+  - inv_alt_high_muscle_source_or_exertional_pattern
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_compile
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_calcium_high_endocrine
+  current_signal_ids:
+  - signal_calcium_high
+  current_primary_biomarkers:
+  - calcium
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_calcium_high_primary_hyperparathyroid_pattern
+  - inv_calcium_high_pth_independent_hypercalcemia
+  - inv_calcium_low_hypoparathyroid_pattern
+  - inv_calcium_low_vitamin_d_or_magnesium_related_hypocalcemia
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_calcium_high
+  - signal_calcium_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_calcium_high_primary_hyperparathyroid_pattern
+  - inv_calcium_high_pth_independent_hypercalcemia
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_compile
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_creatinine_high_renal
+  current_signal_ids:
+  - signal_creatinine_high
+  current_primary_biomarkers:
+  - creatinine
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_creatinine_high_reduced_glomerular_filtration
+  - inv_creatinine_low_low_muscle_mass_or_low_generation
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_creatinine_high
+  - signal_creatinine_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_creatinine_high_reduced_glomerular_filtration
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_crp_high_inflammation
+  current_signal_ids:
+  - signal_crp_high
+  current_primary_biomarkers:
+  - crp
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_crp_high_active_inflammatory_or_infective_state
+  - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_crp_high
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_crp_high_active_inflammatory_or_infective_state
+  - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: defer_semantic_review_cf_crppass3_001
+  recommended_pilot_candidate: true
+  manual_review_required: true
+  notes: Retained s24 authority for signal_crp_high; Pass 3 compile deferred (CF-CRPPASS3-001).
+- package_id: pkg_s24_ferritin_high_overload
+  current_signal_ids:
+  - signal_ferritin_high
+  current_primary_biomarkers:
+  - ferritin
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ferritin_high_inflammatory_hyperferritinemia
+  - inv_ferritin_high_iron_overload_context
+  - inv_ferritin_low_iron_store_depletion
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ferritin_high
+  - signal_ferritin_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_ferritin_high_inflammatory_hyperferritinemia
+  - inv_ferritin_high_iron_overload_context
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_compile
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_ferritin_low_iron_deficiency
+  current_signal_ids:
+  - signal_ferritin_low
+  current_primary_biomarkers:
+  - ferritin
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ferritin_high_inflammatory_hyperferritinemia
+  - inv_ferritin_high_iron_overload_context
+  - inv_ferritin_low_iron_store_depletion
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ferritin_high
+  - signal_ferritin_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_ferritin_low_iron_store_depletion
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_folate_low_deficiency
+  current_signal_ids:
+  - signal_folate_low
+  current_primary_biomarkers:
+  - folate
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_folate_high_supplementation_or_excess_exposure
+  - inv_folate_low_folate_deficiency
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_folate_high
+  - signal_folate_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_folate_low_folate_deficiency
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_ggt_high_hepatic
+  current_signal_ids:
+  - signal_ggt_high
+  current_primary_biomarkers:
+  - ggt
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ggt_high_alcohol_or_enzyme_induction_context
+  - inv_ggt_high_hepatobiliary_cholestatic_context
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ggt_high
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_ggt_high_alcohol_or_enzyme_induction_context
+  - inv_ggt_high_hepatobiliary_cholestatic_context
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_compile
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_hba1c_high_glycaemia
+  current_signal_ids:
+  - signal_hba1c_high
+  current_primary_biomarkers:
+  - hba1c
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_hba1c_high_diabetes_range_hyperglycemia
+  - inv_hba1c_low_shortened_erythrocyte_lifespan_context
+  - inv_hba1c_pct_high_chronic_hyperglycemia_diabetes
+  - inv_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency
+  - inv_hba1c_pct_low_shortened_red_cell_survival_or_low_glycemia
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_hba1c_high
+  - signal_hba1c_low
+  - signal_hba1c_pct_high
+  - signal_hba1c_pct_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_hba1c_high_diabetes_range_hyperglycemia
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_hdl_high_cardiovascular
+  current_signal_ids:
+  - signal_hdl_cholesterol_high
+  current_primary_biomarkers:
+  - hdl_cholesterol
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_hdl_low_atherogenic_dyslipidemia
+  - inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_hdl_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_hdl_low_cardiovascular
+  current_signal_ids:
+  - signal_hdl_cholesterol_low
+  current_primary_biomarkers:
+  - hdl_cholesterol
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_hdl_low_atherogenic_dyslipidemia
+  - inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_hdl_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_hgb_low_anemia
+  current_signal_ids:
+  - signal_hemoglobin_low
+  current_primary_biomarkers:
+  - hemoglobin
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_hgb_high_erythrocytosis_or_hypoxic_drive
+  - inv_hgb_low_iron_deficiency_or_blood_loss_anemia
+  - inv_hgb_low_normocytic_underproduction_context
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_hgb_high
+  - signal_hgb_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_homocysteine_high_metabolic
+  current_signal_ids:
+  - signal_homocysteine_high
+  current_primary_biomarkers:
+  - homocysteine
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_homocysteine_high_b_vitamin_related_methylation_impairment
+  - inv_homocysteine_high_renal_clearance_reduction
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_homocysteine_high
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_homocysteine_high_b_vitamin_related_methylation_impairment
+  - inv_homocysteine_high_renal_clearance_reduction
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_compile
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_ldl_high_dyslipidaemia
+  current_signal_ids:
+  - signal_ldl_cholesterol_high
+  current_primary_biomarkers:
+  - ldl_cholesterol
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_ldl_high_atherogenic_ldl_burden
+  - inv_ldl_high_familial_hypercholesterolemia_context
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_ldl_high
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_lym_high_lymphocytosis
+  current_signal_ids:
+  - signal_lymphocytes_high
+  current_primary_biomarkers:
+  - lymphocytes
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_lym_high_reactive_or_lymphoproliferative_lymphocytosis
+  - inv_lym_low_lymphopenia_stress_or_immunosuppression
+  - inv_lymphocytes_abs_high_reactive_lymphocytosis
+  - inv_lymphocytes_abs_low_true_lymphopenia
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_lym_high
+  - signal_lym_low
+  - signal_lymphocytes_abs_high
+  - signal_lymphocytes_abs_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_mcv_high_macrocytosis
+  current_signal_ids:
+  - signal_mcv_high
+  current_primary_biomarkers:
+  - mcv
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_mcv_high_megaloblastic_macrocytosis
+  - inv_mcv_high_nonmegaloblastic_macrocytosis
+  - inv_mcv_low_microcytosis_iron_deficiency
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_mcv_high
+  - signal_mcv_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_mcv_high_megaloblastic_macrocytosis
+  - inv_mcv_high_nonmegaloblastic_macrocytosis
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_compile
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_neutrophils_high_neutrophilia
+  current_signal_ids:
+  - signal_neutrophils_high
+  current_primary_biomarkers:
+  - neutrophils
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_neutrophils_high_acute_bacterial_inflammatory_response
+  - inv_neutrophils_low_marrow_suppression_or_drug_effect
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_neutrophils_high
+  - signal_neutrophils_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_neutrophils_high_acute_bacterial_inflammatory_response
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_neutrophils_low_neutropenia
+  current_signal_ids:
+  - signal_neutrophils_low
+  current_primary_biomarkers:
+  - neutrophils
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_neutrophils_high_acute_bacterial_inflammatory_response
+  - inv_neutrophils_low_marrow_suppression_or_drug_effect
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_neutrophils_high
+  - signal_neutrophils_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_neutrophils_low_marrow_suppression_or_drug_effect
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_plt_high_thrombocytosis
+  current_signal_ids:
+  - signal_platelets_high
+  current_primary_biomarkers:
+  - platelets
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_plt_high_clonal_myeloproliferative_thrombocytosis
+  - inv_plt_high_reactive_thrombocytosis
+  - inv_plt_low_marrow_suppression_pattern
+  - inv_plt_low_peripheral_consumption_or_immune_destruction
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_plt_high
+  - signal_plt_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_plt_low_thrombocytopenia
+  current_signal_ids:
+  - signal_platelets_low
+  current_primary_biomarkers:
+  - platelets
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_plt_high_clonal_myeloproliferative_thrombocytosis
+  - inv_plt_high_reactive_thrombocytosis
+  - inv_plt_low_marrow_suppression_pattern
+  - inv_plt_low_peripheral_consumption_or_immune_destruction
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_plt_high
+  - signal_plt_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_triglycerides_high_metabolic
+  current_signal_ids:
+  - signal_triglycerides_high
+  current_primary_biomarkers:
+  - triglycerides
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_triglycerides_high_insulin_resistant_hypertriglyceridemia
+  - inv_triglycerides_high_severe_hypertriglyceridemia_context
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_triglycerides_high
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_triglycerides_high_insulin_resistant_hypertriglyceridemia
+  - inv_triglycerides_high_severe_hypertriglyceridemia_context
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_compile
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_tsh_high_hypothyroidism
+  current_signal_ids:
+  - signal_tsh_high
+  current_primary_biomarkers:
+  - tsh
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_tsh_high_primary_hypothyroid_pattern
+  - inv_tsh_low_thyrotoxic_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_tsh_high
+  - signal_tsh_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_tsh_high_primary_hypothyroid_pattern
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_tsh_low_hyperthyroidism
+  current_signal_ids:
+  - signal_tsh_low
+  current_primary_biomarkers:
+  - tsh
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_tsh_high_primary_hypothyroid_pattern
+  - inv_tsh_low_thyrotoxic_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_tsh_high
+  - signal_tsh_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_tsh_low_thyrotoxic_pattern
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_urate_high_metabolic
+  current_signal_ids:
+  - signal_urate_high
+  current_primary_biomarkers:
+  - urate
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_urate_high_gout_crystal_deposition_risk
+  - inv_urate_low_reduced_urate_pool_or_renal_loss
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_urate_high
+  - signal_urate_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_urate_high_gout_crystal_deposition_risk
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_urea_high_renal
+  current_signal_ids:
+  - signal_urea_high
+  current_primary_biomarkers:
+  - urea
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+  - inv_urea_low_low_protein_or_reduced_urea_cycle_input
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_urea_high
+  - signal_urea_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_vitamin_b12_low_deficiency
+  current_signal_ids:
+  - signal_vitamin_b12_low
+  current_primary_biomarkers:
+  - vitamin_b12
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_active_b12_low_b12_depletion
+  - inv_vitamin_b12_high_supplementation_or_secondary_elevation
+  - inv_vitamin_b12_low_b12_deficiency_context
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_active_b12_low
+  - signal_vitamin_b12_high
+  - signal_vitamin_b12_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_vitamin_b12_low_b12_deficiency_context
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_vitamin_d_low_deficiency
+  current_signal_ids:
+  - signal_vitamin_d_low
+  current_primary_biomarkers:
+  - vitamin_d
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_vitamin_d_high_vitamin_d_excess_context
+  - inv_vitamin_d_low_vitamin_d_deficiency
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_vitamin_d_high
+  - signal_vitamin_d_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_vitamin_d_low_vitamin_d_deficiency
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_wbc_high_leukocytosis
+  current_signal_ids:
+  - signal_wbc_high
+  current_primary_biomarkers:
+  - white_blood_cells
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_wbc_high_possible_clonal_leukocyte_proliferation
+  - inv_wbc_high_reactive_leukocytosis
+  - inv_wbc_low_global_leukopenic_suppression
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_wbc_high
+  - signal_wbc_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_wbc_high_possible_clonal_leukocyte_proliferation
+  - inv_wbc_high_reactive_leukocytosis
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_compile
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_s24_wbc_low_leukopenia
+  current_signal_ids:
+  - signal_wbc_low
+  current_primary_biomarkers:
+  - white_blood_cells
+  runtime_loaded: true
+  launch_relevance: runtime_active_not_visible
+  current_source_type: investigation_spec_v1_yaml
+  current_maturity_classification: non_pass3_runtime_revalidation_required
+  transition_state: research_present_uncompiled
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_wbc_high_possible_clonal_leukocyte_proliferation
+  - inv_wbc_high_reactive_leukocytosis
+  - inv_wbc_low_global_leukopenic_suppression
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_wbc_high
+  - signal_wbc_low
+  exact_pass3_signal_id_match: true
+  exact_pass3_signal_id_match_spec_ids:
+  - inv_wbc_low_global_leukopenic_suppression
+  multiple_pass3_frames: false
+  promotion_route: ROUTE_A_exact_signal_match_compile_candidate
+  recommended_action: compile_and_promotion_pilot
+  recommended_pilot_candidate: true
+  manual_review_required: false
+  notes: investigation_spec_v1_yaml cohort.
+- package_id: pkg_thyroid_tsh_context
+  current_signal_ids:
+  - signal_thyroid_tsh_context
+  current_primary_biomarkers:
+  - tsh
+  runtime_loaded: true
+  launch_relevance: internal_only
+  current_source_type: architecture_doc_blocked
+  current_maturity_classification: architecture_anchor_review_required
+  transition_state: runtime_active_legacy
+  pass3_primary_biomarker_match: true
+  pass3_primary_biomarker_match_spec_ids:
+  - inv_tsh_high_primary_hypothyroid_pattern
+  - inv_tsh_low_thyrotoxic_pattern
+  pass3_primary_biomarker_match_signal_ids:
+  - signal_tsh_high
+  - signal_tsh_low
+  exact_pass3_signal_id_match: false
+  exact_pass3_signal_id_match_spec_ids: []
+  multiple_pass3_frames: true
+  promotion_route: ROUTE_C_multiple_pass3_frames_adjudication_needed
+  recommended_action: adjudicate_pass3_frames_then_map
+  recommended_pilot_candidate: false
+  manual_review_required: true
+  notes: Investigation-layer context; architecture doc anchor only.
