@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-LEGACY-2-targeted-retirement-implementation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-31T16:16:50Z",
   "cursor_started_utc": "2026-05-31T16:14:36Z",
-  "head_sha": "e008bb78a945f4f87c875d9804b8329130ea8ab9",
+  "head_sha": "97fbf558e6583fc2904a9bb72d6886bb1056d989",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-LEGACY-2_targeted_retirement_implementation"
 }
