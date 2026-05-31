@@ -50,13 +50,13 @@ def test_narrative_payload_schema_and_builder_carries_report_slices() -> None:
     assert payload.report_v1 is rep
 
     keys = set(payload.section_intents.keys())
-    assert keys == {
-        NarrativeSectionIdV1.retail_summary.value,
-        NarrativeSectionIdV1.lead_narrative.value,
-        NarrativeSectionIdV1.body_overview.value,
-        NarrativeSectionIdV1.next_steps_narrative.value,
-        NarrativeSectionIdV1.clinician_synthesis.value,
-    }
+    assert NarrativeSectionIdV1.retail_summary.value in keys
+    assert NarrativeSectionIdV1.hero_main_finding.value in keys
+    assert NarrativeSectionIdV1.health_systems_context.value in keys
+    assert len(keys) >= 9
+    assert payload.payload_schema_version == "v1.1"
+    assert payload.score_hierarchy is not None
+    assert payload.future_llm_translation_constraints is not None
 
 
 def test_compile_narrative_report_v1_accepts_payload_meta_digest() -> None:

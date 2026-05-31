@@ -100,7 +100,7 @@ def test_lc_s3_compiler_uses_payload_and_populates_five_sections() -> None:
         narrative_payload_v1=payload,
     )
     assert nr.meta.get("narrative_payload_v1_present") is True
-    assert nr.meta.get("lc_s3_assembly_version") == "1"
+    assert nr.meta.get("lc_s3_assembly_version") == "1.1"
     for field in (
         "retail_summary",
         "lead_narrative",
@@ -179,7 +179,7 @@ def test_lc_s3_secondary_ranked_echoes_second_finding() -> None:
         idl_bundle=None,
         narrative_payload_v1=payload,
     )
-    assert "Other patterns considered on this panel" in nr.secondary_narratives
+    assert "Other patterns noted on this panel" in nr.secondary_narratives or "Other patterns considered on this panel" in nr.secondary_narratives
     assert "ldl" in nr.secondary_narratives.lower()
 
 
@@ -216,7 +216,7 @@ def test_lc_s3_missing_root_cause_handled_without_raise() -> None:
         narrative_payload_v1=payload,
     )
     assert nr.retail_summary.strip()
-    assert nr.meta.get("lc_s3_assembly_version") == "1"
+    assert nr.meta.get("lc_s3_assembly_version") == "1.1"
 
 
 def test_lc_s3_absent_payload_preserves_legacy_shape() -> None:

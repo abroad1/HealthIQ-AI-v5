@@ -17,7 +17,15 @@ from core.analytics.consumer_prose_safety_v1 import (
     consumer_body_overview_opener,
     sanitize_consumer_prose,
 )
-from core.contracts.narrative_payload_v1 import NarrativeClaimBoundaryV1, NarrativePayloadV1
+from core.analytics.narrative_brief_enforcement_v1 import (
+    record_brief_consumption_meta,
+    should_omit_section,
+)
+from core.contracts.narrative_payload_v1 import (
+    NarrativeClaimBoundaryV1,
+    NarrativePayloadV1,
+    NarrativeSectionIdV1,
+)
 from core.contracts.report_v1 import ReportTopFindingV1
 
 
@@ -295,36 +303,47 @@ def assemble_lc_s3_sections(
     consumer statin suffix), not the machine intervention appendix string.
     """
     compiler_meta["assets_resolved"].append("lc_s3_payload_primary_assembly")
-    compiler_meta["lc_s3_assembly_version"] = "1"
+    compiler_meta["lc_s3_assembly_version"] = "1.1"
+    record_brief_consumption_meta(payload, compiler_meta)
 
     boundaries = payload.claim_boundaries
 
-    retail_raw = build_consumer_retail_summary(payload, idl_retail_block="")
+    retail_raw = ""
+    if not should_omit_section(payload, NarrativeSectionIdV1.retail_summary):
+        retail_raw = build_consumer_retail_summary(payload, idl_retail_block="")
     retail_summary = _apply_boundary(retail_raw, boundaries)
 
-    lead_narrative_raw = build_consumer_lead_narrative(
-        payload,
-        pathway_excerpt=lead_yaml_block,
-    )
+    lead_narrative_raw = ""
+    if not should_omit_section(payload, NarrativeSectionIdV1.lead_narrative):
+        lead_narrative_raw = build_consumer_lead_narrative(
+            payload,
+            pathway_excerpt=lead_yaml_block,
+        )
     lead_narrative = _apply_boundary(lead_narrative_raw, boundaries)
 
-    bo_raw = "\n\n".join(
-        p
-        for p in [
-            consumer_body_overview_opener(payload).strip(),
-            alcohol_lifestyle_body_overview.strip(),
-            sanitize_consumer_prose(body_overview_for_consumer.strip()),
-        ]
-        if p
-    )
+    bo_raw = ""
+    if not should_omit_section(payload, NarrativeSectionIdV1.body_overview):
+        bo_raw = "\n\n".join(
+            p
+            for p in [
+                consumer_body_overview_opener(payload).strip(),
+                alcohol_lifestyle_body_overview.strip(),
+                sanitize_consumer_prose(body_overview_for_consumer.strip()),
+            ]
+            if p
+        )
     body_overview = _apply_boundary(bo_raw, boundaries)
 
-    ns_raw = build_consumer_next_steps(payload, clarification_paths_block)
+    ns_raw = ""
+    if not should_omit_section(payload, NarrativeSectionIdV1.next_steps_narrative):
+        ns_raw = build_consumer_next_steps(payload, clarification_paths_block)
     next_steps_narrative = _apply_boundary(ns_raw, boundaries)
 
-    clin_raw = "\n\n".join(
-        p for p in [_clinician_header(payload).strip(), clinician_base_without_consumer_lead.strip()] if p
-    )
+    clin_raw = ""
+    if not should_omit_section(payload, NarrativeSectionIdV1.clinician_synthesis):
+        clin_raw = "\n\n".join(
+            p for p in [_clinician_header(payload).strip(), clinician_base_without_consumer_lead.strip()] if p
+        )
     clinician_synthesis = _apply_boundary(clin_raw, boundaries)
 
     secondary_raw = build_consumer_secondary_narratives(

@@ -109,7 +109,7 @@ def test_payload_assembly_five_sections_populated() -> None:
         idl_bundle=None,
         narrative_payload_v1=payload,
     )
-    assert nr.meta.get("lc_s3_assembly_version") == "1", "LC-S3 assembly path not taken"
+    assert nr.meta.get("lc_s3_assembly_version") == "1.1", "LC-S3 assembly path not taken"
     for field in ("retail_summary", "lead_narrative", "body_overview", "next_steps_narrative", "clinician_synthesis"):
         assert getattr(nr, field).strip(), f"Section '{field}' must be non-empty under payload assembly"
 

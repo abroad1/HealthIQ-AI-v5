@@ -582,6 +582,10 @@ def compile_narrative_report_v1(
             "top_finding_count": len(tf),
             "root_cause_hypothesis_count": hyp_n,
             "section_intent_keys": sorted(narrative_payload_v1.section_intents.keys()),
+            "report_story_priority": list(narrative_payload_v1.report_story_priority or []),
+            "evidence_boundary_keys": sorted(narrative_payload_v1.evidence_boundaries.keys()),
+            "score_hierarchy_present": narrative_payload_v1.score_hierarchy is not None,
+            "llm_constraints_present": narrative_payload_v1.future_llm_translation_constraints is not None,
         }
 
     entities_doc = _load_yaml(_ENTITIES_PATH)

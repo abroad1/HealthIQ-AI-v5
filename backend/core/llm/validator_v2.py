@@ -164,6 +164,26 @@ def _apply_layer_b_post_checks(prompt_json: Dict[str, Any], result: LLMResultV2)
                     f"'{lead_sid}'."
                 )
 
+    raw_prohibited = prompt_json.get("layer_b_prohibited_claim_patterns")
+    if isinstance(raw_prohibited, list):
+        for pattern in raw_prohibited:
+            p = str(pattern).strip().lower()
+            if p and p in combined.lower():
+                raise ValueError(
+                    f"prohibited claim pattern from narrative brief: output contains '{pattern}'."
+                )
+
+    raw_llm_actions = prompt_json.get("layer_b_llm_prohibited_actions")
+    if isinstance(raw_llm_actions, list) and "reason_independently" in raw_llm_actions:
+        if re.search(
+            r"\b(i reasoned|independently analyzed|based on my own analysis|decided the finding)\b",
+            combined,
+            re.IGNORECASE,
+        ):
+            raise ValueError(
+                "LLM translation boundary: output suggests independent reasoning outside the governed brief."
+            )
+
 
 def validate_llm_output_v2(prompt_json: Dict[str, Any], llm_json: Dict[str, Any]) -> LLMResultV2:
     """
