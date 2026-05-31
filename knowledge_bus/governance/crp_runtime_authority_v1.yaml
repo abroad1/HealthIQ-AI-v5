@@ -1,0 +1,45 @@
+schema_version: "1.0.0"
+authority_id: crp_runtime_authority_v1
+classification_date_utc: "2026-05-31"
+migration_decision: legacy_s24_retained_pass3_deferred
+
+signals:
+  signal_crp_high:
+    clinical_role: acute_phase_crp_investigation
+    primary_metric: crp
+    activation_logic: lab_range_exceeded
+    distinct_from_signal_systemic_inflammation: true
+    runtime_package_id: pkg_s24_crp_high_inflammation
+    runtime_package_tier: structured_translation_batch_no_psi
+    source_investigation_spec: inv_crp_high_inflammation_v1.yaml
+    pass3_research_frames:
+      - inv_crp_high_active_inflammatory_or_infective_state
+      - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+    pass3_runtime_status: research_only_not_compiled
+    root_cause_target: false
+
+  signal_systemic_inflammation:
+    clinical_role: chronic_low_grade_inflammation_construct
+    primary_metric: crp
+    activation_logic: deterministic_threshold
+    distinct_from_signal_crp_high: true
+    runtime_package_ids:
+      - KBP-0001
+      - pkg_chronic_inflammation
+    root_cause_hypothesis_asset: systemic_inflammation_hypotheses_v1.yaml
+    root_cause_target: true
+    pass3_runtime_status: not_applicable
+
+  signal_inflammation_crp_context:
+    clinical_role: crp_context_escalation
+    primary_metric: crp
+    activation_logic: lab_range_exceeded
+    runtime_package_id: pkg_inflammation_crp_context
+    distinct_from_signal_crp_high: true
+    distinct_from_signal_systemic_inflammation: true
+    root_cause_target: false
+
+wave1_card_policy:
+  vascular_strain_subsystem_id: wave1_cv_vascular_strain
+  visibility_tier: hidden_v1
+  crp_must_not_be_scored_subsystem_basis: true

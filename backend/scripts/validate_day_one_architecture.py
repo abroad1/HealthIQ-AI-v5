@@ -8,6 +8,7 @@ Read-only: does not mutate repository files. Exits non-zero on violation.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 from typing import List, Sequence
@@ -336,6 +337,85 @@ def validate_arch_legacy2_retirement(errors: List[str]) -> None:
         _err(errors, "domain_flat_card_evidence loader must remain present for launch-critical path")
 
 
+def validate_crp_signal_authority(errors: List[str]) -> None:
+    """CRP-PASS3-MIGRATION: CRP package/signal authority must remain explicitly classified."""
+    sys.path.insert(0, str(_REPO / "backend"))
+    from core.knowledge.crp_signal_authority_v1 import (  # noqa: PLC0415
+        CRP_RUNTIME_PACKAGE_SIGNAL_CRP_HIGH,
+        CRP_SIGNAL_IDS,
+        PASS3_CRP_FRAME_IDS,
+        ROOT_CAUSE_INFLAMMATION_SIGNAL_ID,
+        WAVE1_VASCULAR_STRAIN_SUBSYSTEM_ID,
+        authority_by_signal_id,
+        load_crp_runtime_authority,
+    )
+    from core.knowledge.health_system_card_evidence import get_card_evidence_artefact  # noqa: PLC0415
+    from core.knowledge.root_cause_registry_v1 import ROOT_CAUSE_TARGET_SPECS  # noqa: PLC0415
+
+    doc = load_crp_runtime_authority()
+    if doc.get("migration_decision") != "legacy_s24_retained_pass3_deferred":
+        _err(errors, "CRP migration_decision must remain legacy_s24_retained_pass3_deferred")
+
+    by_signal = authority_by_signal_id()
+    if set(by_signal.keys()) != set(CRP_SIGNAL_IDS):
+        _err(errors, f"CRP authority registry must cover {sorted(CRP_SIGNAL_IDS)!r}")
+
+    crp_high = by_signal["signal_crp_high"]
+    if crp_high.runtime_package_id != CRP_RUNTIME_PACKAGE_SIGNAL_CRP_HIGH:
+        _err(errors, "signal_crp_high must remain bound to pkg_s24_crp_high_inflammation")
+    if crp_high.root_cause_target:
+        _err(errors, "signal_crp_high must not be a root-cause registry target")
+
+    systemic = by_signal["signal_systemic_inflammation"]
+    if not systemic.root_cause_target:
+        _err(errors, "signal_systemic_inflammation must remain root-cause target")
+    if systemic.activation_logic != "deterministic_threshold":
+        _err(errors, "signal_systemic_inflammation must use deterministic_threshold activation")
+
+    registry_ids = {spec.signal_id for spec in ROOT_CAUSE_TARGET_SPECS}
+    if ROOT_CAUSE_INFLAMMATION_SIGNAL_ID not in registry_ids:
+        _err(errors, "root-cause registry must include signal_systemic_inflammation")
+    if "signal_crp_high" in registry_ids:
+        _err(errors, "root-cause registry must not register signal_crp_high (naming split policy)")
+
+    packages = _REPO / "knowledge_bus" / "packages"
+    crp_high_holders: list[str] = []
+    for lib_path in sorted(packages.glob("*/signal_library.yaml")):
+        doc_lib = yaml.safe_load(lib_path.read_text(encoding="utf-8")) or {}
+        for entry in doc_lib.get("signals") or []:
+            if isinstance(entry, dict) and str(entry.get("signal_id", "")).strip() == "signal_crp_high":
+                crp_high_holders.append(lib_path.parent.name)
+    if crp_high_holders != [CRP_RUNTIME_PACKAGE_SIGNAL_CRP_HIGH]:
+        _err(
+            errors,
+            f"signal_crp_high must be defined only in {CRP_RUNTIME_PACKAGE_SIGNAL_CRP_HIGH!r}, got {crp_high_holders!r}",
+        )
+
+    manifest_path = packages / CRP_RUNTIME_PACKAGE_SIGNAL_CRP_HIGH / "package_manifest.yaml"
+    if manifest_path.is_file():
+        manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8")) or {}
+        frames = manifest.get("pass3_research_frames") or []
+        if not isinstance(frames, list) or set(frames) != set(PASS3_CRP_FRAME_IDS):
+            _err(errors, "pkg_s24 manifest pass3_research_frames must match governed Pass 3 frame ids")
+
+    vascular = get_card_evidence_artefact(WAVE1_VASCULAR_STRAIN_SUBSYSTEM_ID)
+    if vascular.visibility_tier != "hidden_v1":
+        _err(errors, "wave1_cv_vascular_strain must remain hidden_v1 (CRP must not score card basis)")
+
+    batch4 = _REPO / "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json"
+    if batch4.is_file():
+        batch_doc = json.loads(batch4.read_text(encoding="utf-8"))
+        if isinstance(batch_doc, list):
+            spec_ids = {
+                str(item.get("spec_id", "")).strip()
+                for item in batch_doc
+                if isinstance(item, dict)
+            }
+            for frame_id in PASS3_CRP_FRAME_IDS:
+                if frame_id not in spec_ids:
+                    _err(errors, f"Batch_4 Pass_3 missing governed CRP frame {frame_id!r}")
+
+
 def validate_signal_library_uniqueness(errors: List[str]) -> None:
     """
     Rule 13–15: fail closed on silent within-file collapse; activation_key is frame identity.
@@ -390,6 +470,7 @@ def run_day_one_architecture_validation(*, repo_root: Path | None = None) -> Lis
     validate_authority_manifest(errors)
     validate_wave1_assembler_routing(errors)
     validate_arch_legacy2_retirement(errors)
+    validate_crp_signal_authority(errors)
     validate_med_rev1_wave1_visibility(errors)
     validate_kb_util1_wave1_card_enrichment(errors)
     validate_signal_library_uniqueness(errors)

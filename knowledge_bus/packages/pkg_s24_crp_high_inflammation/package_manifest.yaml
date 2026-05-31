@@ -7,3 +7,10 @@ author: HealthIQ Architecture Team
 created_at: '2026-03-12'
 source_document: knowledge_bus/research/investigation_specs/inv_crp_high_inflammation_v1.yaml
 translation_mode: creation
+runtime_authority_classification: legacy_s24_retained_classified
+pass3_research_frames:
+  - inv_crp_high_active_inflammatory_or_infective_state
+  - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+pass3_runtime_status: research_only_not_compiled
+pass3_research_source: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+governance_registry: knowledge_bus/governance/crp_runtime_authority_v1.yaml
