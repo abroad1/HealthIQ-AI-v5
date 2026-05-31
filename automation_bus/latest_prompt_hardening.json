@@ -1,144 +1,139 @@
 {
-  "work_id": "MED-REV-1_wave1_subsystem_visibility_and_label_alignment",
+  "work_id": "MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux",
   "status": "HARDENED",
   "bus_version": "1.3.1",
-  "hardened_utc": "2026-05-30T00:00:00Z",
+  "hardened_utc": "2026-05-31T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "front_matter_complete",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation (line 2), branch=work/LAUNCH-CORE-5-results-page-narrative-hierarchy-and-score-rationalisation (line 3), risk_level=HIGH (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=MIXED (line 6)"
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7 — all five required fields present: work_id=MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux (line 2), branch=work/MED-REV-2-wave1-domain-card-copy-alignment-and-result-regeneration-ux (line 3), risk_level=HIGH (line 4), execution_model=TWO_PHASE_START_FINISH (line 5), change_type=MIXED (line 6)"
     },
     {
       "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:64-74 — sprint may touch domain_score_assembler.py and report_compiler_v1.py (Intelligence Core: output assembly mechanisms per SOP §3). Affects user-facing health interpretation. HIGH is mandatory per SOP §10 for any work interacting with Intelligence Core components."
+      "citation": "automation_bus/latest_cursor_prompt.md:58-66 — sprint touches domain_narrative_wave1.py and domain_score_assembler.py (Intelligence Core: output assembly mechanisms per SOP §3), adds a regeneration endpoint to analysis.py (pipeline behaviour), and modifies Wave1DomainCards.tsx narrative content. HIGH mandatory per SOP §10 for any work interacting with Intelligence Core components or affecting output generation."
     },
     {
       "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:70-74 — MIXED correct: sprint touches both frontend Layer C (section reorder, banner guard, label changes, marker score hiding) and potentially backend Layer B (section ordering metadata, consumer-safe labels, deduplicated lead summary). Per SOP §4, MIXED always governed under BEHAVIOUR controls."
+      "citation": "automation_bus/latest_cursor_prompt.md:58-66 — MIXED correct: sprint modifies both Layer B governed narrative assembly (domain card prose, IDL-driven copy alignment, regeneration availability logic) and Layer C frontend presentation (StaleResultBanner.tsx, Wave1DomainCards.tsx). Per SOP §4, MIXED always governed under BEHAVIOUR controls."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: baseline preflight (branch=main, working tree clean, LAUNCH-CORE-3 merged, LAUNCH-CORE-4 audit report present) must complete before any file modification."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH. Correct: baseline preflight requires verifying main is clean, MED-REV-1 merged, LAUNCH-CORE-3 merged before any file modification."
     },
     {
-      "check": "2a_launch_core_4_audit_exists",
+      "check": "2a_all_sprint_specific_authority_docs",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LAUNCH-CORE-4_results_page_narrative_hierarchy_and_score_rationalisation_audit.md — file exists on disk. Content verified: audit §8 (line 153) confirms Wave1DomainCards at results/page.tsx lines 717-729 is rendered before PrimaryFindingAndWhy. Audit §9 confirms StaleResultBanner does not render for result_status=incompatible. Audit references base commit ff83dbe on main."
+      "citation": "All 7 sprint-specific authority documents confirmed present on disk: docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md, docs/audit-papers/healthiq_wave1_health_systems_subsystem_medical_review.md, docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md, docs/audit-papers/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_audit.md, docs/audit-papers/LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation_report.md, docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md, docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md"
     },
     {
-      "check": "2a_authority_doc_LAUNCH_CORE_2",
+      "check": "2a_all_implementation_authority_files",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md — file exists on disk."
-    },
-    {
-      "check": "2a_authority_doc_LAUNCH_CORE_1",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy_report.md — file exists on disk."
-    },
-    {
-      "check": "2a_authority_doc_LAUNCH_CORE_3",
-      "result": "CONFIRMED",
-      "citation": "docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md — file exists on disk."
-    },
-    {
-      "check": "2a_authority_doc_ARCH_RT_6_audit",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md — file exists on disk."
-    },
-    {
-      "check": "2a_authority_doc_ARCH_RT_6_guardrails",
-      "result": "CONFIRMED",
-      "citation": "docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md — file exists on disk."
-    },
-    {
-      "check": "2a_authority_doc_validate_script",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_day_one_architecture.py — file exists on disk."
-    },
-    {
-      "check": "2a_implementation_authority_paths",
-      "result": "CONFIRMED",
-      "citation": "All 13 listed paths confirmed present. backend/app/routes/analysis.py, backend/core/dto/result_versioning_policy_v1.py, backend/core/analytics/domain_score_assembler.py, backend/core/analytics/report_compiler_v1.py, backend/core/analytics/domain_narrative_wave1.py, frontend/app/(app)/results/page.tsx, frontend/app/types/analysis.ts, all 5 frontend lib files, all 18 results components including StaleResultBanner.tsx. backend/core/models/** (10 files) and backend/core/contracts/** (24 files) confirmed present."
+      "citation": "All 15 implementation authority files confirmed present on disk: backend/scripts/validate_day_one_architecture.py, backend/app/routes/analysis.py, backend/core/dto/result_versioning_policy_v1.py, backend/core/analytics/domain_score_assembler.py, backend/core/analytics/domain_narrative_wave1.py, backend/core/analytics/report_compiler_v1.py, backend/core/pipeline/orchestrator.py, backend/services/storage/persistence_service.py, backend/core/contracts/replay_manifest_v1.py, backend/core/dto/persisted_replay_contract_v1.py, frontend/app/(app)/results/page.tsx, frontend/app/components/results/StaleResultBanner.tsx, frontend/app/components/results/Wave1DomainCards.tsx, frontend/app/lib/wave1HealthSystemCardDisplay.ts, frontend/app/types/analysis.ts"
     },
     {
       "check": "2a_no_duplicate_authority_sources",
       "result": "CONFIRMED",
-      "citation": "StaleResultBanner.tsx is the sole frontend banner component. results/page.tsx is the sole layout authority. backend/core/dto/result_versioning_policy_v1.py is the sole backend versioning DTO source. frontend/app/lib/feR2ResultsJourneyOrder.ts is the sole canonical section-order test ID registry."
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml is the sole IDL registry source. domain_narrative_wave1.py is the sole domain narrative assembly module. result_versioning_policy_v1.py is the sole versioning policy DTO. StaleResultBanner.tsx is the sole stale result banner component. No duplicate authority sources detected."
     },
     {
-      "check": "2a_banner_defect_source_cross_reference",
-      "result": "CONFIRMED — FRONTEND-ONLY FIX REQUIRED",
-      "citation": "frontend/app/components/results/StaleResultBanner.tsx:12 — guard reads `versioning.result_status !== 'stale'` causing the component to return null for ANY status other than 'stale', including 'incompatible'. frontend/app/types/analysis.ts:366 — ResultVersioningMetadataV1.result_status typed as 'current' | 'stale' | 'incompatible'. backend/core/dto/result_versioning_policy_v1.py:129-131 — user_message for incompatible status IS already populated: 'This saved result cannot be displayed with the current results page contract.' NO backend change is required for the banner fix. Fix is a single guard change in StaleResultBanner.tsx:12."
+      "check": "2a_track_a_cv_defect_source_cross_reference",
+      "result": "CONFIRMED — IDL REGISTRY IS ROOT CAUSE",
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:28-36 — ph_vascular_hcy_inflammation_v1 has retail_display_label='Vascular Inflammation Risk' (line 31) and enabled_for_frontend=true (line 36). domain_narrative_wave1.py:303-312 (evidence_anchor_sentence) reads this dynamically via idl_record(). If vascular IDL resolves as primary_idl, card anchor reads 'Based mainly on: Vascular Inflammation Risk'. domain_narrative_wave1.py:400-413 (cv_contributor_primary) uses primary_idl only — IDL resolution order in domain_score_assembler.py:52 (_IDL_ORDER_CV) tries ph_vascular_hcy_inflammation_v1 FIRST. MED-REV-1 hid the homocysteine subsystem at the health_system_card_evidence level but did NOT change enabled_for_frontend on the IDL record. Defect is live and traceable to idl_records_v1.yaml:36."
     },
     {
-      "check": "2a_section_order_defect_source_cross_reference",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx:717-720 — Wave1DomainCards rendered outside any FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS-assigned section, immediately before PrimaryFindingAndWhy block at lines 722-730. frontend/app/lib/feR2ResultsJourneyOrder.ts:5-14 — Wave1DomainCards has NO entry in the canonical section test ID registry. Target hierarchy (prompt §Target default page hierarchy) places PrimaryFinding at step 2, WorkingWell at step 3, HealthSystems at step 4. Current order confirmed: [Hero/BodyOverview(670), WorkingWell(708), Wave1DomainCards(717), PrimaryFinding(722), Uncertainty(732), Patterns(749), Markers(765)]."
+      "check": "2a_track_a_blood_sugar_defect_source_cross_reference",
+      "result": "CONFIRMED — INSULIN RESISTANCE IDL STILL ENABLED",
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:8-16 — ph_metabolic_early_ir_v1 has retail_display_label='Insulin Resistance Phenotype', subtitle='A pattern suggesting early impaired sugar and lipid handling', enabled_for_frontend=true (line 16). domain_narrative_wave1.py:486-513 (met_contributor_primary) will surface this IDL's subtitle if it is the resolved primary_idl. MED-REV-1 hid the insulin-resistance subsystem at the health_system_card level but did NOT change enabled_for_frontend on ph_metabolic_early_ir_v1. Blood sugar card can still anchor on insulin resistance context — defect is live."
     },
     {
-      "check": "2b_section_reorder_full_scope_clarification",
-      "result": "HARDENING NOTE — CURSOR MUST IMPLEMENT FULL TARGET ORDER",
-      "citation": "Prompt §Target default page hierarchy requires: 1-Hero, 2-PrimaryFinding, 3-WorkingWell, 4-HealthSystems. Current page.tsx has WorkingWell (BalancedSystemsSummary) at line 708 BEFORE both Wave1DomainCards (717) and PrimaryFindingAndWhy (722). Fully implementing the target hierarchy requires moving PrimaryFindingAndWhy BEFORE BalancedSystemsSummary, not merely before Wave1DomainCards. Cursor must implement the complete target sequence and update feR2ResultsJourneyOrder.ts consistently. A partial fix moving only Wave1DomainCards after PrimaryFinding while leaving WorkingWell ahead of PrimaryFinding does NOT satisfy the target hierarchy in the prompt."
+      "check": "2a_track_a_liver_confidence_defect_source_cross_reference",
+      "result": "CONFIRMED — HARDCODED MARKER NAMES",
+      "citation": "backend/core/analytics/domain_narrative_wave1.py:350-352 — confidence_sentence_for('low', 'liver') returns: 'Confidence is limited — a fuller liver function panel (including GGT, ALP, albumin) would improve the read.' This text is hardcoded and does not check whether GGT, ALP, albumin are actually present on the panel. Liver confidence tier is derived from the biomarker coverage pool (_HEP_CONFIDENCE_POOL at domain_score_assembler.py:69-80). A 'low' tier only fires when panel coverage is thin — but the hardcoded copy may still incorrectly name GGT/ALP/albumin as missing when they are present but the overall tier is still low from other gaps. Defect is live."
     },
     {
-      "check": "2b_journey_order_registry_consistency",
-      "result": "HARDENING NOTE — CURSOR MUST RESOLVE",
-      "citation": "frontend/app/lib/feR2ResultsJourneyOrder.ts:5-14 — 8 canonical section test IDs (indices 0-7). Wave1DomainCards currently has NO entry. After the reorder Cursor must either: (a) add a test ID entry for Wave1DomainCards in the registry and assign it via data-testid in page.tsx, OR (b) explicitly confirm Wave1DomainCards intentionally has no journey-order tracking ID and document why. The section order test (required test #1: 'Primary finding before Health Systems Cards') must reference either these test IDs or the component render order — Cursor must ensure the test is reliable and not dependent on text matching or DOM structure that could change."
+      "check": "2a_track_b_regeneration_state_cross_reference",
+      "result": "CONFIRMED — REGENERATION NOT IMPLEMENTED",
+      "citation": "backend/core/dto/result_versioning_policy_v1.py:107 — assess_result_versioning() returns regeneration_available=False hardcoded. No regeneration endpoint found in backend/app/routes/analysis.py (grep for 'regenerat' returned no matches). frontend/app/components/results/StaleResultBanner.tsx:38-43 — shows 'coming soon' placeholder text when regeneration_available=True, no button. REFERENCE_STALE_ANALYSIS_IDS at result_versioning_policy_v1.py:22-27 matches sprint UAT IDs exactly. Track B has real work to do."
     },
     {
-      "check": "2b_existing_test_coverage_gap",
-      "result": "CONFIRMED — TWO GAPS TO FILL",
-      "citation": "frontend/tests/components/StaleResultBanner.test.tsx — exists with 2 tests covering 'current' (renders null) and 'stale' (shows banner). Missing test for 'incompatible' (sprint test requirement #3). No FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS referenced in any test file — no existing section order test (sprint test requirement #1: 'Results page renders Primary finding before Health Systems Cards'). Both gaps must be filled in this sprint."
+      "check": "2a_track_b_persisted_replay_contract_cross_reference",
+      "result": "CONFIRMED — PREFLIGHT REQUIRED BEFORE ENDPOINT IMPLEMENTATION",
+      "citation": "backend/core/dto/persisted_replay_contract_v1.py:17-29 — PERSISTED_RENDER_REQUIRED_KEYS requires analysis_id, biomarkers, consumer_domain_scores, clinician_report_v1, narrative_report_v1, interpretation_display_layer_v1, replay_manifest, meta, result_version. backend/core/contracts/replay_manifest_v1.py:160-163 — lifestyle_input_hash field present but optional (default=None). Whether raw biomarker input is stored in a retrievable form is a runtime question that persistence_service.py and the DB schema must answer. Sprint preflight questions 1-8 (automation_bus/latest_cursor_prompt.md:252-266) are the correct gate before endpoint commit."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:248-278 — allowed Layer B changes enumerated (section ordering metadata, consumer-safe labels, result versioning display state, presentation metadata, deduplicated lead summary). Allowed Layer C changes enumerated (reorder rendered sections, banner, hide marker numeric scores, approved static UI labels). STOP condition #3 (line 420) protects against scope creep into broad backend narrative compiler redesign. Scope is clearly bounded."
+      "citation": "automation_bus/latest_cursor_prompt.md:141-217 (Track A) and 222-306 (Track B) — allowed changes enumerated per domain. Layer A/B/C separation explicitly required at lines 310-318. Track A constraints list 8 explicit prohibitions (lines 203-217). Track B constraints list 8 prohibitions (lines 294-306). Scope is clearly bounded."
     },
     {
       "check": "2b_intelligence_core_boundary",
       "result": "CONFIRMED — STOP CONDITIONS ACTIVE",
-      "citation": "Sprint is explicitly prohibited from touching: SignalEvaluator, SignalRegistry, root-cause compiler logic, clinical scoring thresholds, rail score calculations, PSI status (automation_bus/latest_cursor_prompt.md:341-359). Allowed Layer B changes are DTO/presentation metadata additions only — not analytical logic changes. STOP condition #2 (line 419): STOP if completing the sprint requires frontend clinical inference. STOP condition #3 (line 420): STOP if completing the sprint requires broad backend narrative compiler redesign. These protections are comprehensive."
+      "citation": "automation_bus/latest_cursor_prompt.md:405-419 — STOP conditions cover: Track A requiring scoring threshold changes (1), frontend medical inference (2), broad narrative compiler rewrite (3); Track B unable to locate stored input (4), overwriting old results (5), broad DB lineage migration (6), auditability gap (7), ARCH-RT-6 validator failure (8), scope drift into LLM translation (9). These comprehensively protect the Intelligence Core boundary."
+    },
+    {
+      "check": "2b_idl_registry_fix_path_must_be_declared",
+      "result": "HARDENING NOTE — CURSOR MUST DECLARE AND REPORT FIX PATH",
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:36 — ph_vascular_hcy_inflammation_v1 enabled_for_frontend=true. domain_score_assembler.py:52 — _IDL_ORDER_CV tries vascular IDL first. Cursor has two valid fix paths: (A) set enabled_for_frontend=false on ph_vascular_hcy_inflammation_v1 in idl_records_v1.yaml (Layer A governed change — affects all IDL consumers); (B) change _IDL_ORDER_CV in domain_score_assembler.py to try lipid IDL first (Layer B logic change). Both are in scope for MIXED/HIGH. Cursor must declare which path is taken in the Track A root-cause findings section of the report, and must NOT apply both changes without explicit justification."
+    },
+    {
+      "check": "2b_insulin_resistance_idl_fix_required",
+      "result": "HARDENING NOTE — TRACK A BLOOD SUGAR FIX MUST ADDRESS IDL",
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:16 — ph_metabolic_early_ir_v1 enabled_for_frontend=true. This IDL's subtitle ('A pattern suggesting early impaired sugar and lipid handling') can surface as the blood sugar card contributor via met_contributor_primary (domain_narrative_wave1.py:486-513). The same fix-path choice applies as for cardiovascular: (A) disable IDL for frontend in the YAML, or (B) change primary IDL resolution logic to exclude IR IDL from the blood sugar card anchor when insulin subsystem is hidden. Cursor must resolve this alongside the cardiovascular fix."
+    },
+    {
+      "check": "2b_homocysteine_confidence_bridge_must_be_suppressed",
+      "result": "HARDENING NOTE — VERIFY POST-FIX",
+      "citation": "backend/core/analytics/domain_narrative_wave1.py:281-295 (confidence_sentence_cv_coherent) — adds homocysteine bridge language when 'homocysteine' appears in contributor text. If the vascular IDL fix suppresses homocysteine from the contributor path, this bridge will not fire. Cursor must confirm post-fix that confidence_sentence_cv_coherent no longer receives homocysteine-containing contributor text for the cardiovascular card. Confirm in Track A root-cause findings."
+    },
+    {
+      "check": "2b_legacy_cv_contributor_must_not_be_re-entered",
+      "result": "HARDENING NOTE — VERIFY POST-FIX",
+      "citation": "backend/core/analytics/domain_narrative_wave1.py:373-397 (cv_contributor, legacy) — greedy loop tries _ID_VASCULAR before _ID_LIPID. This function is superseded by cv_contributor_primary (D-6, lines 400-413). Cursor must not introduce any code path in domain_score_assembler.py that falls back to the legacy cv_contributor function. Confirm in Track A root-cause findings that assembler calls only cv_contributor_primary."
+    },
+    {
+      "check": "2b_regeneration_immutability_non_negotiable",
+      "result": "CONFIRMED — STOP CONDITIONS PROTECT",
+      "citation": "automation_bus/latest_cursor_prompt.md:228-241 — regeneration model: old result immutable, regenerated result is a new version or new record, old and new are linked or traceable. STOP condition 5 (line 412) fires if Track B would overwrite old results. backend/core/dto/result_versioning_policy_v1.py:116-150 (build_result_versioning_metadata) is read-only API — does not mutate stored results. Architecture is consistent with immutability requirement."
     },
     {
       "check": "2b_determinism_preserved",
-      "result": "CONFIRMED — no analytical logic touched",
-      "citation": "Section reorder is Layer C JSX order — no determinism impact. Banner guard change is a boolean condition change — no determinism impact. Label changes ('Strong Signal'→'Needs attention' etc.) are static UI string substitutions — no determinism impact. Marker score visibility is a display toggle — no determinism impact. Any Layer B DTO additions add new fields without modifying existing score calculations. Determinism is not at risk for the defined scope."
+      "result": "CONFIRMED — IDL and narrative assembly are deterministic",
+      "citation": "domain_narrative_wave1.py is stateless and deterministic — all functions derive output from passed-in IDL records, signal rows, and bands. No LLM path. No random. The IDL YAML is a governed static artefact. Changing IDL enabled_for_frontend or IDL order in the assembler produces deterministic, governed output changes. Track B regeneration endpoint, if implemented, must invoke the existing orchestrator deterministically — STOP condition 4 protects against non-deterministic regeneration."
     },
     {
       "check": "2b_no_frontend_clinical_inference",
       "result": "CONFIRMED with active STOP condition",
-      "citation": "All label changes in prompt §Scope item 5 are static string substitutions: 'Trust strip'→'Data quality', 'Why this lead won'→'How confident is this read?', 'Strong Signal'→'Needs attention'. These are display-layer renames, not clinical priority decisions. Backend-decided fields must drive any ordering. STOP condition #2 (automation_bus/latest_cursor_prompt.md:419) fires if frontend must derive clinical priority from raw marker data, signal IDs, score values, or string matching. Cursor must confirm at sprint close that no clinical inference was added."
-    },
-    {
-      "check": "2b_regeneration_flow_prohibited",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:341-342 — explicitly prohibited: 'do not add a regenerate button in this sprint, do not implement regeneration flow'. Sprint test requirement #4: 'No regenerate button is introduced.' StaleResultBanner.tsx:30-32 existing conditional for regeneration_available must be preserved as-is. Cursor must not introduce any regeneration UI or backend hooks."
+      "citation": "automation_bus/latest_cursor_prompt.md:318-319 — frontend must not infer clinical meaning, stale logic, or regeneration safety from raw fields; backend must provide safe metadata. STOP condition 2 (line 409) fires if Track A requires frontend medical inference. wave1HealthSystemCardDisplay.ts is presentational only (confirmed by reading file lines 1-49 — no clinical inference, only string formatting helpers). Cursor must maintain this boundary."
     },
     {
       "check": "2b_regression_targets_present",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:374-379 — minimum required commands: python backend/scripts/validate_day_one_architecture.py + python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q. Plus 9 enumerated test requirements (lines 362-373) covering section order, banner for stale, banner for incompatible, no regenerate button, marker scores hidden, completeness display, consumer-safe chips, internal traces hidden, ARCH-RT-6 validator pass."
+      "citation": "automation_bus/latest_cursor_prompt.md:341-373 — 6 Track A tests and 8 Track B tests enumerated. Mandatory commands: python backend/scripts/validate_day_one_architecture.py + python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q. Track A regression tests should extend or reference backend/tests/regression/test_med_rev1_wave1_subsystem_visibility.py (created in MED-REV-1, confirmed in MED-REV-1 report)."
+    },
+    {
+      "check": "2b_no_op_sprint_protection",
+      "result": "CONFIRMED — NOT A NO-OP",
+      "citation": "Track A: ph_vascular_hcy_inflammation_v1 enabled_for_frontend=true (idl_records_v1.yaml:36) with ordering priority over lipid IDL (domain_score_assembler.py:52) — live defect confirmed. liver confidence hardcoded copy at domain_narrative_wave1.py:350-352 — live defect confirmed. Track B: regeneration_available hardcoded False, no endpoint — real implementation required. Sprint has genuine work."
     },
     {
       "check": "2b_stop_conditions_assessment",
       "result": "NO STOP CONDITIONS TRIGGERED IN HARDENING",
-      "citation": "Pre-hardening assessment: (1) required audit files all exist — no STOP; (2) banner fix and section reorder do not require frontend clinical inference — no STOP; (3) banner fix is frontend-only, section reorder is layout-only — no broad narrative compiler redesign required — no STOP; (4) reorder/hide/rename does not remove clinically meaningful analysis — no STOP; (5) hiding marker numeric scores does not change clinical scoring semantics — no STOP; (6) banner fix does not require implementing regeneration flow — no STOP; (7) ARCH-RT-6 validator passed at LAUNCH-CORE-4 audit time, scope does not touch guardrail targets — no STOP; (8) test requirements are achievable (banner tests via unit test, section order via component or integration test) — no STOP. All STOP conditions clear."
-    },
-    {
-      "check": "2b_scope_creep_risk",
-      "result": "LOW — bounded by STOP conditions",
-      "citation": "Primary scope creep risk: Cursor may be tempted to implement backend DTO changes that require modifying report_compiler_v1.py or domain_score_assembler.py analytical logic rather than adding new presentation-only fields. STOP condition #3 (automation_bus/latest_cursor_prompt.md:420) prohibits broad narrative compiler redesign. Cursor must limit Layer B changes to additive presentation metadata — if a DTO change requires modifying existing score or narrative assembly logic, STOP and report."
+      "citation": "Pre-hardening assessment: (1) Track A fixes are copy/IDL alignment — no scoring threshold changes; (2) no frontend clinical inference required; (3) no broad narrative compiler rewrite — assembler IDL order or IDL registry change; (4) Track B preflight is advisory before endpoint commit — not pre-triggered; (5) immutability rule is stated and protected by STOP condition 5; (6) DB migration requirement unknown — STOP condition 6 protects; (7) auditability gap protected by STOP condition 7; (8) ARCH-RT-6 validator scope is architecture guardrails, not card copy — should remain green; (9) no scope drift to LLM translation. All STOP conditions clear in hardening phase."
     },
     {
       "check": "forbidden_files_clear",
       "result": "CONFIRMED",
-      "citation": "Out-of-scope list (automation_bus/latest_cursor_prompt.md:341-359) prohibits: regenerate button, regeneration backend flow, clinical scoring thresholds, rail score calculations, biomarker SSOT, unit conversion, SignalRegistry, SignalEvaluator, PSI status, root-cause compiler logic, compiled artefact clinical content, package clinical content, frontend clinical inference, raw internal IDs/source traces, fallback parsers. Closure requirements (lines 483-490) enforce: no clinical interpretation logic changed, no meaningful analysis removed, no helper scripts committed."
+      "citation": "Sprint explicitly prohibits (automation_bus/latest_cursor_prompt.md:203-217, 294-306): clinical scoring thresholds, rail score calculations, marker values, SignalEvaluator, SignalRegistry, root-cause compiler logic, PSI status, reintroducing hidden subsystems as visible scored evidence, frontend clinical inference, overwriting existing result payloads, mutating old analysis records, fallback parsers, broad DB migrations. No forbidden file paths are referenced as targets in the sprint body."
+    },
+    {
+      "check": "tooling_leakage_check",
+      "result": "CONFIRMED",
+      "citation": "Sprint prompt references no .codex/, .vscode/, or AGENTS.md files. No tooling leakage risk identified."
     }
   ]
 }

@@ -1,32 +1,25 @@
 ---
-work_id: MED-REV-1_wave1_subsystem_visibility_and_label_alignment
-branch: work/MED-REV-1-wave1-subsystem-visibility-and-label-alignment
+work_id: MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux
+branch: work/MED-REV-2-wave1-domain-card-copy-alignment-and-result-regeneration-ux
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# MED-REV-1 — Wave 1 Subsystem Visibility and Label Alignment
+# MED-REV-2 — Wave 1 Domain Card Copy Alignment and Result Regeneration UX
 
 ## Purpose
 
-Resolve the results-page UX hierarchy problem identified in LAUNCH-CORE-4.
+Resolve the post-MED-REV-1 mismatch between the visible Wave 1 subsystem model and the domain-card prose, while adding a safe regeneration UX so stale/incompatible test results can be regenerated using the latest engine without re-uploading the panel.
 
-The page is technically credible, but it currently reads as a stack of competent widgets rather than a guided health report. Users are exposed to too many competing scores, repeated lead-pattern language, and technical labels before they understand the main health story.
-
-This sprint must improve narrative hierarchy and score clarity without discarding meaningful analysis.
-
-The key audit finding is:
+This sprint has two tracks:
 
 ```text
-The results page is technically credible but narratively immature. Users cannot quickly answer: “What is wrong, how sure are you, and what should I do?” without reading repetitive prose and reconciling competing scores.
+Track A — Wave 1 domain card copy alignment
+Track B — Versioned result regeneration UX
 ````
 
-Reference:
-
-```text
-docs/audit-papers/LAUNCH-CORE-4_results_page_narrative_hierarchy_and_score_rationalisation_audit.md
-```
+Both tracks must preserve HealthIQ’s deterministic and auditable result model.
 
 ## Baseline requirement
 
@@ -36,10 +29,9 @@ Expected prior completed work:
 
 ```text
 ARCH-RT programme fully merged through ARCH-RT-6
-LAUNCH-CORE-1 merged
-LAUNCH-CORE-2 UAT completed
-LAUNCH-CORE-3 merged
-LAUNCH-CORE-4 audit completed
+LAUNCH-CORE-5 merged
+MED-REV-1 merged
+LAUNCH-CORE-3 result versioning policy merged
 ```
 
 Before creating or switching branch, run and report:
@@ -57,8 +49,8 @@ STOP if:
 * current branch is not `main`
 * local `main` does not equal `origin/main`
 * working tree is not clean
+* MED-REV-1 is not merged
 * LAUNCH-CORE-3 is not merged
-* LAUNCH-CORE-4 audit report is missing
 * untracked or uncommitted files are present
 
 ## Governance classification
@@ -71,7 +63,7 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This sprint may touch backend result-presentation assembly, DTO shaping, frontend results layout, consumer copy helpers, stale/incompatible result messaging, and tests. It affects user-facing health interpretation and must be governed carefully.
+This sprint may touch user-facing medical prose, domain-card DTO assembly, result-versioning API behaviour, frontend stale/incompatible result UX, and tests. It affects product trust, auditability and user-facing interpretation.
 
 ## Standard rules
 
@@ -84,12 +76,13 @@ Do not re-read SOPs unless the applicable governance requirement cannot be locat
 Read these sprint-specific files before making changes:
 
 ```text
-docs/audit-papers/LAUNCH-CORE-4_results_page_narrative_hierarchy_and_score_rationalisation_audit.md
-docs/audit-papers/LAUNCH-CORE-2_multi_panel_launch_readiness_uat.md
-docs/audit-papers/LAUNCH-CORE-1_results_page_card_coherence_and_consumer_copy_report.md
+docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md
+docs/audit-papers/healthiq_wave1_health_systems_subsystem_medical_review.md
+docs/audit-papers/PROGRAMME-STATUS-1_healthiq_launch_workstream_consolidation_audit.md
 docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md
+docs/audit-papers/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_audit.md
+docs/audit-papers/LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation_report.md
 docs/audit-papers/ARCH-RT-6_day_one_architecture_acceptance_audit.md
-docs/architecture/ARCH-RT-6_day_one_architecture_guardrails_report.md
 backend/scripts/validate_day_one_architecture.py
 ```
 
@@ -99,290 +92,287 @@ Also inspect as implementation authority:
 backend/app/routes/analysis.py
 backend/core/dto/result_versioning_policy_v1.py
 backend/core/analytics/domain_score_assembler.py
-backend/core/analytics/report_compiler_v1.py
 backend/core/analytics/domain_narrative_wave1.py
-backend/core/models/**
-backend/core/contracts/**
+backend/core/analytics/report_compiler_v1.py
+backend/core/pipeline/orchestrator.py
+backend/services/storage/persistence_service.py
+backend/core/contracts/replay_manifest_v1.py
+backend/core/dto/persisted_replay_contract_v1.py
 frontend/app/(app)/results/page.tsx
-frontend/app/components/results/**
-frontend/app/lib/resultsPageLayout.ts
+frontend/app/components/results/StaleResultBanner.tsx
+frontend/app/components/results/Wave1DomainCards.tsx
 frontend/app/lib/wave1HealthSystemCardDisplay.ts
-frontend/app/lib/retailNarrativeSanitize.ts
-frontend/app/lib/cardEvidenceConsumerCopy.ts
 frontend/app/types/analysis.ts
 ```
 
 If actual paths differ, locate and report them.
 
-## Architectural principle: Layer A / B / C separation
+---
 
-This sprint must preserve the HealthIQ layer architecture.
+# Track A — Wave 1 Domain Card Copy Alignment
 
-```text
-Layer A = raw / governed intelligence inputs
-Layer B = interpretation, prioritisation, narrative assembly, DTO shaping
-Layer C = presentation / rendering only
-```
+## Problem statement
 
-### Layer B responsibilities
+MED-REV-1 correctly hid or downgraded thin/support subsystems from the visible subsystem evidence rows. However, domain-card prose still references hidden or downgraded evidence.
 
-Layer B should decide or expose:
+Observed issue examples from manual UAT:
 
 ```text
-- primary story ordering
-- section priority
-- which sections are default-visible versus expandable
-- consumer-safe narrative labels
-- score hierarchy metadata
-- confidence/completeness explanation fields
-- stale/incompatible result messaging
-- deduplicated consumer lead copy
-- any meaning-changing narrative hierarchy decision
+Cardiovascular:
+- Based mainly on: Vascular Inflammation Risk
+- Why this score references inflammation and homocysteine signals
+- But visible subsystem evidence is now only Atherogenic lipid pattern
+
+Blood sugar:
+- Card still says “Sugar and insulin balance”
+- Copy still implies broader metabolic/insulin context
+- But visible subsystem is now Long-term blood sugar only
+
+Liver:
+- Card evidence completeness and confidence prose no longer align cleanly with the flattened liver model
+- Copy references marker availability in ways that may contradict actual available markers
 ```
 
-### Layer C responsibilities
+This means MED-REV-1 fixed the subsystem visibility layer, but the domain-card narrative layer now needs alignment.
 
-Layer C may only:
+## Track A goal
+
+Make domain-card anchors, labels, “why this score”, confidence, consequence and next-step text align with the MED-REV-1 visible medical model.
+
+## Required Track A behaviour
+
+### Cardiovascular
+
+Required direction:
 
 ```text
-- render backend-provided DTO fields
-- render sections in supplied or approved order
-- collapse/expand sections
-- display approved UI labels
-- suppress raw/internal fields
-- hide technical detail by default where instructed
+Visible scored basis:
+- Atherogenic lipid pattern
+
+Do not present hidden support signals as the basis of the card score:
+- homocysteine pathway
+- vascular strain / CRP
 ```
 
-Layer C must not infer:
+Fixes required:
 
 ```text
-- which score matters most
-- whether a clinical section is important
-- which evidence is clinically meaningful
-- what the main finding means
-- how confidence should be interpreted clinically
-- whether a marker is clinically relevant
+- Replace “Based mainly on: Vascular Inflammation Risk” with a lipid-aligned consumer label.
+- Do not say the cardiovascular score is based on inflammation/homocysteine if those are hidden support contexts.
+- If homocysteine remains relevant elsewhere, it must be clearly framed as separate primary finding/root-cause context, not as the visible cardiovascular subsystem score basis.
 ```
 
-STOP if completing the sprint would require the frontend to make clinical or interpretive prioritisation decisions that belong in Layer B.
+### Blood sugar
 
-## Non-negotiable content preservation rule
-
-Do not simplify by deleting meaningful analysis.
-
-The sprint may:
+Required direction:
 
 ```text
-- reorder
-- collapse
-- deduplicate
-- rename
-- summarise
-- move technical detail behind expandable controls
+Visible scored basis:
+- Long-term blood sugar
+
+Do not imply insulin resistance or broad insulin/metabolic context from thin evidence.
 ```
 
-The sprint must not:
+Fixes required:
 
 ```text
-- remove clinically meaningful reasoning
-- discard evidence-for / evidence-against
-- delete marker evidence
-- hide confidence limitations entirely
-- remove missing-marker context
-- remove root-cause reasoning
-- remove next-step guidance
-- weaken auditability
+- Rename/adjust card copy away from “Sugar and insulin balance” if insulin context is hidden.
+- Ensure “why this score” and “what this may mean” describe long-term blood sugar exposure, not insulin resistance unless supported.
+- Keep completeness/reliability wording aligned with HbA1c/glucose evidence.
 ```
 
-Definitions:
+### Liver
+
+Required direction:
 
 ```text
-Suppress = hide from default view, not remove from DTO or journey.
-Merge = combine repeated presentation blocks into one clearer section while retaining source detail where useful.
-Collapse = move into expandable detail.
+Visible model:
+- Flat/simplified liver card
+- Evidence preserved, but not split into misleading scored subsystem rows
 ```
 
-The target is:
+Fixes required:
 
 ```text
-same analytical richness
-better narrative order
-less repetition
-clearer default view
-technical depth still available on demand
+- Ensure liver confidence copy reflects the actual available liver markers.
+- Do not say GGT, ALP or albumin are needed if they are already present.
+- Avoid over-claiming MASLD/fibrosis risk from a thin/partial liver score line.
+- Preserve useful caveats around alcohol, medications, liver history and follow-up.
 ```
 
-## Core UX problems to fix
-
-From LAUNCH-CORE-4:
-
-```text
-1. Main story not obvious within 30 seconds.
-2. Page has weak narrative flow.
-3. Health Systems Cards appear before Primary finding and why.
-4. Too many score families compete without hierarchy.
-5. Lead-pattern language repeats across hero, overview, primary finding and patterns.
-6. “Strong Signal”, “Vascular Inflammation Risk”, “Trust strip”, and “Why this lead won” sound mechanical or internal.
-7. Marker-level “Scored X/100” adds noise in the default marker view.
-8. Result versioning status can be incompatible without a visible banner.
-```
-
-## Target default page hierarchy
-
-Implement this default sequence unless preflight proves a safer alternative:
-
-```text
-1. Hero / main finding
-2. Primary finding and why
-3. What’s working well
-4. Health Systems Cards
-5. Patterns across your body
-6. Marker-level evidence
-7. What to do next
-8. Technical / clinician / advanced detail collapsed
-```
-
-The current audit identified that `Wave1DomainCards` is rendered before `PrimaryFindingAndWhy`, interrupting the explanation journey. Correct this unless a better Layer B-driven section model already exists.
-
-## Scope
-
-Allowed scope:
-
-1. Reorder results-page sections to create a clearer narrative journey.
-2. Merge or suppress repeated hero/body overview/lead-pattern prose.
-3. Show stale/incompatible result banner when result versioning metadata indicates either stale or incompatible status.
-4. Hide marker-level numeric `Scored X/100` values by default, while preserving them in detail/advanced view.
-5. Rename or soften obvious jargon:
-
-   * `Trust strip` → `Data quality`
-   * `Why this lead won` → `How confident is this read?`
-   * `Strong Signal` → consumer-safe wording such as `Needs attention`, if safe and approved by existing copy pattern
-   * `Main system context` → `Most relevant area`
-6. Keep advanced/technical sections collapsed by default.
-7. Add tests for page order, stale/incompatible banner display, and default hiding of noisy marker scores.
-8. Produce a sprint report.
-
-## Backend / Layer B implementation guidance
-
-Prefer backend/DTO support where the change affects interpretation hierarchy.
-
-Allowed Layer B changes include:
-
-```text
-- adding section ordering metadata
-- adding consumer-safe section labels
-- adding result versioning display state
-- adding or refining presentation metadata
-- producing deduplicated lead summary fields
-```
-
-Do not add clinical inference to frontend to compensate for missing backend hierarchy.
-
-If a backend change would require broad narrative compiler redesign, STOP and propose a split.
-
-## Frontend / Layer C implementation guidance
-
-Allowed frontend changes include:
-
-```text
-- reordering rendered sections according to approved hierarchy
-- moving repeated text into “Read more” / expandable detail
-- using approved static UI labels for non-clinical section headings
-- rendering stale/incompatible banner
-- hiding marker numeric scores by default
-- preserving access to detail via existing expand/advanced patterns
-```
-
-Frontend must not derive clinical priority from raw marker data, signal IDs, score values, or string matching.
-
-## Stale / incompatible result banner requirement
-
-LAUNCH-CORE-4 found that this analysis has:
-
-```text
-result_status: incompatible
-regeneration_available: false
-```
-
-but no banner was shown because the banner only renders for `result_status === "stale"`.
-
-Fix this.
-
-Required behaviour:
-
-```text
-- show the banner for stale results
-- show the banner for incompatible results
-- use safe user-facing wording
-- do not add a regenerate button in this sprint
-- do not implement regeneration flow
-```
-
-## Score rationalisation requirement
-
-The sprint should not change clinical scoring.
-
-It should clarify presentation.
-
-At minimum:
-
-```text
-- hide marker-level “Scored X/100” by default
-- keep marker value and status visible
-- keep system card scores visible
-- keep completeness/reliability visible
-- make it clearer that card scores are based on available markers where coverage is limited
-```
-
-If score cap / band downgrade policy is required, STOP and classify as product decision. Do not implement score-threshold changes in this sprint.
-
-## Out of scope
+## Track A constraints
 
 Do not:
 
-* implement refresh/regenerate button
-* implement regeneration backend flow
-* change clinical scoring thresholds
-* change rail score calculations
-* change biomarker SSOT
-* change unit conversion
-* modify SignalRegistry
-* modify SignalEvaluator
-* modify PSI status
-* modify root-cause compiler logic
-* modify compiled artefact clinical content
-* modify package clinical content
-* remove clinically meaningful analysis
-* introduce frontend clinical inference
-* expose raw internal IDs, source traces or compile refs
-* introduce fallback parsers
+```text
+- change clinical scoring thresholds
+- change rail score calculations
+- change marker values
+- change SignalEvaluator or SignalRegistry
+- change root-cause compiler logic
+- change PSI status
+- reintroduce hidden subsystems as visible scored evidence
+- use frontend logic to decide medical meaning
+```
 
-## Required tests
+Layer B must own meaning. Layer C must render.
 
-Add or update tests for:
+---
 
-1. Results page renders Primary finding before Health Systems Cards.
-2. Stale banner renders for `result_status === "stale"`.
-3. Stale/incompatible banner renders for `result_status === "incompatible"`.
-4. No regenerate button is introduced.
-5. Marker-level numeric `Scored X/100` is hidden by default.
-6. Health Systems Card completeness still displays.
-7. Role chips remain consumer-safe.
-8. Internal source traces remain hidden.
-9. ARCH-RT-6 validator still passes.
+# Track B — Versioned Result Regeneration UX
 
-Run at minimum:
+## Problem statement
+
+UAT requires repeatedly uploading a fresh panel to see how the current engine renders a result. LAUNCH-CORE-3 added stale/incompatible result metadata and a banner, but did not add regeneration.
+
+We need a safe way to regenerate an existing analysis using the latest engine without overwriting the old result.
+
+## Non-negotiable regeneration rule
+
+Do not overwrite generated results.
+
+Required model:
+
+```text
+old result remains immutable
+regenerated result is a new version or new analysis/result record
+old and new are linked or traceable where possible
+```
+
+No destructive refresh. No silent mutation.
+
+## Track B goal
+
+Add a safe “Regenerate with latest engine” user flow only if the stored input required for deterministic regeneration is available.
+
+If required inputs are missing, show a clear “Regeneration unavailable” explanation and do not fake it.
+
+## Required Track B preflight
+
+Before implementation, verify and report:
+
+```text
+1. Where raw uploaded/pasted biomarker input is stored.
+2. Where parsed biomarker payload is stored.
+3. Where lifestyle/questionnaire answers are stored.
+4. Whether the existing orchestrator can be invoked safely from stored input.
+5. Whether regenerating from stored input would create a new result row or overwrite the existing row.
+6. Whether existing DB schema supports linking old/new result versions.
+7. Whether LAUNCH-CORE-3 result_versioning metadata can identify stale/incompatible records.
+8. Whether regeneration is safe for:
+   - 746f2b0a-b470-4d87-8ed8-e2c3d1e68c02
+   - 18e14232-9f93-45e6-820c-004ab5a16235
+   - bb695d3c-453e-4e49-abff-ae80587b4248
+```
+
+STOP if safe regeneration cannot be proven.
+
+## Track B permitted implementation
+
+Allowed if safe and bounded:
+
+```text
+- Add a backend endpoint such as POST /api/analysis/{analysis_id}/regenerate
+- Endpoint reads preserved stored input/questionnaire
+- Endpoint runs current engine deterministically
+- Endpoint creates a new result/version record
+- Endpoint does not overwrite old result
+- Endpoint returns the new analysis/result ID
+- Frontend stale/incompatible banner shows a “Regenerate with latest engine” button only when regeneration_available is true
+- If regeneration_available is false, frontend shows clear reason / “upload again” guidance
+```
+
+If full regeneration endpoint is too broad:
+
+```text
+- Implement only regeneration availability detection and UI messaging.
+- Do not add a button that cannot work.
+```
+
+## Track B constraints
+
+Do not:
+
+```text
+- overwrite existing result payloads
+- mutate old analysis records
+- fake regenerated output
+- bypass existing pipeline/orchestrator rules
+- use fallback parsers
+- regenerate from incomplete stored input
+- silently change result history
+- create broad DB migrations unless explicitly approved by hardening
+```
+
+---
+
+# Shared architectural requirements
+
+## Layer A / B / C separation
+
+```text
+Layer A = governed medical intelligence and stored inputs
+Layer B = interpretation, result assembly, narrative, regeneration policy, DTO shaping
+Layer C = presentation/rendering only
+```
+
+Frontend must not infer clinical meaning, stale logic, or regeneration safety from raw fields. Backend must provide safe metadata.
+
+## Content preservation
+
+Do not remove clinically meaningful evidence. If evidence is not suitable for default display, keep it available in governed detail or hidden Layer A artefacts.
+
+## Auditability
+
+Any regenerated result must be traceable to:
+
+```text
+- source analysis/input
+- generation time
+- current engine/result version metadata
+- stale/incompatible reason of old result where applicable
+```
+
+If full lineage IDs are not yet available, document the gap and avoid over-claiming auditability.
+
+---
+
+# Required tests
+
+Add or update tests for Track A:
+
+```text
+1. Cardiovascular card anchor/prose no longer uses hidden vascular inflammation/homocysteine context as score basis.
+2. Cardiovascular visible subsystem remains Atherogenic lipid pattern.
+3. Blood sugar card copy aligns with Long-term blood sugar and does not imply insulin resistance from hidden context.
+4. Liver copy does not claim missing GGT/ALP/albumin when present.
+5. Hidden subsystems remain hidden.
+6. total_bilirubin protection remains intact.
+```
+
+Add or update tests for Track B, if implementation occurs:
+
+```text
+1. Regeneration availability is true only when stored input is sufficient.
+2. Regeneration availability is false when required input is missing.
+3. Regenerate endpoint creates a new result/version, not overwrite.
+4. Old result remains accessible.
+5. New result includes current result_versioning metadata.
+6. Frontend button appears only when regeneration_available is true.
+7. No regenerate button appears when unavailable.
+8. Incompatible/stale banner remains visible.
+```
+
+Always run:
 
 ```powershell
 python backend/scripts/validate_day_one_architecture.py
 python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
 ```
 
-Run relevant frontend tests for touched components.
+Also run targeted tests for touched backend/frontend files.
 
-If no frontend test exists for section order, add one.
-
-## Manual validation target
+## Manual validation
 
 After implementation, manually inspect:
 
@@ -400,73 +390,85 @@ Subaru@555
 Confirm:
 
 ```text
-- main story is clearer within first 30 seconds
-- Primary finding appears before Health Systems Cards
-- repeated lead-pattern copy is reduced
-- stale/incompatible banner behaviour is correct where metadata indicates it
-- marker numeric scores are not noisy by default
-- technical detail remains available
-- no internal IDs/traces are visible
+- Cardiovascular card no longer anchors on Vascular Inflammation Risk as the card score basis.
+- Cardiovascular prose aligns with Atherogenic lipid pattern.
+- Blood sugar card no longer implies insulin context if hidden.
+- Liver card prose aligns with flattened model and actual available markers.
+- Hidden subsystems do not appear as scored subsystem rows.
+- Regenerate button appears only if backend says regeneration is available.
+- If regeneration is used, old result remains accessible and new result loads.
+- No internal IDs/traces are visible.
 ```
 
-## STOP conditions
+---
+
+# STOP conditions
 
 STOP and report if:
 
-1. Required audit files are missing.
-2. Completing the sprint requires frontend clinical inference.
-3. Completing the sprint requires broad backend narrative compiler redesign.
-4. Meaningful analysis would need to be removed rather than collapsed/reordered.
-5. Score rationalisation requires changing clinical scoring semantics.
-6. Stale/incompatible banner requires implementing regeneration flow.
-7. ARCH-RT-6 validator fails.
-8. Tests cannot prove the hierarchy and banner changes.
+```text
+1. Track A requires changing scoring thresholds or clinical interpretation logic.
+2. Track A requires frontend medical inference.
+3. Track A requires broad narrative compiler rewrite.
+4. Track B cannot locate stored input needed for deterministic regeneration.
+5. Track B would overwrite old results.
+6. Track B requires broad DB lineage migration.
+7. Regeneration cannot be made auditable enough for this sprint.
+8. ARCH-RT-6 validator fails.
+9. Scope drifts into Pass 3 richness utilisation or LLM narrative translation.
+```
 
-## Required deliverable
+---
+
+# Required deliverable
 
 Create:
 
 ```text
-docs/audit-papers/LAUNCH-CORE-5_results_page_narrative_hierarchy_and_score_rationalisation_report.md
+docs/audit-papers/MED-REV-2_wave1_domain_card_copy_alignment_and_result_regeneration_ux_report.md
 ```
 
 Report must include:
 
 ```text
-- issues addressed
+- Track A changes
+- Track B preflight findings
+- regeneration implemented or deferred decision
 - files changed
-- Layer B changes
-- Layer C changes
-- confirmation no analysis was discarded
-- before/after section order
-- repeated content reduced or moved
-- score display changes
-- stale/incompatible banner behaviour
+- before/after card copy examples
+- Layer A/B/C responsibility split
+- evidence preservation confirmation
+- result immutability confirmation
 - tests run
 - manual validation result
 - remaining risks / carry-forwards
 ```
 
-## Evidence required from Cursor
+---
+
+# Evidence required from Cursor
 
 Cursor must report:
 
 ```text
 1. baseline branch/status evidence
-2. authority preflight findings
-3. section-order changes
-4. Layer B vs Layer C responsibility split
-5. files changed
-6. tests added/updated
-7. test commands run
-8. test results
-9. manual browser validation result
-10. confirmation no clinically meaningful analysis was removed
-11. confirmation frontend did not infer clinical meaning
-12. confirmation ARCH-RT-6 validator still passes
+2. Track A root-cause findings
+3. Track B regeneration preflight findings
+4. exact card copy / DTO changes
+5. exact regeneration API/UI changes, if any
+6. files changed
+7. tests added/updated
+8. test commands run
+9. test results
+10. manual browser validation result
+11. confirmation old results are not overwritten
+12. confirmation frontend did not infer clinical meaning
+13. confirmation ARCH-RT-6 validator still passes
 ```
 
-## Closure requirements
+---
+
+# Closure requirements
 
 Before finish, run and report:
 
@@ -481,28 +483,34 @@ git stash list
 
 Do not run finish unless:
 
-* current branch matches `work/LAUNCH-CORE-5-results-page-narrative-hierarchy-and-score-rationalisation`
-* all changed files are tied to this sprint
-* no clinical interpretation logic is changed
-* no meaningful analysis is removed
-* no helper scripts are committed
-* no ambiguous stash exists
-* latest commit contains only in-scope work
+```text
+- current branch matches work/MED-REV-2-wave1-domain-card-copy-alignment-and-result-regeneration-ux
+- all changed files are tied to this sprint
+- no destructive refresh logic is included
+- no clinical thresholds or scoring rails are changed
+- no frontend clinical inference is introduced
+- no ambiguous stash exists
+- latest commit contains only in-scope work
+```
 
-## Success criteria
+---
+
+# Success criteria
 
 This sprint is complete only if:
 
-1. Results page has clearer default narrative hierarchy.
-2. Primary finding appears before Health Systems Cards.
-3. Repeated lead-pattern prose is reduced.
-4. Meaningful analysis remains accessible.
-5. Marker numeric scores are hidden by default or moved into detail.
-6. Stale/incompatible banner behaviour is corrected.
-7. Frontend remains presentation-only.
+```text
+1. Domain-card prose aligns with the MED-REV-1 visible model.
+2. Hidden/support subsystems are not referenced as the visible score basis.
+3. Liver prose aligns with the flattened v1 model and available markers.
+4. Useful evidence remains preserved.
+5. Regeneration is either safely implemented or explicitly deferred with reason.
+6. No old result is overwritten.
+7. Frontend remains render-only.
 8. ARCH-RT-6 validator passes.
-9. Tests prove the main UX changes.
+9. Tests prove the card alignment and regeneration behaviour.
 10. Automation Bus gate passes.
+```
 
 ```
 ```
