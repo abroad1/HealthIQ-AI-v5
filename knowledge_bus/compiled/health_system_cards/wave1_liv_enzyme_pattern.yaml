@@ -3,7 +3,7 @@ artefact_id: wave1_liv_enzyme_pattern_v1
 domain_id: wave1_liver
 subsystem_id: wave1_liv_enzyme_pattern
 subsystem_label: Liver enzyme pattern
-visibility_tier: scored_subsystem
+visibility_tier: hidden_v1
 source_spec_ids:
   - inv_alt_high_hepatocellular_injury_v1
   - inv_ggt_high_hepatic

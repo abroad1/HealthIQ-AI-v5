@@ -2,8 +2,8 @@ schema_version: "1.0.0"
 artefact_id: wave1_met_insulin_metabolic_v1
 domain_id: wave1_blood_sugar
 subsystem_id: wave1_met_insulin_metabolic
-subsystem_label: Insulin and metabolic context
-visibility_tier: scored_subsystem
+subsystem_label: Insulin-resistance context
+visibility_tier: hidden_v1
 source_spec_ids:
   - inv_triglycerides_high_metabolic_v1
 compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_insulin_metabolic_card_evidence.yaml

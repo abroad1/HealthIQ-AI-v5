@@ -3,7 +3,7 @@ artefact_id: wave1_cv_homocysteine_pathway_v1
 domain_id: wave1_cardiovascular
 subsystem_id: wave1_cv_homocysteine_pathway
 subsystem_label: Homocysteine pathway
-visibility_tier: scored_subsystem
+visibility_tier: hidden_v1
 source_spec_ids:
   - inv_homocysteine_high_metabolic
 compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_homocysteine_pathway_card_evidence.yaml

@@ -23,8 +23,11 @@ _FRONTEND_SUBSYSTEM = (
     _REPO / "frontend" / "app" / "components" / "results" / "Wave1SubsystemEvidenceSection.tsx"
 )
 
-_RT5B_PROMOTED = (
+_RT5B_VISIBLE = (
     "wave1_cv_lipid_transport",
+    "wave1_met_glycaemic_control",
+)
+_RT5B_HIDDEN = (
     "wave1_cv_homocysteine_pathway",
     "wave1_cv_vascular_strain",
     "wave1_met_insulin_metabolic",
@@ -33,7 +36,7 @@ _RT5B_PROMOTED = (
 )
 
 
-@pytest.mark.parametrize("subsystem_id", _RT5B_PROMOTED)
+@pytest.mark.parametrize("subsystem_id", _RT5B_VISIBLE + _RT5B_HIDDEN)
 def test_rt5b_artefact_validates(subsystem_id: str):
     path = compiled_cards_dir() / f"{subsystem_id}.yaml"
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -55,7 +58,7 @@ def test_estate_index_covers_all_wave1_subsystems():
     assert indexed == set(WAVE1_COMPILED_SUBSYSTEM_IDS)
 
 
-@pytest.mark.parametrize("subsystem_id", _RT5B_PROMOTED)
+@pytest.mark.parametrize("subsystem_id", _RT5B_VISIBLE + _RT5B_HIDDEN)
 def test_loader_registered_for_promoted(subsystem_id: str):
     artefact = get_card_evidence_artefact(subsystem_id)
     assert artefact.compile_manifest_ref
@@ -66,10 +69,33 @@ def test_loader_fail_closed_for_unregistered_subsystem():
         get_card_evidence_artefact("wave2_unknown_subsystem")
 
 
-@pytest.mark.parametrize("subsystem_id", _RT5B_PROMOTED)
-def test_assembler_uses_compiled_path(subsystem_id: str):
+@pytest.mark.parametrize("subsystem_id", _RT5B_VISIBLE)
+def test_assembler_emits_visible_compiled_subsystems(subsystem_id: str):
     domain_map = {
         "wave1_cv_lipid_transport": "wave1_cardiovascular",
+        "wave1_met_glycaemic_control": "wave1_blood_sugar",
+    }
+    panel = {
+        "total_cholesterol",
+        "ldl_cholesterol",
+        "hdl_cholesterol",
+        "triglycerides",
+        "glucose",
+        "hba1c",
+    }
+    rows = assemble_wave1_subsystem_evidence(
+        domain_id=domain_map[subsystem_id],
+        panel_biomarker_ids=panel,
+        rail_biomarker_scores=[{"biomarker_name": "total_cholesterol"}],
+    )
+    row = next(r for r in rows if r.subsystem_id == subsystem_id)
+    assert row.source_trace.startswith("health_system_card_evidence_v1:")
+    assert row.marker_evidence is not None
+
+
+@pytest.mark.parametrize("subsystem_id", _RT5B_HIDDEN)
+def test_assembler_suppresses_hidden_compiled_subsystems(subsystem_id: str):
+    domain_map = {
         "wave1_cv_homocysteine_pathway": "wave1_cardiovascular",
         "wave1_cv_vascular_strain": "wave1_cardiovascular",
         "wave1_met_insulin_metabolic": "wave1_blood_sugar",
@@ -78,17 +104,10 @@ def test_assembler_uses_compiled_path(subsystem_id: str):
     }
     panel = {
         "total_cholesterol",
-        "ldl_cholesterol",
-        "hdl_cholesterol",
-        "triglycerides",
         "homocysteine",
         "crp",
         "insulin",
         "alt",
-        "ast",
-        "ggt",
-        "alp",
-        "albumin",
         "bilirubin",
     }
     rows = assemble_wave1_subsystem_evidence(
@@ -96,21 +115,20 @@ def test_assembler_uses_compiled_path(subsystem_id: str):
         panel_biomarker_ids=panel,
         rail_biomarker_scores=[{"biomarker_name": "alt"}],
     )
-    row = next(r for r in rows if r.subsystem_id == subsystem_id)
-    assert row.source_trace.startswith("health_system_card_evidence_v1:")
-    assert row.marker_evidence is not None
+    assert subsystem_id not in {r.subsystem_id for r in rows}
 
 
 def test_bilirubin_canonical_on_processing_context_compiled():
-    rows = assemble_wave1_subsystem_evidence(
-        domain_id="wave1_liver",
+    from core.knowledge.health_system_card_evidence import assemble_subsystem_from_compiled_card_evidence
+
+    processing = assemble_subsystem_from_compiled_card_evidence(
+        subsystem_id="wave1_liv_processing_context",
         panel_biomarker_ids={"bilirubin", "alp", "albumin"},
-        rail_biomarker_scores=[],
+        scored_on_rail=set(),
     )
-    processing = next(r for r in rows if r.subsystem_id == "wave1_liv_processing_context")
-    assert "bilirubin" in processing.included_marker_ids
-    assert "total_bilirubin" not in processing.missing_marker_ids
-    marker_ids = {m.marker_id for m in processing.marker_evidence or []}
+    assert processing is None
+    artefact = get_card_evidence_artefact("wave1_liv_processing_context")
+    marker_ids = {m.marker_id for m in artefact.markers}
     assert "bilirubin" in marker_ids
     assert "total_bilirubin" not in marker_ids
 

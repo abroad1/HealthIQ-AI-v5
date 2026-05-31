@@ -15,6 +15,7 @@ from core.contracts.insight_graph_v1 import InsightGraphV1
 from core.knowledge.health_system_card_evidence import (
     PILOT_SUBSYSTEM_ID,
     CardEvidenceValidationError,
+    assemble_subsystem_from_compiled_card_evidence,
     compiled_cards_dir,
     get_card_evidence_artefact,
     load_card_evidence_artefact,
@@ -120,7 +121,7 @@ def test_pilot_subsystem_assembly_uses_compiled_roles():
     assert glycaemic.source_trace.startswith("health_system_card_evidence_v1:")
     assert glycaemic.marker_evidence is not None
     roles = {m.marker_id: m.marker_role for m in glycaemic.marker_evidence}
-    assert roles["glucose"] == "score_contributor"
+    assert roles["glucose"] == "missing_for_confidence"
     assert roles["hba1c"] == "score_contributor"
     assert "glucose" in glycaemic.included_marker_ids
     assert "hba1c" in glycaemic.included_marker_ids
@@ -143,9 +144,10 @@ def test_direct_assembly_all_wave1_subsystems_use_compiled_path():
         panel_biomarker_ids=panel,
         rail_biomarker_scores=rail,
     )
-    for row in sugar_rows:
-        assert row.source_trace.startswith("health_system_card_evidence_v1:")
-        assert row.marker_evidence is not None
+    assert len(sugar_rows) == 1
+    assert sugar_rows[0].subsystem_id == PILOT_SUBSYSTEM_ID
+    assert sugar_rows[0].source_trace.startswith("health_system_card_evidence_v1:")
+    assert sugar_rows[0].marker_evidence is not None
 
 
 def test_dto_serialisation_new_optional_fields():
@@ -176,20 +178,16 @@ def test_dto_serialisation_new_optional_fields():
 
 
 def test_bilirubin_fix_not_reintroduced_on_liver_path():
-    panel = {
-        "bilirubin",
-        "alp",
-        "albumin",
-        "glucose",
-        "hba1c",
-        "alt",
-        "total_cholesterol",
-    }
-    rows = _assemble_rows(panel=panel)
-    liver = next(r for r in rows if r.domain_id == "wave1_liver")
-    processing = next(s for s in liver.subsystems or [] if s.subsystem_id == "wave1_liv_processing_context")
-    assert "bilirubin" in processing.included_marker_ids
-    assert "total_bilirubin" not in processing.missing_marker_ids
+    artefact = get_card_evidence_artefact("wave1_liv_processing_context")
+    marker_ids = {m.marker_id for m in artefact.markers}
+    assert "bilirubin" in marker_ids
+    assert "total_bilirubin" not in marker_ids
+    row = assemble_subsystem_from_compiled_card_evidence(
+        subsystem_id="wave1_liv_processing_context",
+        panel_biomarker_ids={"bilirubin", "alp", "albumin"},
+        scored_on_rail=set(),
+    )
+    assert row is None
 
 
 def test_frontend_does_not_infer_marker_roles_from_names():

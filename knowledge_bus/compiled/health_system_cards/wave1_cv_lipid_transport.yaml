@@ -2,7 +2,7 @@ schema_version: "1.0.0"
 artefact_id: wave1_cv_lipid_transport_v1
 domain_id: wave1_cardiovascular
 subsystem_id: wave1_cv_lipid_transport
-subsystem_label: Lipid transport
+subsystem_label: Atherogenic lipid pattern
 visibility_tier: scored_subsystem
 source_spec_ids:
   - inv_ldl_high_dyslipidaemia_v1
@@ -11,7 +11,7 @@ source_spec_ids:
   - inv_triglycerides_high_metabolic_v1
 compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_lipid_transport_card_evidence.yaml
 missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
-mechanism_line: Lipid markers together describe transport and balance patterns on this panel.
+mechanism_line: Lipid markers together describe atherogenic lipoprotein risk patterns on this panel.
 markers:
   - marker_id: ldl_cholesterol
     display_label: LDL cholesterol

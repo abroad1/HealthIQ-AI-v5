@@ -3,7 +3,7 @@ artefact_id: wave1_cv_vascular_strain_v1
 domain_id: wave1_cardiovascular
 subsystem_id: wave1_cv_vascular_strain
 subsystem_label: Vascular strain context
-visibility_tier: contextual_evidence
+visibility_tier: hidden_v1
 source_spec_ids:
   - inv_crp_high_inflammation_v1
 compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_vascular_strain_card_evidence.yaml

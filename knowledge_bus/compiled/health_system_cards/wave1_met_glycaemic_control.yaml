@@ -2,20 +2,20 @@ schema_version: "1.0.0"
 artefact_id: wave1_met_glycaemic_control_v1
 domain_id: wave1_blood_sugar
 subsystem_id: wave1_met_glycaemic_control
-subsystem_label: Glycaemic control
+subsystem_label: Long-term blood sugar
 visibility_tier: scored_subsystem
 source_spec_ids:
   - inv_hba1c_high_glycaemia_v1
 compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt3_glycaemic_card_evidence.yaml
 missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
-mechanism_line: Fasting glucose and HbA1c together describe glycaemic load on this panel.
+mechanism_line: HbA1c anchors long-term blood sugar exposure on this panel; fasting glucose strengthens completeness when present.
 markers:
   - marker_id: glucose
     display_label: Glucose
-    marker_role: score_contributor
-    relationship_kind: direct_score_input
-    rationale_short: Primary glycaemic marker on most panels.
-    presence_policy: required_for_subsystem
+    marker_role: missing_for_confidence
+    relationship_kind: confidence_input
+    rationale_short: Fasting glucose strengthens glycaemic completeness when present.
+    presence_policy: optional_on_panel
   - marker_id: hba1c
     display_label: HbA1c
     marker_role: score_contributor
