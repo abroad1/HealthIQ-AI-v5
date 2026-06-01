@@ -1,0 +1,94 @@
+package_id: pkg_s24_creatinine_high_renal
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+signals:
+- activation:
+    activation_config:
+      enable_lower_bound: false
+      enable_upper_bound: true
+      lower_bound_state: suboptimal
+      upper_bound_state: suboptimal
+    activation_logic: lab_range_exceeded
+  confidence:
+    evidence_strength: consensus
+  confirmatory_test_refs:
+  - rationale: Repeating creatinine with eGFR and urine albumin assessment helps distinguish persistent kidney dysfunction
+      from transient or creatinine-specific distortion.
+    test_id: ct_repeat_creatinine_with_egfr_and_uacr
+  contradiction_markers:
+  - contradiction_id: ctr_normal_cystatin_c_weakens_true_filtration_reduction
+    contradiction_rationale: A normal cystatin C weakens a true chronic kidney filtration reduction interpretation, as cystatin
+      C is a creatinine-independent marker of GFR and its normalcy suggests the creatinine elevation may reflect non-filtration
+      factors.
+    contradiction_strength: moderate
+    marker_reference: cystatin_c
+  - contradiction_id: ctr_albuminuria_supports_ckd
+    contradiction_rationale: Concurrent albuminuria makes a true kidney disease interpretation more plausible than isolated
+      creatinine distortion.
+    contradiction_strength: strong
+    marker_reference: uacr
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: Creatinine is a standard kidney function marker, but interpretation is stronger when paired with
+      eGFR, albuminuria, and confirmatory filtration markers.
+    sources:
+    - journal: Kidney International
+      paper_title: KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease
+      source_id: source_kdigo_ckd_2024
+      year: 2024
+    threshold_notes: Interpretation should remain laboratory anchored and trend-aware; isolated creatinine thresholds were
+      not asserted here.
+  missing_data:
+    policies:
+    - Review eGFR trend, urine albumin, and prior kidney function before concluding chronic kidney disease from a single result.
+    - Compare creatinine with cystatin C or prior baseline when muscle mass or recent exertion may be distorting interpretation.
+  override_rules:
+  - conditions:
+    - boundary: above_max
+      comparator_type: lab_range_boundary
+      condition_type: all_of
+      metric_id: uacr
+      operator: '>'
+    description: Escalate when high creatinine coincides with high UACR, as this more strongly supports clinically meaningful
+      kidney disease.
+    resulting_state: at_risk
+    rule_id: or_creatinine_high_with_uacr_high
+    source_refs:
+    - source_kdigo_ckd_2024
+  primary_metric:
+    biomarker_id: creatinine
+    rationale: High creatinine commonly reflects reduced kidney filtration but requires interpretation alongside eGFR and
+      urine findings because muscle mass and acute hemodynamics also affect concentration.
+  research_domain: renal
+  signal_id: signal_creatinine_high
+  signal_system: renal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - availability: common
+    biomarker_id: egfr
+    expected_direction: low
+    rationale: Low eGFR supports true reduction in kidney filtration when creatinine is elevated.
+    relationship_kind: corroboration
+    role: corroborator
+  - availability: common
+    biomarker_id: uacr
+    expected_direction: high
+    rationale: Albuminuria strengthens a chronic kidney disease interpretation when filtration markers are abnormal.
+    relationship_kind: mechanism
+    role: mechanism_marker
+  - availability: specialist
+    biomarker_id: cystatin_c
+    expected_direction: high
+    rationale: Cystatin C helps distinguish true filtration reduction from creatinine distortion related to muscle mass or
+      assay context.
+    relationship_kind: differential
+    role: differential_marker
+  trigger_direction: high
+translation:
+  compiler_version: kb_util2_pass3_pilot_compiler_v1.0.0
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_creatinine_high_reduced_glomerular_filtration
+  signal_id: signal_creatinine_high
+  source: investigation_spec_v3_pass3_pilot

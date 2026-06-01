@@ -1,0 +1,17 @@
+biomarkers:
+- creatinine
+- cystatin_c
+- egfr
+- uacr
+derived_metrics: []
+evidence_strength: consensus
+physiological_claim: Creatinine is a standard kidney function marker, but interpretation is stronger when paired with eGFR,
+  albuminuria, and confirmatory filtration markers.
+research_domain: renal
+research_summary: Trend confirmation and urine protein assessment usually clarify whether the finding reflects persistent
+  kidney disease or a creatinine-specific confounder.
+sources:
+- journal: Kidney International
+  paper_title: KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease
+  source_id: source_kdigo_ckd_2024
+  year: 2024

@@ -1,0 +1,98 @@
+package_id: pkg_s24_ferritin_low_iron_deficiency
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+signals:
+- activation:
+    activation_config:
+      enable_lower_bound: true
+      enable_upper_bound: false
+      lower_bound_state: suboptimal
+      upper_bound_state: suboptimal
+    activation_logic: lab_range_exceeded
+  confidence:
+    evidence_strength: consensus
+  confirmatory_test_refs:
+  - rationale: Transferrin saturation and CBC help confirm iron-deficient erythropoiesis and determine whether low ferritin
+      is already affecting hematologic output.
+    test_id: ct_transferrin_saturation_and_cbc
+  contradiction_markers:
+  - contradiction_id: ctr_elevated_crp_complicates_absolute_deficiency
+    contradiction_rationale: An elevated CRP complicates a straightforward absolute iron deficiency interpretation, as inflammation
+      suppresses serum iron and can reduce ferritin interpretation reliability, requiring functional iron status markers to
+      clarify the pattern.
+    contradiction_strength: moderate
+    marker_reference: crp
+  - contradiction_id: ctr_low_hemoglobin_exceeds_preanaemic_frame
+    contradiction_rationale: A clearly low haemoglobin indicates that iron depletion has already progressed to overt iron
+      deficiency anaemia, contradicting a pre-anaemic depletion interpretation and placing the finding in a more advanced
+      deficiency stage.
+    contradiction_strength: strong
+    marker_reference: hemoglobin
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: Low ferritin is a well-supported indicator of depleted iron stores and is among the more informative
+      laboratory markers of absolute iron deficiency when inflammatory context is considered.
+    sources:
+    - journal: Gut
+      paper_title: British Society of Gastroenterology guidelines for the management of iron deficiency anaemia in adults
+      source_id: source_bsg_iron_guideline_2021
+      year: 2021
+    - journal: Hematology ASH Education Program
+      paper_title: Diagnosis and management of iron deficiency in chronic inflammatory conditions
+      source_id: source_iron_deficiency_review_2020
+      year: 2020
+    threshold_notes: No extra numeric cutoff is asserted here because laboratory methods and inflammatory context affect interpretation.
+  missing_data:
+    policies:
+    - Assess CRP or broader inflammatory context if there is concern that ferritin interpretation could be confounded.
+    - Review red-cell indices and symptoms before dismissing low ferritin in the absence of anemia.
+  override_rules:
+  - conditions:
+    - boundary: below_min
+      comparator_type: lab_range_boundary
+      condition_type: all_of
+      metric_id: hemoglobin
+      operator: <
+    description: Escalate when low ferritin coincides with low hemoglobin, as this more strongly supports clinically significant
+      iron-deficiency anemia rather than isolated iron depletion.
+    resulting_state: at_risk
+    rule_id: or_ferritin_low_with_hemoglobin_low
+    source_refs:
+    - source_bsg_iron_guideline_2021
+  primary_metric:
+    biomarker_id: ferritin
+    rationale: Low ferritin is a direct indicator of depleted iron stores and is one of the most useful biochemical markers
+      of iron deficiency.
+  research_domain: hematologic
+  signal_id: signal_ferritin_low
+  signal_system: hematologic
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - availability: common
+    biomarker_id: iron
+    expected_direction: low
+    rationale: Low serum iron can corroborate depleted available iron when ferritin is low.
+    relationship_kind: corroboration
+    role: corroborator
+  - availability: common
+    biomarker_id: hemoglobin
+    expected_direction: low
+    rationale: Low hemoglobin supports progression from iron depletion toward iron-deficiency anemia.
+    relationship_kind: mechanism
+    role: mechanism_marker
+  - availability: optional
+    biomarker_id: crp
+    expected_direction: any
+    rationale: A noninflammatory context helps preserve ferritin specificity for iron deficiency because ferritin rises as
+      an acute-phase reactant.
+    relationship_kind: differential
+    role: differential_marker
+  trigger_direction: low
+translation:
+  compiler_version: kb_util2_pass3_pilot_compiler_v1.0.0
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_ferritin_low_iron_store_depletion
+  signal_id: signal_ferritin_low
+  source: investigation_spec_v3_pass3_pilot

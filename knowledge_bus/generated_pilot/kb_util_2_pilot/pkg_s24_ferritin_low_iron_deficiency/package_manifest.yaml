@@ -1,0 +1,13 @@
+author: KB-UTIL-2-PILOT compiler
+behavioural_impact: NONE
+created_at: '2026-06-01'
+description: KB-UTIL-2-PILOT generated package from Pass 3 spec inv_ferritin_low_iron_store_depletion. Not runtime-active.
+package_id: pkg_s24_ferritin_low_iron_deficiency
+package_version: 1.0.0
+pilot_status: generated_non_runtime
+promoted_signal_intelligence: promoted_signal_intelligence.yaml
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+source_spec_id: inv_ferritin_low_iron_store_depletion
+translation_mode: pass3_pilot_compile

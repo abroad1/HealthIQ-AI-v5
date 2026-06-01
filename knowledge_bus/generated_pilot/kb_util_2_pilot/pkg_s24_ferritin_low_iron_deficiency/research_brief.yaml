@@ -1,0 +1,21 @@
+biomarkers:
+- crp
+- ferritin
+- hemoglobin
+- iron
+derived_metrics: []
+evidence_strength: consensus
+physiological_claim: Low ferritin is a well-supported indicator of depleted iron stores and is among the more informative
+  laboratory markers of absolute iron deficiency when inflammatory context is considered.
+research_domain: hematologic
+research_summary: The key follow-on task is usually to confirm functional iron restriction and determine whether the depletion
+  has already impaired erythropoiesis.
+sources:
+- journal: Gut
+  paper_title: British Society of Gastroenterology guidelines for the management of iron deficiency anaemia in adults
+  source_id: source_bsg_iron_guideline_2021
+  year: 2021
+- journal: Hematology ASH Education Program
+  paper_title: Diagnosis and management of iron deficiency in chronic inflammatory conditions
+  source_id: source_iron_deficiency_review_2020
+  year: 2020
