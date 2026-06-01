@@ -1,10 +1,9 @@
 {
-  "branch": "work/KB-MAP-1-pass3-to-legacy-package-mapping-and-promotion-plan",
+  "branch": "work/KB-UTIL-2-PILOT-pass3-to-runtime-artifact-compiler-pilot",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-31T22:09:46Z",
-  "cursor_started_utc": "2026-05-31T22:07:19Z",
-  "head_sha": "15485b680a0d033e268b5b9db51331d3eba690c2",
+  "cursor_started_utc": "2026-06-01T17:19:44Z",
+  "head_sha": "b7bec90171221d8bf63cd99a93f202255bf05005",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan"
+  "status": "IN_PROGRESS",
+  "work_id": "KB-UTIL-2-PILOT_pass3_to_runtime_artifact_compiler_pilot"
 }
