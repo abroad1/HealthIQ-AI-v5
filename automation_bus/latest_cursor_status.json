@@ -1,9 +1,10 @@
 {
   "branch": "work/KB-UTIL-2-PILOT-pass3-to-runtime-artifact-compiler-pilot",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-01T17:24:09Z",
   "cursor_started_utc": "2026-06-01T17:19:44Z",
-  "head_sha": "b7bec90171221d8bf63cd99a93f202255bf05005",
+  "head_sha": "8620ef63852d0493d21d097001f0939357355ee4",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "KB-UTIL-2-PILOT_pass3_to_runtime_artifact_compiler_pilot"
 }
