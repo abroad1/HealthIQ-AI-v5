@@ -1,9 +1,10 @@
 {
   "branch": "work/MED-FRAME-1-signal-family-contextual-frame-architecture",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-02T11:27:36Z",
   "cursor_started_utc": "2026-06-02T11:21:14Z",
-  "head_sha": "a9c82017c26b0b8327abff498b9c954b28d48456",
+  "head_sha": "137a4bbdf97c75f08893d1e9591c7bcacb4ca7ed",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "MED-FRAME-1_signal_family_contextual_frame_architecture"
 }
