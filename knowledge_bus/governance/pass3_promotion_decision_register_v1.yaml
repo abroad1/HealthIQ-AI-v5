@@ -45,6 +45,34 @@ decisions:
       latest_knowledge_status_updated: false
       classification: compiled_not_promoted
       reason: promotion package created and validated, but runtime activation remains blocked by real duplicate activation-key collision with pkg_kb52c and unresolved override-rule behavioural divergence
+    wire1_runtime_authority_preflight:
+      work_id: KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch
+      runtime_authority_mechanism: SignalRegistry scans knowledge_bus/packages/*/signal_library.yaml and resolves activation identity as signal_id::source_spec_id
+      creatinine_runtime_packages_detected:
+      - pkg_s24_creatinine_high_renal
+      - pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+      creatinine_activation_keys_detected:
+      - signal_creatinine_high::inv_creatinine_high_renal
+      - signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration
+      promoted_candidate_runtime_loaded: false
+      duplicate_activation_keys_detected: false
+      duplicate_signal_ids_detected: true
+      canonical_runtime_authority_for_pass3_frame: pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+      proposed_authority_switch: do_not_activate_pkg_creatinine_high_renal_pass3_v1_into_runtime_packages_while_pkg_kb52c_remains_canonical_for_same_pass3_frame
+    wire1_collision_decision:
+      decision: D_candidate_equivalent_to_pkg_kb52c_retain_one_canonical
+      collision_classification: resolved_by_non_activation_of_candidate
+      retained_runtime_canonical_package: pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+      promoted_candidate_status: compiled_not_promoted
+      rationale: candidate and pkg_kb52c represent the same Pass_3 frame identity inv_creatinine_high_reduced_glomerular_filtration; activating candidate without retiring kb52c would introduce duplicate activation identity in SignalRegistry
+    wire1_override_divergence_decision:
+      decision: C_block_activation_pending_clinical_adjudication
+      accepted_with_rationale: false
+      rationale: legacy s24 eGFR and potassium escalation differs from Pass_3 UACR escalation; safe retirement of legacy s24 for signal_creatinine_high requires explicit medical adjudication beyond this sprint
+    wire1_runtime_activation_outcome:
+      activation_performed: false
+      activation_refusal_reason: equivalent_pass3_runtime_authority_already_exists_in_pkg_kb52c_and_legacy_divergence_adjudication_not_complete
+      rollback_path: no_runtime_switch_performed_existing_runtime_authority_unchanged
     legacy_package_treatment:
       legacy_package_id: pkg_s24_creatinine_high_renal
       treatment: deferred

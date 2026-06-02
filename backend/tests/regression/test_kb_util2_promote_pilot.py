@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 import yaml
+from core.knowledge.signal_activation_identity_v1 import resolve_activation_identity
 
 REPO = Path(__file__).resolve().parents[3]
 LEGACY_DIR = REPO / "knowledge_bus/packages/pkg_s24_creatinine_high_renal"
@@ -126,4 +127,64 @@ def test_promotion_validators_do_not_update_latest_knowledge_status():
         check=True,
     )
     assert CURRENT_STATUS.read_bytes() == before
+
+
+def test_wire1_creatinine_runtime_authority_preflight_activation_keys():
+    package_roots = [
+        REPO / "knowledge_bus/packages/pkg_s24_creatinine_high_renal/signal_library.yaml",
+        REPO / "knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/signal_library.yaml",
+    ]
+    rows = []
+    for signal_library_path in package_roots:
+        activation_key, source_spec_id, package_id = resolve_activation_identity(
+            signal_id="signal_creatinine_high",
+            signal_library_path=signal_library_path,
+        )
+        rows.append((package_id, activation_key, source_spec_id))
+    assert rows == [
+        (
+            "pkg_s24_creatinine_high_renal",
+            "signal_creatinine_high::inv_creatinine_high_renal",
+            "inv_creatinine_high_renal",
+        ),
+        (
+            "pkg_kb52c_creatinine_high_reduced_glomerular_filtration",
+            "signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration",
+            "inv_creatinine_high_reduced_glomerular_filtration",
+        ),
+    ]
+    assert len({row[1] for row in rows}) == len(rows)
+
+
+def test_wire1_candidate_is_not_runtime_loaded_under_packages_directory():
+    assert not (REPO / "knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1").exists()
+    assert PROMOTED_DIR.is_dir()
+
+
+def test_wire1_candidate_equivalent_to_pkg_kb52c_override_rule_signature():
+    kb52c_lib = yaml.safe_load(
+        (
+            REPO
+            / "knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/signal_library.yaml"
+        ).read_text(encoding="utf-8")
+    )
+    candidate_lib = yaml.safe_load((PROMOTED_DIR / "signal_library.yaml").read_text(encoding="utf-8"))
+    kb52c_rule = kb52c_lib["signals"][0]["override_rules"]
+    candidate_rule = candidate_lib["signals"][0]["override_rules"]
+    assert kb52c_rule == candidate_rule
+
+
+def test_wire1_register_records_activation_refusal_and_rollback_path():
+    register = yaml.safe_load(
+        (REPO / "knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    decision = register["decisions"][0]
+    assert decision["wire1_collision_decision"]["decision"] == "D_candidate_equivalent_to_pkg_kb52c_retain_one_canonical"
+    assert decision["wire1_runtime_activation_outcome"]["activation_performed"] is False
+    assert (
+        decision["wire1_runtime_activation_outcome"]["rollback_path"]
+        == "no_runtime_switch_performed_existing_runtime_authority_unchanged"
+    )
 
