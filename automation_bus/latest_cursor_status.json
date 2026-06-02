@@ -1,10 +1,9 @@
 {
-  "branch": "work/KB-UTIL-2-PROMOTE-WIRE-1-creatinine-runtime-authority-switch",
+  "branch": "work/MED-FRAME-1-signal-family-contextual-frame-architecture",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-02T10:24:42Z",
-  "cursor_started_utc": "2026-06-02T10:19:18Z",
-  "head_sha": "e5d7f36b6acf21614acae196f8b016414c81910e",
+  "cursor_started_utc": "2026-06-02T11:21:14Z",
+  "head_sha": "a9c82017c26b0b8327abff498b9c954b28d48456",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch"
+  "status": "IN_PROGRESS",
+  "work_id": "MED-FRAME-1_signal_family_contextual_frame_architecture"
 }
