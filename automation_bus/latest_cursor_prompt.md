@@ -1,57 +1,41 @@
 ---
-work_id: MED-FRAME-2_medical_frame_identity_index
-branch: work/MED-FRAME-2-medical-frame-identity-index
+work_id: CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance
+branch: work/CONTEXT-MOD-1-questionnaire-and-medication-modifier-governance
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 ---
 
-# MED-FRAME-2 — Medical Frame Identity Index
+# CONTEXT-MOD-1 — Questionnaire and Medication Modifier Governance
 
 ## Purpose
 
-Implement the first machine-enforced medical frame identity index for HealthIQ.
+Define the governed architecture for using questionnaire answers and medication / drug-category context as structured medical modifiers in HealthIQ analysis.
 
-This sprint turns the MED-FRAME-1 architecture into a governed, non-runtime identity register that can represent:
+This sprint must ensure HealthIQ does not become a biomarker-only interpretation system.
 
-```text
-one biomarker signal family
-→ many medically distinct frames
-→ clear activation identities
-→ package/spec provenance
-→ promotion state
-→ collision prevention
-````
+It must define how contextual inputs attach to medical frames without allowing frontend inference, developer judgement, or uncontrolled ad hoc rules.
 
-The purpose is not to activate packages or change runtime behaviour.
+This is a governance/design sprint only.
 
-The purpose is to prevent HealthIQ from collapsing medically distinct edge cases into one flat signal, while also preventing uncontrolled duplicate runtime authority.
+Do not change runtime behaviour.
 
 ## Strategic context
 
-MED-FRAME-1 established that HealthIQ must support:
+MED-FRAME-1 established that HealthIQ interpretation depends on:
 
 ```text
 biomarker evidence
 + questionnaire context
-+ medication/drug-category context
++ medication / drug-category context
 → medical frames
 → Layer B personalised interpretation
-→ frontend render-only
-```
+→ frontend render-only output
+````
 
-This sprint implements the identity/index foundation for the first part of that model:
+MED-FRAME-2 created the first governed medical frame identity index.
 
-```text
-signal family
-medical frame
-activation key
-research spec
-package authority
-promotion state
-```
-
-Questionnaire and medication/drug-category modifiers are not implemented in this sprint. They are handled by `CONTEXT-MOD-1`.
+This sprint defines the modifier governance model that will later allow questionnaire and medication context to strengthen, weaken, explain, suppress, redirect, or escalate medical frames.
 
 ## Baseline requirement
 
@@ -61,13 +45,11 @@ Expected prior completed work:
 
 ```text
 MED-FRAME-1 merged
-KB-UTIL-2-PROMOTE-WIRE-1 merged or activation-refusal outcome available
-KB-UTIL-2-ACTIVATION-READINESS merged
-KB-UTIL-2-PROMOTE-PILOT merged
-KB-UTIL-2-PILOT merged
-KB-MAP-1 merged
+MED-FRAME-2 merged
 KNOWLEDGE_BUS_SOP_v1.3.1 committed
 KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1 committed
+docs/sprints/launch_core_carry_forward_register.md present and updated
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml present
 ```
 
 Before starting, run and report:
@@ -86,8 +68,8 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- MED-FRAME-1 architecture paper is missing
-- medical_frame_identity_model_draft_v1.yaml is missing
+- MED-FRAME-2 is not merged
+- medical_frame_identity_index_v1.yaml is missing
 - carry-forward register is missing
 ```
 
@@ -95,13 +77,13 @@ STOP if:
 
 ```yaml
 risk_level: HIGH
-change_type: MIXED
+change_type: CONTENT
 execution_model: TWO_PHASE_START_FINISH
 ```
 
 Reason:
 
-This sprint creates governed identity infrastructure for future medical-frame runtime authority. It must not alter runtime behaviour, but it defines controls that future runtime promotion work will depend on.
+This sprint defines future clinical-context modifier governance. It must not change runtime behaviour, but it will shape how personal questionnaire and medication data influence medical interpretation.
 
 ## Required inputs
 
@@ -109,164 +91,281 @@ Read before implementation:
 
 ```text
 docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md
-knowledge_bus/governance/medical_frame_identity_model_draft_v1.yaml
-docs/sprints/launch_core_carry_forward_register.md
+docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+knowledge_bus/schema/medical_frame_identity_index_schema_v1.yaml
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
 docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
-docs/audit-papers/KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch_report.md
-docs/audit-papers/KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution_report.md
-knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml
-knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
+docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Also inspect:
+Also inspect and report any existing artefacts related to:
 
 ```text
-knowledge_bus/packages/pkg_s24_creatinine_high_renal/
-knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/
-knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/
-backend/scripts/validate_day_one_architecture.py
-backend/tests/architecture/test_day_one_architecture_guardrails.py
+questionnaire schema
+lifestyle input DTOs
+medication input DTOs
+drug category / intervention registries
+supplement fields
+known condition fields
+analysis input contracts
+Layer B / report input models
+intervention_effects_registry_v1.yaml
+intervention_annotation_v1.py
+medication_caveat_assembler_v1.py
 ```
 
 If paths differ, locate and report actual paths.
 
-## Required outcome
+## Core problem
 
-Create a governed medical frame identity index and validator.
+Questionnaire and medication context must affect analysis, but not through uncontrolled logic.
 
-The index must be machine-readable, explicitly non-runtime for now, and must model at least the creatinine-high frame family from MED-FRAME-1.
-
-The validator must prove:
+For example, creatinine high may be interpreted differently depending on:
 
 ```text
-- no duplicate active runtime authority for the same activation_key
-- compiled_not_promoted entries may share an activation_key only if explicitly collision-classified
-- each frame has signal_family_id, medical_frame_id, activation_key, research_spec_id, package reference and promotion_state
-- frame identity is not collapsed into signal_id alone
+- hydration
+- recent intense exercise
+- high muscle mass
+- creatine supplementation
+- known CKD
+- diabetes / hypertension
+- NSAID use
+- ACE inhibitor / ARB use
+- diuretic use
+- abnormal potassium
+- abnormal UACR
+- cystatin C availability
 ```
+
+These must not become frontend assumptions or developer-authored clinical shortcuts.
+
+They need a governed modifier model.
+
+## Required architectural distinctions
+
+Define the difference between:
+
+```text
+biomarker evidence
+questionnaire modifier
+medication/drug-category modifier
+supplement modifier
+known-condition modifier
+symptom modifier
+family-history modifier
+presentation-only user preference
+```
+
+The architecture must state which of these can influence medical interpretation and where that influence is allowed.
+
+## Required modifier model
+
+Propose a governed modifier model with at least these fields:
+
+```yaml
+modifier_id:
+modifier_type:
+source_input:
+source_schema_path:
+normalised_value:
+applies_to:
+  signal_family_ids:
+  medical_frame_ids:
+  biomarker_ids:
+modifier_effect:
+evidence_role:
+direction:
+strength:
+clinical_scope:
+requires_medical_review:
+allowed_layer:
+presentation_safety_status:
+source_authority:
+notes:
+```
+
+Allowed `modifier_type` values should include at least:
+
+```text
+questionnaire_lifestyle
+questionnaire_symptom
+questionnaire_known_condition
+questionnaire_family_history
+supplement
+medication_category
+drug_category
+demographic
+```
+
+Allowed `modifier_effect` values should include at least:
+
+```text
+strengthens_frame
+weakens_frame
+explains_possible_cause
+increases_confidence
+decreases_confidence
+adds_safety_escalation_context
+adds_differential_context
+suppresses_overclaiming
+requires_missing_data_caveat
+no_interpretive_effect
+```
+
+Allowed `allowed_layer` values should include at least:
+
+```text
+Layer_A_input_normalisation
+Layer_B_frame_assembly
+Layer_B_narrative_brief
+Presentation_safety_only
+Not_allowed_for_medical_inference
+```
+
+## Required first catalogue
+
+Create an initial governance catalogue for modifier classes.
+
+This is not exhaustive, but must include at least:
+
+### Questionnaire / lifestyle
+
+```text
+age
+sex
+alcohol
+smoking
+exercise
+hydration
+diet
+sleep
+stress
+known_conditions
+family_history
+symptoms if collected
+health_goals if used
+```
+
+### Supplements
+
+```text
+creatine
+iron
+vitamin D
+B12
+folate
+protein supplements
+testosterone / hormone-related supplements if captured
+```
+
+### Medication / drug categories
+
+```text
+NSAIDs
+ACE inhibitors / ARBs
+diuretics
+statins
+metformin
+thyroid medication
+steroids
+testosterone / hormones if declared
+nephrotoxic medication categories
+liver-impacting medication categories
+glucose-impacting medication categories
+lipid-impacting medication categories
+```
+
+Do not invent detailed clinical rules for every item. Classify where the rule would belong, what it can modify, and whether medical review is required.
+
+## Required worked example
+
+Use `signal_creatinine_high` and the MED-FRAME-2 creatinine frames.
+
+Show how context modifiers attach to frames:
+
+```text
+Frame: reduced glomerular filtration
+Relevant modifiers:
+- known CKD
+- diabetes / hypertension
+- ACE inhibitor / ARB
+- diuretics
+- NSAIDs
+
+Frame: albuminuric kidney damage
+Relevant modifiers:
+- diabetes
+- hypertension
+- UACR availability
+- ACE inhibitor / ARB
+
+Frame: acute electrolyte risk
+Relevant modifiers:
+- potassium high
+- ACE inhibitor / ARB
+- spironolactone / potassium-sparing diuretic category if represented
+- CKD context
+
+Frame: creatinine distortion / muscle-supplement context
+Relevant modifiers:
+- high muscle mass
+- recent intense exercise
+- creatine supplementation
+- dehydration
+- cystatin C availability
+```
+
+Show what the modifier may do:
+
+```text
+- strengthen a frame
+- add caution
+- explain possible cause
+- improve or reduce confidence
+- add safety escalation context
+- suppress overclaiming
+```
+
+Do not write retail user copy.
 
 ## Required artefacts
 
 Create:
 
 ```text
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-knowledge_bus/schema/medical_frame_identity_index_schema_v1.yaml
-backend/scripts/validate_medical_frame_identity_index.py
-backend/tests/regression/test_med_frame_identity_index.py
-docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md
+docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md
+knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+knowledge_bus/schema/context_modifier_catalogue_schema_v1.yaml
+backend/scripts/validate_context_modifier_catalogue.py
+backend/tests/regression/test_context_modifier_catalogue.py
+docs/audit-papers/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance_report.md
 ```
 
-The index must be marked:
+Mark the catalogue:
 
 ```yaml
 runtime_consumed: false
-status: governed_non_runtime_index
+status: draft_governance_non_runtime
 ```
 
 Do not wire it into runtime.
-
-## Required index scope
-
-Minimum required signal family:
-
-```text
-signal_creatinine_high
-```
-
-The creatinine family must include frames for:
-
-```text
-1. reduced glomerular filtration / Pass_3 kb52c frame
-2. legacy s24 renal severity / eGFR context
-3. legacy s24 potassium acute complication context
-4. promoted candidate duplicate of kb52c, marked compiled_not_promoted
-```
-
-The index must clearly show that:
-
-```text
-- pkg_kb52c is the current canonical Pass_3 runtime package for the reduced-glomerular-filtration frame
-- promoted candidate pkg_creatinine_high_renal_pass3_v1 is compiled_not_promoted because it collides with pkg_kb52c
-- pkg_s24_creatinine_high_renal contains medically valid legacy context that is not yet adjudicated into the Pass_3 frame model
-- eGFR/potassium logic must not be silently collapsed or discarded
-```
-
-## Required identity fields
-
-Each frame entry must include at minimum:
-
-```yaml
-signal_family_id:
-primary_biomarker_id:
-medical_frame_id:
-frame_label:
-frame_role:
-research_spec_id:
-source_package_id:
-source_package_path:
-activation_key:
-signal_id:
-promotion_state:
-runtime_authority_status:
-clinical_adjudication_status:
-context_inputs_supported:
-  biomarker_evidence:
-  questionnaire_modifiers:
-  medication_modifiers:
-collision_group_id:
-collision_status:
-supersedes:
-superseded_by:
-notes:
-```
-
-Allowed `promotion_state` values:
-
-```text
-runtime_active_canonical
-runtime_active_legacy_unadjudicated
-compiled_not_promoted
-superseded
-retired
-deferred
-```
-
-Allowed `clinical_adjudication_status` values:
-
-```text
-not_required
-required_before_activation
-accepted_with_rationale
-blocked_pending_medical_review
-```
-
-Allowed `collision_status` values:
-
-```text
-none
-real_collision_active_blocker
-allowed_non_runtime_collision
-resolved_by_supersession
-requires_adjudication
-```
 
 ## Validator requirements
 
 The validator must:
 
 ```text
-1. Load the medical frame identity index.
-2. Validate required top-level fields.
-3. Validate required fields for each frame.
-4. Reject duplicate `medical_frame_id`.
-5. Reject duplicate active `activation_key` where more than one frame has `runtime_authority_status: active`.
-6. Allow duplicate activation keys only where non-active entries are explicitly marked `compiled_not_promoted` or equivalent.
-7. Reject any frame with `promotion_state: runtime_active_canonical` and `collision_status: real_collision_active_blocker`.
-8. Reject unknown enum values.
-9. Confirm `runtime_consumed: false`.
-10. Confirm every referenced package path exists, unless explicitly marked future/deferred with reason.
+1. Load the context modifier catalogue.
+2. Confirm runtime_consumed is false.
+3. Confirm required top-level metadata exists.
+4. Confirm every modifier has required fields.
+5. Reject duplicate modifier_id.
+6. Reject unknown modifier_type.
+7. Reject unknown modifier_effect.
+8. Reject unknown allowed_layer.
+9. Confirm referenced medical_frame_ids exist in medical_frame_identity_index_v1.yaml where specified.
+10. Confirm no modifier is marked runtime-active.
 ```
 
 Do not make the validator a runtime dependency.
@@ -276,27 +375,14 @@ Do not make the validator a runtime dependency.
 Add tests proving:
 
 ```text
-1. valid creatinine frame index passes
-2. duplicate active activation_key fails
-3. duplicate non-runtime compiled_not_promoted activation_key passes when collision is classified
-4. missing required field fails
-5. unknown promotion_state fails
-6. unknown collision_status fails
-7. runtime_consumed must be false
-8. referenced package paths exist or are explicitly deferred
-```
-
-## Creatinine worked example requirements
-
-The report must explain in business and architecture terms:
-
-```text
-- why creatinine_high is not one flat medical meaning
-- why eGFR, potassium, UACR and cystatin C represent different evidence roles
-- why the Pass_3 candidate was not activated
-- why pkg_kb52c remains current canonical Pass_3 runtime authority for its frame
-- why legacy s24 logic remains unadjudicated rather than deleted
-- how the identity index prevents both collapse and duplicate authority
+1. valid catalogue passes
+2. duplicate modifier_id fails
+3. unknown modifier_type fails
+4. unknown modifier_effect fails
+5. unknown allowed_layer fails
+6. runtime_consumed true fails
+7. referenced frame IDs must exist
+8. modifier catalogue is non-runtime
 ```
 
 ## Runtime boundary
@@ -313,10 +399,10 @@ frontend
 SSOT
 scoring thresholds
 unit conversion
+questionnaire runtime schema
+medication runtime schema
+knowledge_bus/packages/*
 knowledge_bus/current/latest_knowledge_status.json
-knowledge_bus/packages/*/signal_library.yaml
-knowledge_bus/packages/*/package_manifest.yaml
-knowledge_bus/packages/*/research_brief.yaml
 ```
 
 If any runtime change appears necessary, STOP and report.
@@ -326,13 +412,12 @@ If any runtime change appears necessary, STOP and report.
 Run:
 
 ```powershell
+python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 python backend/scripts/validate_day_one_architecture.py
 python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
-python -m pytest backend/tests/regression/test_med_frame_identity_index.py -q
+python -m pytest backend/tests/regression/test_context_modifier_catalogue.py -q
 ```
-
-If existing project conventions require a different CLI style, use that style and document it.
 
 ## Carry-forward register
 
@@ -345,19 +430,23 @@ docs/sprints/launch_core_carry_forward_register.md
 Expected updates:
 
 ```text
-CF-MEDFRAME1-001 — should be marked resolved only if the identity index and validator are created and passing.
-CF-MEDFRAME1-002 — remains open for CONTEXT-MOD-1.
-CF-MEDFRAME1-003 — remains open for creatinine authority adjudication.
+CF-MEDFRAME1-002 — should be marked resolved only if questionnaire and medication modifier governance, catalogue, schema, validator and tests are created and passing.
 ```
 
-Do not mark creatinine adjudication resolved in this sprint.
+Likely new carry-forward:
+
+```text
+CONTEXT-MOD-2 — bind governed context modifiers into Layer B frame assembly.
+```
+
+Do not mark runtime integration complete in this sprint.
 
 ## Required report content
 
 Create:
 
 ```text
-docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md
+docs/audit-papers/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance_report.md
 ```
 
 Report must include:
@@ -365,8 +454,11 @@ Report must include:
 ```text
 - executive verdict
 - files created/changed
-- identity model implemented
-- creatinine family/frame entries
+- existing questionnaire artefacts found
+- existing medication/drug-category artefacts found
+- modifier model implemented
+- catalogue summary
+- creatinine worked example
 - validator behaviour
 - regression test coverage
 - runtime boundary confirmation
@@ -380,16 +472,16 @@ Report must include:
 Do not:
 
 ```text
-- adjudicate creatinine eGFR/potassium vs UACR logic
-- activate or retire packages
-- modify package contents
-- modify runtime loading
-- modify SignalRegistry
-- modify frontend
-- implement questionnaire modifier rules
-- implement medication modifier rules
-- implement Layer B frame evaluation
-- bulk-index all biomarkers
+- implement modifier evaluation
+- alter questionnaire schema
+- alter medication schema
+- alter Layer B frame assembly
+- change runtime analysis
+- change frontend
+- write user-facing prose
+- add clinical rules directly to SignalEvaluator
+- adjudicate creatinine authority
+- bulk-index all biomarker frames
 ```
 
 ## STOP conditions
@@ -397,14 +489,13 @@ Do not:
 STOP and report if:
 
 ```text
-1. MED-FRAME-1 architecture paper cannot be found
-2. current creatinine package state cannot be reconstructed
-3. pkg_kb52c cannot be found
-4. promoted creatinine candidate cannot be found
-5. validator would require runtime imports
-6. index cannot distinguish active authority from compiled_not_promoted candidate
-7. tests fail
-8. any runtime/package/frontend change appears necessary
+1. existing questionnaire artefacts cannot be located
+2. existing medication/drug-category artefacts cannot be located
+3. modifier catalogue cannot reference the frame index cleanly
+4. validator would require runtime imports
+5. medical_frame_identity_index_v1.yaml validation fails
+6. tests fail
+7. any runtime/package/frontend change appears necessary
 ```
 
 ## Evidence required from Cursor
@@ -414,15 +505,16 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. governance inputs read
-3. package/frame state reconstructed
-4. index path created
-5. schema path created
-6. validator path created
-7. tests created
-8. validation commands run
-9. validation results
-10. carry-forward updates
-11. confirmation no runtime/package/frontend changes
+3. questionnaire artefacts found
+4. medication/drug-category artefacts found
+5. catalogue path created
+6. schema path created
+7. validator path created
+8. tests created
+9. validation commands run
+10. validation results
+11. carry-forward updates
+12. confirmation no runtime/package/frontend changes
 ```
 
 ## Closure requirements
@@ -441,10 +533,11 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/MED-FRAME-2-medical-frame-identity-index
+- current branch matches work/CONTEXT-MOD-1-questionnaire-and-medication-modifier-governance
 - only in-scope docs/governance/schema/validator/test files changed
 - no runtime package files changed
 - no frontend/runtime evaluator files changed
+- no questionnaire/medication runtime schema changed
 - no ambiguous stash exists
 - validator and tests pass
 ```
@@ -454,15 +547,15 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. medical_frame_identity_index_v1.yaml exists
-2. schema exists
-3. validator exists
-4. regression tests exist and pass
-5. creatinine high family is modelled with multiple frames
-6. duplicate active activation_key is blocked
-7. compiled_not_promoted collision is allowed only when classified
-8. pkg_kb52c and promoted candidate collision is represented accurately
-9. legacy s24 eGFR/potassium context is preserved as unadjudicated, not deleted
+1. context modifier governance paper exists
+2. context modifier catalogue exists
+3. schema exists
+4. validator exists
+5. regression tests exist and pass
+6. questionnaire context is represented as governed medical input
+7. medication/drug-category context is represented as governed medical input
+8. creatinine example shows modifier attachment to frames
+9. catalogue remains non-runtime
 10. no runtime behaviour changes occur
 ```
 
