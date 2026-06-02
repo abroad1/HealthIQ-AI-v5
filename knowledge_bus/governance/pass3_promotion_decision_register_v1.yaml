@@ -29,10 +29,10 @@ decisions:
       activation_logic: NO_DIFFERENCE
       thresholds: STRUCTURAL_ONLY
       supporting_markers: RICHNESS_GAIN_ONLY
-      override_rules: RICHNESS_GAIN_ONLY
-      overall: RICHNESS_GAIN_ONLY
-      accepted_with_rationale: true
-      accepted_rationale: pass3 richness retained in promoted_signal_intelligence with no runtime code wiring in this sprint
+      override_rules: BEHAVIOURAL_DIFFERENCE_LOW
+      overall: BEHAVIOURAL_DIFFERENCE_LOW
+      accepted_with_rationale: false
+      accepted_rationale: legacy package uses eGFR plus potassium override escalation while promoted Pass_3 candidate uses UACR-based override escalation; runtime activation remains blocked pending explicit divergence acceptance or resolution
     validators:
       package_manifest_validation: PASS
       research_validation: PASS
@@ -44,7 +44,7 @@ decisions:
     runtime_activation_decision:
       latest_knowledge_status_updated: false
       classification: compiled_not_promoted
-      reason: promotion package created and validated, runtime activation deferred to next promotion harness sprint
+      reason: promotion package created and validated, but runtime activation remains blocked by real duplicate activation-key collision with pkg_kb52c and unresolved override-rule behavioural divergence
     legacy_package_treatment:
       legacy_package_id: pkg_s24_creatinine_high_renal
       treatment: deferred

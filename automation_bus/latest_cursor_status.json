@@ -1,10 +1,9 @@
 {
-  "branch": "work/KB-UTIL-2-PROMOTE-PILOT-route-a-single-package-promotion",
+  "branch": "work/KB-UTIL-2-ACTIVATION-READINESS-creatinine-candidate-divergence-and-collision-resolution",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-02T08:36:14Z",
-  "cursor_started_utc": "2026-06-02T08:35:11Z",
-  "head_sha": "8000c44a871f27155bc832523eda3d887882761d",
+  "cursor_started_utc": "2026-06-02T08:55:02Z",
+  "head_sha": "a71d17fecf3b9e3733d4d62252ae54ca13b98866",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion"
+  "status": "IN_PROGRESS",
+  "work_id": "KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution"
 }

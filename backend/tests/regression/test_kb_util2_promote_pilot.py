@@ -11,6 +11,8 @@ import yaml
 REPO = Path(__file__).resolve().parents[3]
 LEGACY_DIR = REPO / "knowledge_bus/packages/pkg_s24_creatinine_high_renal"
 PROMOTED_DIR = REPO / "knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1"
+CURRENT_STATUS = REPO / "knowledge_bus/current/latest_knowledge_status.json"
+COMPILER_SCRIPT = REPO / "backend/scripts/compile_pass3_pilot_artifacts.py"
 
 
 def _sha256(path: Path) -> str:
@@ -31,6 +33,18 @@ def test_promoted_package_exists_with_required_files():
 
 def test_legacy_package_not_overwritten():
     legacy_hash_before = _sha256(LEGACY_DIR / "signal_library.yaml")
+    subprocess.run(
+        [
+            sys.executable,
+            str(COMPILER_SCRIPT),
+            "--normalize-promoted-manifest",
+            str(PROMOTED_DIR.relative_to(REPO)).replace("\\", "/"),
+        ],
+        cwd=REPO,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
     legacy_hash_after = _sha256(LEGACY_DIR / "signal_library.yaml")
     assert legacy_hash_before == legacy_hash_after
 
@@ -67,4 +81,49 @@ def test_promoted_manifest_and_contract_values():
     assert signal_library["library"]["schema_version"] == "1.0.0"
     compile_manifest = yaml.safe_load((PROMOTED_DIR / "compile_manifest.yaml").read_text(encoding="utf-8"))
     assert compile_manifest["source_contract_version"] == "3.0.0"
+    assert compile_manifest["output_root"] == (
+        "knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/"
+        "pkg_creatinine_high_renal_pass3_v1"
+    )
+    assert compile_manifest["promotion_status"] == "compiled_not_promoted"
+    assert compile_manifest["runtime_active"] is False
+
+
+def test_promoted_candidate_collision_blocker_classified_real():
+    compile_manifest = yaml.safe_load((PROMOTED_DIR / "compile_manifest.yaml").read_text(encoding="utf-8"))
+    assert (
+        compile_manifest["runtime_activation_blocker"]
+        == "real_duplicate_activation_key_collision_with_pkg_kb52c_creatinine_high_reduced_glomerular_filtration"
+    )
+
+
+def test_promotion_validators_do_not_update_latest_knowledge_status():
+    if not CURRENT_STATUS.is_file():
+        return
+    before = CURRENT_STATUS.read_bytes()
+    subprocess.run(
+        [
+            sys.executable,
+            str(REPO / "backend/scripts/validate_knowledge_package.py"),
+            "--package-dir",
+            str(PROMOTED_DIR),
+        ],
+        cwd=REPO,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    subprocess.run(
+        [
+            sys.executable,
+            str(REPO / "backend/scripts/validate_promoted_signal_intelligence.py"),
+            "--model",
+            str(PROMOTED_DIR / "promoted_signal_intelligence.yaml"),
+        ],
+        cwd=REPO,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert CURRENT_STATUS.read_bytes() == before
 

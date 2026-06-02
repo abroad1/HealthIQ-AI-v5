@@ -587,6 +587,23 @@ def write_governance_index(results: list[dict[str, Any]]) -> None:
     index_path.write_text(_canonical_yaml(payload), encoding="utf-8")
 
 
+def normalize_promoted_compile_manifest(promoted_dir: Path) -> None:
+    """Update promoted candidate compile_manifest output_root to the promoted path.
+
+    Promotion copies originally inherit compile manifests generated for OUTPUT_ROOT/package_id.
+    This helper rewrites output_root to the actual promoted candidate directory to avoid
+    stale path leakage in future promotion workflows.
+    """
+    compile_manifest_path = promoted_dir / "compile_manifest.yaml"
+    if not compile_manifest_path.is_file():
+        raise FileNotFoundError(f"compile manifest not found: {compile_manifest_path}")
+    payload = yaml.safe_load(compile_manifest_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"invalid compile manifest payload: {compile_manifest_path}")
+    payload["output_root"] = str(promoted_dir.relative_to(ROOT)).replace("\\", "/")
+    compile_manifest_path.write_text(_canonical_yaml(payload), encoding="utf-8")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Compile Pass 3 pilot package artefacts.")
     parser.add_argument(
@@ -594,7 +611,22 @@ def main(argv: list[str] | None = None) -> int:
         action="append",
         help="Limit to package_id (default: all pilot packages).",
     )
+    parser.add_argument(
+        "--normalize-promoted-manifest",
+        action="append",
+        help=(
+            "Rewrite promoted candidate compile_manifest.yaml output_root to the promoted "
+            "directory path. Accepts path relative to repo root."
+        ),
+    )
     args = parser.parse_args(argv)
+    if args.normalize_promoted_manifest:
+        for rel_path in args.normalize_promoted_manifest:
+            normalize_promoted_compile_manifest(ROOT / rel_path)
+        for rel_path in args.normalize_promoted_manifest:
+            print(f"normalized promoted compile manifest output_root -> {rel_path}")
+        return 0
+
     selected = list(PILOT_PACKAGES)
     if args.package_id:
         allowed = set(args.package_id)
