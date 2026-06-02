@@ -1,9 +1,10 @@
 {
   "branch": "work/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION-creatinine-multiframe-model-decision",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-02T20:00:42Z",
   "cursor_started_utc": "2026-06-02T19:58:05Z",
-  "head_sha": "a04bfc22c312be8aacbd67a58df34bec79d4aa71",
+  "head_sha": "89c02b74ade37f08fec69486a1c20068108b6397",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision"
 }
