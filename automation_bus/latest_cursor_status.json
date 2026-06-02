@@ -1,10 +1,9 @@
 {
-  "branch": "work/MED-FRAME-1-signal-family-contextual-frame-architecture",
+  "branch": "work/MED-FRAME-2-medical-frame-identity-index",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-02T11:27:36Z",
-  "cursor_started_utc": "2026-06-02T11:21:14Z",
-  "head_sha": "137a4bbdf97c75f08893d1e9591c7bcacb4ca7ed",
+  "cursor_started_utc": "2026-06-02T19:14:43Z",
+  "head_sha": "b93577cb40fb4029914f64b9dd90d1295cd9d28e",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "MED-FRAME-1_signal_family_contextual_frame_architecture"
+  "status": "IN_PROGRESS",
+  "work_id": "MED-FRAME-2_medical_frame_identity_index"
 }
