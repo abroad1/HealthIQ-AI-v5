@@ -1,0 +1,87 @@
+# Context Modifier Catalogue — Schema v1
+# CONTEXT-MOD-1 — draft governance catalogue; validator: validate_context_modifier_catalogue.py
+
+schema_name: HealthIQ Context Modifier Catalogue
+schema_version: 1.0.0
+status: LOCKED
+
+description: >
+  Governed catalogue of questionnaire, supplement, medication, and demographic modifiers
+  that may influence medical frame assembly in Layer B. Non-runtime until a future
+  promotion sprint explicitly wires consumption.
+
+root_required_fields:
+  - schema_version
+  - catalogue_id
+  - work_id
+  - generated_utc
+  - runtime_consumed
+  - status
+  - modifiers
+
+schema_version:
+  allowed:
+    - 1.0.0
+
+catalogue_id:
+  pattern: '^context_modifier_catalogue_draft_v[0-9]+$'
+
+runtime_consumed:
+  allowed:
+    - false
+
+status:
+  allowed:
+    - draft_governance_non_runtime
+
+modifier_required_fields:
+  - modifier_id
+  - modifier_type
+  - source_input
+  - source_schema_path
+  - normalised_value
+  - applies_to
+  - modifier_effect
+  - evidence_role
+  - direction
+  - strength
+  - clinical_scope
+  - requires_medical_review
+  - allowed_layer
+  - presentation_safety_status
+  - source_authority
+  - runtime_active
+  - notes
+
+modifier_type_allowed:
+  - questionnaire_lifestyle
+  - questionnaire_symptom
+  - questionnaire_known_condition
+  - questionnaire_family_history
+  - supplement
+  - medication_category
+  - drug_category
+  - demographic
+
+modifier_effect_allowed:
+  - strengthens_frame
+  - weakens_frame
+  - explains_possible_cause
+  - increases_confidence
+  - decreases_confidence
+  - adds_safety_escalation_context
+  - adds_differential_context
+  - suppresses_overclaiming
+  - requires_missing_data_caveat
+  - no_interpretive_effect
+
+allowed_layer_allowed:
+  - Layer_A_input_normalisation
+  - Layer_B_frame_assembly
+  - Layer_B_narrative_brief
+  - Presentation_safety_only
+  - Not_allowed_for_medical_inference
+
+runtime_active:
+  allowed:
+    - false

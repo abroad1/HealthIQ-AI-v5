@@ -1,0 +1,828 @@
+schema_version: 1.0.0
+catalogue_id: context_modifier_catalogue_draft_v1
+work_id: CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance
+generated_utc: '2026-06-02'
+runtime_consumed: false
+status: draft_governance_non_runtime
+
+modifiers:
+  - modifier_id: mod_demo_age
+    modifier_type: demographic
+    source_input: questionnaire.date_of_birth
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: age_years_derived
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: []
+    modifier_effect: no_interpretive_effect
+    evidence_role: stratification_context
+    direction: neutral
+    strength: low
+    clinical_scope: global_demographic
+    requires_medical_review: false
+    allowed_layer: Layer_A_input_normalisation
+    presentation_safety_status: governed_non_clinical
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: >
+      Age is normalised at input; frame-specific thresholds belong in Layer A / reference
+      ranges, not ad hoc Layer B inference.
+
+  - modifier_id: mod_demo_sex
+    modifier_type: demographic
+    source_input: questionnaire.biological_sex
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: biological_sex_enum
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: []
+    modifier_effect: no_interpretive_effect
+    evidence_role: reference_range_stratification
+    direction: neutral
+    strength: low
+    clinical_scope: global_demographic
+    requires_medical_review: false
+    allowed_layer: Layer_A_input_normalisation
+    presentation_safety_status: governed_non_clinical
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Sex-stratified reference interpretation only; not a medical frame selector.
+
+  - modifier_id: mod_q_lifestyle_alcohol
+    modifier_type: questionnaire_lifestyle
+    source_input: questionnaire.alcohol_consumption
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: alcohol_units_band
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [ggt, alt, ast, triglycerides]
+    modifier_effect: adds_differential_context
+    evidence_role: lifestyle_confounder
+    direction: contextual
+    strength: low
+    clinical_scope: hepatic_metabolic
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Class-level lifestyle modifier; detailed rules deferred to future binding sprint.
+
+  - modifier_id: mod_q_lifestyle_smoking
+    modifier_type: questionnaire_lifestyle
+    source_input: questionnaire.smoking_status
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: smoking_status_enum
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [crp, wbc, hemoglobin]
+    modifier_effect: adds_differential_context
+    evidence_role: lifestyle_confounder
+    direction: contextual
+    strength: medium
+    clinical_scope: inflammatory_cardiovascular
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Does not activate frames; may explain inflammatory or haematologic patterns.
+
+  - modifier_id: mod_q_lifestyle_exercise
+    modifier_type: questionnaire_lifestyle
+    source_input: questionnaire.exercise_frequency
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: exercise_band
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids: []
+      biomarker_ids: [creatinine, creatine_kinase]
+    modifier_effect: explains_possible_cause
+    evidence_role: acute_physiological_stressor
+    direction: may_increase
+    strength: medium
+    clinical_scope: renal_muscle
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: >
+      Recent intense exercise may distort creatinine; conceptual frame for muscle-supplement
+      context has no governed medical_frame_id yet — medical_frame_ids left empty.
+
+  - modifier_id: mod_q_hydration
+    modifier_type: questionnaire_lifestyle
+    source_input: questionnaire.hydration_or_fluid_intake
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: hydration_band
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids: []
+      biomarker_ids: [creatinine]
+    modifier_effect: explains_possible_cause
+    evidence_role: preanalytical_confounder
+    direction: may_increase
+    strength: medium
+    clinical_scope: renal
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Dehydration may elevate creatinine without structural kidney disease.
+
+  - modifier_id: mod_q_diet
+    modifier_type: questionnaire_lifestyle
+    source_input: questionnaire.diet_pattern
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: diet_pattern_enum
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [glucose, hba1c, ldl_cholesterol]
+    modifier_effect: adds_differential_context
+    evidence_role: lifestyle_context
+    direction: contextual
+    strength: low
+    clinical_scope: metabolic
+    requires_medical_review: false
+    allowed_layer: Layer_B_narrative_brief
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Narrative brief context only unless future sprint binds metabolic frames.
+
+  - modifier_id: mod_q_sleep
+    modifier_type: questionnaire_lifestyle
+    source_input: questionnaire.sleep_quality
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: sleep_band
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: []
+    modifier_effect: no_interpretive_effect
+    evidence_role: wellness_context
+    direction: neutral
+    strength: low
+    clinical_scope: general_wellness
+    requires_medical_review: false
+    allowed_layer: Presentation_safety_only
+    presentation_safety_status: presentation_only
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Not authorised for medical inference until clinically governed linkage exists.
+
+  - modifier_id: mod_q_stress
+    modifier_type: questionnaire_lifestyle
+    source_input: questionnaire.stress_level
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: stress_band
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: []
+    modifier_effect: no_interpretive_effect
+    evidence_role: wellness_context
+    direction: neutral
+    strength: low
+    clinical_scope: general_wellness
+    requires_medical_review: false
+    allowed_layer: Presentation_safety_only
+    presentation_safety_status: presentation_only
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Presentation-only until stress–biomarker links are medically adjudicated.
+
+  - modifier_id: mod_q_known_conditions
+    modifier_type: questionnaire_known_condition
+    source_input: questionnaire.known_conditions
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: condition_code_set
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids: []
+      biomarker_ids: [creatinine, uacr, cystatin_c]
+    modifier_effect: strengthens_frame
+    evidence_role: comorbidity_context
+    direction: supportive
+    strength: high
+    clinical_scope: renal_cardiometabolic
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_clinical_review_before_activation
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: >
+      CKD, diabetes, hypertension entries strengthen relevant creatinine frames when bound;
+      per-condition rules belong in future governed rows, not developer shortcuts.
+
+  - modifier_id: mod_q_family_history
+    modifier_type: questionnaire_family_history
+    source_input: questionnaire.family_history
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: family_history_code_set
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: []
+    modifier_effect: adds_differential_context
+    evidence_role: predisposition_context
+    direction: contextual
+    strength: low
+    clinical_scope: cardiometabolic_genetic
+    requires_medical_review: true
+    allowed_layer: Layer_B_narrative_brief
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Must not imply diagnosis; differential context only.
+
+  - modifier_id: mod_q_symptoms
+    modifier_type: questionnaire_symptom
+    source_input: questionnaire.symptoms
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: symptom_code_set
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: []
+    modifier_effect: adds_safety_escalation_context
+    evidence_role: symptom_escalation
+    direction: contextual
+    strength: medium
+    clinical_scope: safety_triage
+    requires_medical_review: true
+    allowed_layer: Layer_B_narrative_brief
+    presentation_safety_status: safety_sensitive
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Symptom modifiers may escalate safety context but must not select frames ad hoc.
+
+  - modifier_id: mod_q_health_goals
+    modifier_type: questionnaire_lifestyle
+    source_input: questionnaire.health_goals
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: health_goal_enum
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: []
+    modifier_effect: no_interpretive_effect
+    evidence_role: user_preference
+    direction: neutral
+    strength: low
+    clinical_scope: presentation
+    requires_medical_review: false
+    allowed_layer: Not_allowed_for_medical_inference
+    presentation_safety_status: presentation_only
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: User goals are presentation preferences, not medical modifiers.
+
+  - modifier_id: mod_sup_creatine
+    modifier_type: supplement
+    source_input: questionnaire.supplements.creatine
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: creatine_supplement_boolean
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids: []
+      biomarker_ids: [creatinine, cystatin_c]
+    modifier_effect: explains_possible_cause
+    evidence_role: measurement_distortion
+    direction: may_increase
+    strength: medium
+    clinical_scope: renal_muscle
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: >
+      Creatinine distortion frame is conceptual (MED-FRAME-1); no medical_frame_id indexed yet.
+      Cystatin C availability modifier is separate row.
+
+  - modifier_id: mod_sup_iron
+    modifier_type: supplement
+    source_input: questionnaire.supplements.iron
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: iron_supplement_boolean
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [ferritin, iron, tibc]
+    modifier_effect: adds_differential_context
+    evidence_role: supplement_confounder
+    direction: contextual
+    strength: medium
+    clinical_scope: haematologic
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Class-level supplement governance; iron-specific rules deferred.
+
+  - modifier_id: mod_sup_vitamin_d
+    modifier_type: supplement
+    source_input: questionnaire.supplements.vitamin_d
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: vitamin_d_supplement_boolean
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [vitamin_d_25_oh]
+    modifier_effect: explains_possible_cause
+    evidence_role: supplement_confounder
+    direction: may_increase
+    strength: low
+    clinical_scope: endocrine
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: May explain elevated 25-OH vitamin D without pathology.
+
+  - modifier_id: mod_sup_b12
+    modifier_type: supplement
+    source_input: questionnaire.supplements.b12
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: b12_supplement_boolean
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [vitamin_b12]
+    modifier_effect: explains_possible_cause
+    evidence_role: supplement_confounder
+    direction: may_increase
+    strength: low
+    clinical_scope: haematologic
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Oral B12 may elevate serum B12 without deficiency resolution.
+
+  - modifier_id: mod_sup_folate
+    modifier_type: supplement
+    source_input: questionnaire.supplements.folate
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: folate_supplement_boolean
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [folate]
+    modifier_effect: explains_possible_cause
+    evidence_role: supplement_confounder
+    direction: may_increase
+    strength: low
+    clinical_scope: haematologic
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Class-level folate supplement row.
+
+  - modifier_id: mod_sup_protein
+    modifier_type: supplement
+    source_input: questionnaire.supplements.protein
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: protein_supplement_boolean
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [urea, creatinine]
+    modifier_effect: adds_differential_context
+    evidence_role: supplement_context
+    direction: contextual
+    strength: low
+    clinical_scope: renal_metabolic
+    requires_medical_review: false
+    allowed_layer: Layer_B_narrative_brief
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: High protein intake context only; not a frame selector.
+
+  - modifier_id: mod_sup_testosterone
+    modifier_type: supplement
+    source_input: questionnaire.supplements.testosterone_or_hormone
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: hormone_supplement_boolean
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [testosterone, hematocrit]
+    modifier_effect: adds_differential_context
+    evidence_role: hormone_exposure
+    direction: contextual
+    strength: medium
+    clinical_scope: endocrine_haematologic
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_clinical_review_before_activation
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Captured only if questionnaire field exists; medical review required before runtime.
+
+  - modifier_id: mod_med_nsaid
+    modifier_type: medication_category
+    source_input: intervention_effects_registry.nsaids
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: intervention_class_nsaids
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids:
+        - frame_creatinine_reduced_glomerular_filtration
+      biomarker_ids: [creatinine, uacr]
+    modifier_effect: adds_safety_escalation_context
+    evidence_role: nephrotoxic_exposure
+    direction: risk_increase
+    strength: high
+    clinical_scope: renal
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: safety_sensitive
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: >
+      NSAID class strengthens safety context for reduced GFR frame; does not replace
+      biomarker evidence or activate frames at runtime in CONTEXT-MOD-1.
+
+  - modifier_id: mod_med_ace_arb
+    modifier_type: medication_category
+    source_input: intervention_effects_registry.ace_inhibitor_arb
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: intervention_class_ace_arb
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids:
+        - frame_creatinine_reduced_glomerular_filtration
+        - frame_creatinine_legacy_s24_potassium_escalation
+      biomarker_ids: [creatinine, potassium]
+    modifier_effect: adds_differential_context
+    evidence_role: renal_active_medication
+    direction: contextual
+    strength: high
+    clinical_scope: renal_electrolyte
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_clinical_review_before_activation
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: >
+      ACE/ARB may raise creatinine without progressive injury; potassium frame uses governed
+      frame_creatinine_legacy_s24_potassium_escalation (inactive authority, adjudication pending).
+
+  - modifier_id: mod_med_diuretic
+    modifier_type: medication_category
+    source_input: intervention_effects_registry.diuretics
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: intervention_class_diuretics
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids:
+        - frame_creatinine_reduced_glomerular_filtration
+      biomarker_ids: [creatinine, sodium, potassium]
+    modifier_effect: adds_differential_context
+    evidence_role: volume_electrolyte_context
+    direction: contextual
+    strength: medium
+    clinical_scope: renal_electrolyte
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: Loop and thiazide classes grouped at catalogue level; product rules deferred.
+
+  - modifier_id: mod_med_statin
+    modifier_type: medication_category
+    source_input: intervention_effects_registry.lipid_lowering_statin
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: intervention_class_lipid_lowering_statin
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [ldl_cholesterol, alt, ast, creatine_kinase]
+    modifier_effect: explains_possible_cause
+    evidence_role: expected_pharmacologic_effect
+    direction: may_lower_ldl
+    strength: high
+    clinical_scope: lipid_hepatic
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: Aligns with intervention_effects_registry_v1 statin class entry.
+
+  - modifier_id: mod_med_metformin
+    modifier_type: medication_category
+    source_input: intervention_effects_registry.metformin
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: intervention_class_metformin
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [glucose, hba1c, vitamin_b12]
+    modifier_effect: explains_possible_cause
+    evidence_role: expected_pharmacologic_effect
+    direction: may_lower_glucose
+    strength: high
+    clinical_scope: glucose_metabolic
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: Class-level glucose-impacting medication row.
+
+  - modifier_id: mod_med_thyroid
+    modifier_type: medication_category
+    source_input: intervention_effects_registry.thyroid_replacement
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: intervention_class_thyroid_medication
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [tsh, free_t4]
+    modifier_effect: explains_possible_cause
+    evidence_role: expected_pharmacologic_effect
+    direction: contextual
+    strength: medium
+    clinical_scope: endocrine
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: Thyroid medication class; detailed TSH interpretation rules not in this sprint.
+
+  - modifier_id: mod_med_steroid
+    modifier_type: medication_category
+    source_input: intervention_effects_registry.systemic_glucocorticoid
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: intervention_class_systemic_glucocorticoid
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [glucose, hba1c, wbc]
+    modifier_effect: explains_possible_cause
+    evidence_role: expected_pharmacologic_effect
+    direction: may_raise_glucose
+    strength: high
+    clinical_scope: metabolic_inflammatory
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: Matches systemic_glucocorticoid intervention class in registry.
+
+  - modifier_id: mod_med_testosterone_hormone
+    modifier_type: medication_category
+    source_input: intervention_effects_registry.testosterone_therapy
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: intervention_class_testosterone_therapy
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [testosterone, hematocrit]
+    modifier_effect: adds_differential_context
+    evidence_role: hormone_exposure
+    direction: contextual
+    strength: medium
+    clinical_scope: endocrine_haematologic
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_clinical_review_before_activation
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: Declared hormone therapy; binding requires registry class confirmation in CONTEXT-MOD-2.
+
+  - modifier_id: mod_med_nephrotoxic_class
+    modifier_type: drug_category
+    source_input: intervention_effects_registry.nephrotoxic_classes
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: nephrotoxic_drug_category_set
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids:
+        - frame_creatinine_reduced_glomerular_filtration
+      biomarker_ids: [creatinine, uacr, cystatin_c]
+    modifier_effect: adds_safety_escalation_context
+    evidence_role: nephrotoxic_exposure
+    direction: risk_increase
+    strength: high
+    clinical_scope: renal
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: safety_sensitive
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: Aggregated nephrotoxic categories; NSAID row is more specific sibling.
+
+  - modifier_id: mod_med_hepatotoxic_class
+    modifier_type: drug_category
+    source_input: intervention_effects_registry.hepatotoxic_classes
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: hepatotoxic_drug_category_set
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [alt, ast, ggt, bilirubin]
+    modifier_effect: adds_safety_escalation_context
+    evidence_role: hepatotoxic_exposure
+    direction: risk_increase
+    strength: high
+    clinical_scope: hepatic
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: safety_sensitive
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: Class-level hepatotoxic category governance placeholder.
+
+  - modifier_id: mod_med_glucose_impacting
+    modifier_type: drug_category
+    source_input: intervention_effects_registry.glucose_impacting_classes
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: glucose_impacting_drug_category_set
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [glucose, hba1c]
+    modifier_effect: adds_differential_context
+    evidence_role: pharmacologic_confounder
+    direction: contextual
+    strength: medium
+    clinical_scope: metabolic
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: Umbrella glucose-impacting category; metformin and steroid rows are exemplars.
+
+  - modifier_id: mod_med_lipid_impacting
+    modifier_type: drug_category
+    source_input: intervention_effects_registry.lipid_impacting_classes
+    source_schema_path: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+    normalised_value: lipid_impacting_drug_category_set
+    applies_to:
+      signal_family_ids: []
+      medical_frame_ids: []
+      biomarker_ids: [ldl_cholesterol, non_hdl_cholesterol, apob, triglycerides]
+    modifier_effect: explains_possible_cause
+    evidence_role: pharmacologic_confounder
+    direction: may_lower_lipids
+    strength: medium
+    clinical_scope: lipid
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: intervention_effects_registry_v1
+    runtime_active: false
+    notes: Umbrella lipid-impacting category; statin row is primary exemplar.
+
+  - modifier_id: mod_creatinine_ctx_known_ckd
+    modifier_type: questionnaire_known_condition
+    source_input: questionnaire.known_conditions.ckd
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: condition_ckd_present
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids:
+        - frame_creatinine_reduced_glomerular_filtration
+      biomarker_ids: [creatinine, uacr, cystatin_c]
+    modifier_effect: strengthens_frame
+    evidence_role: comorbidity_anchor
+    direction: supportive
+    strength: high
+    clinical_scope: renal
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_clinical_review_before_activation
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Worked example — reduced glomerular filtration frame.
+
+  - modifier_id: mod_creatinine_ctx_diabetes_htn
+    modifier_type: questionnaire_known_condition
+    source_input: questionnaire.known_conditions.diabetes_or_hypertension
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: diabetes_or_hypertension_present
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids: []
+      biomarker_ids: [creatinine, uacr]
+    modifier_effect: strengthens_frame
+    evidence_role: comorbidity_context
+    direction: supportive
+    strength: high
+    clinical_scope: renal_cardiometabolic
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_clinical_review_before_activation
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: >
+      Worked example — albuminuric kidney damage frame is conceptual; no medical_frame_id
+      in index yet; strengthens GFR and albuminuria context when bound in CONTEXT-MOD-2.
+
+  - modifier_id: mod_creatinine_ctx_uacr_available
+    modifier_type: questionnaire_lifestyle
+    source_input: analysis_input.uacr
+    source_schema_path: backend/core/models/context.py
+    normalised_value: uacr_measurement_present
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids: []
+      biomarker_ids: [uacr, creatinine]
+    modifier_effect: increases_confidence
+    evidence_role: supporting_biomarker_availability
+    direction: supportive
+    strength: medium
+    clinical_scope: renal
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: biomarker_evidence
+    runtime_active: false
+    notes: Worked example — albuminuric damage frame depends on UACR data availability.
+
+  - modifier_id: mod_creatinine_ctx_potassium_high
+    modifier_type: questionnaire_symptom
+    source_input: analysis_input.potassium
+    source_schema_path: backend/core/models/context.py
+    normalised_value: potassium_above_reference
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids:
+        - frame_creatinine_legacy_s24_potassium_escalation
+      biomarker_ids: [potassium, creatinine]
+    modifier_effect: adds_safety_escalation_context
+    evidence_role: electrolyte_risk
+    direction: risk_increase
+    strength: high
+    clinical_scope: renal_electrolyte
+    requires_medical_review: true
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: safety_sensitive
+    source_authority: biomarker_evidence
+    runtime_active: false
+    notes: >
+      Worked example — acute electrolyte risk maps to legacy potassium escalation frame;
+      label disambiguation pending clinical adjudication (CF-MEDFRAME1-003).
+
+  - modifier_id: mod_creatinine_ctx_high_muscle_mass
+    modifier_type: questionnaire_lifestyle
+    source_input: questionnaire.body_composition.high_muscle_mass
+    source_schema_path: backend/ssot/questionnaire.json
+    normalised_value: high_muscle_mass_reported
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids: []
+      biomarker_ids: [creatinine, cystatin_c]
+    modifier_effect: suppresses_overclaiming
+    evidence_role: measurement_distortion
+    direction: may_increase
+    strength: medium
+    clinical_scope: renal_muscle
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: questionnaire_ssot
+    runtime_active: false
+    notes: Worked example — creatinine distortion frame (no indexed medical_frame_id).
+
+  - modifier_id: mod_creatinine_ctx_cystatin_c_available
+    modifier_type: questionnaire_lifestyle
+    source_input: analysis_input.cystatin_c
+    source_schema_path: backend/core/models/context.py
+    normalised_value: cystatin_c_measurement_present
+    applies_to:
+      signal_family_ids: [signal_creatinine_high]
+      medical_frame_ids: []
+      biomarker_ids: [cystatin_c, creatinine]
+    modifier_effect: increases_confidence
+    evidence_role: corroborating_renal_marker
+    direction: supportive
+    strength: medium
+    clinical_scope: renal
+    requires_medical_review: false
+    allowed_layer: Layer_B_frame_assembly
+    presentation_safety_status: requires_governed_wording
+    source_authority: biomarker_evidence
+    runtime_active: false
+    notes: Worked example — reduces overclaiming when creatine or muscle mass distorts creatinine.

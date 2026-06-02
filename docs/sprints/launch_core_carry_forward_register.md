@@ -50,8 +50,9 @@ This register should be read before each new launch, architecture, medical revie
 | CF-MRIMPROVE-003 | CRP-PASS3-MIGRATION | Architecture-doc anchor package cohort | Eight context packages cite `docs/architecture/HealthIQ_Investigation_Layer.md` only. Runtime-loaded thin context signals. | No | KB-UTIL-2 / investigation extraction | Deferred | KB-MAP-1 — ROUTE_C (8 packages); `pkg_hepatic_alt_context` in promotion pilot set. |
 | CF-MRIMPROVE-004 | CRP-PASS3-MIGRATION | `pkg_lipid_transport` provenance gap | Package manifest lacks `source_document`; provenance_gap classification. | No | KB hygiene | Open | KB-MAP-1 — ROUTE_E; Pass 3 `non_hdl` mapping exists; provenance recovery before promotion. Pilot package. |
 | CF-MEDFRAME1-001 | MED-FRAME-1 | Medical frame identity index and family registry | Architecture defined in `docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md`; needs machine-enforced index for promotion and collision checks. | No | MED-FRAME-2 | Resolved | Resolved by MED-FRAME-2 — `medical_frame_identity_index_v1.yaml` + `validate_medical_frame_identity_index.py` + regression tests passing. |
-| CF-MEDFRAME1-002 | MED-FRAME-1 | Questionnaire and drug-category modifier governance | Context modifiers must be governed catalogues bound to frame IDs, not ad hoc Layer B logic. | No | CONTEXT-MOD-1 | Open | Questionnaire SSOT + intervention_effects_registry exist; frame binding not implemented. |
+| CF-MEDFRAME1-002 | MED-FRAME-1 | Questionnaire and drug-category modifier governance | Context modifiers must be governed catalogues bound to frame IDs, not ad hoc Layer B logic. | No | CONTEXT-MOD-1 | Resolved | Resolved by CONTEXT-MOD-1 — `context_modifier_catalogue_draft_v1.yaml`, schema, validator, regression tests; catalogue non-runtime. |
 | CF-MEDFRAME1-003 | MED-FRAME-1 | Creatinine multi-frame ROUTE_C compile and adjudication | Creatinine family has multiple valid frames; legacy s24 vs Pass_3 divergence still open from WIRE-1. | No | KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION | Open | See MED-FRAME-1 creatinine worked example and WIRE-1 refusal rationale. |
+| CF-CONTEXT-MOD-2 | CONTEXT-MOD-1 | Bind governed context modifiers into Layer B frame assembly | Catalogue exists but is not runtime-consumed; identity index context_inputs_supported flags remain false. | No | CONTEXT-MOD-2 | Open | Implement modifier evaluation binder; update medical_frame_identity_index when medically approved. |
 
 ---
 
@@ -87,4 +88,4 @@ When resolving an item:
 
 ## Current summary
 
-As of MED-FRAME-2 closure (2026-06-02), there are no known launch-blocking carry-forwards. Governed non-runtime medical frame identity index exists for creatinine-high family with validator enforcement. CONTEXT-MOD-1 (CF-MEDFRAME1-002) and creatinine authority adjudication (CF-MEDFRAME1-003) remain open. No runtime behaviour changes in MED-FRAME-2.
+As of CONTEXT-MOD-1 closure (2026-06-02), there are no known launch-blocking carry-forwards. Governed context modifier catalogue (draft, non-runtime) exists with validator and regression tests. Layer B binding (CF-CONTEXT-MOD-2) and creatinine authority adjudication (CF-MEDFRAME1-003) remain open. No runtime behaviour changes in CONTEXT-MOD-1.
