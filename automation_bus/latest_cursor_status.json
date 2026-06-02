@@ -1,10 +1,9 @@
 {
-  "branch": "work/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION-creatinine-multiframe-model-decision",
+  "branch": "work/PASS3-FRAME-COVERAGE-1-estate-wide-multiframe-research-coverage-audit",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-02T20:00:42Z",
-  "cursor_started_utc": "2026-06-02T19:58:05Z",
-  "head_sha": "89c02b74ade37f08fec69486a1c20068108b6397",
+  "cursor_started_utc": "2026-06-02T21:02:50Z",
+  "head_sha": "8465b71862a3081d954f06680d0c9b3693b28778",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision"
+  "status": "IN_PROGRESS",
+  "work_id": "PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit"
 }
