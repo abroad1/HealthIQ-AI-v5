@@ -1,0 +1,52 @@
+schema_version: 1.0.0
+register_id: pass3_promotion_decision_register_v1
+work_id: KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion
+generated_utc: '2026-06-02'
+decisions:
+  - promotion_id: kb_util2_promote_pilot_creatinine_v1
+    selected_package_id: pkg_s24_creatinine_high_renal
+    selected_route: ROUTE_A_exact_signal_match_compile_candidate
+    selected_rationale: single Pass_3 frame, exact signal_id match, low-risk pilot mechanics
+    source_pass3_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+    source_spec_id: inv_creatinine_high_reduced_glomerular_filtration
+    source_signal_id: signal_creatinine_high
+    source_primary_biomarker: creatinine
+    generated_pilot_path: knowledge_bus/generated_pilot/kb_util_2_pilot/pkg_s24_creatinine_high_renal
+    promoted_package_path: knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1
+    promoted_package_id: pkg_creatinine_high_renal_pass3_v1
+    advisory_1_resolution:
+      status: resolved
+      detail: compile_manifest now includes source_contract_version and preservation audit pointer is valid
+      evidence_path: knowledge_bus/generated_pilot/kb_util_2_pilot/pkg_s24_creatinine_high_renal/compile_manifest.yaml#source_contract_version
+    advisory_2_schema_version_decision:
+      decision: use_signal_library_schema_v1_0_0
+      status: resolved
+      detail: schema_version 1.0.0 retained to avoid unapproved migration; regression test added
+      evidence_path: knowledge_bus/generated_pilot/kb_util_2_pilot/pkg_s24_creatinine_high_renal/signal_library.yaml
+    divergence_classification:
+      signal_id: NO_DIFFERENCE
+      primary_biomarker: NO_DIFFERENCE
+      activation_logic: NO_DIFFERENCE
+      thresholds: STRUCTURAL_ONLY
+      supporting_markers: RICHNESS_GAIN_ONLY
+      override_rules: RICHNESS_GAIN_ONLY
+      overall: RICHNESS_GAIN_ONLY
+      accepted_with_rationale: true
+      accepted_rationale: pass3 richness retained in promoted_signal_intelligence with no runtime code wiring in this sprint
+    validators:
+      package_manifest_validation: PASS
+      research_validation: PASS
+      signal_architecture_validation: PASS
+      promoted_signal_intelligence_validation: PASS
+      day_one_architecture_validation: PASS
+      architecture_guardrails_pytest: PASS
+      kb_util2_pilot_compiler_pytest: PASS
+    runtime_activation_decision:
+      latest_knowledge_status_updated: false
+      classification: compiled_not_promoted
+      reason: promotion package created and validated, runtime activation deferred to next promotion harness sprint
+    legacy_package_treatment:
+      legacy_package_id: pkg_s24_creatinine_high_renal
+      treatment: superseded_by_pass3_package
+      legacy_package_modified: false
+      traceability_retained: true

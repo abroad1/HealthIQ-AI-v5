@@ -7,11 +7,9 @@ Non-runtime: outputs under knowledge_bus/generated_pilot/kb_util_2_pilot/<packag
 from __future__ import annotations
 
 import argparse
-import copy
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -190,21 +188,11 @@ def _compile_signal_library(spec: dict[str, Any], kbp_id: str) -> dict[str, Any]
     pm = spec["primary_marker"]
     primary_metric = pm["biomarker_id"]
     supporting = spec.get("supporting_markers") or []
-    supporting_metrics = []
     supporting_ids: list[str] = []
     for sm in supporting:
         if not isinstance(sm, dict) or not sm.get("biomarker_id"):
             continue
         supporting_ids.append(sm["biomarker_id"])
-        supporting_metrics.append(
-            {
-                "biomarker_id": sm.get("biomarker_id"),
-                "expected_direction": sm.get("expected_direction"),
-                "role": sm.get("role"),
-                "availability": sm.get("availability"),
-                "rationale": sm.get("rationale"),
-            }
-        )
     biomarkers = sorted({primary_metric, *supporting_ids})
     narrative = spec.get("narrative") or {}
     activation = spec.get("activation") or {}
@@ -221,7 +209,7 @@ def _compile_signal_library(spec: dict[str, Any], kbp_id: str) -> dict[str, Any]
         "system": pm.get("signal_system") or spec.get("research_domain"),
         "primary_metric": primary_metric,
         "trigger_direction": trigger,
-        "supporting_metrics": supporting_metrics,
+        "supporting_metrics": supporting_ids,
         "dependencies": {
             "biomarkers": biomarkers,
             "derived_metrics": [],
@@ -267,7 +255,7 @@ def _compile_signal_library(spec: dict[str, Any], kbp_id: str) -> dict[str, Any]
     return {
         "library": {
             "package_id": kbp_id,
-            "schema_version": "2.0.0",
+            "schema_version": "1.0.0",
             "package_version": "1.0.0",
             "library_name": f"{spec['signal_id']} Investigation Library (Pass 3 pilot)",
             "description": f"Pilot-compiled from {spec['spec_id']} via {COMPILER_VERSION}.",
@@ -547,6 +535,7 @@ def compile_pilot_package(
         "compile_id": f"kb_util2_pilot_{package_id}",
         "compiler_name": COMPILER_VERSION,
         "compiled_at_utc": f"deterministic-{source_hash[:12]}",
+        "source_contract_version": spec.get("investigation_spec_contract_version"),
         "source_spec_id": spec_id,
         "source_path": pass3_path,
         "source_hash_sha256": source_hash,

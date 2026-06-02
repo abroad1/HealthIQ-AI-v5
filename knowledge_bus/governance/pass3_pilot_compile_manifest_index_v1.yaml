@@ -4,23 +4,25 @@ index_id: pass3_pilot_compile_manifest_index_v1
 pilot_output_root: knowledge_bus/generated_pilot/kb_util_2_pilot
 pilots:
 - output_dir: knowledge_bus/generated_pilot/kb_util_2_pilot/pkg_s24_creatinine_high_renal
+  promoted_package_path: knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1
+  promotion_decision: promoted_package_candidate
   output_hashes:
-    compile_manifest.yaml: da0f089500ad132955f1c2b7c53e918a386a9fcf200f4a291c28134af3a73945
+    compile_manifest.yaml: d28dc395c1c079fe672ae1efc1cf26dc491cdc2f254f34a7298fb1fefd41f158
     package_manifest.yaml: 0c61b9acf7bb9fa8fcfa991b4efe8922c172c920f864f5a69d3540886244a5b5
     promoted_signal_intelligence.yaml: aa6fd5fbde052261770b7aaa8ade16337b0942ef06ffa2f1dfd67fbd9d4d2e6a
     research_brief.yaml: 69a34d0d74fd54e5a942c6fe32b83e1685a0738bd03d467e7354c32c521b5d10
-    signal_library.yaml: 4182a611c30d090d24ea8395fdaa2e178c4a8f222adf62d02a7778006bb55b07
+    signal_library.yaml: 35132af9c2e9eaa2df0773b07c5d884fc8587436d9ba2718995d08111a0ad844
     source_field_preservation_audit.yaml: 8435c038e1848ab4312d276c3207aa48e4a32e079467fb406a8c59369f44c535
   package_id: pkg_s24_creatinine_high_renal
   source_hash: 97a8a44c11d7c6441cc638a92d3dcb08598aa974c56e318e98738ca4a1b6625b
   spec_id: inv_creatinine_high_reduced_glomerular_filtration
 - output_dir: knowledge_bus/generated_pilot/kb_util_2_pilot/pkg_s24_ferritin_low_iron_deficiency
   output_hashes:
-    compile_manifest.yaml: 22cf4ee819c73f77462d3fc593caacedba45014a4c553c284a33bb25598e13a9
+    compile_manifest.yaml: 5a4388e059c2ea6d25a9b2f67eee7d13dc75a370e445f139f4748c3c12802cff
     package_manifest.yaml: 665f3dc48488560663931ae7928c285ea75412213feaa50cda5f32aeb9a8b2fc
     promoted_signal_intelligence.yaml: 4bd1533b9156a54cca9d5ead9ee33fade446bc52ac6a734755edcaa8d17c69f6
     research_brief.yaml: e1565c507282a90e77841a4ab4d5e8d81dd632f8462853023b18d2c274908866
-    signal_library.yaml: 7a598b84a36a4028c0eadf17e4856e895bdd979226b2cebf342746819b00a4c3
+    signal_library.yaml: 4bf5be923d7c9aa0d296d0c06df6b42d2a86b4a06c3a3fa38c43baa2a5141c1c
     source_field_preservation_audit.yaml: 470eda70e5fca16ce4a22bcaf01b7f10427efe390bfc33029fb759cc8489b8aa
   package_id: pkg_s24_ferritin_low_iron_deficiency
   source_hash: 9fe6afeb01d334e562da33e97b5b57ebffc65fa8ccbec14044d7734f03a69a47

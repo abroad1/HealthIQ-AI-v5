@@ -82,6 +82,18 @@ def test_preservation_audit_covers_pass3_top_level_fields():
         assert name in fields, f"missing audit field {name}"
 
 
+def test_advisory1_compile_manifest_has_source_contract_version():
+    for pkg in ("pkg_s24_creatinine_high_renal", "pkg_s24_ferritin_low_iron_deficiency"):
+        manifest = yaml.safe_load((OUTPUT_ROOT / pkg / "compile_manifest.yaml").read_text(encoding="utf-8"))
+        assert manifest.get("source_contract_version") == "3.0.0"
+
+
+def test_advisory2_signal_library_schema_version_is_governed_v1():
+    for pkg in ("pkg_s24_creatinine_high_renal", "pkg_s24_ferritin_low_iron_deficiency"):
+        signal_lib = yaml.safe_load((OUTPUT_ROOT / pkg / "signal_library.yaml").read_text(encoding="utf-8"))
+        assert (signal_lib.get("library") or {}).get("schema_version") == "1.0.0"
+
+
 def test_generated_manifest_marked_non_runtime():
     for pkg in ("pkg_s24_creatinine_high_renal", "pkg_s24_ferritin_low_iron_deficiency"):
         manifest = yaml.safe_load((OUTPUT_ROOT / pkg / "package_manifest.yaml").read_text(encoding="utf-8"))

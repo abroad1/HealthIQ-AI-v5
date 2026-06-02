@@ -3,7 +3,7 @@ library:
   library_name: signal_ferritin_low Investigation Library (Pass 3 pilot)
   package_id: KBP-9202
   package_version: 1.0.0
-  schema_version: 2.0.0
+  schema_version: 1.0.0
 signals:
 - activation_config:
     enable_lower_bound: true
@@ -40,7 +40,7 @@ signals:
     primary_metric: ferritin
     signal_state: at_risk
     signal_value: ferritin
-    supporting_markers:
+    supporting_markers: &id001
     - iron
     - hemoglobin
     - crp
@@ -59,23 +59,7 @@ signals:
     - source_bsg_iron_guideline_2021
   primary_metric: ferritin
   signal_id: signal_ferritin_low
-  supporting_metrics:
-  - availability: common
-    biomarker_id: iron
-    expected_direction: low
-    rationale: Low serum iron can corroborate depleted available iron when ferritin is low.
-    role: corroborator
-  - availability: common
-    biomarker_id: hemoglobin
-    expected_direction: low
-    rationale: Low hemoglobin supports progression from iron depletion toward iron-deficiency anemia.
-    role: mechanism_marker
-  - availability: optional
-    biomarker_id: crp
-    expected_direction: any
-    rationale: A noninflammatory context helps preserve ferritin specificity for iron deficiency because ferritin rises as
-      an acute-phase reactant.
-    role: differential_marker
+  supporting_metrics: *id001
   system: hematologic
   thresholds:
   - description: Validator-compatibility placeholder; runtime activation is lab-range driven per Pass 3 activation block.

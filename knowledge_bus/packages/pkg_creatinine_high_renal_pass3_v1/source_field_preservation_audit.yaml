@@ -1,0 +1,80 @@
+compiler_version: kb_util2_pass3_pilot_compiler_v1.0.0
+fields:
+  activation:
+    reason: Activation block copied to signal_library and PSI.
+    status: preserved
+    target_artifact: PACKAGE_ACTIVATION
+    target_path: signal_library.yaml#signals[].activation_logic
+  confirmatory_tests:
+    reason: Mapped to confirmatory_test_refs.
+    status: preserved
+    target_artifact: PROMOTED_SIGNAL_INTELLIGENCE
+    target_path: promoted_signal_intelligence.yaml#signals[].confirmatory_test_refs
+  evidence:
+    reason: Sources and strength in research_brief.
+    status: preserved
+    target_artifact: PROMOTED_SIGNAL_INTELLIGENCE
+    target_path: promoted_signal_intelligence.yaml#signals[].evidence
+  hypotheses:
+    reason: Ranked hypotheses deferred; contradiction_markers extracted to PSI.
+    status: deferred
+    target_artifact: ROOT_CAUSE_FUTURE
+    target_path: (not compiled in pilot)
+  hypothesis_ranking:
+    reason: Future hypothesis registry compile.
+    status: deferred
+    target_artifact: ROOT_CAUSE_FUTURE
+    target_path: (not compiled in pilot)
+  investigation_spec_contract_version:
+    reason: Recorded in compile manifest.
+    status: preserved
+    target_artifact: COMPILE_MANIFEST
+    target_path: compile_manifest.yaml#source_contract_version
+  narrative:
+    reason: Mechanism/pathway/interpretation in explanation; not duplicated in PSI per schema.
+    status: partially_preserved
+    target_artifact: PACKAGE_ACTIVATION
+    target_path: signal_library.yaml#signals[].explanation
+  override_rules:
+    reason: Also in PSI override_rules.
+    status: preserved
+    target_artifact: PACKAGE_ACTIVATION
+    target_path: signal_library.yaml#signals[].override_rules
+  primary_marker:
+    reason: Biomarker_id and rationale in PSI primary_metric.
+    status: preserved
+    target_artifact: PACKAGE_ACTIVATION
+    target_path: signal_library.yaml#signals[].primary_metric
+  research_domain:
+    reason: Copied to research_brief and PSI.
+    status: preserved
+    target_artifact: PACKAGE_ACTIVATION
+    target_path: research_brief.yaml#research_domain
+  signal_id:
+    reason: Exact signal_id retained.
+    status: preserved
+    target_artifact: PACKAGE_ACTIVATION
+    target_path: signal_library.yaml#signals[].signal_id
+  spec_id:
+    reason: Explicit source spec linkage.
+    status: preserved
+    target_artifact: COMPILE_MANIFEST
+    target_path: package_manifest.yaml#source_spec_id
+  states:
+    reason: Exact copy.
+    status: preserved
+    target_artifact: PROMOTED_SIGNAL_INTELLIGENCE
+    target_path: promoted_signal_intelligence.yaml#signals[].states
+  supporting_markers:
+    reason: Roles, relationship_kind, rationale preserved.
+    status: preserved
+    target_artifact: PROMOTED_SIGNAL_INTELLIGENCE
+    target_path: promoted_signal_intelligence.yaml#signals[].supporting_markers
+  trigger_direction:
+    reason: Exact copy.
+    status: preserved
+    target_artifact: PROMOTED_SIGNAL_INTELLIGENCE
+    target_path: promoted_signal_intelligence.yaml#signals[].trigger_direction
+source_hash: 97a8a44c11d7c6441cc638a92d3dcb08598aa974c56e318e98738ca4a1b6625b
+source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+source_spec_id: inv_creatinine_high_reduced_glomerular_filtration
