@@ -1,47 +1,40 @@
 ---
-work_id: KB-UTIL-2-PILOT_pass3_to_runtime_artifact_compiler_pilot
-branch: work/KB-UTIL-2-PILOT-pass3-to-runtime-artifact-compiler-pilot
+work_id: KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion
+branch: work/KB-UTIL-2-PROMOTE-PILOT-route-a-single-package-promotion
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# KB-UTIL-2-PILOT — Pass_3 to Runtime Artefact Compiler Pilot
+# KB-UTIL-2-PROMOTE-PILOT — ROUTE_A Single Package Promotion Pilot
 
 ## Purpose
 
-Build the first deterministic pilot compiler pathway from Pass_3 / investigation-spec v3 research into governed runtime artefacts.
+Promote one validated ROUTE_A package from the KB-UTIL-2-PILOT generated artefacts into governed package authority.
 
-This sprint is the first controlled extraction sprint after KB-MAP-1.
+This sprint is the first controlled promotion sprint after the deterministic Pass_3 compiler pilot.
 
-The goal is not to manually rewrite package files. The goal is to prove that Pass_3 research can be parsed, mapped, compiled, validated and audited without losing medical richness.
+The goal is to prove the full governed path for one low-risk exact-match package:
+
+```text
+Pass_3 source
+→ deterministic compiler output
+→ divergence review
+→ validator pass
+→ package promotion decision
+→ legacy package retirement/classification decision
+→ no runtime behavioural surprise
+````
+
+This is not a bulk migration sprint.
 
 ## Non-negotiable architecture rule
 
-Do not use LLM/manual extraction as the promotion mechanism.
+Do not bulk promote.
 
-Cursor may use LLM assistance to write code, inspect outputs, and summarise findings, but the actual extraction must be deterministic and schema-driven.
+Do not promote more than one package unless explicitly approved during hardening.
 
-Forbidden:
-
-```text
-- manually reading Pass_3 and copy/pasting into package files
-- asking an LLM to “extract the important bits”
-- summarising Pass_3 into artefacts by judgement
-- bulk prompt extraction
-- best-effort field selection
-````
-
-Required:
-
-```text
-Pass_3 JSON in
-→ deterministic parser
-→ deterministic compiler mapping
-→ generated artefacts
-→ validation
-→ source-field preservation audit
-```
+The purpose is to prove the controlled promotion harness and divergence policy before scaling to the remaining ROUTE_A cohort.
 
 ## Baseline requirement
 
@@ -51,12 +44,12 @@ Expected prior completed work:
 
 ```text
 KB-MAP-1 merged
-MED-RESEARCH-REVIEW-1 merged
-CRP-PASS3-MIGRATION merged
+KB-UTIL-2-PILOT merged
 KNOWLEDGE_BUS_SOP_v1.3.1 committed
 KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1 committed
 docs/sprints/launch_core_carry_forward_register.md present and updated
 knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml present
+knowledge_bus/generated_pilot/kb_util_2_pilot/ present
 ```
 
 Before creating or switching branch, run and report:
@@ -75,9 +68,10 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- KB-MAP-1 is not merged
+- KB-UTIL-2-PILOT is not merged
+- generated pilot artefacts are missing
+- carry-forward register is missing
 - Pass3 Promotion Protocol v1.1 is missing
-- pass3_legacy_package_mapping_plan_v1.yaml is missing
 ```
 
 ## Governance classification
@@ -90,7 +84,7 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This sprint creates compiler logic and generated Knowledge Bus artefacts. It must not wire outputs into runtime yet, but it touches the future medical intelligence promotion path.
+This sprint may promote a generated Knowledge Bus package into package authority and may classify or retire one legacy package authority. Even with a low-risk ROUTE_A package, this is medical intelligence promotion work.
 
 ## Required governance inputs
 
@@ -100,81 +94,202 @@ Read before implementation:
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
 docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 docs/sprints/launch_core_carry_forward_register.md
-knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
-knowledge_bus/governance/non_pass3_package_revalidation_register_v1.yaml
+docs/audit-papers/KB-UTIL-2-PILOT_pass3_to_runtime_artifact_compiler_pilot_report.md
 docs/audit-papers/KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan.md
-docs/audit-papers/MED-RESEARCH-REVIEW-1_pass3_primary_biomarker_cross_validation_addendum.md
-docs/audit-papers/MED-RESEARCH-REVIEW-1_non_pass3_package_revalidation_audit.md
+knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
+knowledge_bus/governance/pass3_pilot_compile_manifest_index_v1.yaml
+knowledge_bus/generated_pilot/kb_util_2_pilot/
 ```
 
 Also inspect:
 
 ```text
-knowledge_bus/research/investigation_specs/multi_llm_research/**/*Pass_3*.json
-knowledge_bus/schema/investigation_spec_schema_v3.0.0.yaml
-knowledge_bus/schema/signal_library_schema.yaml
-knowledge_bus/schema/research_brief_schema.yaml
-knowledge_bus/schema/package_manifest_schema.yaml
-knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml
-backend/scripts/validate_investigation_spec.py
+backend/scripts/compile_pass3_pilot_artifacts.py
+backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py
 backend/scripts/validate_knowledge_package.py
 backend/scripts/validate_promoted_signal_intelligence.py
+knowledge_bus/current/latest_knowledge_status.json
+knowledge_bus/packages/
 ```
 
 If paths differ, locate and report actual paths.
 
-## Pilot scope
+## Advisory points from KB-UTIL-2-PILOT
 
-Use a small pilot set only.
+This sprint must address or formally carry forward both advisory points from KB-UTIL-2-PILOT:
 
-Primary pilot candidates from KB-MAP-1:
+### Advisory 1 — preservation audit path discrepancy
+
+KB-UTIL-2-PILOT found that:
+
+```text
+source_field_preservation_audit.yaml recorded:
+investigation_spec_contract_version → compile_manifest.yaml#source_contract_version
+
+but compile_manifest.yaml did not contain source_contract_version.
+```
+
+Required action:
+
+```text
+- Correct the compiler/audit template so the target path is accurate.
+- Either add source_contract_version to compile_manifest.yaml,
+  or update the audit pointer to the actual preservation location.
+- Add/adjust regression test so this cannot recur.
+```
+
+### Advisory 2 — generated signal_library schema version
+
+KB-UTIL-2-PILOT generated:
+
+```yaml
+schema_version: "2.0.0"
+```
+
+while current runtime packages generally use:
+
+```yaml
+schema_version: "1.0.0"
+```
+
+Required action:
+
+```text
+- Determine whether "2.0.0" is intentional and governed.
+- If not formally governed, use "1.0.0" for promoted package artefacts until schema advancement is explicitly approved.
+- Document the decision in the sprint report.
+- Add/adjust regression test so the chosen schema version is deliberate.
+```
+
+STOP if promoting with `schema_version: "2.0.0"` would create an unapproved schema migration.
+
+## Package selection
+
+Use only one ROUTE_A package for promotion.
+
+Recommended first candidate:
 
 ```text
 pkg_s24_creatinine_high_renal
+```
+
+Rationale:
+
+```text
+- ROUTE_A exact signal match
+- single Pass_3 frame
+- renal signal with clear primary biomarker
+- generated pilot artefacts already exist
+- suitable for validating promotion mechanics
+```
+
+Alternative only if preflight identifies a blocker:
+
+```text
 pkg_s24_ferritin_low_iron_deficiency
 ```
 
-These should be ROUTE_A exact signal match / compile candidates.
-
-Use comparison-only cases if helpful:
-
-```text
-pkg_lipid_transport
-pkg_chronic_inflammation
-```
-
-But do not promote or regenerate comparison-only exceptions unless explicitly safe and approved within this sprint.
+Do not promote both.
 
 ## Required preflight
 
-Before writing compiler code, report:
+Before changing package authority, report:
 
 ```text
-1. Exact package IDs selected for pilot.
-2. Current legacy package paths.
-3. Matching Pass_3 file paths.
-4. Matching Pass_3 spec_ids.
-5. Matching signal_ids.
-6. Matching primary biomarkers.
-7. Whether each pilot has one Pass_3 frame or multiple frames.
-8. Whether current package thresholds/activation logic match Pass_3 activation logic.
-9. Whether any behavioural difference would result from generated artefacts.
-10. Whether pilot can proceed without runtime wiring.
+1. selected package_id
+2. current legacy package path
+3. generated pilot package path
+4. source Pass_3 path
+5. source spec_id
+6. source signal_id
+7. source primary biomarker
+8. confirmation exact signal_id match
+9. confirmation single Pass_3 frame
+10. current legacy package schema_version
+11. generated package schema_version
+12. validator status for generated package
+13. promoted_signal_intelligence validator status
+14. compile manifest hash evidence
+15. source-field preservation audit status
+16. behavioural parity/divergence summary
 ```
 
-STOP if the selected pilot package has multiple Pass_3 frames, signal ambiguity, or threshold/activation conflict that requires clinical adjudication.
-
-## Artefacts to generate
-
-For each approved pilot spec, generate into a clearly isolated pilot output area, not active runtime package directories unless hardening explicitly approves.
-
-Preferred output root:
+STOP if:
 
 ```text
-knowledge_bus/generated_pilot/kb_util_2_pilot/<package_id>/
+- selected package is not ROUTE_A
+- selected package has multiple Pass_3 frames
+- exact signal_id match is absent
+- threshold/activation divergence is clinically meaningful
+- generated artefacts fail validation
+- source-field preservation audit has unresolved gaps
 ```
 
-For each pilot, generate:
+## Divergence policy
+
+Before promotion, classify all differences between current legacy package and generated package.
+
+Use:
+
+```text
+NO_DIFFERENCE
+STRUCTURAL_ONLY
+RICHNESS_GAIN_ONLY
+BEHAVIOURAL_DIFFERENCE_LOW
+BEHAVIOURAL_DIFFERENCE_HIGH
+CLINICAL_ADJUDICATION_REQUIRED
+```
+
+Promotion is allowed only if all differences are:
+
+```text
+NO_DIFFERENCE
+STRUCTURAL_ONLY
+RICHNESS_GAIN_ONLY
+```
+
+or explicitly accepted with rationale.
+
+STOP if any difference is:
+
+```text
+BEHAVIOURAL_DIFFERENCE_HIGH
+CLINICAL_ADJUDICATION_REQUIRED
+```
+
+Do not resolve clinical divergence in this sprint.
+
+## Promotion method
+
+Preferred safe promotion method:
+
+```text
+1. Create a new package directory for the generated package rather than overwriting the legacy package.
+2. Preserve the old package unchanged.
+3. Use package naming that makes source/version clear.
+4. Validate the new package.
+5. Update package authority only if governance allows.
+```
+
+Suggested package naming:
+
+```text
+knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1/
+```
+
+or another repo-consistent name approved by hardening.
+
+Do not overwrite:
+
+```text
+knowledge_bus/packages/pkg_s24_creatinine_high_renal/
+```
+
+unless hardening explicitly approves overwrite, which should normally be avoided because promoted packages are immutable.
+
+## Required generated/promoted package contents
+
+The promoted package must include:
 
 ```text
 research_brief.yaml
@@ -185,176 +300,81 @@ compile_manifest.yaml
 source_field_preservation_audit.yaml
 ```
 
-Do not overwrite existing runtime packages.
+If existing package validator does not permit extra files, keep additional artefacts inside the package only if accepted by the validator. Otherwise place them in an adjacent governed artefact folder and reference them from the manifest/report.
 
-Do not update `knowledge_bus/current/latest_knowledge_status.json`.
+Do not drop promoted signal intelligence.
 
-Do not make generated pilot packages active.
+Do not flatten Pass_3 richness into signal_library only.
 
-## Required extraction mapping
+## Runtime status
 
-The compiler must account for these Pass_3 fields:
-
-```text
-investigation_spec_contract_version
-spec_id
-signal_id
-research_domain
-primary_marker
-trigger_direction
-activation
-states
-supporting_markers
-hypotheses
-hypothesis_ranking
-confirmatory_tests
-override_rules
-evidence
-narrative
-```
-
-Each field must be mapped to one of:
+This sprint may update:
 
 ```text
-PACKAGE_ACTIVATION
-PROMOTED_SIGNAL_INTELLIGENCE
-ROOT_CAUSE_FUTURE
-CARD_EVIDENCE_FUTURE
-PRESENTATION_SAFETY_FUTURE
-COMPILE_MANIFEST
-DEFERRED_WITH_REASON
-NOT_APPLICABLE_WITH_REASON
+knowledge_bus/current/latest_knowledge_status.json
 ```
 
-No field may disappear without an explicit preservation-audit entry.
+only if the promoted package is intended to become the active package authority under the current Knowledge Bus SOP process.
 
-## Source-field preservation audit
+If updating latest_knowledge_status.json, include validator evidence exactly as required by Knowledge Bus SOP v1.3.1.
 
-For each pilot spec, generate:
+If hardening decides runtime activation should wait for a later sprint, do not update latest_knowledge_status.json and instead classify the package as:
 
 ```text
-source_field_preservation_audit.yaml
+compiled_not_promoted
 ```
 
-It must include:
+## Legacy package treatment
 
-```yaml
-source_spec_id:
-source_path:
-source_hash:
-compiler_version:
-fields:
-  field_name:
-    status:
-    target_artifact:
-    target_path:
-    reason:
-```
+Do not delete the legacy package.
 
-Allowed `status` values:
+Classify it as one of:
 
 ```text
-preserved
-partially_preserved
+retained_for_traceability
+superseded_by_pass3_package
+accepted_with_rationale
 deferred
-not_applicable
-blocked
 ```
 
-The audit must explicitly prove that the following rich research content was not silently lost:
-
-```text
-- supporting marker roles
-- relationship_kind
-- marker rationale
-- ranked hypotheses
-- physiological claims
-- caveats
-- contradiction markers
-- missing_data.policy
-- confirmatory tests
-- override rules
-- evidence strength
-- evidence source references
-- mechanism / pathway / interpretation / implications narrative
-```
-
-## Compiler implementation
-
-Create a deterministic compiler script or module.
-
-Suggested path:
-
-```text
-backend/scripts/compile_pass3_pilot_artifacts.py
-```
-
-or, if repo conventions prefer Knowledge Bus scripts:
-
-```text
-knowledge_bus/scripts/compile_pass3_pilot_artifacts.py
-```
-
-The compiler must:
-
-```text
-- load explicit source Pass_3 spec(s)
-- validate source structure before compile
-- generate deterministic YAML output
-- sort keys / lists deterministically where appropriate
-- emit source hashes
-- emit output hashes
-- emit compile manifest
-- emit source-field preservation audit
-```
-
-Do not create a broad estate compiler in this sprint.
-
-This is a pilot compiler only.
+If the new package is promoted, the old package should be marked in governance/reporting as superseded, not edited in place.
 
 ## Validation requirements
 
-Add or update validators/tests proving:
+Run package validation against the promoted/generated package:
 
-```text
-1. Pilot compiler is deterministic.
-2. Same input produces same output hashes.
-3. All required Pass_3 top-level fields are accounted for.
-4. Generated signal_library.yaml validates structurally.
-5. Generated research_brief.yaml validates structurally.
-6. Generated package_manifest.yaml validates structurally.
-7. Generated promoted_signal_intelligence.yaml validates if present.
-8. No generated pilot artefact is runtime-active.
-9. Existing runtime packages are not overwritten.
-10. No raw Pass_3 runtime reads are introduced.
+```powershell
+python backend/scripts/validate_knowledge_package.py --package-dir <new_package_dir>
 ```
 
-Add targeted tests, for example:
+Run promoted signal intelligence validation if not included automatically:
 
-```text
-backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py
+```powershell
+python backend/scripts/validate_promoted_signal_intelligence.py --file <path_to_promoted_signal_intelligence.yaml>
 ```
 
-## Standard checks
-
-Always run:
+Run:
 
 ```powershell
 python backend/scripts/validate_day_one_architecture.py
 python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
-```
-
-Also run:
-
-```powershell
 python -m pytest backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py -q
 ```
 
-Run package validators against generated pilot artefacts if supported by the validator.
+Add or update regression tests proving:
+
+```text
+1. advisory 1 is fixed
+2. schema_version decision is deliberate
+3. promoted package validates
+4. promoted signal intelligence validates
+5. legacy package is not overwritten
+6. Pass_3 richness is preserved outside signal_library
+7. no raw Pass_3 runtime read is introduced
+8. no runtime evaluator/frontend code is changed
+```
 
 ## Runtime boundary
-
-This sprint must not wire generated artefacts into runtime.
 
 Do not modify:
 
@@ -368,52 +388,30 @@ frontend
 SSOT
 scoring thresholds
 unit conversion
-knowledge_bus/current/latest_knowledge_status.json
 ```
 
 If any of those appear necessary, STOP and report.
-
-## Behavioural parity / divergence report
-
-For each pilot package, compare generated pilot artefacts against current legacy package.
-
-Report:
-
-```text
-- signal_id match
-- primary biomarker match
-- activation logic match
-- threshold match
-- supporting marker differences
-- override rule differences
-- richer intelligence preserved
-- any behavioural difference
-- whether generated package would be safe for future promotion
-```
-
-Do not resolve behavioural differences in this sprint. Classify them.
 
 ## Required deliverables
 
 Create:
 
 ```text
-docs/audit-papers/KB-UTIL-2-PILOT_pass3_to_runtime_artifact_compiler_pilot_report.md
+docs/audit-papers/KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion_report.md
 ```
 
-Create generated pilot outputs under:
+Update or create:
 
 ```text
-knowledge_bus/generated_pilot/kb_util_2_pilot/
+knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml
 ```
 
-Create or update:
+Update if needed:
 
 ```text
 knowledge_bus/governance/pass3_pilot_compile_manifest_index_v1.yaml
+docs/sprints/launch_core_carry_forward_register.md
 ```
-
-Do not make this runtime-consumed.
 
 ## Required report content
 
@@ -421,18 +419,20 @@ The sprint report must include:
 
 ```text
 - executive verdict
-- pilot package selection rationale
-- source Pass_3 specs used
-- generated artefacts
+- selected package and rationale
+- source Pass_3 spec used
+- generated artefacts promoted
+- validator results
+- promoted signal intelligence validation
+- advisory 1 resolution
+- advisory 2 schema_version decision
 - source-field preservation summary
-- field-level deferred items
-- validation results
-- deterministic output/hash evidence
-- behavioural parity/divergence findings
-- confirmation no runtime wiring occurred
+- behavioural parity/divergence classification
+- legacy package treatment
+- whether latest_knowledge_status.json was updated
+- confirmation no runtime evaluator/frontend changes occurred
 - confirmation no manual LLM extraction occurred
 - recommended next sprint
-- whether pilot proves enough for broader ROUTE_A compile wave
 ```
 
 ## Carry-forward register
@@ -443,31 +443,30 @@ Before finish, update:
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Only update if this sprint materially changes a carry-forward.
+Only update items actually changed by this sprint.
 
-Likely items:
+Likely relevant items:
 
 ```text
+CF-KBUTIL1-001
 CF-MRIMPROVE-001
-CF-MRIMPROVE-002
-CF-MRIMPROVE-003
 CF-CRPPASS3-001
 CF-CHRONICINFL-001
-CF-KBUTIL1-001
 ```
 
-Do not mark broad migration items resolved from this pilot alone.
+Do not mark broad migration items resolved from a single-package pilot.
 
 ## Out of scope
 
 Do not:
 
 ```text
-- bulk compile all 55 packages
-- promote generated artefacts into runtime
-- overwrite existing packages
-- change active package status
-- change thresholds
+- bulk promote ROUTE_A packages
+- promote ROUTE_B/C packages
+- promote CRP/systemic inflammation
+- resolve multi-frame adjudication
+- delete legacy packages
+- alter thresholds manually
 - change activation logic manually
 - change SignalEvaluator or SignalRegistry
 - change frontend
@@ -482,15 +481,16 @@ Do not:
 STOP and report if:
 
 ```text
-1. selected pilot has ambiguous Pass_3 mapping
-2. selected pilot has multiple Pass_3 frames requiring adjudication
-3. compiler would need manual LLM extraction
-4. generated artefacts would require runtime wiring to validate
-5. source-field preservation cannot be proven
-6. package validator cannot validate generated pilot package structure
-7. behavioural divergence appears clinically meaningful
-8. any runtime package would need overwriting
-9. ARCH-RT validator fails
+1. selected package has ambiguous mapping
+2. selected package has multiple Pass_3 frames
+3. package validation fails
+4. promoted signal intelligence validation fails
+5. advisory 1 cannot be cleanly resolved
+6. schema_version choice is unclear
+7. behavioural divergence is clinically meaningful
+8. promotion would require runtime code changes
+9. legacy package would need to be overwritten
+10. ARCH-RT validator fails
 ```
 
 ## Evidence required from Cursor
@@ -500,17 +500,19 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. governance inputs read
-3. pilot package selection
-4. source Pass_3 specs selected
-5. compiler files created/changed
-6. generated artefacts
-7. source-field preservation audit output
-8. validation commands run
-9. test results
-10. behavioural parity/divergence summary
-11. confirmation no runtime wiring
-12. confirmation no manual LLM extraction
-13. confirmation generated outputs are not active runtime authority
+3. selected package and why
+4. source Pass_3 spec
+5. promoted package path
+6. validation commands run
+7. validation results
+8. advisory 1 resolution
+9. advisory 2 decision
+10. divergence classification
+11. legacy package treatment
+12. files changed
+13. confirmation no runtime/frontend/evaluator changes
+14. confirmation no manual LLM extraction
+15. confirmation whether latest_knowledge_status.json changed
 ```
 
 ## Closure requirements
@@ -529,15 +531,13 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/KB-UTIL-2-PILOT-pass3-to-runtime-artifact-compiler-pilot
-- changed files are tied to compiler pilot only
-- no existing runtime packages were overwritten
-- no active package status changed
-- no production runtime logic changed
-- no frontend changed
-- source-field preservation audit exists
-- generated artefacts are clearly marked pilot/non-runtime
+- current branch matches work/KB-UTIL-2-PROMOTE-PILOT-route-a-single-package-promotion
+- only in-scope package/governance/test/report files changed
+- no existing legacy package was overwritten
+- no runtime evaluator/frontend files changed
 - no ambiguous stash exists
+- validator evidence is recorded
+- advisory points are resolved or explicitly carried forward
 ```
 
 ## Success criteria
@@ -545,16 +545,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. deterministic pilot compiler exists
-2. at least one clean ROUTE_A package is compiled from Pass_3
-3. generated package artefacts validate structurally
-4. promoted signal intelligence artefact is generated where possible
-5. source-field preservation audit accounts for all rich Pass_3 fields
-6. no manual LLM extraction is used
-7. no runtime behaviour changes
-8. no generated artefact is promoted to runtime
-9. parity/divergence report is produced
-10. next promotion wave can be judged from evidence
+1. one ROUTE_A package is selected and justified
+2. advisory 1 is resolved
+3. schema_version decision is made and tested
+4. generated/promoted package validates
+5. promoted signal intelligence validates
+6. legacy package is preserved
+7. divergence policy is applied
+8. no runtime evaluator/frontend behaviour changes
+9. no manual LLM extraction is used
+10. next promotion wave can be planned from evidence
 ```
 
 ```
