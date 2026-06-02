@@ -1,10 +1,9 @@
 {
-  "branch": "work/KB-UTIL-2-ACTIVATION-READINESS-creatinine-candidate-divergence-and-collision-resolution",
+  "branch": "work/KB-UTIL-2-PROMOTE-WIRE-1-creatinine-runtime-authority-switch",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-02T09:00:26Z",
-  "cursor_started_utc": "2026-06-02T08:55:02Z",
-  "head_sha": "071f48a059b161bcfc4383d69cf4364be91cd1a5",
+  "cursor_started_utc": "2026-06-02T10:19:18Z",
+  "head_sha": "26ad591a80a8a28eb6b4f29185f96884f79437f6",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution"
+  "status": "IN_PROGRESS",
+  "work_id": "KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch"
 }
