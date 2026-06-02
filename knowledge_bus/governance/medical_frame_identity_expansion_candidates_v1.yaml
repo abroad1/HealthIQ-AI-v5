@@ -1,0 +1,53 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: governance_audit_non_runtime
+work_id: PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit
+generated_utc: '2026-06-02'
+source_audit: knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
+
+description: >
+  Signal families prioritised for medical_frame_identity_index expansion before
+  bulk ROUTE_A promotion. Creatinine is indexed; others are audit-derived candidates only.
+
+expansion_candidates:
+  - signal_family_id: signal_creatinine_high
+    primary_biomarker_id: creatinine
+    priority: 1
+    rationale: adjudicated multiframe pattern; index exists with 4 frames
+    indexed: true
+
+  - signal_family_id: signal_alt_high
+    primary_biomarker_id: alt
+    priority: 2
+    rationale: ROUTE_C; 3 Pass_3 frames; 3 legacy override rules (Hy's Law, cholestatic)
+    indexed: false
+
+  - signal_family_id: signal_crp_high
+    primary_biomarker_id: crp
+    priority: 3
+    rationale: dual Pass_3 inflammation frames; s24 runtime authority; CF-CRPPASS3-001
+    indexed: false
+
+  - signal_family_id: signal_ferritin_high
+    primary_biomarker_id: ferritin
+    priority: 4
+    rationale: inflammatory vs overload vs depletion frames; ROUTE_C
+    indexed: false
+
+  - signal_family_id: signal_ferritin_low
+    primary_biomarker_id: ferritin
+    priority: 5
+    rationale: ROUTE_A with 3 legacy overrides; iron-store depletion vs inflammation
+    indexed: false
+
+  - signal_family_id: signal_apob_atherogenic
+    primary_biomarker_id: apob
+    priority: 6
+    rationale: ROUTE_C; familial vs excess vs low hypobetalipoproteinemia Pass_3 frames
+    indexed: false
+
+  - signal_family_id: signal_systemic_inflammation
+    primary_biomarker_id: crp
+    priority: 7
+    rationale: ROUTE_G; distinct from signal_crp_high; manual medical-review exception
+    indexed: false
