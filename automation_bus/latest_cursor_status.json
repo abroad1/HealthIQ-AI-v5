@@ -1,9 +1,10 @@
 {
   "branch": "work/KB-UTIL-2-PROMOTE-PILOT-route-a-single-package-promotion",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-02T08:36:14Z",
   "cursor_started_utc": "2026-06-02T08:35:11Z",
-  "head_sha": "da6f987dcd0d3dacf78db5dc74fedd8168eb876a",
+  "head_sha": "8000c44a871f27155bc832523eda3d887882761d",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion"
 }
