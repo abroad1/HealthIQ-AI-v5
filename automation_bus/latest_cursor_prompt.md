@@ -1,68 +1,41 @@
 ---
-work_id: PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit
-branch: work/PASS3-FRAME-COVERAGE-1-estate-wide-multiframe-research-coverage-audit
+work_id: PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion
+branch: work/PASS3-FRAME-INDEX-2-high-risk-signal-family-index-expansion
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: MIXED
 ---
 
-# PASS3-FRAME-COVERAGE-1 — Estate-Wide Multi-Frame Research Coverage Audit
+# PASS3-FRAME-INDEX-2 — High-Risk Signal Family Index Expansion
 
 ## Purpose
 
-Audit the wider Pass_3 / package estate to determine where HealthIQ has multiple medically distinct interpretive frames under the same biomarker signal family, and whether those frames are correctly represented before package promotion continues.
+Expand the governed medical frame identity index beyond creatinine, using the estate-wide frame coverage audit to identify the highest-risk signal families for frame collapse.
 
-This sprint must not become a one-biomarker creatinine fix.
+This sprint must not let Cursor decide clinical truth.
 
-Creatinine exposed the issue, but the architectural concern is estate-wide:
+Cursor may propose the highest-risk families from audit evidence, but selection must be based on objective criteria from `PASS3-FRAME-COVERAGE-1`, not preference, convenience, or instinct.
 
-```text
-A primary biomarker signal may support multiple medically valid frames.
-Legacy packages may contain valid edge-case logic.
-Pass_3 may contain some, all, or none of those frames.
-Package promotion must not collapse valid medical frames or silently discard edge-case logic.
-````
-
-The goal is to produce an estate-level frame coverage and enrichment audit so future promotion work knows:
-
-```text
-- which packages can safely proceed to promotion
-- which require multi-frame adjudication
-- which require Pass_3 enrichment
-- which legacy logic must be preserved
-- which package candidates should remain blocked
-```
-
-This is a governance/audit sprint only.
-
-Do not change runtime behaviour.
+The goal is to prevent future package promotion from collapsing medically distinct frames into flat signals.
 
 ---
 
 ## Strategic framing
 
-HealthIQ must support:
+`PASS3-FRAME-COVERAGE-1` found that package promotion cannot safely continue as a naive ROUTE_A / ROUTE_C exercise.
+
+The key estate-level finding was:
 
 ```text
-one biomarker signal family
-→ multiple medically credible frames
-→ supporting / contradicting / contextual evidence
-→ questionnaire and medication modifiers
-→ Layer B personalised interpretation
-→ frontend render-only output
-```
+0 packages are safe for naive ROUTE_A promotion.
+Many packages require frame adjudication or Pass_3 enrichment before promotion.
+````
 
-The current promotion pipeline must not flatten this into:
+The next architecture step is to expand the medical frame identity index for the highest-risk signal families, so future promotion work knows what frames must be preserved.
 
-```text
-one biomarker = one signal = one meaning
-```
+Creatinine was the pattern.
 
-The estate-level question is:
-
-```text
-Where does HealthIQ already have multiple valid medical frames, and are those frames properly represented in Pass_3, package artefacts, frame identity governance and future promotion plans?
-```
+This sprint applies that pattern to the wider estate.
 
 ---
 
@@ -73,15 +46,10 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
-KB-MAP-1 merged
-KB-UTIL-2-PILOT merged
-KB-UTIL-2-PROMOTE-PILOT merged
-KB-UTIL-2-ACTIVATION-READINESS merged
-KB-UTIL-2-PROMOTE-WIRE-1 merged
-MED-FRAME-1 merged
+PASS3-FRAME-COVERAGE-1 merged
+KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION merged
 MED-FRAME-2 merged
 CONTEXT-MOD-1 merged
-KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION merged
 KNOWLEDGE_BUS_SOP_v1.3.1 committed
 KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1 committed
 ```
@@ -102,10 +70,9 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
+- PASS3-FRAME-COVERAGE-1 artefacts are missing
 - medical_frame_identity_index_v1.yaml is missing
-- context_modifier_catalogue_draft_v1.yaml is missing
-- pass3_legacy_package_mapping_plan_v1.yaml is missing
-- creatinine authority adjudication report is missing
+- medical_frame_identity_index validator is missing
 ```
 
 ---
@@ -114,13 +81,13 @@ STOP if:
 
 ```yaml
 risk_level: HIGH
-change_type: CONTENT
+change_type: MIXED
 execution_model: TWO_PHASE_START_FINISH
 ```
 
 Reason:
 
-This sprint reviews medical-intelligence coverage and will govern future package promotion. It must not change runtime behaviour, but it is high-impact architecture work.
+This sprint expands governed medical frame identity infrastructure. It must not change runtime behaviour, but it affects future medical-intelligence promotion authority.
 
 ---
 
@@ -129,202 +96,216 @@ This sprint reviews medical-intelligence coverage and will govern future package
 Read before work:
 
 ```text
+docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md
+knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
+knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+knowledge_bus/schema/medical_frame_identity_index_schema_v1.yaml
+backend/scripts/validate_medical_frame_identity_index.py
 docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md
 docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md
-docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md
-docs/audit-papers/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance_report.md
-docs/audit-papers/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision_report.md
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
-knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
-knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml
-knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml
 docs/sprints/launch_core_carry_forward_register.md
-docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
-docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 ```
 
-Inspect:
+Also inspect relevant packages and Pass_3 files for shortlisted families:
 
 ```text
 knowledge_bus/packages/**
 knowledge_bus/research/investigation_specs/multi_llm_research/**/*Pass_3*.json
-knowledge_bus/research/investigation_specs/**/*.yaml
-knowledge_bus/generated_pilot/**
-knowledge_bus/governance/**
-```
-
-If paths differ, locate and report actual paths.
-
----
-
-## Core architectural issue
-
-This sprint must answer the estate-level question:
-
-```text
-Where do we risk losing medically valid edge-case reasoning when promoting legacy packages into Pass_3-derived artefacts?
-```
-
-Use creatinine as the pattern, not the scope.
-
-For each reviewed signal family, distinguish:
-
-```text
-- primary biomarker signal family
-- Pass_3 research frames
-- legacy package frames
-- supporting markers
-- contradiction markers
-- override/escalation rules
-- questionnaire modifiers
-- medication/drug-category modifiers
-- current package authority
-- promotion route risk
-```
-
----
-
-## Required package cohort
-
-Start from the 55-package cohort in:
-
-```text
 knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
 ```
 
-Prioritise review in this order:
+---
+
+## High-risk family selection
+
+Cursor must not choose families clinically.
+
+Cursor must rank candidate signal families using objective audit fields from `pass3_frame_coverage_audit_v1.yaml` and `medical_frame_identity_expansion_candidates_v1.yaml`.
+
+Ranking criteria:
 
 ```text
-1. ROUTE_C multiple Pass_3 frame adjudication cases
-2. ROUTE_G manual medical-review exceptions
-3. ROUTE_B primary biomarker match but signal mismatch
-4. ROUTE_A exact signal matches where legacy package contains additional override/escalation logic
-5. ROUTE_E provenance recovery items
+1. edge_case_loss_risk = high
+2. promotion_safety_status = blocked_pending_frame_adjudication
+3. promotion_safety_status = blocked_pending_pass3_enrichment
+4. multiple Pass_3 frames for the same primary biomarker
+5. legacy override/escalation logic exists
+6. clinically important system area
+7. risk of losing valid legacy context during promotion
+8. appears in PASS3-FRAME-COVERAGE-1 worked examples
 ```
 
-Do not attempt full clinical adjudication of all 55.
+Required first step:
 
-This is a coverage and risk audit, not a package rewrite.
+```text
+Produce a ranked shortlist of the top candidate signal families before editing the frame index.
+```
+
+The shortlist must include:
+
+```yaml
+signal_family_id:
+primary_biomarker_id:
+packages_involved:
+risk_evidence:
+edge_case_loss_risk:
+promotion_safety_status:
+pass3_frame_count:
+legacy_frame_summary:
+reason_for_selection:
+medical_review_required:
+```
+
+Cursor may proceed to index expansion only for the families that the prompt explicitly allows:
+
+```text
+Expand the index for the top 2–3 highest-risk families, based on audit evidence.
+```
+
+Likely candidates may include ALT, CRP and ferritin, but Cursor must verify this from the audit artefacts rather than assume.
 
 ---
 
-## Required frame coverage classification
+## Required scope
 
-For each package reviewed, classify:
+Expand:
+
+```text
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+```
+
+for the selected high-risk families.
+
+Minimum expected expansion:
+
+```text
+- at least 2 signal families beyond creatinine
+- ideally no more than 3 signal families in this sprint
+```
+
+Do not attempt to index the entire 55-package estate.
+
+---
+
+## Required frame entries
+
+For each selected signal family, create frame entries that preserve distinct medical contexts.
+
+Each frame must include all fields already required by the medical frame identity index schema, including:
 
 ```yaml
-package_id:
 signal_family_id:
 primary_biomarker_id:
-current_route:
-current_package_authority:
-pass3_frame_count:
-pass3_frame_ids:
-legacy_frame_count:
-legacy_frame_summary:
-frame_coverage_status:
-edge_case_loss_risk:
-promotion_safety_status:
-recommended_next_action:
-requires_medical_review:
+medical_frame_id:
+frame_label:
+frame_role:
+research_spec_id:
+source_package_id:
+source_package_path:
+activation_key:
+signal_id:
+promotion_state:
+runtime_authority_status:
+clinical_adjudication_status:
+context_inputs_supported:
+  biomarker_evidence:
+  questionnaire_modifiers:
+  medication_modifiers:
+collision_group_id:
+collision_status:
+supersedes:
+superseded_by:
 notes:
 ```
 
-Allowed `frame_coverage_status` values:
+Do not create duplicate active authority for the same activation key.
+
+Do not mark unadjudicated legacy frames as resolved.
+
+Do not mark draft/non-runtime entries as runtime active.
+
+---
+
+## Required family decision logic
+
+For each selected family, document:
 
 ```text
-pass3_complete_for_known_frames
-pass3_partial_legacy_frames_not_fully_represented
-pass3_multiple_frames_need_adjudication
-legacy_contains_valid_unmapped_frame
-legacy_likely_scaffold_or_retire_candidate
-unclear_requires_manual_review
-```
-
-Allowed `edge_case_loss_risk` values:
-
-```text
-none_detected
-low
-medium
-high
-unknown
-```
-
-Allowed `promotion_safety_status` values:
-
-```text
-safe_for_route_a_promotion
-safe_after_documented_divergence_acceptance
-blocked_pending_frame_adjudication
-blocked_pending_pass3_enrichment
-blocked_pending_provenance_recovery
-retire_candidate
+- which package is currently runtime active, if any
+- which Pass_3 frames exist
+- which legacy frames exist
+- which frames overlap
+- which frames are distinct
+- which frames require medical review
+- which frames require Pass_3 enrichment
+- which frames are compiled_not_promoted or deferred
+- whether any collision exists
 ```
 
 ---
 
-## Required estate-level questions
+## Governance helper script policy
 
-Answer explicitly:
+`PASS3-FRAME-COVERAGE-1` created a read-only governance helper script outside the declared docs/governance scope.
+
+This sprint must handle governance helper scripts explicitly.
+
+Allowed:
 
 ```text
-1. How many of the 55 packages have multiple Pass_3 frames for the same primary biomarker?
-2. How many have legacy override/escalation logic not clearly represented in Pass_3?
-3. How many appear safe for ROUTE_A-style promotion without loss of edge-case reasoning?
-4. How many require Pass_3 enrichment before package retirement or activation?
-5. How many require medical review rather than architecture-only classification?
-6. Which signal families look most at risk of frame collapse?
-7. Which signal families should be prioritised after creatinine?
-8. Does the medical frame identity index need to expand beyond creatinine before further promotion?
-9. Does the context modifier catalogue need extra modifier classes before Layer B wiring?
-10. What promotion work should be paused until frame coverage is improved?
+- read-only helper scripts may be created or updated only if needed to generate or validate governance artefacts
+- helper scripts must not import runtime/evaluator/pipeline modules
+- helper scripts must not modify runtime/package/frontend files
+- helper scripts must write only declared governance outputs
 ```
+
+Preferred location for new governance helper scripts:
+
+```text
+knowledge_bus/tools/
+```
+
+Do not create new helper scripts under `backend/scripts/` unless justified by existing validator/tooling convention.
+
+If the existing helper script is reused, classify it in the report as:
+
+```text
+read_only_governance_helper_non_runtime
+```
+
+Do not change runtime code.
 
 ---
 
-## Required worked examples
+## Required artefacts
 
-Include at least three worked examples:
+Update:
 
 ```text
-1. Creatinine high
-   Use as the known pattern:
-   reduced filtration / UACR / eGFR / potassium / cystatin C / context modifiers.
-
-2. One ROUTE_C multi-frame case
-   Select from the actual KB-MAP-1 route table.
-
-3. One apparent ROUTE_A case
-   Check whether it is genuinely safe or whether legacy package logic contains hidden frame richness.
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 ```
-
-Do not choose examples only because they are easy.
-
----
-
-## Required output artefacts
 
 Create:
 
 ```text
-docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md
-knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
+docs/audit-papers/PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion_report.md
 ```
 
-Optional, only if useful:
+Create or update:
 
 ```text
 knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
 ```
 
-All new governance YAML must include:
+Optional, only if justified:
 
-```yaml
-runtime_consumed: false
-status: governance_audit_non_runtime
+```text
+knowledge_bus/tools/build_medical_frame_identity_expansion.py
 ```
+
+If a helper script is created or moved, document why.
 
 ---
 
@@ -335,113 +316,52 @@ The report must include:
 ```text
 - executive verdict
 - artefacts inspected
-- estate-level methodology
-- 55-package cohort summary
-- route distribution summary
-- multi-frame risk summary
-- edge-case-loss risk summary
-- packages safe for continued promotion
-- packages blocked pending frame adjudication
-- packages blocked pending Pass_3 enrichment
-- packages needing medical review
-- creatinine worked example
-- second worked example from ROUTE_C
-- third worked example from ROUTE_A or ROUTE_B
-- implications for KB-UTIL package promotion
-- implications for medical frame identity index expansion
-- implications for context modifier governance
-- carry-forward updates
-- recommended next sprint
+- ranked high-risk family shortlist
+- objective selection criteria used
+- selected families and rationale
+- frame entries added
+- collision checks
+- clinical adjudication statuses
+- Pass_3 enrichment needs
+- context modifier relevance
+- governance helper script disposition
 - validation output pasted in full
+- carry-forward updates
+- remaining blockers
+- recommended next sprint
 ```
 
 ---
 
-## Required YAML content
+## Carry-forward register
 
-`pass3_frame_coverage_audit_v1.yaml` must include:
-
-```yaml
-schema_version:
-runtime_consumed: false
-status:
-work_id:
-source_register:
-package_count:
-summary_counts:
-  pass3_complete_for_known_frames:
-  pass3_partial_legacy_frames_not_fully_represented:
-  pass3_multiple_frames_need_adjudication:
-  legacy_contains_valid_unmapped_frame:
-  legacy_likely_scaffold_or_retire_candidate:
-  unclear_requires_manual_review:
-packages:
-  - package_id:
-    signal_family_id:
-    primary_biomarker_id:
-    current_route:
-    pass3_frame_count:
-    pass3_frame_ids:
-    legacy_frame_count:
-    legacy_frame_summary:
-    frame_coverage_status:
-    edge_case_loss_risk:
-    promotion_safety_status:
-    recommended_next_action:
-    requires_medical_review:
-    notes:
-```
-
----
-
-## Medical boundary
-
-Cursor must not decide clinical truth.
-
-Cursor may:
+Update:
 
 ```text
-- identify where research frames exist
-- compare package logic to Pass_3 frame coverage
-- classify risk of edge-case loss
-- recommend medical review or Pass_3 enrichment
+docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Cursor must not:
+Expected handling:
 
 ```text
-- decide a valid legacy edge case is obsolete
-- delete or retire packages
-- invent clinical rules
-- mark clinical divergence accepted unless already accepted in source governance
-- promote or activate packages
+CF-PASS3FRAME-001
+Should be marked resolved only if the high-risk frame identity index expansion is completed for the selected families.
+
+CF-PASS3FRAME-002
+Remains open unless Pass_3 enrichment is actually completed, which is out of scope.
+
+CF-PASS3FRAME-003
+Remains open unless promotion pause list is fully converted into explicit next actions.
+
+CF-GOVHELPER-001
+Add or resolve depending on whether helper script policy/location is documented sufficiently.
 ```
 
----
+If CF-GOVHELPER-001 does not yet exist, add it:
 
-## Carry-forwards to consider
-
-This sprint must review and update, if appropriate:
-
-```text
-CF-CREATININE-001
-CF-MRIMPROVE-001
-CF-MRIMPROVE-002
-CF-MRIMPROVE-003
-CF-CRPPASS3-001
-CF-CHRONICINFL-001
-CF-CONTEXT-MOD-2
+```markdown
+| CF-GOVHELPER-001 | PASS3-FRAME-COVERAGE-1 | Governance helper script classification | PASS3-FRAME-COVERAGE-1 created a read-only helper script under backend/scripts to generate governance audit YAML. Future work packages must explicitly classify governance helper scripts, define allowed locations, and decide whether such scripts belong under backend/scripts or knowledge_bus/tools. | No | GOV-HELPER-1_governance_helper_script_policy |
 ```
-
-Likely new carry-forwards:
-
-```text
-CF-PASS3FRAME-001 — expand medical frame identity index to top high-risk multi-frame signal families
-CF-PASS3FRAME-002 — Pass_3 enrichment queue for packages with valid legacy frames not fully represented
-CF-PASS3FRAME-003 — promotion pause list for packages at high risk of edge-case loss
-```
-
-Do not mark a carry-forward resolved unless this sprint genuinely resolves it.
 
 ---
 
@@ -463,7 +383,7 @@ knowledge_bus/packages/*
 knowledge_bus/current/latest_knowledge_status.json
 ```
 
-If any runtime or package change appears necessary, STOP and report.
+If any runtime/package/frontend change appears necessary, STOP and report.
 
 ---
 
@@ -484,6 +404,33 @@ Do not write only “see implementation evidence”.
 
 ---
 
+## Medical boundary
+
+Cursor must not decide clinical truth.
+
+Cursor may:
+
+```text
+- identify frame candidates from artefacts
+- classify existing package/research relationships
+- mark medical review required
+- mark Pass_3 enrichment required
+- preserve medically distinct frames
+```
+
+Cursor must not:
+
+```text
+- decide a legacy edge case is obsolete
+- retire packages
+- activate packages
+- invent new clinical thresholds
+- mark clinical divergence accepted unless already approved in governance
+- collapse multiple frames into one flat signal
+```
+
+---
+
 ## Out of scope
 
 Do not:
@@ -499,6 +446,7 @@ Do not:
 - implement context modifier evaluation
 - change frontend
 - adjudicate medical truth
+- index all 55 packages
 ```
 
 ---
@@ -508,12 +456,12 @@ Do not:
 STOP and report if:
 
 ```text
-1. the 55-package mapping register cannot be loaded
-2. Pass_3 files cannot be located
-3. package frame coverage cannot be assessed reliably
-4. audit discovers a likely runtime safety issue requiring immediate escalation
+1. candidate family ranking cannot be derived from audit artefacts
+2. selected family cannot be mapped to package and Pass_3 evidence
+3. frame entries would require clinical invention
+4. duplicate active activation keys would be introduced
 5. validators fail
-6. any package/runtime/frontend change appears necessary
+6. any runtime/package/frontend change appears necessary
 ```
 
 ---
@@ -525,16 +473,14 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. files inspected
-3. package cohort count
-4. methodology used
-5. summary classification counts
-6. high-risk frame-collapse packages
-7. examples analysed
-8. governance files created
-9. carry-forward updates
-10. validation commands run
-11. actual validation output
-12. confirmation no runtime/package/frontend changes
+3. ranked shortlist
+4. selected families and rationale
+5. frame entries added/updated
+6. helper script disposition
+7. carry-forward updates
+8. validation commands run
+9. actual validation output
+10. confirmation no runtime/package/frontend changes
 ```
 
 ---
@@ -555,8 +501,8 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/PASS3-FRAME-COVERAGE-1-estate-wide-multiframe-research-coverage-audit
-- only in-scope docs/governance files changed
+- current branch matches work/PASS3-FRAME-INDEX-2-high-risk-signal-family-index-expansion
+- only in-scope docs/governance/schema/tooling files changed
 - no runtime package files changed
 - no frontend/runtime evaluator files changed
 - no ambiguous stash exists
@@ -570,16 +516,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. estate-wide frame coverage audit exists
-2. all 55 packages are classified for frame coverage risk
-3. multi-frame / edge-case-loss risks are identified
-4. creatinine is treated as an example, not the whole sprint
-5. at least two additional worked examples are included
-6. future promotion work is clearly gated by frame coverage safety
-7. carry-forward register is updated
-8. no package/runtime/frontend changes occur
-9. actual validator outputs are pasted
-10. validators pass
+1. high-risk family shortlist is derived from PASS3-FRAME-COVERAGE-1 evidence
+2. 2–3 high-risk signal families beyond creatinine are added to the medical frame identity index
+3. all new frames validate
+4. no duplicate active activation keys are introduced
+5. unadjudicated frames remain clearly marked
+6. context modifier relevance is noted but not wired
+7. helper script governance is addressed
+8. carry-forward register is updated
+9. no runtime/package/frontend changes occur
+10. actual validator outputs are pasted
 ```
 
 ```
