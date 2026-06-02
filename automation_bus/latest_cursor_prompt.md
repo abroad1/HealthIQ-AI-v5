@@ -1,27 +1,43 @@
 ---
-work_id: KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision
-branch: work/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION-creatinine-multiframe-model-decision
+work_id: PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit
+branch: work/PASS3-FRAME-COVERAGE-1-estate-wide-multiframe-research-coverage-audit
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: CONTENT
 ---
 
-# KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION — Creatinine Multi-Frame Model Decision
+# PASS3-FRAME-COVERAGE-1 — Estate-Wide Multi-Frame Research Coverage Audit
 
 ## Purpose
 
-Decide how HealthIQ should represent the medically valid interpretive layers under `signal_creatinine_high` without collapsing them into one flat signal and without creating duplicate runtime authority.
+Audit the wider Pass_3 / package estate to determine where HealthIQ has multiple medically distinct interpretive frames under the same biomarker signal family, and whether those frames are correctly represented before package promotion continues.
 
-This sprint must not activate, retire, overwrite, or modify runtime packages.
+This sprint must not become a one-biomarker creatinine fix.
 
-The goal is to produce a governed adjudication decision for the creatinine-high signal family so future implementation work knows whether to:
+Creatinine exposed the issue, but the architectural concern is estate-wide:
 
 ```text
-- retain legacy s24 eGFR/potassium logic as distinct frames
-- enrich the Pass_3 creatinine model to preserve those contexts
-- retire part of the legacy package
-- defer activation pending further medical research
+A primary biomarker signal may support multiple medically valid frames.
+Legacy packages may contain valid edge-case logic.
+Pass_3 may contain some, all, or none of those frames.
+Package promotion must not collapse valid medical frames or silently discard edge-case logic.
 ````
+
+The goal is to produce an estate-level frame coverage and enrichment audit so future promotion work knows:
+
+```text
+- which packages can safely proceed to promotion
+- which require multi-frame adjudication
+- which require Pass_3 enrichment
+- which legacy logic must be preserved
+- which package candidates should remain blocked
+```
+
+This is a governance/audit sprint only.
+
+Do not change runtime behaviour.
+
+---
 
 ## Strategic framing
 
@@ -29,28 +45,26 @@ HealthIQ must support:
 
 ```text
 one biomarker signal family
-→ multiple medically credible interpretive frames
-→ clear activation identities
-→ governed context modifiers
-→ Layer B personalised analysis
+→ multiple medically credible frames
+→ supporting / contradicting / contextual evidence
+→ questionnaire and medication modifiers
+→ Layer B personalised interpretation
 → frontend render-only output
 ```
 
-`creatinine_high` is not one flat medical meaning.
-
-It may support several valid frames, including:
+The current promotion pipeline must not flatten this into:
 
 ```text
-- reduced glomerular filtration / kidney-function severity
-- albuminuric kidney damage / UACR context
-- acute electrolyte-risk context / potassium
-- creatinine distortion or context modifiers / muscle mass, exercise, supplements, hydration
-- medication-associated renal strain
+one biomarker = one signal = one meaning
 ```
 
-The task is not to ask developers to choose which medical interpretation is “true”.
+The estate-level question is:
 
-The task is to decide how medically valid layers should be represented in the architecture.
+```text
+Where does HealthIQ already have multiple valid medical frames, and are those frames properly represented in Pass_3, package artefacts, frame identity governance and future promotion plans?
+```
+
+---
 
 ## Baseline requirement
 
@@ -59,10 +73,15 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
+KB-MAP-1 merged
+KB-UTIL-2-PILOT merged
+KB-UTIL-2-PROMOTE-PILOT merged
+KB-UTIL-2-ACTIVATION-READINESS merged
 KB-UTIL-2-PROMOTE-WIRE-1 merged
 MED-FRAME-1 merged
 MED-FRAME-2 merged
 CONTEXT-MOD-1 merged
+KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION merged
 KNOWLEDGE_BUS_SOP_v1.3.1 committed
 KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1 committed
 ```
@@ -83,10 +102,13 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- medical frame identity index is missing
-- context modifier catalogue is missing
-- creatinine WIRE-1 audit report is missing
+- medical_frame_identity_index_v1.yaml is missing
+- context_modifier_catalogue_draft_v1.yaml is missing
+- pass3_legacy_package_mapping_plan_v1.yaml is missing
+- creatinine authority adjudication report is missing
 ```
+
+---
 
 ## Governance classification
 
@@ -98,7 +120,9 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This sprint adjudicates medical-intelligence structure for a live biomarker signal family. It must not change runtime behaviour, but its output will govern future package promotion and activation.
+This sprint reviews medical-intelligence coverage and will govern future package promotion. It must not change runtime behaviour, but it is high-impact architecture work.
+
+---
 
 ## Required inputs
 
@@ -109,277 +133,317 @@ docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md
 docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md
 docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md
 docs/audit-papers/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance_report.md
-docs/audit-papers/KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch_report.md
-docs/audit-papers/KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution_report.md
-docs/sprints/launch_core_carry_forward_register.md
+docs/audit-papers/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision_report.md
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
 knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml
+knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml
+docs/sprints/launch_core_carry_forward_register.md
+docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
+docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 ```
 
-Inspect the relevant package assets:
+Inspect:
 
 ```text
-knowledge_bus/packages/pkg_s24_creatinine_high_renal/
-knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/
-knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/
+knowledge_bus/packages/**
 knowledge_bus/research/investigation_specs/multi_llm_research/**/*Pass_3*.json
+knowledge_bus/research/investigation_specs/**/*.yaml
+knowledge_bus/generated_pilot/**
+knowledge_bus/governance/**
 ```
 
 If paths differ, locate and report actual paths.
 
-## Required medical/architecture boundary
+---
 
-Cursor must not make independent clinical judgements.
+## Core architectural issue
 
-Cursor may:
+This sprint must answer the estate-level question:
 
 ```text
-- compare artefacts
-- identify divergence
-- classify frame relationships
-- identify where medical review is required
-- update governance documentation
+Where do we risk losing medically valid edge-case reasoning when promoting legacy packages into Pass_3-derived artefacts?
 ```
 
-Cursor must not:
+Use creatinine as the pattern, not the scope.
+
+For each reviewed signal family, distinguish:
 
 ```text
-- decide that eGFR/potassium context is medically obsolete
-- decide that UACR replaces all other creatinine contexts
-- invent hybrid clinical rules
-- delete valid legacy medical context
-- promote or activate a package
-```
-
-## Known medical framing to preserve
-
-The adjudication must begin from this architectural assumption:
-
-```text
-Creatinine high can support multiple medically valid contexts.
-These contexts may coexist and are not automatically contradictory.
-```
-
-At minimum, distinguish:
-
-```text
-creatinine high + low eGFR
-= filtration severity / corroborating kidney-function context
-
-creatinine high + high potassium
-= acute complication / safety-risk context
-
-creatinine high + high UACR
-= kidney-damage / albuminuria context
-
-creatinine high + cystatin C
-= supporting or differential filtration marker
-
-creatinine high + muscle/exercise/creatine/hydration context
-= possible creatinine distortion or contextual explanation
-```
-
-Do not collapse these into one generic consequence.
-
-## Core questions to answer
-
-Answer explicitly:
-
-```text
-1. Is `pkg_kb52c` the correct current Pass_3 canonical package for the reduced-glomerular-filtration frame?
-2. Does the promoted candidate add anything beyond `pkg_kb52c`, or is it a duplicate candidate?
-3. What distinct medical frames are currently represented by `pkg_s24_creatinine_high_renal`?
-4. Which parts of s24 are already covered by Pass_3 / kb52c?
-5. Which parts of s24 are not yet covered by Pass_3 / kb52c?
-6. Should eGFR and potassium be treated as:
-   - separate frames,
-   - supporting evidence roles,
-   - override/escalation rules,
-   - context modifiers,
-   - or deferred pending medical review?
-7. What should happen before any package is activated, superseded, or retired?
-8. What Pass_3 enrichment, package regeneration, or frame-index update is needed?
-```
-
-## Required comparison table
-
-Produce a comparison table covering:
-
-```text
-pkg_s24_creatinine_high_renal
-pkg_kb52c_creatinine_high_reduced_glomerular_filtration
-pkg_creatinine_high_renal_pass3_v1 promoted candidate
-```
-
-For each, capture:
-
-```text
-- package path
-- signal_id
-- activation_key
-- source spec / source document
-- primary biomarker
+- primary biomarker signal family
+- Pass_3 research frames
+- legacy package frames
 - supporting markers
-- override rules
-- thresholds
-- evidence roles
-- frame(s) represented
-- runtime status
-- promotion state
-- clinical adjudication status
-- whether it should be retained, enriched, superseded, or deferred
+- contradiction markers
+- override/escalation rules
+- questionnaire modifiers
+- medication/drug-category modifiers
+- current package authority
+- promotion route risk
 ```
 
-## Required frame-decision output
+---
 
-For the creatinine signal family, define proposed frame decisions for:
+## Required package cohort
+
+Start from the 55-package cohort in:
 
 ```text
-1. reduced_glomerular_filtration
-2. albuminuric_kidney_damage
-3. acute_electrolyte_risk
-4. creatinine_distortion_context
-5. medication_associated_renal_strain
-6. legacy_s24_renal_context
+knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
 ```
 
-For each frame, specify:
+Prioritise review in this order:
+
+```text
+1. ROUTE_C multiple Pass_3 frame adjudication cases
+2. ROUTE_G manual medical-review exceptions
+3. ROUTE_B primary biomarker match but signal mismatch
+4. ROUTE_A exact signal matches where legacy package contains additional override/escalation logic
+5. ROUTE_E provenance recovery items
+```
+
+Do not attempt full clinical adjudication of all 55.
+
+This is a coverage and risk audit, not a package rewrite.
+
+---
+
+## Required frame coverage classification
+
+For each package reviewed, classify:
 
 ```yaml
-frame_id:
-frame_label:
-current_source_package:
-current_status:
-recommended_status:
-required_source_research:
-required_package_action:
-required_context_modifiers:
+package_id:
+signal_family_id:
+primary_biomarker_id:
+current_route:
+current_package_authority:
+pass3_frame_count:
+pass3_frame_ids:
+legacy_frame_count:
+legacy_frame_summary:
+frame_coverage_status:
+edge_case_loss_risk:
+promotion_safety_status:
+recommended_next_action:
 requires_medical_review:
 notes:
 ```
 
-## Expected decision style
-
-Preferred outcome is likely not “delete s24” or “activate new candidate”.
-
-Preferred outcome is likely a governed route such as:
+Allowed `frame_coverage_status` values:
 
 ```text
-- keep pkg_kb52c as current canonical Pass_3 authority for reduced-glomerular-filtration frame
-- treat promoted candidate as duplicate compiled_not_promoted candidate
-- preserve s24 eGFR and potassium as medically valid unadjudicated legacy frames
-- require Pass_3 enrichment or explicit medical adjudication before retiring s24 logic
-- ensure future Layer B can distinguish severity, albuminuria, acute electrolyte risk and distortion contexts
+pass3_complete_for_known_frames
+pass3_partial_legacy_frames_not_fully_represented
+pass3_multiple_frames_need_adjudication
+legacy_contains_valid_unmapped_frame
+legacy_likely_scaffold_or_retire_candidate
+unclear_requires_manual_review
 ```
 
-But Cursor must base final wording on repo evidence.
+Allowed `edge_case_loss_risk` values:
 
-## Required artefacts
+```text
+none_detected
+low
+medium
+high
+unknown
+```
+
+Allowed `promotion_safety_status` values:
+
+```text
+safe_for_route_a_promotion
+safe_after_documented_divergence_acceptance
+blocked_pending_frame_adjudication
+blocked_pending_pass3_enrichment
+blocked_pending_provenance_recovery
+retire_candidate
+```
+
+---
+
+## Required estate-level questions
+
+Answer explicitly:
+
+```text
+1. How many of the 55 packages have multiple Pass_3 frames for the same primary biomarker?
+2. How many have legacy override/escalation logic not clearly represented in Pass_3?
+3. How many appear safe for ROUTE_A-style promotion without loss of edge-case reasoning?
+4. How many require Pass_3 enrichment before package retirement or activation?
+5. How many require medical review rather than architecture-only classification?
+6. Which signal families look most at risk of frame collapse?
+7. Which signal families should be prioritised after creatinine?
+8. Does the medical frame identity index need to expand beyond creatinine before further promotion?
+9. Does the context modifier catalogue need extra modifier classes before Layer B wiring?
+10. What promotion work should be paused until frame coverage is improved?
+```
+
+---
+
+## Required worked examples
+
+Include at least three worked examples:
+
+```text
+1. Creatinine high
+   Use as the known pattern:
+   reduced filtration / UACR / eGFR / potassium / cystatin C / context modifiers.
+
+2. One ROUTE_C multi-frame case
+   Select from the actual KB-MAP-1 route table.
+
+3. One apparent ROUTE_A case
+   Check whether it is genuinely safe or whether legacy package logic contains hidden frame richness.
+```
+
+Do not choose examples only because they are easy.
+
+---
+
+## Required output artefacts
 
 Create:
 
 ```text
-docs/audit-papers/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision_report.md
+docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md
+knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
 ```
 
-Create or update:
+Optional, only if useful:
 
 ```text
-knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml
+knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
 ```
 
-Update if needed:
+All new governance YAML must include:
+
+```yaml
+runtime_consumed: false
+status: governance_audit_non_runtime
+```
+
+---
+
+## Required report content
+
+The report must include:
 
 ```text
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml
-docs/sprints/launch_core_carry_forward_register.md
+- executive verdict
+- artefacts inspected
+- estate-level methodology
+- 55-package cohort summary
+- route distribution summary
+- multi-frame risk summary
+- edge-case-loss risk summary
+- packages safe for continued promotion
+- packages blocked pending frame adjudication
+- packages blocked pending Pass_3 enrichment
+- packages needing medical review
+- creatinine worked example
+- second worked example from ROUTE_C
+- third worked example from ROUTE_A or ROUTE_B
+- implications for KB-UTIL package promotion
+- implications for medical frame identity index expansion
+- implications for context modifier governance
+- carry-forward updates
+- recommended next sprint
+- validation output pasted in full
 ```
 
-Do not update runtime package files.
+---
 
-## YAML requirements
+## Required YAML content
 
-`creatinine_multiframe_authority_decision_v1.yaml` must include:
+`pass3_frame_coverage_audit_v1.yaml` must include:
 
 ```yaml
 schema_version:
 runtime_consumed: false
 status:
 work_id:
-decision_scope:
-signal_family_id:
-primary_biomarker_id:
-current_runtime_authorities:
-compiled_not_promoted_candidates:
-legacy_unadjudicated_frames:
-frame_decisions:
-activation_decision:
-runtime_activation_allowed:
-required_before_activation:
-recommended_next_sprint:
+source_register:
+package_count:
+summary_counts:
+  pass3_complete_for_known_frames:
+  pass3_partial_legacy_frames_not_fully_represented:
+  pass3_multiple_frames_need_adjudication:
+  legacy_contains_valid_unmapped_frame:
+  legacy_likely_scaffold_or_retire_candidate:
+  unclear_requires_manual_review:
+packages:
+  - package_id:
+    signal_family_id:
+    primary_biomarker_id:
+    current_route:
+    pass3_frame_count:
+    pass3_frame_ids:
+    legacy_frame_count:
+    legacy_frame_summary:
+    frame_coverage_status:
+    edge_case_loss_risk:
+    promotion_safety_status:
+    recommended_next_action:
+    requires_medical_review:
+    notes:
 ```
 
-`runtime_activation_allowed` should be `false` unless all medical/architecture blockers are cleared.
+---
 
-## Medical frame identity index handling
+## Medical boundary
 
-If updating `medical_frame_identity_index_v1.yaml`, only make documentation/governance updates that reflect adjudication status.
+Cursor must not decide clinical truth.
 
-Allowed:
+Cursor may:
 
 ```text
-- update notes
-- update clinical_adjudication_status
-- update references to the decision file
+- identify where research frames exist
+- compare package logic to Pass_3 frame coverage
+- classify risk of edge-case loss
+- recommend medical review or Pass_3 enrichment
 ```
 
-Forbidden:
+Cursor must not:
 
 ```text
-- mark unadjudicated frames as resolved without evidence
-- remove eGFR or potassium frames
-- mark duplicate runtime authority as acceptable
-- make the index runtime-consumed
+- decide a valid legacy edge case is obsolete
+- delete or retire packages
+- invent clinical rules
+- mark clinical divergence accepted unless already accepted in source governance
+- promote or activate packages
 ```
 
-Run the identity index validator after any update.
+---
 
-## Context modifier handling
+## Carry-forwards to consider
 
-Use `context_modifier_catalogue_draft_v1.yaml` to identify relevant modifiers, but do not wire them into runtime.
-
-The report must mention how future creatinine frames should eventually use:
+This sprint must review and update, if appropriate:
 
 ```text
-- known CKD
-- diabetes / hypertension
-- NSAIDs
-- ACE inhibitors / ARBs
-- diuretics
-- nephrotoxic medication categories
-- hydration
-- exercise / muscle mass
-- creatine supplementation
+CF-CREATININE-001
+CF-MRIMPROVE-001
+CF-MRIMPROVE-002
+CF-MRIMPROVE-003
+CF-CRPPASS3-001
+CF-CHRONICINFL-001
+CF-CONTEXT-MOD-2
 ```
 
-Do not implement modifier evaluation.
+Likely new carry-forwards:
 
-## Required validations
-
-Run:
-
-```powershell
-python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
-python backend/scripts/validate_day_one_architecture.py
-python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
-python -m pytest backend/tests/regression/test_med_frame_identity_index.py -q
-python -m pytest backend/tests/regression/test_context_modifier_catalogue.py -q
+```text
+CF-PASS3FRAME-001 — expand medical frame identity index to top high-risk multi-frame signal families
+CF-PASS3FRAME-002 — Pass_3 enrichment queue for packages with valid legacy frames not fully represented
+CF-PASS3FRAME-003 — promotion pause list for packages at high risk of edge-case loss
 ```
 
-If a new YAML validator is created for the creatinine decision file, run it too. It is optional unless hardening requires it.
+Do not mark a carry-forward resolved unless this sprint genuinely resolves it.
+
+---
 
 ## Runtime boundary
 
@@ -399,84 +463,60 @@ knowledge_bus/packages/*
 knowledge_bus/current/latest_knowledge_status.json
 ```
 
-If any of those appear necessary, STOP and report.
+If any runtime or package change appears necessary, STOP and report.
 
-## Required report content
+---
 
-The report must include:
+## Required validations
 
-```text
-- executive verdict
-- artefacts inspected
-- package comparison table
-- current runtime authority assessment
-- promoted candidate assessment
-- s24 legacy frame assessment
-- eGFR/potassium/UACR/cystatin-C frame interpretation
-- context modifier relevance
-- medical/architecture decision
-- what must not be collapsed
-- what must not be activated yet
-- updates made
-- validation results
-- remaining blockers
-- recommended next sprint
+Run and paste actual output:
+
+```powershell
+python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+python backend/scripts/validate_day_one_architecture.py
+python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
+python -m pytest backend/tests/regression/test_med_frame_identity_index.py -q
+python -m pytest backend/tests/regression/test_context_modifier_catalogue.py -q
 ```
 
-## Carry-forward register
+Do not write only “see implementation evidence”.
 
-Update:
-
-```text
-docs/sprints/launch_core_carry_forward_register.md
-```
-
-Expected updates:
-
-```text
-CF-MEDFRAME1-003 — should only be marked resolved if this sprint produces a clear creatinine multi-frame decision.
-CF-CONTEXT-MOD-2 — remains open unless Layer B modifier binding is implemented, which is out of scope.
-```
-
-Likely new carry-forward if needed:
-
-```text
-CF-CREATININE-001 — Pass_3 enrichment or package regeneration for eGFR/potassium creatinine frames.
-```
-
-Do not mark runtime activation complete.
+---
 
 ## Out of scope
 
 Do not:
 
 ```text
-- activate any package
-- retire any package
-- change package files
-- change runtime loading
-- change SignalRegistry
-- change SignalEvaluator
-- implement modifier evaluation
+- enrich Pass_3 specs
+- create new package artefacts
+- promote packages
+- activate packages
+- retire packages
+- modify runtime package files
 - implement Layer B frame assembly
+- implement context modifier evaluation
 - change frontend
-- write user-facing wording
-- invent clinical rules
+- adjudicate medical truth
 ```
+
+---
 
 ## STOP conditions
 
 STOP and report if:
 
 ```text
-1. current creatinine package state cannot be reconstructed
-2. pkg_kb52c cannot be found
-3. s24 package cannot be found
-4. promoted candidate cannot be found
-5. eGFR/potassium/UACR divergence cannot be classified without medical review
-6. any runtime/package/frontend change appears necessary
-7. validators fail
+1. the 55-package mapping register cannot be loaded
+2. Pass_3 files cannot be located
+3. package frame coverage cannot be assessed reliably
+4. audit discovers a likely runtime safety issue requiring immediate escalation
+5. validators fail
+6. any package/runtime/frontend change appears necessary
 ```
+
+---
 
 ## Evidence required from Cursor
 
@@ -485,15 +525,19 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. files inspected
-3. package comparison findings
-4. frame decision summary
-5. medical-review boundary statement
-6. governance files created/updated
-7. carry-forward updates
-8. validation commands run
-9. validation results
-10. confirmation no runtime/package/frontend changes
+3. package cohort count
+4. methodology used
+5. summary classification counts
+6. high-risk frame-collapse packages
+7. examples analysed
+8. governance files created
+9. carry-forward updates
+10. validation commands run
+11. actual validation output
+12. confirmation no runtime/package/frontend changes
 ```
+
+---
 
 ## Closure requirements
 
@@ -511,7 +555,7 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION-creatinine-multiframe-model-decision
+- current branch matches work/PASS3-FRAME-COVERAGE-1-estate-wide-multiframe-research-coverage-audit
 - only in-scope docs/governance files changed
 - no runtime package files changed
 - no frontend/runtime evaluator files changed
@@ -519,20 +563,22 @@ Do not run finish unless:
 - validators pass
 ```
 
+---
+
 ## Success criteria
 
 This sprint is complete only if:
 
 ```text
-1. creatinine high is represented as a multi-frame signal family
-2. pkg_kb52c canonical Pass_3 role is clear
-3. promoted candidate duplicate status is clear
-4. s24 eGFR and potassium contexts are preserved, not deleted
-5. UACR/eGFR/potassium/cystatin-C roles are distinguished
-6. no developer-led clinical rule choice is made
-7. no runtime activation occurs
-8. required future work is clear
-9. carry-forward register is accurate
+1. estate-wide frame coverage audit exists
+2. all 55 packages are classified for frame coverage risk
+3. multi-frame / edge-case-loss risks are identified
+4. creatinine is treated as an example, not the whole sprint
+5. at least two additional worked examples are included
+6. future promotion work is clearly gated by frame coverage safety
+7. carry-forward register is updated
+8. no package/runtime/frontend changes occur
+9. actual validator outputs are pasted
 10. validators pass
 ```
 

@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision",
+  "work_id": "PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit",
   "status": "HARDENED",
   "hardened_utc": "2026-06-02T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,17 +8,17 @@
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: work/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION-creatinine-multiframe-model-decision"
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: work/PASS3-FRAME-COVERAGE-1-estate-wide-multiframe-research-coverage-audit"
     },
     {
       "check": "Front Matter — risk_level",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH"
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH. SOP §10 strict mechanical triggers not met (no Intelligence Core, no backend/ssot/, no backend/core/ paths). Author has conservatively over-classified; governance rationale stated at prompt lines 93-99. Non-blocking."
     },
     {
       "check": "Front Matter — execution_model",
@@ -28,163 +28,132 @@
     {
       "check": "Front Matter — change_type",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type: CONTENT"
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type: CONTENT. All output files require runtime_consumed: false and status: governance_audit_non_runtime (prompt lines 321-326). No Intelligence Core interaction. SOP §4 CONTENT definition matches."
     },
     {
       "check": "2A — Authority path: docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md",
       "result": "CONFIRMED",
-      "citation": "docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md — file present"
+      "citation": "docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md — file present in repo"
     },
     {
       "check": "2A — Authority path: docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md — file present"
+      "citation": "docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md — file present in repo"
     },
     {
       "check": "2A — Authority path: docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md",
       "result": "CONFIRMED",
-      "citation": "docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md — file present"
+      "citation": "docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md — file present in repo"
     },
     {
       "check": "2A — Authority path: docs/audit-papers/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance_report.md",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance_report.md — file present"
+      "citation": "docs/audit-papers/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance_report.md — file present in repo"
     },
     {
-      "check": "2A — Authority path: docs/audit-papers/KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch_report.md",
+      "check": "2A — Authority path: docs/audit-papers/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision_report.md",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch_report.md — file present"
-    },
-    {
-      "check": "2A — Authority path: docs/audit-papers/KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution_report.md",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution_report.md — file present"
-    },
-    {
-      "check": "2A — Authority path: docs/sprints/launch_core_carry_forward_register.md",
-      "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md — file present"
+      "citation": "docs/audit-papers/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision_report.md — file present in repo"
     },
     {
       "check": "2A — Authority path: knowledge_bus/governance/medical_frame_identity_index_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml — file present"
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:1 — schema_version: 1.0.0; :3 — index_id: medical_frame_identity_index_v1; :5 — runtime_consumed: false; :6 — status: governed_non_runtime_index. Signal families present: signal_creatinine_high with frames indexed from line 9."
     },
     {
       "check": "2A — Authority path: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml — file present"
+      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml:1 — schema_version: 1.0.0; :3 — catalogue_id: context_modifier_catalogue_draft_v1; :5 — runtime_consumed: false; :6 — status: draft_governance_non_runtime. Modifier catalogue from line 8."
+    },
+    {
+      "check": "2A — Authority path: knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml:1 — schema_version: 1.0.0; :6 — package_count: 55; :7-14 — route_counts: ROUTE_A: 13, ROUTE_B: 3, ROUTE_C: 35, ROUTE_D: 1, ROUTE_E: 1, ROUTE_F: 1, ROUTE_G: 1. 55-package cohort confirmed as authoritative source register."
     },
     {
       "check": "2A — Authority path: knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml — file present"
+      "citation": "knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml:1 — schema_version: 1.0.0; :3 — register_id: pass3_promotion_decision_register_v1; :4 — work_id: KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion"
     },
     {
-      "check": "2A — Package path: knowledge_bus/packages/pkg_s24_creatinine_high_renal/",
+      "check": "2A — Authority path: knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_s24_creatinine_high_renal/package_manifest.yaml:1 — package_id: pkg_s24_creatinine_high_renal; schema_version per signal_library.yaml:4 — schema_version: 1.0.0; source_document:8 — inv_creatinine_high_renal_v1.yaml"
+      "citation": "knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml:1 — schema_version: 1.0.0; :2 — runtime_consumed: false; :3 — status: governed_adjudication_decision; :4 — work_id: KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision"
     },
     {
-      "check": "2A — Package path: knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/",
+      "check": "2A — Authority path: docs/sprints/launch_core_carry_forward_register.md",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/package_manifest.yaml:1 — package_id: pkg_kb52c_creatinine_high_reduced_glomerular_filtration; source_document:9 — Batch_4_Pass_3.json; engine_compatibility:11 — v5.x"
+      "citation": "docs/sprints/launch_core_carry_forward_register.md — file present. All 7 required CF IDs verified: CF-CREATININE-001 (line 55, Open), CF-MRIMPROVE-001 (line 48, Resolved), CF-MRIMPROVE-002 (line 49, Deferred), CF-MRIMPROVE-003 (line 50, Deferred), CF-CRPPASS3-001 (line 46, Open), CF-CHRONICINFL-001 (line 47, Open), CF-CONTEXT-MOD-2 (line 56, Open)."
     },
     {
-      "check": "2A — Package path: knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/",
+      "check": "2A — Authority path: docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/package_manifest.yaml:5 — package_id: pkg_creatinine_high_renal_pass3_v1; pilot_status:7 — compiled_not_promoted_candidate; promotion_scope:15 — non_runtime_candidate"
+      "citation": "docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — file present in HEAD (verified git show HEAD). Committed in 57ac7d5."
     },
     {
-      "check": "2A — Research JSON: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json",
+      "check": "2A — Authority path: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json — file present; cited as source_document in pkg_kb52c manifest:9 and promoted candidate manifest:11"
+      "citation": "docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — file present at that path. Committed in 57ac7d5 (docs(governance): add Knowledge Bus SOP v1.3.1 and Pass 3 promotion protocol v1.1)."
     },
     {
-      "check": "2A — No duplicate authority source for creatinine",
+      "check": "2A — Pass_3 research JSON files present",
       "result": "CONFIRMED",
-      "citation": "grep of backend/ssot/ and backend/core/ for signal_creatinine_high returns only backend/core/knowledge/root_cause_registry_v1.py (signal reference, not a package loader) — no competing runtime authority detected"
+      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/ — Batch_3_Pass_3.json, Batch_4_Pass_3.json, Batch_5_Pass_3.json, Batch_6_Pass_3.json, Batch_7_Pass_3.json all present. Batch_2_Pass_3_Rev1.json archived. Prompt instructs Cursor to locate actual paths if they differ — paths confirmed as exact."
     },
     {
-      "check": "2A — Validator scripts present",
+      "check": "2A — All validation scripts present",
       "result": "CONFIRMED",
       "citation": "backend/scripts/validate_medical_frame_identity_index.py — present; backend/scripts/validate_context_modifier_catalogue.py — present; backend/scripts/validate_day_one_architecture.py — present; backend/tests/architecture/test_day_one_architecture_guardrails.py — present; backend/tests/regression/test_med_frame_identity_index.py — present; backend/tests/regression/test_context_modifier_catalogue.py — present"
     },
     {
-      "check": "Source cross-ref — pkg_s24_creatinine_high_renal signal structure",
-      "result": "CONFIRMED — CONTENT READ",
-      "citation": "knowledge_bus/packages/pkg_s24_creatinine_high_renal/signal_library.yaml:8 — signal_id: signal_creatinine_high; lines 14-16 — supporting_metrics: egfr, urea, potassium; lines 44-51 — override_rule or_renal_ckd_stage_3: eGFR < 60 → at_risk; lines 56-60 — override_rule or_renal_acute_imbalance: potassium > 5.2 → at_risk; schema_version 1.0.0 (library package_id KBP-2402)"
-    },
-    {
-      "check": "Source cross-ref — pkg_kb52c signal structure",
-      "result": "CONFIRMED — CONTENT READ",
-      "citation": "knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/signal_library.yaml:9 — signal_id: signal_creatinine_high; lines 17-35 — supporting_metrics: egfr (corroborator), uacr (mechanism_marker), cystatin_c (differential_marker); lines 62-72 — override_rule or_creatinine_high_with_uacr_high only (no potassium rule, no eGFR escalation rule); schema_version 2.0.0 (library package_id KBP-4742)"
-    },
-    {
-      "check": "Source cross-ref — promoted candidate vs pkg_kb52c identity",
-      "result": "CONFIRMED — DUPLICATE CANDIDATE",
-      "citation": "knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/signal_library.yaml:63 — signal_id: signal_creatinine_high; lines 46-48 — supporting_markers: egfr, uacr, cystatin_c (identical to pkg_kb52c); lines 50-60 — override_rule or_creatinine_high_with_uacr_high (identical to pkg_kb52c); same source_document (Batch_4_Pass_3.json); schema_version 1.0.0 vs pkg_kb52c v2.0.0 — structural variant only; clinically equivalent to pkg_kb52c; compiled_not_promoted_candidate status confirmed"
-    },
-    {
-      "check": "Source cross-ref — potassium acute electrolyte frame: UNADJUDICATED GAP",
-      "result": "HARDENING_FINDING — CRITICAL FRAME GAP CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_s24_creatinine_high_renal/signal_library.yaml:56-60 — override or_renal_acute_imbalance (potassium > 5.2) present ONLY in s24; pkg_kb52c signal_library.yaml — no potassium dependency or override; promoted candidate signal_library.yaml — no potassium dependency or override. The acute electrolyte risk frame (creatinine+potassium arrhythmia context) is carried by s24 ONLY and is not represented in any Pass_3 package. Cursor must NOT delete or retire s24's potassium override rule."
-    },
-    {
-      "check": "Source cross-ref — eGFR CKD escalation rule gap",
-      "result": "HARDENING_FINDING — ESCALATION RULE GAP CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_s24_creatinine_high_renal/signal_library.yaml:44-51 — override or_renal_ckd_stage_3 (eGFR < 60 → at_risk) present ONLY in s24; pkg_kb52c signal_library.yaml:18-23 — eGFR listed only as corroborator supporting_metric, no escalation override rule. The CKD stage 3+ severity escalation logic is absent from all Pass_3 packages — this is an unadjudicated coverage gap to be documented in the decision artefact."
-    },
-    {
-      "check": "Source cross-ref — promoted candidate manifest description contradiction",
-      "result": "WARNING — DESCRIPTION CONTRADICTS STATUS",
-      "citation": "knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/package_manifest.yaml:4 — description states 'supersedes s24 authority by governance decision' BUT manifest:7 — pilot_status: compiled_not_promoted_candidate AND manifest:15 — promotion_scope: non_runtime_candidate. The description is factually incorrect. Cursor must address this contradiction in the adjudication decision document. Authoritative status is compiled_not_promoted_candidate. Cursor must not modify the manifest file (runtime boundary applies to knowledge_bus/packages/*; promoted_candidate is in generated_pilot/ so not strictly listed, but modifying package files is out of scope per prompt line 451)."
-    },
-    {
-      "check": "change_type CONTENT — classification appropriate",
+      "check": "2A — Output files do not yet exist (new file creation only)",
       "result": "CONFIRMED",
-      "citation": "Sprint produces docs/audit-papers/ report, knowledge_bus/governance/ YAML, governance index updates, carry-forward register update. No runtime package files, no evaluator code, no SSOT changes. SOP §4 CONTENT definition matches. Runtime boundary (prompt lines 388-402) explicitly prohibits SignalEvaluator, SignalRegistry, runtime loaders, SSOT, frontend, package files."
+      "citation": "docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md — not yet present; knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml — not yet present. No conflict with existing files."
     },
     {
-      "check": "risk_level HIGH — SOP compliance advisory",
-      "result": "ADVISORY — OVER-CLASSIFIED BY SOP §10 STRICT READING, ACCEPTED",
-      "citation": "SOP §10 HIGH triggers: no Intelligence Core touch, no backend/ssot/, no backend/core/pipeline/, no backend/core/analytics/ changes. Strictly STANDARD by SOP trigger list. Prompt author set HIGH explicitly (latest_cursor_prompt.md:4, lines 93-99 governance rationale). Conservative over-classification — errs toward caution. Not a BLOCKER."
+      "check": "2A — Prerequisite work packages all confirmed merged",
+      "result": "CONFIRMED",
+      "citation": "git log --oneline: KB-MAP-1 COMPLETE (820b526), KB-UTIL-2-PILOT COMPLETE (d92b23f), KB-UTIL-2-PROMOTE-PILOT COMPLETE (79ca865), KB-UTIL-2-ACTIVATION-READINESS COMPLETE (f56de28), KB-UTIL-2-PROMOTE-WIRE-1 COMPLETE (c63b9c3), MED-FRAME-1 COMPLETE (d4168c2), MED-FRAME-2 COMPLETE (71f3f22), CONTEXT-MOD-1 COMPLETE (68fd023), KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION COMPLETE (ee23d22). KNOWLEDGE_BUS_SOP_v1.3.1 and KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1 committed (57ac7d5). All 11 prerequisites verified."
     },
     {
-      "check": "STOP conditions — prerequisite artefacts",
-      "result": "CONFIRMED ALL PRESENT",
-      "citation": "medical_frame_identity_index_v1.yaml — present at knowledge_bus/governance/; context_modifier_catalogue_draft_v1.yaml — present at knowledge_bus/governance/; KB-UTIL-2-PROMOTE-WIRE-1 audit report — present at docs/audit-papers/; KB-UTIL-2-ACTIVATION-READINESS report — present at docs/audit-papers/"
+      "check": "2A — HEAD == origin/main",
+      "result": "CONFIRMED",
+      "citation": "git rev-parse HEAD == git rev-parse origin/main == ee23d2216d1829ddcd505c076447be489ada7277. Branch is clean and current."
     },
     {
-      "check": "Runtime signal reference — signal_creatinine_high active",
-      "result": "CONFIRMED — INSPECT ONLY",
-      "citation": "backend/core/knowledge/root_cause_registry_v1.py:1 (grep match) — RootCauseTargetSpec('signal_creatinine_high', lrc.load_creatinine_high_hypotheses_v1, 'creatinine_high_hypotheses_v1.yaml') registered. Cursor must not modify this registry."
+      "check": "2A — Working tree state",
+      "result": "ADVISORY — NOT A BLOCKER",
+      "citation": "git status: M automation_bus/latest_cursor_prompt.md. This is the GPT-authored prompt file, expected at hardening stage. Will be committed at kernel activation (run_work_package.py start). Not a hardening blocker."
+    },
+    {
+      "check": "2A — No duplicate authority for new output files",
+      "result": "CONFIRMED",
+      "citation": "pass3_frame_coverage_audit_v1.yaml and PASS3-FRAME-COVERAGE-1 audit report do not yet exist. No competing governance file detected at these paths. CONTENT creation only."
+    },
+    {
+      "check": "2B — Behavioural hardening (BEHAVIOUR/MIXED scope check)",
+      "result": "NOT APPLICABLE",
+      "citation": "change_type: CONTENT. Sprint produces governance YAML and markdown audit report only. Runtime boundary (prompt lines 388-402) explicitly excludes all Intelligence Core components. Stage 2B not required."
     }
   ],
   "advisories": [
     {
       "advisory_id": "ADV-1",
-      "severity": "HIGH",
-      "title": "Potassium acute electrolyte frame is carried ONLY by s24 — must not be retired or collapsed",
-      "detail": "pkg_s24_creatinine_high_renal/signal_library.yaml:56-60 carries the creatinine+potassium arrhythmia escalation rule (or_renal_acute_imbalance, potassium > 5.2). This frame is completely absent from pkg_kb52c and the promoted candidate. The sprint's success criteria #4 ('s24 eGFR and potassium contexts are preserved, not deleted') and the prompt's known medical framing section (lines 165-168) make preservation mandatory. Any adjudication decision that classifies this frame as 'superseded' or 'covered' by Pass_3 packages would be factually incorrect. Cursor must classify this as an unadjudicated legacy frame requiring future Pass_3 enrichment."
+      "severity": "LOW",
+      "title": "risk_level HIGH is a conservative over-classification by SOP §10 strict reading",
+      "detail": "None of the SOP §10 mechanical HIGH triggers are met (no Intelligence Core, no backend/ssot/, no backend/core/pipeline/, no backend/core/analytics/ changes). Prompt author has classified HIGH explicitly with governance rationale (prompt lines 93-99). Conservative over-classification is not a blocker and errs toward caution — accepted."
     },
     {
       "advisory_id": "ADV-2",
-      "severity": "MEDIUM",
-      "title": "eGFR CKD stage 3 escalation rule absent from Pass_3 — must be documented as coverage gap",
-      "detail": "pkg_s24_creatinine_high_renal/signal_library.yaml:44-51 has an explicit escalation override (eGFR < 60 → at_risk). pkg_kb52c treats eGFR only as a supporting_metric corroborator without a threshold override. The adjudication decision YAML must document this as a known coverage gap. The two packages are not equivalent for severity escalation purposes."
+      "severity": "LOW",
+      "title": "CF-MRIMPROVE-001 is already marked Resolved in carry-forward register",
+      "detail": "docs/sprints/launch_core_carry_forward_register.md:48 — CF-MRIMPROVE-001 status: Resolved (MED-RESEARCH-REVIEW-1). Cursor must not re-open or re-classify this carry-forward. Sprint should acknowledge its resolved status and not mark it as updated."
     },
     {
       "advisory_id": "ADV-3",
-      "severity": "MEDIUM",
-      "title": "Promoted candidate manifest description is factually incorrect — must be noted in decision document",
-      "detail": "pkg_creatinine_high_renal_pass3_v1/package_manifest.yaml:4 says 'supersedes s24 authority by governance decision' — this is false. The authoritative fields (pilot_status: compiled_not_promoted_candidate, promotion_scope: non_runtime_candidate) override the free-text description. Cursor must record this contradiction in the decision document and confirm the compiled_not_promoted_candidate status. Cursor should NOT edit the manifest file itself (out-of-scope modification risk)."
-    },
-    {
-      "advisory_id": "ADV-4",
       "severity": "LOW",
-      "title": "Promoted candidate uses schema_version 1.0.0 vs pkg_kb52c schema_version 2.0.0",
-      "detail": "This schema version divergence is a structural artefact of the pilot compiler and does not affect clinical equivalence — both express the same signal logic. Cursor should note it in the comparison table but it is not a medical or governance concern."
+      "title": "55-package cohort is large — ROUTE_C (35 packages) dominates",
+      "detail": "pass3_legacy_package_mapping_plan_v1.yaml:8 — ROUTE_C: 35 packages (64% of cohort). The prompt authorises frame coverage classification without full clinical adjudication of all 55. Cursor should apply the systematic classification schema defined in the prompt rather than attempting deep clinical analysis of each package."
     }
   ]
 }
