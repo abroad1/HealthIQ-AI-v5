@@ -4,7 +4,7 @@ created_at: '2026-06-01'
 description: Promoted from KB-UTIL-2-PILOT Pass 3 artefacts; supersedes s24 authority by governance decision.
 package_id: pkg_creatinine_high_renal_pass3_v1
 package_version: 1.0.0
-pilot_status: promoted_package_authority_candidate
+pilot_status: compiled_not_promoted_candidate
 promoted_signal_intelligence: promoted_signal_intelligence.yaml
 research_brief: research_brief.yaml
 signal_library: signal_library.yaml
@@ -12,3 +12,4 @@ source_document: knowledge_bus/research/investigation_specs/multi_llm_research/B
 source_spec_id: inv_creatinine_high_reduced_glomerular_filtration
 translation_mode: pass3_promoted_from_pilot
 legacy_supersedes: pkg_s24_creatinine_high_renal
+promotion_scope: non_runtime_candidate

@@ -10,7 +10,7 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[3]
 LEGACY_DIR = REPO / "knowledge_bus/packages/pkg_s24_creatinine_high_renal"
-PROMOTED_DIR = REPO / "knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1"
+PROMOTED_DIR = REPO / "knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1"
 
 
 def _sha256(path: Path) -> str:

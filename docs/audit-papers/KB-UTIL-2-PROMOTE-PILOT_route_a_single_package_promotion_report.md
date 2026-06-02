@@ -3,7 +3,7 @@
 **Work ID:** `KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion`  
 **Date:** 2026-06-02  
 **Selected package:** `pkg_s24_creatinine_high_renal`  
-**Promoted package path:** `knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1`
+**Promotion candidate path:** `knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1`
 
 ---
 
@@ -11,7 +11,7 @@
 
 One ROUTE_A package was promoted into a **new immutable package directory** (legacy package preserved). Advisory 1 and Advisory 2 from KB-UTIL-2-PILOT were resolved. Validators pass for the promoted package and promoted signal intelligence. No runtime evaluator/frontend code changes were made and no manual LLM extraction was used.
 
-Runtime activation is deferred in this sprint (`compiled_not_promoted`) to avoid unintended behavioural change without promotion harness hardening.
+Runtime activation is deferred in this sprint (`compiled_not_promoted`) due duplicate activation-key collision with existing canonical package authority, and to avoid runtime behavioural surprise without promotion harness hardening.
 
 ---
 
@@ -52,8 +52,8 @@ Runtime activation is deferred in this sprint (`compiled_not_promoted`) to avoid
 
 | Command | Result |
 |---|---|
-| `python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1` | PASS (`ready_for_implementation: True`) |
-| `python backend/scripts/validate_promoted_signal_intelligence.py --model knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1/promoted_signal_intelligence.yaml` | PASS |
+| `python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1` | PASS (`ready_for_implementation: True`) |
+| `python backend/scripts/validate_promoted_signal_intelligence.py --model knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/promoted_signal_intelligence.yaml` | PASS |
 | `python backend/scripts/validate_day_one_architecture.py` | PASS |
 | `python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q` | PASS |
 | `python -m pytest backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py -q` | PASS |
@@ -79,8 +79,8 @@ No `BEHAVIOURAL_DIFFERENCE_HIGH` or `CLINICAL_ADJUDICATION_REQUIRED` classificat
 ## Legacy package treatment
 
 - Legacy package kept unchanged: `knowledge_bus/packages/pkg_s24_creatinine_high_renal`
-- New promoted package created: `knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1`
-- Governance classification for legacy: `superseded_by_pass3_package` (traceability retained)
+- Promotion candidate stored outside runtime package loading scope: `knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1`
+- Governance classification for legacy: `deferred` (traceability retained; no active authority swap in this sprint)
 
 ---
 
