@@ -1,9 +1,10 @@
 {
   "branch": "work/KB-UTIL-2-PROMOTE-WIRE-1-creatinine-runtime-authority-switch",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-02T10:24:42Z",
   "cursor_started_utc": "2026-06-02T10:19:18Z",
-  "head_sha": "26ad591a80a8a28eb6b4f29185f96884f79437f6",
+  "head_sha": "e5d7f36b6acf21614acae196f8b016414c81910e",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch"
 }
