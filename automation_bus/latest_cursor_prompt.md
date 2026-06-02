@@ -1,20 +1,25 @@
 ---
-work_id: KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution
-branch: work/KB-UTIL-2-ACTIVATION-READINESS-creatinine-candidate-divergence-and-collision-resolution
+work_id: KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch
+branch: work/KB-UTIL-2-PROMOTE-WIRE-1-creatinine-runtime-authority-switch
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: BEHAVIOUR
 ---
 
-# KB-UTIL-2-ACTIVATION-READINESS — Creatinine Candidate Divergence and Collision Resolution
+# KB-UTIL-2-PROMOTE-WIRE-1 — Creatinine Runtime Authority Switch
 
 ## Purpose
 
-Resolve the mandatory activation-readiness advisories from `KB-UTIL-2-PROMOTE-PILOT` before any runtime wiring or activation is considered.
+Decide whether the Pass_3-derived creatinine candidate can safely become the governed runtime authority for `signal_creatinine_high`.
 
-This sprint must not activate the promoted package.
+This sprint must resolve the two remaining activation blockers from `KB-UTIL-2-ACTIVATION-READINESS`:
 
-The goal is to determine whether the promoted Pass_3-derived creatinine candidate is safe and correctly documented as a future runtime authority candidate.
+```text
+1. Signal identity collision with pkg_kb52c_creatinine_high_reduced_glomerular_filtration.
+2. Override-rule divergence between legacy eGFR/potassium escalation and Pass_3 UACR escalation.
+````
+
+The goal is not simply to “wire the new package”. The goal is to prove that HealthIQ can safely replace legacy runtime medical intelligence with Pass_3-derived intelligence through a controlled authority switch.
 
 ## Baseline requirement
 
@@ -25,9 +30,10 @@ Expected prior completed work:
 ```text
 KB-UTIL-2-PILOT merged
 KB-UTIL-2-PROMOTE-PILOT merged
+KB-UTIL-2-ACTIVATION-READINESS merged
 KNOWLEDGE_BUS_SOP_v1.3.1 committed
 KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1 committed
-````
+```
 
 Before starting, run and report:
 
@@ -45,8 +51,9 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- promoted creatinine candidate directory is missing
-- KB-UTIL-2-PROMOTE-PILOT report is missing
+- promoted creatinine candidate is missing
+- activation-readiness report is missing
+- pass3_promotion_decision_register_v1.yaml is missing
 ```
 
 ## Required inputs
@@ -54,181 +61,244 @@ STOP if:
 Read:
 
 ```text
+docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
+docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
+docs/audit-papers/KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution_report.md
 docs/audit-papers/KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion_report.md
 docs/sprints/launch_core_carry_forward_register.md
 knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml
-knowledge_bus/governance/pass3_pilot_compile_manifest_index_v1.yaml
 knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/
 knowledge_bus/packages/pkg_s24_creatinine_high_renal/
+knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/
 ```
 
 Also inspect as needed:
 
 ```text
-backend/scripts/compile_pass3_pilot_artifacts.py
-backend/tests/regression/test_kb_util2_promote_pilot.py
-backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py
+SignalRegistry / signal loading code
+Knowledge Bus package loading code
+runtime authority manifests
 backend/scripts/validate_knowledge_package.py
 backend/scripts/validate_promoted_signal_intelligence.py
+backend/scripts/validate_day_one_architecture.py
+backend/tests/regression/
+backend/tests/architecture/
 ```
 
-## Mandatory issues to resolve
+If paths differ, locate and report actual paths.
 
-### Issue 1 — Override-rule divergence classification
+## Mandatory preflight
 
-The audit found that the divergence was incorrectly classified as:
+Before making changes, produce a short authority preflight report covering:
 
 ```text
-RICHNESS_GAIN_ONLY
+1. Which packages currently define signal_creatinine_high.
+2. Which activation keys currently exist for signal_creatinine_high.
+3. Whether pkg_s24_creatinine_high_renal is currently runtime-loaded.
+4. Whether pkg_kb52c_creatinine_high_reduced_glomerular_filtration is currently runtime-loaded.
+5. Whether the promoted Pass_3 candidate is currently runtime-loaded.
+6. Whether duplicate activation keys already exist.
+7. Which package should be treated as current runtime authority before this sprint.
+8. What exact runtime authority switch is proposed.
 ```
 
-Correct classification should be:
+STOP if the current runtime authority cannot be determined.
+
+## Blocker 1 — Signal identity collision
+
+Resolve or formally adjudicate the real collision:
+
+```text
+pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+signal_id: signal_creatinine_high
+```
+
+Required decision:
+
+```text
+A. Candidate supersedes pkg_kb52c.
+B. Candidate supersedes pkg_s24 only, while pkg_kb52c remains separate.
+C. Candidate cannot be activated because collision creates unsafe duplicate authority.
+D. Candidate and pkg_kb52c are equivalent, and one should be retained as canonical.
+```
+
+Do not leave duplicate active runtime authority for the same activation identity.
+
+If a package is superseded, do not delete it. Classify it as superseded/retained for traceability.
+
+## Blocker 2 — Override-rule divergence
+
+The divergence is currently classified as:
 
 ```text
 BEHAVIOURAL_DIFFERENCE_LOW
+accepted_with_rationale: false
 ```
 
-Reason:
+Legacy rules:
 
 ```text
-Legacy package includes escalation rules using eGFR and potassium.
-Generated Pass_3 candidate uses UACR-based escalation.
-This is a rule substitution, not merely extra richness.
+eGFR < 60 → at_risk
+potassium > 5.2 → at_risk
 ```
 
-Required action:
+Pass_3 candidate rule:
 
 ```text
-- update pass3_promotion_decision_register_v1.yaml
-- update sprint/report documentation if needed
-- explicitly classify the candidate as not ready for runtime activation until divergence is accepted or resolved
+UACR above_max via lab_range_boundary → at_risk
 ```
 
-Do not alter the clinical logic in this sprint.
-
-### Issue 2 — `pkg_kb52c` activation-key collision
-
-The promoted candidate manifest references:
+Required decision:
 
 ```text
-duplicate_activation_key_collision_with_pkg_kb52c
+A. Accept the Pass_3 UACR escalation as the correct replacement.
+B. Retain eGFR/potassium escalation as additional runtime logic if supported by canonical research.
+C. Block activation pending medical review.
 ```
 
-Required action:
+Do not manually invent a hybrid rule.
+
+If retaining eGFR/potassium is proposed, prove it comes from canonical research or explicitly classify it as legacy retained with rationale.
+
+STOP if the divergence requires clinical adjudication beyond architecture.
+
+## Activation policy
+
+Runtime activation is allowed only if:
 
 ```text
-- identify what pkg_kb52c is
-- determine whether it exists in the repo
-- determine whether the activation-key collision is real
-- explain why it was not in the 55-package mapping plan if applicable
-- classify the collision as real, stale, mistaken, or unresolved
-- update the manifest/report/register accordingly
+- one canonical runtime authority is selected
+- collision is resolved
+- override divergence is accepted or resolved
+- generated package validates
+- promoted signal intelligence validates
+- source-field preservation audit remains intact
+- no raw Pass_3 runtime read is introduced
+- legacy package is preserved unchanged
+- rollback path is documented
 ```
 
-STOP if the collision implies a broader SignalRegistry identity problem that cannot be resolved in this sprint.
+If any condition fails, do not activate. Update registers and report blockers.
 
-### Issue 3 — Incorrect `output_root`
+## Preferred implementation approach
 
-The promoted candidate compile manifest points to the original generated location instead of the promoted candidate location.
-
-Required action:
+Preferred safe method:
 
 ```text
-- correct output_root in the promoted candidate compile_manifest.yaml
-- update compiler/promotion logic so future promoted candidates do not inherit stale output_root
-- add or update regression test
+1. Move or copy the promoted candidate from generated_pilot into a governed package directory.
+2. Preserve generated_pilot copy as audit evidence.
+3. Preserve legacy package directories unchanged.
+4. Update package authority / manifest / registry only through governed controls.
+5. Add tests proving only one active runtime authority for signal_creatinine_high.
 ```
 
-### Issue 4 — No-op legacy non-overwrite test
-
-The existing test compares a hash to itself.
-
-Required action:
+Suggested governed package path:
 
 ```text
-- replace with a meaningful test
-- prove the legacy package was not overwritten
-- use a committed fixture hash, known baseline content assertion, or equivalent robust check
+knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1/
 ```
 
-### Issue 5 — Missing explicit boundary regression coverage
-
-The audit noted not all required checks were explicitly covered.
-
-Required action:
-
-Add or extend tests proving:
+Do not overwrite:
 
 ```text
-- no raw Pass_3 runtime read was introduced
-- no runtime evaluator/frontend files changed or required
-- promoted candidate remains non-runtime
-- latest_knowledge_status.json is not created or modified
+knowledge_bus/packages/pkg_s24_creatinine_high_renal/
+knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/
 ```
 
-## Scope
+## Runtime status
 
-Allowed:
+If activation proceeds, update runtime authority according to Knowledge Bus SOP v1.3.1.
+
+If the repo uses:
 
 ```text
-- update governance decision register
-- update compile manifest for promoted candidate
-- update compiler/promotion script so future output_root is correct
-- update tests
-- update sprint report/addendum
-- update carry-forward register
+knowledge_bus/current/latest_knowledge_status.json
 ```
 
-Forbidden:
+then update it only with validator PASS evidence.
 
-```text
-- runtime activation
-- updating latest_knowledge_status.json
-- modifying SignalEvaluator
-- modifying SignalRegistry
-- modifying runtime loaders
-- modifying frontend
-- modifying scoring thresholds
-- modifying SSOT
-- overwriting legacy package
-- manually changing clinical rule logic
-```
+If the repo uses another active package authority mechanism, locate it, document it, and use the existing governed path.
+
+STOP if the authority mechanism is unclear.
 
 ## Required validation
 
 Run:
 
 ```powershell
-python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1
-python backend/scripts/validate_promoted_signal_intelligence.py --file knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/promoted_signal_intelligence.yaml
+python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1
+python backend/scripts/validate_promoted_signal_intelligence.py --file knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1/promoted_signal_intelligence.yaml
 python backend/scripts/validate_day_one_architecture.py
 python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
 python -m pytest backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py -q
 python -m pytest backend/tests/regression/test_kb_util2_promote_pilot.py -q
 ```
 
+Add targeted regression tests proving:
+
+```text
+1. only one active runtime authority exists for signal_creatinine_high
+2. legacy packages are not overwritten
+3. promoted package validates
+4. promoted signal intelligence validates
+5. latest_knowledge_status.json or equivalent authority file is updated only after validation
+6. raw Pass_3 files are not runtime-read
+7. rollback path is documented
+8. activation blockers are cleared or activation is refused
+```
+
+## Runtime boundary
+
+Do not modify unless strictly necessary and justified:
+
+```text
+SignalEvaluator
+frontend
+SSOT
+scoring thresholds
+unit conversion
+```
+
+SignalRegistry / package authority loading may be inspected and modified only if required to resolve the activation-key collision.
+
+If modifying SignalRegistry or loader behaviour, classify the exact behavioural impact and add regression coverage.
+
 ## Required deliverable
 
 Create:
 
 ```text
-docs/audit-papers/KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution_report.md
+docs/audit-papers/KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch_report.md
 ```
 
-Report must include:
+Update:
+
+```text
+knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml
+docs/sprints/launch_core_carry_forward_register.md
+```
+
+If activation proceeds, also update the relevant package authority file.
+
+## Required report content
+
+The report must include:
 
 ```text
 - executive verdict
-- Issue 1 resolution
-- Issue 2 collision investigation
-- Issue 3 output_root fix
-- Issue 4 test correction
-- Issue 5 boundary test coverage
-- files changed
+- runtime authority preflight
+- collision investigation and decision
+- override divergence decision
+- package promoted or activation refused
+- package authority files changed
+- legacy package treatment
+- rollback path
 - validation results
-- whether candidate remains compiled_not_promoted
-- whether future runtime activation is allowed, blocked, or conditional
+- tests added/updated
+- whether runtime behaviour changed
+- confirmation no frontend/SSOT/scoring changes
 - remaining carry-forwards
+- recommended next sprint
 ```
 
 ## Carry-forward register
@@ -239,21 +309,95 @@ Update:
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Only mark items resolved if actually resolved.
+If activation succeeds, mark the creatinine-specific blocker resolved.
 
-If future runtime activation remains conditional, add the exact blocker.
+If activation is refused, record the exact blocker:
+
+```text
+- collision unresolved
+- override divergence not accepted
+- runtime authority mechanism unclear
+- validator failure
+- clinical adjudication required
+```
+
+Do not mark broad ROUTE_A migration resolved from this single package.
+
+## Out of scope
+
+Do not:
+
+```text
+- bulk promote ROUTE_A packages
+- promote CRP/systemic inflammation
+- resolve ROUTE_C multi-frame adjudication
+- delete legacy packages
+- manually invent clinical rules
+- change frontend
+- implement root-cause replacement
+- implement card evidence runtime consumption
+- implement LLM narrative generation
+```
 
 ## STOP conditions
 
 STOP and report if:
 
 ```text
-- pkg_kb52c collision cannot be understood
-- divergence appears clinically significant beyond BEHAVIOURAL_DIFFERENCE_LOW
-- resolving the collision requires SignalRegistry/runtime changes
-- output_root correction would require regenerating active runtime packages
-- tests fail
-- any runtime activation becomes necessary
+1. runtime authority mechanism cannot be determined
+2. duplicate activation authority cannot be safely resolved
+3. override divergence requires clinical adjudication
+4. SignalRegistry changes would create broader behavioural risk
+5. package validation fails
+6. promoted signal intelligence validation fails
+7. rollback path cannot be defined
+8. activation would require frontend/scoring/SSOT changes
+9. ARCH-RT validator fails
+```
+
+## Evidence required from Cursor
+
+Cursor must report:
+
+```text
+1. baseline branch/status evidence
+2. governance inputs read
+3. authority preflight findings
+4. collision decision
+5. override divergence decision
+6. promoted package path or activation refusal
+7. authority file changes
+8. tests added/updated
+9. validation commands run
+10. validation results
+11. rollback path
+12. files changed
+13. confirmation no frontend/SSOT/scoring changes
+```
+
+## Closure requirements
+
+Before finish, run and report:
+
+```powershell
+git branch --show-current
+git status --short
+git log --oneline -n 5
+git diff --name-only
+git diff --cached --name-only
+git stash list
+```
+
+Do not run finish unless:
+
+```text
+- current branch matches work/KB-UTIL-2-PROMOTE-WIRE-1-creatinine-runtime-authority-switch
+- only in-scope files changed
+- no legacy package was overwritten
+- no duplicate active authority remains if activation proceeds
+- rollback path is documented
+- no ambiguous stash exists
+- validator evidence is recorded
 ```
 
 ## Success criteria
@@ -261,15 +405,15 @@ STOP and report if:
 This sprint is complete only if:
 
 ```text
-1. divergence classification is corrected
-2. pkg_kb52c collision is explained or carried forward with exact blocker
-3. promoted candidate output_root is corrected
-4. legacy non-overwrite test is meaningful
-5. explicit boundary tests are added
-6. promoted candidate still validates
-7. promoted signal intelligence still validates
-8. candidate remains non-runtime / compiled_not_promoted
-9. no runtime/frontend/evaluator behaviour changes
+1. creatinine runtime authority is clearly determined
+2. pkg_kb52c collision is resolved or activation is refused
+3. override divergence is accepted, resolved, or activation is refused
+4. no duplicate active authority remains
+5. promoted package validates
+6. promoted signal intelligence validates
+7. legacy packages are preserved
+8. rollback path exists
+9. no frontend/SSOT/scoring changes are made
 10. carry-forward register is accurate
 ```
 
