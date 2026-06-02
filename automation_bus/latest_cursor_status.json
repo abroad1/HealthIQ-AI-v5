@@ -1,9 +1,10 @@
 {
   "branch": "work/PASS3-FRAME-COVERAGE-1-estate-wide-multiframe-research-coverage-audit",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-02T21:05:52Z",
   "cursor_started_utc": "2026-06-02T21:02:50Z",
-  "head_sha": "8465b71862a3081d954f06680d0c9b3693b28778",
+  "head_sha": "82e50e90ea7148cd8f9bd7e2d3c8495fdc10529a",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit"
 }
