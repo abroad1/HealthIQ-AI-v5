@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion",
+  "work_id": "KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution",
   "status": "HARDENED",
   "hardened_utc": "2026-06-02T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,132 +8,122 @@
     {
       "check": "front_matter_all_five_fields",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 2-6 — work_id: KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion, branch: work/KB-UTIL-2-PROMOTE-PILOT-route-a-single-package-promotion, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED. All five mandatory fields present with correct values."
-    },
-    {
-      "check": "risk_level_HIGH_correct",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 79-88. HIGH is correct: sprint promotes a generated Knowledge Bus package into package authority and may classify/retire legacy package. Medical intelligence promotion work regardless of ROUTE_A low-risk classification."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 2-6 — work_id: KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution, branch: work/KB-UTIL-2-ACTIVATION-READINESS-creatinine-candidate-divergence-and-collision-resolution, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED. All five mandatory fields present."
     },
     {
       "check": "change_type_MIXED_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6. MIXED correct: sprint promotes governed CONTENT (new package artefacts) that may become active intelligence authority loaded by pipeline — MIXED per SOP §4 definition. MIXED governed using BEHAVIOUR controls."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6. MIXED correct: sprint updates governed YAML content (decision register, compile manifest) and adds/replaces regression tests that protect behavioural boundaries. MIXED governed using BEHAVIOUR controls per SOP §4."
+    },
+    {
+      "check": "risk_level_HIGH_correct",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md line 4. HIGH correct: sprint corrects formal classification of a promoted package candidate and investigates a real signal_id collision — governance decisions with direct downstream impact on runtime activation eligibility. Extra caution warranted."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5. TWO_PHASE_START_FINISH correct: multi-stage promotion work requiring pre-flight checks, advisory resolution, validation runs, and formal closure protocol before finish."
+      "citation": "automation_bus/latest_cursor_prompt.md line 5. TWO_PHASE_START_FINISH correct: multi-issue resolution with explicit pre-flight, validation runs, and closure protocol requirements."
     },
     {
-      "check": "2a_KB_SOP_v1.3.1",
+      "check": "2a_promote_pilot_report_exists",
       "result": "CONFIRMED",
-      "citation": "docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — file confirmed present on disk."
+      "citation": "docs/audit-papers/KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion_report.md — confirmed present on disk. Read in full. Content cross-referenced against governance register and compile manifest."
     },
     {
-      "check": "2a_PASS3_PROMOTION_PROTOCOL_v1.1",
+      "check": "2a_carry_forward_register_exists",
       "result": "CONFIRMED",
-      "citation": "docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — file confirmed present on disk."
+      "citation": "docs/sprints/launch_core_carry_forward_register.md — confirmed present on disk. Read in full. CF-KBUTIL1-001 entry at line 39 records activation blocked by duplicate activation-key collision. No launch-blocking items."
     },
     {
-      "check": "2a_carry_forward_register",
+      "check": "2a_decision_register_exists_and_content_verified",
       "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md — file confirmed present on disk."
+      "citation": "knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml lines 1-52 — read in full. divergence_classification.override_rules: RICHNESS_GAIN_ONLY at line 31. runtime_activation_decision.classification: compiled_not_promoted at line 47. legacy_package_modified: false at line 51. Source content cross-referenced against actual signal_library.yaml files for both packages — override_rules classification is INCORRECT (see Issue 1 finding below)."
     },
     {
-      "check": "2a_pilot_audit_report",
+      "check": "2a_compile_manifest_index_exists",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/KB-UTIL-2-PILOT_pass3_to_runtime_artifact_compiler_pilot_report.md — file confirmed present on disk."
+      "citation": "knowledge_bus/governance/pass3_pilot_compile_manifest_index_v1.yaml lines 1-30 — confirmed present on disk. promoted_package_path at line 7 points to promoted_candidates location correctly."
     },
     {
-      "check": "2a_map_audit_report",
+      "check": "2a_promoted_candidate_directory_exists",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan.md — file confirmed present on disk."
+      "citation": "knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/ — 6 files confirmed: compile_manifest.yaml, package_manifest.yaml, promoted_signal_intelligence.yaml, research_brief.yaml, signal_library.yaml, source_field_preservation_audit.yaml."
     },
     {
-      "check": "2a_pass3_legacy_mapping_plan",
+      "check": "2a_legacy_package_exists_unmodified",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml — file confirmed present on disk."
+      "citation": "knowledge_bus/packages/pkg_s24_creatinine_high_renal/ — 3 files confirmed: package_manifest.yaml, research_brief.yaml, signal_library.yaml. Legacy package intact."
     },
     {
-      "check": "2a_compile_manifest_index",
+      "check": "2a_compiler_script_exists",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_pilot_compile_manifest_index_v1.yaml — file confirmed present on disk with hash evidence for both pilot packages."
+      "citation": "backend/scripts/compile_pass3_pilot_artifacts.py — confirmed present on disk. Read in full. output_root assigned at line 542 as str(out_dir.relative_to(ROOT)) where out_dir = OUTPUT_ROOT / package_id — always points to the original generated directory, not the promoted candidate path."
     },
     {
-      "check": "2a_generated_pilot_artefacts",
+      "check": "2a_test_files_exist",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/generated_pilot/kb_util_2_pilot/pkg_s24_creatinine_high_renal/ — 6 artefact files present: research_brief.yaml, signal_library.yaml, package_manifest.yaml, promoted_signal_intelligence.yaml, compile_manifest.yaml, source_field_preservation_audit.yaml. Alternative package pkg_s24_ferritin_low_iron_deficiency also present with same 6 files."
+      "citation": "backend/tests/regression/test_kb_util2_promote_pilot.py — confirmed present. backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py — confirmed present. backend/scripts/validate_promoted_signal_intelligence.py — confirmed present. backend/scripts/validate_day_one_architecture.py — confirmed present. backend/tests/architecture/test_day_one_architecture_guardrails.py — confirmed present."
     },
     {
-      "check": "2a_validator_scripts",
+      "check": "2a_no_duplicate_authority_sources",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_knowledge_package.py — present. backend/scripts/validate_promoted_signal_intelligence.py — present. backend/scripts/validate_day_one_architecture.py — present. backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py — present for extension."
+      "citation": "Decision register (pass3_promotion_decision_register_v1.yaml) is the single authority for promotion classification. Compile manifest index (pass3_pilot_compile_manifest_index_v1.yaml) is the single authority for compile hashes. No duplicate authority sources detected for the same role."
     },
     {
-      "check": "2a_legacy_package_present_not_overwritten",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_s24_creatinine_high_renal/ — confirmed present with 3 files: package_manifest.yaml, research_brief.yaml, signal_library.yaml. Legacy package intact. Cursor must NOT overwrite this directory."
+      "check": "ISSUE_1_override_rule_divergence_classification",
+      "result": "DEFECT_CONFIRMED — RECLASSIFICATION_REQUIRED",
+      "citation": "Legacy knowledge_bus/packages/pkg_s24_creatinine_high_renal/signal_library.yaml lines 43-60: 2 override rules — (1) or_renal_ckd_stage_3: metric_id=egfr, operator=<, value=60.0, absolute threshold; (2) or_renal_acute_imbalance: metric_id=potassium, operator=>, value=5.2, absolute threshold. Generated candidate knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/signal_library.yaml lines 49-59: 1 override rule — or_creatinine_high_with_uacr_high: metric_id=uacr, operator=>, comparator_type=lab_range_boundary, boundary=above_max. eGFR and potassium rules are ABSENT; UACR rule is SUBSTITUTED. This is a rule substitution, not richness gain. Current classification in decision_register at line 31 (RICHNESS_GAIN_ONLY) is INCORRECT. Correct classification: BEHAVIOURAL_DIFFERENCE_LOW. Required action: update pass3_promotion_decision_register_v1.yaml line 31 from RICHNESS_GAIN_ONLY to BEHAVIOURAL_DIFFERENCE_LOW and accepted_with_rationale accordingly."
     },
     {
-      "check": "2a_latest_knowledge_status_missing",
-      "result": "CONFIRMED_MISSING — MUST_NOT_CREATE_without_full_governance",
-      "citation": "knowledge_bus/current/latest_knowledge_status.json — file does not exist. If Cursor decides runtime activation is appropriate after advisory resolutions and divergence classification, this file must be CREATED (not updated) per KB SOP v1.3.1 with full validator evidence. Default position given open advisories and override rule divergence: do not activate at runtime in this sprint — classify promoted package as compiled_not_promoted."
+      "check": "ISSUE_2_pkg_kb52c_collision_investigation",
+      "result": "COLLISION_CONFIRMED_REAL — CLASSIFICATION_REQUIRED",
+      "citation": "knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/ EXISTS on disk. signal_library.yaml line 9: signal_id: signal_creatinine_high — exact collision with promoted candidate signal_id. package_id: KBP-4742 at line 2. schema_version: 2.0.0 at line 3. Override rules are IDENTICAL to promoted candidate: rule_id: or_creatinine_high_with_uacr_high, UACR-based, lab_range_boundary, same source_refs: source_kdigo_ckd_2024. Content is effectively equivalent — both compiled from Batch_4_Pass_3.json for inv_creatinine_high_reduced_glomerular_filtration. Collision is REAL: signal_id identity collision between promoted candidate and pkg_kb52c_creatinine_high_reduced_glomerular_filtration. Not stale. Not mistaken. The reference in compile_manifest.yaml (runtime_activation_blocker: duplicate_activation_key_collision_with_pkg_kb52c) is ACCURATE. Classification this sprint should reach: REAL_COLLISION_NON_BLOCKING_TO_DOCS_WORK. Resolving for runtime activation would require SignalRegistry adjudication — correctly deferred. STOP condition from prompt (collision implies broader SignalRegistry identity problem) does not trigger for documentation-only classification work."
     },
     {
-      "check": "2a_ROUTE_A_confirmation",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml line 797 — pkg_s24_creatinine_high_renal: promotion_route: ROUTE_A_exact_signal_match_compile_candidate. Line 793: exact_pass3_signal_id_match: true. Line 796: multiple_pass3_frames: false. Line 795: single spec inv_creatinine_high_reduced_glomerular_filtration. Line 799: recommended_pilot_candidate: true. Line 800: manual_review_required: false."
+      "check": "ISSUE_3_output_root_stale_in_promoted_compile_manifest",
+      "result": "DEFECT_CONFIRMED — FIX_REQUIRED",
+      "citation": "knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/compile_manifest.yaml line 10: output_root: knowledge_bus/generated_pilot/kb_util_2_pilot/pkg_s24_creatinine_high_renal. Correct value should be: knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1. Compiler script (compile_pass3_pilot_artifacts.py line 542) sets output_root to str(out_dir.relative_to(ROOT)) where out_dir = OUTPUT_ROOT / package_id — this always generates the original compile path, not the promoted candidate path. Fix required: (1) directly correct output_root in promoted candidate compile_manifest.yaml; (2) note in compiler script that promoted copies must update output_root. AMBIGUITY: there is no separate promotion script in the codebase — the promoted candidate directory was created during the previous sprint without a reusable script. Cursor should fix the file directly and annotate the compiler or create a promotion helper accordingly."
     },
     {
-      "check": "2a_signal_id_exact_match",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_s24_creatinine_high_renal/signal_library.yaml line 8 (signal_id: signal_creatinine_high) vs knowledge_bus/generated_pilot/kb_util_2_pilot/pkg_s24_creatinine_high_renal/signal_library.yaml line 63 (signal_id: signal_creatinine_high). Exact match confirmed."
+      "check": "ISSUE_4_no_op_legacy_non_overwrite_test",
+      "result": "DEFECT_CONFIRMED — FIX_REQUIRED",
+      "citation": "backend/tests/regression/test_kb_util2_promote_pilot.py lines 32-35: test_legacy_package_not_overwritten() reads LEGACY_DIR/signal_library.yaml twice in sequence with no mutation between reads — always passes regardless of file state. This is a no-op test. Required fix: replace with a meaningful assertion. Pattern already used correctly in test_kb_util2_pass3_pilot_compiler.py line 106-110 (test_runtime_packages_not_overwritten): hash file before, call compile_all(), hash file after, assert equal. Apply same pattern here, or alternatively assert against a committed known hash of the legacy file to prove no modification."
     },
     {
-      "check": "2a_hash_integrity_cross_reference",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/generated_pilot/kb_util_2_pilot/pkg_s24_creatinine_high_renal/compile_manifest.yaml lines 4-9 vs knowledge_bus/governance/pass3_pilot_compile_manifest_index_v1.yaml lines 8-13. All 5 artefact hashes match exactly: signal_library.yaml 4182a6..., package_manifest.yaml 0c61b9..., research_brief.yaml 69a34d..., promoted_signal_intelligence.yaml aa6fd5..., source_field_preservation_audit.yaml 8435c0..."
-    },
-    {
-      "check": "ADVISORY_1_source_contract_version_discrepancy",
-      "result": "DEFECT_CONFIRMED — MUST_RESOLVE_BEFORE_PROMOTION",
-      "citation": "source_field_preservation_audit.yaml lines 28-32: investigation_spec_contract_version records target_path as compile_manifest.yaml#source_contract_version. compile_manifest.yaml lines 1-14 read in full: fields are compile_id, compiled_at_utc, compiler_name, output_hashes_sha256, output_root, pilot_status, runtime_active, source_hash_sha256, source_path, source_spec_id — NO source_contract_version field present. The contract version IS recorded at promoted_signal_intelligence.yaml line 91: translation.investigation_spec_contract_version: 3.0.0. Required fix: either add source_contract_version: '3.0.0' to compile_manifest.yaml, OR update the preservation audit pointer to promoted_signal_intelligence.yaml#translation.investigation_spec_contract_version. Add regression test to prevent recurrence. STOP if this cannot be cleanly resolved."
-    },
-    {
-      "check": "ADVISORY_2_schema_version_2_0_0",
-      "result": "DEFECT_CONFIRMED — MUST_RESOLVE_BEFORE_PROMOTION",
-      "citation": "Generated signal_library.yaml line 6: schema_version: 2.0.0. Legacy signal_library.yaml line 3: schema_version: 1.0.0. Generated promoted_signal_intelligence.yaml line 3: schema_version: 1.0.0. No governance approval for schema version advancement to 2.0.0 found in any authority file. Per prompt STOP condition (line 164): do not promote with schema_version 2.0.0 unless formally governed. Required action: set schema_version to 1.0.0 in promoted signal_library artefact, add regression test asserting the chosen version is deliberate."
-    },
-    {
-      "check": "OVERRIDE_RULE_DIVERGENCE_new_hardening_finding",
-      "result": "MUST_FORMALLY_CLASSIFY — POTENTIAL_STOP",
-      "citation": "Legacy signal_library.yaml lines 44-60: 2 override rules — (1) or_renal_ckd_stage_3: eGFR < 60.0 (absolute threshold) → at_risk; (2) or_renal_acute_imbalance: potassium > 5.2 (absolute threshold) → at_risk. Generated signal_library.yaml lines 50-61: 1 entirely different rule — or_creatinine_high_with_uacr_high: UACR above_max via comparator_type lab_range_boundary → at_risk. Both eGFR and potassium escalation rules are absent from generated package. Generated rule introduces lab_range_boundary comparator (not present in legacy). Same divergence mirrored in promoted_signal_intelligence.yaml lines 45-57. Since pkg_s24_creatinine_high_renal is runtime_loaded: true (mapping plan line 782), promoting with different override rules would change which patients receive at_risk escalation at runtime. Cursor must classify this per divergence policy (NO_DIFFERENCE / STRUCTURAL_ONLY / RICHNESS_GAIN_ONLY / BEHAVIOURAL_DIFFERENCE_LOW / BEHAVIOURAL_DIFFERENCE_HIGH / CLINICAL_ADJUDICATION_REQUIRED) before promotion. STOP if classified BEHAVIOURAL_DIFFERENCE_HIGH or CLINICAL_ADJUDICATION_REQUIRED."
+      "check": "ISSUE_5_missing_boundary_regression_coverage",
+      "result": "GAP_CONFIRMED — ADDITIONS_REQUIRED",
+      "citation": "test_kb_util2_promote_pilot.py read in full. No test explicitly asserts: (1) no raw Pass_3 runtime read introduced; (2) no runtime evaluator/frontend files changed; (3) promoted candidate classification field is compiled_not_promoted; (4) latest_knowledge_status.json not created or modified by promotion steps. test_kb_util2_pass3_pilot_compiler.py line 131-137 (test_current_knowledge_status_not_updated_by_compiler) covers the compiler scope only — not the promotion step. New tests must cover the promoted candidate directory's own compile_manifest.promotion_status and the status file boundary."
     },
     {
       "check": "2b_behavioural_scope_defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 379-392 — explicit runtime boundary list. Promotion creates a new package directory only. Behavioural impact on runtime code is NONE. Behavioural impact on runtime OUTPUT is conditional on whether the promoted package replaces the legacy as active authority — deferred by default per latest_knowledge_status.json absence."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 170-195 — explicit Allowed and Forbidden scope lists. Runtime activation, SignalEvaluator, SignalRegistry, runtime loaders, frontend, scoring thresholds, SSOT, legacy package overwrite all explicitly forbidden."
     },
     {
-      "check": "2b_regression_targets_present",
+      "check": "2b_regression_targets_named",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 362-375 — 8 required regression test requirements enumerated. Existing test module backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py confirmed present for extension."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 199-208 — 6 validation commands named: validate_knowledge_package.py, validate_promoted_signal_intelligence.py, validate_day_one_architecture.py, test_day_one_architecture_guardrails.py, test_kb_util2_pass3_pilot_compiler.py, test_kb_util2_promote_pilot.py. All confirmed present on disk."
     },
     {
       "check": "2b_no_scope_creep",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 459-477 — 17 explicit out-of-scope items. Promotion limited to 1 package. No bulk compile. No runtime activation without governance. No manual LLM extraction. No ROUTE_B/C promotion. No CRP/systemic inflammation."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 170-195 — scope limited to governance register, compile manifest, compiler/promotion script, tests, sprint report, carry-forward register. No clinical logic changes, no runtime activation, no SignalRegistry work."
     },
     {
-      "check": "2b_forbidden_files_protected",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 379-392 — explicit forbidden modification list: SignalEvaluator, SignalRegistry, domain_score_assembler, report_compiler, runtime loaders, frontend, SSOT, scoring thresholds, unit conversion. STOP condition 8 (line 491): if any of those appear necessary, STOP and report."
+      "check": "2b_determinism_risk_output_root_correction",
+      "result": "RISK_NOTED",
+      "citation": "Correcting output_root in the promoted candidate compile_manifest.yaml will change that file's SHA256 hash. If any test or governance document asserts the exact hash of this promoted compile_manifest, the test will fail after correction. Cursor must check whether compile_manifest_index_v1.yaml or any test records the hash of the PROMOTED compile_manifest before making the correction. From review: pass3_pilot_compile_manifest_index_v1.yaml lines 8-15 records hashes for the GENERATED location (pkg_s24_creatinine_high_renal), not the promoted candidate directory — so the index does not need updating. No test found that hashes the promoted compile_manifest specifically. Risk is LOW."
     },
     {
-      "check": "no_op_protection",
+      "check": "no_op_sprint_protection",
       "result": "CONFIRMED — real work exists",
-      "citation": "Advisory 1 requires compiler fix + audit template correction + regression test. Advisory 2 requires schema version decision + regression test. Override rule divergence requires formal classification. Promoted package requires new directory creation and validation runs. Sprint report required. Promotion decision register required."
+      "citation": "Five confirmed issues require concrete file changes: decision register divergence reclassification, collision classification documentation, compile manifest output_root correction, no-op test replacement, and boundary test additions. Sprint is not a no-op."
+    },
+    {
+      "check": "stop_conditions_assessment",
+      "result": "NO_STOP_TRIGGERED",
+      "citation": "pkg_kb52c collision: understood — REAL, content-equivalent, same source spec. Divergence: BEHAVIOURAL_DIFFERENCE_LOW, not HIGH. Collision resolution: documentation-only, no SignalRegistry/runtime changes. output_root fix: affects only non-runtime promoted candidate, no active runtime packages. Tests: not yet run but structure is sound. Runtime activation: explicitly forbidden and not needed."
     }
   ]
 }
