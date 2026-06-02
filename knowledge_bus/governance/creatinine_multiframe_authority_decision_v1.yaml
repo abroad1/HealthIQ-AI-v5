@@ -1,0 +1,147 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: governed_adjudication_decision
+work_id: KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision
+generated_utc: '2026-06-02'
+decision_scope: creatinine_high_signal_family_governance_only
+signal_family_id: signal_creatinine_high
+primary_biomarker_id: creatinine
+
+current_runtime_authorities:
+  - package_id: pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+    activation_key: signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration
+    medical_frame_id: frame_creatinine_reduced_glomerular_filtration
+    role: pass3_canonical_reduced_glomerular_filtration
+  - package_id: pkg_s24_creatinine_high_renal
+    activation_key: signal_creatinine_high::inv_creatinine_high_renal
+    medical_frame_ids:
+      - frame_creatinine_legacy_s24_egfr_escalation
+      - frame_creatinine_legacy_s24_potassium_escalation
+    role: legacy_unadjudicated_egfr_and_potassium_override_frames
+
+compiled_not_promoted_candidates:
+  - package_id: pkg_creatinine_high_renal_pass3_v1
+    package_path: knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1
+    activation_key: signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration
+  - duplicate_of: pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+  - adjudication: equivalent_pass3_frame_do_not_activate
+
+legacy_unadjudicated_frames:
+  - medical_frame_id: frame_creatinine_legacy_s24_egfr_escalation
+    override_rule_id: or_renal_ckd_stage_3
+    treatment: retain_until_pass3_enrichment_or_medical_review
+  - medical_frame_id: frame_creatinine_legacy_s24_potassium_escalation
+    override_rule_id: or_renal_acute_imbalance
+    treatment: retain_until_pass3_enrichment_or_medical_review
+
+frame_decisions:
+  - frame_id: reduced_glomerular_filtration
+    frame_label: Reduced glomerular filtration
+    current_source_package: pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+    current_status: runtime_active_canonical
+    recommended_status: retain_canonical_no_change
+    required_source_research: inv_creatinine_high_reduced_glomerular_filtration
+    required_package_action: none
+    required_context_modifiers:
+      - mod_creatinine_ctx_known_ckd
+      - mod_med_ace_arb
+      - mod_med_nsaid
+    requires_medical_review: false
+    notes: >
+      pkg_kb52c is the correct Pass_3 canonical package. UACR override (or_creatinine_high_with_uacr_high)
+      is the Pass_3 escalation path; eGFR is a corroborator not a replacement frame.
+
+  - frame_id: albuminuric_kidney_damage
+    frame_label: Albuminuric kidney damage / UACR context
+    current_source_package: null
+    current_status: not_indexed_partially_covered_by_kb52c_uacr_override
+    recommended_status: defer_pass3_spec_and_package_before_runtime
+    required_source_research: future Pass_3 spec for albuminuric frame (not present in index)
+    required_package_action: pass3_enrichment_or_new_investigation_spec
+    required_context_modifiers:
+      - mod_creatinine_ctx_diabetes_htn
+      - mod_creatinine_ctx_uacr_available
+    requires_medical_review: true
+    notes: >
+      kb52c UACR override covers albuminuria escalation within reduced-GFR frame but does not
+      replace a distinct albuminuric-kidney-damage frame. Do not collapse into single consequence.
+
+  - frame_id: acute_electrolyte_risk
+    frame_label: Acute electrolyte risk (potassium)
+    current_source_package: pkg_s24_creatinine_high_renal
+    current_status: legacy_override_rule_active_in_package_inactive_in_index
+    recommended_status: retain_legacy_frame_pending_pass3_enrichment
+    required_source_research: inv_creatinine_high_renal (legacy) or future Pass_3 electrolyte spec
+    required_package_action: pass3_enrichment_before_s24_retirement
+    required_context_modifiers:
+      - mod_creatinine_ctx_potassium_high
+      - mod_med_ace_arb
+    requires_medical_review: true
+    notes: >
+      eGFR and potassium must remain separate interpretive layers. Potassium > 5.2 override is
+      medically distinct from UACR escalation. Indexed as frame_creatinine_legacy_s24_potassium_escalation.
+
+  - frame_id: creatinine_distortion_context
+    frame_label: Creatinine distortion / muscle-supplement context
+    current_source_package: null
+    current_status: context_modifier_governed_only
+    recommended_status: defer_frame_index_until_pass3_spec
+    required_source_research: future Pass_3 distortion-context spec
+    required_package_action: none_in_this_sprint
+    required_context_modifiers:
+      - mod_sup_creatine
+      - mod_q_lifestyle_exercise
+      - mod_q_hydration
+      - mod_creatinine_ctx_high_muscle_mass
+      - mod_creatinine_ctx_cystatin_c_available
+    requires_medical_review: false
+    notes: >
+      Cystatin C in kb52c is differential_marker role, not a standalone frame. Distortion context
+      uses CONTEXT-MOD-1 modifiers until a dedicated frame is medically specified.
+
+  - frame_id: medication_associated_renal_strain
+    frame_label: Medication-associated renal strain
+    current_source_package: null
+    current_status: intervention_registry_and_modifier_catalogue_only
+    recommended_status: bind_via_context_mod_2_not_runtime_package
+    required_source_research: intervention_effects_registry_v1
+    required_package_action: none
+    required_context_modifiers:
+      - mod_med_nephrotoxic_class
+      - mod_med_nsaid
+      - mod_med_ace_arb
+      - mod_med_diuretic
+    requires_medical_review: true
+    notes: >
+      Nephrotoxic and renal-active medication classes are governed modifiers; not collapsed into
+      biomarker-only interpretation.
+
+  - frame_id: legacy_s24_renal_context
+    frame_label: Legacy s24 renal package (eGFR + potassium overrides)
+    current_source_package: pkg_s24_creatinine_high_renal
+    current_status: runtime_active_legacy_unadjudicated
+    recommended_status: retain_defer_retirement
+    required_source_research: inv_creatinine_high_renal_v1.yaml
+    required_package_action: do_not_modify_package_until_medical_review_and_pass3_enrichment
+    required_context_modifiers: []
+    requires_medical_review: true
+    notes: >
+      s24 provides eGFR CKD-stage and potassium safety overrides not fully replicated in kb52c.
+      Partial overlap: kb52c uses eGFR as corroborator; does not replace eGFR<60 or K+>5.2 rules.
+
+activation_decision:
+  summary: no_runtime_activation_no_retirement_no_package_modification
+  pkg_kb52c: retain_canonical
+  pkg_s24: retain_legacy
+  pkg_creatinine_high_renal_pass3_v1: remain_compiled_not_promoted_duplicate
+
+runtime_activation_allowed: false
+
+required_before_activation:
+  - medical_review_of_legacy_egfr_and_potassium_vs_pass3_uacr_paths
+  - pass3_enrichment_or_distinct_specs_for_albuminuric_and_electrolyte_frames
+  - explicit_collision_resolution_if_candidate_ever_promoted_to_runtime_packages
+  - context_modifier_binding_via_context_mod_2
+  - no_duplicate_active_activation_key_for_same_research_spec
+
+recommended_next_sprint: CREATININE-PASS3-ENRICH-1_pass3_frame_enrichment_for_egfr_potassium_and_albuminuria

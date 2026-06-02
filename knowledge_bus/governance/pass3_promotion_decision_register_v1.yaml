@@ -78,3 +78,13 @@ decisions:
       treatment: deferred
       legacy_package_modified: false
       traceability_retained: true
+creatinine_multiframe_adjudication:
+  work_id: KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision
+  decision_file: knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml
+  adjudicated_utc: '2026-06-02'
+  pkg_kb52c_role: retain_pass3_canonical_reduced_glomerular_filtration
+  pkg_s24_role: retain_legacy_egfr_and_potassium_frames_pending_enrichment
+  promoted_candidate_role: duplicate_compiled_not_promoted_do_not_activate
+  runtime_activation_allowed: false
+  legacy_s24_retirement: blocked_until_pass3_enrichment_and_medical_review
+  recommended_next_sprint: CREATININE-PASS3-ENRICH-1_pass3_frame_enrichment_for_egfr_potassium_and_albuminuria

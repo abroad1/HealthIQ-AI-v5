@@ -34,7 +34,8 @@ signal_families:
         notes: >
           Current canonical Pass_3 runtime package for reduced glomerular filtration frame.
           UACR-based override escalation per Pass_3 spec. KB-UTIL-2-PROMOTE-WIRE-1 retained this
-          authority and refused duplicate promoted candidate activation.
+          authority and refused duplicate promoted candidate activation. KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION
+          confirms retain_canonical; see creatinine_multiframe_authority_decision_v1.yaml.
 
       - signal_family_id: signal_creatinine_high
         primary_biomarker_id: creatinine
@@ -61,6 +62,8 @@ signal_families:
           Legacy package override rule or_renal_ckd_stage_3 (eGFR < 60). Medically distinct from
           Pass_3 UACR escalation; must not be silently collapsed into kb52c frame. Package-level
           runtime authority for activation_key inv_creatinine_high_renal is represented here.
+          KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION: retain until Pass_3 enrichment or medical review;
+          creatinine_multiframe_authority_decision_v1.yaml.
 
       - signal_family_id: signal_creatinine_high
         primary_biomarker_id: creatinine
@@ -86,7 +89,8 @@ signal_families:
         notes: >
           Legacy package override rule or_renal_acute_imbalance (potassium > 5.2). Preserved as
           distinct interpretive frame; shares package activation_key with eGFR frame but inactive
-          runtime authority to prevent duplicate active activation_key.
+          runtime authority to prevent duplicate active activation_key. KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION:
+          acute electrolyte-risk layer; not replaced by kb52c UACR override; see creatinine_multiframe_authority_decision_v1.yaml.
 
       - signal_family_id: signal_creatinine_high
         primary_biomarker_id: creatinine
@@ -100,7 +104,7 @@ signal_families:
         signal_id: signal_creatinine_high
         promotion_state: compiled_not_promoted
         runtime_authority_status: inactive
-        clinical_adjudication_status: required_before_activation
+        clinical_adjudication_status: accepted_with_rationale
         context_inputs_supported:
           biomarker_evidence: true
           questionnaire_modifiers: false
@@ -112,3 +116,5 @@ signal_families:
         notes: >
           ROUTE_A promoted candidate equivalent to pkg_kb52c Pass_3 frame. KB-UTIL-2-PROMOTE-WIRE-1
           refused runtime activation to avoid duplicate activation_key authority with pkg_kb52c.
+          KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION: architecture duplicate confirmed; remain
+          compiled_not_promoted; creatinine_multiframe_authority_decision_v1.yaml.
