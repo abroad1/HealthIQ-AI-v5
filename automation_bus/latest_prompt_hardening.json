@@ -1,5 +1,5 @@
 {
-  "work_id": "MED-FRAME-1_signal_family_contextual_frame_architecture",
+  "work_id": "MED-FRAME-2_medical_frame_identity_index",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-06-02T00:00:00Z",
@@ -8,83 +8,83 @@
     {
       "check": "front_matter_completeness",
       "result": "PASS",
-      "detail": "All five required fields present and correct. work_id: MED-FRAME-1_signal_family_contextual_frame_architecture. branch: work/MED-FRAME-1-signal-family-contextual-frame-architecture. risk_level: STANDARD. execution_model: TWO_PHASE_START_FINISH. change_type: CONTENT. Cited: automation_bus/latest_cursor_prompt.md lines 2-6."
+      "detail": "All five required fields present and correct. work_id: MED-FRAME-2_medical_frame_identity_index. branch: work/MED-FRAME-2-medical-frame-identity-index. risk_level: HIGH. execution_model: TWO_PHASE_START_FINISH. change_type: MIXED. CONFIRMED: automation_bus/latest_cursor_prompt.md lines 2–6."
     },
     {
-      "check": "risk_level_STANDARD_correct",
+      "check": "risk_level_HIGH_correct",
       "result": "CONFIRMED",
-      "detail": "STANDARD correct. Sprint produces only: (1) docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md — new documentation file in existing docs/architecture/ directory; (2) optional knowledge_bus/governance/medical_frame_identity_model_draft_v1.yaml — explicitly marked draft/non-runtime. No Intelligence Core files (backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, update_cursor_status.py) touched. No runtime behaviour change permitted. STANDARD requires Claude audit only — correct. Cited: automation_bus/latest_cursor_prompt.md lines 85-94, 328-337."
-    },
-    {
-      "check": "change_type_CONTENT_correct",
-      "result": "CONFIRMED",
-      "detail": "CONTENT correct. Sprint is architecture/design only — produces documentation and an optional non-runtime YAML sketch. All code, runtime, frontend, questionnaire schema, drug-category schema, SignalEvaluator, SignalRegistry, and package file changes are explicitly prohibited. No output generation, analytical pipeline, or emitted reasoning can change from this sprint. Cited: automation_bus/latest_cursor_prompt.md lines 28-29, 85-94, 328-337."
+      "detail": "HIGH correct. Sprint creates governed identity infrastructure that future runtime promotion work will depend on, and it classifies collision state for active packages. MIXED change_type requires BEHAVIOUR controls. HIGH requires Claude audit + GPT architectural review + dual approval before merge. CONFIRMED: automation_bus/latest_cursor_prompt.md lines 96–105."
     },
     {
       "check": "execution_model_TWO_PHASE_correct",
       "result": "CONFIRMED",
-      "detail": "TWO_PHASE_START_FINISH correct. Docs-Only Bypass (SOP §11) does NOT apply: the optional deliverable knowledge_bus/governance/medical_frame_identity_model_draft_v1.yaml is outside /docs/, so bus is required. Sprint includes baseline checks, STOP conditions, required checks, closure requirements, and success criteria. Cited: automation_bus/latest_cursor_prompt.md lines 65-83, 339-404, 340-404."
+      "detail": "TWO_PHASE_START_FINISH correct. Docs-Only Bypass (SOP §11) does NOT apply: artefacts include knowledge_bus/governance/, knowledge_bus/schema/, backend/scripts/, and backend/tests/ — all outside /docs/. Bus is required. CONFIRMED: automation_bus/latest_cursor_prompt.md lines 150–159."
     },
     {
-      "check": "2a_authority_path_verification",
+      "check": "2a_all_required_source_paths_exist",
       "result": "CONFIRMED",
-      "detail": "All 8 required input paths confirmed present in repo. docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — CONFIRMED EXISTS. docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — CONFIRMED EXISTS. docs/audit-papers/KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan.md — CONFIRMED EXISTS. docs/audit-papers/KB-UTIL-2-PILOT_pass3_to_runtime_artifact_compiler_pilot_report.md — CONFIRMED EXISTS. docs/audit-papers/KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch_report.md — CONFIRMED EXISTS. docs/sprints/launch_core_carry_forward_register.md — CONFIRMED EXISTS. knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml — CONFIRMED EXISTS. knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml — CONFIRMED EXISTS. Validation scripts: backend/scripts/validate_day_one_architecture.py — CONFIRMED EXISTS. backend/tests/architecture/test_day_one_architecture_guardrails.py — CONFIRMED EXISTS. Output directory: docs/architecture/ — CONFIRMED EXISTS (40+ files present). Optional output dir: knowledge_bus/governance/ — CONFIRMED EXISTS."
+      "detail": "All 15 required source paths verified present in repo. (1) docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md — CONFIRMED EXISTS, content read: non-runtime architecture sprint, defines signal families, frames, activation_key format, creatinine worked example. (2) knowledge_bus/governance/medical_frame_identity_model_draft_v1.yaml — CONFIRMED EXISTS, content read: 3-frame creatinine draft, schema_version 0.1.0-draft. (3) docs/sprints/launch_core_carry_forward_register.md — CONFIRMED EXISTS, content read: CF-MEDFRAME1-001/002/003 all Open. (4) docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — CONFIRMED EXISTS. (5) docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — CONFIRMED EXISTS. (6) docs/audit-papers/KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch_report.md — CONFIRMED EXISTS. (7) docs/audit-papers/KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution_report.md — CONFIRMED EXISTS. (8) knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml — CONFIRMED EXISTS. (9) knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml — CONFIRMED EXISTS. (10) knowledge_bus/packages/pkg_s24_creatinine_high_renal/ — CONFIRMED EXISTS: package_manifest.yaml, research_brief.yaml, signal_library.yaml. (11) knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/ — CONFIRMED EXISTS: package_manifest.yaml, research_brief.yaml, signal_library.yaml. (12) knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/ — CONFIRMED EXISTS: 5 files including compile_manifest.yaml and promoted_signal_intelligence.yaml. (13) backend/scripts/validate_day_one_architecture.py — CONFIRMED EXISTS. (14) backend/tests/architecture/test_day_one_architecture_guardrails.py — CONFIRMED EXISTS. (15) backend/core/knowledge/signal_activation_identity_v1.py — CONFIRMED EXISTS, content read."
     },
     {
-      "check": "2a_no_duplicate_authority_sources",
+      "check": "2a_activation_key_derivation_verified",
       "result": "CONFIRMED",
-      "detail": "Sprint creates docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md — a new file with no existing equivalent. No other architecture paper covers signal family / contextual frame design. Optional YAML is explicitly marked draft/non-runtime, not a runtime authority. No duplicate source created. Cited: automation_bus/latest_cursor_prompt.md lines 269-281."
+      "detail": "Activation keys traced through backend/core/knowledge/signal_activation_identity_v1.py content. activation_key format = '{signal_id}::{source_spec_id}' (line 28). (A) pkg_kb52c: source_document = 'knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json' (package_manifest.yaml line 9) — not an inv_*.yaml path, so infer_source_spec_id falls to _PKG_BODY_RE match on 'pkg_kb52c_creatinine_high_reduced_glomerular_filtration' → body = 'creatinine_high_reduced_glomerular_filtration' → source_spec_id = 'inv_creatinine_high_reduced_glomerular_filtration'. CONFIRMED: signal_activation_identity_v1.py line 48. activation_key = 'signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration'. (B) pkg_s24: source_document = 'knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml' (package_manifest.yaml line 8) — matches /inv_ + .yaml pattern, stem = 'inv_creatinine_high_renal_v1', after _v1 stripping → source_spec_id = 'inv_creatinine_high_renal'. CONFIRMED: signal_activation_identity_v1.py line 45. activation_key = 'signal_creatinine_high::inv_creatinine_high_renal'. (C) pkg_creatinine_high_renal_pass3_v1: explicit source_spec_id = 'inv_creatinine_high_reduced_glomerular_filtration' (package_manifest.yaml line 13). activation_key = 'signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration'. COLLISION WITH pkg_kb52c CONFIRMED — identical activation_key. Must be modeled as compiled_not_promoted with collision_status: allowed_non_runtime_collision."
     },
     {
-      "check": "2a_source_questionnaire_content_verified",
+      "check": "2a_output_directory_targets_valid",
       "result": "CONFIRMED",
-      "detail": "backend/ssot/questionnaire.json read in full (607 lines). Questionnaire contains 37 fields across 7 sections: demographics, medical_history, symptoms, lifestyle, physical_assessment, cognitive_assessment, family_history. Key modifiers relevant to architecture paper are present: date_of_birth (age derivable), biological_sex, chronic_conditions, long_term_medications, medical_conditions, tobacco_use, alcohol_drinks_weekly, supplements, dietary_pattern, vigorous_exercise_days, resistance_training_days, daily_fluid_intake, sleep_hours_nightly, stress_level_rating, family_cardiovascular_disease, family_diabetes_metabolic. CRITICAL GAP CONFIRMED: long_term_medications field (questionnaire.json lines 139-151) captures only 4 categories: Corticosteroids, Atypical antipsychotics, HIV/AIDS treatments, Statins. NSAIDs, ACE inhibitors, ARBs, diuretics, metformin, thyroid medication, nephrotoxic categories, liver-impacting categories are NOT present in any schema. No standalone drug-category schema file found anywhere in backend/. This gap is the architectural motivation for the sprint and must be accurately reported by Cursor."
+      "detail": "All 5 output artefact directories exist. knowledge_bus/governance/ — CONFIRMED EXISTS (medical_frame_identity_model_draft_v1.yaml already present). knowledge_bus/schema/ — CONFIRMED EXISTS (13 existing schema files). backend/scripts/ — CONFIRMED EXISTS. backend/tests/regression/ — CONFIRMED EXISTS with __init__.py. docs/audit-papers/ — CONFIRMED EXISTS. No directory creation required."
     },
     {
-      "check": "2a_prior_task_findings_verified",
+      "check": "2a_prior_task_finding_carry_forward_register",
       "result": "CONFIRMED",
-      "detail": "KB-UTIL-2-PROMOTE-WIRE-1 report read (docs/audit-papers/KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch_report.md). Outcome: activation of pkg_creatinine_high_renal_pass3_v1 was REFUSED. Runtime authority unchanged: pkg_s24_creatinine_high_renal active for signal_creatinine_high::inv_creatinine_high_renal; pkg_kb52c_creatinine_high_reduced_glomerular_filtration active for signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration. Promoted candidate not runtime-loaded. This creates exactly the multi-frame architecture context the paper must address: two distinct packages govern two distinct interpretive frames on the same signal, but no formal frame identity model exists. Architecture paper implications section must address this directly."
+      "detail": "Carry-forward register read in full (docs/sprints/launch_core_carry_forward_register.md). CF-MEDFRAME1-001 status: Open (line 52) — must be marked Resolved when sprint success criteria are all met. CF-MEDFRAME1-002 status: Open (line 53) — must remain Open (CONTEXT-MOD-1 scope). CF-MEDFRAME1-003 status: Open (line 54) — must remain Open (creatinine adjudication deferred). No other carry-forwards are affected by this sprint."
     },
     {
-      "check": "2a_existing_medication_context_verified",
-      "result": "CONFIRMED",
-      "detail": "backend/core/analytics/medication_caveat_assembler_v1.py confirmed present and read (lines 1-60). This assembler produces bounded caveat text from questionnaire long_term_medications and supplements fields. It is NOT a drug-category architecture or a modifier governance model. It handles only 4 medication categories from the questionnaire. Cursor must not treat this assembler as the existing medication-context architecture; it is a narrow output-layer caveat generator, not a Layer B modifier framework. This file must not be modified (out of scope). Cited: backend/core/analytics/medication_caveat_assembler_v1.py lines 11-14."
+      "check": "2b_behavioural_scope_and_runtime_boundary",
+      "result": "PASS",
+      "detail": "Sprint is MIXED but explicitly non-runtime. Index must be marked runtime_consumed: false / status: governed_non_runtime_index. Validator must not be a runtime dependency. Prohibited files list (automation_bus/latest_cursor_prompt.md lines 307–320): SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, unit conversion, knowledge_bus/current/latest_knowledge_status.json, knowledge_bus/packages/*/signal_library.yaml, knowledge_bus/packages/*/package_manifest.yaml, knowledge_bus/packages/*/research_brief.yaml. No output drift is possible from this sprint. MIXED classification is correct because the governed index will be consumed by future runtime promotion sprints."
     },
     {
-      "check": "stop_conditions_adequate",
-      "result": "CONFIRMED",
-      "detail": "Baseline STOP conditions appropriate: branch not main, local/remote divergence, dirty working tree, governance docs missing — all checked before work begins. Closure STOP conditions appropriate: branch not matching work/MED-FRAME-1-signal-family-contextual-frame-architecture, non-documentation/governance files changed, ambiguous stash. Validation STOP condition: architecture validators fail. No gap identified — all material failure modes gated. Cited: automation_bus/latest_cursor_prompt.md lines 75-83, 390-404."
+      "check": "2b_validator_runtime_independence",
+      "result": "MANDATORY_NOTE",
+      "detail": "The validator (backend/scripts/validate_medical_frame_identity_index.py) must NOT import from or depend on any runtime pipeline module: no SignalEvaluator, no SignalRegistry, no pipeline imports. It must be a standalone YAML loader + schema validation script. Cursor must confirm this at Stage 4A closure. If any runtime import appears necessary, STOP condition #5 in the prompt applies: 'STOP if validator would require runtime imports'. CONFIRMED: automation_bus/latest_cursor_prompt.md line 264."
     },
     {
-      "check": "forbidden_files_protected",
+      "check": "2b_regression_targets",
+      "result": "PASS",
+      "detail": "8 regression test targets fully specified in prompt (lines 279–287). All 8 map directly to validator rule logic: (1) valid creatinine frame index passes, (2) duplicate active activation_key fails, (3) classified non-runtime compiled_not_promoted collision passes, (4) missing required field fails, (5) unknown promotion_state fails, (6) unknown collision_status fails, (7) runtime_consumed must be false, (8) referenced package paths exist or are explicitly deferred. Tests are self-contained against static YAML fixtures and do not require runtime state."
+    },
+    {
+      "check": "2b_no_scope_creep_risk",
       "result": "CONFIRMED",
-      "detail": "Out-of-scope section explicitly prohibits: code changes, runtime loading changes, package file changes, SignalEvaluator changes, SignalRegistry changes, frontend changes, questionnaire schema changes, drug-category schema changes, frame evaluation implementation, LLM narrative generation, package activation. STOP conditions enforce at closure. No code path through this sprint's deliverables reaches any Intelligence Core component. Cited: automation_bus/latest_cursor_prompt.md lines 328-337."
+      "detail": "Out-of-scope list is comprehensive (automation_bus/latest_cursor_prompt.md lines 381–393): no creatinine adjudication, no package activation/retirement, no package content modification, no runtime loading, no SignalRegistry modification, no frontend, no questionnaire modifier rules, no medication modifier rules, no Layer B frame evaluation, no bulk indexing. Scope creep risk is LOW given explicit prohibitions and STOP conditions."
     }
   ],
   "advisories": [
     {
       "advisory_id": "ADV-1",
-      "severity": "INFORMATIONAL",
-      "title": "Questionnaire medication coverage is narrow — architecture paper must report current state accurately",
-      "detail": "Current state (read from backend/ssot/questionnaire.json lines 139-151): long_term_medications captures Corticosteroids, Atypical antipsychotics, HIV/AIDS treatments, Statins only. The sprint's context modifier scope list (NSAIDs, ACE inhibitors, ARBs, diuretics, metformin, thyroid medication, nephrotoxics, liver-impacting categories) is TARGET architecture scope, not current schema content. Cursor must report what currently exists, acknowledge the gap, and design the architecture to govern where future categories would live. Do not fabricate schemas that do not exist."
+      "severity": "HIGH",
+      "title": "Draft YAML uses non-authorized promotion_state enum values — must not be carried forward",
+      "detail": "knowledge_bus/governance/medical_frame_identity_model_draft_v1.yaml line 26 uses 'runtime_active_legacy'; line 32 uses 'runtime_active_legacy_pending_adjudication'. Neither value is in the sprint-defined authorized enum. Authorized enum (from prompt lines 227–234): runtime_active_canonical | runtime_active_legacy_unadjudicated | compiled_not_promoted | superseded | retired | deferred. Cursor must use 'runtime_active_canonical' for pkg_kb52c (current Pass_3 canonical authority for the reduced GFR frame) and 'runtime_active_legacy_unadjudicated' for pkg_s24 (pending clinical adjudication). Using the draft YAML values in the production index would cause the validator's enum check to fail and would be an architectural error."
     },
     {
       "advisory_id": "ADV-2",
-      "severity": "INFORMATIONAL",
-      "title": "medication_caveat_assembler_v1.py is a caveat text generator, not a drug-category modifier architecture",
-      "detail": "Cursor will find backend/core/analytics/medication_caveat_assembler_v1.py when inspecting medication artefacts. This is a narrow Layer C output component that generates bounded caveat sentences from 4 questionnaire-reported medication categories. It must be reported accurately as current state and must not be treated as an existing modifier framework, extended, or modified in this sprint."
+      "severity": "STANDARD",
+      "title": "Frame 3 (potassium acute complication context) has no distinct research spec — model as deferred",
+      "detail": "pkg_s24_creatinine_high_renal (signal_library.yaml line 8) covers only inv_creatinine_high_renal as its single spec. There is no separately compiled 'inv_creatinine_high_acute_electrolyte_risk' package in the current estate. The MED-FRAME-1 architecture paper (line 254) names this frame as 'frame_electrolyte_risk' with spec 'inv_creatinine_high_acute_electrolyte_risk' — a future target. Cursor must model Frame 3 as: promotion_state=deferred, runtime_authority_status=none, clinical_adjudication_status=required_before_activation, source_package_id=pkg_s24_creatinine_high_renal (sub-context embedded in s24 without separate spec authority), provisional research_spec_id=inv_creatinine_high_acute_electrolyte_risk, collision_status=none. A notes field must explain it is currently bundled within s24 pending separate spec and adjudication. This correctly preserves the clinical context without asserting false runtime authority."
     },
     {
       "advisory_id": "ADV-3",
       "severity": "INFORMATIONAL",
-      "title": "Creatinine worked example must reflect KB-UTIL-2-PROMOTE-WIRE-1 outcome — two active packages, no formal frame model",
-      "detail": "The creatinine example in the architecture paper should ground itself in the real current state: signal_creatinine_high has two runtime authorities (pkg_s24 covering inv_creatinine_high_renal; pkg_kb52c covering inv_creatinine_high_reduced_glomerular_filtration). The promoted Pass_3 candidate was refused activation due to duplicate key collision. This is exactly the kind of multi-frame identity problem the paper must solve — use it as evidence of why the architecture is needed, not just as a worked hypothetical."
+      "title": "Collision representation for pkg_creatinine_high_renal_pass3_v1 — use allowed_non_runtime_collision",
+      "detail": "pkg_creatinine_high_renal_pass3_v1 and pkg_kb52c share activation_key 'signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration'. This is the known collision from KB-UTIL-2-PROMOTE-WIRE-1. In the index: pkg_creatinine_high_renal_pass3_v1 must have promotion_state=compiled_not_promoted, runtime_authority_status=none, collision_status=allowed_non_runtime_collision, superseded_by=pkg_kb52c_creatinine_high_reduced_glomerular_filtration. The collision_group_id field should link both entries. pkg_kb52c must have collision_status=allowed_non_runtime_collision (it is the active party in a known classified collision, not a free-standing authority with no collision history). Validator rule: duplicate active activation_key is blocked; compiled_not_promoted collision is allowed only when explicitly classified — this case satisfies that rule."
     },
     {
       "advisory_id": "ADV-4",
       "severity": "INFORMATIONAL",
-      "title": "Optional YAML must be marked draft/non-runtime — gate explicitly at closure",
-      "detail": "If Cursor creates knowledge_bus/governance/medical_frame_identity_model_draft_v1.yaml, it must be explicitly marked as draft and non-runtime within the file. The closure STOP condition (only documentation/governance draft files changed) covers this, but Cursor should confirm the file contains explicit draft status markers before finishing."
+      "title": "pkg_s24 has a DIFFERENT activation_key from pkg_kb52c — these are not collisions",
+      "detail": "pkg_s24 activation_key = 'signal_creatinine_high::inv_creatinine_high_renal' (distinct from pkg_kb52c's 'signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration'). These two runtime-active packages govern different frames and do NOT collide. collision_status for both pkg_s24 and pkg_kb52c entries (excluding the pass3_v1 collision group) should be 'none'. Cursor must not incorrectly classify the s24 vs kb52c relationship as a collision — they represent medically distinct frames with distinct activation keys and are both legitimately runtime-active."
     }
   ]
 }
