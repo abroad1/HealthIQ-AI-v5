@@ -1,0 +1,63 @@
+# DRAFT — NON-RUNTIME — MED-FRAME-1 architecture sketch
+# Do not load at runtime. For governance review and MED-FRAME-2 implementation planning.
+
+schema_version: 0.1.0-draft
+model_id: medical_frame_identity_model_draft_v1
+status: draft_non_runtime
+work_id: MED-FRAME-1_signal_family_contextual_frame_architecture
+generated_utc: '2026-06-02'
+
+identity_rules:
+  activation_key_format: '{signal_id}::{research_spec_id}'
+  one_runtime_package_per_activation_key: true
+  medical_frame_id_maps_1_to_1_research_spec_id: true
+  signal_family_id_defaults_to_signal_id: true
+
+signal_families:
+  - signal_family_id: signal_creatinine_high
+    primary_biomarker_id: creatinine
+    system: renal
+    frames:
+      - medical_frame_id: frame_creatinine_reduced_glomerular_filtration
+        signal_id: signal_creatinine_high
+        research_spec_id: inv_creatinine_high_reduced_glomerular_filtration
+        activation_key: signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration
+        runtime_package_id: pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+        promotion_state: runtime_active_legacy
+      - medical_frame_id: frame_creatinine_legacy_renal_v1
+        signal_id: signal_creatinine_high
+        research_spec_id: inv_creatinine_high_renal
+        activation_key: signal_creatinine_high::inv_creatinine_high_renal
+        runtime_package_id: pkg_s24_creatinine_high_renal
+        promotion_state: runtime_active_legacy_pending_adjudication
+      - medical_frame_id: frame_creatinine_pass3_candidate
+        signal_id: signal_creatinine_high
+        research_spec_id: inv_creatinine_high_reduced_glomerular_filtration
+        activation_key: signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration
+        runtime_package_id: pkg_creatinine_high_renal_pass3_v1
+        promotion_state: compiled_not_promoted
+
+context_modifier_catalogue_sketch:
+  questionnaire_modifier_ids:
+    - mod_hydration_low
+    - mod_exercise_high
+    - mod_creatine_supplement
+    - mod_known_ckd
+    - mod_diabetes_hypertension
+  intervention_class_modifier_ids:
+    - mod_nsaid_exposure
+    - mod_ace_arb
+    - mod_diuretic
+    - mod_statin
+    - mod_metformin
+    - mod_thyroid_medication
+    - mod_steroid
+    - mod_testosterone_hormone
+
+layer_roles:
+  pass3_canonical_research: medical_authority
+  knowledge_bus_package: activation_and_psi_compile_target
+  signal_registry: activation_key_loading
+  signal_evaluator: deterministic_activation_only
+  layer_b: frame_selection_context_modifiers_narrative_assembly
+  frontend: render_only
