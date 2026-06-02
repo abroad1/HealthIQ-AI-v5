@@ -1,7 +1,9 @@
 schema_version: 1.0.0
 index_id: medical_frame_identity_index_v1
 work_id: MED-FRAME-2_medical_frame_identity_index
+index_expansion_work_id: PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion
 generated_utc: '2026-06-02'
+index_expansion_utc: '2026-06-02'
 runtime_consumed: false
 status: governed_non_runtime_index
 
@@ -118,3 +120,358 @@ signal_families:
           refused runtime activation to avoid duplicate activation_key authority with pkg_kb52c.
           KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION: architecture duplicate confirmed; remain
           compiled_not_promoted; creatinine_multiframe_authority_decision_v1.yaml.
+
+  - signal_family_id: signal_alt_high
+    primary_biomarker_id: alt
+    system: hepatic
+    frames:
+      - signal_family_id: signal_alt_high
+        primary_biomarker_id: alt
+        medical_frame_id: frame_alt_pass3_hepatocellular_injury_kb52c
+        frame_label: Hepatocellular injury pattern (Pass 3 kb52c)
+        frame_role: pass3_canonical_activation_frame
+        research_spec_id: inv_alt_high_hepatocellular_injury_pattern
+        source_package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
+        source_package_path: knowledge_bus/packages/pkg_kb52c_alt_high_hepatocellular_injury_pattern
+        activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury_pattern
+        signal_id: signal_alt_high
+        promotion_state: runtime_active_canonical
+        runtime_authority_status: active
+        clinical_adjudication_status: not_required
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: alt_pass3_hepatocellular_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-FRAME-INDEX-2: Pass_3 kb52c canonical frame for hepatocellular injury.
+          Distinct from legacy s24 v1 activation identity.
+
+      - signal_family_id: signal_alt_high
+        primary_biomarker_id: alt
+        medical_frame_id: frame_alt_pass3_steatotic_liver_kb52c
+        frame_label: Metabolic steatotic liver pattern (Pass 3 kb52c)
+        frame_role: pass3_canonical_activation_frame
+        research_spec_id: inv_alt_high_metabolic_steatotic_liver_pattern
+        source_package_id: pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
+        source_package_path: knowledge_bus/packages/pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
+        activation_key: signal_alt_high::inv_alt_high_metabolic_steatotic_liver_pattern
+        signal_id: signal_alt_high
+        promotion_state: runtime_active_canonical
+        runtime_authority_status: active
+        clinical_adjudication_status: not_required
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: alt_pass3_steatotic_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-FRAME-INDEX-2: Pass_3 metabolic steatotic frame; must not collapse into
+          hepatocellular-only interpretation.
+
+      - signal_family_id: signal_alt_high
+        primary_biomarker_id: alt
+        medical_frame_id: frame_alt_pass3_muscle_exertional_kb52c
+        frame_label: Muscle source or exertional pattern (Pass 3 kb52c)
+        frame_role: pass3_canonical_activation_frame
+        research_spec_id: inv_alt_high_muscle_source_or_exertional_pattern
+        source_package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
+        source_package_path: knowledge_bus/packages/pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
+        activation_key: signal_alt_high::inv_alt_high_muscle_source_or_exertional_pattern
+        signal_id: signal_alt_high
+        promotion_state: runtime_active_canonical
+        runtime_authority_status: active
+        clinical_adjudication_status: not_required
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: alt_pass3_muscle_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-FRAME-INDEX-2: Pass_3 muscle/exertional ALT frame; CK-based escalation in package.
+
+      - signal_family_id: signal_alt_high
+        primary_biomarker_id: alt
+        medical_frame_id: frame_alt_legacy_s24_hys_law_escalation
+        frame_label: Legacy s24 Hy's Law bilirubin escalation
+        frame_role: legacy_override_rule_hys_law
+        research_spec_id: inv_alt_high_hepatocellular_injury
+        source_package_id: pkg_s24_alt_high_hepatocellular_injury
+        source_package_path: knowledge_bus/packages/pkg_s24_alt_high_hepatocellular_injury
+        activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
+        signal_id: signal_alt_high
+        promotion_state: runtime_active_legacy_unadjudicated
+        runtime_authority_status: active
+        clinical_adjudication_status: blocked_pending_medical_review
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: alt_legacy_s24_package
+        collision_status: requires_adjudication
+        supersedes: null
+        superseded_by: null
+        notes: >
+          Legacy override or_alt_impaired_function (ALT + bilirubin). Distinct from Pass_3
+          kb52c frames; PASS3-FRAME-COVERAGE-1 worked example.
+
+      - signal_family_id: signal_alt_high
+        primary_biomarker_id: alt
+        medical_frame_id: frame_alt_legacy_s24_severity_escalation
+        frame_label: Legacy s24 ALT severity threshold escalation
+        frame_role: legacy_override_rule_severity
+        research_spec_id: inv_alt_high_hepatocellular_injury
+        source_package_id: pkg_s24_alt_high_hepatocellular_injury
+        source_package_path: knowledge_bus/packages/pkg_s24_alt_high_hepatocellular_injury
+        activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
+        signal_id: signal_alt_high
+        promotion_state: runtime_active_legacy_unadjudicated
+        runtime_authority_status: inactive
+        clinical_adjudication_status: blocked_pending_medical_review
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: alt_legacy_s24_package
+        collision_status: requires_adjudication
+        supersedes: null
+        superseded_by: null
+        notes: >
+          Legacy or_alt_hepatocellular_severity (>3x ULN). Inactive runtime authority to
+          prevent duplicate active activation_key with Hy's Law frame.
+
+      - signal_family_id: signal_alt_high
+        primary_biomarker_id: alt
+        medical_frame_id: frame_alt_legacy_s24_cholestatic_escalation
+        frame_label: Legacy s24 mixed cholestatic escalation
+        frame_role: legacy_override_rule_cholestatic
+        research_spec_id: inv_alt_high_hepatocellular_injury
+        source_package_id: pkg_s24_alt_high_hepatocellular_injury
+        source_package_path: knowledge_bus/packages/pkg_s24_alt_high_hepatocellular_injury
+        activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
+        signal_id: signal_alt_high
+        promotion_state: runtime_active_legacy_unadjudicated
+        runtime_authority_status: inactive
+        clinical_adjudication_status: blocked_pending_medical_review
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: alt_legacy_s24_package
+        collision_status: requires_adjudication
+        supersedes: null
+        superseded_by: null
+        notes: >
+          Legacy or_alt_mixed_cholestatic (ALT + ALP). Preserved as distinct frame pending
+          Pass_3 enrichment or medical adjudication.
+
+  - signal_family_id: signal_crp_high
+    primary_biomarker_id: crp
+    system: inflammatory
+    frames:
+      - signal_family_id: signal_crp_high
+        primary_biomarker_id: crp
+        medical_frame_id: frame_crp_pass3_active_inflammatory_deferred
+        frame_label: Active inflammatory or infective state (Pass 3 deferred)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_crp_high_active_inflammatory_or_infective_state
+        source_package_id: pass3_deferred_not_compiled
+        source_package_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+        activation_key: signal_crp_high::inv_crp_high_active_inflammatory_or_infective_state
+        signal_id: signal_crp_high
+        promotion_state: deferred
+        runtime_authority_status: none
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: crp_pass3_inflammatory_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-FRAME-INDEX-2: Pass_3 frame exists in research; no runtime package yet.
+          CF-CRPPASS3-001. source_package_path is research batch reference only (deferred).
+
+      - signal_family_id: signal_crp_high
+        primary_biomarker_id: crp
+        medical_frame_id: frame_crp_pass3_residual_cardiometabolic_deferred
+        frame_label: Residual cardiometabolic inflammatory risk (Pass 3 deferred)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_crp_high_residual_cardiometabolic_inflammatory_risk
+        source_package_id: pass3_deferred_not_compiled
+        source_package_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+        activation_key: signal_crp_high::inv_crp_high_residual_cardiometabolic_inflammatory_risk
+        signal_id: signal_crp_high
+        promotion_state: deferred
+        runtime_authority_status: none
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: crp_pass3_cardiometabolic_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-FRAME-INDEX-2: Second Pass_3 CRP frame; must not collapse into single s24 meaning.
+
+      - signal_family_id: signal_crp_high
+        primary_biomarker_id: crp
+        medical_frame_id: frame_crp_legacy_s24_acute_infection_escalation
+        frame_label: Legacy s24 acute infection pattern escalation
+        frame_role: legacy_override_rule_acute_infection
+        research_spec_id: inv_crp_high_inflammation
+        source_package_id: pkg_s24_crp_high_inflammation
+        source_package_path: knowledge_bus/packages/pkg_s24_crp_high_inflammation
+        activation_key: signal_crp_high::inv_crp_high_inflammation
+        signal_id: signal_crp_high
+        promotion_state: runtime_active_legacy_unadjudicated
+        runtime_authority_status: active
+        clinical_adjudication_status: blocked_pending_medical_review
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: crp_legacy_s24_package
+        collision_status: requires_adjudication
+        supersedes: null
+        superseded_by: null
+        notes: >
+          Legacy or_crp_acute_infection_pattern (WBC + neutrophils). Current s24 runtime authority.
+
+      - signal_family_id: signal_crp_high
+        primary_biomarker_id: crp
+        medical_frame_id: frame_crp_legacy_s24_severe_inflammation_escalation
+        frame_label: Legacy s24 severe inflammation escalation (CRP >100)
+        frame_role: legacy_override_rule_severe
+        research_spec_id: inv_crp_high_inflammation
+        source_package_id: pkg_s24_crp_high_inflammation
+        source_package_path: knowledge_bus/packages/pkg_s24_crp_high_inflammation
+        activation_key: signal_crp_high::inv_crp_high_inflammation
+        signal_id: signal_crp_high
+        promotion_state: runtime_active_legacy_unadjudicated
+        runtime_authority_status: inactive
+        clinical_adjudication_status: blocked_pending_medical_review
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: crp_legacy_s24_package
+        collision_status: requires_adjudication
+        supersedes: null
+        superseded_by: null
+        notes: >
+          Legacy or_crp_severe_inflammation. Inactive authority to avoid duplicate activation_key.
+
+      - signal_family_id: signal_crp_high
+        primary_biomarker_id: crp
+        medical_frame_id: frame_crp_legacy_s24_chronic_stress_escalation
+        frame_label: Legacy s24 chronic stress pattern (low albumin)
+        frame_role: legacy_override_rule_chronic_stress
+        research_spec_id: inv_crp_high_inflammation
+        source_package_id: pkg_s24_crp_high_inflammation
+        source_package_path: knowledge_bus/packages/pkg_s24_crp_high_inflammation
+        activation_key: signal_crp_high::inv_crp_high_inflammation
+        signal_id: signal_crp_high
+        promotion_state: runtime_active_legacy_unadjudicated
+        runtime_authority_status: inactive
+        clinical_adjudication_status: blocked_pending_medical_review
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: crp_legacy_s24_package
+        collision_status: requires_adjudication
+        supersedes: null
+        superseded_by: null
+        notes: >
+          Legacy or_crp_chronic_stress_pattern. Preserved pending Pass_3 compile (CF-CRPPASS3-001).
+
+  - signal_family_id: signal_ferritin_high
+    primary_biomarker_id: ferritin
+    system: hematologic
+    frames:
+      - signal_family_id: signal_ferritin_high
+        primary_biomarker_id: ferritin
+        medical_frame_id: frame_ferritin_high_pass3_inflammatory_deferred
+        frame_label: Inflammatory hyperferritinemia (Pass 3 deferred)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_ferritin_high_inflammatory_hyperferritinemia
+        source_package_id: pass3_deferred_not_compiled
+        source_package_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+        activation_key: signal_ferritin_high::inv_ferritin_high_inflammatory_hyperferritinemia
+        signal_id: signal_ferritin_high
+        promotion_state: deferred
+        runtime_authority_status: none
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: ferritin_high_pass3_inflammatory_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-FRAME-INDEX-2: Acute-phase ferritin frame; distinct from iron overload.
+
+      - signal_family_id: signal_ferritin_high
+        primary_biomarker_id: ferritin
+        medical_frame_id: frame_ferritin_high_pass3_iron_overload_deferred
+        frame_label: Iron overload context (Pass 3 deferred)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_ferritin_high_iron_overload_context
+        source_package_id: pass3_deferred_not_compiled
+        source_package_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+        activation_key: signal_ferritin_high::inv_ferritin_high_iron_overload_context
+        signal_id: signal_ferritin_high
+        promotion_state: deferred
+        runtime_authority_status: none
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: ferritin_high_pass3_overload_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-FRAME-INDEX-2: Iron overload frame deferred; no kb52c high package compiled yet.
+
+      - signal_family_id: signal_ferritin_high
+        primary_biomarker_id: ferritin
+        medical_frame_id: frame_ferritin_high_legacy_s24_extreme_elevation
+        frame_label: Legacy s24 extreme ferritin elevation
+        frame_role: legacy_override_rule_extreme
+        research_spec_id: inv_ferritin_high_overload
+        source_package_id: pkg_s24_ferritin_high_overload
+        source_package_path: knowledge_bus/packages/pkg_s24_ferritin_high_overload
+        activation_key: signal_ferritin_high::inv_ferritin_high_overload
+        signal_id: signal_ferritin_high
+        promotion_state: runtime_active_legacy_unadjudicated
+        runtime_authority_status: active
+        clinical_adjudication_status: blocked_pending_medical_review
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: ferritin_high_legacy_s24_package
+        collision_status: requires_adjudication
+        supersedes: null
+        superseded_by: null
+        notes: >
+          Legacy or_ferritin_extreme_elevation (>1000). Must not collapse inflammatory vs overload
+          Pass_3 frames at promotion time.
