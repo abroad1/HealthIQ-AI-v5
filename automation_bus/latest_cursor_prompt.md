@@ -1,25 +1,50 @@
 ---
-work_id: KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch
-branch: work/KB-UTIL-2-PROMOTE-WIRE-1-creatinine-runtime-authority-switch
-risk_level: HIGH
+work_id: MED-FRAME-1_signal_family_contextual_frame_architecture
+branch: work/MED-FRAME-1-signal-family-contextual-frame-architecture
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
-change_type: BEHAVIOUR
+change_type: CONTENT
 ---
 
-# KB-UTIL-2-PROMOTE-WIRE-1 — Creatinine Runtime Authority Switch
+# MED-FRAME-1 — Signal Family and Contextual Medical Frame Architecture
 
 ## Purpose
 
-Decide whether the Pass_3-derived creatinine candidate can safely become the governed runtime authority for `signal_creatinine_high`.
+Define the architecture HealthIQ needs to support medically rich, personalised interpretation without collapsing complex biomarker meaning into single flat signals.
 
-This sprint must resolve the two remaining activation blockers from `KB-UTIL-2-ACTIVATION-READINESS`:
+This sprint is architecture/design only.
+
+It must establish how HealthIQ represents:
 
 ```text
-1. Signal identity collision with pkg_kb52c_creatinine_high_reduced_glomerular_filtration.
-2. Override-rule divergence between legacy eGFR/potassium escalation and Pass_3 UACR escalation.
+primary biomarker signals
+→ multiple medically distinct interpretive frames
+→ supporting / contradicting / contextual evidence
+→ questionnaire modifiers
+→ medication / drug-category modifiers
+→ personalised Layer B analysis
+→ frontend render-only output
 ````
 
-The goal is not simply to “wire the new package”. The goal is to prove that HealthIQ can safely replace legacy runtime medical intelligence with Pass_3-derived intelligence through a controlled authority switch.
+This is not a runtime implementation sprint.
+
+## Strategic framing
+
+HealthIQ must not become a flat blood-marker interpretation engine.
+
+The already-agreed product architecture depends on three core input classes:
+
+```text
+1. biomarker results
+2. health/lifestyle questionnaire context
+3. medication / drug-category context
+```
+
+These are not optional UX extras.
+
+They are essential structured medical-context inputs that affect interpretation, confidence, explanation, escalation and personalisation.
+
+The current Pass_3/package promotion work must not accidentally create a biomarker-only architecture that later struggles to incorporate questionnaire or medication context.
 
 ## Baseline requirement
 
@@ -28,9 +53,11 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
+KB-MAP-1 merged
 KB-UTIL-2-PILOT merged
 KB-UTIL-2-PROMOTE-PILOT merged
 KB-UTIL-2-ACTIVATION-READINESS merged
+KB-UTIL-2-PROMOTE-WIRE-1 merged or its audit outcome available
 KNOWLEDGE_BUS_SOP_v1.3.1 committed
 KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1 committed
 ```
@@ -51,10 +78,20 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- promoted creatinine candidate is missing
-- activation-readiness report is missing
-- pass3_promotion_decision_register_v1.yaml is missing
+- governance documents are missing
 ```
+
+## Governance classification
+
+```yaml
+risk_level: STANDARD
+change_type: CONTENT
+execution_model: TWO_PHASE_START_FINISH
+```
+
+Reason:
+
+This sprint produces architecture documentation and governance recommendations only. It must not alter runtime behaviour.
 
 ## Required inputs
 
@@ -63,243 +100,251 @@ Read:
 ```text
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
 docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
-docs/audit-papers/KB-UTIL-2-ACTIVATION-READINESS_creatinine_candidate_divergence_and_collision_resolution_report.md
-docs/audit-papers/KB-UTIL-2-PROMOTE-PILOT_route_a_single_package_promotion_report.md
+docs/audit-papers/KB-MAP-1_pass3_to_legacy_package_mapping_and_promotion_plan.md
+docs/audit-papers/KB-UTIL-2-PILOT_pass3_to_runtime_artifact_compiler_pilot_report.md
+docs/audit-papers/KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch_report.md
 docs/sprints/launch_core_carry_forward_register.md
+knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
 knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml
-knowledge_bus/generated_pilot/kb_util_2_pilot/promoted_candidates/pkg_creatinine_high_renal_pass3_v1/
-knowledge_bus/packages/pkg_s24_creatinine_high_renal/
-knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/
 ```
 
-Also inspect as needed:
+Also inspect if present:
 
 ```text
-SignalRegistry / signal loading code
-Knowledge Bus package loading code
-runtime authority manifests
-backend/scripts/validate_knowledge_package.py
-backend/scripts/validate_promoted_signal_intelligence.py
-backend/scripts/validate_day_one_architecture.py
-backend/tests/regression/
-backend/tests/architecture/
+frontend or backend questionnaire schemas
+medication / drug category schemas
+analysis input DTOs
+InsightGraph / report DTOs
+any existing health-context or lifestyle-context models
 ```
 
 If paths differ, locate and report actual paths.
 
-## Mandatory preflight
+## Core architectural problem
 
-Before making changes, produce a short authority preflight report covering:
+A biomarker signal may have many medically valid downstream frames.
 
-```text
-1. Which packages currently define signal_creatinine_high.
-2. Which activation keys currently exist for signal_creatinine_high.
-3. Whether pkg_s24_creatinine_high_renal is currently runtime-loaded.
-4. Whether pkg_kb52c_creatinine_high_reduced_glomerular_filtration is currently runtime-loaded.
-5. Whether the promoted Pass_3 candidate is currently runtime-loaded.
-6. Whether duplicate activation keys already exist.
-7. Which package should be treated as current runtime authority before this sprint.
-8. What exact runtime authority switch is proposed.
-```
-
-STOP if the current runtime authority cannot be determined.
-
-## Blocker 1 — Signal identity collision
-
-Resolve or formally adjudicate the real collision:
+Example:
 
 ```text
-pkg_kb52c_creatinine_high_reduced_glomerular_filtration
-signal_id: signal_creatinine_high
+signal_creatinine_high
+  ├── reduced glomerular filtration
+  ├── albuminuric kidney damage
+  ├── acute electrolyte risk
+  ├── creatinine distortion / muscle mass context
+  ├── dehydration / volume context
+  ├── medication-associated renal strain
+  └── future medically valid frames
 ```
 
-Required decision:
+These frames must not be collapsed into one flat “creatinine high” meaning.
+
+They also must not become uncontrolled duplicate runtime authorities.
+
+The architecture must support:
 
 ```text
-A. Candidate supersedes pkg_kb52c.
-B. Candidate supersedes pkg_s24 only, while pkg_kb52c remains separate.
-C. Candidate cannot be activated because collision creates unsafe duplicate authority.
-D. Candidate and pkg_kb52c are equivalent, and one should be retained as canonical.
+one signal family
+many research frames
+clear activation identities
+contextual modifiers
+safe personalised interpretation
+no frontend inference
 ```
 
-Do not leave duplicate active runtime authority for the same activation identity.
+## Required design questions
 
-If a package is superseded, do not delete it. Classify it as superseded/retained for traceability.
-
-## Blocker 2 — Override-rule divergence
-
-The divergence is currently classified as:
+Answer these explicitly:
 
 ```text
-BEHAVIOURAL_DIFFERENCE_LOW
-accepted_with_rationale: false
+1. What is a signal family?
+2. What is an interpretive medical frame?
+3. How does a frame differ from a signal_id?
+4. How does a frame differ from a hypothesis?
+5. How should activation_key / spec_id / hypothesis_id relate?
+6. How do questionnaire inputs modify a frame?
+7. How do medication/drug-category inputs modify a frame?
+8. Where should context modifiers live in the architecture?
+9. What should be compiled from Pass_3?
+10. What should remain Layer B runtime assembly?
+11. What must never be inferred by the frontend?
 ```
 
-Legacy rules:
+## Required model
+
+Propose a model that distinguishes:
 
 ```text
-eGFR < 60 → at_risk
-potassium > 5.2 → at_risk
+signal_id
+signal_family_id
+primary_biomarker_id
+research_spec_id
+activation_key
+medical_frame_id
+hypothesis_id
+context_modifier_id
+evidence_role
+visibility_tier
+presentation_safety_status
 ```
 
-Pass_3 candidate rule:
+Do not invent runtime implementation details unless needed for architecture clarity.
+
+## Context modifier scope
+
+The architecture must explicitly support at least:
 
 ```text
-UACR above_max via lab_range_boundary → at_risk
+Questionnaire context:
+- age
+- sex
+- symptoms if collected
+- health goals if used
+- alcohol
+- smoking
+- exercise
+- hydration
+- diet
+- sleep
+- stress
+- known conditions
+- family history
+- supplement use
+
+Medication / drug-category context:
+- NSAIDs
+- ACE inhibitors / ARBs
+- diuretics
+- statins
+- metformin
+- thyroid medication
+- steroids
+- testosterone / hormones if declared
+- nephrotoxic medication categories
+- liver-impacting medication categories
 ```
 
-Required decision:
+This sprint must not design every rule. It must define where these rules belong and how they should be governed.
+
+## Required example
+
+Use `signal_creatinine_high` as the worked example.
+
+Show how the architecture would represent:
 
 ```text
-A. Accept the Pass_3 UACR escalation as the correct replacement.
-B. Retain eGFR/potassium escalation as additional runtime logic if supported by canonical research.
-C. Block activation pending medical review.
+primary signal:
+- creatinine high
+
+frames:
+- reduced glomerular filtration
+- albuminuric kidney damage
+- acute electrolyte risk
+- creatinine distortion / muscle mass or supplement context
+- medication-associated renal strain
+
+biomarker evidence:
+- eGFR
+- UACR
+- potassium
+- cystatin C
+
+questionnaire context:
+- hydration
+- exercise/muscle mass
+- creatine supplement use
+- known kidney disease
+- diabetes / hypertension if captured
+
+drug-category context:
+- NSAIDs
+- ACE inhibitors / ARBs
+- diuretics
 ```
 
-Do not manually invent a hybrid rule.
-
-If retaining eGFR/potassium is proposed, prove it comes from canonical research or explicitly classify it as legacy retained with rationale.
-
-STOP if the divergence requires clinical adjudication beyond architecture.
-
-## Activation policy
-
-Runtime activation is allowed only if:
-
-```text
-- one canonical runtime authority is selected
-- collision is resolved
-- override divergence is accepted or resolved
-- generated package validates
-- promoted signal intelligence validates
-- source-field preservation audit remains intact
-- no raw Pass_3 runtime read is introduced
-- legacy package is preserved unchanged
-- rollback path is documented
-```
-
-If any condition fails, do not activate. Update registers and report blockers.
-
-## Preferred implementation approach
-
-Preferred safe method:
-
-```text
-1. Move or copy the promoted candidate from generated_pilot into a governed package directory.
-2. Preserve generated_pilot copy as audit evidence.
-3. Preserve legacy package directories unchanged.
-4. Update package authority / manifest / registry only through governed controls.
-5. Add tests proving only one active runtime authority for signal_creatinine_high.
-```
-
-Suggested governed package path:
-
-```text
-knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1/
-```
-
-Do not overwrite:
-
-```text
-knowledge_bus/packages/pkg_s24_creatinine_high_renal/
-knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/
-```
-
-## Runtime status
-
-If activation proceeds, update runtime authority according to Knowledge Bus SOP v1.3.1.
-
-If the repo uses:
-
-```text
-knowledge_bus/current/latest_knowledge_status.json
-```
-
-then update it only with validator PASS evidence.
-
-If the repo uses another active package authority mechanism, locate it, document it, and use the existing governed path.
-
-STOP if the authority mechanism is unclear.
-
-## Required validation
-
-Run:
-
-```powershell
-python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1
-python backend/scripts/validate_promoted_signal_intelligence.py --file knowledge_bus/packages/pkg_creatinine_high_renal_pass3_v1/promoted_signal_intelligence.yaml
-python backend/scripts/validate_day_one_architecture.py
-python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
-python -m pytest backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py -q
-python -m pytest backend/tests/regression/test_kb_util2_promote_pilot.py -q
-```
-
-Add targeted regression tests proving:
-
-```text
-1. only one active runtime authority exists for signal_creatinine_high
-2. legacy packages are not overwritten
-3. promoted package validates
-4. promoted signal intelligence validates
-5. latest_knowledge_status.json or equivalent authority file is updated only after validation
-6. raw Pass_3 files are not runtime-read
-7. rollback path is documented
-8. activation blockers are cleared or activation is refused
-```
-
-## Runtime boundary
-
-Do not modify unless strictly necessary and justified:
-
-```text
-SignalEvaluator
-frontend
-SSOT
-scoring thresholds
-unit conversion
-```
-
-SignalRegistry / package authority loading may be inspected and modified only if required to resolve the activation-key collision.
-
-If modifying SignalRegistry or loader behaviour, classify the exact behavioural impact and add regression coverage.
+The example must show how valid medical context is preserved without creating duplicate co-equal disease claims.
 
 ## Required deliverable
 
 Create:
 
 ```text
-docs/audit-papers/KB-UTIL-2-PROMOTE-WIRE-1_creatinine_runtime_authority_switch_report.md
+docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md
 ```
 
-Update:
+Optional machine-readable sketch if useful:
 
 ```text
-knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml
-docs/sprints/launch_core_carry_forward_register.md
+knowledge_bus/governance/medical_frame_identity_model_draft_v1.yaml
 ```
 
-If activation proceeds, also update the relevant package authority file.
+The YAML must be marked draft / non-runtime if created.
 
 ## Required report content
 
-The report must include:
+The architecture paper must include:
 
 ```text
-- executive verdict
-- runtime authority preflight
-- collision investigation and decision
-- override divergence decision
-- package promoted or activation refused
-- package authority files changed
-- legacy package treatment
-- rollback path
-- validation results
-- tests added/updated
-- whether runtime behaviour changed
-- confirmation no frontend/SSOT/scoring changes
-- remaining carry-forwards
+- executive summary
+- problem statement
+- why flat signal modelling is insufficient
+- signal family vs frame vs hypothesis definitions
+- identity model
+- context modifier model
+- questionnaire role
+- medication/drug-category role
+- Pass_3/package/compiled artefact relationship
+- Layer B role
+- frontend boundary
+- worked creatinine example
+- implications for current creatinine promotion work
 - recommended next sprint
+- risks if ignored
 ```
+
+## Important architectural principles
+
+The paper must preserve these principles:
+
+```text
+- Do not collapse medically distinct frames into one flat signal.
+- Do not create uncontrolled duplicate runtime authority.
+- Do not let developers resolve medical truth ad hoc.
+- Do not let frontend infer clinical meaning.
+- Do not treat questionnaire/drug context as UX-only data.
+- Do not manually invent context rules without governance.
+- Do preserve medically valid edge cases as structured frames or modifiers.
+- Do allow thousands of future edge cases without making runtime chaotic.
+```
+
+## Out of scope
+
+Do not:
+
+```text
+- change code
+- change runtime loading
+- change package files
+- change SignalEvaluator
+- change SignalRegistry
+- change frontend
+- change questionnaire schema
+- change drug-category schema
+- implement frame evaluation
+- implement LLM narrative generation
+- activate any package
+```
+
+## Required checks
+
+Run:
+
+```powershell
+python backend/scripts/validate_day_one_architecture.py
+python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
+```
+
+If these fail, STOP and report.
 
 ## Carry-forward register
 
@@ -309,51 +354,16 @@ Update:
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-If activation succeeds, mark the creatinine-specific blocker resolved.
+only if this sprint creates or reframes future work.
 
-If activation is refused, record the exact blocker:
-
-```text
-- collision unresolved
-- override divergence not accepted
-- runtime authority mechanism unclear
-- validator failure
-- clinical adjudication required
-```
-
-Do not mark broad ROUTE_A migration resolved from this single package.
-
-## Out of scope
-
-Do not:
+Likely carry-forward:
 
 ```text
-- bulk promote ROUTE_A packages
-- promote CRP/systemic inflammation
-- resolve ROUTE_C multi-frame adjudication
-- delete legacy packages
-- manually invent clinical rules
-- change frontend
-- implement root-cause replacement
-- implement card evidence runtime consumption
-- implement LLM narrative generation
+MED-FRAME-2 — implement medical frame identity/index model
+CONTEXT-MOD-1 — questionnaire and drug-category modifier governance
 ```
 
-## STOP conditions
-
-STOP and report if:
-
-```text
-1. runtime authority mechanism cannot be determined
-2. duplicate activation authority cannot be safely resolved
-3. override divergence requires clinical adjudication
-4. SignalRegistry changes would create broader behavioural risk
-5. package validation fails
-6. promoted signal intelligence validation fails
-7. rollback path cannot be defined
-8. activation would require frontend/scoring/SSOT changes
-9. ARCH-RT validator fails
-```
+Do not mark existing package-promotion work resolved.
 
 ## Evidence required from Cursor
 
@@ -361,18 +371,14 @@ Cursor must report:
 
 ```text
 1. baseline branch/status evidence
-2. governance inputs read
-3. authority preflight findings
-4. collision decision
-5. override divergence decision
-6. promoted package path or activation refusal
-7. authority file changes
-8. tests added/updated
-9. validation commands run
-10. validation results
-11. rollback path
-12. files changed
-13. confirmation no frontend/SSOT/scoring changes
+2. files inspected
+3. current questionnaire/context artefacts found
+4. current medication/drug-category artefacts found
+5. architecture paper path
+6. carry-forward updates if any
+7. validation commands run
+8. validation results
+9. confirmation no code/runtime/frontend/package changes were made
 ```
 
 ## Closure requirements
@@ -391,13 +397,10 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/KB-UTIL-2-PROMOTE-WIRE-1-creatinine-runtime-authority-switch
-- only in-scope files changed
-- no legacy package was overwritten
-- no duplicate active authority remains if activation proceeds
-- rollback path is documented
+- current branch matches work/MED-FRAME-1-signal-family-contextual-frame-architecture
+- only documentation/governance draft files changed
+- no runtime/package/frontend/code files changed
 - no ambiguous stash exists
-- validator evidence is recorded
 ```
 
 ## Success criteria
@@ -405,16 +408,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. creatinine runtime authority is clearly determined
-2. pkg_kb52c collision is resolved or activation is refused
-3. override divergence is accepted, resolved, or activation is refused
-4. no duplicate active authority remains
-5. promoted package validates
-6. promoted signal intelligence validates
-7. legacy packages are preserved
-8. rollback path exists
-9. no frontend/SSOT/scoring changes are made
-10. carry-forward register is accurate
+1. architecture supports one biomarker signal with many medical frames
+2. questionnaire context is included as a structured medical input
+3. medication/drug-category context is included as a structured medical input
+4. signal/frame/hypothesis/activation identity boundaries are clear
+5. creatinine example is worked through
+6. frontend remains render-only
+7. Pass_3/package promotion architecture remains aligned
+8. future implementation sprints are clearly identified
+9. no runtime behaviour changes occur
+10. validators pass
 ```
 
 ```
