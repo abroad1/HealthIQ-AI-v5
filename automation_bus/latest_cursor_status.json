@@ -1,10 +1,9 @@
 {
-  "branch": "work/MED-FRAME-2-medical-frame-identity-index",
+  "branch": "work/CONTEXT-MOD-1-questionnaire-and-medication-modifier-governance",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-02T19:18:10Z",
-  "cursor_started_utc": "2026-06-02T19:14:43Z",
-  "head_sha": "b7f4ae3bacb3c1732a9737876926c81a9621928b",
+  "cursor_started_utc": "2026-06-02T19:36:47Z",
+  "head_sha": "9214dc7ad83c81ad068dd5ba3b22ee7d8c55e761",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "MED-FRAME-2_medical_frame_identity_index"
+  "status": "IN_PROGRESS",
+  "work_id": "CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance"
 }
