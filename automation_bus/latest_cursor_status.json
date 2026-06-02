@@ -1,9 +1,10 @@
 {
   "branch": "work/MED-FRAME-2-medical-frame-identity-index",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-02T19:18:10Z",
   "cursor_started_utc": "2026-06-02T19:14:43Z",
-  "head_sha": "b93577cb40fb4029914f64b9dd90d1295cd9d28e",
+  "head_sha": "b7f4ae3bacb3c1732a9737876926c81a9621928b",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "MED-FRAME-2_medical_frame_identity_index"
 }
