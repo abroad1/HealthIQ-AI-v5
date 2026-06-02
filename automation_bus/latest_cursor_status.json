@@ -1,9 +1,10 @@
 {
   "branch": "work/CONTEXT-MOD-1-questionnaire-and-medication-modifier-governance",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-02T19:40:19Z",
   "cursor_started_utc": "2026-06-02T19:36:47Z",
-  "head_sha": "9214dc7ad83c81ad068dd5ba3b22ee7d8c55e761",
+  "head_sha": "6865dc21458f3d20aff1b4942ffd9bcf3a68380c",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance"
 }
