@@ -1,0 +1,81 @@
+# Medical Frame Identity Index — Schema v1
+# MED-FRAME-2 — governed non-runtime index; validator: validate_medical_frame_identity_index.py
+
+schema_name: HealthIQ Medical Frame Identity Index
+schema_version: 1.0.0
+status: LOCKED
+
+description: >
+  Machine-readable index of signal families and medically distinct interpretive frames.
+  Non-runtime until explicitly promoted via a separate governed sprint.
+
+root_required_fields:
+  - schema_version
+  - index_id
+  - work_id
+  - generated_utc
+  - runtime_consumed
+  - status
+  - signal_families
+
+schema_version:
+  allowed:
+    - 1.0.0
+
+index_id:
+  pattern: '^medical_frame_identity_index_v[0-9]+$'
+
+runtime_consumed:
+  allowed:
+    - false
+
+status:
+  allowed:
+    - governed_non_runtime_index
+
+frame_required_fields:
+  - signal_family_id
+  - primary_biomarker_id
+  - medical_frame_id
+  - frame_label
+  - frame_role
+  - research_spec_id
+  - source_package_id
+  - source_package_path
+  - activation_key
+  - signal_id
+  - promotion_state
+  - runtime_authority_status
+  - clinical_adjudication_status
+  - context_inputs_supported
+  - collision_group_id
+  - collision_status
+  - notes
+
+promotion_state_allowed:
+  - runtime_active_canonical
+  - runtime_active_legacy_unadjudicated
+  - compiled_not_promoted
+  - superseded
+  - retired
+  - deferred
+
+clinical_adjudication_status_allowed:
+  - not_required
+  - required_before_activation
+  - accepted_with_rationale
+  - blocked_pending_medical_review
+
+collision_status_allowed:
+  - none
+  - real_collision_active_blocker
+  - allowed_non_runtime_collision
+  - resolved_by_supersession
+  - requires_adjudication
+
+runtime_authority_status_allowed:
+  - active
+  - inactive
+  - none
+
+activation_key_pattern: '^signal_[a-z0-9_]+::[a-z][a-z0-9_]*$'
