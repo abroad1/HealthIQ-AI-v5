@@ -1,10 +1,9 @@
 {
-  "branch": "work/CONTEXT-MOD-1-questionnaire-and-medication-modifier-governance",
+  "branch": "work/KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION-creatinine-multiframe-model-decision",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-02T19:40:19Z",
-  "cursor_started_utc": "2026-06-02T19:36:47Z",
-  "head_sha": "6865dc21458f3d20aff1b4942ffd9bcf3a68380c",
+  "cursor_started_utc": "2026-06-02T19:58:05Z",
+  "head_sha": "a04bfc22c312be8aacbd67a58df34bec79d4aa71",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance"
+  "status": "IN_PROGRESS",
+  "work_id": "KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION_creatinine_multiframe_model_decision"
 }
