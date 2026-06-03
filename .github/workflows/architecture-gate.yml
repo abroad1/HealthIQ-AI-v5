@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHONUNBUFFERED: "1"
+      PYTHONPATH: backend
 
     steps:
       - name: Checkout repository
