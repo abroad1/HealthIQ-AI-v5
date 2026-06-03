@@ -13,5 +13,6 @@ Read-only helpers that generate or validate **governance artefacts** only.
 | Script | Location | Purpose |
 |--------|----------|---------|
 | `build_pass3_frame_coverage_audit.py` | `backend/scripts/` | Generate `pass3_frame_coverage_audit_v1.yaml` from KB-MAP-1 register |
+| `build_biomarker_medical_frame_tree.py` | `knowledge_bus/tools/` | Generate `docs/architecture/biomarker_medical_frame_tree.md` from frame index + modifier catalogue |
 
 Legacy path under `backend/scripts/` is retained where aligned with validator tooling convention.
