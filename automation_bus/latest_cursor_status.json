@@ -1,9 +1,10 @@
 {
   "branch": "work/CI-ARCH-GATE-1A-architecture-gate-pythonpath-followup",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-03T20:43:11Z",
   "cursor_started_utc": "2026-06-03T20:41:16Z",
-  "head_sha": "dfddfb8499ca32e044062700910edfa38335f646",
+  "head_sha": "908eb8a887da792cd422e5ef214c28c51c26b345",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "CI-ARCH-GATE-1A_architecture_gate_pythonpath_followup"
 }
