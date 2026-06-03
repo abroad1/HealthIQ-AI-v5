@@ -1,10 +1,9 @@
 {
-  "branch": "work/CI-ARCH-GATE-1A-architecture-gate-pythonpath-followup",
+  "branch": "work/MED-FRAME-TREE-1-generated-human-readable-biomarker-frame-tree",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-03T20:43:11Z",
-  "cursor_started_utc": "2026-06-03T20:41:16Z",
-  "head_sha": "908eb8a887da792cd422e5ef214c28c51c26b345",
+  "cursor_started_utc": "2026-06-03T20:55:05Z",
+  "head_sha": "3c5b21dee76a3b33ca0b554ff47969c0e2ff7c97",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "CI-ARCH-GATE-1A_architecture_gate_pythonpath_followup"
+  "status": "IN_PROGRESS",
+  "work_id": "MED-FRAME-TREE-1_generated_human_readable_biomarker_frame_tree"
 }
