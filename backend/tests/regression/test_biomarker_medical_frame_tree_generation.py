@@ -126,3 +126,13 @@ def test_generator_rejects_output_outside_docs_architecture(tmp_path):
         text=True,
     )
     assert proc.returncode == 2
+
+
+def test_generate_function_rejects_output_outside_docs_architecture(tmp_path):
+    import pytest
+
+    mod = _load_generator()
+    bad = tmp_path / "elsewhere" / "tree.md"
+    bad.parent.mkdir(parents=True)
+    with pytest.raises(ValueError, match="docs/architecture"):
+        mod.generate(output_path=bad, dry_run=True)

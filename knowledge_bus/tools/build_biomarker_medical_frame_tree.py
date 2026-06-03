@@ -229,7 +229,15 @@ def build_markdown(
     return "\n".join(lines).rstrip() + "\n"
 
 
+def _assert_output_under_docs_architecture(output_path: Path) -> None:
+    try:
+        output_path.resolve().relative_to((ROOT / "docs" / "architecture").resolve())
+    except ValueError as exc:
+        raise ValueError("Output must be under docs/architecture/") from exc
+
+
 def generate(*, output_path: Path, dry_run: bool = False) -> str:
+    _assert_output_under_docs_architecture(output_path)
     generated_utc = _utc_now()
     index = _load(SOURCE_PATHS[0])
     if not index:
@@ -262,7 +270,7 @@ def main() -> int:
     args = parser.parse_args()
     output = args.output.resolve()
     try:
-        output.relative_to((ROOT / "docs" / "architecture").resolve())
+        _assert_output_under_docs_architecture(output)
     except ValueError:
         print("Output must be under docs/architecture/", file=sys.stderr)
         return 2

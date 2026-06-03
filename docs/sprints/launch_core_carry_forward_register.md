@@ -59,7 +59,7 @@ This register should be read before each new launch, architecture, medical revie
 | CF-PASS3FRAME-003 | PASS3-FRAME-COVERAGE-1 | Promotion pause list for edge-case-loss risk | 47/55 packages blocked for promotion; bulk ROUTE_A wave unsafe without frame gates. | No | PASS3-FRAME-COVERAGE-1 | Open | Do not bulk-promote until CF-PASS3FRAME-002 progress. ARCH-SENTINEL-1 adds `validate_medical_intelligence_architecture.py` promotion-safety gate (no naive `safe_for_route_a_promotion`). |
 | CF-GOVHELPER-001 | PASS3-FRAME-COVERAGE-1 | Governance helper script classification | Read-only helper under backend/scripts for frame coverage audit YAML. | No | PASS3-FRAME-INDEX-2 | Resolved | knowledge_bus/tools/README_governance_helpers.md — preferred path knowledge_bus/tools/. ARCH-SENTINEL-1 sentinel reinforces helper import/write boundaries. |
 | CF-SENTINEL-001 | ARCH-SENTINEL-1 | Wire medical-intelligence sentinel into standard CI / Automation Bus gate | Validator and pytest sentinels exist; not yet a required CI job on every PR. | No | CI-ARCH-GATE-1 | Resolved | Resolved by CI-ARCH-GATE-1 — gate + `architecture-gate.yml`. CI-ARCH-GATE-1A added `PYTHONPATH: backend` to that workflow (golden_gate convention). |
-| CF-MEDTREE-001 | MED-FRAME-TREE-1 | Wire generated biomarker frame tree refresh into architecture gate or docs workflow | Generator exists; manual regen via `build_biomarker_medical_frame_tree.py`. | No | MED-FRAME-TREE-2 or CI-DOCS-1 | Open | Run generator when index/catalogue changes; optional gate step not added in MED-FRAME-TREE-1. |
+| CF-MEDTREE-001 | MED-FRAME-TREE-1 | Wire generated biomarker frame tree refresh into architecture gate or docs workflow | Generator exists; manual regen via `build_biomarker_medical_frame_tree.py`. | No | MED-FRAME-TREE-2 or CI-DOCS-1 | Open | PASS3-FRAME-INDEX-3 added `generate()` output-path guard + regression test; CI auto-refresh still open. |
 
 ---
 
@@ -95,4 +95,4 @@ When resolving an item:
 
 ## Current summary
 
-As of MED-FRAME-TREE-1 closure (2026-06-02), there are no known launch-blocking carry-forwards. Human-readable biomarker frame tree is generated at `docs/architecture/biomarker_medical_frame_tree.md` (4 families, 18 frames). CF-MEDTREE-001 tracks optional auto-refresh in CI. Bulk ROUTE_A promotion remains paused (CF-PASS3FRAME-003). Layer B modifier binding (CF-CONTEXT-MOD-2) remains open. No runtime behaviour changes.
+As of PASS3-FRAME-INDEX-3 closure (2026-06-03), there are no known launch-blocking carry-forwards. Medical frame index covers 8 families / 37 frames (creatinine, ALT, CRP, ferritin_high/low, apob, hba1c, bilirubin). Generated tree at `docs/architecture/biomarker_medical_frame_tree.md`. CF-MEDTREE-001 CI auto-refresh still open. Bulk ROUTE_A promotion paused (CF-PASS3FRAME-003). No runtime behaviour changes.

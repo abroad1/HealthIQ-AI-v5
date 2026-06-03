@@ -13,14 +13,14 @@
 
 ### Source artefacts
 
-- `knowledge_bus/governance/medical_frame_identity_index_v1.yaml` — sha256 prefix `19a81d6c63a84a01`
+- `knowledge_bus/governance/medical_frame_identity_index_v1.yaml` — sha256 prefix `3d1662232b37c4a3`
 - `knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml` — sha256 prefix `e52bbf09c61fdc9a`
 - `knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml` — sha256 prefix `96251112fe197bfd`
-- `knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml` — sha256 prefix `53a09441d9e62b94`
+- `knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml` — sha256 prefix `dc1b7feb5be4e79f`
 - `knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml` — sha256 prefix `021d9c91bb082747`
 
-- Indexed signal families: **4**
-- Indexed medical frames: **18**
+- Indexed signal families: **8**
+- Indexed medical frames: **37**
 
 ## Legend — promotion / authority states
 
@@ -139,6 +139,78 @@ _System: hepatic_
 │   ├── Context inputs supported: biomarker_evidence
 │   ├── Linked context modifiers: _none catalogued_
 │   └── Notes: PASS3-FRAME-INDEX-2: Pass_3 metabolic steatotic frame; must not collapse into hepatocellular-only interpretation.
+
+---
+
+## signal_apob_atherogenic — apob
+
+_System: lipid_transport_
+
+├── **Legacy kb45 ApoB–LDL concordance escalation**
+│   ├── Frame ID: `frame_apob_legacy_kb45_ldl_concordance`
+│   ├── Frame role: `legacy_override_rule_ldl_concordance`
+│   ├── Signal ID: `signal_apob_atherogenic`
+│   ├── Activation key: `signal_apob_atherogenic::inv_apob_high_atherogenic_particle_excess`
+│   ├── Source package: `pkg_kb45_apob_high_atherogenic`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb45_apob_high_atherogenic`
+│   ├── Research spec ID: `inv_apob_high_atherogenic_particle_excess`
+│   ├── Promotion state: `runtime_active_legacy_unadjudicated`
+│   ├── Runtime authority: `active`
+│   ├── Clinical adjudication: `blocked_pending_medical_review`
+│   ├── Collision status: `requires_adjudication`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Package promotion safety (audit): `blocked_pending_frame_adjudication`
+│   ├── Package frame coverage (audit): `pass3_multiple_frames_need_adjudication`
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: pkg_kb45 batch-lineage runtime; or_apob_ldl_concordance override preserved.
+
+├── **Atherogenic particle excess (Pass 3 deferred)**
+│   ├── Frame ID: `frame_apob_pass3_atherogenic_particle_excess_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_apob_atherogenic`
+│   ├── Activation key: `signal_apob_atherogenic::inv_apob_high_atherogenic_particle_excess`
+│   ├── Source package: `pkg_kb52c_apob_high_atherogenic_particle_excess`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb52c_apob_high_atherogenic_particle_excess`
+│   ├── Research spec ID: `inv_apob_high_atherogenic_particle_excess`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: kb52c compiled; pkg_kb45 remains runtime authority until adjudication.
+
+├── **Familial combined hyperlipidemia pattern (Pass 3 deferred)**
+│   ├── Frame ID: `frame_apob_pass3_familial_hyperlipidemia_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_apob_atherogenic`
+│   ├── Activation key: `signal_apob_atherogenic::inv_apob_high_familial_combined_hyperlipidemia_pattern`
+│   ├── Source package: `pkg_kb52c_apob_high_familial_combined_hyperlipidemia_pattern`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb52c_apob_high_familial_combined_hyperlipidemia_pattern`
+│   ├── Research spec ID: `inv_apob_high_familial_combined_hyperlipidemia_pattern`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: Distinct familial frame; must not collapse into generic high ApoB.
+
+├── **Hypobetalipoproteinemia or malabsorption (Pass 3 deferred)**
+│   ├── Frame ID: `frame_apob_pass3_hypobetalipoproteinemia_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_apob_low`
+│   ├── Activation key: `signal_apob_low::inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern`
+│   ├── Source package: `pkg_kb52c_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb52c_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern`
+│   ├── Research spec ID: `inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: Low ApoB frame indexed under atherogenic family audit scope; distinct activation_key.
 
 ---
 
@@ -361,5 +433,275 @@ _System: hematologic_
 │   ├── Context inputs supported: biomarker_evidence
 │   ├── Linked context modifiers: _none catalogued_
 │   └── Notes: PASS3-FRAME-INDEX-2: Iron overload frame deferred; no kb52c high package compiled yet.
+
+---
+
+## signal_ferritin_low — ferritin
+
+_System: hematologic_
+
+├── **Legacy s24 IDA progression (low hemoglobin)**
+│   ├── Frame ID: `frame_ferritin_low_legacy_s24_ida_progression`
+│   ├── Frame role: `legacy_override_rule_ida_progression`
+│   ├── Signal ID: `signal_ferritin_low`
+│   ├── Activation key: `signal_ferritin_low::inv_ferritin_low_iron_deficiency`
+│   ├── Source package: `pkg_s24_ferritin_low_iron_deficiency`
+│   ├── Source package path: `knowledge_bus/packages/pkg_s24_ferritin_low_iron_deficiency`
+│   ├── Research spec ID: `inv_ferritin_low_iron_deficiency`
+│   ├── Promotion state: `runtime_active_legacy_unadjudicated`
+│   ├── Runtime authority: `active`
+│   ├── Clinical adjudication: `blocked_pending_medical_review`
+│   ├── Collision status: `requires_adjudication`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Package promotion safety (audit): `blocked_pending_pass3_enrichment`
+│   ├── Package frame coverage (audit): `pass3_partial_legacy_frames_not_fully_represented`
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: or_ferritin_ida_progression; current s24 runtime package authority.
+
+├── **Legacy s24 microcytosis escalation (low MCV)**
+│   ├── Frame ID: `frame_ferritin_low_legacy_s24_microcytosis`
+│   ├── Frame role: `legacy_override_rule_microcytosis`
+│   ├── Signal ID: `signal_ferritin_low`
+│   ├── Activation key: `signal_ferritin_low::inv_ferritin_low_iron_deficiency`
+│   ├── Source package: `pkg_s24_ferritin_low_iron_deficiency`
+│   ├── Source package path: `knowledge_bus/packages/pkg_s24_ferritin_low_iron_deficiency`
+│   ├── Research spec ID: `inv_ferritin_low_iron_deficiency`
+│   ├── Promotion state: `runtime_active_legacy_unadjudicated`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `blocked_pending_medical_review`
+│   ├── Collision status: `requires_adjudication`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Package promotion safety (audit): `blocked_pending_pass3_enrichment`
+│   ├── Package frame coverage (audit): `pass3_partial_legacy_frames_not_fully_represented`
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: or_ferritin_microcytosis; inactive to avoid duplicate activation_key.
+
+├── **Legacy s24 severe iron depletion (<15)**
+│   ├── Frame ID: `frame_ferritin_low_legacy_s24_severe_depletion`
+│   ├── Frame role: `legacy_override_rule_severe_depletion`
+│   ├── Signal ID: `signal_ferritin_low`
+│   ├── Activation key: `signal_ferritin_low::inv_ferritin_low_iron_deficiency`
+│   ├── Source package: `pkg_s24_ferritin_low_iron_deficiency`
+│   ├── Source package path: `knowledge_bus/packages/pkg_s24_ferritin_low_iron_deficiency`
+│   ├── Research spec ID: `inv_ferritin_low_iron_deficiency`
+│   ├── Promotion state: `runtime_active_legacy_unadjudicated`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `blocked_pending_medical_review`
+│   ├── Collision status: `requires_adjudication`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Package promotion safety (audit): `blocked_pending_pass3_enrichment`
+│   ├── Package frame coverage (audit): `pass3_partial_legacy_frames_not_fully_represented`
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: or_ferritin_severe_depletion; preserved pending Pass_3 enrichment.
+
+├── **Inflammatory hyperferritinemia cross-reference (Pass 3 deferred)**
+│   ├── Frame ID: `frame_ferritin_low_pass3_inflammatory_cross_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_ferritin_low`
+│   ├── Activation key: `signal_ferritin_low::inv_ferritin_high_inflammatory_hyperferritinemia`
+│   ├── Source package: `pass3_deferred_not_compiled`
+│   ├── Source package path: `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json`
+│   ├── Research spec ID: `inv_ferritin_high_inflammatory_hyperferritinemia`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: Listed on s24 low package audit; distinct from iron depletion — do not collapse.
+
+├── **Iron store depletion (Pass 3 deferred)**
+│   ├── Frame ID: `frame_ferritin_low_pass3_iron_store_depletion_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_ferritin_low`
+│   ├── Activation key: `signal_ferritin_low::inv_ferritin_low_iron_store_depletion`
+│   ├── Source package: `pkg_kb52c_ferritin_low_iron_store_depletion`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb52c_ferritin_low_iron_store_depletion`
+│   ├── Research spec ID: `inv_ferritin_low_iron_store_depletion`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: Canonical low-ferritin Pass_3 frame; s24 runtime until promotion adjudication.
+
+├── **Iron overload context cross-reference (Pass 3 deferred)**
+│   ├── Frame ID: `frame_ferritin_low_pass3_overload_cross_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_ferritin_low`
+│   ├── Activation key: `signal_ferritin_low::inv_ferritin_high_iron_overload_context`
+│   ├── Source package: `pass3_deferred_not_compiled`
+│   ├── Source package path: `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json`
+│   ├── Research spec ID: `inv_ferritin_high_iron_overload_context`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: High-direction Pass_3 frame on low-family package audit row; enrichment required.
+
+---
+
+## signal_hba1c_high — hba1c
+
+_System: metabolic_
+
+├── **Legacy s24 WHO diagnostic diabetes threshold**
+│   ├── Frame ID: `frame_hba1c_legacy_s24_diagnostic_diabetes`
+│   ├── Frame role: `legacy_override_rule_diagnostic_diabetes`
+│   ├── Signal ID: `signal_hba1c_high`
+│   ├── Activation key: `signal_hba1c_high::inv_hba1c_high_glycaemia`
+│   ├── Source package: `pkg_s24_hba1c_high_glycaemia`
+│   ├── Source package path: `knowledge_bus/packages/pkg_s24_hba1c_high_glycaemia`
+│   ├── Research spec ID: `inv_hba1c_high_glycaemia`
+│   ├── Promotion state: `runtime_active_legacy_unadjudicated`
+│   ├── Runtime authority: `active`
+│   ├── Clinical adjudication: `blocked_pending_medical_review`
+│   ├── Collision status: `requires_adjudication`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Package promotion safety (audit): `blocked_pending_pass3_enrichment`
+│   ├── Package frame coverage (audit): `pass3_partial_legacy_frames_not_fully_represented`
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: or_hba1c_diagnostic_diabetes (>=48 mmol/mol); s24 runtime authority.
+
+├── **Legacy s24 metabolic syndrome pattern (TG + HDL)**
+│   ├── Frame ID: `frame_hba1c_legacy_s24_metabolic_syndrome`
+│   ├── Frame role: `legacy_override_rule_metabolic_syndrome`
+│   ├── Signal ID: `signal_hba1c_high`
+│   ├── Activation key: `signal_hba1c_high::inv_hba1c_high_glycaemia`
+│   ├── Source package: `pkg_s24_hba1c_high_glycaemia`
+│   ├── Source package path: `knowledge_bus/packages/pkg_s24_hba1c_high_glycaemia`
+│   ├── Research spec ID: `inv_hba1c_high_glycaemia`
+│   ├── Promotion state: `runtime_active_legacy_unadjudicated`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `blocked_pending_medical_review`
+│   ├── Collision status: `requires_adjudication`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Package promotion safety (audit): `blocked_pending_pass3_enrichment`
+│   ├── Package frame coverage (audit): `pass3_partial_legacy_frames_not_fully_represented`
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: or_hba1c_metabolic_syndrome; inactive to avoid duplicate activation_key.
+
+├── **Diabetes-range hyperglycemia (Pass 3 deferred)**
+│   ├── Frame ID: `frame_hba1c_pass3_diabetes_range_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_hba1c_high`
+│   ├── Activation key: `signal_hba1c_high::inv_hba1c_high_diabetes_range_hyperglycemia`
+│   ├── Source package: `pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia`
+│   ├── Research spec ID: `inv_hba1c_high_diabetes_range_hyperglycemia`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: kb52c Pass_3 package; s24 runtime until glycaemic adjudication.
+
+├── **Shortened erythrocyte lifespan context (Pass 3 deferred)**
+│   ├── Frame ID: `frame_hba1c_pass3_low_lifespan_context_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_hba1c_low`
+│   ├── Activation key: `signal_hba1c_low::inv_hba1c_low_shortened_erythrocyte_lifespan_context`
+│   ├── Source package: `pkg_kb52c_hba1c_low_shortened_erythrocyte_lifespan_context`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb52c_hba1c_low_shortened_erythrocyte_lifespan_context`
+│   ├── Research spec ID: `inv_hba1c_low_shortened_erythrocyte_lifespan_context`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: Low-direction lifespan bias frame; must not collapse into high-only interpretation.
+
+├── **HbA1c percent chronic hyperglycemia (Pass 3 deferred)**
+│   ├── Frame ID: `frame_hba1c_pass3_pct_chronic_hyperglycemia_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_hba1c_pct_high`
+│   ├── Activation key: `signal_hba1c_pct_high::inv_hba1c_pct_high_chronic_hyperglycemia_diabetes`
+│   ├── Source package: `pass3_deferred_not_compiled`
+│   ├── Source package path: `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json`
+│   ├── Research spec ID: `inv_hba1c_pct_high_chronic_hyperglycemia_diabetes`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: Percent-unit Pass_3 variant; distinct signal_id from mmol/mol high frame.
+
+---
+
+## signal_hyperbilirubinemia — bilirubin
+
+_System: hepatic_
+
+├── **Legacy kb45 liver injury pattern (ALT/ALP concordance)**
+│   ├── Frame ID: `frame_bilirubin_legacy_kb45_liver_injury_pattern`
+│   ├── Frame role: `legacy_override_rule_liver_injury`
+│   ├── Signal ID: `signal_hyperbilirubinemia`
+│   ├── Activation key: `signal_hyperbilirubinemia::inv_bilirubin_high_hepatobiliary_excretion_impairment`
+│   ├── Source package: `pkg_kb45_bilirubin_high_hyperbilirubinemia`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb45_bilirubin_high_hyperbilirubinemia`
+│   ├── Research spec ID: `inv_bilirubin_high_hepatobiliary_excretion_impairment`
+│   ├── Promotion state: `runtime_active_legacy_unadjudicated`
+│   ├── Runtime authority: `active`
+│   ├── Clinical adjudication: `blocked_pending_medical_review`
+│   ├── Collision status: `requires_adjudication`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Package promotion safety (audit): `blocked_pending_frame_adjudication`
+│   ├── Package frame coverage (audit): `pass3_multiple_frames_need_adjudication`
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: or_liver_injury_pattern; pkg_kb45 batch-lineage runtime authority.
+
+├── **Gilbert pattern unconjugated elevation (Pass 3 deferred)**
+│   ├── Frame ID: `frame_bilirubin_pass3_gilbert_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_hyperbilirubinemia`
+│   ├── Activation key: `signal_hyperbilirubinemia::inv_bilirubin_high_gilbert_pattern`
+│   ├── Source package: `pass3_deferred_not_compiled`
+│   ├── Source package path: `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_1_Pass_3.json`
+│   ├── Research spec ID: `inv_bilirubin_high_gilbert_pattern`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: Benign unconjugated pattern; no kb52c package compiled yet.
+
+├── **Hemolytic turnover pattern (Pass 3 deferred)**
+│   ├── Frame ID: `frame_bilirubin_pass3_hemolytic_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_hyperbilirubinemia`
+│   ├── Activation key: `signal_hyperbilirubinemia::inv_bilirubin_high_hemolytic_turnover_pattern`
+│   ├── Source package: `pass3_deferred_not_compiled`
+│   ├── Source package path: `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_1_Pass_3.json`
+│   ├── Research spec ID: `inv_bilirubin_high_hemolytic_turnover_pattern`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: Pre-hepatic frame; distinct from hepatobiliary excretion impairment.
+
+├── **Hepatobiliary excretion impairment (Pass 3 deferred)**
+│   ├── Frame ID: `frame_bilirubin_pass3_hepatobiliary_deferred`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_hyperbilirubinemia`
+│   ├── Activation key: `signal_hyperbilirubinemia::inv_bilirubin_high_hepatobiliary_excretion_impairment`
+│   ├── Source package: `pkg_kb52c_bilirubin_high_hepatobiliary_excretion_impairment`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb52c_bilirubin_high_hepatobiliary_excretion_impairment`
+│   ├── Research spec ID: `inv_bilirubin_high_hepatobiliary_excretion_impairment`
+│   ├── Promotion state: `deferred`
+│   ├── Runtime authority: `none`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-FRAME-INDEX-3: kb52c compiled; pkg_kb45 runtime until frame adjudication.
 
 ---

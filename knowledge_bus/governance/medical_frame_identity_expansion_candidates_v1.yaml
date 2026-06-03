@@ -1,13 +1,14 @@
 schema_version: 1.0.0
 runtime_consumed: false
 status: governance_audit_non_runtime
-work_id: PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion
-generated_utc: '2026-06-02'
+work_id: PASS3-FRAME-INDEX-3_next_high_risk_signal_family_expansion
+generated_utc: '2026-06-03'
 source_audit: knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
 
 description: >
   Signal families prioritised for medical_frame_identity_index expansion.
-  PASS3-FRAME-INDEX-2 indexed ALT, CRP, and ferritin_high families.
+  PASS3-FRAME-INDEX-2 indexed ALT, CRP, and ferritin_high.
+  PASS3-FRAME-INDEX-3 indexed apob, ferritin_low, hba1c_high, hyperbilirubinemia.
 
 expansion_candidates:
   - signal_family_id: signal_creatinine_high
@@ -42,15 +43,29 @@ expansion_candidates:
     primary_biomarker_id: ferritin
     priority: 5
     rationale: ROUTE_A with 3 legacy overrides; iron-store depletion vs inflammation
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 6
 
   - signal_family_id: signal_apob_atherogenic
     primary_biomarker_id: apob
     priority: 6
     rationale: ROUTE_C; familial vs excess vs low hypobetalipoproteinemia Pass_3 frames
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 4
+
+  - signal_family_id: signal_hba1c_high
+    primary_biomarker_id: hba1c
+    priority: 6
+    rationale: glycaemic multiframe; s24 runtime; Pass_3 enrichment blocked
+    indexed: true
+    frame_count_indexed: 5
+
+  - signal_family_id: signal_hyperbilirubinemia
+    primary_biomarker_id: bilirubin
+    priority: 6
+    rationale: ROUTE_C; Gilbert vs hemolytic vs hepatobiliary Pass_3 frames
+    indexed: true
+    frame_count_indexed: 4
 
   - signal_family_id: signal_systemic_inflammation
     primary_biomarker_id: crp
