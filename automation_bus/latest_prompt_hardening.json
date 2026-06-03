@@ -1,119 +1,29 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "CI-ARCH-GATE-1_medical_intelligence_architecture_ci_gate",
+  "work_id": "CI-ARCH-GATE-1A_architecture_gate_pythonpath_followup",
   "status": "HARDENED",
   "hardened_utc": "2026-06-03T00:00:00Z",
-  "hardened_by": "claude-sonnet-4-6",
+  "hardened_by": "cursor-agent",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: CI-ARCH-GATE-1_medical_intelligence_architecture_ci_gate"
+      "citation": "automation_bus/latest_cursor_prompt.md — CI-ARCH-GATE-1A_architecture_gate_pythonpath_followup"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: work/CI-ARCH-GATE-1-medical-intelligence-architecture-ci-gate"
+      "citation": "work/CI-ARCH-GATE-1A-architecture-gate-pythonpath-followup"
     },
     {
-      "check": "Front Matter — risk_level",
+      "check": "Baseline — architecture-gate.yml exists",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH. Correct: sprint touches golden_gate_local.py which is an explicit HIGH risk trigger in SOP §10."
+      "citation": ".github/workflows/architecture-gate.yml"
     },
     {
-      "check": "Front Matter — execution_model",
+      "check": "Baseline — run_architecture_validation_gate.py exists",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH"
-    },
-    {
-      "check": "Front Matter — change_type",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type: MIXED. Correct: changes CI/gate wiring (BEHAVIOUR — alters what runs automatically on every PR or commit) plus documentation and register updates (CONTENT)."
-    },
-    {
-      "check": "2A — validate_medical_intelligence_architecture.py: exists",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_medical_intelligence_architecture.py — file present, 343 lines, contains run_medical_intelligence_architecture_validation() at line 309 and main() at line 325."
-    },
-    {
-      "check": "2A — validate_day_one_architecture.py: exists",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_day_one_architecture.py — file present, 531 lines."
-    },
-    {
-      "check": "2A — validate_day_one_architecture.py already delegates to medical intelligence validator",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_day_one_architecture.py:497 — run_day_one_architecture_validation() calls validate_medical_intelligence_architecture(errors) as its final step. Lines 501-512 define that function: it loads validate_medical_intelligence_architecture.py via importlib and calls mod.run_medical_intelligence_architecture_validation(repo_root=_REPO). The validator delegation is already complete within validate_day_one_architecture.py. Sprint investigation step 3 will confirm this immediately."
-    },
-    {
-      "check": "2A — test_medical_intelligence_architecture_sentinels.py: exists",
-      "result": "CONFIRMED",
-      "citation": "backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py — file present, 70 lines. Contains 4 tests: test_medical_intelligence_validator_passes_on_current_repo (line 24), test_medical_intelligence_validator_cli_exit_zero (line 30), test_governance_artefacts_declare_non_runtime (line 41), test_creatinine_legacy_s24_frames_present (line 53)."
-    },
-    {
-      "check": "2A — test_day_one_architecture_guardrails.py: exists",
-      "result": "CONFIRMED",
-      "citation": "backend/tests/architecture/test_day_one_architecture_guardrails.py — file present."
-    },
-    {
-      "check": "2A — ARCH-SENTINEL-1 audit report: exists",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/ARCH-SENTINEL-1_medical_intelligence_architecture_guardrails_report.md — file present."
-    },
-    {
-      "check": "2A — carry-forward register: exists and CF-SENTINEL-001 is Open",
-      "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md line 61 — CF-SENTINEL-001 | ARCH-SENTINEL-1 | Wire medical-intelligence sentinel into standard CI / Automation Bus gate | Status: Open. Real work remains. Sprint is not no-op."
-    },
-    {
-      "check": "2A — CI workflows verified",
-      "result": "CONFIRMED",
-      "citation": ".github/workflows/ci.yml, validate.yml, golden_gate.yml — all three files present. ci.yml high-value-tests job line 71: runs 'pytest tests/unit/' only — does NOT include architecture tests. validate.yml: nightly-only (cron 02:00 UTC), calls run_all_tests.py which does not exist in repo. golden_gate.yml: runs tests/enforcement and tests/unit/test_golden_panel_runner.py only — no architecture tests."
-    },
-    {
-      "check": "2A — golden_gate_local.py gate checks: does NOT call validate_day_one_architecture.py",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/golden_gate_local.py lines 166-175: checks list contains exactly two entries — run_baseline_tests.py and verify_three_layer_pipeline.py. Neither script calls validate_day_one_architecture.py. This is the primary integration gap for CF-SENTINEL-001."
-    },
-    {
-      "check": "2A — run_baseline_tests.py: does NOT include architecture tests",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/run_baseline_tests.py lines 29-42: explicit pytest file list — tests/enforcement/test_canonical_only.py, tests/enforcement/test_retail_explainer_registry_b1b.py, tests/unit/* (multiple), tests/regression/test_narrative_compiler_why_surface_regression.py, tests/unit/test_phenotype_suite_v1.py. No tests/architecture/ entries."
-    },
-    {
-      "check": "2A — pytest.ini testpaths includes backend/tests (covers architecture tests if called bare)",
-      "result": "CONFIRMED",
-      "citation": "pytest.ini line 8: testpaths = backend/tests. Running bare 'python -m pytest' from repo root would collect backend/tests/architecture/. However no gate or CI workflow calls bare pytest across the full testpaths — each uses explicit file lists or subdirectory constraints."
-    },
-    {
-      "check": "2A — dead condition confirmed in validate_promotion_safety_gate",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_medical_intelligence_architecture.py lines 250-251: condition 'if safety in _BLOCKED_PROMOTION_STATUSES and safety in _UNSAFE_PROMOTION_WITHOUT_OVERRIDE'. _BLOCKED_PROMOTION_STATUSES (lines 52-58) = {'blocked_pending_frame_adjudication', 'blocked_pending_pass3_enrichment', 'blocked_pending_provenance_recovery'}. _UNSAFE_PROMOTION_WITHOUT_OVERRIDE (lines 60-64) = {'safe_for_route_a_promotion'}. Sets are disjoint — no string is a member of both. This condition can never fire. Safe to remove."
-    },
-    {
-      "check": "2A — coverage gap: sentinel test checks 3 of 5 governance artefacts",
-      "result": "CONFIRMED",
-      "citation": "backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py lines 44-51: test_governance_artefacts_declare_non_runtime checks 3 paths. backend/scripts/validate_medical_intelligence_architecture.py lines 44-50 (_GOVERNANCE_YAML_PATHS): 5 paths. Missing from test: 'knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml' and 'knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml'. Sprint carry-forward clean-up item 2 is confirmed valid."
-    },
-    {
-      "check": "2B — Behavioural scope is well-defined; no runtime risk",
-      "result": "CONFIRMED",
-      "citation": "Allowed changes per prompt: CI workflow update, architecture validation script update, local gate script update, pytest collection/gate update, documentation/report update, carry-forward register update. All are validation/gate/docs artefacts. Runtime boundary section explicitly prohibits: SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend behaviour, SSOT, scoring thresholds, unit conversion, knowledge_bus/packages/*, knowledge_bus/current/latest_knowledge_status.json. STOP condition 2 enforces this at execution time."
-    },
-    {
-      "check": "2B — Regression targets declared and reachable",
-      "result": "CONFIRMED",
-      "citation": "Prompt required tests section: validate_medical_intelligence_architecture.py, validate_day_one_architecture.py, test_day_one_architecture_guardrails.py, test_medical_intelligence_architecture_sentinels.py, test_med_frame_identity_index.py, test_context_modifier_catalogue.py — all must pass. No emitted analytical reasoning changes from this sprint (all changes are gate/CI wiring and read-only governance assertions)."
-    },
-    {
-      "check": "2B — STOP conditions are adequate and enforceable",
-      "result": "CONFIRMED",
-      "citation": "7 explicit STOP conditions: (1) gate entry point cannot be identified, (2) integration requires runtime changes, (3) integration weakens existing day-one validation, (4) medical-intelligence validator fails, (5) day-one validator fails, (6) sentinel pytest fails, (7) Automation Bus changes unsafe. These cover all critical failure modes."
-    },
-    {
-      "check": "2B — No STOP conditions triggered by source content review",
-      "result": "CONFIRMED",
-      "citation": "Gate entry point is identified (golden_gate_local.py checks list). Integration does not require runtime changes (adding validate_day_one_architecture.py to gate checks or CI is a config-level change). Existing day-one validation will not be weakened (adding to it, not replacing). Validators are confirmed correct at the script level. No Automation Bus scripts (run_work_package.py, golden_gate_local.py) require unsafe changes — golden_gate_local.py checks list modification is within sprint scope."
+      "citation": "backend/scripts/run_architecture_validation_gate.py"
     }
   ]
 }
