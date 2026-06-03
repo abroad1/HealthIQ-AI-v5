@@ -1,10 +1,9 @@
 {
-  "branch": "work/PASS3-FRAME-INDEX-2-high-risk-signal-family-index-expansion",
+  "branch": "work/ARCH-SENTINEL-1-medical-intelligence-architecture-guardrails",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-02T21:56:47Z",
-  "cursor_started_utc": "2026-06-02T21:53:47Z",
-  "head_sha": "0463f516e2acb3d7d5fbc2cfcf0ccb537628c964",
+  "cursor_started_utc": "2026-06-03T18:47:24Z",
+  "head_sha": "a34b9ce5a92c328d7fed1f0d4be952216d639f0d",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-SENTINEL-1_medical_intelligence_architecture_guardrails"
 }
