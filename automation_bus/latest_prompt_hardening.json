@@ -1,29 +1,194 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "CI-ARCH-GATE-1A_architecture_gate_pythonpath_followup",
+  "work_id": "MED-FRAME-TREE-1_generated_human_readable_biomarker_frame_tree",
   "status": "HARDENED",
   "hardened_utc": "2026-06-03T00:00:00Z",
-  "hardened_by": "cursor-agent",
+  "hardened_by": "claude-code",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md — CI-ARCH-GATE-1A_architecture_gate_pythonpath_followup"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: MED-FRAME-TREE-1_generated_human_readable_biomarker_frame_tree"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "work/CI-ARCH-GATE-1A-architecture-gate-pythonpath-followup"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/MED-FRAME-TREE-1-generated-human-readable-biomarker-frame-tree"
     },
     {
-      "check": "Baseline — architecture-gate.yml exists",
+      "check": "Front Matter — risk_level",
       "result": "CONFIRMED",
-      "citation": ".github/workflows/architecture-gate.yml"
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD"
     },
     {
-      "check": "Baseline — run_architecture_validation_gate.py exists",
+      "check": "Front Matter — execution_model",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/run_architecture_validation_gate.py"
+      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH"
+    },
+    {
+      "check": "Front Matter — change_type",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED"
+    },
+    {
+      "check": "Authority path — medical_frame_identity_index_v1.yaml",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml — exists, readable; schema_version: 1.0.0, 4 signal families, 14 frames indexed"
+    },
+    {
+      "check": "Authority path — context_modifier_catalogue_draft_v1.yaml",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml — exists, readable; schema_version: 1.0.0, 30 modifiers; 3 reference medical_frame_ids (frame_creatinine_reduced_glomerular_filtration, frame_creatinine_legacy_s24_potassium_escalation)"
+    },
+    {
+      "check": "Authority path — pass3_frame_coverage_audit_v1.yaml",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml — exists"
+    },
+    {
+      "check": "Authority path — medical_frame_identity_expansion_candidates_v1.yaml",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml — exists"
+    },
+    {
+      "check": "Authority path — pass3_promotion_decision_register_v1.yaml",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml — exists"
+    },
+    {
+      "check": "Authority path — MED-FRAME-1 architecture doc",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md — exists"
+    },
+    {
+      "check": "Authority path — CONTEXT-MOD-1 doc",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md — exists"
+    },
+    {
+      "check": "Authority path — PASS3-FRAME-COVERAGE-1 audit doc",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md — exists"
+    },
+    {
+      "check": "Authority path — PASS3-FRAME-INDEX-2 report",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion_report.md — exists"
+    },
+    {
+      "check": "Authority path — carry_forward_register",
+      "result": "CONFIRMED",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md — exists"
+    },
+    {
+      "check": "Authority path — README_governance_helpers.md",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/tools/README_governance_helpers.md — exists; confirms knowledge_bus/tools/ as preferred helper location, forbids runtime imports"
+    },
+    {
+      "check": "Authority path — run_architecture_validation_gate.py",
+      "result": "CONFIRMED",
+      "citation": "backend/scripts/run_architecture_validation_gate.py — exists; runs 5 steps including validate_day_one_architecture, validate_medical_intelligence_architecture, and both pytest suites"
+    },
+    {
+      "check": "Authority path — validate_medical_intelligence_architecture.py",
+      "result": "CONFIRMED",
+      "citation": "backend/scripts/validate_medical_intelligence_architecture.py — exists"
+    },
+    {
+      "check": "Authority path — validate_day_one_architecture.py",
+      "result": "CONFIRMED",
+      "citation": "backend/scripts/validate_day_one_architecture.py — exists"
+    },
+    {
+      "check": "Authority path — test_medical_intelligence_architecture_sentinels.py",
+      "result": "CONFIRMED",
+      "citation": "backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py — exists"
+    },
+    {
+      "check": "Prerequisite — ARCH-SENTINEL-1 merged",
+      "result": "CONFIRMED",
+      "citation": "git log: a1c634f chore(bus): ARCH-SENTINEL-1_medical_intelligence_architecture_guardrails kernel COMPLETE status"
+    },
+    {
+      "check": "Prerequisite — CI-ARCH-GATE-1 merged",
+      "result": "CONFIRMED",
+      "citation": "git log: 404a56c chore(bus): CI-ARCH-GATE-1_medical_intelligence_architecture_ci_gate kernel COMPLETE status"
+    },
+    {
+      "check": "Prerequisite — CI-ARCH-GATE-1A merged",
+      "result": "CONFIRMED",
+      "citation": "git log: becb49c chore(bus): CI-ARCH-GATE-1A_architecture_gate_pythonpath_followup kernel COMPLETE status"
+    },
+    {
+      "check": "Prerequisite — MED-FRAME-2 merged",
+      "result": "CONFIRMED",
+      "citation": "git log: 71f3f22 chore(bus): MED-FRAME-2_medical_frame_identity_index kernel COMPLETE status"
+    },
+    {
+      "check": "Prerequisite — CONTEXT-MOD-1 merged",
+      "result": "CONFIRMED",
+      "citation": "git log: 68fd023 chore(bus): CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance kernel COMPLETE status"
+    },
+    {
+      "check": "Prerequisite — PASS3-FRAME-COVERAGE-1 merged",
+      "result": "CONFIRMED",
+      "citation": "git log: 8c06bcf chore(bus): PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit kernel COMPLETE status"
+    },
+    {
+      "check": "Prerequisite — PASS3-FRAME-INDEX-2 merged",
+      "result": "CONFIRMED",
+      "citation": "git log: 88ad4a0 chore(bus): PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion kernel COMPLETE status"
+    },
+    {
+      "check": "Source data — signal families readable from index",
+      "result": "CONFIRMED",
+      "citation": "medical_frame_identity_index_v1.yaml lines 11–478: 4 signal families (signal_creatinine_high, signal_alt_high, signal_crp_high, signal_ferritin_high); 14 total frames across all families; all fields required by tree output are present in index entries"
+    },
+    {
+      "check": "Source data — context modifier frame links readable",
+      "result": "CONFIRMED",
+      "citation": "context_modifier_catalogue_draft_v1.yaml: 3 modifiers reference named medical_frame_ids — mod_med_nsaid (frame_creatinine_reduced_glomerular_filtration, line 445), mod_med_ace_arb (frame_creatinine_reduced_glomerular_filtration + frame_creatinine_legacy_s24_potassium_escalation, lines 468–470), mod_med_diuretic (frame_creatinine_reduced_glomerular_filtration, line 494), mod_creatinine_ctx_known_ckd (frame_creatinine_reduced_glomerular_filtration, line 706), mod_creatinine_ctx_potassium_high (frame_creatinine_legacy_s24_potassium_escalation, line 773); remaining modifiers have empty medical_frame_ids"
+    },
+    {
+      "check": "New artefact — build_biomarker_medical_frame_tree.py",
+      "result": "CONFIRMED_ABSENT — correct for new sprint",
+      "citation": "knowledge_bus/tools/build_biomarker_medical_frame_tree.py — not yet present; sprint creates it"
+    },
+    {
+      "check": "New artefact — docs/architecture/biomarker_medical_frame_tree.md",
+      "result": "CONFIRMED_ABSENT — correct for new sprint",
+      "citation": "docs/architecture/biomarker_medical_frame_tree.md — not yet present; sprint creates it"
+    },
+    {
+      "check": "New artefact — test_biomarker_medical_frame_tree_generation.py",
+      "result": "CONFIRMED_ABSENT — correct for new sprint",
+      "citation": "backend/tests/regression/test_biomarker_medical_frame_tree_generation.py — not yet present; sprint creates it"
+    },
+    {
+      "check": "Behavioural scope — Intelligence Core not touched",
+      "result": "CONFIRMED",
+      "citation": "Sprint scope: generator under knowledge_bus/tools/ (read-only), docs output under docs/architecture/, regression tests only; no SignalEvaluator, SignalRegistry, pipeline, SSOT, or frontend files in scope — README_governance_helpers.md line 8 explicitly forbids this"
+    },
+    {
+      "check": "Behavioural scope — runtime boundary enforced by STOP conditions",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 409–427: runtime boundary lists forbidden files; STOP condition 5 triggers if generator needs runtime imports"
+    },
+    {
+      "check": "PYTHONPATH risk — validate_day_one_architecture.py standalone",
+      "result": "ADVISORY",
+      "citation": "CI-ARCH-GATE-1A fixed PYTHONPATH for CI; standalone runs in local dev may require PYTHONPATH=backend set explicitly. Cursor should use: $env:PYTHONPATH='backend'; python backend/scripts/validate_day_one_architecture.py"
+    },
+    {
+      "check": "New regression test not wired into gate",
+      "result": "ADVISORY — carry-forward declared",
+      "citation": "run_architecture_validation_gate.py lines 83–94: gate only runs existing regression tests (test_med_frame_identity_index.py, test_context_modifier_catalogue.py). New test exists as standalone; CF-MEDTREE-001 declared in prompt covers this gap"
+    },
+    {
+      "check": "No duplicate authority source risk",
+      "result": "CONFIRMED",
+      "citation": "Generator is output-only (docs/architecture/); generated tree explicitly declares it is non-authoritative. No second SSOT created."
     }
   ]
 }
