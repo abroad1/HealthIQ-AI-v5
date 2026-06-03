@@ -1,66 +1,51 @@
 ---
-work_id: MED-FRAME-TREE-1_generated_human_readable_biomarker_frame_tree
-branch: work/MED-FRAME-TREE-1-generated-human-readable-biomarker-frame-tree
-risk_level: STANDARD
+work_id: PASS3-FRAME-INDEX-3_next_high_risk_signal_family_expansion
+branch: work/PASS3-FRAME-INDEX-3-next-high-risk-signal-family-expansion
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# MED-FRAME-TREE-1 — Generated Human-Readable Biomarker Frame Tree
+# PASS3-FRAME-INDEX-3 — Next High-Risk Signal Family Expansion
 
 ## Purpose
 
-Create a generated, human-readable medical frame tree showing how HealthIQ’s biomarker signal families break down into medically distinct frames, evidence roles, context modifiers, package authority and promotion status.
+Continue expanding the governed medical frame identity index beyond the initial indexed families.
 
-The tree must be generated from governed source artefacts.
-
-It must not become a manually maintained second source of truth.
-
-Core principle:
+This sprint must add the next highest-risk biomarker signal families from the estate-wide frame coverage audit into:
 
 ```text
-The tree is an output, not an authority.
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 ````
 
-Authority remains with:
+The goal is to keep building the governed biomarker → medical-frame architecture so the generated human-readable tree becomes progressively more complete.
 
-```text
-Pass_3 / investigation specs
-→ medical_frame_identity_index_v1.yaml
-→ context_modifier_catalogue_draft_v1.yaml
-→ package / promotion governance
-→ generated tree
-```
+This is not a package-promotion sprint.
+
+Do not activate, retire, overwrite, or modify runtime packages.
 
 ---
 
 ## Strategic framing
 
-HealthIQ now has:
+The human-readable biomarker tree is generated from the medical frame identity index.
+
+Therefore:
 
 ```text
-- medical frame identity index
-- context modifier catalogue
-- Pass_3 frame coverage audit
-- architecture sentinel gate
-- CI architecture gate
+medical frame index expands
+→ generated biomarker tree expands
 ```
 
-The next need is human visibility.
-
-We need a clear tree-style document that allows product, architecture, medical review and future developers to see:
+This sprint should add the next batch of high-risk signal families to the index so that HealthIQ can continue moving away from flat biomarker interpretation and toward:
 
 ```text
-biomarker signal family
-├── medical frame
-│   ├── evidence markers
-│   ├── context modifiers
-│   ├── package authority
-│   ├── Pass_3 / legacy source
-│   └── promotion / adjudication status
+one biomarker signal family
+→ multiple medically distinct frames
+→ supporting evidence
+→ context modifiers
+→ governed Layer B interpretation
 ```
-
-This should help prevent future agents from flattening edge cases or losing valid medical reasoning during package promotion.
 
 ---
 
@@ -71,13 +56,13 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
-ARCH-SENTINEL-1 merged
-CI-ARCH-GATE-1 merged
-CI-ARCH-GATE-1A merged
-MED-FRAME-2 merged
-CONTEXT-MOD-1 merged
 PASS3-FRAME-COVERAGE-1 merged
 PASS3-FRAME-INDEX-2 merged
+MED-FRAME-TREE-1 merged
+ARCH-SENTINEL-1 merged
+CI-ARCH-GATE-1 / CI-ARCH-GATE-1A merged
+MED-FRAME-2 merged
+CONTEXT-MOD-1 merged
 ```
 
 Before starting, run and report:
@@ -97,8 +82,8 @@ STOP if:
 - local main does not equal origin/main
 - working tree is not clean
 - medical_frame_identity_index_v1.yaml is missing
-- context_modifier_catalogue_draft_v1.yaml is missing
 - pass3_frame_coverage_audit_v1.yaml is missing
+- biomarker_medical_frame_tree.md is missing
 - architecture gate script is missing
 ```
 
@@ -107,299 +92,274 @@ STOP if:
 ## Governance classification
 
 ```yaml
-risk_level: STANDARD
+risk_level: HIGH
 change_type: MIXED
 execution_model: TWO_PHASE_START_FINISH
 ```
 
 Reason:
 
-This sprint creates generated documentation and non-runtime tooling. It must not change runtime behaviour.
+This sprint updates governed medical frame identity infrastructure. It must not change runtime behaviour, but it affects future medical-intelligence promotion and safety gates.
 
 ---
 
 ## Required inputs
 
-Read before implementation:
+Read before work:
 
 ```text
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
 knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
-knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml
-docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md
-docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md
+knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+docs/architecture/biomarker_medical_frame_tree.md
 docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md
 docs/audit-papers/PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion_report.md
+docs/audit-papers/MED-FRAME-TREE-1_generated_human_readable_biomarker_frame_tree_report.md
 docs/sprints/launch_core_carry_forward_register.md
-knowledge_bus/tools/README_governance_helpers.md
 ```
 
-Also inspect:
+Also inspect relevant source artefacts for selected families:
 
 ```text
-backend/scripts/run_architecture_validation_gate.py
-backend/scripts/validate_medical_intelligence_architecture.py
-backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py
+knowledge_bus/packages/**
+knowledge_bus/research/investigation_specs/multi_llm_research/**/*Pass_3*.json
+knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
 ```
 
 ---
 
-## Required implementation
+## Family selection
 
-Create a deterministic tree generator.
+Cursor must not choose families by instinct.
 
-Preferred path:
+Rank the next candidate families using the estate audit and existing expansion-candidate file.
 
-```text
-knowledge_bus/tools/build_biomarker_medical_frame_tree.py
-```
-
-The generator must:
+Selection criteria:
 
 ```text
-- read governed source artefacts
-- generate Markdown output
-- not read raw Pass_3 as its primary source
-- not infer clinical meaning
-- not modify runtime/package/frontend files
-- sort output deterministically
-- include generation metadata
-- clearly state the tree is generated and non-authoritative
+1. edge_case_loss_risk = high
+2. promotion_safety_status = blocked_pending_frame_adjudication
+3. promotion_safety_status = blocked_pending_pass3_enrichment
+4. multiple Pass_3 frames exist
+5. legacy package contains override/escalation logic
+6. currently absent from medical_frame_identity_index_v1.yaml
+7. clinically important system area
+8. needed before package promotion can safely resume
 ```
 
-Do not place this tool under `backend/scripts/` unless hardening explicitly approves.
+Before editing the index, report a ranked shortlist.
+
+Do not index every remaining family.
+
+Expected scope:
+
+```text
+Add 2–4 new high-risk signal families.
+```
+
+Do not re-index families already covered:
+
+```text
+- signal_creatinine_high
+- signal_alt_high
+- signal_crp_high
+- signal_ferritin_high
+```
+
+unless only adding minor notes required by validation.
 
 ---
 
-## Required generated output
+## Required index update
 
-Create:
+Update:
+
+```text
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+```
+
+For each selected family, add medically distinct frames with all required fields:
+
+```yaml
+signal_family_id:
+primary_biomarker_id:
+medical_frame_id:
+frame_label:
+frame_role:
+research_spec_id:
+source_package_id:
+source_package_path:
+activation_key:
+signal_id:
+promotion_state:
+runtime_authority_status:
+clinical_adjudication_status:
+context_inputs_supported:
+  biomarker_evidence:
+  questionnaire_modifiers:
+  medication_modifiers:
+collision_group_id:
+collision_status:
+supersedes:
+superseded_by:
+notes:
+```
+
+Do not introduce duplicate active activation keys.
+
+Do not mark unadjudicated frames as resolved.
+
+Do not make the index runtime-consumed.
+
+---
+
+## Required frame classification rules
+
+Use existing allowed values only.
+
+Allowed `promotion_state` values include:
+
+```text
+runtime_active_canonical
+runtime_active_legacy_unadjudicated
+compiled_not_promoted
+superseded
+retired
+deferred
+```
+
+Allowed `clinical_adjudication_status` values include:
+
+```text
+not_required
+required_before_activation
+accepted_with_rationale
+blocked_pending_medical_review
+```
+
+Allowed `collision_status` values include:
+
+```text
+none
+real_collision_active_blocker
+allowed_non_runtime_collision
+resolved_by_supersession
+requires_adjudication
+```
+
+If a family cannot be safely represented without clinical judgement, do not force it. Mark it deferred and document the blocker.
+
+---
+
+## Required tree regeneration
+
+After updating the index, regenerate the human-readable tree:
+
+```powershell
+python knowledge_bus/tools/build_biomarker_medical_frame_tree.py
+```
+
+The generated tree must include the newly indexed families and frames.
+
+Update:
 
 ```text
 docs/architecture/biomarker_medical_frame_tree.md
 ```
 
-Optional focused companion if helpful:
-
-```text
-docs/architecture/biomarker_medical_frame_tree_indexed_families.md
-```
-
-The generated Markdown must include at least the indexed families currently in:
-
-```text
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-```
-
-Expected current families include:
-
-```text
-- creatinine high
-- ALT high
-- CRP high
-- ferritin high
-```
-
-Do not hardcode these names. Read them from the index.
+Do not edit the tree manually.
 
 ---
 
-## Required tree content
+## MED-FRAME-TREE carry-forward
 
-For each signal family, the tree must show:
-
-```text
-- signal_family_id
-- primary_biomarker_id
-- each medical_frame_id
-- frame_label
-- frame_role
-- signal_id
-- activation_key
-- source package
-- source package path
-- research_spec_id
-- promotion_state
-- runtime_authority_status
-- clinical_adjudication_status
-- collision_status
-- context inputs supported
-- linked context modifiers where catalogue references the frame
-- notes / unresolved status
-```
-
-The output must make it visually clear where frames are:
+Address the minor carry-forward from MED-FRAME-TREE-1 if safe:
 
 ```text
-- runtime_active_canonical
-- runtime_active_legacy_unadjudicated
-- compiled_not_promoted
-- deferred
-- superseded
-- retired
+CF-MEDTREE-001 — wire generated tree refresh into architecture gate or docs generation workflow and add generate() path guard.
 ```
 
----
-
-## Required worked tree shape
-
-The generated Markdown should use a clear tree-like structure, for example:
+For this sprint, do the small safe part:
 
 ```text
-## signal_creatinine_high — creatinine
-
-├── Reduced glomerular filtration
-│   ├── Frame ID: frame_creatinine_reduced_glomerular_filtration
-│   ├── Source package: pkg_kb52c...
-│   ├── Status: runtime_active_canonical
-│   ├── Evidence/modifier links: known CKD, NSAID, ACE/ARB, diuretic
-│   └── Notes: current Pass_3 authority
-│
-├── Legacy eGFR escalation
-│   ├── Source package: pkg_s24...
-│   ├── Status: runtime_active_legacy_unadjudicated
-│   └── Notes: preserved pending Pass_3 enrichment
+- add output-path guard inside generate(), not only the CLI wrapper
+- add/update regression test proving generate() rejects output outside docs/architecture/
 ```
 
-Exact formatting can differ, but it must be readable by humans.
-
----
-
-## Source-of-truth rule
-
-The generated tree must include a header stating:
-
-```text
-This document is generated from governed HealthIQ architecture artefacts.
-Do not edit this file manually.
-Update the underlying governance files and regenerate.
-```
-
-The generator must include enough metadata to show:
-
-```text
-- generated timestamp
-- source files used
-- source file hashes if practical
-- generator version
-```
-
----
-
-## Regression tests
-
-Create:
-
-```text
-backend/tests/regression/test_biomarker_medical_frame_tree_generation.py
-```
-
-Tests must prove:
-
-```text
-1. generator runs successfully
-2. generated tree contains every signal_family_id from medical_frame_identity_index_v1.yaml
-3. generated tree contains every medical_frame_id from medical_frame_identity_index_v1.yaml
-4. generated tree contains linked context modifiers for frames where modifier catalogue references exist
-5. generated tree declares itself generated / do-not-edit
-6. generator is deterministic
-7. generator does not modify governance source files
-8. generator does not write outside docs/architecture/
-```
+Do not wire tree generation into CI in this sprint unless hardening explicitly approves. If not wired, leave CF-MEDTREE-001 open.
 
 ---
 
 ## Governance helper boundary
 
-This sprint may create a governance helper script because it is explicitly declared.
-
-Rules:
+Any helper tooling must remain under:
 
 ```text
-- helper script must live under knowledge_bus/tools/
-- helper script must be read-only against governance inputs
-- helper script must write only declared tree documentation outputs
-- helper script must not import runtime/evaluator/frontend modules
-- helper script must not modify package files
+knowledge_bus/tools/
 ```
 
-The existing medical-intelligence sentinel should pass after adding the helper.
+Do not create new helper scripts under `backend/scripts/` unless explicitly justified by hardening.
+
+Helper tools must:
+
+```text
+- be read-only against governance/package inputs
+- write only declared docs/governance outputs
+- avoid runtime/evaluator/frontend imports
+- avoid modifying package/runtime/frontend files
+```
 
 ---
 
-## Required validations
+## Required artefacts
 
-Run and paste actual output:
+Update:
 
-```powershell
-python knowledge_bus/tools/build_biomarker_medical_frame_tree.py
-python backend/scripts/run_architecture_validation_gate.py
-python backend/scripts/validate_medical_intelligence_architecture.py
-python backend/scripts/validate_day_one_architecture.py
-python -m pytest backend/tests/regression/test_biomarker_medical_frame_tree_generation.py -q
+```text
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+docs/architecture/biomarker_medical_frame_tree.md
 ```
 
-Also run:
+Update if needed:
 
-```powershell
-python -m pytest backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py -q
+```text
+knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
+knowledge_bus/tools/build_biomarker_medical_frame_tree.py
+backend/tests/regression/test_biomarker_medical_frame_tree_generation.py
+docs/sprints/launch_core_carry_forward_register.md
 ```
-
-Do not write only “all tests passed”.
-
----
-
-## Required report
 
 Create:
 
 ```text
-docs/audit-papers/MED-FRAME-TREE-1_generated_human_readable_biomarker_frame_tree_report.md
+docs/audit-papers/PASS3-FRAME-INDEX-3_next_high_risk_signal_family_expansion_report.md
 ```
 
-Report must include:
+---
+
+## Required report content
+
+The report must include:
 
 ```text
 - executive verdict
-- source artefacts read
-- generator path
-- generated tree path
-- indexed families included
-- number of frames included
-- context modifier links included
-- determinism evidence
+- artefacts inspected
+- ranked candidate family shortlist
+- selected families and rationale
+- families deliberately not selected and why
+- frame entries added
+- collision checks
+- clinical adjudication statuses
+- Pass_3 enrichment needs
+- tree regeneration summary
+- family/frame counts before and after
+- MED-FRAME-TREE carry-forward handling
 - validation output pasted in full
 - runtime boundary confirmation
 - carry-forward updates
 - remaining limitations
 - recommended next sprint
-```
-
----
-
-## Carry-forward register
-
-Update:
-
-```text
-docs/sprints/launch_core_carry_forward_register.md
-```
-
-only if needed.
-
-Expected handling:
-
-```text
-CF-PASS3FRAME-003
-May remain open. The tree supports promotion safety visibility but does not itself complete package promotion gating.
-
-CF-CONTEXT-MOD-2
-Remains open. The tree may show modifier links, but it does not bind modifiers into Layer B.
-
-Possible new carry-forward:
-CF-MEDTREE-001 — wire generated tree refresh into architecture gate or docs generation workflow if not completed in this sprint.
 ```
 
 ---
@@ -426,20 +386,43 @@ If any runtime/package/frontend change appears necessary, STOP and report.
 
 ---
 
+## Required validations
+
+Run and paste actual output:
+
+```powershell
+python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+python knowledge_bus/tools/build_biomarker_medical_frame_tree.py
+python backend/scripts/run_architecture_validation_gate.py
+python -m pytest backend/tests/regression/test_biomarker_medical_frame_tree_generation.py -q
+```
+
+Also run, unless already included in the architecture gate output:
+
+```powershell
+python -m pytest backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py -q
+```
+
+Do not write only “all tests passed”.
+
+---
+
 ## Out of scope
 
 Do not:
 
 ```text
-- implement Layer B frame evaluation
-- implement context modifier evaluation
-- promote packages
-- activate packages
 - enrich Pass_3 specs
-- manually rewrite medical trees
-- create a second authority source
+- create or promote package artefacts
+- activate packages
+- retire packages
+- modify runtime package files
+- implement Layer B frame assembly
+- implement context modifier evaluation
 - change frontend
-- change runtime behaviour
+- adjudicate medical truth
+- index the entire remaining estate
 ```
 
 ---
@@ -449,13 +432,13 @@ Do not:
 STOP and report if:
 
 ```text
-1. tree generation would require manual clinical interpretation
-2. generator cannot read the frame index cleanly
-3. generated tree omits indexed frames
-4. generated tree would need to become authoritative
-5. generator would need runtime imports
-6. generator would write outside declared docs paths
-7. architecture gate fails
+1. ranked shortlist cannot be derived from audit artefacts
+2. selected family cannot be mapped to package and Pass_3 evidence
+3. frame entries would require clinical invention
+4. duplicate active activation keys would be introduced
+5. tree generation omits indexed frames
+6. architecture gate fails
+7. any runtime/package/frontend change appears necessary
 ```
 
 ---
@@ -466,15 +449,16 @@ Cursor must report:
 
 ```text
 1. baseline branch/status evidence
-2. source files inspected
-3. generator created
-4. generated tree created
-5. frame/family counts
-6. tests created
-7. validation commands run
-8. actual validation output
-9. confirmation no runtime/package/frontend changes
-10. carry-forward updates
+2. files inspected
+3. ranked shortlist
+4. selected families and rationale
+5. frame entries added
+6. tree regenerated
+7. family/frame counts before and after
+8. carry-forward updates
+9. validation commands run
+10. actual validation output
+11. confirmation no runtime/package/frontend changes
 ```
 
 ---
@@ -495,12 +479,12 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/MED-FRAME-TREE-1-generated-human-readable-biomarker-frame-tree
-- only in-scope docs/tooling/test/register files changed
+- current branch matches work/PASS3-FRAME-INDEX-3-next-high-risk-signal-family-expansion
+- only in-scope docs/governance/tooling/test/register files changed
 - no runtime package files changed
 - no frontend/runtime evaluator files changed
 - no ambiguous stash exists
-- architecture gate passes
+- validators and architecture gate pass
 ```
 
 ---
@@ -510,16 +494,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. deterministic tree generator exists
-2. human-readable biomarker frame tree exists
-3. tree includes every indexed signal family
-4. tree includes every indexed medical frame
-5. tree links context modifiers where available
-6. tree clearly states it is generated and non-authoritative
-7. regression tests pass
-8. architecture gate passes
-9. no runtime/package/frontend changes occur
-10. future update process is clear
+1. ranked family shortlist is produced from audit evidence
+2. 2–4 new high-risk signal families are added to the frame index
+3. every new frame validates
+4. no duplicate active activation keys are introduced
+5. generated tree includes the new families/frames
+6. tree remains generated and non-authoritative
+7. MED-FRAME-TREE output-path guard is addressed or carried forward
+8. no runtime/package/frontend changes occur
+9. actual validator output is pasted
+10. architecture gate passes
 ```
 
 ```
