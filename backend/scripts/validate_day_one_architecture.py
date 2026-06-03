@@ -8,6 +8,7 @@ Read-only: does not mutate repository files. Exits non-zero on violation.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import sys
 from pathlib import Path
@@ -493,7 +494,22 @@ def run_day_one_architecture_validation(*, repo_root: Path | None = None) -> Lis
     validate_med_rev1_wave1_visibility(errors)
     validate_kb_util1_wave1_card_enrichment(errors)
     validate_signal_library_uniqueness(errors)
+    validate_medical_intelligence_architecture(errors)
     return errors
+
+
+def validate_medical_intelligence_architecture(errors: List[str]) -> None:
+    """ARCH-SENTINEL-1 — delegate to medical intelligence architecture validator."""
+    validator_path = _REPO / "backend" / "scripts" / "validate_medical_intelligence_architecture.py"
+    spec = importlib.util.spec_from_file_location(
+        "validate_medical_intelligence_architecture", validator_path
+    )
+    if spec is None or spec.loader is None:
+        _err(errors, "could not load validate_medical_intelligence_architecture.py")
+        return
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    errors.extend(mod.run_medical_intelligence_architecture_validation(repo_root=_REPO))
 
 
 def main() -> int:
