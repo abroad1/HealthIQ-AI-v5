@@ -60,6 +60,7 @@ This register should be read before each new launch, architecture, medical revie
 | CF-GOVHELPER-001 | PASS3-FRAME-COVERAGE-1 | Governance helper script classification | Read-only helper under backend/scripts for frame coverage audit YAML. | No | PASS3-FRAME-INDEX-2 | Resolved | knowledge_bus/tools/README_governance_helpers.md — preferred path knowledge_bus/tools/. ARCH-SENTINEL-1 sentinel reinforces helper import/write boundaries. |
 | CF-SENTINEL-001 | ARCH-SENTINEL-1 | Wire medical-intelligence sentinel into standard CI / Automation Bus gate | Validator and pytest sentinels exist; not yet a required CI job on every PR. | No | CI-ARCH-GATE-1 | Resolved | Resolved by CI-ARCH-GATE-1 — gate + `architecture-gate.yml`. CI-ARCH-GATE-1A added `PYTHONPATH: backend` to that workflow (golden_gate convention). |
 | CF-MEDTREE-001 | MED-FRAME-TREE-1 | Wire generated biomarker frame tree refresh into architecture gate or docs workflow | Generator exists; manual regen via `build_biomarker_medical_frame_tree.py`. | No | MED-FRAME-TREE-2 or CI-DOCS-1 | Open | PASS3-FRAME-INDEX-3 added `generate()` output-path guard + regression test; CI auto-refresh still open. |
+| CF-INDEX3-002 | PASS3-FRAME-INDEX-3 | Bilirubin deferred frames cite wrong Pass_3 batch path | Gilbert and hemolytic frames used non-existent `Batch_1_Pass_3.json`; specs live in `Batch_5_Pass_3.json`. | No | PASS3-FRAME-INDEX-3 | Resolved | Index paths corrected; `biomarker_medical_frame_tree.md` regenerated; validators pass. |
 
 ---
 

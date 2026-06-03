@@ -859,7 +859,7 @@ signal_families:
         frame_role: pass3_frame_not_compiled
         research_spec_id: inv_bilirubin_high_gilbert_pattern
         source_package_id: pass3_deferred_not_compiled
-        source_package_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_1_Pass_3.json
+        source_package_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
         activation_key: signal_hyperbilirubinemia::inv_bilirubin_high_gilbert_pattern
         signal_id: signal_hyperbilirubinemia
         promotion_state: deferred
@@ -883,7 +883,7 @@ signal_families:
         frame_role: pass3_frame_not_compiled
         research_spec_id: inv_bilirubin_high_hemolytic_turnover_pattern
         source_package_id: pass3_deferred_not_compiled
-        source_package_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_1_Pass_3.json
+        source_package_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
         activation_key: signal_hyperbilirubinemia::inv_bilirubin_high_hemolytic_turnover_pattern
         signal_id: signal_hyperbilirubinemia
         promotion_state: deferred

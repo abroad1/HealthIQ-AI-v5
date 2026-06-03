@@ -13,7 +13,7 @@
 
 ### Source artefacts
 
-- `knowledge_bus/governance/medical_frame_identity_index_v1.yaml` — sha256 prefix `3d1662232b37c4a3`
+- `knowledge_bus/governance/medical_frame_identity_index_v1.yaml` — sha256 prefix `a0008a29a23456b7`
 - `knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml` — sha256 prefix `e52bbf09c61fdc9a`
 - `knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml` — sha256 prefix `96251112fe197bfd`
 - `knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml` — sha256 prefix `dc1b7feb5be4e79f`
@@ -662,7 +662,7 @@ _System: hepatic_
 │   ├── Signal ID: `signal_hyperbilirubinemia`
 │   ├── Activation key: `signal_hyperbilirubinemia::inv_bilirubin_high_gilbert_pattern`
 │   ├── Source package: `pass3_deferred_not_compiled`
-│   ├── Source package path: `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_1_Pass_3.json`
+│   ├── Source package path: `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json`
 │   ├── Research spec ID: `inv_bilirubin_high_gilbert_pattern`
 │   ├── Promotion state: `deferred`
 │   ├── Runtime authority: `none`
@@ -678,7 +678,7 @@ _System: hepatic_
 │   ├── Signal ID: `signal_hyperbilirubinemia`
 │   ├── Activation key: `signal_hyperbilirubinemia::inv_bilirubin_high_hemolytic_turnover_pattern`
 │   ├── Source package: `pass3_deferred_not_compiled`
-│   ├── Source package path: `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_1_Pass_3.json`
+│   ├── Source package path: `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json`
 │   ├── Research spec ID: `inv_bilirubin_high_hemolytic_turnover_pattern`
 │   ├── Promotion state: `deferred`
 │   ├── Runtime authority: `none`
