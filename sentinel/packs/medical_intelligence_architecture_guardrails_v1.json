@@ -1,0 +1,30 @@
+{
+  "pack_version": "1.0.0",
+  "pack_id": "medical_intelligence_architecture_guardrails_v1",
+  "description": "ARCH-SENTINEL-1 / CI-ARCH-GATE-1 — Medical intelligence architecture guardrails (frame index, modifiers, Pass_3 isolation, promotion safety)",
+  "validator_script": "backend/scripts/validate_medical_intelligence_architecture.py",
+  "gate_script": "backend/scripts/run_architecture_validation_gate.py",
+  "defect_classes": {
+    "med_intel_no_raw_pass3_runtime_reads": {
+      "description": "Runtime and frontend must not read raw Pass_3 investigation specs.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py",
+      "first_seen": "2026-06"
+    },
+    "med_intel_governance_non_runtime": {
+      "description": "Governance YAML artefacts declare runtime_consumed false and are not referenced by runtime code.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py",
+      "first_seen": "2026-06"
+    },
+    "med_intel_promotion_safety_gate": {
+      "description": "pass3_frame_coverage_audit must not list naive safe_for_route_a_promotion without override.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py",
+      "first_seen": "2026-06"
+    }
+  }
+}

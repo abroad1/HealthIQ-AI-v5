@@ -165,6 +165,13 @@ def main() -> int:
 
         checks = [
             {
+                "name": "run_architecture_validation_gate",
+                "args": [
+                    sys.executable,
+                    str(repo_root / "backend" / "scripts" / "run_architecture_validation_gate.py"),
+                ],
+            },
+            {
                 "name": "run_baseline_tests",
                 "args": [sys.executable, str(repo_root / "backend" / "scripts" / "run_baseline_tests.py")],
             },

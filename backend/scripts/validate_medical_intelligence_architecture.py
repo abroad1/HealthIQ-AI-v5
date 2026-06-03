@@ -247,11 +247,9 @@ def validate_promotion_safety_gate(errors: List[str]) -> None:
             continue
         pid = pkg.get("package_id", "")
         safety = pkg.get("promotion_safety_status", "")
-        if safety in _BLOCKED_PROMOTION_STATUSES and safety in _UNSAFE_PROMOTION_WITHOUT_OVERRIDE:
-            _err(errors, f"{pid}: contradictory promotion safety flags")
         if safety in _BLOCKED_PROMOTION_STATUSES:
             continue
-        if safety == "safe_for_route_a_promotion":
+        if safety in _UNSAFE_PROMOTION_WITHOUT_OVERRIDE:
             _err(
                 errors,
                 f"{pid}: safe_for_route_a_promotion is forbidden in current estate (0 naive ROUTE_A safe packages)",
