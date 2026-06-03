@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-SENTINEL-1_medical_intelligence_architecture_guardrails",
+  "work_id": "CI-ARCH-GATE-1_medical_intelligence_architecture_ci_gate",
   "status": "HARDENED",
   "hardened_utc": "2026-06-03T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,111 +8,112 @@
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: ARCH-SENTINEL-1_medical_intelligence_architecture_guardrails"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: CI-ARCH-GATE-1_medical_intelligence_architecture_ci_gate"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: work/ARCH-SENTINEL-1-medical-intelligence-architecture-guardrails"
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: work/CI-ARCH-GATE-1-medical-intelligence-architecture-ci-gate"
     },
     {
       "check": "Front Matter — risk_level",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — risk_level: HIGH. Rationale at prompt lines 76-85: sprint adds architecture-protection tooling protecting medical-intelligence authority boundaries. HIGH is correct per SOP §10 — touches Intelligence Core protection layer."
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH. Correct: sprint touches golden_gate_local.py which is an explicit HIGH risk trigger in SOP §10."
     },
     {
       "check": "Front Matter — execution_model",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — execution_model: TWO_PHASE_START_FINISH"
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH"
     },
     {
       "check": "Front Matter — change_type",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:7 — change_type: MIXED. Correct per SOP §4: sprint adds CONTENT (audit report, register update) and BEHAVIOUR-adjacent tests/validators that govern future behavioural boundary compliance."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type: MIXED. Correct: changes CI/gate wiring (BEHAVIOUR — alters what runs automatically on every PR or commit) plus documentation and register updates (CONTENT)."
     },
     {
-      "check": "2A — All governance input documents verified on disk",
+      "check": "2A — validate_medical_intelligence_architecture.py: exists",
       "result": "CONFIRMED",
-      "citation": "All 13 required input paths verified by Glob: docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md ✓; docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md ✓; docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md ✓; docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md ✓; docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md ✓; docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md ✓; docs/audit-papers/PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion_report.md ✓; knowledge_bus/governance/medical_frame_identity_index_v1.yaml ✓; knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml ✓; knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml ✓; knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml ✓; knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml ✓; knowledge_bus/tools/README_governance_helpers.md ✓; docs/sprints/launch_core_carry_forward_register.md ✓"
+      "citation": "backend/scripts/validate_medical_intelligence_architecture.py — file present, 343 lines, contains run_medical_intelligence_architecture_validation() at line 309 and main() at line 325."
     },
     {
-      "check": "2A — All existing test and script paths verified on disk",
+      "check": "2A — validate_day_one_architecture.py: exists",
       "result": "CONFIRMED",
-      "citation": "All 9 existing test/script paths verified by Glob: backend/scripts/validate_day_one_architecture.py ✓; backend/tests/architecture/test_day_one_architecture_guardrails.py ✓; backend/scripts/validate_medical_frame_identity_index.py ✓; backend/tests/regression/test_med_frame_identity_index.py ✓; backend/scripts/validate_context_modifier_catalogue.py ✓; backend/tests/regression/test_context_modifier_catalogue.py ✓; backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py ✓; backend/tests/regression/test_kb_util2_promote_pilot.py ✓; backend/scripts/build_pass3_frame_coverage_audit.py ✓"
+      "citation": "backend/scripts/validate_day_one_architecture.py — file present, 531 lines."
     },
     {
-      "check": "2A — medical_frame_identity_index_v1.yaml: runtime_consumed and status",
+      "check": "2A — validate_day_one_architecture.py already delegates to medical intelligence validator",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:7 — runtime_consumed: false; :8 — status: governed_non_runtime_index. File is correctly classified as non-runtime governance artefact."
+      "citation": "backend/scripts/validate_day_one_architecture.py:497 — run_day_one_architecture_validation() calls validate_medical_intelligence_architecture(errors) as its final step. Lines 501-512 define that function: it loads validate_medical_intelligence_architecture.py via importlib and calls mod.run_medical_intelligence_architecture_validation(repo_root=_REPO). The validator delegation is already complete within validate_day_one_architecture.py. Sprint investigation step 3 will confirm this immediately."
     },
     {
-      "check": "2A — Creatinine legacy eGFR frame present and unadjudicated",
+      "check": "2A — test_medical_intelligence_architecture_sentinels.py: exists",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:44 — medical_frame_id: frame_creatinine_legacy_s24_egfr_escalation; :52 — promotion_state: runtime_active_legacy_unadjudicated; :54 — clinical_adjudication_status: blocked_pending_medical_review. Guardrail 6 prerequisite confirmed."
+      "citation": "backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py — file present, 70 lines. Contains 4 tests: test_medical_intelligence_validator_passes_on_current_repo (line 24), test_medical_intelligence_validator_cli_exit_zero (line 30), test_governance_artefacts_declare_non_runtime (line 41), test_creatinine_legacy_s24_frames_present (line 53)."
     },
     {
-      "check": "2A — Creatinine legacy potassium frame present and unadjudicated",
+      "check": "2A — test_day_one_architecture_guardrails.py: exists",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:70 — medical_frame_id: frame_creatinine_legacy_s24_potassium_escalation; :80 — promotion_state: runtime_active_legacy_unadjudicated; :82 — clinical_adjudication_status: blocked_pending_medical_review. Guardrail 6 prerequisite confirmed."
+      "citation": "backend/tests/architecture/test_day_one_architecture_guardrails.py — file present."
     },
     {
-      "check": "2A — pass3_frame_coverage_audit_v1.yaml: runtime_consumed and status",
+      "check": "2A — ARCH-SENTINEL-1 audit report: exists",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml:2 — runtime_consumed: false; :3 — status: governance_audit_non_runtime. File is correctly classified as non-runtime."
+      "citation": "docs/audit-papers/ARCH-SENTINEL-1_medical_intelligence_architecture_guardrails_report.md — file present."
     },
     {
-      "check": "2A — Blocked promotion statuses present in pass3_frame_coverage_audit_v1.yaml",
+      "check": "2A — carry-forward register: exists and CF-SENTINEL-001 is Open",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml: blocked_pending_frame_adjudication present at lines 34, 54, 69, 109, etc. (majority of 55 packages); blocked_pending_pass3_enrichment at lines 509, 563, 619, 773, 845, 865, 916; blocked_pending_provenance_recovery at line 419 (pkg_lipid_transport). All three target statuses from guardrail 5 are present in the file and addressable by sentinel."
+      "citation": "docs/sprints/launch_core_carry_forward_register.md line 61 — CF-SENTINEL-001 | ARCH-SENTINEL-1 | Wire medical-intelligence sentinel into standard CI / Automation Bus gate | Status: Open. Real work remains. Sprint is not no-op."
     },
     {
-      "check": "2A — build_pass3_frame_coverage_audit.py governance helper boundary",
+      "check": "2A — CI workflows verified",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/build_pass3_frame_coverage_audit.py:9-13 — imports only: argparse, pathlib.Path, typing.Any, yaml. No imports from SignalEvaluator, SignalRegistry, pipeline, or frontend modules. Output path: knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml only (line 19). Reads only package signal_library.yaml files (read-only at line 43-48). Governance helper boundary constraint satisfied."
+      "citation": ".github/workflows/ci.yml, validate.yml, golden_gate.yml — all three files present. ci.yml high-value-tests job line 71: runs 'pytest tests/unit/' only — does NOT include architecture tests. validate.yml: nightly-only (cron 02:00 UTC), calls run_all_tests.py which does not exist in repo. golden_gate.yml: runs tests/enforcement and tests/unit/test_golden_panel_runner.py only — no architecture tests."
     },
     {
-      "check": "2A — Existing validate_day_one_architecture.py coverage scope mapped",
+      "check": "2A — golden_gate_local.py gate checks: does NOT call validate_day_one_architecture.py",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_day_one_architecture.py:196-204 — validate_no_runtime_investigation_spec_reads covers _LAUNCH_CRITICAL_REL_PATHS (11 specific files only); :207-222 — validate_frontend_guards covers 2 specific TSX frontend components only; :438-474 — validate_signal_library_uniqueness blocks duplicate active activation_keys globally across all packages. Guardrails 1, 2, 4 require extension beyond the 11-file and 2-component scope — this is intended by the sprint."
+      "citation": "backend/scripts/golden_gate_local.py lines 166-175: checks list contains exactly two entries — run_baseline_tests.py and verify_three_layer_pipeline.py. Neither script calls validate_day_one_architecture.py. This is the primary integration gap for CF-SENTINEL-001."
     },
     {
-      "check": "2A — carry-forward register state verified",
+      "check": "2A — run_baseline_tests.py: does NOT include architecture tests",
       "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md:59 — CF-PASS3FRAME-003 status: Open (must remain Open per prompt); :60 — CF-GOVHELPER-001 status: Resolved (sentinel reinforcement expected); current summary at line 96 confirms no launch-blocking carry-forwards."
+      "citation": "backend/scripts/run_baseline_tests.py lines 29-42: explicit pytest file list — tests/enforcement/test_canonical_only.py, tests/enforcement/test_retail_explainer_registry_b1b.py, tests/unit/* (multiple), tests/regression/test_narrative_compiler_why_surface_regression.py, tests/unit/test_phenotype_suite_v1.py. No tests/architecture/ entries."
     },
     {
-      "check": "2B — Behavioural scope — runtime boundary explicit",
+      "check": "2A — pytest.ini testpaths includes backend/tests (covers architecture tests if called bare)",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 315-330 (Runtime boundary section) — explicit prohibition on modifying SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend behaviour, SSOT, scoring thresholds, unit conversion, knowledge_bus/packages/*, knowledge_bus/current/latest_knowledge_status.json. Sprint creates only: backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py; docs/audit-papers/ARCH-SENTINEL-1_*_report.md; optional backend/scripts/validate_medical_intelligence_architecture.py; register update."
+      "citation": "pytest.ini line 8: testpaths = backend/tests. Running bare 'python -m pytest' from repo root would collect backend/tests/architecture/. However no gate or CI workflow calls bare pytest across the full testpaths — each uses explicit file lists or subdirectory constraints."
     },
     {
-      "check": "2B — STOP condition 7 protects against scope creep",
+      "check": "2A — dead condition confirmed in validate_promotion_safety_gate",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 409-412 — STOP condition 7: 'If a sentinel requires runtime code changes to pass, STOP and report the architectural gap.' This prevents Cursor from modifying runtime components to make a sentinel green."
+      "citation": "backend/scripts/validate_medical_intelligence_architecture.py lines 250-251: condition 'if safety in _BLOCKED_PROMOTION_STATUSES and safety in _UNSAFE_PROMOTION_WITHOUT_OVERRIDE'. _BLOCKED_PROMOTION_STATUSES (lines 52-58) = {'blocked_pending_frame_adjudication', 'blocked_pending_pass3_enrichment', 'blocked_pending_provenance_recovery'}. _UNSAFE_PROMOTION_WITHOUT_OVERRIDE (lines 60-64) = {'safe_for_route_a_promotion'}. Sets are disjoint — no string is a member of both. This condition can never fire. Safe to remove."
     },
     {
-      "check": "2B — Regression targets declared",
+      "check": "2A — coverage gap: sentinel test checks 3 of 5 governance artefacts",
       "result": "CONFIRMED",
-      "citation": "backend/tests/regression/test_med_frame_identity_index.py ✓; backend/tests/regression/test_context_modifier_catalogue.py ✓; backend/tests/architecture/test_day_one_architecture_guardrails.py ✓; backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py ✓; backend/tests/regression/test_kb_util2_promote_pilot.py ✓ — all must continue to pass. No emitted reasoning changes from this sprint (all new tests are read-only governance assertions)."
+      "citation": "backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py lines 44-51: test_governance_artefacts_declare_non_runtime checks 3 paths. backend/scripts/validate_medical_intelligence_architecture.py lines 44-50 (_GOVERNANCE_YAML_PATHS): 5 paths. Missing from test: 'knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml' and 'knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml'. Sprint carry-forward clean-up item 2 is confirmed valid."
+    },
+    {
+      "check": "2B — Behavioural scope is well-defined; no runtime risk",
+      "result": "CONFIRMED",
+      "citation": "Allowed changes per prompt: CI workflow update, architecture validation script update, local gate script update, pytest collection/gate update, documentation/report update, carry-forward register update. All are validation/gate/docs artefacts. Runtime boundary section explicitly prohibits: SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend behaviour, SSOT, scoring thresholds, unit conversion, knowledge_bus/packages/*, knowledge_bus/current/latest_knowledge_status.json. STOP condition 2 enforces this at execution time."
+    },
+    {
+      "check": "2B — Regression targets declared and reachable",
+      "result": "CONFIRMED",
+      "citation": "Prompt required tests section: validate_medical_intelligence_architecture.py, validate_day_one_architecture.py, test_day_one_architecture_guardrails.py, test_medical_intelligence_architecture_sentinels.py, test_med_frame_identity_index.py, test_context_modifier_catalogue.py — all must pass. No emitted analytical reasoning changes from this sprint (all changes are gate/CI wiring and read-only governance assertions)."
+    },
+    {
+      "check": "2B — STOP conditions are adequate and enforceable",
+      "result": "CONFIRMED",
+      "citation": "7 explicit STOP conditions: (1) gate entry point cannot be identified, (2) integration requires runtime changes, (3) integration weakens existing day-one validation, (4) medical-intelligence validator fails, (5) day-one validator fails, (6) sentinel pytest fails, (7) Automation Bus changes unsafe. These cover all critical failure modes."
     },
     {
       "check": "2B — No STOP conditions triggered by source content review",
       "result": "CONFIRMED",
-      "citation": "1. No runtime Pass_3 reads detected in existing runtime files. 2. governance artefacts correctly marked runtime_consumed: false (index:7, audit:2). 3. No duplicate active activation_keys found (validate_signal_library_uniqueness confirms). 4. Creatinine eGFR frame at index:44, potassium frame at index:70 — both present. 5. build_pass3_frame_coverage_audit.py imports only standard library (lines 9-13). 6. No sentinel identified that would require runtime behaviour changes."
-    }
-  ],
-  "advisories": [
-    {
-      "advisory_id": "ADV-1",
-      "severity": "MEDIUM",
-      "title": "creatinine_multiframe_authority_decision_v1.yaml runtime_consumed status not verified",
-      "detail": "Guardrail 2 requires five listed governance artefacts to remain non-runtime. creatinine_multiframe_authority_decision_v1.yaml is referenced in the guardrail 2 intro text but is not in the explicit five-file list. Its runtime_consumed status was not read during hardening. Cursor should verify it is also runtime_consumed: false when inspecting it at Stage 4 before implementation."
-    },
-    {
-      "advisory_id": "ADV-2",
-      "severity": "LOW",
-      "title": "CF-PASS3FRAME-003 must remain Open — do not mark Resolved",
-      "detail": "docs/sprints/launch_core_carry_forward_register.md:59 — CF-PASS3FRAME-003 is Open. Prompt lines 345-350 state it 'may be updated to reference new sentinel coverage, but should remain open unless promotion pause logic is fully governed.' Cursor must not change status to Resolved."
+      "citation": "Gate entry point is identified (golden_gate_local.py checks list). Integration does not require runtime changes (adding validate_day_one_architecture.py to gate checks or CI is a config-level change). Existing day-one validation will not be weakened (adding to it, not replacing). Validators are confirmed correct at the script level. No Automation Bus scripts (run_work_package.py, golden_gate_local.py) require unsafe changes — golden_gate_local.py checks list modification is within sprint scope."
     }
   ]
 }
