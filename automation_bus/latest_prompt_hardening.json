@@ -1,155 +1,118 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion",
+  "work_id": "ARCH-SENTINEL-1_medical_intelligence_architecture_guardrails",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-02T00:00:00Z",
+  "hardened_utc": "2026-06-03T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: ARCH-SENTINEL-1_medical_intelligence_architecture_guardrails"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: work/PASS3-FRAME-INDEX-2-high-risk-signal-family-index-expansion"
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: work/ARCH-SENTINEL-1-medical-intelligence-architecture-guardrails"
     },
     {
       "check": "Front Matter — risk_level",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH. Governance rationale at prompt lines 88-99: expands governed medical frame identity infrastructure affecting future promotion authority. Conservatively correct classification; accepted."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — risk_level: HIGH. Rationale at prompt lines 76-85: sprint adds architecture-protection tooling protecting medical-intelligence authority boundaries. HIGH is correct per SOP §10 — touches Intelligence Core protection layer."
     },
     {
       "check": "Front Matter — execution_model",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH"
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — execution_model: TWO_PHASE_START_FINISH"
     },
     {
       "check": "Front Matter — change_type",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type: MIXED. Correct per SOP §4: sprint adds governed content (frame entries) that future compilers/evaluators will consume to determine promotion eligibility. MIXED controls apply."
+      "citation": "automation_bus/latest_cursor_prompt.md:7 — change_type: MIXED. Correct per SOP §4: sprint adds CONTENT (audit report, register update) and BEHAVIOUR-adjacent tests/validators that govern future behavioural boundary compliance."
     },
     {
-      "check": "2A — Authority path: docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md",
+      "check": "2A — All governance input documents verified on disk",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md — file present in repo"
+      "citation": "All 13 required input paths verified by Glob: docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md ✓; docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md ✓; docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md ✓; docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md ✓; docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md ✓; docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md ✓; docs/audit-papers/PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion_report.md ✓; knowledge_bus/governance/medical_frame_identity_index_v1.yaml ✓; knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml ✓; knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml ✓; knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml ✓; knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml ✓; knowledge_bus/tools/README_governance_helpers.md ✓; docs/sprints/launch_core_carry_forward_register.md ✓"
     },
     {
-      "check": "2A — Authority path: knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml",
+      "check": "2A — All existing test and script paths verified on disk",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml:1 — schema_version: 1.0.0; :7 — package_count: 55; summary_counts at lines 7-13 confirm 36 pass3_multiple_frames_need_adjudication, 16 pass3_partial_legacy_frames_not_fully_represented. All top candidate families present in per-package entries."
+      "citation": "All 9 existing test/script paths verified by Glob: backend/scripts/validate_day_one_architecture.py ✓; backend/tests/architecture/test_day_one_architecture_guardrails.py ✓; backend/scripts/validate_medical_frame_identity_index.py ✓; backend/tests/regression/test_med_frame_identity_index.py ✓; backend/scripts/validate_context_modifier_catalogue.py ✓; backend/tests/regression/test_context_modifier_catalogue.py ✓; backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py ✓; backend/tests/regression/test_kb_util2_promote_pilot.py ✓; backend/scripts/build_pass3_frame_coverage_audit.py ✓"
     },
     {
-      "check": "2A — Authority path: knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml",
+      "check": "2A — medical_frame_identity_index_v1.yaml: runtime_consumed and status",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml:13-54 — 7 expansion candidates. Priority 1: signal_creatinine_high (indexed: true). Priority 2: signal_alt_high (indexed: false). Priority 3: signal_crp_high (indexed: false). Priority 4: signal_ferritin_high (indexed: false). Priority 5: signal_ferritin_low (indexed: false). Priority 6: signal_apob_atherogenic (indexed: false). Priority 7: signal_systemic_inflammation (indexed: false)."
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:7 — runtime_consumed: false; :8 — status: governed_non_runtime_index. File is correctly classified as non-runtime governance artefact."
     },
     {
-      "check": "2A — Authority path: knowledge_bus/governance/medical_frame_identity_index_v1.yaml",
+      "check": "2A — Creatinine legacy eGFR frame present and unadjudicated",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:1 — schema_version: 1.0.0; :3 — index_id: medical_frame_identity_index_v1; :5 — runtime_consumed: false; :6 — status: governed_non_runtime_index. One signal family present (signal_creatinine_high) with 4 frames from line 9."
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:44 — medical_frame_id: frame_creatinine_legacy_s24_egfr_escalation; :52 — promotion_state: runtime_active_legacy_unadjudicated; :54 — clinical_adjudication_status: blocked_pending_medical_review. Guardrail 6 prerequisite confirmed."
     },
     {
-      "check": "2A — Authority path: knowledge_bus/schema/medical_frame_identity_index_schema_v1.yaml",
+      "check": "2A — Creatinine legacy potassium frame present and unadjudicated",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/schema/medical_frame_identity_index_schema_v1.yaml:4 — schema_version: 1.0.0; :5 — status: LOCKED. frame_required_fields at lines 37-53 (17 fields). NOTE: supersedes and superseded_by are NOT in schema frame_required_fields but ARE required by prompt lines 212-213 — Cursor must include them even though validator skips them (validator line 95-96)."
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:70 — medical_frame_id: frame_creatinine_legacy_s24_potassium_escalation; :80 — promotion_state: runtime_active_legacy_unadjudicated; :82 — clinical_adjudication_status: blocked_pending_medical_review. Guardrail 6 prerequisite confirmed."
     },
     {
-      "check": "2A — Authority path: backend/scripts/validate_medical_frame_identity_index.py",
+      "check": "2A — pass3_frame_coverage_audit_v1.yaml: runtime_consumed and status",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_medical_frame_identity_index.py — file present. Validator enforces: source_package_path directory existence for all non-deferred frames (lines 125-129); duplicate active activation_key detection (lines 190-197); non-runtime promotion_state cannot have active runtime authority (line 199-200). CRITICAL: any frame with promotion_state != deferred that references a non-existent package directory WILL FAIL validation."
+      "citation": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml:2 — runtime_consumed: false; :3 — status: governance_audit_non_runtime. File is correctly classified as non-runtime."
     },
     {
-      "check": "2A — Authority path: docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md",
+      "check": "2A — Blocked promotion statuses present in pass3_frame_coverage_audit_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md — file present in repo"
+      "citation": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml: blocked_pending_frame_adjudication present at lines 34, 54, 69, 109, etc. (majority of 55 packages); blocked_pending_pass3_enrichment at lines 509, 563, 619, 773, 845, 865, 916; blocked_pending_provenance_recovery at line 419 (pkg_lipid_transport). All three target statuses from guardrail 5 are present in the file and addressable by sentinel."
     },
     {
-      "check": "2A — Authority path: docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md",
+      "check": "2A — build_pass3_frame_coverage_audit.py governance helper boundary",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md — file present in repo"
+      "citation": "backend/scripts/build_pass3_frame_coverage_audit.py:9-13 — imports only: argparse, pathlib.Path, typing.Any, yaml. No imports from SignalEvaluator, SignalRegistry, pipeline, or frontend modules. Output path: knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml only (line 19). Reads only package signal_library.yaml files (read-only at line 43-48). Governance helper boundary constraint satisfied."
     },
     {
-      "check": "2A — Authority path: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml",
+      "check": "2A — Existing validate_day_one_architecture.py coverage scope mapped",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml — file present in repo"
+      "citation": "backend/scripts/validate_day_one_architecture.py:196-204 — validate_no_runtime_investigation_spec_reads covers _LAUNCH_CRITICAL_REL_PATHS (11 specific files only); :207-222 — validate_frontend_guards covers 2 specific TSX frontend components only; :438-474 — validate_signal_library_uniqueness blocks duplicate active activation_keys globally across all packages. Guardrails 1, 2, 4 require extension beyond the 11-file and 2-component scope — this is intended by the sprint."
     },
     {
-      "check": "2A — Authority path: docs/sprints/launch_core_carry_forward_register.md",
+      "check": "2A — carry-forward register state verified",
       "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md:57 — CF-PASS3FRAME-001 Open (PASS3-FRAME-INDEX-2 target); :58 — CF-PASS3FRAME-002 Open; :59 — CF-PASS3FRAME-003 Open. CF-GOVHELPER-001 is NOT present in register (register ends at CF-PASS3FRAME-003, line 59) — per prompt lines 360-364 Cursor MUST add it."
+      "citation": "docs/sprints/launch_core_carry_forward_register.md:59 — CF-PASS3FRAME-003 status: Open (must remain Open per prompt); :60 — CF-GOVHELPER-001 status: Resolved (sentinel reinforcement expected); current summary at line 96 confirms no launch-blocking carry-forwards."
     },
     {
-      "check": "2A — All validation scripts present",
+      "check": "2B — Behavioural scope — runtime boundary explicit",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_medical_frame_identity_index.py ✓; backend/scripts/validate_context_modifier_catalogue.py ✓; backend/scripts/validate_day_one_architecture.py ✓; backend/tests/architecture/test_day_one_architecture_guardrails.py ✓; backend/tests/regression/test_med_frame_identity_index.py ✓; backend/tests/regression/test_context_modifier_catalogue.py ✓ — all confirmed present"
+      "citation": "automation_bus/latest_cursor_prompt.md lines 315-330 (Runtime boundary section) — explicit prohibition on modifying SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend behaviour, SSOT, scoring thresholds, unit conversion, knowledge_bus/packages/*, knowledge_bus/current/latest_knowledge_status.json. Sprint creates only: backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py; docs/audit-papers/ARCH-SENTINEL-1_*_report.md; optional backend/scripts/validate_medical_intelligence_architecture.py; register update."
     },
     {
-      "check": "2A — Package directories for top expansion candidates verified on disk",
+      "check": "2B — STOP condition 7 protects against scope creep",
       "result": "CONFIRMED",
-      "citation": "PowerShell Get-ChildItem knowledge_bus/packages confirmed: pkg_s24_alt_high_hepatocellular_injury ✓; pkg_hepatic_alt_context ✓; pkg_s24_crp_high_inflammation ✓; pkg_inflammation_crp_context ✓; pkg_chronic_inflammation ✓; pkg_s24_ferritin_high_overload ✓; pkg_iron_overload_context ✓; pkg_s24_ferritin_low_iron_deficiency ✓; pkg_iron_deficiency_context ✓. These are valid source_package_path targets for non-deferred frame entries."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 409-412 — STOP condition 7: 'If a sentinel requires runtime code changes to pass, STOP and report the architectural gap.' This prevents Cursor from modifying runtime components to make a sentinel green."
     },
     {
-      "check": "2A — knowledge_bus/tools/ exists as preferred governance helper script location",
+      "check": "2B — Regression targets declared",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/tools/ — directory present on disk. Prompt lines 264-269 designates this as preferred location for new governance helper scripts. Cursor must not create new helper scripts under backend/scripts/ without explicit justification."
+      "citation": "backend/tests/regression/test_med_frame_identity_index.py ✓; backend/tests/regression/test_context_modifier_catalogue.py ✓; backend/tests/architecture/test_day_one_architecture_guardrails.py ✓; backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py ✓; backend/tests/regression/test_kb_util2_promote_pilot.py ✓ — all must continue to pass. No emitted reasoning changes from this sprint (all new tests are read-only governance assertions)."
     },
     {
-      "check": "2A — Source content cross-reference: top candidate ranking derivable from audit artefacts",
+      "check": "2B — No STOP conditions triggered by source content review",
       "result": "CONFIRMED",
-      "citation": "pass3_frame_coverage_audit_v1.yaml + medical_frame_identity_expansion_candidates_v1.yaml fully support objective ranking. Top 3 by criteria: (1) signal_alt_high — 3 Pass_3 frames, 3 legacy overrides, edge_case_loss_risk: high, blocked_pending_frame_adjudication (audit lines 459-475); (2) signal_crp_high — 2 Pass_3 frames, 3 legacy overrides, edge_case_loss_risk: high, CF-CRPPASS3-001 open (audit lines 513-529); (3) signal_ferritin_high — 3 Pass_3 frames, 2 legacy overrides, edge_case_loss_risk: high, blocked_pending_frame_adjudication (audit lines 530-547). Prompt line 167 names these as likely candidates; audit evidence corroborates."
-    },
-    {
-      "check": "2B — Behavioural scope — Intelligence Core interaction",
-      "result": "CONFIRMED",
-      "citation": "Sprint output is governance YAML and markdown audit only. runtime_consumed: false enforced by schema (schema line 30). Prompt runtime boundary at lines 372-386 explicitly prohibits SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, unit conversion, knowledge_bus/packages/*, knowledge_bus/current/latest_knowledge_status.json. No Intelligence Core interaction in this sprint."
-    },
-    {
-      "check": "2B — Behavioural hardening — regression targets confirmed",
-      "result": "CONFIRMED",
-      "citation": "backend/tests/regression/test_med_frame_identity_index.py ✓ — runs post-sprint to confirm new frames pass index validation; backend/tests/regression/test_context_modifier_catalogue.py ✓; backend/tests/architecture/test_day_one_architecture_guardrails.py ✓. All must pass before finish."
-    },
-    {
-      "check": "2B — Determinism risk — no unintended output drift possible from this sprint",
-      "result": "CONFIRMED",
-      "citation": "medical_frame_identity_index_v1.yaml:5 — runtime_consumed: false. Index is not consumed by any runtime component in this sprint. Future runtime consumption requires a separate governed sprint (prompt notes context_inputs_supported flags to remain false). No emitted reasoning changes from this sprint."
-    },
-    {
-      "check": "2B — Duplicate active activation_key guard",
-      "result": "CONFIRMED",
-      "citation": "validate_medical_frame_identity_index.py lines 190-197 enforces uniqueness of active activation_key across all frames. Cursor must not introduce a second runtime_authority_status: active frame sharing an activation_key with any existing frame. Pattern from creatinine index: use runtime_authority_status: inactive for frames sharing an activation_key, or promotion_state: deferred/compiled_not_promoted."
-    },
-    {
-      "check": "2B — STOP condition for Pass_3 frame entries without compiled package dirs",
-      "result": "ADVISORY — SURFACED",
-      "citation": "validate_medical_frame_identity_index.py lines 125-129: source_package_path directory existence checked for all frames where promotion_state != deferred. Pass_3 investigation spec IDs (e.g. inv_alt_high_hepatocellular_injury_pattern) are not yet compiled to standalone package directories. Cursor must: (a) set promotion_state: deferred for uncompiled Pass_3 frames, OR (b) set source_package_path to the parent s24/context package that does exist. Failure to handle this will cause validator FAIL on new frames."
+      "citation": "1. No runtime Pass_3 reads detected in existing runtime files. 2. governance artefacts correctly marked runtime_consumed: false (index:7, audit:2). 3. No duplicate active activation_keys found (validate_signal_library_uniqueness confirms). 4. Creatinine eGFR frame at index:44, potassium frame at index:70 — both present. 5. build_pass3_frame_coverage_audit.py imports only standard library (lines 9-13). 6. No sentinel identified that would require runtime behaviour changes."
     }
   ],
   "advisories": [
     {
       "advisory_id": "ADV-1",
-      "severity": "HIGH",
-      "title": "Validator source_package_path check will fail for uncompiled Pass_3 frames",
-      "detail": "validate_medical_frame_identity_index.py lines 125-129 checks directory existence for all non-deferred frames. Pass_3 investigation specs (inv_alt_high_*, inv_crp_high_*, inv_ferritin_*) are not compiled to standalone package directories. Cursor must set promotion_state: deferred for any frame referencing a non-existent package path, or set source_package_path to an existing package dir (e.g. pkg_s24_alt_high_hepatocellular_injury). This is a hard blocker for validation if mishandled."
+      "severity": "MEDIUM",
+      "title": "creatinine_multiframe_authority_decision_v1.yaml runtime_consumed status not verified",
+      "detail": "Guardrail 2 requires five listed governance artefacts to remain non-runtime. creatinine_multiframe_authority_decision_v1.yaml is referenced in the guardrail 2 intro text but is not in the explicit five-file list. Its runtime_consumed status was not read during hardening. Cursor should verify it is also runtime_consumed: false when inspecting it at Stage 4 before implementation."
     },
     {
       "advisory_id": "ADV-2",
-      "severity": "MEDIUM",
-      "title": "supersedes and superseded_by are prompt-required but not schema-required",
-      "detail": "knowledge_bus/schema/medical_frame_identity_index_schema_v1.yaml lines 37-53 frame_required_fields does not include supersedes or superseded_by. Validator skips them (validate_medical_frame_identity_index.py lines 95-96). However, prompt lines 212-213 require them. Cursor must include them in every frame entry as null where not applicable — purely authoring discipline, not a validator enforcement."
-    },
-    {
-      "advisory_id": "ADV-3",
       "severity": "LOW",
-      "title": "CF-GOVHELPER-001 is absent from carry-forward register and must be added",
-      "detail": "docs/sprints/launch_core_carry_forward_register.md ends at CF-PASS3FRAME-003 (line 59). CF-GOVHELPER-001 does not yet exist. Prompt lines 360-364 require Cursor to add it with the exact text specified in the prompt. Not adding it is a carry-forward register gap that will cause sprint completion criteria failure."
-    },
-    {
-      "advisory_id": "ADV-4",
-      "severity": "LOW",
-      "title": "CRP has two distinct signal families in the audit — Cursor must not conflate them",
-      "detail": "pass3_frame_coverage_audit_v1.yaml contains two CRP-related entries: signal_crp_high (pkg_s24_crp_high_inflammation, priority 3 in expansion candidates) and signal_systemic_inflammation (pkg_chronic_inflammation, priority 7). These are medically distinct per CF-ARCHLEG1-002 and CF-CHRONICINFL-001. If CRP is selected for indexing, only signal_crp_high should be expanded in this sprint (priority 3). signal_systemic_inflammation is priority 7 and remains a separate open carry-forward."
+      "title": "CF-PASS3FRAME-003 must remain Open — do not mark Resolved",
+      "detail": "docs/sprints/launch_core_carry_forward_register.md:59 — CF-PASS3FRAME-003 is Open. Prompt lines 345-350 state it 'may be updated to reference new sentinel coverage, but should remain open unless promotion pause logic is fully governed.' Cursor must not change status to Resolved."
     }
   ]
 }

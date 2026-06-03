@@ -1,41 +1,33 @@
 ---
-work_id: PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion
-branch: work/PASS3-FRAME-INDEX-2-high-risk-signal-family-index-expansion
+work_id: ARCH-SENTINEL-1_medical_intelligence_architecture_guardrails
+branch: work/ARCH-SENTINEL-1-medical-intelligence-architecture-guardrails
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# PASS3-FRAME-INDEX-2 — High-Risk Signal Family Index Expansion
+# ARCH-SENTINEL-1 — Medical Intelligence Architecture Guardrails
 
 ## Purpose
 
-Expand the governed medical frame identity index beyond creatinine, using the estate-wide frame coverage audit to identify the highest-risk signal families for frame collapse.
+Create sentinel tests and validation checks that protect the new HealthIQ medical-intelligence architecture from regression.
 
-This sprint must not let Cursor decide clinical truth.
-
-Cursor may propose the highest-risk families from audit evidence, but selection must be based on objective criteria from `PASS3-FRAME-COVERAGE-1`, not preference, convenience, or instinct.
-
-The goal is to prevent future package promotion from collapsing medically distinct frames into flat signals.
-
----
-
-## Strategic framing
-
-`PASS3-FRAME-COVERAGE-1` found that package promotion cannot safely continue as a naive ROUTE_A / ROUTE_C exercise.
-
-The key estate-level finding was:
+This sprint must ensure future work cannot quietly compromise the architecture by:
 
 ```text
-0 packages are safe for naive ROUTE_A promotion.
-Many packages require frame adjudication or Pass_3 enrichment before promotion.
+- reading raw Pass_3 files at runtime
+- treating draft/governance artefacts as runtime authority
+- collapsing multiple medical frames into one flat signal
+- introducing duplicate active activation keys
+- allowing frontend medical inference
+- bypassing frame-coverage safety gates during package promotion
+- retiring legacy edge-case logic without adjudication
+- using governance helper scripts to mutate runtime/package/frontend files
 ````
 
-The next architecture step is to expand the medical frame identity index for the highest-risk signal families, so future promotion work knows what frames must be preserved.
+This is a guardrail sprint, not a feature sprint.
 
-Creatinine was the pattern.
-
-This sprint applies that pattern to the wider estate.
+Do not change medical logic, runtime scoring, frontend behaviour, package activation, or user-facing output.
 
 ---
 
@@ -47,6 +39,7 @@ Expected prior completed work:
 
 ```text
 PASS3-FRAME-COVERAGE-1 merged
+PASS3-FRAME-INDEX-2 merged
 KB-UTIL-2-CREATININE-AUTHORITY-ADJUDICATION merged
 MED-FRAME-2 merged
 CONTEXT-MOD-1 merged
@@ -70,9 +63,10 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- PASS3-FRAME-COVERAGE-1 artefacts are missing
 - medical_frame_identity_index_v1.yaml is missing
-- medical_frame_identity_index validator is missing
+- context_modifier_catalogue_draft_v1.yaml is missing
+- pass3_frame_coverage_audit_v1.yaml is missing
+- governance helper README is missing
 ```
 
 ---
@@ -87,225 +81,205 @@ execution_model: TWO_PHASE_START_FINISH
 
 Reason:
 
-This sprint expands governed medical frame identity infrastructure. It must not change runtime behaviour, but it affects future medical-intelligence promotion authority.
+This sprint adds architecture-protection tooling/tests. It should not change runtime behaviour, but it protects medical-intelligence authority boundaries.
 
 ---
 
 ## Required inputs
 
-Read before work:
+Read before implementation:
 
 ```text
-docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md
-knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
-knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-knowledge_bus/schema/medical_frame_identity_index_schema_v1.yaml
-backend/scripts/validate_medical_frame_identity_index.py
+docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
+docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 docs/architecture/MED-FRAME-1_signal_family_contextual_frame_architecture.md
 docs/audit-papers/MED-FRAME-2_medical_frame_identity_index_report.md
+docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md
+docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md
+docs/audit-papers/PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion_report.md
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
+knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
+knowledge_bus/tools/README_governance_helpers.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Also inspect relevant packages and Pass_3 files for shortlisted families:
+Also inspect existing tests:
 
 ```text
-knowledge_bus/packages/**
-knowledge_bus/research/investigation_specs/multi_llm_research/**/*Pass_3*.json
-knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
+backend/scripts/validate_day_one_architecture.py
+backend/tests/architecture/test_day_one_architecture_guardrails.py
+backend/scripts/validate_medical_frame_identity_index.py
+backend/tests/regression/test_med_frame_identity_index.py
+backend/scripts/validate_context_modifier_catalogue.py
+backend/tests/regression/test_context_modifier_catalogue.py
+backend/tests/regression/test_kb_util2_pass3_pilot_compiler.py
+backend/tests/regression/test_kb_util2_promote_pilot.py
 ```
+
+If paths differ, locate and report actual paths.
 
 ---
 
-## High-risk family selection
+## Required guardrail areas
 
-Cursor must not choose families clinically.
+Create or extend sentinel coverage for the following.
 
-Cursor must rank candidate signal families using objective audit fields from `pass3_frame_coverage_audit_v1.yaml` and `medical_frame_identity_expansion_candidates_v1.yaml`.
+### 1. No raw Pass_3 runtime reads
 
-Ranking criteria:
-
-```text
-1. edge_case_loss_risk = high
-2. promotion_safety_status = blocked_pending_frame_adjudication
-3. promotion_safety_status = blocked_pending_pass3_enrichment
-4. multiple Pass_3 frames for the same primary biomarker
-5. legacy override/escalation logic exists
-6. clinically important system area
-7. risk of losing valid legacy context during promotion
-8. appears in PASS3-FRAME-COVERAGE-1 worked examples
-```
-
-Required first step:
+Runtime code must not read directly from:
 
 ```text
-Produce a ranked shortlist of the top candidate signal families before editing the frame index.
+knowledge_bus/research/investigation_specs/
+*_Pass_3.json
+*_pass_3.json
 ```
-
-The shortlist must include:
-
-```yaml
-signal_family_id:
-primary_biomarker_id:
-packages_involved:
-risk_evidence:
-edge_case_loss_risk:
-promotion_safety_status:
-pass3_frame_count:
-legacy_frame_summary:
-reason_for_selection:
-medical_review_required:
-```
-
-Cursor may proceed to index expansion only for the families that the prompt explicitly allows:
-
-```text
-Expand the index for the top 2–3 highest-risk families, based on audit evidence.
-```
-
-Likely candidates may include ALT, CRP and ferritin, but Cursor must verify this from the audit artefacts rather than assume.
-
----
-
-## Required scope
-
-Expand:
-
-```text
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-```
-
-for the selected high-risk families.
-
-Minimum expected expansion:
-
-```text
-- at least 2 signal families beyond creatinine
-- ideally no more than 3 signal families in this sprint
-```
-
-Do not attempt to index the entire 55-package estate.
-
----
-
-## Required frame entries
-
-For each selected signal family, create frame entries that preserve distinct medical contexts.
-
-Each frame must include all fields already required by the medical frame identity index schema, including:
-
-```yaml
-signal_family_id:
-primary_biomarker_id:
-medical_frame_id:
-frame_label:
-frame_role:
-research_spec_id:
-source_package_id:
-source_package_path:
-activation_key:
-signal_id:
-promotion_state:
-runtime_authority_status:
-clinical_adjudication_status:
-context_inputs_supported:
-  biomarker_evidence:
-  questionnaire_modifiers:
-  medication_modifiers:
-collision_group_id:
-collision_status:
-supersedes:
-superseded_by:
-notes:
-```
-
-Do not create duplicate active authority for the same activation key.
-
-Do not mark unadjudicated legacy frames as resolved.
-
-Do not mark draft/non-runtime entries as runtime active.
-
----
-
-## Required family decision logic
-
-For each selected family, document:
-
-```text
-- which package is currently runtime active, if any
-- which Pass_3 frames exist
-- which legacy frames exist
-- which frames overlap
-- which frames are distinct
-- which frames require medical review
-- which frames require Pass_3 enrichment
-- which frames are compiled_not_promoted or deferred
-- whether any collision exists
-```
-
----
-
-## Governance helper script policy
-
-`PASS3-FRAME-COVERAGE-1` created a read-only governance helper script outside the declared docs/governance scope.
-
-This sprint must handle governance helper scripts explicitly.
 
 Allowed:
 
 ```text
-- read-only helper scripts may be created or updated only if needed to generate or validate governance artefacts
-- helper scripts must not import runtime/evaluator/pipeline modules
-- helper scripts must not modify runtime/package/frontend files
-- helper scripts must write only declared governance outputs
+- governance tools
+- validators
+- compiler scripts
+- audit builders
+- tests
 ```
 
-Preferred location for new governance helper scripts:
+Forbidden:
+
+```text
+- SignalEvaluator
+- SignalRegistry
+- runtime loaders
+- report compiler
+- domain score assembler
+- frontend
+```
+
+### 2. Non-runtime governance artefacts remain non-runtime
+
+The following must not be runtime-consumed:
+
+```text
+medical_frame_identity_index_v1.yaml
+context_modifier_catalogue_draft_v1.yaml
+pass3_frame_coverage_audit_v1.yaml
+medical_frame_identity_expansion_candidates_v1.yaml
+creatinine_multiframe_authority_decision_v1.yaml
+```
+
+Sentinel checks must confirm they are not imported/read by runtime code.
+
+### 3. No duplicate active frame authority
+
+Existing medical frame identity validator already blocks duplicate active activation keys.
+
+This sprint must add a higher-level sentinel or regression check proving:
+
+```text
+- duplicate active activation_key remains forbidden
+- compiled_not_promoted collisions are allowed only when explicitly classified
+- runtime_active_legacy_unadjudicated frames remain clearly marked
+```
+
+### 4. No frontend medical inference
+
+Frontend must remain render-only.
+
+Sentinel tests should guard against frontend code importing or hardcoding medical intelligence sources, including:
+
+```text
+Pass_3
+medical frame index
+context modifier catalogue
+package signal libraries
+clinical thresholds
+diagnostic/escalation logic
+```
+
+If existing day-one guardrails already cover part of this, extend or document the coverage.
+
+### 5. Package promotion blocked by frame-coverage safety
+
+Future promotion work must not treat ROUTE_A as automatically safe.
+
+Add a sentinel check over:
+
+```text
+knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
+```
+
+that confirms any package with:
+
+```text
+promotion_safety_status:
+  - blocked_pending_frame_adjudication
+  - blocked_pending_pass3_enrichment
+  - blocked_pending_provenance_recovery
+```
+
+cannot be listed as safe for promotion without an explicit override/decision artefact.
+
+Do not implement actual promotion logic.
+
+This is a guardrail over governance state.
+
+### 6. Legacy edge-case logic must not be silently retired
+
+Sentinel must check that high-risk known legacy frames remain represented in governance.
+
+At minimum confirm:
+
+```text
+- creatinine s24 eGFR frame still exists in medical_frame_identity_index_v1.yaml
+- creatinine s24 potassium frame still exists in medical_frame_identity_index_v1.yaml
+- both remain unadjudicated / blocked pending medical review or enrichment
+```
+
+Do not adjudicate them.
+
+### 7. Governance helper script boundary
+
+Add a sentinel or test ensuring governance helper scripts under:
 
 ```text
 knowledge_bus/tools/
 ```
 
-Do not create new helper scripts under `backend/scripts/` unless justified by existing validator/tooling convention.
-
-If the existing helper script is reused, classify it in the report as:
+and any existing governance helper under:
 
 ```text
-read_only_governance_helper_non_runtime
+backend/scripts/build_pass3_frame_coverage_audit.py
 ```
 
-Do not change runtime code.
+do not import runtime/evaluator/frontend modules and do not write to runtime/package/frontend paths.
 
 ---
 
 ## Required artefacts
 
-Update:
-
-```text
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-```
-
-Create:
-
-```text
-docs/audit-papers/PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion_report.md
-```
-
 Create or update:
 
 ```text
-knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
+backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py
+docs/audit-papers/ARCH-SENTINEL-1_medical_intelligence_architecture_guardrails_report.md
 ```
 
-Optional, only if justified:
+Update if needed:
 
 ```text
-knowledge_bus/tools/build_medical_frame_identity_expansion.py
+backend/scripts/validate_day_one_architecture.py
+docs/sprints/launch_core_carry_forward_register.md
 ```
 
-If a helper script is created or moved, document why.
+Optional, only if useful and justified:
+
+```text
+backend/scripts/validate_medical_intelligence_architecture.py
+```
+
+If creating a new validator, keep it independent and non-runtime.
 
 ---
 
@@ -315,52 +289,20 @@ The report must include:
 
 ```text
 - executive verdict
-- artefacts inspected
-- ranked high-risk family shortlist
-- objective selection criteria used
-- selected families and rationale
-- frame entries added
-- collision checks
-- clinical adjudication statuses
-- Pass_3 enrichment needs
-- context modifier relevance
-- governance helper script disposition
+- files inspected
+- sentinel checks added
+- existing guardrails reused
+- raw Pass_3 runtime-read protection
+- non-runtime governance artefact protection
+- duplicate active authority protection
+- frontend render-only protection
+- promotion safety gate protection
+- legacy edge-case preservation checks
+- governance helper boundary checks
 - validation output pasted in full
 - carry-forward updates
-- remaining blockers
+- remaining limitations
 - recommended next sprint
-```
-
----
-
-## Carry-forward register
-
-Update:
-
-```text
-docs/sprints/launch_core_carry_forward_register.md
-```
-
-Expected handling:
-
-```text
-CF-PASS3FRAME-001
-Should be marked resolved only if the high-risk frame identity index expansion is completed for the selected families.
-
-CF-PASS3FRAME-002
-Remains open unless Pass_3 enrichment is actually completed, which is out of scope.
-
-CF-PASS3FRAME-003
-Remains open unless promotion pause list is fully converted into explicit next actions.
-
-CF-GOVHELPER-001
-Add or resolve depending on whether helper script policy/location is documented sufficiently.
-```
-
-If CF-GOVHELPER-001 does not yet exist, add it:
-
-```markdown
-| CF-GOVHELPER-001 | PASS3-FRAME-COVERAGE-1 | Governance helper script classification | PASS3-FRAME-COVERAGE-1 created a read-only helper script under backend/scripts to generate governance audit YAML. Future work packages must explicitly classify governance helper scripts, define allowed locations, and decide whether such scripts belong under backend/scripts or knowledge_bus/tools. | No | GOV-HELPER-1_governance_helper_script_policy |
 ```
 
 ---
@@ -375,7 +317,7 @@ SignalRegistry
 runtime loaders
 domain_score_assembler
 report_compiler
-frontend
+frontend behaviour
 SSOT
 scoring thresholds
 unit conversion
@@ -383,7 +325,34 @@ knowledge_bus/packages/*
 knowledge_bus/current/latest_knowledge_status.json
 ```
 
-If any runtime/package/frontend change appears necessary, STOP and report.
+Do not alter emitted analysis.
+
+If a sentinel requires runtime code changes to pass, STOP and report the architectural gap.
+
+---
+
+## Carry-forward handling
+
+Update:
+
+```text
+docs/sprints/launch_core_carry_forward_register.md
+```
+
+Expected handling:
+
+```text
+CF-PASS3FRAME-003
+May be updated to reference the new sentinel coverage, but should remain open unless promotion pause logic is fully governed.
+
+CF-GOVHELPER-001
+Should already be resolved. Confirm the new sentinel reinforces it.
+
+Possible new carry-forward:
+CF-SENTINEL-001 — integrate medical-intelligence sentinel checks into the standard Automation Bus / CI gate if not already wired.
+```
+
+Do not mark package promotion, Pass_3 enrichment, or context-modifier runtime binding as resolved.
 
 ---
 
@@ -396,38 +365,14 @@ python backend/scripts/validate_medical_frame_identity_index.py --index knowledg
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 python backend/scripts/validate_day_one_architecture.py
 python -m pytest backend/tests/architecture/test_day_one_architecture_guardrails.py -q
+python -m pytest backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py -q
 python -m pytest backend/tests/regression/test_med_frame_identity_index.py -q
 python -m pytest backend/tests/regression/test_context_modifier_catalogue.py -q
 ```
 
+If a new validator is created, run it too.
+
 Do not write only “see implementation evidence”.
-
----
-
-## Medical boundary
-
-Cursor must not decide clinical truth.
-
-Cursor may:
-
-```text
-- identify frame candidates from artefacts
-- classify existing package/research relationships
-- mark medical review required
-- mark Pass_3 enrichment required
-- preserve medically distinct frames
-```
-
-Cursor must not:
-
-```text
-- decide a legacy edge case is obsolete
-- retire packages
-- activate packages
-- invent new clinical thresholds
-- mark clinical divergence accepted unless already approved in governance
-- collapse multiple frames into one flat signal
-```
 
 ---
 
@@ -436,17 +381,16 @@ Cursor must not:
 Do not:
 
 ```text
-- enrich Pass_3 specs
-- create new package artefacts
 - promote packages
 - activate packages
-- retire packages
-- modify runtime package files
+- enrich Pass_3 specs
+- change runtime loaders
+- change evaluator logic
+- change frontend
+- modify package files
 - implement Layer B frame assembly
 - implement context modifier evaluation
-- change frontend
-- adjudicate medical truth
-- index all 55 packages
+- create the human-readable biomarker tree
 ```
 
 ---
@@ -456,12 +400,14 @@ Do not:
 STOP and report if:
 
 ```text
-1. candidate family ranking cannot be derived from audit artefacts
-2. selected family cannot be mapped to package and Pass_3 evidence
-3. frame entries would require clinical invention
-4. duplicate active activation keys would be introduced
-5. validators fail
-6. any runtime/package/frontend change appears necessary
+1. sentinel checks reveal runtime reads of raw Pass_3 files
+2. frontend currently imports medical-intelligence sources
+3. governance artefacts are already runtime-consumed
+4. duplicate active activation keys exist
+5. creatinine legacy eGFR/potassium frames are missing
+6. governance helper scripts write to runtime/package/frontend paths
+7. any required sentinel would need runtime behaviour changes
+8. validators fail
 ```
 
 ---
@@ -473,14 +419,13 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. files inspected
-3. ranked shortlist
-4. selected families and rationale
-5. frame entries added/updated
-6. helper script disposition
+3. sentinel tests added
+4. existing guardrails reused
+5. validation commands run
+6. actual validation output
 7. carry-forward updates
-8. validation commands run
-9. actual validation output
-10. confirmation no runtime/package/frontend changes
+8. confirmation no runtime/package/frontend changes
+9. confirmation no emitted reasoning changes
 ```
 
 ---
@@ -501,12 +446,12 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/PASS3-FRAME-INDEX-2-high-risk-signal-family-index-expansion
-- only in-scope docs/governance/schema/tooling files changed
+- current branch matches work/ARCH-SENTINEL-1-medical-intelligence-architecture-guardrails
+- only in-scope tests/scripts/docs/register files changed
 - no runtime package files changed
 - no frontend/runtime evaluator files changed
 - no ambiguous stash exists
-- validators pass
+- validators and sentinel tests pass
 ```
 
 ---
@@ -516,16 +461,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. high-risk family shortlist is derived from PASS3-FRAME-COVERAGE-1 evidence
-2. 2–3 high-risk signal families beyond creatinine are added to the medical frame identity index
-3. all new frames validate
-4. no duplicate active activation keys are introduced
-5. unadjudicated frames remain clearly marked
-6. context modifier relevance is noted but not wired
-7. helper script governance is addressed
-8. carry-forward register is updated
-9. no runtime/package/frontend changes occur
-10. actual validator outputs are pasted
+1. sentinel tests protect against raw Pass_3 runtime reads
+2. sentinel tests protect non-runtime governance artefacts from runtime consumption
+3. duplicate active frame authority remains protected
+4. frontend render-only boundary is protected
+5. promotion safety status is guarded
+6. creatinine legacy eGFR/potassium frames are protected from silent loss
+7. governance helper script boundaries are tested or documented
+8. no runtime/package/frontend behaviour changes occur
+9. actual validator output is pasted
+10. all tests pass
 ```
 
 ```
