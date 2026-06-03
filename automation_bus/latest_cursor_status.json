@@ -1,10 +1,9 @@
 {
-  "branch": "work/CI-ARCH-GATE-1-medical-intelligence-architecture-ci-gate",
+  "branch": "work/CI-ARCH-GATE-1A-architecture-gate-pythonpath-followup",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-03T19:26:16Z",
-  "cursor_started_utc": "2026-06-03T19:17:40Z",
-  "head_sha": "ce12574511bb94105efa1e1dca81f0dee4775173",
+  "cursor_started_utc": "2026-06-03T20:41:16Z",
+  "head_sha": "dfddfb8499ca32e044062700910edfa38335f646",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "CI-ARCH-GATE-1_medical_intelligence_architecture_ci_gate"
+  "status": "IN_PROGRESS",
+  "work_id": "CI-ARCH-GATE-1A_architecture_gate_pythonpath_followup"
 }
