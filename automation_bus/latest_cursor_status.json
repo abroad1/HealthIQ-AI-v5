@@ -1,9 +1,10 @@
 {
   "branch": "work/PASS3-FRAME-INDEX-3-next-high-risk-signal-family-expansion",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-03T21:22:14Z",
   "cursor_started_utc": "2026-06-03T21:19:58Z",
-  "head_sha": "85c734fffc49f680f4e7d29b1cb6bdc5176504c1",
+  "head_sha": "eab24f3c68c44a0b89c7ce202a72e0949b538dcf",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "PASS3-FRAME-INDEX-3_next_high_risk_signal_family_expansion"
 }
