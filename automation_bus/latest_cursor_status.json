@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-CLOSURE-1-final-batch2-promotion-decision",
+  "branch": "work/BATCH2-PROMOTE-1-cleared-wave-package-promotion",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-06T19:18:37Z",
-  "cursor_started_utc": "2026-06-06T19:14:50Z",
-  "head_sha": "e7b61b397225e9a5d736bb94b84a0fb2d6f83984",
+  "cursor_started_utc": "2026-06-06T20:04:42Z",
+  "head_sha": "eb7aa3a2e454e236d5e92702fd3867b760590a3e",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-CLOSURE-1_final_batch2_promotion_decision"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-PROMOTE-1_cleared_wave_package_promotion"
 }
