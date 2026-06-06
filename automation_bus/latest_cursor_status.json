@@ -1,10 +1,9 @@
 {
-  "branch": "work/PASS3-BATCH2-INGEST-1-batch2-pass3-research-asset-registration",
+  "branch": "work/PASS3-BATCH2-FRAME-INDEX-1-batch2-multiframe-identity-index-expansion",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-06T14:49:33Z",
-  "cursor_started_utc": "2026-06-06T14:42:47Z",
-  "head_sha": "b66d7db4c97300a78debccd6e8d75f0850eabab0",
+  "cursor_started_utc": "2026-06-06T15:19:00Z",
+  "head_sha": "e097dd15f8c7b82d9f743434c4a172793e1556af",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration"
+  "status": "IN_PROGRESS",
+  "work_id": "PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion"
 }
