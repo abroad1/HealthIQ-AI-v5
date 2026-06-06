@@ -1,0 +1,175 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: governance_promotion_execution_non_runtime
+work_id: BATCH2-PROMOTE-1_cleared_wave_package_promotion
+source_decision_register: knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml
+promotion_scope: BATCH2-CLOSURE-1 cleared subset (10 packages)
+included_package_count: 10
+excluded_package_count: 10
+runtime_activation_performed: false
+included_packages:
+- package_id: pkg_kb47_creatine_kinase_high_exertional_muscle_injury
+  package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_exertional_muscle_injury
+  spec_id: inv_creatine_kinase_high_exertional_muscle_injury
+  signal_id: signal_creatine_kinase_high
+  medical_frame_id: frame_creatine_kinase_pass3_exertional_muscle_injury
+  activation_key: signal_creatine_kinase_high::inv_creatine_kinase_high_exertional_muscle_injury
+  pre_promotion_state: compiled_not_promoted
+  post_promotion_state: governance_promoted_pending_runtime_activation
+  runtime_activation_changed: false
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  promoted: true
+  notes: Governance promotion only; no signal/threshold/medical logic changes.
+- package_id: pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+  package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+  spec_id: inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
+  signal_id: signal_creatine_kinase_high
+  medical_frame_id: frame_creatine_kinase_pass3_persistent_nonexertional_muscle_injury
+  activation_key: signal_creatine_kinase_high::inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
+  pre_promotion_state: compiled_not_promoted
+  post_promotion_state: governance_promoted_pending_runtime_activation
+  runtime_activation_changed: false
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  promoted: true
+  notes: Governance promotion only; no signal/threshold/medical logic changes.
+- package_id: pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
+  package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
+  spec_id: inv_eosinophil_pct_high_reactive_atopic_eosinophilia
+  signal_id: signal_eosinophil_pct_high
+  medical_frame_id: frame_eosinophil_pct_pass3_reactive_atopic
+  activation_key: signal_eosinophil_pct_high::inv_eosinophil_pct_high_reactive_atopic_eosinophilia
+  pre_promotion_state: compiled_not_promoted
+  post_promotion_state: governance_promoted_pending_runtime_activation
+  runtime_activation_changed: false
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  promoted: true
+  notes: Governance promotion only; no signal/threshold/medical logic changes.
+- package_id: pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+  package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+  spec_id: inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+  signal_id: signal_eosinophil_pct_high
+  medical_frame_id: frame_eosinophil_pct_pass3_secondary_systemic
+  activation_key: signal_eosinophil_pct_high::inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+  pre_promotion_state: compiled_not_promoted
+  post_promotion_state: governance_promoted_pending_runtime_activation
+  runtime_activation_changed: false
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  promoted: true
+  notes: Governance promotion only; no signal/threshold/medical logic changes.
+- package_id: pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+  package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+  spec_id: inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+  signal_id: signal_eosinophils_abs_high
+  medical_frame_id: frame_eosinophils_abs_pass3_hypereosinophilic_secondary
+  activation_key: signal_eosinophils_abs_high::inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+  pre_promotion_state: compiled_not_promoted
+  post_promotion_state: governance_promoted_pending_runtime_activation
+  runtime_activation_changed: false
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  promoted: true
+  notes: Governance promotion only; no signal/threshold/medical logic changes.
+- package_id: pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+  package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+  spec_id: inv_eosinophils_abs_high_reactive_eosinophilic_inflammation
+  signal_id: signal_eosinophils_abs_high
+  medical_frame_id: frame_eosinophils_abs_pass3_reactive_inflammation
+  activation_key: signal_eosinophils_abs_high::inv_eosinophils_abs_high_reactive_eosinophilic_inflammation
+  pre_promotion_state: compiled_not_promoted
+  post_promotion_state: governance_promoted_pending_runtime_activation
+  runtime_activation_changed: false
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  promoted: true
+  notes: Governance promotion only; no signal/threshold/medical logic changes.
+- package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
+  signal_id: signal_free_t3_high
+  medical_frame_id: frame_batch2_free_t3_high_t3_predominant_thyrotoxicosis
+  activation_key: signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis
+  pre_promotion_state: compiled_not_promoted
+  post_promotion_state: governance_promoted_pending_runtime_activation
+  runtime_activation_changed: false
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  promoted: true
+  notes: Governance promotion only; no signal/threshold/medical logic changes.
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
+  spec_id: inv_free_t3_low_low_t3_syndrome
+  signal_id: signal_free_t3_low
+  medical_frame_id: frame_batch2_free_t3_low_low_t3_syndrome
+  activation_key: signal_free_t3_low::inv_free_t3_low_low_t3_syndrome
+  pre_promotion_state: compiled_not_promoted
+  post_promotion_state: governance_promoted_pending_runtime_activation
+  runtime_activation_changed: false
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  promoted: true
+  notes: Governance promotion only; no signal/threshold/medical logic changes.
+- package_id: pkg_kb47_free_t4_high_thyrotoxicosis_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context
+  spec_id: inv_free_t4_high_thyrotoxicosis_context
+  signal_id: signal_free_t4_high
+  medical_frame_id: frame_batch2_free_t4_high_thyrotoxicosis_context
+  activation_key: signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context
+  pre_promotion_state: compiled_not_promoted
+  post_promotion_state: governance_promoted_pending_runtime_activation
+  runtime_activation_changed: false
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  promoted: true
+  notes: Governance promotion only; no signal/threshold/medical logic changes.
+- package_id: pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  package_path: knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  spec_id: inv_free_t4_low_thyroid_hormone_deficiency
+  signal_id: signal_free_t4_low
+  medical_frame_id: frame_batch2_free_t4_low_thyroid_hormone_deficiency
+  activation_key: signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency
+  pre_promotion_state: compiled_not_promoted
+  post_promotion_state: governance_promoted_pending_runtime_activation
+  runtime_activation_changed: false
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  promoted: true
+  notes: Governance promotion only; no signal/threshold/medical logic changes.
+excluded_packages:
+- package_id: pkg_kb47_dhea_high_androgen_excess_context
+  exclusion_reason: Androgen clinical sign-off not complete (CF-BATCH2-010)
+- package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  exclusion_reason: Androgen clinical sign-off not complete (CF-BATCH2-010)
+- package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  exclusion_reason: Creatinine/eGFR multi-frame adjudication unresolved (CF-BATCH2-007)
+- package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  exclusion_reason: Creatinine/eGFR multi-frame adjudication unresolved (CF-BATCH2-007)
+- package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  exclusion_reason: Androgen clinical sign-off not complete (CF-BATCH2-010); runtime
+    Layer B context evaluation pending (CF-CONTEXT-MOD-3)
+- package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  exclusion_reason: Androgen clinical sign-off not complete (CF-BATCH2-010); runtime
+    Layer B context evaluation pending (CF-CONTEXT-MOD-3)
+- package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  exclusion_reason: Androgen clinical sign-off not complete (CF-BATCH2-010)
+- package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  exclusion_reason: Androgen clinical sign-off not complete (CF-BATCH2-010)
+- package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  exclusion_reason: Androgen clinical sign-off not complete (CF-BATCH2-010); runtime
+    Layer B context evaluation pending (CF-CONTEXT-MOD-3)
+- package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  exclusion_reason: Androgen clinical sign-off not complete (CF-BATCH2-010); runtime
+    Layer B context evaluation pending (CF-CONTEXT-MOD-3)

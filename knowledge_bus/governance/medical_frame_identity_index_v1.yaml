@@ -980,7 +980,7 @@ signal_families:
     primary_biomarker_id: creatine_kinase
     medical_frame_id: frame_creatine_kinase_pass3_exertional_muscle_injury
     frame_label: Exertional muscle injury (Pass 3 kb47)
-    frame_role: pass3_frame_not_compiled
+    frame_role: pass3_frame_governance_promoted
     research_spec_id: inv_creatine_kinase_high_exertional_muscle_injury
     source_package_id: pkg_kb47_creatine_kinase_high_exertional_muscle_injury
     source_package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_exertional_muscle_injury
@@ -997,16 +997,15 @@ signal_families:
     collision_status: none
     supersedes: null
     superseded_by: null
-    notes: 'PASS3-BATCH2-FRAME-INDEX-1: Batch_2_Pass_3 canonical spec; pkg_kb47 compiled
-      but not runtime-promoted. Manifest cites Rev1 (CF-BATCH2-002); promotion blocked
-      until adjudication.
-
-      '
+    notes: "PASS3-BATCH2-FRAME-INDEX-1: Batch_2_Pass_3 canonical spec; pkg_kb47 compiled\
+      \ but not runtime-promoted. Manifest cites Rev1 (CF-BATCH2-002); promotion blocked\
+      \ until adjudication.\n          BATCH2-PROMOTE-1: governance promotion recorded;\
+      \ promotion_state remains compiled_not_promoted; runtime_authority_status inactive."
   - signal_family_id: signal_creatine_kinase_high
     primary_biomarker_id: creatine_kinase
     medical_frame_id: frame_creatine_kinase_pass3_persistent_nonexertional_muscle_injury
     frame_label: Persistent non-exertional muscle injury (Pass 3 kb47)
-    frame_role: pass3_frame_not_compiled
+    frame_role: pass3_frame_governance_promoted
     research_spec_id: inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
     source_package_id: pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
     source_package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
@@ -1023,10 +1022,10 @@ signal_families:
     collision_status: none
     supersedes: null
     superseded_by: null
-    notes: 'PASS3-BATCH2-FRAME-INDEX-1: Medically distinct from exertional frame;
-      must not collapse transient exertional CK release into chronic myopathic interpretation.
-
-      '
+    notes: "PASS3-BATCH2-FRAME-INDEX-1: Medically distinct from exertional frame;\
+      \ must not collapse transient exertional CK release into chronic myopathic interpretation.\n\
+      \          BATCH2-PROMOTE-1: governance promotion recorded; promotion_state\
+      \ remains compiled_not_promoted; runtime_authority_status inactive."
 - signal_family_id: signal_egfr_low
   primary_biomarker_id: egfr
   system: renal
@@ -1090,7 +1089,7 @@ signal_families:
     primary_biomarker_id: eosinophil_pct
     medical_frame_id: frame_eosinophil_pct_pass3_reactive_atopic
     frame_label: Reactive atopic eosinophilia (Pass 3 kb47)
-    frame_role: pass3_frame_not_compiled
+    frame_role: pass3_frame_governance_promoted
     research_spec_id: inv_eosinophil_pct_high_reactive_atopic_eosinophilia
     source_package_id: pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
     source_package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
@@ -1107,15 +1106,14 @@ signal_families:
     collision_status: none
     supersedes: null
     superseded_by: null
-    notes: 'PASS3-BATCH2-FRAME-INDEX-1: Percent eosinophil frame; distinct from absolute
-      count family.
-
-      '
+    notes: "PASS3-BATCH2-FRAME-INDEX-1: Percent eosinophil frame; distinct from absolute\
+      \ count family.\n          BATCH2-PROMOTE-1: governance promotion recorded;\
+      \ promotion_state remains compiled_not_promoted; runtime_authority_status inactive."
   - signal_family_id: signal_eosinophil_pct_high
     primary_biomarker_id: eosinophil_pct
     medical_frame_id: frame_eosinophil_pct_pass3_secondary_systemic
     frame_label: Secondary or systemic eosinophilia (Pass 3 kb47)
-    frame_role: pass3_frame_not_compiled
+    frame_role: pass3_frame_governance_promoted
     research_spec_id: inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia
     source_package_id: pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
     source_package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
@@ -1132,10 +1130,10 @@ signal_families:
     collision_status: none
     supersedes: null
     superseded_by: null
-    notes: 'PASS3-BATCH2-FRAME-INDEX-1: Systemic/secondary frame; must not collapse
-      into atopic-only pattern.
-
-      '
+    notes: "PASS3-BATCH2-FRAME-INDEX-1: Systemic/secondary frame; must not collapse\
+      \ into atopic-only pattern.\n          BATCH2-PROMOTE-1: governance promotion\
+      \ recorded; promotion_state remains compiled_not_promoted; runtime_authority_status\
+      \ inactive."
 - signal_family_id: signal_eosinophils_abs_high
   primary_biomarker_id: eosinophils_abs
   system: hematologic
@@ -1144,7 +1142,7 @@ signal_families:
     primary_biomarker_id: eosinophils_abs
     medical_frame_id: frame_eosinophils_abs_pass3_reactive_inflammation
     frame_label: Reactive eosinophilic inflammation (Pass 3 kb47)
-    frame_role: pass3_frame_not_compiled
+    frame_role: pass3_frame_governance_promoted
     research_spec_id: inv_eosinophils_abs_high_reactive_eosinophilic_inflammation
     source_package_id: pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
     source_package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
@@ -1161,15 +1159,15 @@ signal_families:
     collision_status: none
     supersedes: null
     superseded_by: null
-    notes: 'PASS3-BATCH2-FRAME-INDEX-1: Absolute eosinophil count family; distinct
-      biomarker from eosinophil_pct_high despite shared hematologic domain.
-
-      '
+    notes: "PASS3-BATCH2-FRAME-INDEX-1: Absolute eosinophil count family; distinct\
+      \ biomarker from eosinophil_pct_high despite shared hematologic domain.\n  \
+      \        BATCH2-PROMOTE-1: governance promotion recorded; promotion_state remains\
+      \ compiled_not_promoted; runtime_authority_status inactive."
   - signal_family_id: signal_eosinophils_abs_high
     primary_biomarker_id: eosinophils_abs
     medical_frame_id: frame_eosinophils_abs_pass3_hypereosinophilic_secondary
     frame_label: Hypereosinophilic or secondary eosinophilia (Pass 3 kb47)
-    frame_role: pass3_frame_not_compiled
+    frame_role: pass3_frame_governance_promoted
     research_spec_id: inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
     source_package_id: pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
     source_package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
@@ -1186,10 +1184,10 @@ signal_families:
     collision_status: none
     supersedes: null
     superseded_by: null
-    notes: 'PASS3-BATCH2-FRAME-INDEX-1: Hypereosinophilic/secondary frame; ROUTE_C
-      preserved; promotion blocked until provenance realignment (CF-BATCH2-002).
-
-      '
+    notes: "PASS3-BATCH2-FRAME-INDEX-1: Hypereosinophilic/secondary frame; ROUTE_C\
+      \ preserved; promotion blocked until provenance realignment (CF-BATCH2-002).\n\
+      \          BATCH2-PROMOTE-1: governance promotion recorded; promotion_state\
+      \ remains compiled_not_promoted; runtime_authority_status inactive."
 - signal_family_id: signal_dhea_high
   primary_biomarker_id: dhea
   system: hormonal
@@ -1318,7 +1316,7 @@ signal_families:
     primary_biomarker_id: free_t3
     medical_frame_id: frame_batch2_free_t3_high_t3_predominant_thyrotoxicosis
     frame_label: T3-predominant thyrotoxicosis (Pass 3 kb47)
-    frame_role: pass3_frame_not_compiled
+    frame_role: pass3_frame_governance_promoted
     research_spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
     source_package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
     source_package_path: knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
@@ -1335,10 +1333,10 @@ signal_families:
     collision_status: none
     supersedes: null
     superseded_by: null
-    notes: 'PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication
-      required before activation. Provenance canonical. Not runtime-active.
-
-      '
+    notes: "PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication\
+      \ required before activation. Provenance canonical. Not runtime-active.\n  \
+      \        BATCH2-PROMOTE-1: governance promotion recorded; promotion_state remains\
+      \ compiled_not_promoted; runtime_authority_status inactive."
 - signal_family_id: signal_free_t3_low
   primary_biomarker_id: free_t3
   system: hormonal
@@ -1347,7 +1345,7 @@ signal_families:
     primary_biomarker_id: free_t3
     medical_frame_id: frame_batch2_free_t3_low_low_t3_syndrome
     frame_label: Low T3 syndrome (Pass 3 kb47)
-    frame_role: pass3_frame_not_compiled
+    frame_role: pass3_frame_governance_promoted
     research_spec_id: inv_free_t3_low_low_t3_syndrome
     source_package_id: pkg_kb47_free_t3_low_low_t3_syndrome
     source_package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
@@ -1364,10 +1362,10 @@ signal_families:
     collision_status: none
     supersedes: null
     superseded_by: null
-    notes: 'PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication
-      required before activation. Provenance canonical. Not runtime-active.
-
-      '
+    notes: "PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication\
+      \ required before activation. Provenance canonical. Not runtime-active.\n  \
+      \        BATCH2-PROMOTE-1: governance promotion recorded; promotion_state remains\
+      \ compiled_not_promoted; runtime_authority_status inactive."
 - signal_family_id: signal_free_t4_high
   primary_biomarker_id: free_t4
   system: hormonal
@@ -1376,7 +1374,7 @@ signal_families:
     primary_biomarker_id: free_t4
     medical_frame_id: frame_batch2_free_t4_high_thyrotoxicosis_context
     frame_label: Thyrotoxicosis context (Pass 3 kb47)
-    frame_role: pass3_frame_not_compiled
+    frame_role: pass3_frame_governance_promoted
     research_spec_id: inv_free_t4_high_thyrotoxicosis_context
     source_package_id: pkg_kb47_free_t4_high_thyrotoxicosis_context
     source_package_path: knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context
@@ -1393,10 +1391,10 @@ signal_families:
     collision_status: none
     supersedes: null
     superseded_by: null
-    notes: 'PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication
-      required before activation. Provenance canonical. Not runtime-active.
-
-      '
+    notes: "PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication\
+      \ required before activation. Provenance canonical. Not runtime-active.\n  \
+      \        BATCH2-PROMOTE-1: governance promotion recorded; promotion_state remains\
+      \ compiled_not_promoted; runtime_authority_status inactive."
 - signal_family_id: signal_free_t4_low
   primary_biomarker_id: free_t4
   system: hormonal
@@ -1405,7 +1403,7 @@ signal_families:
     primary_biomarker_id: free_t4
     medical_frame_id: frame_batch2_free_t4_low_thyroid_hormone_deficiency
     frame_label: Thyroid hormone deficiency (Pass 3 kb47)
-    frame_role: pass3_frame_not_compiled
+    frame_role: pass3_frame_governance_promoted
     research_spec_id: inv_free_t4_low_thyroid_hormone_deficiency
     source_package_id: pkg_kb47_free_t4_low_thyroid_hormone_deficiency
     source_package_path: knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency
@@ -1422,10 +1420,10 @@ signal_families:
     collision_status: none
     supersedes: null
     superseded_by: null
-    notes: 'PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication
-      required before activation. Provenance canonical. Not runtime-active.
-
-      '
+    notes: "PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication\
+      \ required before activation. Provenance canonical. Not runtime-active.\n  \
+      \        BATCH2-PROMOTE-1: governance promotion recorded; promotion_state remains\
+      \ compiled_not_promoted; runtime_authority_status inactive."
 - signal_family_id: signal_free_testosterone_high
   primary_biomarker_id: free_testosterone
   system: hormonal
