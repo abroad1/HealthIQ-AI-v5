@@ -1,19 +1,19 @@
 {
-  "work_id": "PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion",
+  "work_id": "PASS3-BATCH2-PROVENANCE-1_kb47_manifest_canonical_source_realign",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-06T00:00:00Z",
+  "hardened_utc": "2026-06-06T10:00:00Z",
   "hardened_by": "claude-code",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: PASS3-BATCH2-PROVENANCE-1_kb47_manifest_canonical_source_realign"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/PASS3-BATCH2-FRAME-INDEX-1-batch2-multiframe-identity-index-expansion"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/PASS3-BATCH2-PROVENANCE-1-kb47-manifest-canonical-source-realign"
     },
     {
       "check": "Front Matter — risk_level",
@@ -28,117 +28,107 @@
     {
       "check": "Front Matter — change_type",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: CONTENT"
     },
     {
-      "check": "Front Matter — risk classification correct",
+      "check": "Front Matter — risk classification assessment",
+      "result": "CONFIRMED — conservative but not incorrect",
+      "citation": "source_document in package_manifest.yaml is not runtime-consumed (KB-S49 estate confirms SignalRegistry loads only signal_library.yaml). STANDARD would be technically accurate; HIGH is GPT-declared, conservative, and not a blocker. change_type: CONTENT is accurate — no runtime behaviour change possible from this metadata field update."
+    },
+    {
+      "check": "Authority path — Batch_2_Pass_3.json (canonical target)",
       "result": "CONFIRMED",
-      "citation": "MIXED change_type (governed YAML consumed by Intelligence Core activation pathway) + governed frame infrastructure that gates future package activation. HIGH is correct per SOP §10."
+      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json — file exists; 20 specs confirmed via PowerShell extraction. All 20 spec_ids present and match pkg_kb47_* package suffixes exactly."
+    },
+    {
+      "check": "Authority path — Batch_2_Pass_3_Rev1.json (archived source currently cited)",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/archived_ingested_batches/Batch_2_Pass_3_Rev1.json — file exists at archived path. This is the path currently cited in all 20 pkg_kb47_* manifests as source_document."
     },
     {
       "check": "Authority path — pass3_batch2_research_asset_register_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml line 1: schema_version: 1.0.0, line 5: work_id: PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration, line 7: source_batch: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json"
-    },
-    {
-      "check": "Authority path — Batch_2_Pass_3.json",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json — file exists; 20 specs; schema v3.0.0. Verified via Python extraction: all 8 target-family specs present with valid signal_id, trigger_direction, and primary_marker.biomarker_id (CRITICAL: top-level primary_biomarker_id field is null in v3.0.0 schema; biomarker ID is at primary_marker.biomarker_id)"
-    },
-    {
-      "check": "Authority path — medical_frame_identity_index_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml line 1: schema_version: 1.0.0, line 3: work_id: MED-FRAME-2_medical_frame_identity_index. File contains 7 existing signal families (creatinine_high, alt_high, crp_high, ferritin_high, apob_atherogenic, ferritin_low, hba1c_high, hyperbilirubinemia). Zero entries for creatine_kinase, egfr, eosinophil_pct, eosinophils_abs."
-    },
-    {
-      "check": "Authority path — medical_frame_identity_expansion_candidates_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml — file exists; Glob confirmed"
-    },
-    {
-      "check": "Authority path — context_modifier_catalogue_draft_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml — file exists; grep confirms creatine_kinase appears at lines 103 and 516 as biomarker_ids[] entries in existing modifier definitions. No egfr, eosinophil_pct, or eosinophils_abs entries found. See Advisory below."
-    },
-    {
-      "check": "Authority path — pass3_frame_coverage_audit_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml — file exists; Glob confirmed"
+      "citation": "knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml — file exists (Glob confirmed)."
     },
     {
       "check": "Authority path — PASS3-BATCH2-INGEST-1 audit report",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration_report.md — file exists; Glob confirmed. Prior task artefact present."
+      "citation": "docs/audit-papers/PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration_report.md — file exists; independently read this session."
     },
     {
-      "check": "Authority path — biomarker_medical_frame_tree.md",
+      "check": "Authority path — PASS3-BATCH2-FRAME-INDEX-1 audit report",
       "result": "CONFIRMED",
-      "citation": "docs/architecture/biomarker_medical_frame_tree.md — file exists; Glob confirmed. Must be regenerated via script (not manually edited) after index update."
+      "citation": "docs/audit-papers/PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion_report.md — file exists (Glob confirmed)."
+    },
+    {
+      "check": "Authority path — medical_frame_identity_index_v1.yaml",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml — file exists (Glob confirmed)."
     },
     {
       "check": "Authority path — launch_core_carry_forward_register.md",
       "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md line 64: CF-BATCH2-001 open, scope confirmed as 4 ROUTE_C multi-frame families (creatine_kinase, egfr, eosinophil_pct, eosinophils_abs). CF-BATCH2-002 and CF-BATCH2-003 remain open and out of scope for this sprint."
+      "citation": "docs/sprints/launch_core_carry_forward_register.md line 65: CF-BATCH2-002 status Open, item: 'Realign pkg_kb47_* manifest provenance to canonical Batch_2_Pass_3.json'. Directly confirms this sprint's purpose."
     },
     {
-      "check": "Authority path — all 5 validation scripts",
+      "check": "Authority path — validate_knowledge_package.py",
       "result": "CONFIRMED",
-      "citation": "All five scripts confirmed present: backend/scripts/validate_medical_frame_identity_index.py, backend/scripts/validate_context_modifier_catalogue.py, backend/scripts/run_architecture_validation_gate.py, knowledge_bus/tools/build_biomarker_medical_frame_tree.py, backend/tests/regression/test_biomarker_medical_frame_tree_generation.py"
+      "citation": "backend/scripts/validate_knowledge_package.py — file exists (Glob confirmed)."
     },
     {
-      "check": "Source Cross-Ref — 8 target specs in Batch 2 JSON",
+      "check": "Authority path — run_architecture_validation_gate.py",
       "result": "CONFIRMED",
-      "citation": "Python extraction from Batch_2_Pass_3.json: creatine_kinase (2 specs: inv_creatine_kinase_high_exertional_muscle_injury, inv_creatine_kinase_high_persistent_nonexertional_muscle_injury); egfr (2 specs: inv_egfr_low_chronic_kidney_function_reduction, inv_egfr_low_hemodynamic_filtration_drop); eosinophil_pct (2 specs: inv_eosinophil_pct_high_reactive_atopic_eosinophilia, inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia); eosinophils_abs (2 specs: inv_eosinophils_abs_high_reactive_eosinophilic_inflammation, inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia)"
+      "citation": "backend/scripts/run_architecture_validation_gate.py — file exists (Glob confirmed)."
     },
     {
-      "check": "Source Cross-Ref — register spec_classifications match JSON",
+      "check": "Source Cross-Ref — pkg_kb47 package count",
       "result": "CONFIRMED",
-      "citation": "pass3_batch2_research_asset_register_v1.yaml lines 119-271: all 8 target-family spec_ids present with schema_valid: true, already_indexed_in_medical_frame_index: false, kb47_package_id populated"
+      "citation": "PowerShell directory listing of knowledge_bus/packages/ confirms exactly 20 pkg_kb47_* directories. Names: pkg_kb47_creatine_kinase_high_exertional_muscle_injury, pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury, pkg_kb47_dhea_high_androgen_excess_context, pkg_kb47_dhea_low_adrenal_androgen_reduction, pkg_kb47_egfr_low_chronic_kidney_function_reduction, pkg_kb47_egfr_low_hemodynamic_filtration_drop, pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia, pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation, pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia, pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia, pkg_kb47_fai_high_biochemical_hyperandrogenism, pkg_kb47_fai_low_reduced_free_androgen_availability, pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis, pkg_kb47_free_t3_low_low_t3_syndrome, pkg_kb47_free_t4_high_thyrotoxicosis_context, pkg_kb47_free_t4_low_thyroid_hormone_deficiency, pkg_kb47_free_testosterone_high_androgen_excess_context, pkg_kb47_free_testosterone_low_androgen_deficiency_context, pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction, pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction."
     },
     {
-      "check": "Source Cross-Ref — pkg_kb47 packages exist on disk",
+      "check": "Source Cross-Ref — current source_document value in manifests (CONTENT READ)",
       "result": "CONFIRMED",
-      "citation": "find command confirmed all 8 target-family pkg_kb47 directories present at knowledge_bus/packages/: pkg_kb47_creatine_kinase_high_exertional_muscle_injury, pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury, pkg_kb47_egfr_low_chronic_kidney_function_reduction, pkg_kb47_egfr_low_hemodynamic_filtration_drop, pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia, pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia, pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation, pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia"
+      "citation": "knowledge_bus/packages/pkg_kb47_creatine_kinase_high_exertional_muscle_injury/package_manifest.yaml line 10: source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json. Also confirmed in knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/package_manifest.yaml line 10: same value. Both manifests have no hash fields. Pattern is consistent across the estate per INGEST-1 report independently re-read this session."
     },
     {
-      "check": "Source Cross-Ref — pkg_kb47 provenance mismatch",
+      "check": "Source Cross-Ref — 1:1 spec_id to package mapping (CONTENT READ)",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_kb47_creatine_kinase_high_exertional_muscle_injury/package_manifest.yaml line 10: source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json. Manifest cites archived Rev1, not canonical Batch_2_Pass_3.json. This applies to all pkg_kb47 packages per pass3_batch2_research_asset_register_v1.yaml line 31-33. Provenance realignment is CF-BATCH2-002 (out of scope)."
+      "citation": "PowerShell extraction from Batch_2_Pass_3.json confirms 20 spec_ids. All map 1:1 to pkg_kb47_* packages via pattern pkg_kb47_<suffix> -> inv_<suffix>. All 20 packages have a corresponding canonical spec. No unmappable package exists. No ambiguous case exists."
     },
     {
-      "check": "Source Cross-Ref — no duplicate active activation keys",
+      "check": "Source Cross-Ref — no hash fields in manifests",
       "result": "CONFIRMED",
-      "citation": "grep on medical_frame_identity_index_v1.yaml for creatine_kinase, signal_egfr, eosinophil_pct, eosinophils_abs returned zero matches. No activation key collision risk for any of the 8 new frames."
+      "citation": "package_manifest.yaml for pkg_kb47_creatine_kinase_high_exertional_muscle_injury (13 lines total) and pkg_kb47_egfr_low_chronic_kidney_function_reduction (13 lines total) — neither contains a hash, checksum, or source_hash field. Prompt source hash handling section directs: record that provenance path was realigned without hash update. No hash convention to preserve or invent."
     },
     {
-      "check": "Source Cross-Ref — eGFR legacy boundary",
+      "check": "Source Cross-Ref — source_document is NOT runtime-consumed",
       "result": "CONFIRMED",
-      "citation": "medical_frame_identity_index_v1.yaml line 44: frame_creatinine_legacy_s24_egfr_escalation is indexed under signal_family_id signal_creatinine_high. The egfr biomarker appears only as frame_role context, not as a primary indexed signal family. New signal_egfr_low entries are distinct and will not duplicate this entry."
+      "citation": "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 19-24: runtime_consumers SignalRegistry behaviour 'Iterates knowledge_bus/packages/*/signal_library.yaml (sorted), excludes pkg_example only. estate_tier_distinction_in_runtime: none_observed'. The package_manifest.yaml source_document field is governance metadata only. Updating it carries zero risk of runtime behaviour change."
     },
     {
-      "check": "Prior Task Findings — PASS3-BATCH2-INGEST-1 artefact verified",
+      "check": "Prior Task Findings — INGEST-1 artefact independently verified (not inherited from memory)",
       "result": "CONFIRMED INDEPENDENT RE-VERIFICATION",
-      "citation": "pass3_batch2_research_asset_register_v1.yaml line 4: status: governance_audit_non_runtime, line 23: validation_pass_count: 20, line 24: validation_fail_count: 0. Prior sprint artefact independently re-read this session; findings not inherited from memory."
+      "citation": "docs/audit-papers/PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration_report.md read in full this session. Key finding line 11: '20 pkg_kb47_* packages already exist on disk (KB-S47 lineage) but cite archived Batch_2_Pass_3_Rev1.json — provenance realignment is a follow-up'. CF-BATCH2-002 registered in carry-forward register line 65 as Open."
     },
     {
-      "check": "ADVISORY — creatine_kinase in context_modifier_catalogue",
-      "result": "ADVISORY — not a blocker",
-      "citation": "context_modifier_catalogue_draft_v1.yaml lines 103 and 516: creatine_kinase appears as biomarker_ids[] entry in two existing modifier definitions. These are biomarker-level modifier references, not frame-identity conflicts. Cursor must include this in preflight report item 10 (whether context modifiers already reference these families/frames)."
-    },
-    {
-      "check": "CRITICAL NOTE — JSON schema primary_biomarker_id field",
-      "result": "SURFACED — mandatory constraint for Cursor",
-      "citation": "Batch_2_Pass_3.json spec structure uses primary_marker.biomarker_id (e.g. creatine_kinase, egfr, eosinophil_pct, eosinophils_abs). The top-level primary_biomarker_id field is null in all specs (v3.0.0 schema). Cursor must read primary_marker.biomarker_id when populating primary_biomarker_id in the index. Misreading this field would produce null entries and fail validation."
+      "check": "STOP conditions — all 6 checked",
+      "result": "NO BLOCKERS",
+      "citation": "(1) All 20 pkg_kb47 packages confirmed mappable to Batch_2_Pass_3.json — 1:1 by spec_id suffix. (2) manifest field source_document is unambiguous — single string field, clear canonical target. (3) validate_knowledge_package.py and run_architecture_validation_gate.py both confirmed present. (4) architecture gate script confirmed present. (5) No runtime/package logic/frontend change is necessary — source_document is metadata-only. (6) No hash convention exists in manifests — no hash update needed; document absence per prompt guidance."
     },
     {
       "check": "Forbidden files — runtime boundary",
       "result": "CONFIRMED NOT IN SCOPE",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 349-364: explicitly prohibits SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, unit conversion, knowledge_bus/packages/*, knowledge_bus/current/latest_knowledge_status.json"
+      "citation": "automation_bus/latest_cursor_prompt.md lines 164-176: do not edit signal_library.yaml, research_brief.yaml, thresholds, activation logic, override rules, signal_id, activation_key, runtime status. Lines 319-328: do not modify SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, unit conversion, knowledge_bus/current/latest_knowledge_status.json."
+    },
+    {
+      "check": "Behavioural scope (2B not applicable — change_type CONTENT)",
+      "result": "NOT APPLICABLE",
+      "citation": "change_type: CONTENT. No Intelligence Core component is modified. source_document in package_manifest.yaml is not consumed by any runtime evaluator, loader, or assembler (confirmed via KB-S49 estate analysis). Stage 2B behavioural hardening does not apply."
     },
     {
       "check": "Overall hardening verdict",
       "result": "HARDENED — no blockers",
-      "citation": "All 7 STOP conditions checked: (1) Batch 2 specs for all four families confirmed present and extractable; (2) all families representable from existing spec data without clinical invention; (3) all pkg_kb47 source package paths exist and classified as compiled_not_promoted; (4) no duplicate active activation keys exist; (5) tree regeneration tooling confirmed present; (6) architecture gate script confirmed present; (7) no runtime/package/frontend change is necessary. One critical note (primary_marker.biomarker_id field) and one advisory (CK context modifier references) surfaced for Cursor."
+      "citation": "All authority paths verified to exist. Source content read and cross-referenced (two manifest files read; Batch_2_Pass_3.json extracted). 1:1 package-to-spec mapping confirmed. No hash fields present. Runtime boundary confirmed safe. CF-BATCH2-002 confirmed Open and directly addressed by this sprint. All 6 STOP conditions clear. Sprint is safe to start."
     }
   ]
 }
