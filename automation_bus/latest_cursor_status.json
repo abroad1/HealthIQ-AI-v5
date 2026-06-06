@@ -1,10 +1,9 @@
 {
-  "branch": "work/PASS3-BATCH2-PROVENANCE-1-kb47-manifest-canonical-source-realign",
+  "branch": "work/PASS3-BATCH2-FRAME-INDEX-2-remaining-single-frame-batch2-identity-index-expansion",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-06T15:45:03Z",
-  "cursor_started_utc": "2026-06-06T15:40:52Z",
-  "head_sha": "dbf78879bf2dd8c5a460a3d023e0efebc9107076",
+  "cursor_started_utc": "2026-06-06T15:54:41Z",
+  "head_sha": "4243cc5a9c33743c16a975a0455bf7724738a656",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "PASS3-BATCH2-PROVENANCE-1_kb47_manifest_canonical_source_realign"
+  "status": "IN_PROGRESS",
+  "work_id": "PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion"
 }
