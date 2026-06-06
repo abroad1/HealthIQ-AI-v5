@@ -1,9 +1,10 @@
 {
   "branch": "work/PASS3-BATCH2-FRAME-INDEX-2-remaining-single-frame-batch2-identity-index-expansion",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-06T15:59:30Z",
   "cursor_started_utc": "2026-06-06T15:54:41Z",
-  "head_sha": "4243cc5a9c33743c16a975a0455bf7724738a656",
+  "head_sha": "3c39f7821c017c291bad03d0548f07f6a4439b7f",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion"
 }
