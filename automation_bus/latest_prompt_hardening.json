@@ -1,19 +1,19 @@
 {
+  "work_id": "PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration",
   "bus_version": "1.3.1",
-  "work_id": "PASS3-FRAME-INDEX-3_next_high_risk_signal_family_expansion",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-03T00:00:00Z",
+  "hardened_utc": "2026-06-06T00:00:00Z",
   "hardened_by": "claude-code",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: PASS3-FRAME-INDEX-3_next_high_risk_signal_family_expansion"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/PASS3-FRAME-INDEX-3-next-high-risk-signal-family-expansion"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/PASS3-BATCH2-INGEST-1-batch2-pass3-research-asset-registration"
     },
     {
       "check": "Front Matter — risk_level",
@@ -28,167 +28,92 @@
     {
       "check": "Front Matter — change_type",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: CONTENT"
     },
     {
-      "check": "Authority path — medical_frame_identity_index_v1.yaml",
+      "check": "Authority path — Batch_2_Pass_3.json (primary source)",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml line 1: schema_version: 1.0.0; 4 signal families indexed (signal_creatinine_high, signal_alt_high, signal_crp_high, signal_ferritin_high); 18 total frames; baseline validation PASS confirmed this session"
+      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json — 2875 lines, 20 specs, all investigation_spec_contract_version: '3.0.0', lines 1-145: first spec inv_creatine_kinase_high_exertional_muscle_injury"
+    },
+    {
+      "check": "Authority path — investigation_spec_schema_v3.0.0.yaml",
+      "result": "PATH MISMATCH — advisory, handled by prompt",
+      "citation": "Stated path knowledge_bus/schema/investigation_spec_schema_v3.0.0.yaml does NOT exist. Actual path: knowledge_bus/research/investigation_specs/investigation_spec_schema_v3.0.0.yaml line 1: '# HealthIQ Investigation Spec Schema v3.0.0'. Prompt instructs 'If paths differ, locate and report the actual paths' — this is expected and handled."
+    },
+    {
+      "check": "Authority path — validate_investigation_spec.py",
+      "result": "CONFIRMED",
+      "citation": "backend/scripts/validate_investigation_spec.py line 416: p.add_argument('--spec', required=True, type=Path) — single-spec validator. CRITICAL: line 396-399: validate_document() will fail with 'Root must be a map' if batch array passed directly."
     },
     {
       "check": "Authority path — pass3_frame_coverage_audit_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml line 1: schema_version: 1.0.0; 55+ packages audited; signal_ferritin_low, signal_apob_atherogenic, signal_systemic_inflammation present with edge_case_loss_risk and promotion_safety_status fields"
+      "citation": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml line 1: schema_version: 1.0.0; 55 packages audited"
+    },
+    {
+      "check": "Authority path — medical_frame_identity_index_v1.yaml",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml — exists; line 44: egfr appears only as frame_role: legacy_override_rule_egfr (frame_creatinine_legacy_s24_egfr_escalation). No Batch 2 primary biomarker is present as an indexed signal family."
     },
     {
       "check": "Authority path — medical_frame_identity_expansion_candidates_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml line 1: 7 candidates; priorities 1-4 indexed=true, priorities 5-7 indexed=false (signal_ferritin_low, signal_apob_atherogenic, signal_systemic_inflammation)"
+      "citation": "knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml lines 1-60: 8 candidates listed, none matching any Batch 2 signal family (no creatine_kinase, dhea, egfr, eosinophil, fai, free_t3, free_t4, free_testosterone entries)"
     },
     {
-      "check": "Authority path — context_modifier_catalogue_draft_v1.yaml",
+      "check": "Authority path — pass3_legacy_package_mapping_plan_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml — exists on disk; Glob confirmed"
+      "citation": "knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml — exists; Glob confirmed"
     },
     {
       "check": "Authority path — biomarker_medical_frame_tree.md",
       "result": "CONFIRMED",
-      "citation": "docs/architecture/biomarker_medical_frame_tree.md — exists on disk; Glob confirmed"
-    },
-    {
-      "check": "Authority path — PASS3-FRAME-COVERAGE-1 audit paper",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/PASS3-FRAME-COVERAGE-1_estate_wide_multiframe_research_coverage_audit.md — exists; Glob confirmed"
-    },
-    {
-      "check": "Authority path — PASS3-FRAME-INDEX-2 report",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/PASS3-FRAME-INDEX-2_high_risk_signal_family_index_expansion_report.md — exists; Glob confirmed"
-    },
-    {
-      "check": "Authority path — MED-FRAME-TREE-1 report (read input)",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/MED-FRAME-TREE-1_generated_human_readable_biomarker_frame_tree_report.md — exists; Glob confirmed"
-    },
-    {
-      "check": "Authority path — build_biomarker_medical_frame_tree.py",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/tools/build_biomarker_medical_frame_tree.py line 1: outputs to docs/architecture/ only; path guard in main() lines 264-268 but NOT in generate() — see RISK 3 below"
-    },
-    {
-      "check": "Authority path — validate_medical_frame_identity_index.py",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_medical_frame_identity_index.py line 1: source_package_path dir check at lines 126-129 for all non-deferred frames — see RISK 1 below"
-    },
-    {
-      "check": "Authority path — validate_context_modifier_catalogue.py",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_context_modifier_catalogue.py — exists; Glob confirmed"
-    },
-    {
-      "check": "Authority path — run_architecture_validation_gate.py",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/run_architecture_validation_gate.py — exists; Glob confirmed"
-    },
-    {
-      "check": "Authority path — test_biomarker_medical_frame_tree_generation.py",
-      "result": "CONFIRMED",
-      "citation": "backend/tests/regression/test_biomarker_medical_frame_tree_generation.py lines 1-128: 7 existing tests; path guard test at line 118 uses subprocess (CLI), not direct generate() call — see RISK 3"
-    },
-    {
-      "check": "Authority path — test_medical_intelligence_architecture_sentinels.py",
-      "result": "CONFIRMED",
-      "citation": "backend/tests/architecture/test_medical_intelligence_architecture_sentinels.py — exists; Glob confirmed"
+      "citation": "docs/architecture/biomarker_medical_frame_tree.md — exists; Glob confirmed. Out of scope for modification per prompt runtime boundary."
     },
     {
       "check": "Authority path — launch_core_carry_forward_register.md",
       "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md — exists; Glob confirmed"
+      "citation": "docs/sprints/launch_core_carry_forward_register.md — exists; grep for PASS3-BATCH2/creatine_kinase/egfr/eosinophil/free_t3/free_t4/free_testosterone/dhea/fai returned zero matches — no existing Batch 2 carry-forwards present"
     },
     {
-      "check": "Source Cross-Ref — signal_ferritin_low Pass_3 spec",
+      "check": "Source Cross-Ref — Batch 2 spec_ids vs Batches 3-7",
+      "result": "CONFIRMED — ZERO OVERLAP",
+      "citation": "Python search across Batch_3_Pass_3.json, Batch_4_Pass_3.json, Batch_5_Pass_3.json, Batch_6_Pass_3.json, Batch_7_Pass_3.json for all 16 Batch 2 signal_ids and 10 primary biomarker_ids returned zero matches."
+    },
+    {
+      "check": "Source Cross-Ref — archived Batch_2_Pass_3_Rev1.json identity",
+      "result": "CONFIRMED — identical spec_ids",
+      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/archived_ingested_batches/Batch_2_Pass_3_Rev1.json — 20 specs; Python diff: 'Only in B2 (not Rev1): set(); Only in Rev1 (not B2): set()' — spec_ids are identical. Cursor must verify content equality and report the relationship explicitly."
+    },
+    {
+      "check": "Source Cross-Ref — schema signal_systems compliance (Batch 2)",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json line 939: spec_id: inv_ferritin_low_iron_store_depletion; signal_id: signal_ferritin_low"
+      "citation": "knowledge_bus/research/investigation_specs/investigation_spec_schema_v3.0.0.yaml lines 77-92: allowed signal_systems include mitochondrial, renal, inflammatory, hormonal. Batch 2 uses: mitochondrial (creatine_kinase specs), renal (egfr specs), inflammatory (eosinophil specs), hormonal (dhea/fai/free_t3/free_t4/free_testosterone specs). All valid."
     },
     {
-      "check": "Source Cross-Ref — signal_ferritin_low kb52c package on disk",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_kb52c_ferritin_low_iron_store_depletion — directory exists; confirmed via ls knowledge_bus/packages/"
+      "check": "Prior Task Findings — no inherited findings",
+      "result": "CONFIRMED INDEPENDENT RE-VERIFICATION",
+      "citation": "No prior task artefact for this work_id. All findings in this hardening are independently derived from current file reads this session."
     },
     {
-      "check": "Source Cross-Ref — signal_ferritin_low s24 legacy package on disk",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_s24_ferritin_low_iron_deficiency — directory exists; confirmed via ls knowledge_bus/packages/"
+      "check": "Forbidden files — runtime, package, SSOT, frontend",
+      "result": "CONFIRMED NOT IN SCOPE",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 280-297: explicitly prohibits SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, knowledge_bus/packages/*, knowledge_bus/current/latest_knowledge_status.json"
     },
     {
-      "check": "Source Cross-Ref — signal_apob_atherogenic Pass_3 specs (3 frames)",
-      "result": "CONFIRMED",
-      "citation": "Batch_5_Pass_3.json line 1649: inv_apob_high_atherogenic_particle_excess; line 1813: inv_apob_high_familial_combined_hyperlipidemia_pattern; line 1983: inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern"
+      "check": "RISK 1 — OPERATIONAL: validator requires per-spec splitting",
+      "result": "SURFACED — mandatory constraint",
+      "citation": "backend/scripts/validate_investigation_spec.py lines 396-399: 'if not isinstance(doc, dict): errors.append(\"Root must be a map\")'. Batch_2_Pass_3.json is a JSON array. Per-spec temporary file splitting is REQUIRED. Temporary files authorised for .tmp_validation/ or backend/artifacts/tmp_validation/ only. DO NOT commit temporary split files."
     },
     {
-      "check": "Source Cross-Ref — signal_apob_atherogenic kb45 legacy package on disk",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_kb45_apob_high_atherogenic — directory exists; confirmed via ls knowledge_bus/packages/"
+      "check": "RISK 2 — ADVISORY: docs/audit-papers/ directory does not exist",
+      "result": "SURFACED — directory must be created",
+      "citation": "Glob for docs/audit-papers returned no files. Cursor must create the directory as part of sprint execution before writing the required report. In-scope for CONTENT sprint."
     },
     {
-      "check": "Source Cross-Ref — signal_apob_atherogenic NO kb52c package",
-      "result": "CONFIRMED — no kb52c apob package exists",
-      "citation": "ls knowledge_bus/packages/ output: no pkg_kb52c_apob_* directory present; Pass_3 frames must be marked deferred — see RISK 1"
-    },
-    {
-      "check": "Source Cross-Ref — signal_systemic_inflammation distinct from signal_crp_high",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/crp_runtime_authority_v1.yaml lines 30-36: distinct_from_signal_crp_high: true; must_not_conflate_with_signal_crp_high_or_batch_4_pass3_crp_frames: true"
-    },
-    {
-      "check": "Source Cross-Ref — signal_systemic_inflammation pkg_chronic_inflammation on disk",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_chronic_inflammation — directory exists; confirmed via ls knowledge_bus/packages/"
-    },
-    {
-      "check": "Source Cross-Ref — signal_systemic_inflammation has NO dedicated inv_ spec",
-      "result": "CONFIRMED — no inv_systemic_inflammation_* spec found",
-      "citation": "Grep of all Pass_3 batch JSONs: no inv_systemic_inflammation_* spec_id found; audit entry lists inv_crp_high_* frame IDs which are CRP frames, not systemic_inflammation frames — see RISK 2"
-    },
-    {
-      "check": "Baseline validation — current index",
-      "result": "CONFIRMED PASS",
-      "citation": "python backend/scripts/validate_medical_frame_identity_index.py: validation_status: PASS / errors: 0 (executed this session)"
-    },
-    {
-      "check": "Forbidden files — knowledge_bus/packages/* not in scope",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 369-385: runtime boundary prohibits package file modification"
-    },
-    {
-      "check": "Forbidden files — Intelligence Core not in scope",
-      "result": "CONFIRMED",
-      "citation": "SignalEvaluator, SignalRegistry, domain_score_assembler, report_compiler, SSOT, frontend not touched by scope"
-    },
-    {
-      "check": "RISK 1 — CRITICAL: source_package_path dir check for non-deferred frames",
-      "result": "SURFACED — Cursor must not create non-deferred apob frames with non-existent package paths",
-      "citation": "backend/scripts/validate_medical_frame_identity_index.py lines 126-129: if promotion not in ('deferred',) and source_package_path dir not on disk → validation FAIL. Safe pattern: apob legacy frame → pkg_kb45_apob_high_atherogenic (EXISTS); apob Pass_3 frames → promotion_state: deferred, source_package_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json"
-    },
-    {
-      "check": "RISK 2 — CRITICAL: signal_systemic_inflammation vs signal_crp_high conflation",
-      "result": "SURFACED — inv_crp_high_* spec IDs must NOT be used as research_spec_id for systemic_inflammation frames",
-      "citation": "crp_runtime_authority_v1.yaml lines 30-36: must_not_conflate_with_signal_crp_high_or_batch_4_pass3_crp_frames: true. Audit incorrectly lists inv_crp_high_* under pkg_chronic_inflammation — these belong to CRP not systemic_inflammation. Pass_3 frames for systemic_inflammation must be deferred (no dedicated spec authored yet); legacy frame uses pkg_chronic_inflammation"
-    },
-    {
-      "check": "RISK 3 — MODERATE: CF-MEDTREE-001 generate() path guard missing",
-      "result": "SURFACED — guard must be added inside generate(), not only main()",
-      "citation": "knowledge_bus/tools/build_biomarker_medical_frame_tree.py lines 232-250: generate() has no output path guard; guard only in main() lines 264-268. Regression test at lines 118-128 uses subprocess (CLI); new unit test must call generate() directly with bad path and assert it raises/errors"
-    },
-    {
-      "check": "RISK 4 — INFORMATIONAL: signal_ferritin_low can follow creatinine pattern",
-      "result": "ADVISORY",
-      "citation": "pkg_kb52c_ferritin_low_iron_store_depletion EXISTS (canonical Pass_3) + pkg_s24_ferritin_low_iron_deficiency EXISTS (legacy). Pattern identical to signal_creatinine_high: runtime_active_canonical for kb52c frame, runtime_active_legacy_unadjudicated for s24 frame"
-    },
-    {
-      "check": "RISK 5 — INFORMATIONAL: no duplicate active activation_key risk from new families",
-      "result": "ADVISORY — structurally safe",
-      "citation": "New activation_key namespaces (signal_ferritin_low::*, signal_apob_atherogenic::*, signal_systemic_inflammation::*) do not collide with existing keys; validator enforces uniqueness at backend/scripts/validate_medical_frame_identity_index.py lines 191-196"
+      "check": "Overall hardening verdict",
+      "result": "HARDENED — no blockers",
+      "citation": "All 7 STOP conditions checked: (1) Batch_2_Pass_3.json present confirmed; (2) valid JSON confirmed; (3) per-spec validation path authorised; (4) no duplicate spec_ids with existing estate; (5) can distinguish new from duplicates (zero overlap); (6) no runtime changes needed; (7) architecture gate pre-check shows no structural issues — gate must still be run by Cursor with actual output pasted."
     }
   ]
 }
