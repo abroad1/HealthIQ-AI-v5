@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-CONTEXT-MOD-1-androgen-panel-context-modifier-binding",
+  "branch": "work/BATCH2-CLOSURE-1-final-batch2-promotion-decision",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-06T18:55:42Z",
-  "cursor_started_utc": "2026-06-06T18:51:22Z",
-  "head_sha": "d810c111bd8e3ce95e5280bcb9273d4fce8f2f86",
+  "cursor_started_utc": "2026-06-06T19:14:50Z",
+  "head_sha": "507ac595d07b3c858b3237ebe0314330e4937dc1",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-CLOSURE-1_final_batch2_promotion_decision"
 }
