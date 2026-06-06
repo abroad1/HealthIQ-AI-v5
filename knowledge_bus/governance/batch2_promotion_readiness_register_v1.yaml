@@ -8,10 +8,10 @@ signal_family_count: 16
 spec_count: 20
 summary_counts:
   READY_FOR_PROMOTION_CANDIDATE: 0
-  READY_WITH_DOCUMENTED_CAUTION: 10
-  BLOCKED_PENDING_MEDICAL_REVIEW: 8
+  READY_WITH_DOCUMENTED_CAUTION: 14
+  BLOCKED_PENDING_MEDICAL_REVIEW: 0
   BLOCKED_PENDING_FRAME_ADJUDICATION: 2
-  BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING: 0
+  BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING: 4
   BLOCKED_PENDING_PROVENANCE_OR_VALIDATION: 0
   DUPLICATE_OR_OVERLAP_REVIEW_REQUIRED: 0
 promotion_waves:
@@ -102,14 +102,15 @@ packages:
   activation_key: signal_dhea_high::inv_dhea_high_androgen_excess_context
   collision_status: none
   clinical_adjudication_status: required_before_activation
-  context_modifier_dependency: false
-  promotion_readiness_status: BLOCKED_PENDING_MEDICAL_REVIEW
+  context_modifier_dependency: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
   recommended_wave: Wave_C_medical_review_required
-  recommended_next_action: Complete androgen-panel medical review (CF-BATCH2-005)
-    before promotion candidacy
-  medical_review_required: true
+  recommended_next_action: Governance context binding complete (CF-BATCH2-009); remain
+    caution-gated; clinical signoff (CF-BATCH2-010) before activation
+  medical_review_required: false
   notes: 'Indexed frame_batch2_dhea_high_androgen_excess_context; compiled_not_promoted/inactive.
-    Androgen-panel: medical review gated (CF-BATCH2-005).'
+    Androgen-panel: context_modifier_dependency=true (BATCH2-CONTEXT-MOD-1). Promotion
+    not authorized.'
 - package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
   package_path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
   spec_id: inv_dhea_low_adrenal_androgen_reduction
@@ -125,14 +126,15 @@ packages:
   activation_key: signal_dhea_low::inv_dhea_low_adrenal_androgen_reduction
   collision_status: none
   clinical_adjudication_status: required_before_activation
-  context_modifier_dependency: false
-  promotion_readiness_status: BLOCKED_PENDING_MEDICAL_REVIEW
+  context_modifier_dependency: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
   recommended_wave: Wave_C_medical_review_required
-  recommended_next_action: Complete androgen-panel medical review (CF-BATCH2-005)
-    before promotion candidacy
-  medical_review_required: true
+  recommended_next_action: Governance context binding complete (CF-BATCH2-009); remain
+    caution-gated; clinical signoff (CF-BATCH2-010) before activation
+  medical_review_required: false
   notes: 'Indexed frame_batch2_dhea_low_adrenal_androgen_reduction; compiled_not_promoted/inactive.
-    Androgen-panel: medical review gated (CF-BATCH2-005).'
+    Androgen-panel: context_modifier_dependency=true (BATCH2-CONTEXT-MOD-1). Promotion
+    not authorized.'
 - package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
   package_path: knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction
   spec_id: inv_egfr_low_chronic_kidney_function_reduction
@@ -286,14 +288,16 @@ packages:
   activation_key: signal_fai_high::inv_fai_high_biochemical_hyperandrogenism
   collision_status: none
   clinical_adjudication_status: required_before_activation
-  context_modifier_dependency: false
-  promotion_readiness_status: BLOCKED_PENDING_MEDICAL_REVIEW
+  context_modifier_dependency: true
+  promotion_readiness_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
   recommended_wave: Wave_C_medical_review_required
-  recommended_next_action: Complete androgen-panel medical review (CF-BATCH2-005)
-    before promotion candidacy
-  medical_review_required: true
+  recommended_next_action: Governance context binding complete (CF-BATCH2-009); runtime
+    Layer B evaluation (CF-CONTEXT-MOD-3) and clinical signoff (CF-BATCH2-010) before
+    promotion
+  medical_review_required: false
   notes: 'Indexed frame_batch2_fai_high_biochemical_hyperandrogenism; compiled_not_promoted/inactive.
-    Androgen-panel: medical review gated (CF-BATCH2-005).'
+    Androgen-panel: context_modifier_dependency=true (BATCH2-CONTEXT-MOD-1). Promotion
+    not authorized.'
 - package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
   package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
   spec_id: inv_fai_low_reduced_free_androgen_availability
@@ -309,14 +313,16 @@ packages:
   activation_key: signal_fai_low::inv_fai_low_reduced_free_androgen_availability
   collision_status: none
   clinical_adjudication_status: required_before_activation
-  context_modifier_dependency: false
-  promotion_readiness_status: BLOCKED_PENDING_MEDICAL_REVIEW
+  context_modifier_dependency: true
+  promotion_readiness_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
   recommended_wave: Wave_C_medical_review_required
-  recommended_next_action: Complete androgen-panel medical review (CF-BATCH2-005)
-    before promotion candidacy
-  medical_review_required: true
+  recommended_next_action: Governance context binding complete (CF-BATCH2-009); runtime
+    Layer B evaluation (CF-CONTEXT-MOD-3) and clinical signoff (CF-BATCH2-010) before
+    promotion
+  medical_review_required: false
   notes: 'Indexed frame_batch2_fai_low_reduced_free_androgen_availability; compiled_not_promoted/inactive.
-    Androgen-panel: medical review gated (CF-BATCH2-005).'
+    Androgen-panel: context_modifier_dependency=true (BATCH2-CONTEXT-MOD-1). Promotion
+    not authorized.'
 - package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
   package_path: knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
   spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
@@ -424,14 +430,15 @@ packages:
   activation_key: signal_free_testosterone_high::inv_free_testosterone_high_androgen_excess_context
   collision_status: none
   clinical_adjudication_status: required_before_activation
-  context_modifier_dependency: false
-  promotion_readiness_status: BLOCKED_PENDING_MEDICAL_REVIEW
+  context_modifier_dependency: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
   recommended_wave: Wave_C_medical_review_required
-  recommended_next_action: Complete androgen-panel medical review (CF-BATCH2-005)
-    before promotion candidacy
-  medical_review_required: true
+  recommended_next_action: Governance context binding complete (CF-BATCH2-009); remain
+    caution-gated; clinical signoff (CF-BATCH2-010) before activation
+  medical_review_required: false
   notes: 'Indexed frame_batch2_free_testosterone_high_androgen_excess_context; compiled_not_promoted/inactive.
-    Androgen-panel: medical review gated (CF-BATCH2-005).'
+    Androgen-panel: context_modifier_dependency=true (BATCH2-CONTEXT-MOD-1). Promotion
+    not authorized.'
 - package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
   package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
   spec_id: inv_free_testosterone_low_androgen_deficiency_context
@@ -447,14 +454,15 @@ packages:
   activation_key: signal_free_testosterone_low::inv_free_testosterone_low_androgen_deficiency_context
   collision_status: none
   clinical_adjudication_status: required_before_activation
-  context_modifier_dependency: false
-  promotion_readiness_status: BLOCKED_PENDING_MEDICAL_REVIEW
+  context_modifier_dependency: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
   recommended_wave: Wave_C_medical_review_required
-  recommended_next_action: Complete androgen-panel medical review (CF-BATCH2-005)
-    before promotion candidacy
-  medical_review_required: true
+  recommended_next_action: Governance context binding complete (CF-BATCH2-009); remain
+    caution-gated; clinical signoff (CF-BATCH2-010) before activation
+  medical_review_required: false
   notes: 'Indexed frame_batch2_free_testosterone_low_androgen_deficiency_context;
-    compiled_not_promoted/inactive. Androgen-panel: medical review gated (CF-BATCH2-005).'
+    compiled_not_promoted/inactive. Androgen-panel: context_modifier_dependency=true
+    (BATCH2-CONTEXT-MOD-1). Promotion not authorized.'
 - package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
   package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
   spec_id: inv_free_testosterone_pct_high_elevated_free_androgen_fraction
@@ -470,14 +478,16 @@ packages:
   activation_key: signal_free_testosterone_pct_high::inv_free_testosterone_pct_high_elevated_free_androgen_fraction
   collision_status: none
   clinical_adjudication_status: required_before_activation
-  context_modifier_dependency: false
-  promotion_readiness_status: BLOCKED_PENDING_MEDICAL_REVIEW
+  context_modifier_dependency: true
+  promotion_readiness_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
   recommended_wave: Wave_C_medical_review_required
-  recommended_next_action: Complete androgen-panel medical review (CF-BATCH2-005)
-    before promotion candidacy
-  medical_review_required: true
+  recommended_next_action: Governance context binding complete (CF-BATCH2-009); runtime
+    Layer B evaluation (CF-CONTEXT-MOD-3) and clinical signoff (CF-BATCH2-010) before
+    promotion
+  medical_review_required: false
   notes: 'Indexed frame_batch2_free_testosterone_pct_high_elevated_free_androgen_fraction;
-    compiled_not_promoted/inactive. Androgen-panel: medical review gated (CF-BATCH2-005).'
+    compiled_not_promoted/inactive. Androgen-panel: context_modifier_dependency=true
+    (BATCH2-CONTEXT-MOD-1). Promotion not authorized.'
 - package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
   package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
   spec_id: inv_free_testosterone_pct_low_reduced_free_androgen_fraction
@@ -493,11 +503,13 @@ packages:
   activation_key: signal_free_testosterone_pct_low::inv_free_testosterone_pct_low_reduced_free_androgen_fraction
   collision_status: none
   clinical_adjudication_status: required_before_activation
-  context_modifier_dependency: false
-  promotion_readiness_status: BLOCKED_PENDING_MEDICAL_REVIEW
+  context_modifier_dependency: true
+  promotion_readiness_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
   recommended_wave: Wave_C_medical_review_required
-  recommended_next_action: Complete androgen-panel medical review (CF-BATCH2-005)
-    before promotion candidacy
-  medical_review_required: true
+  recommended_next_action: Governance context binding complete (CF-BATCH2-009); runtime
+    Layer B evaluation (CF-CONTEXT-MOD-3) and clinical signoff (CF-BATCH2-010) before
+    promotion
+  medical_review_required: false
   notes: 'Indexed frame_batch2_free_testosterone_pct_low_reduced_free_androgen_fraction;
-    compiled_not_promoted/inactive. Androgen-panel: medical review gated (CF-BATCH2-005).'
+    compiled_not_promoted/inactive. Androgen-panel: context_modifier_dependency=true
+    (BATCH2-CONTEXT-MOD-1). Promotion not authorized.'
