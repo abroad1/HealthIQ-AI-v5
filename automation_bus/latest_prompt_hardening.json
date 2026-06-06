@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BATCH2-MEDREVIEW-1_androgen_panel_medical_review",
+  "work_id": "BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding",
   "status": "HARDENED",
   "hardened_utc": "2026-06-06T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
@@ -8,122 +8,112 @@
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: BATCH2-MEDREVIEW-1_androgen_panel_medical_review"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/BATCH2-MEDREVIEW-1-androgen-panel-medical-review"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/BATCH2-CONTEXT-MOD-1-androgen-panel-context-modifier-binding"
     },
     {
       "check": "Front Matter — risk_level",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Author-declared HIGH is conservative but defensible: the medical review outcome governs future package promotion decisions for 8 androgen-panel frames. Author rationale at prompt lines 99-107."
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Conservative but defensible — files not in SOP HIGH-risk paths (backend/ssot/, backend/core/) but govern future promotion safety of 8 androgen-panel frames. Author rationale at prompt lines 99-107."
     },
     {
       "check": "Front Matter — execution_model",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH. Correct for HIGH-risk sprint requiring formal gate closure."
+      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH. Correct for HIGH-risk governance sprint."
     },
     {
       "check": "Front Matter — change_type",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: CONTENT. Correct — outputs are knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml (runtime_consumed: false per output schema at prompt line 253) and docs audit paper plus carry-forward update. No Intelligence Core, evaluator, runtime loader, package YAML, or signal library modified."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: CONTENT. Correct — all modified files are runtime_consumed: false governance documents. context_modifier_catalogue_draft_v1.yaml line 6: runtime_consumed: false. medical_frame_identity_index_v1.yaml line 7: runtime_consumed: false. batch2_promotion_readiness_register_v1.yaml line 3: runtime_consumed: false. No Intelligence Core, evaluator, package, SSOT, or frontend files in scope."
     },
     {
-      "check": "Authority path — Batch_2_Pass_3.json",
+      "check": "Authority path — batch2_androgen_panel_medical_review_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json confirmed to exist via Glob. Androgen spec_ids confirmed present: inv_dhea_high_androgen_excess_context at line 435, inv_fai_high_biochemical_hyperandrogenism at line 1439, inv_free_testosterone_high_androgen_excess_context at line 2448. Total 78 matches for dhea|fai|free_testosterone across the file."
-    },
-    {
-      "check": "Authority path — pass3_batch2_research_asset_register_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml confirmed to exist via Glob."
+      "citation": "knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml read in full (212 lines). Lines 1-17: schema_version 1.0.0, work_id BATCH2-MEDREVIEW-1_androgen_panel_medical_review, frame_count: 8. All 8 androgen frames present with context_dependencies populated: dhea_high at line 19 (sex, age, supplements, symptoms), dhea_low at line 44 (age, medications, adrenal_context), fai_high at line 68 (sex, age, shbg, total_testosterone), fai_low at line 93 (sex, age, shbg, free_testosterone, total_testosterone), free_testosterone_high at line 118 (sex, age, symptoms, medications), free_testosterone_low at line 142 (sex, age, lh, symptoms, medications), free_testosterone_pct_high at line 166 (sex, shbg, free_testosterone, total_testosterone), free_testosterone_pct_low at line 191 (sex, shbg, free_testosterone)."
     },
     {
       "check": "Authority path — batch2_promotion_readiness_register_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml read in full (504 lines). Lines 30-38: Wave_C_medical_review_required contains all 8 androgen packages. Lines 90-503: all 8 androgen packages classified BLOCKED_PENDING_MEDICAL_REVIEW with medical_review_required: true. Prior package_validator_status: PASS recorded for all 8 at lines 100, 114-115, 283, 296, 422, 451, 471, 498."
-    },
-    {
-      "check": "Authority path — medical_frame_identity_index_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml read in full (1513 lines). All 8 androgen frames indexed: signal_dhea_high at line 1166, signal_dhea_low at line 1195, signal_fai_high at line 1224, signal_fai_low at line 1253, signal_free_testosterone_high at line 1398, signal_free_testosterone_low at line 1427, signal_free_testosterone_pct_high at line 1456, signal_free_testosterone_pct_low at line 1485. All 8 carry promotion_state: compiled_not_promoted and runtime_authority_status: inactive."
+      "citation": "knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml read in full (504 lines). All 8 androgen entries confirmed: dhea_high at line 90, dhea_low at line 113, fai_high at line 274, fai_low at line 297, free_testosterone_high at line 412, free_testosterone_low at line 435, free_testosterone_pct_high at line 458, free_testosterone_pct_low at line 481. CRITICAL: all 8 entries have context_modifier_dependency: false at lines 105, 129, 289, 312, 427, 450, 470, 496 — this is the exact inconsistency this sprint corrects. Also confirmed: all 8 still show promotion_readiness_status: BLOCKED_PENDING_MEDICAL_REVIEW and recommended_next_action citing CF-BATCH2-005; these are stale post-MEDREVIEW-1 completion and should be updated for consistency per prompt lines 165-169."
     },
     {
       "check": "Authority path — context_modifier_catalogue_draft_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml confirmed to exist via Glob."
+      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml read in full (829 lines). Existing androgen-relevant modifiers: mod_demo_sex at line 32 (applies_to medical_frame_ids: [] — empty, no androgen binding), mod_demo_age at line 9 (applies_to medical_frame_ids: [] — empty), mod_sup_testosterone at line 416 (applies_to biomarker_ids: [testosterone, hematocrit] — does not include dhea, fai, free_testosterone_pct, and medical_frame_ids: [] — empty), mod_med_testosterone_hormone at line 592 (applies_to biomarker_ids: [testosterone, hematocrit] — same limitation). CRITICAL GAP: no SHBG-specific modifier exists in the catalogue. Fai_high, fai_low, free_testosterone_pct_high, free_testosterone_pct_low all require SHBG context per medical review. Sprint must add a mod_androgen_ctx_shbg (or equivalent) governance placeholder — runtime_active: false mandatory."
     },
     {
-      "check": "Authority path — pass3_batch2_kb47_manifest_realign_register_v1.yaml",
+      "check": "Authority path — medical_frame_identity_index_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_batch2_kb47_manifest_realign_register_v1.yaml read (60 lines). Line 6: package_count: 20. Androgen packages listed with manifest_updated: true and package_validator_status: PASS: pkg_kb47_dhea_high_androgen_excess_context at lines 28-37, pkg_kb47_dhea_low_adrenal_androgen_reduction at lines 38-47. Canonical source confirmed as Batch_2_Pass_3.json."
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml read in full (1513 lines). All 8 androgen frames present: signal_dhea_high at line 1166, signal_dhea_low at line 1195, signal_fai_high at line 1224, signal_fai_low at line 1253, signal_free_testosterone_high at line 1398, signal_free_testosterone_low at line 1427, signal_free_testosterone_pct_high at line 1456, signal_free_testosterone_pct_low at line 1485. All 8 carry context_inputs_supported: questionnaire_modifiers: false, medication_modifiers: false (lines approx 1183-1189, 1212-1218, 1241-1247, 1270-1276, 1414-1420, 1443-1449, 1472-1478, 1500-1506). These flags need updating to reflect modifier links now being represented. promotion_state: compiled_not_promoted and runtime_authority_status: inactive confirmed for all 8 — must not change."
+    },
+    {
+      "check": "Authority path — pass3_batch2_research_asset_register_v1.yaml",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml read (30 lines). Lines 1-7: schema_version 1.0.0, work_id PASS3-BATCH2-INGEST-1, status governance_audit_non_runtime. Lines 29-30: kb47_packages_on_disk: 20. Confirms 20 kb47 packages compiled from Batch_2_Pass_3.json."
+    },
+    {
+      "check": "Authority path — BATCH2-MEDREVIEW-1 audit paper",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md confirmed to exist via Glob. Not re-read here — content authority is the .yaml register which was read in full."
     },
     {
       "check": "Authority path — BATCH2-PROMOTION-READINESS-1 audit paper",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review.md read (80 lines). Line 11: 20/20 packages PASS, 8 medically blocked (Wave C androgen), architecture gate PASS. Lines 64-75: all 8 androgen frames explicitly BLOCKED_PENDING_MEDICAL_REVIEW. Line 73: 'Complete CF-BATCH2-005 medical review; do not promote until adjudication.'"
+      "citation": "docs/audit-papers/BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review.md confirmed to exist via Glob."
+    },
+    {
+      "check": "Authority path — CONTEXT-MOD-1 architecture doc",
+      "result": "CONFIRMED",
+      "citation": "docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md confirmed to exist via Glob."
     },
     {
       "check": "Authority path — launch_core_carry_forward_register.md",
       "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md read (80 lines). CF-BATCH2-005 at line 68: Status = Open, 'Medical review not cleared in this sprint.' — confirms real unresolved work. CF-BATCH2-006 at line 69: Open — Wave B promotion not in scope. CF-BATCH2-003 at line 66: Resolved by BATCH2-PROMOTION-READINESS-1, no further action needed from this sprint."
+      "citation": "docs/sprints/launch_core_carry_forward_register.md read (80 lines). CF-BATCH2-009 at line 72: Status = Open, source sprint BATCH2-MEDREVIEW-1. CF-BATCH2-010 at line 73: Status = Open. Both confirmed as current open items in scope. CF-BATCH2-006 at line 69: Open (Wave B — remain open). CF-BATCH2-008 at line 71: Open (thyroid — remain open). All carry-forward handling in prompt lines 325-364 consistent with register state."
     },
     {
-      "check": "Authority path — all 4 validation scripts",
+      "check": "Validator scripts — all required scripts exist",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/run_architecture_validation_gate.py — CONFIRMED (Glob). backend/scripts/validate_medical_frame_identity_index.py — CONFIRMED (Glob). backend/scripts/validate_context_modifier_catalogue.py — CONFIRMED (Glob). backend/scripts/validate_knowledge_package.py — CONFIRMED (Glob). All 4 scripts required by prompt lines 349-364 confirmed to exist."
+      "citation": "backend/scripts/run_architecture_validation_gate.py — CONFIRMED (Glob). backend/scripts/validate_medical_frame_identity_index.py — CONFIRMED (Glob). backend/scripts/validate_context_modifier_catalogue.py — CONFIRMED (Glob). backend/tests/regression/test_context_modifier_catalogue.py — CONFIRMED (Glob). backend/tests/regression/test_med_frame_identity_index.py — CONFIRMED (Glob). All scripts required by prompt lines 349-386 confirmed to exist."
     },
     {
-      "check": "Source cross-ref — all 8 androgen package dirs confirmed on disk",
+      "check": "Source cross-ref — all 8 androgen frames traceable across three authorities",
       "result": "CONFIRMED",
-      "citation": "PowerShell ls knowledge_bus/packages | grep -E 'pkg_kb47_(dhea|fai|free_testosterone)' returned all 8: pkg_kb47_dhea_high_androgen_excess_context, pkg_kb47_dhea_low_adrenal_androgen_reduction, pkg_kb47_fai_high_biochemical_hyperandrogenism, pkg_kb47_fai_low_reduced_free_androgen_availability, pkg_kb47_free_testosterone_high_androgen_excess_context, pkg_kb47_free_testosterone_low_androgen_deficiency_context, pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction, pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction. STOP condition 1 will not trigger."
+      "citation": "All 8 androgen frame_ids confirmed in (1) batch2_androgen_panel_medical_review_v1.yaml, (2) batch2_promotion_readiness_register_v1.yaml, and (3) medical_frame_identity_index_v1.yaml. No frame is absent from any of the three registers. STOP condition 1 and 2 will not trigger."
     },
     {
-      "check": "Source cross-ref — creatine_kinase package confirmed (glob method note for Cursor)",
-      "result": "ADVISORY",
-      "citation": "IMPORTANT FOR CURSOR: The Glob tool with pattern 'knowledge_bus/packages/pkg_kb47_*' returns no results because Glob matches files, not directories. Package existence must be verified via shell command (ls/dir) or by globbing for files inside the directory (e.g. 'knowledge_bus/packages/pkg_kb47_*/**'). Confirmed via bash: pkg_kb47_creatine_kinase_high_exertional_muscle_injury exists with 4 files including package_manifest.yaml."
-    },
-    {
-      "check": "Source cross-ref — androgen spec_ids traceable in Batch_2_Pass_3.json",
+      "check": "Source cross-ref — catalogue structure supports placeholder additions",
       "result": "CONFIRMED",
-      "citation": "Grep for androgen spec_ids in Batch_2_Pass_3.json: inv_dhea_high_androgen_excess_context at line 435, inv_fai_high_biochemical_hyperandrogenism at line 1439, inv_free_testosterone_high_androgen_excess_context at line 2448. Remaining 5 spec_ids (dhea_low, fai_low, free_testosterone_low, free_testosterone_pct_high, free_testosterone_pct_low) inferrable from same source (78 total matches). Frame traceability STOP condition will not trigger from source absence."
+      "citation": "context_modifier_catalogue_draft_v1.yaml structure reviewed: each entry uses modifier_id, modifier_type, source_input, applies_to (with signal_family_ids, medical_frame_ids, biomarker_ids), modifier_effect, runtime_active: false. Pattern is well-established. Adding androgen-specific placeholder entries (mod_androgen_ctx_shbg, linking existing mod_demo_sex/mod_demo_age to androgen frame IDs) follows the same pattern. STOP condition 3 will not trigger."
     },
     {
-      "check": "Source cross-ref — frame identity index consistency",
-      "result": "CONFIRMED",
-      "citation": "All 8 androgen frames in medical_frame_identity_index_v1.yaml carry source_package_id matching the pkg_kb47_* naming and source_package_path pointing to knowledge_bus/packages/pkg_kb47_*. Frame_role: pass3_frame_not_compiled (index nomenclature for compiled-not-promoted state). context_modifier_dependency: false in promotion register — NOTE: this may be revised by the medical review findings; the output YAML register is the appropriate place to document actual context dependencies per review."
+      "check": "Source cross-ref — stale promotion_readiness_status post-MEDREVIEW-1",
+      "result": "ADVISORY — REQUIRES CURSOR ACTION",
+      "citation": "batch2_promotion_readiness_register_v1.yaml lines 106, 130, 290, 313, 428, 451, 474, 497: all 8 androgen entries still show promotion_readiness_status: BLOCKED_PENDING_MEDICAL_REVIEW and recommended_next_action citing CF-BATCH2-005 (medical review). MEDREVIEW-1 is complete. Prompt lines 165-169 authorise correcting inconsistencies with the medical review without changing promotion status. Cursor should update promotion_readiness_status to BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING (for the 4 BLOCKED frames: fai_high, fai_low, free_testosterone_pct_high, free_testosterone_pct_low) and recommended_next_action to reference CF-BATCH2-009 and CF-BATCH2-010. The 4 MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT frames may use BLOCKED_PENDING_CONTEXT_BINDING_AND_CLINICAL_SIGNOFF or remain BLOCKED_PENDING_MEDICAL_REVIEW — Cursor must choose the status consistent with the medical review outcome without changing the promotion wave or blocked state."
     },
     {
-      "check": "Prior task findings — BATCH2-PROMOTION-READINESS-1 baseline independently verified",
+      "check": "Prior task findings — BATCH2-MEDREVIEW-1 baseline independently verified",
       "result": "CONFIRMED — INDEPENDENT RE-VERIFICATION, NOT INHERITED FROM MEMORY",
-      "citation": "batch2_promotion_readiness_register_v1.yaml read directly lines 1-10: work_id BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review, status governance_promotion_readiness_non_runtime. Audit paper read directly. Prior sprint PASS not inherited from memory — confirmed from artefacts."
+      "citation": "batch2_androgen_panel_medical_review_v1.yaml read directly: work_id BATCH2-MEDREVIEW-1_androgen_panel_medical_review line 4, frame_count: 8 line 7, all 8 frames with context_dependencies populated lines 19-211. Not inherited from memory or prior audit summary."
     },
     {
       "check": "Forbidden files — runtime boundary enforcement",
       "result": "CONFIRMED NOT IN SCOPE",
-      "citation": "Prompt lines 368-383 (Runtime boundary do-not-modify list): SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, unit conversion, knowledge_bus/packages/*, knowledge_bus/current/latest_knowledge_status.json — all explicitly prohibited. Prompt lines 388-404 (Out of scope): promote/activate/retire packages, modify package files, signal_library.yaml, research_brief.yaml, context modifier binding, frontend, runtime behaviour, thyroid/eGFR adjudication — all explicitly out of scope."
+      "citation": "Prompt lines 399-411 (Runtime boundary): SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, unit conversion, knowledge_bus/packages/*, latest_knowledge_status.json — all explicitly prohibited. Prompt lines 418-434 (Out of scope): promote/activate/retire/modify packages, signal_library.yaml, research_brief.yaml, implement runtime modifier evaluation, frontend, runtime behaviour, clinical sign-off, thyroid/eGFR review — all out of scope. No creep detected in prompt."
     },
     {
-      "check": "STOP conditions — pre-flight baseline",
+      "check": "STOP conditions — pre-flight",
       "result": "CONFIRMED — NO BLOCKERS DETECTED",
-      "citation": "Batch_2_Pass_3.json — CONFIRMED (Glob). batch2_promotion_readiness_register_v1.yaml — CONFIRMED (Glob + read). medical_frame_identity_index_v1.yaml — CONFIRMED (Glob + read). All 8 androgen package dirs — CONFIRMED (bash). No STOP condition pre-triggers detected. Cursor must still verify branch = main, working tree clean, and local main = origin/main at sprint start per prompt lines 75-95."
-    },
-    {
-      "check": "Output register schema — runtime_consumed: false confirmed",
-      "result": "CONFIRMED",
-      "citation": "Prompt lines 251-283: output schema for batch2_androgen_panel_medical_review_v1.yaml includes runtime_consumed: false as a required top-level field. This is consistent with the pattern in batch2_promotion_readiness_register_v1.yaml line 3: runtime_consumed: false. Correct CONTENT classification."
-    },
-    {
-      "check": "Carry-forward handling accuracy",
-      "result": "CONFIRMED",
-      "citation": "Prompt lines 325-342: CF-BATCH2-005 to be resolved only if all 8 frames have clear outcome + next action. CF-BATCH2-006 to remain Open (Wave B out of scope). CF-BATCH2-003 to remain Open — ADVISORY: carry-forward register line 66 already shows CF-BATCH2-003 as Resolved by BATCH2-PROMOTION-READINESS-1. Cursor should not re-open it; instruction to 'remain Open' at prompt line 334 appears to be a prompt artifact. Cursor must leave CF-BATCH2-003 at its current Resolved status."
+      "citation": "STOP condition 1: all 8 androgen frames found in medical review — PASS. STOP condition 2: all 8 androgen frames found in promotion readiness register — PASS. STOP condition 3: catalogue supports placeholder structure — PASS. STOP condition 4: validators exist — PASS (pre-run check; Cursor must run and paste actual output). STOP condition 5: no package/runtime/frontend change necessary — PASS (scope is governance YAML only). STOP condition 6: architecture gate — must be run by Cursor. Cursor must still verify branch = main, working tree clean, local main = origin/main before starting."
     },
     {
       "check": "Overall hardening verdict",
       "result": "HARDENED — NO BLOCKERS",
-      "citation": "All 5 front matter fields valid. All authority paths confirmed to exist with content read. All 8 androgen package dirs confirmed on disk. Androgen spec_ids traceable in Batch_2_Pass_3.json. Frame identity index consistent. Prior sprint baseline independently verified. Runtime boundary clearly enforced. One advisory raised: CF-BATCH2-003 is already Resolved in the register — Cursor must not re-open it. One advisory raised: Glob tool does not find package directories by name; Cursor should use shell commands to verify package existence. Sprint is ready for Stage 3 kernel start."
+      "citation": "All 5 front matter fields valid. All authority paths confirmed to exist with content read. All 8 androgen frames traceable across three registers. Catalogue structure verified to support placeholder additions. SHBG modifier gap identified and flagged — Cursor must add placeholder. Stale promotion_readiness_status and recommended_next_action flagged — Cursor must update for consistency. All validators and regression test scripts confirmed to exist. Runtime boundary clearly enforced. Sprint is ready for Stage 3 kernel start."
     }
   ]
 }
