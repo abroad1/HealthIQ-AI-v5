@@ -1,52 +1,57 @@
 ---
-work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
-branch: work/PASS3-BATCH2-FRAME-INDEX-2-remaining-single-frame-batch2-identity-index-expansion
+work_id: BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review
+branch: work/BATCH2-PROMOTION-READINESS-1-batch2-indexed-frame-promotion-readiness-review
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 ---
 
-# PASS3-BATCH2-FRAME-INDEX-2 — Remaining Single-Frame Batch 2 Identity Index Expansion
+# BATCH2-PROMOTION-READINESS-1 — Batch 2 Indexed Frame Promotion Readiness Review
 
 ## Purpose
 
-Index the remaining single-frame Batch 2 Pass_3 signal families into the governed medical frame identity index.
+Review all 16 Batch 2 indexed signal families / frames in one controlled promotion-readiness sprint.
 
-This sprint follows:
+This sprint must determine which Batch 2 `pkg_kb47_*` packages are ready to proceed toward governed package promotion, which require medical review, and which should remain blocked.
 
-```text
-PASS3-BATCH2-INGEST-1
-PASS3-BATCH2-FRAME-INDEX-1
-PASS3-BATCH2-PROVENANCE-1
-````
+This is not a package-promotion sprint.
 
-Batch 2 is now registered as canonical and the `pkg_kb47_*` manifests have been realigned to `Batch_2_Pass_3.json`.
-
-This sprint must complete the next safe indexing step for the remaining Batch 2 families, while treating androgen-panel signals with explicit medical-review caution.
-
-Do not promote packages.
 Do not activate packages.
 Do not retire packages.
 Do not modify runtime package logic.
+Do not change frontend, SignalEvaluator, SignalRegistry, scoring, SSOT or runtime loaders.
+
+The goal is to move out of micro-sprint mode by using the governance scaffold now in place:
+
+```text
+Batch 2 canonical research registered
+→ pkg_kb47 provenance corrected
+→ all Batch 2 frames indexed
+→ biomarker tree regenerated
+→ architecture gate active
+→ now assess promotion readiness for the whole Batch 2 estate
+````
 
 ---
 
 ## Strategic framing
 
-Batch 2 contains validated Pass_3 research and compiled `pkg_kb47_*` packages.
+The previous Batch 2 work has brought Batch 2 into line with the wider Pass_3 architecture.
 
-The current architecture requires:
+Current known state:
 
 ```text
-Pass_3 research
-→ medical frame identity index
-→ generated biomarker tree
-→ future promotion readiness review
+- Batch_2_Pass_3.json is canonical and validated
+- 20 Batch 2 specs validated
+- 20 pkg_kb47_* manifests realigned to canonical Batch_2_Pass_3.json
+- all 16 Batch 2 signal families are now indexed
+- all Batch 2 frames are currently compiled_not_promoted / inactive / required_before_activation
+- androgen-panel frames require explicit medical-review caution
 ```
 
-This sprint updates the frame index only.
+This sprint should produce the decision map for what can move forward next.
 
-It must not treat hormone/androgen-related signals as automatically safe just because they are single-frame. Single-frame does not mean low-risk.
+It must not turn each individual marker into a separate sprint unless evidence shows that is necessary.
 
 ---
 
@@ -58,12 +63,12 @@ Expected prior completed work:
 
 ```text
 PASS3-BATCH2-INGEST-1 merged
-PASS3-BATCH2-FRAME-INDEX-1 merged
 PASS3-BATCH2-PROVENANCE-1 merged
-PASS3-FRAME-INDEX-3 merged
-MED-FRAME-TREE-1 merged
+PASS3-BATCH2-FRAME-INDEX-1 merged
+PASS3-BATCH2-FRAME-INDEX-2 merged
 ARCH-SENTINEL-1 merged
 CI-ARCH-GATE-1 / CI-ARCH-GATE-1A merged
+MED-FRAME-TREE-1 merged
 ```
 
 Before starting, run and report:
@@ -95,13 +100,13 @@ STOP if:
 
 ```yaml
 risk_level: HIGH
-change_type: MIXED
+change_type: CONTENT
 execution_model: TWO_PHASE_START_FINISH
 ```
 
 Reason:
 
-This sprint updates governed medical frame identity infrastructure using canonical Batch 2 research. It must not change runtime behaviour, but it affects future package promotion and medical-intelligence safety gates.
+This sprint makes promotion-readiness decisions for a full group of medically governed packages. It must not alter runtime, but its outputs will govern future promotion and activation work.
 
 ---
 
@@ -110,231 +115,366 @@ This sprint updates governed medical frame identity infrastructure using canonic
 Read before work:
 
 ```text
+knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
 knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml
 knowledge_bus/governance/pass3_batch2_kb47_manifest_realign_register_v1.yaml
-knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
 knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 docs/audit-papers/PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration_report.md
-docs/audit-papers/PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion_report.md
 docs/audit-papers/PASS3-BATCH2-PROVENANCE-1_kb47_manifest_canonical_source_realign_report.md
+docs/audit-papers/PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion_report.md
+docs/audit-papers/PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion_report.md
 docs/architecture/biomarker_medical_frame_tree.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Also inspect relevant compiled packages:
+Also inspect:
 
 ```text
 knowledge_bus/packages/pkg_kb47_*
+backend/scripts/validate_knowledge_package.py
+backend/scripts/run_architecture_validation_gate.py
 ```
 
 ---
 
 ## Required scope
 
-Index the remaining Batch 2 single-frame families not indexed by `PASS3-BATCH2-FRAME-INDEX-1`.
+Review all Batch 2 / `pkg_kb47_*` packages and indexed frames.
 
-Expected remaining families include:
+Expected package/spec count:
+
+```text
+20 pkg_kb47_* packages
+20 Batch 2 specs
+16 Batch 2 signal families
+```
+
+Confirm actual counts from repo evidence.
+
+Do not restrict this to androgen-only review.
+
+Do not split thyroid, androgen, eosinophil, renal, CK, or other Batch 2 groups into separate sprints unless the audit proves they need separate follow-up.
+
+---
+
+## Required readiness classifications
+
+For every Batch 2 package/frame, assign one promotion-readiness status:
+
+```text
+READY_FOR_PROMOTION_CANDIDATE
+READY_WITH_DOCUMENTED_CAUTION
+BLOCKED_PENDING_MEDICAL_REVIEW
+BLOCKED_PENDING_FRAME_ADJUDICATION
+BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+BLOCKED_PENDING_PROVENANCE_OR_VALIDATION
+DUPLICATE_OR_OVERLAP_REVIEW_REQUIRED
+```
+
+Definitions:
+
+### READY_FOR_PROMOTION_CANDIDATE
+
+Use only where:
+
+```text
+- Batch 2 spec is valid
+- pkg_kb47 package exists
+- manifest provenance points to canonical Batch_2_Pass_3.json
+- frame is indexed
+- no medical-review caution is flagged
+- no activation-key or frame collision exists
+- no known context modifier dependency blocks promotion
+```
+
+### READY_WITH_DOCUMENTED_CAUTION
+
+Use where technically ready, but promotion should retain clear non-runtime caution notes.
+
+### BLOCKED_PENDING_MEDICAL_REVIEW
+
+Use for androgen-panel frames and any other frame where medical truth, interpretation, or safety cannot be accepted by architecture alone.
+
+### BLOCKED_PENDING_FRAME_ADJUDICATION
+
+Use where signal identity or frame overlap needs architecture/clinical adjudication.
+
+### BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+
+Use where the frame is heavily dependent on questionnaire/medication context before useful interpretation.
+
+### BLOCKED_PENDING_PROVENANCE_OR_VALIDATION
+
+Use only if package/spec validation or canonical provenance is not clean.
+
+### DUPLICATE_OR_OVERLAP_REVIEW_REQUIRED
+
+Use if the Batch 2 frame appears to duplicate an existing indexed or runtime-active frame.
+
+---
+
+## Required grouping
+
+Group the Batch 2 estate into sensible promotion waves.
+
+Expected grouping may include:
+
+```text
+Wave A — technically clean promotion candidates
+Wave B — thyroid-panel cautious candidates
+Wave C — androgen-panel medical-review required
+Wave D — multi-frame / adjudication required
+Wave E — blocked / duplicate / provenance issues
+```
+
+Cursor must derive the final waves from evidence, not assume this list.
+
+---
+
+## Required androgen-panel handling
+
+For at least these families:
 
 ```text
 dhea
 fai
-free_t3
-free_t4
 free_testosterone
 free_testosterone_pct
 ```
 
-Confirm the exact remaining families from:
+The sprint must explicitly answer:
 
 ```text
-knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+1. Which androgen-panel frames exist?
+2. Which package/spec supports each frame?
+3. Why medical review is required before promotion readiness.
+4. Whether they should be excluded from the first promotion wave.
+5. What exact decision is required before they can move forward.
 ```
 
-Do not assume the list blindly.
+Do not clear androgen-panel medical review in this sprint.
+
+Do not mark androgen frames as safe for promotion unless there is explicit medical-review evidence already present in repo governance.
 
 ---
 
-## Androgen-panel caution
+## Required thyroid-panel handling
 
-The androgen-related families require explicit medical-review caution before future activation or promotion.
-
-This includes at least:
-
-```text
-dhea
-fai
-free_testosterone
-free_testosterone_pct
-```
-
-For these, use conservative governance status:
-
-```yaml
-promotion_state: compiled_not_promoted
-runtime_authority_status: inactive
-clinical_adjudication_status: required_before_activation
-```
-
-Do not mark androgen-panel frames as `runtime_active_canonical`.
-
-Do not mark medical review as complete.
-
-Do not claim these are simple low-risk frames.
-
----
-
-## Thyroid-panel caution
-
-Thyroid-related families such as:
+For:
 
 ```text
 free_t3
 free_t4
 ```
 
-may be clinically more straightforward than androgen frames, but still must not be activated in this sprint.
-
-Use conservative governance status unless there is explicit existing governance saying otherwise:
-
-```yaml
-promotion_state: compiled_not_promoted
-runtime_authority_status: inactive
-clinical_adjudication_status: required_before_activation
-```
-
----
-
-## Required preflight
-
-Before editing the index, report:
+The sprint must explicitly answer:
 
 ```text
-1. remaining Batch 2 families not yet indexed
-2. all matching spec_ids
-3. all signal_ids
-4. all primary biomarker IDs
-5. trigger directions
-6. matching pkg_kb47 package paths
-7. whether each package manifest now points to canonical Batch_2_Pass_3.json
-8. whether source package paths exist
-9. whether any activation_key would duplicate an active frame
-10. whether the family is androgen-related, thyroid-related or other
-11. whether medical review is required before future activation
+1. Which thyroid-panel frames exist?
+2. Whether package/spec/provenance/index evidence is complete.
+3. Whether these are promotion candidates or require medical review.
+4. Whether they should be grouped separately from androgen frames.
 ```
-
-STOP if any selected family cannot be mapped to Batch 2 specs and `pkg_kb47_*` packages with confidence.
 
 ---
 
-## Required index fields
+## Required multi-frame handling
 
-Every new frame entry must include all required index fields:
+For Batch 2 multi-frame families already indexed in `PASS3-BATCH2-FRAME-INDEX-1`:
+
+```text
+creatine_kinase
+egfr
+eosinophil_pct
+eosinophils_abs
+```
+
+The sprint must explicitly answer:
+
+```text
+1. Are the frames distinct and correctly indexed?
+2. Are there activation-key collisions?
+3. Do they require frame adjudication before promotion?
+4. Are any eligible for a first promotion candidate wave?
+```
+
+---
+
+## Required readiness table
+
+Create a full Batch 2 readiness table covering every `pkg_kb47_*` package:
 
 ```yaml
-signal_family_id:
-primary_biomarker_id:
-medical_frame_id:
-frame_label:
-frame_role:
-research_spec_id:
-source_package_id:
-source_package_path:
-activation_key:
+package_id:
+package_path:
+spec_id:
 signal_id:
-promotion_state:
-runtime_authority_status:
-clinical_adjudication_status:
-context_inputs_supported:
-  biomarker_evidence:
-  questionnaire_modifiers:
-  medication_modifiers:
-collision_group_id:
+primary_biomarker_id:
+signal_family_id:
+medical_frame_id:
+panel_group:
+batch2_spec_valid:
+manifest_provenance_canonical:
+package_validator_status:
+frame_indexed:
+activation_key:
 collision_status:
-supersedes:
-superseded_by:
+clinical_adjudication_status:
+context_modifier_dependency:
+promotion_readiness_status:
+recommended_wave:
+recommended_next_action:
+medical_review_required:
 notes:
 ```
 
-Use existing allowed enum values only.
-
----
-
-## State classification rules
-
-For Batch 2 frames where a compiled `pkg_kb47_*` package exists and provenance has been realigned:
-
-```yaml
-promotion_state: compiled_not_promoted
-runtime_authority_status: inactive
-clinical_adjudication_status: required_before_activation
-collision_status: none
-```
-
-Use `collision_status: requires_adjudication` only if there is evidence of an activation-key or clinical-frame collision.
-
-Do not introduce duplicate active activation keys.
-
-Do not mark any Batch 2 frame as runtime-active in this sprint.
-
----
-
-## Required family-level outputs
-
-For each indexed family, document:
+Allowed `panel_group` values:
 
 ```text
-- number of frames added
-- frame role represented
-- matching Batch 2 spec
-- matching pkg_kb47 package
-- whether package manifest provenance is canonical
-- whether medical review is required
-- whether future package promotion remains blocked
+renal
+muscle_injury
+eosinophil
+thyroid
+androgen
+other
 ```
 
----
-
-## Tree regeneration
-
-After index update, regenerate the human-readable tree:
-
-```powershell
-python knowledge_bus/tools/build_biomarker_medical_frame_tree.py
-```
-
-Update:
+Allowed `recommended_wave` values:
 
 ```text
-docs/architecture/biomarker_medical_frame_tree.md
+Wave_A_first_promotion_candidates
+Wave_B_cautious_promotion_candidates
+Wave_C_medical_review_required
+Wave_D_frame_adjudication_required
+Wave_E_blocked_or_duplicate
 ```
-
-Do not edit the tree manually.
 
 ---
 
 ## Required artefacts
 
-Update:
-
-```text
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-docs/architecture/biomarker_medical_frame_tree.md
-```
-
-Update if needed:
-
-```text
-knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
-docs/sprints/launch_core_carry_forward_register.md
-```
-
 Create:
 
 ```text
-docs/audit-papers/PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion_report.md
+docs/audit-papers/BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review.md
+knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml
+```
+
+Update:
+
+```text
+docs/sprints/launch_core_carry_forward_register.md
+```
+
+Do not update:
+
+```text
+knowledge_bus/packages/*
+knowledge_bus/current/latest_knowledge_status.json
+```
+
+Do not update the frame index unless correcting a documentation-only typo found during review and explicitly justified.
+
+Do not regenerate the tree unless the frame index changes, which is not expected.
+
+---
+
+## Required register content
+
+`batch2_promotion_readiness_register_v1.yaml` must include:
+
+```yaml
+schema_version:
+runtime_consumed: false
+status:
+work_id:
+source_batch:
+package_count:
+summary_counts:
+  READY_FOR_PROMOTION_CANDIDATE:
+  READY_WITH_DOCUMENTED_CAUTION:
+  BLOCKED_PENDING_MEDICAL_REVIEW:
+  BLOCKED_PENDING_FRAME_ADJUDICATION:
+  BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING:
+  BLOCKED_PENDING_PROVENANCE_OR_VALIDATION:
+  DUPLICATE_OR_OVERLAP_REVIEW_REQUIRED:
+promotion_waves:
+  Wave_A_first_promotion_candidates:
+  Wave_B_cautious_promotion_candidates:
+  Wave_C_medical_review_required:
+  Wave_D_frame_adjudication_required:
+  Wave_E_blocked_or_duplicate:
+packages:
+  - package_id:
+    package_path:
+    spec_id:
+    signal_id:
+    primary_biomarker_id:
+    signal_family_id:
+    medical_frame_id:
+    panel_group:
+    batch2_spec_valid:
+    manifest_provenance_canonical:
+    package_validator_status:
+    frame_indexed:
+    activation_key:
+    collision_status:
+    clinical_adjudication_status:
+    context_modifier_dependency:
+    promotion_readiness_status:
+    recommended_wave:
+    recommended_next_action:
+    medical_review_required:
+    notes:
+```
+
+---
+
+## Required validations
+
+Run and paste actual output:
+
+```powershell
+python backend/scripts/run_architecture_validation_gate.py
+python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+```
+
+Validate all 20 `pkg_kb47_*` packages using repo-standard package validation.
+
+If batch package validation is not available, loop through each package and run:
+
+```powershell
+python backend/scripts/validate_knowledge_package.py --package-dir <package_dir>
+```
+
+Paste actual validation output or a clear per-package PASS table with command evidence.
+
+---
+
+## Required report content
+
+The report must include:
+
+```text
+- executive verdict
+- artefacts inspected
+- package/spec/frame counts
+- full readiness methodology
+- full readiness table or link to register
+- Wave A/B/C/D/E summary
+- androgen-panel assessment
+- thyroid-panel assessment
+- multi-frame family assessment
+- package validation results
+- architecture gate output
+- promotion candidates
+- blocked packages and exact blockers
+- recommended next promotion sprint
+- carry-forward updates
+- confirmation no runtime/package/frontend changes
 ```
 
 ---
@@ -350,53 +490,19 @@ docs/sprints/launch_core_carry_forward_register.md
 Expected handling:
 
 ```text
-CF-BATCH2-004
-Should be marked Resolved only if all remaining single-frame Batch 2 families are indexed.
-
-CF-BATCH2-001
-Should be marked Resolved only if all Batch 2 frame indexing is now complete.
-
 CF-BATCH2-003
-Should remain Open. Promotion readiness review is after indexing and provenance alignment.
+Should be marked Resolved only if this sprint completes promotion-readiness review for all Batch 2 frames.
 
-CF-BATCH2-002
-Should remain Resolved unless this sprint discovers a provenance regression.
+CF-BATCH2-005
+Should remain Open unless medical review of androgen-panel frames is completed, which is not expected in this sprint.
+
+Possible new carry-forward:
+CF-BATCH2-006 — promote Wave A Batch 2 candidates.
+CF-BATCH2-007 — adjudicate Wave D multi-frame candidates.
+CF-BATCH2-008 — thyroid-panel cautious promotion or review.
 ```
 
-Likely new carry-forward if needed:
-
-```text
-CF-BATCH2-005 — medical review of androgen-panel Batch 2 frames before promotion readiness.
-```
-
-Do not mark promotion readiness complete.
-
----
-
-## Required report content
-
-The report must include:
-
-```text
-- executive verdict
-- artefacts inspected
-- remaining Batch 2 families identified
-- selected families and rationale
-- Batch 2 specs indexed
-- frame entries added
-- family/frame counts before and after
-- pkg_kb47 package existence/provenance findings
-- androgen-panel caution / medical-review status
-- thyroid-panel caution / medical-review status
-- collision checks
-- clinical adjudication statuses
-- tree regeneration summary
-- validation output pasted in full
-- runtime boundary confirmation
-- carry-forward updates
-- remaining limitations
-- recommended next sprint
-```
+Do not mark package promotion complete.
 
 ---
 
@@ -422,40 +528,22 @@ If any runtime/package/frontend change appears necessary, STOP and report.
 
 ---
 
-## Required validations
-
-Run and paste actual output:
-
-```powershell
-python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
-python knowledge_bus/tools/build_biomarker_medical_frame_tree.py
-python backend/scripts/run_architecture_validation_gate.py
-python -m pytest backend/tests/regression/test_biomarker_medical_frame_tree_generation.py -q
-```
-
-Also validate that the index and tree contain all newly indexed Batch 2 families.
-
-Do not write only “all tests passed”.
-
----
-
 ## Out of scope
 
 Do not:
 
 ```text
-- change pkg_kb47 manifests
-- compile packages
+- modify package manifests
+- modify signal_library.yaml
+- modify research_brief.yaml
 - promote packages
 - activate packages
 - retire packages
-- modify runtime package files
 - implement Layer B frame assembly
 - implement context modifier evaluation
 - change frontend
-- adjudicate medical truth
-- add new context modifiers
+- adjudicate androgen medical truth
+- change frame index except justified documentation-only correction
 ```
 
 ---
@@ -465,15 +553,13 @@ Do not:
 STOP and report if:
 
 ```text
-1. remaining Batch 2 families cannot be identified
-2. selected families cannot be mapped to Batch 2 specs
-3. selected families cannot be mapped to pkg_kb47 packages
-4. package provenance is not canonical after PASS3-BATCH2-PROVENANCE-1
-5. frame entries would require clinical invention
-6. duplicate active activation keys would be introduced
-7. tree regeneration omits indexed frames
-8. architecture gate fails
-9. any runtime/package/frontend change appears necessary
+1. Batch 2 package/spec/frame counts cannot be reconciled
+2. any pkg_kb47 package fails validation
+3. any package provenance is not canonical
+4. any Batch 2 frame is missing from the frame index
+5. readiness classification requires clinical judgement beyond available governance
+6. architecture gate fails
+7. any runtime/package/frontend change appears necessary
 ```
 
 ---
@@ -485,16 +571,16 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. files inspected
-3. remaining Batch 2 families
-4. selected Batch 2 specs
-5. frame entries added
-6. family/frame counts before and after
-7. pkg_kb47 provenance confirmation
-8. androgen/thyroid medical-review handling
-9. tree regeneration evidence
-10. validation commands run
-11. actual validation output
-12. carry-forward updates
+3. Batch 2 package/spec/frame counts
+4. package validation evidence
+5. readiness classification counts
+6. wave grouping summary
+7. androgen-panel handling
+8. thyroid-panel handling
+9. multi-frame handling
+10. governance files created/updated
+11. carry-forward updates
+12. actual validation output
 13. confirmation no runtime/package/frontend changes
 ```
 
@@ -516,12 +602,13 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/PASS3-BATCH2-FRAME-INDEX-2-remaining-single-frame-batch2-identity-index-expansion
-- only in-scope docs/governance/tree/register files changed
+- current branch matches work/BATCH2-PROMOTION-READINESS-1-batch2-indexed-frame-promotion-readiness-review
+- only in-scope docs/governance/register files changed
 - no runtime package files changed
 - no frontend/runtime evaluator files changed
 - no ambiguous stash exists
-- validators and architecture gate pass
+- all package validators pass
+- architecture gate passes
 ```
 
 ---
@@ -531,16 +618,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. remaining Batch 2 single-frame families are identified
-2. remaining safe-to-index families are indexed
-3. androgen-panel families are explicitly marked medical-review required
-4. every new frame validates
-5. no duplicate active activation keys are introduced
-6. pkg_kb47 provenance is confirmed canonical
-7. generated tree includes the new families/frames
-8. Batch 2 carry-forwards are updated accurately
-9. no runtime/package/frontend changes occur
-10. architecture gate passes
+1. all 20 Batch 2 packages are reviewed
+2. every package has a promotion-readiness classification
+3. Wave A/B/C/D/E groupings are produced
+4. androgen-panel frames remain medical-review gated
+5. thyroid-panel frames are explicitly assessed
+6. multi-frame families are explicitly assessed
+7. package validators pass
+8. architecture gate passes
+9. CF-BATCH2-003 is accurately updated
+10. no runtime/package/frontend changes occur
 ```
 
 ```
