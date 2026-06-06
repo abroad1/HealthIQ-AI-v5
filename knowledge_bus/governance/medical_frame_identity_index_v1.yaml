@@ -1,9 +1,9 @@
 schema_version: 1.0.0
 index_id: medical_frame_identity_index_v1
 work_id: MED-FRAME-2_medical_frame_identity_index
-index_expansion_work_id: PASS3-FRAME-INDEX-3_next_high_risk_signal_family_expansion
+index_expansion_work_id: PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion
 generated_utc: '2026-06-02'
-index_expansion_utc: '2026-06-03'
+index_expansion_utc: '2026-06-06'
 runtime_consumed: false
 status: governed_non_runtime_index
 
@@ -947,3 +947,218 @@ signal_families:
         superseded_by: null
         notes: >
           PASS3-FRAME-INDEX-3: or_liver_injury_pattern; pkg_kb45 batch-lineage runtime authority.
+
+  - signal_family_id: signal_creatine_kinase_high
+    primary_biomarker_id: creatine_kinase
+    system: mitochondrial
+    frames:
+      - signal_family_id: signal_creatine_kinase_high
+        primary_biomarker_id: creatine_kinase
+        medical_frame_id: frame_creatine_kinase_pass3_exertional_muscle_injury
+        frame_label: Exertional muscle injury (Pass 3 kb47)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_creatine_kinase_high_exertional_muscle_injury
+        source_package_id: pkg_kb47_creatine_kinase_high_exertional_muscle_injury
+        source_package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_exertional_muscle_injury
+        activation_key: signal_creatine_kinase_high::inv_creatine_kinase_high_exertional_muscle_injury
+        signal_id: signal_creatine_kinase_high
+        promotion_state: compiled_not_promoted
+        runtime_authority_status: inactive
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: creatine_kinase_pass3_exertional_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-BATCH2-FRAME-INDEX-1: Batch_2_Pass_3 canonical spec; pkg_kb47 compiled but not
+          runtime-promoted. Manifest cites Rev1 (CF-BATCH2-002); promotion blocked until adjudication.
+
+      - signal_family_id: signal_creatine_kinase_high
+        primary_biomarker_id: creatine_kinase
+        medical_frame_id: frame_creatine_kinase_pass3_persistent_nonexertional_muscle_injury
+        frame_label: Persistent non-exertional muscle injury (Pass 3 kb47)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
+        source_package_id: pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+        source_package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+        activation_key: signal_creatine_kinase_high::inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
+        signal_id: signal_creatine_kinase_high
+        promotion_state: compiled_not_promoted
+        runtime_authority_status: inactive
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: creatine_kinase_pass3_persistent_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-BATCH2-FRAME-INDEX-1: Medically distinct from exertional frame; must not collapse
+          transient exertional CK release into chronic myopathic interpretation.
+
+  - signal_family_id: signal_egfr_low
+    primary_biomarker_id: egfr
+    system: renal
+    frames:
+      - signal_family_id: signal_egfr_low
+        primary_biomarker_id: egfr
+        medical_frame_id: frame_egfr_pass3_chronic_kidney_function_reduction
+        frame_label: Chronic kidney function reduction (Pass 3 kb47)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_egfr_low_chronic_kidney_function_reduction
+        source_package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+        source_package_path: knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction
+        activation_key: signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction
+        signal_id: signal_egfr_low
+        promotion_state: compiled_not_promoted
+        runtime_authority_status: inactive
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: egfr_pass3_chronic_frame
+        collision_status: requires_adjudication
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-BATCH2-FRAME-INDEX-1: Distinct signal_egfr_low family; not conflated with
+          signal_creatinine_high legacy eGFR override (frame_creatinine_legacy_s24_egfr_escalation).
+          CF-CREATININE-001 adjacency noted; medical review before activation.
+
+      - signal_family_id: signal_egfr_low
+        primary_biomarker_id: egfr
+        medical_frame_id: frame_egfr_pass3_hemodynamic_filtration_drop
+        frame_label: Hemodynamic filtration drop (Pass 3 kb47)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_egfr_low_hemodynamic_filtration_drop
+        source_package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+        source_package_path: knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop
+        activation_key: signal_egfr_low::inv_egfr_low_hemodynamic_filtration_drop
+        signal_id: signal_egfr_low
+        promotion_state: compiled_not_promoted
+        runtime_authority_status: inactive
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: egfr_pass3_hemodynamic_frame
+        collision_status: requires_adjudication
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-BATCH2-FRAME-INDEX-1: Acute hemodynamic filtration frame; distinct from chronic
+          kidney function reduction; ROUTE_C multi-frame preserved.
+
+  - signal_family_id: signal_eosinophil_pct_high
+    primary_biomarker_id: eosinophil_pct
+    system: hematologic
+    frames:
+      - signal_family_id: signal_eosinophil_pct_high
+        primary_biomarker_id: eosinophil_pct
+        medical_frame_id: frame_eosinophil_pct_pass3_reactive_atopic
+        frame_label: Reactive atopic eosinophilia (Pass 3 kb47)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_eosinophil_pct_high_reactive_atopic_eosinophilia
+        source_package_id: pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
+        source_package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
+        activation_key: signal_eosinophil_pct_high::inv_eosinophil_pct_high_reactive_atopic_eosinophilia
+        signal_id: signal_eosinophil_pct_high
+        promotion_state: compiled_not_promoted
+        runtime_authority_status: inactive
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: eosinophil_pct_pass3_atopic_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-BATCH2-FRAME-INDEX-1: Percent eosinophil frame; distinct from absolute count family.
+
+      - signal_family_id: signal_eosinophil_pct_high
+        primary_biomarker_id: eosinophil_pct
+        medical_frame_id: frame_eosinophil_pct_pass3_secondary_systemic
+        frame_label: Secondary or systemic eosinophilia (Pass 3 kb47)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+        source_package_id: pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+        source_package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+        activation_key: signal_eosinophil_pct_high::inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+        signal_id: signal_eosinophil_pct_high
+        promotion_state: compiled_not_promoted
+        runtime_authority_status: inactive
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: eosinophil_pct_pass3_secondary_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-BATCH2-FRAME-INDEX-1: Systemic/secondary frame; must not collapse into atopic-only pattern.
+
+  - signal_family_id: signal_eosinophils_abs_high
+    primary_biomarker_id: eosinophils_abs
+    system: hematologic
+    frames:
+      - signal_family_id: signal_eosinophils_abs_high
+        primary_biomarker_id: eosinophils_abs
+        medical_frame_id: frame_eosinophils_abs_pass3_reactive_inflammation
+        frame_label: Reactive eosinophilic inflammation (Pass 3 kb47)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_eosinophils_abs_high_reactive_eosinophilic_inflammation
+        source_package_id: pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+        source_package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+        activation_key: signal_eosinophils_abs_high::inv_eosinophils_abs_high_reactive_eosinophilic_inflammation
+        signal_id: signal_eosinophils_abs_high
+        promotion_state: compiled_not_promoted
+        runtime_authority_status: inactive
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: eosinophils_abs_pass3_reactive_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-BATCH2-FRAME-INDEX-1: Absolute eosinophil count family; distinct biomarker from
+          eosinophil_pct_high despite shared hematologic domain.
+
+      - signal_family_id: signal_eosinophils_abs_high
+        primary_biomarker_id: eosinophils_abs
+        medical_frame_id: frame_eosinophils_abs_pass3_hypereosinophilic_secondary
+        frame_label: Hypereosinophilic or secondary eosinophilia (Pass 3 kb47)
+        frame_role: pass3_frame_not_compiled
+        research_spec_id: inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+        source_package_id: pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+        source_package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+        activation_key: signal_eosinophils_abs_high::inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+        signal_id: signal_eosinophils_abs_high
+        promotion_state: compiled_not_promoted
+        runtime_authority_status: inactive
+        clinical_adjudication_status: required_before_activation
+        context_inputs_supported:
+          biomarker_evidence: true
+          questionnaire_modifiers: false
+          medication_modifiers: false
+        collision_group_id: eosinophils_abs_pass3_hypereosinophilic_frame
+        collision_status: none
+        supersedes: null
+        superseded_by: null
+        notes: >
+          PASS3-BATCH2-FRAME-INDEX-1: Hypereosinophilic/secondary frame; ROUTE_C preserved;
+          promotion blocked until provenance realignment (CF-BATCH2-002).
