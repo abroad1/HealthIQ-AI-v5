@@ -1,9 +1,10 @@
 {
   "branch": "work/BATCH2-MEDREVIEW-1-androgen-panel-medical-review",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-06T18:34:03Z",
   "cursor_started_utc": "2026-06-06T18:29:01Z",
-  "head_sha": "e00954af8c12cea540695f708ae19407b91b0966",
+  "head_sha": "f36d677207aea89a17d55884ef70e686e5887751",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BATCH2-MEDREVIEW-1_androgen_panel_medical_review"
 }
