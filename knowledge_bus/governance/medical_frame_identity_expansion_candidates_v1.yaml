@@ -1,7 +1,7 @@
 schema_version: 1.0.0
 runtime_consumed: false
 status: governance_audit_non_runtime
-work_id: PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion
+work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 generated_utc: '2026-06-06'
 source_audit: knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 
@@ -115,94 +115,106 @@ expansion_candidates:
     primary_biomarker_id: dhea
     priority: 9
     rationale: Batch_2_Pass_3; ROUTE_A; shares biomarker with signal_dhea_high
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_dhea_high
     primary_biomarker_id: dhea
     priority: 9
     rationale: Batch_2_Pass_3; ROUTE_A; shares biomarker with signal_dhea_low
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_free_t3_low
     primary_biomarker_id: free_t3
     priority: 9
     rationale: Batch_2_Pass_3; ROUTE_A; thyroid single-frame
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_free_t3_high
     primary_biomarker_id: free_t3
     priority: 9
     rationale: Batch_2_Pass_3; ROUTE_A; thyroid single-frame
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_free_t4_low
     primary_biomarker_id: free_t4
     priority: 9
     rationale: Batch_2_Pass_3; ROUTE_A; thyroid single-frame
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_free_t4_high
     primary_biomarker_id: free_t4
     priority: 9
     rationale: Batch_2_Pass_3; ROUTE_A; thyroid single-frame
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_fai_high
     primary_biomarker_id: fai
     priority: 10
     rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_fai_low
     primary_biomarker_id: fai
     priority: 10
     rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_free_testosterone_low
     primary_biomarker_id: free_testosterone
     priority: 10
     rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_free_testosterone_high
     primary_biomarker_id: free_testosterone
     priority: 10
     rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_free_testosterone_pct_low
     primary_biomarker_id: free_testosterone_pct
     priority: 10
     rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion
 
   - signal_family_id: signal_free_testosterone_pct_high
     primary_biomarker_id: free_testosterone_pct
     priority: 10
     rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
-    indexed: false
-    frame_count_indexed: 0
+    indexed: true
+    frame_count_indexed: 1
     source_batch: Batch_2_Pass_3.json
+    indexed_work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion

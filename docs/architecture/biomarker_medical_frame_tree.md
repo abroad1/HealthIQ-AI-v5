@@ -13,14 +13,14 @@
 
 ### Source artefacts
 
-- `knowledge_bus/governance/medical_frame_identity_index_v1.yaml` — sha256 prefix `0dc6f005b1b9c24d`
+- `knowledge_bus/governance/medical_frame_identity_index_v1.yaml` — sha256 prefix `429b556f66b44f19`
 - `knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml` — sha256 prefix `e52bbf09c61fdc9a`
 - `knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml` — sha256 prefix `96251112fe197bfd`
-- `knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml` — sha256 prefix `fb891a1ec50de30c`
+- `knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml` — sha256 prefix `9059341bf2caa138`
 - `knowledge_bus/governance/pass3_promotion_decision_register_v1.yaml` — sha256 prefix `021d9c91bb082747`
 
-- Indexed signal families: **12**
-- Indexed medical frames: **45**
+- Indexed signal families: **24**
+- Indexed medical frames: **57**
 
 ## Legend — promotion / authority states
 
@@ -418,6 +418,50 @@ _System: inflammatory_
 
 ---
 
+## signal_dhea_high — dhea
+
+_System: hormonal_
+
+├── **Androgen excess context (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_dhea_high_androgen_excess_context`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_dhea_high`
+│   ├── Activation key: `signal_dhea_high::inv_dhea_high_androgen_excess_context`
+│   ├── Source package: `pkg_kb47_dhea_high_androgen_excess_context`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context`
+│   ├── Research spec ID: `inv_dhea_high_androgen_excess_context`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Androgen-panel single-frame; medical review required before activation (CF-BATCH2-005). Provenance canonical Batch_2_Pass_3.json. Not runtime-active.
+
+---
+
+## signal_dhea_low — dhea
+
+_System: hormonal_
+
+├── **Adrenal androgen reduction (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_dhea_low_adrenal_androgen_reduction`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_dhea_low`
+│   ├── Activation key: `signal_dhea_low::inv_dhea_low_adrenal_androgen_reduction`
+│   ├── Source package: `pkg_kb47_dhea_low_adrenal_androgen_reduction`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction`
+│   ├── Research spec ID: `inv_dhea_low_adrenal_androgen_reduction`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Androgen-panel single-frame; medical review required before activation (CF-BATCH2-005). Provenance canonical Batch_2_Pass_3.json. Not runtime-active.
+
+---
+
 ## signal_egfr_low — egfr
 
 _System: renal_
@@ -529,6 +573,50 @@ _System: hematologic_
 │   ├── Context inputs supported: biomarker_evidence
 │   ├── Linked context modifiers: _none catalogued_
 │   └── Notes: PASS3-BATCH2-FRAME-INDEX-1: Absolute eosinophil count family; distinct biomarker from eosinophil_pct_high despite shared hematologic domain.
+
+---
+
+## signal_fai_high — fai
+
+_System: hormonal_
+
+├── **Biochemical hyperandrogenism (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_fai_high_biochemical_hyperandrogenism`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_fai_high`
+│   ├── Activation key: `signal_fai_high::inv_fai_high_biochemical_hyperandrogenism`
+│   ├── Source package: `pkg_kb47_fai_high_biochemical_hyperandrogenism`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism`
+│   ├── Research spec ID: `inv_fai_high_biochemical_hyperandrogenism`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Androgen-panel single-frame; medical review required before activation (CF-BATCH2-005). Provenance canonical Batch_2_Pass_3.json. Not runtime-active.
+
+---
+
+## signal_fai_low — fai
+
+_System: hormonal_
+
+├── **Reduced free androgen availability (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_fai_low_reduced_free_androgen_availability`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_fai_low`
+│   ├── Activation key: `signal_fai_low::inv_fai_low_reduced_free_androgen_availability`
+│   ├── Source package: `pkg_kb47_fai_low_reduced_free_androgen_availability`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability`
+│   ├── Research spec ID: `inv_fai_low_reduced_free_androgen_availability`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Androgen-panel single-frame; medical review required before activation (CF-BATCH2-005). Provenance canonical Batch_2_Pass_3.json. Not runtime-active.
 
 ---
 
@@ -693,6 +781,182 @@ _System: hematologic_
 │   ├── Context inputs supported: biomarker_evidence
 │   ├── Linked context modifiers: _none catalogued_
 │   └── Notes: PASS3-FRAME-INDEX-3: High-direction Pass_3 frame on low-family package audit row; enrichment required.
+
+---
+
+## signal_free_t3_high — free_t3
+
+_System: hormonal_
+
+├── **T3-predominant thyrotoxicosis (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_free_t3_high_t3_predominant_thyrotoxicosis`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_free_t3_high`
+│   ├── Activation key: `signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis`
+│   ├── Source package: `pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis`
+│   ├── Research spec ID: `inv_free_t3_high_t3_predominant_thyrotoxicosis`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication required before activation. Provenance canonical. Not runtime-active.
+
+---
+
+## signal_free_t3_low — free_t3
+
+_System: hormonal_
+
+├── **Low T3 syndrome (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_free_t3_low_low_t3_syndrome`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_free_t3_low`
+│   ├── Activation key: `signal_free_t3_low::inv_free_t3_low_low_t3_syndrome`
+│   ├── Source package: `pkg_kb47_free_t3_low_low_t3_syndrome`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome`
+│   ├── Research spec ID: `inv_free_t3_low_low_t3_syndrome`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication required before activation. Provenance canonical. Not runtime-active.
+
+---
+
+## signal_free_t4_high — free_t4
+
+_System: hormonal_
+
+├── **Thyrotoxicosis context (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_free_t4_high_thyrotoxicosis_context`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_free_t4_high`
+│   ├── Activation key: `signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context`
+│   ├── Source package: `pkg_kb47_free_t4_high_thyrotoxicosis_context`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context`
+│   ├── Research spec ID: `inv_free_t4_high_thyrotoxicosis_context`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication required before activation. Provenance canonical. Not runtime-active.
+
+---
+
+## signal_free_t4_low — free_t4
+
+_System: hormonal_
+
+├── **Thyroid hormone deficiency (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_free_t4_low_thyroid_hormone_deficiency`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_free_t4_low`
+│   ├── Activation key: `signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency`
+│   ├── Source package: `pkg_kb47_free_t4_low_thyroid_hormone_deficiency`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency`
+│   ├── Research spec ID: `inv_free_t4_low_thyroid_hormone_deficiency`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication required before activation. Provenance canonical. Not runtime-active.
+
+---
+
+## signal_free_testosterone_high — free_testosterone
+
+_System: hormonal_
+
+├── **Androgen excess context (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_free_testosterone_high_androgen_excess_context`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_free_testosterone_high`
+│   ├── Activation key: `signal_free_testosterone_high::inv_free_testosterone_high_androgen_excess_context`
+│   ├── Source package: `pkg_kb47_free_testosterone_high_androgen_excess_context`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context`
+│   ├── Research spec ID: `inv_free_testosterone_high_androgen_excess_context`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Androgen-panel single-frame; medical review required before activation (CF-BATCH2-005). Provenance canonical Batch_2_Pass_3.json. Not runtime-active.
+
+---
+
+## signal_free_testosterone_low — free_testosterone
+
+_System: hormonal_
+
+├── **Androgen deficiency context (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_free_testosterone_low_androgen_deficiency_context`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_free_testosterone_low`
+│   ├── Activation key: `signal_free_testosterone_low::inv_free_testosterone_low_androgen_deficiency_context`
+│   ├── Source package: `pkg_kb47_free_testosterone_low_androgen_deficiency_context`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context`
+│   ├── Research spec ID: `inv_free_testosterone_low_androgen_deficiency_context`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Androgen-panel single-frame; medical review required before activation (CF-BATCH2-005). Provenance canonical Batch_2_Pass_3.json. Not runtime-active.
+
+---
+
+## signal_free_testosterone_pct_high — free_testosterone_pct
+
+_System: hormonal_
+
+├── **Elevated free androgen fraction (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_free_testosterone_pct_high_elevated_free_androgen_fraction`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_free_testosterone_pct_high`
+│   ├── Activation key: `signal_free_testosterone_pct_high::inv_free_testosterone_pct_high_elevated_free_androgen_fraction`
+│   ├── Source package: `pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction`
+│   ├── Research spec ID: `inv_free_testosterone_pct_high_elevated_free_androgen_fraction`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Androgen-panel single-frame; medical review required before activation (CF-BATCH2-005). Provenance canonical Batch_2_Pass_3.json. Not runtime-active.
+
+---
+
+## signal_free_testosterone_pct_low — free_testosterone_pct
+
+_System: hormonal_
+
+├── **Reduced free androgen fraction (Pass 3 kb47)**
+│   ├── Frame ID: `frame_batch2_free_testosterone_pct_low_reduced_free_androgen_fraction`
+│   ├── Frame role: `pass3_frame_not_compiled`
+│   ├── Signal ID: `signal_free_testosterone_pct_low`
+│   ├── Activation key: `signal_free_testosterone_pct_low::inv_free_testosterone_pct_low_reduced_free_androgen_fraction`
+│   ├── Source package: `pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction`
+│   ├── Source package path: `knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction`
+│   ├── Research spec ID: `inv_free_testosterone_pct_low_reduced_free_androgen_fraction`
+│   ├── Promotion state: `compiled_not_promoted`
+│   ├── Runtime authority: `inactive`
+│   ├── Clinical adjudication: `required_before_activation`
+│   ├── Collision status: `none`
+│   ├── Context inputs supported: biomarker_evidence
+│   ├── Linked context modifiers: _none catalogued_
+│   └── Notes: PASS3-BATCH2-FRAME-INDEX-2: Androgen-panel single-frame; medical review required before activation (CF-BATCH2-005). Provenance canonical Batch_2_Pass_3.json. Not runtime-active.
 
 ---
 
