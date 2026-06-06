@@ -1,25 +1,51 @@
 ---
-work_id: PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration
-branch: work/PASS3-BATCH2-INGEST-1-batch2-pass3-research-asset-registration
+work_id: PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion
+branch: work/PASS3-BATCH2-FRAME-INDEX-1-batch2-multiframe-identity-index-expansion
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: MIXED
 ---
 
-# PASS3-BATCH2-INGEST-1 — Batch 2 Pass_3 Research Asset Registration
+# PASS3-BATCH2-FRAME-INDEX-1 — Batch 2 Multi-Frame Identity Index Expansion
 
 ## Purpose
 
-Register and audit `Batch_2_Pass_3.json` as a governed Pass_3 research asset before it is used for frame indexing, package promotion, or runtime-facing work.
+Index the highest-risk Batch 2 Pass_3 signal families into the governed medical frame identity index.
 
-This sprint must determine what Batch 2 contains, whether it is schema-valid, what biomarkers/signals it covers, whether it overlaps with existing Pass_3 batches, and whether it introduces new frame-index or enrichment candidates.
+This sprint follows `PASS3-BATCH2-INGEST-1`, which registered `Batch_2_Pass_3.json` as a canonical research asset and identified 16 new signal families not yet represented in the medical frame identity index.
 
-This is a research asset registration/audit sprint only.
+This sprint must start with the Batch 2 ROUTE_C / multi-frame families:
 
-Do not create packages.
+```text
+creatine_kinase
+egfr
+eosinophil_pct
+eosinophils_abs
+````
+
+The goal is to preserve distinct medical frames before any package promotion or package provenance realignment occurs.
+
 Do not promote packages.
-Do not update runtime.
-Do not update SignalEvaluator, SignalRegistry, frontend, scoring, SSOT, or package files.
+Do not activate packages.
+Do not retire packages.
+Do not modify runtime package files.
+
+---
+
+## Strategic framing
+
+Batch 2 is now a validated canonical Pass_3 research asset.
+
+The next architecture step is:
+
+```text
+Batch 2 Pass_3 research
+→ medical frame identity index entries
+→ regenerated human-readable biomarker tree
+→ future package provenance realignment / promotion readiness review
+```
+
+This sprint must not treat each biomarker as a single flat signal. It must preserve distinct frames where Batch 2 contains multiple medically meaningful interpretations.
 
 ---
 
@@ -30,12 +56,12 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
+PASS3-BATCH2-INGEST-1 merged
 PASS3-FRAME-INDEX-3 merged
-Batch_2_Pass_3.json present on main
+MED-FRAME-TREE-1 merged
 ARCH-SENTINEL-1 merged
 CI-ARCH-GATE-1 / CI-ARCH-GATE-1A merged
-MED-FRAME-TREE-1 merged
-````
+```
 
 Before starting, run and report:
 
@@ -53,8 +79,10 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- Batch_2_Pass_3.json cannot be found
-- investigation spec schema cannot be found
+- Batch_2_Pass_3.json is missing
+- pass3_batch2_research_asset_register_v1.yaml is missing
+- medical_frame_identity_index_v1.yaml is missing
+- biomarker_medical_frame_tree.md is missing
 ```
 
 ---
@@ -63,150 +91,187 @@ STOP if:
 
 ```yaml
 risk_level: HIGH
-change_type: CONTENT
+change_type: MIXED
 execution_model: TWO_PHASE_START_FINISH
 ```
 
 Reason:
 
-This sprint registers a newly discovered medical research asset. It does not alter runtime, but it affects future research coverage, frame indexing, package generation and promotion decisions.
+This sprint updates governed medical frame identity infrastructure using newly registered canonical research. It must not change runtime behaviour, but it affects future package promotion and medical-intelligence safety gates.
 
 ---
 
 ## Required inputs
 
-Locate and inspect:
+Read before work:
 
 ```text
+knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml
 knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
-knowledge_bus/research/investigation_specs/multi_llm_research/**/*Pass_3*.json
-knowledge_bus/schema/investigation_spec_schema_v3.0.0.yaml
-backend/scripts/validate_investigation_spec.py
-knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
-knowledge_bus/governance/pass3_legacy_package_mapping_plan_v1.yaml
+knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
+docs/audit-papers/PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration_report.md
 docs/architecture/biomarker_medical_frame_tree.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-If paths differ, locate and report the actual paths.
-
----
-
-## Required investigation
-
-For `Batch_2_Pass_3.json`, report:
+Also inspect relevant existing compiled packages:
 
 ```text
-1. file path
-2. file size
-3. number of specs
-4. schema / contract version
-5. all spec_ids
-6. all signal_ids
-7. all primary_marker.biomarker_id values
-8. trigger directions
-9. supporting markers
-10. contradiction markers if present
-11. confirmatory tests if present
-12. evidence/source fields
-13. any invalid or incomplete specs
+knowledge_bus/packages/pkg_kb47_*
+knowledge_bus/packages/**
 ```
 
-Then compare Batch 2 against the existing Pass_3 estate:
+If paths differ, locate and report actual paths.
+
+---
+
+## Required scope
+
+Index the four Batch 2 multi-frame families identified by `PASS3-BATCH2-INGEST-1`:
 
 ```text
-1. spec_ids already present elsewhere
-2. signal_ids already present elsewhere
-3. primary biomarkers already present elsewhere
-4. new biomarkers not seen in other Pass_3 batches
-5. new signal_ids not seen in other Pass_3 batches
-6. overlapping but distinct frames
-7. possible duplicate frames
-8. likely new medical-frame-index candidates
-9. likely package-promotion / enrichment implications
+1. creatine_kinase
+2. egfr
+3. eosinophil_pct
+4. eosinophils_abs
 ```
 
----
+For each family, add medically distinct frame entries into:
 
-## Required validation
+```text
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+```
 
-Validate every spec in Batch 2.
+Do not index all 16 Batch 2 families in this sprint.
 
-If the existing validator can validate the whole batch directly, use it.
-
-If the validator requires one spec at a time, split Batch 2 into temporary per-spec files under a clearly temporary ignored/generated validation folder, then validate each one.
-
-Use the project’s existing validation style where possible.
-
-Do not commit temporary split files unless hardening explicitly approves.
+Do not modify package manifests yet. The `pkg_kb47_*` provenance realignment is CF-BATCH2-002 and remains out of scope unless hardening explicitly approves.
 
 ---
 
-## Required classifications
+## Required preflight
 
-For every Batch 2 spec, classify:
+Before editing the index, report:
+
+```text
+1. all Batch 2 specs for the four selected families
+2. spec_id values
+3. signal_id values
+4. primary biomarker IDs
+5. trigger directions
+6. source package candidates, especially pkg_kb47_* packages
+7. whether source package paths exist
+8. whether any activation_key would duplicate an active frame
+9. whether any frame requires medical review before future activation
+10. whether current context modifiers already reference these families or frames
+```
+
+STOP if a selected family cannot be mapped to Batch 2 specs.
+
+---
+
+## Required index fields
+
+Every new frame entry must include all required index fields:
 
 ```yaml
-spec_id:
-signal_id:
+signal_family_id:
 primary_biomarker_id:
-trigger_direction:
-schema_valid:
-already_indexed_in_medical_frame_index:
-existing_pass3_overlap:
-overlap_type:
-new_marker_to_pass3_estate:
-new_signal_to_pass3_estate:
-likely_frame_identity_action:
-likely_package_action:
-medical_review_required:
+medical_frame_id:
+frame_label:
+frame_role:
+research_spec_id:
+source_package_id:
+source_package_path:
+activation_key:
+signal_id:
+promotion_state:
+runtime_authority_status:
+clinical_adjudication_status:
+context_inputs_supported:
+  biomarker_evidence:
+  questionnaire_modifiers:
+  medication_modifiers:
+collision_group_id:
+collision_status:
+supersedes:
+superseded_by:
 notes:
 ```
 
-Allowed `overlap_type` values:
+Use existing allowed enum values only.
+
+---
+
+## State classification rules
+
+Because `PASS3-BATCH2-INGEST-1` found that `pkg_kb47_*` compiled packages already exist but point to archived `Batch_2_Pass_3_Rev1.json`, use careful state language.
+
+For Batch 2 frames where a compiled `pkg_kb47_*` package exists:
 
 ```text
-none_new_spec
-same_signal_same_frame_possible_duplicate
-same_signal_distinct_frame
-same_biomarker_distinct_signal
-supporting_marker_overlap_only
-unclear_manual_review
+promotion_state: compiled_not_promoted
+runtime_authority_status: inactive
+clinical_adjudication_status: required_before_activation
+collision_status: requires_adjudication or none, depending on activation identity
 ```
 
-Allowed `likely_frame_identity_action` values:
+Do not mark them `runtime_active_canonical` unless there is clear evidence they are runtime authority.
+
+For Batch 2 frames without a compiled package:
 
 ```text
-no_action_already_indexed
-add_to_existing_signal_family
-create_new_signal_family_entry
-defer_pending_medical_review
-defer_pending_source_validation
-possible_duplicate_review
+promotion_state: deferred
+runtime_authority_status: inactive
+clinical_adjudication_status: required_before_activation
 ```
 
-Allowed `likely_package_action` values:
+Do not create duplicate active activation keys.
+
+---
+
+## Required family-level outputs
+
+For each selected family, document:
 
 ```text
-none
-future_pass3_compile_candidate
-future_pass3_enrichment_candidate
-blocks_legacy_retirement_until_indexed
-possible_duplicate_do_not_compile
-manual_review_required
+- number of frames added
+- frame roles represented
+- whether pkg_kb47 package exists
+- whether provenance realignment is needed
+- whether medical review is needed
+- whether package promotion is blocked until indexing/provenance is complete
 ```
+
+---
+
+## Tree regeneration
+
+After index update, regenerate the human-readable tree:
+
+```powershell
+python knowledge_bus/tools/build_biomarker_medical_frame_tree.py
+```
+
+Update:
+
+```text
+docs/architecture/biomarker_medical_frame_tree.md
+```
+
+Do not edit the tree manually.
 
 ---
 
 ## Required artefacts
 
-Create:
+Update:
 
 ```text
-docs/audit-papers/PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration_report.md
-knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+docs/architecture/biomarker_medical_frame_tree.md
 ```
 
 Update if needed:
@@ -216,39 +281,10 @@ knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Do not update:
+Create:
 
 ```text
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-docs/architecture/biomarker_medical_frame_tree.md
-```
-
-unless hardening explicitly approves. This sprint is asset registration; indexing comes later.
-
----
-
-## Required report content
-
-The report must include:
-
-```text
-- executive verdict
-- Batch 2 file path and metadata
-- validation method
-- validation results with actual output
-- spec count
-- signal_id list
-- primary biomarker list
-- new vs overlapping markers
-- new vs overlapping signals
-- duplicate / possible duplicate findings
-- comparison against existing Pass_3 batches
-- comparison against medical frame identity index
-- implications for frame-index expansion
-- implications for package promotion
-- carry-forward updates
-- recommended next sprint
-- confirmation no runtime/package/frontend changes
+docs/audit-papers/PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion_report.md
 ```
 
 ---
@@ -261,17 +297,49 @@ Update:
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Expected possible carry-forwards:
+Expected handling:
 
 ```text
-CF-BATCH2-001 — index newly registered Batch 2 frames into medical_frame_identity_index_v1.yaml
-CF-BATCH2-002 — resolve possible duplicate Batch 2 specs
-CF-BATCH2-003 — compile eligible Batch 2 Pass_3 specs after indexing
+CF-BATCH2-001
+Should be partially resolved only if the four selected multi-frame families are indexed.
+If the CF was written for all 16 families, update it to show this sprint completed the multi-frame subset and leave a residual item for the remaining single-frame families.
+
+CF-BATCH2-002
+Remain Open. This sprint must not realign pkg_kb47 manifest provenance unless explicitly approved.
+
+CF-BATCH2-003
+Remain Open. Promotion readiness review is after indexing/provenance alignment.
+
+Possible new carry-forward:
+CF-BATCH2-004 — index remaining single-frame Batch 2 families.
 ```
 
-Only add carry-forwards that are actually supported by the audit.
+Do not mark all Batch 2 indexing complete unless all 16 families are indexed, which is not expected in this sprint.
 
-Do not mark existing frame-index or promotion work resolved merely because Batch 2 is registered.
+---
+
+## Required report content
+
+The report must include:
+
+```text
+- executive verdict
+- artefacts inspected
+- selected Batch 2 families and rationale
+- Batch 2 specs indexed
+- frame entries added
+- family/frame counts before and after
+- pkg_kb47 package existence findings
+- provenance realignment implications
+- collision checks
+- clinical adjudication statuses
+- tree regeneration summary
+- validation output pasted in full
+- runtime boundary confirmation
+- carry-forward updates
+- remaining limitations
+- recommended next sprint
+```
 
 ---
 
@@ -302,13 +370,14 @@ If any runtime/package/frontend change appears necessary, STOP and report.
 Run and paste actual output:
 
 ```powershell
-python backend/scripts/run_architecture_validation_gate.py
-python backend/scripts/validate_medical_intelligence_architecture.py
-python backend/scripts/validate_day_one_architecture.py
 python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+python knowledge_bus/tools/build_biomarker_medical_frame_tree.py
+python backend/scripts/run_architecture_validation_gate.py
+python -m pytest backend/tests/regression/test_biomarker_medical_frame_tree_generation.py -q
 ```
 
-Also validate Batch 2 using the investigation spec validator, with actual output pasted.
+Also validate that the index and tree contain the four selected families.
 
 Do not write only “all tests passed”.
 
@@ -319,17 +388,18 @@ Do not write only “all tests passed”.
 Do not:
 
 ```text
-- index Batch 2 frames into medical_frame_identity_index_v1.yaml
-- regenerate the biomarker tree
-- create packages
+- index all 16 Batch 2 families
+- change pkg_kb47 manifests
+- realign package provenance
+- compile packages
 - promote packages
 - activate packages
 - retire packages
-- modify package files
-- change runtime loading
+- modify runtime package files
+- implement Layer B frame assembly
+- implement context modifier evaluation
 - change frontend
-- adjudicate clinical truth
-- invent missing clinical fields
+- adjudicate medical truth
 ```
 
 ---
@@ -339,13 +409,13 @@ Do not:
 STOP and report if:
 
 ```text
-1. Batch_2_Pass_3.json is missing
-2. Batch 2 cannot be parsed as JSON
-3. schema validation fails in a way that cannot be isolated per spec
-4. duplicate spec_ids conflict with existing Pass_3 estate
-5. the audit cannot distinguish new frames from possible duplicates
-6. any runtime/package/frontend change appears necessary
-7. architecture gate fails
+1. Batch 2 specs for selected families cannot be found
+2. selected families cannot be represented without clinical invention
+3. source package paths cannot be resolved or classified
+4. duplicate active activation keys would be introduced
+5. tree regeneration omits indexed frames
+6. architecture gate fails
+7. any runtime/package/frontend change appears necessary
 ```
 
 ---
@@ -356,15 +426,16 @@ Cursor must report:
 
 ```text
 1. baseline branch/status evidence
-2. Batch 2 path and metadata
-3. validation method
-4. actual validation output
-5. spec/signal/biomarker counts
-6. overlap findings
-7. new marker/signal findings
-8. governance files created/updated
-9. carry-forward updates
-10. confirmation no runtime/package/frontend changes
+2. files inspected
+3. selected Batch 2 specs
+4. frame entries added
+5. family/frame counts before and after
+6. pkg_kb47 findings
+7. tree regeneration evidence
+8. validation commands run
+9. actual validation output
+10. carry-forward updates
+11. confirmation no runtime/package/frontend changes
 ```
 
 ---
@@ -385,13 +456,12 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/PASS3-BATCH2-INGEST-1-batch2-pass3-research-asset-registration
-- only in-scope docs/governance files changed
+- current branch matches work/PASS3-BATCH2-FRAME-INDEX-1-batch2-multiframe-identity-index-expansion
+- only in-scope docs/governance/tree/register files changed
 - no runtime package files changed
 - no frontend/runtime evaluator files changed
-- no temporary split validation files are committed unless explicitly approved
 - no ambiguous stash exists
-- architecture gate passes
+- validators and architecture gate pass
 ```
 
 ---
@@ -401,16 +471,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. Batch_2_Pass_3.json is located and registered
-2. every Batch 2 spec is validated or validation failures are explicitly documented
-3. all Batch 2 spec_ids, signal_ids and biomarkers are listed
-4. overlap with existing Pass_3 estate is classified
-5. new markers/signals are identified
-6. future frame-index/package implications are documented
-7. carry-forward register is updated if needed
-8. no runtime/package/frontend changes occur
-9. actual validation output is pasted
-10. architecture gate passes
+1. the four selected Batch 2 multi-frame families are indexed
+2. every new frame validates
+3. no duplicate active activation keys are introduced
+4. pkg_kb47 package existence/provenance implications are documented
+5. generated tree includes the new families/frames
+6. Batch 2 carry-forwards are updated accurately
+7. no runtime/package/frontend changes occur
+8. actual validation output is pasted
+9. architecture gate passes
+10. remaining Batch 2 work is clearly scoped
 ```
 
 ```
