@@ -1,9 +1,10 @@
 {
   "branch": "work/BATCH2-CLOSURE-1-final-batch2-promotion-decision",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-06T19:18:37Z",
   "cursor_started_utc": "2026-06-06T19:14:50Z",
-  "head_sha": "507ac595d07b3c858b3237ebe0314330e4937dc1",
+  "head_sha": "e7b61b397225e9a5d736bb94b84a0fb2d6f83984",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BATCH2-CLOSURE-1_final_batch2_promotion_decision"
 }
