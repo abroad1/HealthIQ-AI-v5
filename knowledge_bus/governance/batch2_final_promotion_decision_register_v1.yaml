@@ -1,0 +1,469 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: governance_final_promotion_decision_non_runtime
+work_id: BATCH2-CLOSURE-1_final_batch2_promotion_decision
+source_batch: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
+final_decision: PROCEED_TO_PROMOTION_WITH_CLEARED_SUBSET
+package_count: 20
+cleared_package_count: 10
+excluded_package_count: 10
+batch2_promote_1_scope:
+  include_packages:
+  - pkg_kb47_creatine_kinase_high_exertional_muscle_injury
+  - pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+  - pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
+  - pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+  - pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+  - pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+  - pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  - pkg_kb47_free_t3_low_low_t3_syndrome
+  - pkg_kb47_free_t4_high_thyrotoxicosis_context
+  - pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  exclude_packages:
+  - pkg_kb47_dhea_high_androgen_excess_context
+  - pkg_kb47_dhea_low_adrenal_androgen_reduction
+  - pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  - pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  - pkg_kb47_fai_high_biochemical_hyperandrogenism
+  - pkg_kb47_fai_low_reduced_free_androgen_availability
+  - pkg_kb47_free_testosterone_high_androgen_excess_context
+  - pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  - pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  - pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  promotion_authorization: BATCH2-PROMOTE-1 may proceed for cleared subset only; no
+    androgen or eGFR packages; thyroid included with documented caution.
+consolidation_answers:
+  all_20_packages_validated: true
+  all_20_provenance_canonical: true
+  all_16_signal_families_indexed: true
+  all_frames_in_biomarker_tree: true
+  androgen_still_blocked: true
+  egfr_still_blocked: true
+  thyroid_cleared_with_caution: true
+  further_review_before_promote_subset: Clinical sign-off for thyroid before activation;
+    promotion sprint may compile/promote cleared packages without activation.
+packages:
+- package_id: pkg_kb47_creatine_kinase_high_exertional_muscle_injury
+  package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_exertional_muscle_injury
+  spec_id: inv_creatine_kinase_high_exertional_muscle_injury
+  signal_id: signal_creatine_kinase_high
+  primary_biomarker_id: creatine_kinase
+  medical_frame_id: frame_creatine_kinase_pass3_exertional_muscle_injury
+  panel_group: muscle_injury
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1
+  final_decision: CLEARED
+  blocker_if_excluded: null
+  required_next_action: Proceed to BATCH2-PROMOTE-1 controlled promotion sprint
+  notes: Indexed frame_creatine_kinase_pass3_exertional_muscle_injury; compiled_not_promoted/inactive.
+    Multi-frame ROUTE_C family.
+- package_id: pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+  package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+  spec_id: inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
+  signal_id: signal_creatine_kinase_high
+  primary_biomarker_id: creatine_kinase
+  medical_frame_id: frame_creatine_kinase_pass3_persistent_nonexertional_muscle_injury
+  panel_group: muscle_injury
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1
+  final_decision: CLEARED
+  blocker_if_excluded: null
+  required_next_action: Proceed to BATCH2-PROMOTE-1 controlled promotion sprint
+  notes: Indexed frame_creatine_kinase_pass3_persistent_nonexertional_muscle_injury;
+    compiled_not_promoted/inactive. Multi-frame ROUTE_C family.
+- package_id: pkg_kb47_dhea_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
+  spec_id: inv_dhea_high_androgen_excess_context
+  signal_id: signal_dhea_high
+  primary_biomarker_id: dhea
+  medical_frame_id: frame_batch2_dhea_high_androgen_excess_context
+  panel_group: androgen
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT
+  context_binding_status: governance_bound_non_runtime
+  final_promotion_group: EXCLUDE_ANDROGEN_PENDING_CLINICAL_SIGNOFF
+  final_decision: EXCLUDED
+  blocker_if_excluded: Androgen clinical sign-off not complete (CF-BATCH2-010)
+  required_next_action: Clinical signoff and runtime context evaluation before androgen
+    promotion
+  notes: 'Indexed frame_batch2_dhea_high_androgen_excess_context; compiled_not_promoted/inactive.
+    Androgen-panel: context_modifier_dependency=true (BATCH2-CONTEXT-MOD-1). Promotion
+    not authorized.'
+- package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
+  spec_id: inv_dhea_low_adrenal_androgen_reduction
+  signal_id: signal_dhea_low
+  primary_biomarker_id: dhea
+  medical_frame_id: frame_batch2_dhea_low_adrenal_androgen_reduction
+  panel_group: androgen
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT
+  context_binding_status: governance_bound_non_runtime
+  final_promotion_group: EXCLUDE_ANDROGEN_PENDING_CLINICAL_SIGNOFF
+  final_decision: EXCLUDED
+  blocker_if_excluded: Androgen clinical sign-off not complete (CF-BATCH2-010)
+  required_next_action: Clinical signoff and runtime context evaluation before androgen
+    promotion
+  notes: 'Indexed frame_batch2_dhea_low_adrenal_androgen_reduction; compiled_not_promoted/inactive.
+    Androgen-panel: context_modifier_dependency=true (BATCH2-CONTEXT-MOD-1). Promotion
+    not authorized.'
+- package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  package_path: knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  spec_id: inv_egfr_low_chronic_kidney_function_reduction
+  signal_id: signal_egfr_low
+  primary_biomarker_id: egfr
+  medical_frame_id: frame_egfr_pass3_chronic_kidney_function_reduction
+  panel_group: renal
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: BLOCKED_PENDING_FRAME_ADJUDICATION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: EXCLUDE_EGFR_PENDING_CREATININE_EGFR_ADJUDICATION
+  final_decision: EXCLUDED
+  blocker_if_excluded: Creatinine/eGFR multi-frame adjudication unresolved (CF-BATCH2-007)
+  required_next_action: Complete egfr frame adjudication sprint before promotion candidacy
+  notes: Indexed frame_egfr_pass3_chronic_kidney_function_reduction; compiled_not_promoted/inactive.
+    Multi-frame ROUTE_C family.
+- package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  package_path: knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  spec_id: inv_egfr_low_hemodynamic_filtration_drop
+  signal_id: signal_egfr_low
+  primary_biomarker_id: egfr
+  medical_frame_id: frame_egfr_pass3_hemodynamic_filtration_drop
+  panel_group: renal
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: BLOCKED_PENDING_FRAME_ADJUDICATION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: EXCLUDE_EGFR_PENDING_CREATININE_EGFR_ADJUDICATION
+  final_decision: EXCLUDED
+  blocker_if_excluded: Creatinine/eGFR multi-frame adjudication unresolved (CF-BATCH2-007)
+  required_next_action: Complete egfr frame adjudication sprint before promotion candidacy
+  notes: Indexed frame_egfr_pass3_hemodynamic_filtration_drop; compiled_not_promoted/inactive.
+    Multi-frame ROUTE_C family.
+- package_id: pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
+  package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
+  spec_id: inv_eosinophil_pct_high_reactive_atopic_eosinophilia
+  signal_id: signal_eosinophil_pct_high
+  primary_biomarker_id: eosinophil_pct
+  medical_frame_id: frame_eosinophil_pct_pass3_reactive_atopic
+  panel_group: eosinophil
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1
+  final_decision: CLEARED
+  blocker_if_excluded: null
+  required_next_action: Proceed to BATCH2-PROMOTE-1 controlled promotion sprint
+  notes: Indexed frame_eosinophil_pct_pass3_reactive_atopic; compiled_not_promoted/inactive.
+    Multi-frame ROUTE_C family.
+- package_id: pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+  package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+  spec_id: inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+  signal_id: signal_eosinophil_pct_high
+  primary_biomarker_id: eosinophil_pct
+  medical_frame_id: frame_eosinophil_pct_pass3_secondary_systemic
+  panel_group: eosinophil
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1
+  final_decision: CLEARED
+  blocker_if_excluded: null
+  required_next_action: Proceed to BATCH2-PROMOTE-1 controlled promotion sprint
+  notes: Indexed frame_eosinophil_pct_pass3_secondary_systemic; compiled_not_promoted/inactive.
+    Multi-frame ROUTE_C family.
+- package_id: pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+  package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+  spec_id: inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+  signal_id: signal_eosinophils_abs_high
+  primary_biomarker_id: eosinophils_abs
+  medical_frame_id: frame_eosinophils_abs_pass3_hypereosinophilic_secondary
+  panel_group: eosinophil
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1
+  final_decision: CLEARED
+  blocker_if_excluded: null
+  required_next_action: Proceed to BATCH2-PROMOTE-1 controlled promotion sprint
+  notes: Indexed frame_eosinophils_abs_pass3_hypereosinophilic_secondary; compiled_not_promoted/inactive.
+    Multi-frame ROUTE_C family.
+- package_id: pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+  package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+  spec_id: inv_eosinophils_abs_high_reactive_eosinophilic_inflammation
+  signal_id: signal_eosinophils_abs_high
+  primary_biomarker_id: eosinophils_abs
+  medical_frame_id: frame_eosinophils_abs_pass3_reactive_inflammation
+  panel_group: eosinophil
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1
+  final_decision: CLEARED
+  blocker_if_excluded: null
+  required_next_action: Proceed to BATCH2-PROMOTE-1 controlled promotion sprint
+  notes: Indexed frame_eosinophils_abs_pass3_reactive_inflammation; compiled_not_promoted/inactive.
+    Multi-frame ROUTE_C family.
+- package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  package_path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
+  spec_id: inv_fai_high_biochemical_hyperandrogenism
+  signal_id: signal_fai_high
+  primary_biomarker_id: fai
+  medical_frame_id: frame_batch2_fai_high_biochemical_hyperandrogenism
+  panel_group: androgen
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  medical_review_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  context_binding_status: governance_bound_non_runtime
+  final_promotion_group: EXCLUDE_ANDROGEN_PENDING_CLINICAL_SIGNOFF
+  final_decision: EXCLUDED
+  blocker_if_excluded: Androgen clinical sign-off not complete (CF-BATCH2-010); runtime
+    Layer B context evaluation pending (CF-CONTEXT-MOD-3)
+  required_next_action: Clinical signoff and runtime context evaluation before androgen
+    promotion
+  notes: 'Indexed frame_batch2_fai_high_biochemical_hyperandrogenism; compiled_not_promoted/inactive.
+    Androgen-panel: context_modifier_dependency=true (BATCH2-CONTEXT-MOD-1). Promotion
+    not authorized.'
+- package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
+  spec_id: inv_fai_low_reduced_free_androgen_availability
+  signal_id: signal_fai_low
+  primary_biomarker_id: fai
+  medical_frame_id: frame_batch2_fai_low_reduced_free_androgen_availability
+  panel_group: androgen
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  medical_review_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  context_binding_status: governance_bound_non_runtime
+  final_promotion_group: EXCLUDE_ANDROGEN_PENDING_CLINICAL_SIGNOFF
+  final_decision: EXCLUDED
+  blocker_if_excluded: Androgen clinical sign-off not complete (CF-BATCH2-010); runtime
+    Layer B context evaluation pending (CF-CONTEXT-MOD-3)
+  required_next_action: Clinical signoff and runtime context evaluation before androgen
+    promotion
+  notes: 'Indexed frame_batch2_fai_low_reduced_free_androgen_availability; compiled_not_promoted/inactive.
+    Androgen-panel: context_modifier_dependency=true (BATCH2-CONTEXT-MOD-1). Promotion
+    not authorized.'
+- package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
+  signal_id: signal_free_t3_high
+  primary_biomarker_id: free_t3
+  medical_frame_id: frame_batch2_free_t3_high_t3_predominant_thyrotoxicosis
+  panel_group: thyroid
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1
+  final_decision: CLEARED
+  blocker_if_excluded: null
+  required_next_action: Proceed to BATCH2-PROMOTE-1 cautious promotion pilot; clinical
+    adjudication sign-off still required before activation
+  notes: 'Indexed frame_batch2_free_t3_high_t3_predominant_thyrotoxicosis; compiled_not_promoted/inactive.
+    Thyroid-panel: cautious wave B.'
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
+  spec_id: inv_free_t3_low_low_t3_syndrome
+  signal_id: signal_free_t3_low
+  primary_biomarker_id: free_t3
+  medical_frame_id: frame_batch2_free_t3_low_low_t3_syndrome
+  panel_group: thyroid
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1
+  final_decision: CLEARED
+  blocker_if_excluded: null
+  required_next_action: Proceed to BATCH2-PROMOTE-1 cautious promotion pilot; clinical
+    adjudication sign-off still required before activation
+  notes: 'Indexed frame_batch2_free_t3_low_low_t3_syndrome; compiled_not_promoted/inactive.
+    Thyroid-panel: cautious wave B.'
+- package_id: pkg_kb47_free_t4_high_thyrotoxicosis_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context
+  spec_id: inv_free_t4_high_thyrotoxicosis_context
+  signal_id: signal_free_t4_high
+  primary_biomarker_id: free_t4
+  medical_frame_id: frame_batch2_free_t4_high_thyrotoxicosis_context
+  panel_group: thyroid
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1
+  final_decision: CLEARED
+  blocker_if_excluded: null
+  required_next_action: Proceed to BATCH2-PROMOTE-1 cautious promotion pilot; clinical
+    adjudication sign-off still required before activation
+  notes: 'Indexed frame_batch2_free_t4_high_thyrotoxicosis_context; compiled_not_promoted/inactive.
+    Thyroid-panel: cautious wave B.'
+- package_id: pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  package_path: knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  spec_id: inv_free_t4_low_thyroid_hormone_deficiency
+  signal_id: signal_free_t4_low
+  primary_biomarker_id: free_t4
+  medical_frame_id: frame_batch2_free_t4_low_thyroid_hormone_deficiency
+  panel_group: thyroid
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: not_applicable
+  context_binding_status: not_applicable
+  final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1
+  final_decision: CLEARED
+  blocker_if_excluded: null
+  required_next_action: Proceed to BATCH2-PROMOTE-1 cautious promotion pilot; clinical
+    adjudication sign-off still required before activation
+  notes: 'Indexed frame_batch2_free_t4_low_thyroid_hormone_deficiency; compiled_not_promoted/inactive.
+    Thyroid-panel: cautious wave B.'
+- package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context
+  spec_id: inv_free_testosterone_high_androgen_excess_context
+  signal_id: signal_free_testosterone_high
+  primary_biomarker_id: free_testosterone
+  medical_frame_id: frame_batch2_free_testosterone_high_androgen_excess_context
+  panel_group: androgen
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT
+  context_binding_status: governance_bound_non_runtime
+  final_promotion_group: EXCLUDE_ANDROGEN_PENDING_CLINICAL_SIGNOFF
+  final_decision: EXCLUDED
+  blocker_if_excluded: Androgen clinical sign-off not complete (CF-BATCH2-010)
+  required_next_action: Clinical signoff and runtime context evaluation before androgen
+    promotion
+  notes: 'Indexed frame_batch2_free_testosterone_high_androgen_excess_context; compiled_not_promoted/inactive.
+    Androgen-panel: context_modifier_dependency=true (BATCH2-CONTEXT-MOD-1). Promotion
+    not authorized.'
+- package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  spec_id: inv_free_testosterone_low_androgen_deficiency_context
+  signal_id: signal_free_testosterone_low
+  primary_biomarker_id: free_testosterone
+  medical_frame_id: frame_batch2_free_testosterone_low_androgen_deficiency_context
+  panel_group: androgen
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION
+  medical_review_status: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT
+  context_binding_status: governance_bound_non_runtime
+  final_promotion_group: EXCLUDE_ANDROGEN_PENDING_CLINICAL_SIGNOFF
+  final_decision: EXCLUDED
+  blocker_if_excluded: Androgen clinical sign-off not complete (CF-BATCH2-010)
+  required_next_action: Clinical signoff and runtime context evaluation before androgen
+    promotion
+  notes: 'Indexed frame_batch2_free_testosterone_low_androgen_deficiency_context;
+    compiled_not_promoted/inactive. Androgen-panel: context_modifier_dependency=true
+    (BATCH2-CONTEXT-MOD-1). Promotion not authorized.'
+- package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  spec_id: inv_free_testosterone_pct_high_elevated_free_androgen_fraction
+  signal_id: signal_free_testosterone_pct_high
+  primary_biomarker_id: free_testosterone_pct
+  medical_frame_id: frame_batch2_free_testosterone_pct_high_elevated_free_androgen_fraction
+  panel_group: androgen
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  medical_review_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  context_binding_status: governance_bound_non_runtime
+  final_promotion_group: EXCLUDE_ANDROGEN_PENDING_CLINICAL_SIGNOFF
+  final_decision: EXCLUDED
+  blocker_if_excluded: Androgen clinical sign-off not complete (CF-BATCH2-010); runtime
+    Layer B context evaluation pending (CF-CONTEXT-MOD-3)
+  required_next_action: Clinical signoff and runtime context evaluation before androgen
+    promotion
+  notes: 'Indexed frame_batch2_free_testosterone_pct_high_elevated_free_androgen_fraction;
+    compiled_not_promoted/inactive. Androgen-panel: context_modifier_dependency=true
+    (BATCH2-CONTEXT-MOD-1). Promotion not authorized.'
+- package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  spec_id: inv_free_testosterone_pct_low_reduced_free_androgen_fraction
+  signal_id: signal_free_testosterone_pct_low
+  primary_biomarker_id: free_testosterone_pct
+  medical_frame_id: frame_batch2_free_testosterone_pct_low_reduced_free_androgen_fraction
+  panel_group: androgen
+  package_validator_status: PASS
+  provenance_canonical: true
+  frame_indexed: true
+  tree_visible: true
+  promotion_readiness_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  medical_review_status: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  context_binding_status: governance_bound_non_runtime
+  final_promotion_group: EXCLUDE_ANDROGEN_PENDING_CLINICAL_SIGNOFF
+  final_decision: EXCLUDED
+  blocker_if_excluded: Androgen clinical sign-off not complete (CF-BATCH2-010); runtime
+    Layer B context evaluation pending (CF-CONTEXT-MOD-3)
+  required_next_action: Clinical signoff and runtime context evaluation before androgen
+    promotion
+  notes: 'Indexed frame_batch2_free_testosterone_pct_low_reduced_free_androgen_fraction;
+    compiled_not_promoted/inactive. Androgen-panel: context_modifier_dependency=true
+    (BATCH2-CONTEXT-MOD-1). Promotion not authorized.'
