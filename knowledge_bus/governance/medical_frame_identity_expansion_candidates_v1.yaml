@@ -1,14 +1,15 @@
 schema_version: 1.0.0
 runtime_consumed: false
 status: governance_audit_non_runtime
-work_id: PASS3-FRAME-INDEX-3_next_high_risk_signal_family_expansion
-generated_utc: '2026-06-03'
-source_audit: knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml
+work_id: PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration
+generated_utc: '2026-06-06'
+source_audit: knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml
 
 description: >
   Signal families prioritised for medical_frame_identity_index expansion.
   PASS3-FRAME-INDEX-2 indexed ALT, CRP, and ferritin_high.
   PASS3-FRAME-INDEX-3 indexed apob, ferritin_low, hba1c_high, hyperbilirubinemia.
+  PASS3-BATCH2-INGEST-1 registered Batch_2_Pass_3.json; Batch 2 families listed below as not yet indexed.
 
 expansion_candidates:
   - signal_family_id: signal_creatinine_high
@@ -73,3 +74,131 @@ expansion_candidates:
     rationale: ROUTE_G; distinct from signal_crp_high; manual medical-review exception
     indexed: false
     frame_count_indexed: 0
+
+  - signal_family_id: signal_creatine_kinase_high
+    primary_biomarker_id: creatine_kinase
+    priority: 8
+    rationale: Batch_2_Pass_3; ROUTE_C; 2 frames; pkg_kb47 compiled; not indexed
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_egfr_low
+    primary_biomarker_id: egfr
+    priority: 8
+    rationale: Batch_2_Pass_3; ROUTE_C; 2 frames; adjacent to creatinine multiframe
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_eosinophil_pct_high
+    primary_biomarker_id: eosinophil_pct
+    priority: 8
+    rationale: Batch_2_Pass_3; ROUTE_C; 2 frames; hematologic multiframe
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_eosinophils_abs_high
+    primary_biomarker_id: eosinophils_abs
+    priority: 8
+    rationale: Batch_2_Pass_3; ROUTE_C; 2 frames; distinct from eosinophil_pct
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_dhea_low
+    primary_biomarker_id: dhea
+    priority: 9
+    rationale: Batch_2_Pass_3; ROUTE_A; shares biomarker with signal_dhea_high
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_dhea_high
+    primary_biomarker_id: dhea
+    priority: 9
+    rationale: Batch_2_Pass_3; ROUTE_A; shares biomarker with signal_dhea_low
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_free_t3_low
+    primary_biomarker_id: free_t3
+    priority: 9
+    rationale: Batch_2_Pass_3; ROUTE_A; thyroid single-frame
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_free_t3_high
+    primary_biomarker_id: free_t3
+    priority: 9
+    rationale: Batch_2_Pass_3; ROUTE_A; thyroid single-frame
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_free_t4_low
+    primary_biomarker_id: free_t4
+    priority: 9
+    rationale: Batch_2_Pass_3; ROUTE_A; thyroid single-frame
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_free_t4_high
+    primary_biomarker_id: free_t4
+    priority: 9
+    rationale: Batch_2_Pass_3; ROUTE_A; thyroid single-frame
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_fai_high
+    primary_biomarker_id: fai
+    priority: 10
+    rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_fai_low
+    primary_biomarker_id: fai
+    priority: 10
+    rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_free_testosterone_low
+    primary_biomarker_id: free_testosterone
+    priority: 10
+    rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_free_testosterone_high
+    primary_biomarker_id: free_testosterone
+    priority: 10
+    rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_free_testosterone_pct_low
+    primary_biomarker_id: free_testosterone_pct
+    priority: 10
+    rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json
+
+  - signal_family_id: signal_free_testosterone_pct_high
+    primary_biomarker_id: free_testosterone_pct
+    priority: 10
+    rationale: Batch_2_Pass_3; ROUTE_A; androgen panel; medical_review_required
+    indexed: false
+    frame_count_indexed: 0
+    source_batch: Batch_2_Pass_3.json

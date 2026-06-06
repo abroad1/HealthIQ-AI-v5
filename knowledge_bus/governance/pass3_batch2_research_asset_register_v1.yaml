@@ -1,0 +1,421 @@
+schema_version: 1.0.0
+register_id: pass3_batch2_research_asset_register_v1
+runtime_consumed: false
+status: governance_audit_non_runtime
+work_id: PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration
+generated_utc: '2026-06-06'
+source_batch: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
+archived_prior_batch: knowledge_bus/research/investigation_specs/multi_llm_research/archived_ingested_batches/Batch_2_Pass_3_Rev1.json
+
+description: >
+  Governed registration of Batch_2_Pass_3.json (20 investigation specs, contract v3.0.0).
+  Audit-only sprint; no runtime, package, or frame-index mutation.
+
+batch_metadata:
+  path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
+  file_size_bytes: 132121
+  spec_count: 20
+  contract_version: '3.0.0'
+  schema_validator: backend/scripts/validate_investigation_spec.py
+  schema_contract_path: knowledge_bus/research/investigation_specs/investigation_spec_schema_v3.0.0.yaml
+  validation_method: per_spec_temporary_json_files
+  validation_pass_count: 20
+  validation_fail_count: 0
+
+estate_summary:
+  new_signal_ids_to_pass3_json_estate: 16
+  new_primary_biomarkers_to_pass3_json_estate: 10
+  duplicate_spec_ids_in_other_pass3_batches: 0
+  indexed_in_medical_frame_identity_index: 0
+  kb47_packages_on_disk: 20
+  kb47_manifest_source_mismatch: >
+    All pkg_kb47_* manifests cite Batch_2_Pass_3_Rev1.json; canonical governed asset is
+    Batch_2_Pass_3.json on main (commit 6ece62c). Provenance realignment deferred.
+
+signal_families:
+  - signal_family_id: signal_creatine_kinase_high
+    primary_biomarker_id: creatine_kinase
+    frame_count: 2
+    route_hint: ROUTE_C
+    indexed: false
+  - signal_family_id: signal_dhea_low
+    primary_biomarker_id: dhea
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_dhea_high
+    primary_biomarker_id: dhea
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_egfr_low
+    primary_biomarker_id: egfr
+    frame_count: 2
+    route_hint: ROUTE_C
+    indexed: false
+    notes: Related to creatinine multiframe; egfr appears only as legacy override in signal_creatinine_high index.
+  - signal_family_id: signal_eosinophil_pct_high
+    primary_biomarker_id: eosinophil_pct
+    frame_count: 2
+    route_hint: ROUTE_C
+    indexed: false
+  - signal_family_id: signal_eosinophils_abs_high
+    primary_biomarker_id: eosinophils_abs
+    frame_count: 2
+    route_hint: ROUTE_C
+    indexed: false
+  - signal_family_id: signal_fai_high
+    primary_biomarker_id: fai
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_fai_low
+    primary_biomarker_id: fai
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_free_t3_low
+    primary_biomarker_id: free_t3
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_free_t3_high
+    primary_biomarker_id: free_t3
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_free_t4_low
+    primary_biomarker_id: free_t4
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_free_t4_high
+    primary_biomarker_id: free_t4
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_free_testosterone_low
+    primary_biomarker_id: free_testosterone
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_free_testosterone_high
+    primary_biomarker_id: free_testosterone
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_free_testosterone_pct_low
+    primary_biomarker_id: free_testosterone_pct
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+  - signal_family_id: signal_free_testosterone_pct_high
+    primary_biomarker_id: free_testosterone_pct
+    frame_count: 1
+    route_hint: ROUTE_A
+    indexed: false
+
+spec_classifications:
+  - spec_id: inv_creatine_kinase_high_exertional_muscle_injury
+    signal_id: signal_creatine_kinase_high
+    primary_biomarker_id: creatine_kinase
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: none_new_spec
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_creatine_kinase_high_exertional_muscle_injury
+    notes: Compiled package exists; manifest cites Rev1 not canonical Batch_2_Pass_3.json.
+
+  - spec_id: inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
+    signal_id: signal_creatine_kinase_high
+    primary_biomarker_id: creatine_kinase
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: same_signal_distinct_frame
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+    notes: Second creatine_kinase frame; distinct from exertional frame within Batch 2.
+
+  - spec_id: inv_dhea_low_adrenal_androgen_reduction
+    signal_id: signal_dhea_low
+    primary_biomarker_id: dhea
+    trigger_direction: low
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: none_new_spec
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+
+  - spec_id: inv_dhea_high_androgen_excess_context
+    signal_id: signal_dhea_high
+    primary_biomarker_id: dhea
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: same_biomarker_distinct_signal
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_dhea_high_androgen_excess_context
+    notes: Shares primary biomarker dhea with signal_dhea_low; distinct trigger direction and frame.
+
+  - spec_id: inv_egfr_low_chronic_kidney_function_reduction
+    signal_id: signal_egfr_low
+    primary_biomarker_id: egfr
+    trigger_direction: low
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: none_new_spec
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+    notes: Distinct from signal_creatinine_high; creatinine index holds egfr only as legacy override.
+
+  - spec_id: inv_egfr_low_hemodynamic_filtration_drop
+    signal_id: signal_egfr_low
+    primary_biomarker_id: egfr
+    trigger_direction: low
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: same_signal_distinct_frame
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+
+  - spec_id: inv_eosinophil_pct_high_reactive_atopic_eosinophilia
+    signal_id: signal_eosinophil_pct_high
+    primary_biomarker_id: eosinophil_pct
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: none_new_spec
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
+
+  - spec_id: inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+    signal_id: signal_eosinophil_pct_high
+    primary_biomarker_id: eosinophil_pct
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: same_signal_distinct_frame
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+
+  - spec_id: inv_eosinophils_abs_high_reactive_eosinophilic_inflammation
+    signal_id: signal_eosinophils_abs_high
+    primary_biomarker_id: eosinophils_abs
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: none_new_spec
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+
+  - spec_id: inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+    signal_id: signal_eosinophils_abs_high
+    primary_biomarker_id: eosinophils_abs
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: same_signal_distinct_frame
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+
+  - spec_id: inv_fai_high_biochemical_hyperandrogenism
+    signal_id: signal_fai_high
+    primary_biomarker_id: fai
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: none_new_spec
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: true
+    kb47_package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+
+  - spec_id: inv_fai_low_reduced_free_androgen_availability
+    signal_id: signal_fai_low
+    primary_biomarker_id: fai
+    trigger_direction: low
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: same_biomarker_distinct_signal
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: true
+    kb47_package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+
+  - spec_id: inv_free_t3_low_low_t3_syndrome
+    signal_id: signal_free_t3_low
+    primary_biomarker_id: free_t3
+    trigger_direction: low
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: none_new_spec
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+
+  - spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
+    signal_id: signal_free_t3_high
+    primary_biomarker_id: free_t3
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: same_biomarker_distinct_signal
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+
+  - spec_id: inv_free_t4_low_thyroid_hormone_deficiency
+    signal_id: signal_free_t4_low
+    primary_biomarker_id: free_t4
+    trigger_direction: low
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: none_new_spec
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+
+  - spec_id: inv_free_t4_high_thyrotoxicosis_context
+    signal_id: signal_free_t4_high
+    primary_biomarker_id: free_t4
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: same_biomarker_distinct_signal
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: false
+    kb47_package_id: pkg_kb47_free_t4_high_thyrotoxicosis_context
+
+  - spec_id: inv_free_testosterone_low_androgen_deficiency_context
+    signal_id: signal_free_testosterone_low
+    primary_biomarker_id: free_testosterone
+    trigger_direction: low
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: none_new_spec
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: true
+    kb47_package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+
+  - spec_id: inv_free_testosterone_high_androgen_excess_context
+    signal_id: signal_free_testosterone_high
+    primary_biomarker_id: free_testosterone
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: same_biomarker_distinct_signal
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: true
+    kb47_package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+
+  - spec_id: inv_free_testosterone_pct_low_reduced_free_androgen_fraction
+    signal_id: signal_free_testosterone_pct_low
+    primary_biomarker_id: free_testosterone_pct
+    trigger_direction: low
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: none_new_spec
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: true
+    kb47_package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+
+  - spec_id: inv_free_testosterone_pct_high_elevated_free_androgen_fraction
+    signal_id: signal_free_testosterone_pct_high
+    primary_biomarker_id: free_testosterone_pct
+    trigger_direction: high
+    schema_valid: true
+    already_indexed_in_medical_frame_index: false
+    existing_pass3_overlap: false
+    overlap_type: same_biomarker_distinct_signal
+    new_marker_to_pass3_estate: true
+    new_signal_to_pass3_estate: true
+    likely_frame_identity_action: create_new_signal_family_entry
+    likely_package_action: manual_review_required
+    medical_review_required: true
+    kb47_package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
