@@ -1,129 +1,141 @@
 {
+  "work_id": "BATCH2-PROMOTE-1_cleared_wave_package_promotion",
   "bus_version": "1.3.1",
-  "work_id": "BATCH2-CLOSURE-1_final_batch2_promotion_decision",
   "status": "HARDENED",
   "hardened_utc": "2026-06-06T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "changes": [
     {
-      "check": "Front Matter — work_id",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: BATCH2-CLOSURE-1_final_batch2_promotion_decision"
+      "file": "knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml",
+      "action": "CREATE",
+      "note": "CONFIRMED: does not yet exist. schema_version: 1.0.0 (consistent with existing registers: batch2_final_promotion_decision_register_v1.yaml line 1, batch2_promotion_readiness_register_v1.yaml line 1). runtime_consumed: false mandatory."
     },
     {
-      "check": "Front Matter — branch",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/BATCH2-CLOSURE-1-final-batch2-promotion-decision"
+      "file": "docs/audit-papers/BATCH2-PROMOTE-1_cleared_wave_package_promotion.md",
+      "action": "CREATE",
+      "note": "CONFIRMED: does not yet exist in docs/audit-papers/ (verified directory listing). Sprint report only — no runtime content."
     },
     {
-      "check": "Front Matter — risk_level",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Conservative — no Intelligence Core or SOP §10 HIGH-trigger paths in scope. High is not prohibited; governs final promotion decision for 20 packages. Per SOP §10: HIGH requires Claude audit + GPT architectural review + dual approval before merge. Gate must not be skipped."
+      "file": "docs/sprints/launch_core_carry_forward_register.md",
+      "action": "UPDATE",
+      "note": "CONFIRMED present at docs/sprints/launch_core_carry_forward_register.md (read in full). CF-BATCH2-011 line 74: resolve only if all 10 cleared packages promoted. CF-BATCH2-007, CF-BATCH2-010, CF-CONTEXT-MOD-3 must remain Open."
     },
     {
-      "check": "Front Matter — execution_model",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH. Correct — produces two new governed artefacts and requires kernel lifecycle."
-    },
-    {
-      "check": "Front Matter — change_type",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: CONTENT. Correct — sprint scope is: knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml (new), docs/audit-papers/BATCH2-CLOSURE-1_final_batch2_promotion_decision.md (new), docs/sprints/launch_core_carry_forward_register.md (update). All runtime_consumed: false governance artefacts. No Intelligence Core, evaluator, package, SSOT, or frontend files in scope."
-    },
-    {
-      "check": "Authority path — pass3_batch2_research_asset_register_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml read in full (422 lines). Lines 1-7: schema_version 1.0.0, work_id PASS3-BATCH2-INGEST-1, status governance_audit_non_runtime. Lines 14-23: spec_count 20, validation_pass_count 20, validation_fail_count 0. Lines 119-422: all 20 spec_classifications present with kb47_package_id values, all schema_valid: true."
-    },
-    {
-      "check": "Authority path — pass3_batch2_kb47_manifest_realign_register_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_batch2_kb47_manifest_realign_register_v1.yaml read (first 40 lines sampled). Lines 1-5: schema_version 1.0.0, work_id PASS3-BATCH2-PROVENANCE-1, package_count: 20. All entries show manifest_updated: true and package_validator_status: PASS. All 20 manifests realigned from Batch_2_Pass_3_Rev1.json to Batch_2_Pass_3.json."
-    },
-    {
-      "check": "Authority path — batch2_promotion_readiness_register_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml read in full (516 lines). Lines 1-16: package_count 20, signal_family_count 16, spec_count 20. Summary counts: READY_WITH_DOCUMENTED_CAUTION 14, BLOCKED_PENDING_FRAME_ADJUDICATION 2, BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING 4. Wave B (10 creatine_kinase/eosinophil/thyroid), Wave C (8 androgen), Wave D (2 egfr). All 20 entries: manifest_provenance_canonical: true, package_validator_status: PASS."
-    },
-    {
-      "check": "Authority path — batch2_androgen_panel_medical_review_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml confirmed present (glob). File exists."
-    },
-    {
-      "check": "Authority path — batch2_androgen_context_modifier_binding_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml confirmed present (glob). CF-BATCH2-009 resolved by BATCH2-CONTEXT-MOD-1 per carry-forward register line 72."
-    },
-    {
-      "check": "Authority path — context_modifier_catalogue_draft_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml confirmed present (glob)."
-    },
-    {
-      "check": "Authority path — medical_frame_identity_index_v1.yaml",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml confirmed present (glob)."
-    },
-    {
-      "check": "Authority path — biomarker_medical_frame_tree.md",
-      "result": "CONFIRMED",
-      "citation": "docs/architecture/biomarker_medical_frame_tree.md confirmed present (required input per prompt line 110)."
-    },
-    {
-      "check": "Authority path — launch_core_carry_forward_register.md",
-      "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md read in full (111 lines). CF-BATCH2-006 line 69: Open (Wave B promotion). CF-BATCH2-007 line 70: Open (eGFR adjudication). CF-BATCH2-008 line 71: Open (thyroid sign-off). CF-BATCH2-009 line 72: Resolved (BATCH2-CONTEXT-MOD-1). CF-BATCH2-010 line 73: Open (androgen clinical signoff). CF-CONTEXT-MOD-3 line 74: Open (runtime Layer B evaluation). All states consistent with prompt carry-forward handling instructions."
-    },
-    {
-      "check": "Authority path — audit papers (all 7)",
-      "result": "CONFIRMED",
-      "citation": "All 7 required audit papers confirmed present: docs/audit-papers/PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration_report.md, PASS3-BATCH2-PROVENANCE-1_kb47_manifest_canonical_source_realign_report.md, PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion_report.md, PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion_report.md, BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review.md, BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md, BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding.md"
-    },
-    {
-      "check": "Authority path — validation scripts (all 4)",
-      "result": "CONFIRMED",
-      "citation": "backend/scripts/run_architecture_validation_gate.py — CONFIRMED (glob). backend/scripts/validate_medical_frame_identity_index.py — CONFIRMED (PowerShell Test-Path: True). backend/scripts/validate_context_modifier_catalogue.py — CONFIRMED (PowerShell Test-Path: True). backend/scripts/validate_knowledge_package.py — CONFIRMED (PowerShell Test-Path: True)."
-    },
-    {
-      "check": "pkg_kb47_* packages on disk",
-      "result": "CONFIRMED",
-      "citation": "All 20 pkg_kb47_* package directories confirmed present in knowledge_bus/packages/ via PowerShell Get-ChildItem. Note: Windows glob patterns may not enumerate directories — Cursor must use PowerShell Get-ChildItem or equivalent to enumerate package paths when running validate_knowledge_package.py for all 20 packages."
-    },
-    {
-      "check": "Prerequisite sprints merged",
-      "result": "CONFIRMED",
-      "citation": "All 10 prerequisites confirmed COMPLETE in git log: PASS3-BATCH2-INGEST-1 (c8ee16f COMPLETE), PASS3-BATCH2-PROVENANCE-1 (051a2a4 COMPLETE), PASS3-BATCH2-FRAME-INDEX-1 (6a60260 COMPLETE), PASS3-BATCH2-FRAME-INDEX-2 (fcbdb41 COMPLETE), BATCH2-PROMOTION-READINESS-1 (e110efe COMPLETE), BATCH2-MEDREVIEW-1 (75c2819 COMPLETE), BATCH2-CONTEXT-MOD-1 (c9d63b1 COMPLETE), ARCH-SENTINEL-1 (a1c634f COMPLETE), CI-ARCH-GATE-1 (404a56c COMPLETE), CI-ARCH-GATE-1A (becb49c COMPLETE), MED-FRAME-TREE-1 (c7fa980 COMPLETE)"
-    },
-    {
-      "check": "Source cross-ref — 20-package reconciliation feasible",
-      "result": "CONFIRMED",
-      "citation": "pass3_batch2_research_asset_register_v1.yaml lines 119-422: all 20 kb47_package_id values enumerated. batch2_promotion_readiness_register_v1.yaml: all 20 packages present with PASS validator status and canonical provenance. Promotability classification already established by BATCH2-PROMOTION-READINESS-1: Wave B (10), Wave C (8 androgen), Wave D (2 egfr). Cursor's reconciliation should be a direct read from existing registers, not re-derivation."
-    },
-    {
-      "check": "Source cross-ref — carry-forward CF-BATCH2-006 resolution condition",
-      "result": "CONFIRMED",
-      "citation": "CF-BATCH2-006 (line 69): 'Resolve only if the final cleared promotion wave is defined.' BATCH2-CLOSURE-1 defines the cleared wave. Sprint should resolve CF-BATCH2-006 by marking Resolved and citing the new register. CF-BATCH2-011 (new carry-forward expected): 'execute BATCH2-PROMOTE-1 for cleared package subset' — consistent with prompt lines 344-348."
-    },
-    {
-      "check": "Source cross-ref — thyroid decision logic",
-      "result": "CONFIRMED",
-      "citation": "batch2_promotion_readiness_register_v1.yaml: free_t3/free_t4 packages (4 packages) in Wave_B_cautious_promotion_candidates with promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION and context_modifier_dependency: false. Medical review file exists. Thyroid decision is unblocked but requires clinical sign-off per CF-BATCH2-008. Prompt lines 199-207 allow clearing if thyroid caution is accepted. Cursor must make an explicit declaration."
-    },
-    {
-      "check": "Working tree warning",
-      "result": "WARN — CURSOR MUST VERIFY",
-      "citation": "Session git status snapshot shows M automation_bus/latest_cursor_prompt.md (uncommitted modification). This is the freshly authored cursor prompt for BATCH2-CLOSURE-1. Cursor must re-verify working tree state at Stage 0. If the file remains uncommitted when baseline checks run, the STOP condition 'working tree is not clean' triggers. Cursor must confirm the file is committed (bus activation) or handle appropriately before proceeding."
-    },
-    {
-      "check": "Forbidden files — runtime boundary",
-      "result": "CONFIRMED NOT IN SCOPE",
-      "citation": "Prompt Runtime boundary (lines 378-395) prohibits: SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, unit conversion, knowledge_bus/packages/*, latest_knowledge_status.json. Out of scope (lines 401-418): promote/activate/retire packages, signal_library.yaml, research_brief.yaml, runtime modifier evaluation, frontend, runtime behaviour, clinical sign-off, eGFR adjudication. Sprint scope (governance register + report + carry-forward update) does not require touching any of these."
-    },
-    {
-      "check": "Overall hardening verdict",
-      "result": "HARDENED — NO BLOCKERS",
-      "citation": "All 5 front matter fields valid. All 9 required input governance files confirmed present. All 7 required audit papers confirmed present. All 4 validation scripts confirmed present. All 20 pkg_kb47_* packages confirmed on disk. All 10 prerequisite sprints confirmed COMPLETE. Carry-forward register state consistent with prompt instructions. Runtime boundary clean. One WARN: Cursor must re-verify working tree cleanliness at Stage 0 before any work. Sprint is ready for Stage 3 kernel start."
+      "file": "knowledge_bus/packages/pkg_kb47_*/package_manifest.yaml (10 files)",
+      "action": "UPDATE_CONDITIONAL",
+      "note": "ADVISORY: current package_manifest.yaml schema has NO promotion_state field (verified by reading pkg_kb47_creatine_kinase_high_exertional_muscle_injury/package_manifest.yaml lines 1-13 in full). Fields present: package_id, package_version, description, research_brief, signal_library, promoted_signal_intelligence, author, created_at, source_document, translation_mode, behavioural_impact. If promotion convention requires a manifest-level field, Cursor must confirm the schema supports it before adding. STOP condition in prompt covers this — do not guess."
     }
-  ]
+  ],
+  "front_matter": {
+    "work_id": {
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: BATCH2-PROMOTE-1_cleared_wave_package_promotion"
+    },
+    "branch": {
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/BATCH2-PROMOTE-1-cleared-wave-package-promotion"
+    },
+    "risk_level": {
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Correct — touches Knowledge Bus package manifests (governance metadata) and creates governed registers. Package paths are not in the §10 HIGH-trigger list verbatim, but HIGH is conservative and appropriate given 10 packages in scope."
+    },
+    "execution_model": {
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH. Correct — produces governed artefacts requiring kernel lifecycle."
+    },
+    "change_type": {
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED. Correct — governance registers (CONTENT) plus potential package manifest metadata changes that sit in the SignalRegistry scan path (knowledge_bus/packages/*/signal_library.yaml per pass3_promotion_decision_register_v1.yaml line 51). MIXED governs."
+    }
+  },
+  "authority_paths": {
+    "batch2_final_promotion_decision_register_v1.yaml": {
+      "status": "CONFIRMED",
+      "citation": "knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml read in full (470 lines). final_decision: PROCEED_TO_PROMOTION_WITH_CLEARED_SUBSET at line 6. cleared_package_count: 10 at line 8. excluded_package_count: 10 at line 9. promotion_authorization: 'BATCH2-PROMOTE-1 may proceed for cleared subset only; no androgen or eGFR packages; thyroid included with documented caution' at line 33. thyroid_cleared_with_caution: true at line 42. All 10 cleared packages carry final_decision: CLEARED."
+    },
+    "batch2_promotion_readiness_register_v1.yaml": {
+      "status": "CONFIRMED",
+      "citation": "knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml read in full (516 lines). All 10 cleared packages in Wave_B_cautious_promotion_candidates (lines 20-29). All 10 have collision_status: none (verified per-package). All 10 have promotion_readiness_status: READY_WITH_DOCUMENTED_CAUTION. All 10 have manifest_provenance_canonical: true and package_validator_status: PASS."
+    },
+    "pass3_batch2_kb47_manifest_realign_register_v1.yaml": {
+      "status": "CONFIRMED_EXISTS",
+      "citation": "knowledge_bus/governance/pass3_batch2_kb47_manifest_realign_register_v1.yaml — present in governance directory listing."
+    },
+    "pass3_batch2_research_asset_register_v1.yaml": {
+      "status": "CONFIRMED_EXISTS",
+      "citation": "knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml — present in governance directory listing."
+    },
+    "medical_frame_identity_index_v1.yaml": {
+      "status": "CONFIRMED_EXISTS",
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml — present in governance directory listing."
+    },
+    "context_modifier_catalogue_draft_v1.yaml": {
+      "status": "CONFIRMED_EXISTS",
+      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml — present in governance directory listing."
+    },
+    "BATCH2-CLOSURE-1_final_batch2_promotion_decision.md": {
+      "status": "CONFIRMED_EXISTS",
+      "citation": "docs/audit-papers/BATCH2-CLOSURE-1_final_batch2_promotion_decision.md — present in audit-papers directory listing."
+    },
+    "launch_core_carry_forward_register.md": {
+      "status": "CONFIRMED",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md read in full (112 lines). CF-BATCH2-011 Open at line 74. CF-BATCH2-007 Open at line 70. CF-BATCH2-010 Open at line 73. CF-CONTEXT-MOD-3 Open at line 75."
+    },
+    "batch2_promote_1_execution_register_v1.yaml": {
+      "status": "CONFIRMED_ABSENT",
+      "citation": "knowledge_bus/governance/ directory listing does not contain batch2_promote_1_execution_register_v1.yaml. Correct — this sprint creates it."
+    }
+  },
+  "source_cross_reference": {
+    "package_list_match": {
+      "status": "CONFIRMED",
+      "citation": "Prompt lines 126-135 lists 10 cleared packages. batch2_final_promotion_decision_register_v1.yaml batch2_promote_1_scope.include_packages (lines 11-21) lists the same 10 packages. Sets are identical. Minor ordering difference for eosinophils_abs entries (items 5/6 swapped between prompt in-scope list vs. register) — functionally irrelevant."
+    },
+    "excluded_package_list_match": {
+      "status": "CONFIRMED",
+      "citation": "Prompt lines 144-155 lists 10 excluded packages. batch2_final_promotion_decision_register_v1.yaml exclude_packages (lines 23-31) lists the same 10 packages. All 10 are androgen (8) + eGFR (2). Sets identical."
+    },
+    "package_directories_on_disk": {
+      "status": "CONFIRMED",
+      "citation": "All 10 cleared package directories confirmed present via PowerShell Get-ChildItem on knowledge_bus/packages/. Each contains: package_manifest.yaml, promoted_signal_intelligence.yaml, research_brief.yaml, signal_library.yaml."
+    },
+    "activation_key_collision_check": {
+      "status": "CONFIRMED_CLEAN",
+      "citation": "batch2_promotion_readiness_register_v1.yaml shows collision_status: none for all 10 cleared packages. Verified per-package: ck_high_exertional line 57, ck_high_persistent line 79, eosinophil_pct_reactive line 196, eosinophil_pct_secondary line 219, eosinophils_abs_hypereosinophilic line 242, eosinophils_abs_reactive line 265, free_t3_high line 338, free_t3_low line 361, free_t4_high line 384, free_t4_low line 407. No collision in egfr excluded packages either (those carry collision_status: requires_adjudication, correctly excluded)."
+    },
+    "thyroid_activation_constraint": {
+      "status": "CONFIRMED",
+      "citation": "batch2_final_promotion_decision_register_v1.yaml line 43: 'further_review_before_promote_subset: Clinical sign-off for thyroid before activation; promotion sprint may compile/promote cleared packages without activation.' All 4 thyroid packages (free_t3_high, free_t3_low, free_t4_high, free_t4_low) have final_decision: CLEARED but activation is NOT authorised. Prompt lines 220-229 and STOP condition at line 375 correctly handle this. runtime_activation_changed must be false for all thyroid packages in the execution register."
+    },
+    "promotion_mechanism_status": {
+      "status": "ADVISORY",
+      "citation": "pass3_promotion_decision_register_v1.yaml line 51: 'runtime_authority_mechanism: SignalRegistry scans knowledge_bus/packages/*/signal_library.yaml and resolves activation identity as signal_id::source_spec_id'. The 10 cleared packages are physically resident in this scan path (confirmed above). The 'compiled_not_promoted/inactive' designation is tracked via governance registers only — there is no structural runtime barrier in the current system. Cursor must determine: (a) whether 'promotion' means adding manifest-level metadata only (governance act), or (b) whether any runtime-relevant mechanism changes. STOP condition in prompt covers this. Do not guess."
+    },
+    "signal_library_description_discrepancy": {
+      "status": "ADVISORY",
+      "citation": "signal_library.yaml for pkg_kb47_creatine_kinase_high_exertional_muscle_injury line 6: description references 'Batch_2_Pass_3_Rev1.json' (pre-provenance-correction name). package_manifest.yaml source_document correctly references canonical Batch_2_Pass_3.json (updated by PASS3-BATCH2-PROVENANCE-1). The signal_library.yaml description string is cosmetic/non-functional. package_validator_status: PASS per decision register. Out of scope for this sprint — do not modify signal_library.yaml."
+    }
+  },
+  "forbidden_files": {
+    "status": "CONFIRMED_NOT_IN_SCOPE",
+    "citation": "Runtime boundary (prompt lines 357-375) prohibits: SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, unit conversion. Excluded packages must not be touched. Sprint scope (governance register + audit report + carry-forward update + conditional manifest metadata) does not require touching any forbidden files."
+  },
+  "behavioural_scope": {
+    "intelligence_core_impact": "NONE",
+    "output_generation_impact": "NONE",
+    "ranking_ordering_impact": "NONE",
+    "determinism_impact": "NONE",
+    "regression_targets": "Architecture gate (run_architecture_validation_gate.py) must pass pre- and post-change. All 10 cleared package validators (validate_knowledge_package.py) must pass pre- and post-change. validate_medical_frame_identity_index.py and validate_context_modifier_catalogue.py required per prompt lines 339-343.",
+    "runtime_activation": "NOT_PERMITTED — promotion only, no activation. Thyroid constraint enforced by decision register line 43. All runtime_activation_changed fields in execution register must be false."
+  },
+  "carry_forward_binding": {
+    "CF-BATCH2-011": "Resolve if and only if all 10 cleared packages promoted. Do not mark resolved if any package fails. Evidence: launch_core_carry_forward_register.md line 74.",
+    "CF-BATCH2-007": "Must remain Open. eGFR adjudication unresolved. Evidence: line 70.",
+    "CF-BATCH2-010": "Must remain Open. Androgen clinical sign-off incomplete. Evidence: line 73.",
+    "CF-CONTEXT-MOD-3": "Must remain Open. Runtime Layer B context evaluation deferred. Evidence: line 75."
+  },
+  "overall_verdict": {
+    "status": "HARDENED — NO BLOCKERS",
+    "citation": "All 5 front matter fields valid and confirmed. All 8 required input governance files confirmed present or verified content. All 10 cleared package directories confirmed on disk. All 10 excluded packages verified against decision register. All 10 activation keys confirmed collision-free. All 4 required validator scripts confirmed present. Carry-forward register state verified consistent with prompt instructions. Runtime boundary clean. Two advisories surfaced: (1) promotion mechanism ambiguity — adequately protected by STOP condition in prompt; (2) thyroid runtime activation prohibition — adequately protected by prompt lines 220-229 and STOP condition. No blockers. Pre-execution token absent — kernel Stage 3 start required before Cursor touches any file."
+  }
 }
