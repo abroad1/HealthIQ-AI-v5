@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-MEDREVIEW-1-androgen-panel-medical-review",
+  "branch": "work/BATCH2-CONTEXT-MOD-1-androgen-panel-context-modifier-binding",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-06T18:34:03Z",
-  "cursor_started_utc": "2026-06-06T18:29:01Z",
-  "head_sha": "f36d677207aea89a17d55884ef70e686e5887751",
+  "cursor_started_utc": "2026-06-06T18:51:22Z",
+  "head_sha": "2cabedf7fd93a36135e5b5138f070e37b21dcf01",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-MEDREVIEW-1_androgen_panel_medical_review"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding"
 }
