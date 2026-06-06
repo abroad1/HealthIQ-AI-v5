@@ -1,134 +1,114 @@
 {
-  "work_id": "PASS3-BATCH2-PROVENANCE-1_kb47_manifest_canonical_source_realign",
   "bus_version": "1.3.1",
+  "work_id": "PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-06T10:00:00Z",
-  "hardened_by": "claude-code",
+  "hardened_utc": "2026-06-06T00:00:00Z",
+  "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: PASS3-BATCH2-PROVENANCE-1_kb47_manifest_canonical_source_realign"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/PASS3-BATCH2-PROVENANCE-1-kb47-manifest-canonical-source-realign"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: work/PASS3-BATCH2-FRAME-INDEX-2-remaining-single-frame-batch2-identity-index-expansion"
     },
     {
       "check": "Front Matter — risk_level",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH"
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Correct — MIXED change touching governed medical frame identity infrastructure that gates future package promotion and medical-intelligence safety checks."
     },
     {
       "check": "Front Matter — execution_model",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH"
+      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH. Correct for HIGH MIXED sprint."
     },
     {
       "check": "Front Matter — change_type",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: CONTENT"
-    },
-    {
-      "check": "Front Matter — risk classification assessment",
-      "result": "CONFIRMED — conservative but not incorrect",
-      "citation": "source_document in package_manifest.yaml is not runtime-consumed (KB-S49 estate confirms SignalRegistry loads only signal_library.yaml). STANDARD would be technically accurate; HIGH is GPT-declared, conservative, and not a blocker. change_type: CONTENT is accurate — no runtime behaviour change possible from this metadata field update."
-    },
-    {
-      "check": "Authority path — Batch_2_Pass_3.json (canonical target)",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json — file exists; 20 specs confirmed via PowerShell extraction. All 20 spec_ids present and match pkg_kb47_* package suffixes exactly."
-    },
-    {
-      "check": "Authority path — Batch_2_Pass_3_Rev1.json (archived source currently cited)",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/archived_ingested_batches/Batch_2_Pass_3_Rev1.json — file exists at archived path. This is the path currently cited in all 20 pkg_kb47_* manifests as source_document."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED. Correct — updates governed YAML index and non-runtime tree doc; no runtime package or evaluator changes but governed content is consumed by future promotion gates."
     },
     {
       "check": "Authority path — pass3_batch2_research_asset_register_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml — file exists (Glob confirmed)."
+      "citation": "knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml line 1: schema_version: 1.0.0, register_id: pass3_batch2_research_asset_register_v1. File exists and read in full. 20 spec_classifications; 12 remaining families with indexed: false confirmed at lines 44-116 (expansion candidates) and register body lines 118-421."
     },
     {
-      "check": "Authority path — PASS3-BATCH2-INGEST-1 audit report",
+      "check": "Authority path — pass3_batch2_kb47_manifest_realign_register_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration_report.md — file exists; independently read this session."
-    },
-    {
-      "check": "Authority path — PASS3-BATCH2-FRAME-INDEX-1 audit report",
-      "result": "CONFIRMED",
-      "citation": "docs/audit-papers/PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion_report.md — file exists (Glob confirmed)."
+      "citation": "knowledge_bus/governance/pass3_batch2_kb47_manifest_realign_register_v1.yaml line 1: schema_version: 1.0.0. All 20 packages: manifest_updated: true, package_validator_status: PASS (lines 14-207). Provenance realignment by PASS3-BATCH2-PROVENANCE-1 is complete."
     },
     {
       "check": "Authority path — medical_frame_identity_index_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml — file exists (Glob confirmed)."
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml line 1: schema_version: 1.0.0. Index read in full. Currently 12 signal families / 37 frames. 4 Batch 2 multi-frame families indexed by PASS3-BATCH2-FRAME-INDEX-1 at lines 951-1165 (signal_creatine_kinase_high, signal_egfr_low, signal_eosinophil_pct_high, signal_eosinophils_abs_high). No existing entries for dhea, fai, free_t3, free_t4, free_testosterone, free_testosterone_pct."
     },
     {
-      "check": "Authority path — launch_core_carry_forward_register.md",
+      "check": "Authority path — medical_frame_identity_expansion_candidates_v1.yaml",
       "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md line 65: CF-BATCH2-002 status Open, item: 'Realign pkg_kb47_* manifest provenance to canonical Batch_2_Pass_3.json'. Directly confirms this sprint's purpose."
+      "citation": "knowledge_bus/governance/medical_frame_identity_expansion_candidates_v1.yaml lines 114-208: all 12 remaining families listed with indexed: false and frame_count_indexed: 0. Families: signal_dhea_low (line 114), signal_dhea_high (line 122), signal_free_t3_low (line 130), signal_free_t3_high (line 138), signal_free_t4_low (line 146), signal_free_t4_high (line 154), signal_fai_high (line 162), signal_fai_low (line 170), signal_free_testosterone_low (line 178), signal_free_testosterone_high (line 186), signal_free_testosterone_pct_low (line 194), signal_free_testosterone_pct_high (line 202)."
     },
     {
-      "check": "Authority path — validate_knowledge_package.py",
+      "check": "Authority path — pkg_kb47 packages on disk (all 12 remaining families)",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/validate_knowledge_package.py — file exists (Glob confirmed)."
+      "citation": "PowerShell Get-ChildItem knowledge_bus/packages — all 20 pkg_kb47_* directories present. Remaining 12: pkg_kb47_dhea_low_adrenal_androgen_reduction, pkg_kb47_dhea_high_androgen_excess_context, pkg_kb47_fai_high_biochemical_hyperandrogenism, pkg_kb47_fai_low_reduced_free_androgen_availability, pkg_kb47_free_t3_low_low_t3_syndrome, pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis, pkg_kb47_free_t4_low_thyroid_hormone_deficiency, pkg_kb47_free_t4_high_thyrotoxicosis_context, pkg_kb47_free_testosterone_low_androgen_deficiency_context, pkg_kb47_free_testosterone_high_androgen_excess_context, pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction, pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction."
     },
     {
-      "check": "Authority path — run_architecture_validation_gate.py",
+      "check": "Source cross-ref — provenance realignment verified on disk (CONTENT READ)",
       "result": "CONFIRMED",
-      "citation": "backend/scripts/run_architecture_validation_gate.py — file exists (Glob confirmed)."
+      "citation": "knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/package_manifest.yaml line 10: source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json. knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/package_manifest.yaml line 10: same. Both point to canonical Batch_2_Pass_3.json, not Rev1. PASS3-BATCH2-PROVENANCE-1 realignment is real on disk for the remaining families."
     },
     {
-      "check": "Source Cross-Ref — pkg_kb47 package count",
+      "check": "Source cross-ref — remaining families and spec mapping",
       "result": "CONFIRMED",
-      "citation": "PowerShell directory listing of knowledge_bus/packages/ confirms exactly 20 pkg_kb47_* directories. Names: pkg_kb47_creatine_kinase_high_exertional_muscle_injury, pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury, pkg_kb47_dhea_high_androgen_excess_context, pkg_kb47_dhea_low_adrenal_androgen_reduction, pkg_kb47_egfr_low_chronic_kidney_function_reduction, pkg_kb47_egfr_low_hemodynamic_filtration_drop, pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia, pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation, pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia, pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia, pkg_kb47_fai_high_biochemical_hyperandrogenism, pkg_kb47_fai_low_reduced_free_androgen_availability, pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis, pkg_kb47_free_t3_low_low_t3_syndrome, pkg_kb47_free_t4_high_thyrotoxicosis_context, pkg_kb47_free_t4_low_thyroid_hormone_deficiency, pkg_kb47_free_testosterone_high_androgen_excess_context, pkg_kb47_free_testosterone_low_androgen_deficiency_context, pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction, pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction."
+      "citation": "pass3_batch2_research_asset_register_v1.yaml cross-referenced with medical_frame_identity_index_v1.yaml. 12 remaining signal families, 12 spec_ids, 12 pkg_kb47 packages — all map 1:1. Spec_ids: inv_dhea_low_adrenal_androgen_reduction, inv_dhea_high_androgen_excess_context, inv_fai_high_biochemical_hyperandrogenism, inv_fai_low_reduced_free_androgen_availability, inv_free_t3_low_low_t3_syndrome, inv_free_t3_high_t3_predominant_thyrotoxicosis, inv_free_t4_low_thyroid_hormone_deficiency, inv_free_t4_high_thyrotoxicosis_context, inv_free_testosterone_low_androgen_deficiency_context, inv_free_testosterone_high_androgen_excess_context, inv_free_testosterone_pct_low_reduced_free_androgen_fraction, inv_free_testosterone_pct_high_elevated_free_androgen_fraction. All trigger directions confirmed from register lines 154-421."
     },
     {
-      "check": "Source Cross-Ref — current source_document value in manifests (CONTENT READ)",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_kb47_creatine_kinase_high_exertional_muscle_injury/package_manifest.yaml line 10: source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json. Also confirmed in knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/package_manifest.yaml line 10: same value. Both manifests have no hash fields. Pattern is consistent across the estate per INGEST-1 report independently re-read this session."
+      "check": "Source cross-ref — dhea caution: asset register vs prompt discrepancy",
+      "result": "ADVISORY — PROMPT GOVERNS",
+      "citation": "pass3_batch2_research_asset_register_v1.yaml lines 163, 179: dhea_low and dhea_high both have medical_review_required: false. However, automation_bus/latest_cursor_prompt.md lines 165-169 explicitly classifies dhea as androgen-panel requiring clinical_adjudication_status: required_before_activation. Cursor must follow the prompt's governance classification. The asset register field predates the androgen-panel caution policy established in this sprint. No STOP required — the prompt is unambiguous. This discrepancy must not cause Cursor to treat dhea as low-risk."
     },
     {
-      "check": "Source Cross-Ref — 1:1 spec_id to package mapping (CONTENT READ)",
-      "result": "CONFIRMED",
-      "citation": "PowerShell extraction from Batch_2_Pass_3.json confirms 20 spec_ids. All map 1:1 to pkg_kb47_* packages via pattern pkg_kb47_<suffix> -> inv_<suffix>. All 20 packages have a corresponding canonical spec. No unmappable package exists. No ambiguous case exists."
+      "check": "Source cross-ref — collision check",
+      "result": "CONFIRMED — NO COLLISIONS",
+      "citation": "medical_frame_identity_index_v1.yaml read in full (1165 lines). No existing signal_family_id, activation_key, or primary_biomarker_id entries for dhea, fai, free_t3, free_t4, free_testosterone, or free_testosterone_pct. No duplicate active activation_key risk for any of the 12 families."
     },
     {
-      "check": "Source Cross-Ref — no hash fields in manifests",
-      "result": "CONFIRMED",
-      "citation": "package_manifest.yaml for pkg_kb47_creatine_kinase_high_exertional_muscle_injury (13 lines total) and pkg_kb47_egfr_low_chronic_kidney_function_reduction (13 lines total) — neither contains a hash, checksum, or source_hash field. Prompt source hash handling section directs: record that provenance path was realigned without hash update. No hash convention to preserve or invent."
-    },
-    {
-      "check": "Source Cross-Ref — source_document is NOT runtime-consumed",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 19-24: runtime_consumers SignalRegistry behaviour 'Iterates knowledge_bus/packages/*/signal_library.yaml (sorted), excludes pkg_example only. estate_tier_distinction_in_runtime: none_observed'. The package_manifest.yaml source_document field is governance metadata only. Updating it carries zero risk of runtime behaviour change."
-    },
-    {
-      "check": "Prior Task Findings — INGEST-1 artefact independently verified (not inherited from memory)",
+      "check": "Prior task findings — PASS3-BATCH2-FRAME-INDEX-1 independently verified",
       "result": "CONFIRMED INDEPENDENT RE-VERIFICATION",
-      "citation": "docs/audit-papers/PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration_report.md read in full this session. Key finding line 11: '20 pkg_kb47_* packages already exist on disk (KB-S47 lineage) but cite archived Batch_2_Pass_3_Rev1.json — provenance realignment is a follow-up'. CF-BATCH2-002 registered in carry-forward register line 65 as Open."
+      "citation": "medical_frame_identity_index_v1.yaml lines 951-1165: 4 ROUTE_C families indexed with notes citing PASS3-BATCH2-FRAME-INDEX-1. Expansion candidates file lines 78-112: same 4 families marked indexed: true with indexed_work_id: PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion. Not inherited from memory — re-verified from file content."
     },
     {
-      "check": "STOP conditions — all 6 checked",
-      "result": "NO BLOCKERS",
-      "citation": "(1) All 20 pkg_kb47 packages confirmed mappable to Batch_2_Pass_3.json — 1:1 by spec_id suffix. (2) manifest field source_document is unambiguous — single string field, clear canonical target. (3) validate_knowledge_package.py and run_architecture_validation_gate.py both confirmed present. (4) architecture gate script confirmed present. (5) No runtime/package logic/frontend change is necessary — source_document is metadata-only. (6) No hash convention exists in manifests — no hash update needed; document absence per prompt guidance."
+      "check": "Prior task findings — PASS3-BATCH2-PROVENANCE-1 independently verified",
+      "result": "CONFIRMED INDEPENDENT RE-VERIFICATION",
+      "citation": "knowledge_bus/governance/pass3_batch2_kb47_manifest_realign_register_v1.yaml lines 1-207 read in full. All 20 packages manifest_updated: true, PASS. On-disk manifest content read directly (pkg_kb47_dhea_low + pkg_kb47_free_testosterone_high both cite Batch_2_Pass_3.json). Not inherited from memory."
     },
     {
       "check": "Forbidden files — runtime boundary",
       "result": "CONFIRMED NOT IN SCOPE",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 164-176: do not edit signal_library.yaml, research_brief.yaml, thresholds, activation logic, override rules, signal_id, activation_key, runtime status. Lines 319-328: do not modify SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, unit conversion, knowledge_bus/current/latest_knowledge_status.json."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 406-421: do not modify SignalEvaluator, SignalRegistry, runtime loaders, domain_score_assembler, report_compiler, frontend, SSOT, scoring thresholds, unit conversion, knowledge_bus/packages/*, knowledge_bus/current/latest_knowledge_status.json. In-scope files are governance YAML, tree doc, carry-forward register, and audit report only."
     },
     {
-      "check": "Behavioural scope (2B not applicable — change_type CONTENT)",
-      "result": "NOT APPLICABLE",
-      "citation": "change_type: CONTENT. No Intelligence Core component is modified. source_document in package_manifest.yaml is not consumed by any runtime evaluator, loader, or assembler (confirmed via KB-S49 estate analysis). Stage 2B behavioural hardening does not apply."
+      "check": "Carry-forward register state",
+      "result": "CONFIRMED",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md line 64: CF-BATCH2-004 Open, assigned to PASS3-BATCH2-FRAME-INDEX-2. Line 65: CF-BATCH2-001 Partially resolved (4 of 16 families). Line 65 CF-BATCH2-002: Resolved by PASS3-BATCH2-PROVENANCE-1. CF-BATCH2-003 Open. Prompt carry-forward handling (lines 353-374) is consistent with register state. CF-BATCH2-005 for androgen-panel medical review is a new carry-forward expected to be added."
+    },
+    {
+      "check": "STOP conditions — all 9 checked",
+      "result": "NO BLOCKERS",
+      "citation": "(1) 12 remaining families confirmed from asset register + expansion candidates — no ambiguity. (2) All 12 mapped to Batch 2 specs with confidence. (3) All 12 pkg_kb47 packages confirmed on disk. (4) Provenance canonical after PASS3-BATCH2-PROVENANCE-1 — verified on disk. (5) No frame entries require clinical invention — governance states (compiled_not_promoted, inactive, required_before_activation) are factual not clinical. (6) No duplicate active activation_keys — collision check clear. (7) Tree regeneration: python script must be run, not manually edited — prompt is explicit. (8) Architecture gate validator exists at backend/scripts/run_architecture_validation_gate.py (confirmed in prior sprint). (9) No runtime/package/frontend change necessary."
+    },
+    {
+      "check": "Behavioural hardening (Stage 2B — MIXED applies)",
+      "result": "CONFIRMED SAFE",
+      "citation": "change_type: MIXED. No Intelligence Core component is modified. medical_frame_identity_index_v1.yaml is non-runtime (line 7: runtime_consumed: false). Tree doc is markdown documentation only. SignalEvaluator and SignalRegistry do not load the frame identity index at runtime (confirmed by runtime_consumed: false on the index). Determinism preserved. No output drift possible from this sprint. Behavioural surface area is zero at runtime."
     },
     {
       "check": "Overall hardening verdict",
       "result": "HARDENED — no blockers",
-      "citation": "All authority paths verified to exist. Source content read and cross-referenced (two manifest files read; Batch_2_Pass_3.json extracted). 1:1 package-to-spec mapping confirmed. No hash fields present. Runtime boundary confirmed safe. CF-BATCH2-002 confirmed Open and directly addressed by this sprint. All 6 STOP conditions clear. Sprint is safe to start."
+      "citation": "All 5 front matter fields valid. All authority paths confirmed to exist with content read. 12 remaining families confirmed, all mapped to Batch 2 specs and pkg_kb47 packages. Provenance realignment verified on disk. No collision risk. Runtime boundary clean. dhea caution discrepancy flagged as advisory with clear resolution (prompt governs). CF-BATCH2-004 and CF-BATCH2-001 are directly addressed. Sprint is safe to start."
     }
   ]
 }
