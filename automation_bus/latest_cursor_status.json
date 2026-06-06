@@ -1,9 +1,10 @@
 {
   "branch": "work/BATCH2-PROMOTION-READINESS-1-batch2-indexed-frame-promotion-readiness-review",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-06T18:04:22Z",
   "cursor_started_utc": "2026-06-06T18:00:41Z",
-  "head_sha": "f3fe4dec9c409ba29de5e2b7b1a618d28834b5b0",
+  "head_sha": "969c29f5299d3fa0b9d7b70bc0b2ab784fb031d5",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review"
 }
