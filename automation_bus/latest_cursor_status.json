@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-PROMOTION-READINESS-1-batch2-indexed-frame-promotion-readiness-review",
+  "branch": "work/BATCH2-MEDREVIEW-1-androgen-panel-medical-review",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-06T18:04:22Z",
-  "cursor_started_utc": "2026-06-06T18:00:41Z",
-  "head_sha": "969c29f5299d3fa0b9d7b70bc0b2ab784fb031d5",
+  "cursor_started_utc": "2026-06-06T18:29:01Z",
+  "head_sha": "e00954af8c12cea540695f708ae19407b91b0966",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-MEDREVIEW-1_androgen_panel_medical_review"
 }
