@@ -1,9 +1,10 @@
 {
   "branch": "work/PASS3-BATCH2-INGEST-1-batch2-pass3-research-asset-registration",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-06T14:49:33Z",
   "cursor_started_utc": "2026-06-06T14:42:47Z",
-  "head_sha": "e72798ff42a16813a330902de80e44b0eca28515",
+  "head_sha": "b66d7db4c97300a78debccd6e8d75f0850eabab0",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration"
 }
