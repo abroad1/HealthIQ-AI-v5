@@ -1,9 +1,10 @@
 {
   "branch": "work/BATCH2-CONTEXT-MOD-1-androgen-panel-context-modifier-binding",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-06T18:55:42Z",
   "cursor_started_utc": "2026-06-06T18:51:22Z",
-  "head_sha": "2cabedf7fd93a36135e5b5138f070e37b21dcf01",
+  "head_sha": "d810c111bd8e3ce95e5280bcb9273d4fce8f2f86",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding"
 }
