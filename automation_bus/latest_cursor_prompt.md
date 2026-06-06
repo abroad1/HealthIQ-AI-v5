@@ -1,53 +1,57 @@
 ---
-work_id: BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding
-branch: work/BATCH2-CONTEXT-MOD-1-androgen-panel-context-modifier-binding
+work_id: BATCH2-CLOSURE-1_final_batch2_promotion_decision
+branch: work/BATCH2-CLOSURE-1-final-batch2-promotion-decision
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: CONTENT
 ---
 
-# BATCH2-CONTEXT-MOD-1 — Androgen-Panel Context Modifier Binding
+# BATCH2-CLOSURE-1 — Final Batch 2 Promotion Decision
 
 ## Purpose
 
-Bind the Batch 2 androgen-panel frames to the governed context-modifier architecture before any future promotion or activation work.
+Consolidate all Batch 2 governance, review, indexing, provenance and readiness work into one final promotion decision.
 
-This sprint addresses:
+This sprint must decide whether Batch 2 is ready to proceed to a controlled promotion sprint, and if so, exactly which packages are cleared.
 
-```text
-CF-BATCH2-009 — bind androgen-panel context modifiers before promotion.
-````
+This sprint must not promote packages.
 
-It must also address the audit observation from `BATCH2-MEDREVIEW-1`:
-
-```text
-batch2_promotion_readiness_register_v1.yaml currently has context_modifier_dependency: false for androgen-panel entries, but the medical review found all 8 androgen-panel frames are context-dependent.
-```
-
-This sprint must correct that governance inconsistency.
-
-This is not a package-promotion sprint.
-
-Do not activate packages.
-Do not promote packages.
-Do not retire packages.
-Do not modify package logic.
-Do not modify runtime, frontend, SignalEvaluator, SignalRegistry, SSOT, scoring or runtime loaders.
+The output must be a final go/no-go decision register for Batch 2.
 
 ---
 
 ## Strategic framing
 
-The androgen-panel medical review concluded:
+We are stopping the micro-sprint pattern.
+
+Batch 2 has already been:
 
 ```text
-- all 8 androgen-panel frames are medically meaningful
-- none are ready for immediate promotion
-- safe interpretation depends on context such as sex, age, SHBG, medication, supplements and symptoms
-- FAI and free testosterone percentage frames are especially dependent on context binding
+- registered as canonical research
+- validated
+- provenance-corrected
+- indexed into the medical frame identity index
+- added to the human-readable tree
+- reviewed for promotion readiness
+- androgen-reviewed
+- androgen context-bound
+````
+
+This sprint must now consolidate that evidence and make the final decision.
+
+The next sprint after this should be either:
+
+```text
+BATCH2-PROMOTE-1
 ```
 
-This sprint must ensure the governance layer reflects that dependency before any future promotion action.
+or:
+
+```text
+Batch 2 paused / closed with blockers documented
+```
+
+Do not create new sub-sprints unless a genuine safety blocker is found.
 
 ---
 
@@ -58,13 +62,16 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
-BATCH2-MEDREVIEW-1 merged
-BATCH2-PROMOTION-READINESS-1 merged
-PASS3-BATCH2-FRAME-INDEX-2 merged
+PASS3-BATCH2-INGEST-1 merged
 PASS3-BATCH2-PROVENANCE-1 merged
-CONTEXT-MOD-1 merged
+PASS3-BATCH2-FRAME-INDEX-1 merged
+PASS3-BATCH2-FRAME-INDEX-2 merged
+BATCH2-PROMOTION-READINESS-1 merged
+BATCH2-MEDREVIEW-1 merged
+BATCH2-CONTEXT-MOD-1 merged
 ARCH-SENTINEL-1 merged
 CI-ARCH-GATE-1 / CI-ARCH-GATE-1A merged
+MED-FRAME-TREE-1 merged
 ```
 
 Before starting, run and report:
@@ -83,25 +90,8 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- batch2_androgen_panel_medical_review_v1.yaml is missing
-- batch2_promotion_readiness_register_v1.yaml is missing
-- context_modifier_catalogue_draft_v1.yaml is missing
-- medical_frame_identity_index_v1.yaml is missing
+- any required Batch 2 governance register is missing
 ```
-
----
-
-## Governance classification
-
-```yaml
-risk_level: HIGH
-change_type: CONTENT
-execution_model: TWO_PHASE_START_FINISH
-```
-
-Reason:
-
-This sprint updates governed context-modifier and promotion-readiness metadata for hormone/androgen frames. It must not alter runtime behaviour, but it affects future promotion safety.
 
 ---
 
@@ -110,168 +100,155 @@ This sprint updates governed context-modifier and promotion-readiness metadata f
 Read before work:
 
 ```text
-knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml
-knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml
-knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml
-docs/audit-papers/BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md
-docs/audit-papers/BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review.md
-docs/architecture/CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance.md
+knowledge_bus/governance/pass3_batch2_kb47_manifest_realign_register_v1.yaml
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml
+knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml
+knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
+knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+docs/architecture/biomarker_medical_frame_tree.md
 docs/sprints/launch_core_carry_forward_register.md
+```
+
+Read the relevant audit reports:
+
+```text
+docs/audit-papers/PASS3-BATCH2-INGEST-1_batch2_pass3_research_asset_registration_report.md
+docs/audit-papers/PASS3-BATCH2-PROVENANCE-1_kb47_manifest_canonical_source_realign_report.md
+docs/audit-papers/PASS3-BATCH2-FRAME-INDEX-1_batch2_multiframe_identity_index_expansion_report.md
+docs/audit-papers/PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion_report.md
+docs/audit-papers/BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review.md
+docs/audit-papers/BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md
+docs/audit-papers/BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding.md
 ```
 
 Also inspect:
 
 ```text
-knowledge_bus/packages/pkg_kb47_dhea_*
-knowledge_bus/packages/pkg_kb47_fai_*
-knowledge_bus/packages/pkg_kb47_free_testosterone_*
-knowledge_bus/packages/pkg_kb47_free_testosterone_pct_*
+knowledge_bus/packages/pkg_kb47_*
+backend/scripts/validate_knowledge_package.py
+backend/scripts/run_architecture_validation_gate.py
 ```
 
 ---
 
-## Scope
+## Required decision
 
-Apply context-modifier governance to these 8 androgen-panel frames:
+This sprint must produce one final Batch 2 promotion decision.
+
+Allowed final decision values:
 
 ```text
-dhea_high_androgen_excess_context
-dhea_low_adrenal_androgen_reduction
-fai_high_biochemical_hyperandrogenism
-fai_low_reduced_free_androgen_availability
-free_testosterone_high_androgen_excess_context
-free_testosterone_low_androgen_deficiency_context
-free_testosterone_pct_high_elevated_free_androgen_fraction
-free_testosterone_pct_low_reduced_free_androgen_fraction
+PROCEED_TO_PROMOTION_WITH_CLEARED_SUBSET
+PAUSE_BATCH2_PROMOTION_PENDING_BLOCKERS
+DO_NOT_PROMOTE_BATCH2_AT_THIS_STAGE
 ```
 
-Do not review thyroid, eGFR, creatine kinase or eosinophil frames in this sprint except where needed for consistency checks.
+Expected likely outcome:
+
+```text
+PROCEED_TO_PROMOTION_WITH_CLEARED_SUBSET
+```
+
+where blocked items are excluded from the promotion sprint.
 
 ---
 
-## Required correction
+## Required package classifications
 
-Update:
+Every one of the 20 Batch 2 packages must be placed into one of these final groups:
 
 ```text
-knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml
+CLEARED_FOR_BATCH2_PROMOTE_1
+EXCLUDE_ANDROGEN_PENDING_CLINICAL_SIGNOFF
+EXCLUDE_EGFR_PENDING_CREATININE_EGFR_ADJUDICATION
+EXCLUDE_PENDING_CONTEXT_RUNTIME_EVALUATION
+EXCLUDE_OTHER_BLOCKER
 ```
 
-For all 8 androgen-panel entries, set:
-
-```yaml
-context_modifier_dependency: true
-```
-
-Do not otherwise alter their promotion-readiness status unless the change is required to preserve consistency with `batch2_androgen_panel_medical_review_v1.yaml`.
-
-The androgen-panel frames must remain blocked or caution-gated. Do not mark them ready for promotion.
+Do not create more groups unless absolutely necessary.
 
 ---
 
-## Required context modifier review
+## Required consolidation questions
 
-For each androgen-panel frame, determine which governed context modifiers are required or missing.
-
-At minimum assess:
+Answer explicitly:
 
 ```text
-- sex
-- age
-- SHBG
-- LH / FSH if represented or missing
-- symptoms if collected
-- known endocrine condition if represented
-- testosterone / hormone medication
-- steroid use
-- supplements / anabolic-androgenic exposure if represented
-- thyroid context if relevant
-- liver context if relevant to SHBG interpretation
+1. Are all 20 Batch 2 packages validated?
+2. Are all 20 package manifests provenance-corrected to canonical Batch_2_Pass_3.json?
+3. Are all 16 Batch 2 signal families indexed?
+4. Are all Batch 2 frames present in the generated biomarker tree?
+5. Which packages are cleared for BATCH2-PROMOTE-1?
+6. Which packages are excluded and why?
+7. Are androgen packages still blocked?
+8. Are thyroid packages allowed into the cautious promotion wave or excluded?
+9. Are eGFR packages excluded due to creatinine/eGFR adjudication?
+10. Is any further review required before promotion of the cleared subset?
 ```
-
-Cursor must not invent clinical rules.
-
-Cursor may classify missing modifiers as required future governance work.
 
 ---
 
-## Required catalogue handling
+## Expected decision logic
 
-Update:
+Use this default unless evidence proves otherwise:
 
-```text
-knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
-```
+### Cleared candidates
 
-only if the existing catalogue lacks necessary androgen-panel modifier entries that can be added as governance placeholders without inventing clinical thresholds.
-
-Allowed additions:
+Consider clearing:
 
 ```text
-- modifier placeholders for sex/age/SHBG/hormone medication/supplement context
-- links from existing modifiers to androgen-panel medical_frame_ids
-- non-runtime metadata only
+creatine_kinase packages
+eosinophil_pct packages
+eosinophils_abs packages
+free_t3 packages, if thyroid caution is accepted
+free_t4 packages, if thyroid caution is accepted
 ```
 
-Every modifier must remain:
+### Exclude androgen
 
-```yaml
-runtime_active: false
+Exclude:
+
+```text
+dhea packages
+fai packages
+free_testosterone packages
+free_testosterone_pct packages
 ```
 
-The catalogue must remain:
+unless there is explicit clinical sign-off evidence already present.
 
-```yaml
-runtime_consumed: false
+Reason:
+
+```text
+androgen-panel frames remain dependent on clinical sign-off and future runtime context evaluation.
 ```
 
-Do not implement modifier evaluation.
+### Exclude eGFR
 
-Do not add clinical thresholds.
+Exclude:
 
-Do not write user-facing interpretation rules.
+```text
+egfr packages
+```
+
+unless creatinine/eGFR adjudication has been resolved.
+
+Reason:
+
+```text
+eGFR frames overlap with existing creatinine/eGFR renal interpretation and should not be promoted until adjudicated.
+```
 
 ---
 
-## Required frame-index handling
-
-Update:
-
-```text
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-```
-
-only if needed to set:
-
-```yaml
-context_inputs_supported:
-  questionnaire_modifiers: true
-  medication_modifiers: true
-```
-
-for androgen-panel frames where context modifier links are now explicitly represented.
-
-Do not mark clinical adjudication as complete.
-
-Do not change:
-
-```yaml
-promotion_state
-runtime_authority_status
-```
-
-unless required to keep the index internally consistent and explicitly justified.
-
----
-
-## Required output register
+## Required final decision register
 
 Create:
 
 ```text
-knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
+knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml
 ```
 
 It must include:
@@ -281,25 +258,32 @@ schema_version:
 runtime_consumed: false
 status:
 work_id:
-source_medical_review:
-frame_count:
-summary:
-  frames_with_context_dependency:
-  frames_with_catalogue_links:
-  frames_blocked_pending_context_binding:
-  frames_remaining_clinical_signoff_required:
-frames:
-  - frame_id:
-    package_id:
+source_batch:
+final_decision:
+package_count:
+cleared_package_count:
+excluded_package_count:
+batch2_promote_1_scope:
+  include_packages:
+  exclude_packages:
+packages:
+  - package_id:
+    package_path:
+    spec_id:
     signal_id:
     primary_biomarker_id:
-    medical_review_outcome:
-    required_context_modifiers:
-    catalogue_modifier_ids:
-    missing_modifier_governance:
-    promotion_readiness_register_updated:
-    frame_index_context_flags_updated:
-    remains_blocked_for_promotion:
+    medical_frame_id:
+    panel_group:
+    package_validator_status:
+    provenance_canonical:
+    frame_indexed:
+    tree_visible:
+    promotion_readiness_status:
+    medical_review_status:
+    context_binding_status:
+    final_promotion_group:
+    final_decision:
+    blocker_if_excluded:
     required_next_action:
     notes:
 ```
@@ -311,7 +295,7 @@ frames:
 Create:
 
 ```text
-docs/audit-papers/BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding.md
+docs/audit-papers/BATCH2-CLOSURE-1_final_batch2_promotion_decision.md
 ```
 
 Report must include:
@@ -319,12 +303,15 @@ Report must include:
 ```text
 - executive verdict
 - artefacts inspected
-- 8-frame context dependency table
-- promotion-readiness register correction
-- context modifier catalogue changes
-- medical frame index changes, if any
-- missing modifier governance
-- remaining medical sign-off requirements
+- summary of Batch 2 work completed
+- 20-package final decision table
+- packages cleared for BATCH2-PROMOTE-1
+- packages excluded and exact blocker
+- androgen decision
+- thyroid decision
+- eGFR decision
+- whether Batch 2 promotion can proceed
+- exact scope for BATCH2-PROMOTE-1
 - validation output pasted in full
 - carry-forward updates
 - confirmation no runtime/package/frontend changes
@@ -343,26 +330,27 @@ docs/sprints/launch_core_carry_forward_register.md
 Expected handling:
 
 ```text
-CF-BATCH2-009
-Resolve only if all 8 androgen-panel frames have context_modifier_dependency corrected and context modifier bindings/placeholders are documented.
+CF-BATCH2-006
+Resolve only if the final cleared promotion wave is defined.
 
 CF-BATCH2-010
-Remain Open. Clinical sign-off before activation is not completed in this sprint.
+Remain Open unless androgen clinical sign-off is completed, which is not expected.
 
-CF-BATCH2-006
-Remain Open. Wave B promotion pilot is separate.
+CF-CONTEXT-MOD-3
+Remain Open unless runtime Layer B context evaluation is implemented, which is out of scope.
+
+CF-BATCH2-007
+Remain Open unless eGFR adjudication is completed, which is out of scope.
 
 CF-BATCH2-008
-Remain Open. Thyroid-panel sign-off is separate.
+Resolve only if thyroid is explicitly classified as either cleared for cautious promotion or excluded with blocker.
 ```
 
-Possible new carry-forward:
+Likely new carry-forward:
 
 ```text
-CF-CONTEXT-MOD-3 — implement runtime Layer B context modifier evaluation after governance binding is complete.
+CF-BATCH2-011 — execute BATCH2-PROMOTE-1 for cleared package subset.
 ```
-
-Do not mark androgen package promotion complete.
 
 ---
 
@@ -376,19 +364,13 @@ python backend/scripts/validate_medical_frame_identity_index.py --index knowledg
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 ```
 
-If context modifier catalogue changes are made, also run its regression tests:
+Validate all 20 `pkg_kb47_*` packages:
 
 ```powershell
-python -m pytest backend/tests/regression/test_context_modifier_catalogue.py -q
+python backend/scripts/validate_knowledge_package.py --package-dir <package_dir>
 ```
 
-If frame index changes are made, also run:
-
-```powershell
-python -m pytest backend/tests/regression/test_med_frame_identity_index.py -q
-```
-
-Do not write only “all tests passed”.
+Paste actual output or a clear per-package PASS table with command evidence.
 
 ---
 
@@ -410,7 +392,9 @@ knowledge_bus/packages/*
 knowledge_bus/current/latest_knowledge_status.json
 ```
 
-Package files must not be edited in this sprint.
+Do not modify package files.
+
+Do not activate anything.
 
 ---
 
@@ -425,12 +409,11 @@ Do not:
 - modify package files
 - modify signal_library.yaml
 - modify research_brief.yaml
-- implement runtime context modifier evaluation
-- implement Layer B frame assembly
+- implement Layer B context evaluation
+- clinically sign off androgen frames
+- adjudicate eGFR/creatinine
 - change frontend
 - change runtime behaviour
-- clinically sign off androgen frames
-- review thyroid or eGFR
 ```
 
 ---
@@ -440,12 +423,13 @@ Do not:
 STOP and report if:
 
 ```text
-1. any androgen frame cannot be found in the medical review register
-2. any androgen frame cannot be found in the promotion readiness register
-3. context modifier catalogue cannot support required placeholder/binding structure
-4. validator fails after catalogue/index updates
-5. any package/runtime/frontend change appears necessary
+1. Batch 2 package/spec/frame counts cannot be reconciled
+2. any pkg_kb47 package fails validation
+3. any package provenance is not canonical
+4. any Batch 2 frame is missing from the frame index
+5. any cleared package has unresolved blocker
 6. architecture gate fails
+7. any runtime/package/frontend change appears necessary
 ```
 
 ---
@@ -457,14 +441,17 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. files inspected
-3. 8 androgen frames reviewed for context dependency
-4. promotion-readiness register corrections
-5. context modifier catalogue changes
-6. frame index changes, if any
-7. binding register created
-8. carry-forward updates
-9. actual validation output
-10. confirmation no runtime/package/frontend changes
+3. 20-package reconciliation
+4. cleared package list
+5. excluded package list with blocker
+6. thyroid decision
+7. androgen decision
+8. eGFR decision
+9. final promotion decision
+10. validation commands run
+11. actual validation output
+12. carry-forward updates
+13. confirmation no runtime/package/frontend changes
 ```
 
 ---
@@ -485,11 +472,12 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/BATCH2-CONTEXT-MOD-1-androgen-panel-context-modifier-binding
+- current branch matches work/BATCH2-CLOSURE-1-final-batch2-promotion-decision
 - only in-scope docs/governance/register files changed
-- no runtime package files changed
-- no frontend/runtime evaluator files changed
+- no package files changed
+- no runtime/frontend/evaluator files changed
 - no ambiguous stash exists
+- all package validators pass
 - architecture gate passes
 ```
 
@@ -500,16 +488,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. all 8 androgen-panel context_modifier_dependency flags are corrected to true
-2. required context modifiers are documented per frame
-3. context catalogue links/placeholders exist where safe
-4. androgen frames remain blocked/caution-gated for promotion
-5. CF-BATCH2-009 is accurately updated
-6. CF-BATCH2-010 remains open
-7. validators pass
-8. architecture gate passes
+1. all 20 Batch 2 packages are reconciled
+2. final Batch 2 promotion decision exists
+3. cleared promotion subset is explicitly defined
+4. excluded packages have exact blockers
+5. thyroid decision is made
+6. androgen remains appropriately blocked or explicitly cleared with evidence
+7. eGFR remains appropriately blocked or explicitly cleared with evidence
+8. BATCH2-PROMOTE-1 scope is clear
 9. no runtime/package/frontend changes occur
-10. next path toward clinical sign-off is clear
+10. architecture gate passes
 ```
 
 ```
