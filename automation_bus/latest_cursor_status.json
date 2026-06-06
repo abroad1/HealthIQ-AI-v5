@@ -1,10 +1,9 @@
 {
-  "branch": "work/PASS3-BATCH2-FRAME-INDEX-2-remaining-single-frame-batch2-identity-index-expansion",
+  "branch": "work/BATCH2-PROMOTION-READINESS-1-batch2-indexed-frame-promotion-readiness-review",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-06T15:59:30Z",
-  "cursor_started_utc": "2026-06-06T15:54:41Z",
-  "head_sha": "3c39f7821c017c291bad03d0548f07f6a4439b7f",
+  "cursor_started_utc": "2026-06-06T18:00:41Z",
+  "head_sha": "f3fe4dec9c409ba29de5e2b7b1a618d28834b5b0",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "PASS3-BATCH2-FRAME-INDEX-2_remaining_single_frame_batch2_identity_index_expansion"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-PROMOTION-READINESS-1_batch2_indexed_frame_promotion_readiness_review"
 }
