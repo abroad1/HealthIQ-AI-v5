@@ -1,0 +1,211 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: governance_medical_review_non_runtime
+work_id: BATCH2-MEDREVIEW-1_androgen_panel_medical_review
+review_scope: Batch_2_androgen_panel_Wave_C_8_frames
+source_batch: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
+frame_count: 8
+summary_counts:
+  MEDICALLY_COHERENT_READY_WITH_CAUTION: 0
+  MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT: 4
+  BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING: 4
+  BLOCKED_PENDING_MEDICAL_RESEARCH_ENRICHMENT: 0
+  BLOCKED_PENDING_CLINICAL_SIGNOFF: 0
+  POSSIBLE_DUPLICATE_OR_OVERLAP_REVIEW_REQUIRED: 0
+panel_overlap_summary: DHEA, FAI, free testosterone and free testosterone % frames
+  form overlapping hyperandrogenism/hypogonadism clusters; promotion must enforce
+  frame-priority rules.
+frames:
+- frame_id: frame_batch2_dhea_high_androgen_excess_context
+  package_id: pkg_kb47_dhea_high_androgen_excess_context
+  spec_id: inv_dhea_high_androgen_excess_context
+  signal_id: signal_dhea_high
+  primary_biomarker_id: dhea
+  direction: high
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
+  frame_indexed: true
+  provenance_canonical: true
+  package_validator_status: PASS
+  medical_review_outcome: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT
+  promotion_readiness_recommendation: remain_blocked_until_context_binding_and_clinical_signoff
+  context_dependencies:
+  - sex
+  - age
+  - supplements
+  - symptoms
+  missing_context_or_research: Sex/age reference interpretation; supplement/hormone
+    therapy modifiers not bound to frame
+  duplicate_or_overlap_risk: moderate — overlaps free_testosterone_high and fai_high
+    hyperandrogenism cluster
+  required_next_action: Bind context modifiers (CF-BATCH2-009); clinical signoff (CF-BATCH2-010)
+    before promotion
+  notes: Pass_3 hypotheses=2; supporting_markers=2; Frame structure coherent; promotion
+    blocked pending context binding and clinical signoff.
+- frame_id: frame_batch2_dhea_low_adrenal_androgen_reduction
+  package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  spec_id: inv_dhea_low_adrenal_androgen_reduction
+  signal_id: signal_dhea_low
+  primary_biomarker_id: dhea
+  direction: low
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
+  frame_indexed: true
+  provenance_canonical: true
+  package_validator_status: PASS
+  medical_review_outcome: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT
+  promotion_readiness_recommendation: remain_blocked_until_context_binding_and_clinical_signoff
+  context_dependencies:
+  - age
+  - medications
+  - adrenal_context
+  missing_context_or_research: Adrenal/stress context modifiers not bound; age-dependent
+    DHEA interpretation
+  duplicate_or_overlap_risk: low — distinct adrenal androgen reduction frame vs gonadal
+    testosterone frames
+  required_next_action: Context binding for adrenal/medication modifiers; clinical
+    signoff before promotion
+  notes: Pass_3 hypotheses=2; supporting_markers=2; Frame structure coherent; promotion
+    blocked pending context binding and clinical signoff.
+- frame_id: frame_batch2_fai_high_biochemical_hyperandrogenism
+  package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  spec_id: inv_fai_high_biochemical_hyperandrogenism
+  signal_id: signal_fai_high
+  primary_biomarker_id: fai
+  direction: high
+  package_path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
+  frame_indexed: true
+  provenance_canonical: true
+  package_validator_status: PASS
+  medical_review_outcome: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  promotion_readiness_recommendation: remain_blocked_pending_context_modifier_binding
+  context_dependencies:
+  - sex
+  - age
+  - shbg
+  - total_testosterone
+  missing_context_or_research: FAI requires sex-specific reference ranges; modifier
+    catalogue not bound to frame
+  duplicate_or_overlap_risk: high — duplicates hyperandrogenism interpretation with
+    dhea_high and free_testosterone_high
+  required_next_action: CF-BATCH2-009 sex/age/SHBG modifier binding required before
+    promotion candidacy
+  notes: Pass_3 hypotheses=2; supporting_markers=2; Frame structure coherent; promotion
+    blocked pending context binding and clinical signoff.
+- frame_id: frame_batch2_fai_low_reduced_free_androgen_availability
+  package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  spec_id: inv_fai_low_reduced_free_androgen_availability
+  signal_id: signal_fai_low
+  primary_biomarker_id: fai
+  direction: low
+  package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
+  frame_indexed: true
+  provenance_canonical: true
+  package_validator_status: PASS
+  medical_review_outcome: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  promotion_readiness_recommendation: remain_blocked_pending_context_modifier_binding
+  context_dependencies:
+  - sex
+  - age
+  - shbg
+  - free_testosterone
+  - total_testosterone
+  missing_context_or_research: Sex-specific FAI thresholds; SHBG binding context not
+    runtime-connected
+  duplicate_or_overlap_risk: moderate — overlaps free_testosterone_low hypogonadism
+    pattern
+  required_next_action: Context modifier binding + clinical signoff before promotion
+  notes: Pass_3 hypotheses=2; supporting_markers=3; Frame structure coherent; promotion
+    blocked pending context binding and clinical signoff.
+- frame_id: frame_batch2_free_testosterone_high_androgen_excess_context
+  package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  spec_id: inv_free_testosterone_high_androgen_excess_context
+  signal_id: signal_free_testosterone_high
+  primary_biomarker_id: free_testosterone
+  direction: high
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context
+  frame_indexed: true
+  provenance_canonical: true
+  package_validator_status: PASS
+  medical_review_outcome: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT
+  promotion_readiness_recommendation: eligible_with_caution_after_context_binding
+  context_dependencies:
+  - sex
+  - age
+  - symptoms
+  - medications
+  missing_context_or_research: Sex-specific reference ranges; testosterone therapy
+    modifier not frame-bound
+  duplicate_or_overlap_risk: moderate — cluster with dhea_high and fai_high
+  required_next_action: Bind sex/age/medication modifiers; clinical signoff; resolve
+    overlap at promotion gate
+  notes: Pass_3 hypotheses=2; supporting_markers=2; Frame structure coherent; promotion
+    blocked pending context binding and clinical signoff.
+- frame_id: frame_batch2_free_testosterone_low_androgen_deficiency_context
+  package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  spec_id: inv_free_testosterone_low_androgen_deficiency_context
+  signal_id: signal_free_testosterone_low
+  primary_biomarker_id: free_testosterone
+  direction: low
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  frame_indexed: true
+  provenance_canonical: true
+  package_validator_status: PASS
+  medical_review_outcome: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT
+  promotion_readiness_recommendation: eligible_with_caution_after_context_binding
+  context_dependencies:
+  - sex
+  - age
+  - lh
+  - symptoms
+  - medications
+  missing_context_or_research: Sex/age hypogonadism context; LH pattern requires clinical
+    context binding
+  duplicate_or_overlap_risk: moderate — overlaps fai_low and free_testosterone_pct_low
+  required_next_action: Context binding + clinical signoff before promotion pilot
+  notes: Pass_3 hypotheses=2; supporting_markers=2; Frame structure coherent; promotion
+    blocked pending context binding and clinical signoff.
+- frame_id: frame_batch2_free_testosterone_pct_high_elevated_free_androgen_fraction
+  package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  spec_id: inv_free_testosterone_pct_high_elevated_free_androgen_fraction
+  signal_id: signal_free_testosterone_pct_high
+  primary_biomarker_id: free_testosterone_pct
+  direction: high
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  frame_indexed: true
+  provenance_canonical: true
+  package_validator_status: PASS
+  medical_review_outcome: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  promotion_readiness_recommendation: remain_blocked_pending_context_modifier_binding
+  context_dependencies:
+  - sex
+  - shbg
+  - free_testosterone
+  - total_testosterone
+  missing_context_or_research: Fraction interpretation requires SHBG and sex context;
+    modifiers not bound
+  duplicate_or_overlap_risk: high — redundant with free_testosterone_high when SHBG
+    low
+  required_next_action: CF-BATCH2-009 SHBG/sex modifier binding; adjudicate overlap
+    with free_testosterone frames
+  notes: Pass_3 hypotheses=2; supporting_markers=2; Frame structure coherent; promotion
+    blocked pending context binding and clinical signoff.
+- frame_id: frame_batch2_free_testosterone_pct_low_reduced_free_androgen_fraction
+  package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  spec_id: inv_free_testosterone_pct_low_reduced_free_androgen_fraction
+  signal_id: signal_free_testosterone_pct_low
+  primary_biomarker_id: free_testosterone_pct
+  direction: low
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  frame_indexed: true
+  provenance_canonical: true
+  package_validator_status: PASS
+  medical_review_outcome: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING
+  promotion_readiness_recommendation: remain_blocked_pending_context_modifier_binding
+  context_dependencies:
+  - sex
+  - shbg
+  - free_testosterone
+  missing_context_or_research: SHBG/sex context for fraction interpretation not bound
+  duplicate_or_overlap_risk: moderate — overlaps free_testosterone_low
+  required_next_action: Context modifier binding + overlap review before promotion
+  notes: Pass_3 hypotheses=2; supporting_markers=2; Frame structure coherent; promotion
+    blocked pending context binding and clinical signoff.
