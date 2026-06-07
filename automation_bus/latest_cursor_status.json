@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-ACTIVATION-1-runtime-activate-cleared-non-thyroid-subset",
+  "branch": "work/BATCH2-REMAINDER-RESOLUTION-1-remaining-batch2-package-resolution-investigation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-07T12:33:40Z",
-  "cursor_started_utc": "2026-06-07T12:28:58Z",
-  "head_sha": "d031d5abe4cc3600ce7ecc4636191d56f58d5918",
+  "cursor_started_utc": "2026-06-07T14:04:51Z",
+  "head_sha": "29d4491119da58fbe31e7aa9f02f92b3eaa9c5ec",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation"
 }
