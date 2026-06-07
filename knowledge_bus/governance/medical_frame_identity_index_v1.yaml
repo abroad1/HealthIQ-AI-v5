@@ -986,9 +986,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_exertional_muscle_injury
     activation_key: signal_creatine_kinase_high::inv_creatine_kinase_high_exertional_muscle_injury
     signal_id: signal_creatine_kinase_high
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: false
@@ -1000,7 +1000,9 @@ signal_families:
     notes: "PASS3-BATCH2-FRAME-INDEX-1: Batch_2_Pass_3 canonical spec; pkg_kb47 compiled\
       \ but not runtime-promoted. Manifest cites Rev1 (CF-BATCH2-002); promotion blocked\
       \ until adjudication.\n          BATCH2-PROMOTE-1: governance promotion recorded;\
-      \ promotion_state remains compiled_not_promoted; runtime_authority_status inactive."
+      \ promotion_state remains compiled_not_promoted; runtime_authority_status inactive.\n\
+      \          BATCH2-ACTIVATION-1: APPROVE BATCH2 RUNTIME ACTIVATION recorded;\
+      \ runtime_active_canonical activated."
   - signal_family_id: signal_creatine_kinase_high
     primary_biomarker_id: creatine_kinase
     medical_frame_id: frame_creatine_kinase_pass3_persistent_nonexertional_muscle_injury
@@ -1011,9 +1013,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
     activation_key: signal_creatine_kinase_high::inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
     signal_id: signal_creatine_kinase_high
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: false
@@ -1025,7 +1027,9 @@ signal_families:
     notes: "PASS3-BATCH2-FRAME-INDEX-1: Medically distinct from exertional frame;\
       \ must not collapse transient exertional CK release into chronic myopathic interpretation.\n\
       \          BATCH2-PROMOTE-1: governance promotion recorded; promotion_state\
-      \ remains compiled_not_promoted; runtime_authority_status inactive."
+      \ remains compiled_not_promoted; runtime_authority_status inactive.\n\
+      \          BATCH2-ACTIVATION-1: APPROVE BATCH2 RUNTIME ACTIVATION recorded;\
+      \ runtime_active_canonical activated."
 - signal_family_id: signal_egfr_low
   primary_biomarker_id: egfr
   system: renal
@@ -1095,9 +1099,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
     activation_key: signal_eosinophil_pct_high::inv_eosinophil_pct_high_reactive_atopic_eosinophilia
     signal_id: signal_eosinophil_pct_high
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: false
@@ -1108,7 +1112,9 @@ signal_families:
     superseded_by: null
     notes: "PASS3-BATCH2-FRAME-INDEX-1: Percent eosinophil frame; distinct from absolute\
       \ count family.\n          BATCH2-PROMOTE-1: governance promotion recorded;\
-      \ promotion_state remains compiled_not_promoted; runtime_authority_status inactive."
+      \ promotion_state remains compiled_not_promoted; runtime_authority_status inactive.\n\
+      \          BATCH2-ACTIVATION-1: APPROVE BATCH2 RUNTIME ACTIVATION recorded;\
+      \ runtime_active_canonical activated."
   - signal_family_id: signal_eosinophil_pct_high
     primary_biomarker_id: eosinophil_pct
     medical_frame_id: frame_eosinophil_pct_pass3_secondary_systemic
@@ -1119,9 +1125,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
     activation_key: signal_eosinophil_pct_high::inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia
     signal_id: signal_eosinophil_pct_high
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: false
@@ -1133,7 +1139,8 @@ signal_families:
     notes: "PASS3-BATCH2-FRAME-INDEX-1: Systemic/secondary frame; must not collapse\
       \ into atopic-only pattern.\n          BATCH2-PROMOTE-1: governance promotion\
       \ recorded; promotion_state remains compiled_not_promoted; runtime_authority_status\
-      \ inactive."
+      \ inactive.\n          BATCH2-ACTIVATION-1: APPROVE BATCH2 RUNTIME ACTIVATION\
+      \ recorded; runtime_active_canonical activated."
 - signal_family_id: signal_eosinophils_abs_high
   primary_biomarker_id: eosinophils_abs
   system: hematologic
@@ -1148,9 +1155,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
     activation_key: signal_eosinophils_abs_high::inv_eosinophils_abs_high_reactive_eosinophilic_inflammation
     signal_id: signal_eosinophils_abs_high
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: false
@@ -1162,7 +1169,8 @@ signal_families:
     notes: "PASS3-BATCH2-FRAME-INDEX-1: Absolute eosinophil count family; distinct\
       \ biomarker from eosinophil_pct_high despite shared hematologic domain.\n  \
       \        BATCH2-PROMOTE-1: governance promotion recorded; promotion_state remains\
-      \ compiled_not_promoted; runtime_authority_status inactive."
+      \ compiled_not_promoted; runtime_authority_status inactive.\n          BATCH2-ACTIVATION-1:\
+      \ APPROVE BATCH2 RUNTIME ACTIVATION recorded; runtime_active_canonical activated."
   - signal_family_id: signal_eosinophils_abs_high
     primary_biomarker_id: eosinophils_abs
     medical_frame_id: frame_eosinophils_abs_pass3_hypereosinophilic_secondary
@@ -1173,9 +1181,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
     activation_key: signal_eosinophils_abs_high::inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
     signal_id: signal_eosinophils_abs_high
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: false
@@ -1187,7 +1195,9 @@ signal_families:
     notes: "PASS3-BATCH2-FRAME-INDEX-1: Hypereosinophilic/secondary frame; ROUTE_C\
       \ preserved; promotion blocked until provenance realignment (CF-BATCH2-002).\n\
       \          BATCH2-PROMOTE-1: governance promotion recorded; promotion_state\
-      \ remains compiled_not_promoted; runtime_authority_status inactive."
+      \ remains compiled_not_promoted; runtime_authority_status inactive.\n\
+      \          BATCH2-ACTIVATION-1: APPROVE BATCH2 RUNTIME ACTIVATION recorded;\
+      \ runtime_active_canonical activated."
 - signal_family_id: signal_dhea_high
   primary_biomarker_id: dhea
   system: hormonal

@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 runtime_consumed: false
-status: stop_gate_pending_human_approval
+status: runtime_activation_complete
 work_id: BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset
 source_governance_promotion_register: knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml
 source_stop_gate_register: docs/audit-papers/BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion.md
@@ -8,19 +8,20 @@ thyroid_clinical_signoff_source: docs/Medical Research Documents/thyroid_blood_m
 thyroid_clinical_signoff_verdict: APPROVE_SUBSET
 human_stop_gate:
   required: true
-  approval_received: false
+  approval_received: true
   approval_phrase: APPROVE BATCH2 RUNTIME ACTIVATION
-  approval_recorded_at: null
-runtime_activation_performed: false
+  approval_recorded_at: '2026-06-07T13:00:00Z'
+runtime_activation_performed: true
 governance_promoted_package_count: 10
 activation_candidate_count: 6
 thyroid_deferred_count: 4
 excluded_package_count: 10
-activated_package_count: 0
+activated_package_count: 6
 deferred_package_count: 4
-rollback_path: No runtime activation performed in Phase 2; rollback is N/A. If Phase
-  3 approved activation is later applied, rollback reverts medical_frame_identity_index
-  and package manifest governance activation metadata for affected packages only.
+rollback_path: Revert medical_frame_identity_index promotion_state to compiled_not_promoted
+  and runtime_authority_status to inactive for the six activated packages; remove
+  governance_runtime_activation_* metadata from affected package manifests only.
+  Thyroid, androgen, and eGFR packages remain untouched.
 activation_mechanism:
   primary: medical_frame_identity_index_v1.yaml — promotion_state runtime_active_canonical,
     runtime_authority_status active
@@ -34,79 +35,79 @@ activation_candidates:
   signal_id: signal_creatine_kinase_high
   activation_key: signal_creatine_kinase_high::inv_creatine_kinase_high_exertional_muscle_injury
   pre_activation_state: governance_promoted_pending_runtime_activation
-  post_activation_state: runtime_active_canonical (pending approval)
+  post_activation_state: runtime_active_canonical
   package_validator_status: PASS
   duplicate_authority_check: PASS
   governance_promoted: true
-  activated: false
+  activated: true
   rollback_action: Revert medical_frame_identity_index promotion_state to compiled_not_promoted
-    and runtime_authority_status to inactive; restore manifest governance_runtime_activation_status
-  notes: Awaiting human STOP gate approval; SignalRegistry already scans knowledge_bus/packages.
+    and runtime_authority_status to inactive; remove manifest governance_runtime_activation_status
+  notes: BATCH2-ACTIVATION-1 runtime activation complete; frame index and manifest metadata updated.
 - package_id: pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
   package_path: knowledge_bus/packages/pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
   signal_id: signal_creatine_kinase_high
   activation_key: signal_creatine_kinase_high::inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
   pre_activation_state: governance_promoted_pending_runtime_activation
-  post_activation_state: runtime_active_canonical (pending approval)
+  post_activation_state: runtime_active_canonical
   package_validator_status: PASS
   duplicate_authority_check: PASS
   governance_promoted: true
-  activated: false
+  activated: true
   rollback_action: Revert medical_frame_identity_index promotion_state to compiled_not_promoted
-    and runtime_authority_status to inactive; restore manifest governance_runtime_activation_status
-  notes: Awaiting human STOP gate approval; SignalRegistry already scans knowledge_bus/packages.
+    and runtime_authority_status to inactive; remove manifest governance_runtime_activation_status
+  notes: BATCH2-ACTIVATION-1 runtime activation complete; frame index and manifest metadata updated.
 - package_id: pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
   package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
   signal_id: signal_eosinophil_pct_high
   activation_key: signal_eosinophil_pct_high::inv_eosinophil_pct_high_reactive_atopic_eosinophilia
   pre_activation_state: governance_promoted_pending_runtime_activation
-  post_activation_state: runtime_active_canonical (pending approval)
+  post_activation_state: runtime_active_canonical
   package_validator_status: PASS
   duplicate_authority_check: PASS
   governance_promoted: true
-  activated: false
+  activated: true
   rollback_action: Revert medical_frame_identity_index promotion_state to compiled_not_promoted
-    and runtime_authority_status to inactive; restore manifest governance_runtime_activation_status
-  notes: Awaiting human STOP gate approval; SignalRegistry already scans knowledge_bus/packages.
+    and runtime_authority_status to inactive; remove manifest governance_runtime_activation_status
+  notes: BATCH2-ACTIVATION-1 runtime activation complete; frame index and manifest metadata updated.
 - package_id: pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
   package_path: knowledge_bus/packages/pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
   signal_id: signal_eosinophil_pct_high
   activation_key: signal_eosinophil_pct_high::inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia
   pre_activation_state: governance_promoted_pending_runtime_activation
-  post_activation_state: runtime_active_canonical (pending approval)
+  post_activation_state: runtime_active_canonical
   package_validator_status: PASS
   duplicate_authority_check: PASS
   governance_promoted: true
-  activated: false
+  activated: true
   rollback_action: Revert medical_frame_identity_index promotion_state to compiled_not_promoted
-    and runtime_authority_status to inactive; restore manifest governance_runtime_activation_status
-  notes: Awaiting human STOP gate approval; SignalRegistry already scans knowledge_bus/packages.
+    and runtime_authority_status to inactive; remove manifest governance_runtime_activation_status
+  notes: BATCH2-ACTIVATION-1 runtime activation complete; frame index and manifest metadata updated.
 - package_id: pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
   package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
   signal_id: signal_eosinophils_abs_high
   activation_key: signal_eosinophils_abs_high::inv_eosinophils_abs_high_reactive_eosinophilic_inflammation
   pre_activation_state: governance_promoted_pending_runtime_activation
-  post_activation_state: runtime_active_canonical (pending approval)
+  post_activation_state: runtime_active_canonical
   package_validator_status: PASS
   duplicate_authority_check: PASS
   governance_promoted: true
-  activated: false
+  activated: true
   rollback_action: Revert medical_frame_identity_index promotion_state to compiled_not_promoted
-    and runtime_authority_status to inactive; restore manifest governance_runtime_activation_status
-  notes: Awaiting human STOP gate approval; SignalRegistry already scans knowledge_bus/packages.
+    and runtime_authority_status to inactive; remove manifest governance_runtime_activation_status
+  notes: BATCH2-ACTIVATION-1 runtime activation complete; frame index and manifest metadata updated.
 - package_id: pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
   package_path: knowledge_bus/packages/pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
   signal_id: signal_eosinophils_abs_high
   activation_key: signal_eosinophils_abs_high::inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
   pre_activation_state: governance_promoted_pending_runtime_activation
-  post_activation_state: runtime_active_canonical (pending approval)
+  post_activation_state: runtime_active_canonical
   package_validator_status: PASS
   duplicate_authority_check: PASS
   governance_promoted: true
-  activated: false
+  activated: true
   rollback_action: Revert medical_frame_identity_index promotion_state to compiled_not_promoted
-    and runtime_authority_status to inactive; restore manifest governance_runtime_activation_status
-  notes: Awaiting human STOP gate approval; SignalRegistry already scans knowledge_bus/packages.
+    and runtime_authority_status to inactive; remove manifest governance_runtime_activation_status
+  notes: BATCH2-ACTIVATION-1 runtime activation complete; frame index and manifest metadata updated.
 thyroid_deferred_packages:
 - package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
   package_path: knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
