@@ -1,9 +1,10 @@
 {
   "branch": "work/CF-AUTHORITY-RUNTIME-1-runtime-signal-authority-collision-enforcement",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-07T18:29:58Z",
   "cursor_started_utc": "2026-06-07T18:24:52Z",
-  "head_sha": "853fa4c7ddcfd2b10876cab8041f69ea920822bb",
+  "head_sha": "cda5838e5b544a9daa19686c681087634473e04a",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement"
 }
