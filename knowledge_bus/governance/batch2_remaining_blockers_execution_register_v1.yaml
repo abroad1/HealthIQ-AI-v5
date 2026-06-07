@@ -1,0 +1,199 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: analysis_complete_ready_for_human_stop_gate
+work_id: BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation
+source_remainder_resolution: knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml
+source_thyroid_gate: knowledge_bus/governance/batch2_thyroid_gate_execution_register_v1.yaml
+analysis_utc: '2026-06-07'
+human_stop_gate:
+  required: true
+  approval_received: false
+  approval_phrase: APPROVE BATCH2 REMAINING GATED ACTIVATION
+  approval_recorded_at: null
+runtime_activation_performed: false
+package_count: 11
+activated_package_count: 0
+blocked_package_count: 11
+runtime_code_changed: false
+consolidated_platform_blocker: CF-CONTEXT-MOD-3
+rollback_path: Revert batch2_remaining_blockers_execution_register_v1.yaml, audit report, and carry-forward
+  register updates. No runtime code or package clinical content changed in this sprint.
+groups:
+  thyroid_ft3_low:
+    outcome: KEEP_BLOCKED
+    blocker: ft3_low_requires_layer_b_context
+    required_next_action: CF-CONTEXT-MOD-3 Layer B illness/medication context evaluation plus TSH+FT4
+      biomarker gates before metadata activation
+    notes: TSH+FT4 presence gates alone do not satisfy clinical sign-off; illness/medication context
+      not runtime-consumed.
+  androgen:
+    outcome: KEEP_BLOCKED
+    blocker: androgen_runtime_context_evaluation_required
+    required_next_action: CF-CONTEXT-MOD-3 runtime context evaluation; CF-BATCH2-010 androgen clinical
+      sign-off before re-promotion/activation
+    notes: All 8 packages remain inactive. Governance bindings exist; catalogue modifiers runtime_active=false;
+      SignalEvaluator has no context modifier evaluation path.
+  egfr:
+    outcome: KEEP_BLOCKED
+    blocker: renal_authority_and_anti_double_counting_required
+    required_next_action: BATCH2-EGFR-AUTHORITY-1 architecture adjudication before promotion/activation
+    notes: Independent signal_egfr_low activation risks duplicate renal signalling vs creatinine canonical
+      and legacy eGFR escalation; no anti-double-counting mechanism in evaluator.
+packages:
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
+  group: thyroid_ft3_low
+  signal_id: signal_free_t3_low
+  medical_frame_id: frame_batch2_free_t3_low_low_t3_syndrome
+  current_state: governance_promoted_pending_runtime_activation
+  blocker_before_sprint: thyroid_activation_requires_tsh_ft4_and_illness_medication_context
+  blocker_after_sprint: ft3_low_requires_layer_b_context
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING
+  required_next_action: CF-CONTEXT-MOD-3
+  notes: enable_lower_bound=false in signal_library; no mandatory_pre_emission_gates. Partial TSH+FT4
+    gates would not satisfy sign-off.
+- package_id: pkg_kb47_dhea_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
+  group: androgen
+  signal_id: signal_dhea_high
+  medical_frame_id: frame_batch2_dhea_high_androgen_excess_context
+  current_state: never_promoted_inactive
+  blocker_before_sprint: androgen_clinical_signoff_required
+  blocker_after_sprint: androgen_runtime_context_evaluation_required
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_MEDICAL_SIGNOFF_REQUIRED
+  required_next_action: CF-CONTEXT-MOD-3; CF-BATCH2-010
+  notes: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT; no clinical sign-off artefact in repo.
+- package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
+  group: androgen
+  signal_id: signal_dhea_low
+  medical_frame_id: frame_batch2_dhea_low_adrenal_androgen_reduction
+  current_state: never_promoted_inactive
+  blocker_before_sprint: androgen_context_runtime_required
+  blocker_after_sprint: androgen_runtime_context_evaluation_required
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING
+  required_next_action: CF-CONTEXT-MOD-3; CF-BATCH2-010
+  notes: Context modifiers bound in governance; runtime evaluation absent.
+- package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  package_path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
+  group: androgen
+  signal_id: signal_fai_high
+  medical_frame_id: frame_batch2_fai_high_biochemical_hyperandrogenism
+  current_state: never_promoted_inactive
+  blocker_before_sprint: androgen_context_runtime_required
+  blocker_after_sprint: androgen_runtime_context_evaluation_required
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING
+  required_next_action: CF-CONTEXT-MOD-3; CF-BATCH2-010
+  notes: SHBG/sex/age context required; not runtime-consumed.
+- package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
+  group: androgen
+  signal_id: signal_fai_low
+  medical_frame_id: frame_batch2_fai_low_reduced_free_androgen_availability
+  current_state: never_promoted_inactive
+  blocker_before_sprint: androgen_context_runtime_required
+  blocker_after_sprint: androgen_runtime_context_evaluation_required
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING
+  required_next_action: CF-CONTEXT-MOD-3; CF-BATCH2-010
+  notes: Same SHBG/sex context runtime gap as fai_high.
+- package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context
+  group: androgen
+  signal_id: signal_free_testosterone_high
+  medical_frame_id: frame_batch2_free_testosterone_high_androgen_excess_context
+  current_state: never_promoted_inactive
+  blocker_before_sprint: androgen_clinical_signoff_required
+  blocker_after_sprint: androgen_runtime_context_evaluation_required
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_MEDICAL_SIGNOFF_REQUIRED
+  required_next_action: CF-CONTEXT-MOD-3; CF-BATCH2-010
+  notes: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT; clinical sign-off required.
+- package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  group: androgen
+  signal_id: signal_free_testosterone_low
+  medical_frame_id: frame_batch2_free_testosterone_low_androgen_deficiency_context
+  current_state: never_promoted_inactive
+  blocker_before_sprint: androgen_context_runtime_required
+  blocker_after_sprint: androgen_runtime_context_evaluation_required
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING
+  required_next_action: CF-CONTEXT-MOD-3; CF-BATCH2-010
+  notes: Context-heavy; activation without Layer B would risk misleading interpretation.
+- package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  group: androgen
+  signal_id: signal_free_testosterone_pct_high
+  medical_frame_id: frame_batch2_free_testosterone_pct_high_elevated_free_androgen_fraction
+  current_state: never_promoted_inactive
+  blocker_before_sprint: androgen_context_runtime_required
+  blocker_after_sprint: androgen_runtime_context_evaluation_required
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING
+  required_next_action: CF-CONTEXT-MOD-3; CF-BATCH2-010
+  notes: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING resolved in governance only.
+- package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  group: androgen
+  signal_id: signal_free_testosterone_pct_low
+  medical_frame_id: frame_batch2_free_testosterone_pct_low_reduced_free_androgen_fraction
+  current_state: never_promoted_inactive
+  blocker_before_sprint: androgen_context_runtime_required
+  blocker_after_sprint: androgen_runtime_context_evaluation_required
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING
+  required_next_action: CF-CONTEXT-MOD-3; CF-BATCH2-010
+  notes: Same SHBG/sex context runtime gap as pct_high.
+- package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  package_path: knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  group: egfr
+  signal_id: signal_egfr_low
+  medical_frame_id: frame_egfr_pass3_chronic_kidney_function_reduction
+  current_state: never_promoted_inactive
+  blocker_before_sprint: renal_authority_adjudication_required
+  blocker_after_sprint: renal_authority_and_anti_double_counting_required
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_AUTHORITY_DECISION_REQUIRED
+  required_next_action: BATCH2-EGFR-AUTHORITY-1
+  notes: collision_status requires_adjudication vs creatinine legacy eGFR override and pkg_kb52c canonical
+    creatinine authority.
+- package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  package_path: knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  group: egfr
+  signal_id: signal_egfr_low
+  medical_frame_id: frame_egfr_pass3_hemodynamic_filtration_drop
+  current_state: never_promoted_inactive
+  blocker_before_sprint: anti_double_counting_required
+  blocker_after_sprint: renal_authority_and_anti_double_counting_required
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  recommended_action: KEEP_BLOCKED_AUTHORITY_DECISION_REQUIRED
+  required_next_action: BATCH2-EGFR-AUTHORITY-1
+  notes: Acute hemodynamic frame; same signal_egfr_low family as chronic; duplicate renal signalling
+    risk without authority model.
