@@ -1052,12 +1052,15 @@ signal_families:
       questionnaire_modifiers: false
       medication_modifiers: false
     collision_group_id: egfr_pass3_chronic_frame
-    collision_status: requires_adjudication
+    collision_status: allowed_non_runtime_collision
     supersedes: null
     superseded_by: null
     notes: 'PASS3-BATCH2-FRAME-INDEX-1: Distinct signal_egfr_low family; not conflated
       with signal_creatinine_high legacy eGFR override (frame_creatinine_legacy_s24_egfr_escalation).
       CF-CREATININE-001 adjacency noted; medical review before activation.
+
+      BATCH2-EGFR-AUTHORITY-1: renal_filtration_axis authority adjudicated in signal_authority_collision_model_v1.yaml;
+      eGFR-low primary when present; runtime inactive pending CF-AUTHORITY-RUNTIME-1.
 
       '
   - signal_family_id: signal_egfr_low
@@ -1078,11 +1081,14 @@ signal_families:
       questionnaire_modifiers: false
       medication_modifiers: false
     collision_group_id: egfr_pass3_hemodynamic_frame
-    collision_status: requires_adjudication
+    collision_status: allowed_non_runtime_collision
     supersedes: null
     superseded_by: null
     notes: 'PASS3-BATCH2-FRAME-INDEX-1: Acute hemodynamic filtration frame; distinct
       from chronic kidney function reduction; ROUTE_C multi-frame preserved.
+
+      BATCH2-EGFR-AUTHORITY-1: renal_filtration_axis authority adjudicated; runtime inactive
+      pending CF-AUTHORITY-RUNTIME-1.
 
       '
 - signal_family_id: signal_eosinophil_pct_high

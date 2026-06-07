@@ -1,0 +1,68 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: authority_adjudicated_pending_runtime_support
+work_id: BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model
+source_collision_model: knowledge_bus/governance/signal_authority_collision_model_v1.yaml
+source_remainder_blockers: knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
+analysis_utc: '2026-06-07'
+human_stop_gate:
+  required: true
+  activation_recommended: false
+  approval_received: false
+  approval_phrase: APPROVE BATCH2 EGFR AUTHORITY ACTIVATION
+  approval_recorded_at: null
+runtime_activation_performed: false
+runtime_code_changed: false
+activated_package_count: 0
+blocked_package_count: 2
+phase_3_outcome: B
+phase_3_outcome_label: governance_authority_classified_runtime_inactive_pending_reusable_runtime_support
+renal_authority_decision:
+  egfr_low_is_distinct_signal_family: true
+  egfr_low_stronger_filtration_evidence_when_present: true
+  creatinine_high_remains_active_as_supporting_or_separate_biochemical_layer: true
+  duplicate_filtration_framing_must_be_prevented: true
+  potassium_acute_risk_remains_distinct_layer: true
+  safe_activation_now: false
+  missing_for_activation: Runtime consumption of signal_authority_collision_model_v1.yaml
+    with fail-closed anti-double-counting in SignalEvaluator
+anti_double_counting_decision:
+  mechanism_exists_in_evaluator: false
+  governance_pattern_defined: true
+  proposed_runtime_pattern: authority_resolution under renal_filtration_axis in signal_authority_collision_model_v1.yaml
+  activation_blocked_until: CF-AUTHORITY-RUNTIME-1
+rollback_path: Revert signal_authority_collision_model_v1.yaml, batch2_egfr_authority_execution_register_v1.yaml,
+  audit report, carry-forward updates, and any frame index note/collision_status changes.
+packages:
+- package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  package_path: knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  signal_id: signal_egfr_low
+  medical_frame_id: frame_egfr_pass3_chronic_kidney_function_reduction
+  activation_key: signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction
+  authority_group_id: renal_filtration_axis
+  blocker_before_sprint: renal_authority_and_anti_double_counting_required
+  blocker_after_sprint: authority_adjudicated_pending_runtime_support
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  collision_status_after_sprint: allowed_non_runtime_collision
+  required_next_action: CF-AUTHORITY-RUNTIME-1 then governance promotion and human STOP gate before
+    metadata activation
+  notes: Chronic kidney function reduction frame; authority classified as primary filtration
+    signal when runtime wired.
+- package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  package_path: knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  signal_id: signal_egfr_low
+  medical_frame_id: frame_egfr_pass3_hemodynamic_filtration_drop
+  activation_key: signal_egfr_low::inv_egfr_low_hemodynamic_filtration_drop
+  authority_group_id: renal_filtration_axis
+  blocker_before_sprint: renal_authority_and_anti_double_counting_required
+  blocker_after_sprint: authority_adjudicated_pending_runtime_support
+  gate_implemented: false
+  activated: false
+  final_state: compiled_not_promoted_inactive
+  collision_status_after_sprint: allowed_non_runtime_collision
+  required_next_action: CF-AUTHORITY-RUNTIME-1 then governance promotion and human STOP gate before
+    metadata activation
+  notes: Acute hemodynamic filtration frame; ROUTE_C multi-frame preserved; same authority
+    group as chronic frame.

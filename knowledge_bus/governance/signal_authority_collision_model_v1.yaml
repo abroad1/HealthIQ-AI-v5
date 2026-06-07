@@ -1,0 +1,126 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: governed_adjudication_model
+work_id: BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model
+generated_utc: '2026-06-07'
+source_creatinine_authority: knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml
+source_remainder_blockers: knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
+design_principle: Declarative authority groups for overlapping biomarker families. Runtime consumption
+  deferred until CF-AUTHORITY-RUNTIME-1 implements evaluator wiring. No ad hoc eGFR-vs-creatinine
+  hardcoding.
+authority_groups:
+- authority_group_id: renal_filtration_axis
+  biological_axis: kidney_filtration_function
+  status: adjudicated_governance_only
+  primary_signal_family: signal_egfr_low
+  supporting_signal_families:
+  - signal_creatinine_high
+  related_active_frames:
+    primary_when_implemented:
+    - frame_egfr_pass3_chronic_kidney_function_reduction
+    - frame_egfr_pass3_hemodynamic_filtration_drop
+    supporting_retained:
+    - frame_creatinine_reduced_glomerular_filtration
+    legacy_parallel_requires_runtime_resolution:
+    - frame_creatinine_legacy_s24_egfr_escalation
+  distinct_risk_layers:
+  - layer_id: hyperkalemia_or_electrolyte_complication
+    signal_family: signal_creatinine_high
+    frame_id: frame_creatinine_legacy_s24_potassium_escalation
+    notes: Medically distinct acute electrolyte layer; must remain parallel when medically
+      distinct.
+  collision_policy:
+    no_duplicate_user_facing_signal: true
+    suppress_supporting_when_primary_present: true
+    consolidate_into_shared_interpretation: true
+    allow_parallel_if_distinct_risk_layer: true
+  authority_decision:
+    egfr_low_is_distinct_signal_family: true
+    egfr_low_stronger_filtration_evidence_when_present: true
+    creatinine_high_remains_relevant_as_supporting_or_biochemical_abnormality: true
+    egfr_low_should_suppress_duplicate_filtration_framing_from_creatinine_high: true
+    creatinine_contributes_supporting_evidence_when_not_duplicate: true
+    potassium_acute_risk_remains_separate_layer: true
+  runtime_action: governance_only_pending_runtime_support
+  requires_runtime_support: true
+  proposed_runtime_pattern:
+    authority_resolution:
+      authority_group_id: renal_filtration_axis
+      primary_when_present: signal_egfr_low
+      supporting_when_primary_present:
+      - signal_creatinine_high
+      duplicate_surface_policy: consolidate
+      distinct_risk_layers_allowed:
+      - hyperkalemia_or_electrolyte_complication
+  notes: First implementation case for reusable collision model. Activating signal_egfr_low
+    without runtime anti-double-counting would present low eGFR + high creatinine as two
+    independent renal-filtration problems. pkg_kb52c canonical creatinine and legacy s24
+    eGFR escalation paths must be considered at runtime wiring.
+- authority_group_id: metabolic_glycaemic_axis
+  biological_axis: glycaemic_regulation
+  status: placeholder_not_adjudicated
+  primary_signal_family: null
+  supporting_signal_families: []
+  collision_policy:
+    no_duplicate_user_facing_signal: null
+    suppress_supporting_when_primary_present: null
+    consolidate_into_shared_interpretation: null
+    allow_parallel_if_distinct_risk_layer: null
+  runtime_action: none_governance_only
+  requires_runtime_support: false
+  notes: Placeholder for future HbA1c / glucose / insulin / HOMA-IR overlap adjudication.
+    No medical decision authored.
+- authority_group_id: thyroid_axis
+  biological_axis: thyroid_hormone_regulation
+  status: placeholder_not_adjudicated
+  primary_signal_family: null
+  supporting_signal_families: []
+  collision_policy:
+    no_duplicate_user_facing_signal: null
+    suppress_supporting_when_primary_present: null
+    consolidate_into_shared_interpretation: null
+    allow_parallel_if_distinct_risk_layer: null
+  runtime_action: none_governance_only
+  requires_runtime_support: false
+  notes: Placeholder for TSH / FT3 / FT4 overlap beyond existing mandatory_pre_emission_gates.
+    No medical decision authored.
+- authority_group_id: androgen_axis
+  biological_axis: androgen_availability
+  status: placeholder_not_adjudicated
+  primary_signal_family: null
+  supporting_signal_families: []
+  collision_policy:
+    no_duplicate_user_facing_signal: null
+    suppress_supporting_when_primary_present: null
+    consolidate_into_shared_interpretation: null
+    allow_parallel_if_distinct_risk_layer: null
+  runtime_action: none_governance_only
+  requires_runtime_support: false
+  notes: Placeholder for testosterone / SHBG / FAI / free testosterone fraction overlap.
+    Blocked pending CF-CONTEXT-MOD-3. No medical decision authored.
+- authority_group_id: liver_injury_axis
+  biological_axis: hepatocellular_injury
+  status: placeholder_not_adjudicated
+  primary_signal_family: null
+  supporting_signal_families: []
+  collision_policy:
+    no_duplicate_user_facing_signal: null
+    suppress_supporting_when_primary_present: null
+    consolidate_into_shared_interpretation: null
+    allow_parallel_if_distinct_risk_layer: null
+  runtime_action: none_governance_only
+  requires_runtime_support: false
+  notes: Placeholder for ALT / AST / GGT / bilirubin overlap. No medical decision authored.
+- authority_group_id: iron_inflammation_axis
+  biological_axis: iron_and_inflammatory_context
+  status: placeholder_not_adjudicated
+  primary_signal_family: null
+  supporting_signal_families: []
+  collision_policy:
+    no_duplicate_user_facing_signal: null
+    suppress_supporting_when_primary_present: null
+    consolidate_into_shared_interpretation: null
+    allow_parallel_if_distinct_risk_layer: null
+  runtime_action: none_governance_only
+  requires_runtime_support: false
+  notes: Placeholder for ferritin / CRP / inflammation overlap. No medical decision authored.
