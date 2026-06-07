@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-REMAINING-BLOCKERS-1-remaining-batch2-blocker-resolution-and-gated-activation",
+  "branch": "work/BATCH2-EGFR-AUTHORITY-1-renal-signal-authority-and-reusable-collision-model",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-07T15:47:39Z",
-  "cursor_started_utc": "2026-06-07T15:43:37Z",
-  "head_sha": "fe8dd861ab0a7c67d37b59c4d98c2935a0fe7985",
+  "cursor_started_utc": "2026-06-07T16:30:35Z",
+  "head_sha": "db1db08e9760905ec5260cdf7094231adb66d635",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model"
 }
