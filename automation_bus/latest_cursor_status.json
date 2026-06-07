@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-PROMOTE-1-cleared-wave-package-promotion",
+  "branch": "work/BATCH2-PROMOTE-1-CONTINUATION-runtime-activation-stop-gated-completion",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-06T20:08:32Z",
-  "cursor_started_utc": "2026-06-06T20:04:42Z",
-  "head_sha": "6db7fc91f01dcb447b85ce2449dfdceed9ccfe18",
+  "cursor_started_utc": "2026-06-07T11:41:46Z",
+  "head_sha": "30a0a57fb21bba3548040c647ec84382456abe38",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-PROMOTE-1_cleared_wave_package_promotion"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion"
 }
