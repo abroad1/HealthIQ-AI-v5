@@ -1,54 +1,72 @@
 ---
-work_id: BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset
-branch: work/BATCH2-ACTIVATION-1-runtime-activate-cleared-non-thyroid-subset
+work_id: BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation
+branch: work/BATCH2-REMAINDER-RESOLUTION-1-remaining-batch2-package-resolution-investigation
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 ---
 
-# BATCH2-ACTIVATION-1 — Runtime Activate Cleared Non-Thyroid Batch 2 Subset
+# BATCH2-REMAINDER-RESOLUTION-1 — Remaining Batch 2 Package Resolution Investigation
 
 ## Purpose
 
-Runtime-activate only the six Batch 2 packages that remain clear after final promotion closure and thyroid clinical sign-off review.
+Investigate all remaining non-active Batch 2 packages and produce a complete, evidence-grounded resolution plan that enables GPT to author the final execution work package for promotion / activation.
 
-This sprint must activate:
+This is an investigation and decision-preparation sprint only.
+
+Do not promote packages.
+Do not activate packages.
+Do not change runtime behaviour.
+Do not modify package logic.
+Do not modify frontend, evaluator, loader, scoring, SSOT, thresholds or clinical wording.
+
+The goal is to leave no unanswered question about the remaining Batch 2 packages.
+
+Current known Batch 2 state:
 
 ```text
-pkg_kb47_creatine_kinase_high_exertional_muscle_injury
-pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
-pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
-pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
-pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
-pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+Runtime active:
+- creatine_kinase ×2
+- eosinophil_pct ×2
+- eosinophils_abs ×2
+
+Governance-promoted but runtime-deferred:
+- free_t3 ×2
+- free_t4 ×2
+
+Still blocked:
+- androgen ×8
+- eGFR ×2
 ````
 
-This sprint must not activate thyroid, androgen, or eGFR packages.
-
-The thyroid clinical sign-off returned `APPROVE_SUBSET`, with TSH mandatory before all four thyroid patterns are activated. FT3 low additionally requires TSH + FT4 + illness/medication context. Therefore thyroid remains governance-promoted but runtime-deferred. 
+The latest activation audit confirms this split: 6 runtime-active, 4 thyroid deferred, 8 androgen excluded, and 2 eGFR excluded. 
 
 ---
 
 ## Strategic framing
 
-Batch 2 is no longer a discovery or readiness problem.
+This sprint must not create another chain of micro-sprints.
 
-The current state is:
+It must answer every remaining question needed to decide the fate of the remaining 14 Batch 2 packages:
 
 ```text
-- 20 Batch 2 packages exist
-- 10 were governance-promoted
-- 6 are runtime activation candidates
-- 4 thyroid packages are deferred pending TSH-gated activation logic
-- 8 androgen packages remain blocked pending clinical sign-off/context runtime work
-- 2 eGFR packages remain blocked pending creatinine/eGFR adjudication
+4 thyroid packages
+8 androgen packages
+2 eGFR packages
 ```
 
-This sprint completes runtime activation for the six genuinely cleared packages only.
+Each package must end this investigation with one of these recommendations:
 
-Do not reopen Batch 2 scoping.
-Do not create another readiness sprint.
-Do not broaden the package set.
+```text
+READY_FOR_EXECUTION_PROMOTION_OR_ACTIVATION
+READY_FOR_EXECUTION_WITH_RUNTIME_GATE
+FORMALLY_BLOCKED_PENDING_SPECIFIC_PREREQUISITE
+REQUIRES_MEDICAL_RESEARCH_REVIEW
+REQUIRES_ARCHITECTURAL_AUTHORITY_DECISION
+DO_NOT_PROMOTE
+```
+
+The output must be detailed enough that GPT can write the next execution sprint without asking Cursor to rediscover the same facts again.
 
 ---
 
@@ -59,8 +77,8 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
+BATCH2-ACTIVATION-1 merged
 BATCH2-PROMOTE-1 merged
-BATCH2-PROMOTE-1-CONTINUATION merged
 BATCH2-CLOSURE-1 merged
 BATCH2-CONTEXT-MOD-1 merged
 BATCH2-MEDREVIEW-1 merged
@@ -89,61 +107,65 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- BATCH2-PROMOTE-1 execution register is missing
-- BATCH2-PROMOTE-1-CONTINUATION execution register is missing
-- final Batch 2 promotion decision register is missing
-- runtime activation mechanism cannot be identified
+- Batch 2 activation register is missing
+- Batch 2 final promotion decision register is missing
+- medical frame identity index is missing
+- context modifier catalogue is missing
 ```
 
 ---
 
 ## Required inputs
 
-Read before work:
+Read all of the following before producing findings:
 
 ```text
-knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml
 knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml
+knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml
 knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml
 knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml
+knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml
+knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
+knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml
+knowledge_bus/governance/pass3_batch2_kb47_manifest_realign_register_v1.yaml
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+knowledge_bus/current/latest_knowledge_status.json
+docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md
+docs/audit-papers/BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset.md
 docs/audit-papers/BATCH2-PROMOTE-1_cleared_wave_package_promotion.md
-docs/audit-papers/BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion.md
 docs/audit-papers/BATCH2-CLOSURE-1_final_batch2_promotion_decision.md
+docs/audit-papers/BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding.md
+docs/audit-papers/BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Also ingest the thyroid clinical sign-off content if present in repo. If not present, create a governance summary from the supplied sign-off:
+Also inspect the remaining package folders:
 
 ```text
-thyroid sign-off verdict: APPROVE_SUBSET
-TSH mandatory before all thyroid activation
-FT3 low requires TSH + FT4 + illness/medication context
-```
+knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis/
+knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/
+knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context/
+knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency/
 
-Do not activate thyroid in this sprint.
+knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/
+knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/
+knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/
+knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability/
+knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/
+knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context/
+knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction/
+knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction/
 
----
-
-## Runtime activation candidate subset
-
-Only these six packages may be runtime-activated:
-
-```text
-pkg_kb47_creatine_kinase_high_exertional_muscle_injury
-pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
-pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
-pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
-pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
-pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/
+knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/
 ```
 
 ---
 
-## Runtime-deferred thyroid subset
+## Remaining packages in scope
 
-These four packages must remain runtime-deferred:
+### Thyroid — 4 packages
 
 ```text
 pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
@@ -152,27 +174,7 @@ pkg_kb47_free_t4_high_thyrotoxicosis_context
 pkg_kb47_free_t4_low_thyroid_hormone_deficiency
 ```
 
-Deferral reasons:
-
-```yaml
-pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis:
-  deferred_reason: thyroid_activation_requires_tsh_gating
-
-pkg_kb47_free_t3_low_low_t3_syndrome:
-  deferred_reason: thyroid_activation_requires_tsh_ft4_and_illness_medication_context
-
-pkg_kb47_free_t4_high_thyrotoxicosis_context:
-  deferred_reason: thyroid_activation_requires_tsh_gating
-
-pkg_kb47_free_t4_low_thyroid_hormone_deficiency:
-  deferred_reason: thyroid_activation_requires_tsh_gating
-```
-
----
-
-## Explicitly excluded packages
-
-These 10 packages must remain untouched and inactive:
+### Androgen — 8 packages
 
 ```text
 pkg_kb47_dhea_high_androgen_excess_context
@@ -183,202 +185,164 @@ pkg_kb47_free_testosterone_high_androgen_excess_context
 pkg_kb47_free_testosterone_low_androgen_deficiency_context
 pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
 pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+```
+
+### eGFR — 2 packages
+
+```text
 pkg_kb47_egfr_low_chronic_kidney_function_reduction
 pkg_kb47_egfr_low_hemodynamic_filtration_drop
 ```
 
-STOP if any excluded package appears in the diff.
+Do not include the already-active 6 non-thyroid packages except for confirming they are out of scope.
 
 ---
 
-## Required preflight
+## Investigation questions — answer all
 
-Before runtime activation, report:
+### A. Whole remaining Batch 2 estate
 
-```text
-1. six activation candidate packages found
-2. four thyroid packages deferred with correct blocker
-3. ten excluded packages confirmed out of scope
-4. all six candidate packages validate
-5. activation keys are unique
-6. no active duplicate activation key exists
-7. runtime activation mechanism identified
-8. exact files expected to change
-9. rollback path
-10. confirmation no medical logic needs changing
-```
-
-STOP if:
+For each of the 14 remaining packages, answer:
 
 ```text
-- any candidate package fails validation
-- any candidate package is not governance-promoted
-- any candidate package is not listed in the final cleared subset
-- any thyroid/androgen/eGFR package would be activated
-- activation-key collision is detected
-- rollback path cannot be defined
-- runtime activation requires code changes
+1. Is the package governance-promoted?
+2. Is the package runtime-active?
+3. Is the package provenance canonical?
+4. Is the package indexed in the medical frame identity index?
+5. Does the package validate?
+6. What blocker currently prevents activation?
+7. Is that blocker medical, architectural, runtime-gating, or context-modifier related?
+8. Can the blocker be resolved inside a single future execution sprint?
+9. What exact precondition must be satisfied before activation?
+10. Recommended final action.
 ```
+
+### B. Thyroid-specific questions
+
+For each thyroid package, answer:
+
+```text
+1. What does the thyroid clinical sign-off require?
+2. Is TSH currently available to the runtime signal evaluation path?
+3. Can TSH gating be implemented using existing runtime architecture without code changes?
+4. If code changes are required, where would they be needed?
+5. Can FT3 high be activated with mandatory TSH suppression gating?
+6. Can FT3 low be activated only with TSH + FT4 + illness/medication context?
+7. Can FT4 high be activated with mandatory TSH low/suppressed gating?
+8. Can FT4 low be activated with mandatory TSH interpretation gating?
+9. Are medication/supplement caveats represented anywhere in context governance?
+10. What is the exact execution path to activate each thyroid package safely?
+```
+
+Thyroid must not be recommended for activation unless the investigation proves that mandatory TSH gating can be enforced.
+
+### C. Androgen-specific questions
+
+For each androgen package, answer:
+
+```text
+1. What context dependencies were identified in the androgen medical review?
+2. Are the necessary context modifiers now present in the context modifier catalogue?
+3. Are those modifiers runtime-consumed or only governance placeholders?
+4. Is sex context available at runtime?
+5. Is age context available at runtime?
+6. Is SHBG available as a biomarker input or modifier?
+7. Is hormone medication context available at runtime?
+8. Is steroid / supplement exposure context available at runtime?
+9. Can these packages be safely activated without Layer B context evaluation?
+10. If not, what exactly must be built first?
+11. Are any androgen packages safe to activate as context-gated/inactive-until-context-present?
+12. Or should all 8 remain formally blocked?
+```
+
+Do not recommend androgen activation unless the required context dependencies can be enforced by current runtime architecture or a clearly defined gated execution path.
+
+### D. eGFR-specific questions
+
+For each eGFR package, answer:
+
+```text
+1. What is the package’s intended interpretation?
+2. How does it overlap with the existing creatinine-high / eGFR escalation frame?
+3. Is eGFR represented as its own signal family in the medical frame identity index?
+4. Is eGFR also present as supporting or escalation evidence under creatinine?
+5. Would activating eGFR create duplicate renal dysfunction signalling?
+6. Are there existing anti-double-counting rules?
+7. If not, where would those rules need to live?
+8. Should eGFR be activated as an independent renal signal?
+9. Should eGFR remain supporting evidence under creatinine only?
+10. Can both exist safely with authority/collision rules?
+11. Is medical research input needed, or is this an architecture authority decision?
+12. What exact execution path is required?
+```
+
+Do not recommend eGFR activation unless duplicate renal interpretation risk is resolved or clearly gateable.
 
 ---
 
-## Mandatory STOP gate
+## Required output classifications
 
-Cursor must STOP before activation and report:
-
-```text
-READY_FOR_HUMAN_STOP_GATE
-```
-
-The STOP report must include:
-
-```text
-- six packages proposed for activation
-- four thyroid packages deferred
-- ten excluded packages untouched
-- activation files proposed
-- runtime effect expected
-- validator status
-- rollback path
-- explicit statement that activation has not yet been performed
-```
-
-No activation may occur until the human explicitly approves continuation with:
-
-```text
-APPROVE BATCH2 RUNTIME ACTIVATION
-```
-
----
-
-## Runtime activation, only if approved
-
-If and only if human approval is given, activate only the six runtime activation candidate packages using the existing Knowledge Bus / runtime authority mechanism.
-
-Allowed changes may include only:
-
-```text
-- existing runtime package authority file, if repo convention requires
-- latest_knowledge_status.json, if repo convention requires
-- medical_frame_identity_index_v1.yaml status updates, if needed to reflect activation
-- package manifest governance/runtime status metadata, if repo convention requires
-- runtime activation execution register
-- audit report
-- carry-forward register
-```
-
-Do not alter:
-
-```text
-signal_library.yaml
-research_brief.yaml
-promoted_signal_intelligence.yaml
-thresholds
-activation_key
-signal_id
-clinical wording
-frontend
-SignalEvaluator
-SignalRegistry code
-runtime loaders
-SSOT
-scoring
-```
-
-STOP if activation would require code changes.
-
----
-
-## Required execution register
-
-Create or update:
-
-```text
-knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml
-```
-
-It must include:
+For every package, assign:
 
 ```yaml
-schema_version:
-runtime_consumed: false
-status:
-work_id:
-source_governance_promotion_register:
-source_stop_gate_register:
-human_stop_gate:
-  required: true
-  approval_received:
-  approval_phrase:
-  approval_recorded_at:
-runtime_activation_performed:
-activation_candidate_count:
-thyroid_deferred_count:
-excluded_package_count:
-activated_package_count:
-rollback_path:
-activation_candidates:
-  - package_id:
-    package_path:
-    signal_id:
-    activation_key:
-    pre_activation_state:
-    post_activation_state:
-    package_validator_status:
-    duplicate_authority_check:
-    activated:
-    rollback_action:
-    notes:
-thyroid_deferred_packages:
-  - package_id:
-    package_path:
-    signal_id:
-    activation_key:
-    runtime_activation_deferred:
-    deferred_reason:
-    activated: false
-    required_next_action:
-    notes:
-excluded_packages:
-  - package_id:
-    exclusion_reason:
-    confirmed_untouched:
+package_id:
+package_path:
+panel_group:
+spec_id:
+signal_id:
+medical_frame_id:
+current_state:
+  governance_promoted:
+  runtime_active:
+  indexed:
+  provenance_canonical:
+  validates:
+blocking_status:
+  blocker_type:
+  blocker_description:
+  blocker_source:
+  can_resolve_in_next_execution_sprint:
+required_before_activation:
+recommended_next_action:
+final_recommendation:
+```
+
+Allowed `blocker_type` values:
+
+```text
+none
+thyroid_tsh_gating_required
+thyroid_tsh_ft4_context_required
+androgen_context_runtime_required
+androgen_clinical_signoff_required
+renal_authority_adjudication_required
+anti_double_counting_required
+runtime_architecture_gap
+medical_research_required
+unknown_blocker
+```
+
+Allowed `final_recommendation` values:
+
+```text
+READY_FOR_NEXT_EXECUTION_SPRINT
+READY_IF_RUNTIME_GATE_IMPLEMENTED
+FORMALLY_BLOCKED_KEEP_INACTIVE
+REQUIRES_MEDICAL_RESEARCH_REVIEW
+REQUIRES_ARCHITECTURE_AUTHORITY_DECISION
+DO_NOT_PROMOTE_OR_ACTIVATE
 ```
 
 ---
 
-## Required report
+## Required artefacts
 
 Create:
 
 ```text
-docs/audit-papers/BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset.md
+docs/audit-papers/BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation.md
+knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml
 ```
-
-Report must include:
-
-```text
-- executive verdict
-- preflight findings
-- STOP gate outcome
-- human approval status
-- six runtime activation candidate packages
-- four thyroid runtime-deferred packages
-- ten excluded packages
-- packages activated, if any
-- runtime authority files changed
-- rollback path
-- validator output pasted in full
-- architecture gate output pasted in full
-- confirmation no medical logic changed
-- confirmation no excluded package changed
-- carry-forward updates
-- final Batch 2 activation status
-```
-
----
-
-## Carry-forward handling
 
 Update:
 
@@ -386,32 +350,94 @@ Update:
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
+Do not modify:
+
+```text
+knowledge_bus/packages/*
+knowledge_bus/current/latest_knowledge_status.json
+medical_frame_identity_index_v1.yaml
+context_modifier_catalogue_draft_v1.yaml
+runtime code
+frontend code
+```
+
+This is investigation only.
+
+---
+
+## Required report content
+
+The report must include:
+
+```text
+- executive verdict
+- artefacts inspected
+- current Batch 2 state summary
+- all 14 remaining packages table
+- thyroid resolution assessment
+- androgen resolution assessment
+- eGFR resolution assessment
+- exact blockers by package
+- whether medical research is still needed
+- whether runtime/context architecture is still needed
+- recommended next execution sprint scope
+- packages that can be resolved together
+- packages that must remain blocked
+- validation output
+- confirmation no runtime/package/frontend changes
+```
+
+---
+
+## Required final recommendation
+
+The report must end with one clear recommendation:
+
+```text
+Recommended next execution package:
+<work_id suggestion>
+
+Scope:
+- packages to activate
+- packages to keep blocked
+- gates to implement
+- STOP gates required
+- validations required
+```
+
+The recommendation must be detailed enough for GPT to write the execution prompt directly.
+
+---
+
+## Carry-forward handling
+
+Update the carry-forward register to consolidate, not fragment.
+
 Expected handling:
 
 ```text
-CF-BATCH2-012
-Resolve only if six non-thyroid packages are runtime-activated successfully.
+CF-BATCH2-013 — thyroid gating
+Update with exact required implementation path.
 
-CF-BATCH2-013
-Remain Open. Thyroid activation requires TSH-gated activation logic and sign-off.
+CF-BATCH2-010 — androgen sign-off
+Update with exact remaining blocker.
 
-CF-BATCH2-007
-Remain Open. eGFR adjudication remains excluded.
+CF-CONTEXT-MOD-3 — runtime context evaluation
+Update with whether this blocks all androgen packages.
 
-CF-BATCH2-010
-Remain Open. Androgen clinical sign-off remains excluded.
-
-CF-CONTEXT-MOD-3
-Remain Open. Runtime Layer B context evaluation remains excluded.
+CF-BATCH2-007 — eGFR adjudication
+Update with exact authority decision required.
 ```
 
-If approval is not provided, leave CF-BATCH2-012 open with status “deferred pending approval”.
+Do not create new carry-forwards unless genuinely necessary.
+
+If a new carry-forward is required, it must consolidate work rather than split one marker into a separate sprint.
 
 ---
 
 ## Required validations
 
-Before activation, run and paste actual output:
+Run and paste actual output:
 
 ```powershell
 python backend/scripts/run_architecture_validation_gate.py
@@ -419,20 +445,13 @@ python backend/scripts/validate_medical_frame_identity_index.py --index knowledg
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 ```
 
-Validate all six activation candidate packages:
+Validate all 14 remaining packages:
 
 ```powershell
 python backend/scripts/validate_knowledge_package.py --package-dir <package_dir>
 ```
 
-After activation, if approved, rerun:
-
-```powershell
-python backend/scripts/run_architecture_validation_gate.py
-python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-```
-
-Paste actual output or a clear per-package PASS table with command evidence.
+A clear per-package PASS table is acceptable only if the command used is stated.
 
 ---
 
@@ -442,17 +461,19 @@ Do not modify:
 
 ```text
 SignalEvaluator
-SignalRegistry code
-runtime loader code
+SignalRegistry
+runtime loaders
 domain_score_assembler
 report_compiler
 frontend
 SSOT
 scoring thresholds
 unit conversion
+knowledge_bus/packages/*
+knowledge_bus/current/latest_knowledge_status.json
 ```
 
-If runtime code changes are required, STOP and report.
+If investigation reveals runtime code will be needed in a future sprint, document it. Do not implement it.
 
 ---
 
@@ -461,20 +482,18 @@ If runtime code changes are required, STOP and report.
 Do not:
 
 ```text
-- activate thyroid packages
-- activate androgen packages
-- activate eGFR packages
-- resolve thyroid clinical sign-off
-- resolve androgen clinical sign-off
-- resolve eGFR/creatinine adjudication
-- implement TSH-gated thyroid activation logic
+- activate packages
+- promote packages
+- modify package manifests
+- modify signal_library.yaml
+- modify research_brief.yaml
+- modify frame index
+- modify context catalogue
+- implement TSH gating
 - implement Layer B context evaluation
-- change signal logic
-- change thresholds
-- write clinical copy
+- adjudicate eGFR authority by changing files
 - change frontend
-- change runtime evaluator behaviour
-- start a new Batch 2 review
+- change runtime behaviour
 ```
 
 ---
@@ -484,17 +503,13 @@ Do not:
 STOP and report if:
 
 ```text
-1. any activation candidate fails validation
-2. any candidate is not listed as cleared in final decision register
-3. any thyroid package would be activated
-4. any androgen or eGFR package would be activated
-5. any excluded package would be modified
-6. activation-key collision is detected
-7. runtime activation mechanism is unclear
-8. activation would require runtime code changes
-9. validators fail
-10. architecture gate fails
-11. rollback path cannot be defined
+1. any required Batch 2 governance register cannot be found
+2. package counts cannot be reconciled
+3. current runtime-active state cannot be determined
+4. activation blockers cannot be traced to source evidence
+5. package validators fail
+6. architecture gate fails
+7. investigation would require code/package changes
 ```
 
 ---
@@ -506,20 +521,17 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. files inspected
-3. preflight report
-4. STOP gate report
-5. human approval status
-6. runtime activation candidate packages
-7. thyroid deferred packages
-8. excluded package confirmation
-9. files changed
-10. packages activated or deferred
-11. rollback path
-12. validation output
-13. architecture gate output
-14. carry-forward updates
-15. confirmation no runtime/frontend/evaluator code changes
-16. confirmation no medical logic changed
+3. current state for all 14 packages
+4. blocker classification for every package
+5. thyroid gating findings
+6. androgen context/runtime findings
+7. eGFR authority findings
+8. package validation evidence
+9. architecture gate output
+10. governance files created/updated
+11. carry-forward updates
+12. recommended next execution sprint
+13. confirmation no runtime/package/frontend changes
 ```
 
 ---
@@ -540,11 +552,10 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/BATCH2-ACTIVATION-1-runtime-activate-cleared-non-thyroid-subset
-- only in-scope authority/governance/docs/register/package-metadata files changed
-- no excluded package files changed
-- no thyroid package files changed except governance deferral documentation
-- no runtime/frontend/evaluator code changed
+- current branch matches work/BATCH2-REMAINDER-RESOLUTION-1-remaining-batch2-package-resolution-investigation
+- only docs/governance/register files changed
+- no package files changed
+- no runtime/frontend/evaluator files changed
 - no ambiguous stash exists
 - validators pass
 - architecture gate passes
@@ -557,17 +568,16 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. preflight is complete
-2. STOP gate occurs before activation
-3. no activation occurs without explicit human approval
-4. only six non-thyroid packages are activated if approved
-5. thyroid packages are explicitly deferred with sign-off/gating blockers
-6. androgen and eGFR packages remain untouched and inactive
-7. rollback path is documented
-8. no medical logic changes occur
-9. no runtime/frontend/evaluator code changes occur
-10. architecture gate passes
-11. Batch 2 activation status is clearly closed or deferred
+1. all 14 remaining Batch 2 packages are investigated
+2. every package has a blocker classification
+3. thyroid has a concrete gating path or remains formally blocked
+4. androgen has a concrete context-runtime path or remains formally blocked
+5. eGFR has a concrete authority path or remains formally blocked
+6. medical research gaps are explicitly identified or ruled out
+7. recommended next execution sprint scope is clear
+8. no runtime/package/frontend changes occur
+9. architecture gate passes
+10. no orphaned Batch 2 packages remain unexplained
 ```
 
 ```
