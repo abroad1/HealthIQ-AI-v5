@@ -1,9 +1,10 @@
 {
   "branch": "work/BATCH2-EGFR-AUTHORITY-1-renal-signal-authority-and-reusable-collision-model",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-07T16:34:29Z",
   "cursor_started_utc": "2026-06-07T16:30:35Z",
-  "head_sha": "db1db08e9760905ec5260cdf7094231adb66d635",
+  "head_sha": "eb455af0f56269fd93a1e3f3644ef4b6f8efc9ae",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model"
 }
