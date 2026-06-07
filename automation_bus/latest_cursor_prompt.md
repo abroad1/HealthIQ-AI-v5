@@ -1,72 +1,64 @@
 ---
-work_id: BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation
-branch: work/BATCH2-REMAINING-BLOCKERS-1-remaining-batch2-blocker-resolution-and-gated-activation
+work_id: BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model
+branch: work/BATCH2-EGFR-AUTHORITY-1-renal-signal-authority-and-reusable-collision-model
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# BATCH2-REMAINING-BLOCKERS-1 — Remaining Batch 2 Blocker Resolution and Gated Activation
+# BATCH2-EGFR-AUTHORITY-1 — Renal Signal Authority and Reusable Collision Model
 
 ## Purpose
 
-Resolve the remaining blocked Batch 2 packages in one outcome-based sprint.
+Resolve the Batch 2 eGFR blocker and create a reusable signal-authority / anti-double-counting pattern for future overlapping biomarker families.
 
-This sprint must address all remaining non-active Batch 2 packages:
+This sprint must address the two remaining Batch 2 eGFR packages:
 
 ```text
-1. FT3 low ×1
-2. Androgen panel ×8
-3. eGFR ×2
+pkg_kb47_egfr_low_chronic_kidney_function_reduction
+pkg_kb47_egfr_low_hemodynamic_filtration_drop
 ````
 
-The goal is not to wait for perfect future medical intelligence. The goal is to decide what can be safely activated now with enforceable gates, and what must remain formally blocked because the current runtime cannot safely enforce the required context or authority rules.
+The immediate problem:
 
-Do not split this into separate marker-by-marker sprints.
+```text
+eGFR-low overlaps with existing creatinine-high / eGFR escalation reasoning.
+```
+
+The architectural opportunity:
+
+```text
+Create a reusable model for cases where multiple biomarkers describe overlapping biology and must not be double-counted.
+```
+
+Do not build a one-off renal hack.
 
 ---
 
-## Current Batch 2 state
+## Strategic framing
 
-Runtime active:
-
-```text
-creatine_kinase ×2
-eosinophil_pct ×2
-eosinophils_abs ×2
-free_t3_high
-free_t4_high
-free_t4_low
-```
-
-Still inactive / blocked:
+HealthIQ AI will repeatedly face overlapping biomarker families:
 
 ```text
-free_t3_low ×1
-androgen ×8
-eGFR ×2
+- creatinine / eGFR / uACR / cystatin C
+- ALT / AST / GGT / bilirubin
+- HbA1c / glucose / fasting insulin / HOMA-IR
+- ferritin / CRP / inflammation
+- testosterone / SHBG / FAI / free testosterone
+- TSH / FT3 / FT4
 ```
 
-The previous investigation concluded:
+This sprint must produce reusable governance and, if safe, minimal runtime support for:
 
 ```text
-FT3 low:
-- requires TSH + FT4 + illness / medication context
-- remains formally blocked until runtime context capability exists
-
-Androgen:
-- context-heavy
-- depends on sex, age, SHBG, medication / hormone use, steroids / supplements and symptoms
-- context modifiers exist in governance but are not runtime-active
-- remains blocked unless a safe runtime gate can be enforced
-
-eGFR:
-- authority conflict with creatinine / eGFR escalation
-- must avoid duplicate renal dysfunction signalling
-- requires renal authority decision before activation
+signal authority groups
+primary vs supporting signal roles
+anti-double-counting rules
+collision resolution metadata
+runtime-safe suppression or consolidation behaviour
 ```
 
-The prior Batch 2 remainder investigation confirmed these blockers and recommended thyroid TSH gating first, with eGFR and androgen remaining as defined resolution paths. 
+The eGFR packages are the first implementation case.
 
 ---
 
@@ -77,18 +69,13 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
+BATCH2-REMAINING-BLOCKERS-1 merged
 BATCH2-THYROID-GATE-1 merged
 BATCH2-ACTIVATION-1 merged
-BATCH2-REMAINDER-RESOLUTION-1 merged
 BATCH2-PROMOTE-1 merged
 BATCH2-CLOSURE-1 merged
-BATCH2-CONTEXT-MOD-1 merged
-BATCH2-MEDREVIEW-1 merged
-BATCH2-PROMOTION-READINESS-1 merged
 PASS3-BATCH2-FRAME-INDEX-1 merged
 PASS3-BATCH2-FRAME-INDEX-2 merged
-PASS3-BATCH2-PROVENANCE-1 merged
-PASS3-BATCH2-INGEST-1 merged
 ARCH-SENTINEL-1 merged
 CI-ARCH-GATE-1 / CI-ARCH-GATE-1A merged
 ```
@@ -109,10 +96,10 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- Batch 2 remainder resolution register is missing
-- thyroid gate execution register is missing
-- medical frame identity index is missing
-- context modifier catalogue is missing
+- medical_frame_identity_index_v1.yaml is missing
+- batch2_remainder_resolution_register_v1.yaml is missing
+- eGFR packages cannot be found
+- creatinine authority/frame entries cannot be found
 ```
 
 ---
@@ -123,436 +110,343 @@ Read before implementation:
 
 ```text
 knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml
-knowledge_bus/governance/batch2_thyroid_gate_execution_register_v1.yaml
-knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml
-knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml
-knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml
-knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
-docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md
+knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml
+knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml
+knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml
 docs/audit-papers/BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation.md
-docs/audit-papers/BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Inspect the remaining package folders:
+Inspect relevant renal packages / governance:
 
 ```text
-knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/
-
-knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/
-knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/
-knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/
-knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability/
-knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/
-knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context/
-knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction/
-knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction/
-
 knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/
 knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/
+knowledge_bus/packages/*creatinine*
+knowledge_bus/packages/*renal*
 ```
 
-Inspect runtime gating and authority code:
+Inspect runtime and governance mechanisms:
 
 ```text
 backend/core/analytics/signal_evaluator.py
 SignalRegistry / package registry loader
-signal evaluation tests
-renal / domain scoring or duplicate-signal handling if present
-context modifier runtime handling if present
+domain score / report assembly logic if relevant
+existing signal suppression / collision / authority handling if any
+backend/tests/regression/
 ```
 
 ---
 
-## Sprint principle
-
-This sprint must not become another investigation-only loop unless implementation is genuinely impossible.
-
-For every remaining package, reach one of these outcomes:
-
-```text
-1. runtime activate with enforceable gates
-2. keep inactive with formal blocker recorded
-3. create one consolidated runtime capability requirement if current architecture cannot safely support activation
-```
-
-Do not create new carry-forwards for individual markers unless unavoidable.
-
----
-
-## In-scope package groups
-
-### Group A — FT3 low
-
-```text
-pkg_kb47_free_t3_low_low_t3_syndrome
-```
-
-Known requirement:
-
-```text
-TSH + FT4 + illness / medication context
-```
-
-### Group B — androgen panel
-
-```text
-pkg_kb47_dhea_high_androgen_excess_context
-pkg_kb47_dhea_low_adrenal_androgen_reduction
-pkg_kb47_fai_high_biochemical_hyperandrogenism
-pkg_kb47_fai_low_reduced_free_androgen_availability
-pkg_kb47_free_testosterone_high_androgen_excess_context
-pkg_kb47_free_testosterone_low_androgen_deficiency_context
-pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
-pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
-```
-
-Known requirement:
-
-```text
-sex / age / SHBG / medication / hormone / steroid / supplement / symptom context
-```
-
-### Group C — eGFR
+## In-scope packages
 
 ```text
 pkg_kb47_egfr_low_chronic_kidney_function_reduction
 pkg_kb47_egfr_low_hemodynamic_filtration_drop
 ```
 
-Known requirement:
+Also inspect, but do not modify unless required and safe:
 
 ```text
-renal authority decision and anti-double-counting against creatinine/eGFR escalation
+existing creatinine-high packages / frames
+existing renal-filtration frames
+existing eGFR escalation frames under creatinine
 ```
 
 ---
 
-## Explicitly out of scope
+## Required architectural output
 
-Do not modify already-active Batch 2 packages except if required by validators and explicitly justified:
+Create a reusable governance model for overlapping signal authority.
 
-```text
-creatine_kinase ×2
-eosinophil_pct ×2
-eosinophils_abs ×2
-free_t3_high
-free_t4_high
-free_t4_low
-```
-
-Do not change:
+Preferred artefact:
 
 ```text
-clinical wording
-thresholds
-reference ranges
-signal IDs
-activation keys
-frontend
-SSOT
-scoring
-domain score assembly
-report compiler
+knowledge_bus/governance/signal_authority_collision_model_v1.yaml
 ```
 
----
-
-## Phase 1 — Unified blocker resolution analysis
-
-Before implementation, produce a concise decision table for all 11 remaining packages:
+It must be non-runtime by default unless explicitly wired later:
 
 ```yaml
-package_id:
-current_state:
-known_blocker:
-can_be_safely_gated_now:
-requires_runtime_code_change:
-requires_medical_research:
-requires_architecture_decision:
-recommended_action:
+runtime_consumed: false
 ```
 
-Allowed `recommended_action` values:
+It should support reusable concepts such as:
 
-```text
-ACTIVATE_WITH_GATE_THIS_SPRINT
-KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING
-KEEP_BLOCKED_AUTHORITY_DECISION_REQUIRED
-KEEP_BLOCKED_MEDICAL_SIGNOFF_REQUIRED
-DO_NOT_ACTIVATE
+```yaml
+authority_group_id:
+biological_axis:
+primary_signal_family:
+supporting_signal_families:
+collision_policy:
+  no_duplicate_user_facing_signal:
+  suppress_supporting_when_primary_present:
+  consolidate_into_shared_interpretation:
+  allow_parallel_if_distinct_risk_layer:
+runtime_action:
+  none_governance_only | suppress | consolidate | annotate
+requires_runtime_support:
+notes:
 ```
 
-STOP only if package state cannot be reconciled.
+This model must be designed so future marker families can reuse it.
 
 ---
 
-## Phase 2 — eGFR renal authority decision
+## Required eGFR authority decision
 
-Resolve the eGFR authority model.
-
-Answer and implement only if safe:
+Answer explicitly:
 
 ```text
-1. Is eGFR-low allowed to become an independent runtime signal?
-2. Does eGFR-low duplicate existing creatinine-high / eGFR escalation?
-3. Are anti-double-counting rules already present?
-4. Can both creatinine-high and eGFR-low exist safely with authority metadata / collision rules?
-5. If not, should eGFR remain inactive?
+1. Is eGFR-low its own signal family?
+2. Is eGFR-low stronger renal-filtration evidence than creatinine-high?
+3. Should creatinine-high remain active as a separate signal?
+4. Should eGFR-low suppress creatinine-high filtration framing when both are present?
+5. Can creatinine still contribute as supporting evidence?
+6. Does potassium / acute risk remain a separate complication layer?
+7. Can the two Batch 2 eGFR packages be activated safely now?
+8. If not, exactly what is missing?
 ```
 
-Preferred safe outcome unless anti-double-counting is already enforceable:
+Preferred architectural decision unless evidence proves otherwise:
 
 ```text
-Keep both eGFR packages inactive.
-Record formal blocker:
-renal_authority_and_anti_double_counting_required
-```
-
-Only activate eGFR if the current architecture can demonstrably prevent duplicate renal dysfunction signalling without broad redesign.
-
-Do not invent renal scoring rules.
-
-Do not modify creatinine package logic unless explicitly required and safe.
-
----
-
-## Phase 3 — androgen context-gated decision
-
-Resolve whether any androgen package can be safely activated now.
-
-Required checks:
-
-```text
-1. Are sex and age available at runtime to SignalEvaluator or equivalent signal context?
-2. Is SHBG available as a biomarker input and accessible to the gate?
-3. Are medication / hormone / steroid / supplement context values runtime-consumed?
-4. Are existing context modifiers runtime-active?
-5. Can the androgen signal be suppressed unless required context exists?
-6. Would activation risk misleading interpretation without Layer B context evaluation?
-```
-
-Preferred safe outcome unless all required runtime context gates are enforceable:
-
-```text
-Keep all 8 androgen packages inactive.
-Record formal blocker:
-androgen_runtime_context_evaluation_required
-```
-
-If a subset can be safely activated with strict fail-closed context gates, implement only that subset and document why.
-
-Do not activate androgen packages merely because governance placeholders exist.
-
----
-
-## Phase 4 — FT3 low decision
-
-Resolve whether FT3 low can be safely activated now.
-
-Required checks:
-
-```text
-1. Can TSH presence be required?
-2. Can FT4 presence be required?
-3. Can illness / medication context be required before signal emission?
-4. Is illness / medication context runtime-consumed?
-5. If context is unavailable, can FT3 low be safely emitted as a strictly gated or context-missing state?
-```
-
-Preferred safe outcome unless full gating is enforceable:
-
-```text
-Keep FT3 low inactive.
-Record formal blocker:
-ft3_low_requires_layer_b_context
-```
-
-Do not activate FT3 low without TSH + FT4 + illness / medication context.
-
----
-
-## Phase 5 — Implementation allowed if safe
-
-Allowed implementation actions:
-
-```text
-- add fail-closed pre-emission gates where existing architecture supports them
-- update signal_library.yaml only for packages being safely gated
-- update frame index state only for packages activated after STOP approval
-- update package manifest metadata only for activated packages
-- create / update a remaining blockers execution register
-- create / update audit report
-- update carry-forward register
-- add regression tests for any new gate
-```
-
-Not allowed:
-
-```text
-- broad runtime redesign
-- hardcoded global ranges
-- new clinical claims
-- changes to medical wording
-- changes to thresholds
-- changes to unrelated packages
-- activation without enforceable gates
+eGFR-low should be the primary renal-filtration authority when available.
+Creatinine-high can remain relevant as supporting evidence or a separate biochemical abnormality.
+The system must avoid presenting low eGFR + high creatinine as two independent renal-filtration problems.
 ```
 
 ---
 
-## Mandatory STOP gate
+## Required reusable implementation principle
 
-After analysis and any gating implementation, STOP before any runtime activation.
+If runtime implementation is needed, implement the smallest reusable mechanism possible.
 
-Report:
+Do not hardcode “eGFR vs creatinine” inside ad hoc logic.
+
+Prefer a reusable declarative pattern, for example:
+
+```yaml
+authority_resolution:
+  authority_group_id: renal_filtration_axis
+  primary_when_present: signal_egfr_low
+  supporting_when_primary_present:
+    - signal_creatinine_high
+  duplicate_surface_policy: consolidate
+```
+
+If current runtime cannot safely consume this pattern without broader redesign, keep it governance-only and formally block eGFR activation.
+
+---
+
+## Phase 1 — Investigation and design
+
+Before changing runtime or activation state, report:
+
+```text
+1. Current creatinine/eGFR frame relationships.
+2. Current eGFR package state.
+3. Whether any runtime anti-double-counting mechanism already exists.
+4. Whether a reusable authority/collision model can be added safely.
+5. Whether eGFR activation requires runtime support now.
+6. Exact files proposed for change.
+7. Rollback path.
+```
+
+STOP if:
+
+```text
+- creatinine/eGFR relationship cannot be resolved from existing evidence
+- activating eGFR would create duplicate renal signalling
+- runtime suppression/consolidation requires broad redesign
+- rollback path cannot be defined
+```
+
+---
+
+## Phase 2 — Implement reusable governance model
+
+Create the reusable authority/collision governance artefact.
+
+At minimum, include one renal authority group:
+
+```yaml
+authority_group_id: renal_filtration_axis
+biological_axis: kidney_filtration_function
+primary_signal_family: signal_egfr_low
+supporting_signal_families:
+  - signal_creatinine_high
+collision_policy:
+  no_duplicate_user_facing_signal: true
+  allow_parallel_if_distinct_risk_layer: true
+  distinct_risk_layers:
+    - hyperkalemia_or_electrolyte_complication
+    - acute_safety_escalation
+runtime_action: governance_only_pending_runtime_support
+requires_runtime_support: true
+```
+
+Also include placeholder examples for future reusable groups, but do not author fake medical decisions.
+
+Acceptable placeholders:
+
+```text
+metabolic_glycaemic_axis
+thyroid_axis
+androgen_axis
+liver_injury_axis
+iron_inflammation_axis
+```
+
+These should be marked as:
+
+```yaml
+status: placeholder_not_adjudicated
+```
+
+---
+
+## Phase 3 — Decide activation outcome
+
+After the authority model is created, decide whether eGFR can activate now.
+
+Allowed outcomes:
+
+```text
+A. Activate both eGFR packages with safe anti-double-counting support.
+B. Governance-promote / authority-classify eGFR but keep runtime inactive pending reusable runtime support.
+C. Keep eGFR formally blocked if authority remains unresolved.
+```
+
+Do not activate eGFR unless duplicate renal signalling is preventable now.
+
+---
+
+## Mandatory STOP gate before activation
+
+If and only if activation is recommended, STOP and report:
 
 ```text
 READY_FOR_HUMAN_STOP_GATE
 ```
 
-The STOP report must include:
+STOP report must include:
 
 ```text
-- packages proposed for activation, if any
-- packages remaining blocked
-- exact blockers
+- eGFR authority decision
+- anti-double-counting mechanism
+- packages proposed for activation
 - files changed
 - tests added
-- validation results
 - rollback path
-- confirmation no clinical wording / thresholds changed
+- confirmation creatinine behaviour remains safe
 ```
 
 Approval phrase:
 
 ```text
-APPROVE BATCH2 REMAINING GATED ACTIVATION
+APPROVE BATCH2 EGFR AUTHORITY ACTIVATION
 ```
 
-No runtime activation may occur without that approval.
+No runtime activation may occur without approval.
 
 ---
 
 ## Runtime activation after STOP approval
 
-If approval is received, activate only packages that meet all conditions:
+If approved, activate only:
 
 ```text
-- blocker resolved by enforceable gate or authority rule
-- package validates
-- activation key unique
-- no duplicate clinical signalling risk
-- regression tests pass
-- rollback path exists
+pkg_kb47_egfr_low_chronic_kidney_function_reduction
+pkg_kb47_egfr_low_hemodynamic_filtration_drop
 ```
 
-If no package meets the bar, close the sprint with all remaining packages formally blocked and no activation.
+Do not activate or modify androgen packages.
+
+Do not change unrelated renal packages unless necessary for the authority model and explicitly justified.
 
 ---
 
-## Required register
+## Required tests
+
+If runtime anti-double-counting / authority behaviour is implemented, add regression tests proving:
+
+```text
+1. eGFR-low can emit when activation criteria are met.
+2. creatinine-high does not produce duplicate renal-filtration output when eGFR-low is primary.
+3. creatinine can still contribute supporting evidence where appropriate.
+4. distinct acute complication layers remain allowed where medically distinct.
+5. unrelated signals are unaffected.
+6. eGFR packages remain inactive if approval is not given.
+```
+
+If no runtime behaviour is changed, tests are required only for created validators / governance artefacts if applicable.
+
+---
+
+## Required artefacts
 
 Create:
 
 ```text
-knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
+knowledge_bus/governance/signal_authority_collision_model_v1.yaml
+docs/audit-papers/BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model.md
 ```
 
-Required structure:
+Create or update:
 
-```yaml
-schema_version:
-runtime_consumed: false
-status:
-work_id:
-source_remainder_resolution:
-human_stop_gate:
-  required: true
-  approval_received:
-  approval_phrase:
-  approval_recorded_at:
-runtime_activation_performed:
-package_count:
-activated_package_count:
-blocked_package_count:
-groups:
-  thyroid_ft3_low:
-    outcome:
-    blocker:
-    required_next_action:
-  androgen:
-    outcome:
-    blocker:
-    required_next_action:
-  egfr:
-    outcome:
-    blocker:
-    required_next_action:
-packages:
-  - package_id:
-    package_path:
-    group:
-    current_state:
-    blocker_before_sprint:
-    blocker_after_sprint:
-    gate_implemented:
-    activated:
-    final_state:
-    required_next_action:
-    notes:
+```text
+knowledge_bus/governance/batch2_egfr_authority_execution_register_v1.yaml
+docs/sprints/launch_core_carry_forward_register.md
 ```
+
+Update only if activated or authority state changes:
+
+```text
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/package_manifest.yaml
+knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/package_manifest.yaml
+```
+
+Do not update:
+
+```text
+signal_library.yaml
+research_brief.yaml
+thresholds
+clinical wording
+frontend
+SSOT
+scoring
+report compiler
+```
+
+unless there is an explicit STOP-level justification.
 
 ---
 
 ## Required report
-
-Create:
-
-```text
-docs/audit-papers/BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation.md
-```
 
 Report must include:
 
 ```text
 - executive verdict
 - artefacts inspected
-- 11-package decision table
-- eGFR authority decision
-- androgen context decision
-- FT3 low decision
-- gates implemented, if any
-- packages activated, if any
-- packages remaining blocked
-- exact remaining blockers
-- tests added / updated
+- creatinine/eGFR relationship summary
+- reusable authority/collision model created
+- renal authority decision
+- eGFR activation decision
+- anti-double-counting decision
+- runtime behaviour changed, if any
+- tests added / not added and why
+- packages activated or kept inactive
+- rollback path
 - validation output pasted in full
 - architecture gate output pasted in full
-- STOP gate outcome
-- rollback path
 - carry-forward updates
-- confirmation no clinical wording / thresholds changed
-- confirmation no unrelated runtime behaviour changed
+- confirmation no unrelated package/frontend/SSOT/scoring changes
 ```
-
----
-
-## Required tests
-
-If any new gate or authority rule is implemented, add regression tests proving:
-
-```text
-- signal does not emit when required gate input is missing
-- signal does not emit when required condition fails
-- signal emits only when all required gate conditions pass
-- unrelated signals remain unaffected
-- blocked packages remain inactive
-```
-
-If no activation is performed and packages remain formally blocked, tests are only required for any changed runtime/gating code.
 
 ---
 
@@ -567,18 +461,21 @@ docs/sprints/launch_core_carry_forward_register.md
 Expected handling:
 
 ```text
-CF-BATCH2-007 — eGFR adjudication
-Resolve only if eGFR is activated safely or formally closed with a final blocker.
+CF-BATCH2-007
+Resolve only if eGFR authority is either:
+- safely activated with anti-double-counting support, or
+- formally closed with a reusable authority blocker.
 
-CF-BATCH2-010 — androgen clinical sign-off
-Resolve only if androgen activation is completed or formal blocker replaces it.
-
-CF-CONTEXT-MOD-3 — runtime context evaluation
-Keep open if needed as a broader platform capability.
-Update to include FT3 low and androgen if they remain blocked by context runtime.
+If runtime support remains needed, consolidate it under a reusable authority/collision runtime carry-forward rather than marker-specific fragmentation.
 ```
 
-Do not create new marker-specific carry-forwards unless there is no alternative.
+Possible new consolidated carry-forward only if genuinely needed:
+
+```text
+CF-AUTHORITY-RUNTIME-1 — implement runtime consumption of signal_authority_collision_model_v1.yaml
+```
+
+Do not create separate carry-forwards per eGFR package.
 
 ---
 
@@ -592,19 +489,19 @@ python backend/scripts/validate_medical_frame_identity_index.py --index knowledg
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 ```
 
-Validate all 11 remaining packages:
+Validate the two eGFR packages:
 
 ```powershell
 python backend/scripts/validate_knowledge_package.py --package-dir <package_dir>
 ```
 
-Run any new or affected regression tests.
+Run any new regression tests if runtime behaviour or governance validators are added.
 
 ---
 
 ## Runtime boundary
 
-Runtime changes are allowed only if they are minimal, fail-closed, tested, and directly required to enforce known gates.
+Runtime changes are allowed only if they are minimal, reusable, fail-safe, and directly support the authority/collision model.
 
 Do not modify:
 
@@ -615,32 +512,12 @@ scoring thresholds
 unit conversion
 domain score assembly
 report compiler
-ranking
 clinical wording
 reference ranges
 unrelated signal behaviour
 ```
 
-STOP if this requires broad redesign.
-
----
-
-## STOP conditions
-
-STOP and report if:
-
-```text
-1. package state cannot be reconciled
-2. runtime gates cannot be enforced fail-closed
-3. eGFR would cause duplicate renal dysfunction signalling
-4. androgen context is not runtime-consumed
-5. FT3 low illness / medication context is not runtime-consumed
-6. activation would require hardcoded global ranges
-7. activation would require broad runtime redesign
-8. validators fail
-9. architecture gate fails
-10. rollback path cannot be defined
-```
+STOP if implementation requires broad redesign.
 
 ---
 
@@ -649,16 +526,16 @@ STOP and report if:
 This sprint is complete only if:
 
 ```text
-1. all 11 remaining Batch 2 packages have final state
-2. any activated package has enforceable fail-closed gates
-3. unsafe packages remain inactive with formal blocker
-4. no package is left ambiguous
+1. eGFR vs creatinine authority is explicitly decided
+2. reusable authority/collision model exists
+3. eGFR packages are either safely activated or formally blocked with exact reusable blocker
+4. no duplicate renal dysfunction signalling is introduced
 5. no clinical wording or thresholds change
 6. no unrelated runtime behaviour changes
 7. validators pass
 8. architecture gate passes
 9. rollback path is documented
-10. Batch 2 remaining blocker status is closed or consolidated into a single platform capability blocker
+10. future overlapping biomarker families can reuse the pattern
 ```
 
 ```
