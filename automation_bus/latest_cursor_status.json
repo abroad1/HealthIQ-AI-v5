@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-REMAINDER-RESOLUTION-1-remaining-batch2-package-resolution-investigation",
+  "branch": "work/BATCH2-THYROID-GATE-1-mandatory-tsh-gating-and-runtime-activation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-07T14:11:20Z",
-  "cursor_started_utc": "2026-06-07T14:04:51Z",
-  "head_sha": "acf113c3ae2a2f47fc15535dbcad8defb5367618",
+  "cursor_started_utc": "2026-06-07T14:28:52Z",
+  "head_sha": "b88c9e77993ac6dc830e5d6925a2722a11d149ff",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation"
 }
