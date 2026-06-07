@@ -1,0 +1,394 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: investigation_complete
+work_id: BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation
+investigation_utc: '2026-06-07'
+batch2_estate_summary:
+  total_packages: 20
+  runtime_active: 6
+  governance_promoted_runtime_deferred: 4
+  never_promoted_blocked: 10
+  remaining_investigated: 14
+authoritative_state_source: knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml
+packages:
+- package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  panel_group: thyroid
+  spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
+  signal_id: signal_free_t3_high
+  medical_frame_id: frame_batch2_free_t3_high_t3_predominant_thyrotoxicosis
+  current_state:
+    governance_promoted: true
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: thyroid_tsh_gating_required
+    blocker_description: Clinical sign-off APPROVE_SUBSET requires mandatory TSH suppression before thyrotoxic
+      interpretation. Package uses lab_range_exceeded on free_t3 alone; override or_free_t3_high_with_tsh_low
+      escalates but does not block isolated FT3-high activation (signal_evaluator.py
+      evaluates primary lab_range first).
+    blocker_source: docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md;
+      backend/core/analytics/signal_evaluator.py; pkg signal_library override_rules
+    can_resolve_in_next_execution_sprint: true
+  required_before_activation:
+  - Implement mandatory TSH-suppression activation gate (signal_library and/or SignalEvaluator)
+  - Record human STOP gate after gate proof
+  - Metadata activation only after gate enforced
+  recommended_next_action: BATCH2-THYROID-GATE-1 — mandatory TSH gate then metadata runtime activation
+  final_recommendation: READY_IF_RUNTIME_GATE_IMPLEMENTED
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
+  panel_group: thyroid
+  spec_id: inv_free_t3_low_low_t3_syndrome
+  signal_id: signal_free_t3_low
+  medical_frame_id: frame_batch2_free_t3_low_low_t3_syndrome
+  current_state:
+    governance_promoted: true
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: thyroid_tsh_ft4_context_required
+    blocker_description: Sign-off explicitly holds FT3 low unless TSH + FT4 + illness/medication context available.
+      No runtime illness/medication context gate exists; frame index context_inputs_supported
+      has questionnaire_modifiers false.
+    blocker_source: thyroid_blood_marker_interpretation_clinical_signoff.md lines 8-22;
+      medical_frame_identity_index_v1.yaml frame_batch2_free_t3_low
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - TSH + FT4 mandatory biomarker gate in signal path
+  - Illness/medication context via Layer B context modifier evaluation (CF-CONTEXT-MOD-3)
+  - Separate execution phase from FT3-high/FT4 sprint
+  recommended_next_action: Defer to post-THYROID-GATE-1 follow-on; do not batch with three TSH-only patterns
+  final_recommendation: FORMALLY_BLOCKED_KEEP_INACTIVE
+- package_id: pkg_kb47_free_t4_high_thyrotoxicosis_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context
+  panel_group: thyroid
+  spec_id: inv_free_t4_high_thyrotoxicosis_context
+  signal_id: signal_free_t4_high
+  medical_frame_id: frame_batch2_free_t4_high_thyrotoxicosis_context
+  current_state:
+    governance_promoted: true
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: thyroid_tsh_gating_required
+    blocker_description: Sign-off requires TSH low/suppressed before thyrotoxicosis context activation. Same
+      lab_range_exceeded-first evaluator behaviour as FT3 high; or_free_t4_high_with_tsh_low
+      is escalation-only.
+    blocker_source: thyroid sign-off; signal_library.yaml or_free_t4_high_with_tsh_low;
+      signal_evaluator.py
+    can_resolve_in_next_execution_sprint: true
+  required_before_activation:
+  - Mandatory TSH-suppression activation gate
+  - Human STOP gate
+  - Metadata runtime activation
+  recommended_next_action: Include in BATCH2-THYROID-GATE-1 with FT3 high and FT4 low (TSH-only gate cohort)
+  final_recommendation: READY_IF_RUNTIME_GATE_IMPLEMENTED
+- package_id: pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  package_path: knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  panel_group: thyroid
+  spec_id: inv_free_t4_low_thyroid_hormone_deficiency
+  signal_id: signal_free_t4_low
+  medical_frame_id: frame_batch2_free_t4_low_thyroid_hormone_deficiency
+  current_state:
+    governance_promoted: true
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: thyroid_tsh_gating_required
+    blocker_description: Sign-off requires TSH interpretation gating before primary hypothyroid pattern activation.
+      or_free_t4_low_with_tsh_high escalates but does not block isolated FT4-low firing.
+    blocker_source: thyroid sign-off; signal_library.yaml; signal_evaluator.py
+    can_resolve_in_next_execution_sprint: true
+  required_before_activation:
+  - Mandatory TSH-interpretation activation gate
+  - Human STOP gate
+  - Metadata runtime activation
+  recommended_next_action: Include in BATCH2-THYROID-GATE-1 TSH-only gate cohort
+  final_recommendation: READY_IF_RUNTIME_GATE_IMPLEMENTED
+- package_id: pkg_kb47_dhea_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
+  panel_group: androgen
+  spec_id: inv_dhea_high_androgen_excess_context
+  signal_id: signal_dhea_high
+  medical_frame_id: frame_batch2_dhea_high_androgen_excess_context
+  current_state:
+    governance_promoted: false
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: androgen_clinical_signoff_required
+    blocker_description: EXCLUDED from BATCH2-PROMOTE-1 (batch2_final_promotion_decision_register_v1.yaml).
+      Medical review MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT; all 8 frames remain_blocked_for_promotion
+      in context binding register; no androgen clinical sign-off artefact in repo.
+    blocker_source: batch2_final_promotion_decision_register_v1.yaml; batch2_androgen_panel_medical_review_v1.yaml;
+      batch2_androgen_context_modifier_binding_v1.yaml
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - Androgen clinical sign-off (CF-BATCH2-010)
+  - Runtime Layer B context modifier evaluation (CF-CONTEXT-MOD-3)
+  - Governance re-promotion sprint after sign-off
+  - Frame-priority rules for hyperandrogenism cluster overlap
+  recommended_next_action: Keep blocked; resolve CF-CONTEXT-MOD-3 and CF-BATCH2-010 before any promotion pilot
+  final_recommendation: FORMALLY_BLOCKED_KEEP_INACTIVE
+- package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
+  panel_group: androgen
+  spec_id: inv_dhea_low_adrenal_androgen_reduction
+  signal_id: signal_dhea_low
+  medical_frame_id: frame_batch2_dhea_low_adrenal_androgen_reduction
+  current_state:
+    governance_promoted: false
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: androgen_context_runtime_required
+    blocker_description: Context modifiers bound in governance only (runtime_active=false for all catalogue
+      entries). Age/medication/adrenal context not runtime-consumed.
+    blocker_source: context_modifier_catalogue_draft_v1.yaml runtime_active false;
+      batch2_androgen_context_modifier_binding_v1.yaml
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - CF-CONTEXT-MOD-3 Layer B evaluation
+  - CF-BATCH2-010 clinical sign-off
+  - Governance promotion after clearance
+  recommended_next_action: Block with androgen panel cohort
+  final_recommendation: FORMALLY_BLOCKED_KEEP_INACTIVE
+- package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  package_path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
+  panel_group: androgen
+  spec_id: inv_fai_high_biochemical_hyperandrogenism
+  signal_id: signal_fai_high
+  medical_frame_id: frame_batch2_fai_high_biochemical_hyperandrogenism
+  current_state:
+    governance_promoted: false
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: androgen_context_runtime_required
+    blocker_description: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING at medical review; SHBG/sex/age modifiers
+      catalogue-linked but not runtime-consumed; high duplicate risk with dhea_high
+      and free_testosterone_high.
+    blocker_source: batch2_androgen_panel_medical_review_v1.yaml; batch2_androgen_context_modifier_binding_v1.yaml
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - CF-CONTEXT-MOD-3 including mod_androgen_ctx_shbg_governance
+  - CF-BATCH2-010 clinical sign-off
+  - Hyperandrogenism frame-priority adjudication at promotion gate
+  recommended_next_action: Block with androgen panel cohort
+  final_recommendation: FORMALLY_BLOCKED_KEEP_INACTIVE
+- package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
+  panel_group: androgen
+  spec_id: inv_fai_low_reduced_free_androgen_availability
+  signal_id: signal_fai_low
+  medical_frame_id: frame_batch2_fai_low_reduced_free_androgen_availability
+  current_state:
+    governance_promoted: false
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: androgen_context_runtime_required
+    blocker_description: Sex-specific FAI thresholds require SHBG and sex context at runtime; governance
+      binding only.
+    blocker_source: batch2_androgen_panel_medical_review_v1.yaml; context_modifier_catalogue_draft_v1.yaml
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - CF-CONTEXT-MOD-3
+  - CF-BATCH2-010
+  - Governance promotion
+  recommended_next_action: Block with androgen panel cohort
+  final_recommendation: FORMALLY_BLOCKED_KEEP_INACTIVE
+- package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context
+  panel_group: androgen
+  spec_id: inv_free_testosterone_high_androgen_excess_context
+  signal_id: signal_free_testosterone_high
+  medical_frame_id: frame_batch2_free_testosterone_high_androgen_excess_context
+  current_state:
+    governance_promoted: false
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: androgen_clinical_signoff_required
+    blocker_description: EXCLUDED from promotion; sex/age/medication context dependencies; moderate overlap
+      with dhea_high and fai_high cluster.
+    blocker_source: batch2_final_promotion_decision_register_v1.yaml; batch2_androgen_panel_medical_review_v1.yaml
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - CF-BATCH2-010
+  - CF-CONTEXT-MOD-3
+  - Promotion sprint after clearance
+  recommended_next_action: Block with androgen panel cohort
+  final_recommendation: FORMALLY_BLOCKED_KEEP_INACTIVE
+- package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  panel_group: androgen
+  spec_id: inv_free_testosterone_low_androgen_deficiency_context
+  signal_id: signal_free_testosterone_low
+  medical_frame_id: frame_batch2_free_testosterone_low_androgen_deficiency_context
+  current_state:
+    governance_promoted: false
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: androgen_context_runtime_required
+    blocker_description: LH/sex/age/medication context required; not runtime-enforced; overlaps fai_low
+      and free_testosterone_pct_low.
+    blocker_source: batch2_androgen_panel_medical_review_v1.yaml
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - CF-CONTEXT-MOD-3
+  - CF-BATCH2-010
+  - Governance promotion
+  recommended_next_action: Block with androgen panel cohort
+  final_recommendation: FORMALLY_BLOCKED_KEEP_INACTIVE
+- package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  panel_group: androgen
+  spec_id: inv_free_testosterone_pct_high_elevated_free_androgen_fraction
+  signal_id: signal_free_testosterone_pct_high
+  medical_frame_id: frame_batch2_free_testosterone_pct_high_elevated_free_androgen_fraction
+  current_state:
+    governance_promoted: false
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: androgen_context_runtime_required
+    blocker_description: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING; SHBG/total testosterone fraction interpretation
+      requires runtime context.
+    blocker_source: batch2_androgen_panel_medical_review_v1.yaml
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - CF-CONTEXT-MOD-3
+  - CF-BATCH2-010
+  - Governance promotion
+  recommended_next_action: Block with androgen panel cohort
+  final_recommendation: FORMALLY_BLOCKED_KEEP_INACTIVE
+- package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  panel_group: androgen
+  spec_id: inv_free_testosterone_pct_low_reduced_free_androgen_fraction
+  signal_id: signal_free_testosterone_pct_low
+  medical_frame_id: frame_batch2_free_testosterone_pct_low_reduced_free_androgen_fraction
+  current_state:
+    governance_promoted: false
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: androgen_context_runtime_required
+    blocker_description: Same SHBG/sex context runtime gap as pct_high; governance binding complete but
+      runtime_active=false throughout catalogue.
+    blocker_source: batch2_androgen_context_modifier_binding_v1.yaml; context_modifier_catalogue_draft_v1.yaml
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - CF-CONTEXT-MOD-3
+  - CF-BATCH2-010
+  - Governance promotion
+  recommended_next_action: Block with androgen panel cohort
+  final_recommendation: FORMALLY_BLOCKED_KEEP_INACTIVE
+- package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  package_path: knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  panel_group: egfr
+  spec_id: inv_egfr_low_chronic_kidney_function_reduction
+  signal_id: signal_egfr_low
+  medical_frame_id: frame_egfr_pass3_chronic_kidney_function_reduction
+  current_state:
+    governance_promoted: false
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: renal_authority_adjudication_required
+    blocker_description: EXCLUDED from BATCH2-PROMOTE-1. Distinct signal_egfr_low family indexed with collision_status
+      requires_adjudication vs creatinine legacy eGFR override (frame_creatinine_legacy_s24_egfr_escalation)
+      and pkg_kb52c canonical creatinine authority. No anti-double-counting rules for independent
+      signal_egfr_low runtime activation.
+    blocker_source: medical_frame_identity_index_v1.yaml lines 1033-1057; creatinine_multiframe_authority_decision_v1.yaml;
+      batch2_final_promotion_decision_register_v1.yaml
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - Architecture authority decision for signal_egfr_low vs signal_creatinine_high relationship
+  - Collision/anti-double-counting rules documented in governance authority file
+  - Medical review of chronic vs hemodynamic frame distinction at activation gate
+  - Governance promotion sprint after authority decision
+  recommended_next_action: BATCH2-EGFR-AUTHORITY-1 architecture adjudication before any promotion/activation
+  final_recommendation: REQUIRES_ARCHITECTURE_AUTHORITY_DECISION
+- package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  package_path: knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  panel_group: egfr
+  spec_id: inv_egfr_low_hemodynamic_filtration_drop
+  signal_id: signal_egfr_low
+  medical_frame_id: frame_egfr_pass3_hemodynamic_filtration_drop
+  current_state:
+    governance_promoted: false
+    runtime_active: false
+    indexed: true
+    provenance_canonical: true
+    validates: true
+  blocking_status:
+    blocker_type: anti_double_counting_required
+    blocker_description: Acute hemodynamic eGFR frame distinct from chronic frame but same signal_egfr_low
+      family; activating either without renal authority model risks duplicate renal dysfunction
+      signalling alongside creatinine-high canonical and legacy eGFR escalation paths.
+    blocker_source: medical_frame_identity_index_v1.yaml lines 1059-1083; CF-BATCH2-007
+    can_resolve_in_next_execution_sprint: false
+  required_before_activation:
+  - Same BATCH2-EGFR-AUTHORITY-1 authority decision as chronic frame
+  - ROUTE_C multi-frame collision rules at runtime
+  recommended_next_action: Resolve jointly with chronic eGFR package in architecture sprint
+  final_recommendation: REQUIRES_ARCHITECTURE_AUTHORITY_DECISION
+recommended_next_execution:
+  work_id_suggestion: BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation
+  rationale: Only remaining cohort already governance-promoted with clinical sign-off APPROVE_SUBSET;
+    packages validate; blocker is a defined runtime gate not promotion re-scoping.
+  scope:
+    packages_to_activate_after_gate:
+    - pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+    - pkg_kb47_free_t4_high_thyrotoxicosis_context
+    - pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+    packages_deferred_in_same_programme:
+    - pkg_kb47_free_t3_low_low_t3_syndrome
+    packages_keep_blocked:
+    - all 8 androgen packages until CF-CONTEXT-MOD-3 and CF-BATCH2-010
+    - both eGFR packages until BATCH2-EGFR-AUTHORITY-1
+  gates_to_implement:
+  - Mandatory TSH-suppression/interpretation activation gate in signal path (signal_library and/or
+    SignalEvaluator) — metadata-only activation insufficient per sign-off
+  - Regression harness proving isolated FT3/FT4 cannot fire without TSH gate
+  stop_gates_required:
+  - Human STOP gate before metadata runtime activation (same pattern as BATCH2-ACTIVATION-1)
+  validations_required:
+  - validate_knowledge_package.py per thyroid package pre- and post-gate
+  - validate_medical_frame_identity_index.py
+  - run_architecture_validation_gate.py
+  follow_on_execution_packages:
+  - work_id: BATCH2-EGFR-AUTHORITY-1_renal_signal_family_authority_adjudication
+    scope: Architecture decision + collision rules for signal_egfr_low; then promotion/activation sprint
+  - work_id: BATCH2-ANDROGEN-EXECUTION-1_androgen_panel_promotion_after_context_and_signoff
+    scope: CF-CONTEXT-MOD-3 + CF-BATCH2-010 then controlled promotion pilot for 8 androgen packages
