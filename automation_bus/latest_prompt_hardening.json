@@ -1,81 +1,139 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion",
+  "work_id": "BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset",
   "status": "HARDENED",
   "hardened_utc": "2026-06-07T00:00:00Z",
-  "hardened_by": "Claude Code (claude-sonnet-4-6)",
+  "hardened_by": "Claude Code — Stage 2 Hardening",
   "changes": [
     {
-      "check": "FRONT_MATTER_ALL_FIELDS",
+      "check": "FRONT_MATTER_WORK_ID",
       "result": "PASS",
-      "detail": "All five mandatory fields present and valid. execution_model: TWO_PHASE_START_FINISH (corrected from prior NOT_HARDENED attempt). risk_level: HIGH correct — modifies medical_frame_identity_index_v1.yaml (Intelligence Core adjacent, governs which packages are runtime_active). change_type: MIXED correct — package manifest and frame index metadata updates (CONTENT component) plus activation state change altering runtime authority (BEHAVIOUR-adjacent component). work_id and branch match between front matter.",
-      "file_evidence": "automation_bus/latest_cursor_prompt.md:2-6; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md:355 confirming TWO_PHASE_START_FINISH is valid"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2 — work_id: BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset"
     },
     {
-      "check": "AUTHORITY_PATHS_EXIST",
-      "result": "PASS_WITH_ADVISORY",
-      "detail": "All 7 required governance input files confirmed present. ADVISORY: knowledge_bus/current/latest_knowledge_status.json does not exist — knowledge_bus/current/ contains only .gitkeep. This file is managed by run_knowledge_package.py KB package lifecycle (backend/scripts/run_knowledge_package.py:24) and is not written until a KB package lifecycle 'start' runs. This sprint does not use that lifecycle; runtime activation mechanism is confirmed via package_manifest.yaml and medical_frame_identity_index_v1.yaml fields. Cursor must not trigger STOP condition 'runtime activation mechanism cannot be identified' on account of this absent file alone.",
-      "file_evidence": "knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml — CONFIRMED; knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml — CONFIRMED; knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml — CONFIRMED; knowledge_bus/governance/medical_frame_identity_index_v1.yaml — CONFIRMED; knowledge_bus/current/.gitkeep (only file in current/)"
+      "check": "FRONT_MATTER_BRANCH",
+      "result": "PASS",
+      "citation": "automation_bus/latest_cursor_prompt.md line 3 — branch: work/BATCH2-ACTIVATION-1-runtime-activate-cleared-non-thyroid-subset"
     },
     {
-      "check": "ACTIVATION_CANDIDATE_SET_VERIFICATION",
+      "check": "FRONT_MATTER_RISK_LEVEL",
+      "result": "PASS — HIGH",
+      "citation": "automation_bus/latest_cursor_prompt.md line 4 — risk_level: HIGH. Justified: sprint touches medical_frame_identity_index_v1.yaml (Intelligence Core adjacent, governs SignalRegistry runtime authority) and package manifest runtime activation metadata."
+    },
+    {
+      "check": "FRONT_MATTER_EXECUTION_MODEL",
+      "result": "PASS — TWO_PHASE_START_FINISH",
+      "citation": "automation_bus/latest_cursor_prompt.md line 5 — execution_model: TWO_PHASE_START_FINISH. Correct: sprint has explicit human STOP gate before activation phase; activation and closure are separate conditional phases."
+    },
+    {
+      "check": "FRONT_MATTER_CHANGE_TYPE",
+      "result": "PASS — MIXED",
+      "citation": "automation_bus/latest_cursor_prompt.md line 6 — change_type: MIXED. Correct: sprint updates governance YAML content (CONTENT component) AND medical_frame_identity_index + package manifests consumed by runtime loader (BEHAVIOUR-adjacent component). MIXED mandates BEHAVIOUR controls per SOP §4."
+    },
+    {
+      "check": "AUTHORITY_PATH_batch2_promote_1_execution_register_v1",
       "result": "CONFIRMED",
-      "detail": "6-package runtime activation candidate set (prompt lines 152-159) verified against both governance registers. batch2_final_promotion_decision_register_v1.yaml: all 6 carry final_decision: CLEARED and required_next_action: 'Proceed to BATCH2-PROMOTE-1 controlled promotion sprint' with NO activation caveat. batch2_promote_1_execution_register_v1.yaml: all 6 show post_promotion_state: governance_promoted_pending_runtime_activation and package_validator_status: PASS. Ordering difference: eosinophils_abs_reactive (prompt line 157) appears before eosinophils_abs_hypereosinophilic (prompt line 158); reversed in the register — same set, functionally irrelevant.",
-      "file_evidence": "knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml:63, 83, 187, 207, 227, 247 (required_next_action — no activation caveat); knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml lines 11-93"
+      "citation": "knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml — file present (directory listing verified)"
     },
     {
-      "check": "THYROID_BOUNDARY_VERIFICATION",
+      "check": "AUTHORITY_PATH_batch2_runtime_activation_execution_register_v1",
+      "result": "CONFIRMED — ADVISORY ON WORK_ID",
+      "citation": "knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml line 4 — current work_id is BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion (prior sprint); status: stop_gate_pending_human_approval. Cursor must overwrite work_id with BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset when updating this register. Prompt correctly says 'Create or update' — update path applies."
+    },
+    {
+      "check": "AUTHORITY_PATH_batch2_final_promotion_decision_register_v1",
       "result": "CONFIRMED",
-      "detail": "Thyroid deferral is now explicit in the prompt (lines 165-191). 4 thyroid packages confirmed governance_promoted in execution register with runtime_activation_changed: false. Final decision register lines 313-315, 333-335, 353-355, 373-374: all 4 thyroid packages have required_next_action containing 'clinical adjudication sign-off still required before activation'. No clinical sign-off record found anywhere in repo. Thyroid exclusion from activation is now hard-coded in the prompt rather than conditional — this resolves the prior architectural concern. Deferred_reason: thyroid_clinical_signoff_required_before_activation is accurate.",
-      "file_evidence": "automation_bus/latest_cursor_prompt.md:165-191; knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml:42-43, 313-315, 333-335, 353-355, 373-374; knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml lines 95-150 (4 thyroid entries, runtime_activation_changed: false)"
+      "citation": "knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml lines 6-7 — final_decision: PROCEED_TO_PROMOTION_WITH_CLEARED_SUBSET; all 6 non-thyroid activation candidates carry final_decision: CLEARED (lines 60, 80, 184, 204, 224, 244 — verified by package_id)"
     },
     {
-      "check": "EXCLUDED_PACKAGE_SET_VERIFICATION",
+      "check": "AUTHORITY_PATH_batch2_promotion_readiness_register_v1",
       "result": "CONFIRMED",
-      "detail": "10 excluded packages (androgen x8, eGFR x2) match exactly against batch2_final_promotion_decision_register_v1.yaml exclude_packages list. All confirmed with final_decision: EXCLUDED. STOP condition 'any excluded package appears in the diff' is present.",
-      "file_evidence": "knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml:23-31; automation_bus/latest_cursor_prompt.md:197-210"
+      "citation": "knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml — file present (directory listing verified)"
     },
     {
-      "check": "RUNTIME_ACTIVATION_MECHANISM",
-      "result": "CONFIRMED — DATA_ONLY_NO_CODE_CHANGES",
-      "detail": "Runtime activation mechanism confirmed: (1) medical_frame_identity_index_v1.yaml — 6 candidate frames currently have promotion_state: compiled_not_promoted and runtime_authority_status: inactive. Activation updates these to promotion_state: runtime_active_canonical and runtime_authority_status: active. Valid value runtime_active_canonical confirmed at validate_medical_frame_identity_index.py:26. (2) package_manifest.yaml — governance_promotion_status field changes from governance_promoted_pending_runtime_activation to reflect active state. No code changes required. STOP condition 'activation would require code changes' will not trigger.",
-      "file_evidence": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:989-990 (compiled_not_promoted / inactive for exertional_muscle_injury frame); backend/scripts/validate_medical_frame_identity_index.py:26-28 (runtime_active_canonical is valid); knowledge_bus/packages/pkg_kb47_creatine_kinase_high_exertional_muscle_injury/package_manifest.yaml:13"
+      "check": "AUTHORITY_PATH_medical_frame_identity_index_v1",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml — file present (directory listing verified); confirmed as primary runtime activation mechanism in batch2_runtime_activation_execution_register_v1.yaml activation_mechanism.primary field"
     },
     {
-      "check": "FRAME_INDEX_CLINICAL_ADJUDICATION_ADVISORY",
+      "check": "AUTHORITY_PATH_context_modifier_catalogue_draft_v1",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml — file present (directory listing verified)"
+    },
+    {
+      "check": "AUTHORITY_PATH_BATCH2_PROMOTE_1_audit_paper",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/BATCH2-PROMOTE-1_cleared_wave_package_promotion.md — file present (directory listing verified)"
+    },
+    {
+      "check": "AUTHORITY_PATH_BATCH2_PROMOTE_1_CONTINUATION_audit_paper",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion.md — file read; confirms Phase 1 preflight PASS, STOP gate issued, no activation performed, approval phrase APPROVE BATCH2 RUNTIME ACTIVATION required. This sprint continues where that sprint stopped."
+    },
+    {
+      "check": "AUTHORITY_PATH_BATCH2_CLOSURE_1_audit_paper",
+      "result": "CONFIRMED",
+      "citation": "docs/audit-papers/BATCH2-CLOSURE-1_final_batch2_promotion_decision.md — file present (directory listing verified)"
+    },
+    {
+      "check": "AUTHORITY_PATH_carry_forward_register",
+      "result": "CONFIRMED",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md — file read; CF-BATCH2-012 status Open (line 75), pending APPROVE BATCH2 RUNTIME ACTIVATION; CF-BATCH2-013 Open (line 76, thyroid sign-off); CF-BATCH2-007/010/CF-CONTEXT-MOD-3 all Open"
+    },
+    {
+      "check": "THYROID_SIGNOFF_FILE_PRESENT_IN_REPO",
+      "result": "CONFIRMED — INGEST NOT CREATE",
+      "citation": "docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md — file exists and read; overall verdict line 14: APPROVE_SUBSET; TSH mandatory before all four patterns (line 26); FT3 low additionally requires TSH + FT4 + illness/medication context (lines 28-30). Prompt correctly maps to this: deferred_reason values in prompt align exactly with sign-off content. Cursor must INGEST this file, not create a governance summary."
+    },
+    {
+      "check": "SIX_ACTIVATION_CANDIDATES_ON_DISK",
+      "result": "CONFIRMED — ALL 6 PRESENT",
+      "citation": "knowledge_bus/packages/ directory listing — all six package directories verified present: pkg_kb47_creatine_kinase_high_exertional_muscle_injury, pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury, pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia, pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia, pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation, pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia"
+    },
+    {
+      "check": "SIX_ACTIVATION_CANDIDATES_CLEARED_IN_DECISION_REGISTER",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml — all six packages carry final_promotion_group: CLEARED_FOR_BATCH2_PROMOTE_1 and final_decision: CLEARED at lines 60, 80, 184, 204, 224, 244 (verified by package_id)"
+    },
+    {
+      "check": "PACKAGE_MANIFEST_PRE_ACTIVATION_STATE",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/packages/pkg_kb47_creatine_kinase_high_exertional_muscle_injury/package_manifest.yaml line 13 — governance_promotion_status: governance_promoted_pending_runtime_activation. Correct pre-activation state. No governance_runtime_activation_status field present yet — sprint will add this on activation if approved."
+    },
+    {
+      "check": "ACTIVATION_MECHANISM_NO_CODE_CHANGES",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml — activation_mechanism.code_changes_required: false; loader_note confirms SignalRegistry already scans knowledge_bus/packages/*/signal_library.yaml, packages already on disk. BATCH2-PROMOTE-1-CONTINUATION audit paper confirms same finding."
+    },
+    {
+      "check": "STOP_GATE_EXPLICIT_AND_CORRECT",
+      "result": "PASS",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 227-251 — READY_FOR_HUMAN_STOP_GATE required before any activation; approval phrase APPROVE BATCH2 RUNTIME ACTIVATION must be explicit; STOP report must include 8 specific items; no activation may occur without approval. Consistent with prior sprint register line 9: approval_phrase: APPROVE BATCH2 RUNTIME ACTIVATION."
+    },
+    {
+      "check": "SCOPE_FENCE_THYROID_ANDROGEN_EGFR_EXCLUSION",
+      "result": "PASS",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 175-190 — 10 excluded packages listed by name; STOP if any excluded package appears in diff. Thyroid deferred at lines 147-169 with deferred_reason values aligning to thyroid sign-off document."
+    },
+    {
+      "check": "BEHAVIOURAL_SCOPE_INTELLIGENCE_CORE_BOUNDARY",
       "result": "ADVISORY",
-      "detail": "All Batch 2 frames in medical_frame_identity_index_v1.yaml (lines 991-1533) currently carry clinical_adjudication_status: required_before_activation — this was set at indexing time. For the 6 runtime activation candidates, this field should be updated to accepted_with_rationale (the valid value used for cleared frames — confirmed at line 109 for creatinine) when activation is recorded, to accurately reflect that BATCH2-CLOSURE-1 cleared them. This is data quality, not a validator constraint — the validator does not enforce any relationship between clinical_adjudication_status and promotion_state. Not a STOP condition. Thyroid frames' required_before_activation remains accurate.",
-      "file_evidence": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:991, 1016, 1100, 1124, 1153, 1178 (six activation candidate frames); medical_frame_identity_index_v1.yaml:109 (accepted_with_rationale as valid value)"
+      "citation": "medical_frame_identity_index_v1.yaml is Intelligence Core adjacent. Cursor must confirm: (1) only promotion_state and runtime_authority_status fields change in the frame index for the 6 candidates; (2) no evaluator logic, ranking, or scoring is altered; (3) no unintended frames are modified; (4) determinism is preserved — same packages active as before except the 6 newly activated (post-approval). Any deviation is a STOP condition."
     },
     {
-      "check": "STOP_CONDITIONS",
+      "check": "RUNTIME_BOUNDARY_PROHIBITED_FILES",
       "result": "PASS",
-      "detail": "10 STOP conditions present and well-formed. STOP condition 4 (thyroid packages proposed for activation without sign-off evidence) is new in amended prompt and correctly protects against regression. Phase 2 mandatory STOP gate is explicit, requires human approval phrase 'APPROVE BATCH2 RUNTIME ACTIVATION' before any activation. Closure STOP conditions list all prohibited file changes including thyroid metadata exception.",
-      "file_evidence": "automation_bus/latest_cursor_prompt.md:539-554; 246-280; 596-607"
+      "citation": "automation_bus/latest_cursor_prompt.md lines 299-315 — prohibited: signal_library.yaml, research_brief.yaml, promoted_signal_intelligence.yaml, thresholds, activation_key, signal_id, clinical wording, frontend, SignalEvaluator, SignalRegistry code, runtime loaders, SSOT, scoring. Out-of-scope list at lines 517-535 repeats prohibition."
     },
     {
-      "check": "RUNTIME_BOUNDARY_PROTECTION",
-      "result": "PASS",
-      "detail": "Prompt prohibits: signal_library.yaml, research_brief.yaml, promoted_signal_intelligence.yaml, thresholds, activation_key, signal_id, clinical wording, frontend, SignalEvaluator, SignalRegistry code, runtime loaders, SSOT, scoring. Out of scope section repeats thyroid activation prohibition explicitly.",
-      "file_evidence": "automation_bus/latest_cursor_prompt.md:299-315, 517-535"
+      "check": "NO_OP_PROTECTION",
+      "result": "PASS — NOT A NO-OP",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md line 75 — CF-BATCH2-012 explicitly Open, deferred pending approval phrase. Six packages are in governance_promoted_pending_runtime_activation state. Real governance state transition to perform."
     },
     {
-      "check": "EXECUTION_REGISTER_SCHEMA",
-      "result": "PASS",
-      "detail": "New schema correctly adds governance_promoted_package_count, activation_candidate_count, thyroid_deferred_count, deferred_package_count. activation_candidates section (renamed from included_packages) and thyroid_deferred_packages section are new. Schema is coherent with the split between 6 activation candidates and 4 deferred thyroid packages. File does not exist yet — correct, it is a sprint deliverable.",
-      "file_evidence": "automation_bus/latest_cursor_prompt.md:350-399; knowledge_bus/governance/ (batch2_runtime_activation_execution_register_v1.yaml absent)"
-    },
-    {
-      "check": "CARRY_FORWARD_ALIGNMENT",
-      "result": "PASS",
-      "detail": "CF-BATCH2-012 (runtime activation of cleared non-thyroid Batch 2 promoted subset) and CF-BATCH2-013 (thyroid clinical sign-off required before thyroid runtime activation) are new items not yet in register — correct. CF-BATCH2-011 confirmed Resolved in register at line 74. CF-BATCH2-007, CF-BATCH2-010, CF-CONTEXT-MOD-3 correctly remain Open.",
-      "file_evidence": "docs/sprints/launch_core_carry_forward_register.md:70-75 (no CF-BATCH2-012 or CF-BATCH2-013 present — confirmed by grep)"
-    },
-    {
-      "check": "FORBIDDEN_FILES",
-      "result": "CONFIRMED_CLEAN",
-      "detail": "No forbidden files in scope. Sprint touches only: medical_frame_identity_index_v1.yaml, package_manifest.yaml (10 packages), batch2_runtime_activation_execution_register_v1.yaml (new), audit report (new), carry-forward register update. None of these are in the HIGH-risk code paths (backend/core/, run_work_package.py, golden_gate_local.py, SSOT).",
-      "file_evidence": "automation_bus/latest_cursor_prompt.md:287-315 (allowed changes); CLAUDE.md §7 (forbidden files list)"
+      "check": "BRANCH_DISCIPLINE",
+      "result": "ADVISORY",
+      "citation": "No active token exists (work_package_active.json not found). Cursor must verify current branch is main and local main equals origin/main before starting. Prompt baseline STOP condition at lines 89-96 covers this."
     }
   ]
 }

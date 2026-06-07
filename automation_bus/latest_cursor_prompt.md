@@ -1,52 +1,54 @@
 ---
-work_id: BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion
-branch: work/BATCH2-PROMOTE-1-CONTINUATION-runtime-activation-stop-gated-completion
+work_id: BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset
+branch: work/BATCH2-ACTIVATION-1-runtime-activate-cleared-non-thyroid-subset
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# BATCH2-PROMOTE-1-CONTINUATION — Runtime Activation STOP-Gated Completion
+# BATCH2-ACTIVATION-1 — Runtime Activate Cleared Non-Thyroid Batch 2 Subset
 
 ## Purpose
 
-Complete the missing STOP-gated runtime activation phase for the Batch 2 packages already governance-promoted in `BATCH2-PROMOTE-1`.
+Runtime-activate only the six Batch 2 packages that remain clear after final promotion closure and thyroid clinical sign-off review.
 
-This sprint must not reopen Batch 2 discovery, readiness review, medical review, frame indexing, provenance correction, or promotion scoping.
-
-The goal is:
+This sprint must activate:
 
 ```text
-Take the same 10 governance-promoted Batch 2 packages
-→ perform a STOP gate for human approval
-→ activate only the runtime-cleared subset if approved
-→ defer thyroid packages inside this sprint because sign-off is missing
-→ validate runtime authority, rollback, and exclusions
-→ close the cleared Batch 2 promotion package
+pkg_kb47_creatine_kinase_high_exertional_muscle_injury
+pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
+pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
 ````
 
-Do not include androgen packages.
-Do not include eGFR packages.
-Do not add new candidates.
-Do not split this into another micro-sprint.
+This sprint must not activate thyroid, androgen, or eGFR packages.
+
+The thyroid clinical sign-off returned `APPROVE_SUBSET`, with TSH mandatory before all four thyroid patterns are activated. FT3 low additionally requires TSH + FT4 + illness/medication context. Therefore thyroid remains governance-promoted but runtime-deferred. 
 
 ---
 
 ## Strategic framing
 
-`BATCH2-PROMOTE-1` governance-promoted the cleared subset but did not activate them at runtime.
+Batch 2 is no longer a discovery or readiness problem.
 
-The correct outcome-based pattern is:
+The current state is:
 
 ```text
-governance promotion
-→ STOP gate
-→ runtime activation of activation-cleared packages if approved
-→ explicit deferral of packages with unresolved blockers
-→ validation / rollback / closure
+- 20 Batch 2 packages exist
+- 10 were governance-promoted
+- 6 are runtime activation candidates
+- 4 thyroid packages are deferred pending TSH-gated activation logic
+- 8 androgen packages remain blocked pending clinical sign-off/context runtime work
+- 2 eGFR packages remain blocked pending creatinine/eGFR adjudication
 ```
 
-This continuation sprint completes that missing activation phase without creating another review sprint.
+This sprint completes runtime activation for the six genuinely cleared packages only.
+
+Do not reopen Batch 2 scoping.
+Do not create another readiness sprint.
+Do not broaden the package set.
 
 ---
 
@@ -58,6 +60,7 @@ Expected prior completed work:
 
 ```text
 BATCH2-PROMOTE-1 merged
+BATCH2-PROMOTE-1-CONTINUATION merged
 BATCH2-CLOSURE-1 merged
 BATCH2-CONTEXT-MOD-1 merged
 BATCH2-MEDREVIEW-1 merged
@@ -87,6 +90,7 @@ STOP if:
 - local main does not equal origin/main
 - working tree is not clean
 - BATCH2-PROMOTE-1 execution register is missing
+- BATCH2-PROMOTE-1-CONTINUATION execution register is missing
 - final Batch 2 promotion decision register is missing
 - runtime activation mechanism cannot be identified
 ```
@@ -99,55 +103,32 @@ Read before work:
 
 ```text
 knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml
+knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml
 knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml
 knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 docs/audit-papers/BATCH2-PROMOTE-1_cleared_wave_package_promotion.md
+docs/audit-papers/BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion.md
 docs/audit-papers/BATCH2-CLOSURE-1_final_batch2_promotion_decision.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Inspect runtime authority / package loading mechanisms:
+Also ingest the thyroid clinical sign-off content if present in repo. If not present, create a governance summary from the supplied sign-off:
 
 ```text
-knowledge_bus/current/latest_knowledge_status.json
-SignalRegistry / package registry loader
-Knowledge Bus package loading code
-backend/scripts/validate_knowledge_package.py
-backend/scripts/run_architecture_validation_gate.py
+thyroid sign-off verdict: APPROVE_SUBSET
+TSH mandatory before all thyroid activation
+FT3 low requires TSH + FT4 + illness/medication context
 ```
 
-If paths differ, locate and report actual paths.
-
----
-
-## Governance-promoted package set
-
-The following 10 packages were governance-promoted in `BATCH2-PROMOTE-1` and remain in scope for reconciliation:
-
-```text
-pkg_kb47_creatine_kinase_high_exertional_muscle_injury
-pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
-pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
-pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
-pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
-pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
-pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
-pkg_kb47_free_t3_low_low_t3_syndrome
-pkg_kb47_free_t4_high_thyrotoxicosis_context
-pkg_kb47_free_t4_low_thyroid_hormone_deficiency
-```
-
-However, governance promotion is not the same as runtime activation.
-
-Only packages without unresolved activation blockers may be runtime-activated.
+Do not activate thyroid in this sprint.
 
 ---
 
 ## Runtime activation candidate subset
 
-Expected runtime activation candidate subset:
+Only these six packages may be runtime-activated:
 
 ```text
 pkg_kb47_creatine_kinase_high_exertional_muscle_injury
@@ -158,15 +139,11 @@ pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
 pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
 ```
 
-These 6 packages may proceed to STOP-gated runtime activation if all preflight checks pass and human approval is explicitly provided.
-
 ---
 
-## Thyroid activation boundary
+## Runtime-deferred thyroid subset
 
-The four thyroid packages are governance-promoted but must not be runtime-activated in this sprint because clinical sign-off before activation is documented as required and no sign-off record exists in the repo.
-
-Affected packages:
+These four packages must remain runtime-deferred:
 
 ```text
 pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
@@ -175,22 +152,25 @@ pkg_kb47_free_t4_high_thyrotoxicosis_context
 pkg_kb47_free_t4_low_thyroid_hormone_deficiency
 ```
 
-These packages must be included in the execution register as:
+Deferral reasons:
 
 ```yaml
-governance_promoted: true
-runtime_activation_deferred: true
-deferred_reason: thyroid_clinical_signoff_required_before_activation
-activated: false
+pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis:
+  deferred_reason: thyroid_activation_requires_tsh_gating
+
+pkg_kb47_free_t3_low_low_t3_syndrome:
+  deferred_reason: thyroid_activation_requires_tsh_ft4_and_illness_medication_context
+
+pkg_kb47_free_t4_high_thyrotoxicosis_context:
+  deferred_reason: thyroid_activation_requires_tsh_gating
+
+pkg_kb47_free_t4_low_thyroid_hormone_deficiency:
+  deferred_reason: thyroid_activation_requires_tsh_gating
 ```
-
-Do not activate thyroid packages unless an explicit clinical sign-off record already exists in the repo.
-
-If no such record exists, defer them inside this sprint and do not create another sprint solely to discover that.
 
 ---
 
-## Explicitly excluded package set
+## Explicitly excluded packages
 
 These 10 packages must remain untouched and inactive:
 
@@ -211,41 +191,40 @@ STOP if any excluded package appears in the diff.
 
 ---
 
-## Phase 1 — Activation preflight
+## Required preflight
 
-Before any activation change, produce a preflight report covering:
+Before runtime activation, report:
 
 ```text
-1. The same 10 packages are governance-promoted in BATCH2-PROMOTE-1.
-2. The same 10 packages are listed as cleared in BATCH2-CLOSURE-1.
-3. The 10 excluded packages remain blocked.
-4. The four thyroid packages are identified as runtime-deferred pending clinical sign-off.
-5. The six non-thyroid packages are identified as runtime activation candidates.
-6. All 10 governance-promoted packages validate.
-7. All runtime activation candidate activation keys are unique.
-8. No active duplicate activation key exists.
-9. Runtime activation mechanism is identified.
-10. Exact files that would change for activation.
-11. Rollback path.
-12. Confirmation no medical logic needs changing.
+1. six activation candidate packages found
+2. four thyroid packages deferred with correct blocker
+3. ten excluded packages confirmed out of scope
+4. all six candidate packages validate
+5. activation keys are unique
+6. no active duplicate activation key exists
+7. runtime activation mechanism identified
+8. exact files expected to change
+9. rollback path
+10. confirmation no medical logic needs changing
 ```
 
 STOP if:
 
 ```text
-- any governance-promoted package fails validation
-- any excluded package is required
-- activation mechanism is unclear
-- duplicate active authority would be created
+- any candidate package fails validation
+- any candidate package is not governance-promoted
+- any candidate package is not listed in the final cleared subset
+- any thyroid/androgen/eGFR package would be activated
+- activation-key collision is detected
 - rollback path cannot be defined
-- thyroid sign-off is missing but thyroid packages are still proposed for activation
+- runtime activation requires code changes
 ```
 
 ---
 
-## Phase 2 — Mandatory STOP gate
+## Mandatory STOP gate
 
-After Phase 1, Cursor must STOP and report:
+Cursor must STOP before activation and report:
 
 ```text
 READY_FOR_HUMAN_STOP_GATE
@@ -254,9 +233,9 @@ READY_FOR_HUMAN_STOP_GATE
 The STOP report must include:
 
 ```text
-- six runtime activation candidate packages
-- four thyroid runtime-deferred packages
-- ten excluded packages
+- six packages proposed for activation
+- four thyroid packages deferred
+- ten excluded packages untouched
 - activation files proposed
 - runtime effect expected
 - validator status
@@ -264,34 +243,26 @@ The STOP report must include:
 - explicit statement that activation has not yet been performed
 ```
 
-No activation may occur until the human explicitly approves continuation.
-
-The approval phrase is:
+No activation may occur until the human explicitly approves continuation with:
 
 ```text
 APPROVE BATCH2 RUNTIME ACTIVATION
 ```
 
-If approval is not provided, the sprint must close as:
-
-```text
-governance promotion complete / runtime activation deferred
-```
-
 ---
 
-## Phase 3 — Runtime activation, only if approved
+## Runtime activation, only if approved
 
 If and only if human approval is given, activate only the six runtime activation candidate packages using the existing Knowledge Bus / runtime authority mechanism.
 
 Allowed changes may include only:
 
 ```text
-- existing runtime package authority file, if this is the repo convention
-- latest_knowledge_status.json, if this is the repo convention
+- existing runtime package authority file, if repo convention requires
+- latest_knowledge_status.json, if repo convention requires
 - medical_frame_identity_index_v1.yaml status updates, if needed to reflect activation
 - package manifest governance/runtime status metadata, if repo convention requires
-- execution register
+- runtime activation execution register
 - audit report
 - carry-forward register
 ```
@@ -318,27 +289,6 @@ STOP if activation would require code changes.
 
 ---
 
-## Runtime activation rules
-
-Activation may proceed only if:
-
-```text
-- package was included in BATCH2-PROMOTE-1 execution register
-- package is listed as cleared in final decision register
-- package is not a thyroid package requiring sign-off
-- package validator passes
-- activation key is unique
-- excluded packages remain inactive
-- rollback path exists
-- architecture gate passes after activation
-```
-
-Thyroid packages must be deferred unless explicit clinical sign-off already exists in the repo.
-
-Androgen and eGFR packages remain excluded.
-
----
-
 ## Required execution register
 
 Create or update:
@@ -355,18 +305,17 @@ runtime_consumed: false
 status:
 work_id:
 source_governance_promotion_register:
+source_stop_gate_register:
 human_stop_gate:
   required: true
   approval_received:
   approval_phrase:
   approval_recorded_at:
 runtime_activation_performed:
-governance_promoted_package_count:
 activation_candidate_count:
 thyroid_deferred_count:
 excluded_package_count:
 activated_package_count:
-deferred_package_count:
 rollback_path:
 activation_candidates:
   - package_id:
@@ -377,7 +326,6 @@ activation_candidates:
     post_activation_state:
     package_validator_status:
     duplicate_authority_check:
-    governance_promoted:
     activated:
     rollback_action:
     notes:
@@ -386,10 +334,9 @@ thyroid_deferred_packages:
     package_path:
     signal_id:
     activation_key:
-    governance_promoted:
     runtime_activation_deferred:
     deferred_reason:
-    activated:
+    activated: false
     required_next_action:
     notes:
 excluded_packages:
@@ -405,22 +352,20 @@ excluded_packages:
 Create:
 
 ```text
-docs/audit-papers/BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion.md
+docs/audit-papers/BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset.md
 ```
 
 Report must include:
 
 ```text
 - executive verdict
-- Phase 1 preflight findings
+- preflight findings
 - STOP gate outcome
-- whether human approval was received
+- human approval status
 - six runtime activation candidate packages
 - four thyroid runtime-deferred packages
 - ten excluded packages
 - packages activated, if any
-- packages deferred
-- excluded package confirmation
 - runtime authority files changed
 - rollback path
 - validator output pasted in full
@@ -428,7 +373,7 @@ Report must include:
 - confirmation no medical logic changed
 - confirmation no excluded package changed
 - carry-forward updates
-- final Batch 2 cleared-promotion status
+- final Batch 2 activation status
 ```
 
 ---
@@ -444,14 +389,11 @@ docs/sprints/launch_core_carry_forward_register.md
 Expected handling:
 
 ```text
-CF-BATCH2-011
-Should already be resolved by BATCH2-PROMOTE-1. Do not reopen unless governance promotion is found invalid.
+CF-BATCH2-012
+Resolve only if six non-thyroid packages are runtime-activated successfully.
 
-Add or resolve:
-CF-BATCH2-012 — runtime activation of cleared non-thyroid Batch 2 promoted subset.
-
-Add or retain:
-CF-BATCH2-013 — thyroid clinical sign-off required before thyroid runtime activation.
+CF-BATCH2-013
+Remain Open. Thyroid activation requires TSH-gated activation logic and sign-off.
 
 CF-BATCH2-007
 Remain Open. eGFR adjudication remains excluded.
@@ -463,13 +405,13 @@ CF-CONTEXT-MOD-3
 Remain Open. Runtime Layer B context evaluation remains excluded.
 ```
 
-If human STOP approval is not provided, leave CF-BATCH2-012 open with status “deferred pending approval”.
+If approval is not provided, leave CF-BATCH2-012 open with status “deferred pending approval”.
 
 ---
 
 ## Required validations
 
-Before activation, run:
+Before activation, run and paste actual output:
 
 ```powershell
 python backend/scripts/run_architecture_validation_gate.py
@@ -477,7 +419,7 @@ python backend/scripts/validate_medical_frame_identity_index.py --index knowledg
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 ```
 
-Validate all 10 governance-promoted packages:
+Validate all six activation candidate packages:
 
 ```powershell
 python backend/scripts/validate_knowledge_package.py --package-dir <package_dir>
@@ -519,12 +461,13 @@ If runtime code changes are required, STOP and report.
 Do not:
 
 ```text
-- activate thyroid packages without clinical sign-off
+- activate thyroid packages
 - activate androgen packages
 - activate eGFR packages
-- resolve androgen clinical sign-off
 - resolve thyroid clinical sign-off
+- resolve androgen clinical sign-off
 - resolve eGFR/creatinine adjudication
+- implement TSH-gated thyroid activation logic
 - implement Layer B context evaluation
 - change signal logic
 - change thresholds
@@ -541,16 +484,17 @@ Do not:
 STOP and report if:
 
 ```text
-1. any governance-promoted package fails validation
-2. any package is not listed as cleared in final decision register
-3. any excluded package would be modified
-4. thyroid packages are proposed for activation without sign-off evidence
-5. activation-key collision is detected
-6. runtime activation mechanism is unclear
-7. activation would require runtime code changes
-8. validators fail
-9. architecture gate fails
-10. rollback path cannot be defined
+1. any activation candidate fails validation
+2. any candidate is not listed as cleared in final decision register
+3. any thyroid package would be activated
+4. any androgen or eGFR package would be activated
+5. any excluded package would be modified
+6. activation-key collision is detected
+7. runtime activation mechanism is unclear
+8. activation would require runtime code changes
+9. validators fail
+10. architecture gate fails
+11. rollback path cannot be defined
 ```
 
 ---
@@ -562,7 +506,7 @@ Cursor must report:
 ```text
 1. baseline branch/status evidence
 2. files inspected
-3. Phase 1 preflight report
+3. preflight report
 4. STOP gate report
 5. human approval status
 6. runtime activation candidate packages
@@ -596,10 +540,10 @@ git stash list
 Do not run finish unless:
 
 ```text
-- current branch matches work/BATCH2-PROMOTE-1-CONTINUATION-runtime-activation-stop-gated-completion
+- current branch matches work/BATCH2-ACTIVATION-1-runtime-activate-cleared-non-thyroid-subset
 - only in-scope authority/governance/docs/register/package-metadata files changed
 - no excluded package files changed
-- no thyroid package files changed unless only documenting runtime deferral
+- no thyroid package files changed except governance deferral documentation
 - no runtime/frontend/evaluator code changed
 - no ambiguous stash exists
 - validators pass
@@ -613,17 +557,17 @@ Do not run finish unless:
 This sprint is complete only if:
 
 ```text
-1. Phase 1 preflight is complete
+1. preflight is complete
 2. STOP gate occurs before activation
 3. no activation occurs without explicit human approval
-4. only activation-cleared non-thyroid packages are activated if approved
-5. thyroid packages are explicitly deferred pending clinical sign-off
+4. only six non-thyroid packages are activated if approved
+5. thyroid packages are explicitly deferred with sign-off/gating blockers
 6. androgen and eGFR packages remain untouched and inactive
 7. rollback path is documented
 8. no medical logic changes occur
 9. no runtime/frontend/evaluator code changes occur
 10. architecture gate passes
-11. Batch 2 cleared promotion package is closed with activated and deferred subsets clearly documented
+11. Batch 2 activation status is clearly closed or deferred
 ```
 
 ```
