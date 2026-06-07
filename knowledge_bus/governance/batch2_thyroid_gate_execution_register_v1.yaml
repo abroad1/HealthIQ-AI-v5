@@ -1,0 +1,104 @@
+schema_version: 1.0.0
+runtime_consumed: true
+status: stop_gate_pending_human_approval
+work_id: BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation
+source_thyroid_signoff: docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md
+source_remainder_resolution: knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml
+human_stop_gate:
+  required: true
+  approval_received: false
+  approval_phrase: APPROVE BATCH2 THYROID GATED ACTIVATION
+  approval_recorded_at: null
+tsh_gating_implemented: true
+runtime_activation_performed: false
+activated_package_count: 0
+deferred_package_count: 1
+excluded_package_count: 10
+rollback_path: Revert signal_evaluator.py mandatory_pre_emission_gates logic; remove mandatory_pre_emission_gates
+  and restore enable_lower_bound on eligible package signal_library.yaml files; if
+  metadata activation later applied, revert medical_frame_identity_index and package
+  manifest activation fields for affected packages only.
+gate_implementation:
+  evaluator: backend/core/analytics/signal_evaluator.py — _passes_mandatory_pre_emission_gates
+  gate_types:
+    tsh_suppressed: lab_range_boundary below_min on tsh
+    tsh_present: biomarker_present on tsh
+  packages_modified:
+  - pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  - pkg_kb47_free_t4_high_thyrotoxicosis_context
+  - pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  regression_tests: backend/tests/regression/test_batch2_thyroid_tsh_gating.py
+activated_packages:
+- package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  signal_id: signal_free_t3_high
+  activation_key: signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis
+  required_gate: TSH suppressed (below lab min)
+  gate_test_status: PASS
+  pre_activation_state: governance_promoted_pending_runtime_activation
+  post_activation_state: runtime_active_canonical (pending approval)
+  activated: false
+  rollback_action: Remove mandatory_pre_emission_gates; revert frame index and manifest if activated
+  notes: Awaiting human STOP gate approval.
+- package_id: pkg_kb47_free_t4_high_thyrotoxicosis_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context
+  signal_id: signal_free_t4_high
+  activation_key: signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context
+  required_gate: TSH suppressed (below lab min)
+  gate_test_status: PASS
+  pre_activation_state: governance_promoted_pending_runtime_activation
+  post_activation_state: runtime_active_canonical (pending approval)
+  activated: false
+  rollback_action: Remove mandatory_pre_emission_gates; revert frame index and manifest if activated
+  notes: Awaiting human STOP gate approval.
+- package_id: pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  package_path: knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  signal_id: signal_free_t4_low
+  activation_key: signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency
+  required_gate: TSH present (any value)
+  gate_test_status: PASS
+  pre_activation_state: governance_promoted_pending_runtime_activation
+  post_activation_state: runtime_active_canonical (pending approval)
+  activated: false
+  rollback_action: Remove mandatory_pre_emission_gates; revert enable_lower_bound; revert frame index if activated
+  notes: enable_lower_bound fixed true; awaiting human STOP gate approval.
+deferred_thyroid_packages:
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
+  signal_id: signal_free_t3_low
+  activation_key: signal_free_t3_low::inv_free_t3_low_low_t3_syndrome
+  deferred_reason: thyroid_tsh_ft4_context_required
+  activated: false
+  required_next_action: CF-CONTEXT-MOD-3 Layer B evaluation plus TSH+FT4+illness context gate
+  notes: Package and signal_library intentionally untouched this sprint.
+excluded_packages:
+- package_id: pkg_kb47_dhea_high_androgen_excess_context
+  exclusion_reason: BATCH2 remainder investigation — androgen blocked
+  confirmed_untouched: true
+- package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  exclusion_reason: BATCH2 remainder investigation — androgen blocked
+  confirmed_untouched: true
+- package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  exclusion_reason: BATCH2 remainder investigation — androgen blocked
+  confirmed_untouched: true
+- package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  exclusion_reason: BATCH2 remainder investigation — androgen blocked
+  confirmed_untouched: true
+- package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  exclusion_reason: BATCH2 remainder investigation — androgen blocked
+  confirmed_untouched: true
+- package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  exclusion_reason: BATCH2 remainder investigation — androgen blocked
+  confirmed_untouched: true
+- package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  exclusion_reason: BATCH2 remainder investigation — androgen blocked
+  confirmed_untouched: true
+- package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  exclusion_reason: BATCH2 remainder investigation — androgen blocked
+  confirmed_untouched: true
+- package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  exclusion_reason: BATCH2 remainder investigation — eGFR authority blocked
+  confirmed_untouched: true
+- package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  exclusion_reason: BATCH2 remainder investigation — eGFR authority blocked
+  confirmed_untouched: true

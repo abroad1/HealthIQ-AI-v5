@@ -46,8 +46,12 @@ signals:
   activation_logic: lab_range_exceeded
   activation_config:
     upper_bound_state: suboptimal
-    enable_lower_bound: false
+    enable_lower_bound: true
     lower_bound_state: suboptimal
+  mandatory_pre_emission_gates:
+  - gate_id: require_tsh_present
+    metric_id: tsh
+    comparator_type: biomarker_present
   override_rules:
   - rule_id: or_free_t4_low_with_tsh_high
     resulting_state: at_risk

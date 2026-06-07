@@ -48,6 +48,12 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
+  mandatory_pre_emission_gates:
+  - gate_id: require_tsh_suppressed
+    metric_id: tsh
+    comparator_type: lab_range_boundary
+    boundary: below_min
+    condition_type: all_of
   override_rules:
   - rule_id: or_free_t4_high_with_tsh_low
     resulting_state: at_risk

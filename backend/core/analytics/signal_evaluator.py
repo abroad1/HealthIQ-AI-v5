@@ -377,6 +377,48 @@ class SignalEvaluator:
 
         return best_state, best_satisfied_count
 
+    def _passes_mandatory_pre_emission_gates(
+        self,
+        signal: Dict[str, Any],
+        signal_biomarkers: Dict[str, float],
+        signal_derived: Dict[str, float],
+        lab_ranges: Dict[str, dict],
+    ) -> bool:
+        gates = signal.get("mandatory_pre_emission_gates")
+        if not isinstance(gates, list) or not gates:
+            return True
+
+        for gate in gates:
+            if not isinstance(gate, dict):
+                return False
+
+            comparator_type = str(gate.get("comparator_type", "")).strip()
+            metric_id = str(gate.get("metric_id", "")).strip()
+            if not metric_id:
+                return False
+
+            if comparator_type == "biomarker_present":
+                observed = self._resolve_condition_metric_value(
+                    metric_id=metric_id,
+                    signal_biomarkers=signal_biomarkers,
+                    signal_derived=signal_derived,
+                )
+                if observed is None:
+                    return False
+                continue
+
+            condition = dict(gate)
+            condition.setdefault("condition_type", "all_of")
+            if not self._evaluate_single_condition(
+                condition=condition,
+                signal_biomarkers=signal_biomarkers,
+                signal_derived=signal_derived,
+                lab_ranges=lab_ranges or {},
+            ):
+                return False
+
+        return True
+
     def _lab_normal_but_flagged(
         self,
         primary_metric: str,
@@ -439,6 +481,14 @@ class SignalEvaluator:
                 signal_derived=signal_derived,
                 lab_ranges=lab_ranges or {},
             )
+
+            if not self._passes_mandatory_pre_emission_gates(
+                signal=signal,
+                signal_biomarkers=signal_biomarkers,
+                signal_derived=signal_derived,
+                lab_ranges=lab_ranges or {},
+            ):
+                continue
 
             output = signal.get("output", {})
             supporting_markers = []
