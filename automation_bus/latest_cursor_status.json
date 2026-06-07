@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-EGFR-AUTHORITY-1-renal-signal-authority-and-reusable-collision-model",
+  "branch": "work/CF-AUTHORITY-RUNTIME-1-runtime-signal-authority-collision-enforcement",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-07T16:34:29Z",
-  "cursor_started_utc": "2026-06-07T16:30:35Z",
-  "head_sha": "eb455af0f56269fd93a1e3f3644ef4b6f8efc9ae",
+  "cursor_started_utc": "2026-06-07T18:24:52Z",
+  "head_sha": "853fa4c7ddcfd2b10876cab8041f69ea920822bb",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model"
+  "status": "IN_PROGRESS",
+  "work_id": "CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement"
 }
