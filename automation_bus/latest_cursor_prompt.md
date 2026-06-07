@@ -1,54 +1,72 @@
 ---
-work_id: BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation
-branch: work/BATCH2-THYROID-GATE-1-mandatory-tsh-gating-and-runtime-activation
+work_id: BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation
+branch: work/BATCH2-REMAINING-BLOCKERS-1-remaining-batch2-blocker-resolution-and-gated-activation
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# BATCH2-THYROID-GATE-1 — Mandatory TSH Gating and Runtime Activation
+# BATCH2-REMAINING-BLOCKERS-1 — Remaining Batch 2 Blocker Resolution and Gated Activation
 
 ## Purpose
 
-Implement mandatory TSH gating for the Batch 2 thyroid packages that have been clinically approved with caveats, then runtime-activate only the thyroid packages that can be safely gated.
+Resolve the remaining blocked Batch 2 packages in one outcome-based sprint.
 
-This sprint must address the remaining thyroid Batch 2 package set in one outcome-based work package.
+This sprint must address all remaining non-active Batch 2 packages:
 
-Do not split this into separate FT3 / FT4 / sign-off / activation sprints.
+```text
+1. FT3 low ×1
+2. Androgen panel ×8
+3. eGFR ×2
+````
+
+The goal is not to wait for perfect future medical intelligence. The goal is to decide what can be safely activated now with enforceable gates, and what must remain formally blocked because the current runtime cannot safely enforce the required context or authority rules.
+
+Do not split this into separate marker-by-marker sprints.
 
 ---
 
-## Strategic framing
+## Current Batch 2 state
 
-`BATCH2-REMAINDER-RESOLUTION-1` concluded:
+Runtime active:
 
 ```text
-FT3 high, FT4 high, FT4 low:
-READY_IF_RUNTIME_GATE_IMPLEMENTED
+creatine_kinase ×2
+eosinophil_pct ×2
+eosinophils_abs ×2
+free_t3_high
+free_t4_high
+free_t4_low
+```
 
+Still inactive / blocked:
+
+```text
+free_t3_low ×1
+androgen ×8
+eGFR ×2
+```
+
+The previous investigation concluded:
+
+```text
 FT3 low:
-FORMALLY_BLOCKED_KEEP_INACTIVE
-````
+- requires TSH + FT4 + illness / medication context
+- remains formally blocked until runtime context capability exists
 
-The thyroid clinical sign-off stated:
+Androgen:
+- context-heavy
+- depends on sex, age, SHBG, medication / hormone use, steroids / supplements and symptoms
+- context modifiers exist in governance but are not runtime-active
+- remains blocked unless a safe runtime gate can be enforced
 
-```text
-TSH is mandatory before all four thyroid patterns are activated.
-
-FT3 low also requires:
-- TSH
-- FT4
-- illness / medication context
+eGFR:
+- authority conflict with creatinine / eGFR escalation
+- must avoid duplicate renal dysfunction signalling
+- requires renal authority decision before activation
 ```
 
-Therefore, this sprint must:
-
-```text
-1. implement mandatory TSH gating for FT3 high, FT4 high and FT4 low
-2. runtime-activate those 3 packages only if the gate is enforceable
-3. keep FT3 low inactive
-4. keep androgen and eGFR excluded
-```
+The prior Batch 2 remainder investigation confirmed these blockers and recommended thyroid TSH gating first, with eGFR and androgen remaining as defined resolution paths. 
 
 ---
 
@@ -59,8 +77,9 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
-BATCH2-REMAINDER-RESOLUTION-1 merged
+BATCH2-THYROID-GATE-1 merged
 BATCH2-ACTIVATION-1 merged
+BATCH2-REMAINDER-RESOLUTION-1 merged
 BATCH2-PROMOTE-1 merged
 BATCH2-CLOSURE-1 merged
 BATCH2-CONTEXT-MOD-1 merged
@@ -90,10 +109,10 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- BATCH2-REMAINDER-RESOLUTION-1 artefacts are missing
-- thyroid clinical sign-off document is missing
+- Batch 2 remainder resolution register is missing
+- thyroid gate execution register is missing
 - medical frame identity index is missing
-- runtime signal gating mechanism cannot be located
+- context modifier catalogue is missing
 ```
 
 ---
@@ -104,68 +123,80 @@ Read before implementation:
 
 ```text
 knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml
+knowledge_bus/governance/batch2_thyroid_gate_execution_register_v1.yaml
 knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml
 knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml
+knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml
+knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md
 docs/audit-papers/BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation.md
-docs/audit-papers/BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset.md
+docs/audit-papers/BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Inspect these package folders:
+Inspect the remaining package folders:
 
 ```text
-knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis/
 knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/
-knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context/
-knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency/
+
+knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/
+knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/
+knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/
+knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability/
+knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/
+knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context/
+knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction/
+knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction/
+
+knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/
+knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/
 ```
 
-Inspect runtime gating/evaluation code:
+Inspect runtime gating and authority code:
 
 ```text
-SignalEvaluator
-SignalRegistry
-Knowledge Bus runtime package loader
-signal evaluation rule handling
-override / escalation rule handling
-backend tests covering signal evaluation
+backend/core/analytics/signal_evaluator.py
+SignalRegistry / package registry loader
+signal evaluation tests
+renal / domain scoring or duplicate-signal handling if present
+context modifier runtime handling if present
 ```
-
-If paths differ, locate and report actual paths.
 
 ---
 
-## In-scope thyroid packages
+## Sprint principle
 
-### Eligible for TSH-gated activation if enforceable
+This sprint must not become another investigation-only loop unless implementation is genuinely impossible.
+
+For every remaining package, reach one of these outcomes:
 
 ```text
-pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
-pkg_kb47_free_t4_high_thyrotoxicosis_context
-pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+1. runtime activate with enforceable gates
+2. keep inactive with formal blocker recorded
+3. create one consolidated runtime capability requirement if current architecture cannot safely support activation
 ```
 
-### Must remain blocked
+Do not create new carry-forwards for individual markers unless unavoidable.
+
+---
+
+## In-scope package groups
+
+### Group A — FT3 low
 
 ```text
 pkg_kb47_free_t3_low_low_t3_syndrome
 ```
 
-Reason:
+Known requirement:
 
 ```text
-FT3 low requires TSH + FT4 + illness / medication context.
-Current runtime architecture does not yet support that full context pathway.
+TSH + FT4 + illness / medication context
 ```
 
----
-
-## Explicitly excluded packages
-
-Do not modify, activate or reclassify:
+### Group B — androgen panel
 
 ```text
 pkg_kb47_dhea_high_androgen_excess_context
@@ -176,190 +207,207 @@ pkg_kb47_free_testosterone_high_androgen_excess_context
 pkg_kb47_free_testosterone_low_androgen_deficiency_context
 pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
 pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+```
+
+Known requirement:
+
+```text
+sex / age / SHBG / medication / hormone / steroid / supplement / symptom context
+```
+
+### Group C — eGFR
+
+```text
 pkg_kb47_egfr_low_chronic_kidney_function_reduction
 pkg_kb47_egfr_low_hemodynamic_filtration_drop
 ```
 
-STOP if any excluded androgen or eGFR package appears in the diff.
-
----
-
-## Required clinical gating rules
-
-The three eligible thyroid packages must not activate from isolated FT3 / FT4 abnormality.
-
-Implement mandatory TSH gating as follows:
-
-### FT3 high
-
-Package:
+Known requirement:
 
 ```text
-pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
-```
-
-Required gate:
-
-```text
-Free T3 high may emit only when TSH is low/suppressed according to the available lab-specific range / abnormality logic.
-```
-
-If TSH is absent or not low/suppressed:
-
-```text
-do not emit this signal
-```
-
-### FT4 high
-
-Package:
-
-```text
-pkg_kb47_free_t4_high_thyrotoxicosis_context
-```
-
-Required gate:
-
-```text
-Free T4 high may emit only when TSH is low/suppressed according to the available lab-specific range / abnormality logic.
-```
-
-If TSH is absent or not low/suppressed:
-
-```text
-do not emit this signal
-```
-
-### FT4 low
-
-Package:
-
-```text
-pkg_kb47_free_t4_low_thyroid_hormone_deficiency
-```
-
-Required gate:
-
-```text
-Free T4 low may emit only when TSH is available.
-```
-
-Interpretation should remain cautious because low FT4 with non-high TSH may indicate central hypothyroidism or non-thyroidal illness rather than simple primary hypothyroidism.
-
-If TSH is absent:
-
-```text
-do not emit this signal
-```
-
-### FT3 low
-
-Package:
-
-```text
-pkg_kb47_free_t3_low_low_t3_syndrome
-```
-
-Do not activate.
-
-Reason:
-
-```text
-Requires TSH + FT4 + illness / medication context.
-Current runtime pathway is not sufficient.
+renal authority decision and anti-double-counting against creatinine/eGFR escalation
 ```
 
 ---
 
-## Required preflight investigation
+## Explicitly out of scope
 
-Before making changes, report:
-
-```text
-1. How current SignalEvaluator emits primary-marker signals.
-2. Whether package override / escalation rules currently prevent isolated primary marker emission.
-3. Where mandatory supporting-marker gates should live.
-4. Whether TSH abnormality state is available during signal evaluation.
-5. Whether lab-specific reference range interpretation can identify low/suppressed TSH.
-6. Exact files that need to change.
-7. Exact packages that will remain untouched.
-8. Rollback path.
-```
-
-STOP if:
+Do not modify already-active Batch 2 packages except if required by validators and explicitly justified:
 
 ```text
-- mandatory TSH gating cannot be enforced before signal emission
-- TSH state is not available to the evaluator
-- implementation would require broad evaluator redesign
-- implementation would affect unrelated packages
-- rollback path cannot be defined
-```
-
----
-
-## Implementation scope
-
-Allowed changes:
-
-```text
-- minimal runtime gating support if needed to enforce required supporting-marker gates
-- package signal metadata/rule metadata for the three eligible thyroid packages
-- medical frame identity index state for activated thyroid frames
-- package manifest governance/runtime status metadata for activated thyroid packages
-- runtime activation execution register
-- audit report
-- carry-forward register
-- tests covering mandatory TSH gating
+creatine_kinase ×2
+eosinophil_pct ×2
+eosinophils_abs ×2
+free_t3_high
+free_t4_high
+free_t4_low
 ```
 
 Do not change:
 
 ```text
-- clinical wording
-- thresholds
-- activation keys
-- signal IDs
-- research briefs
-- promoted signal intelligence content
-- frontend
-- scoring
-- SSOT
-- unrelated runtime behaviour
-- androgen packages
-- eGFR packages
-- FT3 low package activation state
+clinical wording
+thresholds
+reference ranges
+signal IDs
+activation keys
+frontend
+SSOT
+scoring
+domain score assembly
+report compiler
 ```
 
 ---
 
-## Mandatory tests
+## Phase 1 — Unified blocker resolution analysis
 
-Add or update regression tests proving:
+Before implementation, produce a concise decision table for all 11 remaining packages:
 
-```text
-1. FT3 high does not emit when TSH is absent.
-2. FT3 high does not emit when TSH is not low/suppressed.
-3. FT3 high may emit when FT3 high and TSH low/suppressed.
-
-4. FT4 high does not emit when TSH is absent.
-5. FT4 high does not emit when TSH is not low/suppressed.
-6. FT4 high may emit when FT4 high and TSH low/suppressed.
-
-7. FT4 low does not emit when TSH is absent.
-8. FT4 low may emit when FT4 low and TSH is present.
-
-9. FT3 low remains inactive / not runtime-active.
-10. Androgen and eGFR packages remain inactive.
+```yaml
+package_id:
+current_state:
+known_blocker:
+can_be_safely_gated_now:
+requires_runtime_code_change:
+requires_medical_research:
+requires_architecture_decision:
+recommended_action:
 ```
 
-Use lab-specific range logic where available. Do not hardcode global thyroid ranges.
+Allowed `recommended_action` values:
+
+```text
+ACTIVATE_WITH_GATE_THIS_SPRINT
+KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING
+KEEP_BLOCKED_AUTHORITY_DECISION_REQUIRED
+KEEP_BLOCKED_MEDICAL_SIGNOFF_REQUIRED
+DO_NOT_ACTIVATE
+```
+
+STOP only if package state cannot be reconciled.
+
+---
+
+## Phase 2 — eGFR renal authority decision
+
+Resolve the eGFR authority model.
+
+Answer and implement only if safe:
+
+```text
+1. Is eGFR-low allowed to become an independent runtime signal?
+2. Does eGFR-low duplicate existing creatinine-high / eGFR escalation?
+3. Are anti-double-counting rules already present?
+4. Can both creatinine-high and eGFR-low exist safely with authority metadata / collision rules?
+5. If not, should eGFR remain inactive?
+```
+
+Preferred safe outcome unless anti-double-counting is already enforceable:
+
+```text
+Keep both eGFR packages inactive.
+Record formal blocker:
+renal_authority_and_anti_double_counting_required
+```
+
+Only activate eGFR if the current architecture can demonstrably prevent duplicate renal dysfunction signalling without broad redesign.
+
+Do not invent renal scoring rules.
+
+Do not modify creatinine package logic unless explicitly required and safe.
+
+---
+
+## Phase 3 — androgen context-gated decision
+
+Resolve whether any androgen package can be safely activated now.
+
+Required checks:
+
+```text
+1. Are sex and age available at runtime to SignalEvaluator or equivalent signal context?
+2. Is SHBG available as a biomarker input and accessible to the gate?
+3. Are medication / hormone / steroid / supplement context values runtime-consumed?
+4. Are existing context modifiers runtime-active?
+5. Can the androgen signal be suppressed unless required context exists?
+6. Would activation risk misleading interpretation without Layer B context evaluation?
+```
+
+Preferred safe outcome unless all required runtime context gates are enforceable:
+
+```text
+Keep all 8 androgen packages inactive.
+Record formal blocker:
+androgen_runtime_context_evaluation_required
+```
+
+If a subset can be safely activated with strict fail-closed context gates, implement only that subset and document why.
+
+Do not activate androgen packages merely because governance placeholders exist.
+
+---
+
+## Phase 4 — FT3 low decision
+
+Resolve whether FT3 low can be safely activated now.
+
+Required checks:
+
+```text
+1. Can TSH presence be required?
+2. Can FT4 presence be required?
+3. Can illness / medication context be required before signal emission?
+4. Is illness / medication context runtime-consumed?
+5. If context is unavailable, can FT3 low be safely emitted as a strictly gated or context-missing state?
+```
+
+Preferred safe outcome unless full gating is enforceable:
+
+```text
+Keep FT3 low inactive.
+Record formal blocker:
+ft3_low_requires_layer_b_context
+```
+
+Do not activate FT3 low without TSH + FT4 + illness / medication context.
+
+---
+
+## Phase 5 — Implementation allowed if safe
+
+Allowed implementation actions:
+
+```text
+- add fail-closed pre-emission gates where existing architecture supports them
+- update signal_library.yaml only for packages being safely gated
+- update frame index state only for packages activated after STOP approval
+- update package manifest metadata only for activated packages
+- create / update a remaining blockers execution register
+- create / update audit report
+- update carry-forward register
+- add regression tests for any new gate
+```
+
+Not allowed:
+
+```text
+- broad runtime redesign
+- hardcoded global ranges
+- new clinical claims
+- changes to medical wording
+- changes to thresholds
+- changes to unrelated packages
+- activation without enforceable gates
+```
 
 ---
 
 ## Mandatory STOP gate
 
-After implementation and before activation, STOP and report:
+After analysis and any gating implementation, STOP before any runtime activation.
+
+Report:
 
 ```text
 READY_FOR_HUMAN_STOP_GATE
@@ -368,114 +416,93 @@ READY_FOR_HUMAN_STOP_GATE
 The STOP report must include:
 
 ```text
+- packages proposed for activation, if any
+- packages remaining blocked
+- exact blockers
 - files changed
-- TSH gating implementation summary
-- test results
-- packages proposed for activation
-- packages explicitly deferred
+- tests added
+- validation results
 - rollback path
-- confirmation no excluded packages changed
-- confirmation no medical wording / thresholds changed
+- confirmation no clinical wording / thresholds changed
 ```
-
-No runtime activation may occur until the human explicitly approves.
 
 Approval phrase:
 
 ```text
-APPROVE BATCH2 THYROID GATED ACTIVATION
+APPROVE BATCH2 REMAINING GATED ACTIVATION
 ```
+
+No runtime activation may occur without that approval.
 
 ---
 
 ## Runtime activation after STOP approval
 
-If approval is received, activate only:
+If approval is received, activate only packages that meet all conditions:
 
 ```text
-pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
-pkg_kb47_free_t4_high_thyrotoxicosis_context
-pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+- blocker resolved by enforceable gate or authority rule
+- package validates
+- activation key unique
+- no duplicate clinical signalling risk
+- regression tests pass
+- rollback path exists
 ```
 
-Do not activate:
-
-```text
-pkg_kb47_free_t3_low_low_t3_syndrome
-```
-
-After activation, update governance state consistently.
-
-Expected frame state for activated packages:
-
-```yaml
-promotion_state: runtime_active_canonical
-runtime_authority_status: active
-clinical_adjudication_status: accepted_with_rationale
-```
-
-Expected frame state for FT3 low:
-
-```yaml
-promotion_state: compiled_not_promoted
-runtime_authority_status: inactive
-clinical_adjudication_status: required_before_activation
-```
+If no package meets the bar, close the sprint with all remaining packages formally blocked and no activation.
 
 ---
 
-## Required execution register
+## Required register
 
 Create:
 
 ```text
-knowledge_bus/governance/batch2_thyroid_gate_execution_register_v1.yaml
+knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
 ```
 
-It must include:
+Required structure:
 
 ```yaml
 schema_version:
 runtime_consumed: false
 status:
 work_id:
-source_thyroid_signoff:
 source_remainder_resolution:
 human_stop_gate:
   required: true
   approval_received:
   approval_phrase:
   approval_recorded_at:
-tsh_gating_implemented:
 runtime_activation_performed:
+package_count:
 activated_package_count:
-deferred_package_count:
-excluded_package_count:
-activated_packages:
+blocked_package_count:
+groups:
+  thyroid_ft3_low:
+    outcome:
+    blocker:
+    required_next_action:
+  androgen:
+    outcome:
+    blocker:
+    required_next_action:
+  egfr:
+    outcome:
+    blocker:
+    required_next_action:
+packages:
   - package_id:
     package_path:
-    signal_id:
-    activation_key:
-    required_gate:
-    gate_test_status:
-    pre_activation_state:
-    post_activation_state:
+    group:
+    current_state:
+    blocker_before_sprint:
+    blocker_after_sprint:
+    gate_implemented:
     activated:
-    rollback_action:
-    notes:
-deferred_thyroid_packages:
-  - package_id:
-    package_path:
-    signal_id:
-    activation_key:
-    deferred_reason:
-    activated: false
+    final_state:
     required_next_action:
     notes:
-excluded_packages:
-  - package_id:
-    exclusion_reason:
-    confirmed_untouched:
 ```
 
 ---
@@ -485,7 +512,7 @@ excluded_packages:
 Create:
 
 ```text
-docs/audit-papers/BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation.md
+docs/audit-papers/BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation.md
 ```
 
 Report must include:
@@ -493,21 +520,39 @@ Report must include:
 ```text
 - executive verdict
 - artefacts inspected
-- preflight findings
-- TSH gating implementation details
-- packages activated
-- packages deferred
-- packages excluded
+- 11-package decision table
+- eGFR authority decision
+- androgen context decision
+- FT3 low decision
+- gates implemented, if any
+- packages activated, if any
+- packages remaining blocked
+- exact remaining blockers
 - tests added / updated
 - validation output pasted in full
 - architecture gate output pasted in full
 - STOP gate outcome
 - rollback path
 - carry-forward updates
-- confirmation no medical wording changed
-- confirmation no excluded package changed
+- confirmation no clinical wording / thresholds changed
 - confirmation no unrelated runtime behaviour changed
 ```
+
+---
+
+## Required tests
+
+If any new gate or authority rule is implemented, add regression tests proving:
+
+```text
+- signal does not emit when required gate input is missing
+- signal does not emit when required condition fails
+- signal emits only when all required gate conditions pass
+- unrelated signals remain unaffected
+- blocked packages remain inactive
+```
+
+If no activation is performed and packages remain formally blocked, tests are only required for any changed runtime/gating code.
 
 ---
 
@@ -522,28 +567,24 @@ docs/sprints/launch_core_carry_forward_register.md
 Expected handling:
 
 ```text
-CF-BATCH2-013
-Resolve only if FT3 high, FT4 high and FT4 low are activated with mandatory TSH gating and FT3 low remains explicitly deferred.
+CF-BATCH2-007 — eGFR adjudication
+Resolve only if eGFR is activated safely or formally closed with a final blocker.
 
-CF-BATCH2-007
-Remain Open. eGFR adjudication remains excluded.
+CF-BATCH2-010 — androgen clinical sign-off
+Resolve only if androgen activation is completed or formal blocker replaces it.
 
-CF-BATCH2-010
-Remain Open. Androgen clinical sign-off remains excluded.
-
-CF-CONTEXT-MOD-3
-Remain Open. Runtime Layer B context evaluation remains excluded and still blocks FT3 low and androgen packages.
+CF-CONTEXT-MOD-3 — runtime context evaluation
+Keep open if needed as a broader platform capability.
+Update to include FT3 low and androgen if they remain blocked by context runtime.
 ```
 
-Do not mark FT3 low resolved.
-
-Do not mark androgen or eGFR resolved.
+Do not create new marker-specific carry-forwards unless there is no alternative.
 
 ---
 
 ## Required validations
 
-Before activation, run and paste actual output:
+Run and paste actual output:
 
 ```powershell
 python backend/scripts/run_architecture_validation_gate.py
@@ -551,29 +592,19 @@ python backend/scripts/validate_medical_frame_identity_index.py --index knowledg
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 ```
 
-Validate the four thyroid packages:
+Validate all 11 remaining packages:
 
 ```powershell
 python backend/scripts/validate_knowledge_package.py --package-dir <package_dir>
 ```
 
-Run the new / updated thyroid gating regression tests.
-
-After activation, if approved, rerun:
-
-```powershell
-python backend/scripts/run_architecture_validation_gate.py
-python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-python -m pytest <thyroid gating test path> -q
-```
-
-Paste actual output. Do not provide only summaries.
+Run any new or affected regression tests.
 
 ---
 
 ## Runtime boundary
 
-Runtime changes are allowed only to the minimal extent required to enforce mandatory supporting-marker gating before signal emission.
+Runtime changes are allowed only if they are minimal, fail-closed, tested, and directly required to enforce known gates.
 
 Do not modify:
 
@@ -585,31 +616,12 @@ unit conversion
 domain score assembly
 report compiler
 ranking
-unrelated signal evaluation behaviour
+clinical wording
+reference ranges
+unrelated signal behaviour
 ```
 
-STOP if implementation requires broad runtime redesign.
-
----
-
-## Out of scope
-
-Do not:
-
-```text
-- activate FT3 low
-- activate androgen packages
-- activate eGFR packages
-- resolve androgen clinical sign-off
-- resolve eGFR/creatinine authority
-- implement full Layer B context evaluation
-- add global thyroid reference ranges
-- change clinical wording
-- change thresholds
-- change frontend
-- change scoring
-- change unrelated package logic
-```
+STOP if this requires broad redesign.
 
 ---
 
@@ -618,69 +630,16 @@ Do not:
 STOP and report if:
 
 ```text
-1. TSH gating cannot be enforced before signal emission.
-2. TSH abnormality state is unavailable to the evaluator.
-3. implementation would affect unrelated signals.
-4. thyroid activation would require hardcoded global ranges.
-5. FT3 low would need to be activated to complete the work.
-6. androgen or eGFR packages would be touched.
-7. validators fail.
-8. architecture gate fails.
-9. rollback path cannot be defined.
-```
-
----
-
-## Evidence required from Cursor
-
-Cursor must report:
-
-```text
-1. baseline branch/status evidence
-2. files inspected
-3. preflight findings
-4. gating implementation details
-5. test evidence for each thyroid gating scenario
-6. STOP gate report
-7. approval status
-8. packages activated
-9. packages deferred
-10. excluded package confirmation
-11. rollback path
-12. validation output
-13. architecture gate output
-14. carry-forward updates
-15. confirmation no medical wording or thresholds changed
-16. confirmation no unrelated runtime behaviour changed
-```
-
----
-
-## Closure requirements
-
-Before finish, run and report:
-
-```powershell
-git branch --show-current
-git status --short
-git log --oneline -n 5
-git diff --name-only
-git diff --cached --name-only
-git stash list
-```
-
-Do not finish unless:
-
-```text
-- current branch matches work/BATCH2-THYROID-GATE-1-mandatory-tsh-gating-and-runtime-activation
-- only in-scope runtime-gating/package-metadata/governance/docs/test files changed
-- no androgen package files changed
-- no eGFR package files changed
-- FT3 low is not activated
-- no frontend/SSOT/scoring/report compiler files changed
-- no ambiguous stash exists
-- validators pass
-- architecture gate passes
+1. package state cannot be reconciled
+2. runtime gates cannot be enforced fail-closed
+3. eGFR would cause duplicate renal dysfunction signalling
+4. androgen context is not runtime-consumed
+5. FT3 low illness / medication context is not runtime-consumed
+6. activation would require hardcoded global ranges
+7. activation would require broad runtime redesign
+8. validators fail
+9. architecture gate fails
+10. rollback path cannot be defined
 ```
 
 ---
@@ -690,17 +649,16 @@ Do not finish unless:
 This sprint is complete only if:
 
 ```text
-1. mandatory TSH gating is implemented before thyroid signal emission
-2. FT3 high, FT4 high and FT4 low have passing gate tests
-3. FT3 low remains inactive and formally deferred
-4. no isolated FT3/FT4 abnormality can activate the three eligible thyroid packages
-5. no hardcoded global thyroid ranges are introduced
-6. three eligible thyroid packages are activated only after STOP approval
-7. androgen and eGFR packages remain untouched
-8. no clinical wording or thresholds change
-9. architecture gate passes
-10. rollback path is documented
-11. CF-BATCH2-013 is accurately updated
+1. all 11 remaining Batch 2 packages have final state
+2. any activated package has enforceable fail-closed gates
+3. unsafe packages remain inactive with formal blocker
+4. no package is left ambiguous
+5. no clinical wording or thresholds change
+6. no unrelated runtime behaviour changes
+7. validators pass
+8. architecture gate passes
+9. rollback path is documented
+10. Batch 2 remaining blocker status is closed or consolidated into a single platform capability blocker
 ```
 
 ```
