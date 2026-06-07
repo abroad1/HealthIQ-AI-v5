@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-PROMOTE-1-CONTINUATION-runtime-activation-stop-gated-completion",
+  "branch": "work/BATCH2-ACTIVATION-1-runtime-activate-cleared-non-thyroid-subset",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-07T11:45:39Z",
-  "cursor_started_utc": "2026-06-07T11:41:46Z",
-  "head_sha": "eff36c1db64ec6d19d232c71b571863e0f6bf2c1",
+  "cursor_started_utc": "2026-06-07T12:28:58Z",
+  "head_sha": "fa6099e07ecb3ca05df62fd2eb0fb07f1f30f4b7",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset"
 }
