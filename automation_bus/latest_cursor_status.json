@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-THYROID-GATE-1-mandatory-tsh-gating-and-runtime-activation",
+  "branch": "work/BATCH2-REMAINING-BLOCKERS-1-remaining-batch2-blocker-resolution-and-gated-activation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-07T14:55:31Z",
-  "cursor_started_utc": "2026-06-07T14:53:19Z",
-  "head_sha": "6c20c3f3373b96a444acf88c01cd6fcb1f471ccc",
+  "cursor_started_utc": "2026-06-07T15:43:37Z",
+  "head_sha": "624e8e2ca48d23d84e0d5c6d595178ce4ffe2d18",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation"
 }
