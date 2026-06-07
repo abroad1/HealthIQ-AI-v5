@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation",
+  "work_id": "BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation",
   "status": "HARDENED",
   "hardened_utc": "2026-06-07T00:00:00Z",
   "hardened_by": "Claude Code — Stage 2 Hardening",
@@ -8,147 +8,147 @@
     {
       "check": "FRONT_MATTER_WORK_ID",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2 — work_id: BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2 — work_id: BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation"
     },
     {
       "check": "FRONT_MATTER_BRANCH",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3 — branch: work/BATCH2-REMAINDER-RESOLUTION-1-remaining-batch2-package-resolution-investigation"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3 — branch: work/BATCH2-THYROID-GATE-1-mandatory-tsh-gating-and-runtime-activation"
     },
     {
       "check": "FRONT_MATTER_RISK_LEVEL",
-      "result": "PASS — HIGH",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4 — risk_level: HIGH. Defensible: this investigation governs all subsequent HIGH risk Batch 2 execution sprints; its findings become the authoritative blockers/clearances for thyroid, androgen, and eGFR activation. Conservative classification consistent with SOP intent."
+      "result": "PASS — HIGH (CONFIRMED CORRECT)",
+      "citation": "automation_bus/latest_cursor_prompt.md line 4. HIGH risk is correct per SOP: sprint modifies SignalEvaluator (Intelligence Core) to add mandatory TSH pre-emission gate. Signal_evaluator.py is an analytical pipeline component that directly influences output generation. Any work touching Intelligence Core = HIGH risk by default (SOP §3 + §10)."
     },
     {
       "check": "FRONT_MATTER_EXECUTION_MODEL",
       "result": "PASS — TWO_PHASE_START_FINISH",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5 — execution_model: TWO_PHASE_START_FINISH. Correct: sprint requires start (branch creation + baseline verification) and finish (gate + completion) as separate kernel events."
+      "citation": "automation_bus/latest_cursor_prompt.md line 5. Correct: sprint has a mandatory human STOP gate mid-execution (after gating implementation, before runtime activation). TWO_PHASE_START_FINISH is appropriate."
     },
     {
       "check": "FRONT_MATTER_CHANGE_TYPE",
-      "result": "PASS — CONTENT",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6 — change_type: CONTENT. Correct: sprint creates two new governance artefacts (docs/audit-papers/BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation.md and knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml) and updates docs/sprints/launch_core_carry_forward_register.md only. Prompt explicitly prohibits all runtime code, package, SSOT, frontend, evaluator, and loader changes."
+      "result": "PASS — MIXED (CONFIRMED CORRECT)",
+      "citation": "automation_bus/latest_cursor_prompt.md line 6. MIXED is correct: BEHAVIOUR (SignalEvaluator mandatory gate addition — affects emitted reasoning) + CONTENT (package signal metadata, package manifests, governance registers). MIXED is governed by BEHAVIOUR controls per SOP §4."
+    },
+    {
+      "check": "AUTHORITY_PATH_batch2_remainder_resolution_register_v1",
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml lines 1–395. investigation_complete confirmed. READY_IF_RUNTIME_GATE_IMPLEMENTED for FT3 high (line 40), FT4 high (line 91), FT4 low (line 116). FORMALLY_BLOCKED_KEEP_INACTIVE for FT3 low (line 66). Recommended next action: BATCH2-THYROID-GATE-1 at line 39. Blocker confirmed at lines 28–33: SignalEvaluator fires lab_range_exceeded on primary marker before override escalation — override is escalation-only, not a gate."
     },
     {
       "check": "AUTHORITY_PATH_batch2_runtime_activation_execution_register_v1",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml — file read; activated_package_count: 6 (creatine_kinase ×2, eosinophil_pct ×2, eosinophils_abs ×2), thyroid_deferred_count: 4, excluded_package_count: 10 (8 androgen + 2 eGFR). Counts reconcile exactly with prompt's stated Batch 2 state."
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml lines 1–183. status: runtime_activation_complete for 6 non-thyroid packages. All four thyroid packages in thyroid_deferred_packages list (lines 112–151), activated: false, deferred_reason: thyroid_activation_requires_tsh_gating."
+    },
+    {
+      "check": "AUTHORITY_PATH_thyroid_clinical_signoff",
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md lines 1–31. Verdict APPROVE_SUBSET at line 14. FT3 high gate: 'block unless TSH is available' (line 7). FT4 high gate: 'block unless TSH is available' (line 9). FT4 low gate: 'block unless TSH is available' (line 10). FT3 low: 'blocked unless TSH + FT4 + illness/context are available' (line 8). TSH mandatory before all four patterns at line 26."
+    },
+    {
+      "check": "AUTHORITY_PATH_medical_frame_identity_index_v1",
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml lines 1321–1435. All four thyroid frames confirmed inactive. frame_batch2_free_t3_high: compiled_not_promoted, inactive (lines 1335–1336). frame_batch2_free_t3_low: compiled_not_promoted, inactive (lines 1364–1365). frame_batch2_free_t4_high: compiled_not_promoted, inactive (lines 1393–1394). frame_batch2_free_t4_low: compiled_not_promoted, inactive (lines 1422–1423). Expected post-activation state for three packages: runtime_active_canonical, active, accepted_with_rationale. Expected FT3 low state: unchanged compiled_not_promoted, inactive."
+    },
+    {
+      "check": "AUTHORITY_PATH_carry_forward_register",
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md line 75: CF-BATCH2-013 — Open — Implement mandatory TSH activation gate then metadata activate FT3 high + FT4 high + FT4 low only. FT3 low blocked. Assigned to BATCH2-THYROID-GATE-1. CF-BATCH2-007 (eGFR) at line 70: Open. CF-BATCH2-010 (androgen) at line 76: Open. CF-CONTEXT-MOD-3 at line 77: Open, explicitly noted as not required for TSH-only thyroid trio."
     },
     {
       "check": "AUTHORITY_PATH_batch2_final_promotion_decision_register_v1",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml — file read; package_count: 20, cleared_package_count: 10, excluded_package_count: 10. All androgen and eGFR packages carry EXCLUDED status — cross-references with prompt scope."
+      "citation": "knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml — file present (governance directory listing confirmed)."
     },
     {
-      "check": "AUTHORITY_PATH_batch2_promote_1_execution_register_v1",
+      "check": "AUTHORITY_PATH_BATCH2_ACTIVATION1_audit_paper",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml — file present; directory listing confirmed."
+      "citation": "docs/audit-papers/BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset.md — file present (glob confirmed)."
     },
     {
-      "check": "AUTHORITY_PATH_batch2_promotion_readiness_register_v1",
+      "check": "AUTHORITY_PATH_BATCH2_REMAINDER_audit_paper",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_promotion_readiness_register_v1.yaml — file present; directory listing confirmed."
+      "citation": "docs/audit-papers/BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation.md — file present (glob confirmed)."
     },
     {
-      "check": "AUTHORITY_PATH_batch2_androgen_panel_medical_review_v1",
+      "check": "ALL_FOUR_THYROID_PACKAGE_FOLDERS",
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "All four packages exist with signal_library.yaml, package_manifest.yaml, promoted_signal_intelligence.yaml, research_brief.yaml: knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis/, pkg_kb47_free_t3_low_low_t3_syndrome/, pkg_kb47_free_t4_high_thyrotoxicosis_context/, pkg_kb47_free_t4_low_thyroid_hormone_deficiency/. Package manifests confirm governance_promotion_status: governance_promoted_pending_runtime_activation and no governance_runtime_activation_status (not yet activated). Confirmed at pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis/package_manifest.yaml lines 13–16."
+    },
+    {
+      "check": "SSOT_TSH_CANONICAL_ID",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml — file present; directory listing confirmed. This is the primary source Cursor must read for all Section C (androgen-specific) investigation answers."
+      "citation": "backend/ssot/biomarkers.yaml line 713: tsh registered as canonical biomarker. Signal libraries reference metric_id: tsh in override_rules conditions. TSH lab-range-based gating will use tsh as the metric_id."
     },
     {
-      "check": "AUTHORITY_PATH_batch2_androgen_context_modifier_binding_v1",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml — file present; directory listing confirmed."
+      "check": "INTELLIGENCE_CORE_EVALUATOR_ARCHITECTURE",
+      "result": "HARDENING ADDITION — MANDATORY IMPLEMENTATION CONSTRAINT",
+      "citation": "backend/core/analytics/signal_evaluator.py lines 398–484 (evaluate_all), lines 419–440 (lab_range_exceeded path). CONFIRMED: evaluate_all() evaluates lab_range_exceeded on primary metric FIRST (line 422), producing a signal_state if primary marker is out of range. Override rules run AFTER (line 435) and only escalate state — they CANNOT block emission. Therefore or_free_t3_high_with_tsh_low (FT3 high signal_library) and or_free_t4_high_with_tsh_low (FT4 high signal_library) are escalation-only. If TSH is absent or non-suppressed, the signal STILL emits at 'suboptimal'. This is the exact blocker confirmed in batch2_remainder_resolution_register_v1.yaml lines 28–33. MANDATORY: TSH gating must be implemented as a PRE-EMISSION gate in evaluate_all(), checked after signal_state is determined but BEFORE appending to results. The gate must be fail-closed: if TSH is absent (_resolve_condition_metric_value returns None at line 281–282), gate fails and signal is not emitted."
     },
     {
-      "check": "AUTHORITY_PATH_pass3_batch2_research_asset_register_v1",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_batch2_research_asset_register_v1.yaml — file present; directory listing confirmed."
+      "check": "CRITICAL_BUG_FT4_LOW_ENABLE_LOWER_BOUND",
+      "result": "HARDENING ADDITION — BLOCKER: Cursor must fix this in the same sprint",
+      "citation": "knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency/signal_library.yaml line 50: activation_config.enable_lower_bound: false. signal_evaluator.py lines 179–185: lower-bound activation only fires when enable_lower_bound is true. With enable_lower_bound: false, FT4 low will NEVER emit via lab_range_exceeded even after runtime activation — permanently silenced. trigger_direction: low (signal_library.yaml line 14) confirms this package is intended to fire below lab range minimum. Cursor MUST set enable_lower_bound: true for pkg_kb47_free_t4_low_thyroid_hormone_deficiency. This is IN SCOPE: 'package signal metadata/rule metadata for the three eligible thyroid packages' (prompt line 309). Note: pkg_kb47_free_t3_low_low_t3_syndrome has the same issue (line 50) but is not being activated in this sprint — must remain untouched."
     },
     {
-      "check": "AUTHORITY_PATH_pass3_batch2_kb47_manifest_realign_register_v1",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/pass3_batch2_kb47_manifest_realign_register_v1.yaml — file present; directory listing confirmed."
+      "check": "TSH_GATE_SEMANTICS_PER_PATTERN",
+      "result": "HARDENING ADDITION — MANDATORY IMPLEMENTATION SPECIFICATION",
+      "citation": "Clinical sign-off lines 7–10 + prompt lines 204–253. FT3 high: TSH must be LOW/SUPPRESSED (below lab range minimum — lab_range_boundary: lower). Block if TSH absent OR TSH not below min. FT4 high: same gate as FT3 high. FT4 low: TSH must be PRESENT (any value — block only if absent). Do NOT require TSH to be high for FT4 low gate; low FT4 with non-high TSH may indicate central hypothyroidism (prompt lines 247–248). Existing or_free_t4_low_with_tsh_high override rule correctly escalates state when TSH IS high — this is separate from the mandatory presence gate. For FT3 low: NO gate change, NO activation, NO modification."
     },
     {
-      "check": "AUTHORITY_PATH_medical_frame_identity_index_v1",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml — file present; directory listing confirmed. Sprint must read but is prohibited from modifying this file."
+      "check": "FT3_HIGH_SIGNAL_LIBRARY_CURRENT_STATE",
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis/signal_library.yaml lines 1–84. activation_logic: lab_range_exceeded (line 46). activation_config: upper_bound_state: suboptimal, enable_lower_bound: false (lines 48–50). Override rule or_free_t3_high_with_tsh_low (line 52) is escalation-only. No mandatory gate field present — must be added. enable_upper_bound fires correctly for FT3 high direction."
     },
     {
-      "check": "AUTHORITY_PATH_context_modifier_catalogue_draft_v1",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml — file present; directory listing confirmed. Sprint must read but is prohibited from modifying this file."
+      "check": "FT4_HIGH_SIGNAL_LIBRARY_CURRENT_STATE",
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context/signal_library.yaml lines 1–84. activation_logic: lab_range_exceeded (line 46). activation_config: upper_bound_state: suboptimal, enable_lower_bound: false (lines 48–50). Override rule or_free_t4_high_with_tsh_low (line 52) is escalation-only. No mandatory gate field present — must be added. enable_upper_bound fires correctly for FT4 high direction."
     },
     {
-      "check": "AUTHORITY_PATH_thyroid_clinical_signoff",
-      "result": "CONFIRMED",
-      "citation": "docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md — file present; confirmed via Python os.path.exists check."
+      "check": "FT4_LOW_SIGNAL_LIBRARY_CURRENT_STATE",
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency/signal_library.yaml lines 1–83. activation_logic: lab_range_exceeded (line 46). activation_config: enable_lower_bound: false (line 50) — BUG, see CRITICAL_BUG check above. Override rule or_free_t4_low_with_tsh_high (line 52) is escalation-only. No mandatory gate field present — must be added. Cursor must also fix enable_lower_bound: true."
     },
     {
-      "check": "AUTHORITY_PATH_audit_papers_all",
-      "result": "CONFIRMED — 5/5 PRESENT",
-      "citation": "docs/audit-papers/BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset.md — PRESENT; docs/audit-papers/BATCH2-PROMOTE-1_cleared_wave_package_promotion.md — PRESENT; docs/audit-papers/BATCH2-CLOSURE-1_final_batch2_promotion_decision.md — PRESENT; docs/audit-papers/BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding.md — PRESENT; docs/audit-papers/BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md — PRESENT. All confirmed via Python os.path.exists."
+      "check": "FT3_LOW_SIGNAL_LIBRARY_MUST_NOT_CHANGE",
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml lines 1–86. Must remain untouched. activation_config.enable_lower_bound: false (line 50) — FT3 low is doubly protected: (1) governance inactive, (2) lower bound disabled. Do not modify any field in this package."
     },
     {
-      "check": "AUTHORITY_PATH_carry_forward_register",
-      "result": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md — file present; confirmed via Python os.path.exists. Sprint must update CF-BATCH2-013, CF-BATCH2-010, CF-CONTEXT-MOD-3, CF-BATCH2-007 per prompt carry-forward handling section."
-    },
-    {
-      "check": "AUTHORITY_PATH_latest_knowledge_status_json",
-      "result": "ADVISORY — FILE MISSING",
-      "citation": "knowledge_bus/current/latest_knowledge_status.json — DOES NOT EXIST. Directory knowledge_bus/current/ exists but is empty. This file is listed as a required input in the prompt. However: (1) it is not a 'Batch 2 governance register' under STOP condition 1; (2) all activation status information is redundantly available in batch2_runtime_activation_execution_register_v1.yaml. Cursor must note its absence in the artefacts inspected list and proceed using batch2_runtime_activation_execution_register_v1.yaml as the authoritative activation state source. This is not a STOP trigger."
-    },
-    {
-      "check": "ALL_14_PACKAGE_DIRECTORIES_PRESENT",
-      "result": "CONFIRMED — 14/14 PRESENT",
-      "citation": "knowledge_bus/packages/ — directory listing verified. Thyroid (4): pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis, pkg_kb47_free_t3_low_low_t3_syndrome, pkg_kb47_free_t4_high_thyrotoxicosis_context, pkg_kb47_free_t4_low_thyroid_hormone_deficiency. Androgen (8): pkg_kb47_dhea_high_androgen_excess_context, pkg_kb47_dhea_low_adrenal_androgen_reduction, pkg_kb47_fai_high_biochemical_hyperandrogenism, pkg_kb47_fai_low_reduced_free_androgen_availability, pkg_kb47_free_testosterone_high_androgen_excess_context, pkg_kb47_free_testosterone_low_androgen_deficiency_context, pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction, pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction. eGFR (2): pkg_kb47_egfr_low_chronic_kidney_function_reduction, pkg_kb47_egfr_low_hemodynamic_filtration_drop."
-    },
-    {
-      "check": "PACKAGE_COUNT_RECONCILIATION",
-      "result": "CONFIRMED — COUNTS RECONCILE",
-      "citation": "batch2_runtime_activation_execution_register_v1.yaml — activated_package_count: 6; thyroid_deferred_count: 4; excluded_package_count: 10 (8 androgen + 2 eGFR). Prompt scope: 14 remaining = 4 thyroid + 8 androgen + 2 eGFR. Total Batch 2 estate: 6 active + 14 remaining = 20. Consistent with batch2_final_promotion_decision_register_v1.yaml package_count: 20."
-    },
-    {
-      "check": "VALIDATION_SCRIPTS_PRESENT",
-      "result": "CONFIRMED — 4/4 PRESENT",
-      "citation": "backend/scripts/run_architecture_validation_gate.py — PRESENT; backend/scripts/validate_medical_frame_identity_index.py — PRESENT; backend/scripts/validate_context_modifier_catalogue.py — PRESENT; backend/scripts/validate_knowledge_package.py — PRESENT. All confirmed via Python os.path.exists."
-    },
-    {
-      "check": "OUTPUT_ARTEFACT_SCOPE",
-      "result": "PASS — CONTENT ONLY",
-      "citation": "Sprint creates: docs/audit-papers/BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation.md (new, does not yet exist) and knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml (new, does not yet exist). Updates: docs/sprints/launch_core_carry_forward_register.md (exists, line-level updates only). No runtime code, no package manifests, no signal_library.yaml, no medical_frame_identity_index_v1.yaml, no context_modifier_catalogue_draft_v1.yaml modifications."
+      "check": "EXISTING_TEST_INFRASTRUCTURE",
+      "result": "CONFIRMED — SOURCE READ",
+      "citation": "backend/tests/unit/test_signal_evaluator.py — canonical evaluator test module; read confirms fixture pattern for write_signal_library. No thyroid-specific gating test exists yet (glob confirmed no *thyroid* test files). Cursor must create backend/tests/regression/test_batch2_thyroid_tsh_gating.py (or equivalent) implementing all 10 gating scenarios from prompt lines 343–354. Golden panel fixture available: backend/tests/fixtures/golden_panel_sprint14_2_thyroid_immune_mini.json."
     },
     {
       "check": "FORBIDDEN_FILES_FENCED",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md — 'Do not modify' section explicitly lists: knowledge_bus/packages/*, knowledge_bus/current/latest_knowledge_status.json, medical_frame_identity_index_v1.yaml, context_modifier_catalogue_draft_v1.yaml, runtime code, frontend code. 'Out of scope' section reinforces: no activate, no promote, no manifest modification, no signal_library.yaml, no research_brief.yaml, no frame index, no context catalogue, no TSH gating implementation, no Layer B context evaluation, no eGFR authority file changes, no frontend, no runtime behaviour changes."
+      "citation": "Prompt lines 317–333 (do not change) and lines 597–613 (out of scope). Protected: SSOT, thresholds, activation keys, signal IDs, research briefs, promoted signal intelligence content, frontend, scoring, ranking, unrelated runtime behaviour, androgen packages, eGFR packages, FT3 low activation state. SSOT confirmed not in scope: TSH canonical ID already registered at biomarkers.yaml line 713."
     },
     {
-      "check": "STOP_CONDITIONS_TRACEABLE",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 503-514 — 7 STOP conditions defined. Conditions 1-4 are pre-verified by this hardening (all governance registers present, counts reconcile, runtime-active state determinable from activation register, blockers traceable from androgen review / thyroid signoff / prior audit papers). Conditions 5-7 require Cursor runtime execution (validator output, architecture gate, no-code-change enforcement)."
+      "check": "STOP_CONDITION_RISK_ASSESSMENT",
+      "result": "NO STOP TRIGGERED — EXECUTION VIABLE",
+      "citation": "Prompt lines 618–630. TSH gating CAN be enforced: minimal pre-emission gate in evaluate_all() is sufficient (not broad redesign). TSH state IS available: signal_biomarkers dict passes tsh through the same path as existing conditions (evaluator lines 398–411). Implementation does NOT affect unrelated packages: gate is conditional on a new signal_library field present only in the three thyroid packages. No hardcoded global thyroid ranges required: gate uses lab_range_boundary semantics against patient-specific lab_ranges dict. FT3 low not required for this sprint. Androgen/eGFR packages not touched. Rollback path is defined: revert signal_library.yaml changes (enable_lower_bound, mandatory gate field), revert evaluator pre-emission logic, revert medical_frame_identity_index and package_manifest metadata fields."
+    },
+    {
+      "check": "HUMAN_STOP_GATE_REQUIREMENT",
+      "result": "CONFIRMED — MANDATORY",
+      "citation": "Prompt lines 362–388. STOP and report READY_FOR_HUMAN_STOP_GATE after TSH gating implementation and all 10 regression tests pass. Runtime activation only after explicit human approval phrase: 'APPROVE BATCH2 THYROID GATED ACTIVATION'. Cursor must halt after test evidence report and await approval before any metadata activation."
+    },
+    {
+      "check": "BASELINE_BRANCH_REQUIREMENT",
+      "result": "ADVISORY",
+      "citation": "Prompt lines 57–97. Cursor must verify: branch = main, local main = origin/main, working tree clean, BATCH2-REMAINDER-RESOLUTION-1 artefacts present, thyroid clinical sign-off present, medical frame identity index present, runtime signal gating mechanism locatable. Current git log confirms BATCH2-REMAINDER-RESOLUTION-1 at HEAD (9eaa1a2)."
     },
     {
       "check": "NO_OP_PROTECTION",
       "result": "PASS — NOT A NO-OP",
-      "citation": "14 packages remain unclassified for final resolution. No prior sprint has produced a batch2_remainder_resolution_register_v1.yaml. BATCH2-ACTIVATION-1 audit (docs/audit-papers/BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset.md) explicitly deferred thyroid, androgen, and eGFR resolution to a future sprint. Real investigative work required."
-    },
-    {
-      "check": "BEHAVIOURAL_SCOPE_2B",
-      "result": "NOT_APPLICABLE — CONTENT SPRINT",
-      "citation": "change_type: CONTENT. Sprint does not touch Intelligence Core, evaluator logic, pipeline behaviour, output generation, ranking, or filtering. No behavioural hardening required per SOP §4."
-    },
-    {
-      "check": "BRANCH_DISCIPLINE",
-      "result": "ADVISORY",
-      "citation": "No execution token present (automation_bus/state/work_package_active.json does not exist — correct pre-start state). Current branch is main (confirmed: git branch --show-current output 'main'). Prompt baseline STOP conditions require: current branch = main, local main = origin/main, clean working tree. Cursor must verify all three before branching."
+      "citation": "Real work required: TSH mandatory gate mechanism does not exist in current evaluator. FT4 low enable_lower_bound bug is unresolved. Three packages are governance-promoted but not runtime-active. 10 regression tests do not exist. CF-BATCH2-013 is Open."
     },
     {
       "check": "POWERSHELL_COMPATIBILITY",
       "result": "PASS",
-      "citation": "All validation commands in prompt use standard 'python backend/scripts/...' invocations compatible with Windows PowerShell. No bash-specific syntax. Baseline check block uses 'git' commands compatible with Windows. No issues detected."
+      "citation": "All validation commands in prompt use python backend/scripts/... and git invocations compatible with Windows PowerShell. No bash-specific syntax detected."
     }
   ]
 }
