@@ -1,9 +1,10 @@
 {
   "branch": "work/BATCH2-REMAINDER-RESOLUTION-1-remaining-batch2-package-resolution-investigation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-07T14:11:20Z",
   "cursor_started_utc": "2026-06-07T14:04:51Z",
-  "head_sha": "29d4491119da58fbe31e7aa9f02f92b3eaa9c5ec",
+  "head_sha": "acf113c3ae2a2f47fc15535dbcad8defb5367618",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation"
 }
