@@ -1,7 +1,8 @@
 schema_version: 1.0.0
-runtime_consumed: false
+runtime_consumed: true
 status: governed_adjudication_model
 work_id: BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model
+runtime_enforcement_work_id: CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement
 generated_utc: '2026-06-07'
 source_creatinine_authority: knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml
 source_remainder_blockers: knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
@@ -11,7 +12,7 @@ design_principle: Declarative authority groups for overlapping biomarker familie
 authority_groups:
 - authority_group_id: renal_filtration_axis
   biological_axis: kidney_filtration_function
-  status: adjudicated_governance_only
+  status: adjudicated_runtime_enforced
   primary_signal_family: signal_egfr_low
   supporting_signal_families:
   - signal_creatinine_high
@@ -27,6 +28,11 @@ authority_groups:
   - layer_id: hyperkalemia_or_electrolyte_complication
     signal_family: signal_creatinine_high
     frame_id: frame_creatinine_legacy_s24_potassium_escalation
+    preserve_conditions:
+    - metric_id: potassium
+      operator: '>'
+      value: 5.2
+      condition_type: all_of
     notes: Medically distinct acute electrolyte layer; must remain parallel when medically
       distinct.
   collision_policy:
@@ -41,7 +47,7 @@ authority_groups:
     egfr_low_should_suppress_duplicate_filtration_framing_from_creatinine_high: true
     creatinine_contributes_supporting_evidence_when_not_duplicate: true
     potassium_acute_risk_remains_separate_layer: true
-  runtime_action: governance_only_pending_runtime_support
+  runtime_action: runtime_enforced
   requires_runtime_support: true
   proposed_runtime_pattern:
     authority_resolution:

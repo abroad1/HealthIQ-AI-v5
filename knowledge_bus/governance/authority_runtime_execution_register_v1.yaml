@@ -1,0 +1,49 @@
+schema_version: 1.0.0
+runtime_consumed: true
+status: enforcement_complete_pending_activation_stop_gate
+work_id: CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement
+source_authority_model: knowledge_bus/governance/signal_authority_collision_model_v1.yaml
+source_egfr_register: knowledge_bus/governance/batch2_egfr_authority_execution_register_v1.yaml
+analysis_utc: '2026-06-07'
+authority_groups_implemented:
+- authority_group_id: renal_filtration_axis
+  biological_axis: kidney_filtration_function
+  runtime_enforcement_status: enforced_in_signal_evaluator_post_processing
+  primary_signal_family: signal_egfr_low
+  supporting_signal_families:
+  - signal_creatinine_high
+  collision_policy_applied:
+    no_duplicate_user_facing_signal: true
+    suppress_supporting_when_primary_present: true
+    allow_parallel_if_distinct_risk_layer: true
+  tests_passed: true
+  implementation: backend/core/analytics/signal_authority_collision_resolver.py wired
+    at end of SignalEvaluator.evaluate_all()
+human_stop_gate:
+  required: true
+  activation_recommended: true
+  approval_received: false
+  approval_phrase: APPROVE BATCH2 EGFR AUTHORITY ACTIVATION
+  approval_recorded_at: null
+runtime_activation_performed: false
+activated_package_count: 0
+blocked_package_count: 2
+activated_packages: []
+blocked_or_deferred_packages:
+- package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  signal_id: signal_egfr_low
+  activation_key: signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction
+  reason: pending_human_stop_gate_and_enable_lower_bound_activation_config_fix
+  required_next_action: Human STOP approval; fix enable_lower_bound true on both eGFR signal_library.yaml;
+    metadata activation per BATCH2-ACTIVATION-1 pattern
+- package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  signal_id: signal_egfr_low
+  activation_key: signal_egfr_low::inv_egfr_low_hemodynamic_filtration_drop
+  reason: pending_human_stop_gate_and_enable_lower_bound_activation_config_fix
+  required_next_action: Same as chronic package
+phase_3_outcome: deferred_pending_stop_approval
+rollback_path: Revert signal_authority_collision_resolver.py; remove apply call from signal_evaluator.py;
+  revert signal_authority_collision_model_v1.yaml runtime_consumed/runtime_action; revert execution register
+  and audit report. eGFR frame index and manifests unchanged this sprint.
+notes: Runtime enforcement proven by regression tests. eGFR packages remain inactive until STOP approval
+  and Phase 3 activation_config fix + metadata activation.

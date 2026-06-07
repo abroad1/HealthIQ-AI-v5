@@ -10,8 +10,9 @@ from typing import Any, Dict, List, Optional
 
 import yaml
 
-from core.contracts.signal_contract import STATE_RANK as _STATE_RANK_IMPORT
+from core.analytics.signal_authority_collision_resolver import apply_signal_authority_collision_policy
 from core.analytics.signal_confidence_builder import calculate_signal_confidence
+from core.contracts.signal_contract import STATE_RANK as _STATE_RANK_IMPORT
 from core.knowledge.signal_activation_identity_v1 import resolve_activation_identity
 from core.models.signal import SignalResult
 
@@ -531,4 +532,8 @@ class SignalEvaluator:
             results.append(result)
 
         results.sort(key=lambda r: (r.signal_id, r.activation_key))
-        return results
+        return apply_signal_authority_collision_policy(
+            results,
+            signal_biomarkers=signal_biomarkers,
+            signal_derived=signal_derived,
+        )
