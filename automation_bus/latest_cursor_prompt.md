@@ -1,43 +1,33 @@
 ---
-work_id: BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model
-branch: work/BATCH2-EGFR-AUTHORITY-1-renal-signal-authority-and-reusable-collision-model
+work_id: CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement
+branch: work/CF-AUTHORITY-RUNTIME-1-runtime-signal-authority-collision-enforcement
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# BATCH2-EGFR-AUTHORITY-1 — Renal Signal Authority and Reusable Collision Model
+# CF-AUTHORITY-RUNTIME-1 — Runtime Signal Authority / Collision Enforcement
 
 ## Purpose
 
-Resolve the Batch 2 eGFR blocker and create a reusable signal-authority / anti-double-counting pattern for future overlapping biomarker families.
+Implement runtime consumption of the reusable signal authority / collision model and use it to safely close out the Batch 2 eGFR activation blocker.
 
-This sprint must address the two remaining Batch 2 eGFR packages:
+This sprint must deliver two outcomes in one work package:
 
 ```text
-pkg_kb47_egfr_low_chronic_kidney_function_reduction
-pkg_kb47_egfr_low_hemodynamic_filtration_drop
+1. Reusable runtime authority / anti-double-counting enforcement.
+2. Safe eGFR runtime activation, if enforcement is proven and human STOP approval is given.
 ````
 
-The immediate problem:
+Do not split this into separate architecture, runtime, test, and activation sprints.
 
-```text
-eGFR-low overlaps with existing creatinine-high / eGFR escalation reasoning.
-```
-
-The architectural opportunity:
-
-```text
-Create a reusable model for cases where multiple biomarkers describe overlapping biology and must not be double-counted.
-```
-
-Do not build a one-off renal hack.
+`BATCH2-EGFR-AUTHORITY-1` created the governance model but left it `runtime_consumed: false`, with eGFR inactive pending runtime support. This sprint must close that gap. 
 
 ---
 
 ## Strategic framing
 
-HealthIQ AI will repeatedly face overlapping biomarker families:
+HealthIQ will repeatedly have overlapping biomarker families:
 
 ```text
 - creatinine / eGFR / uACR / cystatin C
@@ -48,17 +38,9 @@ HealthIQ AI will repeatedly face overlapping biomarker families:
 - TSH / FT3 / FT4
 ```
 
-This sprint must produce reusable governance and, if safe, minimal runtime support for:
+The platform must avoid double-counting the same biology.
 
-```text
-signal authority groups
-primary vs supporting signal roles
-anti-double-counting rules
-collision resolution metadata
-runtime-safe suppression or consolidation behaviour
-```
-
-The eGFR packages are the first implementation case.
+This sprint must make the authority/collision model usable at runtime for the renal-filtration case, while keeping the implementation reusable for future axes.
 
 ---
 
@@ -69,13 +51,12 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
+BATCH2-EGFR-AUTHORITY-1 merged
 BATCH2-REMAINING-BLOCKERS-1 merged
 BATCH2-THYROID-GATE-1 merged
 BATCH2-ACTIVATION-1 merged
 BATCH2-PROMOTE-1 merged
 BATCH2-CLOSURE-1 merged
-PASS3-BATCH2-FRAME-INDEX-1 merged
-PASS3-BATCH2-FRAME-INDEX-2 merged
 ARCH-SENTINEL-1 merged
 CI-ARCH-GATE-1 / CI-ARCH-GATE-1A merged
 ```
@@ -96,10 +77,10 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- medical_frame_identity_index_v1.yaml is missing
-- batch2_remainder_resolution_register_v1.yaml is missing
+- signal_authority_collision_model_v1.yaml is missing
 - eGFR packages cannot be found
-- creatinine authority/frame entries cannot be found
+- creatinine frames/packages cannot be found
+- architecture gate fails at baseline
 ```
 
 ---
@@ -109,223 +90,180 @@ STOP if:
 Read before implementation:
 
 ```text
-knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml
+knowledge_bus/governance/signal_authority_collision_model_v1.yaml
+knowledge_bus/governance/batch2_egfr_authority_execution_register_v1.yaml
+knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml
-knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml
-knowledge_bus/governance/batch2_runtime_activation_execution_register_v1.yaml
-docs/audit-papers/BATCH2-REMAINDER-RESOLUTION-1_remaining_batch2_package_resolution_investigation.md
+docs/audit-papers/BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model.md
+docs/audit-papers/BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Inspect relevant renal packages / governance:
-
-```text
-knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/
-knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/
-knowledge_bus/packages/*creatinine*
-knowledge_bus/packages/*renal*
-```
-
-Inspect runtime and governance mechanisms:
+Inspect runtime and package files:
 
 ```text
 backend/core/analytics/signal_evaluator.py
 SignalRegistry / package registry loader
-domain score / report assembly logic if relevant
-existing signal suppression / collision / authority handling if any
-backend/tests/regression/
+report assembly / signal result assembly paths
+domain score / output consolidation paths if relevant
+knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/
+knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/
+knowledge_bus/packages/*creatinine*
 ```
 
 ---
 
 ## In-scope packages
 
+eGFR packages:
+
 ```text
 pkg_kb47_egfr_low_chronic_kidney_function_reduction
 pkg_kb47_egfr_low_hemodynamic_filtration_drop
 ```
 
-Also inspect, but do not modify unless required and safe:
+Related authority family to inspect:
 
 ```text
-existing creatinine-high packages / frames
-existing renal-filtration frames
-existing eGFR escalation frames under creatinine
+signal_creatinine_high
+signal_egfr_low
+renal_filtration_axis
 ```
+
+Do not modify unrelated marker families.
 
 ---
 
-## Required architectural output
+## Required runtime behaviour
 
-Create a reusable governance model for overlapping signal authority.
+Implement runtime authority/collision enforcement for the renal filtration axis.
 
-Preferred artefact:
+Required behaviour:
 
 ```text
-knowledge_bus/governance/signal_authority_collision_model_v1.yaml
+1. eGFR-low is treated as the primary renal-filtration authority when active and present.
+2. creatinine-high can remain available as supporting renal evidence.
+3. The system must not surface low eGFR and high creatinine as two independent renal-filtration problems.
+4. Distinct acute complication layers, such as hyperkalemia / electrolyte danger, must remain allowed where medically distinct.
+5. Unrelated signal families must behave exactly as before.
 ```
 
-It must be non-runtime by default unless explicitly wired later:
+The implementation must be reusable. Do not hardcode a one-off `if eGFR then suppress creatinine` hack.
+
+Preferred pattern:
+
+```text
+runtime reads authority group
+→ detects overlapping active signal families
+→ applies collision policy
+→ suppresses / consolidates / annotates duplicate renal-filtration signals
+→ leaves distinct risk-layer signals intact
+```
+
+If full consolidation into report output is not yet possible without broad redesign, implement the smallest safe runtime enforcement and document the remaining limitation.
+
+---
+
+## Required reusable model consumption
+
+Update `signal_authority_collision_model_v1.yaml` only if needed to make runtime consumption unambiguous.
+
+The model should remain reusable for future axes.
+
+At minimum, runtime must consume:
 
 ```yaml
-runtime_consumed: false
+authority_group_id
+primary_signal_family
+supporting_signal_families
+collision_policy.no_duplicate_user_facing_signal
+collision_policy.allow_parallel_if_distinct_risk_layer
+runtime_action
+requires_runtime_support
 ```
 
-It should support reusable concepts such as:
-
-```yaml
-authority_group_id:
-biological_axis:
-primary_signal_family:
-supporting_signal_families:
-collision_policy:
-  no_duplicate_user_facing_signal:
-  suppress_supporting_when_primary_present:
-  consolidate_into_shared_interpretation:
-  allow_parallel_if_distinct_risk_layer:
-runtime_action:
-  none_governance_only | suppress | consolidate | annotate
-requires_runtime_support:
-notes:
-```
-
-This model must be designed so future marker families can reuse it.
+If the current YAML structure is not sufficient, amend it minimally and document the change.
 
 ---
 
-## Required eGFR authority decision
+## Phase 1 — Runtime design and preflight
 
-Answer explicitly:
-
-```text
-1. Is eGFR-low its own signal family?
-2. Is eGFR-low stronger renal-filtration evidence than creatinine-high?
-3. Should creatinine-high remain active as a separate signal?
-4. Should eGFR-low suppress creatinine-high filtration framing when both are present?
-5. Can creatinine still contribute as supporting evidence?
-6. Does potassium / acute risk remain a separate complication layer?
-7. Can the two Batch 2 eGFR packages be activated safely now?
-8. If not, exactly what is missing?
-```
-
-Preferred architectural decision unless evidence proves otherwise:
+Before implementation, report:
 
 ```text
-eGFR-low should be the primary renal-filtration authority when available.
-Creatinine-high can remain relevant as supporting evidence or a separate biochemical abnormality.
-The system must avoid presenting low eGFR + high creatinine as two independent renal-filtration problems.
-```
-
----
-
-## Required reusable implementation principle
-
-If runtime implementation is needed, implement the smallest reusable mechanism possible.
-
-Do not hardcode “eGFR vs creatinine” inside ad hoc logic.
-
-Prefer a reusable declarative pattern, for example:
-
-```yaml
-authority_resolution:
-  authority_group_id: renal_filtration_axis
-  primary_when_present: signal_egfr_low
-  supporting_when_primary_present:
-    - signal_creatinine_high
-  duplicate_surface_policy: consolidate
-```
-
-If current runtime cannot safely consume this pattern without broader redesign, keep it governance-only and formally block eGFR activation.
-
----
-
-## Phase 1 — Investigation and design
-
-Before changing runtime or activation state, report:
-
-```text
-1. Current creatinine/eGFR frame relationships.
-2. Current eGFR package state.
-3. Whether any runtime anti-double-counting mechanism already exists.
-4. Whether a reusable authority/collision model can be added safely.
-5. Whether eGFR activation requires runtime support now.
-6. Exact files proposed for change.
-7. Rollback path.
+1. Where active signal results are assembled.
+2. Where authority/collision enforcement should occur.
+3. How the renal_filtration_axis model will be loaded.
+4. How duplicate renal-filtration outputs will be prevented.
+5. How creatinine can remain supporting evidence.
+6. How distinct complication layers remain allowed.
+7. Exact files proposed for change.
+8. Regression tests to be added.
+9. Rollback path.
 ```
 
 STOP if:
 
 ```text
-- creatinine/eGFR relationship cannot be resolved from existing evidence
-- activating eGFR would create duplicate renal signalling
-- runtime suppression/consolidation requires broad redesign
+- authority model cannot be loaded safely
+- there is no safe place to enforce collision policy
+- implementation would require broad report pipeline redesign
+- enforcement would suppress unrelated clinical risks
 - rollback path cannot be defined
 ```
 
 ---
 
-## Phase 2 — Implement reusable governance model
+## Phase 2 — Runtime implementation
 
-Create the reusable authority/collision governance artefact.
+Implement minimal reusable runtime support.
 
-At minimum, include one renal authority group:
-
-```yaml
-authority_group_id: renal_filtration_axis
-biological_axis: kidney_filtration_function
-primary_signal_family: signal_egfr_low
-supporting_signal_families:
-  - signal_creatinine_high
-collision_policy:
-  no_duplicate_user_facing_signal: true
-  allow_parallel_if_distinct_risk_layer: true
-  distinct_risk_layers:
-    - hyperkalemia_or_electrolyte_complication
-    - acute_safety_escalation
-runtime_action: governance_only_pending_runtime_support
-requires_runtime_support: true
-```
-
-Also include placeholder examples for future reusable groups, but do not author fake medical decisions.
-
-Acceptable placeholders:
+Allowed changes:
 
 ```text
-metabolic_glycaemic_axis
-thyroid_axis
-androgen_axis
-liver_injury_axis
-iron_inflammation_axis
+- authority/collision model loader or helper
+- SignalEvaluator / result assembly logic only if this is the correct enforcement point
+- regression/sentinel tests
+- governance execution register
+- audit report
+- carry-forward register
 ```
 
-These should be marked as:
+Do not change:
 
-```yaml
-status: placeholder_not_adjudicated
+```text
+- clinical wording
+- thresholds
+- reference ranges
+- signal IDs
+- activation keys
+- frontend
+- SSOT
+- scoring thresholds
+- unit conversion
+- report compiler unless absolutely required and justified
 ```
 
 ---
 
-## Phase 3 — Decide activation outcome
+## Phase 3 — eGFR activation decision
 
-After the authority model is created, decide whether eGFR can activate now.
+After authority enforcement exists and tests pass, decide whether the two eGFR packages can be activated.
 
 Allowed outcomes:
 
 ```text
-A. Activate both eGFR packages with safe anti-double-counting support.
-B. Governance-promote / authority-classify eGFR but keep runtime inactive pending reusable runtime support.
-C. Keep eGFR formally blocked if authority remains unresolved.
+A. Activate both eGFR packages after STOP approval.
+B. Keep eGFR inactive if runtime enforcement is incomplete.
 ```
 
-Do not activate eGFR unless duplicate renal signalling is preventable now.
+Do not activate eGFR unless anti-double-counting is proven by tests.
 
 ---
 
 ## Mandatory STOP gate before activation
 
-If and only if activation is recommended, STOP and report:
+If eGFR activation is recommended, STOP and report:
 
 ```text
 READY_FOR_HUMAN_STOP_GATE
@@ -334,13 +272,13 @@ READY_FOR_HUMAN_STOP_GATE
 STOP report must include:
 
 ```text
-- eGFR authority decision
-- anti-double-counting mechanism
-- packages proposed for activation
+- authority/collision implementation summary
+- eGFR packages proposed for activation
+- creatinine interaction behaviour
+- anti-double-counting test results
+- unrelated-signal regression results
 - files changed
-- tests added
 - rollback path
-- confirmation creatinine behaviour remains safe
 ```
 
 Approval phrase:
@@ -349,104 +287,130 @@ Approval phrase:
 APPROVE BATCH2 EGFR AUTHORITY ACTIVATION
 ```
 
-No runtime activation may occur without approval.
+No eGFR activation may occur without this approval.
 
 ---
 
 ## Runtime activation after STOP approval
 
-If approved, activate only:
+If approval is received, activate only:
 
 ```text
 pkg_kb47_egfr_low_chronic_kidney_function_reduction
 pkg_kb47_egfr_low_hemodynamic_filtration_drop
 ```
 
-Do not activate or modify androgen packages.
+Expected frame state after activation:
 
-Do not change unrelated renal packages unless necessary for the authority model and explicitly justified.
-
----
-
-## Required tests
-
-If runtime anti-double-counting / authority behaviour is implemented, add regression tests proving:
-
-```text
-1. eGFR-low can emit when activation criteria are met.
-2. creatinine-high does not produce duplicate renal-filtration output when eGFR-low is primary.
-3. creatinine can still contribute supporting evidence where appropriate.
-4. distinct acute complication layers remain allowed where medically distinct.
-5. unrelated signals are unaffected.
-6. eGFR packages remain inactive if approval is not given.
+```yaml
+promotion_state: runtime_active_canonical
+runtime_authority_status: active
+clinical_adjudication_status: accepted_with_rationale
 ```
 
-If no runtime behaviour is changed, tests are required only for created validators / governance artefacts if applicable.
+Do not activate or modify androgen packages.
+
+Do not modify creatinine package logic unless strictly required for authority enforcement and explicitly justified.
 
 ---
 
-## Required artefacts
+## Required execution register
 
 Create:
 
 ```text
-knowledge_bus/governance/signal_authority_collision_model_v1.yaml
-docs/audit-papers/BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model.md
+knowledge_bus/governance/authority_runtime_execution_register_v1.yaml
 ```
 
-Create or update:
+It must include:
 
-```text
-knowledge_bus/governance/batch2_egfr_authority_execution_register_v1.yaml
-docs/sprints/launch_core_carry_forward_register.md
+```yaml
+schema_version:
+runtime_consumed: false
+status:
+work_id:
+source_authority_model:
+authority_groups_implemented:
+  - authority_group_id:
+    biological_axis:
+    runtime_enforcement_status:
+    primary_signal_family:
+    supporting_signal_families:
+    collision_policy_applied:
+    tests_passed:
+human_stop_gate:
+  required: true
+  approval_received:
+  approval_phrase:
+  approval_recorded_at:
+runtime_activation_performed:
+activated_package_count:
+blocked_package_count:
+activated_packages:
+  - package_id:
+    signal_id:
+    activation_key:
+    pre_activation_state:
+    post_activation_state:
+    authority_group_id:
+    activated:
+    rollback_action:
+blocked_or_deferred_packages:
+  - package_id:
+    reason:
+    required_next_action:
+rollback_path:
+notes:
 ```
-
-Update only if activated or authority state changes:
-
-```text
-knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/package_manifest.yaml
-knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/package_manifest.yaml
-```
-
-Do not update:
-
-```text
-signal_library.yaml
-research_brief.yaml
-thresholds
-clinical wording
-frontend
-SSOT
-scoring
-report compiler
-```
-
-unless there is an explicit STOP-level justification.
 
 ---
 
 ## Required report
+
+Create:
+
+```text
+docs/audit-papers/CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement.md
+```
 
 Report must include:
 
 ```text
 - executive verdict
 - artefacts inspected
-- creatinine/eGFR relationship summary
-- reusable authority/collision model created
-- renal authority decision
-- eGFR activation decision
-- anti-double-counting decision
-- runtime behaviour changed, if any
-- tests added / not added and why
-- packages activated or kept inactive
-- rollback path
+- authority model consumption design
+- runtime implementation details
+- eGFR / creatinine interaction decision
+- anti-double-counting behaviour
+- packages activated or deferred
+- tests added / updated
 - validation output pasted in full
 - architecture gate output pasted in full
+- STOP gate outcome
+- rollback path
 - carry-forward updates
-- confirmation no unrelated package/frontend/SSOT/scoring changes
+- confirmation no clinical wording / thresholds changed
+- confirmation no unrelated runtime behaviour changed
 ```
+
+---
+
+## Required tests
+
+Add or update sentinel/regression tests proving:
+
+```text
+1. eGFR-low can emit when active and criteria are met.
+2. creatinine-high renal-filtration duplicate does not produce an independent duplicate renal-filtration output when eGFR-low is primary.
+3. creatinine may remain as supporting evidence or related signal context where appropriate.
+4. distinct acute risk / complication layers are not suppressed.
+5. unrelated signals are unaffected.
+6. authority model is fail-safe if missing / malformed.
+7. eGFR packages remain inactive until STOP approval.
+8. After approval, only the two eGFR packages become active.
+```
+
+Sentinel tests must fail if future work bypasses or removes authority/collision enforcement.
 
 ---
 
@@ -461,21 +425,17 @@ docs/sprints/launch_core_carry_forward_register.md
 Expected handling:
 
 ```text
+CF-AUTHORITY-RUNTIME-1
+Resolve only if runtime authority/collision enforcement exists, tests pass, and eGFR is either activated safely or formally deferred with exact blocker.
+
 CF-BATCH2-007
-Resolve only if eGFR authority is either:
-- safely activated with anti-double-counting support, or
-- formally closed with a reusable authority blocker.
+Should already be resolved by governance authority classification. Do not reopen unless the authority model is invalidated.
 
-If runtime support remains needed, consolidate it under a reusable authority/collision runtime carry-forward rather than marker-specific fragmentation.
+CF-CONTEXT-MOD-3
+Remain Open. Context runtime evaluation is separate.
 ```
 
-Possible new consolidated carry-forward only if genuinely needed:
-
-```text
-CF-AUTHORITY-RUNTIME-1 — implement runtime consumption of signal_authority_collision_model_v1.yaml
-```
-
-Do not create separate carry-forwards per eGFR package.
+Do not create new marker-specific carry-forwards unless genuinely unavoidable.
 
 ---
 
@@ -495,13 +455,20 @@ Validate the two eGFR packages:
 python backend/scripts/validate_knowledge_package.py --package-dir <package_dir>
 ```
 
-Run any new regression tests if runtime behaviour or governance validators are added.
+Run all new authority/collision tests.
+
+If eGFR is activated after STOP approval, rerun:
+
+```powershell
+python backend/scripts/run_architecture_validation_gate.py
+python -m pytest <authority collision test path> -q
+```
 
 ---
 
 ## Runtime boundary
 
-Runtime changes are allowed only if they are minimal, reusable, fail-safe, and directly support the authority/collision model.
+Runtime changes are allowed only for reusable authority/collision enforcement.
 
 Do not modify:
 
@@ -510,14 +477,58 @@ frontend
 SSOT
 scoring thresholds
 unit conversion
-domain score assembly
-report compiler
+domain score assembly unless enforcement point requires it
 clinical wording
 reference ranges
-unrelated signal behaviour
+unrelated package logic
 ```
 
 STOP if implementation requires broad redesign.
+
+---
+
+## STOP conditions
+
+STOP and report if:
+
+```text
+1. authority model cannot be safely loaded.
+2. collision enforcement cannot be applied before duplicate outputs surface.
+3. eGFR activation would still allow duplicate renal-filtration signalling.
+4. creatinine acute complication layers would be incorrectly suppressed.
+5. unrelated signals are affected.
+6. eGFR activation would require hardcoded clinical thresholds.
+7. validators fail.
+8. architecture gate fails.
+9. rollback path cannot be defined.
+```
+
+---
+
+## Closure requirements
+
+Before finish, run and report:
+
+```powershell
+git branch --show-current
+git status --short
+git log --oneline -n 5
+git diff --name-only
+git diff --cached --name-only
+git stash list
+```
+
+Do not finish unless:
+
+```text
+- current branch matches work/CF-AUTHORITY-RUNTIME-1-runtime-signal-authority-collision-enforcement
+- only in-scope runtime/governance/docs/test/package-metadata files changed
+- no androgen package files changed
+- no frontend/SSOT/scoring/report compiler files changed unless explicitly justified
+- no ambiguous stash exists
+- validators pass
+- architecture gate passes
+```
 
 ---
 
@@ -526,16 +537,17 @@ STOP if implementation requires broad redesign.
 This sprint is complete only if:
 
 ```text
-1. eGFR vs creatinine authority is explicitly decided
-2. reusable authority/collision model exists
-3. eGFR packages are either safely activated or formally blocked with exact reusable blocker
-4. no duplicate renal dysfunction signalling is introduced
-5. no clinical wording or thresholds change
-6. no unrelated runtime behaviour changes
-7. validators pass
-8. architecture gate passes
-9. rollback path is documented
-10. future overlapping biomarker families can reuse the pattern
+1. runtime consumes the reusable authority/collision model
+2. renal_filtration_axis anti-double-counting is enforced
+3. eGFR packages are either safely activated after STOP approval or formally deferred with exact blocker
+4. duplicate renal-filtration signalling is prevented
+5. distinct renal complication layers remain allowed
+6. sentinel/regression tests protect the behaviour
+7. unrelated signals are unaffected
+8. no clinical wording or thresholds change
+9. architecture gate passes
+10. rollback path is documented
+11. future overlapping biomarker families can reuse the runtime pattern
 ```
 
 ```

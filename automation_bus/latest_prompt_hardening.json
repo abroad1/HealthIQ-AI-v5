@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model",
+  "work_id": "CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement",
   "status": "HARDENED",
   "hardened_utc": "2026-06-07",
   "hardened_by": "Claude Code — Stage 2 Hardening",
@@ -9,145 +9,157 @@
       "check": "FRONT_MATTER_COMPLETENESS",
       "finding": "PASS",
       "citation": "automation_bus/latest_cursor_prompt.md lines 1-7",
-      "detail": "All five mandatory front matter fields present: work_id, branch (work/BATCH2-EGFR-AUTHORITY-1-renal-signal-authority-and-reusable-collision-model), risk_level (HIGH), execution_model (TWO_PHASE_START_FINISH), change_type (MIXED). No field missing."
+      "detail": "All five mandatory front matter fields present and correct: work_id (CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement), branch (work/CF-AUTHORITY-RUNTIME-1-runtime-signal-authority-collision-enforcement), risk_level (HIGH), execution_model (TWO_PHASE_START_FINISH), change_type (MIXED). No field missing."
     },
     {
       "check": "RISK_LEVEL_CLASSIFICATION",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4; backend/core/analytics/signal_evaluator.py lines 18-75",
-      "detail": "HIGH is correct. Sprint may interact with signal_evaluator.py (Intelligence Core) if minimal runtime anti-double-counting support is required. Any Intelligence Core interaction = HIGH by default regardless of file path (SOP §10). MIXED covers governance artefact creation (CONTENT) plus potential runtime authority wiring (BEHAVIOUR). MIXED is governed by BEHAVIOUR controls per SOP §4."
+      "citation": "backend/core/analytics/signal_evaluator.py lines 440-534 (evaluate_all); SOP §10 Intelligence Core rule",
+      "detail": "HIGH is correct and mandatory. Sprint modifies SignalEvaluator.evaluate_all() — a direct Intelligence Core component. Any work touching Intelligence Core = HIGH regardless of file path (SOP §10). MIXED is also correct: governance YAML updates (CONTENT) + evaluator/result assembly runtime changes (BEHAVIOUR) are both in scope. MIXED is governed by BEHAVIOUR controls per SOP §4. No reclassification warranted."
     },
     {
       "check": "EXECUTION_MODEL",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5",
-      "detail": "TWO_PHASE_START_FINISH is correct. Phase 1 = investigation and design report. Phase 2 = governance model creation + eGFR activation decision. A separate human STOP gate (READY_FOR_HUMAN_STOP_GATE + APPROVE BATCH2 EGFR AUTHORITY ACTIVATION) guards any runtime activation beyond Phase 2. This is structurally sound."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 5, 189-214, 250-295",
+      "detail": "TWO_PHASE_START_FINISH is correct. Phase 1 = design preflight report (no code). Phase 2 = runtime implementation + tests + governance register + report. A mandatory human STOP gate (READY_FOR_HUMAN_STOP_GATE + APPROVE BATCH2 EGFR AUTHORITY ACTIVATION) separates Phase 2 completion from Phase 3 eGFR activation. This is structurally sound and appropriate for HIGH/Intelligence Core work."
     },
     {
-      "check": "AUTHORITY_PATH_EGFR_CHRONIC_PACKAGE",
+      "check": "2A_AUTHORITY_PATH_COLLISION_MODEL",
       "finding": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/package_manifest.yaml:1-12; knowledge_bus/governance/medical_frame_identity_index_v1.yaml:1039-1062",
-      "detail": "Package exists. signal_id: signal_egfr_low. Activation key: signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction. Frame: frame_egfr_pass3_chronic_kidney_function_reduction. promotion_state: compiled_not_promoted. runtime_authority_status: inactive. collision_status: requires_adjudication. clinical_adjudication_status: required_before_activation."
+      "citation": "knowledge_bus/governance/signal_authority_collision_model_v1.yaml lines 1-127 (entire file read)",
+      "detail": "File exists. schema_version: 1.0.0. runtime_consumed: false (line 2). renal_filtration_axis authority group defined at lines 11-58: primary_signal_family=signal_egfr_low, supporting_signal_families=[signal_creatinine_high], collision_policy.no_duplicate_user_facing_signal=true, collision_policy.suppress_supporting_when_primary_present=true, collision_policy.allow_parallel_if_distinct_risk_layer=true, runtime_action=governance_only_pending_runtime_support, requires_runtime_support=true. proposed_runtime_pattern documented at lines 46-54. Six placeholder authority groups for future axes confirmed (metabolic_glycaemic, thyroid, androgen, liver_injury, iron_inflammation). No duplicate authority source."
     },
     {
-      "check": "AUTHORITY_PATH_EGFR_HEMODYNAMIC_PACKAGE",
+      "check": "2A_AUTHORITY_PATH_EGFR_EXECUTION_REGISTER",
       "finding": "CONFIRMED",
-      "citation": "knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/package_manifest.yaml:1-12; knowledge_bus/governance/medical_frame_identity_index_v1.yaml:1063-1087",
-      "detail": "Package exists. signal_id: signal_egfr_low. Activation key: signal_egfr_low::inv_egfr_low_hemodynamic_filtration_drop. Frame: frame_egfr_pass3_hemodynamic_filtration_drop. promotion_state: compiled_not_promoted. runtime_authority_status: inactive. collision_status: requires_adjudication. ROUTE_C multi-frame preserved (notes line 1084-1085)."
+      "citation": "knowledge_bus/governance/batch2_egfr_authority_execution_register_v1.yaml lines 1-68 (entire file read)",
+      "detail": "File exists. status: authority_adjudicated_pending_runtime_support (line 3). runtime_consumed: false (line 2). human_stop_gate.required: true, approval_received: false (lines 8-14). anti_double_counting_decision.mechanism_exists_in_evaluator: false (line 29). activation_blocked_until: CF-AUTHORITY-RUNTIME-1 (line 33). Two packages documented at lines 37-68: pkg_kb47_egfr_low_chronic_kidney_function_reduction (activation_key: signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction) and pkg_kb47_egfr_low_hemodynamic_filtration_drop (activation_key: signal_egfr_low::inv_egfr_low_hemodynamic_filtration_drop). Both activated: false, gate_implemented: false."
     },
     {
-      "check": "AUTHORITY_PATH_BATCH2_REMAINDER_RESOLUTION_REGISTER",
+      "check": "2A_AUTHORITY_PATH_EGFR_CHRONIC_PACKAGE",
+      "finding": "CONFIRMED — DEFECT DOCUMENTED",
+      "citation": "knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/signal_library.yaml lines 48-51 (activation_config block); knowledge_bus/packages/pkg_kb52c_creatinine_low_low_muscle_mass_or_low_generation/signal_library.yaml lines 56-61 (working low-signal reference)",
+      "detail": "Package exists. signal_id: signal_egfr_low. activation_logic: lab_range_exceeded. DEFECT: activation_config.enable_lower_bound: false (line 51). For a low-direction signal, enable_lower_bound must be true and enable_upper_bound must be false (pattern confirmed in working creatinine_low package lines 57-59: enable_upper_bound: false, enable_lower_bound: true). Current state means both eGFR signals will NEVER fire — they are de-facto inactive via broken activation_config. Phase 3 activation MUST fix both packages to enable_lower_bound: true, enable_upper_bound: false. This is a known required change, not a scope blocker."
+    },
+    {
+      "check": "2A_AUTHORITY_PATH_EGFR_HEMODYNAMIC_PACKAGE",
+      "finding": "CONFIRMED — SAME DEFECT",
+      "citation": "knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/signal_library.yaml lines 48-51 (activation_config block)",
+      "detail": "Package exists. signal_id: signal_egfr_low. activation_logic: lab_range_exceeded. DEFECT: same activation_config.enable_lower_bound: false as chronic package. Phase 3 must also fix this package. Activation keys are distinct from chronic package (source_spec_id inferred as inv_egfr_low_hemodynamic_filtration_drop from package_id). No duplicate activation_key collision on load. Both eGFR packages co-exist in SignalRegistry without error but produce zero signals because enable_lower_bound is false."
+    },
+    {
+      "check": "2A_AUTHORITY_PATH_CREATININE_PACKAGES",
+      "finding": "CONFIRMED — COLLISION SURFACE MAPPED",
+      "citation": "knowledge_bus/packages/pkg_s24_creatinine_high_renal/signal_library.yaml lines 43-59 (override_rules); knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/signal_library.yaml lines 56-73 (activation_config + override_rules)",
+      "detail": "Two active creatinine-high packages in runtime. pkg_s24_creatinine_high_renal: signal_creatinine_high, activation_logic=lab_range_exceeded (upper bound active by default). COLLISION RISK: override rule or_renal_ckd_stage_3 (egfr < 60, line 48) is the exact filtration-duplicate to suppress when eGFR-low is primary. Override rule or_renal_acute_imbalance (potassium > 5.2, line 54) is the DISTINCT RISK LAYER that must remain allowed per collision_policy.allow_parallel_if_distinct_risk_layer=true. pkg_kb52c_creatinine_high_reduced_glomerular_filtration: signal_creatinine_high, enable_upper_bound: true, UACR-based override — also a filtration duplicate to suppress when eGFR primary."
+    },
+    {
+      "check": "2A_AUTHORITY_PATH_MEDICAL_FRAME_INDEX",
       "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml:314-365",
-      "detail": "File exists. Both eGFR packages listed at lines 314-365. pkg_kb47_egfr_low_chronic_kidney_function_reduction: blocker_type=renal_authority_adjudication_required, final_recommendation=REQUIRES_ARCHITECTURE_AUTHORITY_DECISION (line 341). pkg_kb47_egfr_low_hemodynamic_filtration_drop: blocker_type=anti_double_counting_required, same final recommendation (line 365). Recommended next action for both: BATCH2-EGFR-AUTHORITY-1 (lines 340, 364)."
+      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml lines 1033-1093 (signal_egfr_low family)",
+      "detail": "File exists. signal_egfr_low family at lines 1033-1093. frame_egfr_pass3_chronic_kidney_function_reduction (lines 1037-1065): promotion_state=compiled_not_promoted, runtime_authority_status=inactive, collision_status=allowed_non_runtime_collision, notes confirm CF-AUTHORITY-RUNTIME-1 as required next action (lines 1063-1065). frame_egfr_pass3_hemodynamic_filtration_drop (lines 1066-1093): same status, ROUTE_C multi-frame preserved confirmed (line 1090). No runtime-active eGFR frames. Creatinine family: frame_creatinine_legacy_s24_egfr_escalation (lines 41-68) is runtime_active_legacy_unadjudicated (the escalation-path duplicate that must be suppressed at the signal level, not the package level)."
     },
     {
-      "check": "AUTHORITY_PATH_MEDICAL_FRAME_IDENTITY_INDEX",
+      "check": "2A_AUTHORITY_PATH_SIGNAL_EVALUATOR",
+      "finding": "CONFIRMED — NO COLLISION MECHANISM EXISTS",
+      "citation": "backend/core/analytics/signal_evaluator.py lines 440-534 (evaluate_all entire method)",
+      "detail": "File exists. evaluate_all() at lines 440-534: loads all active signals from registry, evaluates each independently, returns all that fire. NO cross-signal suppression. NO authority group lookup. NO family-level collision detection. Only inter-signal mechanism is duplicate activation_key ValueError at load time (lines 59-64 in SignalRegistry._load). The correct enforcement point for authority/collision is POST-evaluate_all() filtering — inject authority resolution between evaluate_all() result assembly and the caller. This is the minimum-invasive, reusable pattern."
+    },
+    {
+      "check": "2A_AUTHORITY_PATH_ACTIVATION_IDENTITY",
       "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:1033-1087",
-      "detail": "File exists. signal_egfr_low family starts at line 1033. Two frames indexed: chronic (line 1039) and hemodynamic (line 1065). Both have collision_group_id and collision_status: requires_adjudication. Both promotion_state: compiled_not_promoted. Both runtime_authority_status: inactive."
+      "citation": "backend/core/knowledge/signal_activation_identity_v1.py lines 39-78 (infer_source_spec_id + resolve_activation_identity)",
+      "detail": "File exists. activation_key = signal_id::source_spec_id. For eGFR packages: source_spec_id inferred from package_id via _PKG_BODY_RE pattern (line 48): pkg_kb47_egfr_low_chronic_kidney_function_reduction -> inv_egfr_low_chronic_kidney_function_reduction. pkg_kb47_egfr_low_hemodynamic_filtration_drop -> inv_egfr_low_hemodynamic_filtration_drop. Both produce distinct activation_keys — no collision on load. Collision enforcement must operate on signal_id or signal_family grouping, not activation_key."
     },
     {
-      "check": "AUTHORITY_PATH_CREATININE_AUTHORITY_DECISION",
+      "check": "2A_AUTHORITY_PATH_VALIDATION_SCRIPTS",
       "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml:1-148",
-      "detail": "File exists. Key finding: activation_decision.summary: no_runtime_activation_no_retirement_no_package_modification (line 133). runtime_activation_allowed: false (line 138). Note at line 53: 'eGFR is a corroborator not a replacement frame' within creatinine authority. Legacy s24 frame_creatinine_legacy_s24_egfr_escalation (runtime_active_legacy_unadjudicated) uses override rule or_renal_ckd_stage_3 for eGFR<60 — directly relevant to the collision the sprint must address."
+      "citation": "backend/scripts/ directory listing",
+      "detail": "All scripts required by prompt exist: run_architecture_validation_gate.py, validate_medical_frame_identity_index.py, validate_context_modifier_catalogue.py, validate_knowledge_package.py. No missing tooling."
     },
     {
-      "check": "AUTHORITY_PATH_REMAINING_BLOCKERS_REGISTER",
+      "check": "2A_AUTHORITY_PATH_CARRY_FORWARD_REGISTER",
       "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml:36-41",
-      "detail": "File exists. egfr group: outcome=KEEP_BLOCKED, blocker=renal_authority_and_anti_double_counting_required (line 38). Recommended next action: BATCH2-EGFR-AUTHORITY-1 architecture adjudication before promotion/activation (line 39). Notes confirm no anti-double-counting mechanism in evaluator (line 41). This is the current authoritative formal blocker state."
+      "citation": "docs/sprints/launch_core_carry_forward_register.md lines 70-78 (CF-BATCH2-007, CF-CONTEXT-MOD-3, CF-AUTHORITY-RUNTIME-1)",
+      "detail": "File exists. CF-AUTHORITY-RUNTIME-1 at line 78: Status=Open, source=BATCH2-EGFR-AUTHORITY-1, prerequisite before eGFR metadata activation confirmed. CF-BATCH2-007 at line 70: Status=Resolved — IMPORTANT: Resolved means the adjudication-task carry-forward was completed by BATCH2-EGFR-AUTHORITY-1; both eGFR packages remain compiled_not_promoted_inactive. CF-CONTEXT-MOD-3 at line 77: Status=Open, androgen/FT3 blocker — unrelated to this sprint. Do NOT reopen CF-BATCH2-007."
     },
     {
-      "check": "AUTHORITY_PATH_BATCH2_FINAL_PROMOTION_REGISTER",
-      "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_final_promotion_decision_register_v1.yaml (file exists); batch2_remainder_resolution_register_v1.yaml:328 (EXCLUDED from BATCH2-PROMOTE-1)",
-      "detail": "File exists. eGFR packages were excluded from BATCH2-PROMOTE-1; this is cross-referenced in batch2_remainder_resolution_register_v1.yaml line 328. Both eGFR packages remain never-promoted."
+      "check": "2A_DUPLICATE_AUTHORITY_SOURCE_RISK",
+      "finding": "PASS — NO DUPLICATE",
+      "citation": "knowledge_bus/governance/ directory; backend/ssot/ directory",
+      "detail": "signal_authority_collision_model_v1.yaml is the single renal filtration authority source. creatinine_multiframe_authority_decision_v1.yaml is the creatinine frame authority source — distinct scope. medical_frame_identity_index_v1.yaml is the frame identity registry — not an authority model. No new SSOT files required. The new execution register (authority_runtime_execution_register_v1.yaml) is a sprint-specific record, not an authority source. No duplicate authority source risk."
     },
     {
-      "check": "AUTHORITY_PATH_CARRY_FORWARD_REGISTER",
-      "finding": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md:70",
-      "detail": "File exists. CF-BATCH2-007 at line 70: Status=Resolved. CRITICAL INTERPRETATION: 'Resolved' means BATCH2-REMAINING-BLOCKERS-1 recorded the formal blocker — NOT that eGFR is activated. The carry-forward item (adjudication task) is resolved; the eGFR blocking condition is NOT resolved. Both eGFR packages remain compiled_not_promoted_inactive. Cursor must not misread CF-BATCH2-007 as resolved-equals-active."
+      "check": "2B_INTELLIGENCE_CORE_SCOPE",
+      "finding": "PASS — SCOPE DEFINED",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 221-234 (allowed changes); backend/core/analytics/signal_evaluator.py lines 440-534",
+      "detail": "Intelligence Core surface area: SignalEvaluator.evaluate_all() return-value post-processing is the single allowed enforcement point. Correct pattern: evaluate_all() returns full results → authority/collision resolver reads signal_authority_collision_model_v1.yaml → suppresses supporting-family signals when primary-family is present → returns filtered results. Alternative: inject as a method on SignalEvaluator or as a separate authority resolver class called by the pipeline. Either is acceptable. The resolver must NOT modify the underlying signal evaluation logic — only filter the assembled result list."
     },
     {
-      "check": "AUTHORITY_PATH_SIGNAL_EVALUATOR",
-      "finding": "CONFIRMED",
-      "citation": "backend/core/analytics/signal_evaluator.py:55-64",
-      "detail": "File exists. SignalRegistry loads all packages/*/signal_library.yaml. Only inter-signal logic is a hard error on duplicate activation_key (lines 59-64: 'Duplicate activation_key collision' ValueError). NO collision suppression, NO authority priority, NO signal-family-level anti-double-counting mechanism exists. This confirms the governance-only default approach in the prompt is correct — any runtime anti-double-counting requires new Intelligence Core code."
+      "check": "2B_REGRESSION_TARGETS",
+      "finding": "PASS — TARGETS EXPLICIT",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 399-413 (8 test requirements)",
+      "detail": "8 required regression tests explicitly listed. Key behaviours: (1) eGFR-low emits when active and criteria met, (2) creatinine-high filtration duplicate suppressed when eGFR-low present, (3) creatinine remains as supporting evidence where appropriate, (4) distinct acute risk layers (potassium/electrolyte) not suppressed, (5) unrelated signals unaffected, (6) authority model fail-safe when missing/malformed, (7) eGFR inactive before STOP approval, (8) only two eGFR packages activate after approval. All 8 are testable against verified source behaviour."
     },
     {
-      "check": "SOURCE_CROSS_REF_EGFR_VS_CREATININE_RELATIONSHIP",
-      "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml:53; medical_frame_identity_index_v1.yaml:41-68",
-      "detail": "creatinine_multiframe_authority_decision_v1.yaml explicitly states eGFR is 'a corroborator not a replacement frame' within creatinine authority (line 53). The legacy frame frame_creatinine_legacy_s24_egfr_escalation is runtime_active_legacy_unadjudicated (index line 43, runtime_authority_status: active at line 25 of creatinine decision). Activating signal_egfr_low without anti-double-counting would present two independent renal-filtration signals. The sprint correctly identifies this as the core risk."
+      "check": "2B_DETERMINISM_RISKS",
+      "finding": "PASS — RISKS DOCUMENTED",
+      "citation": "backend/core/analytics/signal_evaluator.py lines 532-534 (sort); signal_authority_collision_model_v1.yaml line 2 (runtime_consumed: false)",
+      "detail": "Four determinism risks Cursor must handle: (1) Authority model loader must fail-closed — if YAML missing or malformed, evaluator must not silently pass all signals; must raise or return empty/error. (2) Filtered output must maintain sort order (signal_id, activation_key) matching current evaluate_all sort at lines 532-534. (3) eGFR activation_config fix (enable_lower_bound: true, enable_upper_bound: false) applies to BOTH packages — missing one causes asymmetric behaviour. (4) Suppression must target signal_creatinine_high signals from both pkg_s24 (or_renal_ckd_stage_3 override) and pkg_kb52c — not the potassium distinct-risk-layer. No silent output drift allowed."
     },
     {
-      "check": "SOURCE_CROSS_REF_NO_EXISTING_ANTI_DOUBLE_COUNTING",
-      "finding": "CONFIRMED",
-      "citation": "backend/core/analytics/signal_evaluator.py:88-200 (SignalEvaluator class body)",
-      "detail": "SignalEvaluator has no collision resolution, no signal family priority, no suppression path. Only inter-signal logic is the hard duplicate activation_key error in SignalRegistry._load(). This validates that runtime anti-double-counting requires new code in Intelligence Core — correctly HIGH risk and correctly deferred behind a human STOP gate."
-    },
-    {
-      "check": "SOURCE_CROSS_REF_PRIOR_TASK_BATCH2_REMAINING_BLOCKERS",
-      "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml:2-18",
-      "detail": "BATCH2-REMAINING-BLOCKERS-1: status=analysis_complete_ready_for_human_stop_gate (line 3). runtime_code_changed: false (line 17). activated_package_count: 0 (line 15). No eGFR activation was performed. eGFR blocker formally recorded as renal_authority_and_anti_double_counting_required. This is the verified starting state for BATCH2-EGFR-AUTHORITY-1."
-    },
-    {
-      "check": "FORBIDDEN_FILE_PROTECTION",
+      "check": "2B_NO_SCOPE_CREEP",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 411-425",
-      "detail": "Prompt explicitly prohibits modification of: signal_library.yaml, research_brief.yaml, thresholds, clinical wording, frontend, SSOT, scoring, report compiler — unless STOP-level justification with explicit statement. Prohibition list is comprehensive and unambiguous. STOP conditions protect the boundary."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 235-243 (do not change list), lines 311 (do not activate androgen), lines 312-314 (creatinine constraint)",
+      "detail": "Explicit do-not-change list in prompt: clinical wording, thresholds, reference ranges, signal IDs, activation keys, frontend, SSOT, scoring thresholds, unit conversion, report compiler. Androgen packages explicitly excluded. Creatinine package logic must not change unless strictly required and explicitly justified. The activation_config fix in eGFR signal_library.yaml files is NOT in the do-not-change list and is the defined activation mechanism — acceptable as Phase 3 change post STOP approval."
     },
     {
-      "check": "BEHAVIOURAL_SCOPE_STAGE2B",
+      "check": "2B_STOP_CONDITIONS_COVERAGE",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 236-243 (governance-only default); lines 332-343 (STOP gate before activation); lines 373-385 (regression tests if runtime changed)",
-      "detail": "Behavioural scope is well-bounded: (1) signal_authority_collision_model_v1.yaml is governance-only by default (runtime_consumed: false mandatory). (2) Runtime implementation is conditional on meeting strict criteria: minimal, reusable, fail-safe. (3) STOP gate (READY_FOR_HUMAN_STOP_GATE + explicit approval phrase) is required before any runtime activation. (4) If broad redesign needed, STOP is mandatory. (5) Six regression test targets defined for runtime path; tests-not-required path for governance-only is also explicit."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 74-84 (baseline STOP), lines 205-214 (Phase 1 STOP), lines 489-503 (closure STOP conditions)",
+      "detail": "Baseline STOP covers: wrong branch, main drift, dirty tree, missing authority model, missing eGFR packages, missing creatinine frames, gate failure. Phase 1 STOP covers: authority model not safely loadable, no safe enforcement point, requires broad redesign, complication layers would be suppressed, rollback undefined. Closure STOP covers: wrong branch, out-of-scope files, androgen files changed, frontend/SSOT/scoring changed, stash present, validators fail, gate fails. Coverage is comprehensive. No STOP condition gap found."
     },
     {
-      "check": "REGRESSION_TARGETS",
+      "check": "2B_ROLLBACK_PATH",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 373-385",
-      "detail": "If runtime anti-double-counting implemented: 6 tests required covering eGFR emission, creatinine no-duplicate, creatinine supporting evidence, distinct acute layers, unrelated signals unaffected, inactive without approval. If governance-only (expected path): tests required only for governance validators if added. Coverage is adequate for both paths."
-    },
-    {
-      "check": "DETERMINISM_RISK",
-      "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 165-174 (runtime_consumed: false required)",
-      "detail": "Primary artefact runtime_consumed: false is mandatory. No analytical output can change from governance-only creation. Determinism is only at risk if runtime anti-double-counting code is added to signal_evaluator.py — gated by human STOP approval. The prompt correctly isolates and gates this risk."
-    },
-    {
-      "check": "STOP_CONDITIONS_COMPLETENESS",
-      "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 93-103 (baseline STOP); lines 256-264 (Phase 1 STOP); lines 329-343 (activation STOP gate)",
-      "detail": "Baseline STOP covers: branch not main, local main != origin/main, dirty tree, missing medical_frame_identity_index_v1.yaml, missing batch2_remainder_resolution_register_v1.yaml, eGFR packages not found, creatinine authority/frames not found. Phase 1 STOP covers: relationship unresolvable, duplicate signalling risk, runtime requires broad redesign, rollback path undefined. Activation STOP gate requires explicit READY_FOR_HUMAN_STOP_GATE report then APPROVE BATCH2 EGFR AUTHORITY ACTIVATION. Complete and appropriately placed."
-    },
-    {
-      "check": "DUPLICATE_AUTHORITY_SOURCE_RISK",
-      "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 163-174; knowledge_bus/governance/ directory listing",
-      "detail": "signal_authority_collision_model_v1.yaml is a new artefact not duplicating any existing authority source. Creatinine authority remains in creatinine_multiframe_authority_decision_v1.yaml. Medical frame authority remains in medical_frame_identity_index_v1.yaml. No duplicate authority source risk."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 509-532 (closure requirements)",
+      "detail": "Rollback path is definable: revert signal_evaluator.py authority resolver addition, revert eGFR signal_library.yaml activation_config changes, revert authority_runtime_execution_register_v1.yaml, revert medical_frame_identity_index_v1.yaml eGFR frame status updates (if any), revert carry-forward register updates. All changes are file-local and reversible. No DB migration, no schema change, no irreversible operation. Rollback path confirmed viable."
     },
     {
       "check": "POWERSHELL_COMPATIBILITY",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 86-91 (baseline commands); lines 484-499 (validation commands)",
-      "detail": "All commands use python backend/scripts/... and git invocations. No bash-specific syntax. Validation scripts (run_architecture_validation_gate.py, validate_medical_frame_identity_index.py, validate_context_modifier_catalogue.py, validate_knowledge_package.py) are Python invocations compatible with Windows PowerShell."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 64-73 (baseline commands), lines 444-461 (validation commands), lines 512-519 (closure commands)",
+      "detail": "All shell commands use python backend/scripts/... and git invocations. No bash-specific syntax detected. Validation scripts are Python — compatible with Windows PowerShell. git commands follow standard form."
     },
     {
-      "check": "SURFACED_WARNING_CF_BATCH2_007_MISREAD_RISK",
-      "finding": "WARNING — HARDENING INSTRUCTION ISSUED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md:70",
-      "detail": "CF-BATCH2-007 shows Status: 'Resolved'. A hasty reader could interpret this as eGFR being resolved/active. HARDENING INSTRUCTION: Resolved means the adjudication-task carry-forward item was resolved by BATCH2-REMAINING-BLOCKERS-1 recording the formal blocker. Both eGFR packages remain compiled_not_promoted_inactive. Cursor must verify eGFR package runtime_authority_status via medical_frame_identity_index_v1.yaml lines 1047-1048 and 1073-1074 before proceeding — not rely on CF-BATCH2-007 status interpretation."
+      "check": "HARDENING_INSTRUCTION_EGFR_ACTIVATION_CONFIG_FIX",
+      "finding": "HARDENING INSTRUCTION — MANDATORY FOR PHASE 3",
+      "citation": "knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/signal_library.yaml lines 48-51; knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/signal_library.yaml lines 48-51",
+      "detail": "MANDATORY: Both eGFR signal_library.yaml files have activation_config.enable_lower_bound: false. This is a defect — for a low-direction signal using lab_range_exceeded, enable_lower_bound must be true and enable_upper_bound must be false (pattern confirmed in pkg_kb52c_creatinine_low_low_muscle_mass_or_low_generation). Phase 3 activation MUST change both packages to: enable_lower_bound: true, enable_upper_bound: false. Without this fix, eGFR signals will never fire and activation will appear to succeed but produce no clinical output. This change to signal_library.yaml is specifically required for activation and is within Phase 3 scope."
+    },
+    {
+      "check": "HARDENING_INSTRUCTION_COLLISION_ENFORCEMENT_POINT",
+      "finding": "HARDENING INSTRUCTION — IMPLEMENTATION GUIDANCE",
+      "citation": "backend/core/analytics/signal_evaluator.py lines 440-534",
+      "detail": "MANDATORY: Authority/collision enforcement must occur as a post-processing step on the results list returned by evaluate_all(). Do NOT modify the individual signal evaluation logic (threshold, override, gate methods). The pattern: evaluate_all() returns List[SignalResult] → authority resolver reads renal_filtration_axis from signal_authority_collision_model_v1.yaml → groups results by signal family (signal_egfr_low, signal_creatinine_high) → if primary family (signal_egfr_low) has any active results, filter supporting-family (signal_creatinine_high) results that are renal-filtration duplicates → preserve signal_creatinine_high results whose override logic fired for distinct risk layers (potassium). The authority model's proposed_runtime_pattern.authority_resolution block (lines 46-54 of collision model) defines this exactly."
+    },
+    {
+      "check": "HARDENING_INSTRUCTION_DISTINCT_RISK_LAYER_PRESERVATION",
+      "finding": "HARDENING INSTRUCTION — CLINICAL SAFETY CONSTRAINT",
+      "citation": "knowledge_bus/governance/signal_authority_collision_model_v1.yaml lines 27-31 (distinct_risk_layers); knowledge_bus/packages/pkg_s24_creatinine_high_renal/signal_library.yaml lines 53-59 (or_renal_acute_imbalance)",
+      "detail": "MANDATORY: The potassium/electrolyte complication layer (signal_creatinine_high override or_renal_acute_imbalance, potassium > 5.2) is a DISTINCT RISK LAYER per the authority model (lines 27-31 of collision model: hyperkalemia_or_electrolyte_complication must remain parallel when medically distinct). The suppression logic must NOT suppress signal_creatinine_high results that are driven by the potassium override path. Only suppress creatinine-high results that represent filtration-level duplicates (or_renal_ckd_stage_3 override or general creatinine-high without distinct-risk escalation). Failure to preserve this layer is a clinical safety violation."
+    },
+    {
+      "check": "HARDENING_INSTRUCTION_CF_BATCH2_007_MISREAD_RISK",
+      "finding": "HARDENING INSTRUCTION — INTERPRETATION GUARD",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md line 70",
+      "detail": "CF-BATCH2-007 shows Status: Resolved. Cursor must NOT interpret this as eGFR being activated or authority-enforced. Resolved means the adjudication carry-forward task was completed by BATCH2-EGFR-AUTHORITY-1 which recorded the blocker in signal_authority_collision_model_v1.yaml. Both eGFR packages remain compiled_not_promoted with runtime_authority_status: inactive (medical_frame_identity_index_v1.yaml lines 1047-1048 and 1073-1074). This sprint (CF-AUTHORITY-RUNTIME-1) is the one that resolves the actual blocking condition."
     }
   ],
   "prior_task_findings": {
-    "BATCH2-REMAINING-BLOCKERS-1": "CONFIRMED status=analysis_complete_ready_for_human_stop_gate. runtime_code_changed=false. activated_package_count=0. eGFR blocker=renal_authority_and_anti_double_counting_required recorded. Source: batch2_remaining_blockers_execution_register_v1.yaml lines 3-17.",
-    "BATCH2-THYROID-GATE-1": "CONFIRMED complete. 3 thyroid packages runtime_active_canonical. FT3-low and all non-thyroid packages confirmed untouched. eGFR state unchanged. Source: batch2_remaining_blockers_execution_register_v1.yaml confirmed egfr outcome=KEEP_BLOCKED."
+    "BATCH2-EGFR-AUTHORITY-1": "CONFIRMED: signal_authority_collision_model_v1.yaml created with runtime_consumed=false. renal_filtration_axis authority group adjudicated. Both eGFR packages authority_adjudicated_pending_runtime_support. phase_3_outcome=B (governance only). No runtime code changed. anti_double_counting_decision.mechanism_exists_in_evaluator=false confirmed. Source: batch2_egfr_authority_execution_register_v1.yaml lines 1-68 (entire file read).",
+    "BATCH2-REMAINING-BLOCKERS-1": "CONFIRMED: status=analysis_complete_ready_for_human_stop_gate. runtime_code_changed=false. activated_package_count=0. eGFR blocker confirmed as renal_authority_and_anti_double_counting_required. androgen (8 packages) and FT3-low still blocked by CF-CONTEXT-MOD-3 — unrelated to this sprint. Source: batch2_remaining_blockers_execution_register_v1.yaml lines 1-30 read."
   },
   "overall_verdict": "HARDENED",
-  "hardening_notes": "One warning issued: CF-BATCH2-007 'Resolved' status must not be misread as eGFR activation. Cursor must verify eGFR package state from medical_frame_identity_index_v1.yaml directly. All authority paths verified from source content. signal_evaluator.py confirmed to have NO collision/suppression mechanism — governance-only default approach is correct and safe. No blockers found. Sprint may proceed to Stage 3 (python backend/scripts/run_work_package.py start)."
+  "hardening_notes": "Sprint is hardened with two mandatory implementation instructions: (1) Both eGFR signal_library.yaml files have enable_lower_bound: false — this must be fixed to enable_lower_bound: true in Phase 3 activation. Without this fix, eGFR signals will never fire. (2) Collision enforcement must target only renal-filtration duplicate outputs from signal_creatinine_high, NOT the distinct potassium/electrolyte risk layer. All authority paths verified against source file content with line citations. SignalEvaluator.evaluate_all() confirmed to have no existing collision mechanism. Enforcement insertion point confirmed as post-evaluate_all() filtering. No blocking SOP violations found. No STOP condition triggered. Sprint may proceed to Stage 3 (python backend/scripts/run_work_package.py start)."
 }
