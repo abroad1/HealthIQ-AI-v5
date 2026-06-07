@@ -1,9 +1,10 @@
 {
   "branch": "work/BATCH2-PROMOTE-1-CONTINUATION-runtime-activation-stop-gated-completion",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-07T11:45:39Z",
   "cursor_started_utc": "2026-06-07T11:41:46Z",
-  "head_sha": "30a0a57fb21bba3548040c647ec84382456abe38",
+  "head_sha": "eff36c1db64ec6d19d232c71b571863e0f6bf2c1",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion"
 }
