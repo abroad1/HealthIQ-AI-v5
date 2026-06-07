@@ -288,7 +288,7 @@ def test_validate_rejects_ungoverned_preserve_threshold(tmp_path: Path):
         validate_signal_authority_collision_model(bad, model_path=bad_path)
 
 
-def test_egfr_frames_remain_inactive_in_frame_index():
+def test_egfr_frames_runtime_active_in_frame_index():
     index_path = REPO_ROOT / "knowledge_bus" / "governance" / "medical_frame_identity_index_v1.yaml"
     payload = yaml.safe_load(index_path.read_text(encoding="utf-8")) or {}
     frames = []
@@ -298,8 +298,9 @@ def test_egfr_frames_remain_inactive_in_frame_index():
         frames.extend(family.get("frames") or [])
     assert len(frames) == 2
     for frame in frames:
-        assert frame.get("promotion_state") == "compiled_not_promoted"
-        assert frame.get("runtime_authority_status") == "inactive"
+        assert frame.get("promotion_state") == "runtime_active_canonical"
+        assert frame.get("runtime_authority_status") == "active"
+        assert frame.get("clinical_adjudication_status") == "accepted_with_rationale"
 
 
 def test_resolver_suppression_sentinel():

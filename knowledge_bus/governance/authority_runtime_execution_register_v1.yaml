@@ -1,7 +1,8 @@
 schema_version: 1.0.0
 runtime_consumed: true
-status: enforcement_complete_pending_activation_stop_gate
+status: enforcement_complete_runtime_activation_complete
 work_id: CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement
+follow_forward_work_id: CF-AUTHORITY-RUNTIME-1B_egfr_phase3_runtime_activation_follow_forward
 source_authority_model: knowledge_bus/governance/signal_authority_collision_model_v1.yaml
 source_egfr_register: knowledge_bus/governance/batch2_egfr_authority_execution_register_v1.yaml
 analysis_utc: '2026-06-07'
@@ -26,30 +27,34 @@ authority_groups_implemented:
 human_stop_gate:
   required: true
   activation_recommended: true
-  approval_received: false
+  approval_received: true
   approval_phrase: APPROVE BATCH2 EGFR AUTHORITY ACTIVATION
-  approval_recorded_at: null
-runtime_activation_performed: false
-activated_package_count: 0
-blocked_package_count: 2
-activated_packages: []
-blocked_or_deferred_packages:
+  approval_recorded_at: '2026-06-07'
+runtime_activation_performed: true
+activated_package_count: 2
+blocked_package_count: 0
+activated_packages:
 - package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
   signal_id: signal_egfr_low
   activation_key: signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction
-  reason: pending_human_stop_gate_and_enable_lower_bound_activation_config_fix
-  required_next_action: Human STOP approval; fix enable_lower_bound true on both eGFR signal_library.yaml;
-    metadata activation per BATCH2-ACTIVATION-1 pattern
+  medical_frame_id: frame_egfr_pass3_chronic_kidney_function_reduction
+  activation_config_fix: enable_lower_bound true; enable_upper_bound false on signal_library.yaml
+  activated: true
 - package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
   signal_id: signal_egfr_low
   activation_key: signal_egfr_low::inv_egfr_low_hemodynamic_filtration_drop
-  reason: pending_human_stop_gate_and_enable_lower_bound_activation_config_fix
-  required_next_action: Same as chronic package
-phase_3_outcome: deferred_pending_stop_approval
-rollback_path: Revert signal_authority_collision_resolver.py; remove apply call from signal_evaluator.py;
-  revert signal_authority_collision_model_v1.yaml runtime_consumed/runtime_action; revert execution register
-  and audit report. eGFR frame index and manifests unchanged this sprint.
-notes: Runtime enforcement proven by regression tests (13/13). Fail-loud on missing/invalid authority
-  model. Potassium/electrolyte preservation uses governed s24 override or_renal_acute_imbalance — not ad
-  hoc threshold. eGFR packages remain inactive until STOP approval and Phase 3 activation_config fix +
-  metadata activation.
+  medical_frame_id: frame_egfr_pass3_hemodynamic_filtration_drop
+  activation_config_fix: enable_lower_bound true; enable_upper_bound false on signal_library.yaml
+  activated: true
+blocked_or_deferred_packages: []
+phase_3_outcome: complete_via_cf_authority_runtime_1b_follow_forward
+rollback_path: Revert CF-AUTHORITY-RUNTIME-1B commit — restore eGFR signal_library enable_lower_bound
+  false; revert frame index promotion_state/runtime_authority_status/clinical_adjudication_status;
+  remove runtime activation metadata from eGFR package_manifest.yaml files; revert execution register
+  activation fields. Authority collision enforcement (CF-AUTHORITY-RUNTIME-1) rollback remains separate:
+  revert signal_authority_collision_resolver.py; remove apply call from signal_evaluator.py; revert
+  signal_authority_collision_model_v1.yaml runtime_consumed/runtime_action.
+notes: Runtime enforcement proven by regression tests. Fail-loud on missing/invalid authority model.
+  Potassium/electrolyte preservation uses governed s24 override or_renal_acute_imbalance. Phase 3 eGFR
+  runtime activation completed by CF-AUTHORITY-RUNTIME-1B after human APPROVE BATCH2 EGFR AUTHORITY
+  ACTIVATION. Both eGFR packages runtime_active_canonical; anti-double-counting guardrail remains in force.

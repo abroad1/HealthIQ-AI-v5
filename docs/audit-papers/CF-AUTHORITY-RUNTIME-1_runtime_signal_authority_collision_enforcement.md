@@ -143,9 +143,29 @@ pytest_governance_regression: PASS
 
 | ID | Action |
 |----|--------|
-| CF-AUTHORITY-RUNTIME-1 | **Resolved** — runtime enforcement implemented; eGFR activation deferred pending STOP |
-| CF-BATCH2-007 | Unchanged (already resolved at governance level) |
+| CF-AUTHORITY-RUNTIME-1 | **Resolved** — runtime enforcement implemented; eGFR Phase 3 activation completed via CF-AUTHORITY-RUNTIME-1B |
+| CF-BATCH2-007 | **Resolved** (unchanged) — renal authority adjudication; eGFR runtime activation now complete |
 | CF-CONTEXT-MOD-3 | Remains Open |
+
+---
+
+## Phase 3 follow-forward activation (CF-AUTHORITY-RUNTIME-1B)
+
+Human approval received: **APPROVE BATCH2 EGFR AUTHORITY ACTIVATION**
+
+This follow-forward completes the missed Phase 3 eGFR runtime activation deferred at CF-AUTHORITY-RUNTIME-1 STOP gate.
+
+| Item | Status |
+|------|--------|
+| pkg_kb47_egfr_low_chronic_kidney_function_reduction | **runtime_active_canonical** |
+| pkg_kb47_egfr_low_hemodynamic_filtration_drop | **runtime_active_canonical** |
+| enable_lower_bound on both signal_library.yaml | **true** |
+| Authority/collision runtime guardrail | **In force** (unchanged) |
+| Creatinine/eGFR anti-double-counting tests | **PASS** |
+| Governed potassium/electrolyte preservation | **PASS** |
+| Unrelated runtime behaviour | **Unchanged** |
+
+Rollback: revert CF-AUTHORITY-RUNTIME-1B commit (frame index, manifests, signal_library activation_config, execution register activation fields). Authority enforcement rollback path unchanged from CF-AUTHORITY-RUNTIME-1 section above.
 
 ---
 

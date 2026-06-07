@@ -10,3 +10,7 @@ created_at: '2026-03-28'
 source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
 translation_mode: creation
 behavioural_impact: NONE
+governance_runtime_activation_status: runtime_active_canonical
+governance_runtime_activation_work_id: CF-AUTHORITY-RUNTIME-1B_egfr_phase3_runtime_activation_follow_forward
+governance_runtime_activation_register: knowledge_bus/governance/authority_runtime_execution_register_v1.yaml
+governance_runtime_activation_recorded_at: '2026-06-07'

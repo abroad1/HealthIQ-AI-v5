@@ -139,12 +139,11 @@ def test_ft3_low_package_not_runtime_active_in_frame_index():
     assert "runtime_authority_status: inactive" in section
 
 
-def test_androgen_and_egfr_packages_remain_inactive_in_frame_index():
+def test_androgen_packages_remain_inactive_in_frame_index():
     index_path = REPO_ROOT / "knowledge_bus/governance/medical_frame_identity_index_v1.yaml"
     text = index_path.read_text(encoding="utf-8")
     inactive_markers = (
         "pkg_kb47_dhea_high_androgen_excess_context",
-        "pkg_kb47_egfr_low_chronic_kidney_function_reduction",
     )
     for package_id in inactive_markers:
         pos = text.index(f"source_package_id: {package_id}")
