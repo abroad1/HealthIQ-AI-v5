@@ -1,8 +1,8 @@
 {
   "branch": "work/BATCH2-THYROID-GATE-1-mandatory-tsh-gating-and-runtime-activation",
   "bus_version": "1.2",
-  "cursor_started_utc": "2026-06-07T14:28:52Z",
-  "head_sha": "b88c9e77993ac6dc830e5d6925a2722a11d149ff",
+  "cursor_started_utc": "2026-06-07T14:53:19Z",
+  "head_sha": "e97a7362ead1c1dfed16c53d40f9b937fa343064",
   "raw_stop_condition": null,
   "status": "IN_PROGRESS",
   "work_id": "BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation"
