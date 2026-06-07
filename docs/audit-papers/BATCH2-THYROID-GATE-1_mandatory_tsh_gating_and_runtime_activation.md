@@ -8,7 +8,7 @@
 
 ## Executive verdict
 
-**STOP GATE — READY_FOR_HUMAN_STOP_GATE.** Mandatory TSH pre-emission gating **implemented and tested**. **11/11** regression tests **PASS**. **No runtime metadata activation performed** — human approval phrase not received. **FT3 low** remains formally deferred. **Androgen and eGFR packages untouched.**
+**RUNTIME ACTIVATION COMPLETE.** Mandatory TSH pre-emission gating **implemented, tested, and approved**. **Phase 3 metadata activation** performed after **`APPROVE BATCH2 THYROID GATED ACTIVATION`**. **3/3** eligible thyroid packages **runtime_active_canonical**. **FT3 low** remains formally deferred. **Androgen and eGFR packages untouched.**
 
 ---
 
@@ -43,31 +43,38 @@
 
 ## STOP gate outcome
 
-**Status:** `READY_FOR_HUMAN_STOP_GATE`
+**Status:** `RUNTIME_ACTIVATION_COMPLETE`
 
-**Approval received:** **No**
+**Approval received:** **Yes**
 
-**Required phrase:** `APPROVE BATCH2 THYROID GATED ACTIVATION`
+**Approval phrase:** `APPROVE BATCH2 THYROID GATED ACTIVATION`
 
-**Runtime activation performed:** **No**
+**Approval recorded:** 2026-06-07T15:00:00Z
+
+**Runtime activation performed:** **Yes** — 3 packages activated
 
 ---
 
-## Packages proposed for activation (pending approval)
+## Packages activated (Phase 3)
 
-| package_id | gate |
-|------------|------|
-| pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis | TSH suppressed |
-| pkg_kb47_free_t4_high_thyrotoxicosis_context | TSH suppressed |
-| pkg_kb47_free_t4_low_thyroid_hormone_deficiency | TSH present |
+| package_id | gate | post_activation_state |
+|------------|------|------------------------|
+| pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis | TSH suppressed | runtime_active_canonical |
+| pkg_kb47_free_t4_high_thyrotoxicosis_context | TSH suppressed | runtime_active_canonical |
+| pkg_kb47_free_t4_low_thyroid_hormone_deficiency | TSH present | runtime_active_canonical |
+
+**Metadata updated:**
+- `medical_frame_identity_index_v1.yaml` — promotion_state, runtime_authority_status, clinical_adjudication_status for three frames
+- Three `package_manifest.yaml` — `governance_runtime_activation_*` fields (BATCH2-ACTIVATION-1 pattern)
+- `batch2_thyroid_gate_execution_register_v1.yaml` — approval + activation record
 
 ---
 
 ## Packages deferred
 
-| package_id | reason |
-|------------|--------|
-| pkg_kb47_free_t3_low_low_t3_syndrome | TSH + FT4 + illness/medication context — CF-CONTEXT-MOD-3 |
+| package_id | reason | activated |
+|------------|--------|-----------|
+| pkg_kb47_free_t3_low_low_t3_syndrome | thyroid_activation_requires_tsh_ft4_and_illness_medication_context | false |
 
 ---
 
@@ -79,6 +86,8 @@ Androgen (8) + eGFR (2) — **confirmed untouched** in diff.
 
 ## Test evidence
 
+### Pre-activation (Phase 2)
+
 Command: `python -m pytest backend/tests/regression/test_batch2_thyroid_tsh_gating.py -q`
 
 ```text
@@ -87,15 +96,39 @@ Command: `python -m pytest backend/tests/regression/test_batch2_thyroid_tsh_gati
 
 Scenarios covered: FT3 high absent/normal/suppressed TSH; FT4 high absent/normal/suppressed TSH; FT4 low absent/present TSH; FT3 low inactive in frame index; androgen/eGFR inactive; unrelated creatinine signal unaffected.
 
+### Post-activation (Phase 3)
+
+See validation output section below.
+
 ---
 
-## Validation output
+## Validation output (post-activation)
 
-**Package validators (4 thyroid):** all PASS (`validate_knowledge_package.py`)
+**Architecture gate:** PASS
 
-**Architecture gate:** PASS (pre-activation run)
+```text
+architecture_validation_gate: PASS
+medical_frame_identity_index: PASS (errors: 0)
+context_modifier_catalogue: PASS (errors: 0)
+day_one_architecture_validation: PASS
+medical_intelligence_architecture_validation: PASS
+```
 
-**Frame index / context catalogue:** PASS
+**Frame index validator:** PASS (errors: 0)
+
+**Thyroid gating regression:** PASS
+
+```text
+11 passed
+```
+
+**Package validators (3 activated thyroid):** all PASS
+
+| package_id | manifest | research | signal | promoted_signal_intelligence |
+|------------|----------|----------|--------|------------------------------|
+| pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis | PASS | PASS | PASS | PASS |
+| pkg_kb47_free_t4_high_thyrotoxicosis_context | PASS | PASS | PASS | PASS |
+| pkg_kb47_free_t4_low_thyroid_hormone_deficiency | PASS | PASS | PASS | PASS |
 
 ---
 
@@ -104,7 +137,10 @@ Scenarios covered: FT3 high absent/normal/suppressed TSH; FT4 high absent/normal
 1. Revert `signal_evaluator.py` gate method and call site  
 2. Remove `mandatory_pre_emission_gates` from three signal libraries  
 3. Restore FT4 low `enable_lower_bound: false` if rolling back gate fix  
-4. If metadata activation applied later: revert frame index + manifest fields for three packages only  
+4. Revert frame index + manifest `governance_runtime_activation_*` fields for three activated packages only  
+5. Revert `batch2_thyroid_gate_execution_register_v1.yaml` activation flags  
+
+FT3 low, androgen, and eGFR packages remain untouched under rollback.
 
 ---
 
@@ -112,23 +148,30 @@ Scenarios covered: FT3 high absent/normal/suppressed TSH; FT4 high absent/normal
 
 | ID | Action |
 |----|--------|
-| CF-BATCH2-013 | **Open** — gating implemented; metadata activation pending `APPROVE BATCH2 THYROID GATED ACTIVATION` |
-| CF-BATCH2-007 | Open |
-| CF-BATCH2-010 | Open |
-| CF-CONTEXT-MOD-3 | Open — still blocks FT3 low |
+| CF-BATCH2-013 | **Resolved** — TSH gating + 3-package metadata activation complete |
+| CF-BATCH2-007 | Open — eGFR authority |
+| CF-BATCH2-010 | Open — androgen clinical sign-off |
+| CF-CONTEXT-MOD-3 | Open — blocks FT3 low illness/medication context |
 
 ---
 
 ## Confirmations
 
 - No clinical wording changes  
-- No threshold value changes (lab ranges used from patient panel only in tests)  
+- No threshold value changes  
 - No activation keys / signal IDs changed  
 - No frontend / SSOT / scoring changes  
 - FT3 low not activated  
+- Androgen (8) and eGFR (2) packages untouched  
 
 ---
 
-## Next step
+## Phase history
 
-Human must reply with **`APPROVE BATCH2 THYROID GATED ACTIVATION`** to authorize metadata runtime activation of the three TSH-gated thyroid packages.
+| Phase | Status |
+|-------|--------|
+| Phase 1 — Preflight + STOP gate | Complete |
+| Phase 2 — TSH gating implementation + tests | Complete |
+| Phase 3 — Metadata runtime activation (post-approval) | Complete |
+
+**Next step:** Post-activation audit evidence review; kernel finish/merge only after human confirmation.

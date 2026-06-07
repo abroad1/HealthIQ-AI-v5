@@ -1332,9 +1332,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
     activation_key: signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis
     signal_id: signal_free_t3_high
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: false
@@ -1346,7 +1346,9 @@ signal_families:
     notes: "PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication\
       \ required before activation. Provenance canonical. Not runtime-active.\n  \
       \        BATCH2-PROMOTE-1: governance promotion recorded; promotion_state remains\
-      \ compiled_not_promoted; runtime_authority_status inactive."
+      \ compiled_not_promoted; runtime_authority_status inactive.\n          BATCH2-THYROID-GATE-1:\
+      \ APPROVE BATCH2 THYROID GATED ACTIVATION recorded; runtime_active_canonical\
+      \ activated with mandatory TSH pre-emission gate."
 - signal_family_id: signal_free_t3_low
   primary_biomarker_id: free_t3
   system: hormonal
@@ -1375,7 +1377,8 @@ signal_families:
     notes: "PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication\
       \ required before activation. Provenance canonical. Not runtime-active.\n  \
       \        BATCH2-PROMOTE-1: governance promotion recorded; promotion_state remains\
-      \ compiled_not_promoted; runtime_authority_status inactive."
+      \ compiled_not_promoted; runtime_authority_status inactive.\n          BATCH2-THYROID-GATE-1:\
+      \ FT3 low formally deferred — requires TSH + FT4 + illness/medication context."
 - signal_family_id: signal_free_t4_high
   primary_biomarker_id: free_t4
   system: hormonal
@@ -1390,9 +1393,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context
     activation_key: signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context
     signal_id: signal_free_t4_high
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: false
@@ -1404,7 +1407,9 @@ signal_families:
     notes: "PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication\
       \ required before activation. Provenance canonical. Not runtime-active.\n  \
       \        BATCH2-PROMOTE-1: governance promotion recorded; promotion_state remains\
-      \ compiled_not_promoted; runtime_authority_status inactive."
+      \ compiled_not_promoted; runtime_authority_status inactive.\n          BATCH2-THYROID-GATE-1:\
+      \ APPROVE BATCH2 THYROID GATED ACTIVATION recorded; runtime_active_canonical\
+      \ activated with mandatory TSH pre-emission gate."
 - signal_family_id: signal_free_t4_low
   primary_biomarker_id: free_t4
   system: hormonal
@@ -1419,9 +1424,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency
     activation_key: signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency
     signal_id: signal_free_t4_low
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: false
@@ -1433,7 +1438,9 @@ signal_families:
     notes: "PASS3-BATCH2-FRAME-INDEX-2: Thyroid-panel single-frame; clinical adjudication\
       \ required before activation. Provenance canonical. Not runtime-active.\n  \
       \        BATCH2-PROMOTE-1: governance promotion recorded; promotion_state remains\
-      \ compiled_not_promoted; runtime_authority_status inactive."
+      \ compiled_not_promoted; runtime_authority_status inactive.\n          BATCH2-THYROID-GATE-1:\
+      \ APPROVE BATCH2 THYROID GATED ACTIVATION recorded; runtime_active_canonical\
+      \ activated with mandatory TSH pre-emission gate."
 - signal_family_id: signal_free_testosterone_high
   primary_biomarker_id: free_testosterone
   system: hormonal
