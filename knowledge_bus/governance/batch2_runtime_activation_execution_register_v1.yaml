@@ -1,8 +1,11 @@
 schema_version: 1.0.0
 runtime_consumed: false
 status: stop_gate_pending_human_approval
-work_id: BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion
+work_id: BATCH2-ACTIVATION-1_runtime_activate_cleared_non_thyroid_subset
 source_governance_promotion_register: knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml
+source_stop_gate_register: docs/audit-papers/BATCH2-PROMOTE-1-CONTINUATION_runtime_activation_stop_gated_completion.md
+thyroid_clinical_signoff_source: docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md
+thyroid_clinical_signoff_verdict: APPROVE_SUBSET
 human_stop_gate:
   required: true
   approval_received: false
@@ -111,40 +114,40 @@ thyroid_deferred_packages:
   activation_key: signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis
   governance_promoted: true
   runtime_activation_deferred: true
-  deferred_reason: thyroid_clinical_signoff_required_before_activation
+  deferred_reason: thyroid_activation_requires_tsh_gating
   activated: false
-  required_next_action: CF-BATCH2-013 clinical sign-off before thyroid runtime activation
-  notes: No clinical sign-off record in repo; deferred within this sprint.
+  required_next_action: CF-BATCH2-013 — implement TSH-gated thyroid activation logic before runtime activation
+  notes: Clinical sign-off APPROVE_SUBSET received; TSH mandatory before activation per thyroid_blood_marker_interpretation_clinical_signoff.md.
 - package_id: pkg_kb47_free_t3_low_low_t3_syndrome
   package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
   signal_id: signal_free_t3_low
   activation_key: signal_free_t3_low::inv_free_t3_low_low_t3_syndrome
   governance_promoted: true
   runtime_activation_deferred: true
-  deferred_reason: thyroid_clinical_signoff_required_before_activation
+  deferred_reason: thyroid_activation_requires_tsh_ft4_and_illness_medication_context
   activated: false
-  required_next_action: CF-BATCH2-013 clinical sign-off before thyroid runtime activation
-  notes: No clinical sign-off record in repo; deferred within this sprint.
+  required_next_action: CF-BATCH2-013 — implement TSH + FT4 + illness/medication context gating before runtime activation
+  notes: Clinical sign-off holds FT3 low unless TSH + FT4 + illness/medication context available.
 - package_id: pkg_kb47_free_t4_high_thyrotoxicosis_context
   package_path: knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context
   signal_id: signal_free_t4_high
   activation_key: signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context
   governance_promoted: true
   runtime_activation_deferred: true
-  deferred_reason: thyroid_clinical_signoff_required_before_activation
+  deferred_reason: thyroid_activation_requires_tsh_gating
   activated: false
-  required_next_action: CF-BATCH2-013 clinical sign-off before thyroid runtime activation
-  notes: No clinical sign-off record in repo; deferred within this sprint.
+  required_next_action: CF-BATCH2-013 — implement TSH-gated thyroid activation logic before runtime activation
+  notes: Clinical sign-off APPROVE_SUBSET received; TSH mandatory before activation.
 - package_id: pkg_kb47_free_t4_low_thyroid_hormone_deficiency
   package_path: knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency
   signal_id: signal_free_t4_low
   activation_key: signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency
   governance_promoted: true
   runtime_activation_deferred: true
-  deferred_reason: thyroid_clinical_signoff_required_before_activation
+  deferred_reason: thyroid_activation_requires_tsh_gating
   activated: false
-  required_next_action: CF-BATCH2-013 clinical sign-off before thyroid runtime activation
-  notes: No clinical sign-off record in repo; deferred within this sprint.
+  required_next_action: CF-BATCH2-013 — implement TSH-gated thyroid activation logic before runtime activation
+  notes: Clinical sign-off APPROVE_SUBSET received; TSH mandatory before activation.
 excluded_packages:
 - package_id: pkg_kb47_dhea_high_androgen_excess_context
   exclusion_reason: BATCH2-CLOSURE-1 final exclusion
