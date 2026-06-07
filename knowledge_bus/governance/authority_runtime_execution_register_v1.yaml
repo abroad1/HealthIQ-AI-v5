@@ -17,6 +17,10 @@ authority_groups_implemented:
     suppress_supporting_when_primary_present: true
     allow_parallel_if_distinct_risk_layer: true
   tests_passed: true
+  fail_loud_on_missing_or_invalid_model: true
+  distinct_risk_layer_mechanism: governed_override_rule
+  distinct_risk_layer_source_package_path: knowledge_bus/packages/pkg_s24_creatinine_high_renal
+  distinct_risk_layer_override_rule_id: or_renal_acute_imbalance
   implementation: backend/core/analytics/signal_authority_collision_resolver.py wired
     at end of SignalEvaluator.evaluate_all()
 human_stop_gate:
@@ -45,5 +49,7 @@ phase_3_outcome: deferred_pending_stop_approval
 rollback_path: Revert signal_authority_collision_resolver.py; remove apply call from signal_evaluator.py;
   revert signal_authority_collision_model_v1.yaml runtime_consumed/runtime_action; revert execution register
   and audit report. eGFR frame index and manifests unchanged this sprint.
-notes: Runtime enforcement proven by regression tests. eGFR packages remain inactive until STOP approval
-  and Phase 3 activation_config fix + metadata activation.
+notes: Runtime enforcement proven by regression tests (13/13). Fail-loud on missing/invalid authority
+  model. Potassium/electrolyte preservation uses governed s24 override or_renal_acute_imbalance — not ad
+  hoc threshold. eGFR packages remain inactive until STOP approval and Phase 3 activation_config fix +
+  metadata activation.

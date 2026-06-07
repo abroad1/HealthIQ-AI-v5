@@ -536,4 +536,5 @@ class SignalEvaluator:
             results,
             signal_biomarkers=signal_biomarkers,
             signal_derived=signal_derived,
+            lab_ranges=lab_ranges or {},
         )

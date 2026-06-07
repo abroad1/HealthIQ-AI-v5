@@ -28,13 +28,16 @@ authority_groups:
   - layer_id: hyperkalemia_or_electrolyte_complication
     signal_family: signal_creatinine_high
     frame_id: frame_creatinine_legacy_s24_potassium_escalation
-    preserve_conditions:
-    - metric_id: potassium
-      operator: '>'
-      value: 5.2
-      condition_type: all_of
-    notes: Medically distinct acute electrolyte layer; must remain parallel when medically
-      distinct.
+    preserve_when:
+      mechanism: governed_override_rule
+      source_package_path: knowledge_bus/packages/pkg_s24_creatinine_high_renal
+      source_package_id: pkg_s24_creatinine_high_renal
+      override_rule_id: or_renal_acute_imbalance
+      source_governance_ref: knowledge_bus/governance/creatinine_multiframe_authority_decision_v1.yaml
+      source_frame_id: frame_creatinine_legacy_s24_potassium_escalation
+    notes: Distinct acute electrolyte layer preserved by re-evaluating governed s24 override
+      or_renal_acute_imbalance — not an ad hoc potassium threshold. Authority documented in
+      creatinine_multiframe_authority_decision_v1.yaml acute_electrolyte_risk frame.
   collision_policy:
     no_duplicate_user_facing_signal: true
     suppress_supporting_when_primary_present: true

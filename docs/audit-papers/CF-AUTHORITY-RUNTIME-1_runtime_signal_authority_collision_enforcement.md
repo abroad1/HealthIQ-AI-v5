@@ -35,15 +35,18 @@
 
 **Enforcement point:** Post-processing on `List[SignalResult]` — individual signal evaluation logic unchanged.
 
-**Fail-safe:** Missing model file → results pass through unchanged.
+**Fail-loud (GPT review blocker fix):** Missing, unreadable, or invalid authority model raises `AuthorityModelLoadError`. Silent pass-through is **forbidden**.
+
+**Potassium preservation (GPT review blocker fix):** Distinct electrolyte layer preserved by re-evaluating governed s24 override rule `or_renal_acute_imbalance` from `pkg_s24_creatinine_high_renal` — not an ad hoc potassium threshold. Authority reference: `creatinine_multiframe_authority_decision_v1.yaml` / `frame_creatinine_legacy_s24_potassium_escalation`.
 
 ---
 
 ## Runtime implementation details
 
 - Loader reads `authority_groups` with `requires_runtime_support: true` and adjudicated status
-- When `signal_egfr_low` present: suppress `signal_creatinine_high` results
-- **Exception:** Preserve creatinine when `potassium > 5.2` (distinct risk layer per governance model)
+- When `signal_egfr_low` present: suppress `signal_creatinine_high` filtration duplicates
+- **Exception:** Preserve `pkg_s24_creatinine_high_renal` when governed override `or_renal_acute_imbalance` fires (distinct electrolyte risk layer)
+- kb52c creatinine remains suppressed even when potassium is elevated (no governed override on that package)
 - Sort order preserved: `(signal_id, activation_key)`
 
 ---
@@ -54,7 +57,7 @@
 |----------|-------|
 | eGFR-low primary filtration authority when present | Yes |
 | Creatinine-high suppressed as duplicate filtration framing | Yes |
-| Creatinine-high preserved for hyperkalemia layer (K > 5.2) | Yes |
+| Creatinine-high preserved for hyperkalemia layer (governed s24 override) | Yes |
 | Creatinine-high emits when eGFR-low absent | Yes |
 
 ---
@@ -76,9 +79,9 @@ Proven by regression tests: dual renal-filtration outputs consolidated when eGFR
 
 ## Tests added
 
-`backend/tests/regression/test_signal_authority_collision_enforcement.py` — **9/9 PASS**
+`backend/tests/regression/test_signal_authority_collision_enforcement.py` — **13/13 PASS**
 
-Covers: eGFR emission (test config), creatinine suppression, potassium layer preservation, creatinine alone, unrelated signals, missing-model fail-safe, frame index inactive sentinel, wiring sentinel.
+Covers: eGFR emission, creatinine suppression, kb52c suppressed with high K, s24 preserved via governed override, creatinine alone, unrelated signals, missing model raises, malformed model raises, evaluate_all raises when model missing, ungoverned preserve rejected, frame index inactive, wiring sentinel.
 
 ---
 
@@ -100,9 +103,16 @@ pytest_governance_regression: PASS
 
 **Context modifier catalogue:** PASS (errors: 0)
 
-**Regression tests:** 20/20 PASS (9 authority collision + 11 thyroid gating sanity)
+**Regression tests:** 13/13 PASS (authority collision)
 
 **eGFR package validators (2):** PASS — `errors: 0`
+
+## GPT architectural review blocker remediation (2026-06-07)
+
+| Blocker | Fix |
+|---------|-----|
+| Missing/malformed model silent pass-through | `AuthorityModelLoadError` raised on load/validate failure |
+| Ungoverned potassium > 5.2 threshold | Replaced with `preserve_when.mechanism: governed_override_rule` referencing `or_renal_acute_imbalance` |
 
 ---
 
