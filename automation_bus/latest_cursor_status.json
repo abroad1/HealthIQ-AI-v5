@@ -1,9 +1,10 @@
 {
   "branch": "work/BATCH2-CONTEXT-COMPLETION-1-runtime-semantics-and-stop-gated-activation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-12T10:07:34Z",
   "cursor_started_utc": "2026-06-12T09:59:41Z",
-  "head_sha": "96d4925289f192a16027f121b43880f81f340692",
+  "head_sha": "bbb20f446bbcb7a6870619349e90da1dd1d87a5d",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation"
 }
