@@ -93,33 +93,8 @@ export class AnalysisService {
    * Start a new biomarker analysis
    */
   static async startAnalysis(data: AnalysisRequest): Promise<ApiResponse<ApiAnalysisStartResponse>> {
-    console.log("📤 AnalysisService.startAnalysis() called with payload:", data);
-    console.log("📤 Biomarkers count:", Object.keys(data.biomarkers).length);
-    console.log("📤 User data:", data.user);
-    
     try {
       const url = `${API_URL}/analysis/start`;
-      console.log("🌐 POST /api/analysis/start →", url);
-      console.log("📨 Request body:", JSON.stringify(data, null, 2));
-      console.log("Outgoing payload:", data);
-      
-      // === BEGIN DEBUG LOGGING FOR OUTGOING ANALYSIS PAYLOAD ===
-      try {
-        console.group("[TRACE] Outgoing Analysis Payload");
-        console.log("Payload keys:", Object.keys(data || {}));
-        console.log("Biomarker count:", Object.keys(data?.biomarkers || {}).length);
-        console.log("Sample biomarker keys:", Object.keys(data?.biomarkers || {}).slice(0, 5));
-        console.log("User object:", data?.user || {});
-        console.log(
-          "[TRACE] Full Payload JSON:\n",
-          JSON.stringify(data, null, 2)
-        );
-        console.groupEnd();
-      } catch (err) {
-        console.warn("[WARN] Failed to log outgoing payload:", err);
-      }
-      // === END DEBUG LOGGING ===
-      
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -129,11 +104,7 @@ export class AnalysisService {
         body: JSON.stringify(data),
       });
 
-      console.log("📥 Response status:", response.status, response.statusText);
-      
       if (!response.ok) {
-        const errorText = await response.clone().text();
-        console.error("❌ Response error body:", errorText);
         const errorData = await response.json().catch(() => ({})) as { detail?: unknown };
         if (response.status === 402) {
           const d = errorData.detail;
@@ -161,7 +132,6 @@ export class AnalysisService {
       }
 
       const result = (await response.json()) as ApiAnalysisStartResponse;
-      console.log("✅ Response data:", result);
 
       if (result.status !== "completed") {
         return {
@@ -181,7 +151,6 @@ export class AnalysisService {
         message: "Analysis started successfully",
       };
     } catch (error) {
-      console.error("❌ AnalysisService.startAnalysis() error:", error);
       return {
         data: null,
         success: false,

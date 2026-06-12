@@ -102,18 +102,39 @@ _STRICT_CONVERSION_BIOMARKERS = frozenset().union(
 _UMOL_EQUIVALENTS = frozenset({"µmol/L", "umol/L", "uMol/L"})
 _COUNT_UNIT_EQUIVALENTS = frozenset({"K/μL", "K/uL", "10^9/L"})
 _MONOVALENT_EQUIVALENTS = frozenset({"mEq/L", "mmol/L"})
+_GREEK_SMALL_MU = "\u03bc"
+_MICRO_SIGN = "\u00b5"
+
+
+def normalize_unit_token(unit: str) -> str:
+    """Normalise visually equivalent micro-unit characters (Greek mu vs micro sign)."""
+    token = (unit or "").strip()
+    if not token:
+        return token
+    return token.replace(_GREEK_SMALL_MU, _MICRO_SIGN)
+
+
+def _unit_in_equivalent_set(unit: str, equivalents: frozenset[str]) -> bool:
+    normalized = normalize_unit_token(unit)
+    return any(normalize_unit_token(candidate) == normalized for candidate in equivalents)
 
 
 def _units_equivalent(from_unit: str, to_unit: str) -> bool:
-    from_u = (from_unit or "").strip()
-    to_u = (to_unit or "").strip()
+    from_u = normalize_unit_token(from_unit)
+    to_u = normalize_unit_token(to_unit)
     if from_u == to_u:
         return True
-    if from_u in _UMOL_EQUIVALENTS and to_u in _UMOL_EQUIVALENTS:
+    if _unit_in_equivalent_set(from_u, _UMOL_EQUIVALENTS) and _unit_in_equivalent_set(
+        to_u, _UMOL_EQUIVALENTS
+    ):
         return True
-    if from_u in _COUNT_UNIT_EQUIVALENTS and to_u in _COUNT_UNIT_EQUIVALENTS:
+    if _unit_in_equivalent_set(from_u, _COUNT_UNIT_EQUIVALENTS) and _unit_in_equivalent_set(
+        to_u, _COUNT_UNIT_EQUIVALENTS
+    ):
         return True
-    if from_u in _MONOVALENT_EQUIVALENTS and to_u in _MONOVALENT_EQUIVALENTS:
+    if _unit_in_equivalent_set(from_u, _MONOVALENT_EQUIVALENTS) and _unit_in_equivalent_set(
+        to_u, _MONOVALENT_EQUIVALENTS
+    ):
         return True
     return False
 
@@ -176,8 +197,8 @@ class UnitRegistry:
     def _get_conversion_factor(
         self, biomarker_id: str, from_unit: str, to_unit: str
     ) -> Optional[float]:
-        from_u = (from_unit or "").strip()
-        to_u = (to_unit or "").strip()
+        from_u = normalize_unit_token(from_unit)
+        to_u = normalize_unit_token(to_unit)
         if _units_equivalent(from_u, to_u):
             return 1.0
         data = self._load_units()
@@ -210,7 +231,9 @@ class UnitRegistry:
             if from_u in _MONOVALENT_EQUIVALENTS and to_u in _MONOVALENT_EQUIVALENTS:
                 return 1.0
         if biomarker_id in _COUNT_BIOMARKERS:
-            if from_u in _COUNT_UNIT_EQUIVALENTS and to_u in _COUNT_UNIT_EQUIVALENTS:
+            if _unit_in_equivalent_set(from_u, _COUNT_UNIT_EQUIVALENTS) and _unit_in_equivalent_set(
+                to_u, _COUNT_UNIT_EQUIVALENTS
+            ):
                 return 1.0
         if biomarker_id in _HBA1C_BIOMARKERS and from_u == "%" and to_u == "mmol/mol":
             linear = self._get_hba1c_mmol_mol_to_percent_linear(biomarker_id, "mmol/mol", "%")
@@ -275,13 +298,21 @@ class UnitRegistry:
             c = convs.get("pmol_L_to_ng_dL_free_t4", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 0.077693))
-        if biomarker_id in _URATE_BIOMARKERS and from_u == "mg/dL" and to_u in _UMOL_EQUIVALENTS:
+        if biomarker_id in _URATE_BIOMARKERS and from_u == "mg/dL" and _unit_in_equivalent_set(
+            to_u, _UMOL_EQUIVALENTS
+        ):
             c = convs.get("mg_dL_to_umol_L_urate", {})
-            if c.get("from_unit") == from_u and c.get("to_unit") in _UMOL_EQUIVALENTS:
+            if c.get("from_unit") == from_u and _unit_in_equivalent_set(
+                c.get("to_unit", ""), _UMOL_EQUIVALENTS
+            ):
                 return float(c.get("factor", 59.5))
-        if biomarker_id in _URATE_BIOMARKERS and from_u in _UMOL_EQUIVALENTS and to_u == "mg/dL":
+        if biomarker_id in _URATE_BIOMARKERS and _unit_in_equivalent_set(
+            from_u, _UMOL_EQUIVALENTS
+        ) and to_u == "mg/dL":
             c = convs.get("umol_L_to_mg_dL_urate", {})
-            if c.get("from_unit") in _UMOL_EQUIVALENTS and c.get("to_unit") == to_u:
+            if _unit_in_equivalent_set(c.get("from_unit", ""), _UMOL_EQUIVALENTS) and c.get(
+                "to_unit"
+            ) == to_u:
                 return float(c.get("factor", 0.016807))
         if biomarker_id in _HEMATOCRIT_BIOMARKERS and from_u == "%" and to_u == "L/L":
             c = convs.get("percent_to_l_L_hematocrit", {})
@@ -320,7 +351,7 @@ class UnitRegistry:
         Used after apply_unit_normalisation has resolved input_unit.
         """
         base_unit = self.get_base_unit(biomarker_id)
-        from_u = (from_unit or "").strip()
+        from_u = normalize_unit_token(from_unit)
         if not from_u:
             raise UnitConversionError(
                 f"Missing unit for biomarker '{biomarker_id}'; unit must be resolved before conversion",
@@ -424,12 +455,12 @@ def apply_unit_normalisation(
             continue
 
         value = data.get("value", data.get("measurement", 0))
-        input_unit_raw = (data.get("unit") or "").strip()
+        input_unit_raw = normalize_unit_token(data.get("unit") or "")
         ref_range = data.get("reference_range") or data.get("referenceRange")
         ref_range = ref_range if isinstance(ref_range, dict) else None
         rmin = ref_range.get("min") if ref_range else None
         rmax = ref_range.get("max") if ref_range else None
-        ref_unit_raw = (ref_range.get("unit") or "").strip() if ref_range else ""
+        ref_unit_raw = normalize_unit_token(ref_range.get("unit") or "") if ref_range else ""
         has_ref_bounds = isinstance(rmin, (int, float)) and isinstance(rmax, (int, float))
 
         # --- Resolve input_unit (deterministic missing-unit rules) ---

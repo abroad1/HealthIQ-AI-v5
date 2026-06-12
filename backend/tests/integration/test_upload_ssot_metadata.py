@@ -5,6 +5,7 @@ Integration test for upload pipeline with SSOT metadata.
 import pytest
 from fastapi.testclient import TestClient
 import importlib
+from tests.auth_headers import ANALYSIS_TEST_AUTH_HEADERS
 
 
 def load_app():
@@ -25,7 +26,8 @@ def test_upload_parse_includes_ssot_metadata():
     # Use the two-line sample
     response = client.post(
         "/api/upload/parse",
-        data={"text_content": "ALT,42,U/L\nHDL,1.0,mmol/L"}
+        data={"text_content": "ALT,42,U/L\nHDL,1.0,mmol/L"},
+        headers=ANALYSIS_TEST_AUTH_HEADERS,
     )
     
     assert response.status_code == 200

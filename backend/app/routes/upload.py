@@ -2,8 +2,10 @@
 Upload API routes - handles file uploads and parsing operations.
 """
 
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends
 from typing import Dict, Any, Optional
+from core.dependencies.analysis_auth import require_analysis_submitter
+from core.dependencies.auth import CurrentUser
 from pydantic import BaseModel
 import json
 import yaml
@@ -42,7 +44,8 @@ class ParseResponse(BaseModel):
 @router.post("/parse")
 async def parse_upload(
     file: Optional[UploadFile] = File(None),
-    text_content: Optional[str] = Form(None)
+    text_content: Optional[str] = Form(None),
+    _auth_user: CurrentUser = Depends(require_analysis_submitter),
 ) -> ParseResponse:
     """
     Parse uploaded file or text content using LLM-powered biomarker extraction.

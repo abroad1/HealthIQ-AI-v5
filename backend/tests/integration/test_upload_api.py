@@ -6,6 +6,7 @@ import pytest
 import json
 from fastapi.testclient import TestClient
 from app.main import app
+from tests.auth_headers import ANALYSIS_TEST_AUTH_HEADERS
 
 
 class TestUploadAPI:
@@ -16,11 +17,20 @@ class TestUploadAPI:
         """Create test client."""
         return TestClient(app)
     
+    def test_parse_upload_requires_authentication(self, client):
+        """Unauthenticated POST /api/upload/parse must be rejected."""
+        response = client.post(
+            "/api/upload/parse",
+            data={"text_content": "Sample lab report text content"},
+        )
+        assert response.status_code == 401
+
     def test_parse_upload_with_text(self, client):
         """Test POST /api/upload/parse with text content."""
         response = client.post(
             "/api/upload/parse",
-            data={"text_content": "Sample lab report text content"}
+            data={"text_content": "Sample lab report text content"},
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
         )
 
         assert response.status_code == 200
@@ -43,7 +53,7 @@ class TestUploadAPI:
         minimal_pdf = b"%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n"
         files = {"file": ("test_report.pdf", minimal_pdf, "application/pdf")}
 
-        response = client.post("/api/upload/parse", files=files)
+        response = client.post("/api/upload/parse", files=files, headers=ANALYSIS_TEST_AUTH_HEADERS)
 
         assert response.status_code == 200
         data = response.json()
@@ -64,7 +74,7 @@ class TestUploadAPI:
     
     def test_parse_upload_without_input(self, client):
         """Test POST /api/upload/parse without any input."""
-        response = client.post("/api/upload/parse")
+        response = client.post("/api/upload/parse", headers=ANALYSIS_TEST_AUTH_HEADERS)
 
         assert response.status_code == 400
     
@@ -154,7 +164,8 @@ class TestUploadAPI:
         # Malformed request: invalid_field instead of file/text_content
         response = client.post(
             "/api/upload/parse",
-            data={"invalid_field": "invalid_value"}
+            data={"invalid_field": "invalid_value"},
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
         )
 
         assert response.status_code == 400

@@ -33,6 +33,7 @@ hdl_cholesterol,50,mg/dL
         response = client.post(
             "/api/upload/parse",
             data={"text_content": text},
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
         )
         assert response.status_code == 200
         data = response.json()
@@ -56,6 +57,7 @@ hdl_cholesterol,50,mg/dL
         response = client.post(
             "/api/upload/parse",
             data={"text_content": text},
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
         )
         assert response.status_code == 200
         data = response.json()
@@ -73,6 +75,7 @@ glucose,95,mg/dL
         response = client.post(
             "/api/upload/parse",
             data={"text_content": text},
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
         )
         assert response.status_code == 200
         data = response.json()

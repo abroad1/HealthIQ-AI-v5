@@ -10,6 +10,7 @@ from core.units.registry import (
     UnitConversionError,
     convert_value,
     apply_unit_normalisation,
+    normalize_unit_token,
 )
 from core.canonical.alias_registry_service import AliasRegistryService, get_alias_registry_service
 
@@ -98,6 +99,20 @@ class TestConvertValue:
         val, unit = convert_value("creatinine", 1.0, "mg/dL")
         assert unit == "µmol/L"
         assert abs(val - 88.4) < 0.001
+
+    def test_urate_umol_l_greek_mu_converts(self):
+        val_greek, unit_greek = convert_value("urate", 300.0, "μmol/L")
+        val_micro, unit_micro = convert_value("urate", 300.0, "µmol/L")
+        assert unit_greek == "µmol/L"
+        assert unit_micro == "µmol/L"
+        assert val_greek == pytest.approx(val_micro, abs=0.0001)
+        val_mgdl, unit_mgdl = convert_value("urate", 5.0, "mg/dL")
+        assert unit_mgdl == "µmol/L"
+        assert val_mgdl == pytest.approx(297.5, abs=0.1)
+
+    def test_normalize_unit_token_unifies_mu_variants(self):
+        assert normalize_unit_token("μmol/L") == normalize_unit_token("µmol/L")
+        assert normalize_unit_token("μmol/L") == "µmol/L"
 
     def test_vitamin_d_ng_ml_to_nmol_l(self):
         """Vitamin D: ng/mL -> nmol/L (factor 2.5)."""
