@@ -1,9 +1,10 @@
 {
   "branch": "work/WAVE1-PUBLIC-LAUNCH-FIXES-1-pre-public-launch-blocker-remediation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-12T13:17:46Z",
   "cursor_started_utc": "2026-06-12T13:10:10Z",
-  "head_sha": "98a4ec81adeb7527b5b61769b8f085d26073b13a",
+  "head_sha": "303aa4fe3d6beafcbd30599cd340ad82b3f69fdc",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "WAVE1-PUBLIC-LAUNCH-FIXES-1_pre_public_launch_blocker_remediation"
 }
