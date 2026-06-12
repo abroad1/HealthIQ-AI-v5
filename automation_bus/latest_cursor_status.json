@@ -1,10 +1,9 @@
 {
-  "branch": "work/CONTEXT-RUNTIME-1-reusable-runtime-context-evaluation-layer",
+  "branch": "work/CONTEXT-THREADING-1-runtime-context-orchestrator-threading",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-12T06:55:28Z",
-  "cursor_started_utc": "2026-06-12T06:46:39Z",
-  "head_sha": "26dc42bb8fe0cc0f97add384d3e0f54fb92312e3",
+  "cursor_started_utc": "2026-06-12T08:35:49Z",
+  "head_sha": "7d58a2514c471eac586e96ffa720cda72f0187b1",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer"
+  "status": "IN_PROGRESS",
+  "work_id": "CONTEXT-THREADING-1_runtime_context_orchestrator_threading"
 }
