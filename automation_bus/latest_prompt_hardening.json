@@ -1,239 +1,188 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance",
+  "work_id": "BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation",
   "status": "HARDENED",
   "hardened_utc": "2026-06-12T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "changes": [],
   "front_matter": {
     "work_id": "CONFIRMED — automation_bus/latest_cursor_prompt.md line 2",
-    "branch": "CONFIRMED — work/CONTEXT-CLEARANCE-1-context-semantics-and-batch2-clearance (automation_bus/latest_cursor_prompt.md line 3)",
-    "risk_level": "CONFIRMED HIGH — Intelligence Core package eligibility and context semantics for signal emission; SOP §10 mandates HIGH (automation_bus/latest_cursor_prompt.md line 4)",
+    "branch": "CONFIRMED — work/BATCH2-CONTEXT-COMPLETION-1-runtime-semantics-and-stop-gated-activation (automation_bus/latest_cursor_prompt.md line 3)",
+    "risk_level": "CONFIRMED HIGH — runtime_context_evaluator.py is Intelligence Core; signal emission path affected; SOP §10 mandates HIGH (automation_bus/latest_cursor_prompt.md line 4)",
     "execution_model": "CONFIRMED TWO_PHASE_START_FINISH — automation_bus/latest_cursor_prompt.md line 5",
-    "change_type": "CONFIRMED MIXED — governance content (semantics YAML, clearance register, audit paper) plus behavioural context semantics for Intelligence Core signal evaluation (automation_bus/latest_cursor_prompt.md line 6)"
+    "change_type": "CONFIRMED BEHAVIOUR — evaluator changes affect signal emission; package metadata remediation affects which signals can emit; BEHAVIOUR controls apply (automation_bus/latest_cursor_prompt.md line 6)"
   },
   "authority_paths": [
     {
+      "path": "knowledge_bus/governance/runtime_context_semantics_model_v1.yaml",
+      "status": "CONFIRMED — file read",
+      "note": "runtime_consumed: false (line 2); authority_role: clearance_and_classification_only (line 6); execution_companion: runtime_context_requirements_model_v1.yaml (line 7); execution_evaluator: backend/core/analytics/runtime_context_evaluator.py (line 8). remediation_work_id field at line 69 references 'BATCH2-CONTEXT-ACTIVATION-1' — this is stale naming; the actual executing sprint is BATCH2-CONTEXT-COMPLETION-1. Non-blocking; sprint prompt governs."
+    },
+    {
       "path": "knowledge_bus/governance/runtime_context_requirements_model_v1.yaml",
-      "status": "CONFIRMED",
-      "note": "Primary runtime context governance model. runtime_consumed: true; evaluator_path: backend/core/analytics/runtime_context_evaluator.py (line 27). THIS IS THE EXISTING AUTHORITY. New semantics model must not compete with or override it."
+      "status": "CONFIRMED — file read",
+      "note": "runtime_consumed: true (line 2); package_metadata_field: runtime_context_requirements (line 26); evaluator_path: backend/core/analytics/runtime_context_evaluator.py (line 27). This is the runtime execution contract. sprint must not create a competing authority."
+    },
+    {
+      "path": "knowledge_bus/governance/batch2_context_clearance_register_v1.yaml",
+      "status": "CONFIRMED — file read",
+      "note": "9 packages confirmed: 8 androgen BLOCKED_PENDING_CLINICAL_SIGNOFF, 1 FT3 low BLOCKED_PENDING_CONTEXT_SEMANTICS. activated_package_count: 0 (line 9). All 9 packages listed with package_path, signal_id, activation_key confirmed. metadata_misclassifications documented per package."
     },
     {
       "path": "backend/core/analytics/runtime_context_evaluator.py",
-      "status": "CONFIRMED",
-      "note": "File exists. MUST NOT be modified in this sprint. Evaluator supports only two requirement types: 'present' (line 287) and 'lab_range_boundary' (line 291). Any new requirement type falls through to missing.append() at line 312 — silent suppression."
+      "status": "CONFIRMED — file read (346 lines)",
+      "note": "build_runtime_context_snapshot() at line 164. evaluate_runtime_context_requirements() at line 250. 'disclosed' requirement mode is NOT implemented — any requirement type other than 'present' or 'lab_range_boundary' falls through to missing.append() at line 313, permanently suppressing the signal. Snapshot does not record hormone_therapy_status_disclosed or aas_exposure_status_disclosed keys."
+    },
+    {
+      "path": "backend/core/analytics/signal_evaluator.py",
+      "status": "CONFIRMED — exists (glob)",
+      "note": "Must not be modified unless absolutely required. If it must change, Cursor must explain before making the change."
     },
     {
       "path": "knowledge_bus/governance/context_runtime_execution_register_v1.yaml",
-      "status": "CONFIRMED",
-      "note": "File exists. Governance register from CONTEXT-RUNTIME-1."
+      "status": "CONFIRMED — exists (glob)"
     },
     {
       "path": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml",
-      "status": "CONFIRMED",
-      "note": "File exists. Catalogue source for modifier governance. Non-runtime."
-    },
-    {
-      "path": "knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml",
-      "status": "CONFIRMED",
-      "note": "File exists. NOTE: This register (analysis_utc: 2026-06-07) predates CONTEXT-RUNTIME-1 + CONTEXT-THREADING-1 completion. CF-CONTEXT-MOD-3 is now Resolved per carry-forward register. The consolidated_platform_blocker: CF-CONTEXT-MOD-3 field is stale — runtime capability now exists. Remaining blockers are CF-CONTEXT-SEMANTICS-1 and CF-BATCH2-010."
-    },
-    {
-      "path": "knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml",
-      "status": "CONFIRMED",
-      "note": "File exists."
+      "status": "CONFIRMED — exists (glob)"
     },
     {
       "path": "knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml",
-      "status": "CONFIRMED",
-      "note": "File exists. 8/8 frames reviewed. 4 MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT, 4 BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING. All 8 paths confirmed. No clinical sign-off artefact exists — CF-BATCH2-010 remains Open."
+      "status": "CONFIRMED — exists (glob)",
+      "note": "All 8 androgen frames reviewed; no clinical sign-off artefact present. CF-BATCH2-010 remains Open."
     },
     {
       "path": "knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml",
-      "status": "CONFIRMED",
-      "note": "File exists. 8/8 frames with catalogue links. All runtime_active=false. Governance-only binding; no runtime changes."
+      "status": "CONFIRMED — exists (glob)"
     },
     {
       "path": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml",
-      "status": "CONFIRMED",
-      "note": "File exists."
+      "status": "CONFIRMED — exists (glob)"
     },
     {
-      "path": "docs/sprints/launch_core_carry_forward_register.md",
-      "status": "CONFIRMED",
-      "note": "CF-CONTEXT-SEMANTICS-1 Open (line 79); CF-BATCH2-010 Open (line 76); ARCH-ORCH-RESTRUCTURE-1 Open (line 78); CF-CONTEXT-MOD-3 Resolved (line 77). All four carry-forwards cited in prompt confirmed at exact lines."
+      "path": "knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml",
+      "status": "CONFIRMED — exists (glob)"
+    },
+    {
+      "path": "knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml",
+      "status": "CONFIRMED — exists (glob)"
     },
     {
       "path": "docs/audit-papers/CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer.md",
-      "status": "CONFIRMED",
-      "note": "File exists."
+      "status": "CONFIRMED — exists (glob)"
     },
     {
       "path": "docs/audit-papers/CONTEXT-THREADING-1_runtime_context_orchestrator_threading.md",
-      "status": "CONFIRMED",
-      "note": "File exists. Confirms: threading complete; FT3 low and all 8 androgen packages remain inactive; evaluator and signal_evaluator.py unchanged in that sprint."
+      "status": "CONFIRMED — exists (glob)"
     },
     {
-      "path": "docs/audit-papers/CONTEXT-THREADING-1_pre_sprint_architecture_audit.md",
-      "status": "CONFIRMED",
-      "note": "File exists."
+      "path": "docs/audit-papers/CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance.md",
+      "status": "CONFIRMED — exists (glob)"
     },
     {
-      "path": "docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md",
-      "status": "CONFIRMED",
-      "note": "File exists (Test-Path = True)."
-    },
-    {
-      "path": "docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md",
-      "status": "CONFIRMED",
-      "note": "File exists."
-    },
-    {
-      "path": "backend/scripts/run_architecture_validation_gate.py",
-      "status": "CONFIRMED",
-      "note": "File exists. Required validation — must be run and output pasted."
-    },
-    {
-      "path": "backend/scripts/validate_medical_frame_identity_index.py",
-      "status": "CONFIRMED",
-      "note": "File exists. Required validation."
-    },
-    {
-      "path": "backend/scripts/validate_context_modifier_catalogue.py",
-      "status": "CONFIRMED",
-      "note": "File exists. Required validation."
+      "path": "docs/sprints/launch_core_carry_forward_register.md",
+      "status": "CONFIRMED — file read",
+      "note": "CF-BATCH2-010 Open (line 76); CF-CONTEXT-SEMANTICS-1 Resolved (line 79) with note that evaluator/package metadata remediation deferred to BATCH2-CONTEXT-ACTIVATION-1; ARCH-ORCH-RESTRUCTURE-1 Open (line 78); CF-CONTEXT-MOD-3 Resolved (line 77)."
     },
     {
       "path": "backend/tests/regression/test_runtime_context_evaluation.py",
-      "status": "CONFIRMED",
-      "note": "File exists. Required regression suite — must pass and output pasted."
+      "status": "CONFIRMED — file read (imports confirmed at lines 10-16)",
+      "note": "Existing test file; new tests for disclosed semantics must be added here (Phase 5, items 1-18)."
     },
     {
-      "path": "backend/tests/governance/",
-      "status": "CONFIRMED ABSENT",
-      "note": "Directory does NOT exist. Cursor must create it before writing test_runtime_context_semantics_model.py and test_batch2_context_clearance_register.py."
+      "path": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml",
+      "status": "CONFIRMED — file read",
+      "note": "enable_lower_bound: false at line 50. illness_or_recovery_status requirement: present at line 63 (misclassification confirmed). FT3 low has two independent blockers: (1) enable_lower_bound false, (2) illness_or_recovery_status misclassified as present not disclosed."
     }
   ],
   "source_cross_references": [
     {
-      "ref": "semantic_ambiguity_in_signal_library",
-      "file": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml",
-      "line": "67-70",
-      "status": "CONFIRMED — CORE PROBLEM",
-      "note": "runtime_context_requirements declares: context_type: medication / key: hormone_therapy / requirement: present AND context_type: clinical_context / key: aas_exposure / requirement: present. Verified as representative of all 8 androgen packages."
-    },
-    {
-      "ref": "evaluator_hormone_therapy_snapshot_logic",
+      "ref": "disclosed_mode_absent_from_evaluator",
       "file": "backend/core/analytics/runtime_context_evaluator.py",
-      "line": "215-225",
-      "status": "CONFIRMED — FALSE NEGATIVE MECHANISM",
-      "note": "snapshot['medication']['hormone_therapy'] is set to True ONLY when the medication list contains 'testosterone' or 'hormone' keywords. A patient not on hormone therapy will have no 'hormone_therapy' key in the snapshot. The evaluator will treat this as missing required context and suppress the signal — even when the patient has fully disclosed their medication history."
+      "lines": "278-313",
+      "status": "CONFIRMED — CORE IMPLEMENTATION GAP",
+      "note": "evaluate_runtime_context_requirements() handles requirement == 'present' (line 308) for non-biomarker context but falls through to missing.append() for all other values including 'disclosed'. The evaluator must add elif requirement == 'disclosed': branch checking the corresponding _disclosed key in the snapshot bucket."
     },
     {
-      "ref": "evaluator_aas_exposure_snapshot_logic",
+      "ref": "snapshot_does_not_record_disclosure_state",
       "file": "backend/core/analytics/runtime_context_evaluator.py",
-      "line": "244-245",
-      "status": "CONFIRMED — FALSE NEGATIVE MECHANISM",
-      "note": "snapshot['clinical_context']['aas_exposure'] is set to True ONLY when supplements contain 'steroid' or 'prohormone'. A patient with no AAS exposure will have no 'aas_exposure' key — signal suppressed even if disclosure is complete and AAS non-exposure is the relevant clinical context."
+      "lines": "218-246",
+      "status": "CONFIRMED — CORE IMPLEMENTATION GAP",
+      "note": "build_runtime_context_snapshot() sets snapshot['medication']['hormone_therapy'] = True only when meds contain 'testosterone'/'hormone' keywords (lines 223-224). Sets snapshot['clinical_context']['aas_exposure'] = True only when supplements contain 'steroid'/'prohormone' (lines 244-245). Neither records whether the relevant question was disclosed/answered. Separate _status_disclosed keys do not exist. Snapshot building must be extended to record disclosure independently of positive presence."
     },
     {
-      "ref": "evaluator_unknown_requirement_type_fallthrough",
+      "ref": "illness_or_recovery_status_snapshot_conflation",
       "file": "backend/core/analytics/runtime_context_evaluator.py",
-      "line": "312",
-      "status": "CONFIRMED — CRITICAL CONSTRAINT",
-      "note": "Any requirement type other than 'present' or 'lab_range_boundary' falls through to missing.append(). If Cursor encodes 'disclosed' or any new type in package YAML without updating the evaluator, the requirement will ALWAYS be unsatisfied — signal permanently suppressed. See STOP C."
+      "lines": "236-237",
+      "status": "CONFIRMED — IMPLEMENTATION NOTE",
+      "note": "snapshot['clinical_context']['illness_or_recovery_status'] = True set when chronic_conditions is non-empty. This conflates condition presence with question disclosure. A new illness_or_recovery_status_disclosed key must be introduced that tracks whether the question was answered, not whether conditions exist. The existing key must not be modified to preserve backward compatibility."
     },
     {
-      "ref": "all_8_androgen_packages_inactive",
-      "file": "knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml",
-      "line": "59-170",
+      "ref": "ft3_low_enable_lower_bound_false",
+      "file": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml",
+      "lines": "50",
+      "status": "CONFIRMED — ACTIVATION-LAYER BLOCKER",
+      "note": "enable_lower_bound: false. FT3 low cannot receive ACTIVATE_NOW regardless of context semantics implementation. If STOP-gated activation is reached, this field requires explicit review before FT3 low can be considered."
+    },
+    {
+      "ref": "ft3_low_metadata_misclassification",
+      "file": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml",
+      "lines": "63",
+      "status": "CONFIRMED — METADATA MISCLASSIFICATION",
+      "note": "clinical_context key: illness_or_recovery_status requirement: present. Clearance register confirms this should be disclosed semantics. Phase 3 remediation must change this to requirement: disclosed and add corresponding snapshot disclosure key."
+    },
+    {
+      "ref": "work_id_naming_discrepancy",
+      "file": "knowledge_bus/governance/runtime_context_semantics_model_v1.yaml",
+      "lines": "69",
+      "status": "CONFIRMED — NON-BLOCKING DISCREPANCY",
+      "note": "remediation_work_id: BATCH2-CONTEXT-ACTIVATION-1_stop_gated_context_package_activation in semantics model. Actual sprint is BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation. The semantics model was authored before GPT consolidated the sprint naming. Sprint prompt governs; note in audit paper."
+    },
+    {
+      "ref": "all_9_packages_confirmed_inactive",
+      "file": "knowledge_bus/governance/batch2_context_clearance_register_v1.yaml",
+      "lines": "1-236",
       "status": "CONFIRMED",
-      "note": "All 8 androgen packages: activated: false, final_state: compiled_not_promoted_inactive or never_promoted_inactive. FT3 low at lines 43-57: activated: false, final_state: compiled_not_promoted_inactive."
-    },
-    {
-      "ref": "all_8_androgen_package_paths",
-      "file": "knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml",
-      "line": "25-211",
-      "status": "CONFIRMED",
-      "note": "All 8 package paths confirmed: pkg_kb47_dhea_high_androgen_excess_context, pkg_kb47_dhea_low_adrenal_androgen_reduction, pkg_kb47_fai_high_biochemical_hyperandrogenism, pkg_kb47_fai_low_reduced_free_androgen_availability, pkg_kb47_free_testosterone_high_androgen_excess_context, pkg_kb47_free_testosterone_low_androgen_deficiency_context, pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction, pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction."
-    },
-    {
-      "ref": "ft3_low_package_path",
-      "file": "knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml",
-      "line": "43-57",
-      "status": "CONFIRMED",
-      "note": "pkg_kb47_free_t3_low_low_t3_syndrome at path knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome. signal_id: signal_free_t3_low."
-    },
-    {
-      "ref": "clinical_signoff_absent",
-      "file": "docs/sprints/launch_core_carry_forward_register.md",
-      "line": "76",
-      "status": "CONFIRMED",
-      "note": "CF-BATCH2-010 Open: 'No clinical sign-off artefact in repo.' This means all 8 androgen packages must receive BLOCKED_PENDING_CLINICAL_SIGNOFF or BLOCKED_PENDING_CONTEXT_SEMANTICS clearance decisions. CLEARED_FOR_STOP_GATED_ACTIVATION is not available to any androgen package in this sprint."
-    },
-    {
-      "ref": "context_mod_3_resolved_stale_blockers_register",
-      "file": "knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml",
-      "line": "18",
-      "status": "CONFIRMED STALE",
-      "note": "consolidated_platform_blocker: CF-CONTEXT-MOD-3 in this register is now stale. CF-CONTEXT-MOD-3 Resolved per launch_core_carry_forward_register.md line 77. Cursor should acknowledge this staleness in the audit paper but must NOT amend this register without explicit instruction — it is a historical artefact."
+      "note": "8 androgen packages: clearance_decision BLOCKED_PENDING_CLINICAL_SIGNOFF; activation_eligibility: false. 1 FT3 low: clearance_decision BLOCKED_PENDING_CONTEXT_SEMANTICS; activation_eligibility: false. activated_package_count: 0. No activation-eligible packages exist at sprint start."
     }
   ],
   "prior_task_findings": {
-    "CF-CONTEXT-SEMANTICS-1": "CONFIRMED OPEN — launch_core_carry_forward_register.md line 79. Carry-forward note: 'Distinguish hard gates from disclosed context and interpretation modifiers before androgen package activation.'",
-    "CF-BATCH2-010": "CONFIRMED OPEN — launch_core_carry_forward_register.md line 76. 'No clinical sign-off artefact in repo.' All 8 remain inactive.",
-    "ARCH-ORCH-RESTRUCTURE-1": "CONFIRMED OPEN — launch_core_carry_forward_register.md line 78. Must remain Open after this sprint. Do not claim this sprint resolves orchestrator phase ordering.",
-    "CF-CONTEXT-MOD-3": "CONFIRMED RESOLVED — launch_core_carry_forward_register.md line 77. Resolved by CONTEXT-RUNTIME-1 + CONTEXT-THREADING-1. Runtime capability now live. The batch2_remaining_blockers_execution_register is stale on this point.",
-    "CONTEXT-THREADING-1": "CONFIRMED COMPLETE — docs/audit-papers/CONTEXT-THREADING-1_runtime_context_orchestrator_threading.md. Threading via raw questionnaire_data at Step 1.6 is live. FT3 low and all 8 androgen packages remain inactive. Evaluator and SignalEvaluator unchanged in that sprint."
-  },
-  "stop_conditions": {
-    "authoritative_context_semantics_source_cannot_be_identified": "FALSE — runtime_context_requirements_model_v1.yaml is authoritative; evaluator_path confirmed",
-    "sprint_would_create_duplicate_authority": "RISK MANAGED — new runtime_context_semantics_model_v1.yaml must NOT set runtime_consumed: true or redefine supported_context_types / evaluator_path / runtime_contract. See STOP A.",
-    "any_activation_required_to_complete_sprint": "FALSE — sprint is governance-only; no activation",
-    "clinical_signoff_absent_would_require_inventing_approval": "FALSE — sprint categorises androgen packages as BLOCKED_PENDING_CLINICAL_SIGNOFF without inventing sign-off; clinical sign-off remains Open per CF-BATCH2-010",
-    "ft3_low_clearance_requires_inventing_illness_medication_logic": "FALSE — FT3 low classified as requiring existing TSH+FT4+illness/medication logic per BATCH2-THYROID-GATE-1 governance; sprint reports clearance decision only",
-    "runtime_pipeline_changes_required": "FALSE — governance YAML only; if Cursor identifies otherwise, STOP B applies",
-    "signal_evaluator_changes_required": "FALSE — if Cursor identifies otherwise, STOP B applies",
-    "package_activation_metadata_would_change": "FALSE — no activation_key or active status changes permitted",
-    "rollback_path_cannot_be_defined": "FALSE — all outputs are governance YAML + tests + docs; revert is trivial"
+    "CF-CONTEXT-SEMANTICS-1": "CONFIRMED — launch_core_carry_forward_register.md line 79. Status: Resolved at governance/classification level. Evaluator and package metadata remediation deferred to BATCH2-CONTEXT-ACTIVATION-1 (now executing as BATCH2-CONTEXT-COMPLETION-1). This sprint completes the implementation deferred by CONTEXT-CLEARANCE-1.",
+    "CF-BATCH2-010": "CONFIRMED OPEN — launch_core_carry_forward_register.md line 76. All 8 androgen packages BLOCKED_PENDING_CLINICAL_SIGNOFF. No sign-off artefact in repo. Must remain Open after this sprint.",
+    "ARCH-ORCH-RESTRUCTURE-1": "CONFIRMED OPEN — launch_core_carry_forward_register.md line 78. This sprint must not claim orchestrator restructure complete.",
+    "CF-CONTEXT-MOD-3": "CONFIRMED RESOLVED — launch_core_carry_forward_register.md line 77. Capability + threading complete (CONTEXT-RUNTIME-1, CONTEXT-THREADING-1). Must remain Resolved."
   },
   "mandatory_stop_conditions_for_cursor": {
-    "STOP_A": "Duplicate Authority — If the proposed runtime_context_semantics_model_v1.yaml contains runtime_consumed: true, OR redefines supported_context_types / evaluator_path / runtime_contract fields that exist in runtime_context_requirements_model_v1.yaml, STOP before committing and report. The new file must reference the existing model as authority (e.g., semantic_authority_for: runtime_context_requirements_model_v1.yaml) and extend it with semantic type definitions only.",
-    "STOP_B": "Runtime / Evaluator Changes — If at any point implementation determines that runtime_context_evaluator.py, signal_evaluator.py, orchestrator.py, or any other runtime code file must be changed in this sprint, STOP and report before making any changes. Those changes belong in BATCH2-CONTEXT-ACTIVATION-1.",
-    "STOP_C": "Package YAML New Requirement Types — If Cursor edits any signal_library.yaml to change requirement: present to requirement: disclosed or any other new type, STOP immediately. The evaluator at runtime_context_evaluator.py:312 falls through unknown types to missing.append() — any new type will always evaluate as unsatisfied and permanently suppress the signal. Package semantic corrections require a separate sprint with evaluator changes included and regression-tested."
+    "STOP_1": "Authoritative sources cannot be identified — any of the 14 authority preflight items at prompt §Authority preflight missing or ambiguous. STOP and report before any file edit.",
+    "STOP_2": "Duplicate context authority — if implementing disclosed semantics requires creating a second runtime_context_requirements_model or a second evaluator, STOP before committing. Single evaluator + single requirements model must remain the authority.",
+    "STOP_3": "Disclosed semantics cannot be implemented deterministically — if the snapshot cannot record disclosure state without external API calls, LLM inference, or clinical heuristics, STOP and report.",
+    "STOP_4": "Broad evaluator redesign required — if implementing disclosed semantics requires restructuring evaluate_runtime_context_requirements() beyond adding a disclosed branch and snapshot disclosure keys, STOP and report.",
+    "STOP_5": "Orchestrator changes required — if any orchestrator file must change to support disclosed semantics, STOP and report. Orchestrator is explicitly not in scope.",
+    "STOP_6": "Package remediation would require threshold changes — Phase 3 touches only runtime_context_requirements metadata. If any threshold, clinical wording, signal_id, or activation_key change would be required, STOP.",
+    "STOP_7": "Package remediation would require signal_id or activation_key changes — STOP immediately.",
+    "STOP_8": "Androgen clinical sign-off absent — androgen packages must not receive ACTIVATE_NOW. All 8 must remain BLOCKED_PENDING_CLINICAL_SIGNOFF at Phase 7.",
+    "STOP_9": "FT3 low activation requires ungoverned illness/medication logic — if implementing the disclosed requirement for illness_or_recovery_status requires any clinical heuristic or LLM call, STOP.",
+    "STOP_10": "Active package behaviour changes unexpectedly — if any currently active signal's evaluation result changes after disclosed semantics are implemented, STOP before commit.",
+    "STOP_11": "Validators fail — any run_architecture_validation_gate.py, validate_medical_frame_identity_index.py, or validate_context_modifier_catalogue.py failure. STOP.",
+    "STOP_12": "Tests fail — any existing regression test failure. STOP.",
+    "STOP_13": "Package validators fail — any validate_knowledge_package.py failure for a touched package. STOP.",
+    "STOP_14": "Activation approval phrase not given — stop before Phase 8. Sprint may still complete as implementation-only sprint.",
+    "STOP_15": "Rollback path cannot be defined — STOP before commit if rollback is unclear.",
+    "STOP_16": "Disclosed semantics implemented in requirement evaluation but snapshot does not record disclosure state — this is the Amendment 6 addition. Do not implement only half of the coordinated change.",
+    "STOP_17": "FT3 low recommended for ACTIVATE_NOW while enable_lower_bound remains false — STOP. This is an independent activation-layer blocker."
   },
   "behavioural_hardening": {
-    "scope_defined": "CONFIRMED — Expected outputs: runtime_context_semantics_model_v1.yaml, batch2_context_clearance_register_v1.yaml, backend/tests/governance/test_runtime_context_semantics_model.py, backend/tests/governance/test_batch2_context_clearance_register.py, docs/audit-papers/CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance.md, docs/sprints/launch_core_carry_forward_register.md. Any file outside this list requires STOP and report before commit.",
-    "regression_targets": "CONFIRMED — existing test_runtime_context_evaluation.py must pass (run and paste full output); architecture validation gate must pass; modifier catalogue validator must pass; medical frame index validator must pass. New governance tests must also pass.",
-    "determinism_preserved": "CONFIRMED — no threshold, scoring, ranking, reference range, clinical wording, runtime code, or SSOT changes. Sprint produces governance artefacts only.",
-    "output_structure_unchanged": "CONFIRMED — no changes to signal output structure, payload format, or report compiler.",
-    "no_hidden_side_effects": "CONFIRMED — if package signal_library.yaml files are NOT changed (recommended), no runtime behaviour changes. If changed, STOP_C applies.",
-    "package_modification_rule": "If any package signal_library.yaml is modified, Cursor must: (1) list each modified package; (2) explain the exact semantic correction; (3) prove no activation status changed; (4) run package validation for each touched package; (5) prove no thresholds, clinical wording, signal_id, activation_key, or reference ranges changed. Recommendation: do NOT modify package files in this sprint — the semantics model is governance-only and does not require package YAML changes to meet success criteria.",
-    "carry_forward_handling": "CF-CONTEXT-SEMANTICS-1: mark Resolved ONLY if semantics model distinguishing hard gates, disclosed context, modifiers, and companion biomarker requirements is created. CF-BATCH2-010: must remain Open — no clinical sign-off artefact exists. ARCH-ORCH-RESTRUCTURE-1: must remain Open. CF-CONTEXT-MOD-3: must remain Resolved. Do NOT create one carry-forward per androgen marker.",
-    "test_directory_note": "backend/tests/governance/ does NOT currently exist. Cursor must create this directory. The governance test files are net-new."
-  },
-  "package_inventory": {
-    "androgen_packages_count": 8,
-    "packages": [
-      { "package_id": "pkg_kb47_dhea_high_androgen_excess_context", "signal_id": "signal_dhea_high", "path": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context", "inactive": true },
-      { "package_id": "pkg_kb47_dhea_low_adrenal_androgen_reduction", "signal_id": "signal_dhea_low", "path": "knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction", "inactive": true },
-      { "package_id": "pkg_kb47_fai_high_biochemical_hyperandrogenism", "signal_id": "signal_fai_high", "path": "knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism", "inactive": true },
-      { "package_id": "pkg_kb47_fai_low_reduced_free_androgen_availability", "signal_id": "signal_fai_low", "path": "knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability", "inactive": true },
-      { "package_id": "pkg_kb47_free_testosterone_high_androgen_excess_context", "signal_id": "signal_free_testosterone_high", "path": "knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context", "inactive": true },
-      { "package_id": "pkg_kb47_free_testosterone_low_androgen_deficiency_context", "signal_id": "signal_free_testosterone_low", "path": "knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context", "inactive": true },
-      { "package_id": "pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction", "signal_id": "signal_free_testosterone_pct_high", "path": "knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction", "inactive": true },
-      { "package_id": "pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction", "signal_id": "signal_free_testosterone_pct_low", "path": "knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction", "inactive": true }
-    ],
-    "ft3_low_package": {
-      "package_id": "pkg_kb47_free_t3_low_low_t3_syndrome",
-      "signal_id": "signal_free_t3_low",
-      "path": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome",
-      "inactive": true
-    },
-    "all_9_inactive": true,
-    "clinical_signoff_available": false,
-    "note": "No clinical sign-off artefact exists in repo for any androgen package. CLEARED_FOR_STOP_GATED_ACTIVATION is not an available clearance decision for any androgen package in this sprint."
+    "scope_defined": "CONFIRMED — Expected changed files listed at prompt §Expected changed files. Any file outside that list requires STOP and explanation before editing.",
+    "regression_targets": "CONFIRMED — backend/tests/regression/test_runtime_context_evaluation.py must pass (all existing tests + 18 new tests); run_architecture_validation_gate.py must pass; validate_medical_frame_identity_index.py must pass; validate_context_modifier_catalogue.py must pass; validate_knowledge_package.py for each touched package must pass. All output must be pasted in full.",
+    "determinism_preserved": "CONFIRMED — disclosed semantics implementation must be deterministic fail-closed. No clinical thresholds, no LLM calls, no heuristics. Snapshot reads from disclosed questionnaire fields only.",
+    "output_structure_unchanged": "CONFIRMED — existing active package signal evaluation results must be unchanged. present requirement mode at evaluator line 308 must not be modified.",
+    "backward_compatibility": "CONFIRMED REQUIRED — evaluate_runtime_context_requirements() lines 285-311 (present and lab_range_boundary handling) must not be changed. Active packages not in scope of this sprint must evaluate identically before and after.",
+    "two_coordinated_changes_required": "CONFIRMED — Amendment 3 is architecturally correct. Two changes must be made together in runtime_context_evaluator.py: (1) build_runtime_context_snapshot() must record disclosure state independently of positive presence (new _status_disclosed keys); (2) evaluate_runtime_context_requirements() must add a disclosed branch at ~line 311 that checks for those _status_disclosed keys. Implementing only one half triggers STOP_16.",
+    "package_inventory": "CONFIRMED — 9 packages, all inactive. 8 androgen BLOCKED_PENDING_CLINICAL_SIGNOFF, 1 FT3 low BLOCKED_PENDING_CONTEXT_SEMANTICS. At Phase 7, no androgen package may receive ACTIVATE_NOW. FT3 low may not receive ACTIVATE_NOW while enable_lower_bound: false.",
+    "carry_forward_handling": "CF-CONTEXT-SEMANTICS-1 may be updated to Resolved if evaluator disclosed mode is fully implemented and tested. CF-BATCH2-010 must remain Open. ARCH-ORCH-RESTRUCTURE-1 must remain Open. Do not create one carry-forward per androgen marker.",
+    "no_merge": "CONFIRMED — HIGH risk route: Cursor implementation → Claude audit → GPT architectural review → human merge approval. No merge without GPT review.",
+    "audit_paper_required": "CONFIRMED — docs/audit-papers/BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation.md + docs/audit-papers/BATCH2-CONTEXT-COMPLETION-1_architecture_delta_report.md both required."
   },
   "overall_verdict": "HARDENED",
-  "hardening_notes": "Sprint is hardened and may proceed to Stage 3. Three non-negotiable STOP conditions apply (STOP_A: duplicate authority, STOP_B: runtime code changes, STOP_C: package YAML new requirement types). Key facts for Cursor: (1) The semantic ambiguity is confirmed — hormone_therapy and aas_exposure in signal_library.yaml requirement: present means 'patient has the condition' not 'patient has disclosed'; this is a false-negative risk that this sprint documents in governance artefacts. (2) This sprint's outputs are governance-only — no runtime code changes, no package activation, no evaluator changes. (3) All 8 androgen packages and FT3 low remain inactive and must remain so after this sprint. (4) CF-BATCH2-010 remains Open — no clearance decision can be CLEARED_FOR_STOP_GATED_ACTIVATION without a clinical sign-off artefact. (5) backend/tests/governance/ does not exist — create it. (6) The batch2_remaining_blockers_execution_register is stale on CF-CONTEXT-MOD-3 — acknowledge in audit paper, do not amend that register. HIGH risk route: Cursor implementation → Claude audit → GPT architectural review → human approval before merge."
+  "hardening_notes": "Sprint may proceed to Stage 3 (kernel start). Key facts for Cursor: (1) The core implementation gap is confirmed from file reads — runtime_context_evaluator.py line 313 falls through on unknown requirement types and the snapshot records no disclosure state. Two coordinated changes required in that one file. (2) All 9 packages remain inactive and must remain so after this sprint unless STOP-gated activation is approved. No androgen package can receive ACTIVATE_NOW due to CF-BATCH2-010. (3) FT3 low has TWO independent blockers: enable_lower_bound: false (signal_library.yaml line 50) and illness_or_recovery_status misclassified as present not disclosed (signal_library.yaml line 63). (4) The semantics model remediation_work_id field references BATCH2-CONTEXT-ACTIVATION-1 — this is stale naming predating the GPT sprint consolidation; note in audit paper, not a blocker. (5) illness_or_recovery_status in the snapshot (evaluator line 236-237) conflates condition presence with disclosure — a new _disclosed key must be introduced without modifying the existing key. (6) If activation approval phrase 'APPROVE BATCH2 CONTEXT RUNTIME ACTIVATION' is received, only packages with ACTIVATE_NOW recommendation may be activated; given CF-BATCH2-010, this is unlikely for any androgen package in this sprint."
 }
