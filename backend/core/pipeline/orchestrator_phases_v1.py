@@ -137,6 +137,7 @@ def evaluate_signal_evaluation_phase(
     input_reference_profiles: Mapping[str, Any],
     registry_hash_fn: Callable[[], Optional[str]],
     utc_now_fn: Callable[[], str],
+    runtime_context: Optional[Dict[str, Any]] = None,
 ) -> SignalEvaluationPhaseResult:
     signal_biomarkers = {k: v for k, v in simple_biomarkers.items() if k != "age"}
     signal_derived = {
@@ -149,6 +150,7 @@ def evaluate_signal_evaluation_phase(
         signal_derived,
         lab_ranges=input_reference_ranges,
         reference_profiles=input_reference_profiles,
+        runtime_context=runtime_context,
     )
     return SignalEvaluationPhaseResult(
         signal_results_serialized=[r.model_dump() for r in signal_results_raw],

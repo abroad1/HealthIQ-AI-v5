@@ -15,6 +15,7 @@ UNIT_NORMALISATION_META_KEY = "__unit_normalisation_meta__"
 
 from core.canonical.normalize import BiomarkerNormalizer, normalize_panel
 from core.canonical.resolver import resolve_to_canonical, CanonicalResolver
+from core.analytics.runtime_context_evaluator import build_runtime_context_snapshot
 from core.pipeline.orchestrator_phases_v1 import (
     evaluate_signal_evaluation_phase,
     prepare_scoring_inputs_from_panel,
@@ -1251,6 +1252,9 @@ class AnalysisOrchestrator:
                 }
 
             # Step 1.6: Phase signal_evaluation
+            runtime_ctx = build_runtime_context_snapshot(
+                questionnaire_responses=questionnaire_data,
+            )
             signal_phase = evaluate_signal_evaluation_phase(
                 signal_evaluator=self.signal_evaluator,
                 simple_biomarkers=simple_biomarkers,
@@ -1259,6 +1263,7 @@ class AnalysisOrchestrator:
                 input_reference_profiles=input_reference_profiles,
                 registry_hash_fn=self._get_signal_registry_hash_sha256,
                 utc_now_fn=self._utc_now_iso,
+                runtime_context=runtime_ctx,
             )
             signal_results_serialized = signal_phase.signal_results_serialized
             signal_registry_hash_sha256 = signal_phase.signal_registry_hash_sha256
