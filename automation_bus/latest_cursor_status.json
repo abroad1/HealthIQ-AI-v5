@@ -1,10 +1,9 @@
 {
-  "branch": "work/CF-AUTHORITY-RUNTIME-1-runtime-signal-authority-collision-enforcement",
+  "branch": "work/CONTEXT-RUNTIME-1-reusable-runtime-context-evaluation-layer",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-07T18:29:58Z",
-  "cursor_started_utc": "2026-06-07T18:24:52Z",
-  "head_sha": "cda5838e5b544a9daa19686c681087634473e04a",
+  "cursor_started_utc": "2026-06-12T06:46:39Z",
+  "head_sha": "d57bacd221ac4901af3310508b3e37068d700543",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement"
+  "status": "IN_PROGRESS",
+  "work_id": "CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer"
 }
