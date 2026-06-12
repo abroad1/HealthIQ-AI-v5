@@ -1,80 +1,97 @@
 ---
-work_id: CONTEXT-THREADING-1_runtime_context_orchestrator_threading
-branch: work/CONTEXT-THREADING-1-runtime-context-orchestrator-threading
+work_id: CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance
+branch: work/CONTEXT-CLEARANCE-1-context-semantics-and-batch2-clearance
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: BEHAVIOUR
+change_type: MIXED
 ---
 
-# CONTEXT-THREADING-1 — Runtime Context Orchestrator Threading
+# CONTEXT-CLEARANCE-1 — Context Semantics and Batch 2 Clearance
 
 ## Purpose
 
-Wire the reusable runtime context evaluator into the live analysis pipeline.
+Define the reusable runtime context semantics required before any remaining context-dependent Batch 2 package can be safely activated.
 
-CONTEXT-RUNTIME-1 created the reusable context evaluation capability, including:
+This sprint must answer one question:
 
-* `backend/core/analytics/runtime_context_evaluator.py`
-* `build_runtime_context_snapshot()`
-* package-declared `runtime_context_requirements`
-* `SignalEvaluator.evaluate_all(..., runtime_context=None)`
-* fail-closed runtime context gating
+```text
+For context-dependent Batch 2 packages, what must be true before runtime activation is safe?
+```
 
-However, the pre-sprint architecture audit found that the live orchestrator does not yet pass questionnaire, demographic, medication, supplement, symptom, illness, or known-condition context into signal evaluation.
+This sprint must produce a governed clearance decision for:
 
-This sprint must complete the missing runtime threading step.
+```text
+- 8 androgen packages
+- FT3 low
+```
 
 This is not a package activation sprint.
 
 Do not activate:
 
-* FT3 low
-* androgen packages
-* any other currently inactive package
-
-Do not change androgen context semantics in this sprint.
+```text
+- androgen packages
+- FT3 low
+- any other currently inactive package
+```
 
 ---
 
-## Strategic architecture alignment note
+## Strategic architecture note
 
-This sprint is an interim runtime-threading bridge, not the final orchestrator architecture.
+CONTEXT-RUNTIME-1 created fail-closed runtime context evaluation.
 
-The accepted ADR target remains:
+CONTEXT-THREADING-1 made that context capability live in the orchestrator via raw `questionnaire_data`.
 
-```text
-canonical research authority
-→ governed compile
-→ compiled runtime artefacts
-→ thin runtime loaders
-→ presentation-safe DTOs
-→ frontend render-only
-```
-
-The current pipeline is structurally imperfect because signal evaluation currently runs before full `AnalysisContext` creation. `CONTEXT-THREADING-1` must not attempt a broad orchestrator refactor. It may use raw `questionnaire_data` because that is the only context source available before Step 1.6.
-
-This tactical bridge is acceptable because it makes the reusable context evaluator live without activating blocked packages and without widening the runtime rewrite.
-
-However, this sprint must not be represented as completing the final “thin runtime loader” target architecture.
-
-The sprint must record a carry-forward that the day-one architecture / launch-gate work must address orchestrator phase ordering and context assembly so that, in the final architecture, runtime loaders receive already-assembled governed inputs rather than reaching backwards into raw questionnaire payloads.
-
-Success criteria are limited to:
+However, androgen activation remains blocked because the current context requirement semantics may incorrectly treat fields such as:
 
 ```text
-- safe live threading of runtime_context into SignalEvaluator
-- no package activation
-- no behavioural drift for currently active signals
-- explicit carry-forward for final orchestrator restructuring
+medication.hormone_therapy: present
+clinical_context.aas_exposure: present
 ```
 
-Required carry-forward entry:
+as meaning:
 
 ```text
-ARCH-ORCH-RESTRUCTURE-1
-
-The current orchestrator still performs signal evaluation before full AnalysisContext creation. CONTEXT-THREADING-1 uses raw questionnaire_data as an interim bridge only. Before final day-one architecture acceptance, the runtime pipeline must be reviewed/restructured so context assembly occurs before context-dependent evaluation, consistent with the ADR target of thin runtime loaders receiving governed, assembled inputs.
+the patient is on hormone therapy / has AAS exposure
 ```
+
+rather than:
+
+```text
+the patient has disclosed whether hormone therapy / AAS exposure applies
+```
+
+That is a false-negative risk and must be resolved before activation.
+
+The target model must distinguish:
+
+```text
+1. hard prerequisite gates
+2. disclosed context requirements
+3. optional interpretation modifiers
+4. companion biomarker requirements
+5. activation eligibility decisions
+```
+
+These concepts must not be collapsed into one boolean gate.
+
+---
+
+## Governance classification
+
+This sprint is HIGH risk / MIXED because it affects governed runtime package eligibility and context semantics for Intelligence Core signal emission.
+
+Required route:
+
+```text
+Cursor implementation
+Claude hardening / audit
+GPT architectural review
+Human approval before merge
+```
+
+No merge is permitted without GPT architectural review.
 
 ---
 
@@ -83,273 +100,323 @@ The current orchestrator still performs signal evaluation before full AnalysisCo
 Read before implementation:
 
 ```text
+docs/sprints/launch_core_carry_forward_register.md
 docs/audit-papers/CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer.md
+docs/audit-papers/CONTEXT-THREADING-1_runtime_context_orchestrator_threading.md
+CONTEXT-THREADING-1_pre_sprint_architecture_audit.md
+
 knowledge_bus/governance/runtime_context_requirements_model_v1.yaml
 knowledge_bus/governance/context_runtime_execution_register_v1.yaml
-docs/sprints/launch_core_carry_forward_register.md
-CONTEXT-THREADING-1_pre_sprint_architecture_audit.md
+knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
+knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml
+knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml
+knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+
 docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md
 ```
 
-Also inspect:
+Also inspect all 9 context-dependent Batch 2 packages:
 
 ```text
-backend/core/analytics/runtime_context_evaluator.py
-backend/core/analytics/signal_evaluator.py
-backend/core/pipeline/orchestrator.py
-backend/core/pipeline/orchestrator_phases_v1.py
-backend/core/pipeline/context_factory.py
-backend/core/pipeline/questionnaire_mapper.py
-backend/app/routes/analysis.py
+FT3 low package
+8 androgen packages
+```
+
+Confirm their exact paths from the repo before editing.
+
+---
+
+## Authority preflight
+
+Before making changes, verify and report:
+
+```text
+1. The authoritative runtime context semantics source file.
+2. The runtime evaluator that consumes package-declared runtime_context_requirements.
+3. The package files that currently declare runtime_context_requirements.
+4. The current activation status of FT3 low.
+5. The current activation status of all 8 androgen packages.
+6. That no duplicate context semantics authority exists.
+7. That any proposed new semantics file does not create a second competing authority.
+8. That any tests reference the same authority source as runtime/governance.
+```
+
+STOP if the authoritative context semantics location cannot be identified.
+
+---
+
+## Reality check
+
+Before editing, verify whether the problem still exists.
+
+Confirm:
+
+```text
+- CF-CONTEXT-SEMANTICS-1 is still Open.
+- CF-BATCH2-010 is still Open.
+- FT3 low remains inactive.
+- all 8 androgen packages remain inactive.
+- hormone_therapy / AAS exposure semantics are still ambiguous or unsafe for activation.
+```
+
+If the problem no longer exists, STOP and report instead of proceeding.
+
+---
+
+## Scope
+
+This sprint must produce:
+
+```text
+1. A reusable context requirement semantics model.
+2. A hard gate vs disclosed context vs modifier distinction.
+3. An androgen clearance matrix covering all 8 androgen packages.
+4. An FT3 low clearance decision.
+5. A package-level activation eligibility list.
+6. A deferred / non-launch-critical list if required.
+7. Updated carry-forward register entries.
+8. Tests / validators proving the semantics model is structurally valid.
+9. An audit paper explaining decisions and remaining blockers.
 ```
 
 ---
 
-## Architectural context
+## Required semantic model
 
-The pre-sprint architecture audit found:
+The sprint must define or update a governed semantics model that distinguishes:
 
-```text
-- orchestrator segmentation has only been partially completed
-- backend/core/pipeline/orchestrator.py remains the main execution thread
-- backend/core/pipeline/orchestrator_phases_v1.py contains evaluate_signal_evaluation_phase()
-- signal evaluation occurs at Step 1.6
-- create_analysis_context() runs later at Step 2
-- therefore runtime context threading must use raw questionnaire_data, not mapped lifestyle_factors or medical_history
-- build_runtime_context_snapshot() already accepts raw questionnaire_responses
-- no new context builder module is required for this sprint
-```
+### Hard prerequisite gate
 
-The intended threading path is:
+A condition required before signal emission can safely occur.
+
+Examples:
 
 ```text
-raw questionnaire_data
-→ build_runtime_context_snapshot(questionnaire_responses=questionnaire_data)
-→ evaluate_signal_evaluation_phase(..., runtime_context=runtime_ctx)
-→ SignalEvaluator.evaluate_all(..., runtime_context=runtime_ctx)
-→ package-declared runtime_context_requirements enforced fail-closed
+- biological sex available where sex-specific interpretation is required
+- age available where age-specific interpretation is required
+- SHBG available where FAI/free testosterone interpretation requires SHBG
+- TSH and FT4 available where FT3 low interpretation requires thyroid context
 ```
 
----
+### Disclosed context requirement
 
-## Governance classification
+A requirement that the user has answered or disclosed a context field, regardless of whether the answer is positive or negative.
 
-This sprint is HIGH risk because it touches runtime pipeline files:
+Examples:
 
 ```text
-backend/core/pipeline/orchestrator.py
-backend/core/pipeline/orchestrator_phases_v1.py
+- hormone therapy status disclosed: yes/no/unknown
+- AAS exposure status disclosed: yes/no/unknown
+- relevant medication status disclosed: yes/no/unknown
 ```
 
-Required route:
+This must not mean the condition is present.
+
+### Interpretation modifier
+
+A context item that may alter interpretation wording, confidence, caution level, or explanatory framing, but should not automatically suppress signal emission unless explicitly promoted to a hard prerequisite.
+
+Examples:
 
 ```text
-Cursor implementation
-Claude audit
-GPT architectural review
-Merge only after explicit approval
+- hormone therapy
+- AAS exposure
+- supplements
+- endocrine history
+- symptoms
+- recent illness/recovery
 ```
 
----
+### Companion biomarker requirement
 
-## Start conditions
+A required biomarker dependency for specific frames.
 
-Start from clean `main`.
-
-Before creating the branch, run and report:
-
-```powershell
-git branch --show-current
-git status --short
-git rev-parse HEAD
-git rev-parse origin/main
-git log --oneline -n 8
-```
-
-Do not proceed unless:
+Examples:
 
 ```text
-- current branch is main
-- local main equals origin/main
-- working tree is clean
-- CONTEXT-RUNTIME-1 is already merged
-- build_runtime_context_snapshot() exists
-- SignalEvaluator.evaluate_all() already accepts runtime_context
-```
-
-Then create/switch to:
-
-```text
-work/CONTEXT-THREADING-1-runtime-context-orchestrator-threading
+- SHBG for FAI / free testosterone percentage contexts where clinically required
+- FT4 and TSH for FT3 low context
 ```
 
 ---
 
-## Phase 1 — Read-only verification
+## Batch 2 clearance requirements
 
-Before making code changes, verify and report:
+### Androgen packages
+
+For each of the 8 androgen packages, produce a row containing:
 
 ```text
-1. Exact variable name and scope of raw questionnaire data inside AnalysisOrchestrator.run()
-2. Exact call site of evaluate_signal_evaluation_phase()
-3. Exact signature of evaluate_signal_evaluation_phase()
-4. Exact signature of SignalEvaluator.evaluate_all()
-5. Confirm build_runtime_context_snapshot() can be imported safely
-6. Confirm create_analysis_context() runs after signal evaluation
-7. Confirm raw questionnaire_data is available before signal evaluation
-8. Confirm only the 9 inactive Batch 2 context-dependent packages currently declare runtime_context_requirements:
-   - FT3 low
-   - androgen ×8
-9. Confirm no currently active package declares runtime_context_requirements
-10. Confirm no package activation is required for this sprint
-11. Confirm this sprint is only an interim bridge and not final orchestrator restructuring
+- package_id
+- signal_id
+- activation_key
+- source_spec_id
+- current runtime authority status
+- current runtime_context_requirements
+- required hard gates
+- required disclosed context
+- optional modifiers
+- companion biomarker requirements
+- clinical sign-off status
+- clearance decision
+- reason
+- activation eligibility
 ```
 
-STOP and report if:
+Allowed clearance decisions:
 
 ```text
-- raw questionnaire_data is not available before signal evaluation
-- build_runtime_context_snapshot() cannot consume raw questionnaire_data
-- any currently active package declares runtime_context_requirements
-- implementation would require broad orchestrator refactor
-- implementation would require modifying clinical wording, thresholds, reference ranges, scoring, frontend, SSOT, report compiler, package activation keys, or signal IDs
+CLEARED_FOR_STOP_GATED_ACTIVATION
+BLOCKED_PENDING_CLINICAL_SIGNOFF
+BLOCKED_PENDING_CONTEXT_SEMANTICS
+BLOCKED_PENDING_COMPANION_BIOMARKER
+DEFERRED_NON_LAUNCH_CRITICAL
+REJECTED_DO_NOT_ACTIVATE
+```
+
+### FT3 low
+
+Produce the same clearance assessment for FT3 low.
+
+FT3 low must not be activated unless the sprint can prove that the required TSH + FT4 + illness/medication context model is safe and deterministic.
+
+---
+
+## Required outputs
+
+Create or update appropriate governance artefacts.
+
+Expected outputs may include:
+
+```text
+knowledge_bus/governance/runtime_context_semantics_model_v1.yaml
+knowledge_bus/governance/batch2_context_clearance_register_v1.yaml
+docs/audit-papers/CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance.md
+docs/sprints/launch_core_carry_forward_register.md
+backend/tests/governance/test_runtime_context_semantics_model.py
+backend/tests/governance/test_batch2_context_clearance_register.py
+```
+
+If different file paths are used, explain why.
+
+Do not modify runtime pipeline code unless validation proves it is absolutely required. If runtime code changes appear necessary, STOP and report before continuing.
+
+---
+
+## Explicit non-goals
+
+This sprint must not:
+
+```text
+- activate androgen packages
+- activate FT3 low
+- change runtime package activation metadata to active
+- change clinical thresholds
+- change lab reference range policy
+- change scoring
+- change frontend
+- change report compiler
+- change SSOT biomarker definitions
+- change signal IDs
+- change activation keys
+- change orchestrator phase ordering
+- refactor runtime pipeline
+- alter existing active package behaviour
+- introduce fallback or dummy parsers
+- introduce raw Pass 3 runtime reads
+- add LLM interpretation logic
 ```
 
 ---
 
-## Phase 2 — Minimal implementation
+## Package modification rules
 
-Allowed files:
+Package metadata may only be changed if required to encode corrected, governed context semantics.
+
+If any package `signal_library.yaml` is modified, Cursor must:
 
 ```text
-backend/core/pipeline/orchestrator.py
-backend/core/pipeline/orchestrator_phases_v1.py
-backend/tests/regression/test_context_threading.py
-docs/audit-papers/CONTEXT-THREADING-1_runtime_context_orchestrator_threading.md
+1. list each modified package
+2. explain the exact semantic correction
+3. prove no activation status changed
+4. run package validation for each touched package
+5. prove the change does not alter thresholds, clinical wording, signal_id, activation_key, or reference ranges
+```
+
+If package changes are not necessary, do not touch package files.
+
+---
+
+## Required carry-forward handling
+
+Update:
+
+```text
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-If a different test file is used, report the reason.
-
-Do not modify:
+Required logic:
 
 ```text
-backend/core/analytics/signal_evaluator.py
-backend/core/analytics/runtime_context_evaluator.py
-backend/core/pipeline/questionnaire_mapper.py
-backend/core/pipeline/context_factory.py
-any package signal_library.yaml
-any package package_manifest.yaml
-knowledge_bus/governance/*.yaml
-frontend
-SSOT
-scoring
-report compiler
-clinical wording
-thresholds
-reference ranges
-signal IDs
-activation keys
+CF-CONTEXT-SEMANTICS-1:
+- mark Resolved only if the sprint creates a governed semantics model distinguishing hard gates, disclosed context, modifiers, and companion biomarker requirements
+- otherwise keep Open and explain remaining blocker
+
+CF-BATCH2-010:
+- must remain Open unless a clinical sign-off artefact is created or verified
+- if androgen clinical sign-off remains incomplete, state that androgen activation remains blocked
+
+ARCH-ORCH-RESTRUCTURE-1:
+- must remain Open
+- do not claim this sprint resolves final orchestrator phase ordering
+
+CF-CONTEXT-MOD-3:
+- must remain Resolved at capability/threading level
+- note that package activation is still governed separately
 ```
 
-Exception:
-
-```text
-Only modify another file if a validator proves it is required. If so, STOP and report before continuing.
-```
+Do not create one carry-forward per androgen marker.
 
 ---
 
-## Required implementation detail
+## Required audit report
 
-In:
-
-```text
-backend/core/pipeline/orchestrator.py
-```
-
-Import:
-
-```python
-build_runtime_context_snapshot
-```
-
-from the existing runtime context evaluator module.
-
-Immediately before the existing `evaluate_signal_evaluation_phase()` call, build:
-
-```python
-runtime_ctx = build_runtime_context_snapshot(
-    questionnaire_responses=questionnaire_data,
-)
-```
-
-Pass it into the phase call:
-
-```python
-runtime_context=runtime_ctx
-```
-
-Do not use mapped `lifestyle_factors` or `medical_history` in this sprint because they are created after signal evaluation.
-
-In:
+Create:
 
 ```text
-backend/core/pipeline/orchestrator_phases_v1.py
+docs/audit-papers/CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance.md
 ```
 
-Update `evaluate_signal_evaluation_phase()` to accept:
-
-```python
-runtime_context: Optional[Dict[str, Any]] = None
-```
-
-Then forward it into:
-
-```python
-signal_evaluator.evaluate_all(
-    ...
-    runtime_context=runtime_context,
-)
-```
-
-Do not change the order of existing signal evaluation steps.
-
-Do not alter:
+The report must include:
 
 ```text
-- threshold evaluation
-- lab-range logic
-- mandatory pre-emission gates
-- confidence calculation
-- authority collision resolution
-- package registry behaviour
-- signal activation state
+- executive verdict
+- files inspected
+- files changed
+- authority preflight result
+- reality check result
+- semantic model summary
+- androgen clearance matrix summary
+- FT3 low decision summary
+- activation eligibility list
+- deferred / non-launch-critical list
+- confirmation no activation occurred
+- confirmation FT3 low remains inactive
+- confirmation all androgen packages remain inactive
+- confirmation no clinical thresholds changed
+- confirmation no reference range policy changed
+- confirmation no frontend / SSOT / scoring / report compiler changed
+- validation output pasted in full
+- test output pasted in full
+- rollback path
+- residual architectural observations
+- recommended next sprint
 ```
 
----
-
-## Required tests
-
-Add regression coverage proving:
-
-```text
-1. evaluate_signal_evaluation_phase() remains backward compatible when runtime_context=None
-2. runtime_context is forwarded into SignalEvaluator.evaluate_all()
-3. build_runtime_context_snapshot() is called from orchestrator using raw questionnaire_data
-4. active signals without runtime_context_requirements are unaffected by runtime_context
-5. a signal with runtime_context_requirements suppresses when required context is missing
-6. a signal with runtime_context_requirements can pass when required context is present
-7. no currently active package is suppressed by the threading change
-8. no package activation occurs
-```
-
-The critical integration test is:
-
-```text
-A representative active panel with questionnaire_data must produce the same active signal set as the same panel without questionnaire_data, because currently active packages must not depend on runtime_context_requirements.
-```
+Validation output must be pasted in full, not summarised.
 
 ---
 
@@ -362,103 +429,26 @@ python backend/scripts/run_architecture_validation_gate.py
 python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 python -m pytest backend/tests/regression/test_runtime_context_evaluation.py -q
-python -m pytest backend/tests/regression/test_context_threading.py -q
 ```
 
-If the context threading tests are placed elsewhere, run the actual file and report the path.
+Also run any new tests created by this sprint, for example:
 
-Also run any existing signal evaluator regression tests if they exist.
-
----
-
-## Required audit report
-
-Create:
-
-```text
-docs/audit-papers/CONTEXT-THREADING-1_runtime_context_orchestrator_threading.md
+```powershell
+python -m pytest backend/tests/governance/test_runtime_context_semantics_model.py -q
+python -m pytest backend/tests/governance/test_batch2_context_clearance_register.py -q
 ```
 
-The report must include:
+If package files are modified, run:
 
-```text
-- executive verdict
-- files inspected
-- files changed
-- confirmation of raw questionnaire_data source
-- confirmation of signal evaluation call path
-- confirmation create_analysis_context() still runs later and is not used for this sprint
-- confirmation this is an interim bridge, not final orchestrator architecture
-- implementation summary
-- test evidence
-- validation output pasted in full
-- confirmation no package activation occurred
-- confirmation FT3 low remains inactive
-- confirmation androgen packages remain inactive
-- confirmation no clinical wording / thresholds / reference ranges changed
-- confirmation no frontend / SSOT / scoring / report compiler changed
-- confirmation no package signal_library.yaml changed
-- rollback path
-- residual architectural observations
+```powershell
+python backend/scripts/validate_knowledge_package.py --package-dir <each_touched_package_dir>
 ```
 
----
-
-## Carry-forward handling
-
-Update:
+If a validator does not exist for a new governance artefact, either:
 
 ```text
-docs/sprints/launch_core_carry_forward_register.md
-```
-
-Required logic:
-
-```text
-CF-CONTEXT-MOD-3:
-- may be marked resolved only if reusable context capability is now live in the pipeline and tested
-- note that package activation remains blocked separately
-
-CF-BATCH2-010:
-- must remain open
-- androgen activation remains blocked pending androgen clinical sign-off and context semantics correction
-
-ARCH-ORCH-RESTRUCTURE-1:
-- must be added or updated
-- record that CONTEXT-THREADING-1 uses raw questionnaire_data as an interim bridge only
-- record that final day-one architecture still requires review/restructure of orchestrator phase ordering and context assembly
-- record that final runtime loaders should receive already-assembled governed inputs rather than reaching backwards into raw questionnaire payloads
-
-CF-CONTEXT-SEMANTICS-1:
-- create if not already present
-- resolve androgen gate semantics before activation
-- distinguish hard gates from disclosed context and interpretation modifiers
-```
-
-Do not create one carry-forward per androgen marker.
-
----
-
-## Explicit non-goals
-
-This sprint must not:
-
-```text
-- activate FT3 low
-- activate androgen packages
-- change androgen runtime_context_requirements semantics
-- change hormone_therapy or aas_exposure handling
-- add new clinical logic
-- add hardcoded clinical thresholds
-- change clinical wording
-- change signal thresholds
-- change reference ranges
-- change scoring
-- change frontend
-- change report compiler
-- refactor the orchestrator beyond the minimum threading change
-- redesign questionnaire mapping
-- claim final day-one orchestrator architecture is complete
+- create a narrow validator/test for it, or
+- STOP and explain why validation cannot be provided
 ```
 
 ---
@@ -468,34 +458,42 @@ This sprint must not:
 STOP and report if:
 
 ```text
-1. any currently active package declares runtime_context_requirements
-2. raw questionnaire_data is not available before signal evaluation
-3. build_runtime_context_snapshot() cannot safely consume the raw questionnaire_data
-4. threading requires modifying signal_evaluator.py or runtime_context_evaluator.py
-5. threading requires changing package metadata
-6. validators fail
-7. architecture gate fails
-8. tests show existing active signals are suppressed or changed
-9. implementation requires broad orchestrator refactor
-10. rollback path cannot be defined
-11. the sprint cannot record ARCH-ORCH-RESTRUCTURE-1 as an explicit carry-forward
+1. the authoritative context semantics source cannot be identified
+2. the sprint would create a duplicate context semantics authority
+3. any activation is required to complete the sprint
+4. androgen clinical sign-off cannot be found and clearance would require inventing clinical approval
+5. FT3 low clearance would require inventing illness/medication logic not present in governed artefacts
+6. runtime pipeline changes are required
+7. SignalEvaluator changes are required
+8. package activation metadata would need to change
+9. thresholds, clinical wording, reference ranges, scoring, SSOT, frontend, or report compiler would need to change
+10. validators fail
+11. tests fail
+12. the clearance matrix cannot identify every one of the 8 androgen packages
+13. the sprint cannot prove FT3 low and all androgen packages remain inactive
+14. rollback path cannot be defined
 ```
 
 ---
 
 ## Expected changed files
 
-Expected changed files should be limited to:
+Expected changed files should be limited to governance, tests, audit and carry-forward documentation, for example:
 
 ```text
-backend/core/pipeline/orchestrator.py
-backend/core/pipeline/orchestrator_phases_v1.py
-backend/tests/regression/test_context_threading.py
-docs/audit-papers/CONTEXT-THREADING-1_runtime_context_orchestrator_threading.md
+knowledge_bus/governance/runtime_context_semantics_model_v1.yaml
+knowledge_bus/governance/batch2_context_clearance_register_v1.yaml
+backend/tests/governance/test_runtime_context_semantics_model.py
+backend/tests/governance/test_batch2_context_clearance_register.py
+docs/audit-papers/CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-If any other file changes, explain why before commit.
+Package files may only be touched if necessary to encode corrected context semantics and must be validated individually.
+
+Runtime code files are not expected to change.
+
+If any file outside expected scope changes, STOP and explain before commit.
 
 ---
 
@@ -511,7 +509,19 @@ git status --short
 Commit message:
 
 ```text
-fix(pipeline): thread runtime context into signal evaluation
+docs(governance): define context clearance for Batch 2 packages
+```
+
+If tests or validators are added, use:
+
+```text
+test(governance): validate Batch 2 context clearance model
+```
+
+or a single combined commit:
+
+```text
+chore(governance): define Batch 2 context clearance model
 ```
 
 After commit, report:
@@ -526,4 +536,29 @@ Do not merge.
 
 Return evidence for Claude audit and GPT architectural review.
 
-The strategic correction is now built into the sprint: this is a safe bridge, not a claim that the final orchestrator architecture is complete.
+---
+
+## Success criteria
+
+This sprint succeeds only if:
+
+```text
+- reusable context semantics are defined
+- hard gates, disclosed context, modifiers, and companion biomarker requirements are separated
+- all 8 androgen packages have a clearance decision
+- FT3 low has a clearance decision
+- activation eligibility list exists
+- deferred / non-launch-critical list exists if required
+- no package activation occurred
+- all validators and tests pass
+- carry-forward register is updated correctly
+- next activation sprint can be scoped without re-litigating semantics
+```
+
+The expected next sprint, if this passes, is:
+
+```text
+BATCH2-CONTEXT-ACTIVATION-1_stop_gated_context_package_activation
+```
+
+That next sprint must activate only packages explicitly cleared by this sprint and must not re-open semantic or clinical sign-off decisions.
