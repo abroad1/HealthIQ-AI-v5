@@ -1,46 +1,72 @@
 ---
-work_id: CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement
-branch: work/CF-AUTHORITY-RUNTIME-1-runtime-signal-authority-collision-enforcement
+work_id: CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer
+branch: work/CONTEXT-RUNTIME-1-reusable-runtime-context-evaluation-layer
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# CF-AUTHORITY-RUNTIME-1 — Runtime Signal Authority / Collision Enforcement
+# CONTEXT-RUNTIME-1 — Reusable Runtime Context Evaluation Layer
 
 ## Purpose
 
-Implement runtime consumption of the reusable signal authority / collision model and use it to safely close out the Batch 2 eGFR activation blocker.
+Build a reusable runtime context evaluation layer that can safely support context-dependent biomarker interpretation.
 
-This sprint must deliver two outcomes in one work package:
+This sprint must not be a one-off fix for FT3 low or androgen markers.
+
+It must create reusable architecture that future biomarkers can use when interpretation depends on non-biomarker or companion-marker context.
+
+Initial use cases:
 
 ```text
-1. Reusable runtime authority / anti-double-counting enforcement.
-2. Safe eGFR runtime activation, if enforcement is proven and human STOP approval is given.
+1. Batch 2 FT3 low
+2. Batch 2 androgen panel ×8
 ````
 
-Do not split this into separate architecture, runtime, test, and activation sprints.
+Future intended use cases include:
 
-`BATCH2-EGFR-AUTHORITY-1` created the governance model but left it `runtime_consumed: false`, with eGFR inactive pending runtime support. This sprint must close that gap. 
+```text
+- fasting insulin / HOMA-IR / metabolic syndrome
+- testosterone / SHBG / FAI / free testosterone
+- ferritin / CRP / inflammation
+- thyroid patterns
+- renal patterns
+- liver patterns
+- medication-influenced markers
+```
 
 ---
 
 ## Strategic framing
 
-HealthIQ will repeatedly have overlapping biomarker families:
+HealthIQ AI cannot safely interpret some biomarkers from the primary blood marker alone.
+
+Some signals require context such as:
 
 ```text
-- creatinine / eGFR / uACR / cystatin C
-- ALT / AST / GGT / bilirubin
-- HbA1c / glucose / fasting insulin / HOMA-IR
-- ferritin / CRP / inflammation
-- testosterone / SHBG / FAI / free testosterone
-- TSH / FT3 / FT4
+- sex
+- age
+- medication use
+- supplement use
+- hormone therapy
+- steroid/anabolic exposure
+- acute illness / infection / recovery state
+- companion biomarkers
+- contradiction biomarkers
+- symptom or known-condition context
 ```
 
-The platform must avoid double-counting the same biology.
+Current Batch 2 blockers show this clearly:
 
-This sprint must make the authority/collision model usable at runtime for the renal-filtration case, while keeping the implementation reusable for future axes.
+```text
+FT3 low:
+- requires TSH + FT4 + illness / medication context
+
+Androgen panel:
+- requires sex, age, SHBG, hormone/medication/steroid/supplement/symptom context
+```
+
+This sprint must build the reusable mechanism that lets packages declare required context and ensures runtime only emits, suppresses, or defers signals safely.
 
 ---
 
@@ -51,12 +77,13 @@ Start from clean `main`.
 Expected prior completed work:
 
 ```text
+CF-AUTHORITY-RUNTIME-1B merged
 BATCH2-EGFR-AUTHORITY-1 merged
 BATCH2-REMAINING-BLOCKERS-1 merged
 BATCH2-THYROID-GATE-1 merged
 BATCH2-ACTIVATION-1 merged
 BATCH2-PROMOTE-1 merged
-BATCH2-CLOSURE-1 merged
+CONTEXT-MOD-1 merged
 ARCH-SENTINEL-1 merged
 CI-ARCH-GATE-1 / CI-ARCH-GATE-1A merged
 ```
@@ -77,10 +104,10 @@ STOP if:
 - current branch is not main
 - local main does not equal origin/main
 - working tree is not clean
-- signal_authority_collision_model_v1.yaml is missing
-- eGFR packages cannot be found
-- creatinine frames/packages cannot be found
-- architecture gate fails at baseline
+- context_modifier_catalogue_draft_v1.yaml is missing
+- batch2_remaining_blockers_execution_register_v1.yaml is missing
+- Batch 2 androgen package folders cannot be found
+- FT3 low package folder cannot be found
 ```
 
 ---
@@ -90,141 +117,237 @@ STOP if:
 Read before implementation:
 
 ```text
-knowledge_bus/governance/signal_authority_collision_model_v1.yaml
-knowledge_bus/governance/batch2_egfr_authority_execution_register_v1.yaml
+knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
+knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml
+knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
+knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
-docs/audit-papers/BATCH2-EGFR-AUTHORITY-1_renal_signal_authority_and_reusable_collision_model.md
 docs/audit-papers/BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation.md
+docs/audit-papers/BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding.md
+docs/audit-papers/BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md
+docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Inspect runtime and package files:
+Inspect runtime paths:
 
 ```text
 backend/core/analytics/signal_evaluator.py
+backend/core/analytics/
 SignalRegistry / package registry loader
-report assembly / signal result assembly paths
-domain score / output consolidation paths if relevant
-knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/
-knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/
-knowledge_bus/packages/*creatinine*
+existing context/user profile ingestion paths
+existing test fixtures for biomarker context
+```
+
+Inspect packages:
+
+```text
+knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/
+
+knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/
+knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/
+knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/
+knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability/
+knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/
+knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context/
+knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction/
+knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction/
 ```
 
 ---
 
-## In-scope packages
+## Sprint principle
 
-eGFR packages:
+Do not build bespoke marker logic.
 
-```text
-pkg_kb47_egfr_low_chronic_kidney_function_reduction
-pkg_kb47_egfr_low_hemodynamic_filtration_drop
+Build a reusable context gate system that packages can declare against.
+
+Preferred pattern:
+
+```yaml
+runtime_context_requirements:
+  required_context:
+    - context_type: demographic
+      key: sex
+    - context_type: demographic
+      key: age
+    - context_type: biomarker
+      key: shbg
+    - context_type: medication
+      key: hormone_therapy
+    - context_type: clinical_context
+      key: acute_illness_or_recovery
+  missing_context_behaviour: suppress_signal | emit_context_insufficient | defer_activation
 ```
 
-Related authority family to inspect:
+Use a minimal schema that is future-proof but not over-engineered.
+
+---
+
+## Required architectural output
+
+Create a reusable runtime context requirements model.
+
+Preferred artefact:
 
 ```text
-signal_creatinine_high
-signal_egfr_low
-renal_filtration_axis
+knowledge_bus/governance/runtime_context_requirements_model_v1.yaml
 ```
 
-Do not modify unrelated marker families.
+It must include:
+
+```yaml
+schema_version:
+runtime_consumed:
+status:
+work_id:
+supported_context_types:
+  - demographic
+  - biomarker
+  - medication
+  - supplement
+  - symptom
+  - clinical_context
+  - known_condition
+supported_missing_context_behaviours:
+  - suppress_signal
+  - emit_context_insufficient
+  - defer_activation
+runtime_contract:
+  fail_closed_on_missing_required_context:
+  no_clinical_claim_from_missing_context:
+  package_declared_requirements_only:
+notes:
+```
+
+The model must be reusable for future biomarkers.
 
 ---
 
 ## Required runtime behaviour
 
-Implement runtime authority/collision enforcement for the renal filtration axis.
+Implement a reusable runtime context evaluator.
 
-Required behaviour:
-
-```text
-1. eGFR-low is treated as the primary renal-filtration authority when active and present.
-2. creatinine-high can remain available as supporting renal evidence.
-3. The system must not surface low eGFR and high creatinine as two independent renal-filtration problems.
-4. Distinct acute complication layers, such as hyperkalemia / electrolyte danger, must remain allowed where medically distinct.
-5. Unrelated signal families must behave exactly as before.
-```
-
-The implementation must be reusable. Do not hardcode a one-off `if eGFR then suppress creatinine` hack.
-
-Preferred pattern:
+Preferred helper:
 
 ```text
-runtime reads authority group
-→ detects overlapping active signal families
-→ applies collision policy
-→ suppresses / consolidates / annotates duplicate renal-filtration signals
-→ leaves distinct risk-layer signals intact
+backend/core/analytics/runtime_context_evaluator.py
 ```
 
-If full consolidation into report output is not yet possible without broad redesign, implement the smallest safe runtime enforcement and document the remaining limitation.
+It should support:
+
+```text
+1. required context presence checks
+2. required companion biomarker presence checks
+3. required companion biomarker abnormality checks, where existing lab-range logic supports it
+4. medication/supplement/context presence checks if such data exists in runtime input
+5. fail-closed behaviour when required context is missing
+6. deterministic result
+7. no LLM calls
+8. no hardcoded medical thresholds
+```
+
+It must not invent unavailable context.
+
+If context data is unavailable in current runtime inputs, the evaluator must return a structured missing-context result and suppress or defer affected signals according to package metadata.
 
 ---
 
-## Required reusable model consumption
+## Required package metadata pattern
 
-Update `signal_authority_collision_model_v1.yaml` only if needed to make runtime consumption unambiguous.
+Add context requirements only where supported by prior governance and medical review.
 
-The model should remain reusable for future axes.
+In scope:
 
-At minimum, runtime must consume:
+### FT3 low
 
-```yaml
-authority_group_id
-primary_signal_family
-supporting_signal_families
-collision_policy.no_duplicate_user_facing_signal
-collision_policy.allow_parallel_if_distinct_risk_layer
-runtime_action
-requires_runtime_support
+```text
+pkg_kb47_free_t3_low_low_t3_syndrome
 ```
 
-If the current YAML structure is not sufficient, amend it minimally and document the change.
+Known requirements:
+
+```text
+- TSH required
+- FT4 required
+- illness / medication context required
+```
+
+Default safe outcome unless all requirements can be enforced:
+
+```text
+remain inactive / formally gated
+```
+
+### Androgen panel
+
+Known requirements include:
+
+```text
+- sex
+- age
+- SHBG where clinically relevant
+- hormone medication context
+- steroid / anabolic exposure context
+- supplement context
+- symptom or endocrine context where available
+```
+
+Default safe outcome unless runtime context can be enforced:
+
+```text
+remain inactive / formally gated
+```
+
+Do not activate androgen packages merely because metadata exists.
 
 ---
 
-## Phase 1 — Runtime design and preflight
+## Phase 1 — Runtime context capability audit
 
 Before implementation, report:
 
 ```text
-1. Where active signal results are assembled.
-2. Where authority/collision enforcement should occur.
-3. How the renal_filtration_axis model will be loaded.
-4. How duplicate renal-filtration outputs will be prevented.
-5. How creatinine can remain supporting evidence.
-6. How distinct complication layers remain allowed.
-7. Exact files proposed for change.
-8. Regression tests to be added.
-9. Rollback path.
+1. What context data is currently available to SignalEvaluator or adjacent runtime layers?
+2. Is sex available?
+3. Is age available?
+4. Are medications available?
+5. Are supplements available?
+6. Are symptoms / illness context available?
+7. Are known conditions available?
+8. Are companion biomarkers available through the same evaluation input?
+9. Where should reusable context gating live?
+10. Which packages can be safely gated now?
+11. Which packages must remain inactive because required context is unavailable?
+12. Exact files proposed for change.
+13. Rollback path.
 ```
 
 STOP if:
 
 ```text
-- authority model cannot be loaded safely
-- there is no safe place to enforce collision policy
-- implementation would require broad report pipeline redesign
-- enforcement would suppress unrelated clinical risks
-- rollback path cannot be defined
+- no safe runtime location exists for context evaluation
+- runtime context shape cannot be determined
+- implementation would require broad pipeline redesign
+- package activation would require unavailable context
 ```
 
 ---
 
-## Phase 2 — Runtime implementation
+## Phase 2 — Implement reusable context gate
 
-Implement minimal reusable runtime support.
+Implement reusable context evaluation support only if it can be done safely and minimally.
 
 Allowed changes:
 
 ```text
-- authority/collision model loader or helper
-- SignalEvaluator / result assembly logic only if this is the correct enforcement point
-- regression/sentinel tests
-- governance execution register
+- reusable runtime context evaluator/helper
+- small SignalEvaluator integration if this is the correct enforcement point
+- package signal_library metadata for FT3 low / androgen packages only if governed
+- context requirements governance model
+- tests
+- execution register
 - audit report
 - carry-forward register
 ```
@@ -239,31 +362,41 @@ Do not change:
 - activation keys
 - frontend
 - SSOT
-- scoring thresholds
-- unit conversion
-- report compiler unless absolutely required and justified
+- scoring
+- report compiler
+- unrelated package logic
 ```
 
 ---
 
-## Phase 3 — eGFR activation decision
+## Phase 3 — Activation decision
 
-After authority enforcement exists and tests pass, decide whether the two eGFR packages can be activated.
+After context runtime support exists, decide whether any blocked Batch 2 package can safely activate.
 
 Allowed outcomes:
 
 ```text
-A. Activate both eGFR packages after STOP approval.
-B. Keep eGFR inactive if runtime enforcement is incomplete.
+A. Activate safe subset after STOP approval.
+B. Keep all context-dependent packages inactive but now gated and ready for future activation when context data exists.
+C. Keep packages formally blocked if runtime context architecture is still insufficient.
 ```
 
-Do not activate eGFR unless anti-double-counting is proven by tests.
+Expected likely outcome:
+
+```text
+FT3 low remains inactive unless illness/medication context is runtime-consumed.
+Androgen packages remain inactive unless required sex/age/SHBG/medication/supplement context is enforceable.
+```
+
+Do not force activation.
+
+The success of this sprint is reusable context capability, not maximising the number of activated packages.
 
 ---
 
 ## Mandatory STOP gate before activation
 
-If eGFR activation is recommended, STOP and report:
+If any activation is recommended, STOP and report:
 
 ```text
 READY_FOR_HUMAN_STOP_GATE
@@ -272,33 +405,28 @@ READY_FOR_HUMAN_STOP_GATE
 STOP report must include:
 
 ```text
-- authority/collision implementation summary
-- eGFR packages proposed for activation
-- creatinine interaction behaviour
-- anti-double-counting test results
-- unrelated-signal regression results
+- packages proposed for activation
+- packages remaining gated/inactive
+- context requirements enforced
+- test evidence
 - files changed
 - rollback path
+- confirmation no clinical wording / thresholds changed
 ```
 
 Approval phrase:
 
 ```text
-APPROVE BATCH2 EGFR AUTHORITY ACTIVATION
+APPROVE BATCH2 CONTEXT GATED ACTIVATION
 ```
 
-No eGFR activation may occur without this approval.
+No package activation may occur without approval.
 
 ---
 
 ## Runtime activation after STOP approval
 
-If approval is received, activate only:
-
-```text
-pkg_kb47_egfr_low_chronic_kidney_function_reduction
-pkg_kb47_egfr_low_hemodynamic_filtration_drop
-```
+If approved, activate only packages with fully enforceable context gates.
 
 Expected frame state after activation:
 
@@ -308,9 +436,7 @@ runtime_authority_status: active
 clinical_adjudication_status: accepted_with_rationale
 ```
 
-Do not activate or modify androgen packages.
-
-Do not modify creatinine package logic unless strictly required for authority enforcement and explicitly justified.
+Packages without fully enforceable context must remain inactive.
 
 ---
 
@@ -319,7 +445,7 @@ Do not modify creatinine package logic unless strictly required for authority en
 Create:
 
 ```text
-knowledge_bus/governance/authority_runtime_execution_register_v1.yaml
+knowledge_bus/governance/context_runtime_execution_register_v1.yaml
 ```
 
 It must include:
@@ -329,15 +455,23 @@ schema_version:
 runtime_consumed: false
 status:
 work_id:
-source_authority_model:
-authority_groups_implemented:
-  - authority_group_id:
-    biological_axis:
-    runtime_enforcement_status:
-    primary_signal_family:
-    supporting_signal_families:
-    collision_policy_applied:
-    tests_passed:
+source_context_catalogue:
+source_batch2_blocker_register:
+runtime_context_evaluator:
+  implemented:
+  path:
+  fail_closed:
+  deterministic:
+supported_context_types:
+context_availability:
+  sex:
+  age:
+  medications:
+  supplements:
+  symptoms:
+  illness_context:
+  known_conditions:
+  companion_biomarkers:
 human_stop_gate:
   required: true
   approval_received:
@@ -345,22 +479,21 @@ human_stop_gate:
   approval_recorded_at:
 runtime_activation_performed:
 activated_package_count:
+gated_inactive_package_count:
 blocked_package_count:
-activated_packages:
+packages:
   - package_id:
-    signal_id:
-    activation_key:
-    pre_activation_state:
-    post_activation_state:
-    authority_group_id:
+    package_path:
+    group:
+    required_context:
+    context_available:
+    gate_implemented:
     activated:
-    rollback_action:
-blocked_or_deferred_packages:
-  - package_id:
-    reason:
+    final_state:
+    blocker_if_inactive:
     required_next_action:
+    notes:
 rollback_path:
-notes:
 ```
 
 ---
@@ -370,7 +503,7 @@ notes:
 Create:
 
 ```text
-docs/audit-papers/CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement.md
+docs/audit-papers/CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer.md
 ```
 
 Report must include:
@@ -378,11 +511,13 @@ Report must include:
 ```text
 - executive verdict
 - artefacts inspected
-- authority model consumption design
+- runtime context availability audit
+- reusable context model created
 - runtime implementation details
-- eGFR / creatinine interaction decision
-- anti-double-counting behaviour
-- packages activated or deferred
+- FT3 low decision
+- androgen panel decision
+- packages activated, if any
+- packages remaining gated/inactive
 - tests added / updated
 - validation output pasted in full
 - architecture gate output pasted in full
@@ -397,20 +532,21 @@ Report must include:
 
 ## Required tests
 
-Add or update sentinel/regression tests proving:
+Add regression/sentinel tests proving:
 
 ```text
-1. eGFR-low can emit when active and criteria are met.
-2. creatinine-high renal-filtration duplicate does not produce an independent duplicate renal-filtration output when eGFR-low is primary.
-3. creatinine may remain as supporting evidence or related signal context where appropriate.
-4. distinct acute risk / complication layers are not suppressed.
-5. unrelated signals are unaffected.
-6. authority model is fail-safe if missing / malformed.
-7. eGFR packages remain inactive until STOP approval.
-8. After approval, only the two eGFR packages become active.
+1. signal with required demographic context does not emit when context is missing
+2. signal with required companion biomarker does not emit when companion marker is missing
+3. signal with required medication/supplement context does not emit when that context is missing
+4. signal emits only when all required context is present
+5. unrelated signals without context requirements are unaffected
+6. missing context fails closed
+7. FT3 low remains inactive unless TSH + FT4 + illness/medication context requirements are satisfied
+8. androgen packages remain inactive unless their required context is satisfied
+9. no hardcoded medical thresholds are introduced
 ```
 
-Sentinel tests must fail if future work bypasses or removes authority/collision enforcement.
+Tests should use package-declared requirements, not bespoke marker-specific code.
 
 ---
 
@@ -425,17 +561,17 @@ docs/sprints/launch_core_carry_forward_register.md
 Expected handling:
 
 ```text
-CF-AUTHORITY-RUNTIME-1
-Resolve only if runtime authority/collision enforcement exists, tests pass, and eGFR is either activated safely or formally deferred with exact blocker.
-
-CF-BATCH2-007
-Should already be resolved by governance authority classification. Do not reopen unless the authority model is invalidated.
-
 CF-CONTEXT-MOD-3
-Remain Open. Context runtime evaluation is separate.
-```
+Resolve only if reusable runtime context evaluation exists and is tested.
 
-Do not create new marker-specific carry-forwards unless genuinely unavoidable.
+If FT3 low / androgen packages remain inactive due to unavailable runtime context data, update the CF or create a consolidated follow-on for context data ingestion, not marker-specific fragments.
+
+CF-BATCH2-010
+Resolve only if androgen clinical sign-off and runtime context prerequisites are satisfied.
+Otherwise keep open with precise blocker.
+
+Do not create separate carry-forwards for each androgen marker.
+```
 
 ---
 
@@ -449,26 +585,27 @@ python backend/scripts/validate_medical_frame_identity_index.py --index knowledg
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 ```
 
-Validate the two eGFR packages:
+Validate in-scope packages:
 
 ```powershell
-python backend/scripts/validate_knowledge_package.py --package-dir <package_dir>
+python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
+python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
+python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
+python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
+python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
+python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context
+python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
+python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
 ```
 
-Run all new authority/collision tests.
-
-If eGFR is activated after STOP approval, rerun:
-
-```powershell
-python backend/scripts/run_architecture_validation_gate.py
-python -m pytest <authority collision test path> -q
-```
+Run all new context runtime tests.
 
 ---
 
 ## Runtime boundary
 
-Runtime changes are allowed only for reusable authority/collision enforcement.
+Runtime changes are allowed only for reusable context evaluation and fail-closed gating.
 
 Do not modify:
 
@@ -477,10 +614,11 @@ frontend
 SSOT
 scoring thresholds
 unit conversion
-domain score assembly unless enforcement point requires it
+domain score assembly
+report compiler
 clinical wording
 reference ranges
-unrelated package logic
+unrelated signal behaviour
 ```
 
 STOP if implementation requires broad redesign.
@@ -492,42 +630,14 @@ STOP if implementation requires broad redesign.
 STOP and report if:
 
 ```text
-1. authority model cannot be safely loaded.
-2. collision enforcement cannot be applied before duplicate outputs surface.
-3. eGFR activation would still allow duplicate renal-filtration signalling.
-4. creatinine acute complication layers would be incorrectly suppressed.
-5. unrelated signals are affected.
-6. eGFR activation would require hardcoded clinical thresholds.
-7. validators fail.
-8. architecture gate fails.
-9. rollback path cannot be defined.
-```
-
----
-
-## Closure requirements
-
-Before finish, run and report:
-
-```powershell
-git branch --show-current
-git status --short
-git log --oneline -n 5
-git diff --name-only
-git diff --cached --name-only
-git stash list
-```
-
-Do not finish unless:
-
-```text
-- current branch matches work/CF-AUTHORITY-RUNTIME-1-runtime-signal-authority-collision-enforcement
-- only in-scope runtime/governance/docs/test/package-metadata files changed
-- no androgen package files changed
-- no frontend/SSOT/scoring/report compiler files changed unless explicitly justified
-- no ambiguous stash exists
-- validators pass
-- architecture gate passes
+1. runtime context shape cannot be determined
+2. context gates cannot be enforced fail-closed
+3. implementation would require broad pipeline redesign
+4. required context data is unavailable and activation would be unsafe
+5. package activation would require hardcoded clinical thresholds
+6. validators fail
+7. architecture gate fails
+8. rollback path cannot be defined
 ```
 
 ---
@@ -537,17 +647,17 @@ Do not finish unless:
 This sprint is complete only if:
 
 ```text
-1. runtime consumes the reusable authority/collision model
-2. renal_filtration_axis anti-double-counting is enforced
-3. eGFR packages are either safely activated after STOP approval or formally deferred with exact blocker
-4. duplicate renal-filtration signalling is prevented
-5. distinct renal complication layers remain allowed
-6. sentinel/regression tests protect the behaviour
-7. unrelated signals are unaffected
-8. no clinical wording or thresholds change
-9. architecture gate passes
-10. rollback path is documented
-11. future overlapping biomarker families can reuse the runtime pattern
+1. reusable runtime context evaluation model exists
+2. runtime context evaluator exists or the sprint formally proves why it cannot yet be implemented
+3. context-dependent packages fail closed when required context is missing
+4. tests protect reusable context-gating behaviour
+5. FT3 low has a final safe state
+6. androgen panel has a final safe state
+7. no clinical wording or thresholds change
+8. no unrelated runtime behaviour changes
+9. validators pass
+10. architecture gate passes
+11. future context-heavy biomarkers can reuse the pattern
 ```
 
 ```

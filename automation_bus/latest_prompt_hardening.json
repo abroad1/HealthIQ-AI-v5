@@ -1,165 +1,141 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement",
+  "work_id": "CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-07",
+  "hardened_utc": "2026-06-12",
   "hardened_by": "Claude Code — Stage 2 Hardening",
   "changes": [
     {
       "check": "FRONT_MATTER_COMPLETENESS",
       "finding": "PASS",
       "citation": "automation_bus/latest_cursor_prompt.md lines 1-7",
-      "detail": "All five mandatory front matter fields present and correct: work_id (CF-AUTHORITY-RUNTIME-1_runtime_signal_authority_collision_enforcement), branch (work/CF-AUTHORITY-RUNTIME-1-runtime-signal-authority-collision-enforcement), risk_level (HIGH), execution_model (TWO_PHASE_START_FINISH), change_type (MIXED). No field missing."
+      "detail": "All five mandatory front matter fields present: work_id (CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer), branch (work/CONTEXT-RUNTIME-1-reusable-runtime-context-evaluation-layer), risk_level (HIGH), execution_model (TWO_PHASE_START_FINISH), change_type (MIXED). No field missing or malformed."
     },
     {
       "check": "RISK_LEVEL_CLASSIFICATION",
       "finding": "PASS",
-      "citation": "backend/core/analytics/signal_evaluator.py lines 440-534 (evaluate_all); SOP §10 Intelligence Core rule",
-      "detail": "HIGH is correct and mandatory. Sprint modifies SignalEvaluator.evaluate_all() — a direct Intelligence Core component. Any work touching Intelligence Core = HIGH regardless of file path (SOP §10). MIXED is also correct: governance YAML updates (CONTENT) + evaluator/result assembly runtime changes (BEHAVIOUR) are both in scope. MIXED is governed by BEHAVIOUR controls per SOP §4. No reclassification warranted."
+      "citation": "backend/core/analytics/signal_evaluator.py lines 441-540 (evaluate_all); SOP §10 Intelligence Core rule",
+      "detail": "HIGH is correct and mandatory. Sprint proposes backend/core/analytics/runtime_context_evaluator.py (new Intelligence Core component) and integration into SignalEvaluator.evaluate_all() — a direct Intelligence Core method. Any work touching Intelligence Core = HIGH by default (SOP §10). MIXED is correct: new governed YAML (runtime_context_requirements_model_v1.yaml = CONTENT) consumed by a new Intelligence Core component (BEHAVIOUR). MIXED is governed by BEHAVIOUR controls per SOP §4. No reclassification warranted."
     },
     {
       "check": "EXECUTION_MODEL",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 5, 189-214, 250-295",
-      "detail": "TWO_PHASE_START_FINISH is correct. Phase 1 = design preflight report (no code). Phase 2 = runtime implementation + tests + governance register + report. A mandatory human STOP gate (READY_FOR_HUMAN_STOP_GATE + APPROVE BATCH2 EGFR AUTHORITY ACTIVATION) separates Phase 2 completion from Phase 3 eGFR activation. This is structurally sound and appropriate for HIGH/Intelligence Core work."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 5, 307-334 (Phase 1), 338-368 (Phase 2), 372-428 (Phase 3 + STOP gate)",
+      "detail": "TWO_PHASE_START_FINISH is correct. Phase 1 = runtime capability audit and design report (no code changes). Phase 2 = implement reusable context evaluator, package metadata, governance model, tests. Phase 3 = activation decision gated by mandatory human STOP (READY_FOR_HUMAN_STOP_GATE + APPROVE BATCH2 CONTEXT GATED ACTIVATION). Structurally sound and appropriate for HIGH/Intelligence Core/MIXED work."
     },
     {
-      "check": "2A_AUTHORITY_PATH_COLLISION_MODEL",
+      "check": "2A_AUTHORITY_CONTEXT_MODIFIER_CATALOGUE",
       "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/signal_authority_collision_model_v1.yaml lines 1-127 (entire file read)",
-      "detail": "File exists. schema_version: 1.0.0. runtime_consumed: false (line 2). renal_filtration_axis authority group defined at lines 11-58: primary_signal_family=signal_egfr_low, supporting_signal_families=[signal_creatinine_high], collision_policy.no_duplicate_user_facing_signal=true, collision_policy.suppress_supporting_when_primary_present=true, collision_policy.allow_parallel_if_distinct_risk_layer=true, runtime_action=governance_only_pending_runtime_support, requires_runtime_support=true. proposed_runtime_pattern documented at lines 46-54. Six placeholder authority groups for future axes confirmed (metabolic_glycaemic, thyroid, androgen, liver_injury, iron_inflammation). No duplicate authority source."
+      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml lines 1-6",
+      "detail": "File exists. schema_version: 1.0.0 (line 1), work_id: CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance (line 3), runtime_consumed: false (line 5), status: draft_governance_non_runtime (line 6). All 30+ modifiers verified to have runtime_active: false. This is the primary source document for all supported context types in scope. No modifier is currently runtime-active — confirms the capability gap the sprint must close."
     },
     {
-      "check": "2A_AUTHORITY_PATH_EGFR_EXECUTION_REGISTER",
+      "check": "2A_AUTHORITY_BATCH2_BLOCKERS_REGISTER",
       "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_egfr_authority_execution_register_v1.yaml lines 1-68 (entire file read)",
-      "detail": "File exists. status: authority_adjudicated_pending_runtime_support (line 3). runtime_consumed: false (line 2). human_stop_gate.required: true, approval_received: false (lines 8-14). anti_double_counting_decision.mechanism_exists_in_evaluator: false (line 29). activation_blocked_until: CF-AUTHORITY-RUNTIME-1 (line 33). Two packages documented at lines 37-68: pkg_kb47_egfr_low_chronic_kidney_function_reduction (activation_key: signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction) and pkg_kb47_egfr_low_hemodynamic_filtration_drop (activation_key: signal_egfr_low::inv_egfr_low_hemodynamic_filtration_drop). Both activated: false, gate_implemented: false."
+      "citation": "knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml lines 1-7",
+      "detail": "File exists. status: analysis_complete_ready_for_human_stop_gate (line 3), runtime_activation_performed: false (line 13), activated_package_count: 0 (line 16), blocked_package_count: 11 (line 17). All 9 in-scope packages confirmed: activated=false, gate_implemented=false. Consolidated platform blocker: CF-CONTEXT-MOD-3 (line 19). Confirmed blockers: androgen group = androgen_runtime_context_evaluation_required; thyroid/FT3 = ft3_low_requires_layer_b_context."
     },
     {
-      "check": "2A_AUTHORITY_PATH_EGFR_CHRONIC_PACKAGE",
-      "finding": "CONFIRMED — DEFECT DOCUMENTED",
-      "citation": "knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/signal_library.yaml lines 48-51 (activation_config block); knowledge_bus/packages/pkg_kb52c_creatinine_low_low_muscle_mass_or_low_generation/signal_library.yaml lines 56-61 (working low-signal reference)",
-      "detail": "Package exists. signal_id: signal_egfr_low. activation_logic: lab_range_exceeded. DEFECT: activation_config.enable_lower_bound: false (line 51). For a low-direction signal, enable_lower_bound must be true and enable_upper_bound must be false (pattern confirmed in working creatinine_low package lines 57-59: enable_upper_bound: false, enable_lower_bound: true). Current state means both eGFR signals will NEVER fire — they are de-facto inactive via broken activation_config. Phase 3 activation MUST fix both packages to enable_lower_bound: true, enable_upper_bound: false. This is a known required change, not a scope blocker."
-    },
-    {
-      "check": "2A_AUTHORITY_PATH_EGFR_HEMODYNAMIC_PACKAGE",
-      "finding": "CONFIRMED — SAME DEFECT",
-      "citation": "knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/signal_library.yaml lines 48-51 (activation_config block)",
-      "detail": "Package exists. signal_id: signal_egfr_low. activation_logic: lab_range_exceeded. DEFECT: same activation_config.enable_lower_bound: false as chronic package. Phase 3 must also fix this package. Activation keys are distinct from chronic package (source_spec_id inferred as inv_egfr_low_hemodynamic_filtration_drop from package_id). No duplicate activation_key collision on load. Both eGFR packages co-exist in SignalRegistry without error but produce zero signals because enable_lower_bound is false."
-    },
-    {
-      "check": "2A_AUTHORITY_PATH_CREATININE_PACKAGES",
-      "finding": "CONFIRMED — COLLISION SURFACE MAPPED",
-      "citation": "knowledge_bus/packages/pkg_s24_creatinine_high_renal/signal_library.yaml lines 43-59 (override_rules); knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/signal_library.yaml lines 56-73 (activation_config + override_rules)",
-      "detail": "Two active creatinine-high packages in runtime. pkg_s24_creatinine_high_renal: signal_creatinine_high, activation_logic=lab_range_exceeded (upper bound active by default). COLLISION RISK: override rule or_renal_ckd_stage_3 (egfr < 60, line 48) is the exact filtration-duplicate to suppress when eGFR-low is primary. Override rule or_renal_acute_imbalance (potassium > 5.2, line 54) is the DISTINCT RISK LAYER that must remain allowed per collision_policy.allow_parallel_if_distinct_risk_layer=true. pkg_kb52c_creatinine_high_reduced_glomerular_filtration: signal_creatinine_high, enable_upper_bound: true, UACR-based override — also a filtration duplicate to suppress when eGFR primary."
-    },
-    {
-      "check": "2A_AUTHORITY_PATH_MEDICAL_FRAME_INDEX",
+      "check": "2A_AUTHORITY_PATH_ALL_REQUIRED_INPUTS",
       "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml lines 1033-1093 (signal_egfr_low family)",
-      "detail": "File exists. signal_egfr_low family at lines 1033-1093. frame_egfr_pass3_chronic_kidney_function_reduction (lines 1037-1065): promotion_state=compiled_not_promoted, runtime_authority_status=inactive, collision_status=allowed_non_runtime_collision, notes confirm CF-AUTHORITY-RUNTIME-1 as required next action (lines 1063-1065). frame_egfr_pass3_hemodynamic_filtration_drop (lines 1066-1093): same status, ROUTE_C multi-frame preserved confirmed (line 1090). No runtime-active eGFR frames. Creatinine family: frame_creatinine_legacy_s24_egfr_escalation (lines 41-68) is runtime_active_legacy_unadjudicated (the escalation-path duplicate that must be suppressed at the signal level, not the package level)."
+      "citation": "PowerShell path verification (all 5 doc paths checked)",
+      "detail": "All required input documents confirmed present: docs/audit-papers/BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation.md EXISTS; docs/audit-papers/BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding.md EXISTS; docs/audit-papers/BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md EXISTS; docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md EXISTS; docs/sprints/launch_core_carry_forward_register.md EXISTS. All governance YAML inputs (batch2_androgen_context_modifier_binding_v1.yaml, batch2_remainder_resolution_register_v1.yaml, medical_frame_identity_index_v1.yaml) also confirmed present."
+    },
+    {
+      "check": "2A_AUTHORITY_PATH_ALL_9_PACKAGES",
+      "finding": "CONFIRMED",
+      "citation": "PowerShell directory listing of knowledge_bus/packages/",
+      "detail": "All 9 in-scope packages confirmed present: pkg_kb47_free_t3_low_low_t3_syndrome, pkg_kb47_dhea_high_androgen_excess_context, pkg_kb47_dhea_low_adrenal_androgen_reduction, pkg_kb47_fai_high_biochemical_hyperandrogenism, pkg_kb47_fai_low_reduced_free_androgen_availability, pkg_kb47_free_testosterone_high_androgen_excess_context, pkg_kb47_free_testosterone_low_androgen_deficiency_context, pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction, pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction."
     },
     {
       "check": "2A_AUTHORITY_PATH_SIGNAL_EVALUATOR",
-      "finding": "CONFIRMED — NO COLLISION MECHANISM EXISTS",
-      "citation": "backend/core/analytics/signal_evaluator.py lines 440-534 (evaluate_all entire method)",
-      "detail": "File exists. evaluate_all() at lines 440-534: loads all active signals from registry, evaluates each independently, returns all that fire. NO cross-signal suppression. NO authority group lookup. NO family-level collision detection. Only inter-signal mechanism is duplicate activation_key ValueError at load time (lines 59-64 in SignalRegistry._load). The correct enforcement point for authority/collision is POST-evaluate_all() filtering — inject authority resolution between evaluate_all() result assembly and the caller. This is the minimum-invasive, reusable pattern."
+      "finding": "CONFIRMED — NO CONTEXT PARAMETER EXISTS",
+      "citation": "backend/core/analytics/signal_evaluator.py lines 441-447",
+      "detail": "evaluate_all() signature confirmed: (self, signal_biomarkers: Dict[str, float], signal_derived: Dict[str, float], lab_ranges: Dict[str, dict], reference_profiles: Optional[Dict[str, dict]] = None). Zero context, questionnaire, sex, age, medication, or supplement parameters. Confirmed the capability gap. The mandatory_pre_emission_gates mechanism (lines 381-421) supports biomarker_present and numeric comparator_type only — no demographic or questionnaire gate type. This is the primary integration surface the sprint must extend."
     },
     {
-      "check": "2A_AUTHORITY_PATH_ACTIVATION_IDENTITY",
-      "finding": "CONFIRMED",
-      "citation": "backend/core/knowledge/signal_activation_identity_v1.py lines 39-78 (infer_source_spec_id + resolve_activation_identity)",
-      "detail": "File exists. activation_key = signal_id::source_spec_id. For eGFR packages: source_spec_id inferred from package_id via _PKG_BODY_RE pattern (line 48): pkg_kb47_egfr_low_chronic_kidney_function_reduction -> inv_egfr_low_chronic_kidney_function_reduction. pkg_kb47_egfr_low_hemodynamic_filtration_drop -> inv_egfr_low_hemodynamic_filtration_drop. Both produce distinct activation_keys — no collision on load. Collision enforcement must operate on signal_id or signal_family grouping, not activation_key."
+      "check": "2A_AUTHORITY_PATH_FT3_LOW_SIGNAL_LIBRARY",
+      "finding": "CONFIRMED — INACTIVE, ENABLE_LOWER_BOUND=FALSE",
+      "citation": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml lines 48-52",
+      "detail": "signal_id: signal_free_t3_low (line 9). activation_logic: lab_range_exceeded (line 47). activation_config.enable_lower_bound: false (line 50). The signal cannot fire for low FT3. No mandatory_pre_emission_gates block present. Supporting metrics TSH and FT4 declared but not gated. Current state = cannot activate via any path. Sprint must add enable_lower_bound: true AND mandatory_pre_emission_gates for TSH + FT4 presence before activation is safe."
     },
     {
-      "check": "2A_AUTHORITY_PATH_VALIDATION_SCRIPTS",
-      "finding": "CONFIRMED",
-      "citation": "backend/scripts/ directory listing",
-      "detail": "All scripts required by prompt exist: run_architecture_validation_gate.py, validate_medical_frame_identity_index.py, validate_context_modifier_catalogue.py, validate_knowledge_package.py. No missing tooling."
+      "check": "2A_AUTHORITY_PATH_ANDROGEN_SIGNAL_LIBRARY_EXAMPLE",
+      "finding": "CONFIRMED — UPPER-BOUND ACTIVE, NO CONTEXT GATE",
+      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml lines 48-52",
+      "detail": "signal_id: signal_dhea_high. activation_logic: lab_range_exceeded. enable_upper_bound default=true (not explicitly false). Meaning: dhea_high would fire on lab-range upper-bound WITHOUT any sex, age, or medication context check if the package were activated. This confirms context gating must exist in the evaluator before any androgen package activation can be safe — the signal_library metadata alone is insufficient protection."
     },
     {
-      "check": "2A_AUTHORITY_PATH_CARRY_FORWARD_REGISTER",
-      "finding": "CONFIRMED",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md lines 70-78 (CF-BATCH2-007, CF-CONTEXT-MOD-3, CF-AUTHORITY-RUNTIME-1)",
-      "detail": "File exists. CF-AUTHORITY-RUNTIME-1 at line 78: Status=Open, source=BATCH2-EGFR-AUTHORITY-1, prerequisite before eGFR metadata activation confirmed. CF-BATCH2-007 at line 70: Status=Resolved — IMPORTANT: Resolved means the adjudication-task carry-forward was completed by BATCH2-EGFR-AUTHORITY-1; both eGFR packages remain compiled_not_promoted_inactive. CF-CONTEXT-MOD-3 at line 77: Status=Open, androgen/FT3 blocker — unrelated to this sprint. Do NOT reopen CF-BATCH2-007."
+      "check": "2A_AUTHORITY_PATH_ANALYSIS_CONTEXT_MODEL",
+      "finding": "CONFIRMED — CONTEXT DATA EXISTS UPSTREAM",
+      "citation": "backend/core/models/context.py lines 12-31",
+      "detail": "AnalysisContext model exists with: questionnaire_responses: Optional[Dict[str, Any]] (line 20), lifestyle_factors: Optional[Dict[str, Any]] (line 24), medical_history: Optional[Dict[str, Any]] (line 28). Sex (biological_sex), age (date_of_birth), medications (long_term_medications), supplements, and known conditions are all collectible via questionnaire_responses. The data exists upstream but is NOT threaded through to SignalEvaluator.evaluate_all(). The sprint's Phase 1 audit must trace the call path from AnalysisContext to evaluate_all() to identify the correct integration point."
+    },
+    {
+      "check": "2A_CARRY_FORWARD_REGISTER",
+      "finding": "CONFIRMED — BOTH CF ITEMS OPEN",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md line 77 (CF-CONTEXT-MOD-3), line 76 (CF-BATCH2-010)",
+      "detail": "CF-CONTEXT-MOD-3 (line 77): Status=Open. Explicitly identifies all catalogue modifiers runtime_active=false as blocking androgen (8 packages) and FT3 low (illness/medication + TSH+FT4). Prerequisite for any remaining Batch 2 activation. This sprint resolves CF-CONTEXT-MOD-3 if successful. CF-BATCH2-010 (line 76): Status=Open. Androgen clinical sign-off STILL REQUIRED after CF-CONTEXT-MOD-3. Sprint correctly does not close CF-BATCH2-010."
     },
     {
       "check": "2A_DUPLICATE_AUTHORITY_SOURCE_RISK",
       "finding": "PASS — NO DUPLICATE",
-      "citation": "knowledge_bus/governance/ directory; backend/ssot/ directory",
-      "detail": "signal_authority_collision_model_v1.yaml is the single renal filtration authority source. creatinine_multiframe_authority_decision_v1.yaml is the creatinine frame authority source — distinct scope. medical_frame_identity_index_v1.yaml is the frame identity registry — not an authority model. No new SSOT files required. The new execution register (authority_runtime_execution_register_v1.yaml) is a sprint-specific record, not an authority source. No duplicate authority source risk."
+      "citation": "knowledge_bus/governance/ directory listing",
+      "detail": "runtime_context_requirements_model_v1.yaml is a new file — no existing file with this name. context_modifier_catalogue_draft_v1.yaml is the single source of modifier governance, not a duplicate. The new execution register (context_runtime_execution_register_v1.yaml) is a sprint record, not an authority source. No duplicate authority source risk introduced."
     },
     {
       "check": "2B_INTELLIGENCE_CORE_SCOPE",
       "finding": "PASS — SCOPE DEFINED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 221-234 (allowed changes); backend/core/analytics/signal_evaluator.py lines 440-534",
-      "detail": "Intelligence Core surface area: SignalEvaluator.evaluate_all() return-value post-processing is the single allowed enforcement point. Correct pattern: evaluate_all() returns full results → authority/collision resolver reads signal_authority_collision_model_v1.yaml → suppresses supporting-family signals when primary-family is present → returns filtered results. Alternative: inject as a method on SignalEvaluator or as a separate authority resolver class called by the pipeline. Either is acceptable. The resolver must NOT modify the underlying signal evaluation logic — only filter the assembled result list."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 235-255 (required runtime behaviour), lines 354-369 (do-not-change list)",
+      "detail": "Intelligence Core surface area: (1) runtime_context_evaluator.py — new helper for context presence checks only; (2) small SignalEvaluator integration — context evaluation must be injected as a pre-emission gate, not by modifying threshold/override/state evaluation logic; (3) package signal_library metadata additions for FT3 low / androgen packages if governed. Evaluator must not invent unavailable context, must return structured missing-context result, must fail closed. Allowed changes precisely listed in prompt lines 344-354. Forbidden surfaces explicitly listed: clinical wording, thresholds, reference ranges, signal IDs, activation keys, frontend, SSOT, scoring, report compiler."
     },
     {
       "check": "2B_REGRESSION_TARGETS",
-      "finding": "PASS — TARGETS EXPLICIT",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 399-413 (8 test requirements)",
-      "detail": "8 required regression tests explicitly listed. Key behaviours: (1) eGFR-low emits when active and criteria met, (2) creatinine-high filtration duplicate suppressed when eGFR-low present, (3) creatinine remains as supporting evidence where appropriate, (4) distinct acute risk layers (potassium/electrolyte) not suppressed, (5) unrelated signals unaffected, (6) authority model fail-safe when missing/malformed, (7) eGFR inactive before STOP approval, (8) only two eGFR packages activate after approval. All 8 are testable against verified source behaviour."
+      "finding": "PASS — 9 TARGETS EXPLICIT",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 535-549 (9 test requirements)",
+      "detail": "9 regression tests required: (1) signal with required demographic context does not emit when context missing; (2) signal with required companion biomarker does not emit when companion missing; (3) signal with required medication/supplement context does not emit when absent; (4) signal emits when all required context present; (5) unrelated signals without context requirements unaffected; (6) missing context fails closed; (7) FT3 low remains inactive unless TSH+FT4+illness/medication context satisfied; (8) androgen packages remain inactive unless required context satisfied; (9) no hardcoded medical thresholds introduced. All 9 are verifiable against source behaviour confirmed in this hardening."
     },
     {
       "check": "2B_DETERMINISM_RISKS",
       "finding": "PASS — RISKS DOCUMENTED",
-      "citation": "backend/core/analytics/signal_evaluator.py lines 532-534 (sort); signal_authority_collision_model_v1.yaml line 2 (runtime_consumed: false)",
-      "detail": "Four determinism risks Cursor must handle: (1) Authority model loader must fail-closed — if YAML missing or malformed, evaluator must not silently pass all signals; must raise or return empty/error. (2) Filtered output must maintain sort order (signal_id, activation_key) matching current evaluate_all sort at lines 532-534. (3) eGFR activation_config fix (enable_lower_bound: true, enable_upper_bound: false) applies to BOTH packages — missing one causes asymmetric behaviour. (4) Suppression must target signal_creatinine_high signals from both pkg_s24 (or_renal_ckd_stage_3 override) and pkg_kb52c — not the potassium distinct-risk-layer. No silent output drift allowed."
+      "citation": "backend/core/analytics/signal_evaluator.py lines 531-534 (sort); context_modifier_catalogue_draft_v1.yaml line 5 (runtime_consumed: false)",
+      "detail": "Four determinism risks Cursor must handle: (1) Context evaluator must be pure-function — same input must always produce same gate result; (2) Fail-closed means absent context key returns suppress, never default-allow — must not infer or default missing context (prompt line 253); (3) Filtered output must maintain sort order (signal_id, activation_key) matching evaluate_all() sort at lines 531-534; (4) Package metadata additions must use package-declared requirements only — not bespoke marker-specific code (prompt line 549). No silent output drift allowed."
     },
     {
       "check": "2B_NO_SCOPE_CREEP",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 235-243 (do not change list), lines 311 (do not activate androgen), lines 312-314 (creatinine constraint)",
-      "detail": "Explicit do-not-change list in prompt: clinical wording, thresholds, reference ranges, signal IDs, activation keys, frontend, SSOT, scoring thresholds, unit conversion, report compiler. Androgen packages explicitly excluded. Creatinine package logic must not change unless strictly required and explicitly justified. The activation_config fix in eGFR signal_library.yaml files is NOT in the do-not-change list and is the defined activation mechanism — acceptable as Phase 3 change post STOP approval."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 354-369 (do not change list); lines 259-305 (metadata scope restriction)",
+      "detail": "Explicit do-not-change list: clinical wording, thresholds, reference ranges, signal IDs, activation keys, frontend, SSOT, scoring, report compiler, unrelated package logic. Package metadata scope restricted to FT3 low and androgen packages only if governed by prior medical review/binding. Prompt explicitly states: do not activate androgen packages merely because metadata exists (line 303). eGFR and other packages out of scope. No scope creep risk in prompt structure."
     },
     {
       "check": "2B_STOP_CONDITIONS_COVERAGE",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 74-84 (baseline STOP), lines 205-214 (Phase 1 STOP), lines 489-503 (closure STOP conditions)",
-      "detail": "Baseline STOP covers: wrong branch, main drift, dirty tree, missing authority model, missing eGFR packages, missing creatinine frames, gate failure. Phase 1 STOP covers: authority model not safely loadable, no safe enforcement point, requires broad redesign, complication layers would be suppressed, rollback undefined. Closure STOP covers: wrong branch, out-of-scope files, androgen files changed, frontend/SSOT/scoring changed, stash present, validators fail, gate fails. Coverage is comprehensive. No STOP condition gap found."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 101-110 (baseline STOP), lines 327-334 (Phase 1 STOP), lines 627-642 (general STOP conditions)",
+      "detail": "Baseline STOP covers: wrong branch, main drift, dirty tree, missing context_modifier_catalogue, missing batch2 blockers register, missing androgen package folders, missing FT3 package. Phase 1 STOP covers: no safe runtime location for context evaluation, runtime context shape cannot be determined, broad pipeline redesign required, unavailable context prevents safe activation. General STOP covers: validators fail, architecture gate fails, rollback undefined, hardcoded thresholds required. Coverage is comprehensive."
+    },
+    {
+      "check": "2B_CF_BATCH2_010_GUARD",
+      "finding": "HARDENING INSTRUCTION — CLINICAL SAFETY CONSTRAINT",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md line 76; knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml lines 58-70",
+      "detail": "MANDATORY: CF-BATCH2-010 (androgen clinical sign-off) is OPEN and is separate from CF-CONTEXT-MOD-3 (runtime capability). Even if the runtime context layer is fully built and context gates are enforced, androgen packages cannot activate until clinical sign-off artefact exists in the repo. The batch2 blockers register records 4 androgen packages as KEEP_BLOCKED_MEDICAL_SIGNOFF_REQUIRED (dhea_high, free_testosterone_high at lines 58-70), not only KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING. Phase 3 expected outcome (androgen packages remain inactive) is correct. Context capability must be built as infrastructure; activation is a separate gate."
     },
     {
       "check": "2B_ROLLBACK_PATH",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 509-532 (closure requirements)",
-      "detail": "Rollback path is definable: revert signal_evaluator.py authority resolver addition, revert eGFR signal_library.yaml activation_config changes, revert authority_runtime_execution_register_v1.yaml, revert medical_frame_identity_index_v1.yaml eGFR frame status updates (if any), revert carry-forward register updates. All changes are file-local and reversible. No DB migration, no schema change, no irreversible operation. Rollback path confirmed viable."
+      "citation": "automation_bus/latest_cursor_prompt.md (STOP gate section); files in scope are all new or metadata additions",
+      "detail": "Rollback path is definable: delete runtime_context_evaluator.py, revert signal_evaluator.py integration (if any), revert signal_library.yaml mandatory_pre_emission_gates additions, delete runtime_context_requirements_model_v1.yaml, delete context_runtime_execution_register_v1.yaml, revert carry-forward register updates. All changes are file-local and reversible. No DB migration, no schema change, no irreversible operation."
     },
     {
       "check": "POWERSHELL_COMPATIBILITY",
       "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 64-73 (baseline commands), lines 444-461 (validation commands), lines 512-519 (closure commands)",
-      "detail": "All shell commands use python backend/scripts/... and git invocations. No bash-specific syntax detected. Validation scripts are Python — compatible with Windows PowerShell. git commands follow standard form."
-    },
-    {
-      "check": "HARDENING_INSTRUCTION_EGFR_ACTIVATION_CONFIG_FIX",
-      "finding": "HARDENING INSTRUCTION — MANDATORY FOR PHASE 3",
-      "citation": "knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/signal_library.yaml lines 48-51; knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/signal_library.yaml lines 48-51",
-      "detail": "MANDATORY: Both eGFR signal_library.yaml files have activation_config.enable_lower_bound: false. This is a defect — for a low-direction signal using lab_range_exceeded, enable_lower_bound must be true and enable_upper_bound must be false (pattern confirmed in pkg_kb52c_creatinine_low_low_muscle_mass_or_low_generation). Phase 3 activation MUST change both packages to: enable_lower_bound: true, enable_upper_bound: false. Without this fix, eGFR signals will never fire and activation will appear to succeed but produce no clinical output. This change to signal_library.yaml is specifically required for activation and is within Phase 3 scope."
-    },
-    {
-      "check": "HARDENING_INSTRUCTION_COLLISION_ENFORCEMENT_POINT",
-      "finding": "HARDENING INSTRUCTION — IMPLEMENTATION GUIDANCE",
-      "citation": "backend/core/analytics/signal_evaluator.py lines 440-534",
-      "detail": "MANDATORY: Authority/collision enforcement must occur as a post-processing step on the results list returned by evaluate_all(). Do NOT modify the individual signal evaluation logic (threshold, override, gate methods). The pattern: evaluate_all() returns List[SignalResult] → authority resolver reads renal_filtration_axis from signal_authority_collision_model_v1.yaml → groups results by signal family (signal_egfr_low, signal_creatinine_high) → if primary family (signal_egfr_low) has any active results, filter supporting-family (signal_creatinine_high) results that are renal-filtration duplicates → preserve signal_creatinine_high results whose override logic fired for distinct risk layers (potassium). The authority model's proposed_runtime_pattern.authority_resolution block (lines 46-54 of collision model) defines this exactly."
-    },
-    {
-      "check": "HARDENING_INSTRUCTION_DISTINCT_RISK_LAYER_PRESERVATION",
-      "finding": "HARDENING INSTRUCTION — CLINICAL SAFETY CONSTRAINT",
-      "citation": "knowledge_bus/governance/signal_authority_collision_model_v1.yaml lines 27-31 (distinct_risk_layers); knowledge_bus/packages/pkg_s24_creatinine_high_renal/signal_library.yaml lines 53-59 (or_renal_acute_imbalance)",
-      "detail": "MANDATORY: The potassium/electrolyte complication layer (signal_creatinine_high override or_renal_acute_imbalance, potassium > 5.2) is a DISTINCT RISK LAYER per the authority model (lines 27-31 of collision model: hyperkalemia_or_electrolyte_complication must remain parallel when medically distinct). The suppression logic must NOT suppress signal_creatinine_high results that are driven by the potassium override path. Only suppress creatinine-high results that represent filtration-level duplicates (or_renal_ckd_stage_3 override or general creatinine-high without distinct-risk escalation). Failure to preserve this layer is a clinical safety violation."
-    },
-    {
-      "check": "HARDENING_INSTRUCTION_CF_BATCH2_007_MISREAD_RISK",
-      "finding": "HARDENING INSTRUCTION — INTERPRETATION GUARD",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md line 70",
-      "detail": "CF-BATCH2-007 shows Status: Resolved. Cursor must NOT interpret this as eGFR being activated or authority-enforced. Resolved means the adjudication carry-forward task was completed by BATCH2-EGFR-AUTHORITY-1 which recorded the blocker in signal_authority_collision_model_v1.yaml. Both eGFR packages remain compiled_not_promoted with runtime_authority_status: inactive (medical_frame_identity_index_v1.yaml lines 1047-1048 and 1073-1074). This sprint (CF-AUTHORITY-RUNTIME-1) is the one that resolves the actual blocking condition."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 93-99 (baseline commands), lines 583-601 (validation commands)",
+      "detail": "All shell commands use python backend/scripts/... and git invocations in PowerShell syntax. No bash-specific syntax detected. Validation scripts are Python — compatible with Windows PowerShell environment confirmed for this repo."
     }
   ],
   "prior_task_findings": {
-    "BATCH2-EGFR-AUTHORITY-1": "CONFIRMED: signal_authority_collision_model_v1.yaml created with runtime_consumed=false. renal_filtration_axis authority group adjudicated. Both eGFR packages authority_adjudicated_pending_runtime_support. phase_3_outcome=B (governance only). No runtime code changed. anti_double_counting_decision.mechanism_exists_in_evaluator=false confirmed. Source: batch2_egfr_authority_execution_register_v1.yaml lines 1-68 (entire file read).",
-    "BATCH2-REMAINING-BLOCKERS-1": "CONFIRMED: status=analysis_complete_ready_for_human_stop_gate. runtime_code_changed=false. activated_package_count=0. eGFR blocker confirmed as renal_authority_and_anti_double_counting_required. androgen (8 packages) and FT3-low still blocked by CF-CONTEXT-MOD-3 — unrelated to this sprint. Source: batch2_remaining_blockers_execution_register_v1.yaml lines 1-30 read."
+    "BATCH2-REMAINING-BLOCKERS-1": "CONFIRMED INDEPENDENTLY: status=analysis_complete_ready_for_human_stop_gate; runtime_code_changed=false; activated_package_count=0; consolidated_platform_blocker=CF-CONTEXT-MOD-3; androgen (8) blocked by androgen_runtime_context_evaluation_required; FT3 low blocked by ft3_low_requires_layer_b_context. Source: batch2_remaining_blockers_execution_register_v1.yaml lines 1-34 (file read).",
+    "CONTEXT-MOD-1": "CONFIRMED INDEPENDENTLY: context_modifier_catalogue_draft_v1.yaml runtime_consumed=false (line 5); all modifiers runtime_active=false; 30+ modifiers covering demographic, questionnaire, supplement, medication categories all governance-only. Source: context_modifier_catalogue_draft_v1.yaml lines 1-1151 (entire file read)."
   },
   "overall_verdict": "HARDENED",
-  "hardening_notes": "Sprint is hardened with two mandatory implementation instructions: (1) Both eGFR signal_library.yaml files have enable_lower_bound: false — this must be fixed to enable_lower_bound: true in Phase 3 activation. Without this fix, eGFR signals will never fire. (2) Collision enforcement must target only renal-filtration duplicate outputs from signal_creatinine_high, NOT the distinct potassium/electrolyte risk layer. All authority paths verified against source file content with line citations. SignalEvaluator.evaluate_all() confirmed to have no existing collision mechanism. Enforcement insertion point confirmed as post-evaluate_all() filtering. No blocking SOP violations found. No STOP condition triggered. Sprint may proceed to Stage 3 (python backend/scripts/run_work_package.py start)."
+  "hardening_notes": "Sprint is hardened. Key findings for Cursor: (1) SignalEvaluator.evaluate_all() has zero context parameters — the integration point for runtime context evaluation must be identified by tracing AnalysisContext (backend/core/models/context.py line 12) through the pipeline to evaluate_all(). (2) FT3 low signal_library has enable_lower_bound: false — must be changed to true and mandatory_pre_emission_gates added for TSH+FT4 presence before FT3 low activation is safe. (3) Androgen packages will require both runtime context gates AND clinical sign-off (CF-BATCH2-010 still open) before activation — Phase 3 expected outcome is remain inactive. (4) All authority paths verified against source content with line citations. No STOP condition triggered. No architectural violations found. Sprint may proceed to Stage 3 (python backend/scripts/run_work_package.py start)."
 }
