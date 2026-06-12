@@ -1,0 +1,236 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: clearance_analysis_complete_no_activation
+work_id: CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance
+source_semantics_model: knowledge_bus/governance/runtime_context_semantics_model_v1.yaml
+source_medical_review: knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml
+source_context_binding: knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
+analysis_utc: '2026-06-12'
+runtime_activation_performed: false
+activated_package_count: 0
+activation_eligibility_summary:
+  eligible_for_stop_gated_activation: 0
+  blocked_pending_clinical_signoff: 8
+  blocked_pending_context_semantics: 9
+  deferred_non_launch_critical: 0
+  rejected_do_not_activate: 0
+recommended_next_sprint: BATCH2-CONTEXT-ACTIVATION-1_stop_gated_context_package_activation
+packages:
+- package_id: pkg_kb47_dhea_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
+  group: androgen
+  signal_id: signal_dhea_high
+  activation_key: signal_dhea_high::inv_dhea_high_androgen_excess_context
+  source_spec_id: inv_dhea_high_androgen_excess_context
+  current_runtime_authority_status: inactive
+  current_promotion_state: compiled_not_promoted
+  clinical_signoff_status: not_in_repo
+  required_hard_gates:
+  - demographic.sex
+  - demographic.age
+  required_disclosed_context:
+  - medication.hormone_therapy_status
+  - clinical_context.aas_exposure_status
+  - supplement.supplements_disclosed
+  optional_modifiers:
+  - symptom.symptoms_present
+  companion_biomarker_requirements: []
+  metadata_misclassifications:
+  - medication.hormone_therapy uses present not disclosed
+  - clinical_context.aas_exposure uses present not disclosed
+  clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
+  activation_eligibility: false
+  reason: No androgen clinical sign-off artefact (CF-BATCH2-010). Package metadata still
+    uses positive-presence semantics for hormone/AAS fields pending BATCH2-CONTEXT-ACTIVATION-1.
+- package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
+  group: androgen
+  signal_id: signal_dhea_low
+  activation_key: signal_dhea_low::inv_dhea_low_adrenal_androgen_reduction
+  source_spec_id: inv_dhea_low_adrenal_androgen_reduction
+  current_runtime_authority_status: inactive
+  current_promotion_state: compiled_not_promoted
+  clinical_signoff_status: not_in_repo
+  required_hard_gates:
+  - demographic.age
+  required_disclosed_context:
+  - medication.long_term_medications_disclosed
+  - medication.steroid_use_disclosed
+  optional_modifiers:
+  - symptom.symptoms_present
+  - clinical_context.stress_context
+  companion_biomarker_requirements: []
+  metadata_misclassifications:
+  - medication.steroid uses present not disclosed
+  clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
+  activation_eligibility: false
+  reason: Clinical sign-off required; steroid gate misclassified as positive presence.
+- package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  package_path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
+  group: androgen
+  signal_id: signal_fai_high
+  activation_key: signal_fai_high::inv_fai_high_biochemical_hyperandrogenism
+  source_spec_id: inv_fai_high_biochemical_hyperandrogenism
+  current_runtime_authority_status: inactive
+  current_promotion_state: compiled_not_promoted
+  clinical_signoff_status: not_in_repo
+  required_hard_gates:
+  - demographic.sex
+  - demographic.age
+  required_disclosed_context:
+  - medication.hormone_therapy_status
+  - clinical_context.aas_exposure_status
+  optional_modifiers: []
+  companion_biomarker_requirements:
+  - biomarker.shbg
+  - biomarker.testosterone
+  metadata_misclassifications:
+  - medication.hormone_therapy uses present not disclosed
+  - clinical_context.aas_exposure uses present not disclosed
+  clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
+  activation_eligibility: false
+  reason: Clinical sign-off + companion biomarkers + disclosed semantics remediation required.
+- package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
+  group: androgen
+  signal_id: signal_fai_low
+  activation_key: signal_fai_low::inv_fai_low_reduced_free_androgen_availability
+  source_spec_id: inv_fai_low_reduced_free_androgen_availability
+  current_runtime_authority_status: inactive
+  current_promotion_state: compiled_not_promoted
+  clinical_signoff_status: not_in_repo
+  required_hard_gates:
+  - demographic.sex
+  - demographic.age
+  required_disclosed_context:
+  - medication.long_term_medications_disclosed
+  optional_modifiers: []
+  companion_biomarker_requirements:
+  - biomarker.shbg
+  - biomarker.free_testosterone
+  - biomarker.testosterone
+  - biomarker.lh
+  metadata_misclassifications: []
+  clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
+  activation_eligibility: false
+  reason: Clinical sign-off required; companion biomarker gates already hard prerequisites.
+- package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context
+  group: androgen
+  signal_id: signal_free_testosterone_high
+  activation_key: signal_free_testosterone_high::inv_free_testosterone_high_androgen_excess_context
+  source_spec_id: inv_free_testosterone_high_androgen_excess_context
+  current_runtime_authority_status: inactive
+  current_promotion_state: compiled_not_promoted
+  clinical_signoff_status: not_in_repo
+  required_hard_gates:
+  - demographic.sex
+  - demographic.age
+  required_disclosed_context:
+  - medication.long_term_medications_disclosed
+  - medication.hormone_therapy_status
+  optional_modifiers:
+  - symptom.symptoms_present
+  companion_biomarker_requirements: []
+  metadata_misclassifications:
+  - medication.hormone_therapy uses present not disclosed
+  clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
+  activation_eligibility: false
+  reason: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT per medical review; sign-off absent.
+- package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  group: androgen
+  signal_id: signal_free_testosterone_low
+  activation_key: signal_free_testosterone_low::inv_free_testosterone_low_androgen_deficiency_context
+  source_spec_id: inv_free_testosterone_low_androgen_deficiency_context
+  current_runtime_authority_status: inactive
+  current_promotion_state: compiled_not_promoted
+  clinical_signoff_status: not_in_repo
+  required_hard_gates:
+  - demographic.sex
+  - demographic.age
+  required_disclosed_context:
+  - medication.long_term_medications_disclosed
+  optional_modifiers:
+  - symptom.symptoms_present
+  companion_biomarker_requirements:
+  - biomarker.lh
+  metadata_misclassifications: []
+  clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
+  activation_eligibility: false
+  reason: Clinical sign-off required before hypogonadism-context activation.
+- package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  group: androgen
+  signal_id: signal_free_testosterone_pct_high
+  activation_key: signal_free_testosterone_pct_high::inv_free_testosterone_pct_high_elevated_free_androgen_fraction
+  source_spec_id: inv_free_testosterone_pct_high_elevated_free_androgen_fraction
+  current_runtime_authority_status: inactive
+  current_promotion_state: compiled_not_promoted
+  clinical_signoff_status: not_in_repo
+  required_hard_gates:
+  - demographic.sex
+  required_disclosed_context: []
+  optional_modifiers: []
+  companion_biomarker_requirements:
+  - biomarker.shbg
+  - biomarker.free_testosterone
+  - biomarker.testosterone
+  metadata_misclassifications: []
+  clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
+  activation_eligibility: false
+  reason: BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING in medical review; sign-off required.
+- package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  group: androgen
+  signal_id: signal_free_testosterone_pct_low
+  activation_key: signal_free_testosterone_pct_low::inv_free_testosterone_pct_low_reduced_free_androgen_fraction
+  source_spec_id: inv_free_testosterone_pct_low_reduced_free_androgen_fraction
+  current_runtime_authority_status: inactive
+  current_promotion_state: compiled_not_promoted
+  clinical_signoff_status: not_in_repo
+  required_hard_gates:
+  - demographic.sex
+  required_disclosed_context: []
+  optional_modifiers: []
+  companion_biomarker_requirements:
+  - biomarker.shbg
+  - biomarker.free_testosterone
+  metadata_misclassifications: []
+  clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
+  activation_eligibility: false
+  reason: Clinical sign-off required; overlap adjudication with free_testosterone_low deferred.
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
+  group: thyroid_ft3_low
+  signal_id: signal_free_t3_low
+  activation_key: signal_free_t3_low::inv_free_t3_low_low_t3_syndrome
+  source_spec_id: inv_free_t3_low_low_t3_syndrome
+  current_runtime_authority_status: inactive
+  current_promotion_state: compiled_not_promoted
+  clinical_signoff_status: thyroid_signoff_exists_ft3_low_deferred
+  required_hard_gates:
+  - biomarker.tsh
+  - biomarker.free_t4
+  required_disclosed_context:
+  - clinical_context.illness_or_recovery_status_disclosed
+  - medication.thyroid_medication_disclosed
+  optional_modifiers:
+  - symptom.symptoms_present
+  companion_biomarker_requirements:
+  - biomarker.tsh
+  - biomarker.free_t4
+  metadata_misclassifications:
+  - clinical_context.illness_or_recovery_status uses present not disclosed
+  clearance_decision: BLOCKED_PENDING_CONTEXT_SEMANTICS
+  activation_eligibility: false
+  reason: enable_lower_bound false; illness/medication requires disclosed semantics not
+    positive presence; evaluator disclosed mode not yet implemented. Not launch-critical
+    relative to active thyroid subset.
+deferred_non_launch_critical:
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  reason: Active thyroid trio (FT3 high, FT4 high/low) already runtime-active with TSH
+    gates; FT3 low deferred until disclosed illness/medication semantics proven safe.
+rollback_path: Revert runtime_context_semantics_model_v1.yaml, batch2_context_clearance_register_v1.yaml,
+  audit paper, tests, and carry-forward register updates. No runtime or package changes in
+  this sprint.

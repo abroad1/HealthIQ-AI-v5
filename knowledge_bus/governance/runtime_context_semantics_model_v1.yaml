@@ -1,0 +1,71 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: governed_clearance_semantics_authority
+work_id: CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance
+generated_utc: '2026-06-12'
+authority_role: clearance_and_classification_only
+execution_companion: knowledge_bus/governance/runtime_context_requirements_model_v1.yaml
+execution_evaluator: backend/core/analytics/runtime_context_evaluator.py
+notes: This file is the authoritative semantics taxonomy for context-dependent Batch 2
+  clearance. It does not duplicate runtime execution schema — runtime_context_requirements_model_v1.yaml
+  remains the execution contract. Package metadata corrections and evaluator `disclosed` mode
+  are deferred to BATCH2-CONTEXT-ACTIVATION-1.
+semantic_classes:
+  hard_prerequisite_gate:
+    definition: Condition required before signal emission can safely occur.
+    runtime_requirement_mode: present
+    fail_closed_when_missing: true
+    examples:
+    - demographic.sex where sex-specific interpretation required
+    - demographic.age where age stratification required
+    - biomarker.shbg present where FAI interpretation requires SHBG
+    - biomarker.tsh and biomarker.free_t4 for FT3 low thyroid context
+  disclosed_context_requirement:
+    definition: User must have answered or disclosed a context field (yes/no/unknown).
+      Does not require positive presence.
+    runtime_requirement_mode: disclosed
+    fail_closed_when_missing: true
+    fail_closed_when_undisclosed_only: true
+    examples:
+    - medication.hormone_therapy_status disclosed
+    - clinical_context.aas_exposure_status disclosed
+    - medication.long_term_medications_disclosed
+    - clinical_context.illness_or_recovery_status disclosed
+  interpretation_modifier:
+    definition: May alter confidence, caution, or framing; must not auto-suppress unless
+      explicitly promoted to hard_prerequisite_gate.
+    runtime_requirement_mode: modifier_optional
+    fail_closed_when_missing: false
+    examples:
+    - symptom.symptoms_present
+    - supplement.supplements_disclosed
+    - clinical_context.stress_context
+    - known_condition.known_conditions
+  companion_biomarker_requirement:
+    definition: Required biomarker dependency for specific frames.
+    runtime_requirement_mode: present
+    context_type: biomarker
+    fail_closed_when_missing: true
+    examples:
+    - biomarker.shbg for FAI / free testosterone pct frames
+    - biomarker.lh for hypogonadism differential frames
+    - biomarker.testosterone corroboration where binding requires
+supported_clearance_decisions:
+- CLEARED_FOR_STOP_GATED_ACTIVATION
+- BLOCKED_PENDING_CLINICAL_SIGNOFF
+- BLOCKED_PENDING_CONTEXT_SEMANTICS
+- BLOCKED_PENDING_COMPANION_BIOMARKER
+- DEFERRED_NON_LAUNCH_CRITICAL
+- REJECTED_DO_NOT_ACTIVATE
+misclassification_patterns:
+- pattern_id: positive_presence_instead_of_disclosed
+  description: runtime_context_requirements uses requirement present on medication/clinical
+    fields that medically require disclosure status not positive exposure.
+  affected_keys:
+  - medication.hormone_therapy
+  - clinical_context.aas_exposure
+  - medication.steroid
+  - clinical_context.illness_or_recovery_status
+  remediation_work_id: BATCH2-CONTEXT-ACTIVATION-1_stop_gated_context_package_activation
+  remediation_action: Reclassify to disclosed_context_requirement with evaluator disclosed
+    mode before activation.
