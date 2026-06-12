@@ -1,141 +1,160 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer",
+  "work_id": "CONTEXT-THREADING-1_runtime_context_orchestrator_threading",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-12",
-  "hardened_by": "Claude Code — Stage 2 Hardening",
+  "hardened_utc": "2026-06-12T00:00:00Z",
+  "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "changes": [
     {
-      "check": "FRONT_MATTER_COMPLETENESS",
-      "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 1-7",
-      "detail": "All five mandatory front matter fields present: work_id (CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer), branch (work/CONTEXT-RUNTIME-1-reusable-runtime-context-evaluation-layer), risk_level (HIGH), execution_model (TWO_PHASE_START_FINISH), change_type (MIXED). No field missing or malformed."
-    },
-    {
-      "check": "RISK_LEVEL_CLASSIFICATION",
-      "finding": "PASS",
-      "citation": "backend/core/analytics/signal_evaluator.py lines 441-540 (evaluate_all); SOP §10 Intelligence Core rule",
-      "detail": "HIGH is correct and mandatory. Sprint proposes backend/core/analytics/runtime_context_evaluator.py (new Intelligence Core component) and integration into SignalEvaluator.evaluate_all() — a direct Intelligence Core method. Any work touching Intelligence Core = HIGH by default (SOP §10). MIXED is correct: new governed YAML (runtime_context_requirements_model_v1.yaml = CONTENT) consumed by a new Intelligence Core component (BEHAVIOUR). MIXED is governed by BEHAVIOUR controls per SOP §4. No reclassification warranted."
-    },
-    {
-      "check": "EXECUTION_MODEL",
-      "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 5, 307-334 (Phase 1), 338-368 (Phase 2), 372-428 (Phase 3 + STOP gate)",
-      "detail": "TWO_PHASE_START_FINISH is correct. Phase 1 = runtime capability audit and design report (no code changes). Phase 2 = implement reusable context evaluator, package metadata, governance model, tests. Phase 3 = activation decision gated by mandatory human STOP (READY_FOR_HUMAN_STOP_GATE + APPROVE BATCH2 CONTEXT GATED ACTIVATION). Structurally sound and appropriate for HIGH/Intelligence Core/MIXED work."
-    },
-    {
-      "check": "2A_AUTHORITY_CONTEXT_MODIFIER_CATALOGUE",
-      "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml lines 1-6",
-      "detail": "File exists. schema_version: 1.0.0 (line 1), work_id: CONTEXT-MOD-1_questionnaire_and_medication_modifier_governance (line 3), runtime_consumed: false (line 5), status: draft_governance_non_runtime (line 6). All 30+ modifiers verified to have runtime_active: false. This is the primary source document for all supported context types in scope. No modifier is currently runtime-active — confirms the capability gap the sprint must close."
-    },
-    {
-      "check": "2A_AUTHORITY_BATCH2_BLOCKERS_REGISTER",
-      "finding": "CONFIRMED",
-      "citation": "knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml lines 1-7",
-      "detail": "File exists. status: analysis_complete_ready_for_human_stop_gate (line 3), runtime_activation_performed: false (line 13), activated_package_count: 0 (line 16), blocked_package_count: 11 (line 17). All 9 in-scope packages confirmed: activated=false, gate_implemented=false. Consolidated platform blocker: CF-CONTEXT-MOD-3 (line 19). Confirmed blockers: androgen group = androgen_runtime_context_evaluation_required; thyroid/FT3 = ft3_low_requires_layer_b_context."
-    },
-    {
-      "check": "2A_AUTHORITY_PATH_ALL_REQUIRED_INPUTS",
-      "finding": "CONFIRMED",
-      "citation": "PowerShell path verification (all 5 doc paths checked)",
-      "detail": "All required input documents confirmed present: docs/audit-papers/BATCH2-REMAINING-BLOCKERS-1_remaining_batch2_blocker_resolution_and_gated_activation.md EXISTS; docs/audit-papers/BATCH2-CONTEXT-MOD-1_androgen_panel_context_modifier_binding.md EXISTS; docs/audit-papers/BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md EXISTS; docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md EXISTS; docs/sprints/launch_core_carry_forward_register.md EXISTS. All governance YAML inputs (batch2_androgen_context_modifier_binding_v1.yaml, batch2_remainder_resolution_register_v1.yaml, medical_frame_identity_index_v1.yaml) also confirmed present."
-    },
-    {
-      "check": "2A_AUTHORITY_PATH_ALL_9_PACKAGES",
-      "finding": "CONFIRMED",
-      "citation": "PowerShell directory listing of knowledge_bus/packages/",
-      "detail": "All 9 in-scope packages confirmed present: pkg_kb47_free_t3_low_low_t3_syndrome, pkg_kb47_dhea_high_androgen_excess_context, pkg_kb47_dhea_low_adrenal_androgen_reduction, pkg_kb47_fai_high_biochemical_hyperandrogenism, pkg_kb47_fai_low_reduced_free_androgen_availability, pkg_kb47_free_testosterone_high_androgen_excess_context, pkg_kb47_free_testosterone_low_androgen_deficiency_context, pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction, pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction."
-    },
-    {
-      "check": "2A_AUTHORITY_PATH_SIGNAL_EVALUATOR",
-      "finding": "CONFIRMED — NO CONTEXT PARAMETER EXISTS",
-      "citation": "backend/core/analytics/signal_evaluator.py lines 441-447",
-      "detail": "evaluate_all() signature confirmed: (self, signal_biomarkers: Dict[str, float], signal_derived: Dict[str, float], lab_ranges: Dict[str, dict], reference_profiles: Optional[Dict[str, dict]] = None). Zero context, questionnaire, sex, age, medication, or supplement parameters. Confirmed the capability gap. The mandatory_pre_emission_gates mechanism (lines 381-421) supports biomarker_present and numeric comparator_type only — no demographic or questionnaire gate type. This is the primary integration surface the sprint must extend."
-    },
-    {
-      "check": "2A_AUTHORITY_PATH_FT3_LOW_SIGNAL_LIBRARY",
-      "finding": "CONFIRMED — INACTIVE, ENABLE_LOWER_BOUND=FALSE",
-      "citation": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml lines 48-52",
-      "detail": "signal_id: signal_free_t3_low (line 9). activation_logic: lab_range_exceeded (line 47). activation_config.enable_lower_bound: false (line 50). The signal cannot fire for low FT3. No mandatory_pre_emission_gates block present. Supporting metrics TSH and FT4 declared but not gated. Current state = cannot activate via any path. Sprint must add enable_lower_bound: true AND mandatory_pre_emission_gates for TSH + FT4 presence before activation is safe."
-    },
-    {
-      "check": "2A_AUTHORITY_PATH_ANDROGEN_SIGNAL_LIBRARY_EXAMPLE",
-      "finding": "CONFIRMED — UPPER-BOUND ACTIVE, NO CONTEXT GATE",
-      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml lines 48-52",
-      "detail": "signal_id: signal_dhea_high. activation_logic: lab_range_exceeded. enable_upper_bound default=true (not explicitly false). Meaning: dhea_high would fire on lab-range upper-bound WITHOUT any sex, age, or medication context check if the package were activated. This confirms context gating must exist in the evaluator before any androgen package activation can be safe — the signal_library metadata alone is insufficient protection."
-    },
-    {
-      "check": "2A_AUTHORITY_PATH_ANALYSIS_CONTEXT_MODEL",
-      "finding": "CONFIRMED — CONTEXT DATA EXISTS UPSTREAM",
-      "citation": "backend/core/models/context.py lines 12-31",
-      "detail": "AnalysisContext model exists with: questionnaire_responses: Optional[Dict[str, Any]] (line 20), lifestyle_factors: Optional[Dict[str, Any]] (line 24), medical_history: Optional[Dict[str, Any]] (line 28). Sex (biological_sex), age (date_of_birth), medications (long_term_medications), supplements, and known conditions are all collectible via questionnaire_responses. The data exists upstream but is NOT threaded through to SignalEvaluator.evaluate_all(). The sprint's Phase 1 audit must trace the call path from AnalysisContext to evaluate_all() to identify the correct integration point."
-    },
-    {
-      "check": "2A_CARRY_FORWARD_REGISTER",
-      "finding": "CONFIRMED — BOTH CF ITEMS OPEN",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md line 77 (CF-CONTEXT-MOD-3), line 76 (CF-BATCH2-010)",
-      "detail": "CF-CONTEXT-MOD-3 (line 77): Status=Open. Explicitly identifies all catalogue modifiers runtime_active=false as blocking androgen (8 packages) and FT3 low (illness/medication + TSH+FT4). Prerequisite for any remaining Batch 2 activation. This sprint resolves CF-CONTEXT-MOD-3 if successful. CF-BATCH2-010 (line 76): Status=Open. Androgen clinical sign-off STILL REQUIRED after CF-CONTEXT-MOD-3. Sprint correctly does not close CF-BATCH2-010."
-    },
-    {
-      "check": "2A_DUPLICATE_AUTHORITY_SOURCE_RISK",
-      "finding": "PASS — NO DUPLICATE",
-      "citation": "knowledge_bus/governance/ directory listing",
-      "detail": "runtime_context_requirements_model_v1.yaml is a new file — no existing file with this name. context_modifier_catalogue_draft_v1.yaml is the single source of modifier governance, not a duplicate. The new execution register (context_runtime_execution_register_v1.yaml) is a sprint record, not an authority source. No duplicate authority source risk introduced."
-    },
-    {
-      "check": "2B_INTELLIGENCE_CORE_SCOPE",
-      "finding": "PASS — SCOPE DEFINED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 235-255 (required runtime behaviour), lines 354-369 (do-not-change list)",
-      "detail": "Intelligence Core surface area: (1) runtime_context_evaluator.py — new helper for context presence checks only; (2) small SignalEvaluator integration — context evaluation must be injected as a pre-emission gate, not by modifying threshold/override/state evaluation logic; (3) package signal_library metadata additions for FT3 low / androgen packages if governed. Evaluator must not invent unavailable context, must return structured missing-context result, must fail closed. Allowed changes precisely listed in prompt lines 344-354. Forbidden surfaces explicitly listed: clinical wording, thresholds, reference ranges, signal IDs, activation keys, frontend, SSOT, scoring, report compiler."
-    },
-    {
-      "check": "2B_REGRESSION_TARGETS",
-      "finding": "PASS — 9 TARGETS EXPLICIT",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 535-549 (9 test requirements)",
-      "detail": "9 regression tests required: (1) signal with required demographic context does not emit when context missing; (2) signal with required companion biomarker does not emit when companion missing; (3) signal with required medication/supplement context does not emit when absent; (4) signal emits when all required context present; (5) unrelated signals without context requirements unaffected; (6) missing context fails closed; (7) FT3 low remains inactive unless TSH+FT4+illness/medication context satisfied; (8) androgen packages remain inactive unless required context satisfied; (9) no hardcoded medical thresholds introduced. All 9 are verifiable against source behaviour confirmed in this hardening."
-    },
-    {
-      "check": "2B_DETERMINISM_RISKS",
-      "finding": "PASS — RISKS DOCUMENTED",
-      "citation": "backend/core/analytics/signal_evaluator.py lines 531-534 (sort); context_modifier_catalogue_draft_v1.yaml line 5 (runtime_consumed: false)",
-      "detail": "Four determinism risks Cursor must handle: (1) Context evaluator must be pure-function — same input must always produce same gate result; (2) Fail-closed means absent context key returns suppress, never default-allow — must not infer or default missing context (prompt line 253); (3) Filtered output must maintain sort order (signal_id, activation_key) matching evaluate_all() sort at lines 531-534; (4) Package metadata additions must use package-declared requirements only — not bespoke marker-specific code (prompt line 549). No silent output drift allowed."
-    },
-    {
-      "check": "2B_NO_SCOPE_CREEP",
-      "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 354-369 (do not change list); lines 259-305 (metadata scope restriction)",
-      "detail": "Explicit do-not-change list: clinical wording, thresholds, reference ranges, signal IDs, activation keys, frontend, SSOT, scoring, report compiler, unrelated package logic. Package metadata scope restricted to FT3 low and androgen packages only if governed by prior medical review/binding. Prompt explicitly states: do not activate androgen packages merely because metadata exists (line 303). eGFR and other packages out of scope. No scope creep risk in prompt structure."
-    },
-    {
-      "check": "2B_STOP_CONDITIONS_COVERAGE",
-      "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 101-110 (baseline STOP), lines 327-334 (Phase 1 STOP), lines 627-642 (general STOP conditions)",
-      "detail": "Baseline STOP covers: wrong branch, main drift, dirty tree, missing context_modifier_catalogue, missing batch2 blockers register, missing androgen package folders, missing FT3 package. Phase 1 STOP covers: no safe runtime location for context evaluation, runtime context shape cannot be determined, broad pipeline redesign required, unavailable context prevents safe activation. General STOP covers: validators fail, architecture gate fails, rollback undefined, hardcoded thresholds required. Coverage is comprehensive."
-    },
-    {
-      "check": "2B_CF_BATCH2_010_GUARD",
-      "finding": "HARDENING INSTRUCTION — CLINICAL SAFETY CONSTRAINT",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md line 76; knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml lines 58-70",
-      "detail": "MANDATORY: CF-BATCH2-010 (androgen clinical sign-off) is OPEN and is separate from CF-CONTEXT-MOD-3 (runtime capability). Even if the runtime context layer is fully built and context gates are enforced, androgen packages cannot activate until clinical sign-off artefact exists in the repo. The batch2 blockers register records 4 androgen packages as KEEP_BLOCKED_MEDICAL_SIGNOFF_REQUIRED (dhea_high, free_testosterone_high at lines 58-70), not only KEEP_BLOCKED_RUNTIME_CAPABILITY_MISSING. Phase 3 expected outcome (androgen packages remain inactive) is correct. Context capability must be built as infrastructure; activation is a separate gate."
-    },
-    {
-      "check": "2B_ROLLBACK_PATH",
-      "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md (STOP gate section); files in scope are all new or metadata additions",
-      "detail": "Rollback path is definable: delete runtime_context_evaluator.py, revert signal_evaluator.py integration (if any), revert signal_library.yaml mandatory_pre_emission_gates additions, delete runtime_context_requirements_model_v1.yaml, delete context_runtime_execution_register_v1.yaml, revert carry-forward register updates. All changes are file-local and reversible. No DB migration, no schema change, no irreversible operation."
-    },
-    {
-      "check": "POWERSHELL_COMPATIBILITY",
-      "finding": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 93-99 (baseline commands), lines 583-601 (validation commands)",
-      "detail": "All shell commands use python backend/scripts/... and git invocations in PowerShell syntax. No bash-specific syntax detected. Validation scripts are Python — compatible with Windows PowerShell environment confirmed for this repo."
+      "change_id": "C-1",
+      "type": "front_matter_correction",
+      "description": "change_type corrected from RUNTIME_PIPELINE (invalid) to BEHAVIOUR (valid SOP v1.3.1 value). Applied by GPT before hardening finalised.",
+      "file": "automation_bus/latest_cursor_prompt.md",
+      "line": 6
     }
   ],
+  "front_matter": {
+    "work_id": "CONFIRMED — automation_bus/latest_cursor_prompt.md line 2",
+    "branch": "CONFIRMED — work/CONTEXT-THREADING-1-runtime-context-orchestrator-threading (automation_bus/latest_cursor_prompt.md line 3)",
+    "risk_level": "CONFIRMED HIGH — touches Intelligence Core pipeline files orchestrator.py and orchestrator_phases_v1.py; SOP §10 mandates HIGH for Intelligence Core (automation_bus/latest_cursor_prompt.md line 4)",
+    "execution_model": "CONFIRMED TWO_PHASE_START_FINISH — automation_bus/latest_cursor_prompt.md line 5",
+    "change_type": "CONFIRMED BEHAVIOUR — automation_bus/latest_cursor_prompt.md line 6; modifies Intelligence Core pipeline behaviour and signal emission filtering"
+  },
+  "authority_paths": [
+    {
+      "path": "docs/audit-papers/CONTEXT-THREADING-1_pre_sprint_architecture_audit.md",
+      "status": "CONFIRMED",
+      "note": "Pre-sprint architecture audit dated 2026-06-12. Confirms gap, threading path, and minimum file scope (2 files). Source read in full."
+    },
+    {
+      "path": "backend/core/analytics/runtime_context_evaluator.py",
+      "status": "CONFIRMED",
+      "note": "build_runtime_context_snapshot() at line 164. Accepts questionnaire_responses: Optional[Mapping[str, Any]]. No changes required to this file."
+    },
+    {
+      "path": "backend/core/analytics/signal_evaluator.py",
+      "status": "CONFIRMED",
+      "note": "evaluate_all() at line 442 already accepts runtime_context: Optional[Dict[str, Any]] = None. passes_runtime_context_requirements() called at line 496. No changes required to this file."
+    },
+    {
+      "path": "backend/core/pipeline/orchestrator.py",
+      "status": "CONFIRMED",
+      "note": "evaluate_signal_evaluation_phase() called at line 1254 with no runtime_context (gap confirmed). questionnaire_data parameter in scope from line 999. create_analysis_context() at line 1270 (after signal evaluation)."
+    },
+    {
+      "path": "backend/core/pipeline/orchestrator_phases_v1.py",
+      "status": "CONFIRMED",
+      "note": "evaluate_signal_evaluation_phase() signature at line 131 has no runtime_context param. evaluate_all() called at line 147 without it."
+    },
+    {
+      "path": "knowledge_bus/governance/runtime_context_requirements_model_v1.yaml",
+      "status": "CONFIRMED",
+      "note": "File exists. Consumed by runtime_context_evaluator.py."
+    },
+    {
+      "path": "knowledge_bus/governance/context_runtime_execution_register_v1.yaml",
+      "status": "CONFIRMED",
+      "note": "File exists. Governance register from CONTEXT-RUNTIME-1 completion."
+    },
+    {
+      "path": "docs/sprints/launch_core_carry_forward_register.md",
+      "status": "CONFIRMED",
+      "note": "CF-CONTEXT-MOD-3 Resolved by CONTEXT-RUNTIME-1; threading follow-on explicitly recorded in notes. CF-BATCH2-010 Open (androgen sign-off still required)."
+    },
+    {
+      "path": "docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md",
+      "status": "CONFIRMED",
+      "note": "File exists."
+    },
+    {
+      "path": "docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md",
+      "status": "CONFIRMED",
+      "note": "File exists."
+    }
+  ],
+  "source_cross_references": [
+    {
+      "ref": "gap_orchestrator",
+      "file": "backend/core/pipeline/orchestrator.py",
+      "line": 1254,
+      "status": "CONFIRMED",
+      "note": "evaluate_signal_evaluation_phase() called with no runtime_context parameter. Three-line addition required immediately before this call."
+    },
+    {
+      "ref": "gap_phases",
+      "file": "backend/core/pipeline/orchestrator_phases_v1.py",
+      "line": 131,
+      "status": "CONFIRMED",
+      "note": "evaluate_signal_evaluation_phase() signature missing runtime_context param. Must add Optional[Dict[str, Any]] = None and forward to evaluate_all() at line 147."
+    },
+    {
+      "ref": "already_correct_signal_evaluator",
+      "file": "backend/core/analytics/signal_evaluator.py",
+      "line": 442,
+      "status": "CONFIRMED — DO NOT MODIFY",
+      "note": "evaluate_all() already accepts runtime_context=None. passes_runtime_context_requirements() called at line 496. This file must not be touched in this sprint."
+    },
+    {
+      "ref": "already_correct_runtime_context_evaluator",
+      "file": "backend/core/analytics/runtime_context_evaluator.py",
+      "line": 164,
+      "status": "CONFIRMED — DO NOT MODIFY",
+      "note": "build_runtime_context_snapshot() already accepts questionnaire_responses. This file must not be touched in this sprint."
+    },
+    {
+      "ref": "questionnaire_data_in_scope",
+      "file": "backend/core/pipeline/orchestrator.py",
+      "line": 999,
+      "status": "CONFIRMED",
+      "note": "questionnaire_data: Optional[Dict[str, Any]] = None is a run() parameter and is in scope at line 1254."
+    },
+    {
+      "ref": "phase_ordering_constraint",
+      "file": "backend/core/pipeline/orchestrator.py",
+      "line": 1270,
+      "status": "CONFIRMED",
+      "note": "create_analysis_context() at line 1270 runs AFTER signal evaluation at line 1254. Threading must use raw questionnaire_data, not mapped lifestyle_factors or medical_history."
+    }
+  ],
+  "package_context_requirements_audit": {
+    "status": "CONFIRMED",
+    "packages_with_runtime_context_requirements": 9,
+    "packages": [
+      "pkg_kb47_free_t3_low_low_t3_syndrome",
+      "pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction",
+      "pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction",
+      "pkg_kb47_free_testosterone_low_androgen_deficiency_context",
+      "pkg_kb47_free_testosterone_high_androgen_excess_context",
+      "pkg_kb47_fai_low_reduced_free_androgen_availability",
+      "pkg_kb47_fai_high_biochemical_hyperandrogenism",
+      "pkg_kb47_dhea_low_adrenal_androgen_reduction",
+      "pkg_kb47_dhea_high_androgen_excess_context"
+    ],
+    "all_inactive": true,
+    "note": "All 9 confirmed inactive. 8 androgen packages blocked by CF-BATCH2-010 (Open). FT3 low deferred per BATCH2-THYROID-GATE-1. No currently active package declares runtime_context_requirements — threading change cannot suppress any active signal."
+  },
+  "stop_conditions": {
+    "any_active_package_has_runtime_context_requirements": "FALSE — 9 packages have requirements, all inactive",
+    "questionnaire_data_unavailable_before_signal_evaluation": "FALSE — in scope at orchestrator.run():999, signal eval at line 1254",
+    "build_runtime_context_snapshot_cannot_consume_raw_questionnaire": "FALSE — confirmed accepts questionnaire_responses at runtime_context_evaluator.py:164",
+    "threading_requires_modifying_signal_evaluator": "FALSE — evaluate_all() already correct",
+    "threading_requires_changing_package_metadata": "FALSE — no package changes in this sprint",
+    "implementation_requires_broad_orchestrator_refactor": "FALSE — 2-file, 3-line addition confirmed by pre-sprint audit",
+    "rollback_path_undefined": "FALSE — trivially reversible (revert 3-line orchestrator addition + optional param)",
+    "sprint_cannot_record_ARCH_ORCH_RESTRUCTURE_1": "FALSE — prompt explicitly requires it"
+  },
+  "behavioural_hardening": {
+    "scope_defined": "CONFIRMED — 2 implementation files + 1 test file + 1 audit report + carry-forward register. No other files permitted without STOP.",
+    "regression_targets": "CONFIRMED — 8 explicit test requirements in prompt including full active-panel integration test proving no existing signal suppressed.",
+    "determinism_preserved": "CONFIRMED — no threshold, scoring, ranking, reference range, or clinical wording changes. runtime_context is optional param with None default; existing behaviour unchanged when not provided.",
+    "output_structure_unchanged": "CONFIRMED — signal sort order (signal_id, activation_key) at signal_evaluator.py:545 unchanged. No new output fields added by this sprint.",
+    "no_hidden_side_effects": "CONFIRMED — build_runtime_context_snapshot() is a pure builder; evaluate_signal_evaluation_phase() change is additive optional param only.",
+    "carry_forward_ARCH_ORCH_RESTRUCTURE_1": "REQUIRED — prompt explicitly mandates this entry in launch_core_carry_forward_register.md, recording this as interim bridge only."
+  },
   "prior_task_findings": {
-    "BATCH2-REMAINING-BLOCKERS-1": "CONFIRMED INDEPENDENTLY: status=analysis_complete_ready_for_human_stop_gate; runtime_code_changed=false; activated_package_count=0; consolidated_platform_blocker=CF-CONTEXT-MOD-3; androgen (8) blocked by androgen_runtime_context_evaluation_required; FT3 low blocked by ft3_low_requires_layer_b_context. Source: batch2_remaining_blockers_execution_register_v1.yaml lines 1-34 (file read).",
-    "CONTEXT-MOD-1": "CONFIRMED INDEPENDENTLY: context_modifier_catalogue_draft_v1.yaml runtime_consumed=false (line 5); all modifiers runtime_active=false; 30+ modifiers covering demographic, questionnaire, supplement, medication categories all governance-only. Source: context_modifier_catalogue_draft_v1.yaml lines 1-1151 (entire file read)."
+    "CONTEXT-RUNTIME-1": "CONFIRMED — git log sha 5c95ad9; runtime_context_evaluator.py and signal_evaluator.py changes merged. Pre-sprint audit 2026-06-12 independently confirms CONTEXT-RUNTIME-1 is complete and correct.",
+    "pre_sprint_audit": "CONFIRMED — docs/audit-papers/CONTEXT-THREADING-1_pre_sprint_architecture_audit.md read in full. All gap locations match source code. File scope confirmed as 2 files only."
   },
   "overall_verdict": "HARDENED",
-  "hardening_notes": "Sprint is hardened. Key findings for Cursor: (1) SignalEvaluator.evaluate_all() has zero context parameters — the integration point for runtime context evaluation must be identified by tracing AnalysisContext (backend/core/models/context.py line 12) through the pipeline to evaluate_all(). (2) FT3 low signal_library has enable_lower_bound: false — must be changed to true and mandatory_pre_emission_gates added for TSH+FT4 presence before FT3 low activation is safe. (3) Androgen packages will require both runtime context gates AND clinical sign-off (CF-BATCH2-010 still open) before activation — Phase 3 expected outcome is remain inactive. (4) All authority paths verified against source content with line citations. No STOP condition triggered. No architectural violations found. Sprint may proceed to Stage 3 (python backend/scripts/run_work_package.py start)."
+  "hardening_notes": "Sprint is hardened and may proceed to Stage 3. Key facts for Cursor: (1) Gap is in exactly 2 files: orchestrator.py:1254 (no runtime_context passed) and orchestrator_phases_v1.py:131 (no runtime_context param). (2) signal_evaluator.py and runtime_context_evaluator.py are already correct — do not touch. (3) All 9 packages with runtime_context_requirements are inactive; threading change will not suppress any active signal. (4) Raw questionnaire_data is the only available context source at Step 1.6 — do not use lifestyle_factors or medical_history. (5) ARCH-ORCH-RESTRUCTURE-1 carry-forward is mandatory. HIGH risk route: Cursor implementation → Claude audit → GPT architectural review → merge only after explicit approval."
 }
