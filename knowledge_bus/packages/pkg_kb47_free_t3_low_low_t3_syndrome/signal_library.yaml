@@ -49,6 +49,18 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
+  runtime_context_requirements:
+    missing_context_behaviour: suppress_signal
+    required_context:
+    - context_type: biomarker
+      key: tsh
+      requirement: present
+    - context_type: biomarker
+      key: free_t4
+      requirement: present
+    - context_type: clinical_context
+      key: illness_or_recovery_status
+      requirement: present
   override_rules:
   - rule_id: or_free_t3_low_with_free_t4_low
     resulting_state: at_risk

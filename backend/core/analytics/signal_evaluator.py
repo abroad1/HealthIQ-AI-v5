@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 
 import yaml
 
+from core.analytics.runtime_context_evaluator import passes_runtime_context_requirements
 from core.analytics.signal_authority_collision_resolver import apply_signal_authority_collision_policy
 from core.analytics.signal_confidence_builder import calculate_signal_confidence
 from core.contracts.signal_contract import STATE_RANK as _STATE_RANK_IMPORT
@@ -444,6 +445,7 @@ class SignalEvaluator:
         signal_derived: Dict[str, float],
         lab_ranges: Dict[str, dict],
         reference_profiles: Optional[Dict[str, dict]] = None,
+        runtime_context: Optional[Dict[str, Any]] = None,
     ) -> List[SignalResult]:
         results: List[SignalResult] = []
         reference_profiles = reference_profiles or {}
@@ -485,6 +487,15 @@ class SignalEvaluator:
 
             if not self._passes_mandatory_pre_emission_gates(
                 signal=signal,
+                signal_biomarkers=signal_biomarkers,
+                signal_derived=signal_derived,
+                lab_ranges=lab_ranges or {},
+            ):
+                continue
+
+            if not passes_runtime_context_requirements(
+                signal,
+                runtime_context=runtime_context,
                 signal_biomarkers=signal_biomarkers,
                 signal_derived=signal_derived,
                 lab_ranges=lab_ranges or {},

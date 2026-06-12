@@ -1,0 +1,29 @@
+schema_version: 1.0.0
+runtime_consumed: true
+status: governed_runtime_context_model
+work_id: CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer
+generated_utc: '2026-06-12'
+source_context_catalogue: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+source_androgen_binding: knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
+source_batch2_blockers: knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
+supported_context_types:
+- demographic
+- biomarker
+- medication
+- supplement
+- symptom
+- clinical_context
+- known_condition
+supported_missing_context_behaviours:
+- suppress_signal
+- emit_context_insufficient
+- defer_activation
+runtime_contract:
+  fail_closed_on_missing_required_context: true
+  no_clinical_claim_from_missing_context: true
+  package_declared_requirements_only: true
+package_metadata_field: runtime_context_requirements
+evaluator_path: backend/core/analytics/runtime_context_evaluator.py
+notes: Packages declare required_context entries on signal_library signals. RuntimeContextEvaluator
+  enforces presence fail-closed before signal emission. Biomarker companion requirements reuse
+  existing lab-range boundary evaluation where declared. No ad hoc per-marker evaluator branches.

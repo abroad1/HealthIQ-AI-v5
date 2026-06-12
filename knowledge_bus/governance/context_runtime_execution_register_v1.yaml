@@ -1,0 +1,145 @@
+schema_version: 1.0.0
+runtime_consumed: true
+status: runtime_context_evaluation_implemented_pending_activation_stop_gate
+work_id: CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer
+source_context_catalogue: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+source_batch2_blocker_register: knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
+source_context_model: knowledge_bus/governance/runtime_context_requirements_model_v1.yaml
+analysis_utc: '2026-06-12'
+runtime_context_evaluator:
+  implemented: true
+  path: backend/core/analytics/runtime_context_evaluator.py
+  fail_closed: true
+  deterministic: true
+  signal_evaluator_integration: backend/core/analytics/signal_evaluator.py evaluate_all(runtime_context=...)
+supported_context_types:
+- demographic
+- biomarker
+- medication
+- supplement
+- symptom
+- clinical_context
+- known_condition
+context_availability:
+  sex: questionnaire.biological_sex via build_runtime_context_snapshot
+  age: questionnaire.date_of_birth or biomarker age
+  medications: questionnaire.long_term_medications / medical_history
+  supplements: questionnaire.supplements
+  symptoms: questionnaire.symptoms
+  illness_context: questionnaire.chronic_conditions / stress_level
+  known_conditions: questionnaire.chronic_conditions / medical_history.conditions
+  companion_biomarkers: signal_biomarkers and signal_derived inputs to evaluate_all
+  orchestrator_threading: not_yet_wired_signal_evaluation_precedes_questionnaire_merge
+human_stop_gate:
+  required: true
+  activation_recommended: false
+  approval_received: false
+  approval_phrase: APPROVE BATCH2 CONTEXT GATED ACTIVATION
+  approval_recorded_at: null
+runtime_activation_performed: false
+activated_package_count: 0
+gated_inactive_package_count: 9
+blocked_package_count: 9
+packages:
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
+  group: thyroid_ft3_low
+  required_context:
+  - biomarker.tsh
+  - biomarker.free_t4
+  - clinical_context.illness_or_recovery_status
+  context_available: partial_via_questionnaire_snapshot_builder
+  gate_implemented: true
+  activated: false
+  final_state: compiled_not_promoted_inactive_gated
+  blocker_if_inactive: enable_lower_bound_false; illness_context_not_orchestrator_threaded
+  required_next_action: Human STOP approval; enable_lower_bound if activating; orchestrator context threading
+  notes: Runtime context gate enforced; remains inactive.
+- package_id: pkg_kb47_dhea_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
+  group: androgen
+  required_context:
+  - demographic.sex
+  - demographic.age
+  - symptom.symptoms_present
+  - supplement.supplements_disclosed
+  - medication.hormone_therapy
+  - clinical_context.aas_exposure
+  context_available: partial_via_questionnaire_snapshot_builder
+  gate_implemented: true
+  activated: false
+  final_state: compiled_not_promoted_inactive_gated
+  blocker_if_inactive: CF-BATCH2-010 clinical signoff; orchestrator context threading
+  required_next_action: APPROVE BATCH2 CONTEXT GATED ACTIVATION after clinical signoff
+  notes: Fail-closed context gate on signal_library metadata.
+- package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
+  group: androgen
+  gate_implemented: true
+  activated: false
+  final_state: compiled_not_promoted_inactive_gated
+  blocker_if_inactive: CF-BATCH2-010; orchestrator context threading
+  required_next_action: Human STOP approval after prerequisites
+  notes: Package-declared runtime_context_requirements enforced.
+- package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  package_path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
+  group: androgen
+  gate_implemented: true
+  activated: false
+  final_state: compiled_not_promoted_inactive_gated
+  blocker_if_inactive: CF-BATCH2-010; SHBG companion biomarker + context
+  required_next_action: Human STOP approval after prerequisites
+  notes: Inactive; gated.
+- package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
+  group: androgen
+  gate_implemented: true
+  activated: false
+  final_state: compiled_not_promoted_inactive_gated
+  blocker_if_inactive: CF-BATCH2-010
+  required_next_action: Human STOP approval after prerequisites
+  notes: Inactive; gated.
+- package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context
+  group: androgen
+  gate_implemented: true
+  activated: false
+  final_state: compiled_not_promoted_inactive_gated
+  blocker_if_inactive: CF-BATCH2-010
+  required_next_action: Human STOP approval after prerequisites
+  notes: Inactive; gated.
+- package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  group: androgen
+  gate_implemented: true
+  activated: false
+  final_state: compiled_not_promoted_inactive_gated
+  blocker_if_inactive: CF-BATCH2-010
+  required_next_action: Human STOP approval after prerequisites
+  notes: Inactive; gated.
+- package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  group: androgen
+  gate_implemented: true
+  activated: false
+  final_state: compiled_not_promoted_inactive_gated
+  blocker_if_inactive: CF-BATCH2-010
+  required_next_action: Human STOP approval after prerequisites
+  notes: Inactive; gated.
+- package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  group: androgen
+  gate_implemented: true
+  activated: false
+  final_state: compiled_not_promoted_inactive_gated
+  blocker_if_inactive: CF-BATCH2-010
+  required_next_action: Human STOP approval after prerequisites
+  notes: Inactive; gated.
+phase_3_outcome: capability_implemented_all_context_dependent_packages_remain_inactive
+rollback_path: Revert runtime_context_evaluator.py; remove runtime_context parameter and gate call from
+  signal_evaluator.py; remove runtime_context_requirements from in-scope signal_library.yaml files;
+  revert runtime_context_requirements_model_v1.yaml, context_runtime_execution_register_v1.yaml, audit
+  report, tests, and carry-forward register updates.
+notes: Reusable fail-closed context evaluation implemented. No package metadata activation performed.
+  Orchestrator does not yet pass runtime_context into evaluate_all — follow-on for context ingestion
+  threading. CF-CONTEXT-MOD-3 resolved at capability level; CF-BATCH2-010 remains open.

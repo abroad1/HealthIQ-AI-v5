@@ -48,6 +48,27 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
+  runtime_context_requirements:
+    missing_context_behaviour: suppress_signal
+    required_context:
+    - context_type: demographic
+      key: sex
+      requirement: present
+    - context_type: demographic
+      key: age
+      requirement: present
+    - context_type: biomarker
+      key: shbg
+      requirement: present
+    - context_type: biomarker
+      key: testosterone
+      requirement: present
+    - context_type: medication
+      key: hormone_therapy
+      requirement: present
+    - context_type: clinical_context
+      key: aas_exposure
+      requirement: present
   override_rules:
   - rule_id: or_fai_high_with_testosterone_high
     resulting_state: at_risk

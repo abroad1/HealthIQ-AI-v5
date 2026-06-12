@@ -50,6 +50,24 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
+  runtime_context_requirements:
+    missing_context_behaviour: suppress_signal
+    required_context:
+    - context_type: demographic
+      key: sex
+      requirement: present
+    - context_type: demographic
+      key: age
+      requirement: present
+    - context_type: biomarker
+      key: lh
+      requirement: present
+    - context_type: symptom
+      key: symptoms_present
+      requirement: present
+    - context_type: medication
+      key: long_term_medications
+      requirement: present
   override_rules:
   - rule_id: or_free_testosterone_low_with_total_testosterone_low
     resulting_state: at_risk
