@@ -1,9 +1,10 @@
 {
   "branch": "work/CONTEXT-CLEARANCE-1-context-semantics-and-batch2-clearance",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-12T09:13:26Z",
   "cursor_started_utc": "2026-06-12T09:08:49Z",
-  "head_sha": "748125fe7f836563c83391bc77d3946662433581",
+  "head_sha": "86e2eb3b412c024b6822dae4457a831eab5519d2",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance"
 }
