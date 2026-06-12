@@ -1,10 +1,9 @@
 {
-  "branch": "work/CONTEXT-THREADING-1-runtime-context-orchestrator-threading",
+  "branch": "work/CONTEXT-CLEARANCE-1-context-semantics-and-batch2-clearance",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-12T08:41:10Z",
-  "cursor_started_utc": "2026-06-12T08:35:49Z",
-  "head_sha": "74aa2117d364b3cfe2ee2179844fb88831024df2",
+  "cursor_started_utc": "2026-06-12T09:08:49Z",
+  "head_sha": "748125fe7f836563c83391bc77d3946662433581",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "CONTEXT-THREADING-1_runtime_context_orchestrator_threading"
+  "status": "IN_PROGRESS",
+  "work_id": "CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance"
 }
