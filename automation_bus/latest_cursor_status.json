@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-CONTEXT-COMPLETION-1-runtime-semantics-and-stop-gated-activation",
+  "branch": "work/WAVE1-PUBLIC-LAUNCH-FIXES-1-pre-public-launch-blocker-remediation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-12T10:07:34Z",
-  "cursor_started_utc": "2026-06-12T09:59:41Z",
-  "head_sha": "bbb20f446bbcb7a6870619349e90da1dd1d87a5d",
+  "cursor_started_utc": "2026-06-12T13:10:10Z",
+  "head_sha": "98a4ec81adeb7527b5b61769b8f085d26073b13a",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation"
+  "status": "IN_PROGRESS",
+  "work_id": "WAVE1-PUBLIC-LAUNCH-FIXES-1_pre_public_launch_blocker_remediation"
 }
