@@ -189,7 +189,7 @@ def test_medication_context_missing_suppresses_androgen_signal():
         "signal_dhea_high",
     )
     ctx = _full_androgen_context()
-    ctx["medication"].pop("hormone_therapy", None)
+    ctx["medication"].pop("hormone_therapy_status_disclosed", None)
     results = _evaluate_signal(signal, {"dhea": 20.0}, runtime_context=ctx)
     assert results == []
 
@@ -229,6 +229,119 @@ def test_ft3_low_suppressed_without_illness_context_even_with_tsh_ft4():
     )
     ctx = build_runtime_context_snapshot(
         questionnaire_responses={"biological_sex": "female", "date_of_birth": "1980-01-01"},
+    )
+    results = _evaluate_signal(
+        signal,
+        {"free_t3": 1.5, "tsh": 2.0, "free_t4": 1.2},
+        lab_ranges=THYROID_LAB_RANGES,
+        runtime_context=ctx,
+    )
+    assert results == []
+
+
+def test_snapshot_records_hormone_therapy_disclosure_separate_from_exposure():
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"long_term_medications": []},
+    )
+    assert ctx["medication"].get("hormone_therapy_status_disclosed") is True
+    assert "hormone_therapy" not in ctx["medication"]
+
+
+def test_snapshot_records_aas_disclosure_separate_from_exposure():
+    ctx_no_aas = build_runtime_context_snapshot(
+        questionnaire_responses={"supplements": []},
+    )
+    assert ctx_no_aas["clinical_context"].get("aas_exposure_status_disclosed") is True
+    assert "aas_exposure" not in ctx_no_aas["clinical_context"]
+
+    ctx_aas = build_runtime_context_snapshot(
+        questionnaire_responses={"supplements": ["prohormone stack"]},
+    )
+    assert ctx_aas["clinical_context"].get("aas_exposure_status_disclosed") is True
+    assert ctx_aas["clinical_context"].get("aas_exposure") is True
+
+
+def test_disclosed_hormone_therapy_passes_when_answer_is_no():
+    requirements = {
+        "missing_context_behaviour": "suppress_signal",
+        "required_context": [
+            {
+                "context_type": "medication",
+                "key": "hormone_therapy_status_disclosed",
+                "requirement": "disclosed",
+            },
+        ],
+    }
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"long_term_medications": []},
+    )
+    result = evaluate_runtime_context_requirements(
+        requirements,
+        runtime_context=ctx,
+        signal_biomarkers={},
+        signal_derived={},
+        lab_ranges={},
+    )
+    assert result.satisfied
+
+
+def test_disclosed_aas_exposure_passes_when_answer_is_no():
+    requirements = {
+        "missing_context_behaviour": "suppress_signal",
+        "required_context": [
+            {
+                "context_type": "clinical_context",
+                "key": "aas_exposure_status_disclosed",
+                "requirement": "disclosed",
+            },
+        ],
+    }
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"supplements": []},
+    )
+    result = evaluate_runtime_context_requirements(
+        requirements,
+        runtime_context=ctx,
+        signal_biomarkers={},
+        signal_derived={},
+        lab_ranges={},
+    )
+    assert result.satisfied
+
+
+def test_disclosed_requirement_fails_when_question_not_answered():
+    requirements = {
+        "missing_context_behaviour": "suppress_signal",
+        "required_context": [
+            {
+                "context_type": "medication",
+                "key": "hormone_therapy_status_disclosed",
+                "requirement": "disclosed",
+            },
+        ],
+    }
+    result = evaluate_runtime_context_requirements(
+        requirements,
+        runtime_context=build_runtime_context_snapshot(),
+        signal_biomarkers={},
+        signal_derived={},
+        lab_ranges={},
+    )
+    assert not result.satisfied
+
+
+def test_ft3_low_cannot_activate_now_while_enable_lower_bound_false():
+    signal = _load_package_signal(
+        "pkg_kb47_free_t3_low_low_t3_syndrome",
+        "signal_free_t3_low",
+    )
+    assert signal.get("activation_config", {}).get("enable_lower_bound") is False
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "female",
+            "date_of_birth": "1980-01-01",
+            "chronic_conditions": ["None"],
+        },
     )
     results = _evaluate_signal(
         signal,

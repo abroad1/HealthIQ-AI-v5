@@ -161,6 +161,25 @@ def _value_present(value: Any) -> bool:
     return True
 
 
+def _field_answered(mapping: Mapping[str, Any], key: str) -> bool:
+    return key in mapping
+
+
+def _medications_question_answered(
+    responses: Mapping[str, Any],
+    history: Mapping[str, Any],
+) -> bool:
+    if _field_answered(responses, "long_term_medications"):
+        return True
+    if _field_answered(responses, "current_medications"):
+        return True
+    if _field_answered(history, "medications"):
+        return True
+    if _field_answered(history, "long_term_medication_classes"):
+        return True
+    return False
+
+
 def build_runtime_context_snapshot(
     *,
     questionnaire_responses: Optional[Mapping[str, Any]] = None,
@@ -212,6 +231,12 @@ def build_runtime_context_snapshot(
     if "supplements" in responses and _value_present(responses.get("supplements")):
         snapshot["supplement"]["supplements_disclosed"] = True
 
+    if _medications_question_answered(responses, history):
+        snapshot["medication"]["long_term_medications_disclosed"] = True
+        snapshot["medication"]["hormone_therapy_status_disclosed"] = True
+        snapshot["medication"]["steroid_use_disclosed"] = True
+        snapshot["medication"]["thyroid_medication_disclosed"] = True
+
     meds = responses.get("long_term_medications") or history.get("medications")
     if _value_present(meds):
         snapshot["medication"]["long_term_medications"] = meds
@@ -235,6 +260,12 @@ def build_runtime_context_snapshot(
 
     if _value_present(responses.get("chronic_conditions")):
         snapshot["clinical_context"]["illness_or_recovery_status"] = True
+
+    if _field_answered(responses, "chronic_conditions") or _field_answered(responses, "recent_infections"):
+        snapshot["clinical_context"]["illness_or_recovery_status_disclosed"] = True
+
+    if _field_answered(responses, "supplements"):
+        snapshot["clinical_context"]["aas_exposure_status_disclosed"] = True
 
     supplements = responses.get("supplements")
     if isinstance(supplements, list):
@@ -307,6 +338,11 @@ def evaluate_runtime_context_requirements(
         bucket = _context_bucket(ctx, context_type)
         if requirement == "present":
             if not _value_present(bucket.get(key)):
+                missing.append(_requirement_label(item))
+            continue
+
+        if requirement == "disclosed":
+            if bucket.get(key) is not True:
                 missing.append(_requirement_label(item))
             continue
 

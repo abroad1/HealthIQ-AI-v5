@@ -64,11 +64,11 @@ signals:
       key: testosterone
       requirement: present
     - context_type: medication
-      key: hormone_therapy
-      requirement: present
+      key: hormone_therapy_status_disclosed
+      requirement: disclosed
     - context_type: clinical_context
-      key: aas_exposure
-      requirement: present
+      key: aas_exposure_status_disclosed
+      requirement: disclosed
   override_rules:
   - rule_id: or_fai_high_with_testosterone_high
     resulting_state: at_risk

@@ -63,11 +63,11 @@ signals:
       key: symptoms_present
       requirement: present
     - context_type: medication
-      key: long_term_medications
-      requirement: present
+      key: long_term_medications_disclosed
+      requirement: disclosed
     - context_type: medication
-      key: hormone_therapy
-      requirement: present
+      key: hormone_therapy_status_disclosed
+      requirement: disclosed
   override_rules:
   - rule_id: or_free_testosterone_high_with_total_testosterone_high
     resulting_state: at_risk

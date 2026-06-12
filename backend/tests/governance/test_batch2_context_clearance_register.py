@@ -63,10 +63,12 @@ def test_androgen_packages_blocked_pending_clinical_signoff():
         assert row["clinical_signoff_status"] == "not_in_repo"
 
 
-def test_ft3_low_blocked_pending_context_semantics():
+def test_ft3_low_deferred_after_disclosed_semantics_implementation():
     reg = _load(REGISTER_PATH)
     ft3 = next(r for r in reg["packages"] if r["package_id"] == "pkg_kb47_free_t3_low_low_t3_syndrome")
-    assert ft3["clearance_decision"] == "BLOCKED_PENDING_CONTEXT_SEMANTICS"
+    assert ft3["clearance_decision"] == "DEFERRED_NON_LAUNCH_CRITICAL"
+    assert ft3.get("metadata_remediation_status") == "disclosed_semantics_aligned"
+    assert "enable_lower_bound_false" in (ft3.get("activation_layer_blockers") or [])
 
 
 def test_frame_index_confirms_inactive_runtime_authority():

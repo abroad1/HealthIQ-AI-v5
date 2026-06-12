@@ -55,8 +55,8 @@ signals:
       key: age
       requirement: present
     - context_type: medication
-      key: long_term_medications
-      requirement: present
+      key: long_term_medications_disclosed
+      requirement: disclosed
     - context_type: clinical_context
       key: stress_context
       requirement: present
@@ -64,8 +64,8 @@ signals:
       key: symptoms_present
       requirement: present
     - context_type: medication
-      key: steroid
-      requirement: present
+      key: steroid_use_disclosed
+      requirement: disclosed
   override_rules:
   - rule_id: or_dhea_low_with_cortisol_low
     resulting_state: at_risk

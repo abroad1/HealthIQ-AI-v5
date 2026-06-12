@@ -1,10 +1,9 @@
 {
-  "branch": "work/CONTEXT-CLEARANCE-1-context-semantics-and-batch2-clearance",
+  "branch": "work/BATCH2-CONTEXT-COMPLETION-1-runtime-semantics-and-stop-gated-activation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-12T09:13:26Z",
-  "cursor_started_utc": "2026-06-12T09:08:49Z",
-  "head_sha": "86e2eb3b412c024b6822dae4457a831eab5519d2",
+  "cursor_started_utc": "2026-06-12T09:59:41Z",
+  "head_sha": "96d4925289f192a16027f121b43880f81f340692",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation"
 }

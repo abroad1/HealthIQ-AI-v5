@@ -59,8 +59,8 @@ signals:
       key: free_t4
       requirement: present
     - context_type: clinical_context
-      key: illness_or_recovery_status
-      requirement: present
+      key: illness_or_recovery_status_disclosed
+      requirement: disclosed
   override_rules:
   - rule_id: or_free_t3_low_with_free_t4_low
     resulting_state: at_risk

@@ -1,7 +1,9 @@
 schema_version: 1.0.0
 runtime_consumed: false
-status: clearance_analysis_complete_no_activation
+status: disclosed_runtime_semantics_implemented_no_activation
 work_id: CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance
+remediation_work_id: BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation
+remediation_utc: '2026-06-12'
 source_semantics_model: knowledge_bus/governance/runtime_context_semantics_model_v1.yaml
 source_medical_review: knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml
 source_context_binding: knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
@@ -11,10 +13,10 @@ activated_package_count: 0
 activation_eligibility_summary:
   eligible_for_stop_gated_activation: 0
   blocked_pending_clinical_signoff: 8
-  blocked_pending_context_semantics: 9
+  blocked_pending_context_semantics: 0
   deferred_non_launch_critical: 0
   rejected_do_not_activate: 0
-recommended_next_sprint: BATCH2-CONTEXT-ACTIVATION-1_stop_gated_context_package_activation
+recommended_next_sprint: androgen_clinical_signoff_before_stop_gated_activation
 packages:
 - package_id: pkg_kb47_dhea_high_androgen_excess_context
   package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
@@ -35,13 +37,12 @@ packages:
   optional_modifiers:
   - symptom.symptoms_present
   companion_biomarker_requirements: []
-  metadata_misclassifications:
-  - medication.hormone_therapy uses present not disclosed
-  - clinical_context.aas_exposure uses present not disclosed
+  metadata_misclassifications: []
+  metadata_remediation_status: disclosed_semantics_aligned
   clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
   activation_eligibility: false
-  reason: No androgen clinical sign-off artefact (CF-BATCH2-010). Package metadata still
-    uses positive-presence semantics for hormone/AAS fields pending BATCH2-CONTEXT-ACTIVATION-1.
+  reason: No androgen clinical sign-off artefact (CF-BATCH2-010). Disclosed semantics
+    remediated in BATCH2-CONTEXT-COMPLETION-1.
 - package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
   package_path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
   group: androgen
@@ -60,11 +61,11 @@ packages:
   - symptom.symptoms_present
   - clinical_context.stress_context
   companion_biomarker_requirements: []
-  metadata_misclassifications:
-  - medication.steroid uses present not disclosed
+  metadata_misclassifications: []
+  metadata_remediation_status: disclosed_semantics_aligned
   clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
   activation_eligibility: false
-  reason: Clinical sign-off required; steroid gate misclassified as positive presence.
+  reason: Clinical sign-off required (CF-BATCH2-010). Disclosed semantics remediated.
 - package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
   package_path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
   group: androgen
@@ -84,12 +85,11 @@ packages:
   companion_biomarker_requirements:
   - biomarker.shbg
   - biomarker.testosterone
-  metadata_misclassifications:
-  - medication.hormone_therapy uses present not disclosed
-  - clinical_context.aas_exposure uses present not disclosed
+  metadata_misclassifications: []
+  metadata_remediation_status: disclosed_semantics_aligned
   clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
   activation_eligibility: false
-  reason: Clinical sign-off + companion biomarkers + disclosed semantics remediation required.
+  reason: Clinical sign-off required (CF-BATCH2-010). Disclosed semantics remediated.
 - package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
   package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
   group: androgen
@@ -132,8 +132,8 @@ packages:
   optional_modifiers:
   - symptom.symptoms_present
   companion_biomarker_requirements: []
-  metadata_misclassifications:
-  - medication.hormone_therapy uses present not disclosed
+  metadata_misclassifications: []
+  metadata_remediation_status: disclosed_semantics_aligned
   clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF
   activation_eligibility: false
   reason: MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT per medical review; sign-off absent.
@@ -220,17 +220,19 @@ packages:
   companion_biomarker_requirements:
   - biomarker.tsh
   - biomarker.free_t4
-  metadata_misclassifications:
-  - clinical_context.illness_or_recovery_status uses present not disclosed
-  clearance_decision: BLOCKED_PENDING_CONTEXT_SEMANTICS
+  metadata_misclassifications: []
+  metadata_remediation_status: disclosed_semantics_aligned
+  activation_layer_blockers:
+  - enable_lower_bound_false
+  clearance_decision: DEFERRED_NON_LAUNCH_CRITICAL
   activation_eligibility: false
-  reason: enable_lower_bound false; illness/medication requires disclosed semantics not
-    positive presence; evaluator disclosed mode not yet implemented. Not launch-critical
-    relative to active thyroid subset.
+  reason: Disclosed illness context semantics implemented; enable_lower_bound remains false;
+    thyroid_medication_disclosed not yet in package metadata. Not launch-critical relative
+    to active thyroid subset.
 deferred_non_launch_critical:
 - package_id: pkg_kb47_free_t3_low_low_t3_syndrome
   reason: Active thyroid trio (FT3 high, FT4 high/low) already runtime-active with TSH
     gates; FT3 low deferred until disclosed illness/medication semantics proven safe.
-rollback_path: Revert runtime_context_semantics_model_v1.yaml, batch2_context_clearance_register_v1.yaml,
-  audit paper, tests, and carry-forward register updates. No runtime or package changes in
-  this sprint.
+rollback_path: Revert runtime_context_evaluator.py disclosed branch and snapshot disclosure keys;
+  revert remediated signal_library.yaml runtime_context_requirements; revert batch2_context_clearance_register_v1.yaml,
+  context_runtime_execution_register_v1.yaml, audit papers, tests, and carry-forward register updates.
