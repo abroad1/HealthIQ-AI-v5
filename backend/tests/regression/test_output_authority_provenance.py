@@ -21,6 +21,72 @@ from core.knowledge.signal_activation_identity_v1 import resolve_activation_iden
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
+ANDROGEN_LAB_RANGES = {
+    "fai": {"min": 20.0, "max": 70.0},
+    "testosterone": {"min": 8.0, "max": 30.0},
+    "shbg": {"min": 15.0, "max": 50.0},
+    "free_testosterone": {"min": 5.0, "max": 25.0},
+}
+
+
+def _female_androgen_context(*, hormone_therapy: bool = False, pregnant: bool = False):
+    return build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "female",
+            "date_of_birth": "1990-01-01",
+            "long_term_medications": ["Testosterone replacement"] if hormone_therapy else [],
+            "supplements": [],
+            "symptoms": ["acne"],
+            "pregnancy_status": pregnant,
+        }
+    )
+
+
+def _adult_male_low_context(*, hormone_therapy: bool = False):
+    return build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "male",
+            "date_of_birth": "1985-01-01",
+            "long_term_medications": ["Testosterone replacement"] if hormone_therapy else [],
+            "supplements": [],
+            "symptoms": ["fatigue"],
+            "chronic_conditions": [],
+        },
+        lifestyle_factors={"calorie_restriction": False, "fasting": False},
+    )
+
+
+def _compile_androgen_report(signal_id: str, package_dir: str, biomarkers: dict, *, runtime_context, lab_ranges=None):
+    signal = _load_package_signal(package_dir, signal_id)
+    signal_results = _evaluate(
+        signal,
+        biomarkers,
+        runtime_context=runtime_context,
+        lab_ranges=lab_ranges or ANDROGEN_LAB_RANGES,
+    )
+    return compile_report_v1(
+        signal_results=[row for row in signal_results],
+        interaction_summary=[],
+        interventions_v1=[],
+        signal_registry_version="test",
+        signal_registry_hash_sha256="abc",
+        biomarker_context={k: {"value": v} for k, v in biomarkers.items()},
+        input_reference_ranges=lab_ranges or ANDROGEN_LAB_RANGES,
+    ), signal_results
+
+
+def _signal_card_for(report, signal_id: str):
+    prov = report.output_authority_provenance_v1
+    assert prov is not None
+    return next(
+        (
+            e
+            for e in prov.governed_elements
+            if e.output_element_type == "signal_card" and signal_id in (e.source_signal_ids or [])
+        ),
+        None,
+    )
+
 
 class _SingleSignalRegistry:
     def __init__(self, signal: dict) -> None:
@@ -152,6 +218,83 @@ def test_dhea_high_inactive_produces_no_signal_card():
     prov = report.output_authority_provenance_v1
     assert prov is not None
     assert not [e for e in prov.governed_elements if e.output_element_type == "signal_card"]
+
+
+_ANDROGEN_BIOMARKERS = {"fai": 90.0, "testosterone": 40.0, "shbg": 20.0}
+_FT_HIGH_BIOMARKERS = {"free_testosterone": 30.0, "testosterone": 40.0, "shbg": 20.0}
+_FT_LOW_BIOMARKERS = {"free_testosterone": 3.0, "testosterone": 5.0, "shbg": 40.0}
+
+
+def test_fai_high_active_produces_governed_signal_card_provenance():
+    report, signal_results = _compile_androgen_report(
+        "signal_fai_high",
+        "pkg_kb47_fai_high_biochemical_hyperandrogenism",
+        _ANDROGEN_BIOMARKERS,
+        runtime_context=_female_androgen_context(),
+    )
+    assert signal_results
+    card = _signal_card_for(report, "signal_fai_high")
+    assert card is not None
+    assert card.authority_status == "CARD_GOVERNED_ACTIVE"
+
+
+def test_fai_high_suppressed_produces_no_governed_signal_card():
+    report, signal_results = _compile_androgen_report(
+        "signal_fai_high",
+        "pkg_kb47_fai_high_biochemical_hyperandrogenism",
+        _ANDROGEN_BIOMARKERS,
+        runtime_context=_female_androgen_context(hormone_therapy=True),
+    )
+    assert signal_results == []
+    assert _signal_card_for(report, "signal_fai_high") is None
+
+
+def test_free_testosterone_high_active_produces_governed_signal_card_provenance():
+    report, signal_results = _compile_androgen_report(
+        "signal_free_testosterone_high",
+        "pkg_kb47_free_testosterone_high_androgen_excess_context",
+        _FT_HIGH_BIOMARKERS,
+        runtime_context=_female_androgen_context(),
+    )
+    assert signal_results
+    card = _signal_card_for(report, "signal_free_testosterone_high")
+    assert card is not None
+    assert card.authority_status == "CARD_GOVERNED_ACTIVE"
+
+
+def test_free_testosterone_high_suppressed_produces_no_governed_signal_card():
+    report, signal_results = _compile_androgen_report(
+        "signal_free_testosterone_high",
+        "pkg_kb47_free_testosterone_high_androgen_excess_context",
+        _FT_HIGH_BIOMARKERS,
+        runtime_context=_female_androgen_context(pregnant=True),
+    )
+    assert signal_results == []
+    assert _signal_card_for(report, "signal_free_testosterone_high") is None
+
+
+def test_free_testosterone_low_active_produces_governed_signal_card_provenance():
+    report, signal_results = _compile_androgen_report(
+        "signal_free_testosterone_low",
+        "pkg_kb47_free_testosterone_low_androgen_deficiency_context",
+        _FT_LOW_BIOMARKERS,
+        runtime_context=_adult_male_low_context(),
+    )
+    assert signal_results
+    card = _signal_card_for(report, "signal_free_testosterone_low")
+    assert card is not None
+    assert card.authority_status == "CARD_GOVERNED_ACTIVE"
+
+
+def test_free_testosterone_low_suppressed_produces_no_governed_signal_card():
+    report, signal_results = _compile_androgen_report(
+        "signal_free_testosterone_low",
+        "pkg_kb47_free_testosterone_low_androgen_deficiency_context",
+        _FT_LOW_BIOMARKERS,
+        runtime_context=_adult_male_low_context(hormone_therapy=True),
+    )
+    assert signal_results == []
+    assert _signal_card_for(report, "signal_free_testosterone_low") is None
 
 
 def test_runtime_does_not_read_raw_pass3_json():

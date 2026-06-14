@@ -64,6 +64,11 @@ def main() -> int:
             None,
         ),
         (
+            "validate_day_one_launch_estate_gate",
+            [py, str(scripts / "validate_day_one_launch_estate_gate.py")],
+            None,
+        ),
+        (
             "validate_medical_intelligence_architecture",
             [py, str(scripts / "validate_medical_intelligence_architecture.py")],
             None,

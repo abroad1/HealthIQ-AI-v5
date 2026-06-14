@@ -1,0 +1,67 @@
+schema_version: 1.0.0
+runtime_consumed: true
+status: active
+work_id: ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate
+artefact_path: knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml
+analysis_utc: '2026-06-14'
+gate_name: day_one_launch_estate_gate
+gate_version: '1.0.0'
+launch_scope: HealthIQ AI Wave 1 day-one analytical runtime estate
+traceability_manifest: knowledge_bus/governance/day_one_full_traceability_manifest_v1.yaml
+required_architecture_conditions:
+- AnalysisContext precedes signal evaluation (ARCH-COMPLETION-1)
+- Runtime context derived from governed post-context objects
+- Orchestrator phase order matches orchestrator_phases_v1.yaml
+required_runtime_authority_conditions:
+- Signal packages loaded via SignalRegistry with activation gates
+- signal_authority_collision_model_v1.yaml enforced post-evaluation
+- No raw Pass 3 JSON reads at runtime in backend/core
+- No investigation-spec runtime reads in backend/core
+required_output_authority_conditions:
+- compiled_output_authority_model_v1.yaml present
+- root_cause_authority_register_v1.yaml present
+- card_authority_register_v1.yaml present
+- ReportV1.output_authority_provenance_v1 additive field present
+- why_engine_fallback_v1 quarantined from clinician output
+- narrative_report_compiler_v1.py classified GOVERNED_COMPILED_ASSET
+required_context_safety_conditions:
+- runtime_context_evaluator fail-closed
+- Batch 2 activated signals use disclosure_state gates
+- Suppressed context-dependent signals emit no analytical conclusions
+required_signal_activation_conditions:
+- BATCH2-FULL-COVERAGE-ACTIVATION-1 four packages runtime_active_canonical
+- Five Batch 2 packages remain inactive per execution register
+required_inactive_quarantined_path_conditions:
+- DHEA packages inactive pending identity remediation
+- Layer C / Layer 3 card paths quarantined
+- why_engine_fallback_v1 blocked from governed consumer root-cause
+required_frontend_render_only_conditions:
+- frontend consumes DTO only; no package or Pass 3 reads
+required_security_repo_hygiene_conditions:
+- check_no_secret_files.py passes
+- No git-tracked secret env files
+allowed_carry_forwards:
+- CF-ARCHLEG1-001 root-cause YAML to compiled migration (non-blocking)
+- CF-ARCH-COMPLETION-2-RC-1 Batch 2 root-cause mapping (non-blocking)
+- DHEA/DHEA-S identity remediation while packages inactive (non-blocking)
+- Optional future provenance regression expansion (non-blocking)
+- UX/frontend polish (non-blocking)
+disallowed_carry_forwards:
+- UNKNOWN_BLOCKER manifest entries
+- BLOCKED_UNGOVERNED user-facing runtime paths
+- Raw Pass 3 runtime consumption
+- Investigation-spec runtime consumption
+- Frontend medical inference requirement
+- Active signal without package authority
+- Ungoverned root-cause fallback in consumer output
+final_verdict: DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD
+final_verdict_rationale: >
+  All user-facing analytical runtime paths are governed or quarantined. No UNKNOWN_BLOCKER
+  or BLOCKED_UNGOVERNED user-facing paths remain. Raw Pass 3 and investigation-spec runtime
+  reads absent. Residual non-blocking carry-forwards: root-cause YAML migration (CF-ARCHLEG1-001),
+  Batch 2 root-cause mapping (CF-ARCH-COMPLETION-2-RC-1), DHEA identity remediation.
+allowed_final_verdicts:
+- DAY_ONE_ARCHITECTURE_COMPLETE
+- DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD
+- DAY_ONE_ARCHITECTURE_NOT_COMPLETE
+rollback_path: Revert manifest, gate, validator; restore prior architecture closure status.

@@ -1,0 +1,227 @@
+schema_version: 1.0.0
+runtime_consumed: true
+status: active
+work_id: ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate
+artefact_path: knowledge_bus/governance/day_one_full_traceability_manifest_v1.yaml
+analysis_utc: '2026-06-14'
+purpose: Single authoritative map of day-one runtime analytical authority and traceability.
+references:
+  compiled_output_authority: knowledge_bus/governance/compiled_output_authority_model_v1.yaml
+  root_cause_authority: knowledge_bus/governance/root_cause_authority_register_v1.yaml
+  card_authority: knowledge_bus/governance/card_authority_register_v1.yaml
+  batch2_activation: knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml
+  frame_index: knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+forbidden_runtime_inputs:
+- Batch_2_Pass_3.json
+- knowledge_bus/research/investigation_specs
+- multi_llm_research
+pipeline_phases:
+- analysis_context
+- signal_evaluation
+- scoring
+- insight_graph
+- state_engine_stack
+- insight_synthesis
+- dto_assembly
+- report_narrative_idl
+entries:
+- id: orchestrator_run
+  path: backend/core/pipeline/orchestrator.py
+  role: AnalysisOrchestrator.run pipeline hub
+  authority_classification: GOVERNED_RUNTIME_AUTHORITY
+  runtime_consumed: true
+  user_facing: true
+  source_authority: orchestrator_phases_v1.yaml phase order
+  allowed_runtime_inputs: [AnalysisContext, signal_results, insight_graph]
+  forbidden_runtime_inputs: [raw Pass 3, investigation_specs]
+  provenance_required: true
+  governed_by: ADR-RT-001, ARCH-COMPLETION-1
+  launch_gate_status: PASS
+  evidence: AnalysisContext precedes signal evaluation
+- id: runtime_context_evaluator
+  path: backend/core/analytics/runtime_context_evaluator.py
+  role: Fail-closed runtime context snapshot builder
+  authority_classification: GOVERNED_RUNTIME_AUTHORITY
+  runtime_consumed: true
+  user_facing: false
+  source_authority: reusable_runtime_context_primitive_model_v1.yaml
+  allowed_runtime_inputs: [questionnaire_responses, lifestyle_factors, medical_history]
+  forbidden_runtime_inputs: [raw Pass 3]
+  provenance_required: false
+  governed_by: BATCH2-FULL-COVERAGE-BUILD-1
+  launch_gate_status: PASS
+  evidence: disclosure_state primitives implemented
+- id: signal_evaluator
+  path: backend/core/analytics/signal_evaluator.py
+  role: Activated signal evaluation with context gates
+  authority_classification: GOVERNED_RUNTIME_AUTHORITY
+  runtime_consumed: true
+  user_facing: true
+  source_authority: knowledge_bus/packages/*/signal_library.yaml
+  allowed_runtime_inputs: [SignalRegistry, runtime_context, lab_ranges]
+  forbidden_runtime_inputs: [raw Pass 3, investigation_specs]
+  provenance_required: true
+  governed_by: signal_authority_collision_model_v1.yaml
+  launch_gate_status: PASS
+  evidence: Package metadata activation gates enforced
+- id: report_compiler_v1
+  path: backend/core/analytics/report_compiler_v1.py
+  role: ReportV1 and clinician report compilation
+  authority_classification: GOVERNED_RUNTIME_AUTHORITY
+  runtime_consumed: true
+  user_facing: true
+  source_authority: compiled_output_authority_model_v1.yaml
+  allowed_runtime_inputs: [signal_results, root_cause_v1, intervention_annotations]
+  forbidden_runtime_inputs: [raw Pass 3]
+  provenance_required: true
+  governed_by: ARCH-COMPLETION-2
+  launch_gate_status: PASS
+  evidence: output_authority_provenance_v1 attached additively
+- id: output_authority_provenance_builder
+  path: backend/core/analytics/output_authority_provenance_builder_v1.py
+  role: Provenance bundle builder for ReportV1
+  authority_classification: GOVERNED_MAPPING_AUTHORITY
+  runtime_consumed: true
+  user_facing: false
+  source_authority: compiled_output_authority_model_v1.yaml
+  allowed_runtime_inputs: [signal_results, ReportV1, RootCauseV1]
+  forbidden_runtime_inputs: [raw Pass 3]
+  provenance_required: true
+  governed_by: ARCH-COMPLETION-2
+  launch_gate_status: PASS
+  evidence: governed vs quarantined element classification
+- id: root_cause_compiler_v1
+  path: backend/core/analytics/root_cause_compiler_v1.py
+  role: Root-cause hypothesis compilation
+  authority_classification: GOVERNED_MAPPING_AUTHORITY
+  runtime_consumed: true
+  user_facing: true
+  source_authority: root_cause_authority_register_v1.yaml
+  allowed_runtime_inputs: [root_cause/hypotheses/*_v1.yaml, compiled/hypotheses/]
+  forbidden_runtime_inputs: [raw Pass 3, why_engine_fallback consumer output]
+  provenance_required: true
+  governed_by: LC-S18 registry + ARCH-COMPLETION-2 quarantine
+  launch_gate_status: PASS
+  evidence: why_engine_fallback_v1 quarantined from clinician path
+- id: narrative_report_compiler_v1
+  path: backend/core/analytics/narrative_report_compiler_v1.py
+  role: Deterministic retail narrative compiler (N-5..N-7)
+  authority_classification: GOVERNED_COMPILED_ASSET
+  runtime_consumed: true
+  user_facing: true
+  source_authority: knowledge_bus/interpretation_entities_v1, pathway_explainers_v1, functional_interpretation_v1
+  allowed_runtime_inputs:
+  - knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml
+  - knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml
+  - knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml
+  - NarrativePayloadV1, signal_results, insight_graph
+  forbidden_runtime_inputs: [raw Pass 3, investigation_specs]
+  provenance_required: true
+  governed_by: LAYER-B-1 narrative brief + compiled KB assets
+  launch_gate_status: PASS
+  evidence: Runtime reads governed compiled YAML assets only; no Pass 3 reads
+- id: domain_score_assembler
+  path: backend/core/analytics/domain_score_assembler.py
+  role: Wave 1 consumer domain cards
+  authority_classification: GOVERNED_COMPILED_ASSET
+  runtime_consumed: true
+  user_facing: true
+  source_authority: knowledge_bus/compiled/health_system_cards/
+  allowed_runtime_inputs: [compiled_card_evidence, scoring_rails, IDL]
+  forbidden_runtime_inputs: [raw Pass 3]
+  provenance_required: true
+  governed_by: card_authority_register_v1.yaml
+  launch_gate_status: PASS
+  evidence: health_system_card_evidence loader fail-closed
+- id: idl_publisher
+  path: backend/core/analytics/interpretation_display_layer_publish_v1.py
+  role: Section 5 pattern cards
+  authority_classification: GOVERNED_COMPILED_ASSET
+  runtime_consumed: true
+  user_facing: true
+  source_authority: knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml
+  allowed_runtime_inputs: [idl_records, fired signal_results]
+  forbidden_runtime_inputs: [raw Pass 3]
+  provenance_required: true
+  governed_by: card_authority_register_v1.yaml
+  launch_gate_status: PASS
+  evidence: Static IDL YAML + signal gating
+- id: insight_graph_layer_c_features
+  path: backend/core/analytics/insight_graph_builder.py
+  role: Inline Layer C heuristic feature bundle
+  authority_classification: LEGACY_QUARANTINED
+  runtime_consumed: true
+  user_facing: false
+  source_authority: inline code heuristics
+  allowed_runtime_inputs: [biomarker thresholds in code]
+  forbidden_runtime_inputs: [raw Pass 3]
+  provenance_required: false
+  governed_by: card_authority_register_v1.yaml
+  launch_gate_status: QUARANTINED
+  evidence: Not primary production card authority; tooling/debug adjunct
+- id: layer3_insight_assembler
+  path: backend/core/layer3/insight_assembler_v1.py
+  role: Layer 3 insight cards (non-orchestrator path)
+  authority_classification: LEGACY_QUARANTINED
+  runtime_consumed: false
+  user_facing: false
+  source_authority: burden vector heuristics
+  allowed_runtime_inputs: [AnalysisDTO]
+  forbidden_runtime_inputs: [raw Pass 3]
+  provenance_required: false
+  governed_by: card_authority_register_v1.yaml
+  launch_gate_status: QUARANTINED
+  evidence: Not called from production orchestrator.run()
+- id: frontend_results_render
+  path: frontend/
+  role: Render-only consumer of AnalysisDTO
+  authority_classification: GOVERNED_RENDER_ONLY
+  runtime_consumed: false
+  user_facing: true
+  source_authority: backend DTO contracts
+  allowed_runtime_inputs: [build_analysis_result_dto output]
+  forbidden_runtime_inputs: [package reads, Pass 3, clinical inference]
+  provenance_required: false
+  governed_by: frontend_contract_v1.py, validate_day_one_architecture.py
+  launch_gate_status: PASS
+  evidence: LC-S19 render-only contract
+- id: batch2_ft3_low_active
+  path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
+  role: Activated Batch 2 FT3 low signal
+  authority_classification: GOVERNED_RUNTIME_AUTHORITY
+  runtime_consumed: true
+  user_facing: true
+  source_authority: batch2_full_coverage_activation_execution_register_v1.yaml
+  allowed_runtime_inputs: [runtime_context gates, lab_ranges]
+  forbidden_runtime_inputs: [raw Pass 3]
+  provenance_required: true
+  governed_by: BATCH2-FULL-COVERAGE-ACTIVATION-1
+  launch_gate_status: PASS
+  evidence: Provenance regression test coverage
+- id: batch2_fai_high_active
+  path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
+  role: Activated Batch 2 FAI high signal (female-only)
+  authority_classification: GOVERNED_RUNTIME_AUTHORITY
+  runtime_consumed: true
+  user_facing: true
+  source_authority: batch2_full_coverage_activation_execution_register_v1.yaml
+  allowed_runtime_inputs: [runtime_context gates, lab_ranges]
+  forbidden_runtime_inputs: [raw Pass 3]
+  provenance_required: true
+  governed_by: BATCH2-FULL-COVERAGE-ACTIVATION-1
+  launch_gate_status: PASS
+  evidence: Provenance regression test coverage ARCH-COMPLETION-3
+- id: batch2_dhea_inactive
+  path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
+  role: Inactive DHEA high pending identity remediation
+  authority_classification: INACTIVE_NOT_RUNTIME_CONSUMED
+  runtime_consumed: false
+  user_facing: false
+  source_authority: batch2_full_coverage_activation_execution_register_v1.yaml
+  allowed_runtime_inputs: []
+  forbidden_runtime_inputs: [signal emission without approval phrase]
+  provenance_required: false
+  governed_by: BATCH2-FULL-COVERAGE-ACTIVATION-1
+  launch_gate_status: PASS_WITH_CARRY_FORWARD
+  evidence: Fail-closed; no governed analytical output
+rollback_path: Revert manifest, gate, validator, and tests from ARCH-COMPLETION-3.
