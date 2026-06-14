@@ -1,51 +1,46 @@
 ---
-work_id: WAVE1-PUBLIC-LAUNCH-FIXES-1_pre_public_launch_blocker_remediation
-branch: work/WAVE1-PUBLIC-LAUNCH-FIXES-1-pre-public-launch-blocker-remediation
+work_id: ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure
+branch: work/ARCH-COMPLETION-1-final-runtime-context-and-orchestrator-restructure
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# WAVE1-PUBLIC-LAUNCH-FIXES-1 — Pre-Public Launch Blocker Remediation
+# ARCH-COMPLETION-1 — Final Runtime Context and Orchestrator Restructure
 
 ## Purpose
 
-Remediate the four conditional blockers identified by the Wave 1 product launch-readiness audit so HealthIQ AI can proceed safely toward public Wave 1 launch preparation.
+Complete the orchestrator phase-order correction required by `ARCH-ORCH-RESTRUCTURE-1`.
 
-This is one outcome-based remediation sprint.
+The current orchestrator still uses an interim bridge in which context-dependent signal evaluation receives runtime context derived directly from raw `questionnaire_data` before the fully assembled `AnalysisContext` exists.
 
-Do not split this into four micro-sprints unless a STOP condition proves that one blocker cannot be remediated safely within this work package.
+That bridge was acceptable only while all context-dependent packages remained inactive.
 
-The four launch-readiness blockers are:
-
-```text
-CB-1 — frontend PII console logging in AnalysisService.startAnalysis()
-CB-2 — unauthenticated /api/upload/parse endpoint
-CB-3 — urate unit conversion failure caused by Unicode mu mismatch
-CB-4 — unsafe dev billing override values in backend/env.example
-```
-
-The expected outcome is:
+This sprint must replace that bridge with the recommended target architecture:
 
 ```text
-All four public-launch blockers remediated, validated, and documented.
+normalise input
+→ assemble governed AnalysisContext
+→ derive runtime context from AnalysisContext
+→ run signal evaluation
+→ run downstream analytics / cards / narratives / DTO assembly
 ```
+
+The goal is not to rewrite the whole product.
+
+The goal is to fix the orchestrator phase order once properly, so the orchestrator becomes a clean pipeline coordinator rather than a source of hidden context behaviour.
 
 ---
 
-## Strategic context
+## Strategic rationale
 
-The Day-One Architecture Closure Review accepted the architecture with conditions.
+HealthIQ AI is not currently being released to beta users.
 
-The Wave 1 Launch Readiness Audit returned:
+The human owner has decided that the correct priority is to complete the backend intelligence foundation before frontend polish or beta preparation.
 
-```text
-LAUNCH_READY_WITH_CONDITIONS
-```
+This sprint therefore reclassifies `ARCH-ORCH-RESTRUCTURE-1` from an acceptable Wave 1 residual into pre-beta foundation work.
 
-No new architecture programme is required.
-
-This sprint must fix the specific public-launch blockers and preserve the existing governed runtime architecture.
+The sprint must establish the best recommended orchestrator architecture for the current product stage.
 
 ---
 
@@ -62,11 +57,11 @@ change_type: BEHAVIOUR
 Rationale:
 
 ```text
-- privacy / health data exposure is in scope
-- backend authentication is in scope
-- unit conversion affects real-world lab result handling
-- launch-readiness status depends on the outcome
-- frontend and backend runtime behaviour may change
+- backend/core/pipeline/orchestrator.py may be changed
+- backend/core/pipeline/orchestrator_phases_v1.py may be changed
+- runtime phase ordering may change
+- signal evaluation input source may change
+- context-dependent package safety depends on the result
 ```
 
 Required route:
@@ -87,7 +82,7 @@ Do not merge without explicit human approval.
 Work only on:
 
 ```text
-work/WAVE1-PUBLIC-LAUNCH-FIXES-1-pre-public-launch-blocker-remediation
+work/ARCH-COMPLETION-1-final-runtime-context-and-orchestrator-restructure
 ```
 
 Do not work on `main`.
@@ -101,23 +96,26 @@ Do not merge.
 This sprint must not:
 
 ```text
-- change clinical thresholds
-- change biomarker reference range policy
-- change scoring
-- change report compiler logic
-- change SSOT biomarker definitions
+- activate androgen packages
+- activate FT3 low
+- activate any inactive package
+- change package signal_library.yaml files
 - change signal IDs
 - change activation keys
-- activate any package
-- modify package signal_library.yaml files
-- alter androgen or FT3 low activation state
+- change clinical thresholds
+- change biomarker reference range policy
+- change SSOT biomarker definitions
+- change scoring
+- change report compiler logic
+- change frontend code
+- introduce frontend medical inference
 - introduce fallback or dummy parsers
 - introduce raw Pass 3 / investigation-spec runtime reads
-- introduce frontend medical inference
 - add LLM-based clinical reasoning
+- change clinical wording unless forced by existing tests and explicitly justified
 ```
 
-The sprint may touch frontend service code, backend route auth, unit registry normalisation, env example configuration, tests, and audit documentation only.
+The output of currently active signals must remain behaviourally stable unless a test proves the current behaviour is wrong and the change is explicitly documented.
 
 ---
 
@@ -126,8 +124,12 @@ The sprint may touch frontend service code, backend route auth, unit registry no
 Read before implementation:
 
 ```text
-docs/audit-papers/WAVE1-LAUNCH-READINESS-1_product_readiness_and_release_gate.md
 docs/audit-papers/DAY-ONE-ARCHITECTURE-CLOSURE-REVIEW.md
+docs/audit-papers/BETA-READINESS-RECHECK-1_post_launch_fixes_readiness_gate.md
+docs/audit-papers/CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer.md
+docs/audit-papers/CONTEXT-THREADING-1_runtime_context_orchestrator_threading.md
+docs/audit-papers/CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance.md
+docs/audit-papers/BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation.md
 docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 docs/sprints/launch_core_carry_forward_register.md
 ```
@@ -135,26 +137,19 @@ docs/sprints/launch_core_carry_forward_register.md
 Also inspect:
 
 ```text
-frontend/app/services/analysis.ts
-backend/app/routes/upload.py
-backend/app/routes/analysis.py
-backend/core/units/registry.py
-backend/env.example
-backend/.env.test
-frontend/.env.local.example
-sentinel/reports/sentinel_run_87c5a2cd.json
+backend/core/pipeline/orchestrator.py
+backend/core/pipeline/orchestrator_phases_v1.py
+backend/core/analytics/runtime_context_evaluator.py
+backend/core/analytics/signal_evaluator.py
+backend/core/context.py
+backend/core/models.py
+backend/core/data/validation.py
+knowledge_bus/governance/context_runtime_execution_register_v1.yaml
+knowledge_bus/governance/batch2_context_clearance_register_v1.yaml
+knowledge_bus/governance/runtime_context_requirements_model_v1.yaml
 ```
 
-Inspect relevant tests for:
-
-```text
-- upload / parse route auth
-- analysis route auth
-- unit conversion / unit registry
-- urate conversion
-- frontend analysis service
-- sentinel / launch-readiness regression tests
-```
+If any expected file is missing, report it and classify whether it blocks the sprint.
 
 ---
 
@@ -174,372 +169,259 @@ Confirm:
 ```text
 1. Current branch matches this work package branch.
 2. Working tree is clean.
-3. WAVE1-LAUNCH-READINESS-1 audit exists.
-4. The audit lists CB-1, CB-2, CB-3, and CB-4.
-5. BATCH2-CONTEXT-COMPLETION-1 is already merged.
-6. No androgen package is active.
-7. FT3 low is inactive.
+3. Repository secret-file gate failure is no longer present in tracked files.
+4. BETA-READINESS-RECHECK-1 exists and records beta readiness as not claimed.
+5. Context-dependent Batch 2 packages are currently inactive.
+6. FT3 low is currently inactive.
+7. All 8 androgen packages are currently inactive.
+8. No explicit activation approval exists.
 ```
 
-STOP if the baseline is not the post-launch-readiness audit baseline.
+STOP if baseline state is unclear.
 
 ---
 
-## Reality check
+## Current known architectural defect
 
-Before implementation, confirm each blocker still exists.
-
-### CB-1 reality check
-
-Inspect:
+The current architecture contains this known defect:
 
 ```text
-frontend/app/services/analysis.ts
+Signal evaluation receives runtime context before the fully assembled AnalysisContext exists.
 ```
 
-Confirm whether `AnalysisService.startAnalysis()` still logs:
+The current interim bridge:
 
 ```text
-- full request payload
-- user demographics
-- questionnaire data
-- biomarker values
-- JSON.stringify(data, null, 2)
+build_runtime_context_snapshot(questionnaire_responses=questionnaire_data)
 ```
 
-If the logging is already removed, record that and do not re-edit unnecessarily.
+or equivalent logic reads raw questionnaire payload before the governed `AnalysisContext` has been created.
 
-### CB-2 reality check
-
-Inspect:
+This was previously accepted only because:
 
 ```text
-backend/app/routes/upload.py
-backend/app/routes/analysis.py
+- context-dependent packages were inactive
+- no active package relied on those gates
+- the bridge was deterministic and fail-closed
 ```
 
-Confirm whether `/api/upload/parse` still lacks the authentication dependency used by `/api/analysis/start`.
-
-If already authenticated, record that and do not re-edit unnecessarily.
-
-### CB-3 reality check
-
-Inspect:
-
-```text
-backend/core/units/registry.py
-```
-
-Confirm whether the registry still treats these as distinct incompatible units:
-
-```text
-μmol/L  # U+03BC Greek small letter mu
-µmol/L  # U+00B5 micro sign
-```
-
-Reproduce or identify the failing sentinel / regression tests if possible.
-
-### CB-4 reality check
-
-Inspect:
-
-```text
-backend/env.example
-```
-
-Confirm whether it still contains unsafe launch-risk defaults:
-
-```text
-HEALTHIQ_DISABLE_BILLING_ENFORCEMENT=1
-HEALTHIQ_FREE_COMPLETED_ANALYSES=99
-```
-
-If already removed or neutralised, record that.
+It is not the final target architecture.
 
 ---
 
-## Scope
+## Target architecture
 
-This sprint may remediate only:
+After this sprint, the orchestrator should follow this high-level phase order:
 
 ```text
-CB-1 — remove frontend PII console logging
-CB-2 — add auth to /api/upload/parse
-CB-3 — normalise Unicode mu variants in unit registry
-CB-4 — remove / neutralise dev billing override values in env.example
+1. Receive raw request / input DTO
+2. Validate and normalise biomarkers
+3. Prepare demographic and questionnaire inputs
+4. Create governed AnalysisContext
+5. Build RuntimeContextSnapshot from AnalysisContext or equivalent governed context object
+6. Run SignalEvaluator.evaluate_all(..., runtime_context=runtime_context)
+7. Run downstream analytics, scoring, card evidence, root-cause, narrative and DTO assembly
 ```
 
-It may also add or update tests directly proving those fixes.
+The orchestrator should coordinate phases.
 
-It may add a sprint audit paper and, if useful, a launch-fixes evidence register.
+It should not perform medical reasoning itself.
+
+It should not inspect raw research.
+
+It should not become a parallel intelligence authority.
 
 ---
 
-# Phase 1 — CB-1: Remove frontend PII console logging
+## Required design principle
 
-## Required remediation
+The runtime context used by signal evaluation must be derived from governed assembled context, not raw questionnaire payload.
 
-In:
-
-```text
-frontend/app/services/analysis.ts
-```
-
-Remove production console logging from:
+Preferred implementation:
 
 ```text
-AnalysisService.startAnalysis()
+AnalysisContext
+→ RuntimeContextSnapshot
+→ SignalEvaluator.evaluate_all(runtime_context=...)
 ```
 
-Specifically remove or guard any logging of:
+Acceptable implementation:
 
 ```text
-- full analysis payload
-- user demographics
-- questionnaire data
-- biomarker values
-- request body JSON
-- JSON.stringify(data, null, 2)
-- console.group trace blocks containing health data
+a clearly named governed context object produced after AnalysisContext assembly
+→ RuntimeContextSnapshot
+→ SignalEvaluator.evaluate_all(runtime_context=...)
 ```
 
-Preferred fix:
+Unacceptable implementation:
 
 ```text
-Remove the logs entirely.
+raw questionnaire_data
+→ RuntimeContextSnapshot
+→ SignalEvaluator before AnalysisContext
 ```
-
-Do not replace them with another logging pathway.
-
-Do not introduce a debug flag that could accidentally expose health data in production.
-
-## Allowed remaining logs
-
-Only non-sensitive operational logs may remain if already present and necessary, for example:
-
-```text
-- request started
-- request completed
-- status code
-```
-
-But do not log payload contents, biomarker values, user data, questionnaire answers, or full JSON bodies.
-
-## Required tests / checks
-
-Add or update frontend tests if a suitable test pattern exists.
-
-At minimum, perform a grep check proving no live frontend service logs sensitive analysis payloads:
-
-```text
-frontend/app/services/analysis.ts
-```
-
-Search for:
-
-```text
-console.log
-console.group
-console.groupEnd
-JSON.stringify(data
-Full Payload
-Request body
-User data
-```
-
-If logs remain, explain why they are safe.
 
 ---
 
-# Phase 2 — CB-2: Authenticate /api/upload/parse
+## In scope
 
-## Required remediation
-
-In:
+This sprint may modify:
 
 ```text
-backend/app/routes/upload.py
+backend/core/pipeline/orchestrator.py
+backend/core/pipeline/orchestrator_phases_v1.py
+backend/core/analytics/runtime_context_evaluator.py
+backend/tests/regression/test_context_threading.py
+backend/tests/regression/test_runtime_context_evaluation.py
+backend/tests/architecture/*
+docs/audit-papers/*
+docs/sprints/launch_core_carry_forward_register.md
 ```
 
-Add the same authentication dependency / bearer-token pattern used by:
+Only modify `runtime_context_evaluator.py` if needed to create a clean `AnalysisContext` → `RuntimeContextSnapshot` adapter.
 
-```text
-backend/app/routes/analysis.py
-/api/analysis/start
-```
-
-Do not invent a new authentication pattern.
-
-Do not create a parallel auth mechanism.
-
-Do not weaken analysis route authentication.
-
-The goal is:
-
-```text
-/api/upload/parse must require an authenticated user before accepting file or text parsing requests.
-```
-
-## Required behaviour
-
-Unauthenticated requests to `/api/upload/parse` must fail safely.
-
-Authenticated requests must continue to work.
-
-The route must still support the existing accepted inputs:
-
-```text
-- UploadFile
-- text_content
-```
-
-Do not alter parsing semantics except for authentication gating.
-
-## Required tests
-
-Add or update backend route tests proving:
-
-```text
-1. unauthenticated /api/upload/parse request is rejected
-2. authenticated /api/upload/parse request reaches the existing parse flow
-3. /api/analysis/start auth behaviour is unchanged
-```
-
-If test infrastructure for route auth is not available, create the narrowest safe regression test or document the blocker and STOP before committing.
+Only modify `signal_evaluator.py` if absolutely necessary, and explain why the existing `runtime_context` parameter is insufficient.
 
 ---
 
-# Phase 3 — CB-3: Fix Unicode mu unit conversion defect
+## Out of scope
 
-## Required remediation
-
-In:
+Do not modify:
 
 ```text
-backend/core/units/registry.py
+knowledge_bus/packages/**
+backend/ssot/**
+backend/core/reporting/**
+backend/core/scoring/**
+frontend/**
 ```
 
-Normalise visually equivalent micro unit characters before unit matching / conversion.
+Do not modify package activation registers except to confirm that inactive packages remain inactive.
 
-The defect:
+Do not change package metadata.
+
+Do not change clinical content.
+
+Do not change thresholds.
+
+Do not change report output wording unless unavoidable and explicitly justified.
+
+---
+
+# Phase 1 — Read-only design audit
+
+Before changing code, produce a short implementation design note in the sprint audit paper or Cursor status.
+
+Answer:
 
 ```text
-μmol/L  # U+03BC Greek small letter mu
-µmol/L  # U+00B5 micro sign
+1. Where is AnalysisContext currently created?
+2. Where is signal evaluation currently invoked?
+3. Where is runtime context currently built?
+4. Which exact line/order causes the current inversion?
+5. What is the minimal safe phase reordering?
+6. Can SignalEvaluator already receive runtime_context without interface changes?
+7. Can RuntimeContextSnapshot be built from AnalysisContext without weakening semantics?
+8. Which tests currently protect context threading?
+9. Which active outputs must remain unchanged?
 ```
 
-must not cause a `UnitConversionError` when they represent the same clinical unit.
+STOP if the required change requires a broad orchestrator rewrite rather than a phase-order correction.
 
-Required behaviour:
+---
+
+# Phase 2 — Implement final context phase ordering
+
+Restructure the orchestrator so that:
 
 ```text
-μmol/L and µmol/L must resolve to the same canonical unit for conversion purposes.
+AnalysisContext is created before context-dependent signal evaluation.
 ```
 
-The fix should be general enough for unit parsing, but must not silently alter unrelated units.
+Then ensure signal evaluation receives runtime context derived from that assembled context.
 
-## Design requirements
-
-The fix must:
+Expected pattern:
 
 ```text
-- be deterministic
-- be centralised in the unit normalisation path
-- preserve existing known-good unit conversions
-- avoid special-casing urate only if a general unit-normalisation function exists or can be safely used
-- not change biomarker thresholds or reference ranges
-- not change canonical biomarker identity
+context = create_analysis_context(...)
+runtime_context = build_runtime_context_snapshot_from_context(context)
+signals = signal_evaluator.evaluate_all(..., runtime_context=runtime_context)
 ```
 
-If there is an existing unit normalisation helper, use it.
+or equivalent.
 
-If no such helper exists, create the smallest safe helper in the unit registry module.
+The exact function names may differ, but the architectural flow must be clear.
 
-## Required tests
+If the current `build_runtime_context_snapshot()` only accepts raw questionnaire input, extend it safely rather than keeping the raw bridge.
+
+Any new helper must be deterministic and test-covered.
+
+---
+
+# Phase 3 — Remove or neutralise the raw questionnaire bridge
+
+Remove the old interim behaviour where signal evaluation relies on:
+
+```text
+questionnaire_data
+```
+
+before `AnalysisContext` exists.
+
+It is acceptable for raw questionnaire data to be used in constructing `AnalysisContext`.
+
+It is not acceptable for context-dependent signal evaluation to bypass `AnalysisContext` once this sprint is complete.
+
+Search for and inspect:
+
+```text
+build_runtime_context_snapshot(questionnaire_responses=questionnaire_data)
+runtime_context_snapshot(questionnaire_data)
+evaluate_all(... questionnaire_data ...)
+```
+
+The final implementation must make it clear that signal evaluation is downstream of context assembly.
+
+---
+
+# Phase 4 — Preserve inactive package safety
+
+Confirm no activation changes.
+
+Required checks:
+
+```text
+- all 8 androgen packages remain inactive
+- FT3 low remains inactive
+- activated_package_count remains 0 for context-dependent Batch 2 packages
+- approval_received remains false unless explicit approval evidence exists
+- no package signal_library.yaml files changed
+```
+
+Add or update tests if necessary.
+
+This sprint must not be used as a back door to activate context-dependent packages.
+
+---
+
+# Phase 5 — Regression tests
 
 Add or update tests proving:
 
 ```text
-1. urate with µmol/L still works
-2. urate with μmol/L now works
-3. μmol/L and µmol/L normalise to the same conversion key
-4. unrelated units still behave unchanged
-5. the six failing sentinel regression tests now pass
+1. AnalysisContext is created before signal evaluation.
+2. Runtime context passed to SignalEvaluator is derived from AnalysisContext or a governed post-context object.
+3. SignalEvaluator no longer receives context derived directly from raw questionnaire_data before AnalysisContext creation.
+4. Existing disclosed-context semantics still pass.
+5. Missing context still fails closed.
+6. Positive and negative disclosure answers still satisfy disclosed requirements.
+7. Active signal output is unchanged for representative panels.
+8. Context-dependent inactive packages remain inactive.
 ```
 
-The launch audit identified six sentinel failures with the same root cause. Run the failing tests directly if their paths are present.
+If direct phase-order testing is difficult, add the narrowest robust test using mocks/spies/instrumentation around orchestrator phase calls.
 
----
-
-# Phase 4 — CB-4: Neutralise dev billing override risk
-
-## Required remediation
-
-In:
-
-```text
-backend/env.example
-```
-
-Remove, comment out, or clearly neutralise:
-
-```text
-HEALTHIQ_DISABLE_BILLING_ENFORCEMENT=1
-HEALTHIQ_FREE_COMPLETED_ANALYSES=99
-```
-
-Preferred fix:
-
-```text
-Remove these enabled dev defaults from env.example and replace them with safe commented examples.
-```
-
-Example acceptable pattern:
-
-```text
-# Local development only. Do not enable in production.
-# HEALTHIQ_DISABLE_BILLING_ENFORCEMENT=1
-# HEALTHIQ_FREE_COMPLETED_ANALYSES=99
-```
-
-If a production-safe default is needed, use:
-
-```text
-HEALTHIQ_DISABLE_BILLING_ENFORCEMENT=0
-HEALTHIQ_FREE_COMPLETED_ANALYSES=1
-```
-
-Do not change runtime billing code unless absolutely necessary.
-
-## Required checks
-
-Confirm:
-
-```text
-- env.example no longer enables billing bypass by default
-- production deployment cannot accidentally inherit 99 free analyses from env.example without explicit override
-```
-
----
-
-# Phase 5 — Confirm forbidden areas unchanged
-
-After remediation, verify that the following were not changed:
-
-```text
-knowledge_bus/packages/**/signal_library.yaml
-backend/ssot/**
-backend/core/analytics/signal_evaluator.py
-backend/core/analytics/runtime_context_evaluator.py
-backend/core/pipeline/orchestrator.py
-backend/core/pipeline/orchestrator_phases_v1.py
-backend/core/reporting/**
-backend/core/scoring/**
-frontend/app/components/clusters/ClusterInsightPanel.tsx
-frontend/app/(app)/results/page.tsx
-```
-
-If any of these changed, STOP and explain why before proceeding.
+Do not rely only on implementation comments.
 
 ---
 
@@ -563,96 +445,90 @@ python -m pytest backend/tests/regression/test_runtime_context_evaluation.py -q
 python -m pytest backend/tests/regression/test_context_threading.py -q
 ```
 
-## Unit conversion tests
+## Orchestrator / pipeline regressions
 
-Run the existing unit registry / unit conversion tests.
+Run existing orchestrator and pipeline tests.
 
-Also run the six previously failing sentinel tests if present:
+If there is no direct orchestrator test coverage, add targeted tests and run them.
+
+Suggested search:
 
 ```powershell
-python -m pytest tests/regression/test_lc_s5_proving_checks.py::test_check2_alcohol_bridge_language_when_moderate_threshold_met -q
-python -m pytest tests/regression/test_obs2_questionnaire_exercise_unknown_regression.py::test_obs2_ab_baseline_vs_statin_off_consumer_bands_align -q
-python -m pytest tests/regression/test_obs2_questionnaire_exercise_unknown_regression.py::test_obs2_ab_statin_off_vs_on_analytical_invariants -q
-python -m pytest tests/regression/test_obs2_questionnaire_exercise_unknown_regression.py::test_obs2_vr_baseline_vs_statin_off_consumer_bands_align -q
-python -m pytest tests/regression/test_obs2_questionnaire_exercise_unknown_regression.py::test_obs2_lifestyle_fixture_with_partial_questionnaire_completes -q
-python -m pytest tests/regression/test_lc_s4_statin_signal_isolation_regression.py::test_statin_on_vs_off_preserves_scoring_body_overview_framing_only -q
+python -m pytest backend/tests -q -k "orchestrator or pipeline or context"
 ```
 
-If actual paths differ, discover and run the correct tests. Report the actual paths.
+Do not rely on broad passing tests only. There must be at least one direct test proving the new phase ordering.
 
-## Backend auth tests
+## Safety checks
 
-Run affected backend route/auth tests.
+Run:
 
-If no route/auth tests exist, add targeted tests and run them.
+```powershell
+python scripts/check_no_secret_files.py
+```
 
-## Frontend tests
+if present.
 
-Run the narrowest relevant frontend test command for `frontend/app/services/analysis.ts`.
-
-If no existing test coverage exists, run TypeScript/lint checks if available and perform grep evidence proving sensitive console logging is removed.
-
-## Sentinel
-
-Run the sentinel or architecture gate command that produced the previous 54 passed / 6 failed result, if available.
-
-The six Unicode mu failures must be resolved.
+Run grep/search evidence proving forbidden package files were not modified.
 
 ---
 
-# Phase 7 — Required audit report
+# Phase 7 — Required audit paper
 
 Create:
 
 ```text
-docs/audit-papers/WAVE1-PUBLIC-LAUNCH-FIXES-1_pre_public_launch_blocker_remediation.md
+docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md
 ```
 
-The report must include:
+The audit paper must include:
 
 ```text
 - executive verdict
 - files inspected
 - files changed
-- CB-1 remediation evidence
-- CB-2 remediation evidence
-- CB-3 remediation evidence
-- CB-4 remediation evidence
-- confirmation no packages activated
-- confirmation androgen packages remain inactive
-- confirmation FT3 low remains inactive
+- previous orchestrator phase order
+- new orchestrator phase order
+- explanation of how AnalysisContext now precedes signal evaluation
+- explanation of how RuntimeContextSnapshot is derived
+- confirmation raw questionnaire bridge removed or neutralised
+- confirmation SignalEvaluator interface remains stable or explanation if changed
+- confirmation all context-dependent packages remain inactive
+- confirmation no package metadata changed
 - confirmation no clinical thresholds changed
-- confirmation no reference range policy changed
-- confirmation no signal IDs changed
-- confirmation no activation keys changed
-- confirmation no report compiler changed
 - confirmation no scoring changed
+- confirmation no report compiler changed
 - confirmation no SSOT changed
-- confirmation no raw research runtime reads introduced
+- confirmation no frontend changed
 - full validator output
 - full test output
-- sentinel / regression output
 - rollback path
-- residual launch-readiness observations
-- recommendation for next action
+- carry-forward impact
 ```
 
 Validation and test output must be pasted in full, not summarised.
 
 ---
 
-# Phase 8 — Launch readiness update
+# Phase 8 — Carry-forward handling
 
-The audit report must conclude with one of:
+Update:
 
 ```text
-PUBLIC_LAUNCH_BLOCKERS_RESOLVED
-PUBLIC_LAUNCH_BLOCKERS_PARTIALLY_RESOLVED
-PUBLIC_LAUNCH_BLOCKERS_NOT_RESOLVED
-INCONCLUSIVE_EVIDENCE_GAP
+docs/sprints/launch_core_carry_forward_register.md
 ```
 
-If not all blockers are resolved, state exactly which remain.
+only if the implementation genuinely closes `ARCH-ORCH-RESTRUCTURE-1`.
+
+Do not close unrelated carry-forwards.
+
+If closed, record:
+
+```text
+ARCH-ORCH-RESTRUCTURE-1: Resolved by ARCH-COMPLETION-1. Signal evaluation now receives runtime context derived from AnalysisContext / governed post-context object rather than raw questionnaire_data bridge.
+```
+
+If not fully closed, leave it open and explain the remaining gap.
 
 ---
 
@@ -661,14 +537,14 @@ If not all blockers are resolved, state exactly which remain.
 Expected changed files may include:
 
 ```text
-frontend/app/services/analysis.ts
-backend/app/routes/upload.py
-backend/core/units/registry.py
-backend/env.example
-
-backend/tests/**/*
-frontend/**/*test*
-docs/audit-papers/WAVE1-PUBLIC-LAUNCH-FIXES-1_pre_public_launch_blocker_remediation.md
+backend/core/pipeline/orchestrator.py
+backend/core/pipeline/orchestrator_phases_v1.py
+backend/core/analytics/runtime_context_evaluator.py
+backend/tests/regression/test_context_threading.py
+backend/tests/regression/test_runtime_context_evaluation.py
+backend/tests/architecture/*
+docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md
+docs/sprints/launch_core_carry_forward_register.md
 automation_bus/latest_cursor_status.json
 ```
 
@@ -676,7 +552,7 @@ No package files are expected to change.
 
 No SSOT files are expected to change.
 
-No orchestrator or signal evaluator files are expected to change.
+No frontend files are expected to change.
 
 ---
 
@@ -687,14 +563,9 @@ Do not change:
 ```text
 knowledge_bus/packages/**
 backend/ssot/**
-backend/core/analytics/signal_evaluator.py
-backend/core/analytics/runtime_context_evaluator.py
-backend/core/pipeline/orchestrator.py
-backend/core/pipeline/orchestrator_phases_v1.py
 backend/core/reporting/**
 backend/core/scoring/**
-frontend/app/components/clusters/ClusterInsightPanel.tsx
-frontend/app/(app)/results/page.tsx
+frontend/**
 ```
 
 Do not activate:
@@ -712,7 +583,7 @@ Do not introduce:
 - dummy parsers
 - raw research runtime reads
 - frontend clinical inference
-- new LLM clinical reasoning
+- LLM clinical reasoning
 ```
 
 ---
@@ -722,25 +593,24 @@ Do not introduce:
 STOP and report if:
 
 ```text
-1. the launch-readiness audit cannot be found
-2. the four blockers cannot be confirmed or mapped to current files
-3. fixing /api/upload/parse auth requires redesigning auth globally
-4. unit registry fix requires changing biomarker reference ranges
-5. unit registry fix requires changing clinical thresholds
-6. removing PII console logging requires altering analysis payload shape
-7. env.example remediation requires changing runtime billing code
-8. any package activation is required
-9. any androgen or FT3 low activation state changes
-10. architecture validators fail
-11. unit conversion tests still fail
-12. parse auth tests fail
-13. sensitive frontend console logging remains
-14. sentinel still reports the Unicode mu defect
-15. unexpected files change and cannot be justified
-16. rollback path cannot be defined
+1. AnalysisContext creation cannot be moved before signal evaluation without broad pipeline rewrite.
+2. RuntimeContextSnapshot cannot be derived from AnalysisContext or governed post-context object.
+3. SignalEvaluator interface must be redesigned broadly.
+4. Active signal outputs change unexpectedly.
+5. Any context-dependent package would become active.
+6. Any package metadata change is required.
+7. Any clinical threshold or reference range change is required.
+8. Any frontend change is required.
+9. Any report compiler or scoring change is required.
+10. Architecture validators fail.
+11. Context runtime tests fail.
+12. Orchestrator phase-order tests cannot be written.
+13. Secret-file guardrail fails.
+14. Working tree contains untracked local secret files.
+15. Rollback path cannot be defined.
 ```
 
-If a STOP condition is triggered, do not perform ad hoc remediation beyond the approved scope.
+If a STOP condition is triggered, do not perform ad hoc remediation beyond scope.
 
 ---
 
@@ -758,7 +628,7 @@ git diff --cached --name-only
 Commit message:
 
 ```text
-fix(launch): remediate Wave 1 public launch blockers
+refactor(orchestrator): derive signal runtime context after analysis context assembly
 ```
 
 After commit, report:
@@ -780,25 +650,29 @@ Return evidence for Claude audit and GPT architectural review.
 This sprint succeeds only if:
 
 ```text
-- CB-1 PII console logging is removed
-- CB-2 /api/upload/parse requires authentication
-- CB-3 Unicode mu unit conversion defect is fixed
-- CB-4 env.example no longer enables unsafe dev billing defaults
-- the six previously failing sentinel tests pass
+- AnalysisContext is assembled before signal evaluation
+- runtime context passed to SignalEvaluator is derived from AnalysisContext or governed post-context object
+- interim raw questionnaire_data bridge is removed or neutralised
+- active outputs remain stable
+- context-dependent packages remain inactive
+- androgen packages remain inactive
+- FT3 low remains inactive
+- no package metadata changes
+- no SSOT changes
+- no scoring changes
+- no report compiler changes
+- no frontend changes
 - architecture validators pass
-- context package safety remains unchanged
-- no packages are activated
-- no clinical logic is changed
-- no reference range policy is changed
-- no frontend clinical inference is introduced
-- no fallback parser is introduced
-- audit paper is complete with full evidence
+- context runtime tests pass
+- direct orchestrator phase-order test passes
+- audit paper contains full evidence
+- ARCH-ORCH-RESTRUCTURE-1 is either closed with evidence or remains open with a precise residual
 ```
 
 Expected next action after success:
 
 ```text
-Run a short read-only Wave 1 launch-readiness re-check.
+Proceed to BATCH2-MINIMUM-COVERAGE-1_androgen_ft3_low_clinical_and_runtime_completion.
 ```
 
-Do not proceed directly to public launch without confirming the four blockers are closed.
+Do not proceed to Batch 2 completion until this orchestrator foundation is complete and approved.

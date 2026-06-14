@@ -1,24 +1,24 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "WAVE1-PUBLIC-LAUNCH-FIXES-1_pre_public_launch_blocker_remediation",
+  "work_id": "ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-12T00:00:00Z",
-  "hardened_by": "Claude Code (SOP v1.3.1 Stage 2)",
+  "hardened_utc": "2026-06-14T00:00:00Z",
+  "hardened_by": "Claude Code (claude-sonnet-4-6, SOP v1.3.1 Stage 2)",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: work/WAVE1-PUBLIC-LAUNCH-FIXES-1-pre-public-launch-blocker-remediation"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: work/ARCH-COMPLETION-1-final-runtime-context-and-orchestrator-restructure"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4. Justified: CB-2 touches backend auth routing (runtime behaviour change); CB-3 touches unit registry (apply_unit_normalisation — called by analysis.py line 173, in the Layer A ingestion path immediately before orchestrator.run()); CB-1 touches health data handling; launch-readiness verdict depends on outcome."
+      "citation": "automation_bus/latest_cursor_prompt.md line 4. Justified: orchestrator.py and orchestrator_phases_v1.py are Intelligence Core pipeline components (runtime phase ordering, signal evaluation input sourcing). HIGH is mandatory per SOP §3/§10."
     },
     {
       "check": "Front Matter — execution_model TWO_PHASE_START_FINISH",
@@ -28,124 +28,124 @@
     {
       "check": "Front Matter — change_type BEHAVIOUR",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6. Justified: CB-2 changes route auth behaviour (unauthenticated callers now receive 401); CB-3 changes unit normalisation pass/fail behaviour for inputs encoded with U+03BC (Greek mu) — currently raises UnitConversionError, after fix succeeds."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6. Justified: orchestrator phase ordering change directly changes what input signal evaluation receives — this is a behavioural change to Intelligence Core."
     },
     {
-      "check": "Authority path — WAVE1-LAUNCH-READINESS-1 audit",
+      "check": "Authority path — backend/core/pipeline/orchestrator.py",
       "result": "CONFIRMED EXISTS AND READ",
-      "citation": "docs/audit-papers/WAVE1-LAUNCH-READINESS-1_product_readiness_and_release_gate.md. File read. Confirms CB-1 at lines 199-206, CB-2 at lines 125-129 and 211-213, CB-3 at lines 112 and 243, CB-4 at lines 224-231. Audit verdict: LAUNCH_READY_WITH_CONDITIONS."
+      "citation": "backend/core/pipeline/orchestrator.py — file read (2295 lines). Defect confirmed at lines 1254–1267: build_runtime_context_snapshot(questionnaire_responses=questionnaire_data) builds runtime_ctx from raw questionnaire_data at Step 1.6, before create_analysis_context() at line 1275 (Step 2). Signal evaluation runs before AnalysisContext assembly."
     },
     {
-      "check": "Authority path — DAY-ONE-ARCHITECTURE-CLOSURE-REVIEW",
+      "check": "Authority path — backend/core/pipeline/orchestrator_phases_v1.py",
+      "result": "CONFIRMED EXISTS AND READ",
+      "citation": "backend/core/pipeline/orchestrator_phases_v1.py — file read (172 lines). PIPELINE_PHASE_ORDER at lines 17–34 explicitly lists 'signal_evaluation' at index 4 before 'analysis_context' at index 5. This is a documentation defect mirroring the code defect. Both must be corrected."
+    },
+    {
+      "check": "Authority path — backend/core/analytics/runtime_context_evaluator.py",
+      "result": "CONFIRMED EXISTS AND READ",
+      "citation": "backend/core/analytics/runtime_context_evaluator.py — file read (382 lines). build_runtime_context_snapshot() at line 183 accepts questionnaire_responses, lifestyle_factors, medical_history, signal_biomarkers as separate params. Post-context creation, Cursor can pass context.questionnaire_responses, context.user.lifestyle_factors, context.medical_history — richer than the current raw-only call."
+    },
+    {
+      "check": "Authority path — backend/core/analytics/signal_evaluator.py",
+      "result": "CONFIRMED EXISTS AND READ",
+      "citation": "backend/core/analytics/signal_evaluator.py — file read (80+ lines). evaluate_all() already accepts runtime_context kwarg (confirmed via orchestrator_phases_v1.py line 153: runtime_context=runtime_context). No interface redesign required. STOP condition 3 does not trigger."
+    },
+    {
+      "check": "Authority path — backend/core/pipeline/context_factory.py",
       "result": "CONFIRMED EXISTS",
-      "citation": "docs/audit-papers/DAY-ONE-ARCHITECTURE-CLOSURE-REVIEW.md verified present"
+      "citation": "backend/core/pipeline/context_factory.py verified present. Imported at orchestrator.py line 24."
     },
     {
-      "check": "Authority path — ADR-RT-001",
+      "check": "Authority path — knowledge_bus/governance/batch2_context_clearance_register_v1.yaml",
+      "result": "CONFIRMED EXISTS AND READ",
+      "citation": "knowledge_bus/governance/batch2_context_clearance_register_v1.yaml — file read. All 8 androgen packages: current_runtime_authority_status: inactive, activation_eligibility: false, clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF. FT3 low (pkg_kb47_free_t3_low_low_t3_syndrome): current_runtime_authority_status: inactive, activation_eligibility: false, clearance_decision: DEFERRED_NON_LAUNCH_CRITICAL, activation_layer_blockers: enable_lower_bound_false."
+    },
+    {
+      "check": "Authority path — knowledge_bus/governance/context_runtime_execution_register_v1.yaml",
       "result": "CONFIRMED EXISTS",
-      "citation": "docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md verified present"
+      "citation": "knowledge_bus/governance/context_runtime_execution_register_v1.yaml verified present."
     },
     {
-      "check": "Authority path — carry forward register",
+      "check": "Authority path — knowledge_bus/governance/runtime_context_requirements_model_v1.yaml",
       "result": "CONFIRMED EXISTS",
-      "citation": "docs/sprints/launch_core_carry_forward_register.md verified present"
+      "citation": "knowledge_bus/governance/runtime_context_requirements_model_v1.yaml verified present. Referenced as DEFAULT_MODEL_PATH in runtime_context_evaluator.py line 17–21."
     },
     {
-      "check": "Authority path — sentinel report",
+      "check": "Authority path — docs/audit-papers/BETA-READINESS-RECHECK-1_post_launch_fixes_readiness_gate.md",
+      "result": "CONFIRMED EXISTS AND READ",
+      "citation": "docs/audit-papers/BETA-READINESS-RECHECK-1_post_launch_fixes_readiness_gate.md — file read. Verdict: NOT_READY_PENDING_BLOCKERS. Beta readiness NOT claimed. Authority preflight check 4 from prompt satisfied."
+    },
+    {
+      "check": "Authority path — docs/sprints/launch_core_carry_forward_register.md",
+      "result": "CONFIRMED EXISTS AND READ",
+      "citation": "docs/sprints/launch_core_carry_forward_register.md — file read. ARCH-ORCH-RESTRUCTURE-1 at line 78: status Open. Description: 'Signal evaluation still runs before full AnalysisContext creation; CONTEXT-THREADING-1 uses raw questionnaire_data as interim bridge only.' This sprint is the correct resolver."
+    },
+    {
+      "check": "Authority path — backend/tests/regression/test_context_threading.py",
+      "result": "CONFIRMED EXISTS AND READ",
+      "citation": "backend/tests/regression/test_context_threading.py — file read. Existing regression tests cover context threading via build_runtime_context_snapshot and evaluate_signal_evaluation_phase. These must continue to pass."
+    },
+    {
+      "check": "Authority path — backend/tests/regression/test_runtime_context_evaluation.py",
       "result": "CONFIRMED EXISTS",
-      "citation": "sentinel/reports/sentinel_run_87c5a2cd.json verified present"
+      "citation": "backend/tests/regression/test_runtime_context_evaluation.py verified present."
     },
     {
-      "check": "Authority path — frontend/app/services/analysis.ts",
-      "result": "CONFIRMED EXISTS AND READ",
-      "citation": "frontend/app/services/analysis.ts — file read (440 lines)"
+      "check": "Authority path — output audit paper ARCH-COMPLETION-1_*.md",
+      "result": "NOT YET PRESENT — CORRECT",
+      "citation": "docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md does not exist. Cursor must create it in Phase 7."
     },
     {
-      "check": "Authority path — backend/app/routes/upload.py",
-      "result": "CONFIRMED EXISTS AND READ",
-      "citation": "backend/app/routes/upload.py — file read (248 lines)"
+      "check": "Defect independently confirmed",
+      "result": "CONFIRMED — orchestrator.py:1255 build_runtime_context_snapshot(questionnaire_responses=questionnaire_data) runs before create_analysis_context() at line 1275",
+      "citation": "orchestrator.py lines 1254–1267: runtime_ctx built from raw questionnaire_data; evaluate_signal_evaluation_phase() called with that runtime_ctx. orchestrator.py lines 1272–1281: create_analysis_context() called at Step 2 with comment 'CONTEXT-HARDENING-A ordering fix' — still AFTER signal evaluation. The inversion is confirmed."
     },
     {
-      "check": "Authority path — backend/app/routes/analysis.py",
-      "result": "CONFIRMED EXISTS AND READ",
-      "citation": "backend/app/routes/analysis.py — file read (624 lines)"
+      "check": "Fix feasibility — AnalysisContext can precede signal evaluation",
+      "result": "CONFIRMED — all create_analysis_context() inputs available before Step 1.6",
+      "citation": "filtered_biomarkers available at orchestrator.py line 1056 (quarantine phase). user dict available from run() param. questionnaire_data available from run() param. Step 1.5 (derived markers, line 1073) adds simple_biomarkers['age'] = age but this is independent of create_analysis_context() inputs. Moving context creation to before Step 1.6 is surgical and does not require inputs from later steps."
     },
     {
-      "check": "Authority path — backend/core/units/registry.py",
-      "result": "CONFIRMED EXISTS AND READ",
-      "citation": "backend/core/units/registry.py — file read (586 lines)"
+      "check": "Fix feasibility — build_runtime_context_snapshot can be derived from AnalysisContext",
+      "result": "CONFIRMED — function signature accepts lifestyle_factors and medical_history separately",
+      "citation": "runtime_context_evaluator.py line 183: build_runtime_context_snapshot(*, questionnaire_responses=None, lifestyle_factors=None, medical_history=None, signal_biomarkers=None). Post-context call: pass context.questionnaire_responses, context.user.lifestyle_factors, context.medical_history. This is richer than the current call which only passes questionnaire_data."
     },
     {
-      "check": "Authority path — backend/env.example",
-      "result": "CONFIRMED EXISTS AND READ",
-      "citation": "backend/env.example — file read (140 lines)"
+      "check": "SignalEvaluator interface stability",
+      "result": "CONFIRMED — no interface change required",
+      "citation": "orchestrator_phases_v1.py line 153: runtime_context=runtime_context already passed to signal_evaluator.evaluate_all(). STOP condition 3 does not trigger."
     },
     {
-      "check": "Authority path — backend/core/dependencies/analysis_auth.py",
-      "result": "CONFIRMED EXISTS AND READ",
-      "citation": "backend/core/dependencies/analysis_auth.py — file read (68 lines)"
+      "check": "PIPELINE_PHASE_ORDER documentation defect",
+      "result": "DEFECT CONFIRMED — must be corrected in this sprint",
+      "citation": "orchestrator_phases_v1.py lines 17–34: PIPELINE_PHASE_ORDER tuple lists 'signal_evaluation' (index 4) before 'analysis_context' (index 5). After implementation, this must be reordered to place 'analysis_context' before 'signal_evaluation'."
     },
     {
-      "check": "Authority path — backend/.env.test",
-      "result": "CONFIRMED EXISTS",
-      "citation": "backend/.env.test verified present"
+      "check": "Inactive package safety — androgen packages",
+      "result": "CONFIRMED INACTIVE",
+      "citation": "batch2_context_clearance_register_v1.yaml: all 8 androgen packages (pkg_kb47_dhea_high, pkg_kb47_dhea_low, pkg_kb47_fai_high, and 5 others) have activation_eligibility: false and clearance_decision: BLOCKED_PENDING_CLINICAL_SIGNOFF. No package signal_library.yaml files are in sprint scope."
     },
     {
-      "check": "CB-1 reality — PII console logging confirmed",
-      "result": "CONFIRMED DEFECT EXISTS",
-      "citation": "frontend/app/services/analysis.ts line 96: console.log('AnalysisService.startAnalysis() called with payload:', data) — logs full payload object. Line 98: console.log('User data:', data.user) — logs user demographics. Line 103: console.log('Request body:', JSON.stringify(data, null, 2)) — full JSON serialisation of health data. Lines 107-120: console.group('[TRACE] Outgoing Analysis Payload') block including console.log('[TRACE] Full Payload JSON:', JSON.stringify(data, null, 2)). Line 104: console.log('Outgoing payload:', data). Line 132: console.log('Response status:', response.status, ...). Line 164: console.log('Response data:', result). All match audit citations exactly."
+      "check": "Inactive package safety — FT3 low",
+      "result": "CONFIRMED INACTIVE",
+      "citation": "batch2_context_clearance_register_v1.yaml lines 203–231: pkg_kb47_free_t3_low_low_t3_syndrome: current_runtime_authority_status: inactive, activation_eligibility: false, activation_layer_blockers: [enable_lower_bound_false]."
     },
     {
-      "check": "CB-2 reality — unauthenticated /parse confirmed",
-      "result": "CONFIRMED DEFECT EXISTS",
-      "citation": "backend/app/routes/upload.py lines 42-46: @router.post('/parse') async def parse_upload(file: Optional[UploadFile] = File(None), text_content: Optional[str] = Form(None)) — signature has no auth dependency. Contrast with backend/app/routes/analysis.py line 97: auth_user: CurrentUser = Depends(require_analysis_submitter). Auth dependency is absent."
+      "check": "Forbidden file scope",
+      "result": "CONFIRMED CLEAN",
+      "citation": "Expected changed files (orchestrator.py, orchestrator_phases_v1.py, runtime_context_evaluator.py, test files, audit paper, carry-forward register) are all in permitted scope. knowledge_bus/packages/**, backend/ssot/**, backend/core/reporting/**, backend/core/scoring/**, frontend/** are all out of scope and must not be touched."
     },
     {
-      "check": "CB-2 auth pattern — require_analysis_submitter usable for /parse",
-      "result": "CONFIRMED USABLE",
-      "citation": "backend/core/dependencies/analysis_auth.py lines 46-53: require_analysis_submitter() accepts Annotated[Optional[HTTPAuthorizationCredentials], Depends(_bearer_optional)] and optional X-Test-Auth-User-Id header. Raises HTTP 401 for unauthenticated callers in production mode. Test mode bypass via HEALTHIQ_MODE=test + X-Test-Auth-User-Id. Import is already present in analysis.py (line 59-62). No new auth mechanism required."
-    },
-    {
-      "check": "CB-3 reality — Unicode mu mismatch confirmed",
-      "result": "CONFIRMED DEFECT EXISTS",
-      "citation": "backend/core/units/registry.py line 102: _UMOL_EQUIVALENTS = frozenset({'µmol/L', 'umol/L', 'uMol/L'}). Set contains U+00B5 (MICRO SIGN) only. Does NOT contain U+03BC (GREEK SMALL LETTER MU). _units_equivalent() at lines 107-118 checks from_u in _UMOL_EQUIVALENTS — U+03BC returns False. Urate is in _STRICT_CONVERSION_BIOMARKERS (line 99 via _URATE_BIOMARKERS at line 80). _convert_with_explicit_unit() at lines 315-357: _units_equivalent(U+03BC, base_unit_U+00B5) returns False; no explicit conversion factor for U+03BC input in urate branches (lines 278-285 check to_u in _UMOL_EQUIVALENTS — correct for mg/dL input, but from_u in _UMOL_EQUIVALENTS check at line 282 would fail for U+03BC from_unit); factor is None; biomarker is in _STRICT_CONVERSION_BIOMARKERS → raises UnitConversionError."
-    },
-    {
-      "check": "CB-3 fix design — minimal safe additive change",
-      "result": "CONFIRMED SAFE",
-      "citation": "backend/core/units/registry.py line 102. Fix: add 'μmol/L' (U+03BC) to _UMOL_EQUIVALENTS frozenset. Additive only — existing U+00B5 and umol/L behaviour is unchanged. _UMOL_EQUIVALENTS used in three places: _units_equivalent() (line 112), _get_conversion_factor() urate branches (lines 278-285 check to_u/from_u in _UMOL_EQUIVALENTS), value_and_reference_units_coherent_for_numeric_compare() (line 575). Adding U+03BC only allows currently-failing cases to succeed. No conversion factors change. No base units change. No clinical thresholds change. Urate base unit (µmol/L) unchanged."
-    },
-    {
-      "check": "CB-3 — Intelligence Core interaction assessed",
-      "result": "FLAGGED AND ASSESSED SAFE",
-      "citation": "apply_unit_normalisation() in registry.py is called at backend/app/routes/analysis.py line 173: normalized = apply_unit_normalisation(normalized). This is the Layer A ingestion path. The frozenset addition is purely additive: inputs that previously raised UnitConversionError now succeed. The conversion result for U+03BC input is identical to U+00B5 input (both resolve to base unit µmol/L with factor 1.0). No downstream scoring, ranking, or output changes for inputs that previously succeeded."
-    },
-    {
-      "check": "CB-4 reality — unsafe billing defaults confirmed",
-      "result": "CONFIRMED DEFECT EXISTS",
-      "citation": "backend/env.example line 123: HEALTHIQ_FREE_COMPLETED_ANALYSES=99 (uncommented, active default). Line 127: HEALTHIQ_DISABLE_BILLING_ENFORCEMENT=1 (uncommented, active default). Both are active values. Labels describe them as dev-only but values are enabled. Fix: comment out both lines, replace with safe commented examples."
-    },
-    {
-      "check": "No duplicate authority sources",
-      "result": "CONFIRMED",
-      "citation": "Single unit registry at backend/core/units/registry.py. Single auth module at backend/core/dependencies/analysis_auth.py. No parallel implementations detected in codebase."
-    },
-    {
-      "check": "Behavioural scope — defined and bounded",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 99-118 (non-negotiable constraints list) and lines 685-720 (Forbidden changes). Scope limited to: frontend console log removal, upload auth dependency, Unicode mu equivalence set extension, env.example config. All clinical, SSOT, package, orchestrator, signal evaluator, scoring, and report compiler files are explicitly forbidden."
-    },
-    {
-      "check": "Regression targets — specified with concern",
-      "result": "CONFIRMED WITH CONCERN — SEE NOTE",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 572-578 lists six pytest paths: test_check2_alcohol_bridge_language_when_moderate_threshold_met, test_obs2_ab_baseline_vs_statin_off_consumer_bands_align, test_obs2_ab_statin_off_vs_on_analytical_invariants, test_obs2_vr_baseline_vs_statin_off_consumer_bands_align, test_obs2_lifestyle_fixture_with_partial_questionnaire_completes, test_statin_on_vs_off_preserves_scoring_body_overview_framing_only. CONCERN: These test names (alcohol, statin, exercise, lifestyle) do not obviously correspond to Unicode mu / urate unit conversion. Cursor must verify the sentinel report (sentinel/reports/sentinel_run_87c5a2cd.json) to confirm actual failing test paths and root cause before treating these listed paths as authoritative. If the actual failing tests differ, Cursor must discover and run the correct paths."
-    },
-    {
-      "check": "STOP conditions — pre-implementation assessment",
+      "check": "STOP conditions pre-assessment",
       "result": "NONE TRIGGERED",
-      "citation": "All 16 prompt STOP conditions assessed: (1) audit exists and lists all four blockers — PASS; (2) all four blockers confirmed in source files — PASS; (3) CB-2 fix reuses require_analysis_submitter, no global auth redesign — PASS; (4-5) CB-3 fix does not touch thresholds or ranges — PASS; (6) CB-1 fix removes logs, no payload shape change — PASS; (7) CB-4 fix is env.example config only, no runtime code change — PASS; (8-9) no package/androgen/FT3 changes required — PASS. Conditions 10-16 will be assessed post-implementation."
+      "citation": "Condition 1 (broad rewrite): does not trigger — fix is surgical. Condition 2 (RuntimeContextSnapshot cannot be derived from AnalysisContext): does not trigger — function accepts component fields. Condition 3 (SignalEvaluator redesign): does not trigger — interface stable. Conditions 4–9 (activation/threshold/frontend/scoring/compiler changes): none required. Conditions 10–12 (validator/test failures): to be verified post-implementation. Condition 13–15 (secret files, rollback): no secret files in sprint scope; rollback is git revert."
+    },
+    {
+      "check": "Precision risk — user_data mutation timing",
+      "result": "FLAGGED — CURSOR MUST CONFIRM IN PHASE 1 DESIGN NOTE",
+      "citation": "orchestrator.py lines 369–379: create_analysis_context() calls user_data.update({...}) which mutates the user dict. Cursor must confirm in Phase 1 that moving this mutation earlier (before Step 1.6) does not affect any step between scoring_input_preparation (line 1067) and the current Step 2 position (line 1275). Assessment: the mutation adds questionnaire-derived keys only; simple_biomarkers computation at lines 1067–1069 does not read user dict. No blocker anticipated, but must be confirmed."
     }
   ],
   "overall_verdict": "HARDENED",
-  "hardening_notes": "Sprint may proceed to Stage 3 (kernel start). Key facts for Cursor: (1) CB-1: Remove all console.log/console.group/console.groupEnd calls from AnalysisService.startAnalysis() at frontend/app/services/analysis.ts lines 96-121. Non-PII status logs (line 132) may remain if assessed safe. Do not add debug flags. (2) CB-2: Add require_analysis_submitter dependency to parse_upload() in backend/app/routes/upload.py. Import from core.dependencies.analysis_auth. Use the same pattern as analysis.py line 97. The auth module is already tested and works in test mode via X-Test-Auth-User-Id. (3) CB-3: Add 'μmol/L' (U+03BC, U+03BC unicode codepoint — NOT copy-pasted as it may display the same) to _UMOL_EQUIVALENTS frozenset at registry.py line 102. This is the minimal safe fix. Before implementing, verify sentinel/reports/sentinel_run_87c5a2cd.json to confirm the actual failing test root cause. (4) CB-4: Comment out HEALTHIQ_FREE_COMPLETED_ANALYSES=99 and HEALTHIQ_DISABLE_BILLING_ENFORCEMENT=1 in backend/env.example lines 123 and 127. Replace with commented examples showing safe production values. (5) Required governance: Phase 5 forbidden area check, Phase 6 full validator + test output pasted, Phase 7 audit paper, Phase 8 verdict. Do not merge without GPT architectural review and human approval."
+  "hardening_notes": "Sprint may proceed to Stage 3 (kernel start) after branch creation and human review. Key implementation facts: (1) DEFECT LOCATION: orchestrator.py lines 1254–1267 (runtime_ctx from raw questionnaire_data) and lines 1272–1281 (create_analysis_context at Step 2 — too late). (2) TARGET MOVE: create_analysis_context() call must move to before Step 1.6. All required inputs (filtered_biomarkers, user, questionnaire_data) are available from line 1056 onward. (3) POST-CONTEXT CALL: replace build_runtime_context_snapshot(questionnaire_responses=questionnaire_data) with build_runtime_context_snapshot(questionnaire_responses=context.questionnaire_responses, lifestyle_factors=context.user.lifestyle_factors, medical_history=context.medical_history). Verify exact field names on AnalysisContext object. (4) PIPELINE_PHASE_ORDER: orchestrator_phases_v1.py lines 17–34 must be updated — move 'analysis_context' to before 'signal_evaluation'. (5) USER_DATA MUTATION: confirm in Phase 1 design note that user_data.update() at create_analysis_context() line 369 moving earlier does not affect any intermediate step. (6) REGRESSION: existing test_context_threading.py and test_runtime_context_evaluation.py must pass; new direct phase-order test must be added per Phase 5 requirements. (7) Do not merge without Claude audit, GPT architectural review, and explicit human approval."
 }
