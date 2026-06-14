@@ -43,6 +43,22 @@ SUPPORTED_MISSING_BEHAVIOURS = frozenset(
     }
 )
 
+DISCLOSURE_ANSWERED_YES = "answered_yes"
+DISCLOSURE_ANSWERED_NO = "answered_no"
+DISCLOSURE_NOT_ANSWERED = "not_answered"
+DISCLOSURE_UNKNOWN = "unknown"
+DISCLOSURE_NOT_APPLICABLE = "not_applicable"
+
+SUPPORTED_DISCLOSURE_STATES = frozenset(
+    {
+        DISCLOSURE_ANSWERED_YES,
+        DISCLOSURE_ANSWERED_NO,
+        DISCLOSURE_NOT_ANSWERED,
+        DISCLOSURE_UNKNOWN,
+        DISCLOSURE_NOT_APPLICABLE,
+    }
+)
+
 
 class RuntimeContextModelError(RuntimeError):
     """Raised when the runtime context requirements model cannot be loaded or validated."""
@@ -183,6 +199,34 @@ def _medications_question_answered(
     return False
 
 
+def _disclosure_state_from_value(value: Any, *, field_answered: bool) -> str:
+    """Map a user-declared field value to a reusable disclosure-state primitive."""
+    if not field_answered:
+        return DISCLOSURE_NOT_ANSWERED
+    if value is None:
+        return DISCLOSURE_NOT_ANSWERED
+    if isinstance(value, list):
+        if len(value) == 0:
+            return DISCLOSURE_ANSWERED_NO
+        lowered = {str(item).strip().lower() for item in value if str(item).strip()}
+        if lowered <= {"", "none", "no", "false", "n/a", "not_applicable"}:
+            return DISCLOSURE_ANSWERED_NO
+        return DISCLOSURE_ANSWERED_YES
+    if isinstance(value, str):
+        stripped = value.strip().lower()
+        if not stripped or stripped in {"none", "no", "false", "n/a", "not_applicable"}:
+            return DISCLOSURE_ANSWERED_NO
+        return DISCLOSURE_ANSWERED_YES
+    if isinstance(value, bool):
+        return DISCLOSURE_ANSWERED_YES if value else DISCLOSURE_ANSWERED_NO
+    return DISCLOSURE_ANSWERED_YES if _value_present(value) else DISCLOSURE_ANSWERED_NO
+
+
+def _set_disclosure_state(bucket: Dict[str, Any], key: str, state: str) -> None:
+    if state in SUPPORTED_DISCLOSURE_STATES:
+        bucket[key] = state
+
+
 def build_runtime_context_snapshot(
     *,
     questionnaire_responses: Optional[Mapping[str, Any]] = None,
@@ -231,28 +275,60 @@ def build_runtime_context_snapshot(
     if "symptoms" in responses and _value_present(responses.get("symptoms")):
         snapshot["symptom"]["symptoms_present"] = True
 
-    if "supplements" in responses and _value_present(responses.get("supplements")):
+    supplements_answered = _field_answered(responses, "supplements")
+    supplements_value = responses.get("supplements")
+    supplement_state = _disclosure_state_from_value(
+        supplements_value,
+        field_answered=supplements_answered,
+    )
+    _set_disclosure_state(snapshot["supplement"], "supplements_status", supplement_state)
+    if supplements_answered:
         snapshot["supplement"]["supplements_disclosed"] = True
 
-    if _medications_question_answered(responses, history):
+    medications_answered = _medications_question_answered(responses, history)
+    meds = responses.get("long_term_medications") or history.get("medications") or history.get(
+        "long_term_medication_classes"
+    )
+    if responses.get("current_medications") is not None and not _field_answered(responses, "long_term_medications"):
+        meds = responses.get("current_medications")
+    long_term_meds_state = _disclosure_state_from_value(
+        meds,
+        field_answered=medications_answered,
+    )
+    _set_disclosure_state(
+        snapshot["medication"],
+        "long_term_medications_status",
+        long_term_meds_state,
+    )
+    if medications_answered:
         snapshot["medication"]["long_term_medications_disclosed"] = True
         snapshot["medication"]["hormone_therapy_status_disclosed"] = True
         snapshot["medication"]["steroid_use_disclosed"] = True
         snapshot["medication"]["thyroid_medication_disclosed"] = True
 
-    meds = responses.get("long_term_medications") or history.get("medications")
     if _value_present(meds):
         snapshot["medication"]["long_term_medications"] = meds
 
     med_classes = history.get("long_term_medication_classes") or meds
+    hormone_therapy_state = DISCLOSURE_ANSWERED_NO if medications_answered else DISCLOSURE_NOT_ANSWERED
+    steroid_use_state = DISCLOSURE_ANSWERED_NO if medications_answered else DISCLOSURE_NOT_ANSWERED
+    thyroid_medication_state = (
+        DISCLOSURE_ANSWERED_NO if medications_answered else DISCLOSURE_NOT_ANSWERED
+    )
     if isinstance(med_classes, list):
         lowered = {str(item).strip().lower() for item in med_classes if str(item).strip()}
         if any("testosterone" in item or "hormone" in item for item in lowered):
             snapshot["medication"]["hormone_therapy"] = True
+            hormone_therapy_state = DISCLOSURE_ANSWERED_YES
         if any("steroid" in item or "corticosteroid" in item for item in lowered):
             snapshot["medication"]["steroid"] = True
+            steroid_use_state = DISCLOSURE_ANSWERED_YES
         if any("thyroid" in item for item in lowered):
             snapshot["medication"]["thyroid_medication"] = True
+            thyroid_medication_state = DISCLOSURE_ANSWERED_YES
+    _set_disclosure_state(snapshot["medication"], "hormone_therapy_status", hormone_therapy_state)
+    _set_disclosure_state(snapshot["medication"], "steroid_use_status", steroid_use_state)
+    _set_disclosure_state(snapshot["medication"], "thyroid_medication_status", thyroid_medication_state)
 
     conditions = history.get("conditions") or responses.get("chronic_conditions")
     if _value_present(conditions):
@@ -262,12 +338,28 @@ def build_runtime_context_snapshot(
         snapshot["clinical_context"]["stress_context"] = True
 
     if _value_present(responses.get("chronic_conditions")):
-        snapshot["clinical_context"]["illness_or_recovery_status"] = True
+        snapshot["clinical_context"]["illness_or_recovery_exposure"] = True
 
-    if _field_answered(responses, "chronic_conditions") or _field_answered(responses, "recent_infections"):
+    illness_answered = _field_answered(responses, "chronic_conditions") or _field_answered(
+        responses, "recent_infections"
+    )
+    illness_value = responses.get("chronic_conditions")
+    if _field_answered(responses, "recent_infections") and illness_value is None:
+        illness_value = responses.get("recent_infections")
+    illness_state = _disclosure_state_from_value(
+        illness_value,
+        field_answered=illness_answered,
+    )
+    _set_disclosure_state(
+        snapshot["clinical_context"],
+        "illness_or_recovery_disclosure_status",
+        illness_state,
+    )
+    if illness_answered:
         snapshot["clinical_context"]["illness_or_recovery_status_disclosed"] = True
 
-    if _field_answered(responses, "supplements"):
+    aas_state = supplement_state if supplements_answered else DISCLOSURE_NOT_ANSWERED
+    if supplements_answered:
         snapshot["clinical_context"]["aas_exposure_status_disclosed"] = True
 
     supplements = responses.get("supplements")
@@ -277,6 +369,43 @@ def build_runtime_context_snapshot(
             snapshot["supplement"]["testosterone_supplement"] = True
         if any("steroid" in item or "prohormone" in item for item in lowered):
             snapshot["clinical_context"]["aas_exposure"] = True
+            aas_state = DISCLOSURE_ANSWERED_YES
+    _set_disclosure_state(snapshot["clinical_context"], "aas_exposure_status", aas_state)
+
+    if _field_answered(responses, "symptoms"):
+        symptom_state = _disclosure_state_from_value(
+            responses.get("symptoms"),
+            field_answered=True,
+        )
+        _set_disclosure_state(snapshot["symptom"], "symptoms_status", symptom_state)
+
+    if _field_answered(responses, "biological_sex"):
+        _set_disclosure_state(
+            snapshot["demographic"],
+            "sex_status",
+            DISCLOSURE_ANSWERED_YES if snapshot["demographic"].get("sex") else DISCLOSURE_ANSWERED_NO,
+        )
+    if _field_answered(responses, "date_of_birth") or (signal_biomarkers or {}).get("age") is not None:
+        _set_disclosure_state(snapshot["demographic"], "age_status", DISCLOSURE_ANSWERED_YES)
+
+    lifestyle = dict(lifestyle_factors or {})
+    for field_name, primitive_key in (
+        ("calorie_restriction", "calorie_restriction_status"),
+        ("fasting", "fasting_status"),
+        ("under_eating", "under_eating_status"),
+        ("weight_loss_phase", "weight_loss_phase_status"),
+        ("heavy_training_load", "heavy_training_load_status"),
+        ("overtraining", "overtraining_status"),
+    ):
+        if _field_answered(lifestyle, field_name):
+            _set_disclosure_state(
+                snapshot["clinical_context"],
+                primitive_key,
+                _disclosure_state_from_value(lifestyle.get(field_name), field_answered=True),
+            )
+
+    for biomarker_id in signal_biomarkers or {}:
+        snapshot["biomarker"][f"{biomarker_id}_available"] = True
 
     return snapshot
 
@@ -368,6 +497,17 @@ def evaluate_runtime_context_requirements(
 
         if requirement == "disclosed":
             if bucket.get(key) is not True:
+                missing.append(_requirement_label(item))
+            continue
+
+        if requirement == "disclosure_state":
+            allowed = item.get("allowed_values")
+            observed = bucket.get(key)
+            if not isinstance(allowed, list) or not allowed:
+                missing.append(_requirement_label(item))
+                continue
+            allowed_set = {str(value).strip() for value in allowed if str(value).strip()}
+            if observed not in allowed_set:
                 missing.append(_requirement_label(item))
             continue
 

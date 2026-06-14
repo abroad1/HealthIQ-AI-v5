@@ -1,0 +1,87 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: medical_research_intake_specification
+work_id: BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness
+generated_utc: '2026-06-14'
+activation_readiness_register: knowledge_bus/governance/batch2_full_coverage_activation_readiness_register_v1.yaml
+notes: This sprint does not invent medical conclusions. It defines the structured contract
+  for parallel medical research LLM output validation in a future activation sprint.
+required_output_sections_per_pattern:
+- clinically_valid_cautious_interpretation
+- required_companion_biomarkers
+- required_context_fields
+- exclusion_conditions
+- fail_closed_conditions
+- safe_wording_boundaries
+- unsafe_wording_to_avoid
+- activation_recommendation
+- confidence_level
+- research_citations_or_evidence_basis
+- external_clinician_review_required
+patterns:
+- pattern_id: ft3_low_low_t3_syndrome
+  package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  signal_id: signal_free_t3_low
+  biomarker: free_t3
+  trigger_direction: low
+  research_questions:
+  - Is isolated low FT3 a safe cautious educational pattern without over-diagnosing thyroid disease?
+  - What companion biomarkers are mandatory before interpretation?
+  - What illness, medication, dieting, and training contexts must be disclosed?
+  - When must the signal fail closed?
+  - What wording must be avoided to prevent diagnostic overreach?
+  expected_activation_recommendation_values:
+  - ACTIVATE_WITH_GATES
+  - DEFER
+  - DO_NOT_ACTIVATE
+- pattern_id: dhea_high_androgen_excess
+  package_id: pkg_kb47_dhea_high_androgen_excess_context
+  signal_id: signal_dhea_high
+  group: androgen
+- pattern_id: dhea_low_adrenal_reduction
+  package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  signal_id: signal_dhea_low
+  group: androgen
+- pattern_id: fai_high_hyperandrogenism
+  package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  signal_id: signal_fai_high
+  group: androgen
+- pattern_id: fai_low_reduced_availability
+  package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  signal_id: signal_fai_low
+  group: androgen
+- pattern_id: free_testosterone_high_excess
+  package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  signal_id: signal_free_testosterone_high
+  group: androgen
+- pattern_id: free_testosterone_low_deficiency
+  package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  signal_id: signal_free_testosterone_low
+  group: androgen
+- pattern_id: free_testosterone_pct_high
+  package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  signal_id: signal_free_testosterone_pct_high
+  group: androgen
+- pattern_id: free_testosterone_pct_low
+  package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  signal_id: signal_free_testosterone_pct_low
+  group: androgen
+androgen_shared_research_requirements:
+  clinical_signoff_carry_forward: CF-BATCH2-010
+  required_context_fields:
+  - biological sex
+  - age
+  - hormone therapy / HRT disclosure
+  - AAS / prohormone disclosure
+  - prescribed steroid disclosure
+  - supplement disclosure
+  - relevant symptoms
+  fail_closed_when:
+  - required disclosure fields not answered
+  - companion biomarkers missing where frame requires
+  external_clinician_review_required: true
+validation_rules:
+- Research output must map each required_context_field to a primitive in reusable_runtime_context_primitive_model_v1.yaml
+- Research output must not propose threshold changes without separate authority sprint
+- Research output must not recommend activation without explicit fail_closed_conditions
+- Research output with activation_recommendation ACTIVATE_WITH_GATES still requires human approval phrase in activation sprint

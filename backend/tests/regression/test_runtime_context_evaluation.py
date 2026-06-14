@@ -375,3 +375,112 @@ def test_no_hardcoded_thresholds_in_runtime_context_evaluator():
     )
     assert "5.2" not in source
     assert "60.0" not in source
+
+
+def test_disclosure_state_answered_no_not_treated_as_missing_for_hormone_therapy():
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"long_term_medications": []},
+    )
+    assert ctx["medication"]["hormone_therapy_status"] == "answered_no"
+    assert ctx["medication"].get("hormone_therapy_status_disclosed") is True
+    assert "hormone_therapy" not in ctx["medication"]
+
+
+def test_disclosure_state_answered_no_not_treated_as_missing_for_aas():
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"supplements": []},
+    )
+    assert ctx["clinical_context"]["aas_exposure_status"] == "answered_no"
+    assert ctx["clinical_context"].get("aas_exposure_status_disclosed") is True
+    assert "aas_exposure" not in ctx["clinical_context"]
+
+
+def test_disclosure_state_answered_no_for_thyroid_medication_when_meds_empty():
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"long_term_medications": []},
+    )
+    assert ctx["medication"]["thyroid_medication_status"] == "answered_no"
+    assert "thyroid_medication" not in ctx["medication"]
+
+
+def test_disclosure_state_not_answered_when_question_unanswered():
+    ctx = build_runtime_context_snapshot()
+    assert ctx["medication"].get("hormone_therapy_status") == "not_answered"
+    assert ctx["clinical_context"].get("aas_exposure_status") == "not_answered"
+    assert ctx["clinical_context"].get("illness_or_recovery_disclosure_status") == "not_answered"
+
+
+def test_disclosure_state_requirement_accepts_answered_no():
+    requirements = {
+        "missing_context_behaviour": "suppress_signal",
+        "required_context": [
+            {
+                "context_type": "medication",
+                "key": "hormone_therapy_status",
+                "requirement": "disclosure_state",
+                "allowed_values": ["answered_yes", "answered_no"],
+            },
+        ],
+    }
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"long_term_medications": []},
+    )
+    result = evaluate_runtime_context_requirements(
+        requirements,
+        runtime_context=ctx,
+        signal_biomarkers={},
+        signal_derived={},
+        lab_ranges={},
+    )
+    assert result.satisfied
+
+
+def test_disclosure_state_requirement_fails_for_not_answered():
+    requirements = {
+        "missing_context_behaviour": "suppress_signal",
+        "required_context": [
+            {
+                "context_type": "medication",
+                "key": "hormone_therapy_status",
+                "requirement": "disclosure_state",
+                "allowed_values": ["answered_yes", "answered_no"],
+            },
+        ],
+    }
+    result = evaluate_runtime_context_requirements(
+        requirements,
+        runtime_context=build_runtime_context_snapshot(),
+        signal_biomarkers={},
+        signal_derived={},
+        lab_ranges={},
+    )
+    assert not result.satisfied
+
+
+def test_positive_exposure_separate_from_disclosure_for_aas():
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"supplements": ["prohormone stack"]},
+    )
+    assert ctx["clinical_context"]["aas_exposure_status"] == "answered_yes"
+    assert ctx["clinical_context"]["aas_exposure"] is True
+
+
+def test_companion_biomarker_availability_primitives_from_signal_biomarkers():
+    ctx = build_runtime_context_snapshot(
+        signal_biomarkers={"tsh": 2.0, "free_t4": 1.2},
+    )
+    assert ctx["biomarker"]["tsh_available"] is True
+    assert ctx["biomarker"]["free_t4_available"] is True
+
+
+def test_lifestyle_disclosure_states_mapped_when_present():
+    ctx = build_runtime_context_snapshot(
+        lifestyle_factors={
+            "calorie_restriction": False,
+            "fasting": True,
+            "heavy_training_load": False,
+        },
+    )
+    assert ctx["clinical_context"]["calorie_restriction_status"] == "answered_no"
+    assert ctx["clinical_context"]["fasting_status"] == "answered_yes"
+    assert ctx["clinical_context"]["heavy_training_load_status"] == "answered_no"

@@ -1,0 +1,104 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: governed_frontend_backend_contract_draft
+work_id: BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness
+generated_utc: '2026-06-14'
+primitive_model: knowledge_bus/governance/reusable_runtime_context_primitive_model_v1.yaml
+notes: Describes structured data the frontend or upload flow must eventually provide.
+  Not runtime-consumed directly. Runtime mapping is implemented in runtime_context_evaluator.py.
+safe_default_behaviour: fail_closed_when_required_field_not_answered
+fields:
+- field_name: biological_sex
+  user_facing_intent: Biological sex for sex-specific reference interpretation
+  primitive: demographic.sex
+  allowed_values: [male, female, other]
+  required_for_signal_families: [androgen, fai, free_testosterone_pct]
+  required_before_activation: true
+  optional_modifier: false
+  unanswered_fail_closed: true
+- field_name: date_of_birth
+  user_facing_intent: Age derivation for age-stratified interpretation
+  primitive: demographic.age
+  allowed_values: ISO date string
+  required_for_signal_families: [androgen, thyroid]
+  required_before_activation: true
+  optional_modifier: false
+  unanswered_fail_closed: true
+- field_name: long_term_medications
+  user_facing_intent: Disclosed long-term medication list including explicit none
+  primitive: medication.long_term_medications_status
+  allowed_values: [answered_yes, answered_no, not_answered]
+  required_for_signal_families: [androgen, thyroid]
+  required_before_activation: true
+  optional_modifier: false
+  unanswered_fail_closed: true
+  safe_default_behaviour: suppress_signal
+- field_name: supplements
+  user_facing_intent: Disclosed supplement list including explicit none
+  primitive: supplement.supplements_status
+  allowed_values: [answered_yes, answered_no, not_answered]
+  required_for_signal_families: [androgen]
+  required_before_activation: true
+  optional_modifier: true
+  unanswered_fail_closed: true
+- field_name: chronic_conditions
+  user_facing_intent: Recent or ongoing illness / recovery context disclosure
+  primitive: clinical_context.illness_or_recovery_disclosure_status
+  allowed_values: [answered_yes, answered_no, not_answered]
+  required_for_signal_families: [thyroid_ft3_low]
+  required_before_activation: true
+  optional_modifier: false
+  unanswered_fail_closed: true
+- field_name: recent_infections
+  user_facing_intent: Recent infection disclosure for non-thyroidal illness context
+  primitive: clinical_context.illness_or_recovery_disclosure_status
+  allowed_values: [answered_yes, answered_no, not_answered]
+  required_for_signal_families: [thyroid_ft3_low]
+  required_before_activation: true
+  optional_modifier: false
+  unanswered_fail_closed: true
+- field_name: lifestyle_factors.calorie_restriction
+  user_facing_intent: Calorie restriction / dieting / under-eating context
+  primitive: clinical_context.calorie_restriction_status
+  required_for_signal_families: [thyroid_ft3_low]
+  required_before_activation: true
+  optional_modifier: true
+  unanswered_fail_closed: true
+- field_name: lifestyle_factors.fasting
+  user_facing_intent: Fasting context for thyroid hormone conversion patterns
+  primitive: clinical_context.fasting_status
+  required_for_signal_families: [thyroid_ft3_low]
+  required_before_activation: true
+  optional_modifier: true
+  unanswered_fail_closed: true
+- field_name: lifestyle_factors.heavy_training_load
+  user_facing_intent: Heavy training / overtraining context
+  primitive: clinical_context.heavy_training_load_status
+  required_for_signal_families: [thyroid_ft3_low, androgen]
+  required_before_activation: true
+  optional_modifier: true
+  unanswered_fail_closed: true
+- field_name: symptoms
+  user_facing_intent: Relevant symptom disclosure
+  primitive: symptom.symptoms_status
+  required_for_signal_families: [androgen, thyroid]
+  required_before_activation: false
+  optional_modifier: true
+  unanswered_fail_closed: false
+ft3_low_required_fields:
+- thyroid medication status via long_term_medications
+- recent illness / infection via chronic_conditions or recent_infections
+- recovery from illness via chronic_conditions disclosure
+- calorie restriction / fasting / under-eating via lifestyle_factors
+- heavy training / overtraining via lifestyle_factors
+- TSH availability via lab panel
+- FT4 availability via lab panel
+androgen_required_fields:
+- biological sex
+- age
+- hormone therapy / HRT via long_term_medications
+- anabolic steroid / AAS exposure via supplements
+- prescribed steroid use via long_term_medications
+- supplement use via supplements
+- relevant androgen symptoms via symptoms
+- companion androgen biomarker availability via lab panel

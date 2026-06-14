@@ -1,0 +1,158 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: governed_design_authority
+work_id: BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness
+generated_utc: '2026-06-14'
+execution_companion: knowledge_bus/governance/runtime_context_requirements_model_v1.yaml
+runtime_evaluator: backend/core/analytics/runtime_context_evaluator.py
+design_rule: Build context once. Bind to many signals. Keep signal evaluation deterministic.
+supported_disclosure_states:
+- answered_yes
+- answered_no
+- not_answered
+- unknown
+- not_applicable
+primitives:
+- canonical_key: demographic.sex
+  type: categorical
+  allowed_values: [male, female, other]
+  role: hard_prerequisite_gate
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: demographic.sex
+  disclosure_state_key: demographic.sex_status
+  example_questionnaire_field: biological_sex
+  reusable_domains: [androgen, thyroid, iron, kidney, liver, glucose]
+- canonical_key: demographic.age
+  type: numeric
+  role: hard_prerequisite_gate
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: demographic.age
+  disclosure_state_key: demographic.age_status
+  example_questionnaire_field: date_of_birth
+  reusable_domains: [androgen, thyroid, kidney, liver, glucose, cortisol]
+- canonical_key: medication.long_term_medications_status
+  type: disclosure_state
+  allowed_values: [answered_yes, answered_no, not_answered, unknown, not_applicable]
+  role: disclosed_context_requirement
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: medication.long_term_medications_status
+  legacy_disclosed_key: medication.long_term_medications_disclosed
+  example_questionnaire_field: long_term_medications
+  reusable_domains: [androgen, thyroid, liver, kidney, glucose, inflammation]
+- canonical_key: medication.hormone_therapy_status
+  type: disclosure_state
+  exposure_key: medication.hormone_therapy
+  role: disclosed_context_requirement
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: medication.hormone_therapy_status
+  legacy_disclosed_key: medication.hormone_therapy_status_disclosed
+  example_questionnaire_field: long_term_medications
+  reusable_domains: [androgen, thyroid]
+- canonical_key: medication.steroid_use_status
+  type: disclosure_state
+  exposure_key: medication.steroid
+  role: disclosed_context_requirement
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: medication.steroid_use_status
+  legacy_disclosed_key: medication.steroid_use_disclosed
+  example_questionnaire_field: long_term_medications
+  reusable_domains: [androgen, thyroid, inflammation, glucose]
+- canonical_key: medication.thyroid_medication_status
+  type: disclosure_state
+  exposure_key: medication.thyroid_medication
+  role: disclosed_context_requirement
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: medication.thyroid_medication_status
+  legacy_disclosed_key: medication.thyroid_medication_disclosed
+  example_questionnaire_field: long_term_medications
+  reusable_domains: [thyroid]
+- canonical_key: supplement.supplements_status
+  type: disclosure_state
+  role: disclosed_context_requirement
+  can_gate_activation: false
+  can_modify_interpretation: true
+  fail_closed_when_missing: false
+  runtime_snapshot_key: supplement.supplements_status
+  legacy_disclosed_key: supplement.supplements_disclosed
+  example_questionnaire_field: supplements
+  reusable_domains: [androgen, thyroid, iron, nutrients]
+- canonical_key: clinical_context.aas_exposure_status
+  type: disclosure_state
+  exposure_key: clinical_context.aas_exposure
+  role: disclosed_context_requirement
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: clinical_context.aas_exposure_status
+  legacy_disclosed_key: clinical_context.aas_exposure_status_disclosed
+  example_questionnaire_field: supplements
+  reusable_domains: [androgen]
+- canonical_key: clinical_context.illness_or_recovery_disclosure_status
+  type: disclosure_state
+  exposure_key: clinical_context.illness_or_recovery_exposure
+  role: disclosed_context_requirement
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: clinical_context.illness_or_recovery_disclosure_status
+  legacy_disclosed_key: clinical_context.illness_or_recovery_status_disclosed
+  example_questionnaire_field: chronic_conditions
+  reusable_domains: [thyroid, inflammation, iron, liver, kidney, glucose]
+- canonical_key: clinical_context.calorie_restriction_status
+  type: disclosure_state
+  role: interpretation_modifier
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: clinical_context.calorie_restriction_status
+  example_questionnaire_field: lifestyle_factors.calorie_restriction
+  reusable_domains: [thyroid, glucose, cortisol, iron]
+- canonical_key: clinical_context.fasting_status
+  type: disclosure_state
+  role: interpretation_modifier
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: clinical_context.fasting_status
+  example_questionnaire_field: lifestyle_factors.fasting
+  reusable_domains: [thyroid, glucose]
+- canonical_key: clinical_context.heavy_training_load_status
+  type: disclosure_state
+  role: interpretation_modifier
+  can_gate_activation: true
+  can_modify_interpretation: true
+  fail_closed_when_missing: true
+  runtime_snapshot_key: clinical_context.heavy_training_load_status
+  example_questionnaire_field: lifestyle_factors.heavy_training_load
+  reusable_domains: [thyroid, cortisol, iron, androgen]
+- canonical_key: symptom.symptoms_status
+  type: disclosure_state
+  exposure_key: symptom.symptoms_present
+  role: interpretation_modifier
+  can_gate_activation: false
+  can_modify_interpretation: true
+  fail_closed_when_missing: false
+  runtime_snapshot_key: symptom.symptoms_status
+  example_questionnaire_field: symptoms
+  reusable_domains: [androgen, thyroid, iron, liver]
+- canonical_key: biomarker.companion_availability
+  type: presence
+  role: companion_biomarker_requirement
+  can_gate_activation: true
+  can_modify_interpretation: false
+  fail_closed_when_missing: true
+  runtime_snapshot_key_pattern: biomarker.{biomarker_id}_available
+  example_source: signal_biomarkers map at evaluation time
+  reusable_domains: [androgen, thyroid, iron, kidney, liver, glucose]
