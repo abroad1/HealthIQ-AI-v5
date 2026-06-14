@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-COMPLETION-1-final-runtime-context-and-orchestrator-restructure",
+  "branch": "work/BATCH2-MINIMUM-COVERAGE-1-androgen-ft3-low-clinical-and-runtime-completion",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-14T12:42:20Z",
-  "cursor_started_utc": "2026-06-14T12:32:56Z",
-  "head_sha": "01de11bf9b08fd74b439669378aa71e35568cff7",
+  "cursor_started_utc": "2026-06-14T13:05:44Z",
+  "head_sha": "be9aa7ede503538a649513c32f662d823ab205a3",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-MINIMUM-COVERAGE-1_androgen_ft3_low_clinical_and_runtime_completion"
 }
