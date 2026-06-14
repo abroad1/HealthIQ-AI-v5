@@ -1,9 +1,10 @@
 {
   "branch": "work/BATCH2-FULL-COVERAGE-ACTIVATION-1-activate-research-supported-thyroid-and-androgen-signals",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-14T16:12:31Z",
   "cursor_started_utc": "2026-06-14T16:02:58Z",
-  "head_sha": "cd848088a89076895bedfeb27b8cfe0bfa57c2c2",
+  "head_sha": "50e233b6b6f2afd37e01db6945ed2904dbb444f6",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals"
 }
