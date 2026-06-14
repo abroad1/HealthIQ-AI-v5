@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-COMPLETION-2-compiled-card-and-root-cause-authority-completion",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-14T20:07:13Z",
   "cursor_started_utc": "2026-06-14T20:02:04Z",
-  "head_sha": "b4c7322d99d075efe77087e090e9784ae6d1b86d",
+  "head_sha": "1835d468324cb5505b2fd86c3d82a6cb0a4db558",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion"
 }
