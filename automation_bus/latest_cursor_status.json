@@ -1,10 +1,9 @@
 {
-  "branch": "work/BATCH2-FULL-COVERAGE-BUILD-1-reusable-context-layer-research-authority-and-activation-readiness",
+  "branch": "work/BATCH2-FULL-COVERAGE-ACTIVATION-1-activate-research-supported-thyroid-and-androgen-signals",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-14T14:03:34Z",
-  "cursor_started_utc": "2026-06-14T13:59:02Z",
-  "head_sha": "52dca3d1e4ac868941c1d2b8e9b92d79c695708a",
+  "cursor_started_utc": "2026-06-14T16:02:58Z",
+  "head_sha": "cd848088a89076895bedfeb27b8cfe0bfa57c2c2",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness"
+  "status": "IN_PROGRESS",
+  "work_id": "BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals"
 }
