@@ -1,0 +1,228 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: classification_complete_no_activation
+work_id: BATCH2-MINIMUM-COVERAGE-1_androgen_ft3_low_clinical_and_runtime_completion
+analysis_utc: '2026-06-14'
+source_clearance_register: knowledge_bus/governance/batch2_context_clearance_register_v1.yaml
+source_medical_review: knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml
+source_context_binding: knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml
+source_remainder_resolution: knowledge_bus/governance/batch2_remainder_resolution_register_v1.yaml
+human_stop_gate:
+  required: true
+  approval_phrase: APPROVE BATCH2 MINIMUM COVERAGE ACTIVATION
+  approval_received: false
+  approval_recorded_at: null
+runtime_activation_performed: false
+activated_package_count: 0
+package_count: 9
+decision_summary:
+  activate_with_gates: 0
+  exclude_from_minimum_coverage: 1
+  defer_pending_external_clinical_authority: 8
+  do_not_activate: 0
+cf_batch2_010_status: Open
+cf_batch2_010_resolved: false
+packages:
+- package_id: pkg_kb47_dhea_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
+  group: androgen
+  signal_id: signal_dhea_high
+  biomarker: dhea
+  trigger_direction: high
+  current_activation_state: inactive
+  clinical_authority_present: false
+  runtime_context_complete: partial
+  companion_biomarkers_complete: true
+  enable_lower_bound: false
+  enable_upper_bound: true
+  activation_layer_blockers:
+  - CF-BATCH2-010 clinical signoff absent
+  runtime_blockers:
+  - disclosed context gates implemented but package inactive
+  governance_blockers:
+  - clinical_signoff_status not_in_repo
+  - clearance_decision BLOCKED_PENDING_CLINICAL_SIGNOFF
+  minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
+  stop_gate_passed: false
+  evidence: batch2_androgen_panel_medical_review_v1.yaml MEDICALLY_COHERENT_BUT_CONTEXT_DEPENDENT;
+    no androgen clinical sign-off artefact; CF-BATCH2-010 Open
+- package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  package_path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
+  group: androgen
+  signal_id: signal_dhea_low
+  biomarker: dhea
+  trigger_direction: low
+  current_activation_state: inactive
+  clinical_authority_present: false
+  runtime_context_complete: partial
+  companion_biomarkers_complete: true
+  enable_lower_bound: true
+  enable_upper_bound: false
+  activation_layer_blockers:
+  - CF-BATCH2-010 clinical signoff absent
+  runtime_blockers:
+  - disclosed medication/stress context gates; package inactive
+  governance_blockers:
+  - clinical_signoff_status not_in_repo
+  minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
+  stop_gate_passed: false
+  evidence: batch2_androgen_context_modifier_binding_v1.yaml remains_blocked_for_promotion=true
+- package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  package_path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
+  group: androgen
+  signal_id: signal_fai_high
+  biomarker: fai
+  trigger_direction: high
+  current_activation_state: inactive
+  clinical_authority_present: false
+  runtime_context_complete: partial
+  companion_biomarkers_complete: true
+  enable_lower_bound: false
+  enable_upper_bound: true
+  activation_layer_blockers:
+  - CF-BATCH2-010 clinical signoff absent
+  runtime_blockers:
+  - SHBG/testosterone companion gates declared
+  governance_blockers:
+  - BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING per medical review
+  minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
+  stop_gate_passed: false
+  evidence: medical review frame BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING; sign-off absent
+- package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
+  group: androgen
+  signal_id: signal_fai_low
+  biomarker: fai
+  trigger_direction: low
+  current_activation_state: inactive
+  clinical_authority_present: false
+  runtime_context_complete: partial
+  companion_biomarkers_complete: true
+  enable_lower_bound: true
+  enable_upper_bound: false
+  activation_layer_blockers:
+  - CF-BATCH2-010 clinical signoff absent
+  runtime_blockers:
+  - sex-specific FAI thresholds require SHBG/sex context
+  governance_blockers:
+  - clinical_signoff_status not_in_repo
+  minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
+  stop_gate_passed: false
+  evidence: companion biomarker gates (shbg, free_testosterone, testosterone, lh) declared; sign-off absent
+- package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context
+  group: androgen
+  signal_id: signal_free_testosterone_high
+  biomarker: free_testosterone
+  trigger_direction: high
+  current_activation_state: inactive
+  clinical_authority_present: false
+  runtime_context_complete: partial
+  companion_biomarkers_complete: true
+  enable_lower_bound: false
+  enable_upper_bound: true
+  activation_layer_blockers:
+  - CF-BATCH2-010 clinical signoff absent
+  runtime_blockers:
+  - hyperandrogenism cluster overlap risk
+  governance_blockers:
+  - EXCLUDED from BATCH2-PROMOTE-1
+  minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
+  stop_gate_passed: false
+  evidence: batch2_remainder_resolution_register_v1.yaml FORMALLY_BLOCKED_KEEP_INACTIVE
+- package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  group: androgen
+  signal_id: signal_free_testosterone_low
+  biomarker: free_testosterone
+  trigger_direction: low
+  current_activation_state: inactive
+  clinical_authority_present: false
+  runtime_context_complete: partial
+  companion_biomarkers_complete: true
+  enable_lower_bound: true
+  enable_upper_bound: false
+  activation_layer_blockers:
+  - CF-BATCH2-010 clinical signoff absent
+  runtime_blockers:
+  - LH/sex/age/medication context dependencies
+  governance_blockers:
+  - clinical_signoff_status not_in_repo
+  minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
+  stop_gate_passed: false
+  evidence: medical review context-dependent; no governed clinical sign-off artefact
+- package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  group: androgen
+  signal_id: signal_free_testosterone_pct_high
+  biomarker: free_testosterone_pct
+  trigger_direction: high
+  current_activation_state: inactive
+  clinical_authority_present: false
+  runtime_context_complete: partial
+  companion_biomarkers_complete: true
+  enable_lower_bound: false
+  enable_upper_bound: true
+  activation_layer_blockers:
+  - CF-BATCH2-010 clinical signoff absent
+  runtime_blockers:
+  - SHBG/total testosterone fraction interpretation requires context
+  governance_blockers:
+  - BLOCKED_PENDING_CONTEXT_MODIFIER_BINDING per medical review
+  minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
+  stop_gate_passed: false
+  evidence: batch2_androgen_context_modifier_binding_v1.yaml remains_blocked_for_promotion=true
+- package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  group: androgen
+  signal_id: signal_free_testosterone_pct_low
+  biomarker: free_testosterone_pct
+  trigger_direction: low
+  current_activation_state: inactive
+  clinical_authority_present: false
+  runtime_context_complete: partial
+  companion_biomarkers_complete: true
+  enable_lower_bound: true
+  enable_upper_bound: false
+  activation_layer_blockers:
+  - CF-BATCH2-010 clinical signoff absent
+  runtime_blockers:
+  - SHBG/sex context runtime gap
+  governance_blockers:
+  - clinical_signoff_status not_in_repo
+  minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
+  stop_gate_passed: false
+  evidence: overlap adjudication with free_testosterone_low deferred; sign-off absent
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
+  group: thyroid_ft3_low
+  signal_id: signal_free_t3_low
+  biomarker: free_t3
+  trigger_direction: low
+  current_activation_state: inactive
+  clinical_authority_present: partial
+  runtime_context_complete: partial
+  companion_biomarkers_complete: true
+  enable_lower_bound: false
+  enable_upper_bound: true
+  activation_layer_blockers:
+  - enable_lower_bound_false
+  - thyroid_medication_disclosed metadata incomplete
+  runtime_blockers:
+  - illness_or_recovery_status_disclosed required
+  - low T3 syndrome over-interpretation risk
+  governance_blockers:
+  - DEFERRED_NON_LAUNCH_CRITICAL in clearance register
+  - active thyroid trio already covers minimum credible pre-beta coverage
+  minimum_coverage_decision: EXCLUDE_FROM_MINIMUM_COVERAGE
+  stop_gate_passed: false
+  evidence: signal_library.yaml enable_lower_bound=false; BATCH2-THYROID-GATE-1 deferred FT3 low;
+    approval phrase absent
+executive_verdict: All 9 remaining Batch 2 context-dependent packages receive formal minimum-coverage
+  decisions. Zero packages activated. Eight androgen packages deferred pending external clinical
+  authority (CF-BATCH2-010). FT3 low excluded from minimum pre-beta biomarker coverage set.
+recommended_next_action: External androgen clinical sign-off workflow before BATCH2-ANDROGEN-EXECUTION-1;
+  proceed to ARCH-COMPLETION-2 with minimum biomarker estate explicitly defined excluding FT3 low
+  and androgen panel until sign-off.
+rollback_path: Revert batch2_minimum_coverage_decision_register_v1.yaml, batch2_context_clearance_register_v1.yaml,
+  context_runtime_execution_register_v1.yaml, audit paper, tests, and carry-forward register updates.

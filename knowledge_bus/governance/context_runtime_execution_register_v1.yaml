@@ -1,8 +1,9 @@
 schema_version: 1.0.0
 runtime_consumed: true
-status: disclosed_runtime_semantics_implemented_pending_activation_stop_gate
+status: minimum_coverage_classified_no_activation
 work_id: CONTEXT-RUNTIME-1_reusable_runtime_context_evaluation_layer
-remediation_work_id: BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation
+remediation_work_id: BATCH2-MINIMUM-COVERAGE-1_androgen_ft3_low_clinical_and_runtime_completion
+source_minimum_coverage_register: knowledge_bus/governance/batch2_minimum_coverage_decision_register_v1.yaml
 source_context_catalogue: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 source_batch2_blocker_register: knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml
 source_context_model: knowledge_bus/governance/runtime_context_requirements_model_v1.yaml
@@ -31,12 +32,12 @@ context_availability:
   illness_context: questionnaire.chronic_conditions / stress_level
   known_conditions: questionnaire.chronic_conditions / medical_history.conditions
   companion_biomarkers: signal_biomarkers and signal_derived inputs to evaluate_all
-  orchestrator_threading: not_yet_wired_signal_evaluation_precedes_questionnaire_merge
+  orchestrator_threading: ARCH-COMPLETION-1 — runtime context derived from AnalysisContext via build_runtime_context_snapshot_from_analysis_context
 human_stop_gate:
   required: true
   activation_recommended: false
   approval_received: false
-  approval_phrase: APPROVE BATCH2 CONTEXT GATED ACTIVATION
+  approval_phrase: APPROVE BATCH2 MINIMUM COVERAGE ACTIVATION
   approval_recorded_at: null
 runtime_activation_performed: false
 activated_package_count: 0
@@ -137,11 +138,16 @@ packages:
   blocker_if_inactive: CF-BATCH2-010
   required_next_action: Human STOP approval after prerequisites
   notes: Inactive; gated.
-phase_3_outcome: disclosed_semantics_implemented_all_context_dependent_packages_remain_inactive
+phase_3_outcome: minimum_coverage_classified_all_nine_packages_remain_inactive
+minimum_coverage_decision_summary:
+  activate_with_gates: 0
+  exclude_from_minimum_coverage: 1
+  defer_pending_external_clinical_authority: 8
+  do_not_activate: 0
 rollback_path: Revert runtime_context_evaluator.py; remove runtime_context parameter and gate call from
   signal_evaluator.py; remove runtime_context_requirements from in-scope signal_library.yaml files;
-  revert runtime_context_requirements_model_v1.yaml, context_runtime_execution_register_v1.yaml, audit
-  report, tests, and carry-forward register updates.
+  revert runtime_context_requirements_model_v1.yaml, context_runtime_execution_register_v1.yaml,
+  batch2_minimum_coverage_decision_register_v1.yaml, audit report, tests, and carry-forward register updates.
 notes: Reusable fail-closed context evaluation implemented. No package metadata activation performed.
-  Orchestrator does not yet pass runtime_context into evaluate_all — follow-on for context ingestion
-  threading. CF-CONTEXT-MOD-3 resolved at capability level; CF-BATCH2-010 remains open.
+  ARCH-COMPLETION-1 orchestrator threading active. CF-CONTEXT-MOD-3 resolved. CF-BATCH2-010 remains open.
+  BATCH2-MINIMUM-COVERAGE-1 formalised minimum-coverage decisions for all 9 packages; zero activations.

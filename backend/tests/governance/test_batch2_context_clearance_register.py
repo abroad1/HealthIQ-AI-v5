@@ -77,3 +77,16 @@ def test_frame_index_confirms_inactive_runtime_authority():
         pos = index_text.index(f"source_package_id: {package_id}")
         section = index_text[pos : pos + 550]
         assert "runtime_authority_status: inactive" in section
+
+
+def test_minimum_coverage_decisions_recorded_on_clearance_register():
+    reg = _load(REGISTER_PATH)
+    androgen_rows = [r for r in reg["packages"] if r.get("group") == "androgen"]
+    assert len(androgen_rows) == 8
+    for row in androgen_rows:
+        assert row["minimum_coverage_decision"] == "DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY"
+    ft3 = next(r for r in reg["packages"] if r["package_id"] == "pkg_kb47_free_t3_low_low_t3_syndrome")
+    assert ft3["minimum_coverage_decision"] == "EXCLUDE_FROM_MINIMUM_COVERAGE"
+    summary = reg.get("minimum_coverage_summary") or {}
+    assert summary.get("defer_pending_external_clinical_authority") == 8
+    assert summary.get("exclude_from_minimum_coverage") == 1
