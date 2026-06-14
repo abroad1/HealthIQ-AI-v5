@@ -15,7 +15,7 @@ UNIT_NORMALISATION_META_KEY = "__unit_normalisation_meta__"
 
 from core.canonical.normalize import BiomarkerNormalizer, normalize_panel
 from core.canonical.resolver import resolve_to_canonical, CanonicalResolver
-from core.analytics.runtime_context_evaluator import build_runtime_context_snapshot
+from core.analytics.runtime_context_evaluator import build_runtime_context_snapshot_from_analysis_context
 from core.pipeline.orchestrator_phases_v1 import (
     evaluate_signal_evaluation_phase,
     prepare_scoring_inputs_from_panel,
@@ -1251,10 +1251,22 @@ class AnalysisOrchestrator:
                     "inputs_used": inputs_used if source == "computed" else None,
                 }
 
-            # Step 1.6: Phase signal_evaluation
-            runtime_ctx = build_runtime_context_snapshot(
-                questionnaire_responses=questionnaire_data,
+            # Step 1.55: Create analysis context before context-dependent signal evaluation.
+            logger.info("Step 1.55: Creating analysis context before signal evaluation")
+            context = self.create_analysis_context(
+                analysis_id=analysis_id,
+                raw_biomarkers=filtered_biomarkers,
+                user_data=user,
+                questionnaire_data=questionnaire_data,
+                assume_canonical=True,
             )
+
+            runtime_ctx = build_runtime_context_snapshot_from_analysis_context(
+                context,
+                signal_biomarkers=simple_biomarkers,
+            )
+
+            # Step 1.6: Phase signal_evaluation (runtime context derived from AnalysisContext)
             signal_phase = evaluate_signal_evaluation_phase(
                 signal_evaluator=self.signal_evaluator,
                 simple_biomarkers=simple_biomarkers,
@@ -1269,17 +1281,6 @@ class AnalysisOrchestrator:
             signal_registry_hash_sha256 = signal_phase.signal_registry_hash_sha256
             report_generated_at = signal_phase.report_generated_at
 
-            # Step 2: Create analysis context first so questionnaire-derived lifestyle / demographics
-            # are merged into user_data before scoring (CONTEXT-HARDENING-A ordering fix).
-            logger.info("Step 2: Creating analysis context (questionnaire merge before scoring)")
-            context = self.create_analysis_context(
-                analysis_id=analysis_id,
-                raw_biomarkers=filtered_biomarkers,
-                user_data=user,
-                questionnaire_data=questionnaire_data,
-                assume_canonical=True
-            )
-
             user_intervention_document: Optional[Dict[str, Any]] = None
             if questionnaire_data and isinstance(questionnaire_data, dict):
                 user_intervention_document = (
@@ -1287,7 +1288,7 @@ class AnalysisOrchestrator:
                 )
             intervention_annotations_v1 = build_intervention_annotations_v1(user_intervention_document)
 
-            # Step 3: Score biomarkers using merged user context from Step 2
+            # Step 3: Score biomarkers using merged user context from analysis context assembly
             logger.info("Step 3: Scoring biomarkers")
             scoring_result = self.score_biomarkers(
                 biomarkers=simple_biomarkers,

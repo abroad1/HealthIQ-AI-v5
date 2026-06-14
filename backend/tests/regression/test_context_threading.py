@@ -7,7 +7,10 @@ from unittest.mock import MagicMock
 
 import yaml
 
-from core.analytics.runtime_context_evaluator import build_runtime_context_snapshot
+from core.analytics.runtime_context_evaluator import (
+    build_runtime_context_snapshot,
+    build_runtime_context_snapshot_from_analysis_context,
+)
 from core.analytics.signal_evaluator import SignalEvaluator, SignalRegistry
 from core.knowledge.signal_activation_identity_v1 import resolve_activation_identity
 from core.pipeline import orchestrator as orchestrator_module
@@ -86,11 +89,46 @@ def test_evaluate_signal_evaluation_phase_forwards_runtime_context():
     assert kwargs.get("runtime_context") == runtime_ctx
 
 
-def test_orchestrator_wires_build_runtime_context_snapshot():
+def test_orchestrator_wires_post_context_runtime_snapshot():
     source = Path(orchestrator_module.__file__).read_text(encoding="utf-8")
-    assert "build_runtime_context_snapshot" in source
-    assert "questionnaire_responses=questionnaire_data" in source
-    assert "runtime_context=runtime_ctx" in source
+    assert "build_runtime_context_snapshot_from_analysis_context" in source
+    assert "runtime_ctx = build_runtime_context_snapshot_from_analysis_context" in source
+    ctx_idx = source.index("create_analysis_context(")
+    sig_idx = source.index("evaluate_signal_evaluation_phase(")
+    assert ctx_idx < sig_idx
+    assert "questionnaire_responses=questionnaire_data" not in source.split(
+        "evaluate_signal_evaluation_phase("
+    )[0].split("create_analysis_context(")[-1]
+
+
+def test_build_runtime_context_snapshot_from_analysis_context_uses_assembled_fields():
+    from core.models.biomarker import BiomarkerPanel, BiomarkerValue
+    from core.models.context import AnalysisContext
+    from core.models.user import User
+
+    user = User(user_id="test-user", gender="female", age=45)
+    panel = BiomarkerPanel(
+        biomarkers={
+            "glucose": BiomarkerValue(name="glucose", value=95.0, unit="mg/dL"),
+        }
+    )
+    context = AnalysisContext(
+        analysis_id="analysis-test",
+        user=user,
+        biomarker_panel=panel,
+        questionnaire_responses={
+            "biological_sex": "female",
+            "date_of_birth": "1980-06-01",
+            "long_term_medications": [],
+        },
+        lifestyle_factors={"stress_level": 3},
+        medical_history={"long_term_medication_classes": []},
+        created_at="2026-06-12T00:00:00Z",
+    )
+    ctx = build_runtime_context_snapshot_from_analysis_context(context)
+    assert ctx["demographic"]["sex"] == "female"
+    assert ctx["medication"]["hormone_therapy_status_disclosed"] is True
+    assert ctx["clinical_context"]["stress_context"] is True
 
 
 def test_build_runtime_context_snapshot_accepts_raw_questionnaire_data():

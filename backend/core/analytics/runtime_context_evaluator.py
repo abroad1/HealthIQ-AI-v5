@@ -9,9 +9,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Sequence
 
 import yaml
+
+if TYPE_CHECKING:
+    from core.models.context import AnalysisContext
 
 DEFAULT_MODEL_PATH = (
     Path(__file__).resolve().parents[3]
@@ -276,6 +279,28 @@ def build_runtime_context_snapshot(
             snapshot["clinical_context"]["aas_exposure"] = True
 
     return snapshot
+
+
+def build_runtime_context_snapshot_from_analysis_context(
+    context: AnalysisContext,
+    *,
+    signal_biomarkers: Optional[Mapping[str, float]] = None,
+) -> Dict[str, Any]:
+    """
+    Build runtime context from assembled AnalysisContext (post-governance assembly).
+
+    Signal evaluation must use this adapter rather than reading raw questionnaire_data
+    before AnalysisContext exists.
+    """
+    questionnaire_responses = getattr(context, "questionnaire_responses", None)
+    lifestyle_factors = getattr(context, "lifestyle_factors", None)
+    medical_history = getattr(context, "medical_history", None)
+    return build_runtime_context_snapshot(
+        questionnaire_responses=questionnaire_responses,
+        lifestyle_factors=lifestyle_factors,
+        medical_history=medical_history,
+        signal_biomarkers=signal_biomarkers,
+    )
 
 
 def evaluate_runtime_context_requirements(

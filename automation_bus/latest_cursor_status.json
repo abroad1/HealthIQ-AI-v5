@@ -1,10 +1,9 @@
 {
-  "branch": "work/WAVE1-PUBLIC-LAUNCH-FIXES-1-pre-public-launch-blocker-remediation",
+  "branch": "work/ARCH-COMPLETION-1-final-runtime-context-and-orchestrator-restructure",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-12T13:17:46Z",
-  "cursor_started_utc": "2026-06-12T13:10:10Z",
-  "head_sha": "303aa4fe3d6beafcbd30599cd340ad82b3f69fdc",
+  "cursor_started_utc": "2026-06-14T12:32:56Z",
+  "head_sha": "0046a7c2c2482e8d57f09f531d3a81f3cc4349ae",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "WAVE1-PUBLIC-LAUNCH-FIXES-1_pre_public_launch_blocker_remediation"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure"
 }
