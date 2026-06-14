@@ -1,9 +1,10 @@
 {
   "branch": "work/ARCH-COMPLETION-3-full-traceability-manifest-and-launch-estate-gate",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-14T20:46:07Z",
   "cursor_started_utc": "2026-06-14T20:38:45Z",
-  "head_sha": "6c59fd227c44ae32e913652b802805f028c9725e",
+  "head_sha": "bcf8bb36063ede1e78afc856586eea181ca4dd75",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate"
 }
