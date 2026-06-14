@@ -1,64 +1,58 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals",
+  "work_id": "ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion",
   "status": "HARDENED",
   "hardened_utc": "2026-06-14T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6, SOP v1.3.1 Stage 2)",
   "changes": [
     {
       "type": "HARDENING_NOTE",
-      "description": "AUTHORITY PATH MISMATCH — The 'Authoritative inputs' section lists knowledge_bus/research/medical_reviews/batch2_thyroid_androgen_context_authority_review_v1.md as a file to read. This path does NOT exist in the repository. The actual medical research authority is at docs/Medical Research Documents/Batch_2_Thyroid_Androgen_Context_Authority_Review.md (confirmed present). Cursor must use the existing file at the preferred path. The STOP condition in 'Required medical research authority' correctly points to the preferred path — the STOP will not trigger. However, Cursor must not report a blocking gap for the missing knowledge_bus/research/medical_reviews/ path.",
-      "risk": "MEDIUM",
-      "required_action": "Cursor: use docs/Medical Research Documents/Batch_2_Thyroid_Androgen_Context_Authority_Review.md as the medical research authority. Report the missing knowledge_bus path as a non-blocking path discrepancy. Do not STOP for this."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "FT3 LOW enable_lower_bound IS FALSE — signal_library.yaml for pkg_kb47_free_t3_low_low_t3_syndrome has activation_config.enable_lower_bound: false (signal_library.yaml line 51). The signal_evaluator.py at line 181 reads: lower_bound_enabled = bool(activation_cfg.get('enable_lower_bound', False)) — when False, the lower-bound check is skipped entirely. Since FT3 low is a trigger_direction: low signal, it will NEVER activate with enable_lower_bound: false regardless of any other gate. This must be changed to enable_lower_bound: true as part of FT3 low activation in Phase 7. This is explicitly anticipated in the activation readiness register (next_activation_prerequisite: enable_lower_bound review + metadata runtime_context_requirements).",
-      "risk": "HIGH",
-      "required_action": "Cursor: as part of Phase 7 FT3 low activation, set activation_config.enable_lower_bound: true in pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml. Without this change, FT3 low will not activate at all. Verify signal_evaluator.py line 185: 'if lower_bound_enabled and low is not None and primary_value < low: return lower_bound_state' — confirm the flag controls activation."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "FEMALE-ONLY GATE ENCODING — The runtime_context_evaluator.py has NO 'value_equals' requirement type. To encode 'fail closed if biological sex is male' for FAI high female-only activation, Cursor must use the existing 'disclosure_state' requirement type with allowed_values: [female]. This works mechanically because build_runtime_context_snapshot() stores snapshot['demographic']['sex'] = str(sex).strip().lower() (runtime_context_evaluator.py line 256), and the disclosure_state evaluator checks bucket.get(key) against allowed_values (lines 503-512). Use: {context_type: demographic, key: sex, requirement: disclosure_state, allowed_values: [female]}. This is the only available mechanism without modifying the evaluator. Do not invent a new requirement type unless STOP condition 3 or 8 is triggered.",
-      "risk": "MEDIUM",
-      "required_action": "Cursor: for FAI high female-only gate, use requirement: disclosure_state with allowed_values: [female] on key: sex in the demographic context bucket. Verify this works by reading runtime_context_evaluator.py lines 503-512 and confirming the sex value stored is lowercase."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "ADULT-ONLY AGE GATE CANNOT BE ENCODED WITH EXISTING REQUIREMENT TYPES — runtime_context_evaluator.py supports only: present, disclosed, disclosure_state, lab_range_boundary. None of these can enforce a minimum numeric age threshold (e.g. age >= 18). The demographic snapshot stores snapshot['demographic']['age'] as an integer (line 267) but no evaluator requirement type can compare it to a minimum. If Cursor cannot represent 'fail closed if non-adult' deterministically, STOP condition 11 applies for free testosterone low ('free testosterone low cannot be restricted to adult male symptom-gated interpretation'). Cursor must either: (a) add a minimum_value requirement type to the evaluator (allowed as 'strictly justified' backend change), or (b) add a runtime context primitive 'is_adult' (boolean) to the snapshot builder, then gate on that with disclosure_state or present requirement. If neither approach is safe to add in this sprint, free testosterone low must remain inactive and the age-gate gap documented as the blocker.",
-      "risk": "HIGH",
-      "required_action": "Cursor: for free testosterone low adult-only gate, determine whether adding a minimum_value requirement type to runtime_context_evaluator.py or adding an is_adult snapshot primitive is within sprint scope and safe. If it is, implement it. If not, STOP activating free testosterone low and document the adult-gate gap as the blocker in Phase 8."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "MISSING GATES IN SIGNAL LIBRARIES — All 4 activation target signal libraries have partial runtime_context_requirements that do NOT yet include all gates mandated by Phase 3-6. Cursor must ADD these gates as part of Phase 7 activation. Specific gaps found by reading the signal_library.yaml files: (1) FT3 low — missing thyroid_medication_status gate and energy-availability gates (calorie_restriction_status, fasting_status, under_eating_status, heavy_training_load_status). (2) FAI high — missing pregnancy gate, menstrual/menopause gate, dhea_supplementation exclusion gate, fertility_treatment gate, androgen excess symptom disclosure, female-only sex restriction. (3) Free testosterone high — missing shbg present gate, testosterone present gate, aas_exposure exclusion gate, dhea_supplementation exclusion gate, pregnancy gate, method/assay gate. (4) Free testosterone low — missing testosterone present gate, shbg present gate, male-only sex restriction, adult-only gate, illness/recovery context gate, energy availability context gate, aas_exposure exclusion gate. All these gaps are expected — the packages are governance_promoted_pending_runtime_activation and the sprint is explicitly intended to populate these gates.",
-      "risk": "MEDIUM",
-      "required_action": "Cursor: treat all Phase 3-6 gate specifications as the authoritative gate set to encode in runtime_context_requirements for each activation target. The signal_library.yaml files have partial gates already — extend them with the missing gates from the phase specifications. Do not partially activate a signal with incomplete gates (prompt non-negotiable constraint)."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "DHEA IDENTITY GATE PRE-RESULT — pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml line 12 has primary_metric: dhea (KBP-4702). The SSOT at backend/ssot/biomarkers.yaml line 1397 confirms dhea and dhea_s are distinct canonical biomarkers. The medical research authority (docs/Medical Research Documents/Batch_2_Thyroid_Androgen_Context_Authority_Review.md line 168-244) gives verdict: VALID_ONLY_AS_WEAK_CONTEXTUAL_SIGNAL and runtime activation recommendation: DO_NOT_ACTIVATE_YET_CONTEXT_MODEL_INSUFFICIENT. The required approval phrase 'APPROVE DHEA-S ACTIVATION IN BATCH2-FULL-COVERAGE-ACTIVATION-1' is ABSENT from the prompt. Therefore the Phase 2 DHEA identity gate result is predetermined: KEEP_INACTIVE_PENDING_DHEA_DHEAS_IDENTITY_REMEDIATION for DHEA high, DO_NOT_ACTIVATE_EVIDENCE_INSUFFICIENT for DHEA low.",
+      "description": "AUTHORITY PATH MISMATCH — The 'Authoritative inputs' section lists docs/architecture/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md. This path DOES NOT EXIST in the repository. The actual file is at docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md (confirmed present). The prompt itself covers this: 'If the exact paths differ, locate the equivalent repo-persisted files and document the actual paths used.' Non-blocking.",
       "risk": "LOW",
-      "required_action": "Cursor: confirm the DHEA gate result in Phase 2 as KEEP_INACTIVE for both packages. No DHEA/DHEA-S activation occurs in this sprint. Document that the package primary_metric is dhea (not dhea_s), which is itself the identity ambiguity that must be resolved before any DHEA-lineage activation."
+      "required_action": "Cursor: use docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md as the sprint plan authority. Document the path correction in the Phase 10 audit paper."
+    },
+    {
+      "type": "HARDENING_NOTE",
+      "description": "BATCH 2 ENDOCRINE SIGNALS HAVE NO ROOT-CAUSE REGISTRY ENTRIES — backend/core/knowledge/root_cause_registry_v1.py (lines 29-76) lists all registered root-cause targets. None of the activated Batch 2 endocrine signals are registered: signal_free_t3_low, signal_fai_high, signal_free_testosterone_high, signal_free_testosterone_low are ALL absent. Only thyroid-adjacent signals registered are signal_thyroid_tsh_context (line 33), signal_tsh_high (line 68), signal_tsh_low (line 69). This means Phase 3 will encounter these signals with NO governed root-cause path. Cursor must NOT invent root-cause output — must classify them as ROOT_CAUSE_REQUIRES_FUTURE_MAPPING and document the gap. This is a predictable, expected finding consistent with the sprint scope.",
+      "risk": "HIGH",
+      "required_action": "Cursor: in Phase 3, classify signal_free_t3_low, signal_fai_high, signal_free_testosterone_high, signal_free_testosterone_low as ROOT_CAUSE_REQUIRES_FUTURE_MAPPING in root_cause_authority_register_v1.yaml. Do not create governed hypotheses for these signals in this sprint. Do not create root-cause output for them. This is the correct outcome — the register documenting the gap IS the sprint deliverable for these signals."
+    },
+    {
+      "type": "HARDENING_NOTE",
+      "description": "NARRATIVE COMPILER RUNTIME YAML READS — backend/core/analytics/narrative_report_compiler_v1.py (lines 33-36) reads three YAML files at runtime: knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml, knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml, knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml. These are governed compiled narrative assets, NOT raw Pass 3 / investigation spec files. Confirmed present: all three files exist in their respective directories. Phase 1 must classify these reads as GOVERNED_RUNTIME_AUTHORITY (not LEGACY_UNGOVERNED_BLOCKER). Cursor must NOT quarantine or disable these reads. Confirm classification in the output-authority estate map.",
+      "risk": "MEDIUM",
+      "required_action": "Cursor: in Phase 1 output-authority estate map, classify all three knowledge_bus narrative YAML runtime reads as GOVERNED_RUNTIME_AUTHORITY. These files are governed compiled assets, not raw research files. Do not confuse them with investigation_spec or research_brief files. investigation_spec_to_promoted_signal.py (backend/core/knowledge/investigation_spec_to_promoted_signal.py) is a BUILD-TIME translation utility — it is only called from scripts/ and tests/, never at runtime. Confirm this in Phase 1."
+    },
+    {
+      "type": "HARDENING_NOTE",
+      "description": "PROVENANCE METADATA PHASE 5 — DTO BREAK RISK — backend/core/layer3/insight_assembler_v1.py (line 1) uses InsightCard and Layer3InsightsV1 from backend/core/contracts/layer3_insights_v1.py. Phase 5 requires adding provenance fields to compiled outputs. Any schema addition to InsightCard or Layer3InsightsV1 may break frontend DTO consumers. STOP condition 4 applies: 'output authority cannot be represented without breaking frontend DTO consumers'. Cursor must verify frontend DTO tolerance (whether extra unknown fields are ignored) BEFORE implementing Phase 5 provenance additions. Pydantic models with extra='forbid' will reject extra fields entirely — if any consumer model uses extra='forbid', additive provenance is a breaking change.",
+      "risk": "HIGH",
+      "required_action": "Cursor: before implementing Phase 5 provenance metadata additions, read backend/core/contracts/layer3_insights_v1.py and the frontend DTO contract (backend/core/dto/frontend_contract_v1.py). Check if any model uses extra='forbid'. If yes, STOP and report — do not add fields to those models. If extra fields are tolerated (extra='allow' or not set), proceed with additive provenance fields only. Never change existing field types or remove fields."
+    },
+    {
+      "type": "HARDENING_NOTE",
+      "description": "INTELLIGENCE CORE COMPONENTS IN SCOPE — This sprint touches the following confirmed Intelligence Core components: backend/core/analytics/root_cause_compiler_v1.py (KB-S33, lines 1-13, confirmed deterministic hypothesis-based compiler), backend/core/analytics/report_compiler_v1.py (KB-S32, confirmed uses compile_root_cause_v1 and compiled hypothesis artefacts), backend/core/analytics/narrative_report_compiler_v1.py (N-8, confirmed consumes governed YAML assets), backend/core/layer3/insight_assembler_v1.py (Sprint 22, confirmed deterministic rule-based). HIGH risk classification is correct. Any code changes to these files require full behavioural audit in Phase 10. New governance YAML files in knowledge_bus/governance/ are CONTENT only and do not trigger Intelligence Core behavioural concerns unless they gate runtime compiler behaviour.",
+      "risk": "MEDIUM",
+      "required_action": "Cursor: treat any modification to the four compiler/assembler files listed above as HIGH risk behaviour changes requiring explicit justification in the audit paper. New knowledge_bus/governance/*.yaml files created in Phases 2-4 are CONTENT — do not misclassify them as BEHAVIOUR unless they are consumed by a runtime loader."
     }
   ],
   "front_matter_check": {
     "work_id": {
       "present": true,
-      "value": "BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals",
+      "value": "ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion",
       "citation": "latest_cursor_prompt.md line 2"
     },
     "branch": {
       "present": true,
-      "value": "work/BATCH2-FULL-COVERAGE-ACTIVATION-1-activate-research-supported-thyroid-and-androgen-signals",
+      "value": "work/ARCH-COMPLETION-2-compiled-card-and-root-cause-authority-completion",
       "exists_now": false,
-      "citation": "latest_cursor_prompt.md line 3 — branch does not yet exist; created by kernel at Stage 3 (correct; confirmed by git branch --list output returning empty)"
+      "citation": "latest_cursor_prompt.md line 3 — branch does not exist yet; correct, created by kernel at Stage 3"
     },
     "risk_level": {
       "present": true,
       "value": "HIGH",
       "justified": true,
-      "citation": "latest_cursor_prompt.md line 4 — HIGH correct: activation changes signal_library.yaml activation_config and runtime_context_requirements in Intelligence Core-adjacent packages; signal_evaluator.py at line 181 reads enable_lower_bound from activation_config — a write to this field directly affects emitted signal output; endocrine signal activation is clinically sensitive per rationale section lines 73-78"
+      "citation": "latest_cursor_prompt.md line 4 — HIGH correct: sprint modifies Intelligence Core output authority chain (root_cause_compiler_v1.py, report_compiler_v1.py, narrative_report_compiler_v1.py, insight_assembler_v1.py); may quarantine or disable legacy analytical output paths; touches compiled output consumed by frontend; user-facing analytical statement authority may change"
     },
     "execution_model": {
       "present": true,
@@ -68,319 +62,245 @@
     "change_type": {
       "present": true,
       "value": "BEHAVIOUR",
-      "citation": "latest_cursor_prompt.md line 6 — BEHAVIOUR correct: activation changes enable_lower_bound flag (signal_evaluator.py line 181 is the consumer), adds runtime_context_requirements gates to signal_library.yaml files (signal_evaluator.py passes these to runtime_context_evaluator.py), changes governance_promotion_status in package_manifest.yaml files — all of these directly affect whether signals emit output and under what conditions"
+      "citation": "latest_cursor_prompt.md line 6 — BEHAVIOUR correct: legacy analytical output paths may be disabled; provenance metadata may be added to emitted DTOs; root-cause and card authority wiring may be changed; compiled output emitted to frontend may change in content or structure"
     },
     "all_five_fields_valid": true
   },
   "stage_2a_authority_verification": {
     "status": "PASS_WITH_PATH_DISCREPANCY",
-    "medical_research_authority": {
-      "preferred_path_verified": true,
-      "preferred_path": "docs/Medical Research Documents/Batch_2_Thyroid_Androgen_Context_Authority_Review.md",
-      "preferred_path_citation": "Confirmed present via Glob; file contains pattern-by-pattern verdicts for all 9 biomarkers including FT3 low, DHEA high, DHEA low, FAI high, FAI low, free testosterone high, free testosterone low, free testosterone pct high, free testosterone pct low",
-      "alternate_path_missing": "knowledge_bus/research/medical_reviews/batch2_thyroid_androgen_context_authority_review_v1.md — DOES NOT EXIST",
-      "blocker": false,
-      "note": "STOP condition 1 is tied to preferred path; preferred path IS present; path discrepancy in authoritative inputs list is a non-blocking documentation issue"
-    },
     "audit_papers_verified": [
       {
         "path": "docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "citation": "Confirmed via Bash ls"
       },
       {
-        "path": "docs/audit-papers/BATCH2-MINIMUM-COVERAGE-1_androgen_ft3_low_clinical_and_runtime_completion.md",
+        "path": "docs/audit-papers/BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals.md",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "citation": "Confirmed via Bash ls"
       },
       {
         "path": "docs/audit-papers/BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness.md",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "citation": "Confirmed via Bash ls"
       },
       {
-        "path": "docs/audit-papers/BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation.md",
+        "path": "docs/audit-papers/BATCH2-MINIMUM-COVERAGE-1_androgen_ft3_low_clinical_and_runtime_completion.md",
         "exists": true,
-        "citation": "Confirmed via Glob"
-      },
-      {
-        "path": "docs/audit-papers/CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance.md",
-        "exists": true,
-        "citation": "Confirmed via Glob"
+        "citation": "Confirmed via Bash ls"
       },
       {
         "path": "docs/audit-papers/DAY-ONE-ARCHITECTURE-CLOSURE-REVIEW.md",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "citation": "Confirmed via Bash ls"
       },
       {
         "path": "docs/sprints/launch_core_carry_forward_register.md",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "citation": "Confirmed via Bash ls"
+      },
+      {
+        "path": "docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md",
+        "exists": true,
+        "citation": "Confirmed via Bash ls docs/architecture/"
+      },
+      {
+        "path": "docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md",
+        "exists": true,
+        "prompt_listed_as": "docs/architecture/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md",
+        "citation": "Confirmed via Bash: file is at docs/sprints/ not docs/architecture/ as listed in prompt. Prompt self-corrects: 'If the exact paths differ, locate the equivalent repo-persisted files and document the actual paths used.' Non-blocking."
       }
     ],
-    "governance_files_verified": [
+    "intelligence_core_files_verified": [
       {
-        "path": "knowledge_bus/governance/reusable_runtime_context_primitive_model_v1.yaml",
-        "exists": true,
-        "citation": "Confirmed via Glob of knowledge_bus/governance/**"
-      },
-      {
-        "path": "knowledge_bus/governance/context_questionnaire_contract_v1.yaml",
-        "exists": true,
-        "citation": "Confirmed via Glob"
-      },
-      {
-        "path": "knowledge_bus/governance/batch2_full_coverage_activation_readiness_register_v1.yaml",
+        "path": "backend/core/analytics/root_cause_compiler_v1.py",
         "exists": true,
         "content_verified": true,
-        "citation": "batch2_full_coverage_activation_readiness_register_v1.yaml line 1: schema_version: 1.0.0; line 2: runtime_consumed: false; line 9: runtime_activation_performed: false; line 10: activated_package_count: 0 — all 9 packages listed as inactive; FT3 low blocker is enable_lower_bound review + metadata runtime_context_requirements (line 157); 8 androgen packages blocked BLOCKED_PENDING_EXTERNAL_CLINICAL_AUTHORITY"
+        "citation": "Confirmed via Read: KB-S33 deterministic root-cause compiler. Line 13: imports get_root_cause_targets from root_cause_registry_v1. Line 45: _ROOT_CAUSE_TARGETS = get_root_cause_targets(). Uses CompiledHypothesisArtefact from core.knowledge.compiled_hypothesis. All paths deterministic — no LLM, no raw Pass 3 reads."
       },
       {
-        "path": "knowledge_bus/governance/batch2_medical_research_intake_contract_v1.yaml",
+        "path": "backend/core/analytics/report_compiler_v1.py",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "content_verified": true,
+        "citation": "Confirmed via Read: KB-S32 deterministic report compiler. Line 45: imports compile_root_cause_v1 from root_cause_compiler_v1. Imports ClinicianReportV1 and RootCauseFindingV1 from clinician_report_v1. Deterministic."
       },
       {
-        "path": "knowledge_bus/governance/batch2_minimum_coverage_decision_register_v1.yaml",
+        "path": "backend/core/analytics/narrative_report_compiler_v1.py",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "content_verified": true,
+        "citation": "Confirmed via Read: N-8 deterministic narrative report compiler. Lines 33-36: reads three YAML files at runtime from knowledge_bus/ governed asset directories (confirmed present). No investigation_spec reads. No LLM. No raw Pass 3 reads."
       },
       {
-        "path": "knowledge_bus/governance/batch2_context_clearance_register_v1.yaml",
+        "path": "backend/core/layer3/insight_assembler_v1.py",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "content_verified": true,
+        "citation": "Confirmed via Read: Sprint 22 Layer 3 Insight Assembler. Line 1: 'Deterministic, rule-based. No LLM. No timestamps. No UUIDs.' Uses InsightCard and Layer3InsightsV1 from layer3_insights_v1.py. Consumes AnalysisDTO."
       },
       {
-        "path": "knowledge_bus/governance/context_runtime_execution_register_v1.yaml",
+        "path": "backend/core/knowledge/root_cause_registry_v1.py",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "content_verified": true,
+        "citation": "Confirmed via Read lines 29-76: 15 signals registered. Batch 2 endocrine signals (free_t3_low, fai_high, free_testosterone_high, free_testosterone_low) are NOT registered. Registered thyroid-adjacent: signal_thyroid_tsh_context (line 33), signal_tsh_high (line 68), signal_tsh_low (line 69). See hardening note 2."
       },
       {
-        "path": "knowledge_bus/governance/runtime_context_requirements_model_v1.yaml",
+        "path": "backend/core/knowledge/investigation_spec_to_promoted_signal.py",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "content_verified": true,
+        "citation": "Confirmed via Read: BUILD-TIME translation utility only. Called only from backend/scripts/validate_day_one_architecture.py and backend/tests/unit/test_promoted_signal_intelligence_kb_s47d.py. NOT imported by any runtime path. Confirmed by grep: no runtime caller in backend/core/. NOT a runtime investigation_spec read."
       },
       {
-        "path": "knowledge_bus/governance/runtime_context_semantics_model_v1.yaml",
+        "path": "backend/core/contracts/root_cause_v1.py",
         "exists": true,
-        "citation": "Confirmed via Glob"
-      },
-      {
-        "path": "knowledge_bus/governance/batch2_remaining_blockers_execution_register_v1.yaml",
-        "exists": true,
-        "citation": "Confirmed via Glob"
-      },
-      {
-        "path": "knowledge_bus/governance/batch2_androgen_panel_medical_review_v1.yaml",
-        "exists": true,
-        "citation": "Confirmed via Glob"
-      },
-      {
-        "path": "knowledge_bus/governance/batch2_androgen_context_modifier_binding_v1.yaml",
-        "exists": true,
-        "citation": "Confirmed via Glob"
-      },
-      {
-        "path": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml",
-        "exists": true,
-        "citation": "Confirmed via Glob"
+        "content_verified": true,
+        "citation": "Confirmed via Read: KB-S33 root cause output contract. RootCauseV1 (line 58), RootCauseFindingV1 (line 48), RootCauseHypothesisV1 (line 34). Pydantic models with extra='forbid'. Signal_id, hypotheses, evidence structure defined."
       }
     ],
-    "runtime_files_verified": [
+    "governance_artifacts_to_be_created": [
       {
-        "path": "backend/core/pipeline/orchestrator.py",
-        "exists": true,
-        "citation": "Confirmed via Glob"
+        "path": "knowledge_bus/governance/compiled_output_authority_model_v1.yaml",
+        "exists": false,
+        "status": "CORRECT — will be created in Phase 2"
       },
       {
-        "path": "backend/core/analytics/runtime_context_evaluator.py",
-        "exists": true,
-        "content_verified": true,
-        "citation": "runtime_context_evaluator.py line 256: snapshot['demographic']['sex'] = str(sex).strip().lower() — sex stored as lowercase string. Line 267: snapshot['demographic']['age'] = age — age stored as integer. Lines 503-512: disclosure_state evaluator checks bucket.get(key) in allowed_values — mechanism available for sex=female gate using disclosure_state with allowed_values: [female]. No value_equals or minimum_value requirement types exist (confirmed by reading all if-blocks in evaluate_runtime_context_requirements lines 462-514)."
+        "path": "knowledge_bus/governance/root_cause_authority_register_v1.yaml",
+        "exists": false,
+        "status": "CORRECT — will be created in Phase 3"
       },
       {
-        "path": "backend/core/analytics/signal_evaluator.py",
+        "path": "knowledge_bus/governance/card_authority_register_v1.yaml",
+        "exists": false,
+        "status": "CORRECT — will be created in Phase 4"
+      }
+    ],
+    "validators_verified": [
+      {
+        "path": "backend/scripts/run_architecture_validation_gate.py",
         "exists": true,
-        "content_verified": true,
-        "citation": "signal_evaluator.py line 181: lower_bound_enabled = bool(activation_cfg.get('enable_lower_bound', False)). Line 185: if lower_bound_enabled and low is not None and primary_value < low: return lower_bound_state. FT3 low signal_library.yaml has enable_lower_bound: false — this is a confirmed activation blocker requiring the flag to be set to true."
+        "citation": "Confirmed via Bash ls"
       },
+      {
+        "path": "backend/scripts/validate_day_one_architecture.py",
+        "exists": true,
+        "citation": "Confirmed via Bash ls"
+      },
+      {
+        "path": "backend/scripts/validate_medical_frame_identity_index.py",
+        "exists": true,
+        "citation": "Confirmed via Bash ls"
+      },
+      {
+        "path": "backend/scripts/validate_context_modifier_catalogue.py",
+        "exists": true,
+        "citation": "Confirmed via Bash ls"
+      },
+      {
+        "path": "scripts/check_no_secret_files.py",
+        "exists": true,
+        "citation": "Confirmed via Bash ls"
+      }
+    ],
+    "regression_tests_verified": [
       {
         "path": "backend/tests/regression/test_runtime_context_evaluation.py",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "citation": "Confirmed via Bash ls"
       },
       {
         "path": "backend/tests/regression/test_context_threading.py",
         "exists": true,
-        "citation": "Confirmed via Glob"
+        "citation": "Confirmed via Bash ls"
+      },
+      {
+        "path": "backend/tests/regression/test_batch2_full_coverage_activation.py",
+        "exists": true,
+        "citation": "Confirmed via Bash ls"
       }
     ],
-    "package_directories_verified": {
-      "all_9_present": true,
-      "all_9_have_signal_library": true,
-      "all_9_have_package_manifest": true,
-      "all_9_confirmed_inactive": true,
-      "citation": "Glob of knowledge_bus/packages/pkg_kb47_*/** returned all 9 package directories with signal_library.yaml and package_manifest.yaml. Package manifests read: FT3 low governance_promotion_status: governance_promoted_pending_runtime_activation (manifest line 13). FAI high, free testosterone high, free testosterone low, DHEA high, DHEA low, FAI low, free testosterone pct high, free testosterone pct low manifests confirmed present. Activation readiness register confirms all 9 packages at activated_package_count: 0.",
-      "ssot_identity_verified": {
-        "dhea": "backend/ssot/biomarkers.yaml line 1397: dhea is a distinct canonical biomarker from dhea_s (line 1417). DHEA high package primary_metric: dhea (signal_library.yaml line 12). Identity is DHEA, not DHEA-S.",
-        "fai": "backend/ssot/biomarkers.yaml line 1438: fai exists as a canonical derived/calculated biomarker.",
-        "free_testosterone": "backend/ssot/biomarkers.yaml line 1215: free_testosterone canonical biomarker confirmed.",
-        "free_t3": "backend/ssot/biomarkers.yaml line 1158: free_t3 canonical biomarker confirmed."
+    "prerequisite_merges_verified": {
+      "arch_completion_1": {
+        "status": "CONFIRMED",
+        "citation": "git log main shows commit 56af2d9 'chore(bus): ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure kernel COMPLETE status'. Audit paper confirmed at docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md."
+      },
+      "batch2_full_coverage_activation_1": {
+        "status": "CONFIRMED",
+        "citation": "git log main shows commit 0515b8b 'chore(bus): BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals kernel COMPLETE status'. Audit paper confirmed at docs/audit-papers/BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals.md."
       }
     },
-    "duplicate_authority_sources": "NONE — no duplicate authority for any of the 4 activation targets found. Medical research authority exists at one location only (preferred path). Governance files each serve a distinct purpose."
+    "duplicate_authority_sources": "NONE — no duplicate authority for compiled output, root-cause, or card paths found. Three governance YAML files to be created are new (no existing equivalents detected in knowledge_bus/governance/).",
+    "raw_pass3_runtime_reads": "NONE — investigation_spec_to_promoted_signal.py is build-time only (confirmed by grep: only called from scripts/ and tests/). narrative_report_compiler_v1.py reads governed compiled YAML assets (not investigation_spec or research_brief files). No raw Pass 3 runtime reads detected."
   },
   "stage_2b_behavioural_hardening": {
     "status": "PASS",
     "change_type_declared": "BEHAVIOUR",
-    "change_type_justified": "Activation changes signal_library.yaml activation_config (enable_lower_bound) and runtime_context_requirements. signal_evaluator.py at line 181 reads enable_lower_bound from activation_config — a write to this field in FT3 low's signal_library.yaml changes whether the signal fires. runtime_context_requirements gates written to package signal_library.yaml files are consumed by signal_evaluator.py via passes_runtime_context_requirements() — adding new gates changes which biomarker/context profiles produce signal output. Both changes affect emitted analytical output. Governance register updates and package_manifest.yaml activation_state changes are CONTENT changes wrapped in the same sprint but the signal_library.yaml activation changes are definitively BEHAVIOUR.",
+    "change_type_justified": "Sprint may quarantine or disable legacy analytical output paths (changes what emitted output users see), add provenance metadata to compiled DTOs (changes output shape), and repair root-cause/card authority wiring (changes output content authority). All touch Intelligence Core components. BEHAVIOUR classification is mandatory and correct.",
     "intelligence_core_components_affected": [
       {
-        "component": "knowledge_bus/packages/*/signal_library.yaml (4 files for activation targets)",
-        "change_type": "WRITE",
-        "scope": "activation_config.enable_lower_bound (FT3 low only) and runtime_context_requirements.required_context additions for all 4 activation targets",
-        "determinism_risk": "MEDIUM — gate additions are deterministic mappings from biomarker presence and context disclosure; fail-closed default (missing_context_behaviour: suppress_signal) is already set in all 4 libraries; risk is correct gate specification"
+        "component": "backend/core/analytics/root_cause_compiler_v1.py",
+        "change_type": "POSSIBLE_WRITE — Phase 3 may repair authority wiring; quarantine of ungoverned paths may alter which hypotheses are emitted",
+        "determinism_risk": "HIGH — any change to root-cause compilation directly changes user-visible WHY explanations; must be strictly governed"
       },
       {
-        "component": "knowledge_bus/packages/*/package_manifest.yaml (4 files for activation targets, possibly 5 inactive packages for metadata update)",
-        "change_type": "WRITE",
-        "scope": "governance_promotion_status field update from governance_promoted_pending_runtime_activation to runtime_active (for 4 targets) or equivalent inactive annotation (for 5 others)",
-        "determinism_risk": "LOW — metadata only; does not gate runtime behaviour directly"
+        "component": "backend/core/analytics/report_compiler_v1.py",
+        "change_type": "POSSIBLE_WRITE — Phase 6 may disable legacy output paths; Phase 5 may add provenance fields",
+        "determinism_risk": "HIGH — report compiler produces primary compiled output consumed by frontend"
       },
       {
-        "component": "backend/core/analytics/signal_evaluator.py",
-        "change_type": "POSSIBLE_WRITE if adult-only gate requires new requirement type",
-        "scope": "Possible addition of minimum_value requirement type to evaluate_runtime_context_requirements(); all other gates are encodable with existing requirement types",
-        "determinism_risk": "MEDIUM if new requirement type is added — must be strictly mechanical (threshold comparison), no inference"
+        "component": "backend/core/analytics/narrative_report_compiler_v1.py",
+        "change_type": "POSSIBLE_WRITE — Phase 6 if ungoverned narrative paths are classified LEGACY_UNGOVERNED_BLOCKER",
+        "determinism_risk": "MEDIUM — narrative compiler is deterministic; changes affect narrative content only if governed YAML assets change"
       },
       {
-        "component": "backend/core/analytics/runtime_context_evaluator.py",
-        "change_type": "POSSIBLE_WRITE if is_adult snapshot primitive approach is chosen",
-        "scope": "build_runtime_context_snapshot() — additive boolean is_adult primitive derived from age integer",
-        "determinism_risk": "LOW — deterministic boolean from integer age comparison"
+        "component": "backend/core/layer3/insight_assembler_v1.py",
+        "change_type": "POSSIBLE_WRITE — Phase 5 if provenance fields added to InsightCard contract",
+        "determinism_risk": "HIGH — schema changes to InsightCard will break frontend DTO if extra='forbid'; additive changes only permitted"
+      },
+      {
+        "component": "knowledge_bus/governance/compiled_output_authority_model_v1.yaml (new)",
+        "change_type": "CREATE — Phase 2 governance artefact",
+        "determinism_risk": "LOW — governance YAML only; not consumed by runtime unless explicitly loaded by a compiler"
+      },
+      {
+        "component": "knowledge_bus/governance/root_cause_authority_register_v1.yaml (new)",
+        "change_type": "CREATE — Phase 3 governance artefact",
+        "determinism_risk": "LOW — governance YAML only; same caveat as above"
+      },
+      {
+        "component": "knowledge_bus/governance/card_authority_register_v1.yaml (new)",
+        "change_type": "CREATE — Phase 4 governance artefact",
+        "determinism_risk": "LOW — governance YAML only; same caveat as above"
       }
     ],
     "behavioural_surface_area": [
-      "enable_lower_bound: true in FT3 low signal_library.yaml enables the lower-bound activation path in signal_evaluator.py (line 185) — FT3 low will now emit signal_free_t3_low when FT3 < lab_range_minimum AND all context gates are satisfied",
-      "runtime_context_requirements gates added to FAI high, free testosterone high, free testosterone low will suppress these signals when required biomarkers or context disclosures are missing",
-      "Female-only gate on FAI high will suppress signal for male patients",
-      "DHEA high and DHEA low packages: NO behavioural change; they remain inactive",
-      "FAI low, free testosterone pct high, free testosterone pct low: NO behavioural change; they remain inactive as primary signals"
+      "Root-cause output: any ungoverned legacy hypothesis paths classified LEGACY_UNGOVERNED_BLOCKER and quarantined will no longer emit WHY explanations to users",
+      "Compiled output: provenance metadata fields added to DTOs change output payload shape (must be additive only)",
+      "Report compiler: disabling legacy output paths changes which findings appear in compiled report",
+      "Insight assembler: any schema change to InsightCard or Layer3InsightsV1 affects all card rendering in frontend"
     ],
-    "expected_output_changes": "ACTIVATION: 4 packages (FT3 low, FAI high, free testosterone high, free testosterone low) will begin emitting signals under their gate conditions after this sprint. SUPPRESSION: same 4 packages will fail-closed when gates are not satisfied. No changes to already-active packages.",
+    "expected_output_changes": "CLASSIFICATION: governance YAML files documenting authority status for all output paths. QUARANTINE: ungoverned legacy paths blocked from emitting analytical output. PROVENANCE: additive metadata fields on compiled outputs where DTO tolerates extras. REGISTERS: root-cause and card authority registers documenting governed and ungoverned state for all output types.",
     "regression_targets_confirmed": [
       "backend/tests/regression/test_runtime_context_evaluation.py — must pass unchanged",
       "backend/tests/regression/test_context_threading.py — must pass unchanged",
-      "Existing active Batch 2 thyroid packages (pkg_kb47_free_t3_high, pkg_kb47_free_t4_high, pkg_kb47_free_t4_low) must remain unaffected",
-      "Creatine kinase and eosinophil packages must remain unaffected",
-      "All 5 packages remaining inactive must show no signal emission in any test scenario"
+      "backend/tests/regression/test_batch2_full_coverage_activation.py — must pass unchanged",
+      "All existing active Batch 2 endocrine signals must continue to activate under correct gate conditions",
+      "DHEA packages must remain inactive throughout",
+      "No change to active thyroid (previously active), creatine kinase, eosinophil packages"
     ],
     "no_scope_creep": true,
     "stop_conditions_protect_behavioural_correctness": {
-      "stop_3": "If required context gates cannot be represented deterministically — STOP. Female-only gate IS representable using disclosure_state mechanism (confirmed). Adult-only gate for FT3 low is NOT required (no age gate on FT3 low). Adult-only gate for free testosterone low NEEDS assessment — if not encodable, STOP activation of free testosterone low only.",
-      "stop_11": "free testosterone low cannot be restricted to adult male if age gate cannot be encoded — signals partial STOP (free testosterone low stays inactive); does not kill entire sprint",
-      "stop_19": "Diagnosis wording would be emitted — STOP. Safe wording is specified for all 4 activation targets.",
-      "stop_21": "Validators fail — STOP",
-      "stop_22": "Tests fail — STOP",
-      "stop_24": "Rollback path undefined — rollback is git branch deletion (valid)"
+      "stop_4": "Output authority cannot be represented without breaking frontend DTO consumers — STOP. Cursor must read layer3_insights_v1.py and frontend_contract_v1.py and confirm extra field tolerance before Phase 5. If extra='forbid' anywhere in the DTO chain, STOP.",
+      "stop_5": "Untraceable analytical output cannot be quarantined safely — STOP. Do not delete large legacy systems; quarantine behind inactive flag only.",
+      "stop_9": "Changes require frontend rendering edits — STOP. No frontend files expected to change.",
+      "stop_15": "Validators fail — STOP. All 4 validators must pass.",
+      "stop_16": "Tests fail — STOP. All regression tests must pass."
     },
     "determinism_risks_surfaced": [
-      "RISK 1 (HIGH): enable_lower_bound must be set to true only after all context gates for FT3 low are in place. If enable_lower_bound is set to true without completing the full gate set, FT3 low may emit without required gates. Cursor must complete ALL gate additions before changing enable_lower_bound, or change enable_lower_bound and gates atomically in the same commit.",
-      "RISK 2 (MEDIUM): Female-only gate using disclosure_state with allowed_values: [female] correctly suppresses signal for male and unknown-sex patients. But the evaluator checks bucket.get(key) — if sex is stored as 'Female' (capitalised) rather than 'female' (lowercase), the gate fails. runtime_context_evaluator.py line 256 confirms .lower() is applied: snapshot['demographic']['sex'] = str(sex).strip().lower() — this risk is LOW given the lowercase enforcement.",
-      "RISK 3 (MEDIUM): Free testosterone low requires both sex=male gate and adult-only gate. If only the sex gate is encoded and the adult gate is deferred/blocked, free testosterone low should remain inactive as a whole — partial gating is forbidden by the non-negotiable constraint 'Do not partially activate a signal with missing gates'.",
-      "RISK 4 (LOW): The 5 inactive packages (DHEA high, DHEA low, FAI low, free testosterone pct high, free testosterone pct low) must not have runtime_context_requirements cleared or altered in ways that could accidentally enable them. Their current signal_library.yaml files have partial runtime_context_requirements already — Cursor must only UPDATE their package_manifest.yaml and governance registers to record inactive status; do not touch their signal_library.yaml gate content.",
-      "RISK 5 (LOW): Package manifests for activation targets have behavioural_impact: NONE (package_manifest.yaml lines 12-13). This field should be updated to reflect the actual behavioural impact of activation. Failure to update this is a metadata inconsistency but does not affect runtime behaviour."
+      "RISK 1 (HIGH): Batch 2 endocrine signals (free_t3_low, fai_high, free_testosterone_high, free_testosterone_low) have NO entries in root_cause_registry_v1.py. Phase 3 will find no governed root-cause path for these signals. Cursor must NOT invent root-cause hypotheses. Must classify as ROOT_CAUSE_REQUIRES_FUTURE_MAPPING. Emitting fabricated root-cause output for these signals would be an analytical authority violation.",
+      "RISK 2 (HIGH): Phase 5 provenance metadata additions may break frontend DTO if any Pydantic model in the output chain uses extra='forbid'. layer3_insights_v1.py InsightCard model must be checked before any field additions. Cursor must verify DTO tolerance FIRST.",
+      "RISK 3 (MEDIUM): narrative_report_compiler_v1.py reads governed YAML assets at runtime. These must NOT be classified as ungoverned in Phase 1. Incorrect classification would cause Phase 6 to quarantine legitimate governed output paths.",
+      "RISK 4 (MEDIUM): Any quarantine of root-cause or card output in Phase 6 must be done behind an inactive flag — not by deleting code. Delete is forbidden unless clearly safe and test-covered per STOP condition 5.",
+      "RISK 5 (LOW): Phase 8 requires regression tests covering FT3 low activated/suppressed case, FAI high activated/suppressed case, free testosterone high/low activated/suppressed cases. These signals are now active (BATCH2-FULL-COVERAGE-ACTIVATION-1 is merged). Test coverage for their output authority traceability is the new work — existing activation tests do not cover output provenance."
     ]
   },
-  "baseline_state_assertions": {
-    "arch_completion_1_merged": {
-      "status": "CONFIRMED",
-      "citation": "git log shows commit 90d7085 references BATCH2-FULL-COVERAGE-BUILD-1 COMPLETE; ARCH-COMPLETION-1 is in prior commit history. docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md confirmed present."
-    },
-    "batch2_minimum_coverage_1_merged": {
-      "status": "CONFIRMED",
-      "citation": "git log shows commit d166f5d 'BATCH2-MINIMUM-COVERAGE-1_androgen_ft3_low_clinical_and_runtime_completion kernel COMPLETE status'. docs/audit-papers/BATCH2-MINIMUM-COVERAGE-1 confirmed present."
-    },
-    "batch2_full_coverage_build_1_merged": {
-      "status": "CONFIRMED",
-      "citation": "git log shows commit 90d7085 'BATCH2-FULL-COVERAGE-BUILD-1 COMPLETE'. docs/audit-papers/BATCH2-FULL-COVERAGE-BUILD-1 confirmed present. batch2_full_coverage_activation_readiness_register_v1.yaml confirmed present with runtime_consumed: false and activated_package_count: 0."
-    },
-    "medical_research_authority_present": {
-      "status": "CONFIRMED",
-      "citation": "docs/Medical Research Documents/Batch_2_Thyroid_Androgen_Context_Authority_Review.md present. Content verified: lines 9-14 provide pattern-by-pattern ACTIVATE_WITH_GATES verdicts for FT3 low, FAI high, free testosterone high, free testosterone low. Lines 18-25 confirm DO_NOT_ACTIVATE for DHEA high, DHEA low, FAI low, free testosterone pct high, free testosterone pct low. All 9 required patterns covered."
-    },
-    "all_9_packages_inactive": {
-      "status": "CONFIRMED",
-      "citation": "batch2_full_coverage_activation_readiness_register_v1.yaml: activated_package_count: 0 (line 10). runtime_activation_performed: false (line 9). All 9 package entries show current_activation_state: inactive. package_manifest.yaml for FT3 low shows governance_promotion_status: governance_promoted_pending_runtime_activation (line 13)."
-    },
-    "dhea_identity_gate_result": {
-      "status": "CONFIRMED_WILL_BLOCK",
-      "citation": "pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml line 12: primary_metric: dhea. backend/ssot/biomarkers.yaml line 1397: dhea is distinct from dhea_s (line 1417). Medical research authority line 246: runtime activation recommendation DO_NOT_ACTIVATE_YET_CONTEXT_MODEL_INSUFFICIENT for DHEA high. Required approval phrase 'APPROVE DHEA-S ACTIVATION IN BATCH2-FULL-COVERAGE-ACTIVATION-1' is ABSENT from latest_cursor_prompt.md. DHEA high and DHEA low remain inactive."
-    },
-    "answered_semantics_present": {
-      "status": "CONFIRMED",
-      "citation": "runtime_context_evaluator.py lines 46-59: DISCLOSURE_ANSWERED_YES, DISCLOSURE_ANSWERED_NO, DISCLOSURE_NOT_ANSWERED constants defined. Lines 202-222: _disclosure_state_from_value() maps field values to disclosure states. Line 503-512: disclosure_state requirement type in evaluate_runtime_context_requirements. Semantics exist from BATCH2-FULL-COVERAGE-BUILD-1 sprint."
-    },
-    "enable_lower_bound_gap_confirmed": {
-      "status": "CONFIRMED",
-      "citation": "pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml lines 50-51: activation_config.enable_lower_bound: false. signal_evaluator.py line 181: lower_bound_enabled = bool(activation_cfg.get('enable_lower_bound', False)). Line 185: if lower_bound_enabled and low is not None and primary_value < low: return lower_bound_state. With enable_lower_bound: false, the condition at line 185 never evaluates — FT3 low cannot activate."
-    }
-  },
-  "stop_condition_pre_assessment": {
-    "stop_1_medical_research_missing": {
-      "will_trigger": false,
-      "rationale": "Medical research authority at preferred path docs/Medical Research Documents/Batch_2_Thyroid_Androgen_Context_Authority_Review.md IS present (confirmed). STOP is tied to preferred path only."
-    },
-    "stop_2_activation_target_lacks_research_authority": {
-      "will_trigger": false,
-      "rationale": "All 4 activation targets (FT3 low, FAI high, free testosterone high, free testosterone low) have ACTIVATE_WITH_GATES verdicts in the medical research authority (lines 9-14). The 5 non-activation targets correctly have DO_NOT_ACTIVATE verdicts."
-    },
-    "stop_3_context_gates_not_representable": {
-      "will_trigger": "PARTIAL RISK — adult-only gate for free testosterone low may not be representable with existing requirement types. See hardening note 4. All other required gates ARE representable with existing evaluator types.",
-      "rationale": "Female-only sex gate: representable via disclosure_state with allowed_values: [female] on demographic.sex key. Thyroid medication gate: representable via medication.thyroid_medication_status_disclosed requirement. Energy availability gates: representable via clinical_context.calorie_restriction_status and clinical_context.energy_availability_status primitives (added in BATCH2-FULL-COVERAGE-BUILD-1). Biomarker presence gates: representable via biomarker context_type with requirement: present. Adult-only gate: NO existing requirement type can compare demographic.age (integer) to a minimum threshold — this is the partial risk."
-    },
-    "stop_4_answered_no_not_distinguished": {
-      "will_trigger": false,
-      "rationale": "runtime_context_evaluator.py confirms DISCLOSURE_ANSWERED_YES, DISCLOSURE_ANSWERED_NO, DISCLOSURE_NOT_ANSWERED are all defined and distinguishable (lines 46-59). disclosure_state requirement type with allowed_values allows specifying which states satisfy a gate."
-    },
-    "stop_5_positive_exposure_not_separate": {
-      "will_trigger": false,
-      "rationale": "runtime_context_evaluator.py lines 361-373: aas_exposure_status_disclosed (boolean) and aas_exposure (boolean) are separate keys — disclosure state and positive exposure are separate."
-    },
-    "stop_6_ft3_low_cannot_require_tsh_ft4": {
-      "will_trigger": false,
-      "rationale": "FT3 low signal_library.yaml already has tsh and free_t4 as biomarker context_type requirements with requirement: present. These gates exist."
-    },
-    "stop_7_ft3_low_cannot_fail_closed_on_illness_energy": {
-      "will_trigger": false,
-      "rationale": "illness_or_recovery_status_disclosed gate exists in FT3 low signal_library.yaml. Energy availability gates (calorie_restriction_status, fasting_status) exist as clinical_context primitives added in BATCH2-FULL-COVERAGE-BUILD-1. These gates can be added to runtime_context_requirements."
-    },
-    "stop_8_fai_high_female_only": {
-      "will_trigger": false,
-      "rationale": "Female-only gate is representable using disclosure_state requirement with allowed_values: [female] on demographic.sex. runtime_context_evaluator.py line 256 confirms sex is stored lowercase. This gate will suppress FAI high for male patients."
-    },
-    "stop_9_fai_requires_testosterone_shbg": {
-      "will_trigger": false,
-      "rationale": "FAI high signal_library.yaml already has shbg and testosterone as biomarker context_type requirements with requirement: present (lines 62-65)."
-    },
-    "stop_10_free_testosterone_method_uncertainty": {
-      "will_trigger": "RISK — runtime context evaluator has no method/assay-type gate. Cursor must assess whether a method_flag context primitive exists in the snapshot builder, or whether fail-closed default (suppress_signal) is sufficient when method cannot be captured.",
-      "rationale": "No method_flag or assay_type runtime context primitive found in runtime_context_evaluator.py. Free testosterone high prompt Phase 5 requires method gate. If method cannot be represented, prompt says 'fail closed if method cannot be represented safely' — suppressing the signal may be acceptable."
-    },
-    "stop_11_free_testosterone_low_adult_male_symptom": {
-      "will_trigger": "PARTIAL — if adult-only age gate cannot be encoded, free testosterone low must remain inactive. Sprint can still proceed without activating free testosterone low.",
-      "rationale": "Male-only gate and symptom gate are representable. Adult-only gate requires age threshold comparison which no existing requirement type supports."
-    },
-    "stop_19_diagnosis_wording": {
-      "will_trigger": false,
-      "rationale": "Diagnosis wording is prohibited in the signal_library.yaml explanation and interpretation fields. None of the existing signal_library.yaml files contain diagnosis language. The wording in the libraries uses cautious language: 'contextual low T3 syndrome' not 'hypothyroidism'. Phase 3-6 wording boundaries must be respected in any wording updates."
-    },
-    "stop_24_rollback_undefined": {
-      "will_trigger": false,
-      "rationale": "Sprint is on a dedicated branch. Rollback is git branch deletion. New signal_library.yaml gate additions can be reverted. No SSOT changes expected."
-    }
-  },
   "overall_verdict": "HARDENED",
-  "hardening_notes": "Sprint is correctly classified HIGH / BEHAVIOUR / TWO_PHASE_START_FINISH. Medical research authority confirmed at preferred path with all 9 pattern verdicts. All 7 referenced audit papers confirmed present. All 14 governance files confirmed present. All 9 package directories confirmed present and inactive. Signal evaluator enable_lower_bound mechanism confirmed — FT3 low requires enable_lower_bound: true change as part of activation. Female-only gate for FAI high is representable using existing disclosure_state requirement type. Adult-only gate for free testosterone low requires assessment by Cursor — may require a new minimum_value requirement type or is_adult snapshot primitive, or free testosterone low remains inactive. DHEA identity gate result is predetermined: KEEP_INACTIVE (approval phrase absent, research says DO_NOT_ACTIVATE_YET, primary_metric is dhea not dhea_s). Six hardening notes added covering: authority path mismatch (non-blocking), enable_lower_bound mandatory fix, female-only gate encoding mechanism, adult-only gate risk, missing gates in signal libraries, DHEA identity pre-result. Two STOP conditions carry partial risk (stop_10 method gate, stop_11 adult gate) but neither kills the sprint — they gate individual package activations. GPT architectural review and human approval required before merge per HIGH risk route."
+  "hardening_notes": "Sprint is correctly classified HIGH / BEHAVIOUR / TWO_PHASE_START_FINISH. All 7 required authoritative audit papers confirmed present. One authority path discrepancy (sprint plan listed under docs/architecture/ but actually in docs/sprints/) is non-blocking per prompt self-correction guidance. All prerequisite sprints confirmed merged to main. All 4 required validator scripts exist. All 3 regression test files exist. Secret file guard exists. Three governance YAML files to be created are new (correct). Intelligence Core files confirmed deterministic with no raw Pass 3 runtime reads. Critical finding: Batch 2 endocrine signals (FT3 low, FAI high, free testosterone high/low) have no root-cause registry entries — Phase 3 must classify as ROOT_CAUSE_REQUIRES_FUTURE_MAPPING, not invent output. DTO break risk in Phase 5 requires frontend tolerance check before implementation. Narrative compiler runtime YAML reads are governed compiled assets — must not be misclassified as ungoverned in Phase 1. GPT architectural review and human approval required before merge per HIGH risk route. Five determinism risks surfaced in Stage 2B."
 }
