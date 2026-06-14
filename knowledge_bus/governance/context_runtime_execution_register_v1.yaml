@@ -39,10 +39,12 @@ human_stop_gate:
   approval_received: false
   approval_phrase: APPROVE BATCH2 MINIMUM COVERAGE ACTIVATION
   approval_recorded_at: null
+superseded_by_activation_execution_register: knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml
+activation_execution_work_id: BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals
 runtime_activation_performed: false
 activated_package_count: 0
-gated_inactive_package_count: 9
-blocked_package_count: 9
+gated_inactive_package_count: 5
+activated_via_execution_register_count: 4
 packages:
 - package_id: pkg_kb47_free_t3_low_low_t3_syndrome
   package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
@@ -53,11 +55,10 @@ packages:
   - clinical_context.illness_or_recovery_status_disclosed
   context_available: partial_via_questionnaire_snapshot_builder
   gate_implemented: true
-  activated: false
-  final_state: compiled_not_promoted_inactive_gated
-  blocker_if_inactive: enable_lower_bound_false
-  required_next_action: Human STOP approval with enable_lower_bound review if activating
-  notes: Disclosed illness context semantics implemented; remains inactive pending activation-layer review.
+  activated: true
+  final_state: runtime_active_canonical
+  activation_work_id: BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals
+  notes: Activated with enable_lower_bound and disclosure_state gates per medical research authority.
 - package_id: pkg_kb47_dhea_high_androgen_excess_context
   package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
   group: androgen
@@ -88,11 +89,10 @@ packages:
   package_path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
   group: androgen
   gate_implemented: true
-  activated: false
-  final_state: compiled_not_promoted_inactive_gated
-  blocker_if_inactive: CF-BATCH2-010; SHBG companion biomarker + context
-  required_next_action: Human STOP approval after prerequisites
-  notes: Inactive; gated.
+  activated: true
+  final_state: runtime_active_canonical
+  activation_work_id: BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals
+  notes: Female-only activation with therapy/AAS/symptom gates.
 - package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
   package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
   group: androgen
@@ -106,20 +106,18 @@ packages:
   package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context
   group: androgen
   gate_implemented: true
-  activated: false
-  final_state: compiled_not_promoted_inactive_gated
-  blocker_if_inactive: CF-BATCH2-010
-  required_next_action: Human STOP approval after prerequisites
-  notes: Inactive; gated.
+  activated: true
+  final_state: runtime_active_canonical
+  activation_work_id: BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals
+  notes: Activated with testosterone/SHBG companion and therapy/AAS/symptom gates.
 - package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
   package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
   group: androgen
   gate_implemented: true
-  activated: false
-  final_state: compiled_not_promoted_inactive_gated
-  blocker_if_inactive: CF-BATCH2-010
-  required_next_action: Human STOP approval after prerequisites
-  notes: Inactive; gated.
+  activated: true
+  final_state: runtime_active_canonical
+  activation_work_id: BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals
+  notes: Adult male symptom-gated activation with enable_lower_bound.
 - package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
   package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
   group: androgen
@@ -138,16 +136,8 @@ packages:
   blocker_if_inactive: CF-BATCH2-010
   required_next_action: Human STOP approval after prerequisites
   notes: Inactive; gated.
-phase_3_outcome: minimum_coverage_classified_all_nine_packages_remain_inactive
-minimum_coverage_decision_summary:
-  activate_with_gates: 0
-  exclude_from_minimum_coverage: 1
-  defer_pending_external_clinical_authority: 8
-  do_not_activate: 0
-rollback_path: Revert runtime_context_evaluator.py; remove runtime_context parameter and gate call from
-  signal_evaluator.py; remove runtime_context_requirements from in-scope signal_library.yaml files;
-  revert runtime_context_requirements_model_v1.yaml, context_runtime_execution_register_v1.yaml,
-  batch2_minimum_coverage_decision_register_v1.yaml, audit report, tests, and carry-forward register updates.
-notes: Reusable fail-closed context evaluation implemented. No package metadata activation performed.
-  ARCH-COMPLETION-1 orchestrator threading active. CF-CONTEXT-MOD-3 resolved. CF-BATCH2-010 remains open.
-  BATCH2-MINIMUM-COVERAGE-1 formalised minimum-coverage decisions for all 9 packages; zero activations.
+phase_3_outcome: four_packages_runtime_activated_via_BATCH2-FULL-COVERAGE-ACTIVATION-1
+notes: Reusable fail-closed context evaluation implemented. Four research-supported packages activated
+  via batch2_full_coverage_activation_execution_register_v1.yaml. Five packages remain inactive
+  (DHEA identity remediation, modifier-only futures). CF-BATCH2-010 partially addressed for activated
+  androgen subset; external sign-off still required for DHEA/FAI-low/pct packages.

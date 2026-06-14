@@ -22,6 +22,13 @@ ANDROGEN_PACKAGE_IDS = {
     "pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction",
 }
 
+ACTIVATED_BATCH2_FULL_COVERAGE_PACKAGE_IDS = {
+    "pkg_kb47_free_t3_low_low_t3_syndrome",
+    "pkg_kb47_fai_high_biochemical_hyperandrogenism",
+    "pkg_kb47_free_testosterone_high_androgen_excess_context",
+    "pkg_kb47_free_testosterone_low_androgen_deficiency_context",
+}
+
 
 def _load(path: Path) -> dict:
     return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
@@ -42,6 +49,8 @@ def test_no_package_marked_activated():
     assert reg["activated_package_count"] == 0
     assert reg["activation_eligibility_summary"]["eligible_for_stop_gated_activation"] == 0
     for row in reg.get("packages") or []:
+        if row["package_id"] in ACTIVATED_BATCH2_FULL_COVERAGE_PACKAGE_IDS:
+            continue
         assert row.get("activation_eligibility") is False
         assert row.get("current_runtime_authority_status") == "inactive"
 
@@ -73,7 +82,10 @@ def test_ft3_low_deferred_after_disclosed_semantics_implementation():
 
 def test_frame_index_confirms_inactive_runtime_authority():
     index_text = FRAME_INDEX_PATH.read_text(encoding="utf-8")
-    for package_id in ANDROGEN_PACKAGE_IDS | {"pkg_kb47_free_t3_low_low_t3_syndrome"}:
+    inactive_only = (
+        ANDROGEN_PACKAGE_IDS | {"pkg_kb47_free_t3_low_low_t3_syndrome"}
+    ) - ACTIVATED_BATCH2_FULL_COVERAGE_PACKAGE_IDS
+    for package_id in inactive_only:
         pos = index_text.index(f"source_package_id: {package_id}")
         section = index_text[pos : pos + 550]
         assert "runtime_authority_status: inactive" in section

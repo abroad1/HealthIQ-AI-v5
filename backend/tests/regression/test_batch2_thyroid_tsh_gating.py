@@ -128,15 +128,18 @@ def test_ft4_low_emits_when_ft4_low_and_tsh_present():
     assert _signal_ids(results) == {"signal_free_t4_low"}
 
 
-def test_ft3_low_package_not_runtime_active_in_frame_index():
+def test_ft3_low_frame_active_after_full_coverage_activation():
     index_path = REPO_ROOT / "knowledge_bus/governance/medical_frame_identity_index_v1.yaml"
     text = index_path.read_text(encoding="utf-8")
     assert "frame_batch2_free_t3_low_low_t3_syndrome" in text
+def test_ft3_low_frame_active_after_full_coverage_activation():
+    index_path = REPO_ROOT / "knowledge_bus/governance/medical_frame_identity_index_v1.yaml"
+    text = index_path.read_text(encoding="utf-8")
     assert "source_package_id: pkg_kb47_free_t3_low_low_t3_syndrome" in text
     section_start = text.index("frame_batch2_free_t3_low_low_t3_syndrome")
     section = text[section_start : section_start + 600]
-    assert "promotion_state: compiled_not_promoted" in section
-    assert "runtime_authority_status: inactive" in section
+    assert "promotion_state: runtime_active_canonical" in section
+    assert "runtime_authority_status: active" in section
 
 
 def test_androgen_packages_remain_inactive_in_frame_index():

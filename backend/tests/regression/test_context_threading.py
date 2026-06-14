@@ -234,7 +234,6 @@ def test_ft3_and_androgen_frames_remain_inactive_in_frame_index():
     index_path = REPO_ROOT / "knowledge_bus/governance/medical_frame_identity_index_v1.yaml"
     text = index_path.read_text(encoding="utf-8")
     for package_id in (
-        "pkg_kb47_free_t3_low_low_t3_syndrome",
         "pkg_kb47_dhea_high_androgen_excess_context",
     ):
         pos = text.index(f"source_package_id: {package_id}")

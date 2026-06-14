@@ -9,7 +9,11 @@ author: HealthIQ Knowledge Bus — KB-S47
 created_at: '2026-03-28'
 source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
 translation_mode: creation
-behavioural_impact: NONE
+behavioural_impact: SIGNAL_RUNTIME_ACTIVATION
 governance_promotion_status: governance_promoted_pending_runtime_activation
 governance_promotion_register: knowledge_bus/governance/batch2_promote_1_execution_register_v1.yaml
 governance_promoted_work_id: BATCH2-PROMOTE-1_cleared_wave_package_promotion
+governance_runtime_activation_status: runtime_active_canonical
+governance_runtime_activation_work_id: BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals
+governance_runtime_activation_register: knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml
+governance_runtime_activation_recorded_at: '2026-06-14'

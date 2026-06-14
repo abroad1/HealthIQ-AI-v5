@@ -272,6 +272,26 @@ def build_runtime_context_snapshot(
     if age_metric is not None and "age" not in snapshot["demographic"]:
         snapshot["demographic"]["age"] = int(age_metric)
 
+    age_value = snapshot["demographic"].get("age")
+    if isinstance(age_value, int):
+        snapshot["demographic"]["is_adult"] = age_value >= 18
+
+    lifestyle = dict(lifestyle_factors or {})
+    pregnancy_answered = _field_answered(responses, "pregnancy_status") or _field_answered(
+        lifestyle, "pregnancy_status"
+    )
+    if pregnancy_answered:
+        pregnancy_value = responses.get("pregnancy_status") or lifestyle.get("pregnancy_status")
+        pregnancy_state = _disclosure_state_from_value(
+            pregnancy_value,
+            field_answered=True,
+        )
+        _set_disclosure_state(
+            snapshot["clinical_context"],
+            "pregnancy_status",
+            pregnancy_state,
+        )
+
     if "symptoms" in responses and _value_present(responses.get("symptoms")):
         snapshot["symptom"]["symptoms_present"] = True
 
@@ -370,6 +390,8 @@ def build_runtime_context_snapshot(
         if any("steroid" in item or "prohormone" in item for item in lowered):
             snapshot["clinical_context"]["aas_exposure"] = True
             aas_state = DISCLOSURE_ANSWERED_YES
+        if any("dhea" in item for item in lowered):
+            snapshot["supplement"]["dhea_supplementation"] = True
     _set_disclosure_state(snapshot["clinical_context"], "aas_exposure_status", aas_state)
 
     if _field_answered(responses, "symptoms"):

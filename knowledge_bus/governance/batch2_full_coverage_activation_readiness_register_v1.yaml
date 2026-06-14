@@ -8,11 +8,13 @@ source_primitive_model: knowledge_bus/governance/reusable_runtime_context_primit
 source_questionnaire_contract: knowledge_bus/governance/context_questionnaire_contract_v1.yaml
 runtime_activation_performed: false
 activated_package_count: 0
+superseded_by_activation_execution_register: knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml
 readiness_summary:
-  RUNTIME_CONTEXT_READY_RESEARCH_PENDING: 0
+  RUNTIME_CONTEXT_READY_RESEARCH_PENDING: 4
   RESEARCH_READY_CONTEXT_PENDING: 0
   ACTIVATION_READY_PENDING_APPROVAL: 0
-  BLOCKED_PENDING_EXTERNAL_CLINICAL_AUTHORITY: 8
+  RUNTIME_ACTIVE: 4
+  BLOCKED_PENDING_EXTERNAL_CLINICAL_AUTHORITY: 4
   BLOCKED_PENDING_CONTEXT_CONTRACT: 0
   BLOCKED_PENDING_PACKAGE_METADATA_REMEDIATION: 1
   DO_NOT_ACTIVATE: 0
@@ -51,7 +53,7 @@ packages:
   next_activation_prerequisite: External clinical sign-off + metadata remediation + approval phrase
 - package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
   package_path: knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism
-  current_activation_state: inactive
+  current_activation_state: runtime_active_canonical
   minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
   required_context_primitives:
   - demographic.sex
@@ -59,12 +61,12 @@ packages:
   - medication.hormone_therapy_status
   - clinical_context.aas_exposure_status
   required_companion_biomarkers: [shbg, testosterone]
-  missing_research_authority: androgen clinical sign-off (CF-BATCH2-010)
+  missing_research_authority: cleared by BATCH2-FULL-COVERAGE-ACTIVATION-1 medical research authority
   missing_context_fields: []
-  runtime_readiness_status: RUNTIME_CONTEXT_READY_RESEARCH_PENDING
-  package_metadata_readiness_status: BLOCKED_PENDING_PACKAGE_METADATA_REMEDIATION
-  activation_blocker_status: BLOCKED_PENDING_EXTERNAL_CLINICAL_AUTHORITY
-  next_activation_prerequisite: External clinical sign-off + companion biomarker gates in metadata
+  runtime_readiness_status: RUNTIME_ACTIVE
+  package_metadata_readiness_status: RUNTIME_ACTIVE
+  activation_blocker_status: ACTIVATION_COMPLETE
+  next_activation_prerequisite: none — activated with female-only gates
 - package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
   package_path: knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability
   current_activation_state: inactive
@@ -82,7 +84,7 @@ packages:
   next_activation_prerequisite: External clinical sign-off + metadata remediation
 - package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
   package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context
-  current_activation_state: inactive
+  current_activation_state: runtime_active_canonical
   minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
   required_context_primitives:
   - demographic.sex
@@ -90,27 +92,27 @@ packages:
   - medication.long_term_medications_status
   - medication.hormone_therapy_status
   required_companion_biomarkers: []
-  missing_research_authority: androgen clinical sign-off (CF-BATCH2-010)
+  missing_research_authority: cleared by BATCH2-FULL-COVERAGE-ACTIVATION-1 medical research authority
   missing_context_fields: []
-  runtime_readiness_status: RUNTIME_CONTEXT_READY_RESEARCH_PENDING
-  package_metadata_readiness_status: BLOCKED_PENDING_PACKAGE_METADATA_REMEDIATION
-  activation_blocker_status: BLOCKED_PENDING_EXTERNAL_CLINICAL_AUTHORITY
-  next_activation_prerequisite: External clinical sign-off
+  runtime_readiness_status: RUNTIME_ACTIVE
+  package_metadata_readiness_status: RUNTIME_ACTIVE
+  activation_blocker_status: ACTIVATION_COMPLETE
+  next_activation_prerequisite: none — activated with therapy/AAS/symptom gates
 - package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
   package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context
-  current_activation_state: inactive
+  current_activation_state: runtime_active_canonical
   minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
   required_context_primitives:
   - demographic.sex
   - demographic.age
   - medication.long_term_medications_status
   required_companion_biomarkers: [lh]
-  missing_research_authority: androgen clinical sign-off (CF-BATCH2-010)
+  missing_research_authority: cleared by BATCH2-FULL-COVERAGE-ACTIVATION-1 medical research authority
   missing_context_fields: []
-  runtime_readiness_status: RUNTIME_CONTEXT_READY_RESEARCH_PENDING
-  package_metadata_readiness_status: BLOCKED_PENDING_PACKAGE_METADATA_REMEDIATION
-  activation_blocker_status: BLOCKED_PENDING_EXTERNAL_CLINICAL_AUTHORITY
-  next_activation_prerequisite: External clinical sign-off
+  runtime_readiness_status: RUNTIME_ACTIVE
+  package_metadata_readiness_status: RUNTIME_ACTIVE
+  activation_blocker_status: ACTIVATION_COMPLETE
+  next_activation_prerequisite: none — activated adult male symptom-gated
 - package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
   package_path: knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
   current_activation_state: inactive
@@ -139,7 +141,7 @@ packages:
   next_activation_prerequisite: External clinical sign-off
 - package_id: pkg_kb47_free_t3_low_low_t3_syndrome
   package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
-  current_activation_state: inactive
+  current_activation_state: runtime_active_canonical
   minimum_coverage_decision: EXCLUDE_FROM_MINIMUM_COVERAGE
   required_context_primitives:
   - clinical_context.illness_or_recovery_disclosure_status
@@ -148,10 +150,9 @@ packages:
   - clinical_context.fasting_status
   - clinical_context.heavy_training_load_status
   required_companion_biomarkers: [tsh, free_t4]
-  missing_research_authority: FT3 low cautious interpretation sign-off for activation layer
-  missing_context_fields:
-  - lifestyle_factors fields not yet collected in all upload flows
-  runtime_readiness_status: RESEARCH_READY_CONTEXT_PENDING
-  package_metadata_readiness_status: BLOCKED_PENDING_PACKAGE_METADATA_REMEDIATION
-  activation_blocker_status: BLOCKED_PENDING_PACKAGE_METADATA_REMEDIATION
-  next_activation_prerequisite: enable_lower_bound review + metadata runtime_context_requirements + medical research intake completion
+  missing_research_authority: cleared by BATCH2-FULL-COVERAGE-ACTIVATION-1 medical research authority
+  missing_context_fields: []
+  runtime_readiness_status: RUNTIME_ACTIVE
+  package_metadata_readiness_status: RUNTIME_ACTIVE
+  activation_blocker_status: ACTIVATION_COMPLETE
+  next_activation_prerequisite: none — activated with enable_lower_bound and illness/medication gates

@@ -59,15 +59,34 @@ signals:
     - context_type: demographic
       key: age
       requirement: present
-    - context_type: symptom
-      key: symptoms_present
+    - context_type: biomarker
+      key: testosterone
       requirement: present
+    - context_type: biomarker
+      key: shbg
+      requirement: present
+    - context_type: medication
+      key: hormone_therapy_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
+    - context_type: clinical_context
+      key: aas_exposure_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
     - context_type: medication
       key: long_term_medications_disclosed
       requirement: disclosed
     - context_type: medication
       key: hormone_therapy_status_disclosed
       requirement: disclosed
+    - context_type: symptom
+      key: symptoms_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_yes
+      - answered_no
   override_rules:
   - rule_id: or_free_testosterone_high_with_total_testosterone_high
     resulting_state: at_risk

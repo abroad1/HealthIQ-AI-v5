@@ -48,23 +48,56 @@ signals:
   activation_logic: lab_range_exceeded
   activation_config:
     upper_bound_state: suboptimal
-    enable_lower_bound: false
+    enable_lower_bound: true
     lower_bound_state: suboptimal
   runtime_context_requirements:
     missing_context_behaviour: suppress_signal
     required_context:
     - context_type: demographic
       key: sex
+      requirement: disclosure_state
+      allowed_values:
+      - male
+    - context_type: demographic
+      key: is_adult
       requirement: present
     - context_type: demographic
       key: age
       requirement: present
     - context_type: biomarker
-      key: lh
+      key: testosterone
+      requirement: present
+    - context_type: biomarker
+      key: shbg
       requirement: present
     - context_type: symptom
-      key: symptoms_present
-      requirement: present
+      key: symptoms_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_yes
+      - answered_no
+    - context_type: clinical_context
+      key: illness_or_recovery_disclosure_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_yes
+      - answered_no
+    - context_type: clinical_context
+      key: calorie_restriction_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_yes
+      - answered_no
+    - context_type: medication
+      key: hormone_therapy_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
+    - context_type: clinical_context
+      key: aas_exposure_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
     - context_type: medication
       key: long_term_medications_disclosed
       requirement: disclosed

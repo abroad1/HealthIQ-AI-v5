@@ -49,15 +49,20 @@ def test_questionnaire_contract_maps_ft3_and_androgen_fields():
     assert "chronic_conditions" in field_names
 
 
-def test_readiness_register_covers_nine_packages_without_activation():
+def test_readiness_register_covers_nine_packages_without_unauthorised_activation():
     reg = _load(ARTIFACTS["readiness_register"])
+    exec_reg_path = REPO_ROOT / "knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml"
+    exec_reg = _load(exec_reg_path)
     packages = reg.get("packages") or []
     assert len(packages) == 9
-    assert reg["runtime_activation_performed"] is False
-    assert reg["activated_package_count"] == 0
+    assert exec_reg["runtime_activation_performed"] is True
+    assert exec_reg["activated_package_count"] == 4
+    activated_ids = {row["package_id"] for row in exec_reg.get("activated_packages") or []}
     for row in packages:
-        assert row["current_activation_state"] == "inactive"
-        assert row["activation_blocker_status"] != "ACTIVATION_READY_PENDING_APPROVAL"
+        if row["package_id"] in activated_ids:
+            assert row.get("current_activation_state") == "runtime_active_canonical"
+        else:
+            assert row["activation_blocker_status"] != "ACTIVATION_READY_PENDING_APPROVAL"
 
 
 def test_research_intake_contract_covers_ft3_and_androgen_patterns():

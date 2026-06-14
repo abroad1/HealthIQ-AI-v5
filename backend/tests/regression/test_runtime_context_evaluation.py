@@ -330,18 +330,20 @@ def test_disclosed_requirement_fails_when_question_not_answered():
     assert not result.satisfied
 
 
-def test_ft3_low_cannot_activate_now_while_enable_lower_bound_false():
+def test_ft3_low_enable_lower_bound_active_after_full_coverage_activation():
     signal = _load_package_signal(
         "pkg_kb47_free_t3_low_low_t3_syndrome",
         "signal_free_t3_low",
     )
-    assert signal.get("activation_config", {}).get("enable_lower_bound") is False
+    assert signal.get("activation_config", {}).get("enable_lower_bound") is True
     ctx = build_runtime_context_snapshot(
         questionnaire_responses={
             "biological_sex": "female",
             "date_of_birth": "1980-01-01",
-            "chronic_conditions": ["None"],
+            "chronic_conditions": [],
+            "long_term_medications": [],
         },
+        lifestyle_factors={"calorie_restriction": False, "fasting": False},
     )
     results = _evaluate_signal(
         signal,
@@ -349,7 +351,7 @@ def test_ft3_low_cannot_activate_now_while_enable_lower_bound_false():
         lab_ranges=THYROID_LAB_RANGES,
         runtime_context=ctx,
     )
-    assert results == []
+    assert {row.signal_id for row in results} == {"signal_free_t3_low"}
 
 
 def test_androgen_packages_remain_inactive_without_runtime_context():

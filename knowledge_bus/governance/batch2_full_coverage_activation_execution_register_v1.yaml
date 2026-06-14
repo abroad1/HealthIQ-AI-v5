@@ -1,0 +1,43 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: activation_complete
+work_id: BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals
+activation_utc: '2026-06-14'
+medical_research_authority: docs/Medical Research Documents/Batch_2_Thyroid_Androgen_Context_Authority_Review.md
+runtime_activation_performed: true
+activated_package_count: 4
+kept_inactive_count: 5
+activated_packages:
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  signal_id: signal_free_t3_low
+  activation_outcome: ACTIVATE_WITH_GATES_THIS_SPRINT
+  governance_runtime_activation_status: runtime_active_canonical
+- package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  signal_id: signal_fai_high
+  activation_outcome: ACTIVATE_WITH_GATES_THIS_SPRINT
+  scope_note: female-only initial activation
+  governance_runtime_activation_status: runtime_active_canonical
+- package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  signal_id: signal_free_testosterone_high
+  activation_outcome: ACTIVATE_WITH_GATES_THIS_SPRINT
+  governance_runtime_activation_status: runtime_active_canonical
+- package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  signal_id: signal_free_testosterone_low
+  activation_outcome: ACTIVATE_WITH_GATES_THIS_SPRINT
+  scope_note: adult male symptom-gated
+  governance_runtime_activation_status: runtime_active_canonical
+kept_inactive_packages:
+- package_id: pkg_kb47_dhea_high_androgen_excess_context
+  outcome: KEEP_INACTIVE_PENDING_DHEA_DHEAS_IDENTITY_REMEDIATION
+  reason: primary_metric dhea not dhea_s; approval phrase absent
+- package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  outcome: DO_NOT_ACTIVATE
+  reason: evidence insufficient per medical research authority
+- package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  outcome: KEEP_INACTIVE_MODIFIER_ONLY_FUTURE
+- package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  outcome: KEEP_INACTIVE_MODIFIER_ONLY_FUTURE
+- package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  outcome: KEEP_INACTIVE_MODIFIER_ONLY_FUTURE
+rollback_path: Revert signal_library.yaml gates and enable_lower_bound flags, package manifests,
+  medical_frame_identity_index entries, governance registers, tests, and audit paper for this sprint.

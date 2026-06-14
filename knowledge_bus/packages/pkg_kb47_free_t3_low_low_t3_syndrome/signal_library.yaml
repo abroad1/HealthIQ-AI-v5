@@ -47,7 +47,7 @@ signals:
   activation_logic: lab_range_exceeded
   activation_config:
     upper_bound_state: suboptimal
-    enable_lower_bound: false
+    enable_lower_bound: true
     lower_bound_state: suboptimal
   runtime_context_requirements:
     missing_context_behaviour: suppress_signal
@@ -58,9 +58,30 @@ signals:
     - context_type: biomarker
       key: free_t4
       requirement: present
+    - context_type: medication
+      key: thyroid_medication_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_yes
+      - answered_no
     - context_type: clinical_context
-      key: illness_or_recovery_status_disclosed
-      requirement: disclosed
+      key: illness_or_recovery_disclosure_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_yes
+      - answered_no
+    - context_type: clinical_context
+      key: calorie_restriction_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_yes
+      - answered_no
+    - context_type: clinical_context
+      key: fasting_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_yes
+      - answered_no
   override_rules:
   - rule_id: or_free_t3_low_with_free_t4_low
     resulting_state: at_risk
