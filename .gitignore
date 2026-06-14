@@ -52,8 +52,20 @@ reports/forensics/
 # OS junk
 .DS_Store
 
-# Local env
+# Local env — secret files must never be committed
+# Safe example/test files (placeholders only) are explicitly tracked below
 .env
+*.env
+*.env.*
+old.env*
+*.local
+*.secret
+!.env.example
+!.env.local.example
+!.env.test
+!backend/.env.example
+!backend/.env.test
+!frontend/.env.local.example
 /result.json
 pr_body.txt
 
