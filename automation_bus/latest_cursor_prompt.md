@@ -1,65 +1,58 @@
 ---
-work_id: BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness
-branch: work/BATCH2-FULL-COVERAGE-BUILD-1-reusable-context-layer-research-authority-and-activation-readiness
+work_id: BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals
+branch: work/BATCH2-FULL-COVERAGE-ACTIVATION-1-activate-research-supported-thyroid-and-androgen-signals
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
-----------------------
+---
 
-# BATCH2-FULL-COVERAGE-BUILD-1 — Reusable Context Layer, Research Authority and Activation Readiness
+# BATCH2-FULL-COVERAGE-ACTIVATION-1 — Activate Research-Supported Thyroid and Androgen Signals
 
 ## Purpose
 
-Build the reusable context capability required to safely interpret the remaining Batch 2 context-dependent markers, while preparing the system for a future activation sprint once the medical research authority is complete.
+Activate only the Batch 2 thyroid and androgen signals that are now supported by medical research authority and reusable runtime context gates.
 
-This is not another decision-only classification sprint.
+This is an activation sprint, not another classification or readiness sprint.
 
-This sprint must build the missing reusable context infrastructure that FT3 low and androgen patterns require, and make that capability reusable for future biomarkers and signal inputs.
-
-The immediate use cases are:
-
-```text
-- FT3 low / low T3 syndrome / non-thyroidal illness context
-- DHEA high
-- DHEA low
-- FAI high
-- FAI low
-- free testosterone high
-- free testosterone low
-- free testosterone percentage high
-- free testosterone percentage low
-```
-
-But the architecture must not be thyroid-and-androgen-specific.
-
-The strategic goal is:
-
-```text
-Build context once.
-Bind it to many signals.
-Keep signal evaluation deterministic.
-Avoid marker-specific questionnaire hacks.
-```
+The sprint must activate the research-supported signals with strict deterministic gates, while keeping weak, ambiguous or insufficiently supported signals inactive as primary runtime signals.
 
 ---
 
 ## Strategic context
 
-HealthIQ AI is not currently being released to beta users.
-
-The human owner has decided that the backend intelligence foundation and full intended biomarker coverage must be completed before frontend polish or beta exposure.
-
-`ARCH-COMPLETION-1` corrected the orchestrator architecture so that `AnalysisContext` now precedes signal evaluation.
-
-`BATCH2-MINIMUM-COVERAGE-1` formally classified the remaining Batch 2 context-dependent packages but did not activate them.
-
-That classification is no longer enough. This sprint must start building what is missing.
-
-The desired end state is:
+Previous work established:
 
 ```text
-A reusable context layer that supports FT3 low, androgen patterns and future context-sensitive biomarkers.
+- ARCH-COMPLETION-1 corrected orchestrator phase order.
+- AnalysisContext now precedes signal evaluation.
+- Runtime context is derived from AnalysisContext / governed post-context objects.
+- BATCH2-MINIMUM-COVERAGE-1 formally classified the unresolved Batch 2 estate.
+- BATCH2-FULL-COVERAGE-BUILD-1 added reusable runtime context primitives.
+- answered_yes / answered_no / not_answered semantics now exist.
+- disclosure state is separated from positive exposure.
+- medical research authority has now been produced for FT3 low and 8 androgen patterns.
 ```
+
+The medical research review supports activation-with-gates for:
+
+```text
+- FT3 low
+- Free Androgen Index high, female-only initially
+- Free testosterone high, sex-specific and assay-gated
+- Free testosterone low, adult male-only and symptom-gated
+```
+
+The medical research review does not support activation as primary signals for:
+
+```text
+- DHEA high, unless DHEA-S identity is explicitly resolved and separately approved
+- DHEA low
+- Free Androgen Index low
+- Free testosterone percentage high
+- Free testosterone percentage low
+```
+
+The goal is to move from activation readiness to safe deterministic runtime activation.
 
 ---
 
@@ -76,11 +69,11 @@ change_type: BEHAVIOUR
 Rationale:
 
 ```text
-- reusable clinical/context primitives are being introduced or expanded
-- runtime context mapping may change
-- questionnaire/context contract may change
-- signal activation readiness is being prepared
-- future package activation depends on the output
+- inactive clinical signal packages may become active
+- endocrine interpretation logic is clinically sensitive
+- package activation state will change
+- runtime context gates will be bound to clinical packages
+- safe wording and fail-closed behaviour must be enforced
 ```
 
 Required route:
@@ -101,7 +94,7 @@ Do not merge without explicit human approval.
 Work only on:
 
 ```text
-work/BATCH2-FULL-COVERAGE-BUILD-1-reusable-context-layer-research-authority-and-activation-readiness
+work/BATCH2-FULL-COVERAGE-ACTIVATION-1-activate-research-supported-thyroid-and-androgen-signals
 ```
 
 Do not work on `main`.
@@ -110,57 +103,101 @@ Do not merge.
 
 ---
 
+## Required medical research authority
+
+Before implementation, verify that the Batch 2 medical research review is present in the repository.
+
+Preferred path:
+
+```text
+"C:\Users\abroa\HealthIQ-AI-v5\docs\Medical Research Documents\Batch_2_Thyroid_Androgen_Context_Authority_Review.md"
+```
+
+If the file is not present, STOP and ask the human owner to place the medical research review into the repository.
+
+Do not reconstruct the research review from memory.
+
+Do not activate any package without a repo-persisted medical research authority artefact.
+
+The research authority must contain pattern-by-pattern recommendations for:
+
+```text
+- FT3 low
+- DHEA high
+- DHEA low
+- FAI high
+- FAI low
+- free testosterone high
+- free testosterone low
+- free testosterone percentage high
+- free testosterone percentage low
+```
+
+---
+
 ## Non-negotiable constraints
 
 This sprint must not:
 
 ```text
-- activate androgen packages
-- activate FT3 low
-- activate any inactive package
-- change signal IDs
-- change activation keys
-- change clinical thresholds
+- activate unsupported signals
+- activate DHEA high unless DHEA-S identity and separate approval are explicitly resolved
+- activate DHEA low
+- activate FAI low
+- activate free testosterone percentage high as a primary signal
+- activate free testosterone percentage low as a primary signal
+- diagnose thyroid disease
+- diagnose PCOS
+- diagnose hypogonadism
+- diagnose adrenal disease
+- recommend treatment
+- recommend supplements or hormones
 - change biomarker reference range policy
-- change SSOT biomarker definitions
-- change scoring
-- change report compiler logic
+- substitute global/default reference ranges where lab ranges are available
+- change SSOT unless a STOP gate proves canonical identity remediation is unavoidable
 - change frontend result rendering
 - introduce frontend medical inference
 - introduce fallback or dummy parsers
 - introduce raw Pass 3 / investigation-spec runtime reads
 - introduce LLM clinical reasoning into runtime signal evaluation
-- hardcode context logic only for FT3 low or androgen
 ```
 
-This sprint may prepare activation readiness.
+Activation must remain deterministic.
 
-It must not perform activation.
+All new active signals must fail closed when required biomarker or context gates are missing.
 
 ---
 
-## Core design rule
+## Allowed activation targets
 
-Any context capability built for FT3 low or androgen must be reusable for other future context-sensitive signals unless there is a specific clinical reason it cannot be.
-
-Examples of future reusable use cases include:
+Only the following packages may be activated in this sprint:
 
 ```text
-- inflammation interpretation
-- liver marker interpretation
-- kidney marker interpretation
-- iron studies
-- glucose / insulin patterns
-- cortisol / stress patterns
-- nutrient deficiency patterns
-- medication-influenced results
-- training-load-influenced results
-- acute illness / recovery interpretation
+knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/
+knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/
+knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/
+knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context/
 ```
 
-Do not build marker-specific questionnaire hacks.
+All other Batch 2 androgen packages must remain inactive unless explicitly STOP-gated for metadata-only remediation.
 
-Build reusable primitives, then bind them to marker-specific requirements.
+---
+
+## Required inactive primary signals
+
+The following packages must remain inactive as primary signals:
+
+```text
+knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/
+knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/
+knowledge_bus/packages/pkg_kb47_fai_low_reduced_free_androgen_availability/
+knowledge_bus/packages/pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction/
+knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction/
+```
+
+The percentage and low-FAI packages may be documented as future optional modifiers only if an existing safe modifier architecture already supports this.
+
+Do not invent a new modifier architecture in this sprint.
 
 ---
 
@@ -171,11 +208,18 @@ Read before implementation:
 ```text
 docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md
 docs/audit-papers/BATCH2-MINIMUM-COVERAGE-1_androgen_ft3_low_clinical_and_runtime_completion.md
+docs/audit-papers/BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness.md
 docs/audit-papers/BATCH2-CONTEXT-COMPLETION-1_runtime_semantics_and_stop_gated_activation.md
 docs/audit-papers/CONTEXT-CLEARANCE-1_context_semantics_and_batch2_clearance.md
 docs/audit-papers/DAY-ONE-ARCHITECTURE-CLOSURE-REVIEW.md
 docs/sprints/launch_core_carry_forward_register.md
 
+knowledge_bus/research/medical_reviews/batch2_thyroid_androgen_context_authority_review_v1.md
+
+knowledge_bus/governance/reusable_runtime_context_primitive_model_v1.yaml
+knowledge_bus/governance/context_questionnaire_contract_v1.yaml
+knowledge_bus/governance/batch2_full_coverage_activation_readiness_register_v1.yaml
+knowledge_bus/governance/batch2_medical_research_intake_contract_v1.yaml
 knowledge_bus/governance/batch2_minimum_coverage_decision_register_v1.yaml
 knowledge_bus/governance/batch2_context_clearance_register_v1.yaml
 knowledge_bus/governance/context_runtime_execution_register_v1.yaml
@@ -197,7 +241,7 @@ backend/tests/regression/test_runtime_context_evaluation.py
 backend/tests/regression/test_context_threading.py
 ```
 
-Inspect the 9 relevant package directories:
+Inspect all 9 package directories:
 
 ```text
 knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/
@@ -211,7 +255,7 @@ knowledge_bus/packages/pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_
 knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/
 ```
 
-If any expected file is missing, report it and classify whether it blocks the sprint.
+If any expected authority file is missing, report whether it blocks the sprint.
 
 ---
 
@@ -233,319 +277,554 @@ Confirm:
 2. Working tree is clean.
 3. ARCH-COMPLETION-1 is merged.
 4. BATCH2-MINIMUM-COVERAGE-1 is merged.
-5. `AnalysisContext` precedes signal evaluation.
-6. Runtime context is derived from `AnalysisContext` or a governed post-context object.
-7. All 8 androgen packages remain inactive.
-8. FT3 low remains inactive.
-9. No activation approval currently exists.
-10. Repository secret-file gate failure remains remediated.
+5. BATCH2-FULL-COVERAGE-BUILD-1 is merged.
+6. Batch 2 medical research review is present in the repository.
+7. `AnalysisContext` precedes signal evaluation.
+8. Runtime context is derived from `AnalysisContext` or governed post-context object.
+9. answered_yes / answered_no / not_answered semantics exist.
+10. Disclosure state and positive exposure are separate.
+11. All 9 target packages are currently inactive.
+12. No unauthorised activation already exists.
+13. Repository secret-file gate failure remains remediated.
 ```
 
 STOP if the baseline is unclear.
 
 ---
 
-# Phase 1 — Read-only architecture and context gap audit
+# Phase 1 — Research-to-runtime activation mapping
 
-Before changing code or governance files, produce a short design note answering:
-
-```text
-1. What context primitives already exist?
-2. Which context primitives are missing for FT3 low?
-3. Which context primitives are missing for androgen signals?
-4. Which missing primitives are likely reusable across future biomarkers?
-5. Where is questionnaire/context data currently represented?
-6. Where is runtime context currently built?
-7. Which context keys are currently disclosed-only?
-8. Which context keys represent positive exposure?
-9. Which context keys represent modifier intensity, duration, recency or severity?
-10. What is the minimal reusable model needed before activation readiness can be claimed?
-```
-
-STOP if the sprint would require a broad unrelated questionnaire/frontend redesign.
-
----
-
-# Phase 2 — Define reusable context primitives
-
-Create or update a governed context primitive model.
-
-Preferred artefact:
-
-```text
-knowledge_bus/governance/reusable_runtime_context_primitive_model_v1.yaml
-```
-
-If a better existing authority file already exists, use that and explain why.
-
-The model must define reusable primitives for at least:
-
-```text
-- disclosure state
-- positive / negative exposure state
-- unknown / unanswered state
-- medication exposure
-- medication class exposure
-- thyroid medication exposure
-- hormone therapy exposure
-- HRT exposure
-- prescribed steroid exposure
-- anabolic steroid / AAS exposure
-- supplement exposure
-- acute illness status
-- recent infection status
-- recovery status
-- calorie restriction / dieting / fasting
-- under-eating / low energy availability
-- weight loss phase
-- heavy training load
-- overtraining / recovery pressure
-- relevant thyroid symptoms
-- relevant androgen symptoms
-- sex / biological sex
-- age
-- life-stage where applicable
-- companion biomarker availability
-```
-
-For each primitive, define:
-
-```text
-- canonical context key
-- type
-- allowed values
-- whether it is required / optional / disclosed-only / modifier
-- whether it can gate signal activation
-- whether it can only modify interpretation
-- whether missing value must fail closed
-- example source questionnaire field
-- likely reusable biomarker domains
-```
-
-Required value semantics:
-
-```text
-answered_yes
-answered_no
-not_answered
-unknown
-not_applicable
-```
-
-Do not collapse `answered_no` into missing.
-
-Do not treat a default empty frontend list as genuine disclosure unless the source contract proves the user actively answered the field.
-
----
-
-# Phase 3 — Define questionnaire/context contract
-
-Create or update a governed questionnaire/context contract.
-
-Preferred artefact:
-
-```text
-knowledge_bus/governance/context_questionnaire_contract_v1.yaml
-```
-
-The contract must define the backend context fields needed to support the primitives.
-
-This does not require frontend implementation in this sprint.
-
-The contract should describe the structured data the frontend or upload flow must eventually provide.
-
-Include:
-
-```text
-- field name
-- user-facing intent
-- internal context primitive mapped
-- allowed values
-- required for which signal families
-- whether required before activation
-- whether optional modifier
-- whether unanswered must fail closed
-- safe default behaviour
-```
-
-For FT3 low, include at least:
-
-```text
-- thyroid medication status
-- recent illness / infection
-- recovery from illness
-- calorie restriction / fasting / under-eating
-- recent significant weight loss
-- heavy training / overtraining
-- relevant thyroid symptoms
-- TSH availability
-- FT4 availability
-```
-
-For androgen, include at least:
-
-```text
-- biological sex
-- age
-- hormone therapy / HRT
-- anabolic steroid / AAS exposure
-- prescribed steroid use
-- relevant medication classes
-- supplement use
-- relevant androgen symptoms
-- companion androgen biomarker availability
-```
-
-Design the contract so that future biomarkers can bind to the same primitives.
-
----
-
-# Phase 4 — Build runtime context mapping capability
-
-Update runtime context mapping so that the reusable primitives can be represented deterministically in runtime context.
-
-Likely file:
-
-```text
-backend/core/analytics/runtime_context_evaluator.py
-```
-
-Allowed work:
-
-```text
-- add reusable primitive mapping helpers
-- add `answered_yes` / `answered_no` / `not_answered` distinction where missing
-- add deterministic mapping from AnalysisContext fields to primitive keys
-- preserve existing disclosed-context semantics
-- preserve existing positive-exposure semantics
-- preserve fail-closed behaviour when required context is missing
-```
-
-Do not weaken existing gates.
-
-Do not make context inference speculative.
-
-Do not infer AAS, HRT, steroid use, thyroid medication, illness, dieting or overtraining from biomarkers alone.
-
-Context must come from user-declared/questionnaire/context fields or explicit structured inputs.
-
----
-
-# Phase 5 — Bind primitives to Batch 2 activation-readiness register
-
-Create or update an activation-readiness register.
-
-Preferred artefact:
-
-```text
-knowledge_bus/governance/batch2_full_coverage_activation_readiness_register_v1.yaml
-```
+Create a read-only activation mapping table before making changes.
 
 For each of the 9 packages, document:
 
 ```text
 - package path
 - current activation state
-- current minimum coverage decision
-- required context primitives
-- required companion biomarkers
-- missing research authority
-- missing context fields
-- runtime readiness status
-- package metadata readiness status
-- activation blocker status
-- next activation prerequisite
+- research verdict
+- allowed activation outcome
+- required biomarker gates
+- required context gates
+- required exclusion gates
+- required wording boundaries
+- whether this sprint may activate it
+- reason
 ```
 
-Allowed readiness statuses:
+Allowed activation outcome values:
 
 ```text
-RUNTIME_CONTEXT_READY_RESEARCH_PENDING
-RESEARCH_READY_CONTEXT_PENDING
-ACTIVATION_READY_PENDING_APPROVAL
-BLOCKED_PENDING_EXTERNAL_CLINICAL_AUTHORITY
-BLOCKED_PENDING_CONTEXT_CONTRACT
-BLOCKED_PENDING_PACKAGE_METADATA_REMEDIATION
+ACTIVATE_WITH_GATES_THIS_SPRINT
+KEEP_INACTIVE_PRIMARY_SIGNAL
+KEEP_INACTIVE_PENDING_DHEA_DHEAS_IDENTITY_REMEDIATION
+KEEP_INACTIVE_PENDING_EXTERNAL_CLINICIAN_SIGNOFF
+KEEP_INACTIVE_MODIFIER_ONLY_FUTURE
 DO_NOT_ACTIVATE
 ```
 
-This register must be governance-only:
-
-```yaml
-runtime_consumed: false
-```
-
-Do not activate any package.
+STOP if any package outcome conflicts with the medical research authority.
 
 ---
 
-# Phase 6 — Medical research handoff contract
+# Phase 2 — DHEA / DHEA-S identity STOP gate
 
-Prepare the repository to receive the parallel medical research output.
+Before activating or remediating anything related to DHEA, perform a DHEA identity gate.
 
-Create a medical research intake specification.
-
-Preferred artefact:
+For:
 
 ```text
-knowledge_bus/governance/batch2_medical_research_intake_contract_v1.yaml
+knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/
+knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/
 ```
 
-It must define the expected structure of the medical research output for:
+Determine:
 
 ```text
-- FT3 low
-- 8 androgen packages
+- Is the source marker DHEA or DHEA-S?
+- Does the canonical biomarker identity distinguish DHEA from DHEA-S?
+- Does the package title, manifest, signal library and frame identity align?
+- Does the medical research authority support the exact marker identity?
 ```
 
-For each marker/pattern, the research output must answer:
+Rules:
 
 ```text
-- clinically valid cautious interpretation?
-- required companion biomarkers
-- required context fields
-- exclusion conditions
-- fail-closed conditions
-- safe wording boundaries
-- unsafe wording to avoid
-- activation recommendation
-- confidence level
-- research citations / evidence basis
-- whether external clinician review is still required
+If marker identity is DHEA or ambiguous:
+  - do not activate DHEA high
+  - do not activate DHEA low
+  - document required canonical marker remediation
+  - keep both packages inactive
+
+If marker identity is explicitly DHEA-S:
+  - do not activate in this sprint unless exact human approval phrase is present
+  - document future activation prerequisites for DHEA-S high
+  - keep DHEA-S low inactive unless separate clinician authority exists
+
+Required approval phrase for DHEA-S activation:
+  APPROVE DHEA-S ACTIVATION IN BATCH2-FULL-COVERAGE-ACTIVATION-1
 ```
 
-This sprint should not invent the medical conclusions.
+If that exact phrase is absent, no DHEA/DHEA-S package may activate.
 
-It should create the structured contract so the medical research LLM output can be validated and used in the next activation sprint.
+Expected default outcome:
+
+```text
+DHEA high remains inactive.
+DHEA low remains inactive.
+```
 
 ---
 
-# Phase 7 — Tests
+# Phase 3 — FT3 low activation design
 
-Add or update tests proving:
+Prepare FT3 low activation with strict gates.
+
+Target package:
 
 ```text
-1. context primitives preserve answered_yes / answered_no / not_answered distinctions
-2. disclosed context still passes for answered_yes and answered_no
-3. disclosed context fails for not_answered
-4. positive exposure is not confused with disclosure
-5. AAS answered_no is not treated as missing
-6. HRT / hormone therapy answered_no is not treated as missing
-7. thyroid medication answered_no is not treated as missing
-8. illness/recovery unanswered fails closed where required
-9. reusable primitives can be generated from AnalysisContext-derived runtime context
-10. no context-dependent packages become active
-11. androgen packages remain inactive
-12. FT3 low remains inactive
+knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/
 ```
 
-If existing tests already cover some of these, extend only where needed.
+Activation is permitted only if all of the following can be encoded deterministically.
 
-Do not rely only on governance-file tests. There must be runtime mapping tests.
+Required biomarker gates:
+
+```text
+- FT3 low relative to lab-provided reference range
+- TSH present
+- FT4 present
+```
+
+Required context gates:
+
+```text
+- thyroid medication status answered
+- recent acute illness / infection / recovery status answered
+- energy availability context answered
+- calorie restriction / fasting / under-eating / significant weight loss context answered or represented through the energy availability primitive
+- pregnancy/postpartum status answered where applicable
+- medication/biotin disclosure captured where available
+```
+
+Required exclusion/fail-closed gates:
+
+```text
+- fail closed if TSH missing
+- fail closed if FT4 missing
+- fail closed if thyroid medication question not_answered
+- fail closed if illness/recovery context not_answered
+- fail closed if energy availability context not_answered
+- fail closed if pregnancy/postpartum is answered_yes and pregnancy-specific logic is unavailable
+- fail closed or divert if the pattern suggests overt thyroid dysfunction requiring clinician interpretation rather than low-T3 educational wording
+```
+
+Required wording boundary:
+
+```text
+May say:
+  "This pattern may be consistent with reduced peripheral T3 availability, which can sometimes be seen during illness, recovery, calorie restriction or low energy availability."
+
+Must not say:
+  "You have low T3 syndrome."
+  "You have hypothyroidism."
+  "Your thyroid is underactive."
+  "You need thyroid hormone."
+```
+
+Maximum claim strength:
+
+```text
+may be consistent with
+```
 
 ---
 
-# Phase 8 — Required validation
+# Phase 4 — FAI high activation design
+
+Prepare FAI high activation with female-only initial scope.
+
+Target package:
+
+```text
+knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/
+```
+
+Activation is permitted only if all of the following can be encoded deterministically.
+
+Required biomarker gates:
+
+```text
+- FAI high relative to lab-provided sex-specific reference range
+- total testosterone present
+- SHBG present
+```
+
+Required demographic/context gates:
+
+```text
+- biological sex present
+- biological sex = female for initial activation
+- age present
+- menstrual / menopause status answered where applicable
+- pregnancy status answered where applicable
+- hormone therapy / HRT / oral contraceptive context answered
+- testosterone therapy / AAS exposure context answered
+- DHEA supplementation context answered
+- fertility treatment context answered where available
+- androgen excess symptom disclosure captured
+```
+
+Required exclusion/fail-closed gates:
+
+```text
+- fail closed if biological sex missing
+- fail closed if age missing
+- fail closed if total testosterone missing
+- fail closed if SHBG missing
+- fail closed if biological sex is male
+- fail closed if testosterone therapy or AAS exposure is answered_yes for endogenous interpretation
+- fail closed or suppress endogenous interpretation if DHEA supplementation is answered_yes
+- fail closed if pregnancy is answered_yes and pregnancy-specific logic is unavailable
+- use clinician-review escalation wording, not routine wording, if severe or rapid-onset virilisation is disclosed
+```
+
+Required wording boundary:
+
+```text
+May say:
+  "This pattern may be consistent with biochemical hyperandrogenism, especially when interpreted in a female patient alongside symptoms, menstrual status and companion androgens."
+  "FAI is calculated from testosterone and SHBG, so a high result can reflect high testosterone, low SHBG, or both."
+
+Must not say:
+  "You have PCOS."
+  "You have an androgen disorder."
+  "You have an adrenal or ovarian tumour."
+  "This proves excess testosterone."
+```
+
+Maximum claim strength:
+
+```text
+may be consistent with
+```
+
+---
+
+# Phase 5 — Free testosterone high activation design
+
+Prepare free testosterone high activation with sex-specific and assay/method gates.
+
+Target package:
+
+```text
+knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/
+```
+
+Activation is permitted only if deterministic gates can safely distinguish endogenous interpretation from therapy/supplement exposure.
+
+Required biomarker gates:
+
+```text
+- free testosterone high relative to lab-provided sex-specific reference range
+- total testosterone present
+- SHBG present
+- albumin present if calculated free testosterone is used
+```
+
+Required method gate:
+
+```text
+- method flag captured where available
+- calculated free testosterone or equilibrium dialysis is preferred
+- direct analogue free testosterone requires caution wording or fail-closed if method cannot be represented safely
+```
+
+Required demographic/context gates:
+
+```text
+- biological sex present
+- age present
+- hormone therapy context answered
+- testosterone therapy context answered
+- AAS exposure context answered
+- DHEA supplementation context answered
+- oral contraceptive context answered where applicable
+- pregnancy status answered where applicable
+- androgen excess symptom disclosure captured
+```
+
+Required exclusion/fail-closed gates:
+
+```text
+- fail closed if biological sex missing
+- fail closed if age missing
+- fail closed if total testosterone missing
+- fail closed if SHBG missing
+- fail closed if assay/method requirements cannot be represented safely
+- do not emit endogenous excess interpretation if testosterone therapy or AAS exposure is answered_yes
+- suppress or caveat endogenous interpretation if DHEA supplementation is answered_yes
+- fail closed if pregnancy is answered_yes and pregnancy-specific logic is unavailable
+- use clinician-review escalation wording, not routine wording, if severe or rapid-onset virilisation is disclosed
+```
+
+Required wording boundary:
+
+```text
+May say:
+  "This pattern may be consistent with increased free androgen exposure, but it is not diagnostic on its own."
+  "Interpretation depends on sex, age, total testosterone, SHBG, albumin, symptoms and hormone/supplement use."
+
+Must not say:
+  "You have PCOS."
+  "You have androgen excess disorder."
+  "You have an adrenal or ovarian tumour."
+  "This confirms high testosterone disease."
+```
+
+Maximum claim strength:
+
+```text
+may be consistent with
+```
+
+---
+
+# Phase 6 — Free testosterone low activation design
+
+Prepare free testosterone low activation for adult male reduced androgen availability only.
+
+Target package:
+
+```text
+knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context/
+```
+
+Activation is permitted only if all of the following can be encoded deterministically.
+
+Required biomarker gates:
+
+```text
+- free testosterone low relative to lab-provided age/sex range
+- total testosterone present
+- SHBG present
+- albumin present if calculated free testosterone is used
+```
+
+Required demographic/context gates:
+
+```text
+- biological sex present
+- biological sex = male
+- adult age present
+- androgen deficiency symptoms answered
+- acute illness / recovery context answered
+- energy availability context answered
+- testosterone therapy context answered
+- AAS exposure context answered
+- relevant medication disclosure captured where available
+- sample timing / morning sample disclosure captured where available
+```
+
+Required exclusion/fail-closed gates:
+
+```text
+- fail closed if biological sex missing
+- fail closed if age missing
+- fail closed if biological sex is female
+- fail closed if non-adult
+- fail closed if total testosterone missing
+- fail closed if SHBG missing
+- fail closed if androgen deficiency symptoms not_answered
+- fail closed if acute illness / recovery context not_answered
+- fail closed if energy availability context not_answered
+- do not emit endogenous reduced-androgen interpretation if testosterone therapy or AAS exposure is answered_yes
+```
+
+Required wording boundary:
+
+```text
+May say:
+  "In an adult male, this pattern may be consistent with reduced free androgen availability if it is persistent and accompanied by relevant symptoms."
+  "This is not diagnostic of hypogonadism and usually requires repeat morning testing and clinical assessment."
+
+Must not say:
+  "You have hypogonadism."
+  "You are testosterone deficient."
+  "You need testosterone."
+  "This explains your symptoms."
+```
+
+Maximum claim strength:
+
+```text
+may be consistent with
+```
+
+---
+
+# Phase 7 — Package and governance implementation
+
+Only after completing Phases 1–6, implement activation changes.
+
+Allowed changes:
+
+```text
+- update signal package activation state for approved activation targets
+- add runtime_context_requirements to approved activation targets
+- update package manifests if required to reflect gates
+- update governance activation/readiness registers
+- update medical frame identity index only if required and justified
+- update tests
+- update carry-forward register
+- create audit paper
+```
+
+Forbidden changes:
+
+```text
+- activating unsupported signals
+- changing signal IDs unless a STOP gate proves unavoidable and receives explicit human approval
+- changing clinical thresholds
+- changing SSOT reference range policy
+- frontend changes
+- scoring changes
+- report compiler changes
+- raw research runtime reads
+- LLM runtime reasoning
+```
+
+If an active package cannot encode all required gates safely, keep it inactive and document the blocker.
+
+Do not partially activate a signal with missing gates.
+
+---
+
+# Phase 8 — Inactive package handling
+
+For each inactive primary signal, update governance/readiness records to make the inactive state explicit.
+
+Required outcomes:
+
+```text
+DHEA high:
+  KEEP_INACTIVE_PENDING_DHEA_DHEAS_IDENTITY_REMEDIATION
+  unless exact DHEA-S activation approval phrase is present
+
+DHEA low:
+  DO_NOT_ACTIVATE_EVIDENCE_INSUFFICIENT
+
+FAI low:
+  KEEP_INACTIVE_MODIFIER_ONLY_FUTURE or DO_NOT_ACTIVATE_EVIDENCE_INSUFFICIENT
+
+Free testosterone percentage high:
+  KEEP_INACTIVE_MODIFIER_ONLY_FUTURE or DO_NOT_ACTIVATE_EVIDENCE_INSUFFICIENT
+
+Free testosterone percentage low:
+  KEEP_INACTIVE_MODIFIER_ONLY_FUTURE or DO_NOT_ACTIVATE_EVIDENCE_INSUFFICIENT
+```
+
+Do not create a new modifier runtime pathway in this sprint.
+
+If existing architecture already supports modifier-only status, document the status there.
+
+If not, leave them inactive and document future modifier potential in governance only.
+
+---
+
+# Phase 9 — Required tests
+
+Add or update tests proving all activated signals behave correctly.
+
+## FT3 low tests
+
+Must prove:
+
+```text
+- fires when FT3 low, TSH present, FT4 present and all required context gates answered
+- fails closed when TSH missing
+- fails closed when FT4 missing
+- fails closed when thyroid medication context not_answered
+- fails closed when illness/recovery context not_answered
+- fails closed when energy availability context not_answered
+- fails closed or suppresses if pregnancy/postpartum answered_yes and no pregnancy-specific logic exists
+- does not diagnose hypothyroidism
+```
+
+## FAI high tests
+
+Must prove:
+
+```text
+- fires for female context with high FAI, total testosterone present, SHBG present and required context answered
+- fails closed when total testosterone missing
+- fails closed when SHBG missing
+- fails closed when biological sex missing
+- fails closed for male context
+- fails closed or suppresses endogenous interpretation when testosterone therapy/AAS answered_yes
+- fails closed or suppresses endogenous interpretation when DHEA supplementation answered_yes
+- does not diagnose PCOS
+```
+
+## Free testosterone high tests
+
+Must prove:
+
+```text
+- fires only when free testosterone high, total testosterone present, SHBG present and required context gates are met
+- fails closed when biological sex missing
+- fails closed when age missing
+- fails closed when total testosterone missing
+- fails closed when SHBG missing
+- fails closed when method gate cannot be represented safely if method is required
+- suppresses endogenous interpretation when testosterone therapy/AAS answered_yes
+- does not diagnose androgen disorder, PCOS, adrenal disease or ovarian disease
+```
+
+## Free testosterone low tests
+
+Must prove:
+
+```text
+- fires for adult male only when free testosterone low, total testosterone present, SHBG present, symptoms answered and required context gates are met
+- fails closed when biological sex missing
+- fails closed for female context
+- fails closed for non-adult context
+- fails closed when total testosterone missing
+- fails closed when SHBG missing
+- fails closed when symptoms not_answered
+- fails closed when illness/recovery context not_answered
+- fails closed when energy availability context not_answered
+- suppresses endogenous interpretation when testosterone therapy/AAS answered_yes
+- does not diagnose hypogonadism
+```
+
+## Inactive package tests
+
+Must prove:
+
+```text
+- DHEA high remains inactive unless explicit DHEA-S approval gate is satisfied
+- DHEA low remains inactive
+- FAI low remains inactive as primary signal
+- free testosterone percentage high remains inactive as primary signal
+- free testosterone percentage low remains inactive as primary signal
+```
+
+## Regression tests
+
+Must prove:
+
+```text
+- existing active Batch 2 thyroid high/FT4 packages remain stable
+- existing creatine kinase/eosinophil packages remain stable
+- no unrelated signals change output unexpectedly
+- runtime context answered_yes / answered_no / not_answered semantics still pass
+- disclosure state and positive exposure remain separate
+```
+
+---
+
+# Phase 10 — Required validation
 
 Run and paste full output.
 
@@ -558,24 +837,20 @@ python backend/scripts/validate_medical_frame_identity_index.py --index knowledg
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 ```
 
-## Context regressions
+## Context and signal regressions
 
 ```powershell
 python -m pytest backend/tests/regression/test_runtime_context_evaluation.py -q
 python -m pytest backend/tests/regression/test_context_threading.py -q
 ```
 
-## Governance tests
+Run all relevant signal evaluator and package activation tests.
 
-Run existing governance tests for:
+Run all relevant governance tests.
 
-```text
-batch2 minimum coverage
-batch2 context clearance
-runtime context semantics
-```
+If package validators exist, run them for all 9 package directories.
 
-Add and run new tests for new governance artefacts.
+If no validator exists for package activation metadata, report that as an evidence gap.
 
 ## Secret-file guardrail
 
@@ -589,12 +864,12 @@ if present.
 
 ---
 
-# Phase 9 — Required audit paper
+# Phase 11 — Required audit paper
 
 Create:
 
 ```text
-docs/audit-papers/BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness.md
+docs/audit-papers/BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals.md
 ```
 
 The audit paper must include:
@@ -603,19 +878,19 @@ The audit paper must include:
 - executive verdict
 - files inspected
 - files changed
-- existing context primitives found
-- new reusable context primitives added
-- questionnaire/context contract summary
-- runtime context mapping changes
-- FT3 low readiness assessment
-- androgen readiness assessment
-- activation-readiness register summary
-- medical research intake contract summary
-- confirmation no packages activated
-- confirmation androgen packages remain inactive
-- confirmation FT3 low remains inactive
-- confirmation no package metadata changed unless explicitly justified
-- confirmation no SSOT changed
+- medical research authority used
+- 9-package research-to-runtime activation mapping table
+- DHEA/DHEA-S identity STOP-gate result
+- FT3 low activation details
+- FAI high activation details
+- free testosterone high activation details
+- free testosterone low activation details
+- inactive package handling
+- confirmation no unsupported packages activated
+- confirmation no DHEA/DHEA-S package activated unless exact approval phrase present
+- confirmation no diagnosis wording introduced
+- confirmation no treatment/supplement recommendation introduced
+- confirmation no SSOT changed unless explicitly justified
 - confirmation no scoring changed
 - confirmation no report compiler changed
 - confirmation no frontend changed
@@ -631,7 +906,7 @@ Validation and test output must be pasted in full, not summarised.
 
 ---
 
-# Phase 10 — Carry-forward handling
+# Phase 12 — Carry-forward handling
 
 Update:
 
@@ -639,19 +914,29 @@ Update:
 docs/sprints/launch_core_carry_forward_register.md
 ```
 
-only if justified.
+only where justified.
 
-Expected handling:
+Expected carry-forward handling:
 
 ```text
-CF-BATCH2-010 remains Open unless external clinical authority is actually present.
-FT3 low blocker remains Open unless the context contract and lower-bound readiness are truly resolved.
-Context capability carry-forward may be added or updated only if this sprint leaves a precise residual.
+CF-BATCH2-010:
+  May be partially closed only for the specific androgen packages activated with research authority.
+  Must remain open for DHEA/DHEA-S unresolved identity if applicable.
+  Must not be closed globally if DHEA remains unresolved.
+
+FT3 low blocker:
+  May be closed if FT3 low is activated with all required gates and enable_lower_bound is safely resolved.
+
+DHEA/DHEA-S blocker:
+  Add or update precise carry-forward if marker identity remains unresolved.
+
+Modifier-only androgen patterns:
+  Add precise carry-forward only if future modifier architecture is required.
 ```
 
-Do not close CF-BATCH2-010.
+Do not leave vague residuals.
 
-Do not claim activation readiness if medical research authority is not yet available.
+Every inactive package must have a named reason and next condition.
 
 ---
 
@@ -660,26 +945,37 @@ Do not claim activation readiness if medical research authority is not yet avail
 Expected changed files may include:
 
 ```text
-knowledge_bus/governance/reusable_runtime_context_primitive_model_v1.yaml
-knowledge_bus/governance/context_questionnaire_contract_v1.yaml
+knowledge_bus/research/medical_reviews/batch2_thyroid_androgen_context_authority_review_v1.md
 knowledge_bus/governance/batch2_full_coverage_activation_readiness_register_v1.yaml
-knowledge_bus/governance/batch2_medical_research_intake_contract_v1.yaml
-backend/core/analytics/runtime_context_evaluator.py
+knowledge_bus/governance/batch2_minimum_coverage_decision_register_v1.yaml
+knowledge_bus/governance/batch2_context_clearance_register_v1.yaml
+knowledge_bus/governance/context_runtime_execution_register_v1.yaml
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/**
+knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/**
+knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/**
+knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context/**
 backend/tests/regression/test_runtime_context_evaluation.py
 backend/tests/regression/test_context_threading.py
 backend/tests/governance/*
+backend/tests/*
 docs/sprints/launch_core_carry_forward_register.md
-docs/audit-papers/BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness.md
+docs/audit-papers/BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals.md
 automation_bus/latest_cursor_status.json
 ```
 
-No package files are expected to change unless a strictly necessary metadata-readiness annotation is proposed and STOP-gated.
+Possible files, only if strictly justified:
+
+```text
+backend/core/analytics/runtime_context_evaluator.py
+backend/core/analytics/signal_evaluator.py
+```
 
 No frontend files are expected to change.
 
-No SSOT files are expected to change.
-
 No scoring or report compiler files are expected to change.
+
+No SSOT files are expected to change unless the DHEA/DHEA-S identity STOP gate proves a narrow canonical identity clarification is unavoidable. If SSOT change is required, STOP and request explicit human approval before editing.
 
 ---
 
@@ -689,22 +985,35 @@ Do not change:
 
 ```text
 frontend/**
-backend/ssot/**
 backend/core/reporting/**
 backend/core/scoring/**
 ```
 
+Do not change:
+
+```text
+backend/ssot/**
+```
+
+unless the DHEA/DHEA-S STOP gate proves a narrow identity correction is unavoidable and explicit human approval is obtained before editing.
+
 Do not activate:
 
 ```text
-- androgen packages
-- FT3 low
-- any inactive package
+- DHEA high without exact DHEA-S approval phrase
+- DHEA low
+- FAI low
+- free testosterone percentage high
+- free testosterone percentage low
+- any unrelated package
 ```
 
 Do not introduce:
 
 ```text
+- diagnosis wording
+- treatment recommendations
+- supplement recommendations
 - fallback parsers
 - dummy parsers
 - raw research runtime reads
@@ -719,19 +1028,30 @@ Do not introduce:
 STOP and report if:
 
 ```text
-1. reusable context primitives cannot be introduced without broad frontend redesign
-2. runtime context mapping cannot preserve answered_yes / answered_no / not_answered distinctions
-3. positive exposure and disclosure cannot be separated deterministically
-4. AnalysisContext does not contain enough structured fields to support a reusable context adapter
-5. the sprint would require package activation
-6. the sprint would require clinical threshold changes
-7. the sprint would require SSOT changes
-8. the sprint would require report compiler changes
-9. the sprint would require frontend changes
-10. validators fail
-11. context runtime tests fail
-12. secret-file guardrail fails
-13. rollback path cannot be defined
+1. medical research authority artefact is missing from repo
+2. any activation target lacks sufficient research authority
+3. required context gates cannot be represented deterministically
+4. answered_no and not_answered cannot be distinguished for required gates
+5. positive exposure and disclosure cannot be separated
+6. FT3 low cannot require TSH and FT4
+7. FT3 low cannot fail closed on missing illness/recovery or energy-availability context
+8. FAI high cannot be restricted to female-only initial activation
+9. FAI high cannot require total testosterone and SHBG
+10. free testosterone high cannot safely handle assay/method uncertainty
+11. free testosterone low cannot be restricted to adult male symptom-gated interpretation
+12. testosterone therapy / AAS exposure cannot suppress endogenous androgen interpretation
+13. pregnancy/postpartum cannot be excluded or routed
+14. DHEA and DHEA-S identity is ambiguous and activation would otherwise occur
+15. activation would require frontend changes
+16. activation would require scoring changes
+17. activation would require report compiler changes
+18. activation would require broad SSOT redesign
+19. diagnosis wording would be emitted
+20. treatment/supplement recommendation would be emitted
+21. validators fail
+22. tests fail
+23. secret-file guardrail fails
+24. rollback path cannot be defined
 ```
 
 If a STOP condition is triggered, do not perform ad hoc remediation beyond scope.
@@ -752,7 +1072,13 @@ git diff --cached --name-only
 Commit message:
 
 ```text
-feat(context): add reusable runtime context primitives for Batch 2 readiness
+feat(signals): activate gated Batch 2 thyroid and androgen signals
+```
+
+If no package activation occurs due to STOP gates, use:
+
+```text
+docs(governance): document Batch 2 activation blockers
 ```
 
 After commit, report:
@@ -774,29 +1100,35 @@ Return evidence for Claude audit and GPT architectural review.
 This sprint succeeds only if:
 
 ```text
-- reusable context primitives are defined
-- questionnaire/context contract is defined
-- runtime context mapping supports the new primitives deterministically
-- answered_yes / answered_no / not_answered are preserved
-- disclosure is not confused with positive exposure
-- Batch 2 full-coverage activation-readiness register exists
-- medical research intake contract exists
-- all 9 remaining packages have activation-readiness status
-- no packages are activated
-- androgen packages remain inactive
-- FT3 low remains inactive
-- no package metadata changes occur unless explicitly justified
-- no SSOT changes occur
+- medical research authority is repo-persisted
+- all 9 packages are mapped from research verdict to runtime outcome
+- FT3 low is activated with strict gates or blocked with exact reason
+- FAI high is activated female-only with strict gates or blocked with exact reason
+- free testosterone high is activated with sex/method/therapy gates or blocked with exact reason
+- free testosterone low is activated adult-male-only and symptom-gated or blocked with exact reason
+- DHEA high remains inactive unless DHEA-S identity and exact approval phrase are both present
+- DHEA low remains inactive
+- FAI low remains inactive as primary signal
+- free testosterone percentage high remains inactive as primary signal
+- free testosterone percentage low remains inactive as primary signal
+- no unsupported signals activate
+- no diagnosis wording is introduced
+- no treatment or supplement recommendation is introduced
+- no frontend changes occur
 - no scoring changes occur
 - no report compiler changes occur
-- no frontend changes occur
+- no raw research runtime reads are introduced
 - validators pass
-- context runtime tests pass
+- tests pass
 - audit paper contains full evidence
 ```
 
 Expected next action after success:
 
 ```text
-Run the parallel medical research LLM review using the intake contract, then proceed to the activation build only once research authority and runtime readiness are both present.
+Claude audit
+GPT architectural review
+Human approval
+Merge
+Then proceed to ARCH-COMPLETION-2 compiled card and root-cause authority completion.
 ```
