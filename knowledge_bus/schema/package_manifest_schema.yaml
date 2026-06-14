@@ -58,6 +58,7 @@ optional_fields:
       - NONE
       - LOW
       - HIGH
+      - SIGNAL_RUNTIME_ACTIVATION
 
   engine_compatibility:
     type: string

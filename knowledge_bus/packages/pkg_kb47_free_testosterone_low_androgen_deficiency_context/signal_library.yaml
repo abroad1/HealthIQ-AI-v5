@@ -60,7 +60,7 @@ signals:
       - male
     - context_type: demographic
       key: is_adult
-      requirement: present
+      requirement: disclosed
     - context_type: demographic
       key: age
       requirement: present

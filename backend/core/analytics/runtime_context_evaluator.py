@@ -281,7 +281,10 @@ def build_runtime_context_snapshot(
         lifestyle, "pregnancy_status"
     )
     if pregnancy_answered:
-        pregnancy_value = responses.get("pregnancy_status") or lifestyle.get("pregnancy_status")
+        if _field_answered(responses, "pregnancy_status"):
+            pregnancy_value = responses.get("pregnancy_status")
+        else:
+            pregnancy_value = lifestyle.get("pregnancy_status")
         pregnancy_state = _disclosure_state_from_value(
             pregnancy_value,
             field_answered=True,
@@ -383,6 +386,9 @@ def build_runtime_context_snapshot(
         snapshot["clinical_context"]["aas_exposure_status_disclosed"] = True
 
     supplements = responses.get("supplements")
+    dhea_supplement_state = (
+        DISCLOSURE_ANSWERED_NO if supplements_answered else DISCLOSURE_NOT_ANSWERED
+    )
     if isinstance(supplements, list):
         lowered = {str(item).strip().lower() for item in supplements}
         if any("testosterone" in item for item in lowered):
@@ -392,7 +398,13 @@ def build_runtime_context_snapshot(
             aas_state = DISCLOSURE_ANSWERED_YES
         if any("dhea" in item for item in lowered):
             snapshot["supplement"]["dhea_supplementation"] = True
+            dhea_supplement_state = DISCLOSURE_ANSWERED_YES
     _set_disclosure_state(snapshot["clinical_context"], "aas_exposure_status", aas_state)
+    _set_disclosure_state(
+        snapshot["supplement"],
+        "dhea_supplementation_status",
+        dhea_supplement_state,
+    )
 
     if _field_answered(responses, "symptoms"):
         symptom_state = _disclosure_state_from_value(

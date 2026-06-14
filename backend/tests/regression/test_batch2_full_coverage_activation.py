@@ -61,23 +61,29 @@ def _evaluate(signal: dict, biomarkers: dict[str, float], *, runtime_context=Non
     )
 
 
-def _ft3_full_context():
+def _ft3_full_context(*, pregnant: bool = False):
     return build_runtime_context_snapshot(
         questionnaire_responses={
             "long_term_medications": [],
             "chronic_conditions": [],
+            "pregnancy_status": pregnant,
         },
         lifestyle_factors={"calorie_restriction": False, "fasting": False},
     )
 
 
-def _female_androgen_context(*, hormone_therapy: bool = False, aas: bool = False):
+def _female_androgen_context(*, hormone_therapy: bool = False, aas: bool = False, dhea: bool = False, pregnant: bool = False):
     responses = {
         "biological_sex": "female",
         "date_of_birth": "1990-01-01",
         "long_term_medications": ["Testosterone replacement"] if hormone_therapy else [],
-        "supplements": ["prohormone stack"] if aas else [],
+        "supplements": (
+            ["prohormone stack"]
+            if aas
+            else (["DHEA 25mg"] if dhea else [])
+        ),
         "symptoms": ["acne"],
+        "pregnancy_status": pregnant,
     }
     return build_runtime_context_snapshot(questionnaire_responses=responses)
 
@@ -129,6 +135,63 @@ def test_ft3_low_fails_closed_without_energy_context():
         {"free_t3": 1.5, "tsh": 2.0, "free_t4": 1.2},
         runtime_context=ctx,
         lab_ranges=THYROID_LAB_RANGES,
+    )
+    assert results == []
+
+
+def test_ft3_low_suppresses_when_pregnant():
+    signal = _load_package_signal("pkg_kb47_free_t3_low_low_t3_syndrome", "signal_free_t3_low")
+    results = _evaluate(
+        signal,
+        {"free_t3": 1.5, "tsh": 2.0, "free_t4": 1.2},
+        runtime_context=_ft3_full_context(pregnant=True),
+        lab_ranges=THYROID_LAB_RANGES,
+    )
+    assert results == []
+
+
+def test_fai_high_suppresses_when_pregnant():
+    signal = _load_package_signal("pkg_kb47_fai_high_biochemical_hyperandrogenism", "signal_fai_high")
+    results = _evaluate(
+        signal,
+        {"fai": 90.0, "testosterone": 40.0, "shbg": 20.0},
+        runtime_context=_female_androgen_context(pregnant=True),
+    )
+    assert results == []
+
+
+def test_fai_high_suppresses_with_dhea_supplementation():
+    signal = _load_package_signal("pkg_kb47_fai_high_biochemical_hyperandrogenism", "signal_fai_high")
+    results = _evaluate(
+        signal,
+        {"fai": 90.0, "testosterone": 40.0, "shbg": 20.0},
+        runtime_context=_female_androgen_context(dhea=True),
+    )
+    assert results == []
+
+
+def test_free_testosterone_high_suppresses_when_pregnant():
+    signal = _load_package_signal(
+        "pkg_kb47_free_testosterone_high_androgen_excess_context",
+        "signal_free_testosterone_high",
+    )
+    results = _evaluate(
+        signal,
+        {"free_testosterone": 30.0, "testosterone": 40.0, "shbg": 20.0},
+        runtime_context=_female_androgen_context(pregnant=True),
+    )
+    assert results == []
+
+
+def test_free_testosterone_high_suppresses_with_dhea_supplementation():
+    signal = _load_package_signal(
+        "pkg_kb47_free_testosterone_high_androgen_excess_context",
+        "signal_free_testosterone_high",
+    )
+    results = _evaluate(
+        signal,
+        {"free_testosterone": 30.0, "testosterone": 40.0, "shbg": 20.0},
+        runtime_context=_female_androgen_context(dhea=True),
     )
     assert results == []
 

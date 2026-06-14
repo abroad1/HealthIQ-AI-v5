@@ -342,6 +342,7 @@ def test_ft3_low_enable_lower_bound_active_after_full_coverage_activation():
             "date_of_birth": "1980-01-01",
             "chronic_conditions": [],
             "long_term_medications": [],
+            "pregnancy_status": False,
         },
         lifestyle_factors={"calorie_restriction": False, "fasting": False},
     )

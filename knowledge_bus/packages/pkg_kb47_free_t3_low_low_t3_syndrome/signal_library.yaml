@@ -82,6 +82,11 @@ signals:
       allowed_values:
       - answered_yes
       - answered_no
+    - context_type: clinical_context
+      key: pregnancy_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
   override_rules:
   - rule_id: or_free_t3_low_with_free_t4_low
     resulting_state: at_risk
