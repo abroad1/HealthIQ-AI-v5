@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-COMPLETION-2-compiled-card-and-root-cause-authority-completion",
+  "branch": "work/ARCH-COMPLETION-3-full-traceability-manifest-and-launch-estate-gate",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-14T20:07:13Z",
-  "cursor_started_utc": "2026-06-14T20:02:04Z",
-  "head_sha": "1835d468324cb5505b2fd86c3d82a6cb0a4db558",
+  "cursor_started_utc": "2026-06-14T20:38:45Z",
+  "head_sha": "6c59fd227c44ae32e913652b802805f028c9725e",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate"
 }
