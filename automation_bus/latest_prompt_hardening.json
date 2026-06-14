@@ -1,58 +1,68 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion",
+  "work_id": "ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate",
   "status": "HARDENED",
   "hardened_utc": "2026-06-14T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6, SOP v1.3.1 Stage 2)",
   "changes": [
     {
+      "type": "HARDENING_CORRECTION",
+      "description": "FRONT MATTER TYPO CORRECTED — latest_cursor_prompt.md line 2 was 'swork_id:' (leading 's' typo). Corrected to 'work_id:' directly by Claude Code with explicit user authorisation before re-audit. Both front matter blockers from the initial hardening pass are now resolved: (1) field name corrected, (2) closing delimiter '---' already present at line 7.",
+      "risk": "NONE",
+      "citation": "latest_cursor_prompt.md line 2 — corrected from 'swork_id:' to 'work_id:'"
+    },
+    {
       "type": "HARDENING_NOTE",
-      "description": "AUTHORITY PATH MISMATCH — The 'Authoritative inputs' section lists docs/architecture/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md. This path DOES NOT EXIST in the repository. The actual file is at docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md (confirmed present). The prompt itself covers this: 'If the exact paths differ, locate the equivalent repo-persisted files and document the actual paths used.' Non-blocking.",
+      "description": "AUTHORITY PATH DISCREPANCY — ADVISORY CARRIED FORWARD. The 'Authoritative inputs' section lists docs/architecture/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md. This path does NOT exist at docs/architecture/. The file is at docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md (confirmed via Glob). The prompt self-corrects: 'If the exact paths differ, locate the equivalent repo-persisted files and document the actual paths used.' Non-blocking.",
       "risk": "LOW",
-      "required_action": "Cursor: use docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md as the sprint plan authority. Document the path correction in the Phase 10 audit paper."
+      "citation": "docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md — confirmed present via Glob",
+      "required_action": "Cursor: read docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md as the sprint plan authority. Document the path correction in the Phase 10 audit paper."
     },
     {
       "type": "HARDENING_NOTE",
-      "description": "BATCH 2 ENDOCRINE SIGNALS HAVE NO ROOT-CAUSE REGISTRY ENTRIES — backend/core/knowledge/root_cause_registry_v1.py (lines 29-76) lists all registered root-cause targets. None of the activated Batch 2 endocrine signals are registered: signal_free_t3_low, signal_fai_high, signal_free_testosterone_high, signal_free_testosterone_low are ALL absent. Only thyroid-adjacent signals registered are signal_thyroid_tsh_context (line 33), signal_tsh_high (line 68), signal_tsh_low (line 69). This means Phase 3 will encounter these signals with NO governed root-cause path. Cursor must NOT invent root-cause output — must classify them as ROOT_CAUSE_REQUIRES_FUTURE_MAPPING and document the gap. This is a predictable, expected finding consistent with the sprint scope.",
-      "risk": "HIGH",
-      "required_action": "Cursor: in Phase 3, classify signal_free_t3_low, signal_fai_high, signal_free_testosterone_high, signal_free_testosterone_low as ROOT_CAUSE_REQUIRES_FUTURE_MAPPING in root_cause_authority_register_v1.yaml. Do not create governed hypotheses for these signals in this sprint. Do not create root-cause output for them. This is the correct outcome — the register documenting the gap IS the sprint deliverable for these signals."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "NARRATIVE COMPILER RUNTIME YAML READS — backend/core/analytics/narrative_report_compiler_v1.py (lines 33-36) reads three YAML files at runtime: knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml, knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml, knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml. These are governed compiled narrative assets, NOT raw Pass 3 / investigation spec files. Confirmed present: all three files exist in their respective directories. Phase 1 must classify these reads as GOVERNED_RUNTIME_AUTHORITY (not LEGACY_UNGOVERNED_BLOCKER). Cursor must NOT quarantine or disable these reads. Confirm classification in the output-authority estate map.",
+      "description": "NARRATIVE COMPILER RUNTIME YAML READS — GOVERNED COMPILED ASSETS. backend/core/analytics/narrative_report_compiler_v1.py (lines 33-36) reads three YAML files at runtime: knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml (N-7, authority: knowledge_bus/interpretation_entities_v1, schema_version: 1.0.0); knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml (N-5); knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml (N-6). All three files exist and are governed compiled assets — not raw Pass 3 JSON or investigation spec files. Expected Phase 1 classification: GOVERNED_COMPILED_ASSET. Cursor must NOT quarantine or disable these reads.",
       "risk": "MEDIUM",
-      "required_action": "Cursor: in Phase 1 output-authority estate map, classify all three knowledge_bus narrative YAML runtime reads as GOVERNED_RUNTIME_AUTHORITY. These files are governed compiled assets, not raw research files. Do not confuse them with investigation_spec or research_brief files. investigation_spec_to_promoted_signal.py (backend/core/knowledge/investigation_spec_to_promoted_signal.py) is a BUILD-TIME translation utility — it is only called from scripts/ and tests/, never at runtime. Confirm this in Phase 1."
+      "citation": "backend/core/analytics/narrative_report_compiler_v1.py lines 33-36; knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml lines 1 and 5: authority field confirmed",
+      "required_action": "Cursor: in Phase 1 output-authority estate map, classify all three knowledge_bus narrative YAML runtime reads as GOVERNED_COMPILED_ASSET. Do not misclassify as LEGACY_QUARANTINED or BLOCKED_UNGOVERNED."
     },
     {
       "type": "HARDENING_NOTE",
-      "description": "PROVENANCE METADATA PHASE 5 — DTO BREAK RISK — backend/core/layer3/insight_assembler_v1.py (line 1) uses InsightCard and Layer3InsightsV1 from backend/core/contracts/layer3_insights_v1.py. Phase 5 requires adding provenance fields to compiled outputs. Any schema addition to InsightCard or Layer3InsightsV1 may break frontend DTO consumers. STOP condition 4 applies: 'output authority cannot be represented without breaking frontend DTO consumers'. Cursor must verify frontend DTO tolerance (whether extra unknown fields are ignored) BEFORE implementing Phase 5 provenance additions. Pydantic models with extra='forbid' will reject extra fields entirely — if any consumer model uses extra='forbid', additive provenance is a breaking change.",
-      "risk": "HIGH",
-      "required_action": "Cursor: before implementing Phase 5 provenance metadata additions, read backend/core/contracts/layer3_insights_v1.py and the frontend DTO contract (backend/core/dto/frontend_contract_v1.py). Check if any model uses extra='forbid'. If yes, STOP and report — do not add fields to those models. If extra fields are tolerated (extra='allow' or not set), proceed with additive provenance fields only. Never change existing field types or remove fields."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "INTELLIGENCE CORE COMPONENTS IN SCOPE — This sprint touches the following confirmed Intelligence Core components: backend/core/analytics/root_cause_compiler_v1.py (KB-S33, lines 1-13, confirmed deterministic hypothesis-based compiler), backend/core/analytics/report_compiler_v1.py (KB-S32, confirmed uses compile_root_cause_v1 and compiled hypothesis artefacts), backend/core/analytics/narrative_report_compiler_v1.py (N-8, confirmed consumes governed YAML assets), backend/core/layer3/insight_assembler_v1.py (Sprint 22, confirmed deterministic rule-based). HIGH risk classification is correct. Any code changes to these files require full behavioural audit in Phase 10. New governance YAML files in knowledge_bus/governance/ are CONTENT only and do not trigger Intelligence Core behavioural concerns unless they gate runtime compiler behaviour.",
+      "description": "ARCH-COMPLETION-2 CARRY-FORWARD 2 — PROVENANCE TEST GAP CONFIRMED. backend/tests/regression/test_output_authority_provenance.py contains 7 tests. FT3 low (line 95) and DHEA inactive (line 133) tests are present. No FAI high activated, FAI high suppressed, free testosterone high activated, free testosterone high suppressed, free testosterone low activated, or free testosterone low suppressed provenance tests exist. Gap confirmed independently. Phase 5 must resolve this carry-forward.",
       "risk": "MEDIUM",
-      "required_action": "Cursor: treat any modification to the four compiler/assembler files listed above as HIGH risk behaviour changes requiring explicit justification in the audit paper. New knowledge_bus/governance/*.yaml files created in Phases 2-4 are CONTENT — do not misclassify them as BEHAVIOUR unless they are consumed by a runtime loader."
+      "citation": "backend/tests/regression/test_output_authority_provenance.py lines 95-165 — FT3 low and DHEA tests present; FAI high and free testosterone tests absent",
+      "required_action": "Cursor: Phase 5 carry-forward 2 — add 6 provenance tests to test_output_authority_provenance.py for FAI high activated/suppressed, free testosterone high activated/suppressed, free testosterone low activated/suppressed. Tests must verify output_authority_provenance_v1 content on compiled ReportV1, not merely signal activation state."
+    },
+    {
+      "type": "HARDENING_NOTE",
+      "description": "REPORTV1 PROVENANCE FIELD CONFIRMED PRESENT. backend/core/contracts/report_v1.py line 88: 'output_authority_provenance_v1: Optional[OutputAuthorityProvenanceBundleV1] = None'. Additive field in place from ARCH-COMPLETION-2. No contract change required by this sprint unless the launch estate gate discovers a genuine gap. Validator Phase 9 check 10 is pre-satisfied.",
+      "risk": "LOW",
+      "citation": "backend/core/contracts/report_v1.py line 88",
+      "required_action": "No action needed. Confirm field persists at Phase 9 validation. Do not modify report_v1.py unless the launch estate gate identifies a genuine implementation gap."
+    },
+    {
+      "type": "HARDENING_NOTE",
+      "description": "EXISTING VALIDATOR TO EXTEND NOT DUPLICATE. backend/scripts/validate_day_one_architecture.py exists. backend/scripts/validate_day_one_launch_estate_gate.py does not yet exist — Phase 4 creation is correct. These serve different authority domains; do not merge them.",
+      "risk": "LOW",
+      "citation": "Glob: backend/scripts/validate_day_one_architecture.py confirmed present; validate_day_one_launch_estate_gate.py absent",
+      "required_action": "Cursor: create backend/scripts/validate_day_one_launch_estate_gate.py as a new file per Phase 4. Do not overwrite or merge into validate_day_one_architecture.py."
     }
   ],
   "front_matter_check": {
     "work_id": {
       "present": true,
-      "value": "ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion",
-      "citation": "latest_cursor_prompt.md line 2"
+      "value": "ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate",
+      "citation": "latest_cursor_prompt.md line 2 — corrected by Claude Code with user authorisation"
     },
     "branch": {
       "present": true,
-      "value": "work/ARCH-COMPLETION-2-compiled-card-and-root-cause-authority-completion",
-      "exists_now": false,
-      "citation": "latest_cursor_prompt.md line 3 — branch does not exist yet; correct, created by kernel at Stage 3"
+      "value": "work/ARCH-COMPLETION-3-full-traceability-manifest-and-launch-estate-gate",
+      "citation": "latest_cursor_prompt.md line 3"
     },
     "risk_level": {
       "present": true,
       "value": "HIGH",
       "justified": true,
-      "citation": "latest_cursor_prompt.md line 4 — HIGH correct: sprint modifies Intelligence Core output authority chain (root_cause_compiler_v1.py, report_compiler_v1.py, narrative_report_compiler_v1.py, insight_assembler_v1.py); may quarantine or disable legacy analytical output paths; touches compiled output consumed by frontend; user-facing analytical statement authority may change"
+      "citation": "latest_cursor_prompt.md line 4 — HIGH correct: sprint touches backend/scripts/validate_* (SOP §10 HIGH trigger); alters validators and launch gate enforcement"
     },
     "execution_model": {
       "present": true,
@@ -62,245 +72,137 @@
     "change_type": {
       "present": true,
       "value": "BEHAVIOUR",
-      "citation": "latest_cursor_prompt.md line 6 — BEHAVIOUR correct: legacy analytical output paths may be disabled; provenance metadata may be added to emitted DTOs; root-cause and card authority wiring may be changed; compiled output emitted to frontend may change in content or structure"
+      "citation": "latest_cursor_prompt.md line 6 — BEHAVIOUR correct: sprint creates/updates validators governing permitted runtime analytical output; provenance tests verify output authority paths"
+    },
+    "closing_delimiter": {
+      "status": "PASS",
+      "citation": "latest_cursor_prompt.md line 7: '---'"
     },
     "all_five_fields_valid": true
   },
   "stage_2a_authority_verification": {
-    "status": "PASS_WITH_PATH_DISCREPANCY",
+    "status": "PASS_WITH_ADVISORY",
     "audit_papers_verified": [
       {
         "path": "docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md",
         "exists": true,
-        "citation": "Confirmed via Bash ls"
+        "citation": "CONFIRMED — Glob"
       },
       {
         "path": "docs/audit-papers/BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals.md",
         "exists": true,
-        "citation": "Confirmed via Bash ls"
+        "citation": "CONFIRMED — Glob"
       },
       {
-        "path": "docs/audit-papers/BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness.md",
+        "path": "docs/audit-papers/ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion.md",
         "exists": true,
-        "citation": "Confirmed via Bash ls"
-      },
-      {
-        "path": "docs/audit-papers/BATCH2-MINIMUM-COVERAGE-1_androgen_ft3_low_clinical_and_runtime_completion.md",
-        "exists": true,
-        "citation": "Confirmed via Bash ls"
+        "citation": "CONFIRMED — Glob"
       },
       {
         "path": "docs/audit-papers/DAY-ONE-ARCHITECTURE-CLOSURE-REVIEW.md",
         "exists": true,
-        "citation": "Confirmed via Bash ls"
+        "citation": "CONFIRMED — Glob"
       },
       {
         "path": "docs/sprints/launch_core_carry_forward_register.md",
         "exists": true,
-        "citation": "Confirmed via Bash ls"
+        "citation": "CONFIRMED — Glob"
       },
       {
         "path": "docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md",
         "exists": true,
-        "citation": "Confirmed via Bash ls docs/architecture/"
+        "citation": "CONFIRMED — Glob"
       },
       {
-        "path": "docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md",
-        "exists": true,
-        "prompt_listed_as": "docs/architecture/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md",
-        "citation": "Confirmed via Bash: file is at docs/sprints/ not docs/architecture/ as listed in prompt. Prompt self-corrects: 'If the exact paths differ, locate the equivalent repo-persisted files and document the actual paths used.' Non-blocking."
+        "path": "docs/architecture/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md",
+        "exists": false,
+        "actual_path": "docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md",
+        "status": "ADVISORY — path discrepancy; file confirmed at docs/sprints/; prompt self-corrects; non-blocking",
+        "citation": "CONFIRMED at docs/sprints/ via Glob"
       }
     ],
-    "intelligence_core_files_verified": [
-      {
-        "path": "backend/core/analytics/root_cause_compiler_v1.py",
-        "exists": true,
-        "content_verified": true,
-        "citation": "Confirmed via Read: KB-S33 deterministic root-cause compiler. Line 13: imports get_root_cause_targets from root_cause_registry_v1. Line 45: _ROOT_CAUSE_TARGETS = get_root_cause_targets(). Uses CompiledHypothesisArtefact from core.knowledge.compiled_hypothesis. All paths deterministic — no LLM, no raw Pass 3 reads."
-      },
-      {
-        "path": "backend/core/analytics/report_compiler_v1.py",
-        "exists": true,
-        "content_verified": true,
-        "citation": "Confirmed via Read: KB-S32 deterministic report compiler. Line 45: imports compile_root_cause_v1 from root_cause_compiler_v1. Imports ClinicianReportV1 and RootCauseFindingV1 from clinician_report_v1. Deterministic."
-      },
-      {
-        "path": "backend/core/analytics/narrative_report_compiler_v1.py",
-        "exists": true,
-        "content_verified": true,
-        "citation": "Confirmed via Read: N-8 deterministic narrative report compiler. Lines 33-36: reads three YAML files at runtime from knowledge_bus/ governed asset directories (confirmed present). No investigation_spec reads. No LLM. No raw Pass 3 reads."
-      },
-      {
-        "path": "backend/core/layer3/insight_assembler_v1.py",
-        "exists": true,
-        "content_verified": true,
-        "citation": "Confirmed via Read: Sprint 22 Layer 3 Insight Assembler. Line 1: 'Deterministic, rule-based. No LLM. No timestamps. No UUIDs.' Uses InsightCard and Layer3InsightsV1 from layer3_insights_v1.py. Consumes AnalysisDTO."
-      },
-      {
-        "path": "backend/core/knowledge/root_cause_registry_v1.py",
-        "exists": true,
-        "content_verified": true,
-        "citation": "Confirmed via Read lines 29-76: 15 signals registered. Batch 2 endocrine signals (free_t3_low, fai_high, free_testosterone_high, free_testosterone_low) are NOT registered. Registered thyroid-adjacent: signal_thyroid_tsh_context (line 33), signal_tsh_high (line 68), signal_tsh_low (line 69). See hardening note 2."
-      },
-      {
-        "path": "backend/core/knowledge/investigation_spec_to_promoted_signal.py",
-        "exists": true,
-        "content_verified": true,
-        "citation": "Confirmed via Read: BUILD-TIME translation utility only. Called only from backend/scripts/validate_day_one_architecture.py and backend/tests/unit/test_promoted_signal_intelligence_kb_s47d.py. NOT imported by any runtime path. Confirmed by grep: no runtime caller in backend/core/. NOT a runtime investigation_spec read."
-      },
-      {
-        "path": "backend/core/contracts/root_cause_v1.py",
-        "exists": true,
-        "content_verified": true,
-        "citation": "Confirmed via Read: KB-S33 root cause output contract. RootCauseV1 (line 58), RootCauseFindingV1 (line 48), RootCauseHypothesisV1 (line 34). Pydantic models with extra='forbid'. Signal_id, hypotheses, evidence structure defined."
-      }
+    "governance_files_verified": [
+      { "path": "knowledge_bus/governance/compiled_output_authority_model_v1.yaml", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "knowledge_bus/governance/root_cause_authority_register_v1.yaml", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "knowledge_bus/governance/card_authority_register_v1.yaml", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "knowledge_bus/governance/reusable_runtime_context_primitive_model_v1.yaml", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "knowledge_bus/governance/context_questionnaire_contract_v1.yaml", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "knowledge_bus/governance/day_one_full_traceability_manifest_v1.yaml", "exists": false, "status": "CORRECT — output artifact; Phase 2" },
+      { "path": "knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml", "exists": false, "status": "CORRECT — output artifact; Phase 3" }
     ],
-    "governance_artifacts_to_be_created": [
-      {
-        "path": "knowledge_bus/governance/compiled_output_authority_model_v1.yaml",
-        "exists": false,
-        "status": "CORRECT — will be created in Phase 2"
-      },
-      {
-        "path": "knowledge_bus/governance/root_cause_authority_register_v1.yaml",
-        "exists": false,
-        "status": "CORRECT — will be created in Phase 3"
-      },
-      {
-        "path": "knowledge_bus/governance/card_authority_register_v1.yaml",
-        "exists": false,
-        "status": "CORRECT — will be created in Phase 4"
-      }
+    "runtime_core_files_verified": [
+      { "path": "backend/core/pipeline/orchestrator.py", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "backend/core/analytics/runtime_context_evaluator.py", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "backend/core/analytics/signal_evaluator.py", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "backend/core/analytics/report_compiler_v1.py", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "backend/core/analytics/output_authority_provenance_builder_v1.py", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "backend/core/analytics/narrative_report_compiler_v1.py", "exists": true, "citation": "CONFIRMED — Glob; reads 3 governed compiled YAML assets (lines 33-36); zero raw Pass 3 reads" },
+      { "path": "backend/core/contracts/report_v1.py", "exists": true, "citation": "CONFIRMED — report_v1.py line 88: output_authority_provenance_v1 field present" },
+      { "path": "backend/core/contracts/output_authority_provenance_v1.py", "exists": true, "citation": "CONFIRMED — Glob" },
+      { "path": "backend/core/knowledge/compiled_output_authority_v1.py", "exists": true, "citation": "CONFIRMED — Glob" }
     ],
     "validators_verified": [
-      {
-        "path": "backend/scripts/run_architecture_validation_gate.py",
-        "exists": true,
-        "citation": "Confirmed via Bash ls"
-      },
-      {
-        "path": "backend/scripts/validate_day_one_architecture.py",
-        "exists": true,
-        "citation": "Confirmed via Bash ls"
-      },
-      {
-        "path": "backend/scripts/validate_medical_frame_identity_index.py",
-        "exists": true,
-        "citation": "Confirmed via Bash ls"
-      },
-      {
-        "path": "backend/scripts/validate_context_modifier_catalogue.py",
-        "exists": true,
-        "citation": "Confirmed via Bash ls"
-      },
-      {
-        "path": "scripts/check_no_secret_files.py",
-        "exists": true,
-        "citation": "Confirmed via Bash ls"
-      }
+      { "path": "backend/scripts/validate_day_one_architecture.py", "exists": true, "citation": "CONFIRMED — Glob; extend, do not replace" },
+      { "path": "backend/scripts/validate_day_one_launch_estate_gate.py", "exists": false, "status": "CORRECT — new output artifact; Phase 4" }
     ],
     "regression_tests_verified": [
-      {
-        "path": "backend/tests/regression/test_runtime_context_evaluation.py",
-        "exists": true,
-        "citation": "Confirmed via Bash ls"
-      },
-      {
-        "path": "backend/tests/regression/test_context_threading.py",
-        "exists": true,
-        "citation": "Confirmed via Bash ls"
-      },
-      {
-        "path": "backend/tests/regression/test_batch2_full_coverage_activation.py",
-        "exists": true,
-        "citation": "Confirmed via Bash ls"
-      }
+      { "path": "backend/tests/regression/test_output_authority_provenance.py", "exists": true, "citation": "CONFIRMED — 7 tests present; FAI high and free testosterone tests absent (carry-forward gap to resolve in Phase 5)" }
     ],
-    "prerequisite_merges_verified": {
-      "arch_completion_1": {
-        "status": "CONFIRMED",
-        "citation": "git log main shows commit 56af2d9 'chore(bus): ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure kernel COMPLETE status'. Audit paper confirmed at docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md."
-      },
-      "batch2_full_coverage_activation_1": {
-        "status": "CONFIRMED",
-        "citation": "git log main shows commit 0515b8b 'chore(bus): BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals kernel COMPLETE status'. Audit paper confirmed at docs/audit-papers/BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals.md."
-      }
+    "narrative_compiler_yaml_reads": {
+      "status": "CONFIRMED_GOVERNED",
+      "files_read_at_runtime": [
+        {
+          "path": "knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml",
+          "exists": true,
+          "classification": "GOVERNED_COMPILED_ASSET",
+          "citation": "narrative_report_compiler_v1.py line 34; file header: N-7 — Benchmark-governed interpretation entities; authority: knowledge_bus/interpretation_entities_v1"
+        },
+        {
+          "path": "knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml",
+          "exists": true,
+          "classification": "GOVERNED_COMPILED_ASSET",
+          "citation": "narrative_report_compiler_v1.py line 35; N-5 governed pathway explainer asset"
+        },
+        {
+          "path": "knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml",
+          "exists": true,
+          "classification": "GOVERNED_COMPILED_ASSET",
+          "citation": "narrative_report_compiler_v1.py line 36; N-6 governed functional interpretation asset"
+        }
+      ],
+      "raw_pass3_reads": "NONE",
+      "investigation_spec_reads": "NONE"
     },
-    "duplicate_authority_sources": "NONE — no duplicate authority for compiled output, root-cause, or card paths found. Three governance YAML files to be created are new (no existing equivalents detected in knowledge_bus/governance/).",
-    "raw_pass3_runtime_reads": "NONE — investigation_spec_to_promoted_signal.py is build-time only (confirmed by grep: only called from scripts/ and tests/). narrative_report_compiler_v1.py reads governed compiled YAML assets (not investigation_spec or research_brief files). No raw Pass 3 runtime reads detected."
+    "duplicate_authority_sources": "NONE detected"
   },
   "stage_2b_behavioural_hardening": {
     "status": "PASS",
     "change_type_declared": "BEHAVIOUR",
-    "change_type_justified": "Sprint may quarantine or disable legacy analytical output paths (changes what emitted output users see), add provenance metadata to compiled DTOs (changes output shape), and repair root-cause/card authority wiring (changes output content authority). All touch Intelligence Core components. BEHAVIOUR classification is mandatory and correct.",
-    "intelligence_core_components_affected": [
-      {
-        "component": "backend/core/analytics/root_cause_compiler_v1.py",
-        "change_type": "POSSIBLE_WRITE — Phase 3 may repair authority wiring; quarantine of ungoverned paths may alter which hypotheses are emitted",
-        "determinism_risk": "HIGH — any change to root-cause compilation directly changes user-visible WHY explanations; must be strictly governed"
-      },
-      {
-        "component": "backend/core/analytics/report_compiler_v1.py",
-        "change_type": "POSSIBLE_WRITE — Phase 6 may disable legacy output paths; Phase 5 may add provenance fields",
-        "determinism_risk": "HIGH — report compiler produces primary compiled output consumed by frontend"
-      },
-      {
-        "component": "backend/core/analytics/narrative_report_compiler_v1.py",
-        "change_type": "POSSIBLE_WRITE — Phase 6 if ungoverned narrative paths are classified LEGACY_UNGOVERNED_BLOCKER",
-        "determinism_risk": "MEDIUM — narrative compiler is deterministic; changes affect narrative content only if governed YAML assets change"
-      },
-      {
-        "component": "backend/core/layer3/insight_assembler_v1.py",
-        "change_type": "POSSIBLE_WRITE — Phase 5 if provenance fields added to InsightCard contract",
-        "determinism_risk": "HIGH — schema changes to InsightCard will break frontend DTO if extra='forbid'; additive changes only permitted"
-      },
-      {
-        "component": "knowledge_bus/governance/compiled_output_authority_model_v1.yaml (new)",
-        "change_type": "CREATE — Phase 2 governance artefact",
-        "determinism_risk": "LOW — governance YAML only; not consumed by runtime unless explicitly loaded by a compiler"
-      },
-      {
-        "component": "knowledge_bus/governance/root_cause_authority_register_v1.yaml (new)",
-        "change_type": "CREATE — Phase 3 governance artefact",
-        "determinism_risk": "LOW — governance YAML only; same caveat as above"
-      },
-      {
-        "component": "knowledge_bus/governance/card_authority_register_v1.yaml (new)",
-        "change_type": "CREATE — Phase 4 governance artefact",
-        "determinism_risk": "LOW — governance YAML only; same caveat as above"
-      }
-    ],
-    "behavioural_surface_area": [
-      "Root-cause output: any ungoverned legacy hypothesis paths classified LEGACY_UNGOVERNED_BLOCKER and quarantined will no longer emit WHY explanations to users",
-      "Compiled output: provenance metadata fields added to DTOs change output payload shape (must be additive only)",
-      "Report compiler: disabling legacy output paths changes which findings appear in compiled report",
-      "Insight assembler: any schema change to InsightCard or Layer3InsightsV1 affects all card rendering in frontend"
-    ],
-    "expected_output_changes": "CLASSIFICATION: governance YAML files documenting authority status for all output paths. QUARANTINE: ungoverned legacy paths blocked from emitting analytical output. PROVENANCE: additive metadata fields on compiled outputs where DTO tolerates extras. REGISTERS: root-cause and card authority registers documenting governed and ungoverned state for all output types.",
+    "change_type_justified": "Sprint creates/updates validators governing what runtime analytical output is permitted; adds provenance regression tests proving output authority. Touches the boundary of Intelligence Core output governance. BEHAVIOUR classification is mandatory and correct.",
     "regression_targets_confirmed": [
+      "backend/tests/regression/test_output_authority_provenance.py — all 7 existing tests must pass unchanged",
       "backend/tests/regression/test_runtime_context_evaluation.py — must pass unchanged",
-      "backend/tests/regression/test_context_threading.py — must pass unchanged",
       "backend/tests/regression/test_batch2_full_coverage_activation.py — must pass unchanged",
-      "All existing active Batch 2 endocrine signals must continue to activate under correct gate conditions",
-      "DHEA packages must remain inactive throughout",
-      "No change to active thyroid (previously active), creatine kinase, eosinophil packages"
+      "No signal packages may be activated or deactivated",
+      "DHEA packages must remain inactive",
+      "why_engine_fallback_v1 must remain quarantined from clinician output"
     ],
     "no_scope_creep": true,
     "stop_conditions_protect_behavioural_correctness": {
-      "stop_4": "Output authority cannot be represented without breaking frontend DTO consumers — STOP. Cursor must read layer3_insights_v1.py and frontend_contract_v1.py and confirm extra field tolerance before Phase 5. If extra='forbid' anywhere in the DTO chain, STOP.",
-      "stop_5": "Untraceable analytical output cannot be quarantined safely — STOP. Do not delete large legacy systems; quarantine behind inactive flag only.",
-      "stop_9": "Changes require frontend rendering edits — STOP. No frontend files expected to change.",
-      "stop_15": "Validators fail — STOP. All 4 validators must pass.",
-      "stop_16": "Tests fail — STOP. All regression tests must pass."
+      "stop_2": "narrative_report_compiler_v1.py reads raw research — STOP. Pre-verified: reads governed compiled assets only.",
+      "stop_7": "Launch estate validator would be superficial or always-pass — STOP. Cursor must not create a pass-through validator.",
+      "stop_13": "Changes require signal package activation/deactivation — STOP. No package changes expected.",
+      "stop_17": "Validators fail — STOP.",
+      "stop_18": "Tests fail — STOP."
     },
     "determinism_risks_surfaced": [
-      "RISK 1 (HIGH): Batch 2 endocrine signals (free_t3_low, fai_high, free_testosterone_high, free_testosterone_low) have NO entries in root_cause_registry_v1.py. Phase 3 will find no governed root-cause path for these signals. Cursor must NOT invent root-cause hypotheses. Must classify as ROOT_CAUSE_REQUIRES_FUTURE_MAPPING. Emitting fabricated root-cause output for these signals would be an analytical authority violation.",
-      "RISK 2 (HIGH): Phase 5 provenance metadata additions may break frontend DTO if any Pydantic model in the output chain uses extra='forbid'. layer3_insights_v1.py InsightCard model must be checked before any field additions. Cursor must verify DTO tolerance FIRST.",
-      "RISK 3 (MEDIUM): narrative_report_compiler_v1.py reads governed YAML assets at runtime. These must NOT be classified as ungoverned in Phase 1. Incorrect classification would cause Phase 6 to quarantine legitimate governed output paths.",
-      "RISK 4 (MEDIUM): Any quarantine of root-cause or card output in Phase 6 must be done behind an inactive flag — not by deleting code. Delete is forbidden unless clearly safe and test-covered per STOP condition 5.",
-      "RISK 5 (LOW): Phase 8 requires regression tests covering FT3 low activated/suppressed case, FAI high activated/suppressed case, free testosterone high/low activated/suppressed cases. These signals are now active (BATCH2-FULL-COVERAGE-ACTIVATION-1 is merged). Test coverage for their output authority traceability is the new work — existing activation tests do not cover output provenance."
+      "RISK 1 (MEDIUM): narrative_report_compiler_v1.py YAML reads must be classified as GOVERNED_COMPILED_ASSET in Phase 1. Incorrect classification as LEGACY_QUARANTINED or BLOCKED_UNGOVERNED would cause Phase 6 to disable legitimate governed narrative output paths.",
+      "RISK 2 (LOW): Launch estate validator must be genuinely fail-closed. STOP condition 7 prohibits a superficial or always-pass validator.",
+      "RISK 3 (LOW): Carry-forward 2 provenance tests must verify output_authority_provenance_v1 content on the compiled ReportV1, not merely signal_results activation state. Pattern is established at test_output_authority_provenance.py lines 95-165."
     ]
   },
   "overall_verdict": "HARDENED",
-  "hardening_notes": "Sprint is correctly classified HIGH / BEHAVIOUR / TWO_PHASE_START_FINISH. All 7 required authoritative audit papers confirmed present. One authority path discrepancy (sprint plan listed under docs/architecture/ but actually in docs/sprints/) is non-blocking per prompt self-correction guidance. All prerequisite sprints confirmed merged to main. All 4 required validator scripts exist. All 3 regression test files exist. Secret file guard exists. Three governance YAML files to be created are new (correct). Intelligence Core files confirmed deterministic with no raw Pass 3 runtime reads. Critical finding: Batch 2 endocrine signals (FT3 low, FAI high, free testosterone high/low) have no root-cause registry entries — Phase 3 must classify as ROOT_CAUSE_REQUIRES_FUTURE_MAPPING, not invent output. DTO break risk in Phase 5 requires frontend tolerance check before implementation. Narrative compiler runtime YAML reads are governed compiled assets — must not be misclassified as ungoverned in Phase 1. GPT architectural review and human approval required before merge per HIGH risk route. Five determinism risks surfaced in Stage 2B."
+  "hardening_notes": "Sprint is correctly classified HIGH / BEHAVIOUR / TWO_PHASE_START_FINISH. All five front matter fields are valid. All prerequisite sprints confirmed merged. All required authority files, governance YAMLs, and runtime core files confirmed present. Narrative compiler YAML reads are governed compiled assets — must be classified GOVERNED_COMPILED_ASSET in Phase 1, not quarantined. ReportV1 provenance field confirmed present at report_v1.py line 88. Carry-forward gaps confirmed independently: FAI high and free testosterone provenance tests absent, to be added in Phase 5. One advisory: sprint plan file is at docs/sprints/ not docs/architecture/ as listed — Cursor must use the correct path and document the correction in the Phase 10 audit paper. GPT architectural review and human approval required before merge per HIGH risk route."
 }

@@ -1,62 +1,62 @@
 ---
-work_id: ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion
-branch: work/ARCH-COMPLETION-2-compiled-card-and-root-cause-authority-completion
+work_id: ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate
+branch: work/ARCH-COMPLETION-3-full-traceability-manifest-and-launch-estate-gate
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# ARCH-COMPLETION-2 — Compiled Card and Root-Cause Authority Completion
+# ARCH-COMPLETION-3 — Full Traceability Manifest and Launch Estate Gate
 
 ## Purpose
 
-Complete the remaining day-one architecture authority chain between:
+Complete the final day-one architecture gate for HealthIQ AI.
+
+This sprint must produce a full runtime traceability manifest and a launch-estate gate that proves the day-one analytical architecture is governed, traceable, fail-closed and free from unresolved legacy runtime authority paths.
+
+This sprint should answer one question:
 
 ```text
-activated signals
-runtime context
-root-cause logic
-card generation
-compiled analytical output
+Is the day-one intelligence architecture now complete enough to be formally closed?
 ```
 
-The goal is to ensure that every user-facing analytical statement produced by the day-one runtime estate is traceable to governed runtime authority, and that no compiled card, root-cause explanation or output fragment is being generated from legacy, unclear, raw-research, ungoverned or duplicate paths.
+If yes, the sprint must produce evidence and close the relevant carry-forward items.
 
-This sprint is not a frontend polish sprint.
+If no, the sprint must identify precise residual blockers with named files, named authority gaps and named remediation conditions.
 
-This sprint is not a signal activation sprint.
+This is not a frontend polish sprint.
 
-This sprint is the authority-completion sprint for the analytical output layer.
+This is not a new signal activation sprint.
+
+This is not a new medical research sprint.
+
+This is the final architecture-completion gate.
 
 ---
 
 ## Strategic context
 
-The following foundations are now complete or merged:
+The following work is now complete and merged:
 
 ```text
 - ADR-RT-001 accepted the research-to-runtime day-one architecture.
-- ARCH-COMPLETION-1 corrected orchestrator phase order.
+- ARCH-COMPLETION-1 corrected orchestrator phase ordering.
 - AnalysisContext now precedes signal evaluation.
 - Runtime context is derived from AnalysisContext / governed post-context objects.
-- BATCH2-MINIMUM-COVERAGE-1 removed ambiguity from remaining Batch 2 classification.
+- BATCH2-MINIMUM-COVERAGE-1 clarified the unresolved Batch 2 estate.
 - BATCH2-FULL-COVERAGE-BUILD-1 added reusable runtime context primitives.
 - BATCH2-FULL-COVERAGE-ACTIVATION-1 activated the research-supported thyroid/androgen signals with deterministic gates.
+- ARCH-COMPLETION-2 added compiled output authority, root-cause authority, card authority and additive ReportV1 provenance.
 ```
 
-The remaining risk is now in the output-authority chain.
-
-We need to confirm and, where required, repair how signals become:
+`ARCH-COMPLETION-2` carried forward two non-blocking items:
 
 ```text
-- insight cards
-- root-cause explanations
-- grouped analytical narratives
-- compiled output payloads
-- downstream renderable DTOs
+1. The full traceability manifest must explicitly classify narrative_report_compiler_v1.py runtime YAML reads as governed compiled assets.
+2. Provenance-specific regression tests must be added for FAI high, free testosterone high and free testosterone low.
 ```
 
-The product must not contain apparently polished analytical output that is actually coming from legacy root-cause/card/hypothesis paths with unclear authority.
+This sprint must resolve those carry-forwards and perform the final launch-estate architecture gate.
 
 ---
 
@@ -73,11 +73,11 @@ change_type: BEHAVIOUR
 Rationale:
 
 ```text
-- user-facing analytical output authority may change
-- card/root-cause pathways may be refactored or constrained
-- compiled output may change
-- legacy or duplicate analytical paths may be disabled
-- traceability requirements may be introduced or enforced
+- this sprint may alter validators, launch gates and runtime traceability enforcement
+- it touches the final architecture closure decision
+- it may quarantine or block any remaining ungoverned analytical output
+- it may add provenance tests and authority-manifest requirements
+- it may update day-one completion status
 ```
 
 Required route:
@@ -98,7 +98,7 @@ Do not merge without explicit human approval.
 Work only on:
 
 ```text
-work/ARCH-COMPLETION-2-compiled-card-and-root-cause-authority-completion
+work/ARCH-COMPLETION-3-full-traceability-manifest-and-launch-estate-gate
 ```
 
 Do not work on `main`.
@@ -114,7 +114,7 @@ This sprint must not:
 ```text
 - activate or deactivate signal packages
 - change clinical thresholds
-- change reference range policy
+- change biomarker reference range policy
 - change SSOT biomarker definitions
 - change scoring algorithms
 - change frontend rendering
@@ -123,57 +123,46 @@ This sprint must not:
 - introduce raw Pass 3 / investigation-spec runtime reads
 - introduce LLM clinical reasoning into deterministic runtime output
 - invent medical claims not traceable to governed runtime authority
-- weaken context gates
+- weaken runtime context gates
 - weaken package activation gates
 - remove fail-closed behaviour
+- downgrade governance failures to warnings unless explicitly justified and approved
 ```
 
 This sprint may:
 
 ```text
-- inspect and repair root-cause authority wiring
-- inspect and repair card authority wiring
-- inspect and repair compiled output traceability
-- classify legacy output paths
-- disable or quarantine ungoverned legacy output paths
-- add provenance and authority metadata to compiled outputs
-- add tests proving output statements are governed and traceable
+- create or update the full traceability manifest
+- create or update the launch-estate gate model
+- add or update architecture validators
+- add provenance-specific regression tests
+- classify remaining output/runtime authority sources
+- quarantine ungoverned runtime paths
+- update carry-forward registers
+- formally mark day-one architecture complete if evidence supports it
 ```
 
 ---
 
 ## Core design rule
 
-Every analytical output element must answer:
+Every runtime analytical path must be classifiable as one of:
 
 ```text
-What governed runtime object authorised this statement?
+GOVERNED_RUNTIME_AUTHORITY
+GOVERNED_COMPILED_ASSET
+GOVERNED_MAPPING_AUTHORITY
+GOVERNED_RENDER_ONLY
+GOVERNED_DEBUG_ONLY
+LEGACY_QUARANTINED
+INACTIVE_NOT_RUNTIME_CONSUMED
+BLOCKED_UNGOVERNED
+UNKNOWN_BLOCKER
 ```
 
-Acceptable authority sources include:
+No runtime analytical path may remain `UNKNOWN_BLOCKER` or `BLOCKED_UNGOVERNED` if day-one architecture is to be marked complete.
 
-```text
-- activated signal package
-- governed signal output
-- governed runtime context snapshot
-- governed root-cause mapping
-- governed card authority mapping
-- governed compiler authority manifest
-```
-
-Unacceptable authority sources include:
-
-```text
-- raw Pass 3 research file at runtime
-- investigation spec at runtime
-- legacy hypothesis path without authority mapping
-- legacy root-cause path without authority mapping
-- hardcoded analytical statement in compiler code
-- frontend-derived medical inference
-- LLM-generated runtime explanation without deterministic authority
-```
-
-If an output element cannot be traced, it must not be emitted as day-one governed analytical output.
+No user-facing analytical output may be emitted from an ungoverned source.
 
 ---
 
@@ -184,30 +173,44 @@ Read before implementation:
 ```text
 docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md
 docs/audit-papers/BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals.md
-docs/audit-papers/BATCH2-FULL-COVERAGE-BUILD-1_reusable_context_layer_research_authority_and_activation_readiness.md
-docs/audit-papers/BATCH2-MINIMUM-COVERAGE-1_androgen_ft3_low_clinical_and_runtime_completion.md
+docs/audit-papers/ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion.md
 docs/audit-papers/DAY-ONE-ARCHITECTURE-CLOSURE-REVIEW.md
 docs/sprints/launch_core_carry_forward_register.md
 
 docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 docs/architecture/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md
+
+knowledge_bus/governance/compiled_output_authority_model_v1.yaml
+knowledge_bus/governance/root_cause_authority_register_v1.yaml
+knowledge_bus/governance/card_authority_register_v1.yaml
+knowledge_bus/governance/reusable_runtime_context_primitive_model_v1.yaml
+knowledge_bus/governance/context_questionnaire_contract_v1.yaml
+knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 ```
 
-If the exact paths differ, locate the equivalent repo-persisted files and document the actual paths used.
+If exact paths differ, locate the equivalent repo-persisted files and document the actual paths used.
 
-Inspect all runtime/output files that participate in:
+Inspect all relevant runtime and output authority files, including but not limited to:
 
 ```text
-- signal output to card transformation
-- root-cause generation
-- card generation
-- compiled output generation
-- DTO/output payload generation
-- result payload assembly
-- any “insight”, “card”, “root_cause”, “hypothesis”, “compiled”, “summary”, “narrative” or “explanation” module
+backend/core/pipeline/orchestrator.py
+backend/core/analytics/runtime_context_evaluator.py
+backend/core/analytics/signal_evaluator.py
+backend/core/analytics/report_compiler_v1.py
+backend/core/analytics/output_authority_provenance_builder_v1.py
+backend/core/contracts/report_v1.py
+backend/core/contracts/output_authority_provenance_v1.py
+backend/core/knowledge/compiled_output_authority_v1.py
 ```
 
-Do not assume the file list. Discover it.
+Also explicitly inspect and classify:
+
+```text
+backend/core/analytics/narrative_report_compiler_v1.py
+```
+
+Do not assume the file list is complete. Discover all runtime reads and analytical output paths.
 
 ---
 
@@ -229,331 +232,380 @@ Confirm:
 2. Working tree is clean.
 3. ARCH-COMPLETION-1 is merged.
 4. BATCH2-FULL-COVERAGE-ACTIVATION-1 is merged.
-5. The four research-supported Batch 2 endocrine signals are active.
-6. DHEA high/low, FAI low and free testosterone percentage high/low remain inactive as primary signals.
-7. AnalysisContext still precedes signal evaluation.
-8. Runtime context is still derived from AnalysisContext or governed post-context object.
-9. No frontend rendering change is required for this sprint.
-10. Repository secret-file gate remains remediated.
+5. ARCH-COMPLETION-2 is merged.
+6. ReportV1 contains additive output_authority_provenance_v1.
+7. compiled_output_authority_model_v1.yaml exists.
+8. root_cause_authority_register_v1.yaml exists.
+9. card_authority_register_v1.yaml exists.
+10. why_engine_fallback_v1 is quarantined from clinician-report output.
+11. No frontend rendering change is required.
+12. Repository secret-file gate remains remediated.
 ```
 
 STOP if the baseline is unclear.
 
 ---
 
-# Phase 1 — Discover the output-authority estate
+# Phase 1 — Full runtime authority discovery
 
-Before making changes, produce a read-only map of the analytical output estate.
+Perform a full discovery of runtime analytical authority sources.
 
-Find and document all code paths that generate or transform:
+Inspect and document all runtime paths that:
 
 ```text
-- cards
-- card titles
-- card summaries
-- card bodies
-- root-cause explanations
-- grouped findings
-- insight narratives
-- hypothesis narratives
-- compiled summaries
-- output DTOs
-- payload fragments sent to frontend or report generation
+- read YAML/JSON/Markdown/domain authority files
+- assemble AnalysisContext
+- build runtime context
+- evaluate signals
+- build root-cause findings
+- build cards
+- build insight or narrative output
+- compile reports
+- attach provenance
+- assemble DTOs or API response payloads
 ```
 
-For each path, record:
+For every runtime read or generated output path, record:
 
 ```text
 - file path
-- function/class name
-- input object(s)
-- output object(s)
-- whether it consumes activated signals
-- whether it consumes runtime context
-- whether it consumes root-cause mappings
-- whether it consumes package metadata
-- whether it consumes legacy hypothesis/card/root-cause files
-- whether it contains hardcoded medical/analytical wording
-- whether frontend depends on its output shape
-- authority status
+- function/class
+- runtime input
+- runtime output
+- source artefact read, if any
+- whether source artefact is governed
+- whether source artefact is raw research
+- whether source artefact is compiled/promoted authority
+- whether path emits user-facing analytical output
+- whether path emits debug-only output
+- whether frontend consumes the output
+- authority classification
+- evidence
 ```
 
-Allowed authority statuses:
+Allowed classifications:
 
 ```text
 GOVERNED_RUNTIME_AUTHORITY
+GOVERNED_COMPILED_ASSET
 GOVERNED_MAPPING_AUTHORITY
-LEGACY_CLASSIFIED_ALLOWED_TEMPORARY
-LEGACY_UNGOVERNED_BLOCKER
-DUPLICATE_AUTHORITY_BLOCKER
-OUTPUT_SHAPE_ONLY_NO_MEDICAL_AUTHORITY
-UNKNOWN_REQUIRES_REVIEW
+GOVERNED_RENDER_ONLY
+GOVERNED_DEBUG_ONLY
+LEGACY_QUARANTINED
+INACTIVE_NOT_RUNTIME_CONSUMED
+BLOCKED_UNGOVERNED
+UNKNOWN_BLOCKER
 ```
 
-STOP if the output-authority estate cannot be discovered.
+Required explicit classification:
+
+```text
+backend/core/analytics/narrative_report_compiler_v1.py
+```
+
+The narrative compiler’s runtime YAML reads must be classified accurately. If they are governed compiled assets, document them as:
+
+```text
+GOVERNED_COMPILED_ASSET
+```
+
+If any runtime path reads raw Pass 3 research or investigation specs, STOP.
 
 ---
 
-# Phase 2 — Define compiled output authority model
+# Phase 2 — Create full traceability manifest
 
-Create or update a governed authority model for compiled analytical output.
-
-Preferred artefact:
+Create or update:
 
 ```text
-knowledge_bus/governance/compiled_output_authority_model_v1.yaml
+knowledge_bus/governance/day_one_full_traceability_manifest_v1.yaml
 ```
 
-If an equivalent artefact already exists, update it rather than duplicating authority.
+This manifest must provide a single authoritative map of the day-one runtime estate.
 
-The model must define:
+It must include at least:
 
 ```text
-- allowed output element types
-- required authority source for each output element type
-- required provenance fields
-- allowed compiler inputs
-- forbidden compiler inputs
-- legacy-path handling rules
+- runtime pipeline phases
+- key runtime modules
+- runtime authority files
+- compiled authority assets
+- signal package authority
+- runtime context authority
+- card authority
+- root-cause authority
+- compiled output authority
+- report compiler authority
+- narrative compiler authority
 - frontend/render-only boundary
-- root-cause authority rules
-- card authority rules
-- fail-closed behaviour for untraceable output
+- inactive/quarantined legacy paths
+- forbidden runtime inputs
+- launch-blocking classifications
 ```
 
-At minimum, cover:
+For each entry, include:
 
 ```text
-signal_card
-root_cause_card
-system_summary
-cluster_summary
-hypothesis_summary
-biomarker_explanation
-contextual_modifier_explanation
-missing_context_notice
-inactive_signal_notice
-```
-
-For each type, define:
-
-```text
-- may_emit: true / false
-- required_authority
-- required_trace_fields
+- id
+- path
+- role
+- authority_classification
+- runtime_consumed: true / false
+- user_facing: true / false
+- source_authority
 - allowed_runtime_inputs
 - forbidden_runtime_inputs
-- fail_closed_if_missing_authority
+- provenance_required: true / false
+- governed_by
+- launch_gate_status
+- evidence
 ```
 
-The model must explicitly forbid raw research reads at runtime.
+Allowed `launch_gate_status` values:
+
+```text
+PASS
+PASS_WITH_CARRY_FORWARD
+BLOCKED
+NOT_RUNTIME_CONSUMED
+QUARANTINED
+DEBUG_ONLY
+```
+
+Do not duplicate authority unnecessarily. The manifest should reference existing governance artefacts where they already exist.
 
 ---
 
-# Phase 3 — Root-cause authority audit and repair
+# Phase 3 — Create launch estate gate model
 
-Inspect all root-cause generation logic.
-
-For each root-cause output path, determine whether it is based on:
+Create or update:
 
 ```text
-- activated signal outputs
-- governed package metadata
-- governed context mappings
-- governed root-cause mapping file
-- legacy hypothesis code
-- static hardcoded rule
-- raw/untraceable narrative
+knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml
 ```
 
-Create or update a root-cause authority register.
+This gate must define the final closure criteria for day-one architecture.
 
-Preferred artefact:
+It must include:
 
 ```text
-knowledge_bus/governance/root_cause_authority_register_v1.yaml
+- gate name
+- gate version
+- launch scope
+- required architecture conditions
+- required runtime authority conditions
+- required output authority conditions
+- required context safety conditions
+- required signal activation conditions
+- required inactive/quarantined path conditions
+- required frontend/render-only conditions
+- required security/repo-hygiene conditions
+- allowed carry-forwards
+- disallowed carry-forwards
+- final verdict values
 ```
 
-For each root-cause type, record:
+Allowed final verdict values:
 
 ```text
-- root_cause_id
-- display label
-- authority source
-- allowed source signals
-- required companion evidence
-- required context evidence
-- allowed wording strength
-- prohibited wording
-- runtime consumed? true / false
-- activation status
-- fail-closed condition
+DAY_ONE_ARCHITECTURE_COMPLETE
+DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD
+DAY_ONE_ARCHITECTURE_NOT_COMPLETE
 ```
 
-If no root-cause type can be safely governed in this sprint, do not invent root-cause outputs. Instead, explicitly classify legacy root-cause output as blocked.
-
-Allowed outcomes:
+The gate must make clear that day-one architecture cannot be complete if:
 
 ```text
-ROOT_CAUSE_GOVERNED_ACTIVE
-ROOT_CAUSE_GOVERNED_INACTIVE
-ROOT_CAUSE_LEGACY_QUARANTINED
-ROOT_CAUSE_UNTRACEABLE_BLOCKED
-ROOT_CAUSE_REQUIRES_FUTURE_MAPPING
+- any user-facing analytical runtime path is ungoverned
+- any raw Pass 3 file is consumed at runtime
+- any investigation spec is consumed at runtime
+- any frontend medical inference is required
+- any active signal lacks package authority
+- any compiled output lacks authority/provenance where required
+- any root-cause output is emitted from ungoverned fallback
+- any diagnosis/treatment/supplement wording is introduced
+- any SSOT/reference-range policy is bypassed
 ```
 
-Do not leave unclassified root-cause output paths.
+Allowed non-blocking carry-forwards may include:
+
+```text
+- additional optional provenance regression coverage
+- future modifier-only signal architecture
+- DHEA/DHEA-S identity remediation if the relevant packages remain inactive
+- non-launch-blocking UX/frontend polish
+- broader future biomarker expansion
+```
 
 ---
 
-# Phase 4 — Card authority audit and repair
+# Phase 4 — Implement or update launch gate validator
 
-Inspect all card generation logic.
+Create or update a deterministic validator.
 
-For each card type, determine whether it is authorised by:
-
-```text
-- activated signal
-- signal family
-- biomarker result
-- package metadata
-- root-cause mapping
-- runtime context modifier
-- legacy hardcoded logic
-- frontend inference
-```
-
-Create or update a card authority register.
-
-Preferred artefact:
+Preferred file:
 
 ```text
-knowledge_bus/governance/card_authority_register_v1.yaml
+backend/scripts/validate_day_one_launch_estate_gate.py
 ```
 
-For each card type, record:
+The validator must check:
 
 ```text
-- card_id
-- card_type
-- display purpose
-- authorised input
-- required trace fields
-- allowed wording strength
-- prohibited wording
-- whether card may include root-cause explanation
-- whether card may include context explanation
-- whether card may include missing-context notice
-- runtime consumed? true / false
-- activation status
-- fail-closed condition
+1. day_one_full_traceability_manifest_v1.yaml exists.
+2. day_one_launch_estate_gate_v1.yaml exists.
+3. No manifest entry is UNKNOWN_BLOCKER.
+4. No user-facing runtime analytical path is BLOCKED_UNGOVERNED.
+5. Raw Pass 3 runtime reads are forbidden.
+6. Investigation-spec runtime reads are forbidden.
+7. compiled_output_authority_model_v1.yaml exists.
+8. root_cause_authority_register_v1.yaml exists.
+9. card_authority_register_v1.yaml exists.
+10. ReportV1 includes output_authority_provenance_v1.
+11. why_engine_fallback_v1 is quarantined or blocked from governed clinician output.
+12. narrative_report_compiler_v1.py is classified in the manifest.
+13. active Batch 2 signals are represented in provenance tests or explicitly carried forward.
+14. inactive DHEA/DHEA-S and modifier-only signals remain inactive.
+15. frontend paths are classified render-only or out of scope.
+16. launch estate final verdict is one of the allowed values.
 ```
 
-Allowed outcomes:
+If the validator already exists, extend it rather than creating a duplicate.
 
-```text
-CARD_GOVERNED_ACTIVE
-CARD_GOVERNED_INACTIVE
-CARD_RENDER_ONLY
-CARD_LEGACY_QUARANTINED
-CARD_UNTRACEABLE_BLOCKED
-CARD_REQUIRES_FUTURE_MAPPING
-```
+The validator must fail hard on launch-blocking conditions.
 
-Any card that contains analytical/medical wording must have an authority source.
-
-Pure display/layout cards may be classified as `CARD_RENDER_ONLY`.
+Do not create a validator that always passes.
 
 ---
 
-# Phase 5 — Implement compiled output provenance
+# Phase 5 — Close ARCH-COMPLETION-2 carry-forwards
 
-Implement or extend provenance metadata on compiled analytical outputs.
+Resolve the two carry-forward items from `ARCH-COMPLETION-2`.
 
-Each emitted analytical output element should include, where applicable:
+## Carry-forward 1 — narrative compiler classification
 
-```text
-- output_element_id
-- output_element_type
-- source_signal_ids
-- source_package_ids
-- source_biomarker_ids
-- source_context_keys
-- source_root_cause_ids
-- authority_register_ref
-- authority_status
-- wording_strength
-- generated_by
-```
-
-The implementation must not require frontend changes unless the frontend already tolerates extra fields.
-
-If adding extra fields would break frontend consumers, STOP and report.
-
-Preferred behaviour:
+Explicitly classify:
 
 ```text
-- additive metadata fields only
-- no breaking DTO changes
-- frontend remains render-only
+backend/core/analytics/narrative_report_compiler_v1.py
 ```
 
-If a compiled output cannot be traced to authority, it must be suppressed, quarantined, or marked as non-governed and excluded from day-one governed output.
+Also classify any runtime YAML/authority assets it reads.
+
+Expected classification, if verified:
+
+```text
+GOVERNED_COMPILED_ASSET
+```
+
+Do not quarantine this path if it is reading governed compiled assets and producing authorised narrative output.
+
+If it reads raw research or ungoverned assets, STOP.
+
+## Carry-forward 2 — Batch 2 provenance-specific tests
+
+Add provenance-specific regression tests for:
+
+```text
+- FAI high activated case
+- FAI high suppressed case
+- free testosterone high activated case
+- free testosterone high suppressed case
+- free testosterone low activated case
+- free testosterone low suppressed case
+```
+
+These tests must verify output authority provenance, not merely signal activation/suppression.
+
+They should prove:
+
+```text
+- activated signal produces governed provenance element
+- suppressed signal does not produce governed analytical output
+- source_signal_ids include the expected signal ID
+- authority_status is appropriate
+- inactive or suppressed states do not produce misleading output
+```
+
+Do not remove existing FT3 low or DHEA inactive provenance tests.
 
 ---
 
-# Phase 6 — Quarantine or block legacy ungoverned paths
+# Phase 6 — Final raw-research runtime read scan
 
-Any output path classified as:
-
-```text
-LEGACY_UNGOVERNED_BLOCKER
-DUPLICATE_AUTHORITY_BLOCKER
-UNKNOWN_REQUIRES_REVIEW
-```
-
-must be handled.
-
-Allowed remediation:
+Add or update tests/scripts to prove the day-one runtime does not consume:
 
 ```text
-- quarantine from day-one output
-- disable emission behind explicit inactive flag
-- restrict to non-user-facing debug output
-- require authority mapping before emission
-- convert to render-only if no analytical claim remains
+- raw Pass 3 files
+- investigation specs
+- multi-LLM research specs
+- unpromoted research assets
 ```
 
-Do not delete large legacy systems unless clearly safe and covered by tests.
+The scan must cover at least:
 
-Do not leave ungoverned legacy analytical output active.
+```text
+backend/core/**
+backend/routes/**
+backend/scripts used by runtime gates where relevant
+```
+
+The scan must not falsely fail on:
+
+```text
+- build-time promotion scripts
+- governance documentation references
+- audit papers
+- tests that intentionally mention forbidden paths
+```
+
+If existing tests already cover part of this, extend them rather than duplicating.
 
 ---
 
-# Phase 7 — Integration with existing active signal estate
+# Phase 7 — Launch estate verdict
 
-Validate compiled output against currently active signal estate, including:
-
-```text
-- previously active thyroid high / FT4 high / FT4 low signals
-- creatine kinase packages
-- eosinophil packages
-- FT3 low
-- FAI high
-- free testosterone high
-- free testosterone low
-```
-
-Confirm:
+Using the manifest and validator evidence, set a launch estate verdict in:
 
 ```text
-- active signals can produce governed output where expected
-- inactive signals do not produce output
-- missing context produces missing-context notices only if governed
-- suppressed signals do not produce analytical conclusions
-- DHEA unresolved identity does not produce adrenal androgen output
-- modifier-only future patterns do not produce primary signal cards
+knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml
 ```
+
+Allowed verdicts:
+
+```text
+DAY_ONE_ARCHITECTURE_COMPLETE
+DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD
+DAY_ONE_ARCHITECTURE_NOT_COMPLETE
+```
+
+Choose the verdict honestly.
+
+Use:
+
+```text
+DAY_ONE_ARCHITECTURE_COMPLETE
+```
+
+only if there are no architecture carry-forwards.
+
+Use:
+
+```text
+DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD
+```
+
+only if remaining items are explicitly non-blocking and do not affect day-one runtime safety.
+
+Use:
+
+```text
+DAY_ONE_ARCHITECTURE_NOT_COMPLETE
+```
+
+if any launch-blocking governance, traceability, runtime authority or safety defect remains.
+
+Do not inflate the verdict.
 
 ---
 
@@ -562,39 +614,31 @@ Confirm:
 Add or update tests proving:
 
 ```text
-1. every emitted analytical card has authority metadata
-2. every emitted root-cause explanation has authority metadata
-3. compiled output does not consume raw Pass 3 or investigation-spec files at runtime
-4. frontend DTO shape is backward-compatible or explicitly tolerated
-5. untraceable legacy card paths are quarantined or blocked
-6. untraceable legacy root-cause paths are quarantined or blocked
-7. inactive packages do not produce compiled cards
-8. suppressed context-dependent signals do not produce analytical conclusions
-9. missing-context notices are governed if emitted
-10. active Batch 2 signals produce traceable output
-11. DHEA unresolved identity does not produce adrenal androgen output
-12. frontend remains render-only
-13. no diagnosis wording is introduced
-14. no treatment or supplement recommendation is introduced
+1. full traceability manifest exists and contains required domains.
+2. narrative_report_compiler_v1.py is classified.
+3. no manifest entry has UNKNOWN_BLOCKER.
+4. no user-facing analytical runtime path is BLOCKED_UNGOVERNED.
+5. day-one launch estate gate exists and has an allowed verdict.
+6. launch estate validator passes.
+7. raw Pass 3 runtime reads are absent.
+8. investigation-spec runtime reads are absent.
+9. why_engine_fallback_v1 remains quarantined or blocked from clinician output.
+10. ReportV1 still includes output_authority_provenance_v1.
+11. FT3 low provenance test still passes.
+12. FAI high activated provenance test passes.
+13. FAI high suppressed provenance test passes.
+14. free testosterone high activated provenance test passes.
+15. free testosterone high suppressed provenance test passes.
+16. free testosterone low activated provenance test passes.
+17. free testosterone low suppressed provenance test passes.
+18. inactive DHEA does not produce governed analytical output.
+19. frontend remains render-only.
+20. no signal package activation/deactivation occurred.
 ```
 
-Regression tests must cover at least:
+Do not rely only on YAML structure tests.
 
-```text
-- FT3 low activated case
-- FT3 low suppressed case
-- FAI high activated case
-- FAI high suppressed case
-- free testosterone high activated case
-- free testosterone high suppressed case
-- free testosterone low activated case
-- free testosterone low suppressed case
-- inactive DHEA package
-```
-
-Do not rely only on governance-file tests.
-
-There must be runtime/output tests.
+There must be runtime/provenance tests.
 
 ---
 
@@ -607,9 +651,12 @@ Run and paste full output.
 ```powershell
 python backend/scripts/run_architecture_validation_gate.py
 python backend/scripts/validate_day_one_architecture.py
+python backend/scripts/validate_day_one_launch_estate_gate.py
 python backend/scripts/validate_medical_frame_identity_index.py --index knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 ```
+
+If any validator does not exist, create it if in scope, or report why it is absent.
 
 ## Context and signal regressions
 
@@ -617,18 +664,7 @@ python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowle
 python -m pytest backend/tests/regression/test_runtime_context_evaluation.py -q
 python -m pytest backend/tests/regression/test_context_threading.py -q
 python -m pytest backend/tests/regression/test_batch2_full_coverage_activation.py -q
-```
-
-## Output authority tests
-
-Run all new and existing tests covering:
-
-```text
-- compiled output
-- card generation
-- root-cause generation
-- signal-to-card transformation
-- output DTOs
+python -m pytest backend/tests/regression/test_output_authority_provenance.py -q
 ```
 
 ## Governance tests
@@ -636,11 +672,23 @@ Run all new and existing tests covering:
 Run all relevant governance tests for:
 
 ```text
-- compiled output authority model
-- root-cause authority register
-- card authority register
+- full traceability manifest
+- launch estate gate
+- compiled output authority
+- root-cause authority
+- card authority
 - Batch 2 activation registers
 - runtime context registers
+```
+
+## Unit tests
+
+Run all relevant unit tests for:
+
+```text
+- report compiler
+- provenance builder
+- compiled output authority loader
 ```
 
 ## Secret-file guardrail
@@ -660,7 +708,7 @@ if present.
 Create:
 
 ```text
-docs/audit-papers/ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion.md
+docs/audit-papers/ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate.md
 ```
 
 The audit paper must include:
@@ -669,19 +717,22 @@ The audit paper must include:
 - executive verdict
 - files inspected
 - files changed
-- output-authority estate map
-- compiled output authority model summary
-- root-cause authority audit result
-- card authority audit result
-- legacy path classification
-- legacy path remediation
-- provenance implementation details
-- active signal estate integration result
+- carry-forward items inherited from ARCH-COMPLETION-2
+- carry-forward resolution evidence
+- full runtime authority discovery summary
+- full traceability manifest summary
+- launch estate gate summary
+- launch estate final verdict
+- validator implementation details
+- raw-research runtime read scan result
+- narrative_report_compiler_v1.py classification
+- Batch 2 provenance test coverage result
+- inactive/quarantined path status
 - confirmation no signal packages activated or deactivated
 - confirmation no SSOT changed unless explicitly justified
 - confirmation no scoring changed
 - confirmation no frontend changed
-- confirmation no report compiler changed unless explicitly justified
+- confirmation no report compiler output contract broken
 - confirmation no raw research runtime reads introduced
 - confirmation no diagnosis wording introduced
 - confirmation no treatment/supplement recommendation introduced
@@ -706,23 +757,19 @@ docs/sprints/launch_core_carry_forward_register.md
 
 only where justified.
 
-Expected carry-forward handling:
+Expected handling:
 
 ```text
-- close or update any carry-forward relating to legacy root-cause/card/hypothesis path ambiguity
-- add precise carry-forward if a legacy path remains quarantined but not deleted
-- add precise carry-forward if a card/root-cause type remains inactive pending authority mapping
-- do not create vague residuals
+- close ARCH-COMPLETION-2 narrative compiler traceability carry-forward if resolved
+- close ARCH-COMPLETION-2 Batch 2 provenance-test carry-forward if resolved
+- close day-one architecture carry-forward only if launch estate verdict supports completion
+- add precise non-blocking carry-forwards only where appropriate
+- keep DHEA/DHEA-S future remediation open if packages remain inactive
 ```
 
-Do not mark day-one architecture complete unless:
+Do not create vague residuals.
 
-```text
-- output authority is governed
-- ungoverned legacy output is blocked/quarantined
-- compiled output provenance is implemented or explicitly not required
-- all validators and tests pass
-```
+Do not mark day-one architecture complete unless evidence supports it.
 
 ---
 
@@ -731,31 +778,34 @@ Do not mark day-one architecture complete unless:
 Expected changed files may include:
 
 ```text
-knowledge_bus/governance/compiled_output_authority_model_v1.yaml
-knowledge_bus/governance/root_cause_authority_register_v1.yaml
-knowledge_bus/governance/card_authority_register_v1.yaml
-backend/core/**
-backend/tests/regression/**
-backend/tests/governance/**
-backend/tests/**
+knowledge_bus/governance/day_one_full_traceability_manifest_v1.yaml
+knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml
+backend/scripts/validate_day_one_launch_estate_gate.py
+backend/tests/regression/test_output_authority_provenance.py
+backend/tests/governance/test_arch_completion_3_traceability_manifest.py
+backend/tests/governance/test_day_one_launch_estate_gate.py
+backend/tests/unit/*
 docs/sprints/launch_core_carry_forward_register.md
-docs/audit-papers/ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion.md
+docs/audit-papers/ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate.md
 automation_bus/latest_cursor_status.json
 ```
 
 Possible but must be justified:
 
 ```text
-backend/core/reporting/**
+backend/core/knowledge/compiled_output_authority_v1.py
+backend/core/analytics/output_authority_provenance_builder_v1.py
+backend/core/analytics/report_compiler_v1.py
+backend/core/contracts/report_v1.py
 ```
 
-Only touch report compiler code if compiled output authority or provenance cannot be completed otherwise.
+Only touch these if the launch estate gate or traceability manifest proves a genuine implementation gap.
 
 No frontend files are expected to change.
 
 No SSOT files are expected to change.
 
-No signal package activation files are expected to change.
+No signal package files are expected to change.
 
 ---
 
@@ -796,24 +846,26 @@ Do not introduce:
 STOP and report if:
 
 ```text
-1. compiled output paths cannot be discovered
-2. root-cause generation paths cannot be discovered
-3. card generation paths cannot be discovered
-4. output authority cannot be represented without breaking frontend DTO consumers
-5. untraceable analytical output cannot be quarantined safely
-6. compiled output currently depends on raw Pass 3 / investigation-spec files at runtime
-7. root-cause output currently depends on raw Pass 3 / investigation-spec files at runtime
-8. card output currently depends on frontend inference
-9. changes would require frontend rendering edits
-10. changes would require SSOT edits
-11. changes would require signal package activation/deactivation
-12. changes would require clinical threshold changes
-13. diagnosis wording would be emitted
-14. treatment/supplement recommendation would be emitted
-15. validators fail
-16. tests fail
-17. secret-file guardrail fails
-18. rollback path cannot be defined
+1. full runtime authority discovery cannot be completed.
+2. narrative_report_compiler_v1.py reads raw research or ungoverned assets.
+3. full traceability manifest cannot classify all user-facing analytical runtime paths.
+4. any manifest entry remains UNKNOWN_BLOCKER.
+5. any user-facing analytical runtime path remains BLOCKED_UNGOVERNED.
+6. launch estate gate cannot be represented deterministically.
+7. launch estate validator would need to be superficial or always-pass.
+8. raw Pass 3 runtime reads are found.
+9. investigation-spec runtime reads are found.
+10. provenance tests cannot be added for FAI high, free testosterone high or free testosterone low.
+11. changes would require frontend rendering edits.
+12. changes would require SSOT edits.
+13. changes would require signal package activation/deactivation.
+14. changes would require clinical threshold changes.
+15. diagnosis wording would be emitted.
+16. treatment/supplement recommendation would be emitted.
+17. validators fail.
+18. tests fail.
+19. secret-file guardrail fails.
+20. rollback path cannot be defined.
 ```
 
 If a STOP condition is triggered, do not perform ad hoc remediation beyond scope.
@@ -834,13 +886,13 @@ git diff --cached --name-only
 Commit message:
 
 ```text
-feat(output): add governed authority provenance for compiled analytical output
+feat(governance): add day-one traceability manifest and launch estate gate
 ```
 
-If no runtime/code change occurs and the sprint only classifies/quarantines authority paths, use:
+If no runtime/code change occurs and the sprint only creates governance/test artefacts, use:
 
 ```text
-docs(governance): complete compiled output authority mapping
+docs(governance): complete day-one launch estate traceability gate
 ```
 
 After commit, report:
@@ -862,18 +914,22 @@ Return evidence for Claude audit and GPT architectural review.
 This sprint succeeds only if:
 
 ```text
-- output-authority estate is discovered and documented
-- compiled output authority model exists
-- root-cause authority register exists or equivalent authority is documented
-- card authority register exists or equivalent authority is documented
-- every active analytical output path is governed or quarantined
-- emitted analytical cards carry authority/provenance metadata where applicable
-- emitted root-cause explanations carry authority/provenance metadata where applicable
-- inactive/suppressed signals do not produce analytical conclusions
-- raw research files are not consumed at runtime
-- frontend remains render-only
-- no signal activation/deactivation occurs
+- full runtime authority discovery is complete
+- day_one_full_traceability_manifest_v1.yaml exists
+- day_one_launch_estate_gate_v1.yaml exists
+- launch estate validator exists and passes
+- narrative_report_compiler_v1.py is explicitly classified
+- FAI high provenance tests pass
+- free testosterone high provenance tests pass
+- free testosterone low provenance tests pass
+- raw Pass 3 runtime reads are absent
+- investigation-spec runtime reads are absent
+- every user-facing analytical runtime path is governed or quarantined
+- no UNKNOWN_BLOCKER entries remain
+- no BLOCKED_UNGOVERNED user-facing paths remain
+- no signal packages are activated or deactivated
 - no SSOT changes occur
+- no frontend changes occur
 - no scoring changes occur
 - no diagnosis wording is introduced
 - no treatment/supplement recommendation is introduced
@@ -889,5 +945,10 @@ Claude audit
 GPT architectural review
 Human approval
 Merge
-Then proceed to ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate.
+
+If launch verdict is DAY_ONE_ARCHITECTURE_COMPLETE or DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD:
+  formally close day-one architecture rework and move to product / beta readiness estate.
+
+If launch verdict is DAY_ONE_ARCHITECTURE_NOT_COMPLETE:
+  remediate the named blockers before product readiness work.
 ```
