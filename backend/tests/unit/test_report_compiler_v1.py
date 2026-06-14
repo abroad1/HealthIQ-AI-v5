@@ -79,6 +79,15 @@ def test_compile_clinician_report_v1_maps_informational_safety_class_to_monitori
     compiled = compile_clinician_report_v1(report_v1_payload=report, biomarker_rows=[])
     assert compiled is not None
     assert compiled.sections.root_cause is not None
+    # ARCH-COMPLETION-2: why_engine_fallback_v1 is quarantined from governed clinician output.
+    assert len(compiled.sections.root_cause.hypotheses) == 0
+
+
+def test_compile_clinician_report_v1_maps_governed_informational_hypothesis_to_monitoring():
+    report = _report_v1_with_informational_root_cause_fallback()
+    report["root_cause_v1"]["findings"][0]["hypotheses"][0]["hypothesis_id"] = "hcy_governed_hypothesis_v1"
+    compiled = compile_clinician_report_v1(report_v1_payload=report, biomarker_rows=[])
+    assert compiled.sections.root_cause is not None
     assert len(compiled.sections.root_cause.hypotheses) == 1
     assert compiled.sections.root_cause.hypotheses[0].safety_class == "monitoring"
 
@@ -100,7 +109,7 @@ def test_build_analysis_result_dto_accepts_informational_root_cause_fallback():
     dto = build_analysis_result_dto(raw)
     assert dto["clinician_report_v1"] is not None
     hypotheses = dto["clinician_report_v1"]["sections"]["root_cause"]["hypotheses"]
-    assert hypotheses[0]["safety_class"] == "monitoring"
+    assert hypotheses == []
 
 
 def test_report_v1_ordering_and_schema_fields():

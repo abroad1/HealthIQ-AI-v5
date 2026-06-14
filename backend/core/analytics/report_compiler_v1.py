@@ -42,6 +42,10 @@ from core.analytics.consumer_prose_safety_v1 import (
     format_runner_up_topic_consumer,
     format_runner_up_why_consumer,
 )
+from core.analytics.output_authority_provenance_builder_v1 import (
+    build_report_output_authority_provenance_v1,
+    is_governed_hypothesis,
+)
 from core.analytics.root_cause_compiler_v1 import compile_root_cause_v1
 from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_tests_registry_v1
 
@@ -400,13 +404,18 @@ def _normalise_root_cause_finding(
         row for row in _to_list(finding_row.get("hypotheses")) if isinstance(row, dict)
     ]
     hypotheses_out: List[HypothesisV1] = []
-    for idx, hypothesis_row in enumerate(hypotheses_in[:4], start=1):
+    rank = 0
+    for hypothesis_row in hypotheses_in[:4]:
+        hypothesis_id = str(hypothesis_row.get("hypothesis_id", "")).strip()
+        if not is_governed_hypothesis(hypothesis_id):
+            continue
+        rank += 1
         evidence_for = [
             EvidenceItem(
                 item=str(item.get("item", "")).strip(),
                 marker_refs=[str(x) for x in _to_list(item.get("marker_refs")) if str(x).strip()],
             )
-            for item in hypotheses_in[idx - 1].get("evidence_for", [])
+            for item in hypothesis_row.get("evidence_for", [])
             if isinstance(item, dict) and str(item.get("item", "")).strip()
         ]
         evidence_against = [
@@ -414,7 +423,7 @@ def _normalise_root_cause_finding(
                 item=str(item.get("item", "")).strip(),
                 marker_refs=[str(x) for x in _to_list(item.get("marker_refs")) if str(x).strip()],
             )
-            for item in hypotheses_in[idx - 1].get("evidence_against", [])
+            for item in hypothesis_row.get("evidence_against", [])
             if isinstance(item, dict) and str(item.get("item", "")).strip()
         ]
         missing_data = [
@@ -422,7 +431,7 @@ def _normalise_root_cause_finding(
                 marker_id=str(item.get("marker_id", "")).strip(),
                 reason=str(item.get("reason", "")).strip(),
             )
-            for item in hypotheses_in[idx - 1].get("missing_data", [])
+            for item in hypothesis_row.get("missing_data", [])
             if isinstance(item, dict)
             and str(item.get("marker_id", "")).strip()
             and str(item.get("reason", "")).strip()
@@ -433,7 +442,7 @@ def _normalise_root_cause_finding(
                 display_name=str(item.get("display_name", "")).strip(),
                 rationale=str(item.get("rationale", "")).strip(),
             )
-            for item in hypotheses_in[idx - 1].get("confirmatory_tests", [])
+            for item in hypothesis_row.get("confirmatory_tests", [])
             if isinstance(item, dict)
             and str(item.get("test_id", "")).strip()
             and str(item.get("display_name", "")).strip()
@@ -441,11 +450,11 @@ def _normalise_root_cause_finding(
         ]
         hypotheses_out.append(
             HypothesisV1(
-                hypothesis_id=str(hypothesis_row.get("hypothesis_id", "")).strip(),
+                hypothesis_id=hypothesis_id,
                 title=str(hypothesis_row.get("title", "")).strip(),
                 summary=str(hypothesis_row.get("summary", "")).strip(),
                 hypothesis_confidence=_safe_float(hypothesis_row.get("hypothesis_confidence")),
-                ranking_rationale=_build_ranking_rationale(hypothesis_row, idx),
+                ranking_rationale=_build_ranking_rationale(hypothesis_row, rank),
                 evidence_for=evidence_for,
                 evidence_against=evidence_against,
                 missing_data=missing_data,
@@ -787,6 +796,19 @@ def compile_report_v1(
         input_reference_ranges=input_reference_ranges,
     )
     intervention_annotations_v1 = build_intervention_annotations_v1(user_intervention_document)
+    output_authority_provenance_v1 = build_report_output_authority_provenance_v1(
+        signal_results=signal_results,
+        report=ReportV1(
+            report_version="v1",
+            top_findings=top_findings,
+            top_chains=top_chains,
+            actions=actions,
+            meta=meta,
+            root_cause_v1=root_cause_v1,
+            intervention_annotations_v1=intervention_annotations_v1,
+        ),
+        root_cause=root_cause_v1,
+    )
 
     return ReportV1(
         report_version="v1",
@@ -796,4 +818,5 @@ def compile_report_v1(
         meta=meta,
         root_cause_v1=root_cause_v1,
         intervention_annotations_v1=intervention_annotations_v1,
+        output_authority_provenance_v1=output_authority_provenance_v1,
     )

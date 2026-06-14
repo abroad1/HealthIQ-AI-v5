@@ -1,0 +1,104 @@
+schema_version: 1.0.0
+runtime_consumed: true
+status: active
+work_id: ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion
+artefact_path: knowledge_bus/governance/compiled_output_authority_model_v1.yaml
+analysis_utc: '2026-06-14'
+purpose: >
+  Govern day-one compiled analytical output authority chain from activated signals
+  through root-cause and card surfaces to frontend DTO assembly.
+forbidden_compiler_inputs:
+- Batch_2_Pass_3.json
+- investigation_specs/multi_llm_research
+- knowledge_bus/research/investigation_specs
+- raw Pass 3
+- LLM clinical reasoning at runtime
+allowed_compiler_inputs:
+- activated signal_results from SignalEvaluator
+- runtime_context snapshot from build_runtime_context_snapshot_from_analysis_context
+- knowledge_bus/root_cause/hypotheses/*_v1.yaml
+- knowledge_bus/compiled/hypotheses/
+- knowledge_bus/compiled/health_system_cards/
+- knowledge_bus/governance/*_register_v1.yaml
+- knowledge_bus/governance/*_model_v1.yaml
+legacy_path_handling:
+  LEGACY_CLASSIFIED_ALLOWED_TEMPORARY: may emit with provenance tag until ARCH-RT-4 migration
+  LEGACY_UNGOVERNED_BLOCKER: quarantine from day-one governed consumer output
+  DUPLICATE_AUTHORITY_BLOCKER: apply signal_authority_collision_model_v1.yaml
+  UNKNOWN_REQUIRES_REVIEW: fail-closed suppress
+fail_closed_default: suppress_signal
+frontend_render_boundary: frontend remains render-only; no medical inference
+output_element_types:
+- element_type: signal_card
+  may_emit: true
+  required_authority: activated_signal_output
+  required_trace_fields: [source_signal_ids, source_package_ids, authority_status]
+  allowed_runtime_inputs: [signal_results, package_metadata]
+  forbidden_runtime_inputs: [raw Pass 3, investigation_spec]
+  fail_closed_if_missing_authority: true
+  default_wording_strength: informational
+- element_type: root_cause_card
+  may_emit: true
+  required_authority: governed_root_cause_mapping
+  required_trace_fields: [source_signal_ids, source_root_cause_ids, authority_status]
+  allowed_runtime_inputs: [signal_results, root_cause_hypothesis_yaml, compiled_hypothesis]
+  forbidden_runtime_inputs: [raw Pass 3, why_engine_fallback_untraceable]
+  fail_closed_if_missing_authority: true
+  default_wording_strength: informational
+- element_type: system_summary
+  may_emit: true
+  required_authority: consumer_domain_card
+  required_trace_fields: [source_signal_ids, authority_status]
+  allowed_runtime_inputs: [scoring_rails, compiled_card_evidence, idl_records]
+  forbidden_runtime_inputs: [raw Pass 3]
+  fail_closed_if_missing_authority: true
+  default_wording_strength: informational
+- element_type: cluster_summary
+  may_emit: true
+  required_authority: interpretation_display_layer
+  required_trace_fields: [source_signal_ids, authority_status]
+  allowed_runtime_inputs: [idl_records_v1.yaml, fired_signal_results]
+  forbidden_runtime_inputs: [raw Pass 3]
+  fail_closed_if_missing_authority: true
+  default_wording_strength: informational
+- element_type: hypothesis_summary
+  may_emit: true
+  required_authority: governed_root_cause_mapping
+  required_trace_fields: [source_root_cause_ids, authority_status]
+  allowed_runtime_inputs: [root_cause_v1]
+  forbidden_runtime_inputs: [why_engine_fallback_untraceable]
+  fail_closed_if_missing_authority: true
+  default_wording_strength: informational
+- element_type: biomarker_explanation
+  may_emit: true
+  required_authority: ssot_retail_explainer_registry
+  required_trace_fields: [source_biomarker_ids, authority_status]
+  allowed_runtime_inputs: [evidence_registry, ssot]
+  forbidden_runtime_inputs: [raw Pass 3]
+  fail_closed_if_missing_authority: true
+  default_wording_strength: educational
+- element_type: contextual_modifier_explanation
+  may_emit: true
+  required_authority: context_modifier_catalogue
+  required_trace_fields: [source_context_keys, authority_status]
+  allowed_runtime_inputs: [runtime_context_snapshot]
+  forbidden_runtime_inputs: [frontend_inference]
+  fail_closed_if_missing_authority: true
+  default_wording_strength: informational
+- element_type: missing_context_notice
+  may_emit: true
+  required_authority: runtime_context_requirements_model
+  required_trace_fields: [source_context_keys, authority_status]
+  allowed_runtime_inputs: [runtime_context_evaluation_result]
+  forbidden_runtime_inputs: [diagnosis_wording]
+  fail_closed_if_missing_authority: true
+  default_wording_strength: informational
+- element_type: inactive_signal_notice
+  may_emit: false
+  required_authority: package_activation_register
+  required_trace_fields: [source_signal_ids, authority_status]
+  allowed_runtime_inputs: [governance_registers]
+  forbidden_runtime_inputs: [signal_evaluator_emission]
+  fail_closed_if_missing_authority: true
+  default_wording_strength: informational
+rollback_path: Revert compiled_output_authority_model_v1.yaml, provenance builder, contract extensions, and compiler wiring.

@@ -1,0 +1,60 @@
+schema_version: 1.0.0
+runtime_consumed: true
+status: active
+work_id: ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion
+artefact_path: knowledge_bus/governance/card_authority_register_v1.yaml
+analysis_utc: '2026-06-14'
+entries:
+- card_id: report_top_finding
+  card_type: signal_card
+  display_purpose: Ranked signal finding headline in ReportV1.top_findings
+  authorised_input: activated SignalResult rows
+  required_trace_fields: [signal_id, package_id, primary_metric, authority_status]
+  allowed_wording_strength: informational
+  prohibited_wording: diagnosis, treatment recommendation, supplement recommendation
+  may_include_root_cause_explanation: false
+  may_include_context_explanation: false
+  may_include_missing_context_notice: false
+  runtime_consumed: true
+  activation_status: CARD_GOVERNED_ACTIVE
+  fail_closed_condition: signal_state not suboptimal/at_risk
+  generated_by: core.analytics.report_compiler_v1.compile_report_v1
+- card_id: consumer_domain_score
+  card_type: consumer_domain_card
+  display_purpose: Wave 1 Health Systems domain card
+  authorised_input: scoring rails + compiled health_system_card_evidence + IDL
+  required_trace_fields: [domain_id, active_signal_ids, source_track, authority_status]
+  allowed_wording_strength: informational
+  prohibited_wording: diagnosis, treatment recommendation
+  may_include_root_cause_explanation: false
+  may_include_context_explanation: true
+  runtime_consumed: true
+  activation_status: CARD_GOVERNED_ACTIVE
+  generated_by: core.analytics.domain_score_assembler.assemble_consumer_domain_scores_v1
+- card_id: idl_pattern_card
+  card_type: interpretation_display_layer_card
+  display_purpose: Section 5 retail pattern card from IDL records
+  authorised_input: idl_records_v1.yaml + fired signal_results
+  required_trace_fields: [record_id, source_signal_ids, authority_status]
+  allowed_wording_strength: informational
+  prohibited_wording: diagnosis, treatment recommendation
+  runtime_consumed: true
+  activation_status: CARD_GOVERNED_ACTIVE
+  generated_by: core.analytics.interpretation_display_layer_publish_v1
+- card_id: layer3_insight_card
+  card_type: hypothesis_summary
+  display_purpose: Layer 3 tooling insight cards (non-production orchestrator path)
+  authorised_input: AnalysisDTO burden vector
+  activation_status: CARD_LEGACY_QUARANTINED
+  runtime_consumed: false
+  fail_closed_condition: not emitted from production orchestrator.run()
+  notes: Tooling/tests only per insight_assembler_v1.py
+- card_id: layer_c_feature_card
+  card_type: system_summary
+  display_purpose: Inline heuristic Layer C features in insight_graph
+  authorised_input: biomarker heuristics in insight_graph_builder._build_layer_c_features
+  activation_status: CARD_LEGACY_QUARANTINED
+  runtime_consumed: false
+  fail_closed_condition: not primary production card authority
+  notes: Hardcoded heuristics — quarantined pending governed mapping
+rollback_path: Revert register and card provenance builder hooks.

@@ -1,0 +1,59 @@
+schema_version: 1.0.0
+runtime_consumed: true
+status: active
+work_id: ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion
+artefact_path: knowledge_bus/governance/root_cause_authority_register_v1.yaml
+analysis_utc: '2026-06-14'
+registry_source: core.knowledge.root_cause_registry_v1.ROOT_CAUSE_TARGET_SPECS
+pattern_entries:
+- signal_id_prefix: signal_
+  authority_source: knowledge_bus/root_cause/hypotheses/{asset}_v1.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  runtime_consumed: true
+  fail_closed_condition: signal not in fired suboptimal/at_risk set
+  notes: LC-S18 legacy YAML hypothesis assets — governed mapping, not raw Pass 3
+entries:
+- signal_id: signal_vitamin_d_low
+  root_cause_id: rc_vitamin_d_low_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low_compiled_hypothesis_v1.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_vitamin_d_low]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+- signal_id: __why_engine_fallback__
+  root_cause_id: why_engine_fallback_v1
+  authority_source: inline_untraceable
+  activation_status: ROOT_CAUSE_UNTRACEABLE_BLOCKED
+  allowed_source_signals: []
+  runtime_consumed: false
+  fail_closed_condition: always quarantined from day-one governed consumer output
+  prohibited_wording: diagnosis, treatment, supplement recommendation
+  notes: Structured placeholder when lead signal lacks governed hypotheses
+batch2_active_signal_entries:
+- signal_id: signal_free_t3_low
+  authority_source: signal_output_only_pending_root_cause_mapping
+  activation_status: ROOT_CAUSE_REQUIRES_FUTURE_MAPPING
+  runtime_consumed: false
+  notes: Activated signal; root-cause YAML not registered in ROOT_CAUSE_TARGET_SPECS
+- signal_id: signal_fai_high
+  authority_source: signal_output_only_pending_root_cause_mapping
+  activation_status: ROOT_CAUSE_REQUIRES_FUTURE_MAPPING
+- signal_id: signal_free_testosterone_high
+  authority_source: signal_output_only_pending_root_cause_mapping
+  activation_status: ROOT_CAUSE_REQUIRES_FUTURE_MAPPING
+- signal_id: signal_free_testosterone_low
+  authority_source: signal_output_only_pending_root_cause_mapping
+  activation_status: ROOT_CAUSE_REQUIRES_FUTURE_MAPPING
+batch2_inactive_signal_entries:
+- signal_id: signal_dhea_high
+  activation_status: ROOT_CAUSE_GOVERNED_INACTIVE
+  fail_closed_condition: package inactive pending DHEA/DHEA-S identity remediation
+- signal_id: signal_dhea_low
+  activation_status: ROOT_CAUSE_GOVERNED_INACTIVE
+- signal_id: signal_fai_low
+  activation_status: ROOT_CAUSE_GOVERNED_INACTIVE
+- signal_id: signal_free_testosterone_pct_high
+  activation_status: ROOT_CAUSE_GOVERNED_INACTIVE
+- signal_id: signal_free_testosterone_pct_low
+  activation_status: ROOT_CAUSE_GOVERNED_INACTIVE
+rollback_path: Revert register and provenance quarantine rules in output_authority_provenance_builder_v1.py.
