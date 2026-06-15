@@ -4,6 +4,7 @@
 work_id: BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability
 branch: work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-reachability
 status: FINAL_CORRECTIONS_COMPLETE
+head_sha: eedee952081050bfd958c1f47bc866292af49831
 ---
 
 ## Executive verdict
@@ -114,14 +115,14 @@ Checks all 5 active Batch 2 packages for pregnancy gate safety, questionnaire-ab
 ## Test output (full — post GPT corrections)
 
 ```
-82 passed (active reachability + runtime context + batch2 + dhea high + governance)
+86 passed (active reachability + runtime context + batch2 + dhea high + governance)
 ```
 
 Sprint regression command:
 
 ```
 python -m pytest backend/tests/regression/test_active_signal_context_gate_reachability.py backend/tests/regression/test_runtime_context_evaluation.py backend/tests/regression/test_batch2_full_coverage_activation.py backend/tests/governance/test_active_signal_context_gate_reachability_governance.py backend/tests/regression/test_dhea_s_high_activation.py -q
-→ 82 passed
+→ 86 passed
 ```
 
 ---
@@ -163,7 +164,7 @@ day_one_architecture_validation: PASS
 day_one_launch_estate_gate: PASS
 active_package_count: 5
 [active] pkg_kb47_free_t3_low_low_t3_syndrome :: signal_free_t3_low (7 gates)
-[active] pkg_kb47_fai_high_biochemical_hyperandrogenism :: signal_fai_high (10 gates)
+[active] pkg_kb47_fai_high_biochemical_hyperandrogenism :: signal_fai_high (9 gates)
 [active] pkg_kb47_free_testosterone_high_androgen_excess_context :: signal_free_testosterone_high (10 gates)
 [active] pkg_kb47_free_testosterone_low_androgen_deficiency_context :: signal_free_testosterone_low (11 gates)
 [active] pkg_kb47_dhea_high_androgen_excess_context :: signal_dhea_high (6 gates)
