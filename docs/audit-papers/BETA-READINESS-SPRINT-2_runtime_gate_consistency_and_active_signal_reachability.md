@@ -6,6 +6,7 @@ branch: work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-
 status: MERGED_CLOSURE_COMPLETE
 head_sha: 6873b40
 merged_to_main: 6873b40
+closure_doc_sha: 993243c
 ---
 
 ## Executive verdict
@@ -238,7 +239,7 @@ Revert signal_library pregnancy gate changes, reachability validator, policy YAM
 | Sprint branch | `work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-reachability` | Fast-forward merge |
 | `main` HEAD | `6873b40` | `git rev-parse main` |
 | `origin/main` HEAD | `6873b40` | `git rev-parse origin/main` — **aligned** |
-| Working tree | Clean (post-closure doc commit pending) | `git status --short` |
+| Working tree | Clean | `git status --short` |
 | Stash | Empty | `git stash list` |
 | Kernel status | COMPLETE | `automation_bus/latest_cursor_status.json` |
 | Active package count | 5 | Unchanged |
