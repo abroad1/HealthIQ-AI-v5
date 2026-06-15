@@ -1,9 +1,10 @@
 {
   "branch": "work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-reachability",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-15T22:28:03Z",
   "cursor_started_utc": "2026-06-15T22:30:00Z",
-  "head_sha": "666b748a5bed9d698715e60febda04676af00aed",
+  "head_sha": "651e036847cda7439f23593ce73e6887fab6fac6",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability"
 }
