@@ -187,6 +187,82 @@ def test_missing_age_suppresses_free_testosterone_high():
     assert results == []
 
 
+def test_fai_high_activates_when_supplements_field_absent():
+    signal = _load_package_signal("pkg_kb47_fai_high_biochemical_hyperandrogenism", "signal_fai_high")
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "female",
+            "date_of_birth": "1990-01-01",
+            "long_term_medications": [],
+        }
+    )
+    assert ctx["supplement"]["dhea_supplementation_status"] == "not_answered"
+    results = _evaluate(signal, {"fai": 90.0, "testosterone": 40.0, "shbg": 20.0}, runtime_context=ctx)
+    assert {row.signal_id for row in results} == {"signal_fai_high"}
+
+
+def test_free_testosterone_high_activates_when_supplements_field_absent():
+    signal = _load_package_signal(
+        "pkg_kb47_free_testosterone_high_androgen_excess_context",
+        "signal_free_testosterone_high",
+    )
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "female",
+            "date_of_birth": "1990-01-01",
+            "long_term_medications": [],
+        }
+    )
+    assert ctx["supplement"]["dhea_supplementation_status"] == "not_answered"
+    results = _evaluate(
+        signal,
+        {"free_testosterone": 30.0, "testosterone": 40.0, "shbg": 20.0},
+        runtime_context=ctx,
+    )
+    assert {row.signal_id for row in results} == {"signal_free_testosterone_high"}
+
+
+def test_dhea_supplementation_answered_yes_still_suppresses_fai_and_ft_high():
+    fai = _load_package_signal("pkg_kb47_fai_high_biochemical_hyperandrogenism", "signal_fai_high")
+    ft_high = _load_package_signal(
+        "pkg_kb47_free_testosterone_high_androgen_excess_context",
+        "signal_free_testosterone_high",
+    )
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "female",
+            "date_of_birth": "1990-01-01",
+            "long_term_medications": [],
+            "supplements": ["DHEA 25mg"],
+        }
+    )
+    assert ctx["supplement"]["dhea_supplementation_status"] == "answered_yes"
+    assert _evaluate(fai, {"fai": 90.0, "testosterone": 40.0, "shbg": 20.0}, runtime_context=ctx) == []
+    assert _evaluate(
+        ft_high,
+        {"free_testosterone": 30.0, "testosterone": 40.0, "shbg": 20.0},
+        runtime_context=ctx,
+    ) == []
+
+
+def test_dhea_s_high_gate_unchanged_allows_not_answered():
+    signal = _load_package_signal("pkg_kb47_dhea_high_androgen_excess_context", "signal_dhea_high")
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "female",
+            "date_of_birth": "1990-01-01",
+        }
+    )
+    assert ctx["supplement"]["dhea_supplementation_status"] == "not_answered"
+    results = _evaluate(
+        signal,
+        {"dhea_s": 20.0},
+        runtime_context=ctx,
+        lab_ranges={"dhea_s": {"min": 0.94, "max": 15.44}},
+    )
+    assert {row.signal_id for row in results} == {"signal_dhea_high"}
+
+
 def test_ordinary_supplements_do_not_suppress_fai_high():
     signal = _load_package_signal("pkg_kb47_fai_high_biochemical_hyperandrogenism", "signal_fai_high")
     for supplements in (["Vitamin D"], ["Omega-3/Fish Oil"], ["Multivitamin"]):

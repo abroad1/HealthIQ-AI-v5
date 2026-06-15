@@ -53,6 +53,27 @@ def _load_questionnaire_ids(path: Path) -> frozenset[str]:
     return frozenset(ids)
 
 
+def _optional_field_dependent_keys(
+    policy: dict[str, Any],
+    *,
+    package_id: str,
+) -> dict[str, frozenset[str]]:
+    optional = policy.get("questionnaire_optional_fields") or {}
+    if not isinstance(optional, dict):
+        return {}
+    out: dict[str, frozenset[str]] = {}
+    for field_id, row in optional.items():
+        if not isinstance(row, dict):
+            continue
+        scope = row.get("package_scope")
+        if isinstance(scope, list) and scope and package_id not in {str(item) for item in scope}:
+            continue
+        keys = row.get("dependent_context_keys") or []
+        if isinstance(keys, list):
+            out[str(field_id)] = frozenset(str(k) for k in keys if str(k).strip())
+    return out
+
+
 def _context_key_to_questionnaire_field(key: str) -> str | None:
     mapping = {
         "hormone_therapy_status": "long_term_medications",
@@ -140,6 +161,8 @@ def _validate_disclosure_gate(
     suppress_registry: dict[tuple[str, str, str], str],
     symptoms_decisions: dict[str, Any],
     questionnaire_mappings: dict[str, Any],
+    optional_dependent_keys: dict[str, frozenset[str]],
+    optional_field_policy: dict[str, Any],
     errors: list[str],
 ) -> None:
     context_type = str(gate.get("context_type", "")).strip()
@@ -174,6 +197,26 @@ def _validate_disclosure_gate(
                     f"not present in questionnaire: {list(mapped.keys())}"
                 )
                 return
+
+    for _field_id, dependent_keys in optional_dependent_keys.items():
+        if key not in dependent_keys:
+            continue
+        field_policy = optional_field_policy.get(_field_id) if isinstance(optional_field_policy, dict) else None
+        if not isinstance(field_policy, dict):
+            continue
+        safe = field_policy.get("safe_missing_states") or []
+        safe_set = {str(v).strip() for v in safe if str(v).strip()}
+        allowed = gate.get("allowed_values")
+        if not isinstance(allowed, list):
+            errors.append(f"{package_id}/{signal_id}: {key} gate missing allowed_values")
+            return
+        allowed_set = {str(v).strip() for v in allowed if str(v).strip()}
+        if not (safe_set & allowed_set):
+            errors.append(
+                f"{package_id}/{signal_id}: {key} depends on optional field {_field_id!r}; "
+                f"allowed_values must include {sorted(safe_set)}"
+            )
+        return
 
     if key in absent_keys:
         allowed = gate.get("allowed_values")
@@ -212,11 +255,16 @@ def _validate_package(
     suppress_registry: dict[tuple[str, str, str], str],
     symptoms_decisions: dict[str, Any],
     questionnaire_mappings: dict[str, Any],
+    policy: dict[str, Any],
     errors: list[str],
     report: list[str],
 ) -> None:
     package_id = str(package_row["package_id"])
     signal_id = str(package_row.get("signal_id", ""))
+    optional_field_policy = policy.get("questionnaire_optional_fields") or {}
+    if not isinstance(optional_field_policy, dict):
+        optional_field_policy = {}
+    optional_dependent_keys = _optional_field_dependent_keys(policy, package_id=package_id)
     library = _load_signal_library(package_id)
     signal = _signal_for_id(library, signal_id)
     if signal is None:
@@ -244,6 +292,8 @@ def _validate_package(
             suppress_registry=suppress_registry,
             symptoms_decisions=symptoms_decisions,
             questionnaire_mappings=questionnaire_mappings,
+            optional_dependent_keys=optional_dependent_keys,
+            optional_field_policy=optional_field_policy,
             errors=errors,
         )
 
@@ -352,6 +402,7 @@ def validate(*, repo_root: Path | None = None) -> tuple[list[str], list[str]]:
             suppress_registry=suppress_registry,
             symptoms_decisions=symptoms_decisions,
             questionnaire_mappings=questionnaire_mappings,
+            policy=policy,
             errors=errors,
             report=report,
         )

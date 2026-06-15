@@ -3,7 +3,7 @@
 ---
 work_id: BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability
 branch: work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-reachability
-status: GPT_CORRECTIONS_COMPLETE
+status: FINAL_CORRECTIONS_COMPLETE
 ---
 
 ## Executive verdict
@@ -55,7 +55,7 @@ Applied to: `pkg_kb47_fai_high_biochemical_hyperandrogenism`, `pkg_kb47_free_t3_
 | Gate | Package | Reason |
 |------|---------|--------|
 | calorie_restriction_status, fasting_status | FT3 low, FT low | Lifestyle-sourced; suppress-until-answered with cited Batch 2 authority |
-| dhea_supplementation_status (answered_no only) | FAI high, FT high | Optional supplements field; follow-up if users skip supplements |
+| dhea_supplementation_status (answered_no only) | FAI high, FT high | **Resolved** — allows `not_answered` for optional supplements field |
 | hormone_therapy disclosed presence | FAI high, FT high | Required medications question always answered |
 
 ---
@@ -81,6 +81,14 @@ Applied to: `pkg_kb47_fai_high_biochemical_hyperandrogenism`, `pkg_kb47_free_t3_
 - Policy distinguishes downgrade vs suppress-until-answered vs questionnaire mapping
 - Validator runs synthetic AAS translation checks
 - Validator enforces symptoms authority decisions against package gates
+
+### 4. DHEA supplementation optional-field fix (final correction)
+
+**Problem:** FAI high and FT high required `dhea_supplementation_status: answered_no` only; users skipping optional `supplements` received `not_answered` and were suppressed.
+
+**Fix:** Both packages now allow `answered_no` and `not_answered` on `dhea_supplementation_status`; `answered_yes` remains suppressive. Same optional-supplements class fix applied to `aas_exposure_status` (`not_answered` allowed; removed `aas_exposure_status_disclosed` presence gate on FAI high).
+
+**Policy:** `questionnaire_optional_fields.supplements` registered with dependent key `dhea_supplementation_status`.
 
 ---
 

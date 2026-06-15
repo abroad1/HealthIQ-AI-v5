@@ -75,6 +75,7 @@ signals:
       requirement: disclosure_state
       allowed_values:
       - answered_no
+      - not_answered
     - context_type: medication
       key: long_term_medications_disclosed
       requirement: disclosed
@@ -93,6 +94,7 @@ signals:
       requirement: disclosure_state
       allowed_values:
       - answered_no
+      - not_answered
   override_rules:
   - rule_id: or_free_testosterone_high_with_total_testosterone_high
     resulting_state: at_risk

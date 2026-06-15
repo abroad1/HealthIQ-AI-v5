@@ -5,6 +5,19 @@ work_id: BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reac
 description: >
   Policy registry for active runtime signal context gate reachability. Distinguishes
   safe-missing states, cited suppress-until-answered gates, and evaluator translation rules.
+questionnaire_optional_fields:
+  supplements:
+    reason: optional in backend/ssot/questionnaire.json (required false)
+    package_scope:
+      - pkg_kb47_fai_high_biochemical_hyperandrogenism
+      - pkg_kb47_free_testosterone_high_androgen_excess_context
+    dependent_context_keys:
+      - dhea_supplementation_status
+      - aas_exposure_status
+    safe_missing_states:
+      - not_answered
+    suppressive_states:
+      - answered_yes
 questionnaire_absent_context_keys:
   pregnancy_status:
     reason: pregnancy_status is not captured in backend/ssot/questionnaire.json

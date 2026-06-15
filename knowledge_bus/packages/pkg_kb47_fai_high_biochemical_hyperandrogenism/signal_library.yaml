@@ -75,11 +75,9 @@ signals:
       requirement: disclosure_state
       allowed_values:
       - answered_no
+      - not_answered
     - context_type: medication
       key: hormone_therapy_status_disclosed
-      requirement: disclosed
-    - context_type: clinical_context
-      key: aas_exposure_status_disclosed
       requirement: disclosed
     - context_type: clinical_context
       key: pregnancy_status
@@ -93,6 +91,7 @@ signals:
       requirement: disclosure_state
       allowed_values:
       - answered_no
+      - not_answered
   override_rules:
   - rule_id: or_fai_high_with_testosterone_high
     resulting_state: at_risk
