@@ -13,9 +13,13 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any, Sequence
 
 import yaml
+
+_BACKEND = Path(__file__).resolve().parents[1]
+if str(_BACKEND) not in sys.path:
+    sys.path.insert(0, str(_BACKEND))
 
 _REPO = Path(__file__).resolve().parents[2]
 _BATCH2_REGISTER = (
@@ -134,6 +138,8 @@ def _validate_disclosure_gate(
     absent_keys: dict[str, Any],
     lifestyle_keys: frozenset[str],
     suppress_registry: dict[tuple[str, str, str], str],
+    symptoms_decisions: dict[str, Any],
+    questionnaire_mappings: dict[str, Any],
     errors: list[str],
 ) -> None:
     context_type = str(gate.get("context_type", "")).strip()
@@ -149,6 +155,25 @@ def _validate_disclosure_gate(
     if key == "pregnancy_status":
         _validate_pregnancy_gate(package_id=package_id, signal_id=signal_id, gate=gate, errors=errors)
         return
+
+    if key == "symptoms_status":
+        decision_row = symptoms_decisions.get(package_id)
+        if isinstance(decision_row, dict):
+            decision = str(decision_row.get("decision", "")).strip()
+            if decision == "required_gate_with_questionnaire_mapping":
+                mapped = questionnaire_mappings.get("symptoms_status") or {}
+                mapped_fields = [
+                    str(field)
+                    for field in mapped.keys()
+                    if str(field) in questionnaire_ids
+                ]
+                if mapped_fields:
+                    return
+                errors.append(
+                    f"{package_id}/{signal_id}: symptoms_status mapping fields "
+                    f"not present in questionnaire: {list(mapped.keys())}"
+                )
+                return
 
     if key in absent_keys:
         allowed = gate.get("allowed_values")
@@ -185,6 +210,8 @@ def _validate_package(
     absent_keys: dict[str, Any],
     lifestyle_keys: frozenset[str],
     suppress_registry: dict[tuple[str, str, str], str],
+    symptoms_decisions: dict[str, Any],
+    questionnaire_mappings: dict[str, Any],
     errors: list[str],
     report: list[str],
 ) -> None:
@@ -215,8 +242,75 @@ def _validate_package(
             absent_keys=absent_keys,
             lifestyle_keys=lifestyle_keys,
             suppress_registry=suppress_registry,
+            symptoms_decisions=symptoms_decisions,
+            questionnaire_mappings=questionnaire_mappings,
             errors=errors,
         )
+
+
+def _validate_evaluator_aas_translation(errors: list[str]) -> None:
+    from core.analytics.runtime_context_evaluator import build_runtime_context_snapshot
+
+    cases = (
+        (["Vitamin D"], "answered_no"),
+        (["Omega-3/Fish Oil"], "answered_no"),
+        (["Multivitamin"], "answered_no"),
+        (["Iron"], "answered_no"),
+        (["prohormone stack"], "answered_yes"),
+        (["anabolic steroid"], "answered_yes"),
+    )
+    for supplements, expected in cases:
+        ctx = build_runtime_context_snapshot(
+            questionnaire_responses={"supplements": supplements},
+        )
+        actual = ctx["clinical_context"].get("aas_exposure_status")
+        if actual != expected:
+            errors.append(
+                "evaluator AAS translation: supplements="
+                f"{supplements!r} expected aas_exposure_status={expected}, got {actual!r}"
+            )
+
+    ctx_unanswered = build_runtime_context_snapshot()
+    if ctx_unanswered["clinical_context"].get("aas_exposure_status") != "not_answered":
+        errors.append("evaluator AAS translation: unanswered supplements must be not_answered")
+
+
+def _validate_symptoms_gate_policy(
+    policy: dict[str, Any],
+    errors: list[str],
+) -> None:
+    decisions = policy.get("symptoms_gate_authority_decisions") or {}
+    if not isinstance(decisions, dict):
+        return
+    for package_id, row in decisions.items():
+        if not isinstance(row, dict):
+            continue
+        signal_id = str(row.get("signal_id", "")).strip()
+        decision = str(row.get("decision", "")).strip()
+        library = _load_signal_library(str(package_id))
+        signal = _signal_for_id(library, signal_id)
+        if signal is None:
+            errors.append(f"symptoms policy: {package_id}/{signal_id} not found")
+            continue
+        required = (signal.get("runtime_context_requirements") or {}).get("required_context") or []
+        has_symptoms_gate = any(
+            isinstance(g, dict)
+            and g.get("context_type") == "symptom"
+            and g.get("key") == "symptoms_status"
+            for g in required
+        )
+        if decision == "downgrade_not_suppress" and has_symptoms_gate:
+            errors.append(
+                f"{package_id}/{signal_id}: symptoms_status must not be hard gate "
+                f"(authority decision={decision})"
+            )
+        if decision == "required_gate_with_questionnaire_mapping" and not has_symptoms_gate:
+            errors.append(
+                f"{package_id}/{signal_id}: symptoms_status required gate missing "
+                f"(authority decision={decision})"
+            )
+        if decision == "downgrade_not_suppress" and not str(row.get("authority_citation", "")).strip():
+            errors.append(f"{package_id}/{signal_id}: downgrade decision missing authority_citation")
 
 
 def validate(*, repo_root: Path | None = None) -> tuple[list[str], list[str]]:
@@ -240,6 +334,12 @@ def validate(*, repo_root: Path | None = None) -> tuple[list[str], list[str]]:
         return [f"activated package count mismatch: register={expected_count} loaded={len(activated)}"], []
 
     suppress_registry = _suppress_registry(policy)
+    symptoms_decisions = policy.get("symptoms_gate_authority_decisions") or {}
+    if not isinstance(symptoms_decisions, dict):
+        symptoms_decisions = {}
+    questionnaire_mappings = policy.get("questionnaire_field_mappings") or {}
+    if not isinstance(questionnaire_mappings, dict):
+        questionnaire_mappings = {}
     errors: list[str] = []
     report: list[str] = [f"active_package_count: {len(activated)}"]
 
@@ -250,9 +350,14 @@ def validate(*, repo_root: Path | None = None) -> tuple[list[str], list[str]]:
             absent_keys=absent_keys,
             lifestyle_keys=lifestyle_keys,
             suppress_registry=suppress_registry,
+            symptoms_decisions=symptoms_decisions,
+            questionnaire_mappings=questionnaire_mappings,
             errors=errors,
             report=report,
         )
+
+    _validate_evaluator_aas_translation(errors)
+    _validate_symptoms_gate_policy(policy, errors)
 
     return errors, report
 

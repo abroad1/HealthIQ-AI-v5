@@ -222,6 +222,46 @@ def _disclosure_state_from_value(value: Any, *, field_answered: bool) -> str:
     return DISCLOSURE_ANSWERED_YES if _value_present(value) else DISCLOSURE_ANSWERED_NO
 
 
+def _supplement_item_indicates_aas_exposure(item: str) -> bool:
+    """True only when a supplement entry explicitly indicates AAS/testosterone exposure."""
+    lowered = item.strip().lower()
+    if not lowered or lowered in {"none", "other"}:
+        return False
+    if any(token in lowered for token in ("anabolic", "prohormone", "aas")):
+        return True
+    if "testosterone" in lowered:
+        return True
+    if "steroid" in lowered:
+        return True
+    return False
+
+
+def _aas_exposure_state_from_supplements(supplements: Any, *, supplements_answered: bool) -> str:
+    if not supplements_answered:
+        return DISCLOSURE_NOT_ANSWERED
+    if not isinstance(supplements, list) or len(supplements) == 0:
+        return DISCLOSURE_ANSWERED_NO
+    lowered = {str(item).strip().lower() for item in supplements if str(item).strip()}
+    if lowered <= {"", "none", "no", "false", "n/a", "not_applicable"}:
+        return DISCLOSURE_ANSWERED_NO
+    if any(_supplement_item_indicates_aas_exposure(item) for item in lowered):
+        return DISCLOSURE_ANSWERED_YES
+    return DISCLOSURE_ANSWERED_NO
+
+
+def _symptoms_disclosure_from_responses(responses: Mapping[str, Any]) -> Optional[str]:
+    if _field_answered(responses, "symptoms"):
+        return _disclosure_state_from_value(responses.get("symptoms"), field_answered=True)
+    if _field_answered(responses, "low_testosterone_symptoms"):
+        raw = str(responses.get("low_testosterone_symptoms", "")).strip().lower()
+        if raw in {"no symptoms", "no", "none"}:
+            return DISCLOSURE_ANSWERED_NO
+        if raw in {"not sure", ""}:
+            return DISCLOSURE_NOT_ANSWERED
+        return DISCLOSURE_ANSWERED_YES
+    return None
+
+
 def _set_disclosure_state(bucket: Dict[str, Any], key: str, state: str) -> None:
     if state in SUPPORTED_DISCLOSURE_STATES:
         bucket[key] = state
@@ -303,6 +343,10 @@ def build_runtime_context_snapshot(
 
     if "symptoms" in responses and _value_present(responses.get("symptoms")):
         snapshot["symptom"]["symptoms_present"] = True
+
+    symptom_state = _symptoms_disclosure_from_responses(responses)
+    if symptom_state is not None:
+        _set_disclosure_state(snapshot["symptom"], "symptoms_status", symptom_state)
 
     supplements_answered = _field_answered(responses, "supplements")
     supplements_value = responses.get("supplements")
@@ -387,7 +431,10 @@ def build_runtime_context_snapshot(
     if illness_answered:
         snapshot["clinical_context"]["illness_or_recovery_status_disclosed"] = True
 
-    aas_state = supplement_state if supplements_answered else DISCLOSURE_NOT_ANSWERED
+    aas_state = _aas_exposure_state_from_supplements(
+        responses.get("supplements"),
+        supplements_answered=supplements_answered,
+    )
     if supplements_answered:
         snapshot["clinical_context"]["aas_exposure_status_disclosed"] = True
 
@@ -399,9 +446,8 @@ def build_runtime_context_snapshot(
         lowered = {str(item).strip().lower() for item in supplements}
         if any("testosterone" in item for item in lowered):
             snapshot["supplement"]["testosterone_supplement"] = True
-        if any("steroid" in item or "prohormone" in item for item in lowered):
+        if aas_state == DISCLOSURE_ANSWERED_YES:
             snapshot["clinical_context"]["aas_exposure"] = True
-            aas_state = DISCLOSURE_ANSWERED_YES
         if any("dhea" in item for item in lowered):
             snapshot["supplement"]["dhea_supplementation"] = True
             dhea_supplement_state = DISCLOSURE_ANSWERED_YES
@@ -411,13 +457,6 @@ def build_runtime_context_snapshot(
         "dhea_supplementation_status",
         dhea_supplement_state,
     )
-
-    if _field_answered(responses, "symptoms"):
-        symptom_state = _disclosure_state_from_value(
-            responses.get("symptoms"),
-            field_answered=True,
-        )
-        _set_disclosure_state(snapshot["symptom"], "symptoms_status", symptom_state)
 
     if _field_answered(responses, "biological_sex"):
         _set_disclosure_state(

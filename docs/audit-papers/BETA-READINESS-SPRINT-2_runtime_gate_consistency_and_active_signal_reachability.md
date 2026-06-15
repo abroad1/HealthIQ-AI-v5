@@ -3,7 +3,7 @@
 ---
 work_id: BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability
 branch: work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-reachability
-status: IMPLEMENTATION_COMPLETE
+status: GPT_CORRECTIONS_COMPLETE
 ---
 
 ## Executive verdict
@@ -54,17 +54,41 @@ Applied to: `pkg_kb47_fai_high_biochemical_hyperandrogenism`, `pkg_kb47_free_t3_
 
 | Gate | Package | Reason |
 |------|---------|--------|
-| symptoms_status | FAI high, FT high, FT low | Suppress-until-answered per Batch 2 medical authority; registered in policy |
-| calorie_restriction_status, fasting_status | FT3 low, FT low | Lifestyle-sourced; suppress-until-answered with medical justification |
-| dhea_supplementation_status (answered_no only) | FAI high, FT high | Deferred to CF-BETA-READINESS-2 |
-| hormone_therapy / AAS disclosed presence | FAI high, FT high | Existing Batch 2 gates unchanged |
+| calorie_restriction_status, fasting_status | FT3 low, FT low | Lifestyle-sourced; suppress-until-answered with cited Batch 2 authority |
+| dhea_supplementation_status (answered_no only) | FAI high, FT high | Optional supplements field; follow-up if users skip supplements |
+| hormone_therapy disclosed presence | FAI high, FT high | Required medications question always answered |
+
+---
+
+## GPT architectural review corrections
+
+### 1. AAS evaluator fix
+
+**Bug:** `aas_state = supplement_state if supplements_answered` treated any supplement (Vitamin D, omega-3, etc.) as `answered_yes`.
+
+**Fix:** `_aas_exposure_state_from_supplements()` — AAS-specific term detection only; generic supplements → `answered_no`.
+
+### 2. symptoms_status authority findings
+
+| Package | Authority classification | Decision | Action |
+|---------|-------------------------|----------|--------|
+| FAI high | REQUIRED_DISCLOSURE_ONLY (Batch_2 authority § FAI high) | **B** | Removed hard gate; added `limitation_note` |
+| FT high | REQUIRED_DISCLOSURE_ONLY (Batch_2 authority § FT high) | **B** | Removed hard gate; added `limitation_note` |
+| FT low | REQUIRED_GATE (Batch_2 authority § FT low) | **A with mapping** | Hard gate retained; `low_testosterone_symptoms` → `symptoms_status` in evaluator |
+
+### 3. Policy / validator enhancements
+
+- Policy distinguishes downgrade vs suppress-until-answered vs questionnaire mapping
+- Validator runs synthetic AAS translation checks
+- Validator enforces symptoms authority decisions against package gates
 
 ---
 
 ## Runtime context evaluator review
 
-- `pregnancy_status`: defaults to `not_answered` when field absent (DHEA-S-HIGH-ACTIVATION-1); **no change this sprint**
-- Other disclosure keys reviewed; no broad rewrite required
+- `pregnancy_status`: defaults to `not_answered` when field absent (unchanged)
+- `aas_exposure_status`: AAS-specific supplement detection (corrected)
+- `symptoms_status`: mapped from `low_testosterone_symptoms` for FT low reachability
 - Lifestyle-sourced keys remain set only when lifestyle_factors answered
 
 ---
@@ -75,7 +99,32 @@ Applied to: `pkg_kb47_fai_high_biochemical_hyperandrogenism`, `pkg_kb47_free_t3_
 **Policy:** `knowledge_bus/governance/active_signal_context_gate_reachability_policy_v1.yaml`  
 **Promoted to:** `run_architecture_validation_gate.py`
 
-Checks all 5 active Batch 2 packages for pregnancy gate safety, questionnaire-absent key handling, and suppress-until-answered registry entries.
+Checks all 5 active Batch 2 packages for pregnancy gate safety, questionnaire-absent key handling, suppress-until-answered registry entries, AAS evaluator translation, and symptoms authority alignment.
+
+---
+
+## Test output (full — post GPT corrections)
+
+```
+82 passed (active reachability + runtime context + batch2 + dhea high + governance)
+```
+
+Sprint regression command:
+
+```
+python -m pytest backend/tests/regression/test_active_signal_context_gate_reachability.py backend/tests/regression/test_runtime_context_evaluation.py backend/tests/regression/test_batch2_full_coverage_activation.py backend/tests/governance/test_active_signal_context_gate_reachability_governance.py backend/tests/regression/test_dhea_s_high_activation.py -q
+→ 82 passed
+```
+
+---
+
+## Validator output (full — post GPT corrections)
+
+```
+architecture_validation_gate: PASS
+validate_active_signal_context_gate_reachability: PASS (includes AAS translation checks)
+active_packages_checked: 5
+```
 
 ---
 
@@ -106,8 +155,8 @@ day_one_architecture_validation: PASS
 day_one_launch_estate_gate: PASS
 active_package_count: 5
 [active] pkg_kb47_free_t3_low_low_t3_syndrome :: signal_free_t3_low (7 gates)
-[active] pkg_kb47_fai_high_biochemical_hyperandrogenism :: signal_fai_high (11 gates)
-[active] pkg_kb47_free_testosterone_high_androgen_excess_context :: signal_free_testosterone_high (11 gates)
+[active] pkg_kb47_fai_high_biochemical_hyperandrogenism :: signal_fai_high (10 gates)
+[active] pkg_kb47_free_testosterone_high_androgen_excess_context :: signal_free_testosterone_high (10 gates)
 [active] pkg_kb47_free_testosterone_low_androgen_deficiency_context :: signal_free_testosterone_low (11 gates)
 [active] pkg_kb47_dhea_high_androgen_excess_context :: signal_dhea_high (6 gates)
 validation_status: PASS
@@ -165,4 +214,4 @@ Revert signal_library pregnancy gate changes, reachability validator, policy YAM
 
 ## Recommended next action
 
-Claude audit → GPT architectural review → human approval → merge
+Claude re-audit (GPT corrections applied) → GPT architectural re-review → human approval → merge

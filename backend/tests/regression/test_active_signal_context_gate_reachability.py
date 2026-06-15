@@ -62,13 +62,12 @@ def _evaluate(signal: dict, biomarkers: dict, *, runtime_context, lab_ranges=Non
     )
 
 
-def _female_minimal(*, pregnant: bool | None = None):
+def _female_minimal(*, pregnant: bool | None = None, supplements: list[str] | None = None):
     responses: dict = {
         "biological_sex": "female",
         "date_of_birth": "1990-01-01",
         "long_term_medications": [],
-        "supplements": [],
-        "symptoms": ["acne"],
+        "supplements": supplements if supplements is not None else [],
     }
     if pregnant is not None:
         responses["pregnancy_status"] = pregnant
@@ -178,11 +177,107 @@ def test_missing_age_suppresses_free_testosterone_high():
         "signal_free_testosterone_high",
     )
     ctx = build_runtime_context_snapshot(
-        questionnaire_responses={"biological_sex": "female", "long_term_medications": [], "supplements": [], "symptoms": []}
+        questionnaire_responses={"biological_sex": "female", "long_term_medications": [], "supplements": []}
     )
     results = _evaluate(
         signal,
         {"free_testosterone": 30.0, "testosterone": 40.0, "shbg": 20.0},
+        runtime_context=ctx,
+    )
+    assert results == []
+
+
+def test_ordinary_supplements_do_not_suppress_fai_high():
+    signal = _load_package_signal("pkg_kb47_fai_high_biochemical_hyperandrogenism", "signal_fai_high")
+    for supplements in (["Vitamin D"], ["Omega-3/Fish Oil"], ["Multivitamin"]):
+        ctx = _female_minimal(supplements=supplements)
+        assert ctx["clinical_context"]["aas_exposure_status"] == "answered_no"
+        results = _evaluate(
+            signal,
+            {"fai": 90.0, "testosterone": 40.0, "shbg": 20.0},
+            runtime_context=ctx,
+        )
+        assert {row.signal_id for row in results} == {"signal_fai_high"}, f"suppressed for {supplements}"
+
+
+def test_genuine_aas_suppresses_fai_high():
+    signal = _load_package_signal("pkg_kb47_fai_high_biochemical_hyperandrogenism", "signal_fai_high")
+    ctx = _female_minimal(supplements=["prohormone stack"])
+    assert ctx["clinical_context"]["aas_exposure_status"] == "answered_yes"
+    results = _evaluate(
+        signal,
+        {"fai": 90.0, "testosterone": 40.0, "shbg": 20.0},
+        runtime_context=ctx,
+    )
+    assert results == []
+
+
+def test_fai_high_activates_without_symptoms_field():
+    signal = _load_package_signal("pkg_kb47_fai_high_biochemical_hyperandrogenism", "signal_fai_high")
+    ctx = _female_minimal()
+    assert "symptoms_status" not in ctx["symptom"]
+    results = _evaluate(signal, {"fai": 90.0, "testosterone": 40.0, "shbg": 20.0}, runtime_context=ctx)
+    assert {row.signal_id for row in results} == {"signal_fai_high"}
+
+
+def test_free_testosterone_high_activates_without_symptoms_field():
+    signal = _load_package_signal(
+        "pkg_kb47_free_testosterone_high_androgen_excess_context",
+        "signal_free_testosterone_high",
+    )
+    ctx = _female_minimal()
+    results = _evaluate(
+        signal,
+        {"free_testosterone": 30.0, "testosterone": 40.0, "shbg": 20.0},
+        runtime_context=ctx,
+    )
+    assert {row.signal_id for row in results} == {"signal_free_testosterone_high"}
+
+
+def test_free_testosterone_low_reachable_via_low_testosterone_symptoms():
+    signal = _load_package_signal(
+        "pkg_kb47_free_testosterone_low_androgen_deficiency_context",
+        "signal_free_testosterone_low",
+    )
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "male",
+            "date_of_birth": "1985-01-01",
+            "long_term_medications": [],
+            "supplements": [],
+            "chronic_conditions": [],
+            "low_testosterone_symptoms": "Decreased energy/libido",
+        },
+        lifestyle_factors={"calorie_restriction": False, "fasting": False},
+    )
+    assert ctx["symptom"]["symptoms_status"] == "answered_yes"
+    results = _evaluate(
+        signal,
+        {"free_testosterone": 3.0, "testosterone": 5.0, "shbg": 40.0},
+        runtime_context=ctx,
+    )
+    assert {row.signal_id for row in results} == {"signal_free_testosterone_low"}
+
+
+def test_free_testosterone_low_suppressed_without_symptoms_answered():
+    signal = _load_package_signal(
+        "pkg_kb47_free_testosterone_low_androgen_deficiency_context",
+        "signal_free_testosterone_low",
+    )
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "male",
+            "date_of_birth": "1985-01-01",
+            "long_term_medications": [],
+            "supplements": [],
+            "chronic_conditions": [],
+        },
+        lifestyle_factors={"calorie_restriction": False, "fasting": False},
+    )
+    assert "symptoms_status" not in ctx["symptom"]
+    results = _evaluate(
+        signal,
+        {"free_testosterone": 3.0, "testosterone": 5.0, "shbg": 40.0},
         runtime_context=ctx,
     )
     assert results == []

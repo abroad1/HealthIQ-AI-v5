@@ -410,6 +410,26 @@ def test_disclosure_state_answered_no_not_treated_as_missing_for_aas():
     assert "aas_exposure" not in ctx["clinical_context"]
 
 
+def test_vitamin_d_supplement_does_not_set_aas_answered_yes():
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"supplements": ["Vitamin D"]},
+    )
+    assert ctx["clinical_context"]["aas_exposure_status"] == "answered_no"
+    assert "aas_exposure" not in ctx["clinical_context"]
+
+
+def test_low_testosterone_symptoms_maps_to_symptoms_status():
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"low_testosterone_symptoms": "No symptoms"},
+    )
+    assert ctx["symptom"]["symptoms_status"] == "answered_no"
+
+    ctx_yes = build_runtime_context_snapshot(
+        questionnaire_responses={"low_testosterone_symptoms": "Decreased energy/libido"},
+    )
+    assert ctx_yes["symptom"]["symptoms_status"] == "answered_yes"
+
+
 def test_disclosure_state_answered_no_for_thyroid_medication_when_meds_empty():
     ctx = build_runtime_context_snapshot(
         questionnaire_responses={"long_term_medications": []},
