@@ -13,29 +13,32 @@ readiness_summary:
   RUNTIME_CONTEXT_READY_RESEARCH_PENDING: 4
   RESEARCH_READY_CONTEXT_PENDING: 0
   ACTIVATION_READY_PENDING_APPROVAL: 0
-  RUNTIME_ACTIVE: 4
-  BLOCKED_PENDING_EXTERNAL_CLINICAL_AUTHORITY: 4
+  RUNTIME_ACTIVE: 5
+  BLOCKED_PENDING_EXTERNAL_CLINICAL_AUTHORITY: 3
   BLOCKED_PENDING_CONTEXT_CONTRACT: 0
   BLOCKED_PENDING_PACKAGE_METADATA_REMEDIATION: 1
   DO_NOT_ACTIVATE: 0
 packages:
 - package_id: pkg_kb47_dhea_high_androgen_excess_context
   package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
-  current_activation_state: inactive
-  minimum_coverage_decision: DEFER_PENDING_EXTERNAL_CLINICAL_AUTHORITY
+  current_activation_state: runtime_active_canonical
+  minimum_coverage_decision: ACTIVATE_WITH_GATES_THIS_SPRINT
   required_context_primitives:
   - demographic.sex
   - demographic.age
   - medication.hormone_therapy_status
   - clinical_context.aas_exposure_status
   - supplement.supplements_status
+  - supplement.dhea_supplementation_status
+  - clinical_context.pregnancy_status
   required_companion_biomarkers: []
-  missing_research_authority: androgen clinical sign-off (CF-BATCH2-010)
+  missing_research_authority: none
   missing_context_fields: []
-  runtime_readiness_status: RUNTIME_CONTEXT_READY_RESEARCH_PENDING
-  package_metadata_readiness_status: BLOCKED_PENDING_PACKAGE_METADATA_REMEDIATION
-  activation_blocker_status: BLOCKED_PENDING_EXTERNAL_CLINICAL_AUTHORITY
-  next_activation_prerequisite: External clinical sign-off + populate runtime_context_requirements + approval phrase
+  runtime_readiness_status: RUNTIME_ACTIVE
+  package_metadata_readiness_status: READY
+  activation_blocker_status: ACTIVATED
+  next_activation_prerequisite: none
+  superseding_medical_authority: docs/Medical Research Documents/DHEA-S_High_Activation_Medical_Research_Review.md
 - package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
   package_path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
   current_activation_state: inactive

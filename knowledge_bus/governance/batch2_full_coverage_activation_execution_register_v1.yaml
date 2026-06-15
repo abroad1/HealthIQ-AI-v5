@@ -4,9 +4,10 @@ status: activation_complete
 work_id: BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals
 activation_utc: '2026-06-14'
 medical_research_authority: docs/Medical Research Documents/Batch_2_Thyroid_Androgen_Context_Authority_Review.md
+dhea_s_high_superseding_authority: docs/Medical Research Documents/DHEA-S_High_Activation_Medical_Research_Review.md
 runtime_activation_performed: true
-activated_package_count: 4
-kept_inactive_count: 5
+activated_package_count: 5
+kept_inactive_count: 4
 activated_packages:
 - package_id: pkg_kb47_free_t3_low_low_t3_syndrome
   signal_id: signal_free_t3_low
@@ -26,12 +27,14 @@ activated_packages:
   activation_outcome: ACTIVATE_WITH_GATES_THIS_SPRINT
   scope_note: adult male symptom-gated
   governance_runtime_activation_status: runtime_active_canonical
-kept_inactive_packages:
+  governance_runtime_activation_status: runtime_active_canonical
 - package_id: pkg_kb47_dhea_high_androgen_excess_context
-  outcome: KEEP_INACTIVE_PENDING_EXTERNAL_CLINICIAN_SIGNOFF
-  reason: DHEA-S identity remediated (primary_metric dhea_s); external clinician sign-off required before runtime activation per medical research authority
-  identity_remediation_status: IDENTITY_RESOLVED_PRIMARY_METRIC_DHEA_S
-  identity_remediation_work_id: DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution
+  signal_id: signal_dhea_high
+  activation_outcome: ACTIVATE_WITH_GATES_THIS_SPRINT
+  scope_note: standalone cautious DHEA-S high biomarker-level signal per DHEA-S_High_Activation_Medical_Research_Review.md
+  governance_runtime_activation_status: runtime_active_canonical
+  governance_runtime_activation_work_id: DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation
+kept_inactive_packages:
 - package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
   outcome: DO_NOT_ACTIVATE
   reason: evidence insufficient per medical research authority

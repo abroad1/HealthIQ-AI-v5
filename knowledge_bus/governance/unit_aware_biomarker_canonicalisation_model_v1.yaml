@@ -72,5 +72,5 @@ ambiguous_marker_families:
       without sulfate label indicators, canonicalise as dhea (unsulfated) when range
       does not match dhea_s_convention.
 dhea_low_activation_policy: DHEA_LOW_DO_NOT_ACTIVATE_EVIDENCE_INSUFFICIENT
-dhea_s_high_activation_policy: KEEP_INACTIVE_PENDING_EXTERNAL_CLINICIAN_SIGNOFF
+dhea_s_high_activation_policy: ACTIVATE_STANDALONE_CAUTIONARY_BIOMARKER_LEVEL
 rollback_path: Revert governance model, identity resolver, alias registry, package metadata, and tests.

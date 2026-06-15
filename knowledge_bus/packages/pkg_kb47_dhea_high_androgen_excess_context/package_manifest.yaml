@@ -1,8 +1,8 @@
 package_id: pkg_kb47_dhea_high_androgen_excess_context
 package_version: 1.0.0
 description: KB-S47 Batch 2 package for inv_dhea_high_androgen_excess_context (signal_dhea_high).
-  Biomarker IDs aligned to SSOT where governed. Primary metric remediated to dhea_s via
-  DHEA-DHEAS-CANONICALISATION-1 unit-aware identity resolution.
+  Runtime primary metric is DHEA-S (dhea_s). Standalone biomarker-level signal only; broad
+  androgen-excess wording is not permitted without corroboration.
 research_brief: research_brief.yaml
 signal_library: signal_library.yaml
 promoted_signal_intelligence: promoted_signal_intelligence.yaml
@@ -10,7 +10,11 @@ author: HealthIQ Knowledge Bus — KB-S47
 created_at: '2026-03-28'
 source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
 translation_mode: creation
-behavioural_impact: NONE
+behavioural_impact: SIGNAL_RUNTIME_ACTIVATION
 identity_remediation_status: IDENTITY_RESOLVED_PRIMARY_METRIC_DHEA_S
 identity_remediation_work_id: DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution
-governance_runtime_activation_status: inactive_pending_external_clinician_signoff
+medical_research_authority: docs/Medical Research Documents/DHEA-S_High_Activation_Medical_Research_Review.md
+governance_runtime_activation_status: runtime_active_canonical
+governance_runtime_activation_work_id: DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation
+governance_runtime_activation_register: knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml
+governance_runtime_activation_recorded_at: '2026-06-15'

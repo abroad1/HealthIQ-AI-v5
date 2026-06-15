@@ -1,10 +1,9 @@
 {
-  "branch": "work/DHEA-DHEAS-CANONICALISATION-1-unit-aware-marker-identity-and-adrenal-androgen-resolution",
+  "branch": "work/DHEA-S-HIGH-ACTIVATION-1-medical-authority-gated-runtime-activation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-15T09:32:05Z",
-  "cursor_started_utc": "2026-06-15T09:22:54Z",
-  "head_sha": "7c8e692544d009a780bd5280f63c4f630e5253ea",
+  "cursor_started_utc": "2026-06-15T15:58:59Z",
+  "head_sha": "5a750a5cbd320190105702c1c806ea3b8513abbc",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution"
+  "status": "IN_PROGRESS",
+  "work_id": "DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation"
 }

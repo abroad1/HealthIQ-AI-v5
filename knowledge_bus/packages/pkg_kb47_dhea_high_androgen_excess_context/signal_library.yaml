@@ -2,40 +2,45 @@ library:
   package_id: KBP-4702
   schema_version: 2.0.0
   package_version: 1.0.0
-  library_name: KB-S47 Dhea High signal library
-  description: Translated from inv_dhea_high_androgen_excess_context (Batch_2_Pass_3_Rev1.json).
-    Primary metric remediated to DHEA-S per DHEA-DHEAS-CANONICALISATION-1 unit-aware identity resolution.
+  library_name: KB-S47 Dhea S High signal library
+  description: Standalone cautious DHEA-S high biomarker-level signal. Primary metric
+    dhea_s per DHEA-DHEAS-CANONICALISATION-1. Activated per DHEA-S_High_Activation_Medical_Research_Review.md.
+    Broad androgen-excess wording requires corroborating markers/symptoms and is not permitted
+    without them.
 signals:
 - signal_id: signal_dhea_high
   name: Dhea S High
-  description: DHEA-S is an adrenal androgen marker. Elevated DHEA-S relative to the
-    lab-provided range may support an adrenal contribution to androgen excess when
-    interpreted alongside sex, age, symptoms, testosterone, SHBG and supplement/medication
-    context. Not diagnostic in isolation.
+  description: Standalone cautious DHEA-S high biomarker-level signal. Elevated DHEA-S
+    relative to the lab-provided range may be consistent with increased adrenal androgen
+    production but is not diagnostic on its own.
   system: hormonal
   primary_metric: dhea_s
   trigger_direction: high
+  standalone_signal_allowed: true
+  corroboration_required: false
   supporting_metrics:
   - biomarker_id: testosterone
     expected_direction: high
     role: corroborator
     availability: common
-    rationale: Concurrent testosterone elevation corroborates that high DHEA-S is sitting
-      within a broader biochemical hyperandrogenism pattern.
+    rationale: Strongly recommended for broader androgen-excess interpretation; not required
+      for basic DHEA-S-high signal.
   - biomarker_id: shbg
     expected_direction: any
     role: context_marker
     availability: common
-    rationale: SHBG helps contextualise androgen bioavailability alongside DHEA-S.
+    rationale: Strongly recommended for FAI/free androgen context; not required for basic
+      signal.
   dependencies:
     biomarkers:
     - dhea_s
-    - testosterone
     derived_metrics: []
     signals: []
   optional_dependencies:
     biomarkers:
+    - testosterone
     - shbg
+    - fai
     derived_metrics: []
     signals: []
   thresholds:
@@ -59,9 +64,6 @@ signals:
     - context_type: demographic
       key: age
       requirement: present
-    - context_type: symptom
-      key: symptoms_present
-      requirement: present
     - context_type: supplement
       key: supplements_disclosed
       requirement: present
@@ -71,16 +73,6 @@ signals:
     - context_type: clinical_context
       key: aas_exposure_status_disclosed
       requirement: disclosed
-    - context_type: medication
-      key: hormone_therapy_status
-      requirement: disclosure_state
-      allowed_values:
-      - answered_no
-    - context_type: clinical_context
-      key: aas_exposure_status
-      requirement: disclosure_state
-      allowed_values:
-      - answered_no
     - context_type: clinical_context
       key: pregnancy_status
       requirement: disclosure_state
@@ -91,6 +83,18 @@ signals:
       requirement: disclosure_state
       allowed_values:
       - answered_no
+    - context_type: medication
+      key: hormone_therapy_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
+      - answered_yes
+    - context_type: clinical_context
+      key: aas_exposure_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
+      - answered_yes
     - context_type: symptom
       key: symptoms_status
       requirement: disclosure_state
@@ -100,8 +104,8 @@ signals:
   override_rules:
   - rule_id: or_dhea_s_high_with_testosterone_high
     resulting_state: at_risk
-    description: Escalate when high DHEA-S coincides with high total testosterone, as
-      this more strongly supports a broader biochemical hyperandrogenism pattern.
+    description: Optional escalation when high DHEA-S coincides with high total testosterone;
+      broader androgen-excess interpretation only when corroboration present.
     conditions:
     - metric_id: testosterone
       operator: '>'
@@ -109,23 +113,27 @@ signals:
       comparator_type: lab_range_boundary
       boundary: above_max
     source_refs:
-    - source_hyperandrogenism_review_2021
+    - docs/Medical Research Documents/DHEA-S_High_Activation_Medical_Research_Review.md
   output:
     signal_value: dhea_s
-    signal_state: at_risk
+    signal_state: suboptimal
     confidence: confidence_model_v1
     primary_metric: dhea_s
-    supporting_markers:
-    - testosterone
-    - shbg
+    supporting_markers: []
+    limitation_note: Because symptom information and/or supporting androgen markers are
+      not available, this should be treated as a biomarker-level observation rather than
+      a broader androgen-excess interpretation.
   explanation:
-    mechanism: DHEA-S is produced predominantly by the adrenal cortex and can rise in
-      states of increased adrenal androgen output.
-    biological_pathway: Adrenal steroidogenesis and peripheral androgen metabolism.
-    interpretation: This pattern may support an adrenal contribution to androgen excess
-      when interpreted alongside sex, age, symptoms, testosterone, SHBG and supplement/medication
-      context.
-    implications: Further androgen profiling is usually more informative than relying
-      on an isolated DHEA-S result.
-    supporting_marker_roles: Total testosterone corroborates broader hyperandrogenism;
-      SHBG contextualises androgen bioavailability.
+    mechanism: DHEA-S is an adrenal androgen marker mainly produced by the adrenal glands
+      and can act as a precursor to other sex hormones.
+    biological_pathway: Adrenal steroidogenesis.
+    interpretation: Your DHEA-S result is above the reference range provided by the laboratory.
+      A higher result may be consistent with increased adrenal androgen production, but
+      this result is not diagnostic on its own. Interpretation depends on age, biological
+      sex, symptoms, hormone therapy, anabolic steroid or DHEA supplement use, pregnancy
+      status where relevant, and other androgen markers such as testosterone, SHBG or free
+      androgen index if available.
+    implications: Further androgen profiling may be informative when testosterone, SHBG,
+      FAI or symptom context is available.
+    supporting_marker_roles: Testosterone, SHBG and FAI are strongly recommended for broader
+      androgen-excess interpretation but are not required for this biomarker-level signal.

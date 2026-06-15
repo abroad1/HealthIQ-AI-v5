@@ -12,8 +12,9 @@ signals:
   signal_system: hormonal
   primary_metric:
     biomarker_id: dhea_s
-    rationale: DHEA-S is the defensible adrenal androgen marker for high adrenal androgen
-      context; standalone DHEA labels require unit-aware identity resolution.
+    rationale: Standalone cautious DHEA-S high biomarker-level signal per DHEA-S_High_Activation_Medical_Research_Review.md
+  standalone_signal_allowed: true
+  corroboration_required: false
   trigger_direction: high
   activation:
     activation_logic: lab_range_exceeded

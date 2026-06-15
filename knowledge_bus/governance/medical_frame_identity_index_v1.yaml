@@ -1224,9 +1224,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
     activation_key: signal_dhea_high::inv_dhea_high_androgen_excess_context
     signal_id: signal_dhea_high
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: true
