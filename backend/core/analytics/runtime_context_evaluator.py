@@ -294,6 +294,12 @@ def build_runtime_context_snapshot(
             "pregnancy_status",
             pregnancy_state,
         )
+    else:
+        _set_disclosure_state(
+            snapshot["clinical_context"],
+            "pregnancy_status",
+            DISCLOSURE_NOT_ANSWERED,
+        )
 
     if "symptoms" in responses and _value_present(responses.get("symptoms")):
         snapshot["symptom"]["symptoms_present"] = True

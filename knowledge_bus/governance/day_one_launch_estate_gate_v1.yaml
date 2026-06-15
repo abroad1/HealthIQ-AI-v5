@@ -29,10 +29,11 @@ required_context_safety_conditions:
 - Batch 2 activated signals use disclosure_state gates
 - Suppressed context-dependent signals emit no analytical conclusions
 required_signal_activation_conditions:
-- BATCH2-FULL-COVERAGE-ACTIVATION-1 four packages runtime_active_canonical
-- Five Batch 2 packages remain inactive per execution register
+- Five Batch 2 packages runtime_active_canonical (FT3 low, FAI high, free testosterone high/low, DHEA-S high)
+- Four inactive androgen packages remain per execution register (DHEA-S low, FAI low, free testosterone pct high/low)
 required_inactive_quarantined_path_conditions:
-- DHEA packages inactive pending identity remediation
+- DHEA-S low inactive; unsulfated DHEA high/low inactive
+- DHEA/DHEA-S identity remediation resolved; DHEA-S high active as standalone biomarker-level signal
 - Layer C / Layer 3 card paths quarantined
 - why_engine_fallback_v1 blocked from governed consumer root-cause
 required_frontend_render_only_conditions:
@@ -43,7 +44,7 @@ required_security_repo_hygiene_conditions:
 allowed_carry_forwards:
 - CF-ARCHLEG1-001 root-cause YAML to compiled migration (non-blocking)
 - CF-ARCH-COMPLETION-2-RC-1 Batch 2 root-cause mapping (non-blocking)
-- DHEA/DHEA-S identity remediation while packages inactive (non-blocking)
+- DHEA/DHEA-S identity remediation resolved; DHEA-S high activation governed separately (non-blocking carry-forwards remain)
 - Optional future provenance regression expansion (non-blocking)
 - UX/frontend polish (non-blocking)
 disallowed_carry_forwards:
@@ -59,7 +60,7 @@ final_verdict_rationale: >
   All user-facing analytical runtime paths are governed or quarantined. No UNKNOWN_BLOCKER
   or BLOCKED_UNGOVERNED user-facing paths remain. Raw Pass 3 and investigation-spec runtime
   reads absent. Residual non-blocking carry-forwards: root-cause YAML migration (CF-ARCHLEG1-001),
-  Batch 2 root-cause mapping (CF-ARCH-COMPLETION-2-RC-1), DHEA identity remediation.
+  Batch 2 root-cause mapping (CF-ARCH-COMPLETION-2-RC-1), DHEA-S low and remaining androgen packages inactive.
 allowed_final_verdicts:
 - DAY_ONE_ARCHITECTURE_COMPLETE
 - DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD

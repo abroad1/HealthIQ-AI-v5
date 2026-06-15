@@ -27,7 +27,6 @@ activated_packages:
   activation_outcome: ACTIVATE_WITH_GATES_THIS_SPRINT
   scope_note: adult male symptom-gated
   governance_runtime_activation_status: runtime_active_canonical
-  governance_runtime_activation_status: runtime_active_canonical
 - package_id: pkg_kb47_dhea_high_androgen_excess_context
   signal_id: signal_dhea_high
   activation_outcome: ACTIVATE_WITH_GATES_THIS_SPRINT

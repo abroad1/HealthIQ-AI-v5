@@ -183,15 +183,27 @@ def test_companion_biomarker_present_with_context_allows_evaluation_path():
     assert isinstance(results, list)
 
 
-def test_medication_context_missing_suppresses_androgen_signal():
+def test_optional_disclosure_flags_not_required_for_dhea_s_high_activation():
     signal = _load_package_signal(
         "pkg_kb47_dhea_high_androgen_excess_context",
         "signal_dhea_high",
     )
-    ctx = _full_androgen_context()
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "female",
+            "date_of_birth": "1990-01-01",
+        }
+    )
     ctx["medication"].pop("hormone_therapy_status_disclosed", None)
-    results = _evaluate_signal(signal, {"dhea": 20.0}, runtime_context=ctx)
-    assert results == []
+    ctx["clinical_context"].pop("aas_exposure_status_disclosed", None)
+    ctx["supplement"].pop("supplements_disclosed", None)
+    results = _evaluate_signal(
+        signal,
+        {"dhea_s": 20.0},
+        runtime_context=ctx,
+        lab_ranges={"dhea_s": {"min": 0.94, "max": 15.44}},
+    )
+    assert {row.signal_id for row in results} == {"signal_dhea_high"}
 
 
 def test_unrelated_signal_without_context_requirements_unaffected():

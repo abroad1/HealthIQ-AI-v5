@@ -70,6 +70,49 @@ def _evaluate(signal: dict, biomarkers: dict, *, runtime_context, lab_ranges=Non
     )
 
 
+def test_minimal_real_user_context_activates_without_optional_fields():
+    """Representative questionnaire: age, sex, high DHEA-S only — no symptoms/pregnancy/supplements."""
+    signal = _load_package_signal("pkg_kb47_dhea_high_androgen_excess_context", "signal_dhea_high")
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "female",
+            "date_of_birth": "1990-01-01",
+        }
+    )
+    assert ctx["clinical_context"]["pregnancy_status"] == "not_answered"
+    assert ctx["supplement"]["dhea_supplementation_status"] == "not_answered"
+    assert "symptoms_status" not in ctx["symptom"]
+    results = _evaluate(signal, {"dhea_s": 20.0}, runtime_context=ctx)
+    assert {row.signal_id for row in results} == {"signal_dhea_high"}
+
+
+def test_missing_age_suppresses():
+    signal = _load_package_signal("pkg_kb47_dhea_high_androgen_excess_context", "signal_dhea_high")
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={"biological_sex": "female"}
+    )
+    results = _evaluate(signal, {"dhea_s": 20.0}, runtime_context=ctx)
+    assert results == []
+
+
+def test_dhea_s_low_remains_inactive():
+    signal = _load_package_signal("pkg_kb47_dhea_low_adrenal_androgen_reduction", "signal_dhea_low")
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "biological_sex": "male",
+            "date_of_birth": "1990-01-01",
+            "symptoms": ["fatigue"],
+        }
+    )
+    results = _evaluate(
+        signal,
+        {"dhea_s": 0.5},
+        runtime_context=ctx,
+        lab_ranges={"dhea_s": {"min": 0.94, "max": 15.44}},
+    )
+    assert results == []
+
+
 def test_dhea_s_high_activates_standalone_without_testosterone():
     signal = _load_package_signal("pkg_kb47_dhea_high_androgen_excess_context", "signal_dhea_high")
     assert signal.get("standalone_signal_allowed") is True
