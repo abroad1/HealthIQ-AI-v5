@@ -1,9 +1,10 @@
 {
   "branch": "work/DHEA-DHEAS-CANONICALISATION-1-unit-aware-marker-identity-and-adrenal-androgen-resolution",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-15T09:32:05Z",
   "cursor_started_utc": "2026-06-15T09:22:54Z",
-  "head_sha": "3cf8c5c64d509288525099aab6e1777f38c2d950",
+  "head_sha": "7c8e692544d009a780bd5280f63c4f630e5253ea",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution"
 }
