@@ -1,10 +1,9 @@
 {
-  "branch": "work/DHEA-S-HIGH-ACTIVATION-1-medical-authority-gated-runtime-activation",
+  "branch": "work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-reachability",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-15T21:14:55Z",
-  "cursor_started_utc": "2026-06-15T18:00:00Z",
-  "head_sha": "fbae37f20b97a710b2a6f463ebe44d9eba6fbb32",
+  "cursor_started_utc": "2026-06-15T21:47:40Z",
+  "head_sha": "6dd94b8bb538e230b492dd4a81c4db95acd8b703",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation"
+  "status": "IN_PROGRESS",
+  "work_id": "BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability"
 }
