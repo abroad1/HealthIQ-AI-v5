@@ -28,6 +28,7 @@ required_context_safety_conditions:
 - runtime_context_evaluator fail-closed
 - Batch 2 activated signals use disclosure_state gates
 - Suppressed context-dependent signals emit no analytical conclusions
+- Active signal context gate reachability validated (validate_active_signal_context_gate_reachability.py)
 required_signal_activation_conditions:
 - Five Batch 2 packages runtime_active_canonical (FT3 low, FAI high, free testosterone high/low, DHEA-S high)
 - Four inactive androgen packages remain per execution register (DHEA-S low, FAI low, free testosterone pct high/low)

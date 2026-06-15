@@ -87,6 +87,8 @@ signals:
       requirement: disclosure_state
       allowed_values:
       - answered_no
+      - not_answered
+      - not_applicable
   override_rules:
   - rule_id: or_free_t3_low_with_free_t4_low
     resulting_state: at_risk

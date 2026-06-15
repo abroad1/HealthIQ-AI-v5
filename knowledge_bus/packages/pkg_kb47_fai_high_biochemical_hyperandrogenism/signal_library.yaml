@@ -92,6 +92,8 @@ signals:
       requirement: disclosure_state
       allowed_values:
       - answered_no
+      - not_answered
+      - not_applicable
     - context_type: supplement
       key: dhea_supplementation_status
       requirement: disclosure_state

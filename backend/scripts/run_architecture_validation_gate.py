@@ -69,6 +69,11 @@ def main() -> int:
             None,
         ),
         (
+            "validate_active_signal_context_gate_reachability",
+            [py, str(scripts / "validate_active_signal_context_gate_reachability.py")],
+            None,
+        ),
+        (
             "validate_medical_intelligence_architecture",
             [py, str(scripts / "validate_medical_intelligence_architecture.py")],
             None,

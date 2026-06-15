@@ -1,0 +1,67 @@
+schema_version: 1.0.0
+runtime_consumed: false
+status: active
+work_id: BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability
+description: >
+  Policy registry for active runtime signal context gates that are intentionally
+  suppress-until-answered rather than allowing not_answered. All other active gates
+  for questionnaire-absent fields must allow not_answered and/or not_applicable.
+questionnaire_absent_context_keys:
+  pregnancy_status:
+    reason: pregnancy_status is not captured in backend/ssot/questionnaire.json
+    safe_missing_states:
+      - not_answered
+      - not_applicable
+    suppressive_states:
+      - answered_yes
+lifestyle_sourced_context_keys:
+  calorie_restriction_status:
+    lifestyle_field: calorie_restriction
+    note: Derived from lifestyle_factors, not questionnaire.json
+  fasting_status:
+    lifestyle_field: fasting
+    note: Derived from lifestyle_factors, not questionnaire.json
+suppress_until_answered_gates:
+  - package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+    signal_id: signal_free_testosterone_low
+    context_type: symptom
+    key: symptoms_status
+    medical_justification: >
+      Adult male low free testosterone activation is symptom-gated per Batch 2 medical
+      authority; biomarker-only activation without symptom disclosure is intentionally
+      suppressed until symptoms are answered yes or no.
+  - package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+    signal_id: signal_fai_high
+    context_type: symptom
+    key: symptoms_status
+    medical_justification: >
+      FAI high requires symptom disclosure (answered_yes or answered_no) per existing
+      Batch 2 activation gates; broader hyperandrogenism interpretation requires
+      symptom context. Follow-up sprint may align with questionnaire symptom fields.
+  - package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+    signal_id: signal_free_testosterone_high
+    context_type: symptom
+    key: symptoms_status
+    medical_justification: >
+      Free testosterone high requires symptom disclosure per existing Batch 2 activation
+      gates. Follow-up sprint may align with questionnaire symptom fields.
+  - package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+    signal_id: signal_free_t3_low
+    context_type: clinical_context
+    key: calorie_restriction_status
+    medical_justification: >
+      FT3 low activation requires energy-intake context disclosure per Batch 2 thyroid
+      authority; analysis pipeline must supply lifestyle_factors or user must answer.
+  - package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+    signal_id: signal_free_t3_low
+    context_type: clinical_context
+    key: fasting_status
+    medical_justification: >
+      FT3 low activation requires fasting context disclosure per Batch 2 thyroid authority.
+  - package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+    signal_id: signal_free_testosterone_low
+    context_type: clinical_context
+    key: calorie_restriction_status
+    medical_justification: >
+      Free testosterone low requires energy-intake context per adult male symptom-gated
+      activation scope.
