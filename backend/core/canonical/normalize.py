@@ -7,6 +7,7 @@ from typing import Dict, Any, List, Mapping, Optional, Tuple
 from core.canonical.alias_registry_service import AliasRegistryService, get_alias_registry_service
 from core.canonical.resolver import CanonicalResolver
 from core.canonical.errors import CanonicalCollisionError
+from core.canonical.unit_aware_biomarker_identity_v1 import resolve_canonical_with_identity
 from core.models.biomarker import BiomarkerPanel, BiomarkerValue
 
 
@@ -67,7 +68,23 @@ class BiomarkerNormalizer:
                 continue
             
             # Use v4 alias service for comprehensive resolution
-            canonical_key = self.alias_service.resolve(key)
+            label_hint = self.alias_service.resolve(key)
+            unit_for_identity = ""
+            reference_range = None
+            if isinstance(value, dict) and "value" in value:
+                unit_for_identity = str(value.get("unit") or "")
+                if "reference_range" in value and isinstance(value["reference_range"], dict):
+                    reference_range = dict(value["reference_range"])
+                elif "referenceRange" in value and isinstance(value["referenceRange"], dict):
+                    reference_range = dict(value["referenceRange"])
+
+            identity = resolve_canonical_with_identity(
+                raw_label=key,
+                label_canonical_hint=label_hint,
+                unit=unit_for_identity,
+                reference_range=reference_range,
+            )
+            canonical_key = identity.canonical_id
             if canonical_key.startswith("unmapped_"):
                 # Keep unmapped biomarkers but tag them as "unmapped"
                 unmapped_keys.append(key)
@@ -149,6 +166,9 @@ class BiomarkerNormalizer:
                         unit=unit,
                         reference_range=reference_range,
                         reference_profile=reference_profile,
+                        raw_label=identity.raw_label,
+                        identity_confidence=identity.confidence,
+                        identity_resolution_reason=identity.reason,
                         **extra
                     )
         
@@ -249,6 +269,12 @@ def normalize_biomarkers_with_metadata(raw_biomarkers: Dict[str, Any]) -> Dict[s
         }
         if biomarker_value.reference_profile is not None:
             result[name]["reference_profile"] = biomarker_value.reference_profile
+        if biomarker_value.raw_label:
+            result[name]["raw_label"] = biomarker_value.raw_label
+        if biomarker_value.identity_confidence:
+            result[name]["identity_confidence"] = biomarker_value.identity_confidence
+        if biomarker_value.identity_resolution_reason:
+            result[name]["identity_resolution_reason"] = biomarker_value.identity_resolution_reason
         if biomarker_value.timestamp:
             result[name]["timestamp"] = biomarker_value.timestamp
     
@@ -263,7 +289,22 @@ def detect_canonical_collisions(raw_biomarkers: Mapping[str, Any]) -> List[Dict[
     alias_service = get_alias_registry_service()
     canonical_to_raw: Dict[str, set] = {}
     for raw_key in sorted(str(k) for k in raw_biomarkers.keys()):
-        canonical_id = str(alias_service.resolve(raw_key)).strip()
+        value = raw_biomarkers[raw_key]
+        unit = ""
+        ref_range = None
+        if isinstance(value, dict):
+            unit = str(value.get("unit") or "")
+            ref = value.get("reference_range") or value.get("referenceRange")
+            if isinstance(ref, dict):
+                ref_range = ref
+        label_hint = str(alias_service.resolve(raw_key)).strip()
+        identity = resolve_canonical_with_identity(
+            raw_label=raw_key,
+            label_canonical_hint=label_hint,
+            unit=unit,
+            reference_range=ref_range,
+        )
+        canonical_id = str(identity.canonical_id).strip()
         if not canonical_id or canonical_id.startswith("unmapped_"):
             continue
         canonical_to_raw.setdefault(canonical_id, set()).add(raw_key)

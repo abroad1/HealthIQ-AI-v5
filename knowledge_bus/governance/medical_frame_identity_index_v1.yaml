@@ -1211,11 +1211,11 @@ signal_families:
       \          BATCH2-ACTIVATION-1: APPROVE BATCH2 RUNTIME ACTIVATION recorded;\
       \ runtime_active_canonical activated."
 - signal_family_id: signal_dhea_high
-  primary_biomarker_id: dhea
+  primary_biomarker_id: dhea_s
   system: hormonal
   frames:
   - signal_family_id: signal_dhea_high
-    primary_biomarker_id: dhea
+    primary_biomarker_id: dhea_s
     medical_frame_id: frame_batch2_dhea_high_androgen_excess_context
     frame_label: Androgen excess context (Pass 3 kb47)
     frame_role: pass3_frame_not_compiled
@@ -1224,9 +1224,9 @@ signal_families:
     source_package_path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
     activation_key: signal_dhea_high::inv_dhea_high_androgen_excess_context
     signal_id: signal_dhea_high
-    promotion_state: compiled_not_promoted
-    runtime_authority_status: inactive
-    clinical_adjudication_status: required_before_activation
+    promotion_state: runtime_active_canonical
+    runtime_authority_status: active
+    clinical_adjudication_status: accepted_with_rationale
     context_inputs_supported:
       biomarker_evidence: true
       questionnaire_modifiers: true

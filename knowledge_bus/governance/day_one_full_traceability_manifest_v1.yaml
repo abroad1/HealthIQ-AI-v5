@@ -211,9 +211,22 @@ entries:
   governed_by: BATCH2-FULL-COVERAGE-ACTIVATION-1
   launch_gate_status: PASS
   evidence: Provenance regression test coverage ARCH-COMPLETION-3
-- id: batch2_dhea_inactive
+- id: batch2_dhea_s_high_active
   path: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context
-  role: Inactive DHEA high pending identity remediation
+  role: Activated Batch 2 DHEA-S high signal (identity remediated)
+  authority_classification: GOVERNED_RUNTIME_AUTHORITY
+  runtime_consumed: true
+  user_facing: true
+  source_authority: batch2_full_coverage_activation_execution_register_v1.yaml
+  allowed_runtime_inputs: [runtime_context gates, lab_ranges, unit-aware dhea_s identity]
+  forbidden_runtime_inputs: [raw Pass 3, ambiguous label-only DHEA]
+  provenance_required: true
+  governed_by: DHEA-DHEAS-CANONICALISATION-1
+  launch_gate_status: PASS
+  evidence: Unit-aware canonicalisation + disclosure-state gates
+- id: batch2_dhea_inactive
+  path: knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction
+  role: Inactive DHEA-S low pending medical authority
   authority_classification: INACTIVE_NOT_RUNTIME_CONSUMED
   runtime_consumed: false
   user_facing: false

@@ -62,7 +62,6 @@ _FORBIDDEN_RUNTIME_MARKERS: Sequence[tuple[str, str]] = (
 )
 
 _INACTIVE_DHEA_PACKAGES: Sequence[str] = (
-    "pkg_kb47_dhea_high_androgen_excess_context",
     "pkg_kb47_dhea_low_adrenal_androgen_reduction",
 )
 

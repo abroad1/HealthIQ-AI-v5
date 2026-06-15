@@ -47,6 +47,9 @@ class BiomarkerValue(BaseModel):
     unit_source: Optional[str] = Field(default=None, description="explicit | reference_range | ssot_assumed")
     confidence_downgrade_unit_assumed: bool = Field(default=False, description="True when unit was assumed from SSOT")
     reference_unit_assumed: bool = Field(default=False, description="True when ref range unit was assumed from input")
+    raw_label: Optional[str] = Field(default=None, description="Original lab-reported label before canonicalisation")
+    identity_confidence: Optional[str] = Field(default=None, description="Unit-aware identity confidence level")
+    identity_resolution_reason: Optional[str] = Field(default=None, description="Governed reason for canonical identity decision")
 
 
 class BiomarkerPanel(BaseModel):

@@ -1,0 +1,76 @@
+schema_version: 1.0.0
+runtime_consumed: true
+status: active
+work_id: DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution
+artefact_path: knowledge_bus/governance/unit_aware_biomarker_canonicalisation_model_v1.yaml
+purpose: >
+  Govern multi-factor biomarker identity resolution for ambiguous lab labels.
+  Label-only canonicalisation is forbidden for markers in the ambiguous registry.
+scope:
+- ambiguous biomarker families listed in ambiguous_marker_families
+- runtime canonicalisation via backend/core/canonical/unit_aware_biomarker_identity_v1.py
+required_identity_evidence_fields:
+- raw_label
+- unit
+- reference_range
+- canonical_id
+- identity_confidence
+- identity_resolution_reason
+allowed_confidence_levels:
+- HIGH_CONFIDENCE_UNIT_RANGE_MATCH
+- MODERATE_CONFIDENCE_UNIT_MATCH
+- LOW_CONFIDENCE_LABEL_ONLY
+- AMBIGUOUS_FAIL_CLOSED
+fail_closed_conditions:
+- ambiguous label with no unit and no reference range
+- unit and reference range conflict with target canonical convention
+- true DHEA vs DHEA-S cannot be distinguished safely
+raw_label_preservation_required: true
+ambiguous_marker_families:
+- family_id: dhea_dheas
+  description: DHEA / DHEA-S assay naming ambiguity in commercial panels
+  explicit_canonical_ids:
+    dhea_s:
+      label_indicators:
+      - dhea-s
+      - dheas
+      - dehydroepiandrosterone sulfate
+      - dehydroepiandrosterone sulphate
+    dhea:
+      label_indicators:
+      - unsulfated
+      - unconjugated
+  ambiguous_raw_labels:
+  - DHEA
+  - DHEA (Venous)
+  - DHEA - venous
+  - Dehydroepiandrosterone
+  dhea_s_convention:
+    units:
+    - umol/L
+    - umol/l
+    - µmol/L
+    - μmol/L
+    reference_range_umol_l:
+      min_plausible: 0.5
+      max_plausible: 30.0
+      min_ref_max: 3.0
+      max_ref_min: 0.0
+    identity_rule: >
+      If raw label is ambiguous DHEA family AND unit matches dhea_s_convention.units
+      AND lab reference range resembles DHEA-S reporting (e.g. AB panel 0.94-15.44 umol/L),
+      canonicalise as dhea_s with HIGH_CONFIDENCE_UNIT_RANGE_MATCH.
+    label_only_insufficient: true
+  unsulfated_dhea_convention:
+    units:
+    - ng/mL
+    - ng/ml
+    - nmol/L
+    - nmol/l
+    identity_rule: >
+      If raw label is ambiguous DHEA family AND unit matches unsulfated convention
+      without sulfate label indicators, canonicalise as dhea (unsulfated) when range
+      does not match dhea_s_convention.
+dhea_low_activation_policy: DHEA_LOW_DO_NOT_ACTIVATE_EVIDENCE_INSUFFICIENT
+dhea_s_high_activation_policy: ACTIVATE_WITH_GATES_WHEN_IDENTITY_CONFIRMED
+rollback_path: Revert governance model, identity resolver, alias registry, package metadata, and tests.

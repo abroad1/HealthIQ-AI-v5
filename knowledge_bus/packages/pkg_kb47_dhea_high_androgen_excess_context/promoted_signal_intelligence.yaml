@@ -11,10 +11,9 @@ signals:
   research_domain: hormonal
   signal_system: hormonal
   primary_metric:
-    biomarker_id: dhea
-    rationale: DHEA is an androgen precursor and high levels can support an adrenal
-      or broader hyperandrogenic context, but isolated interpretation is assay-sensitive
-      and non-specific.
+    biomarker_id: dhea_s
+    rationale: DHEA-S is the defensible adrenal androgen marker for high adrenal androgen
+      context; standalone DHEA labels require unit-aware identity resolution.
   trigger_direction: high
   activation:
     activation_logic: lab_range_exceeded

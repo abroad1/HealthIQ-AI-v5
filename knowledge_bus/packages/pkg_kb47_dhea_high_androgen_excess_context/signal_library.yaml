@@ -4,42 +4,43 @@ library:
   package_version: 1.0.0
   library_name: KB-S47 Dhea High signal library
   description: Translated from inv_dhea_high_androgen_excess_context (Batch_2_Pass_3_Rev1.json).
+    Primary metric remediated to DHEA-S per DHEA-DHEAS-CANONICALISATION-1 unit-aware identity resolution.
 signals:
 - signal_id: signal_dhea_high
-  name: Dhea High
-  description: DHEA is an androgen precursor and high levels can support an adrenal
-    or broader hyperandrogenic context, but isolated interpretation is assay-sensitive
-    and non-specific.
+  name: Dhea S High
+  description: DHEA-S is an adrenal androgen marker. Elevated DHEA-S relative to the
+    lab-provided range may support an adrenal contribution to androgen excess when
+    interpreted alongside sex, age, symptoms, testosterone, SHBG and supplement/medication
+    context. Not diagnostic in isolation.
   system: hormonal
-  primary_metric: dhea
+  primary_metric: dhea_s
   trigger_direction: high
   supporting_metrics:
   - biomarker_id: testosterone
     expected_direction: high
     role: corroborator
     availability: common
-    rationale: Concurrent testosterone elevation corroborates that high DHEA is sitting
+    rationale: Concurrent testosterone elevation corroborates that high DHEA-S is sitting
       within a broader biochemical hyperandrogenism pattern.
-  - biomarker_id: dhea_s
-    expected_direction: high
-    role: differential_marker
-    availability: specialist
-    rationale: DHEA-S helps distinguish a persistent adrenal-weighted androgen source
-      from isolated or assay-sensitive DHEA variation.
+  - biomarker_id: shbg
+    expected_direction: any
+    role: context_marker
+    availability: common
+    rationale: SHBG helps contextualise androgen bioavailability alongside DHEA-S.
   dependencies:
     biomarkers:
-    - dhea
-    - testosterone
     - dhea_s
+    - testosterone
     derived_metrics: []
     signals: []
   optional_dependencies:
-    biomarkers: []
+    biomarkers:
+    - shbg
     derived_metrics: []
     signals: []
   thresholds:
-  - threshold_id: dhea_high_lab_range_activation_placeholder
-    metric_id: dhea
+  - threshold_id: dhea_s_high_lab_range_activation_placeholder
+    metric_id: dhea_s
     operator: '>='
     value: 9999.0
     severity: at_risk
@@ -70,10 +71,36 @@ signals:
     - context_type: clinical_context
       key: aas_exposure_status_disclosed
       requirement: disclosed
+    - context_type: medication
+      key: hormone_therapy_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
+    - context_type: clinical_context
+      key: aas_exposure_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
+    - context_type: clinical_context
+      key: pregnancy_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
+    - context_type: supplement
+      key: dhea_supplementation_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
+    - context_type: symptom
+      key: symptoms_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_yes
+      - answered_no
   override_rules:
-  - rule_id: or_dhea_high_with_testosterone_high
+  - rule_id: or_dhea_s_high_with_testosterone_high
     resulting_state: at_risk
-    description: Escalate when high DHEA coincides with high total testosterone, as
+    description: Escalate when high DHEA-S coincides with high total testosterone, as
       this more strongly supports a broader biochemical hyperandrogenism pattern.
     conditions:
     - metric_id: testosterone
@@ -84,22 +111,21 @@ signals:
     source_refs:
     - source_hyperandrogenism_review_2021
   output:
-    signal_value: dhea
+    signal_value: dhea_s
     signal_state: at_risk
     confidence: confidence_model_v1
-    primary_metric: dhea
+    primary_metric: dhea_s
     supporting_markers:
     - testosterone
-    - dhea_s
+    - shbg
   explanation:
-    mechanism: DHEA is an androgen precursor that can rise in states of increased
-      adrenal or broader steroidogenic androgen production.
-    biological_pathway: Adrenal and peripheral androgen precursor synthesis and downstream
-      androgen metabolism.
-    interpretation: This is best read as supportive evidence of androgen excess context
-      rather than a stand-alone source-defining marker.
+    mechanism: DHEA-S is produced predominantly by the adrenal cortex and can rise in
+      states of increased adrenal androgen output.
+    biological_pathway: Adrenal steroidogenesis and peripheral androgen metabolism.
+    interpretation: This pattern may support an adrenal contribution to androgen excess
+      when interpreted alongside sex, age, symptoms, testosterone, SHBG and supplement/medication
+      context.
     implications: Further androgen profiling is usually more informative than relying
-      on an isolated DHEA result.
-    supporting_marker_roles: Total testosterone corroborates broader hyperandrogenism,
-      while DHEA-S is the key differential marker for deciding whether the excess
-      appears adrenal-weighted.
+      on an isolated DHEA-S result.
+    supporting_marker_roles: Total testosterone corroborates broader hyperandrogenism;
+      SHBG contextualises androgen bioavailability.
