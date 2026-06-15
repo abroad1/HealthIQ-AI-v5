@@ -1,25 +1,25 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation",
+  "work_id": "BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability",
   "status": "HARDENED",
   "hardened_utc": "2026-06-15T00:00:00Z",
   "hardened_by": "Claude Code (Sonnet 4.6) — SOP v1.3.1 Stage 2",
   "front_matter_check": {
     "work_id": {
       "present": true,
-      "value": "DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation",
+      "value": "BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability",
       "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:2"
     },
     "branch": {
       "present": true,
-      "value": "work/DHEA-S-HIGH-ACTIVATION-1-medical-authority-gated-runtime-activation",
+      "value": "work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-reachability",
       "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:3"
     },
     "risk_level": {
       "present": true,
       "value": "HIGH",
       "justified": true,
-      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:4 — HIGH correct: package activation status changes, signal_library.yaml gates change, governance files change. Touches Intelligence Core input surface (package signal evaluation)."
+      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:4 — HIGH correct: touches backend/core/analytics/runtime_context_evaluator.py (Intelligence Core); signal gate semantics change directly affecting which signals fire for real users; endocrine signal activation/suppression behaviour changes."
     },
     "execution_model": {
       "present": true,
@@ -30,7 +30,7 @@
       "present": true,
       "value": "BEHAVIOUR",
       "justified": true,
-      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:6 — BEHAVIOUR correct: governance_runtime_activation_status changes from inactive to runtime_active_canonical; signal_dhea_high enters SignalRegistry evaluation; runtime_context_requirements gates change directly affecting whether signal fires."
+      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:6 — BEHAVIOUR correct: runtime_context_requirements allowed_values in signal_library.yaml files change; runtime_context_evaluator.py may change; signal firing behaviour changes for real users. All BEHAVIOUR controls apply."
     },
     "closing_delimiter": {
       "status": "PASS",
@@ -39,143 +39,288 @@
     "all_five_fields_valid": true
   },
   "stage_2a_authority_verification": {
-    "status": "PASS",
-    "medical_authority_file": {
-      "path": "docs/Medical Research Documents/DHEA-S_High_Activation_Medical_Research_Review.md",
-      "exists": true,
-      "dhea_s_high_activate_now": "CONFIRMED: line 15",
-      "standalone_signal_allowed_true": "CONFIRMED: line 209",
-      "corroboration_required_false": "CONFIRMED: line 210",
-      "dhea_s_low_decision": "CONFIRMED: BIOMARKER_LEVEL_EXPLANATION_ONLY — line 172",
-      "unsulfated_dhea_high_decision": "CONFIRMED: DO_NOT_ACTIVATE — line 289",
-      "unsulfated_dhea_low_decision": "CONFIRMED: DO_NOT_ACTIVATE — line 290",
-      "safe_wording_section": "CONFIRMED: lines 126-147 — maximum claim strength: may support, may be consistent with",
-      "suppression_table": "CONFIRMED: lines 109-122 — DHEA supplementation=SUPPRESS, pregnancy=SUPPRESS, missing age=SUPPRESS, missing sex=SUPPRESS, HRT=DOWNGRADE, AAS=DOWNGRADE"
-    },
-    "package_current_state": {
-      "manifest_path": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/package_manifest.yaml",
-      "governance_runtime_activation_status": "CONFIRMED: inactive_pending_external_clinician_signoff — line 16",
-      "identity_remediation_status": "CONFIRMED: IDENTITY_RESOLVED_PRIMARY_METRIC_DHEA_S — line 14",
-      "behavioural_impact": "CONFIRMED: NONE — line 13 (must change to SIGNAL_RUNTIME_ACTIVATION this sprint)"
-    },
-    "signal_library": {
-      "path": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml",
-      "primary_metric": "CONFIRMED: dhea_s — line 21",
-      "activation_logic": "CONFIRMED: lab_range_exceeded — line 48",
-      "trigger_direction": "CONFIRMED: high — line 16"
-    },
-    "execution_register": {
-      "path": "knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml",
-      "activated_package_count": "CONFIRMED: 4 — line 8",
-      "dhea_high_in_kept_inactive": "CONFIRMED: lines 30-34 — KEEP_INACTIVE_PENDING_EXTERNAL_CLINICIAN_SIGNOFF",
-      "dhea_low_in_kept_inactive": "CONFIRMED: lines 35-37 — DO_NOT_ACTIVATE"
-    },
-    "carry_forward": {
-      "CF-DHEA-S-ACTIVATION-001": "CONFIRMED: Open — docs/sprints/launch_core_carry_forward_register.md:82",
-      "CF-BATCH2-010": "CONFIRMED: Open — line 80 — 5 androgen packages remain inactive"
-    },
-    "day_one_estate_gate": {
-      "path": "knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml",
-      "stale_condition": "CONFIRMED: line 35 — 'DHEA packages inactive pending identity remediation' — this becomes stale when DHEA-S high activates. MANDATORY UPDATE required in Phase 5."
-    },
-    "regression_test_inversion": {
-      "path": "backend/tests/regression/test_dhea_s_high_remains_inactive.py",
-      "line_23": "CONFIRMED: asserts pkg_kb47_dhea_high_androgen_excess_context NOT in activated and IN inactive. This test WILL FAIL after sprint. Must be replaced with a test asserting activation."
-    },
-    "duplicate_authority_sources": "NONE detected."
+    "status": "PASS_WITH_PATH_CORRECTION",
+    "authority_files_present": [
+      {
+        "path": "docs/audit-papers/DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation.md",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "docs/audit-papers/DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution.md",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "docs/audit-papers/BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals.md",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "docs/audit-papers/ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate.md",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "docs/sprints/launch_core_carry_forward_register.md",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "knowledge_bus/governance/runtime_context_requirements_model_v1.yaml",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "backend/core/analytics/runtime_context_evaluator.py",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob and content read"
+      },
+      {
+        "path": "backend/core/analytics/signal_evaluator.py",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/signal_library.yaml",
+        "exists": true,
+        "citation": "CONFIRMED: file present — content read"
+      },
+      {
+        "path": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml",
+        "exists": true,
+        "citation": "CONFIRMED: file present — content read"
+      },
+      {
+        "path": "knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/signal_library.yaml",
+        "exists": true,
+        "citation": "CONFIRMED: file present — content read"
+      },
+      {
+        "path": "knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context/signal_library.yaml",
+        "exists": true,
+        "citation": "CONFIRMED: file present — content read"
+      },
+      {
+        "path": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml",
+        "exists": true,
+        "citation": "CONFIRMED: file present — content read. This is the DHEA-S high package (package_id: KBP-4702, description: 'Standalone cautious DHEA-S high biomarker-level signal'). Directory name is pkg_kb47_dhea_high_androgen_excess_context, not pkg_kb47_dheas_high_*."
+      },
+      {
+        "path": "backend/tests/regression/test_runtime_context_evaluation.py",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "backend/tests/regression/test_context_threading.py",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "backend/tests/regression/test_batch2_full_coverage_activation.py",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "backend/tests/regression/test_dhea_s_high_activation.py",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      },
+      {
+        "path": "backend/tests/regression/test_output_authority_provenance.py",
+        "exists": true,
+        "citation": "CONFIRMED: file present — verified by Glob"
+      }
+    ],
+    "path_corrections": [
+      {
+        "id": "PC-1",
+        "severity": "WARN — path error in prompt, not a functional STOP",
+        "prompt_states": "backend/config/questionnaire.json",
+        "actual_path": "backend/ssot/questionnaire.json",
+        "citation": "CONFIRMED: Glob for backend/config/questionnaire.json returned no results. Glob for **/questionnaire.json returned backend/ssot/questionnaire.json and frontend/app/lib/mock/questionnaire.json. Authoritative backend questionnaire is backend/ssot/questionnaire.json — consistent with CLAUDE.md and MEMORY.md SSOT structure documentation.",
+        "required_action": "Cursor must use backend/ssot/questionnaire.json in all authority preflight and inspection steps where the prompt references backend/config/questionnaire.json. This does not block execution but must be corrected in Cursor's working context."
+      }
+    ],
+    "duplicate_authority_sources": "NONE detected — single questionnaire at backend/ssot/questionnaire.json is authoritative."
   },
   "stage_2b_behavioural_hardening": {
     "status": "PASS_WITH_IMPLEMENTATION_WARNINGS",
     "intelligence_core_components_affected": [
-      "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml — runtime_context_requirements gates (hard behaviour change)",
-      "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/package_manifest.yaml — governance_runtime_activation_status (activation state change)",
-      "SignalRegistry — signal_dhea_high enters active evaluation on next load after package activation"
+      "knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/signal_library.yaml — runtime_context_requirements.required_context pregnancy_status gate (lines 92-94)",
+      "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml — runtime_context_requirements.required_context pregnancy_status gate (lines 87-89)",
+      "knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/signal_library.yaml — runtime_context_requirements.required_context pregnancy_status gate (lines 92-94)",
+      "backend/core/analytics/runtime_context_evaluator.py — build_runtime_context_snapshot() may require narrow deterministic additions for missing optional context keys",
+      "backend/scripts/validate_active_signal_context_gate_reachability.py — new validator (new file)"
     ],
-    "behavioural_surface_area": "signal_dhea_high will emit to users whose dhea_s is above lab range and all context gates pass. This is a new user-visible output that did not exist before.",
+    "behavioural_surface_area": "Pregnancy gate changes will allow FAI high, FT3 low, and free testosterone high signals to fire for users where pregnancy_status is not_answered (i.e. all real users today, since questionnaire has no pregnancy_status field). This is a user-visible output change — these signals will emit where they are currently suppressed for all users. This is the intended correction.",
     "determinism_preserved": true,
-    "no_lllm_reasoning": true,
+    "no_llm_reasoning": true,
     "regression_targets": [
-      "Existing four Batch 2 active signals remain active and unchanged",
-      "DHEA-S low remains inactive (pkg_kb47_dhea_low_adrenal_androgen_reduction)",
-      "Unsulfated DHEA remains separate canonical concept",
-      "Day-one launch estate validator passes (requires gate file update)",
+      "DHEA-S high remains active (pkg_kb47_dhea_high_androgen_excess_context pregnancy gate already allows not_answered — signal_library.yaml:69-73)",
+      "DHEA-S low remains inactive",
+      "Unsulfated DHEA remains inactive",
+      "Batch 2 active package count remains 5 (no new activation, no deactivation)",
       "No frontend changes",
-      "No scoring changes"
+      "No scoring changes",
+      "No report compiler changes",
+      "No diagnosis wording introduced",
+      "No treatment/supplement/hormone recommendations introduced",
+      "pregnancy answered_yes remains suppressive for all three carry-forward packages"
+    ],
+    "baseline_not_verifiable_from_hardening": [
+      "Whether DHEA-S-HIGH-ACTIVATION-1 is merged into main — Cursor must confirm via git log at Stage 0 / authority preflight",
+      "Whether Batch 2 active package count is exactly 5 — Cursor must confirm via governance validators at Phase 7",
+      "Whether day-one launch estate gate passes before modification — Cursor must run validate_day_one_launch_estate_gate.py in authority preflight"
     ]
+  },
+  "carry_forward_verification": {
+    "pregnancy_gate_consistency_confirmed_in_source": true,
+    "fai_high": {
+      "package": "pkg_kb47_fai_high_biochemical_hyperandrogenism",
+      "signal_library_path": "knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/signal_library.yaml",
+      "pregnancy_status_current_allowed_values": ["answered_no"],
+      "citation": "CONFIRMED: signal_library.yaml:92-94",
+      "runtime_state": "pregnancy_status = not_answered for all real users (questionnaire has no pregnancy_status field — confirmed backend/ssot/questionnaire.json full content read). not_answered NOT in [answered_no] → gate fails → signal SUPPRESSED for all real users.",
+      "required_fix": "Add not_answered and not_applicable to allowed_values per sprint Phase 1 preferred outcome A"
+    },
+    "ft3_low": {
+      "package": "pkg_kb47_free_t3_low_low_t3_syndrome",
+      "signal_library_path": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml",
+      "pregnancy_status_current_allowed_values": ["answered_no"],
+      "citation": "CONFIRMED: signal_library.yaml:87-89",
+      "runtime_state": "pregnancy_status = not_answered for all real users → gate fails → signal SUPPRESSED for all real users.",
+      "required_fix": "Add not_answered and not_applicable to allowed_values per sprint Phase 1 preferred outcome A (subject to clinical safety review per FT3 + pregnancy clinical context)"
+    },
+    "free_testosterone_high": {
+      "package": "pkg_kb47_free_testosterone_high_androgen_excess_context",
+      "signal_library_path": "knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/signal_library.yaml",
+      "pregnancy_status_current_allowed_values": ["answered_no"],
+      "citation": "CONFIRMED: signal_library.yaml:92-94",
+      "runtime_state": "pregnancy_status = not_answered for all real users → gate fails → signal SUPPRESSED for all real users.",
+      "required_fix": "Add not_answered and not_applicable to allowed_values per sprint Phase 1 preferred outcome A"
+    },
+    "dhea_s_high": {
+      "package": "pkg_kb47_dhea_high_androgen_excess_context",
+      "signal_library_path": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml",
+      "pregnancy_status_current_allowed_values": ["answered_no", "not_answered", "not_applicable"],
+      "citation": "CONFIRMED: signal_library.yaml:69-73",
+      "runtime_state": "pregnancy_status = not_answered for all real users → not_answered IS in allowed_values → gate PASSES → DHEA-S high is reachable. This is the correctly-gated reference model for the other three packages.",
+      "required_fix": "NONE — already correctly gated"
+    }
+  },
+  "additional_unreachability_findings": [
+    {
+      "id": "AUF-1",
+      "severity": "HIGH — blocks multiple signals for all real users",
+      "title": "symptoms_status gate: key never produced by runtime_context_evaluator for real questionnaire responses",
+      "affected_packages": [
+        "pkg_kb47_fai_high_biochemical_hyperandrogenism (signal_library.yaml:86-89 — requires symptoms_status: [answered_yes, answered_no])",
+        "pkg_kb47_free_testosterone_high_androgen_excess_context (signal_library.yaml:87-89 — requires symptoms_status: [answered_yes, answered_no])",
+        "pkg_kb47_free_testosterone_low_androgen_deficiency_context (signal_library.yaml:74-78 — requires symptoms_status: [answered_yes, answered_no])"
+      ],
+      "evaluator_citation": "CONFIRMED: runtime_context_evaluator.py:415 — _field_answered(responses, 'symptoms') — only sets symptoms_status if the key 'symptoms' exists in questionnaire_responses",
+      "questionnaire_citation": "CONFIRMED: backend/ssot/questionnaire.json full content read — no question with id: 'symptoms'. Has 'regular_migraines' (line 189), 'recent_infections' (line 204), 'low_testosterone_symptoms' (line 240) — none map to the key 'symptoms'",
+      "runtime_consequence": "symptoms_status is NEVER set in clinical_context bucket for any real user. gate evaluator: observed = bucket.get('symptoms_status') = None. None not in {answered_yes, answered_no} → gate fails → signal suppressed for all users.",
+      "phase_0_instruction": "Cursor MUST document this in Phase 0 audit table. Sprint Phase 0 explicitly requires auditing 'whether the key is produced by runtime_context_evaluator' and 'whether the key is actually captured by questionnaire.json'. This is exactly the class of issue the sprint is designed to detect.",
+      "phase_4_instruction": "Runtime context evaluator review (Phase 4) must determine whether symptoms_status can be derived from existing questionnaire fields (regular_migraines, recent_infections, symptoms_related fields) via a narrow deterministic mapping, OR whether a new questionnaire field would be required. If a new field is required, STOP condition 7 applies. If deterministic mapping from existing fields is possible, this is an allowed Phase 4 small deterministic addition.",
+      "stop_condition_risk": "STOP 7 (new questionnaire field required) and STOP 11 (broad context redesign) may apply. Cursor must assess and escalate if triggered."
+    },
+    {
+      "id": "AUF-2",
+      "severity": "HIGH — blocks signals for users who take ANY supplement",
+      "title": "aas_exposure_status evaluator logic: inherits supplement_state wholesale, suppressing users with any supplement",
+      "affected_packages": [
+        "pkg_kb47_fai_high_biochemical_hyperandrogenism (signal_library.yaml:77-79 — requires aas_exposure_status: [answered_no])",
+        "pkg_kb47_free_testosterone_high_androgen_excess_context (signal_library.yaml:75-77 — requires aas_exposure_status: [answered_no])",
+        "pkg_kb47_free_testosterone_low_androgen_deficiency_context (signal_library.yaml:97-100 — requires aas_exposure_status: [answered_no])"
+      ],
+      "evaluator_citation": "CONFIRMED: runtime_context_evaluator.py:390 — aas_state = supplement_state if supplements_answered else DISCLOSURE_NOT_ANSWERED. supplement_state is DISCLOSURE_ANSWERED_YES for any supplement list containing values other than None/no/not_applicable (e.g. ['Multivitamin', 'Vitamin D']). aas_state = DISCLOSURE_ANSWERED_YES before steroid/prohormone check (lines 404-405). aas_exposure_status is set to answered_yes for any user who takes any supplement at all.",
+      "questionnaire_citation": "CONFIRMED: backend/ssot/questionnaire.json:297-310 — 'supplements' field with options: Multivitamin, Vitamin D, Omega-3/Fish Oil, Probiotics, Iron, Other, None. required: false.",
+      "runtime_consequence": "User selects [Multivitamin, Vitamin D] → supplements_answered=True → supplement_state=answered_yes → aas_state=answered_yes (before steroid check, no steroid found, stays answered_yes) → aas_exposure_status=answered_yes → gate requires answered_no → FAIL. Signal suppressed for a user who takes only vitamins.",
+      "phase_0_instruction": "Cursor MUST document in Phase 0 audit. This is an evaluator logic bug within Phase 4 scope.",
+      "phase_4_instruction": "aas_exposure_status should default to answered_no when supplements are answered but contain no AAS/steroid/prohormone keywords, not inherit supplement_state wholesale. A narrow deterministic fix is: aas_state = DISCLOSURE_ANSWERED_NO if supplements_answered and no AAS keywords found; DISCLOSURE_ANSWERED_YES only when AAS keywords detected. This is a small deterministic addition permitted by Phase 4 scope.",
+      "stop_condition_risk": "STOP 11 (broad context model redesign) does NOT apply — this is a narrow evaluator logic bug. However, Cursor must confirm the fix does not affect other signals before making the change."
+    },
+    {
+      "id": "AUF-3",
+      "severity": "MEDIUM — affects FT3 low and free testosterone low for users who do not provide lifestyle factors",
+      "title": "calorie_restriction_status and fasting_status: depend on lifestyle_factors upstream mapping, not questionnaire fields directly",
+      "affected_packages": [
+        "pkg_kb47_free_t3_low_low_t3_syndrome (signal_library.yaml:79-82 — requires calorie_restriction_status: [answered_yes, answered_no])",
+        "pkg_kb47_free_t3_low_low_t3_syndrome (signal_library.yaml:83-86 — requires fasting_status: [answered_yes, answered_no])",
+        "pkg_kb47_free_testosterone_low_androgen_deficiency_context (signal_library.yaml:85-90 — requires calorie_restriction_status: [answered_yes, answered_no])"
+      ],
+      "evaluator_citation": "CONFIRMED: runtime_context_evaluator.py:432-445 — maps lifestyle_factors['calorie_restriction'] → calorie_restriction_status and lifestyle_factors['fasting'] → fasting_status. These are only set if the corresponding key exists in lifestyle_factors.",
+      "questionnaire_citation": "CONFIRMED: backend/ssot/questionnaire.json — has 'fasting_hours' (line 265, id: fasting_hours) and 'dietary_pattern' (line 312) but no key named 'calorie_restriction' or 'fasting'. Whether lifestyle_factors['fasting'] is assembled from questionnaire responses['fasting_hours'] cannot be verified from the evaluator alone — requires checking upstream pipeline assembly.",
+      "phase_0_instruction": "Cursor must verify in Phase 0 audit whether the upstream pipeline maps questionnaire 'fasting_hours' to lifestyle_factors['fasting'] and 'dietary_pattern' to lifestyle_factors['calorie_restriction']. If no mapping exists, these gates will NEVER be satisfied → signals always suppressed. If mapping exists, confirm it is deterministic.",
+      "stop_condition_risk": "STOP 7 may apply if no upstream mapping exists and these fields require new questionnaire questions."
+    }
+  ],
+  "stop_condition_pre_assessment": {
+    "stop_1_dhea_s_high_not_merged": "Cannot confirm from hardening — Cursor verifies at Stage 0 / authority preflight via git log",
+    "stop_2_dhea_s_high_not_active": "Cannot confirm from hardening — Cursor verifies at Stage 0 via test suite",
+    "stop_3_batch2_count_not_5": "Cannot confirm from hardening — Cursor verifies via governance validator",
+    "stop_4_gates_cannot_be_read_deterministically": "NOT TRIGGERED — all signal_library.yaml files read successfully; required_context structure is well-formed",
+    "stop_5_pregnancy_semantics_cannot_be_resolved": "NOT TRIGGERED — DHEA-S high reference model provides clear precedent: not_answered and not_applicable safe; answered_yes suppressive",
+    "stop_6_any_package_unsafe_for_not_answered": "Requires per-package clinical review in Phase 1. FT3 low + pregnancy requires specific assessment (thyroid hormone alteration in pregnancy is clinically significant). Cursor must not assume outcome A for FT3 low without reviewing FT3-specific authority.",
+    "stop_7_new_questionnaire_field_required": "RISK for symptoms_status (AUF-1) and potentially calorie_restriction/fasting (AUF-3). Cursor must assess in Phase 0/4 and STOP if new questions are required.",
+    "stop_8_through_19": "NOT triggered by prompt structure — appropriate non-scope exclusions in place"
   },
   "implementation_warnings": [
     {
       "id": "IW-1",
       "severity": "CRITICAL",
-      "title": "Symptom gate permanently blocks signal for all users",
-      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:63-64 (symptoms_present: present) and lines 96-99 (symptoms_status: allowed_values [answered_yes, answered_no]); backend/ssot/questionnaire.json — no 'symptoms' key exists; backend/core/analytics/runtime_context_evaluator.py:298-299 — symptoms_present only set if responses.get('symptoms') is present",
-      "explanation": "The questionnaire.json has no 'symptoms' field. The runtime context builder sets symptoms_present only if responses.get('symptoms') is present — it never will be. Both the symptoms_present:present gate and the symptoms_status:disclosure_state gate will ALWAYS fail, permanently blocking signal_dhea_high for every user regardless of their DHEA-S level.",
-      "required_action": "MANDATORY: Remove symptoms_present from required_context hard gates. Remove symptoms_status from required_context hard gates. Per medical authority (DHEA-S_High_Activation_Medical_Research_Review.md:121 — 'Missing symptom context: DOWNGRADE'), symptoms absence is a downgrade not a suppress condition. Downgrade handling must use a different mechanism (output metadata or missing_context_behaviour: emit_context_insufficient with separate soft gate list). Do NOT leave these as hard suppress gates."
+      "title": "Path error in prompt: questionnaire referenced at wrong path",
+      "citation": "Prompt references backend/config/questionnaire.json — file does NOT exist. Actual authoritative path: backend/ssot/questionnaire.json (CONFIRMED by Glob).",
+      "required_action": "MANDATORY: Cursor must use backend/ssot/questionnaire.json in all Phase 0 audit steps and Phase 4 review. Do not attempt to read backend/config/questionnaire.json — it does not exist."
     },
     {
       "id": "IW-2",
       "severity": "CRITICAL",
-      "title": "Pregnancy gate permanently blocks signal for all users",
-      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:85-89 (pregnancy_status: allowed_values [answered_no]); backend/ssot/questionnaire.json — no 'pregnancy_status' field; backend/core/analytics/runtime_context_evaluator.py:280-296 — pregnancy_status only set if _field_answered(responses, 'pregnancy_status') or _field_answered(lifestyle, 'pregnancy_status')",
-      "explanation": "The questionnaire.json has no pregnancy_status field. The runtime context builder will never add pregnancy_status to the clinical_context bucket. The gate evaluator sees the key as absent → observed=None → not in [answered_no] → gate fails. This blocks all users.",
-      "required_action": "MANDATORY: Update allowed_values for pregnancy_status to [answered_no, not_answered, not_applicable]. The sprint prompt Phase 2 says 'suppress if pregnancy answered_yes and pregnancy-specific logic is unavailable' — meaning not_answered and not_applicable must pass. Since there is no pregnancy question in the current questionnaire, the effective state will always be not_answered; the gate must allow this. Only answered_yes should suppress."
+      "title": "Pregnancy gate: all three carry-forward packages suppress all real users today",
+      "citation": "FAI high signal_library.yaml:92-94; FT3 low signal_library.yaml:87-89; Free testosterone high signal_library.yaml:92-94 — all require pregnancy_status: [answered_no] only. runtime_context_evaluator.py:298-302 — sets not_answered when no pregnancy_status field in responses. backend/ssot/questionnaire.json — no pregnancy_status field confirmed by full content read.",
+      "required_action": "MANDATORY Phase 1: add not_answered and not_applicable to pregnancy_status allowed_values for FAI high and free testosterone high per preferred outcome A. For FT3 low: clinically assess whether pregnancy-specific suppression is required before applying outcome A. answered_yes must remain suppressive for all three."
     },
     {
       "id": "IW-3",
       "severity": "HIGH",
-      "title": "AAS exposure gate blocks users who skip the optional supplements question",
-      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:80-83 (aas_exposure_status: allowed_values [answered_no]); backend/core/analytics/runtime_context_evaluator.py:384 — aas_state = supplement_state if supplements_answered else DISCLOSURE_NOT_ANSWERED; backend/ssot/questionnaire.json — supplements: required=false",
-      "explanation": "Supplements is optional (required:false). If user skips it, aas_exposure_status=not_answered. Gate only allows answered_no → signal suppressed for any user who did not fill in supplements. Sprint prompt says 'AAS exposure status is captured OR explicitly not answered' — so not_answered must be allowed. Additionally, sprint says AAS=yes should DOWNGRADE not suppress.",
-      "required_action": "MANDATORY: Add not_answered to allowed_values for aas_exposure_status. Consider also removing aas_exposure_status from the hard suppress gate list entirely and handling AAS=yes as a downgrade via output metadata."
+      "title": "symptoms_status gate: never produced for real users — compounding suppression for FAI high, free testosterone high, free testosterone low",
+      "citation": "runtime_context_evaluator.py:415; backend/ssot/questionnaire.json full content — no 'symptoms' id. Affects signal_library.yaml lines 86-89 (FAI high), 87-89 (FT3 high), 74-78 (FT3 low).",
+      "required_action": "MANDATORY Phase 0 audit capture, Phase 4 assessment. Cursor must determine whether a narrow deterministic mapping from existing questionnaire fields to symptoms_status is possible. If not, STOP condition 7 applies."
     },
     {
       "id": "IW-4",
       "severity": "HIGH",
-      "title": "DHEA supplementation gate blocks users who skip optional supplements question",
-      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:90-93 (dhea_supplementation_status: allowed_values [answered_no]); backend/core/analytics/runtime_context_evaluator.py:388-401 — dhea_supplement_state=not_answered if supplements not answered",
-      "explanation": "If supplements is not answered, dhea_supplementation_status=not_answered. Current gate only allows answered_no → suppressed. Sprint prompt says 'DHEA supplementation status is captured or explicitly not answered' → not_answered must be allowed.",
-      "required_action": "MANDATORY: Add not_answered to allowed_values for dhea_supplementation_status. answered_yes remains correctly suppressive. answered_no and not_answered should both allow activation."
+      "title": "aas_exposure_status evaluator bug: supplements answered_yes (any supplement) incorrectly sets aas_exposure_status to answered_yes",
+      "citation": "runtime_context_evaluator.py:390 — aas_state = supplement_state if supplements_answered. CONFIRMED: any non-empty/non-none supplement list produces supplement_state = DISCLOSURE_ANSWERED_YES. Gate requires answered_no for FAI high (signal_library.yaml:77-79), free testosterone high (lines 75-77), free testosterone low (lines 97-100).",
+      "required_action": "MANDATORY Phase 4 assessment. Narrow deterministic fix: aas_state should = DISCLOSURE_ANSWERED_NO when supplements are answered but no AAS/steroid/prohormone keywords detected; only DISCLOSURE_ANSWERED_YES when AAS keywords found. Cursor must confirm scope of fix does not exceed Phase 4 allowed change."
     },
     {
       "id": "IW-5",
-      "severity": "HIGH",
-      "title": "HRT gate suppresses when it should only downgrade",
-      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:74-78 (hormone_therapy_status: allowed_values [answered_no]); backend/core/analytics/runtime_context_evaluator.py:336-353 — hormone_therapy_status=answered_yes if medication contains 'testosterone' or 'hormone'",
-      "explanation": "The long_term_medications question is mandatory. A user on HRT will have hormone_therapy_status=answered_yes. The current gate suppresses the signal. The sprint prompt and medical authority say HRT = DOWNGRADE not suppress.",
-      "required_action": "MANDATORY: Do not use hormone_therapy_status as a hard suppress gate. Remove it from required_context or change it to a non-blocking gate. HRT=yes should produce downgraded/limited output, not silence the signal entirely."
+      "severity": "MEDIUM",
+      "title": "calorie_restriction_status and fasting_status reachability depends on unverified upstream pipeline mapping",
+      "citation": "runtime_context_evaluator.py:432-445; backend/ssot/questionnaire.json has fasting_hours and dietary_pattern but not fasting or calorie_restriction keys. Affects FT3 low and free testosterone low.",
+      "required_action": "Phase 0 audit: verify upstream pipeline mapping of questionnaire fields to lifestyle_factors. If no mapping, assess STOP condition 7."
     },
     {
       "id": "IW-6",
-      "severity": "HIGH",
-      "title": "Day-one estate gate stale condition will cause validator failure",
-      "citation": "knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml:34-35 — 'DHEA packages inactive pending identity remediation'",
-      "explanation": "After DHEA-S high is activated, this condition is no longer true. Phase 7 validators must pass. If the gate file is not updated, validate_day_one_launch_estate_gate.py may fail.",
-      "required_action": "MANDATORY: Update day_one_launch_estate_gate_v1.yaml in Phase 5 governance updates to reflect that DHEA-S high is now runtime_active_canonical per this sprint's medical authority. DHEA-S low and unsulfated DHEA remain inactive — note this distinction."
-    },
-    {
-      "id": "IW-7",
-      "severity": "MEDIUM",
-      "title": "package_manifest.yaml behavioural_impact must update from NONE to SIGNAL_RUNTIME_ACTIVATION",
-      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/package_manifest.yaml:13",
-      "required_action": "MANDATORY per Phase 3: set behavioural_impact: SIGNAL_RUNTIME_ACTIVATION."
-    },
-    {
-      "id": "IW-8",
-      "severity": "HIGH",
-      "title": "test_dhea_s_high_remains_inactive.py asserts the old state and will fail",
-      "citation": "backend/tests/regression/test_dhea_s_high_remains_inactive.py:23-26 — asserts pkg_kb47_dhea_high NOT in activated and IN inactive",
-      "explanation": "After this sprint, DHEA-S high is in activated_packages. This test will fail. The sprint lists test_dhea_dheas_canonicalisation.py as an expected changed file — Cursor must also update or replace the remains_inactive test.",
-      "required_action": "MANDATORY: Replace or update test_dhea_s_high_remains_inactive.py. The test_dhea_s_high_remains_inactive.py test that checks the execution register must be converted to confirm DHEA-S high IS active and DHEA-S low remains inactive."
-    },
-    {
-      "id": "IW-9",
       "severity": "ADVISORY",
-      "title": "testosterone in dependencies.biomarkers is metadata only — not a runtime blocker",
-      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:32-36; backend/core/analytics/signal_evaluator.py:453-461 — evaluate_all() checks primary_metric only, not dependencies.biomarkers",
-      "explanation": "The signal evaluator does NOT use dependencies.biomarkers as a hard activation gate. Testosterone listed there is metadata only. For clarity, consider moving it to optional_dependencies to match the sprint intent that testosterone is STRONGLY_RECOMMENDED but not required.",
-      "required_action": "ADVISORY: Move testosterone from dependencies.biomarkers to optional_dependencies.biomarkers. Not a blocker for activation correctness."
+      "title": "free_testosterone_low is not one of the named carry-forward packages but also has gate issues",
+      "citation": "pkg_kb47_free_testosterone_low_androgen_deficiency_context/signal_library.yaml:74-78 (symptoms_status), lines 85-90 (calorie_restriction_status), lines 97-100 (aas_exposure_status). This package was not listed in the named three carry-forward packages but has the same class of issues.",
+      "required_action": "Phase 0 audit must include free testosterone low as specified in the prompt audit list (line 9 of Phase 0 section). Decisions for symptoms_status and aas_exposure_status fixes should cover this package consistently."
     }
   ],
   "overall_verdict": "HARDENED",
-  "hardening_notes": "Prompt is structurally sound and correctly classified HIGH/BEHAVIOUR/TWO_PHASE_START_FINISH. All five front matter fields valid. Medical authority file exists and contains all three required tokens (DHEA_S_HIGH_ACTIVATE_NOW, standalone_signal_allowed:true, corroboration_required:false) confirmed with line citations. Package is confirmed inactive with identity resolved. Nine implementation warnings documented — five are CRITICAL or HIGH and represent gates in the existing signal_library.yaml that will permanently block activation unless Cursor corrects them. Most critical: the symptom gate and pregnancy gate will suppress the signal for ALL users because the questionnaire has no 'symptoms' or 'pregnancy_status' fields. Cursor must address all MANDATORY items before Phase 7 validators can pass. GPT architectural review and human approval required before merge per HIGH risk route."
+  "hardening_notes": "Prompt is structurally sound and correctly classified HIGH/BEHAVIOUR/TWO_PHASE_START_FINISH. All five front matter fields are valid. One path correction required (questionnaire at backend/ssot/ not backend/config/). Carry-forward issue fully verified from source content: all three named packages have pregnancy_status gates allowing only answered_no, while the questionnaire has no pregnancy_status field and the evaluator produces not_answered by default — signals are confirmed suppressed for all real users today. DHEA-S high is confirmed correctly gated (allows not_answered) and is the reference model. Two additional unreachability findings surface beyond the stated carry-forward: (AUF-1) symptoms_status never produced for real users — affects FAI high, free testosterone high, and free testosterone low; (AUF-2) aas_exposure_status evaluator logic incorrectly inherits supplement_state, suppressing signals for any supplement user. These are within the sprint's explicit Phase 0 audit scope and Phase 4 evaluator review scope. STOP conditions 7 and 11 must be assessed during implementation for symptoms_status. All STOP conditions are appropriate. GPT architectural review and human approval required before merge per HIGH risk route."
 }
