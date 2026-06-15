@@ -1,10 +1,9 @@
 {
-  "branch": "work/ARCH-COMPLETION-3-full-traceability-manifest-and-launch-estate-gate",
+  "branch": "work/DHEA-DHEAS-CANONICALISATION-1-unit-aware-marker-identity-and-adrenal-androgen-resolution",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-14T20:46:07Z",
-  "cursor_started_utc": "2026-06-14T20:38:45Z",
-  "head_sha": "bcf8bb36063ede1e78afc856586eea181ca4dd75",
+  "cursor_started_utc": "2026-06-15T09:22:54Z",
+  "head_sha": "3cf8c5c64d509288525099aab6e1777f38c2d950",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate"
+  "status": "IN_PROGRESS",
+  "work_id": "DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution"
 }
