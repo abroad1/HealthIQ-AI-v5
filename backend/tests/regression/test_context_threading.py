@@ -233,9 +233,10 @@ def test_context_dependent_signal_can_pass_with_required_runtime_context():
 def test_androgen_frame_index_activation_states():
     index_path = REPO_ROOT / "knowledge_bus/governance/medical_frame_identity_index_v1.yaml"
     text = index_path.read_text(encoding="utf-8")
-    active_pos = text.index("source_package_id: pkg_kb47_dhea_high_androgen_excess_context")
-    active_section = text[active_pos : active_pos + 400]
-    assert "runtime_authority_status: active" in active_section
-    inactive_pos = text.index("source_package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction")
-    inactive_section = text[inactive_pos : inactive_pos + 400]
-    assert "runtime_authority_status: inactive" in inactive_section
+    for package_id in (
+        "pkg_kb47_dhea_high_androgen_excess_context",
+        "pkg_kb47_dhea_low_adrenal_androgen_reduction",
+    ):
+        pos = text.index(f"source_package_id: {package_id}")
+        section = text[pos : pos + 400]
+        assert "runtime_authority_status: inactive" in section

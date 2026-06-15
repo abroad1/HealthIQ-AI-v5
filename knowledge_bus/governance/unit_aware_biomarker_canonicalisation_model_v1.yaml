@@ -1,5 +1,5 @@
 schema_version: 1.0.0
-runtime_consumed: true
+runtime_consumed: false
 status: active
 work_id: DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution
 artefact_path: knowledge_bus/governance/unit_aware_biomarker_canonicalisation_model_v1.yaml
@@ -8,7 +8,7 @@ purpose: >
   Label-only canonicalisation is forbidden for markers in the ambiguous registry.
 scope:
 - ambiguous biomarker families listed in ambiguous_marker_families
-- runtime canonicalisation via backend/core/canonical/unit_aware_biomarker_identity_v1.py
+- implementation authority in backend/core/canonical/unit_aware_biomarker_identity_v1.py (not YAML-driven runtime config)
 required_identity_evidence_fields:
 - raw_label
 - unit
@@ -72,5 +72,5 @@ ambiguous_marker_families:
       without sulfate label indicators, canonicalise as dhea (unsulfated) when range
       does not match dhea_s_convention.
 dhea_low_activation_policy: DHEA_LOW_DO_NOT_ACTIVATE_EVIDENCE_INSUFFICIENT
-dhea_s_high_activation_policy: ACTIVATE_WITH_GATES_WHEN_IDENTITY_CONFIRMED
+dhea_s_high_activation_policy: KEEP_INACTIVE_PENDING_EXTERNAL_CLINICIAN_SIGNOFF
 rollback_path: Revert governance model, identity resolver, alias registry, package metadata, and tests.
