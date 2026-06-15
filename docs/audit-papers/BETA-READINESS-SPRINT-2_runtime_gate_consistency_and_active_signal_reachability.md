@@ -3,8 +3,9 @@
 ---
 work_id: BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability
 branch: work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-reachability
-status: FINAL_CORRECTIONS_COMPLETE
-head_sha: eedee952081050bfd958c1f47bc866292af49831
+status: MERGED_CLOSURE_COMPLETE
+head_sha: 6873b40
+merged_to_main: 6873b40
 ---
 
 ## Executive verdict
@@ -223,4 +224,21 @@ Revert signal_library pregnancy gate changes, reachability validator, policy YAM
 
 ## Recommended next action
 
-Claude re-audit (GPT corrections applied) → GPT architectural re-review → human approval → merge
+~~Claude re-audit (GPT corrections applied) → GPT architectural re-review → human approval → merge~~
+
+**Closure complete.** Merged to `main` and published to `origin/main`.
+
+---
+
+## Post-Implementation Closure (published)
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Merge authorised | Yes | Human approval 2026-06-15 |
+| Sprint branch | `work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-reachability` | Fast-forward merge |
+| `main` HEAD | `6873b40` | `git rev-parse main` |
+| `origin/main` HEAD | `6873b40` | `git rev-parse origin/main` — **aligned** |
+| Working tree | Clean (post-closure doc commit pending) | `git status --short` |
+| Stash | Empty | `git stash list` |
+| Kernel status | COMPLETE | `automation_bus/latest_cursor_status.json` |
+| Active package count | 5 | Unchanged |
