@@ -1,62 +1,64 @@
 ---
-work_id: ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate
-branch: work/ARCH-COMPLETION-3-full-traceability-manifest-and-launch-estate-gate
+work_id: DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution
+branch: work/DHEA-DHEAS-CANONICALISATION-1-unit-aware-marker-identity-and-adrenal-androgen-resolution
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# ARCH-COMPLETION-3 — Full Traceability Manifest and Launch Estate Gate
+# DHEA-DHEAS-CANONICALISATION-1 — Unit-Aware Marker Identity and Adrenal Androgen Resolution
 
 ## Purpose
 
-Complete the final day-one architecture gate for HealthIQ AI.
+Resolve the DHEA / DHEA-S identity ambiguity and introduce a reusable unit-aware biomarker canonicalisation rule for ambiguous lab markers.
 
-This sprint must produce a full runtime traceability manifest and a launch-estate gate that proves the day-one analytical architecture is governed, traceable, fail-closed and free from unresolved legacy runtime authority paths.
+This sprint must not treat DHEA as a one-off manual correction.
 
-This sprint should answer one question:
+The immediate problem is:
 
 ```text
-Is the day-one intelligence architecture now complete enough to be formally closed?
+Some commercial lab panels may label a result as "DHEA" or "DHEA (Venous)" even when the unit, reference range and laboratory convention indicate the measured analyte is actually DHEA-S / DHEAS.
 ```
 
-If yes, the sprint must produce evidence and close the relevant carry-forward items.
+The wider architectural problem is:
 
-If no, the sprint must identify precise residual blockers with named files, named authority gaps and named remediation conditions.
+```text
+HealthIQ must not canonicalise ambiguous biomarkers by name alone.
+```
 
-This is not a frontend polish sprint.
+The strategic goal is:
 
-This is not a new signal activation sprint.
-
-This is not a new medical research sprint.
-
-This is the final architecture-completion gate.
+```text
+Use marker name + unit + reference range + lab context + assay convention to resolve canonical biomarker identity safely.
+```
 
 ---
 
 ## Strategic context
 
-The following work is now complete and merged:
+The Batch 2 medical research authority concluded:
 
 ```text
-- ADR-RT-001 accepted the research-to-runtime day-one architecture.
-- ARCH-COMPLETION-1 corrected orchestrator phase ordering.
-- AnalysisContext now precedes signal evaluation.
-- Runtime context is derived from AnalysisContext / governed post-context objects.
-- BATCH2-MINIMUM-COVERAGE-1 clarified the unresolved Batch 2 estate.
-- BATCH2-FULL-COVERAGE-BUILD-1 added reusable runtime context primitives.
-- BATCH2-FULL-COVERAGE-ACTIVATION-1 activated the research-supported thyroid/androgen signals with deterministic gates.
-- ARCH-COMPLETION-2 added compiled output authority, root-cause authority, card authority and additive ReportV1 provenance.
+- DHEA high should not activate unless the source marker is clearly DHEA-S.
+- DHEA low should not activate as a primary runtime signal.
+- DHEA-S high may be clinically meaningful as an adrenal androgen excess context, but only if marker identity and runtime gates are explicit.
 ```
 
-`ARCH-COMPLETION-2` carried forward two non-blocking items:
+The human owner has also reviewed the commercial AB full-panel lab report and external lab references. The panel labels the result as:
 
 ```text
-1. The full traceability manifest must explicitly classify narrative_report_compiler_v1.py runtime YAML reads as governed compiled assets.
-2. Provenance-specific regression tests must be added for FAI high, free testosterone high and free testosterone low.
+DHEA (Venous)
 ```
 
-This sprint must resolve those carry-forwards and perform the final launch-estate architecture gate.
+but reports it in:
+
+```text
+µmol/L
+```
+
+with a reference range consistent with DHEA-S / DHEAS reporting conventions.
+
+This sprint must convert that evidence into repo-governed canonicalisation and package behaviour.
 
 ---
 
@@ -73,11 +75,12 @@ change_type: BEHAVIOUR
 Rationale:
 
 ```text
-- this sprint may alter validators, launch gates and runtime traceability enforcement
-- it touches the final architecture closure decision
-- it may quarantine or block any remaining ungoverned analytical output
-- it may add provenance tests and authority-manifest requirements
-- it may update day-one completion status
+- biomarker identity canonicalisation may change
+- alias resolution may change
+- parsed marker identity may change
+- DHEA-S package activation may be considered
+- signal package metadata may change
+- endocrine interpretation is clinically sensitive
 ```
 
 Required route:
@@ -98,7 +101,7 @@ Do not merge without explicit human approval.
 Work only on:
 
 ```text
-work/ARCH-COMPLETION-3-full-traceability-manifest-and-launch-estate-gate
+work/DHEA-DHEAS-CANONICALISATION-1-unit-aware-marker-identity-and-adrenal-androgen-resolution
 ```
 
 Do not work on `main`.
@@ -112,57 +115,74 @@ Do not merge.
 This sprint must not:
 
 ```text
-- activate or deactivate signal packages
-- change clinical thresholds
-- change biomarker reference range policy
-- change SSOT biomarker definitions
-- change scoring algorithms
+- silently map all DHEA labels to DHEA-S
+- merge DHEA and DHEA-S into one ambiguous canonical identity
+- activate DHEA low
+- activate unsulfated DHEA high
+- activate any adrenal androgen signal without deterministic gates
+- change lab-derived reference range policy
+- substitute global/default ranges where lab ranges exist
 - change frontend rendering
 - introduce frontend medical inference
 - introduce fallback or dummy parsers
 - introduce raw Pass 3 / investigation-spec runtime reads
-- introduce LLM clinical reasoning into deterministic runtime output
-- invent medical claims not traceable to governed runtime authority
-- weaken runtime context gates
-- weaken package activation gates
-- remove fail-closed behaviour
-- downgrade governance failures to warnings unless explicitly justified and approved
+- introduce LLM clinical reasoning into runtime canonicalisation or signal evaluation
+- diagnose adrenal disease
+- diagnose PCOS
+- recommend treatment, supplements or hormones
 ```
 
-This sprint may:
+This sprint must preserve original lab evidence.
+
+For ambiguous markers, HealthIQ must retain:
 
 ```text
-- create or update the full traceability manifest
-- create or update the launch-estate gate model
-- add or update architecture validators
-- add provenance-specific regression tests
-- classify remaining output/runtime authority sources
-- quarantine ungoverned runtime paths
-- update carry-forward registers
-- formally mark day-one architecture complete if evidence supports it
+- original raw label
+- original unit
+- original reference range
+- canonical identity decision
+- identity confidence
+- identity resolution reason
 ```
 
 ---
 
 ## Core design rule
 
-Every runtime analytical path must be classifiable as one of:
+Create or formalise this rule:
 
 ```text
-GOVERNED_RUNTIME_AUTHORITY
-GOVERNED_COMPILED_ASSET
-GOVERNED_MAPPING_AUTHORITY
-GOVERNED_RENDER_ONLY
-GOVERNED_DEBUG_ONLY
-LEGACY_QUARANTINED
-INACTIVE_NOT_RUNTIME_CONSUMED
-BLOCKED_UNGOVERNED
-UNKNOWN_BLOCKER
+Known ambiguous biomarkers must not be canonicalised by label alone.
 ```
 
-No runtime analytical path may remain `UNKNOWN_BLOCKER` or `BLOCKED_UNGOVERNED` if day-one architecture is to be marked complete.
+Canonicalisation for ambiguous markers must consider:
 
-No user-facing analytical output may be emitted from an ungoverned source.
+```text
+- raw reported name
+- unit
+- lab-provided reference range
+- panel context
+- known assay/reporting convention
+- existing alias registry
+- source lab metadata where available
+```
+
+For DHEA / DHEA-S specifically:
+
+```text
+If raw label is "DHEA", "DHEA (Venous)", "DHEA-S", "DHEAS", "Dehydroepiandrosterone sulphate" or similar
+AND unit is µmol/L or umol/L
+AND the reference range resembles DHEA-S / DHEAS reporting
+THEN canonicalise as DHEA-S / DHEAS with documented identity reason.
+
+If raw label is DHEA
+AND unit/range are missing or ambiguous
+THEN do not guess.
+Return unresolved marker identity or fail-closed canonicalisation.
+
+If true unsulfated DHEA appears with a unit/range consistent with unsulfated DHEA
+THEN keep it separate from DHEA-S.
+```
 
 ---
 
@@ -171,46 +191,50 @@ No user-facing analytical output may be emitted from an ungoverned source.
 Read before implementation:
 
 ```text
-docs/audit-papers/ARCH-COMPLETION-1_final_runtime_context_and_orchestrator_restructure.md
 docs/audit-papers/BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals.md
-docs/audit-papers/ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion.md
-docs/audit-papers/DAY-ONE-ARCHITECTURE-CLOSURE-REVIEW.md
+docs/audit-papers/ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate.md
 docs/sprints/launch_core_carry_forward_register.md
 
-docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
-docs/architecture/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md
-
-knowledge_bus/governance/compiled_output_authority_model_v1.yaml
-knowledge_bus/governance/root_cause_authority_register_v1.yaml
-knowledge_bus/governance/card_authority_register_v1.yaml
-knowledge_bus/governance/reusable_runtime_context_primitive_model_v1.yaml
-knowledge_bus/governance/context_questionnaire_contract_v1.yaml
+knowledge_bus/research/medical_reviews/batch2_thyroid_androgen_context_authority_review_v1.md
 knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml
+knowledge_bus/governance/batch2_full_coverage_activation_readiness_register_v1.yaml
+knowledge_bus/governance/day_one_full_traceability_manifest_v1.yaml
+knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml
 knowledge_bus/governance/medical_frame_identity_index_v1.yaml
 ```
 
-If exact paths differ, locate the equivalent repo-persisted files and document the actual paths used.
-
-Inspect all relevant runtime and output authority files, including but not limited to:
+Inspect all biomarker identity and canonicalisation files, including but not limited to:
 
 ```text
-backend/core/pipeline/orchestrator.py
-backend/core/analytics/runtime_context_evaluator.py
+backend/config/biomarker_alias_registry.yaml
+backend/config/biomarker_catalogue.yaml
+backend/config/derived_biomarkers.yaml
+backend/ssot/**
+backend/core/data/**
+backend/core/parsing/**
+backend/core/normalisation/**
 backend/core/analytics/signal_evaluator.py
-backend/core/analytics/report_compiler_v1.py
-backend/core/analytics/output_authority_provenance_builder_v1.py
-backend/core/contracts/report_v1.py
-backend/core/contracts/output_authority_provenance_v1.py
-backend/core/knowledge/compiled_output_authority_v1.py
+backend/core/analytics/runtime_context_evaluator.py
 ```
 
-Also explicitly inspect and classify:
+Inspect package files:
 
 ```text
-backend/core/analytics/narrative_report_compiler_v1.py
+knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/
+knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/
 ```
 
-Do not assume the file list is complete. Discover all runtime reads and analytical output paths.
+Inspect any sample panel fixtures used for AB full-panel testing.
+
+Locate the AB full-panel sample that contains:
+
+```text
+DHEA (Venous)
+unit: µmol/L / umol/L
+reference range similar to 0.94 - 15.44
+```
+
+If the sample cannot be found, report that as an evidence gap.
 
 ---
 
@@ -230,415 +254,337 @@ Confirm:
 ```text
 1. Current branch matches this work package branch.
 2. Working tree is clean.
-3. ARCH-COMPLETION-1 is merged.
-4. BATCH2-FULL-COVERAGE-ACTIVATION-1 is merged.
-5. ARCH-COMPLETION-2 is merged.
-6. ReportV1 contains additive output_authority_provenance_v1.
-7. compiled_output_authority_model_v1.yaml exists.
-8. root_cause_authority_register_v1.yaml exists.
-9. card_authority_register_v1.yaml exists.
-10. why_engine_fallback_v1 is quarantined from clinician-report output.
-11. No frontend rendering change is required.
-12. Repository secret-file gate remains remediated.
+3. ARCH-COMPLETION-3 is merged.
+4. Day-one architecture verdict is complete with non-blocking carry-forward.
+5. DHEA high package is currently inactive.
+6. DHEA low package is currently inactive.
+7. No DHEA / DHEA-S package is currently active.
+8. Existing DHEA carry-forward remains open.
+9. Lab-derived range policy remains active.
+10. Repository secret-file gate remains remediated.
 ```
 
-STOP if the baseline is unclear.
+STOP if baseline is unclear.
 
 ---
 
-# Phase 1 — Full runtime authority discovery
+# Phase 1 — DHEA / DHEA-S identity audit
 
-Perform a full discovery of runtime analytical authority sources.
+Before changing code, produce a read-only identity audit.
 
-Inspect and document all runtime paths that:
-
-```text
-- read YAML/JSON/Markdown/domain authority files
-- assemble AnalysisContext
-- build runtime context
-- evaluate signals
-- build root-cause findings
-- build cards
-- build insight or narrative output
-- compile reports
-- attach provenance
-- assemble DTOs or API response payloads
-```
-
-For every runtime read or generated output path, record:
+Document:
 
 ```text
-- file path
-- function/class
-- runtime input
-- runtime output
-- source artefact read, if any
-- whether source artefact is governed
-- whether source artefact is raw research
-- whether source artefact is compiled/promoted authority
-- whether path emits user-facing analytical output
-- whether path emits debug-only output
-- whether frontend consumes the output
-- authority classification
-- evidence
+- where DHEA currently appears in canonical registry / alias registry / packages
+- whether DHEA-S or DHEAS already exists as a canonical biomarker
+- whether DHEA and DHEA-S are currently conflated
+- what sample panel evidence exists
+- what unit is reported
+- what reference range is reported
+- whether the unit/range strongly indicates DHEA-S
+- whether true unsulfated DHEA appears anywhere
+- which package(s) currently depend on the ambiguous identity
 ```
 
-Allowed classifications:
+Allowed identity conclusions:
 
 ```text
-GOVERNED_RUNTIME_AUTHORITY
-GOVERNED_COMPILED_ASSET
-GOVERNED_MAPPING_AUTHORITY
-GOVERNED_RENDER_ONLY
-GOVERNED_DEBUG_ONLY
-LEGACY_QUARANTINED
-INACTIVE_NOT_RUNTIME_CONSUMED
-BLOCKED_UNGOVERNED
-UNKNOWN_BLOCKER
+DHEA_S_CONFIRMED
+DHEA_UNSULFATED_CONFIRMED
+AMBIGUOUS_IDENTITY_FAIL_CLOSED
+DHEA_AND_DHEAS_CONFLATED_BLOCKER
+INSUFFICIENT_SAMPLE_EVIDENCE
 ```
 
-Required explicit classification:
-
-```text
-backend/core/analytics/narrative_report_compiler_v1.py
-```
-
-The narrative compiler’s runtime YAML reads must be classified accurately. If they are governed compiled assets, document them as:
-
-```text
-GOVERNED_COMPILED_ASSET
-```
-
-If any runtime path reads raw Pass 3 research or investigation specs, STOP.
+STOP if the identity cannot be resolved safely.
 
 ---
 
-# Phase 2 — Create full traceability manifest
+# Phase 2 — Define reusable multi-factor canonicalisation model
 
-Create or update:
+Create or update a governed model for ambiguous biomarker canonicalisation.
+
+Preferred artefact:
 
 ```text
+knowledge_bus/governance/unit_aware_biomarker_canonicalisation_model_v1.yaml
+```
+
+The model must define:
+
+```text
+- purpose
+- scope
+- ambiguous biomarker handling
+- required identity evidence fields
+- allowed confidence levels
+- fail-closed conditions
+- raw label preservation requirement
+- unit-aware canonicalisation rules
+- DHEA / DHEA-S rule
+- future extension pattern for other ambiguous markers
+```
+
+Required confidence levels:
+
+```text
+HIGH_CONFIDENCE_UNIT_RANGE_MATCH
+MODERATE_CONFIDENCE_UNIT_MATCH
+LOW_CONFIDENCE_LABEL_ONLY
+AMBIGUOUS_FAIL_CLOSED
+```
+
+The DHEA rule must explicitly state:
+
+```text
+label-only DHEA is insufficient for DHEA-S canonicalisation unless supported by unit/range/lab-context evidence.
+```
+
+The governance file must be marked:
+
+```yaml
+runtime_consumed: true
+```
+
+only if runtime code actually reads it.
+
+If runtime does not consume it yet, mark:
+
+```yaml
+runtime_consumed: false
+```
+
+and explain where implementation lives.
+
+---
+
+# Phase 3 — Implement or extend canonicalisation logic
+
+Implement the smallest safe reusable canonicalisation change.
+
+Allowed implementation patterns:
+
+```text
+- add multi-factor identity resolution helper
+- extend existing alias resolver to accept unit/reference range context
+- add DHEA/DHEAS special-case only through a general ambiguous-marker framework
+- add identity confidence/provenance metadata if current marker model supports it
+```
+
+Forbidden implementation patterns:
+
+```text
+- broad parser rewrite
+- fallback parser
+- dummy parser
+- hardcoded silent remapping with no provenance
+- label-only DHEA → DHEA-S remap
+- deleting true DHEA support if already present
+```
+
+If current architecture cannot persist canonicalisation provenance, do not force a large rewrite. Instead:
+
+```text
+- implement safe canonical_id resolution
+- preserve raw label/unit/range wherever current structures allow
+- add carry-forward for richer provenance if genuinely required
+```
+
+Canonicalisation must fail closed where:
+
+```text
+- raw label is ambiguous
+- unit is missing
+- reference range is missing
+- unit/range conflict with DHEA-S convention
+- true DHEA vs DHEA-S cannot be distinguished
+```
+
+---
+
+# Phase 4 — Update canonical IDs and aliases
+
+If Phase 1 confirms DHEA-S identity:
+
+```text
+- create or confirm canonical biomarker ID for DHEA-S / DHEAS
+- map DHEA-S / DHEAS aliases to that ID
+- map "DHEA (Venous)" to DHEA-S only when unit/range rule passes
+- do not map true unsulfated DHEA to DHEA-S
+- update package metadata to refer to DHEA-S where justified
+```
+
+If Phase 1 does not confirm DHEA-S identity:
+
+```text
+- do not update package identity to DHEA-S
+- keep packages inactive
+- document unresolved identity blocker
+```
+
+Expected canonical ID preference:
+
+```text
+dhea_s
+```
+
+Use the repo’s existing naming convention if different, but document the choice.
+
+---
+
+# Phase 5 — DHEA-S high package handling
+
+If and only if DHEA-S identity is confirmed, assess whether the existing DHEA high package should become a DHEA-S high package.
+
+Allowed outcomes:
+
+```text
+RENAME_TO_DHEA_S_HIGH_AND_ACTIVATE_WITH_GATES
+RENAME_TO_DHEA_S_HIGH_KEEP_INACTIVE_PENDING_GATES
+KEEP_DHEA_HIGH_INACTIVE_IDENTITY_UNRESOLVED
+KEEP_DHEA_HIGH_INACTIVE_UNSULFATED_DHEA
+```
+
+Activation is allowed only if all required gates from the medical research authority can be encoded deterministically.
+
+Required DHEA-S high gates:
+
+```text
+- DHEA-S high relative to lab-provided reference range
+- biological sex present
+- age present
+- DHEA supplementation context answered
+- testosterone therapy / AAS exposure context answered
+- hormone therapy context answered where applicable
+- androgen excess symptoms disclosure captured
+- pregnancy status answered where applicable
+- companion testosterone / SHBG availability captured where available
+```
+
+Required exclusions:
+
+```text
+- suppress endogenous adrenal-androgen interpretation if DHEA supplementation answered_yes
+- suppress endogenous interpretation if testosterone therapy / AAS answered_yes
+- suppress if pregnancy answered_yes and pregnancy-specific logic is unavailable
+- use clinician-review wording for severe or rapid-onset virilisation if symptom severity available
+```
+
+Safe wording only:
+
+```text
+May say:
+  "This pattern may support an adrenal contribution to androgen excess when interpreted alongside sex, age, symptoms, testosterone, SHBG and supplement/medication context."
+
+Must not say:
+  "You have adrenal androgen excess."
+  "You have an adrenal tumour."
+  "You have PCOS."
+  "Your adrenal glands are overactive."
+```
+
+Do not activate if any required gate cannot be represented safely.
+
+---
+
+# Phase 6 — DHEA / DHEA-S low handling
+
+Do not activate DHEA low or DHEA-S low as a primary runtime signal in this sprint.
+
+Required outcome:
+
+```text
+DHEA_LOW_DO_NOT_ACTIVATE_EVIDENCE_INSUFFICIENT
+```
+
+If package identity is converted to DHEA-S low, keep it inactive unless a separate future medical authority explicitly supports activation.
+
+Update governance to make this explicit.
+
+---
+
+# Phase 7 — Governance and carry-forward updates
+
+Update relevant governance artefacts to reflect the outcome.
+
+Likely files:
+
+```text
+knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml
+knowledge_bus/governance/batch2_full_coverage_activation_readiness_register_v1.yaml
 knowledge_bus/governance/day_one_full_traceability_manifest_v1.yaml
-```
-
-This manifest must provide a single authoritative map of the day-one runtime estate.
-
-It must include at least:
-
-```text
-- runtime pipeline phases
-- key runtime modules
-- runtime authority files
-- compiled authority assets
-- signal package authority
-- runtime context authority
-- card authority
-- root-cause authority
-- compiled output authority
-- report compiler authority
-- narrative compiler authority
-- frontend/render-only boundary
-- inactive/quarantined legacy paths
-- forbidden runtime inputs
-- launch-blocking classifications
-```
-
-For each entry, include:
-
-```text
-- id
-- path
-- role
-- authority_classification
-- runtime_consumed: true / false
-- user_facing: true / false
-- source_authority
-- allowed_runtime_inputs
-- forbidden_runtime_inputs
-- provenance_required: true / false
-- governed_by
-- launch_gate_status
-- evidence
-```
-
-Allowed `launch_gate_status` values:
-
-```text
-PASS
-PASS_WITH_CARRY_FORWARD
-BLOCKED
-NOT_RUNTIME_CONSUMED
-QUARANTINED
-DEBUG_ONLY
-```
-
-Do not duplicate authority unnecessarily. The manifest should reference existing governance artefacts where they already exist.
-
----
-
-# Phase 3 — Create launch estate gate model
-
-Create or update:
-
-```text
 knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml
+knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+docs/sprints/launch_core_carry_forward_register.md
 ```
 
-This gate must define the final closure criteria for day-one architecture.
-
-It must include:
+Required carry-forward handling:
 
 ```text
-- gate name
-- gate version
-- launch scope
-- required architecture conditions
-- required runtime authority conditions
-- required output authority conditions
-- required context safety conditions
-- required signal activation conditions
-- required inactive/quarantined path conditions
-- required frontend/render-only conditions
-- required security/repo-hygiene conditions
-- allowed carry-forwards
-- disallowed carry-forwards
-- final verdict values
+- close DHEA/DHEA-S identity carry-forward if resolved
+- keep DHEA-S low inactive with explicit reason
+- keep DHEA-S high active only if deterministic gates are complete
+- if DHEA-S high remains inactive, record exact missing gate/reason
+- do not leave vague DHEA carry-forward text
 ```
 
-Allowed final verdict values:
+If day-one launch estate verdict remains valid, do not unnecessarily reopen day-one architecture.
 
-```text
-DAY_ONE_ARCHITECTURE_COMPLETE
-DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD
-DAY_ONE_ARCHITECTURE_NOT_COMPLETE
-```
-
-The gate must make clear that day-one architecture cannot be complete if:
-
-```text
-- any user-facing analytical runtime path is ungoverned
-- any raw Pass 3 file is consumed at runtime
-- any investigation spec is consumed at runtime
-- any frontend medical inference is required
-- any active signal lacks package authority
-- any compiled output lacks authority/provenance where required
-- any root-cause output is emitted from ungoverned fallback
-- any diagnosis/treatment/supplement wording is introduced
-- any SSOT/reference-range policy is bypassed
-```
-
-Allowed non-blocking carry-forwards may include:
-
-```text
-- additional optional provenance regression coverage
-- future modifier-only signal architecture
-- DHEA/DHEA-S identity remediation if the relevant packages remain inactive
-- non-launch-blocking UX/frontend polish
-- broader future biomarker expansion
-```
+If this work changes the launch estate verdict, document why.
 
 ---
 
-# Phase 4 — Implement or update launch gate validator
-
-Create or update a deterministic validator.
-
-Preferred file:
-
-```text
-backend/scripts/validate_day_one_launch_estate_gate.py
-```
-
-The validator must check:
-
-```text
-1. day_one_full_traceability_manifest_v1.yaml exists.
-2. day_one_launch_estate_gate_v1.yaml exists.
-3. No manifest entry is UNKNOWN_BLOCKER.
-4. No user-facing runtime analytical path is BLOCKED_UNGOVERNED.
-5. Raw Pass 3 runtime reads are forbidden.
-6. Investigation-spec runtime reads are forbidden.
-7. compiled_output_authority_model_v1.yaml exists.
-8. root_cause_authority_register_v1.yaml exists.
-9. card_authority_register_v1.yaml exists.
-10. ReportV1 includes output_authority_provenance_v1.
-11. why_engine_fallback_v1 is quarantined or blocked from governed clinician output.
-12. narrative_report_compiler_v1.py is classified in the manifest.
-13. active Batch 2 signals are represented in provenance tests or explicitly carried forward.
-14. inactive DHEA/DHEA-S and modifier-only signals remain inactive.
-15. frontend paths are classified render-only or out of scope.
-16. launch estate final verdict is one of the allowed values.
-```
-
-If the validator already exists, extend it rather than creating a duplicate.
-
-The validator must fail hard on launch-blocking conditions.
-
-Do not create a validator that always passes.
-
----
-
-# Phase 5 — Close ARCH-COMPLETION-2 carry-forwards
-
-Resolve the two carry-forward items from `ARCH-COMPLETION-2`.
-
-## Carry-forward 1 — narrative compiler classification
-
-Explicitly classify:
-
-```text
-backend/core/analytics/narrative_report_compiler_v1.py
-```
-
-Also classify any runtime YAML/authority assets it reads.
-
-Expected classification, if verified:
-
-```text
-GOVERNED_COMPILED_ASSET
-```
-
-Do not quarantine this path if it is reading governed compiled assets and producing authorised narrative output.
-
-If it reads raw research or ungoverned assets, STOP.
-
-## Carry-forward 2 — Batch 2 provenance-specific tests
-
-Add provenance-specific regression tests for:
-
-```text
-- FAI high activated case
-- FAI high suppressed case
-- free testosterone high activated case
-- free testosterone high suppressed case
-- free testosterone low activated case
-- free testosterone low suppressed case
-```
-
-These tests must verify output authority provenance, not merely signal activation/suppression.
-
-They should prove:
-
-```text
-- activated signal produces governed provenance element
-- suppressed signal does not produce governed analytical output
-- source_signal_ids include the expected signal ID
-- authority_status is appropriate
-- inactive or suppressed states do not produce misleading output
-```
-
-Do not remove existing FT3 low or DHEA inactive provenance tests.
-
----
-
-# Phase 6 — Final raw-research runtime read scan
-
-Add or update tests/scripts to prove the day-one runtime does not consume:
-
-```text
-- raw Pass 3 files
-- investigation specs
-- multi-LLM research specs
-- unpromoted research assets
-```
-
-The scan must cover at least:
-
-```text
-backend/core/**
-backend/routes/**
-backend/scripts used by runtime gates where relevant
-```
-
-The scan must not falsely fail on:
-
-```text
-- build-time promotion scripts
-- governance documentation references
-- audit papers
-- tests that intentionally mention forbidden paths
-```
-
-If existing tests already cover part of this, extend them rather than duplicating.
-
----
-
-# Phase 7 — Launch estate verdict
-
-Using the manifest and validator evidence, set a launch estate verdict in:
-
-```text
-knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml
-```
-
-Allowed verdicts:
-
-```text
-DAY_ONE_ARCHITECTURE_COMPLETE
-DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD
-DAY_ONE_ARCHITECTURE_NOT_COMPLETE
-```
-
-Choose the verdict honestly.
-
-Use:
-
-```text
-DAY_ONE_ARCHITECTURE_COMPLETE
-```
-
-only if there are no architecture carry-forwards.
-
-Use:
-
-```text
-DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD
-```
-
-only if remaining items are explicitly non-blocking and do not affect day-one runtime safety.
-
-Use:
-
-```text
-DAY_ONE_ARCHITECTURE_NOT_COMPLETE
-```
-
-if any launch-blocking governance, traceability, runtime authority or safety defect remains.
-
-Do not inflate the verdict.
-
----
-
-# Phase 8 — Tests
+# Phase 8 — Required tests
 
 Add or update tests proving:
 
+## Canonicalisation tests
+
 ```text
-1. full traceability manifest exists and contains required domains.
-2. narrative_report_compiler_v1.py is classified.
-3. no manifest entry has UNKNOWN_BLOCKER.
-4. no user-facing analytical runtime path is BLOCKED_UNGOVERNED.
-5. day-one launch estate gate exists and has an allowed verdict.
-6. launch estate validator passes.
-7. raw Pass 3 runtime reads are absent.
-8. investigation-spec runtime reads are absent.
-9. why_engine_fallback_v1 remains quarantined or blocked from clinician output.
-10. ReportV1 still includes output_authority_provenance_v1.
-11. FT3 low provenance test still passes.
-12. FAI high activated provenance test passes.
-13. FAI high suppressed provenance test passes.
-14. free testosterone high activated provenance test passes.
-15. free testosterone high suppressed provenance test passes.
-16. free testosterone low activated provenance test passes.
-17. free testosterone low suppressed provenance test passes.
-18. inactive DHEA does not produce governed analytical output.
-19. frontend remains render-only.
-20. no signal package activation/deactivation occurred.
+1. "DHEA (Venous)" + µmol/L + DHEA-S-like reference range canonicalises to DHEA-S.
+2. "DHEA" + µmol/L + DHEA-S-like reference range canonicalises to DHEA-S.
+3. "DHEAS" canonicalises to DHEA-S.
+4. "DHEA-S" canonicalises to DHEA-S.
+5. Ambiguous "DHEA" with no unit/range does not silently canonicalise to DHEA-S.
+6. Unit/range conflict fails closed or remains unresolved.
+7. Raw label is preserved.
+8. Unit is preserved.
+9. Reference range is preserved where current model supports it.
+10. Canonicalisation reason/confidence is recorded where current model supports it.
 ```
 
-Do not rely only on YAML structure tests.
+## Package tests
 
-There must be runtime/provenance tests.
+If DHEA-S high is activated, tests must prove:
+
+```text
+- fires only when DHEA-S is high and all required gates are satisfied
+- suppresses when DHEA supplementation answered_yes
+- suppresses when AAS/testosterone therapy answered_yes
+- suppresses when sex missing
+- suppresses when age missing
+- suppresses when pregnancy answered_yes
+- does not diagnose adrenal disease, adrenal tumour or PCOS
+```
+
+If DHEA-S high remains inactive, tests must prove:
+
+```text
+- package remains inactive
+- no adrenal androgen signal is emitted from ambiguous DHEA
+- DHEA low remains inactive
+```
+
+## Regression tests
+
+Must prove:
+
+```text
+- existing Batch 2 activated signals remain active and unchanged
+- inactive androgen packages remain inactive unless explicitly changed
+- raw Pass 3 runtime reads remain absent
+- day-one launch estate validator still passes
+```
 
 ---
 
@@ -656,9 +602,7 @@ python backend/scripts/validate_medical_frame_identity_index.py --index knowledg
 python backend/scripts/validate_context_modifier_catalogue.py --catalogue knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
 ```
 
-If any validator does not exist, create it if in scope, or report why it is absent.
-
-## Context and signal regressions
+## Regression tests
 
 ```powershell
 python -m pytest backend/tests/regression/test_runtime_context_evaluation.py -q
@@ -667,29 +611,9 @@ python -m pytest backend/tests/regression/test_batch2_full_coverage_activation.p
 python -m pytest backend/tests/regression/test_output_authority_provenance.py -q
 ```
 
-## Governance tests
+Run all new canonicalisation tests.
 
-Run all relevant governance tests for:
-
-```text
-- full traceability manifest
-- launch estate gate
-- compiled output authority
-- root-cause authority
-- card authority
-- Batch 2 activation registers
-- runtime context registers
-```
-
-## Unit tests
-
-Run all relevant unit tests for:
-
-```text
-- report compiler
-- provenance builder
-- compiled output authority loader
-```
+Run all relevant governance tests.
 
 ## Secret-file guardrail
 
@@ -708,7 +632,7 @@ if present.
 Create:
 
 ```text
-docs/audit-papers/ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate.md
+docs/audit-papers/DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution.md
 ```
 
 The audit paper must include:
@@ -717,29 +641,29 @@ The audit paper must include:
 - executive verdict
 - files inspected
 - files changed
-- carry-forward items inherited from ARCH-COMPLETION-2
-- carry-forward resolution evidence
-- full runtime authority discovery summary
-- full traceability manifest summary
-- launch estate gate summary
-- launch estate final verdict
-- validator implementation details
-- raw-research runtime read scan result
-- narrative_report_compiler_v1.py classification
-- Batch 2 provenance test coverage result
-- inactive/quarantined path status
-- confirmation no signal packages activated or deactivated
+- DHEA / DHEA-S identity audit
+- sample panel evidence
+- unit/reference-range evidence
+- canonicalisation model summary
+- canonicalisation implementation details
+- DHEA-S high package outcome
+- DHEA/DHEA-S low package outcome
+- governance updates
+- carry-forward impact
+- confirmation raw label/unit/range preservation
+- confirmation no label-only DHEA to DHEA-S remap
+- confirmation no unsupported DHEA activation
+- confirmation no DHEA low activation
 - confirmation no SSOT changed unless explicitly justified
-- confirmation no scoring changed
 - confirmation no frontend changed
-- confirmation no report compiler output contract broken
+- confirmation no scoring changed
+- confirmation no report compiler changed unless explicitly justified
 - confirmation no raw research runtime reads introduced
 - confirmation no diagnosis wording introduced
 - confirmation no treatment/supplement recommendation introduced
 - full validator output
 - full test output
 - rollback path
-- carry-forward impact
 - recommended next action
 ```
 
@@ -747,132 +671,7 @@ Validation and test output must be pasted in full, not summarised.
 
 ---
 
-# Phase 11 — Carry-forward handling
-
-Update:
-
-```text
-docs/sprints/launch_core_carry_forward_register.md
-```
-
-only where justified.
-
-Expected handling:
-
-```text
-- close ARCH-COMPLETION-2 narrative compiler traceability carry-forward if resolved
-- close ARCH-COMPLETION-2 Batch 2 provenance-test carry-forward if resolved
-- close day-one architecture carry-forward only if launch estate verdict supports completion
-- add precise non-blocking carry-forwards only where appropriate
-- keep DHEA/DHEA-S future remediation open if packages remain inactive
-```
-
-Do not create vague residuals.
-
-Do not mark day-one architecture complete unless evidence supports it.
-
----
-
-## Expected changed files
-
-Expected changed files may include:
-
-```text
-knowledge_bus/governance/day_one_full_traceability_manifest_v1.yaml
-knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml
-backend/scripts/validate_day_one_launch_estate_gate.py
-backend/tests/regression/test_output_authority_provenance.py
-backend/tests/governance/test_arch_completion_3_traceability_manifest.py
-backend/tests/governance/test_day_one_launch_estate_gate.py
-backend/tests/unit/*
-docs/sprints/launch_core_carry_forward_register.md
-docs/audit-papers/ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate.md
-automation_bus/latest_cursor_status.json
-```
-
-Possible but must be justified:
-
-```text
-backend/core/knowledge/compiled_output_authority_v1.py
-backend/core/analytics/output_authority_provenance_builder_v1.py
-backend/core/analytics/report_compiler_v1.py
-backend/core/contracts/report_v1.py
-```
-
-Only touch these if the launch estate gate or traceability manifest proves a genuine implementation gap.
-
-No frontend files are expected to change.
-
-No SSOT files are expected to change.
-
-No signal package files are expected to change.
-
----
-
-## Forbidden changes
-
-Do not change:
-
-```text
-frontend/**
-backend/ssot/**
-```
-
-Do not activate or deactivate packages under:
-
-```text
-knowledge_bus/packages/**
-```
-
-unless the change is strictly non-behavioural documentation/provenance metadata and is explicitly justified.
-
-Do not introduce:
-
-```text
-- fallback parsers
-- dummy parsers
-- raw research runtime reads
-- frontend clinical inference
-- LLM clinical reasoning
-- diagnosis wording
-- treatment recommendations
-- supplement recommendations
-```
-
----
-
-## STOP conditions
-
-STOP and report if:
-
-```text
-1. full runtime authority discovery cannot be completed.
-2. narrative_report_compiler_v1.py reads raw research or ungoverned assets.
-3. full traceability manifest cannot classify all user-facing analytical runtime paths.
-4. any manifest entry remains UNKNOWN_BLOCKER.
-5. any user-facing analytical runtime path remains BLOCKED_UNGOVERNED.
-6. launch estate gate cannot be represented deterministically.
-7. launch estate validator would need to be superficial or always-pass.
-8. raw Pass 3 runtime reads are found.
-9. investigation-spec runtime reads are found.
-10. provenance tests cannot be added for FAI high, free testosterone high or free testosterone low.
-11. changes would require frontend rendering edits.
-12. changes would require SSOT edits.
-13. changes would require signal package activation/deactivation.
-14. changes would require clinical threshold changes.
-15. diagnosis wording would be emitted.
-16. treatment/supplement recommendation would be emitted.
-17. validators fail.
-18. tests fail.
-19. secret-file guardrail fails.
-20. rollback path cannot be defined.
-```
-
-If a STOP condition is triggered, do not perform ad hoc remediation beyond scope.
-
----
-
-## Git evidence requirements
+# Phase 11 — Git evidence requirements
 
 Before commit, report:
 
@@ -883,16 +682,22 @@ git diff --name-only
 git diff --cached --name-only
 ```
 
-Commit message:
+Commit message if DHEA-S high is activated:
 
 ```text
-feat(governance): add day-one traceability manifest and launch estate gate
+feat(canonicalisation): resolve DHEA-S identity and activate gated adrenal androgen signal
 ```
 
-If no runtime/code change occurs and the sprint only creates governance/test artefacts, use:
+Commit message if identity is resolved but DHEA-S high remains inactive:
 
 ```text
-docs(governance): complete day-one launch estate traceability gate
+feat(canonicalisation): add unit-aware DHEA-S biomarker identity resolution
+```
+
+Commit message if identity cannot be resolved:
+
+```text
+docs(governance): document DHEA identity blocker and fail-closed canonicalisation
 ```
 
 After commit, report:
@@ -909,30 +714,53 @@ Return evidence for Claude audit and GPT architectural review.
 
 ---
 
+## STOP conditions
+
+STOP and report if:
+
+```text
+1. AB full-panel DHEA evidence cannot be located.
+2. DHEA and DHEA-S are conflated but cannot be safely separated.
+3. Canonicalisation would require label-only DHEA to DHEA-S mapping.
+4. Unit/reference-range evidence is missing or contradictory.
+5. Raw label/unit/range cannot be preserved sufficiently for audit.
+6. DHEA-S high activation would lack required context gates.
+7. DHEA supplementation context cannot suppress endogenous interpretation.
+8. AAS/testosterone therapy context cannot suppress endogenous interpretation.
+9. Pregnancy context cannot suppress where required.
+10. Changes would require frontend rendering edits.
+11. Changes would require broad SSOT redesign.
+12. Changes would require scoring changes.
+13. Changes would require report compiler changes.
+14. Diagnosis wording would be introduced.
+15. Treatment/supplement recommendation would be introduced.
+16. Validators fail.
+17. Tests fail.
+18. Secret-file guardrail fails.
+19. Rollback path cannot be defined.
+```
+
+Do not perform ad hoc remediation beyond scope if a STOP condition is triggered.
+
+---
+
 ## Success criteria
 
 This sprint succeeds only if:
 
 ```text
-- full runtime authority discovery is complete
-- day_one_full_traceability_manifest_v1.yaml exists
-- day_one_launch_estate_gate_v1.yaml exists
-- launch estate validator exists and passes
-- narrative_report_compiler_v1.py is explicitly classified
-- FAI high provenance tests pass
-- free testosterone high provenance tests pass
-- free testosterone low provenance tests pass
-- raw Pass 3 runtime reads are absent
-- investigation-spec runtime reads are absent
-- every user-facing analytical runtime path is governed or quarantined
-- no UNKNOWN_BLOCKER entries remain
-- no BLOCKED_UNGOVERNED user-facing paths remain
-- no signal packages are activated or deactivated
-- no SSOT changes occur
+- DHEA / DHEA-S identity is resolved or safely failed closed
+- unit-aware ambiguous-marker canonicalisation is defined
+- label-only DHEA is not silently mapped to DHEA-S
+- raw label/unit/reference range are preserved where supported
+- DHEA and DHEA-S remain separate canonical concepts
+- sample AB full-panel DHEA evidence is tested
+- DHEA low remains inactive
+- DHEA-S high is either safely activated with gates or explicitly remains inactive with exact reason
+- governance and carry-forward registers are updated
 - no frontend changes occur
 - no scoring changes occur
-- no diagnosis wording is introduced
-- no treatment/supplement recommendation is introduced
+- no unsupported signal activation occurs
 - validators pass
 - tests pass
 - audit paper contains full evidence
@@ -946,9 +774,5 @@ GPT architectural review
 Human approval
 Merge
 
-If launch verdict is DAY_ONE_ARCHITECTURE_COMPLETE or DAY_ONE_ARCHITECTURE_COMPLETE_WITH_NON_BLOCKING_CARRY_FORWARD:
-  formally close day-one architecture rework and move to product / beta readiness estate.
-
-If launch verdict is DAY_ONE_ARCHITECTURE_NOT_COMPLETE:
-  remediate the named blockers before product readiness work.
+Then proceed to product/beta readiness estate or a short architecture-debt closure pass if any non-blocking carry-forward remains.
 ```
