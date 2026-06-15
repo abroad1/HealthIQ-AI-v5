@@ -1,10 +1,9 @@
 {
   "branch": "work/DHEA-S-HIGH-ACTIVATION-1-medical-authority-gated-runtime-activation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-15T16:04:19Z",
-  "cursor_started_utc": "2026-06-15T15:58:59Z",
-  "head_sha": "95c03da20632e901a0ec0015add0fd90bd69ae14",
+  "cursor_started_utc": "2026-06-15T18:00:00Z",
+  "head_sha": "53ce4e7df8e52ce556f7ddab9ad6621f25662255",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
+  "status": "IN_PROGRESS",
   "work_id": "DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation"
 }
