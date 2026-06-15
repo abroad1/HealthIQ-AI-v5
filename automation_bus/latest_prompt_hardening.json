@@ -1,256 +1,181 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution",
+  "work_id": "DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation",
   "status": "HARDENED",
   "hardened_utc": "2026-06-15T00:00:00Z",
-  "hardened_by": "Claude Code (claude-sonnet-4-6, SOP v1.3.1 Stage 2)",
-  "changes": [
-    {
-      "type": "HARDENING_CORRECTION",
-      "description": "PATH ERROR IN AUTHORITATIVE INPUTS — ADVISORY. The prompt's 'Authoritative inputs' and 'Inspect all biomarker identity and canonicalisation files' section lists 'backend/config/biomarker_alias_registry.yaml', 'backend/config/biomarker_catalogue.yaml', and 'backend/config/derived_biomarkers.yaml'. None of these files exist at backend/config/. The actual alias registry is at backend/ssot/biomarker_alias_registry.yaml (confirmed via Grep, 199+ lines). backend/config/ contains only Python configuration files (__init__.py, ai.py, settings.py, flags.py, database.py, env.py). No biomarker_catalogue.yaml or derived_biomarkers.yaml exist anywhere in the repo.",
-      "risk": "LOW",
-      "citation": "CONFIRMED via Glob: backend/config/ contains __init__.py, ai.py, settings.py, flags.py, database.py, env.py only. CONFIRMED via Grep pattern 'dhea|DHEA' on *.yaml: backend/ssot/biomarker_alias_registry.yaml lines 178-194 contain dhea and dhea_s entries.",
-      "required_action": "Cursor: use backend/ssot/biomarker_alias_registry.yaml as the authoritative alias registry. Document the path correction in the Phase 10 audit paper. Do not attempt to create or populate backend/config/biomarker_alias_registry.yaml."
-    },
-    {
-      "type": "HARDENING_CORRECTION",
-      "description": "PATH ERROR — PARSING AND NORMALISATION DIRECTORIES DO NOT EXIST. The prompt lists 'backend/core/parsing/**' and 'backend/core/normalisation/**' as inspection targets. Neither directory exists. The actual canonicalisation and normalisation implementation lives in backend/core/canonical/ (alias_registry_service.py, normalize.py, alias_registry.py, resolver.py).",
-      "risk": "LOW",
-      "citation": "CONFIRMED via Glob: backend/core/parsing/ — no files found. backend/core/normalisation/ — no files found. backend/core/canonical/ contains alias_registry_service.py, normalize.py, alias_registry.py, resolver.py.",
-      "required_action": "Cursor: the canonicalisation implementation to extend is backend/core/canonical/alias_registry_service.py (AliasRegistryService.resolve()) and backend/core/canonical/normalize.py (BiomarkerNormalizer). Do not create parsing/ or normalisation/ directories."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "ALIAS REGISTRY CONFIRMED PRESENT WITH DHEA IDENTITY MAPPED TO UNSULFATED DHEA. backend/ssot/biomarker_alias_registry.yaml lines 178-184: dhea entry maps aliases ['DHEA', 'DHEA (Venous)', 'DHEA - venous', 'Dehydroepiandrosterone'] to canonical_id: dhea. Lines 185-194: dhea_s entry maps aliases ['DHEA-S', 'DHEA-S (Venous)', 'DHEA-S - venous', 'DHEAS', 'Dehydroepiandrosterone sulfate', 'dehydroepiandrosterone_sulfate', 'dheas'] to canonical_id: dhea_s. DHEA and DHEA-S are already separate canonical identities. The problem is that 'DHEA (Venous)' is currently hardcoded to resolve to dhea, not dhea_s.",
-      "risk": "MEDIUM",
-      "citation": "CONFIRMED via Grep on backend/ssot/biomarker_alias_registry.yaml: lines 178-194 (dhea block and dhea_s block both present and separated).",
-      "required_action": "Cursor: Phase 3 must NOT blindly remap 'DHEA (Venous)' in the alias registry from dhea to dhea_s without a unit/range gate. The unit-aware canonicalisation model must be implemented in code (AliasRegistryService or a new wrapper) before any alias registry change is made. A label-only remap is explicitly prohibited by the sprint's non-negotiable constraints."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "SSOT BIOMARKERS.YAML — DHEA AND DHEA-S CONFIRMED SEPARATE WITH CORRECT UNITS. backend/ssot/biomarkers.yaml lines 1397-1416: dhea entry with unit 'umol/L', no aliases listed, category Adrenal. Lines 1417-1437: dhea_s entry with unit 'umol/L', aliases [dheas, dhea_sulfate, dehydroepiandrosterone_sulfate], description explicitly states 'distinct from unconjugated serum DHEA'. The two canonical biomarkers are correctly separated at SSOT level. No SSOT redesign is required by this sprint.",
-      "risk": "LOW",
-      "citation": "CONFIRMED: backend/ssot/biomarkers.yaml lines 1397-1416 (dhea), lines 1417-1437 (dhea_s).",
-      "required_action": "Cursor: do not modify backend/ssot/biomarkers.yaml unless explicitly justified by Phase 1 identity audit. The SSOT structure is correct."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "AB FULL PANEL SAMPLE EVIDENCE CONFIRMED. backend/tests/fixtures/panels/ab_full_panel_with_ranges.json line 173: 'dhea' key, value 5.12, unit 'umol/L', reference_range { min: 0.94, max: 15.44, unit: 'umol/L', source: 'lab' }. This range (0.94-15.44 µmol/L) is consistent with DHEA-S reporting conventions, not unsulfated DHEA reporting conventions. The fixture already holds the parsed canonical key 'dhea' — the raw label 'DHEA (Venous)' is not preserved in the fixture. Parsing notes (ab_full_panel_parsing_notes.md line 13) confirm 'dhea' is in the parsed biomarker list.",
-      "risk": "MEDIUM",
-      "citation": "CONFIRMED: backend/tests/fixtures/panels/ab_full_panel_with_ranges.json lines 173-182; backend/tests/fixtures/panels/ab_full_panel_parsing_notes.md line 13.",
-      "required_action": "Cursor: Phase 1 identity evidence is SUFFICIENT from the fixture — unit umol/L and reference range 0.94-15.44 µmol/L strongly support DHEA-S identity. Note that the fixture does NOT preserve the original raw label 'DHEA (Venous)'. Phase 8 canonicalisation tests must use the raw label form (e.g. 'DHEA (Venous)') as test input, not the already-resolved canonical key 'dhea'."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "RESOLUTION CHAIN CONFIRMED — DHEA (VENOUS) RESOLVES TO dhea VIA ALIAS REGISTRY. The AliasRegistryService.resolve() method in backend/core/canonical/alias_registry_service.py processes: (1) strip abnormal markers, (2) normalize key to lowercase/underscores, (3) strip specimen suffix '(venous)'. 'DHEA (Venous)' normalizes to 'dhea_(venous)', then strips specimen suffix to 'dhea'. It ALSO matches directly via alias_registry entry at backend/ssot/biomarker_alias_registry.yaml line 182. Both resolution paths currently resolve 'DHEA (Venous)' to canonical 'dhea', not 'dhea_s'. The specimen-suffix stripping alone would prevent unit-aware resolution — Phase 3 must handle this architectural constraint.",
-      "risk": "HIGH",
-      "citation": "CONFIRMED: backend/core/canonical/alias_registry_service.py lines 332-369 (resolve method), lines 314-329 (_strip_specimen_suffix method); backend/ssot/biomarker_alias_registry.yaml line 182.",
-      "required_action": "Cursor: Phase 3 implementation must address BOTH resolution paths. The alias registry entry for 'DHEA (Venous)' → dhea (line 182) must be handled; and the specimen-suffix stripping logic must not collapse unit-aware DHEA disambiguation. The safest implementation is a post-resolution unit-aware identity refinement step, not a modification to the core specimen-suffix stripping logic which is used for many other biomarkers."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "PACKAGE PRIMARY_METRIC USES dhea, NOT dhea_s. pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml line 9: 'primary_metric: dhea'. pkg_kb47_dhea_low_adrenal_androgen_reduction/signal_library.yaml line 9: 'primary_metric: dhea'. Both packages reference the unsulfated DHEA canonical ID. If Phase 4 renames/reroutes the AB panel DHEA to resolve to dhea_s, these packages must be updated to primary_metric: dhea_s. This is a BEHAVIOUR change in signal evaluation scope — signal_dhea_high would then fire only on dhea_s, not dhea. The medical authority (batch2_thyroid_androgen_context_authority_review_v1.md) explicitly requires this: 'DHEA high should not activate unless the source biomarker is clearly DHEA-S'.",
-      "risk": "HIGH",
-      "citation": "CONFIRMED: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml lines 8-9; knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/signal_library.yaml lines 8-9; knowledge_bus/research/medical_reviews/batch2_thyroid_androgen_context_authority_review_v1.md line 20 (DHEA high table entry).",
-      "required_action": "Cursor: Phase 4 — if DHEA-S identity is confirmed, update both package signal libraries to primary_metric: dhea_s. This change must be listed explicitly in Phase 11 git diff and included in the Phase 10 audit paper's 'files changed' section."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "DHEA-S HIGH ACTIVATION — PREGNANCY GATE MISSING FROM EXISTING SIGNAL LIBRARY. pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml runtime_context_requirements lists 6 context gates (sex, age, symptoms_present, supplements_disclosed, hormone_therapy_status_disclosed, aas_exposure_status_disclosed). Pregnancy status is NOT listed. The medical authority review (batch2_thyroid_androgen_context_authority_review_v1.md) requires pregnancy as an EXCLUSION_CONDITION for DHEA high activation. Phase 5 activation gate assessment must flag this missing gate. STOP condition 9 applies if pregnancy context cannot suppress where required.",
-      "risk": "HIGH",
-      "citation": "CONFIRMED: knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml lines 52-70 (runtime_context_requirements — 6 entries, no pregnancy gate); knowledge_bus/research/medical_reviews/batch2_thyroid_androgen_context_authority_review_v1.md line 213 ('Do not emit if pregnancy is disclosed').",
-      "required_action": "Cursor: Phase 5 — if assessing DHEA-S high activation, the missing pregnancy exclusion gate must be added to signal_library.yaml runtime_context_requirements before activation is permitted. If the pregnancy context primitive cannot be safely encoded from the current questionnaire schema, the outcome must be RENAME_TO_DHEA_S_HIGH_KEEP_INACTIVE_PENDING_GATES with explicit documentation of the missing gate."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "MEDICAL AUTHORITY DIRECTION IS DO_NOT_ACTIVATE_YET. batch2_thyroid_androgen_context_authority_review_v1.md final activation matrix (line 1100): 'DHEA high | DO_NOT_ACTIVATE_YET_CONTEXT_MODEL_INSUFFICIENT | Future: DHEA-S explicit + sex/age + testosterone/SHBG + supplement exclusions | Yes before activation | LOW'. This direction was confirmed before this sprint and remains the governing medical authority. DHEA-S high activation would require external clinician sign-off per the medical authority matrix. The sprint's Phase 5 outcome is most likely RENAME_TO_DHEA_S_HIGH_KEEP_INACTIVE_PENDING_GATES given the existing authority direction and missing pregnancy gate.",
-      "risk": "HIGH",
-      "citation": "CONFIRMED: knowledge_bus/research/medical_reviews/batch2_thyroid_androgen_context_authority_review_v1.md lines 1100-1101 (final activation matrix rows for DHEA high and DHEA low).",
-      "required_action": "Cursor: Phase 5 must not activate DHEA-S high without clinician sign-off and all required gates being present. The expected outcome per medical authority is RENAME_TO_DHEA_S_HIGH_KEEP_INACTIVE_PENDING_GATES. Document this explicitly in governance and carry-forward updates."
-    },
-    {
-      "type": "HARDENING_NOTE",
-      "description": "CARRY-FORWARD CF-BATCH2-010 IS OPEN. docs/sprints/launch_core_carry_forward_register.md row CF-BATCH2-010: 'DHEA high/low, FAI low, free testosterone pct high/low remain inactive. CF-BATCH2-010 Open for remaining 5 androgen packages.' This sprint resolves the DHEA identity ambiguity but is unlikely to close CF-BATCH2-010 fully unless DHEA-S high is activated with all gates satisfied. Phase 7 must update CF-BATCH2-010 status accurately.",
-      "risk": "MEDIUM",
-      "citation": "CONFIRMED: docs/sprints/launch_core_carry_forward_register.md row CF-BATCH2-010 (line 80).",
-      "required_action": "Cursor: Phase 7 — update CF-BATCH2-010 in launch_core_carry_forward_register.md. If DHEA-S high remains inactive, do not mark CF-BATCH2-010 as Resolved. Add a new CF item for the DHEA identity resolution outcome."
-    }
-  ],
+  "hardened_by": "Claude Code (Sonnet 4.6) — SOP v1.3.1 Stage 2",
   "front_matter_check": {
     "work_id": {
       "present": true,
-      "value": "DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution",
-      "citation": "CONFIRMED: latest_cursor_prompt.md line 2"
+      "value": "DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation",
+      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:2"
     },
     "branch": {
       "present": true,
-      "value": "work/DHEA-DHEAS-CANONICALISATION-1-unit-aware-marker-identity-and-adrenal-androgen-resolution",
-      "citation": "CONFIRMED: latest_cursor_prompt.md line 3"
+      "value": "work/DHEA-S-HIGH-ACTIVATION-1-medical-authority-gated-runtime-activation",
+      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:3"
     },
     "risk_level": {
       "present": true,
       "value": "HIGH",
       "justified": true,
-      "citation": "CONFIRMED: latest_cursor_prompt.md line 4. HIGH is correct and mandatory: sprint touches backend/core/canonical/alias_registry_service.py (canonicalisation logic — direct Intelligence Core input), backend/ssot/biomarker_alias_registry.yaml (SSOT — HIGH trigger per SOP §10), and knowledge_bus/packages/pkg_kb47_* signal_library.yaml (package signal evaluation). All three trigger HIGH classification."
+      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:4 — HIGH correct: package activation status changes, signal_library.yaml gates change, governance files change. Touches Intelligence Core input surface (package signal evaluation)."
     },
     "execution_model": {
       "present": true,
       "value": "TWO_PHASE_START_FINISH",
-      "citation": "CONFIRMED: latest_cursor_prompt.md line 5"
+      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:5"
     },
     "change_type": {
       "present": true,
       "value": "BEHAVIOUR",
       "justified": true,
-      "citation": "CONFIRMED: latest_cursor_prompt.md line 6. BEHAVIOUR is correct: sprint changes biomarker canonical identity resolution logic (alias_registry_service.py), which is an Intelligence Core input surface. A change to how 'DHEA (Venous)' resolves changes which signals can fire. Package primary_metric changes from dhea to dhea_s change signal evaluation scope directly."
+      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:6 — BEHAVIOUR correct: governance_runtime_activation_status changes from inactive to runtime_active_canonical; signal_dhea_high enters SignalRegistry evaluation; runtime_context_requirements gates change directly affecting whether signal fires."
     },
     "closing_delimiter": {
       "status": "PASS",
-      "citation": "CONFIRMED: latest_cursor_prompt.md line 7: '---'"
+      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:7 — '---'"
     },
     "all_five_fields_valid": true
   },
   "stage_2a_authority_verification": {
-    "status": "PASS_WITH_PATH_CORRECTIONS",
-    "ssot_files_verified": [
-      {
-        "path": "backend/ssot/biomarkers.yaml",
-        "exists": true,
-        "dhea_entry_line": 1397,
-        "dhea_s_entry_line": 1417,
-        "citation": "CONFIRMED: both dhea and dhea_s present as separate canonical entries with unit umol/L"
-      },
-      {
-        "path": "backend/ssot/biomarker_alias_registry.yaml",
-        "exists": true,
-        "dhea_block_lines": "178-184",
-        "dhea_s_block_lines": "185-194",
-        "citation": "CONFIRMED via Grep: dhea canonical_id dhea; aliases include 'DHEA (Venous)' at line 182. dhea_s canonical_id dhea_s; aliases include DHEAS, DHEA-S at lines 188-194."
-      }
-    ],
-    "implementation_files_verified": [
-      {
-        "path": "backend/core/canonical/alias_registry_service.py",
-        "exists": true,
-        "key_method": "AliasRegistryService.resolve()",
-        "citation": "CONFIRMED: lines 332-369 — resolve() accepts name string only; no unit/range parameter exists yet"
-      },
-      {
-        "path": "backend/core/canonical/normalize.py",
-        "exists": true,
-        "citation": "CONFIRMED: BiomarkerNormalizer.normalize_biomarkers() preserves reference_range and unit in BiomarkerValue; existing audit fields: original_unit, original_value, unit_normalised, unit_source"
-      },
-      {
-        "path": "backend/core/canonical/alias_registry.py",
-        "exists": true,
-        "citation": "CONFIRMED: BiomarkerAliasResolver — references backend/ssot/biomarker_alias_registry.yaml (correct path)"
-      }
-    ],
-    "package_files_verified": [
-      {
-        "path": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml",
-        "exists": true,
-        "primary_metric": "dhea",
-        "activation_logic": "lab_range_exceeded",
-        "behavioural_impact": "NONE (package not yet runtime-active)",
-        "citation": "CONFIRMED: signal_library.yaml lines 9, 47; package_manifest.yaml line 12"
-      },
-      {
-        "path": "knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/signal_library.yaml",
-        "exists": true,
-        "primary_metric": "dhea",
-        "activation_logic": "lab_range_exceeded",
-        "citation": "CONFIRMED: signal_library.yaml line 9"
-      }
-    ],
-    "sample_evidence_verified": [
-      {
-        "path": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json",
-        "exists": true,
-        "dhea_key": "dhea",
-        "value": 5.12,
-        "unit": "umol/L",
-        "reference_range_min": 0.94,
-        "reference_range_max": 15.44,
-        "range_consistent_with_dhea_s": true,
-        "citation": "CONFIRMED: lines 173-182"
-      }
-    ],
-    "medical_authority_verified": [
-      {
-        "path": "knowledge_bus/research/medical_reviews/batch2_thyroid_androgen_context_authority_review_v1.md",
-        "exists": true,
-        "dhea_high_activation_decision": "DO_NOT_ACTIVATE_YET_CONTEXT_MODEL_INSUFFICIENT",
-        "dhea_low_activation_decision": "DO_NOT_ACTIVATE_EVIDENCE_INSUFFICIENT",
-        "clinician_signoff_required": true,
-        "citation": "CONFIRMED: lines 1100-1101 (final activation matrix)"
-      }
-    ],
-    "governance_files_verified": [
-      {
-        "path": "knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml",
-        "exists": true,
-        "citation": "CONFIRMED via prior audit"
-      },
-      {
-        "path": "knowledge_bus/governance/batch2_full_coverage_activation_readiness_register_v1.yaml",
-        "exists": true,
-        "citation": "CONFIRMED via prior audit"
-      },
-      {
-        "path": "docs/sprints/launch_core_carry_forward_register.md",
-        "exists": true,
-        "cf_batch2_010_status": "Open",
-        "citation": "CONFIRMED: line 80"
-      }
-    ],
-    "path_corrections_required": [
-      "backend/config/biomarker_alias_registry.yaml — DOES NOT EXIST. Use backend/ssot/biomarker_alias_registry.yaml",
-      "backend/config/biomarker_catalogue.yaml — DOES NOT EXIST. No equivalent found in repo.",
-      "backend/config/derived_biomarkers.yaml — DOES NOT EXIST. No equivalent found in repo.",
-      "backend/core/parsing/** — DIRECTORY DOES NOT EXIST. Use backend/core/canonical/",
-      "backend/core/normalisation/** — DIRECTORY DOES NOT EXIST. Use backend/core/canonical/"
-    ],
-    "duplicate_authority_sources": "NONE detected — dhea and dhea_s are properly separated in both biomarkers.yaml and biomarker_alias_registry.yaml"
+    "status": "PASS",
+    "medical_authority_file": {
+      "path": "docs/Medical Research Documents/DHEA-S_High_Activation_Medical_Research_Review.md",
+      "exists": true,
+      "dhea_s_high_activate_now": "CONFIRMED: line 15",
+      "standalone_signal_allowed_true": "CONFIRMED: line 209",
+      "corroboration_required_false": "CONFIRMED: line 210",
+      "dhea_s_low_decision": "CONFIRMED: BIOMARKER_LEVEL_EXPLANATION_ONLY — line 172",
+      "unsulfated_dhea_high_decision": "CONFIRMED: DO_NOT_ACTIVATE — line 289",
+      "unsulfated_dhea_low_decision": "CONFIRMED: DO_NOT_ACTIVATE — line 290",
+      "safe_wording_section": "CONFIRMED: lines 126-147 — maximum claim strength: may support, may be consistent with",
+      "suppression_table": "CONFIRMED: lines 109-122 — DHEA supplementation=SUPPRESS, pregnancy=SUPPRESS, missing age=SUPPRESS, missing sex=SUPPRESS, HRT=DOWNGRADE, AAS=DOWNGRADE"
+    },
+    "package_current_state": {
+      "manifest_path": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/package_manifest.yaml",
+      "governance_runtime_activation_status": "CONFIRMED: inactive_pending_external_clinician_signoff — line 16",
+      "identity_remediation_status": "CONFIRMED: IDENTITY_RESOLVED_PRIMARY_METRIC_DHEA_S — line 14",
+      "behavioural_impact": "CONFIRMED: NONE — line 13 (must change to SIGNAL_RUNTIME_ACTIVATION this sprint)"
+    },
+    "signal_library": {
+      "path": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml",
+      "primary_metric": "CONFIRMED: dhea_s — line 21",
+      "activation_logic": "CONFIRMED: lab_range_exceeded — line 48",
+      "trigger_direction": "CONFIRMED: high — line 16"
+    },
+    "execution_register": {
+      "path": "knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml",
+      "activated_package_count": "CONFIRMED: 4 — line 8",
+      "dhea_high_in_kept_inactive": "CONFIRMED: lines 30-34 — KEEP_INACTIVE_PENDING_EXTERNAL_CLINICIAN_SIGNOFF",
+      "dhea_low_in_kept_inactive": "CONFIRMED: lines 35-37 — DO_NOT_ACTIVATE"
+    },
+    "carry_forward": {
+      "CF-DHEA-S-ACTIVATION-001": "CONFIRMED: Open — docs/sprints/launch_core_carry_forward_register.md:82",
+      "CF-BATCH2-010": "CONFIRMED: Open — line 80 — 5 androgen packages remain inactive"
+    },
+    "day_one_estate_gate": {
+      "path": "knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml",
+      "stale_condition": "CONFIRMED: line 35 — 'DHEA packages inactive pending identity remediation' — this becomes stale when DHEA-S high activates. MANDATORY UPDATE required in Phase 5."
+    },
+    "regression_test_inversion": {
+      "path": "backend/tests/regression/test_dhea_s_high_remains_inactive.py",
+      "line_23": "CONFIRMED: asserts pkg_kb47_dhea_high_androgen_excess_context NOT in activated and IN inactive. This test WILL FAIL after sprint. Must be replaced with a test asserting activation."
+    },
+    "duplicate_authority_sources": "NONE detected."
   },
   "stage_2b_behavioural_hardening": {
-    "status": "PASS",
-    "change_type_declared": "BEHAVIOUR",
-    "change_type_justified": "Canonicalisation identity resolution is an Intelligence Core input surface. A change in how 'DHEA (Venous)' resolves (dhea vs dhea_s) directly changes which signal packages can fire. Package primary_metric changes from dhea to dhea_s change signal evaluation scope. BEHAVIOUR classification is mandatory and correct.",
+    "status": "PASS_WITH_IMPLEMENTATION_WARNINGS",
     "intelligence_core_components_affected": [
-      "backend/core/canonical/alias_registry_service.py — AliasRegistryService.resolve() — Identity resolution entry point",
-      "backend/ssot/biomarker_alias_registry.yaml — canonical alias mappings consumed by resolve()",
-      "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml — primary_metric field",
-      "knowledge_bus/packages/pkg_kb47_dhea_low_adrenal_androgen_reduction/signal_library.yaml — primary_metric field"
+      "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml — runtime_context_requirements gates (hard behaviour change)",
+      "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/package_manifest.yaml — governance_runtime_activation_status (activation state change)",
+      "SignalRegistry — signal_dhea_high enters active evaluation on next load after package activation"
     ],
-    "regression_targets_confirmed": [
-      "backend/tests/regression/test_runtime_context_evaluation.py — must pass unchanged",
-      "backend/tests/regression/test_context_threading.py — must pass unchanged",
-      "backend/tests/regression/test_batch2_full_coverage_activation.py — must pass unchanged",
-      "backend/tests/regression/test_output_authority_provenance.py — must pass unchanged",
-      "All existing activated signals must remain active and unchanged",
-      "DHEA packages must remain inactive unless Phase 5 explicitly activates DHEA-S high with all required gates confirmed"
-    ],
-    "no_scope_creep": true,
-    "stop_conditions_assessed": {
-      "stop_1": "AB full-panel DHEA evidence cannot be located — CLEAR: backend/tests/fixtures/panels/ab_full_panel_with_ranges.json lines 173-182",
-      "stop_2": "DHEA and DHEA-S are conflated but cannot be safely separated — CLEAR: they are already separate canonical identities in SSOT",
-      "stop_3": "Canonicalisation would require label-only DHEA to DHEA-S mapping — RISK: Phase 3 must implement unit/range-aware resolution before any alias registry change",
-      "stop_4": "Unit/reference-range evidence is missing or contradictory — CLEAR: unit umol/L + range 0.94-15.44 both confirm DHEA-S",
-      "stop_6": "DHEA-S high activation would lack required context gates — AT RISK: pregnancy gate absent from signal_library runtime_context_requirements",
-      "stop_9": "Pregnancy context cannot suppress where required — AT RISK: pregnancy not currently in signal_library gates",
-      "stop_11": "Changes would require broad SSOT redesign — CLEAR: SSOT structure is correct",
-      "stop_16": "Validators fail — deferred to Phase 9",
-      "stop_17": "Tests fail — deferred to Phase 8"
-    },
-    "determinism_risks_surfaced": [
-      "RISK 1 (HIGH): Specimen-suffix stripping in AliasRegistryService._strip_specimen_suffix() already strips '_(venous)' from 'dhea_(venous)' producing 'dhea'. Any unit-aware resolution must happen AFTER the existing alias resolution, not by modifying the specimen-suffix logic which serves many other biomarkers.",
-      "RISK 2 (HIGH): 'DHEA (Venous)' maps to dhea via BOTH the alias registry (explicit entry at line 182) AND the specimen-suffix stripping. Phase 3 must handle both paths. Removing the alias registry entry without implementing code-level unit-aware resolution would still result in 'DHEA (Venous)' resolving to 'dhea' via specimen stripping.",
-      "RISK 3 (HIGH): Package primary_metric must change from 'dhea' to 'dhea_s' if identity is confirmed. This is a BEHAVIOUR change in signal evaluation scope — the package will no longer fire on a panel that has only unsulfated DHEA. This must be explicitly documented as an intended behavioural change in the audit paper.",
-      "RISK 4 (MEDIUM): The AB full panel fixture already holds 'dhea' as the canonical key. Phase 8 canonicalisation tests must simulate the raw input pipeline (input = 'DHEA (Venous)' + unit + range → assert canonical = 'dhea_s'). The fixture itself cannot be used as a test input for the new unit-aware resolution tests without modification.",
-      "RISK 5 (MEDIUM): If the governance model at Phase 2 marks runtime_consumed: true but the runtime code is not yet reading it, the validator Phase 9 will fail. The governance file must be marked runtime_consumed: false until runtime code explicitly reads it."
+    "behavioural_surface_area": "signal_dhea_high will emit to users whose dhea_s is above lab range and all context gates pass. This is a new user-visible output that did not exist before.",
+    "determinism_preserved": true,
+    "no_lllm_reasoning": true,
+    "regression_targets": [
+      "Existing four Batch 2 active signals remain active and unchanged",
+      "DHEA-S low remains inactive (pkg_kb47_dhea_low_adrenal_androgen_reduction)",
+      "Unsulfated DHEA remains separate canonical concept",
+      "Day-one launch estate validator passes (requires gate file update)",
+      "No frontend changes",
+      "No scoring changes"
     ]
   },
+  "implementation_warnings": [
+    {
+      "id": "IW-1",
+      "severity": "CRITICAL",
+      "title": "Symptom gate permanently blocks signal for all users",
+      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:63-64 (symptoms_present: present) and lines 96-99 (symptoms_status: allowed_values [answered_yes, answered_no]); backend/ssot/questionnaire.json — no 'symptoms' key exists; backend/core/analytics/runtime_context_evaluator.py:298-299 — symptoms_present only set if responses.get('symptoms') is present",
+      "explanation": "The questionnaire.json has no 'symptoms' field. The runtime context builder sets symptoms_present only if responses.get('symptoms') is present — it never will be. Both the symptoms_present:present gate and the symptoms_status:disclosure_state gate will ALWAYS fail, permanently blocking signal_dhea_high for every user regardless of their DHEA-S level.",
+      "required_action": "MANDATORY: Remove symptoms_present from required_context hard gates. Remove symptoms_status from required_context hard gates. Per medical authority (DHEA-S_High_Activation_Medical_Research_Review.md:121 — 'Missing symptom context: DOWNGRADE'), symptoms absence is a downgrade not a suppress condition. Downgrade handling must use a different mechanism (output metadata or missing_context_behaviour: emit_context_insufficient with separate soft gate list). Do NOT leave these as hard suppress gates."
+    },
+    {
+      "id": "IW-2",
+      "severity": "CRITICAL",
+      "title": "Pregnancy gate permanently blocks signal for all users",
+      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:85-89 (pregnancy_status: allowed_values [answered_no]); backend/ssot/questionnaire.json — no 'pregnancy_status' field; backend/core/analytics/runtime_context_evaluator.py:280-296 — pregnancy_status only set if _field_answered(responses, 'pregnancy_status') or _field_answered(lifestyle, 'pregnancy_status')",
+      "explanation": "The questionnaire.json has no pregnancy_status field. The runtime context builder will never add pregnancy_status to the clinical_context bucket. The gate evaluator sees the key as absent → observed=None → not in [answered_no] → gate fails. This blocks all users.",
+      "required_action": "MANDATORY: Update allowed_values for pregnancy_status to [answered_no, not_answered, not_applicable]. The sprint prompt Phase 2 says 'suppress if pregnancy answered_yes and pregnancy-specific logic is unavailable' — meaning not_answered and not_applicable must pass. Since there is no pregnancy question in the current questionnaire, the effective state will always be not_answered; the gate must allow this. Only answered_yes should suppress."
+    },
+    {
+      "id": "IW-3",
+      "severity": "HIGH",
+      "title": "AAS exposure gate blocks users who skip the optional supplements question",
+      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:80-83 (aas_exposure_status: allowed_values [answered_no]); backend/core/analytics/runtime_context_evaluator.py:384 — aas_state = supplement_state if supplements_answered else DISCLOSURE_NOT_ANSWERED; backend/ssot/questionnaire.json — supplements: required=false",
+      "explanation": "Supplements is optional (required:false). If user skips it, aas_exposure_status=not_answered. Gate only allows answered_no → signal suppressed for any user who did not fill in supplements. Sprint prompt says 'AAS exposure status is captured OR explicitly not answered' — so not_answered must be allowed. Additionally, sprint says AAS=yes should DOWNGRADE not suppress.",
+      "required_action": "MANDATORY: Add not_answered to allowed_values for aas_exposure_status. Consider also removing aas_exposure_status from the hard suppress gate list entirely and handling AAS=yes as a downgrade via output metadata."
+    },
+    {
+      "id": "IW-4",
+      "severity": "HIGH",
+      "title": "DHEA supplementation gate blocks users who skip optional supplements question",
+      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:90-93 (dhea_supplementation_status: allowed_values [answered_no]); backend/core/analytics/runtime_context_evaluator.py:388-401 — dhea_supplement_state=not_answered if supplements not answered",
+      "explanation": "If supplements is not answered, dhea_supplementation_status=not_answered. Current gate only allows answered_no → suppressed. Sprint prompt says 'DHEA supplementation status is captured or explicitly not answered' → not_answered must be allowed.",
+      "required_action": "MANDATORY: Add not_answered to allowed_values for dhea_supplementation_status. answered_yes remains correctly suppressive. answered_no and not_answered should both allow activation."
+    },
+    {
+      "id": "IW-5",
+      "severity": "HIGH",
+      "title": "HRT gate suppresses when it should only downgrade",
+      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:74-78 (hormone_therapy_status: allowed_values [answered_no]); backend/core/analytics/runtime_context_evaluator.py:336-353 — hormone_therapy_status=answered_yes if medication contains 'testosterone' or 'hormone'",
+      "explanation": "The long_term_medications question is mandatory. A user on HRT will have hormone_therapy_status=answered_yes. The current gate suppresses the signal. The sprint prompt and medical authority say HRT = DOWNGRADE not suppress.",
+      "required_action": "MANDATORY: Do not use hormone_therapy_status as a hard suppress gate. Remove it from required_context or change it to a non-blocking gate. HRT=yes should produce downgraded/limited output, not silence the signal entirely."
+    },
+    {
+      "id": "IW-6",
+      "severity": "HIGH",
+      "title": "Day-one estate gate stale condition will cause validator failure",
+      "citation": "knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml:34-35 — 'DHEA packages inactive pending identity remediation'",
+      "explanation": "After DHEA-S high is activated, this condition is no longer true. Phase 7 validators must pass. If the gate file is not updated, validate_day_one_launch_estate_gate.py may fail.",
+      "required_action": "MANDATORY: Update day_one_launch_estate_gate_v1.yaml in Phase 5 governance updates to reflect that DHEA-S high is now runtime_active_canonical per this sprint's medical authority. DHEA-S low and unsulfated DHEA remain inactive — note this distinction."
+    },
+    {
+      "id": "IW-7",
+      "severity": "MEDIUM",
+      "title": "package_manifest.yaml behavioural_impact must update from NONE to SIGNAL_RUNTIME_ACTIVATION",
+      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/package_manifest.yaml:13",
+      "required_action": "MANDATORY per Phase 3: set behavioural_impact: SIGNAL_RUNTIME_ACTIVATION."
+    },
+    {
+      "id": "IW-8",
+      "severity": "HIGH",
+      "title": "test_dhea_s_high_remains_inactive.py asserts the old state and will fail",
+      "citation": "backend/tests/regression/test_dhea_s_high_remains_inactive.py:23-26 — asserts pkg_kb47_dhea_high NOT in activated and IN inactive",
+      "explanation": "After this sprint, DHEA-S high is in activated_packages. This test will fail. The sprint lists test_dhea_dheas_canonicalisation.py as an expected changed file — Cursor must also update or replace the remains_inactive test.",
+      "required_action": "MANDATORY: Replace or update test_dhea_s_high_remains_inactive.py. The test_dhea_s_high_remains_inactive.py test that checks the execution register must be converted to confirm DHEA-S high IS active and DHEA-S low remains inactive."
+    },
+    {
+      "id": "IW-9",
+      "severity": "ADVISORY",
+      "title": "testosterone in dependencies.biomarkers is metadata only — not a runtime blocker",
+      "citation": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml:32-36; backend/core/analytics/signal_evaluator.py:453-461 — evaluate_all() checks primary_metric only, not dependencies.biomarkers",
+      "explanation": "The signal evaluator does NOT use dependencies.biomarkers as a hard activation gate. Testosterone listed there is metadata only. For clarity, consider moving it to optional_dependencies to match the sprint intent that testosterone is STRONGLY_RECOMMENDED but not required.",
+      "required_action": "ADVISORY: Move testosterone from dependencies.biomarkers to optional_dependencies.biomarkers. Not a blocker for activation correctness."
+    }
+  ],
   "overall_verdict": "HARDENED",
-  "hardening_notes": "Sprint is correctly classified HIGH / BEHAVIOUR / TWO_PHASE_START_FINISH. All five front matter fields are valid. Core identity problem is confirmed and verifiable. Path errors exist in the 'Authoritative inputs' section (backend/config/ paths do not exist; use backend/ssot/biomarker_alias_registry.yaml; use backend/core/canonical/ not backend/core/parsing/ or backend/core/normalisation/). AB full panel DHEA sample evidence confirmed at backend/tests/fixtures/panels/ab_full_panel_with_ranges.json lines 173-182: unit umol/L, range 0.94-15.44, consistent with DHEA-S. Critical implementation constraint: 'DHEA (Venous)' resolves to dhea via BOTH alias registry (line 182) AND specimen-suffix stripping — Phase 3 must address both paths without modifying the specimen-suffix logic. Pregnancy gate is absent from DHEA high signal_library runtime_context_requirements — Phase 5 activation is not safe without adding it. Medical authority direction is DO_NOT_ACTIVATE_YET for both DHEA high and low; expected Phase 5 outcome is RENAME_TO_DHEA_S_HIGH_KEEP_INACTIVE_PENDING_GATES. Package primary_metric changes from dhea to dhea_s are required and must be documented as explicit behavioural changes. GPT architectural review and human approval required before merge per HIGH risk route."
+  "hardening_notes": "Prompt is structurally sound and correctly classified HIGH/BEHAVIOUR/TWO_PHASE_START_FINISH. All five front matter fields valid. Medical authority file exists and contains all three required tokens (DHEA_S_HIGH_ACTIVATE_NOW, standalone_signal_allowed:true, corroboration_required:false) confirmed with line citations. Package is confirmed inactive with identity resolved. Nine implementation warnings documented — five are CRITICAL or HIGH and represent gates in the existing signal_library.yaml that will permanently block activation unless Cursor corrects them. Most critical: the symptom gate and pregnancy gate will suppress the signal for ALL users because the questionnaire has no 'symptoms' or 'pregnancy_status' fields. Cursor must address all MANDATORY items before Phase 7 validators can pass. GPT architectural review and human approval required before merge per HIGH risk route."
 }
