@@ -1,9 +1,10 @@
 {
   "branch": "work/INTERNAL-UAT-RESULTS-TRUST-HARDENING-1-high-trust-results-page-coherence",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-16T21:16:26Z",
   "cursor_started_utc": "2026-06-16T21:07:07Z",
-  "head_sha": "5eafe9218d5f4398417629ac8f455ffa2939962d",
+  "head_sha": "5b72ae649ba694158aa5a25c3b08372aba45bf58",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "INTERNAL-UAT-RESULTS-TRUST-HARDENING-1_high_trust_results_page_coherence"
 }
