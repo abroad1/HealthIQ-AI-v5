@@ -4,7 +4,7 @@
 work_id: INTERNAL-UAT-RESULTS-TRUST-HARDENING-1_high_trust_results_page_coherence
 branch: work/INTERNAL-UAT-RESULTS-TRUST-HARDENING-1-high-trust-results-page-coherence
 status: MERGED_CLOSURE_COMPLETE
-head_sha: 12f1a7a
+head_sha: bc559b6
 merged_to_main: 3dd3bd8
 ---
 
@@ -214,8 +214,8 @@ Cursor implementation + GPT correction
 |-------|--------|----------|
 | Merge authorised | Yes | Human approval 2026-06-14 |
 | Sprint branch | `work/INTERNAL-UAT-RESULTS-TRUST-HARDENING-1-high-trust-results-page-coherence` | Fast-forward merge |
-| `main` HEAD | `12f1a7a` | `git rev-parse main` |
-| `origin/main` HEAD | `12f1a7a` | `git rev-parse origin/main` — **aligned** |
+| `main` HEAD | `bc559b6` | `git rev-parse main` |
+| `origin/main` HEAD | `bc559b6` | `git rev-parse origin/main` — **aligned** |
 | Working tree | Clean | `git status --short` |
 | Stash | Empty | `git stash list` |
 | Kernel status | COMPLETE | `automation_bus/latest_cursor_status.json` |
