@@ -1,10 +1,9 @@
 {
-  "branch": "work/INTERNAL-UAT-RESULT-VERSIONING-1-dto-render-contract-compatibility-fix",
+  "branch": "work/INTERNAL-UAT-RESULTS-TRUST-HARDENING-1-high-trust-results-page-coherence",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-16T17:47:24Z",
-  "cursor_started_utc": "2026-06-16T17:20:28Z",
-  "head_sha": "749f7866c37b83a9eaae48051406e67205b0620e",
+  "cursor_started_utc": "2026-06-16T21:07:07Z",
+  "head_sha": "5eafe9218d5f4398417629ac8f455ffa2939962d",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "INTERNAL-UAT-RESULT-VERSIONING-1_dto_render_contract_compatibility_fix"
+  "status": "IN_PROGRESS",
+  "work_id": "INTERNAL-UAT-RESULTS-TRUST-HARDENING-1_high_trust_results_page_coherence"
 }
