@@ -74,6 +74,7 @@ export function normalizeAnalysisResultPayload(raw: unknown): AnalysisResult {
           ? null
           : null,
     result_version: typeof r.result_version === 'string' ? r.result_version : undefined,
+    result_versioning: (r.result_versioning ?? null) as AnalysisResult['result_versioning'],
     created_at: typeof r.created_at === 'string' ? r.created_at : undefined,
     completed_at: typeof r.completed_at === 'string' ? r.completed_at : undefined,
   } as AnalysisResult;

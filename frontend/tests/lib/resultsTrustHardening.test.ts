@@ -1,4 +1,3 @@
-import { neutraliseHypothesisTitleForDisplay } from '@/lib/hypothesisDisplayCopy';
 import {
   formatConsumerDriverBandStatusLabel,
   resolveHeroPrimaryStory,
@@ -26,14 +25,14 @@ function idlRecord(partial: Partial<InterpretationDisplayRecordV1>): Interpretat
 }
 
 describe('IUAT results trust hardening', () => {
-  it('IUAT-001 neutralises B12-associated title when B12 counter-evidence present', () => {
-    const title = neutraliseHypothesisTitleForDisplay('B12-associated pattern', [
-      {
-        item: 'B12 appears clearly within range, which makes a B12-driven pattern less likely on this panel alone.',
-      },
-    ]);
-    expect(title).toBe('Homocysteine-related pattern');
-    expect(title).not.toMatch(/B12-associated/i);
+  it('IUAT-001 frontend does not rewrite hypothesis titles from counter-evidence', () => {
+    const src = fs.readFileSync(
+      path.join(process.cwd(), 'app/components/results/PrimaryFindingAndWhy.tsx'),
+      'utf8'
+    );
+    expect(src).not.toContain('hypothesisDisplayCopy');
+    expect(src).not.toContain('neutraliseHypothesisTitleForDisplay');
+    expect(src).toContain('scrubConsumerRetailNarrative(hyp0.title)');
   });
 
   it('IUAT-002 body overview copy does not claim unavailable when clusters exist', () => {
@@ -108,5 +107,16 @@ describe('IUAT results trust hardening', () => {
     };
     expect(formatConsumerDriverBandStatusLabel(transferrin)).toBe('Below range');
     expect(formatConsumerDriverBandStatusLabel(transferrin)).not.toBe('Critical');
+  });
+
+  it('IUAT-006 critical without directional interpretation falls back to Needs review', () => {
+    const marker: BiomarkerResult = {
+      biomarker_name: 'example_marker',
+      value: 1,
+      unit: 'U/L',
+      score: 30,
+      status: 'critical',
+    };
+    expect(formatConsumerDriverBandStatusLabel(marker)).toBe('Needs review');
   });
 });

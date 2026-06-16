@@ -13,6 +13,7 @@ import {
   type ConsumerDomainScoreV1,
   type InterpretationDisplayLayerBundleV1,
   type NarrativeReportV1,
+  type ResultVersioningMetadataV1,
 } from '../types/analysis';
 
 /** Store row mirrors API BiomarkerResult (B1A/B1B explainer fields optional). */
@@ -47,6 +48,8 @@ export interface AnalysisResult {
   derived_markers?: unknown;
   replay_manifest?: unknown;
   consumer_domain_scores?: ConsumerDomainScoreV1[] | null;
+  /** LAUNCH-CORE-3 — persisted snapshot status from GET /api/analysis/result. */
+  result_versioning?: ResultVersioningMetadataV1 | null;
 }
 
 export interface AnalysisError {

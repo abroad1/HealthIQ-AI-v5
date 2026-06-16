@@ -10,7 +10,10 @@ from pathlib import Path
 import pytest
 
 from core.analytics.lifestyle_consumer_surface_v1 import _metabolic_modifier_paragraph
-from core.analytics.report_compiler_v1 import _neutralise_hypothesis_title_for_counter_evidence
+from core.analytics.report_compiler_v1 import (
+    _neutralise_hypothesis_title_for_counter_evidence,
+    _normalise_root_cause_finding,
+)
 from core.contracts.clinician_report_v1 import EvidenceItem
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -44,6 +47,33 @@ def test_iuat_001_ab_fixture_hypothesis_neutralises_on_compile_path() -> None:
     ]
     title = _neutralise_hypothesis_title_for_counter_evidence(str(hyp.get("title", "")), against)
     assert title == "Homocysteine-related pattern"
+
+
+@pytest.mark.regression
+def test_iuat_001_compiler_normalise_root_cause_emits_neutral_title() -> None:
+    raw = json.loads(_FIXTURE.read_text(encoding="utf-8"))
+    root_cause = raw["sections"]["root_cause"]
+    finding = _normalise_root_cause_finding(root_cause)
+    assert finding.hypotheses
+    top = finding.hypotheses[0]
+    assert top.title == "Homocysteine-related pattern"
+    assert "B12-associated" not in top.title
+    assert top.evidence_against
+    assert any("B12" in (ev.item or "") for ev in top.evidence_against)
+
+
+@pytest.mark.regression
+def test_iuat_001_b12_title_unchanged_without_counter_evidence() -> None:
+    title = _neutralise_hypothesis_title_for_counter_evidence(
+        "B12-associated pattern",
+        [
+            EvidenceItem(
+                item="Folate is within range on this panel.",
+                marker_refs=["folate"],
+            )
+        ],
+    )
+    assert title == "B12-associated pattern"
 
 
 @pytest.mark.regression
