@@ -1,0 +1,55 @@
+# Result render contract model v1 — governance note (documentation only).
+#
+# Clarifies the distinction between persisted replay snapshots and the assembled
+# API DTO served to the frontend. Not consumed by runtime loaders.
+
+schema_version: "1.0.0"
+runtime_consumed: false
+policy_id: result_render_contract_model_v1
+
+principles:
+  - id: persisted_snapshot_is_not_render_contract
+    statement: >
+      The persisted client_result_shape_v1 snapshot is a replay/source snapshot,
+      not the final frontend render contract.
+
+  - id: assembled_dto_is_render_contract
+    statement: >
+      The assembled GET /api/analysis/result DTO from build_analysis_result_dto
+      is the frontend render contract.
+
+  - id: read_time_derivation_allowed
+    statement: >
+      Some render fields, including clinician_report_v1 and balanced_systems_v1,
+      may be derived at read time from meta.insight_graph.report_v1 and related
+      analytical inputs rather than stored verbatim on persistence.
+
+  - id: compatibility_assesses_render_dto
+    statement: >
+      result_versioning compatibility must assess the fully assembled render DTO,
+      not the pre-DTO persisted snapshot alone.
+
+  - id: do_not_confuse_persisted_with_render
+    statement: >
+      Persisted snapshot replay compatibility must not be confused with render
+      compatibility for the results page.
+
+  - id: frontend_must_not_hide_warnings
+    statement: >
+      The frontend must not hide compatibility or stale-result warnings.
+
+  - id: true_render_failures_must_surface
+    statement: >
+      True render-blocking failures must still surface via result_versioning
+      render_blockers and stale/incompatible status.
+
+implementation_refs:
+  dto_builder: backend/core/dto/builders.py::build_analysis_result_dto
+  versioning_metadata: backend/core/dto/result_versioning_policy_v1.py::build_result_versioning_metadata
+  result_route: backend/app/routes/analysis.py::get_analysis_result
+
+follow_up_out_of_scope:
+  - id: RESULTS-COPY-PATTERN-GROUPS-1
+    statement: >
+      Clarify pattern group fallback copy when clusters exist but advanced pattern
+      buckets are hidden by showDetails=false.

@@ -417,7 +417,7 @@ async def get_analysis_result(
             row = _analysis_row_for_owner(analysis_id, db, auth_user)
             raw_biomarkers = row.raw_biomarkers if isinstance(row.raw_biomarkers, dict) else None
         dto["result_versioning"] = build_result_versioning_metadata(
-            raw,
+            dto,
             raw_biomarkers=raw_biomarkers,
         )
         return dto
