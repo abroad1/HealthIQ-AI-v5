@@ -3,17 +3,18 @@
 ---
 work_id: INTERNAL-UAT-RESULTS-TRUST-HARDENING-1_high_trust_results_page_coherence
 branch: work/INTERNAL-UAT-RESULTS-TRUST-HARDENING-1-high-trust-results-page-coherence
-status: GPT_CORRECTION_COMPLETE_PENDING_REVIEW
-head_sha: (see latest commit on branch)
+status: MERGED_CLOSURE_COMPLETE
+head_sha: 3dd3bd8
+merged_to_main: 3dd3bd8
 ---
 
 ## Executive verdict
 
 Resolved all six **HIGH** internal UAT trust/coherence defects on the working results page (`analysis_id: 6bcbf1de-d97f-4a1c-9556-e3a6e0625fd1`) without changing parser, intelligence, signal activation, scoring, lab ranges, or result-versioning logic.
 
-**GPT architectural review (initial): FAIL** — duplicate frontend B12 title rewrite removed; TypeScript build fixed.
+**GPT architectural review (initial): FAIL** — duplicate frontend B12 title rewrite removed; TypeScript build fixed. **GPT re-review: PASS after correction.**
 
-**Do not merge** until re-review passes and human approval.
+**Merged to `main` and published.** Post-implementation closure complete.
 
 ---
 
@@ -199,7 +200,23 @@ test_dhea_s_high_activation.py                       → 37 passed
 
 ```
 Cursor implementation + GPT correction
-→ GPT re-review
-→ Claude audit
-→ Human approval before merge
+→ GPT re-review (PASS after correction)
+→ Human approval → merge
 ```
+
+**Closure complete.** Merged to `main` and published to `origin/main`. Rerun internal UAT on `analysis_id: 6bcbf1de-d97f-4a1c-9556-e3a6e0625fd1` to confirm all six HIGH trust fixes on the live results page.
+
+---
+
+## Post-Implementation Closure (published)
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Merge authorised | Yes | Human approval 2026-06-14 |
+| Sprint branch | `work/INTERNAL-UAT-RESULTS-TRUST-HARDENING-1-high-trust-results-page-coherence` | Fast-forward merge |
+| `main` HEAD | (see publish step) | `git rev-parse main` |
+| `origin/main` HEAD | (see publish step) | `git rev-parse origin/main` — must align |
+| Working tree | Clean | `git status --short` |
+| Stash | Empty | `git stash list` |
+| Kernel status | COMPLETE | `automation_bus/latest_cursor_status.json` |
+| GPT correction | Applied | Duplicate frontend B12 title layer removed; `result_versioning` type fix; build passes |
