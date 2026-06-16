@@ -158,9 +158,10 @@ export function resolveHeroPrimaryStory(
   if (!secondary || !concernLead) {
     return { heroTitle: phenotypeLabel, systemContextLine: null, bridgeExplanation: secondary };
   }
+  const systemLabel = scrubConsumerRetailNarrative(phenotypeLabel);
   return {
     heroTitle: concernLead,
-    systemContextLine: `Most relevant area: ${phenotypeLabel}`,
+    systemContextLine: `Broader system context: ${systemLabel}`,
     bridgeExplanation: null,
   };
 }
@@ -390,6 +391,25 @@ function humanizeStatus(status: string | null | undefined): string {
     .filter(Boolean)
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ');
+}
+
+/**
+ * IUAT-006 — consumer-safe status in the driving-signals band only.
+ * Uses backend interpretation text when present; does not compute lab abnormality.
+ */
+export function formatConsumerDriverBandStatusLabel(b: BiomarkerResult): string {
+  const status = (b.status || '').trim().toLowerCase();
+  const interp = sanitizeBiomarkerInterpretationForRetail(b.interpretation);
+  if (interp) {
+    const snippet = firstSentence(interp).toLowerCase();
+    if (/\b(below|low)\b/.test(snippet) && !/\babove\b/.test(snippet)) return 'Below range';
+    if (/\b(above|elevated|high)\b/.test(snippet)) return 'Above range';
+    if (/\b(in range|within range|optimal|normal)\b/.test(snippet)) return 'In range';
+  }
+  if (status === 'critical') return 'Needs review';
+  if (status === 'elevated' || status === 'high') return 'Above range';
+  if (status === 'low') return 'Below range';
+  return humanizeStatus(b.status);
 }
 
 export function oneLineMarkerInterpretation(b: BiomarkerResult): string {

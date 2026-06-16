@@ -56,7 +56,7 @@ export default function PipelineStatus({
 
   const line1 =
     expected > 0
-      ? `We received ${present} of ${expected} expected markers for this interpretation.${
+      ? `${present} of ${expected} key markers available for this headline interpretation.${
           checksPassed ? ' Core quality checks passed.' : ' Review the notes below before relying on the headline.'
         }`
       : 'Panel completeness was not scored for this result.';

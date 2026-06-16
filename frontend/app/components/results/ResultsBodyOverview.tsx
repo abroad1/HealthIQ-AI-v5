@@ -78,6 +78,11 @@ export function ResultsBodyOverview({
               </div>
               <p className="text-xs text-slate-500 mt-2">{totalPatterns} pattern group{totalPatterns === 1 ? '' : 's'} in this run.</p>
             </div>
+          ) : hasBuckets ? (
+            <p className="text-sm text-slate-600 border border-dashed border-slate-200 rounded-md px-3 py-2 bg-white">
+              Detailed pattern groups are hidden in this view. {totalPatterns} pattern summar
+              {totalPatterns === 1 ? 'y is' : 'ies are'} covered in the sections below.
+            </p>
           ) : (
             <p className="text-sm text-slate-600 border border-dashed border-slate-200 rounded-md px-3 py-2 bg-white">
               Pattern groups are not available for this result yet — the sections below still walk through your markers

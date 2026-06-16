@@ -6,7 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import type { BiomarkerResult } from '@/types/analysis';
 import { Download } from 'lucide-react';
-import { humanizeStatus, oneLineMarkerInterpretation, type ResultActionCardModel, formatBiomarkerDisplayName } from '@/lib/resultsPageLayout';
+import {
+  formatConsumerDriverBandStatusLabel,
+  oneLineMarkerInterpretation,
+  type ResultActionCardModel,
+  formatBiomarkerDisplayName,
+} from '@/lib/resultsPageLayout';
 import { cn } from '@/lib/utils';
 import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
 
@@ -158,7 +163,7 @@ export function ResultsDrivingSignals({ markers, biomarkerSectionId }: ResultsDr
                     <p className="font-medium text-slate-900">{formatBiomarkerDisplayName(b.biomarker_name)}</p>
                     <p className="text-sm text-slate-700 tabular-nums">
                       {b.value} {b.unit}
-                      <span className="text-slate-500"> · {humanizeStatus(b.status)}</span>
+                      <span className="text-slate-500"> · {formatConsumerDriverBandStatusLabel(b)}</span>
                     </p>
                   </div>
                   <p className="text-sm text-slate-600 mt-1 leading-relaxed">{oneLineMarkerInterpretation(b)}</p>

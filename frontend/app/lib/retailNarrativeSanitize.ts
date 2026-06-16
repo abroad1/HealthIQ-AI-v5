@@ -30,6 +30,7 @@ export function scrubLongInternalSlugs(text: string): string {
 }
 
 const EXACT_TOKEN_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/\bCardiovascular\s+\d+\s+Biomarkers\b/gi, 'cardiovascular markers on this panel'],
   [/\bcardiovascular_4_biomarkers\b/gi, 'cardiovascular markers on this panel'],
   [/\bdeterministic\s+narrative\s+compiler\b/gi, 'structured clinical rules'],
   [/\bdeterministic\s+arbitration\b/gi, 'clinical prioritisation on this panel'],

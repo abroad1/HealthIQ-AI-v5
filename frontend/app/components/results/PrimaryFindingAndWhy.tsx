@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ClinicianEvidenceItem, ClinicianReportV1 } from '@/types/analysis';
 import { buildSection3LeadStatement, buildWhatThisMeansBlock, firstSentence } from '@/lib/primaryFindingShaping';
 import { formatBiomarkerDisplayName } from '@/lib/resultsPageLayout';
+import { neutraliseHypothesisTitleForDisplay } from '@/lib/hypothesisDisplayCopy';
 import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
 
 function formatMarkerRef(id: string): string {
@@ -102,7 +103,11 @@ export function PrimaryFindingAndWhy({
             Primary finding and why
           </CardTitle>
           {hyp0?.title ? (
-            <p className="text-sm font-medium text-indigo-950 pt-1">{scrubConsumerRetailNarrative(hyp0.title)}</p>
+            <p className="text-sm font-medium text-indigo-950 pt-1">
+              {scrubConsumerRetailNarrative(
+                neutraliseHypothesisTitleForDisplay(hyp0.title, hyp0.evidence_against)
+              )}
+            </p>
           ) : null}
           {leadPatternLabel && hyp0?.title && leadPatternLabel.trim().toLowerCase() !== hyp0.title.trim().toLowerCase() ? (
             <p className="text-sm text-slate-600 pt-1" data-testid="primary-finding-lead-pattern-bridge">

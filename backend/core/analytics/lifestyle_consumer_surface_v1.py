@@ -96,9 +96,8 @@ def _metabolic_modifier_paragraph(lifestyle_artifact: Mapping[str, Any]) -> str:
         return ""
     return (
         "Your lifestyle inputs suggest additional metabolic context on this panel "
-        "(for example weight, sleep, alcohol, or smoking patterns). This is used only "
-        "to adjust how systems are weighted in the analytical model — not to alter "
-        "the lab values on this panel."
+        "(for example weight, sleep, alcohol, or smoking patterns). This helps add "
+        "context when we interpret how different areas of health relate on this panel."
     )
 
 

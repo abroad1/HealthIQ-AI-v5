@@ -397,6 +397,38 @@ def _build_ranking_rationale(hypothesis_row: Dict[str, Any], rank: int) -> str:
     return f"Ranked #{rank} because {for_anchor}; {against_anchor}."
 
 
+def _neutralise_hypothesis_title_for_counter_evidence(
+    title: str,
+    evidence_against: List[EvidenceItem],
+) -> str:
+    """
+    IUAT-001 — avoid B12-causality headings when B12 counter-evidence is present.
+    """
+    t = (title or "").strip()
+    if not t:
+        return t
+    low_title = t.lower()
+    if "b12" not in low_title or "associated" not in low_title:
+        return t
+    for ev in evidence_against:
+        item = (ev.item or "").lower()
+        if "b12" not in item:
+            continue
+        if any(
+            phrase in item
+            for phrase in (
+                "within range",
+                "in range",
+                "less likely",
+                "pulls against",
+                "complicates",
+                "makes a b12-driven",
+            )
+        ):
+            return "Homocysteine-related pattern"
+    return t
+
+
 def _normalise_root_cause_finding(
     finding_row: Dict[str, Any],
 ) -> RootCauseFindingV1:
@@ -448,10 +480,11 @@ def _normalise_root_cause_finding(
             and str(item.get("display_name", "")).strip()
             and str(item.get("rationale", "")).strip()
         ]
+        raw_title = str(hypothesis_row.get("title", "")).strip()
         hypotheses_out.append(
             HypothesisV1(
                 hypothesis_id=hypothesis_id,
-                title=str(hypothesis_row.get("title", "")).strip(),
+                title=_neutralise_hypothesis_title_for_counter_evidence(raw_title, evidence_against),
                 summary=str(hypothesis_row.get("summary", "")).strip(),
                 hypothesis_confidence=_safe_float(hypothesis_row.get("hypothesis_confidence")),
                 ranking_rationale=_build_ranking_rationale(hypothesis_row, rank),

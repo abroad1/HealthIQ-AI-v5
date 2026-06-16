@@ -635,7 +635,7 @@ export default function ResultsPage() {
                     <p>{completed_at ? new Date(completed_at).toLocaleString() : 'N/A'}</p>
                   </div>
                   <div>
-                    <span className="text-gray-500 block text-xs uppercase tracking-wide">Markers analysed</span>
+                    <span className="text-gray-500 block text-xs uppercase tracking-wide">Uploaded markers</span>
                     <p>{biomarkers.length}</p>
                   </div>
                   <div>
@@ -649,7 +649,7 @@ export default function ResultsPage() {
             <p className="text-sm text-gray-500 mb-2">
               {completed_at ? `Completed ${new Date(completed_at).toLocaleDateString()}` : null}
               {completed_at && biomarkers.length ? ' · ' : ''}
-              {biomarkers.length ? `${biomarkers.length} markers` : null}
+              {biomarkers.length ? `${biomarkers.length} uploaded markers` : null}
             </p>
           )}
         </div>
