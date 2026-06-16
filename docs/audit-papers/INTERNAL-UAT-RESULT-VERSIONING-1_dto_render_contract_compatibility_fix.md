@@ -5,6 +5,7 @@ work_id: INTERNAL-UAT-RESULT-VERSIONING-1_dto_render_contract_compatibility_fix
 branch: work/INTERNAL-UAT-RESULT-VERSIONING-1-dto-render-contract-compatibility-fix
 status: GPT_CORRECTION_COMPLETE
 head_sha: 14a1218
+closure_head_sha: 749f786
 ---
 
 ## Executive verdict
