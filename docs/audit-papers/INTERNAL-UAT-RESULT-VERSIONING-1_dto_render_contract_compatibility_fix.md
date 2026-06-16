@@ -3,9 +3,9 @@
 ---
 work_id: INTERNAL-UAT-RESULT-VERSIONING-1_dto_render_contract_compatibility_fix
 branch: work/INTERNAL-UAT-RESULT-VERSIONING-1-dto-render-contract-compatibility-fix
-status: GPT_CORRECTION_COMPLETE
+status: MERGED_CLOSURE_COMPLETE
 head_sha: 14a1218
-closure_head_sha: 749f786
+merged_to_main: f4de8ae
 ---
 
 ## Executive verdict
@@ -182,4 +182,20 @@ Revert `analysis.py` versioning call to use `raw`; remove regression test file a
 
 ## Recommended next action
 
-Claude audit → GPT architectural review → human approval → merge → rerun internal UAT on upload/result flow for `fdf9bc74` class analyses.
+~~Claude audit → GPT architectural review → human approval → merge~~
+
+**Closure complete.** Merged to `main` and published to `origin/main`. Rerun internal UAT on upload/result flow to confirm false stale banner is gone for fresh analyses.
+
+---
+
+## Post-Implementation Closure (published)
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Merge authorised | Yes | Human approval 2026-06-16 |
+| Sprint branch | `work/INTERNAL-UAT-RESULT-VERSIONING-1-dto-render-contract-compatibility-fix` | Fast-forward merge |
+| `main` HEAD | `f4de8ae` | `git rev-parse main` |
+| `origin/main` HEAD | `f4de8ae` | `git rev-parse origin/main` — **aligned** |
+| Working tree | Clean | `git status --short` |
+| Stash | Empty | `git stash list` |
+| Kernel status | COMPLETE | `automation_bus/latest_cursor_status.json` |
