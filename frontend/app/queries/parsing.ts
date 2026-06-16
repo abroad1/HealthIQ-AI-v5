@@ -1,12 +1,8 @@
 'use client'
 
 import { useMutation } from '@tanstack/react-query'
+import { API_BASE, getApiAuthHeaders } from '../lib/api'
 import { ParseResponse, ValidationResponse, UseParseUploadResult, UseValidateParsedResult } from '../types/parsed'
-
-/**
- * Base API URL for parsing endpoints
- */
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000'
 
 /**
  * Parse upload hook - calls backend /api/upload/parse
@@ -31,6 +27,7 @@ export function useParseUpload(): UseParseUploadResult {
 
       const response = await fetch(`${API_BASE}/api/upload/parse`, {
         method: 'POST',
+        headers: getApiAuthHeaders(),
         body: formData,
       })
 
@@ -86,6 +83,7 @@ export function useValidateParsed(): UseValidateParsedResult {
 
       const response = await fetch(`${API_BASE}/api/upload/validate`, {
         method: 'POST',
+        headers: getApiAuthHeaders(),
         body: formData,
       })
 
