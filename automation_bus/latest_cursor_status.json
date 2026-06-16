@@ -1,9 +1,10 @@
 {
   "branch": "work/INTERNAL-UAT-RESULT-VERSIONING-1-dto-render-contract-compatibility-fix",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-16T17:47:24Z",
   "cursor_started_utc": "2026-06-16T17:20:28Z",
-  "head_sha": "14a12182e30b3d38d3b9e452514e0f9a80dac939",
+  "head_sha": "749f7866c37b83a9eaae48051406e67205b0620e",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "INTERNAL-UAT-RESULT-VERSIONING-1_dto_render_contract_compatibility_fix"
 }
