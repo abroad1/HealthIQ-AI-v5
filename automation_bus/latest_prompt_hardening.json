@@ -1,326 +1,124 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability",
+  "work_id": "INTERNAL-UAT-RESULT-VERSIONING-1_dto_render_contract_compatibility_fix",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-15T00:00:00Z",
+  "hardened_utc": "2026-06-16T00:00:00Z",
   "hardened_by": "Claude Code (Sonnet 4.6) — SOP v1.3.1 Stage 2",
-  "front_matter_check": {
-    "work_id": {
-      "present": true,
-      "value": "BETA-READINESS-SPRINT-2_runtime_gate_consistency_and_active_signal_reachability",
-      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:2"
-    },
-    "branch": {
-      "present": true,
-      "value": "work/BETA-READINESS-SPRINT-2-runtime-gate-consistency-and-active-signal-reachability",
-      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:3"
-    },
-    "risk_level": {
-      "present": true,
-      "value": "HIGH",
-      "justified": true,
-      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:4 — HIGH correct: touches backend/core/analytics/runtime_context_evaluator.py (Intelligence Core); signal gate semantics change directly affecting which signals fire for real users; endocrine signal activation/suppression behaviour changes."
-    },
-    "execution_model": {
-      "present": true,
-      "value": "TWO_PHASE_START_FINISH",
-      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:5"
-    },
-    "change_type": {
-      "present": true,
-      "value": "BEHAVIOUR",
-      "justified": true,
-      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:6 — BEHAVIOUR correct: runtime_context_requirements allowed_values in signal_library.yaml files change; runtime_context_evaluator.py may change; signal firing behaviour changes for real users. All BEHAVIOUR controls apply."
-    },
-    "closing_delimiter": {
-      "status": "PASS",
-      "citation": "CONFIRMED: automation_bus/latest_cursor_prompt.md:7 — '---'"
-    },
-    "all_five_fields_valid": true
-  },
-  "stage_2a_authority_verification": {
-    "status": "PASS_WITH_PATH_CORRECTION",
-    "authority_files_present": [
-      {
-        "path": "docs/audit-papers/DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation.md",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "docs/audit-papers/DHEA-DHEAS-CANONICALISATION-1_unit_aware_marker_identity_and_adrenal_androgen_resolution.md",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "docs/audit-papers/BATCH2-FULL-COVERAGE-ACTIVATION-1_activate_research_supported_thyroid_and_androgen_signals.md",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "docs/audit-papers/ARCH-COMPLETION-3_full_traceability_manifest_and_launch_estate_gate.md",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "docs/sprints/launch_core_carry_forward_register.md",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "knowledge_bus/governance/runtime_context_requirements_model_v1.yaml",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "backend/core/analytics/runtime_context_evaluator.py",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob and content read"
-      },
-      {
-        "path": "backend/core/analytics/signal_evaluator.py",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/signal_library.yaml",
-        "exists": true,
-        "citation": "CONFIRMED: file present — content read"
-      },
-      {
-        "path": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml",
-        "exists": true,
-        "citation": "CONFIRMED: file present — content read"
-      },
-      {
-        "path": "knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/signal_library.yaml",
-        "exists": true,
-        "citation": "CONFIRMED: file present — content read"
-      },
-      {
-        "path": "knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context/signal_library.yaml",
-        "exists": true,
-        "citation": "CONFIRMED: file present — content read"
-      },
-      {
-        "path": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml",
-        "exists": true,
-        "citation": "CONFIRMED: file present — content read. This is the DHEA-S high package (package_id: KBP-4702, description: 'Standalone cautious DHEA-S high biomarker-level signal'). Directory name is pkg_kb47_dhea_high_androgen_excess_context, not pkg_kb47_dheas_high_*."
-      },
-      {
-        "path": "backend/tests/regression/test_runtime_context_evaluation.py",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "backend/tests/regression/test_context_threading.py",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "backend/tests/regression/test_batch2_full_coverage_activation.py",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "backend/tests/regression/test_dhea_s_high_activation.py",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      },
-      {
-        "path": "backend/tests/regression/test_output_authority_provenance.py",
-        "exists": true,
-        "citation": "CONFIRMED: file present — verified by Glob"
-      }
-    ],
-    "path_corrections": [
-      {
-        "id": "PC-1",
-        "severity": "WARN — path error in prompt, not a functional STOP",
-        "prompt_states": "backend/config/questionnaire.json",
-        "actual_path": "backend/ssot/questionnaire.json",
-        "citation": "CONFIRMED: Glob for backend/config/questionnaire.json returned no results. Glob for **/questionnaire.json returned backend/ssot/questionnaire.json and frontend/app/lib/mock/questionnaire.json. Authoritative backend questionnaire is backend/ssot/questionnaire.json — consistent with CLAUDE.md and MEMORY.md SSOT structure documentation.",
-        "required_action": "Cursor must use backend/ssot/questionnaire.json in all authority preflight and inspection steps where the prompt references backend/config/questionnaire.json. This does not block execution but must be corrected in Cursor's working context."
-      }
-    ],
-    "duplicate_authority_sources": "NONE detected — single questionnaire at backend/ssot/questionnaire.json is authoritative."
-  },
-  "stage_2b_behavioural_hardening": {
-    "status": "PASS_WITH_IMPLEMENTATION_WARNINGS",
-    "intelligence_core_components_affected": [
-      "knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/signal_library.yaml — runtime_context_requirements.required_context pregnancy_status gate (lines 92-94)",
-      "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml — runtime_context_requirements.required_context pregnancy_status gate (lines 87-89)",
-      "knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/signal_library.yaml — runtime_context_requirements.required_context pregnancy_status gate (lines 92-94)",
-      "backend/core/analytics/runtime_context_evaluator.py — build_runtime_context_snapshot() may require narrow deterministic additions for missing optional context keys",
-      "backend/scripts/validate_active_signal_context_gate_reachability.py — new validator (new file)"
-    ],
-    "behavioural_surface_area": "Pregnancy gate changes will allow FAI high, FT3 low, and free testosterone high signals to fire for users where pregnancy_status is not_answered (i.e. all real users today, since questionnaire has no pregnancy_status field). This is a user-visible output change — these signals will emit where they are currently suppressed for all users. This is the intended correction.",
-    "determinism_preserved": true,
-    "no_llm_reasoning": true,
-    "regression_targets": [
-      "DHEA-S high remains active (pkg_kb47_dhea_high_androgen_excess_context pregnancy gate already allows not_answered — signal_library.yaml:69-73)",
-      "DHEA-S low remains inactive",
-      "Unsulfated DHEA remains inactive",
-      "Batch 2 active package count remains 5 (no new activation, no deactivation)",
-      "No frontend changes",
-      "No scoring changes",
-      "No report compiler changes",
-      "No diagnosis wording introduced",
-      "No treatment/supplement/hormone recommendations introduced",
-      "pregnancy answered_yes remains suppressive for all three carry-forward packages"
-    ],
-    "baseline_not_verifiable_from_hardening": [
-      "Whether DHEA-S-HIGH-ACTIVATION-1 is merged into main — Cursor must confirm via git log at Stage 0 / authority preflight",
-      "Whether Batch 2 active package count is exactly 5 — Cursor must confirm via governance validators at Phase 7",
-      "Whether day-one launch estate gate passes before modification — Cursor must run validate_day_one_launch_estate_gate.py in authority preflight"
-    ]
-  },
-  "carry_forward_verification": {
-    "pregnancy_gate_consistency_confirmed_in_source": true,
-    "fai_high": {
-      "package": "pkg_kb47_fai_high_biochemical_hyperandrogenism",
-      "signal_library_path": "knowledge_bus/packages/pkg_kb47_fai_high_biochemical_hyperandrogenism/signal_library.yaml",
-      "pregnancy_status_current_allowed_values": ["answered_no"],
-      "citation": "CONFIRMED: signal_library.yaml:92-94",
-      "runtime_state": "pregnancy_status = not_answered for all real users (questionnaire has no pregnancy_status field — confirmed backend/ssot/questionnaire.json full content read). not_answered NOT in [answered_no] → gate fails → signal SUPPRESSED for all real users.",
-      "required_fix": "Add not_answered and not_applicable to allowed_values per sprint Phase 1 preferred outcome A"
-    },
-    "ft3_low": {
-      "package": "pkg_kb47_free_t3_low_low_t3_syndrome",
-      "signal_library_path": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml",
-      "pregnancy_status_current_allowed_values": ["answered_no"],
-      "citation": "CONFIRMED: signal_library.yaml:87-89",
-      "runtime_state": "pregnancy_status = not_answered for all real users → gate fails → signal SUPPRESSED for all real users.",
-      "required_fix": "Add not_answered and not_applicable to allowed_values per sprint Phase 1 preferred outcome A (subject to clinical safety review per FT3 + pregnancy clinical context)"
-    },
-    "free_testosterone_high": {
-      "package": "pkg_kb47_free_testosterone_high_androgen_excess_context",
-      "signal_library_path": "knowledge_bus/packages/pkg_kb47_free_testosterone_high_androgen_excess_context/signal_library.yaml",
-      "pregnancy_status_current_allowed_values": ["answered_no"],
-      "citation": "CONFIRMED: signal_library.yaml:92-94",
-      "runtime_state": "pregnancy_status = not_answered for all real users → gate fails → signal SUPPRESSED for all real users.",
-      "required_fix": "Add not_answered and not_applicable to allowed_values per sprint Phase 1 preferred outcome A"
-    },
-    "dhea_s_high": {
-      "package": "pkg_kb47_dhea_high_androgen_excess_context",
-      "signal_library_path": "knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/signal_library.yaml",
-      "pregnancy_status_current_allowed_values": ["answered_no", "not_answered", "not_applicable"],
-      "citation": "CONFIRMED: signal_library.yaml:69-73",
-      "runtime_state": "pregnancy_status = not_answered for all real users → not_answered IS in allowed_values → gate PASSES → DHEA-S high is reachable. This is the correctly-gated reference model for the other three packages.",
-      "required_fix": "NONE — already correctly gated"
-    }
-  },
-  "additional_unreachability_findings": [
+  "changes": [
     {
-      "id": "AUF-1",
-      "severity": "HIGH — blocks multiple signals for all real users",
-      "title": "symptoms_status gate: key never produced by runtime_context_evaluator for real questionnaire responses",
-      "affected_packages": [
-        "pkg_kb47_fai_high_biochemical_hyperandrogenism (signal_library.yaml:86-89 — requires symptoms_status: [answered_yes, answered_no])",
-        "pkg_kb47_free_testosterone_high_androgen_excess_context (signal_library.yaml:87-89 — requires symptoms_status: [answered_yes, answered_no])",
-        "pkg_kb47_free_testosterone_low_androgen_deficiency_context (signal_library.yaml:74-78 — requires symptoms_status: [answered_yes, answered_no])"
+      "check": "front_matter_completeness",
+      "result": "PASS",
+      "note": "All 5 mandatory fields present and valid.",
+      "citations": [
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:2 — work_id: INTERNAL-UAT-RESULT-VERSIONING-1_dto_render_contract_compatibility_fix",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:3 — branch: work/INTERNAL-UAT-RESULT-VERSIONING-1-dto-render-contract-compatibility-fix",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH (correct: result_versioning metadata controls user-visible stale/incompatible banner; behaviour change to DTO assessment path; Intelligence Core-adjacent via result assembly pipeline)",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:6 — change_type: BEHAVIOUR (correct: changes which payload is assessed for compatibility; directly alters result_versioning.compatible and render_blockers emitted to frontend)"
+      ]
+    },
+    {
+      "check": "stage_2a_authority_verification",
+      "result": "PASS_WITH_PATH_NOTE",
+      "authority_files_confirmed": [
+        {
+          "path": "backend/app/routes/analysis.py",
+          "exists": true,
+          "citation": "CONFIRMED: read — get_analysis_result at line 397; bug at line 419: build_result_versioning_metadata(raw, ...) passes pre-DTO persisted snapshot"
+        },
+        {
+          "path": "backend/core/dto/builders.py",
+          "exists": true,
+          "citation": "CONFIRMED: read — build_analysis_result_dto at line 30; clinician_report_v1 assembled at lines 49-54 via compile_clinician_report_v1"
+        },
+        {
+          "path": "backend/core/dto/persisted_replay_contract_v1.py",
+          "exists": true,
+          "citation": "CONFIRMED: read — PERSISTED_RENDER_REQUIRED_KEYS at line 17 (includes clinician_report_v1); assess_persisted_result_compatibility at line 61; missing_required logic at line 65: 'k not in stored'; compatible logic at line 91"
+        },
+        {
+          "path": "backend/core/dto/frontend_contract_v1.py",
+          "exists": true,
+          "citation": "CONFIRMED: read — FRONTEND_CONSUMED_ROOT_KEYS at line 13; all keys emitted by build_analysis_result_dto listed"
+        },
+        {
+          "path": "backend/core/dto/result_versioning_policy_v1.py",
+          "exists": true,
+          "citation": "CONFIRMED: read — build_result_versioning_metadata at line 126; passes stored to assess_result_versioning at line 132; assess_result_versioning calls assess_persisted_result_compatibility and detect_launch_core_stale_reasons"
+        },
+        {
+          "path": "backend/core/analytics/report_compiler_v1.py",
+          "exists": true,
+          "citation": "CONFIRMED: read — compile_clinician_report_v1 at line 511; returns None when report_row is empty at lines 518-520: 'if not report_row: return None'"
+        },
+        {
+          "path": "backend/tests/unit/test_launch_core3_result_versioning.py",
+          "exists": true,
+          "citation": "CONFIRMED: read — _render_contract_shell at line 17 includes clinician_report_v1 at line 35; existing tests exercise versioning against post-DTO-shape fixtures"
+        },
+        {
+          "path": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py",
+          "exists": true,
+          "citation": "CONFIRMED: read — fixture-based regression tests; fixture path at line 26: backend/tests/fixtures/persisted_results/lc_s20_ab_launch_core_v1.json"
+        },
+        {
+          "path": "automation_bus/_uat_fdf9bc74.json",
+          "exists": true,
+          "citation": "CONFIRMED: Glob hit — file present"
+        },
+        {
+          "path": "docs/testing/INVESTIGATION_fdf9bc74_result_versioning_false_incompatible_2026-06-16.md",
+          "exists": true,
+          "citation": "CONFIRMED: read — investigation artefact present; root cause, proposed fix, and test requirements confirmed from content"
+        }
       ],
-      "evaluator_citation": "CONFIRMED: runtime_context_evaluator.py:415 — _field_answered(responses, 'symptoms') — only sets symptoms_status if the key 'symptoms' exists in questionnaire_responses",
-      "questionnaire_citation": "CONFIRMED: backend/ssot/questionnaire.json full content read — no question with id: 'symptoms'. Has 'regular_migraines' (line 189), 'recent_infections' (line 204), 'low_testosterone_symptoms' (line 240) — none map to the key 'symptoms'",
-      "runtime_consequence": "symptoms_status is NEVER set in clinical_context bucket for any real user. gate evaluator: observed = bucket.get('symptoms_status') = None. None not in {answered_yes, answered_no} → gate fails → signal suppressed for all users.",
-      "phase_0_instruction": "Cursor MUST document this in Phase 0 audit table. Sprint Phase 0 explicitly requires auditing 'whether the key is produced by runtime_context_evaluator' and 'whether the key is actually captured by questionnaire.json'. This is exactly the class of issue the sprint is designed to detect.",
-      "phase_4_instruction": "Runtime context evaluator review (Phase 4) must determine whether symptoms_status can be derived from existing questionnaire fields (regular_migraines, recent_infections, symptoms_related fields) via a narrow deterministic mapping, OR whether a new questionnaire field would be required. If a new field is required, STOP condition 7 applies. If deterministic mapping from existing fields is possible, this is an allowed Phase 4 small deterministic addition.",
-      "stop_condition_risk": "STOP 7 (new questionnaire field required) and STOP 11 (broad context redesign) may apply. Cursor must assess and escalate if triggered."
+      "path_mismatch_note": "Prompt's authoritative inputs section lists incorrect paths for investigation artefacts: 'docs/Medical Research Documents/INVESTIGATION_fdf9bc74...' and 'docs/UAT_results_page_analysis_fdf9bc74...' — actual location is docs/testing/ for both. Prompt already anticipates this with 'If the investigation file is in a different path, locate it by filename.' NON-BLOCKING. Cursor must search by filename before reading.",
+      "duplicate_authority_sources": "NONE detected."
     },
     {
-      "id": "AUF-2",
-      "severity": "HIGH — blocks signals for users who take ANY supplement",
-      "title": "aas_exposure_status evaluator logic: inherits supplement_state wholesale, suppressing users with any supplement",
-      "affected_packages": [
-        "pkg_kb47_fai_high_biochemical_hyperandrogenism (signal_library.yaml:77-79 — requires aas_exposure_status: [answered_no])",
-        "pkg_kb47_free_testosterone_high_androgen_excess_context (signal_library.yaml:75-77 — requires aas_exposure_status: [answered_no])",
-        "pkg_kb47_free_testosterone_low_androgen_deficiency_context (signal_library.yaml:97-100 — requires aas_exposure_status: [answered_no])"
+      "check": "root_cause_confirmed",
+      "result": "CONFIRMED",
+      "citation": "backend/app/routes/analysis.py:413-422 — raw is loaded from DB snapshot (missing clinician_report_v1), dto is assembled via build_analysis_result_dto(raw) which adds clinician_report_v1 at builders.py:49-54. build_result_versioning_metadata is then called with raw (line 419) not dto. assess_persisted_result_compatibility (persisted_replay_contract_v1.py:65) finds clinician_report_v1 missing from raw → compatible=false → render_blockers=[clinician_report_v1]. Fix: pass dto at analysis.py:419.",
+      "clinician_report_v1_not_persisted": "CONFIRMED: analysis.py:218-282 — start_analysis stored dict does not include clinician_report_v1 key. analysis_regeneration.py build_client_result_shape_from_dto follows same pattern per investigation artefact.",
+      "clinician_report_v1_derived_at_read_time": "CONFIRMED: builders.py:49-54 — compile_clinician_report_v1 called inside build_analysis_result_dto from meta.insight_graph.report_v1."
+    },
+    {
+      "check": "stale_heuristics_safe_on_dto",
+      "result": "CONFIRMED",
+      "citation": "detect_launch_core_stale_reasons (result_versioning_policy_v1.py:63-102) reads only stored.get('meta') for completeness_policy_id and stored.get('consumer_domain_scores') for subsystem card checks. Both keys are present identically on raw and dto (builders.py:80-92 passes them through unchanged). Stale detection is safe when dto is passed instead of raw."
+    },
+    {
+      "check": "stop_condition_7_none_value_risk",
+      "result": "MANDATORY_IMPLEMENTATION_NOTE",
+      "severity": "CRITICAL — must be resolved in Phase 2 before Phase 3 tests can pass",
+      "citation": "report_compiler_v1.py:518-520 — compile_clinician_report_v1 returns None when report_row is empty. builders.py:85-87 — dto['clinician_report_v1'] = clinician_report.model_dump() if clinician_report is not None else None. When compile fails, the key IS present on dto with value None. persisted_replay_contract_v1.py:65 — check is 'k not in stored', NOT 'k not in stored or stored[k] is None'. None value passes the presence check → clinician_report_v1 not in missing_required → compatible=True for a genuine compile failure. This violates STOP condition 7 and Phase 3 requirement 2.",
+      "required_action": "Implementation MUST extend the missing_required check to treat None-valued required keys as absent. Recommended: change persisted_replay_contract_v1.py:65 from 'k not in stored' to 'k not in stored or stored[k] is None'. Alternative: strip None-valued required keys from dto before passing to build_result_versioning_metadata in the route. Phase 3 test 2 ('true missing report_v1 → compatible must remain false') will fail if this is not addressed."
+    },
+    {
+      "check": "stage_2b_behavioural_hardening",
+      "result": "PASS",
+      "behavioural_surface_area": "GET /api/analysis/result — result_versioning metadata block in API response. Controls StaleResultBanner on frontend. Output change: result_versioning.compatible flips false→true for fresh analyses with populated report_v1; render_blockers clears. Stale detection (stale_reasons, stale flag, result_status for genuinely stale results) must remain unchanged.",
+      "determinism_preserved": true,
+      "no_llm_in_scope": true,
+      "regression_targets": [
+        "True incompatible results (missing report_v1 in meta.insight_graph) must remain compatible=false",
+        "Genuinely stale results (version mismatch, legacy subsystem traces) must remain stale=true",
+        "Fresh analyses with populated report_v1 must become compatible=true, render_blockers=[]",
+        "Regenerated analyses must become compatible=true (if regeneration re-runs pipeline and produces report_v1)",
+        "stale-result banner must not be hidden or bypassed — StaleResultBanner is driven by API response, no frontend change",
+        "clinician_report_v1 must still be populated in API response by compiler — no dummy/fallback",
+        "No frontend files changed",
+        "No parser/intelligence/signal/scoring files changed",
+        "No report compiler changes"
       ],
-      "evaluator_citation": "CONFIRMED: runtime_context_evaluator.py:390 — aas_state = supplement_state if supplements_answered else DISCLOSURE_NOT_ANSWERED. supplement_state is DISCLOSURE_ANSWERED_YES for any supplement list containing values other than None/no/not_applicable (e.g. ['Multivitamin', 'Vitamin D']). aas_state = DISCLOSURE_ANSWERED_YES before steroid/prohormone check (lines 404-405). aas_exposure_status is set to answered_yes for any user who takes any supplement at all.",
-      "questionnaire_citation": "CONFIRMED: backend/ssot/questionnaire.json:297-310 — 'supplements' field with options: Multivitamin, Vitamin D, Omega-3/Fish Oil, Probiotics, Iron, Other, None. required: false.",
-      "runtime_consequence": "User selects [Multivitamin, Vitamin D] → supplements_answered=True → supplement_state=answered_yes → aas_state=answered_yes (before steroid check, no steroid found, stays answered_yes) → aas_exposure_status=answered_yes → gate requires answered_no → FAIL. Signal suppressed for a user who takes only vitamins.",
-      "phase_0_instruction": "Cursor MUST document in Phase 0 audit. This is an evaluator logic bug within Phase 4 scope.",
-      "phase_4_instruction": "aas_exposure_status should default to answered_no when supplements are answered but contain no AAS/steroid/prohormone keywords, not inherit supplement_state wholesale. A narrow deterministic fix is: aas_state = DISCLOSURE_ANSWERED_NO if supplements_answered and no AAS keywords found; DISCLOSURE_ANSWERED_YES only when AAS keywords detected. This is a small deterministic addition permitted by Phase 4 scope.",
-      "stop_condition_risk": "STOP 11 (broad context model redesign) does NOT apply — this is a narrow evaluator logic bug. However, Cursor must confirm the fix does not affect other signals before making the change."
+      "scope_confirmed": "Fix confined to: (1) analysis.py:419 — pass dto not raw; (2) persisted_replay_contract_v1.py:65 — None-value treatment for required keys; (3) new and updated tests for fresh/regen/true-failure/stale cases; (4) governance note at knowledge_bus/governance/ or docs/architecture/."
     },
     {
-      "id": "AUF-3",
-      "severity": "MEDIUM — affects FT3 low and free testosterone low for users who do not provide lifestyle factors",
-      "title": "calorie_restriction_status and fasting_status: depend on lifestyle_factors upstream mapping, not questionnaire fields directly",
-      "affected_packages": [
-        "pkg_kb47_free_t3_low_low_t3_syndrome (signal_library.yaml:79-82 — requires calorie_restriction_status: [answered_yes, answered_no])",
-        "pkg_kb47_free_t3_low_low_t3_syndrome (signal_library.yaml:83-86 — requires fasting_status: [answered_yes, answered_no])",
-        "pkg_kb47_free_testosterone_low_androgen_deficiency_context (signal_library.yaml:85-90 — requires calorie_restriction_status: [answered_yes, answered_no])"
-      ],
-      "evaluator_citation": "CONFIRMED: runtime_context_evaluator.py:432-445 — maps lifestyle_factors['calorie_restriction'] → calorie_restriction_status and lifestyle_factors['fasting'] → fasting_status. These are only set if the corresponding key exists in lifestyle_factors.",
-      "questionnaire_citation": "CONFIRMED: backend/ssot/questionnaire.json — has 'fasting_hours' (line 265, id: fasting_hours) and 'dietary_pattern' (line 312) but no key named 'calorie_restriction' or 'fasting'. Whether lifestyle_factors['fasting'] is assembled from questionnaire responses['fasting_hours'] cannot be verified from the evaluator alone — requires checking upstream pipeline assembly.",
-      "phase_0_instruction": "Cursor must verify in Phase 0 audit whether the upstream pipeline maps questionnaire 'fasting_hours' to lifestyle_factors['fasting'] and 'dietary_pattern' to lifestyle_factors['calorie_restriction']. If no mapping exists, these gates will NEVER be satisfied → signals always suppressed. If mapping exists, confirm it is deterministic.",
-      "stop_condition_risk": "STOP 7 may apply if no upstream mapping exists and these fields require new questionnaire questions."
-    }
-  ],
-  "stop_condition_pre_assessment": {
-    "stop_1_dhea_s_high_not_merged": "Cannot confirm from hardening — Cursor verifies at Stage 0 / authority preflight via git log",
-    "stop_2_dhea_s_high_not_active": "Cannot confirm from hardening — Cursor verifies at Stage 0 via test suite",
-    "stop_3_batch2_count_not_5": "Cannot confirm from hardening — Cursor verifies via governance validator",
-    "stop_4_gates_cannot_be_read_deterministically": "NOT TRIGGERED — all signal_library.yaml files read successfully; required_context structure is well-formed",
-    "stop_5_pregnancy_semantics_cannot_be_resolved": "NOT TRIGGERED — DHEA-S high reference model provides clear precedent: not_answered and not_applicable safe; answered_yes suppressive",
-    "stop_6_any_package_unsafe_for_not_answered": "Requires per-package clinical review in Phase 1. FT3 low + pregnancy requires specific assessment (thyroid hormone alteration in pregnancy is clinically significant). Cursor must not assume outcome A for FT3 low without reviewing FT3-specific authority.",
-    "stop_7_new_questionnaire_field_required": "RISK for symptoms_status (AUF-1) and potentially calorie_restriction/fasting (AUF-3). Cursor must assess in Phase 0/4 and STOP if new questions are required.",
-    "stop_8_through_19": "NOT triggered by prompt structure — appropriate non-scope exclusions in place"
-  },
-  "implementation_warnings": [
-    {
-      "id": "IW-1",
-      "severity": "CRITICAL",
-      "title": "Path error in prompt: questionnaire referenced at wrong path",
-      "citation": "Prompt references backend/config/questionnaire.json — file does NOT exist. Actual authoritative path: backend/ssot/questionnaire.json (CONFIRMED by Glob).",
-      "required_action": "MANDATORY: Cursor must use backend/ssot/questionnaire.json in all Phase 0 audit steps and Phase 4 review. Do not attempt to read backend/config/questionnaire.json — it does not exist."
-    },
-    {
-      "id": "IW-2",
-      "severity": "CRITICAL",
-      "title": "Pregnancy gate: all three carry-forward packages suppress all real users today",
-      "citation": "FAI high signal_library.yaml:92-94; FT3 low signal_library.yaml:87-89; Free testosterone high signal_library.yaml:92-94 — all require pregnancy_status: [answered_no] only. runtime_context_evaluator.py:298-302 — sets not_answered when no pregnancy_status field in responses. backend/ssot/questionnaire.json — no pregnancy_status field confirmed by full content read.",
-      "required_action": "MANDATORY Phase 1: add not_answered and not_applicable to pregnancy_status allowed_values for FAI high and free testosterone high per preferred outcome A. For FT3 low: clinically assess whether pregnancy-specific suppression is required before applying outcome A. answered_yes must remain suppressive for all three."
-    },
-    {
-      "id": "IW-3",
-      "severity": "HIGH",
-      "title": "symptoms_status gate: never produced for real users — compounding suppression for FAI high, free testosterone high, free testosterone low",
-      "citation": "runtime_context_evaluator.py:415; backend/ssot/questionnaire.json full content — no 'symptoms' id. Affects signal_library.yaml lines 86-89 (FAI high), 87-89 (FT3 high), 74-78 (FT3 low).",
-      "required_action": "MANDATORY Phase 0 audit capture, Phase 4 assessment. Cursor must determine whether a narrow deterministic mapping from existing questionnaire fields to symptoms_status is possible. If not, STOP condition 7 applies."
-    },
-    {
-      "id": "IW-4",
-      "severity": "HIGH",
-      "title": "aas_exposure_status evaluator bug: supplements answered_yes (any supplement) incorrectly sets aas_exposure_status to answered_yes",
-      "citation": "runtime_context_evaluator.py:390 — aas_state = supplement_state if supplements_answered. CONFIRMED: any non-empty/non-none supplement list produces supplement_state = DISCLOSURE_ANSWERED_YES. Gate requires answered_no for FAI high (signal_library.yaml:77-79), free testosterone high (lines 75-77), free testosterone low (lines 97-100).",
-      "required_action": "MANDATORY Phase 4 assessment. Narrow deterministic fix: aas_state should = DISCLOSURE_ANSWERED_NO when supplements are answered but no AAS/steroid/prohormone keywords detected; only DISCLOSURE_ANSWERED_YES when AAS keywords found. Cursor must confirm scope of fix does not exceed Phase 4 allowed change."
-    },
-    {
-      "id": "IW-5",
-      "severity": "MEDIUM",
-      "title": "calorie_restriction_status and fasting_status reachability depends on unverified upstream pipeline mapping",
-      "citation": "runtime_context_evaluator.py:432-445; backend/ssot/questionnaire.json has fasting_hours and dietary_pattern but not fasting or calorie_restriction keys. Affects FT3 low and free testosterone low.",
-      "required_action": "Phase 0 audit: verify upstream pipeline mapping of questionnaire fields to lifestyle_factors. If no mapping, assess STOP condition 7."
-    },
-    {
-      "id": "IW-6",
-      "severity": "ADVISORY",
-      "title": "free_testosterone_low is not one of the named carry-forward packages but also has gate issues",
-      "citation": "pkg_kb47_free_testosterone_low_androgen_deficiency_context/signal_library.yaml:74-78 (symptoms_status), lines 85-90 (calorie_restriction_status), lines 97-100 (aas_exposure_status). This package was not listed in the named three carry-forward packages but has the same class of issues.",
-      "required_action": "Phase 0 audit must include free testosterone low as specified in the prompt audit list (line 9 of Phase 0 section). Decisions for symptoms_status and aas_exposure_status fixes should cover this package consistently."
+      "check": "scope_discipline",
+      "result": "PASS",
+      "note": "Pattern groups copy issue correctly deferred to RESULTS-COPY-PATTERN-GROUPS-1 per Phase 6. No frontend, no parser, no intelligence/signal/scoring, no report compiler changes in scope."
     }
   ],
   "overall_verdict": "HARDENED",
-  "hardening_notes": "Prompt is structurally sound and correctly classified HIGH/BEHAVIOUR/TWO_PHASE_START_FINISH. All five front matter fields are valid. One path correction required (questionnaire at backend/ssot/ not backend/config/). Carry-forward issue fully verified from source content: all three named packages have pregnancy_status gates allowing only answered_no, while the questionnaire has no pregnancy_status field and the evaluator produces not_answered by default — signals are confirmed suppressed for all real users today. DHEA-S high is confirmed correctly gated (allows not_answered) and is the reference model. Two additional unreachability findings surface beyond the stated carry-forward: (AUF-1) symptoms_status never produced for real users — affects FAI high, free testosterone high, and free testosterone low; (AUF-2) aas_exposure_status evaluator logic incorrectly inherits supplement_state, suppressing signals for any supplement user. These are within the sprint's explicit Phase 0 audit scope and Phase 4 evaluator review scope. STOP conditions 7 and 11 must be assessed during implementation for symptoms_status. All STOP conditions are appropriate. GPT architectural review and human approval required before merge per HIGH risk route."
+  "hardening_notes": "Prompt is structurally sound. All 5 front matter fields valid. Root cause confirmed at analysis.py:419 from direct file reads. One critical implementation note issued: the naive fix (pass dto instead of raw) introduces a false-compatible risk for true compile failures where clinician_report_v1 is None on the dto. Cursor must extend persisted_replay_contract_v1.py:65 to treat None-valued required keys as absent, then prove this with Phase 3 test 2. Stale heuristics are safe to run against the dto. Investigation artefact path mismatch is non-blocking — Cursor must locate by filename. HIGH risk route applies: Claude audit + GPT architectural review + human approval before merge."
 }
