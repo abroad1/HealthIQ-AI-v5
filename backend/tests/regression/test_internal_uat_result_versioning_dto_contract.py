@@ -112,6 +112,7 @@ def test_missing_report_v1_still_surfaces_render_blocker_on_dto():
     dto = build_analysis_result_dto(raw)
     assert dto["clinician_report_v1"] is None
     meta = build_result_versioning_metadata(dto)
+    assert meta["compatible"] is False
     assert "missing_primary_finding" in meta["render_blockers"]
 
 

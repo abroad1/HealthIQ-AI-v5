@@ -3,13 +3,15 @@
 ---
 work_id: INTERNAL-UAT-RESULT-VERSIONING-1_dto_render_contract_compatibility_fix
 branch: work/INTERNAL-UAT-RESULT-VERSIONING-1-dto-render-contract-compatibility-fix
-status: IMPLEMENTATION_COMPLETE
-head_sha: 47432a73e8aebe390cea3905c7e54c69ce153028
+status: GPT_CORRECTION_COMPLETE
+head_sha: pending
 ---
 
 ## Executive verdict
 
-Fixed false `result_versioning.compatible: false` / `render_blockers: ["clinician_report_v1"]` on fresh analyses. Root cause: `GET /api/analysis/result` assessed compatibility on the **persisted snapshot** before read-time DTO assembly, while `clinician_report_v1` is compiled at read time from `meta.insight_graph.report_v1`. **Option A+** implemented: compatibility now assesses the assembled API DTO. Stale heuristics and true failure paths preserved. No frontend, parser, intelligence, signal, scoring, or report compiler changes.
+Fixed false `result_versioning.compatible: false` / `render_blockers: ["clinician_report_v1"]` on fresh analyses. Root cause: `GET /api/analysis/result` assessed compatibility on the **persisted snapshot** before read-time DTO assembly, while `clinician_report_v1` is compiled at read time from `meta.insight_graph.report_v1`. **Option A+** implemented: compatibility now assesses the assembled API DTO.
+
+**GPT correction (post-review):** `assess_persisted_result_compatibility` now treats required keys with `None` values as missing, preventing false `compatible: true` when `clinician_report_v1` compiles to `None`. Stale heuristics and true failure paths preserved. No frontend, parser, intelligence, signal, scoring, or report compiler changes.
 
 ---
 
@@ -53,7 +55,8 @@ dto["result_versioning"] = build_result_versioning_metadata(dto, raw_biomarkers=
 | File | Change |
 |------|--------|
 | `backend/app/routes/analysis.py` | Assess versioning on assembled `dto` |
-| `backend/tests/regression/test_internal_uat_result_versioning_dto_contract.py` | New regression tests |
+| `backend/core/dto/persisted_replay_contract_v1.py` | Required-key check treats `None` as missing (GPT correction) |
+| `backend/tests/regression/test_internal_uat_result_versioning_dto_contract.py` | Regression tests incl. strengthened true-failure assertion |
 | `knowledge_bus/governance/result_render_contract_model_v1.yaml` | Governance note (`runtime_consumed: false`) |
 | `docs/sprints/launch_core_carry_forward_register.md` | CF-INTERNAL-UAT-RV1-001 resolved; CF-RESULTS-COPY-PATTERN-GROUPS-1 opened |
 
@@ -65,7 +68,7 @@ dto["result_versioning"] = build_result_versioning_metadata(dto, raw_biomarkers=
 - No dummy/fallback `clinician_report_v1` created
 - Frontend stale banner not bypassed — frontend unchanged
 - True incompatible persisted snapshot still fails (`test_persisted_raw_false_incompatible_when_clinician_report_not_stored`)
-- Missing `report_v1` surfaces `missing_primary_finding` render blocker on DTO
+- Missing `report_v1` → `compatible: false` and `missing_primary_finding` in render_blockers on DTO
 - Stale heuristics unchanged (`test_stale_heuristics_unchanged_on_assembled_dto`)
 - Fresh GET `/api/analysis/result` returns `compatible: true` (`test_get_analysis_result_assesses_assembled_dto_not_raw_snapshot`)
 - No parser / intelligence / signal / scoring / payment / auth changes
@@ -117,7 +120,39 @@ OK: no secret env files are git-tracked.
 
 ---
 
-## Test output (full)
+## GPT architectural review correction
+
+**Finding:** Required-key presence check accepted keys with `None` values; compiler failure (`dto["clinician_report_v1"] = None`) could incorrectly pass as compatible.
+
+**Fix in `persisted_replay_contract_v1.py`:**
+
+```python
+missing_required = tuple(
+    sorted(k for k in PERSISTED_RENDER_REQUIRED_KEYS if k not in stored or stored[k] is None)
+)
+```
+
+**Test strengthened:** `test_missing_report_v1_still_surfaces_render_blocker_on_dto` now asserts `meta["compatible"] is False`.
+
+---
+
+## Test output (full — post GPT correction)
+
+```
+============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-8.4.1, pluggy-1.6.0
+collected 34 items
+
+backend/tests/regression/test_internal_uat_result_versioning_dto_contract.py ..... [ 14%]
+backend/tests/unit/test_launch_core3_result_versioning.py ......         [ 32%]
+backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py ... [100%]
+
+============================= 34 passed in 7.78s ==============================
+```
+
+---
+
+## Test output (full — initial implementation)
 
 ```
 ============================= test session starts =============================

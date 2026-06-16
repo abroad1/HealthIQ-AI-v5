@@ -62,7 +62,9 @@ def assess_persisted_result_compatibility(stored: Dict[str, Any]) -> PersistedCo
     if not isinstance(stored, dict):
         raise PersistedReplayCompatibilityError("persisted payload must be a dict")
 
-    missing_required = tuple(sorted(k for k in PERSISTED_RENDER_REQUIRED_KEYS if k not in stored))
+    missing_required = tuple(
+        sorted(k for k in PERSISTED_RENDER_REQUIRED_KEYS if k not in stored or stored[k] is None)
+    )
     missing_root = tuple(sorted(k for k in FRONTEND_CONSUMED_ROOT_KEYS if k not in stored))
 
     stale_reasons: List[str] = []
