@@ -1,10 +1,9 @@
 {
-  "branch": "work/INTERNAL-UAT-RESULTS-TRUST-HARDENING-1-high-trust-results-page-coherence",
+  "branch": "work/LAYER-BOUNDARY-RECONCILIATION-1-layer-boundary-reconciliation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-16T21:31:41Z",
-  "cursor_started_utc": "2026-06-16T21:07:07Z",
-  "head_sha": "3cb00b44f80231dfb6673b09c26e22409e301ca6",
+  "cursor_started_utc": "2026-06-18T11:34:11Z",
+  "head_sha": "b51f2ab26324e8b4ff98584b1daef9d2b73b071d",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "INTERNAL-UAT-RESULTS-TRUST-HARDENING-1_high_trust_results_page_coherence"
+  "status": "IN_PROGRESS",
+  "work_id": "LAYER-BOUNDARY-RECONCILIATION-1"
 }
