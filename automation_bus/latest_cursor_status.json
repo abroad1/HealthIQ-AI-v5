@@ -1,9 +1,10 @@
 {
   "branch": "work/LAYER-BOUNDARY-RECONCILIATION-1-layer-boundary-reconciliation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-18T11:37:23Z",
   "cursor_started_utc": "2026-06-18T11:34:11Z",
-  "head_sha": "b51f2ab26324e8b4ff98584b1daef9d2b73b071d",
+  "head_sha": "e6e182a77f2ac5a66155efdb7bfc90b591a2d9d9",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LAYER-BOUNDARY-RECONCILIATION-1"
 }
