@@ -1,176 +1,108 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "INTERNAL-UAT-RESULTS-TRUST-HARDENING-1_high_trust_results_page_coherence",
-  "status": "HARDENED",
-  "hardened_utc": "2026-06-16T22:30:00Z",
-  "hardened_by": "Claude Code (Sonnet 4.6) — SOP v1.3.1 Stage 2",
+  "work_id": "LAYER-BOUNDARY-RECONCILIATION-1",
+  "status": "NOT_HARDENED",
+  "hardened_utc": "2026-06-18T00:00:00Z",
+  "hardened_by": "Claude Sonnet 4.6 — SOP v1.3.1 Stage 2",
   "changes": [
     {
       "check": "front_matter_completeness",
+      "result": "BLOCKER",
+      "field": "change_type",
+      "current_value": "DOCS",
+      "required_value": "CONTENT",
+      "citation": "automation_bus/latest_cursor_prompt.md:7 — change_type: DOCS. Valid values per SOP v1.3.1: CONTENT | BEHAVIOUR | MIXED. DOCS is not a valid value; kernel preflight will reject. All expected outputs are documentation under /docs/; correct value is CONTENT.",
+      "resolution": "GPT must correct change_type to CONTENT and reissue the prompt. Alternatively GPT may elect the Docs-Only Bypass (SOP §11) — all expected changes are under /docs/ so bypass is eligible; if bypass is used, no front matter or bus lifecycle is required."
+    },
+    {
+      "check": "front_matter_completeness",
+      "result": "WARN",
+      "field": "risk_level",
+      "current_value": "HIGH",
+      "note": "Docs-only sprint. No Intelligence Core components, no governed code, no SSOT, no pipeline files in scope. HIGH is an overstatement — STANDARD is appropriate. Conservative and not a kernel blocker, but triggers unnecessarily heavy governance (Claude audit + GPT review + dual approval). GPT should confirm intent.",
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH"
+    },
+    {
+      "check": "front_matter_completeness",
       "result": "PASS",
-      "citations": [
-        "CONFIRMED: automation_bus/latest_cursor_prompt.md:2 — work_id: INTERNAL-UAT-RESULTS-TRUST-HARDENING-1_high_trust_results_page_coherence",
-        "CONFIRMED: automation_bus/latest_cursor_prompt.md:3 — branch: work/INTERNAL-UAT-RESULTS-TRUST-HARDENING-1-high-trust-results-page-coherence",
-        "CONFIRMED: automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH (correct: touches output-generation layer, frontend rendering of clinician_report_v1 fields, compiler-produced prose surfaces)",
-        "CONFIRMED: automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH",
-        "CONFIRMED: automation_bus/latest_cursor_prompt.md:6 — change_type: BEHAVIOUR (correct: changes user-facing clinical wording, hierarchy, and label presentation derived from Intelligence Core outputs)"
+      "fields_confirmed": [
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:2 — work_id: LAYER-BOUNDARY-RECONCILIATION-1",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:3 — branch: work/LAYER-BOUNDARY-RECONCILIATION-1-layer-boundary-reconciliation",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH (valid value)",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH (valid value, conservative — see WARN above)"
       ]
     },
     {
       "check": "stage_2a_authority_verification",
       "result": "PASS",
-      "authority_files_confirmed": [
-        {
-          "path": "docs/testing/INTERNAL_UAT_RESULTS_PAGE_FULL_AUDIT_6bcbf1de_2026-06-16.md",
-          "exists": true,
-          "citation": "CONFIRMED: read — full defect register at lines 173-188; 6 HIGH issues with source + fix direction documented; baseline evidence table lines 48-63"
-        },
-        {
-          "path": "automation_bus/_uat_6bcbf1de_result_api.json",
-          "exists": true,
-          "citation": "CONFIRMED: read — analysis_id: 6bcbf1de-d97f-4a1c-9556-e3a6e0625fd1; biomarkers.length=79; clinician_report_v1.sections.root_cause.hypotheses[0].title='B12-associated pattern'; data_quality.panel_completeness_present=9, panel_completeness_expected=9; narrative_report_v1.body_overview contains '**Cardiovascular 4 Biomarkers**' and mojibake; transferrin.status='critical', value=2.0 g/L, ref 2.15–3.65 (source:lab); IDL ph_vascular_hcy_inflammation_v1.retail_display_label='Vascular Inflammation Risk', severity_state='strong_signal'"
-        },
-        {
-          "path": "docs/testing/screenshots/uat_6bcbf1de_results_page/",
-          "exists": true,
-          "citation": "CONFIRMED: ls — 5 files present: 01-hero-governance.png, 02-body-overview-primary-why.png, 03-health-systems-confidence.png, 04-markers-driving.png, 05-next-steps-footer.png"
-        },
-        {
-          "path": "backend/core/analytics/report_compiler_v1.py",
-          "exists": true,
-          "citation": "CONFIRMED: Glob hit; grep — hypothesis title at line 454: title=str(hypothesis_row.get('title', '')).strip() — reads from insight_graph data, not hardcoded"
-        },
-        {
-          "path": "backend/core/analytics/narrative_report_compiler_v1.py",
-          "exists": true,
-          "citation": "CONFIRMED: Glob hit; body_overview is compiled by this module. lifestyle_consumer_surface_v1.py:100 confirmed as source of 'analytical model' phrase"
-        },
-        {
-          "path": "backend/core/dto/builders.py",
-          "exists": true,
-          "citation": "CONFIRMED: Glob hit — no 'critical' consumer label mapping found; transferrin status flows through as-is from biomarker scoring"
-        },
-        {
-          "path": "frontend/app/components/results/PrimaryFindingAndWhy.tsx",
-          "exists": true,
-          "citation": "CONFIRMED: grep — hyp0 at line 65; scrubConsumerRetailNarrative(hyp0.title) at line 105 — title rendered directly after scrub"
-        },
-        {
-          "path": "frontend/app/components/results/ResultsBodyOverview.tsx",
-          "exists": true,
-          "citation": "CONFIRMED: read — line 44: primary = scrubConsumerRetailNarrative(primaryRaw); compiled body_overview IS piped through scrub. Pattern-groups fallback at lines 82-85."
-        },
-        {
-          "path": "frontend/app/lib/retailNarrativeSanitize.ts",
-          "exists": true,
-          "citation": "CONFIRMED: read — scrubConsumerRetailNarrative pipeline order lines 85-93: stripMarkdown → scrubInternalArchitecture → scrubFeR6aRetail → scrubMojibake → scrubKnownPatternNames. EXACT_TOKEN_REPLACEMENTS at line 33 includes snake_case cardiovascular_4_biomarkers only."
-        },
-        {
-          "path": "frontend/app/lib/resultsPageLayout.ts",
-          "exists": true,
-          "citation": "CONFIRMED: grep — resolveHeroPrimaryStory at line 151; systemContextLine template 'Most relevant area: ${phenotypeLabel}' at line 163; humanizeStatus at lines 386-391 (simple title-case, no consumer remapping); humanizeStatus exported at line 403"
-        },
-        {
-          "path": "frontend/app/components/results/ResultsHeroBlocks.tsx",
-          "exists": true,
-          "citation": "CONFIRMED: read — humanizeStatus(b.status) called at line 161 for driver band status display"
-        },
-        {
-          "path": "frontend/app/lib/trendComparison.ts",
-          "exists": true,
-          "citation": "CONFIRMED: grep — humanizeStatus imported and used at line 120 for rangeStatusLabel. Critical dependency for IUAT-006 constraint."
-        }
+      "all_paths_exist": true,
+      "paths_checked": [
+        "CONFIRMED: docs/strategy/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED.md — exists",
+        "CONFIRMED: docs/strategy/LAYER_ARCHITECTURE_AUTHORITY_INDEX_2026-06-17_r2.md — exists",
+        "CONFIRMED: docs/strategy/LAYER_ARCHITECTURE_AUTHORITY_INDEX_2026-06-17.md — exists",
+        "CONFIRMED: docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_LATE_DOCUMENT_ADDENDUM_2026-06-17.md — exists",
+        "CONFIRMED: docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_ESTATE_AUDIT_CURSOR_2026-06-17.md — exists",
+        "CONFIRMED: docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_ESTATE_AUDIT_CLAUDE_2026-06-17.md — exists",
+        "CONFIRMED: docs/architecture/ADR_WP2_layer_b_layer_c_contract_path_b.md — exists",
+        "CONFIRMED: backend/core/contracts/narrative_payload_v1.py — exists",
+        "CONFIRMED: architecture/ADR-002-deterministic-analysis-engine.md — exists",
+        "CONFIRMED: architecture/ADR-005-disease-specific-signal-evaluation-v2.md — exists",
+        "CONFIRMED: architecture/ADR-007-clinician-summary-report.md — exists",
+        "CONFIRMED: docs/intelligence/PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_v1.md — exists",
+        "CONFIRMED: docs/intelligence/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md — exists",
+        "CONFIRMED: docs/architecture/RETAIL_EXPLAINER_CONTENT_BOUNDARIES_v1.md — exists",
+        "CONFIRMED: knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml — exists",
+        "CONFIRMED: docs/AUTHORITY_MAP.md — exists",
+        "CONFIRMED: docs/archive/working-papers/download-arch/HealthIQ_FE_VISUALISATION_Surface_Policy_Proposal_v1_fresh.md — exists (supporting only)",
+        "CONFIRMED: docs/frontend/CLAUDE_TRANSLATION_SPEC_v1.md — exists (supporting only)"
       ],
-      "duplicate_authority_sources": "NONE detected."
+      "duplicate_authority_sources": "NONE detected. LAYER_ARCHITECTURE_AUTHORITY_INDEX r2 supersedes the original by naming convention; no conflict."
     },
     {
-      "check": "stage_2b_behavioural_hardening",
+      "check": "stage_2b_source_cross_reference",
       "result": "PASS",
-      "behavioural_surface_area": "Frontend copy rendering, frontend label mapping, narrative scrub rules, hero subline template. These changes affect user-visible clinical wording hierarchy and label presentation derived from Intelligence Core outputs. They do NOT touch signal activation, scoring, lab range handling, result versioning, parser behaviour, or analytical core.",
-      "determinism_preserved": true,
-      "no_llm_in_scope": true,
-      "regression_targets": [
-        "PrimaryFindingAndWhy.tsx — hypothesis title scrubbed to neutral label when B12 counter-evidence present; counter-evidence bullets remain visible",
-        "ResultsBodyOverview.tsx — pattern-groups fallback copy when showPatternGroupBuckets=false and clusters.length>0",
-        "page.tsx / PipelineStatus.tsx — marker count labels distinguish 79 uploaded vs 9 key markers",
-        "retailNarrativeSanitize.ts — body_overview markdown stripped, 'Cardiovascular 4 Biomarkers' (title-case) scrubbed, 'analytical model' phrase substituted correctly after mojibake fix",
-        "resolveHeroPrimaryStory — subline wording explains homocysteine → vascular context relationship; no scoring change",
-        "ResultsHeroBlocks.tsx — driver band status label for 'critical' biomarkers uses consumer-safe label (Below range), not raw clinical status term",
-        "Baseline evidence preserved: result_versioning.compatible=true, clinician_report_v1 present, stale/incompatible banner absent"
-      ],
-      "scope_confirmed": "Fixes confined to: frontend/app/lib/cardEvidenceConsumerCopy.ts, frontend/app/lib/retailNarrativeSanitize.ts, frontend/app/lib/resultsPageLayout.ts, frontend/app/components/results/ResultsBodyOverview.tsx, frontend/app/components/results/ResultsHeroBlocks.tsx, frontend/app/(app)/results/page.tsx (marker count labels), plus tests."
-    },
-    {
-      "check": "IUAT-001_B12_heading_source_trace",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/_uat_6bcbf1de_result_api.json: clinician_report_v1.sections.root_cause.hypotheses[0].title='B12-associated pattern', hypothesis_id='hcy_b12_pattern_v1'. report_compiler_v1.py:454 passes title through from insight_graph data unchanged. PrimaryFindingAndWhy.tsx:105: scrubConsumerRetailNarrative(hyp0.title). retailNarrativeSanitize.ts:92 scrubs slug hcy_b12_pattern_v1 but NOT the display title 'B12-associated pattern'. cardEvidenceConsumerCopy.ts:24-26 scrubs 'Homocysteine Elevation Context' but NOT 'B12-associated pattern'. Gap confirmed.",
-      "fix_direction": "Add scrub rule to cardEvidenceConsumerCopy.ts:scrubKnownInternalPatternNames — replace 'B12-associated pattern' with 'Raised homocysteine / one-carbon context' (or equivalent neutral label approved by prompt). Frontend scrub layer only. No compiler change required.",
-      "stop_condition_check": "CLEAR — title neutralisation is cautious display-layer copy; no new medical authority required; no signal/scoring change"
-    },
-    {
-      "check": "IUAT-002_pattern_groups_source_trace",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/components/results/ResultsBodyOverview.tsx:82-85 — hardcoded fallback 'Pattern groups are not available for this result yet' fires when showPatternGroupBuckets=false, regardless of clusters.length. API snapshot: clusters.length=3.",
-      "fix_direction": "Change else-branch copy at ResultsBodyOverview.tsx:82-85 — when hasBuckets=true and showPatternGroupBuckets=false, text must convey hidden/summary mode, not unavailability. Example: 'Pattern summaries are captured in your result narrative. Detailed breakdowns are available in technical detail.'",
-      "stop_condition_check": "CLEAR — pure copy change, no data change"
-    },
-    {
-      "check": "IUAT-003_marker_count_source_trace",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/_uat_6bcbf1de_result_api.json: biomarkers.length=79 (uploaded/scored panel); clinician_report_v1.data_quality.panel_completeness_present=9, panel_completeness_expected=9 (primary metric set for this interpretation). Toolbar renders biomarkers.length; PipelineStatus.tsx:57-61 renders primary metric completeness. No DTO change required — dual labels possible from existing fields.",
-      "fix_direction": "Frontend label clarification: toolbar 'X uploaded markers'; data quality section 'Y of Z key markers available for this headline interpretation'. No calculation change.",
-      "stop_condition_check": "CLEAR — no completeness calculation change; existing DTO fields sufficient"
-    },
-    {
-      "check": "IUAT-004_markdown_leakage_source_trace",
-      "result": "CONFIRMED — MANDATORY IMPLEMENTATION CONSTRAINTS",
-      "citation": "automation_bus/_uat_6bcbf1de_result_api.json narrative_report_v1.body_overview: contains '**Cardiovascular 4 Biomarkers**' (bold markdown, title-case) and 'analytical model \\ufffd not to alter...' (\\ufffd mojibake replaces em-dash). ResultsBodyOverview.tsx:44 pipes through scrubConsumerRetailNarrative(). stripSimpleMarkdownDecorators strips ** but leaves title-case 'Cardiovascular 4 Biomarkers'. EXACT_TOKEN_REPLACEMENTS (retailNarrativeSanitize.ts:33) only matches snake_case cardiovascular_4_biomarkers — MISS. scrubFeR6aRetailSurfacePhrases:76 regex requires [—–-] but \\ufffd is still present when it runs (scrubMojibake runs AFTER at line 89) — MISS.",
-      "fix_direction": "Two required changes: (1) Add /\\bCardiovascular\\s+4\\s+Biomarkers\\b/gi mapping to EXACT_TOKEN_REPLACEMENTS in retailNarrativeSanitize.ts. (2) Either broaden scrubFeR6aRetailSurfacePhrases regex to match \\ufffd as dash substitute (e.g. [—–\\-\\ufffd]) OR reorder scrubConsumerRetailNarrative pipeline to run scrubMojibakeArtifacts before scrubFeR6aRetailSurfacePhrases. Reordering is cleaner.",
-      "stop_condition_check": "CLEAR — presentation scrub only; no analytical meaning change; no markdown rendering (XSS risk absent)"
-    },
-    {
-      "check": "IUAT-005_hero_hierarchy_source_trace",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/lib/resultsPageLayout.ts:163 — systemContextLine: `Most relevant area: ${phenotypeLabel}`. phenotypeLabel = IDL records[0].retail_display_label = 'Vascular Inflammation Risk' (ph_vascular_hcy_inflammation_v1, severity_state: strong_signal confirmed from API snapshot). page1.primary_concern='Homocysteine Elevation Context...' → scrub → heroTitle='Raised homocysteine pattern...'",
-      "fix_direction": "Change systemContextLine template at resultsPageLayout.ts:163 from 'Most relevant area: ${phenotypeLabel}' to 'Relevant system context: ${phenotypeLabel}' or 'Raised homocysteine is the lead finding; the broader affected system is ${phenotypeLabel}.' Copy-only. No scoring, signal or domain ranking change.",
-      "stop_condition_check": "CLEAR — template copy change only"
-    },
-    {
-      "check": "IUAT-006_transferrin_critical_source_trace",
-      "result": "CONFIRMED — MANDATORY IMPLEMENTATION CONSTRAINT",
-      "citation": "automation_bus/_uat_6bcbf1de_result_api.json: transferrin.status='critical', value=2.0 g/L, reference_range {min:2.15, max:3.65, source:'lab'} — lab-grounded. frontend/app/lib/resultsPageLayout.ts:386-391 humanizeStatus() title-cases status string only → 'critical' → 'Critical'. ResultsHeroBlocks.tsx:161 calls humanizeStatus(b.status). trendComparison.ts:120 also imports and uses humanizeStatus.",
-      "fix_direction": "MUST NOT modify humanizeStatus() — it is used in trendComparison.ts:120 and changing it would silently alter trend view labels (unintended scope creep). MUST add a separate driverBandStatusLabel(status: string): string function in resultsPageLayout.ts that maps 'critical' → 'Below range' (and 'elevated' → 'Elevated', 'optimal' → 'Optimal', etc. as appropriate). Use driverBandStatusLabel() in ResultsHeroBlocks.tsx:161 instead of humanizeStatus(). Backend status remains 'critical' in DTO — only the display label changes.",
-      "stop_condition_check": "CLEAR — display label remapping only; no new medical severity inference; backend status unchanged; STOP condition 6 not triggered"
-    },
-    {
-      "check": "stop_conditions_global",
-      "result": "PASS — NO STOP CONDITIONS TRIGGERED",
-      "verified": [
-        "STOP 1: All 6 HIGH issues reproducible from API snapshot and UAT audit — CLEAR",
-        "STOP 2: No fix requires signal activation/deactivation change — CLEAR",
-        "STOP 3: No fix requires clinical scoring logic change — CLEAR",
-        "STOP 4: No fix requires lab reference range interpretation change — CLEAR",
-        "STOP 5: No fix requires frontend clinical inference — CLEAR (label remapping ≠ clinical inference)",
-        "STOP 6: Transferrin Critical fix does not require new medical severity policy — CLEAR (display label only)",
-        "STOP 7: B12 wording fix is cautious title neutralisation only — CLEAR",
-        "STOP 8: Versioning compatibility not at risk — no versioning files touched",
-        "STOP 9: clinician_report_v1 remains present and real — no compiler change",
-        "STOP 10: stale/incompatible warnings not hidden or bypassed — no versioning change",
-        "STOP 11: parser behaviour unchanged — no parser files",
-        "STOP 12: No raw Pass 3 or investigation-spec runtime reads introduced"
+      "findings": [
+        {
+          "claim": "Strategic Vision v1.5 §2.3 defines Layer A/B/C model",
+          "status": "CONFIRMED",
+          "citation": "docs/strategy/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED.md lines 91-145 — Layer A (canonicalisation/governed inputs), Layer B (deterministic analytical engine including signal activation, phenotype mapping, WHY, clinician reporting), Layer C (narrative translation and presentation only). Exactly as described in prompt."
+        },
+        {
+          "claim": "ADR-005 uses A/B/C/D stage labels that conflict with product Layer vocabulary",
+          "status": "CONFIRMED",
+          "citation": "architecture/ADR-005-disease-specific-signal-evaluation-v2.md lines 79-105 — Stage 3 is explicitly labelled 'Layer C: Signal Evaluation Engine'. In product terms, Signal Evaluation is Layer B work. Stage 4 is 'Layer D: Insight and Narrative Construction'. These are local pipeline stage labels, not product-level Layer vocabulary. Drift is real and reconciliation sprint is justified."
+        },
+        {
+          "claim": "NarrativePayloadV1 is the governed Layer B → Layer C handoff object",
+          "status": "CONFIRMED",
+          "citation": "backend/core/contracts/narrative_payload_v1.py line 20: NARRATIVE_PAYLOAD_SCHEMA_VERSION = 'v1.1'. Docstring lines 2-6 confirms WP2/LAYER-B-1 formal handoff object. Governed DTO contract exists in repo."
+        },
+        {
+          "claim": "ADR-002 defines three-layer architecture with Layer C = Narrative Translation",
+          "status": "CONFIRMED",
+          "citation": "architecture/ADR-002-deterministic-analysis-engine.md lines 92-108 — Layer C defined as 'Narrative Translation'. Line 107-108: 'Any computation performed in Layer C that belongs in Layer B is an architectural defect and must be treated as a blocking governance violation.' Aligns with Strategic Vision v1.5 §2.3."
+        }
       ]
     },
     {
-      "check": "forbidden_files",
-      "result": "PASS",
-      "note": "None of the following are required by any of the 6 fixes: signal library YAML, runtime context evaluator, signal evaluator, scoring core, result versioning compatibility logic, medical frame identity index, reference range logic, parser files. Prompt forbidden-file list fully respected."
+      "check": "stage_2b_behavioural_hardening",
+      "result": "NOT_APPLICABLE",
+      "note": "change_type should be CONTENT (docs-only). No Intelligence Core components, no analytical code, no output generation changes in scope. No behavioural hardening required."
     },
     {
-      "check": "baseline_preservation",
-      "result": "MUST CONFIRM POST-IMPLEMENTATION",
-      "required": "After implementation, re-verify: result_versioning.compatible=true, result_status=current, render_blockers=[], clinician_report_v1 present and populated, stale/incompatible banner absent, regenerate CTA absent for analysis_id 6bcbf1de-d97f-4a1c-9556-e3a6e0625fd1."
+      "check": "stop_conditions",
+      "result": "PASS",
+      "note": "Prompt contains six explicit Do Not clauses: no runtime code, no tests, no frontend behaviour, no backend compilers, no Gemini implementation, no Layer B/C runtime logic. STOP conditions are adequate for the documentation scope."
+    },
+    {
+      "check": "implementation_notes",
+      "result": "INFO",
+      "notes": [
+        "New ADR output path is docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md. Existing canonical ADRs live in architecture/ (not docs/architecture/). Cursor must follow prompt instruction to explain any path deviation in the audit summary.",
+        "AUTHORITY_MAP.md update is optional per prompt. Architecture section lists ADRs — minimal entry addition is appropriate if Cursor elects to update it.",
+        "Docs-Only Bypass (SOP §11) is available: all expected outputs are under /docs/. If GPT elects bypass, no bus lifecycle is required."
+      ]
     }
   ],
-  "overall_verdict": "HARDENED",
-  "hardening_notes": "Prompt is structurally sound. All 5 front matter fields valid. All 6 HIGH issues traced to specific files and lines from direct file reads and API snapshot cross-reference. Two mandatory implementation constraints issued: (1) IUAT-004: add title-case 'Cardiovascular 4 Biomarkers' scrub rule AND fix scrub pipeline ordering so mojibake runs before phrase substitution — both required or the 'analytical model' phrase fix will silently fail. (2) IUAT-006: must NOT modify humanizeStatus() due to trendComparison.ts dependency — must add a separate driverBandStatusLabel() function for the driver band only. No STOP conditions triggered. HIGH risk route applies: Claude audit + GPT architectural review + human approval before merge."
+  "overall_verdict": "NOT_HARDENED — one BLOCKER: change_type: DOCS is not a valid SOP v1.3.1 value. GPT must correct to CONTENT (or elect Docs-Only Bypass) and reissue the prompt before Cursor may proceed."
 }
