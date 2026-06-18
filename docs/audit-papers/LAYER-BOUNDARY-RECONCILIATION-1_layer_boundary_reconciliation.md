@@ -6,6 +6,8 @@ branch: work/LAYER-BOUNDARY-RECONCILIATION-1-layer-boundary-reconciliation
 status: MERGED_CLOSURE_COMPLETE
 change_type_declared: DOCS
 change_type_correct: CONTENT
+head_sha: 883b65f
+merged_to_main: 8a30022
 ---
 
 ## Executive verdict
@@ -73,4 +75,8 @@ No runtime code, tests, or frontend/backend behaviour changed.
 | Merge authorised | Yes | GPT exception + human approval |
 | GPT governed exception | Recorded | Invalid `change_type: DOCS` → should be `CONTENT` |
 | Sprint branch | `work/LAYER-BOUNDARY-RECONCILIATION-1-layer-boundary-reconciliation` | Fast-forward merge |
-| Code files in merge | None | Documentation and bus artefacts only |
+| `main` HEAD | `883b65f` | `git rev-parse main` |
+| `origin/main` HEAD | `883b65f` | `git rev-parse origin/main` — **aligned** |
+| Working tree | Clean | `git status --short` |
+| Stash | Empty | `git stash list` |
+| Code files in merge | **None** | Docs + bus artefacts only |
