@@ -1,5 +1,7 @@
 # HealthIQ AI — Eight-Block Beta Readiness Estate Audit
 
+> Post-audit note: see `EIGHT_BLOCK_BETA_READINESS_LATE_DOCUMENT_ADDENDUM_2026-06-17.md` and `docs/strategy/LAYER_ARCHITECTURE_AUTHORITY_INDEX_2026-06-17_r2.md` for later-discovered authority documents.
+
 **Auditor:** Cursor (independent evidence discovery)  
 **Date:** 2026-06-17  
 **Mode:** Read-only — no code, documentation, branch, or implementation changes  
