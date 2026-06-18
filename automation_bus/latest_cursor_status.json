@@ -1,9 +1,10 @@
 {
   "branch": "work/EIGHT-BLOCK-PROGRAMME-1-comparison-and-roadmap",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-18T19:17:29Z",
   "cursor_started_utc": "2026-06-18T19:13:00Z",
-  "head_sha": "de8a27f190c27d311b434f4e955ab44943d523b3",
+  "head_sha": "c6124d402140ceacd864a0c0be0aba2f04939cc4",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "EIGHT-BLOCK-PROGRAMME-1"
 }
