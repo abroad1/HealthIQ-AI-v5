@@ -51,6 +51,7 @@ Find the domain you care about. Look at the Status column.
 | `architecture/ADR-008-promoted-signal-intelligence-contract-v1.md` | AUTHORITATIVE | Signal intelligence contract. |
 | `architecture/ADR-009-KB-S46-root-cause-why-insulin-inflammation.md` | AUTHORITATIVE | Root-cause WHY architecture. |
 | `architecture/ADR-007-clinician-summary-report.md` | AUTHORITATIVE | Clinician summary report contract. |
+| `docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md` | AUTHORITATIVE | Canonical Layer A/B/C vocabulary for roadmap and sprint planning. |
 | `architecture/ADR-004-disease-specific-signal-evaluation.md` | SUPERSEDED | Superseded by ADR-005. |
 | `architecture/ARCHITECTURE_GUARDRAILS.md` | AUTHORITATIVE | Enforceable rules. |
 | `architecture/HEALTHIQ_REASONING_PIPELINE.md` | AUTHORITATIVE | Canonical pipeline model. |
