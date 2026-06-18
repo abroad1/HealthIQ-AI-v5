@@ -5,7 +5,7 @@ work_id: EIGHT-BLOCK-PROGRAMME-1
 branch: work/EIGHT-BLOCK-PROGRAMME-1-comparison-and-roadmap
 status: MERGED_CLOSURE_COMPLETE
 change_type: CONTENT
-head_sha: (published HEAD)
+head_sha: d2d5a9c
 merged_to_main: db1beb7
 ---
 
@@ -48,8 +48,8 @@ Documentation-only sprint producing the **canonical Cursor/Claude eight-block co
 |-------|--------|----------|
 | Merge authorised | Yes | GPT + human approval |
 | Sprint branch | `work/EIGHT-BLOCK-PROGRAMME-1-comparison-and-roadmap` | Fast-forward merge |
-| `main` HEAD | (see publish step) | `git rev-parse main` |
-| `origin/main` HEAD | (see publish step) | aligned |
+| `main` HEAD | `d2d5a9c` | `git rev-parse main` |
+| `origin/main` HEAD | `d2d5a9c` | **aligned** |
 | Code files in merge | **None** | Docs + bus artefacts only |
 | Working tree | Clean | `git status --short` |
 | Stash | Empty | `git stash list` |
