@@ -1,10 +1,9 @@
 {
-  "branch": "work/LAYER-BOUNDARY-RECONCILIATION-1-layer-boundary-reconciliation",
+  "branch": "work/EIGHT-BLOCK-PROGRAMME-1-comparison-and-roadmap",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-18T11:37:23Z",
-  "cursor_started_utc": "2026-06-18T11:34:11Z",
-  "head_sha": "e6e182a77f2ac5a66155efdb7bfc90b591a2d9d9",
+  "cursor_started_utc": "2026-06-18T19:13:00Z",
+  "head_sha": "de8a27f190c27d311b434f4e955ab44943d523b3",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LAYER-BOUNDARY-RECONCILIATION-1"
+  "status": "IN_PROGRESS",
+  "work_id": "EIGHT-BLOCK-PROGRAMME-1"
 }
