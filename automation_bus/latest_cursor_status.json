@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-6R-thyroid-scoring-architecture-recovery",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-20T12:05:00Z",
   "cursor_started_utc": "2026-06-20T12:00:38Z",
-  "head_sha": "b9eb170fd4ea6fd211c891ddba99d4d5770286e7",
+  "head_sha": "6828c2317297957e07ddd3f8de065008dc165ff5",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-6R"
 }
