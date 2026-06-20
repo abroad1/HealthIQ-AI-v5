@@ -186,6 +186,31 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-7 — Research-to-runtime adequacy gate
+
+**Status:** Complete  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- Programme-level research-to-runtime adequacy gate across launch-core and second-wave domain candidates.
+- Machine-readable readiness matrix (14 candidates) distinguishing research presence from runtime promotion readiness.
+- Systemic finding: estate is research-rich but unevenly promoted; thyroid pattern recurs as promotion-discipline risk.
+
+### Carry-forwards
+- Thyroid launch-core gap (#6 of 6) blocked until P1-SCORING-LAB-RANGE-ENGINE and TSH authority resolution.
+- Five MED-REV-1 hidden subsystems and orphan wave1_liver_flat_v1 estate drift.
+- Second-wave silent inflammation and hormone balance deferred.
+
+### Blockers / risks
+- Implementing thin runtime cards without compiled evidence + scoring rail + signal authority repeats P1-4/P1-6 failure mode.
+- Frame adjudication backlog blocks signal depth on P1-2/P1-3 implemented domains.
+
+### Recommended next sprint
+- P1-SCORING-LAB-RANGE-ENGINE (scoring-engine architecture prerequisite for hormonal/thyroid path).
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

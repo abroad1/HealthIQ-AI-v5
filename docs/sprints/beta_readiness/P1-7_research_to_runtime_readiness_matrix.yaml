@@ -1,0 +1,379 @@
+work_id: P1-7
+classification_date: "2026-06-20"
+source_authorities:
+  - path: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
+    role: eight-block programme baseline
+  - path: docs/architecture/User Health to Systems Map_FINAL.md
+    role: launch-core six + second-wave two domain framing
+  - path: knowledge_bus/compiled/estate_index_v1.yaml
+    role: compiled card estate authority
+  - path: backend/core/knowledge/health_system_card_evidence.py
+    role: runtime compiled subsystem gate and MED-REV-1 visibility
+  - path: backend/core/analytics/wave1_subsystem_evidence.py
+    role: Wave 1 domain-to-subsystem assembly order
+  - path: backend/core/analytics/domain_score_assembler.py
+    role: consumer domain row integration
+  - path: docs/sprints/beta_readiness/P1-6R_thyroid_scoring_architecture_recovery.md
+    role: scoring architecture blocker for hormonal rail
+  - path: docs/architecture/ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1.md
+    role: thyroid scoring blocked until engine change
+summary:
+  estate_finding: research-rich but unevenly promoted; governance and scoring architecture blockers recur
+  ready_count: 4
+  near_ready_count: 4
+  blocked_count: 5
+  unknown_count: 1
+  recommended_next_sprint: P1-SCORING-LAB-RANGE-ENGINE
+candidates:
+  - id: wave1_cardiovascular
+    name: Cardiovascular health (launch-core domain)
+    category: domain
+    primary_classification: READY_FOR_RUNTIME_CARD
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Strong
+      pass3_spec_support: Partial
+      signal_authority: Strong
+      frame_root_cause_authority: Partial
+      scoring_readiness: Strong
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Partial
+      test_readiness: Strong
+      runtime_integration_readiness: Strong
+    evidence_paths:
+      - backend/core/analytics/domain_score_assembler.py
+      - backend/core/analytics/wave1_subsystem_evidence.py:20-25
+      - knowledge_bus/compiled/estate_index_v1.yaml
+    secondary_blockers:
+      - two CV subsystems remain MED-REV-1 hidden
+      - pathway explainer partial only
+    recommended_action: maintain; optional P2 prose depth sprint for hidden subsystems promotion review
+
+  - id: wave1_blood_sugar
+    name: Blood sugar control (launch-core domain)
+    category: domain
+    primary_classification: READY_FOR_RUNTIME_CARD
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Strong
+      pass3_spec_support: Partial
+      signal_authority: Strong
+      frame_root_cause_authority: Partial
+      scoring_readiness: Strong
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Partial
+      test_readiness: Strong
+      runtime_integration_readiness: Strong
+    evidence_paths:
+      - backend/core/analytics/domain_score_assembler.py
+      - backend/core/analytics/wave1_subsystem_evidence.py:26-29
+      - backend/ssot/scoring_policy.yaml
+    secondary_blockers:
+      - wave1_met_insulin_metabolic hidden from default user view
+    recommended_action: maintain; adjudicate insulin-metabolic subsystem visibility when medical review permits
+
+  - id: wave1_liver
+    name: Liver health (launch-core domain)
+    category: domain
+    primary_classification: RESEARCH_PRESENT_RUNTIME_READY_AFTER_MINOR_WIRING
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Strong
+      pass3_spec_support: Partial
+      signal_authority: Partial
+      frame_root_cause_authority: Partial
+      scoring_readiness: Strong
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Weak
+      test_readiness: Partial
+      runtime_integration_readiness: Strong
+    evidence_paths:
+      - backend/core/analytics/domain_score_assembler.py
+      - backend/core/analytics/wave1_subsystem_evidence.py:30-33
+      - knowledge_bus/compiled/health_system_cards/wave1_liver_flat_v1.yaml
+    secondary_blockers:
+      - estate drift orphan wave1_liver_flat_v1 not in estate_index
+      - both liver subsystems MED-REV-1 hidden
+      - no dedicated liver pathway explainer
+    recommended_action: reconcile orphan flat card drift in dedicated hygiene sprint; P2 liver prose substrate
+
+  - id: wave1_kidney
+    name: Kidney function (launch-core domain)
+    category: domain
+    primary_classification: RESEARCH_PRESENT_RUNTIME_READY_AFTER_MINOR_WIRING
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Partial
+      pass3_spec_support: Partial
+      signal_authority: Partial
+      frame_root_cause_authority: Partial
+      scoring_readiness: Partial
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Partial
+      test_readiness: Strong
+      runtime_integration_readiness: Strong
+    evidence_paths:
+      - docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md
+      - backend/tests/unit/test_p1_2_kidney_domain_card.py
+      - knowledge_bus/compiled/manifests/p1_2_kidney_filtration_card_evidence.yaml
+    secondary_blockers:
+      - urea signals excluded pending frame adjudication
+      - eGFR scoring bands deferred
+      - no standalone ACR/UACR package
+    recommended_action: frame adjudication for urea; optional eGFR scoring after lab-range engine pattern exists
+
+  - id: wave1_blood_iron_oxygen
+    name: Blood / iron / oxygen (launch-core domain)
+    category: domain
+    primary_classification: RESEARCH_PRESENT_RUNTIME_READY_AFTER_MINOR_WIRING
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Strong
+      pass3_spec_support: Partial
+      signal_authority: Blocked
+      frame_root_cause_authority: Partial
+      scoring_readiness: Partial
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Weak
+      test_readiness: Strong
+      runtime_integration_readiness: Strong
+    evidence_paths:
+      - docs/sprints/beta_readiness/P1-3_blood_iron_oxygen_domain_card.md
+      - backend/tests/unit/test_p1_3_blood_iron_oxygen_domain_card.py
+      - backend/ssot/scoring_policy.yaml
+    secondary_blockers:
+      - empty launch signal allowlist pending frame adjudication
+      - iron/ferritin/transferrin scoring bands absent
+      - TIBC/UIBC absent from SSOT
+    recommended_action: CBC/iron frame adjudication sprint before signal activation; iron scoring bands after architecture decision
+
+  - id: wave1_thyroid_energy_regulation
+    name: Thyroid and energy regulation (launch-core domain)
+    category: domain
+    primary_classification: SCORING_ARCHITECTURE_BLOCKED
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Partial
+      pass3_spec_support: Partial
+      signal_authority: Blocked
+      frame_root_cause_authority: Partial
+      scoring_readiness: Blocked
+      compiled_card_evidence: Absent
+      prose_explainer_readiness: Weak
+      test_readiness: Partial
+      runtime_integration_readiness: Absent
+    evidence_paths:
+      - docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md
+      - docs/sprints/beta_readiness/P1-6R_thyroid_scoring_architecture_recovery.md
+      - docs/architecture/ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1.md
+      - backend/ssot/scoring_policy.yaml:31-34
+    secondary_blockers:
+      - kb52c TSH packages not launch-active
+      - kb59 thyroid antibodies inactive
+      - FT3 low deferred per P1-5
+    recommended_action: P1-SCORING-LAB-RANGE-ENGINE then hormonal policy sprint; TSH promotion governance; P1-4 retry only after preconditions
+
+  - id: silent_inflammation
+    name: Silent inflammation (second-wave domain)
+    category: domain
+    primary_classification: RESEARCH_PRESENT_UNCOMPILED
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Partial
+      pass3_spec_support: Weak
+      signal_authority: Partial
+      frame_root_cause_authority: Weak
+      scoring_readiness: Partial
+      compiled_card_evidence: Absent
+      prose_explainer_readiness: Absent
+      test_readiness: Partial
+      runtime_integration_readiness: Absent
+    evidence_paths:
+      - docs/architecture/User Health to Systems Map_FINAL.md:212-213
+      - knowledge_bus/packages/pkg_chronic_inflammation/package_manifest.yaml
+      - backend/ssot/scoring_policy.yaml
+    secondary_blockers:
+      - no domain assembler row
+      - no compiled card in estate_index
+      - User Health map flags fuzziness risk
+    recommended_action: defer until launch-core six complete; compile card only after medical review and frame adjudication
+
+  - id: hormone_balance
+    name: Hormone balance / gonadal axis (second-wave domain)
+    category: domain
+    primary_classification: RESEARCH_PRESENT_UNMAPPED
+    dimensions:
+      upstream_research: Partial
+      kb_packages: Partial
+      pass3_spec_support: Weak
+      signal_authority: Weak
+      frame_root_cause_authority: Weak
+      scoring_readiness: Blocked
+      compiled_card_evidence: Absent
+      prose_explainer_readiness: Absent
+      test_readiness: Weak
+      runtime_integration_readiness: Absent
+    evidence_paths:
+      - docs/architecture/User Health to Systems Map_FINAL.md:213-214
+      - knowledge_bus/packages/pkg_kb47_free_testosterone_low_androgen_deficiency_context/package_manifest.yaml
+      - backend/ssot/scoring_policy.yaml:31-34
+    secondary_blockers:
+      - hormonal scoring rail inert
+      - no domain mapping in wave1_subsystem_evidence
+      - confidence/subgroup logic immature per strategy map
+    recommended_action: defer second-wave; do not implement until launch-core closure and hormonal scoring architecture resolved
+
+  - id: wave1_met_insulin_metabolic
+    name: Insulin / metabolic coupling subsystem
+    category: subsystem
+    primary_classification: COMPILED_NOT_PROMOTED
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Strong
+      pass3_spec_support: Partial
+      signal_authority: Partial
+      frame_root_cause_authority: Partial
+      scoring_readiness: Strong
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Weak
+      test_readiness: Partial
+      runtime_integration_readiness: Partial
+    evidence_paths:
+      - backend/core/knowledge/health_system_card_evidence.py:40-51
+      - knowledge_bus/compiled/estate_index_v1.yaml:25-28
+    secondary_blockers:
+      - MED-REV-1 hidden_v1 visibility tier
+    recommended_action: medical review sprint for promotion decision; no runtime card sprint until visibility adjudicated
+
+  - id: wave1_cv_homocysteine_pathway
+    name: Homocysteine / one-carbon cardiovascular subsystem
+    category: subsystem
+    primary_classification: COMPILED_NOT_PROMOTED
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Strong
+      pass3_spec_support: Partial
+      signal_authority: Partial
+      frame_root_cause_authority: Partial
+      scoring_readiness: Strong
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Partial
+      test_readiness: Partial
+      runtime_integration_readiness: Partial
+    evidence_paths:
+      - backend/core/knowledge/health_system_card_evidence.py:40-51
+      - knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml
+    secondary_blockers:
+      - MED-REV-1 hidden
+    recommended_action: promotion review; pathway explainer exists but subsystem not user-visible
+
+  - id: wave1_cv_vascular_strain
+    name: Vascular strain cardiovascular subsystem
+    category: subsystem
+    primary_classification: COMPILED_NOT_PROMOTED
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Strong
+      pass3_spec_support: Partial
+      signal_authority: Partial
+      frame_root_cause_authority: Partial
+      scoring_readiness: Strong
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Weak
+      test_readiness: Partial
+      runtime_integration_readiness: Partial
+    evidence_paths:
+      - backend/core/knowledge/health_system_card_evidence.py:40-51
+      - knowledge_bus/compiled/estate_index_v1.yaml:21-24
+    secondary_blockers:
+      - MED-REV-1 hidden
+    recommended_action: medical review for visibility promotion
+
+  - id: wave1_liv_enzyme_pattern
+    name: Liver enzyme pattern subsystem
+    category: subsystem
+    primary_classification: COMPILED_NOT_PROMOTED
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Strong
+      pass3_spec_support: Partial
+      signal_authority: Partial
+      frame_root_cause_authority: Partial
+      scoring_readiness: Strong
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Weak
+      test_readiness: Partial
+      runtime_integration_readiness: Partial
+    evidence_paths:
+      - backend/core/knowledge/health_system_card_evidence.py:40-51
+      - knowledge_bus/compiled/estate_index_v1.yaml:29-32
+    secondary_blockers:
+      - MED-REV-1 hidden
+    recommended_action: liver prose substrate + medical review before promotion
+
+  - id: wave1_liv_processing_context
+    name: Liver processing context subsystem
+    category: subsystem
+    primary_classification: COMPILED_NOT_PROMOTED
+    dimensions:
+      upstream_research: Strong
+      kb_packages: Strong
+      pass3_spec_support: Partial
+      signal_authority: Partial
+      frame_root_cause_authority: Partial
+      scoring_readiness: Strong
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Weak
+      test_readiness: Partial
+      runtime_integration_readiness: Partial
+    evidence_paths:
+      - backend/core/knowledge/health_system_card_evidence.py:40-51
+      - knowledge_bus/compiled/estate_index_v1.yaml:33-36
+    secondary_blockers:
+      - MED-REV-1 hidden
+    recommended_action: same as wave1_liv_enzyme_pattern
+
+  - id: wave1_liver_flat_v1
+    name: Liver flat card orphan artefact
+    category: subsystem
+    primary_classification: UNKNOWN_INSUFFICIENT_EVIDENCE
+    dimensions:
+      upstream_research: Unknown
+      kb_packages: Unknown
+      pass3_spec_support: Unknown
+      signal_authority: Absent
+      frame_root_cause_authority: Unknown
+      scoring_readiness: Not applicable
+      compiled_card_evidence: Partial
+      prose_explainer_readiness: Unknown
+      test_readiness: Absent
+      runtime_integration_readiness: Absent
+    evidence_paths:
+      - knowledge_bus/compiled/health_system_cards/wave1_liver_flat_v1.yaml
+      - knowledge_bus/compiled/estate_index_v1.yaml
+      - backend/core/knowledge/health_system_card_evidence.py:26-37
+    secondary_blockers:
+      - absent from estate_index and WAVE1_COMPILED_SUBSYSTEM_IDS
+    recommended_action: estate hygiene sprint to classify or archive; do not wire into runtime without authority reconciliation
+
+  - id: signal_vitamin_d_low
+    name: Vitamin D low compiled hypothesis
+    category: signal_cluster
+    primary_classification: READY_FOR_COMPILED_CARD_ONLY
+    dimensions:
+      upstream_research: Partial
+      kb_packages: Partial
+      pass3_spec_support: Weak
+      signal_authority: Strong
+      frame_root_cause_authority: Partial
+      scoring_readiness: Not applicable
+      compiled_card_evidence: Strong
+      prose_explainer_readiness: Weak
+      test_readiness: Partial
+      runtime_integration_readiness: Partial
+    evidence_paths:
+      - knowledge_bus/compiled/estate_index_v1.yaml:46-52
+      - knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml
+    secondary_blockers:
+      - not mapped to launch-core consumer domain row
+    recommended_action: track as compiled hypothesis; domain mapping decision separate from launch-core six
