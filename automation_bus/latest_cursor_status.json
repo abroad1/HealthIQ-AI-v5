@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-1-launch-core-domain-build-materials-map",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-20T08:56:24Z",
   "cursor_started_utc": "2026-06-20T08:52:21Z",
-  "head_sha": "ff443b9eaeec149d53ed520abfadb269bc823d03",
+  "head_sha": "11c92c048e1eddd42a460147cfa001704b1b35b8",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-1"
 }
