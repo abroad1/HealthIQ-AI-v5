@@ -1,90 +1,80 @@
 ---
-work_id: P1-4
-branch: work/P1-4-thyroid-energy-regulation-domain-card
+work_id: P1-5
+branch: work/P1-5-ft3-thyroid-authority-reconciliation
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# P1-4 — Thyroid / Energy Regulation Domain Card
+# P1-5 — FT3 / Thyroid Authority Reconciliation
 
 ## Objective
 
-Implement the third missing launch-core domain if, and only if, the thyroid authority and FT3 register position can be reconciled safely:
+Resolve the governance contradiction that blocked P1-4.
 
-```text id="gvcsk4"
-Thyroid / energy regulation
-```
+P1-4 correctly stopped before thyroid runtime implementation because FT3 low authority was contradictory across multiple governance/register files, the hormonal scoring rail was inert, TSH package authority was inactive, and kb59 antibody material was not runtime-governed.
 
-This sprint must follow the launch-core domain pattern established by P1-2 kidney function and P1-3 blood / iron / oxygen, but thyroid is clinically more context-sensitive. Therefore, this sprint has an internal STOP gate before implementation.
+This sprint is a governance reconciliation sprint.
 
-The sprint has two phases:
+It must not implement the thyroid / energy regulation domain card.
 
-```text id="7c7jza"
-Phase 1 — Thyroid authority and FT3/register reconciliation
-Phase 2 — Bounded thyroid / energy regulation domain implementation, only if Phase 1 passes safely
-```
-
-If Phase 1 exposes unresolved authority conflict, blocked signal ambiguity, unsafe FT3 handling, or missing medical-review authority, stop and produce a blocker report. Do not improvise.
+It must produce a clear, auditable authority position for thyroid runtime readiness and define the exact preconditions for retrying P1-4.
 
 ---
 
-## Prerequisite
+## Required outcome
 
-Do not start unless P1-3 has been merged to `main`.
+The sprint must answer and, where safe, reconcile:
 
-Required files on `main`:
-
-```text id="sr7q41"
-docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md
-docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md
-docs/sprints/beta_readiness/P1-3_blood_iron_oxygen_domain_card.md
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+```text
+What is the authoritative runtime position for FT3 low, FT3 high, FT4 high, FT4 low, TSH high/low, and thyroid antibodies?
 ```
 
-If any file is missing on `main`, stop and report:
+The safest default is:
 
-```text id="bcdtx4"
-P1 launch-core prerequisite evidence is not present on main. P1-4 must not proceed.
+```text
+No thyroid signal may be treated as runtime active unless all relevant governance files clearly support that status.
 ```
+
+FT3 low must not be activated by this sprint.
+
+If the evidence remains unresolved, the sprint must document the conflict and stop without changing authority files beyond the blocker report/register entry.
 
 ---
 
-## Critical architectural boundary
+## Critical scope rule
 
-This sprint is Layer B implementation work only if the Phase 1 authority gate passes.
+This is not a thyroid implementation sprint.
 
-Layer B owns:
+Do not change runtime code.
 
-```text id="uz6bva"
-biomarker interpretation
-signal activation/suppression
-domain/system reasoning
-subsystem reasoning
-WHY/root-cause
-hierarchy
-surfacing decisions
-clinician-report content
-prose/explainer selection
-safety
-provenance
-```
+Do not change scoring logic.
 
-Layer C, Gemini and frontend must not perform thyroid / energy regulation reasoning.
+Do not create a thyroid compiled card.
 
-Do not create frontend medical inference.
+Do not wire a thyroid domain row.
+
+Do not alter `domain_score_assembler.py`.
+
+Do not alter `domain_narrative_wave1.py`.
+
+Do not alter `wave1_subsystem_evidence.py`.
+
+Do not alter DTO/replay contracts.
+
+Do not touch frontend files.
 
 Do not use Gemini.
 
-Do not create or rely on fallback parser logic.
+Do not introduce fallback parser logic.
 
-Do not substitute global/default ranges where lab-provided ranges exist.
+Do not promote Pass 3 material.
 
-Do not activate blocked or context-dependent thyroid signals unless explicit governed authority says they are safe for runtime activation.
+Do not modify Knowledge Bus source packages.
 
-Do not create diagnostic hypothyroidism, hyperthyroidism, thyrotoxicosis, thyroiditis, Graves’ disease, pituitary disease or non-thyroidal illness language unless already governed, explicitly supported, non-diagnostic, and safe.
+Do not activate blocked or context-dependent thyroid signals.
 
-The default posture is educational interpretation of thyroid-axis markers and energy-regulation context, not diagnosis.
+Do not create diagnostic thyroid disease language.
 
 ---
 
@@ -92,11 +82,11 @@ The default posture is educational interpretation of thyroid-axis markers and en
 
 Start from `main`.
 
-```powershell id="spuemi"
+```powershell
 git switch main
 git pull
 git status --short
-git switch -c work/P1-4-thyroid-energy-regulation-domain-card
+git switch -c work/P1-5-ft3-thyroid-authority-reconciliation
 ```
 
 Do not proceed if the working tree is dirty.
@@ -105,58 +95,55 @@ Confirm the Automation Bus active work package/state file if required by SOP.
 
 ---
 
+## Prerequisites
+
+Required files on `main`:
+
+```text
+docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md
+docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md
+docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+```
+
+If any are missing, stop and report:
+
+```text
+P1-5 prerequisite evidence is not present on main. P1-5 must not proceed.
+```
+
+---
+
 ## First authority documents
 
 Read these first, in this order:
 
-```text id="rsdkn5"
+```text
 docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
 docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md
-docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md
-docs/sprints/beta_readiness/P1-3_blood_iron_oxygen_domain_card.md
+docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md
 docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
-P1-1 is the immediate scope authority for thyroid / energy regulation.
-
-P1-2 and P1-3 are implementation pattern references for adding bounded launch-core domain rows after the original Wave 1 domains.
-
-Do not exceed the thyroid / energy regulation scope proven by P1-1.
+P1-4 is the immediate trigger authority for this reconciliation sprint.
 
 ---
 
-## Additional authority and reference files
+## Files/registers to locate and inspect
 
-Read as relevant and only if present:
+Locate the following files by exact filename search if their full paths are not already known:
 
-```text id="v9t1yw"
-docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_COMPARISON_AND_PROGRAMME_RECOMMENDATION_2026-06-18.md
-docs/strategy/LAYER_ARCHITECTURE_AUTHORITY_INDEX_2026-06-17_r2.md
-docs/architecture/User Health to Systems Map_FINAL.md
-docs/AUTHORITY_MAP.md
-backend/ssot/scoring_policy.yaml
-backend/core/analytics/domain_score_assembler.py
-backend/core/analytics/domain_narrative_wave1.py
-backend/core/analytics/wave1_subsystem_evidence.py
-backend/core/contracts/narrative_payload_v1.py
-backend/core/dto/persisted_replay_contract_v1.py
-backend/core/knowledge/health_system_card_evidence.py
-backend/core/analytics/report_compiler_v1.py
-backend/core/analytics/root_cause_compiler_v1.py
-knowledge_bus/
-knowledge_bus/compiled/
-knowledge_bus/pathway_explainers_v1/
-backend/tests/
-docs/testing/
-docs/intelligence/
-docs/architecture/
-docs/medical_review/
+```text
+batch2_thyroid_gate_execution_register_v1.yaml
+batch2_full_coverage_activation_execution_register_v1.yaml
+batch2_context_clearance_register_v1.yaml
+medical_frame_identity_index_v1.yaml
+root_cause_authority_register_v1.yaml
 ```
 
-Also search the repository for thyroid-specific authority, including terms:
+Also search for:
 
-```text id="zg8hs3"
+```text
 FT3
 Free T3
 free_t3
@@ -170,304 +157,116 @@ thyroid
 thyrotoxicosis
 low T3
 non-thyroidal illness
-Batch 2 Thyroid
 thyroid authority
-FT3 register
+activation_eligibility
+runtime_active_canonical
+blocked
+deferred
 ```
 
-If a path listed by P1-1 no longer exists or differs from the map, record that honestly and adjust only within the authorised scope.
+If any expected file cannot be found, record that clearly and do not invent its contents.
 
 ---
 
-## Phase 1 — Thyroid authority and FT3/register reconciliation
+## Phase 1 — Authority audit
 
-Before any implementation, create a short authority reconciliation section in the sprint implementation note.
+Create a concise authority audit table covering at least:
 
-You must determine:
-
-```text id="9vax5o"
-1. Which thyroid markers are present in the existing governed estate.
-2. Which thyroid signals are active, inactive, blocked, or context-dependent.
-3. Whether FT3 low remains blocked or requires medical-review/context gating.
-4. Whether FT3 high, FT4 high, FT4 low, TSH high/low or other thyroid patterns have clear runtime authority.
-5. Whether any register, map, package, signal index, frame index or audit document conflicts.
-6. Whether any thyroid signal would require context evidence before runtime activation.
-7. Whether a safe domain card can be emitted using existing scoring/card evidence without activating blocked/context-dependent signals.
+```text
+FT3 low
+FT3 high
+FT4 low
+FT4 high
+TSH high
+TSH low
+thyroid antibodies
 ```
 
-### Phase 1 STOP conditions
+For each item, record:
 
-Stop before implementation if any of the following are true:
-
-```text id="r3kb48"
-- FT3 low authority is unresolved or contradictory.
-- Any required thyroid marker or signal status cannot be established from repo evidence.
-- Implementation would require activation of a blocked or context-dependent thyroid signal.
-- Implementation would require new global/default thyroid reference ranges.
-- Implementation would require new thyroid scoring bands not already governed.
-- Implementation would require diagnostic hypothyroid/hyperthyroid/thyrotoxicosis/non-thyroidal illness claims.
-- Implementation would require Gemini, frontend inference or Layer C medical reasoning.
-- Existing thyroid medical-review authority is absent, ambiguous or contradictory.
+```text
+- register/file path
+- current status
+- activation eligibility
+- runtime active/inactive/deferred/blocked/context-dependent status
+- notes/comments
+- contradictions
+- whether medical review is present or absent
+- whether root-cause mapping is present or future-mapped
 ```
 
-If a STOP condition is triggered:
+You must explicitly cover the P1-4 findings:
 
-```text id="n9dwoi"
-- do not touch runtime code;
-- do not modify scoring policy;
-- do not create a compiled runtime card;
-- do not wire a thyroid domain row;
-- create the P1-4 implementation note as a blocker report;
-- update the build deliverable register with Status: Blocked or Partial;
-- return for GPT architectural review.
+```text
+- FT3 low deferred in batch2_thyroid_gate_execution_register_v1.yaml
+- FT3 low runtime_active_canonical in batch2_full_coverage_activation_execution_register_v1.yaml
+- FT3 low inactive / activation_eligibility false in batch2_context_clearance_register_v1.yaml
+- FT3 low internal contradiction in medical_frame_identity_index_v1.yaml
+- FT3 low ROOT_CAUSE_REQUIRES_FUTURE_MAPPING in root_cause_authority_register_v1.yaml
+- hormonal scoring rail has system_weight 0.0 and no biomarkers
+- kb52c TSH packages inactive
+- kb59 antibodies inactive
 ```
+
+If any of the above are not confirmed from the repository, state that honestly.
 
 ---
 
-## Phase 2 — Implementation scope only if Phase 1 passes
+## Phase 2 — Reconciliation decision
 
-If Phase 1 confirms a safe bounded scope, implement a thyroid / energy regulation domain card / domain output using existing repository patterns.
+After Phase 1, decide whether a safe reconciliation can be made.
 
-The sprint may include, if required by the existing architecture:
+The only acceptable reconciliation directions are:
 
-```text id="x8wtdc"
-- domain assembler wiring for thyroid / energy regulation
-- domain score/card output wiring
-- subsystem evidence wiring where supported
-- compiled health-system card evidence where supported
-- DTO/replay/report inclusion where existing Layer B contracts require it
-- deterministic tests for thyroid / energy regulation domain output
-- minimal documentation of implementation decisions
-- build deliverable register update
+```text
+1. Confirm FT3 low and any unresolved thyroid patterns as NOT runtime active / deferred / blocked pending governance.
+2. Confirm specific thyroid patterns as eligible only if every relevant authority source supports that status.
+3. Leave files unchanged and produce a blocker report if authority cannot be reconciled safely.
 ```
 
-The sprint must stay inside the safe thyroid scope established by Phase 1.
+Do not choose the permissive interpretation where files conflict.
+
+Do not treat `runtime_active_canonical` in one file as sufficient authority if another register says deferred, inactive, or future-mapped.
+
+Do not activate FT3 low.
+
+Do not create runtime authority for context-dependent thyroid patterns.
 
 ---
 
-## Candidate biomarker scope
+## Permitted changes
 
-Use only biomarkers supported by P1-1 and repository evidence.
+This sprint may change only documentation/governance files required to remove contradiction or document unresolved contradiction.
 
-Candidate markers to verify include:
+Permitted outputs:
 
-```text id="j9kljp"
-TSH
-Free T4
-Free T3
-thyroid antibodies only if present and governed
+```text
+docs/sprints/beta_readiness/P1-5_ft3_thyroid_authority_reconciliation.md
+docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md
+docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
-Do not invent additional markers.
+Governance/register YAML files may be changed only if all of the following are true:
 
-Do not add interpretation logic for unavailable markers.
+```text
+- the intended correction is to make authority more conservative, not more permissive;
+- the correction resolves an internal contradiction or known drift;
+- the corrected status is NOT runtime active / deferred / blocked / requires future mapping;
+- no thyroid signal becomes newly active;
+- no package becomes promoted;
+- no runtime behaviour is created;
+- the final report identifies every file changed and every status changed.
+```
 
-Do not treat FT3 low as safe unless the authority review clearly supports runtime activation.
-
-Do not use symptoms, lifestyle context or medication assumptions unless the existing runtime has governed structured context available and the relevant thyroid authority explicitly requires or allows it.
-
-If a marker is absent from an uploaded panel, handle it through existing missing-marker patterns only where those patterns are already governed.
+If a governance file appears to be runtime-consumed and the behavioural effect is uncertain, do not modify it. Record the required correction in the ADR and leave the file unchanged for a later dedicated activation-control sprint.
 
 ---
 
-## Clinical safety rules
+## Prohibited changes
 
-Thyroid / energy regulation output must remain:
+Do not change:
 
-```text id="3xe95r"
-educational
-non-diagnostic
-cautious
-lab-range grounded
-traceable
-proportionate
-context-aware where required
-```
-
-Do not state or imply a diagnosis of:
-
-```text id="zw9r6w"
-hypothyroidism
-hyperthyroidism
-thyrotoxicosis
-T3-toxicosis
-thyroiditis
-Graves’ disease
-Hashimoto’s disease
-pituitary disease
-non-thyroidal illness
-low T3 syndrome
-```
-
-unless an existing governed source explicitly allows the wording and the output remains non-diagnostic.
-
-Preferred framing:
-
-```text id="npvro2"
-thyroid-axis markers
-thyroid hormone signalling context
-markers that can relate to energy regulation
-a pattern that may be worth discussing with a clinician if out of range or persistent
-```
-
-Avoid:
-
-```text id="wpy0f8"
-you have hypothyroidism
-this proves hyperthyroidism
-this confirms thyrotoxicosis
-this means low T3 syndrome
-this indicates pituitary disease
-diagnostic staging
-urgent disease claims
-```
-
----
-
-## Lab-range rules
-
-Use lab-provided reference ranges where available.
-
-Do not hardcode global/default reference ranges.
-
-Do not introduce new global reference intervals.
-
-Do not rebalance existing biomarker weights unless explicitly justified by an existing governed scoring policy and P1-1 evidence.
-
-Do not repeat the P1-2 scoring-policy error: if implementation would require new range bands, diagnostic thresholds, or a new scoring policy, stop and report the blocker rather than improvising.
-
----
-
-## Scoring and policy rules
-
-Inspect existing scoring rails before modifying anything.
-
-If thyroid / energy regulation scoring is already present in `backend/ssot/scoring_policy.yaml`, reuse it.
-
-Do not rewrite scoring policy broadly.
-
-Do not create a new scoring model from memory.
-
-If a minimal scoring-policy update appears necessary, only proceed if:
-
-```text id="g0l0tz"
-- Phase 1 found clear authority for the relevant markers;
-- P1-1 identified it as required or expected;
-- the existing scoring-policy structure clearly supports the change;
-- the change is bounded to thyroid / energy regulation;
-- it does not introduce hardcoded global reference intervals;
-- it does not silently rebalance existing governed weights;
-- tests are added or updated;
-- the final report explains the policy change.
-```
-
-If scoring-policy ambiguity is significant, stop and report the blocker.
-
----
-
-## Signal-routing rules
-
-Do not route thyroid signals by broad system-field matching.
-
-Use a signal-id allowlist only.
-
-The allowlist must include only signals with clear runtime authority.
-
-If all thyroid signals are blocked or context-dependent, the allowlist must be empty.
-
-If the allowlist is empty but a safe scored/card domain row can be emitted from governed scoring/card evidence, that is acceptable only if Phase 1 supports it.
-
-If an empty allowlist would make the thyroid domain misleading or unsupported, stop and report the blocker.
-
----
-
-## Subsystem rules
-
-Only implement subsystem groupings supported by P1-1 and repository evidence.
-
-Possible subsystem candidates must be evidence-backed.
-
-Potential areas to verify, not assume:
-
-```text id="oo2b7e"
-thyroid axis
-thyroid hormone signalling
-energy regulation
-TSH / FT4 relationship
-T3 conversion only if medically governed
-```
-
-Do not invent polished subsystem names solely for UX.
-
-Subsystems remain Layer B.
-
-Frontend must only render governed outputs.
-
----
-
-## Prose, explainer and clinician-report rules
-
-This sprint may wire existing thyroid / energy regulation material into governed Layer B surfaces if required by the runtime pattern.
-
-Do not create a broad prose expansion sprint inside P1-4.
-
-Do not write a full new thyroid explainer estate.
-
-Do not use Gemini to produce prose.
-
-If existing retail explainer, pathway explainer or clinician-report assets are insufficient, record the gap as a carry-forward to P2-1 or later Layer B prose work.
-
----
-
-## Runtime constraints
-
-Do not:
-
-```text id="ybvf4u"
-- read raw Pass 3 material at runtime
-- read raw Knowledge Bus research files at runtime
-- modify Knowledge Bus source packages
-- promote Pass 3 material
-- activate blocked/context-dependent signals
-- add frontend medical inference
-- add Gemini runtime calls
-- add fallback parser logic
-- introduce hardcoded clinical thresholds
-- infer thyroid disease context from marker names alone
-```
-
----
-
-## Required deliverables
-
-### 1. Phase 1 authority reconciliation
-
-Create or update the implementation note with a Phase 1 section.
-
-Required path:
-
-```text id="hd4cpp"
-docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md
-```
-
-The Phase 1 section must state:
-
-```text id="qoc9jd"
-- thyroid authority sources found;
-- active / inactive / blocked / context-dependent signal status;
-- FT3 low status;
-- any authority conflicts;
-- whether implementation proceeded or stopped;
-- rationale for that decision.
-```
-
-### 2. Runtime/domain implementation, only if Phase 1 passes
-
-If safe to proceed, implement the bounded thyroid / energy regulation domain output according to existing architecture and P1-1 evidence.
-
-Expected candidate areas may include:
-
-```text id="zbbvf7"
+```text
 backend/core/analytics/domain_score_assembler.py
 backend/core/analytics/domain_narrative_wave1.py
 backend/core/analytics/wave1_subsystem_evidence.py
@@ -475,109 +274,194 @@ backend/core/dto/persisted_replay_contract_v1.py
 backend/core/knowledge/health_system_card_evidence.py
 backend/ssot/scoring_policy.yaml
 knowledge_bus/compiled/
-backend/tests/
+frontend/
 ```
 
-Only modify what is necessary.
+Do not change Knowledge Bus source packages.
 
-### 3. Tests
+Do not change Pass 3 source material.
 
-Add or update targeted tests if implementation proceeds.
+Do not change medical-review conclusions.
 
-Tests should verify, as applicable:
+Do not write new clinical interpretations.
 
-```text id="c5hjoz"
-- thyroid / energy regulation domain appears in the expected output surface
-- relevant biomarkers map correctly
-- missing biomarkers do not create fabricated claims
-- lab-provided ranges are respected
-- output remains non-diagnostic
-- unsupported disease claims are absent
-- blocked/context-dependent thyroid signals are not routed
-- FT3 low is not activated unless explicitly authorised
-- no Layer C/Gemini/frontend inference is required
-- existing domains are not regressed
-- P1-2 kidney output is not regressed
-- P1-3 blood / iron / oxygen output is not regressed
-```
+Do not add tests for a runtime thyroid implementation because no implementation is authorised in this sprint.
 
-If Phase 1 stops before implementation, tests may be limited to documentation/validation checks. State this honestly.
+---
 
-### 4. Implementation note
+## Required deliverable 1 — Reconciliation report
 
 Create:
 
-```text id="q2ohjk"
-docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md
+```text
+docs/sprints/beta_readiness/P1-5_ft3_thyroid_authority_reconciliation.md
 ```
 
 Use this structure:
 
-```markdown id="e8v7qs"
-# P1-4 — Thyroid / Energy Regulation Domain Card
+```markdown
+# P1-5 — FT3 / Thyroid Authority Reconciliation
 
 ## 1. Summary
-- whether Phase 1 passed or stopped
-- what was implemented, if anything
-- what remains out of scope
+- why this sprint was required
+- whether authority was reconciled or remains blocked
+- whether any governance/register files were changed
+- whether P1-4 retry is allowed or still blocked
 
-## 2. Phase 1 authority reconciliation
-- authority documents and files reviewed
-- marker scope
-- signal status
-- FT3 low status
-- conflicts or ambiguities
-- implementation decision
+## 2. Authority files inspected
+- list each file inspected
+- path
+- purpose
+- whether it was changed
 
-## 3. P1-1 evidence used
-- key evidence from P1-1 that justified this sprint scope
+## 3. Thyroid marker and signal status table
+| Marker / pattern | File/register | Current status before P1-5 | Conflict? | P1-5 reconciled position | File changed? | Notes |
+|---|---|---|---|---|---|---|
 
-## 4. Runtime changes
-- concise description of the domain/card/scoring/report/test changes
-- or “not applicable — stopped at authority gate”
+Must include:
+- FT3 low
+- FT3 high
+- FT4 low
+- FT4 high
+- TSH high
+- TSH low
+- thyroid antibodies
 
-## 5. Safety boundaries
-- non-diagnostic wording
-- lab-range use
-- avoided unsupported thyroid disease claims
-- no blocked/context-dependent signal activation
-- no Gemini / no frontend inference
+## 4. FT3 low reconciliation
+- all positions found
+- contradiction analysis
+- final authority position
+- rationale
+- whether any file was corrected
+- why FT3 low remains inactive/deferred if applicable
 
-## 6. Tests and validation
-- tests added/updated
-- commands run
-- result
+## 5. Other thyroid authority findings
+- FT3 high
+- FT4 high
+- FT4 low
+- TSH high/low
+- thyroid antibodies
+- TSH package status
+- antibody package status
+- root-cause mapping status
 
-## 7. Carry-forwards
-- FT3/register gaps
-- prose/explainer gaps
-- clinician-report gaps
-- UX/display implications
-- safety/provenance gaps
+## 6. Hormonal scoring rail assessment
+- current scoring rail status
+- whether it is inert
+- whether scoring policy was changed
+- why scoring policy was not changed if left untouched
+- preconditions for future thyroid scoring activation
+
+## 7. P1-4 retry decision
+State one of:
+- P1-4 retry permitted
+- P1-4 retry blocked
+- P1-4 retry permitted only after named preconditions
+
+List the exact preconditions.
+
+## 8. Files changed
+- list every changed file
+- for each governance/register file changed, list the exact status correction
+
+## 9. Safety and architecture boundaries
+Confirm:
+- no runtime code changed
+- no scoring policy changed unless explicitly justified
+- no signal activated
+- no package promoted
+- no Knowledge Bus source packages changed
+- no Pass 3 artefacts changed
+- no Gemini/frontend/fallback parser introduced
+
+## 10. Recommended next sprint
+Recommend the next sprint:
+- P1-4 retry if all blockers resolved
+- or next governance/scoring/package-promotion sprint if blockers remain
 ```
 
-Do not turn this into a large audit paper.
+---
 
-### 5. Build deliverable register update
+## Required deliverable 2 — ADR
+
+Create:
+
+```text
+docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md
+```
+
+Use this structure:
+
+```markdown
+# ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1
+
+## Status
+Accepted / Proposed / Blocked
+
+## Context
+Summarise why P1-4 stopped and why this ADR is needed.
+
+## Decision
+State the authoritative runtime position for:
+- FT3 low
+- FT3 high
+- FT4 high
+- FT4 low
+- TSH high/low
+- thyroid antibodies
+
+If unresolved, state that clearly.
+
+## Non-negotiable constraints
+- no permissive interpretation where registers conflict
+- no FT3 low activation without explicit resolved authority
+- no context-dependent thyroid signal activation without required context model
+- no hardcoded reference ranges
+- no diagnostic thyroid disease wording
+- no Layer C/Gemini/frontend reasoning
+
+## Consequences
+- what P1-4 retry may or may not do
+- what remains blocked
+- what future sprint must resolve if needed
+
+## Files/registers reviewed
+List reviewed files.
+
+## Supersession / correction notes
+State whether this ADR supersedes, clarifies, or requires correction to any existing register entry.
+```
+
+If the ADR status cannot be Accepted because authority remains unresolved, use:
+
+```text
+Status: Blocked
+```
+
+Do not pretend the authority is resolved if it is not.
+
+---
+
+## Required deliverable 3 — Build deliverable register update
 
 At closure, update:
 
-```text id="o1xuy6"
+```text
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
 Append a short entry:
 
-```markdown id="uj521r"
-## P1-4 — Thyroid / energy regulation domain card
+```markdown
+## P1-5 — FT3 / thyroid authority reconciliation
 
 **Status:** Complete / Partial / Blocked  
 **Date closed:** <YYYY-MM-DD>  
-**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate  
+**Programme block(s):** Block 1 Core health systems model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance  
 
 ### Delivered / ticked off
 - <what this sprint completed against the beta-readiness programme>
-- <major implementation, authority or validation outcome>
+- <major governance decision or reconciliation outcome>
 
 ### Carry-forwards
 - <what still needs to be done later>
@@ -594,40 +478,7 @@ Keep the register entry short.
 
 Do not list every file touched.
 
-Do not duplicate the full implementation note or audit.
-
----
-
-## Expected changed file categories
-
-If Phase 1 stops before implementation, expected files are only:
-
-```text id="zy2jsh"
-docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-automation_bus/
-```
-
-If Phase 2 proceeds, expected categories may include:
-
-```text id="o4ih8k"
-backend/core/analytics/
-backend/core/dto/
-backend/core/knowledge/
-backend/ssot/
-backend/tests/
-knowledge_bus/compiled/
-docs/sprints/beta_readiness/
-automation_bus/
-```
-
-Do not change frontend files unless the existing architecture requires a purely render-only snapshot/test update. If any frontend file appears necessary, stop and explain why before making the change if the workflow allows; otherwise record it as a blocker.
-
-Do not change Knowledge Bus source packages or raw Pass 3 source material.
-
-Do not update the final strategy baseline.
-
-Do not update AUTHORITY_MAP.
+Do not duplicate the full reconciliation report.
 
 ---
 
@@ -635,46 +486,19 @@ Do not update AUTHORITY_MAP.
 
 Run:
 
-```powershell id="do1lcr"
+```powershell
 git diff --stat
 git diff --name-only
 git status --short
 ```
 
-If Phase 2 implementation proceeds, run relevant tests.
+If YAML governance/register files are changed, run any available YAML/schema validation for those files.
 
-Suggested test discovery command:
+If no schema validation exists, state that clearly.
 
-```powershell id="m1d2oq"
-python -m pytest --collect-only
-```
+No runtime test suite is required if no runtime files are changed.
 
-At minimum, if implementation proceeds, run tests covering:
-
-```text id="7neagn"
-domain score assembler
-governed subsystem evidence
-thyroid / energy regulation domain card
-kidney domain card regression from P1-2
-blood / iron / oxygen domain card regression from P1-3
-scoring rules if scoring policy changed
-day-one architecture validator if compiled card estate changed
-```
-
-If existing project test commands are documented, use the documented commands.
-
-The final report must state:
-
-```text id="jz14tl"
-- tests run
-- whether they passed
-- any tests not run
-- reason any tests could not be run
-```
-
-If tests fail because of pre-existing unrelated failures, isolate and document the failure.
-
-If tests fail because of this sprint, fix or report the sprint as blocked.
+If any prohibited runtime/code file is changed, stop and report failure.
 
 ---
 
@@ -682,24 +506,20 @@ If tests fail because of this sprint, fix or report the sprint as blocked.
 
 Return:
 
-```text id="x56128"
+```text
 - branch name
-- whether Phase 1 passed or stopped
+- whether authority was reconciled or remains blocked
+- FT3 low final position
+- thyroid marker/pattern statuses agreed
 - files changed
-- summary of thyroid authority reconciliation
-- FT3 low status
-- summary of implementation, if any
-- whether scoring policy changed
-- whether report/DTO/compiler surfaces changed
-- tests run and results
-- safety constraints applied
-- carry-forwards
+- whether any governance/register YAML files were changed
+- whether any runtime/code/scoring files were changed
+- validation run and results
+- whether P1-4 retry is now permitted
+- remaining blockers
 - recommended next sprint
-- confirmation no frontend inference added
-- confirmation no Gemini added
-- confirmation no fallback parser added
-- confirmation no Knowledge Bus source packages or Pass 3 artefacts changed
-- validation output
+- git diff --stat
+- git diff --name-only
 - git status --short
 ```
 
@@ -711,42 +531,39 @@ Do not merge until Claude audit, GPT architectural review and human approval.
 
 This sprint is complete only if:
 
-```text id="f5uhsz"
-1. Phase 1 thyroid authority reconciliation is completed and documented.
+```text
+1. P1-5 reconciliation report exists at:
+   docs/sprints/beta_readiness/P1-5_ft3_thyroid_authority_reconciliation.md
 
-2. FT3 low status is explicitly resolved as active, blocked, context-dependent, or unresolved.
+2. ADR exists at:
+   docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md
 
-3. Any authority conflict is documented honestly.
+3. FT3 low status is explicitly resolved or explicitly declared unresolved/blocked.
 
-4. If Phase 1 does not support safe implementation, no runtime implementation is performed and the sprint is reported as Blocked or Partial.
+4. The report covers at least:
+   - FT3 low
+   - FT3 high
+   - FT4 low
+   - FT4 high
+   - TSH high
+   - TSH low
+   - thyroid antibodies
 
-5. If Phase 2 proceeds, thyroid / energy regulation is implemented as a bounded launch-core domain/card output using existing governed assets and P1-1 evidence.
+5. No permissive runtime interpretation is chosen where registers conflict.
 
-6. The implementation remains Layer B governed and does not move medical reasoning into Layer C, Gemini or frontend.
+6. No thyroid signal is newly activated.
 
-7. The output is non-diagnostic and does not make unsupported hypothyroid, hyperthyroid, thyrotoxicosis, thyroiditis, Graves’, Hashimoto’s, pituitary disease, low T3 syndrome or non-thyroidal illness claims.
+7. No thyroid package is promoted.
 
-8. Lab-provided reference ranges remain authoritative where available.
+8. No runtime code, frontend code, Gemini path, fallback parser, compiled thyroid card, DTO contract, domain assembler, narrative helper, subsystem evidence file, or scoring policy is changed unless the sprint stops and reports a failure.
 
-9. No hardcoded global/default reference ranges or diagnostic thresholds are introduced.
+9. Any governance/register file change is conservative and explicitly documented.
 
-10. No unauthorised scoring weight rebalancing is introduced.
+10. The hormonal scoring rail position is assessed and either left unchanged with rationale or reported as requiring a separate scoring sprint.
 
-11. No blocked or context-dependent thyroid signals are activated without explicit governed authority.
+11. P1-4 retry decision is explicit.
 
-12. No fallback parser logic is introduced.
+12. Build deliverable register is updated with a short P1-5 entry.
 
-13. No Gemini runtime or prompt path is introduced.
-
-14. No Knowledge Bus source packages or raw Pass 3 artefacts are modified or read at runtime.
-
-15. Targeted tests are added or updated and run if implementation proceeds.
-
-16. Existing implemented domains, including P1-2 kidney and P1-3 blood / iron / oxygen, are not regressed.
-
-17. `docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md` is created.
-
-18. `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md` is updated with a short P1-4 entry.
-
-19. The final report clearly states carry-forwards into P2 prose/explainer work, P3 safety/provenance work, and P5 UX work where relevant.
+13. Final report includes validation output and clean git status.
 ```
