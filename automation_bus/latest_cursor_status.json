@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-9-pass3-research-to-runtime-exploitation-map",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-20T13:39:18Z",
   "cursor_started_utc": "2026-06-20T13:34:26Z",
-  "head_sha": "c62290db9d3bbd9b6a3baf198f40a628cecf0314",
+  "head_sha": "c1348853d762a2fc80ca7caf00aeedd4eaf3ea9e",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-9"
 }
