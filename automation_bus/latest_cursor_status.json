@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-11-pass3-cbc-iron-oxygen-signal-intelligence-batch-b",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-20T15:11:47Z",
   "cursor_started_utc": "2026-06-20T15:07:37Z",
-  "head_sha": "a4ed57c18165b8848f0503e06549ef8b9a826eca",
+  "head_sha": "be6e8c331f9dcb511d895484f078d5bdc9b0dcf4",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-11"
 }
