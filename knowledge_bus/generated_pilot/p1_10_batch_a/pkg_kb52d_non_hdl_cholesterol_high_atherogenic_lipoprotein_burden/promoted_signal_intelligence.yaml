@@ -1,0 +1,104 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_non_hdl_high_atherogenic_lipoprotein_burden
+  signal_id: signal_non_hdl_high
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: lipid_apob_depth
+signals:
+- signal_id: signal_non_hdl_high
+  research_domain: vascular
+  signal_system: vascular
+  primary_metric:
+    biomarker_id: non_hdl
+    rationale: Non-HDL cholesterol captures cholesterol carried by atherogenic apoB-containing
+      particles and can support cardiovascular risk interpretation beyond LDL cholesterol
+      alone.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: apob
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: ApoB elevation corroborates increased atherogenic particle burden and
+      strengthens interpretation of non-HDL as a particle-rich risk pattern.
+  - biomarker_id: ldl_cholesterol
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Elevated LDL cholesterol supports a cholesterol-rich atherogenic pathway
+      contributing to high non-HDL cholesterol.
+  - biomarker_id: triglycerides
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: High triglycerides suggest a more mixed remnant-rich dyslipidaemia
+      rather than predominantly LDL-driven elevation.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_apob
+    marker_reference: apob
+    contradiction_rationale: A normal apoB weakens interpretation of markedly increased
+      particle burden and may suggest cholesterol enrichment without a strong particle-number
+      signal.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_high_ldl_predominant
+    marker_reference: ldl_cholesterol
+    contradiction_rationale: A strongly LDL-predominant pattern weakens the case for
+      a mainly remnant-rich mixed dyslipidaemia frame.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Assess triglycerides and glycaemic-metabolic context before prioritising remnant-rich
+      dyslipidaemia over a predominantly LDL-driven pattern.
+    - Review apoB, triglycerides, and LDL-related context before assuming a predominantly
+      LDL-driven pattern.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_non_hdl_high_with_high_apob
+    resulting_state: at_risk
+    description: Escalate when high non-HDL cholesterol is accompanied by elevated
+      apoB, as combined cholesterol and particle burden strengthens atherogenic risk
+      interpretation.
+    conditions:
+    - metric_id: apob
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_non_hdl_guideline_2024
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: Non-HDL cholesterol reflects cholesterol carried by apoB-containing
+      lipoproteins and is widely used as an atherogenic risk marker in dyslipidaemia
+      assessment.
+    threshold_notes: Interpretation is lab-range anchored here; no additional disease-specific
+      threshold is invented beyond the abnormal result and corroborating lipid context.
+    sources:
+    - source_id: source_non_hdl_guideline_2024
+      paper_title: Guideline and review literature supporting non-HDL cholesterol
+        as an atherogenic risk marker
+      journal: Guideline and review literature
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_apolipoprotein_b
+    rationale: ApoB testing can help clarify whether high non-HDL reflects increased
+      atherogenic particle number rather than cholesterol content alone.

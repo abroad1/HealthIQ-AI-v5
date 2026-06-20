@@ -1,0 +1,18 @@
+compile_id: p1_10_batch_a_pkg_kb52c_alt_high_hepatocellular_injury_pattern
+work_id: P1-10
+cluster_id: liver_enzymes
+compiler_name: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+compiled_at_utc: '2026-06-20T14:22:55Z'
+pilot_status: promoted_signal_intelligence_non_runtime
+runtime_active: false
+governance_runtime_activation_status: inactive_promoted_batch_a
+source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+source_spec_id: inv_alt_high_hepatocellular_injury_pattern
+source_hash_sha256: 680fa15c4808b6f0f51a12b7142528f7418086e08201eec6ab681764a91269a8
+source_contract_version: 3.0.0
+target_package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
+output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern
+output_hashes_sha256:
+  promoted_signal_intelligence.yaml: de9635eaae4a490395dedefb63f3a47dd95f29d39c5a106c8ba263a08367a531
+validation:
+  promoted_signal_intelligence_validation: PASS

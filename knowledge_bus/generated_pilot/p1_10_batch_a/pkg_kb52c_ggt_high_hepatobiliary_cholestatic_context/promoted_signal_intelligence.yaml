@@ -1,0 +1,103 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_ggt_high_hepatobiliary_cholestatic_context
+  signal_id: signal_ggt_high
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: liver_enzymes
+signals:
+- signal_id: signal_ggt_high
+  research_domain: hepatic
+  signal_system: hepatic
+  primary_metric:
+    biomarker_id: ggt
+    rationale: GGT is a hepatobiliary enzyme whose elevation is most informative when
+      interpreted alongside ALP and broader liver context.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: alp
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Elevated ALP alongside GGT supports a hepatobiliary or cholestatic
+      source rather than isolated enzyme induction alone.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Concurrent bilirubin elevation can indicate greater cholestatic significance
+      or more clinically important biliary obstruction.
+  - biomarker_id: alt
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: ALT helps show whether the overall pattern is mixed hepatocellular-cholestatic
+      rather than predominantly cholestatic.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_alp_ggt
+    marker_reference: alp
+    contradiction_rationale: A normal ALP weakens a cholestatic interpretation and
+      makes isolated enzyme induction or metabolic context more plausible.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_alt_ggt
+    marker_reference: alt
+    contradiction_rationale: A normal ALT weakens a mixed hepatocellular pattern and
+      supports a more isolated cholestatic or induction-based interpretation.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Assess the full liver enzyme pattern rather than using GGT alone to label the
+      process.
+    - Review ALP, bilirubin, symptoms, and imaging context before assigning a cholestatic
+      interpretation.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_ggt_high_with_high_alp
+    resulting_state: at_risk
+    description: Escalate when GGT and ALP are both high because the combination more
+      strongly supports a clinically relevant hepatobiliary pattern than isolated
+      GGT elevation.
+    conditions:
+    - metric_id: alp
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_ggt_cholestasis_review
+  evidence:
+    evidence_strength: strong
+    physiological_claim: High GGT commonly supports a hepatobiliary or cholestatic
+      source of liver enzyme abnormality, particularly when ALP is also elevated.
+    threshold_notes: The deterministic trigger is the laboratory abnormality; disease-specific
+      diagnosis depends on the liver-pattern context.
+    sources:
+    - source_id: source_ggt_cholestasis_review
+      paper_title: Gamma-glutamyl transferase in cholestatic and hepatobiliary patterns
+      journal: Review literature and clinical reference sources
+      year: 2025
+  confirmatory_test_refs:
+  - test_id: ct_liver_ultrasound
+    rationale: Imaging may help clarify biliary obstruction or cholestatic structural
+      disease when the biochemical pattern is supportive.
+  - test_id: ct_repeat_liver_panel
+    rationale: Repeat liver panel helps confirm persistence and pattern evolution
+      across ALP, ALT, and bilirubin.

@@ -1,0 +1,234 @@
+work_id: P1-10
+classification_date: "2026-06-20"
+source_authorities:
+  - path: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
+    role: Batch A cluster selection and gap baseline
+  - path: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
+    role: promotion discipline and non-activation rule
+  - path: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml
+    role: governed PSI contract v1
+  - path: architecture/ADR-008-promoted-signal-intelligence-contract-v1.md
+    role: authoritative PSI architecture decision
+signal_repository:
+  authoritative_path: knowledge_bus/packages/*/promoted_signal_intelligence.yaml
+  staging_path: knowledge_bus/generated_pilot/p1_10_batch_a/*/promoted_signal_intelligence.yaml
+  schema_or_contract_path: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml
+  validator_or_loader_path: backend/scripts/validate_promoted_signal_intelligence.py
+  loader_path: backend/core/knowledge/load_promoted_signal_intelligence.py
+  runtime_consumed: false
+batch:
+  name: Pass 3 Launch-Core Signal Intelligence Batch A
+  selection_basis:
+    - P1-9 highest-value unpromoted or PSI-missing launch-core clusters
+    - Pass 3 source re-read for each selected cluster
+    - promotion without runtime activation (generated_pilot staging)
+    - deterministic v3→PSI translation via investigation_spec_to_promoted_signal
+  clusters_selected: 6
+  clusters_deferred: 5
+  entries_promoted: 16
+clusters:
+  - id: lipid_derived
+    name: Cardiovascular lipid / derived Pass 3 cluster
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/lipid_derived_pass_3.json
+    source_spec_ids:
+      - inv_total_cholesterol_high_atherogenic_hypercholesterolemia
+      - inv_total_cholesterol_high_hdl_dominant_elevation_pattern
+      - inv_total_cholesterol_low_hypocholesterolemia_context
+      - inv_tc_hdl_ratio_high_atherogenic_discordance_pattern
+      - inv_tc_hdl_ratio_low_hdl_dominant_pattern
+    biomarkers:
+      - total_cholesterol
+      - tc_hdl_ratio
+      - ldl_cholesterol
+    system_mapping:
+      - cardiovascular
+    subsystem_mapping:
+      - wave1_cv_lipid_transport
+    promotion_action: created
+    signal_repository_entries:
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_total_cholesterol_high_atherogenic_hypercholesterolemia/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_total_cholesterol_high_hdl_dominant_elevation_pattern/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_total_cholesterol_low_hypocholesterolemia_context/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_tc_hdl_ratio_high_atherogenic_discordance_pattern/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_tc_hdl_ratio_low_hdl_dominant_pattern/promoted_signal_intelligence.yaml
+    runtime_activation_state: inactive
+    scoring_readiness: partial
+    medical_review_status: partial
+    downstream_gaps:
+      - manifest opt-in wiring to production packages deferred
+      - prose/WHY consumer layer still thin
+    evidence_paths:
+      - knowledge_bus/packages/pkg_kb60_total_cholesterol_high_atherogenic_hypercholesterolemia/package_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/p1_10_batch_a_compile_manifest_index_v1.yaml
+    recommended_next_action: Batch B manifest opt-in after medical review of lipid depth promotion
+
+  - id: homocysteine_one_carbon
+    name: Homocysteine / one-carbon Pass 3 cluster
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+    source_spec_ids:
+      - inv_homocysteine_high_b_vitamin_related_methylation_impairment
+      - inv_homocysteine_high_renal_clearance_reduction
+    biomarkers:
+      - homocysteine
+      - vitamin_b12
+      - folate
+    system_mapping:
+      - cardiovascular
+    subsystem_mapping:
+      - wave1_cv_homocysteine_methylation
+    promotion_action: created
+    signal_repository_entries:
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_renal_clearance_reduction/promoted_signal_intelligence.yaml
+    runtime_activation_state: inactive
+    scoring_readiness: ready
+    medical_review_status: required
+    downstream_gaps:
+      - MED-REV-1 hidden subsystem promotion pending
+    evidence_paths:
+      - knowledge_bus/packages/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/research_brief.yaml
+    recommended_next_action: medical-review promotion cohort for homocysteine subsystem visibility
+
+  - id: liver_enzymes
+    name: Liver enzyme / liver stress Pass 3 cluster
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+    source_spec_ids:
+      - inv_alt_high_hepatocellular_injury_pattern
+      - inv_alt_high_metabolic_steatotic_liver_pattern
+      - inv_alt_high_muscle_source_or_exertional_pattern
+      - inv_ggt_high_hepatobiliary_cholestatic_context
+      - inv_ggt_high_alcohol_or_enzyme_induction_context
+    biomarkers:
+      - alt
+      - ggt
+      - ast
+    system_mapping:
+      - liver
+    subsystem_mapping:
+      - wave1_hep_enzyme_elevation
+      - wave1_hep_cholestatic_pattern
+    promotion_action: created
+    signal_repository_entries:
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_muscle_source_or_exertional_pattern/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_ggt_high_alcohol_or_enzyme_induction_context/promoted_signal_intelligence.yaml
+    runtime_activation_state: inactive
+    scoring_readiness: ready
+    medical_review_status: required
+    downstream_gaps:
+      - MED-REV-1 hidden liver subsystems
+      - prose/WHY thin at consumer layer
+    evidence_paths:
+      - knowledge_bus/packages/pkg_kb52c_alt_high_hepatocellular_injury_pattern/package_manifest.yaml
+    recommended_next_action: MED-REV-1 hidden subsystem promotion review
+
+  - id: kidney_urea
+    name: Kidney urea Pass 3 cluster
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+    source_spec_ids:
+      - inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+      - inv_urea_low_low_protein_or_reduced_urea_cycle_input
+    biomarkers:
+      - urea
+      - albumin
+      - creatinine
+    system_mapping:
+      - kidney_function
+    subsystem_mapping:
+      - wave1_ren_glomerular_filtration
+    promotion_action: created
+    signal_repository_entries:
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_urea_low_low_protein_or_reduced_urea_cycle_input/promoted_signal_intelligence.yaml
+    runtime_activation_state: blocked
+    scoring_readiness: partial
+    medical_review_status: required
+    downstream_gaps:
+      - frame adjudication backlog per P1-2
+      - no runtime activation authorised
+    evidence_paths:
+      - docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md
+    recommended_next_action: urea adjudication sprint before manifest opt-in
+
+  - id: lipid_apob_depth
+    name: ApoB / non-HDL lipid depth cluster
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+    source_spec_ids:
+      - inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern
+      - inv_non_hdl_high_atherogenic_lipoprotein_burden
+    biomarkers:
+      - apob
+      - non_hdl_cholesterol
+      - ldl_cholesterol
+    system_mapping:
+      - cardiovascular
+    subsystem_mapping:
+      - wave1_cv_lipid_transport
+    promotion_action: created
+    signal_repository_entries:
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden/promoted_signal_intelligence.yaml
+    runtime_activation_state: inactive
+    scoring_readiness: ready
+    medical_review_status: partial
+    downstream_gaps:
+      - signal authority partial on lipid card
+    evidence_paths:
+      - knowledge_bus/packages/pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden/package_manifest.yaml
+    recommended_next_action: lipid depth manifest opt-in cohort in Batch B
+
+  - id: kidney_egfr_scoring_blocked
+    name: Kidney eGFR / creatinine cluster (existing PSI reference)
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3.json
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+    source_spec_ids:
+      - inv_egfr_low_chronic_kidney_function_reduction
+      - inv_egfr_low_hemodynamic_filtration_drop
+    biomarkers:
+      - egfr
+      - creatinine
+      - uacr
+    system_mapping:
+      - kidney_function
+    subsystem_mapping:
+      - wave1_ren_glomerular_filtration
+    promotion_action: enriched
+    signal_repository_entries:
+      - knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/promoted_signal_intelligence.yaml
+      - knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/promoted_signal_intelligence.yaml
+    runtime_activation_state: blocked
+    scoring_readiness: blocked
+    medical_review_status: partial
+    downstream_gaps:
+      - eGFR lab_range_only scoring-policy wiring deferred after P1-8
+      - production PSI already exists; no new staging copy required
+    evidence_paths:
+      - docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
+      - knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/promoted_signal_intelligence.yaml
+    recommended_next_action: P1-SCORING-HORMONAL-POLICY parallel track then eGFR policy cohort
+
+deferred_clusters:
+  - id: pass3_cbc_hematology_cluster
+    reason: frame adjudication blocks safe signal authority; inactive promotion deferred to Batch B after clearance
+  - id: pass3_thyroid_axis
+    reason: RESEARCH_PRESENT_SCORING_BLOCKED; hormonal policy and TSH authority required
+  - id: pass3_thyroid_antibodies
+    reason: governance conflict; kb59 inactive; defer until hormonal policy sprint
+  - id: pass3_sex_hormone_androgen
+    reason: context-model gating required; second-wave deferral
+  - id: pass3_inflammation_eosinophil
+    reason: unmapped to launch-core domain; second-wave deferral
+validation:
+  yaml_parse: pass
+  repository_validator: pass
+  runtime_activation_check: pass

@@ -1,0 +1,103 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_homocysteine_high_b_vitamin_related_methylation_impairment
+  signal_id: signal_homocysteine_high
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: homocysteine_one_carbon
+signals:
+- signal_id: signal_homocysteine_high
+  research_domain: metabolic
+  signal_system: metabolic
+  primary_metric:
+    biomarker_id: homocysteine
+    rationale: Homocysteine is a methylation-pathway intermediate and rises most commonly
+      with folate, B12, or B6 insufficiency, renal impairment, or genetic pathway
+      variation.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: folate
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Low folate supports impaired remethylation as a common cause of elevated
+      homocysteine.
+  - biomarker_id: active_b12
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Low active B12 supports an alternative or combined cobalamin-related
+      cause of hyperhomocysteinemia.
+  - biomarker_id: mcv
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Macrocytosis supports a clinically relevant hematinic consequence of
+      impaired one-carbon metabolism.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_folate_hcy
+    marker_reference: folate
+    contradiction_rationale: Normal folate weakens folate deficiency as the leading
+      explanation for elevated homocysteine.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_normal_active_b12_hcy
+    marker_reference: active_b12
+    contradiction_rationale: Normal active B12 weakens a primary cobalamin-deficiency
+      explanation.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Assess active B12 before assuming folate deficiency is the sole explanation.
+    - Review folate and B12 markers together before attributing elevated homocysteine
+      to folate alone.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_homocysteine_high_with_low_active_b12
+    resulting_state: at_risk
+    description: Escalate when homocysteine is high and active B12 is low because
+      the combination supports a clinically relevant cobalamin-related methylation
+      defect.
+    conditions:
+    - metric_id: active_b12
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_homocysteine_review
+  evidence:
+    evidence_strength: strong
+    physiological_claim: High homocysteine commonly reflects impaired remethylation
+      or transsulfuration, most often in a B-vitamin deficiency context.
+    threshold_notes: Interpretation should remain lab-range anchored and integrated
+      with B12, folate, and renal context.
+    sources:
+    - source_id: source_homocysteine_review
+      paper_title: Homocysteine in folate and cobalamin deficiency
+      journal: Nutrition and hematology review literature
+      year: 2025
+  confirmatory_test_refs:
+  - test_id: ct_b12_and_folate_panel
+    rationale: Parallel B12 and folate testing helps distinguish the most likely remethylation
+      defect.
+  - test_id: ct_methylmalonic_acid
+    rationale: Methylmalonic acid can help clarify whether cobalamin deficiency is
+      contributing to elevated homocysteine.

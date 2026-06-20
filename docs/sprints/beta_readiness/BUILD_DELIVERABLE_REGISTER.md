@@ -259,6 +259,31 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-10 — Pass 3 launch-core signal intelligence Batch A
+
+**Status:** Complete  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- First governed Pass 3 → PSI batch promotion factory run (16 staged PSI entries, 6 clusters).
+- Authoritative repository confirmed (ADR-008 per-package PSI + `generated_pilot` staging).
+- Runtime activation unchanged; production package manifests untouched.
+
+### Carry-forwards
+- Manifest opt-in wiring for staged Batch A PSI deferred to P1-11.
+- CBC/iron, thyroid, hormone, inflammation clusters deferred per P1-9.
+- eGFR scoring-policy wiring remains blocked.
+
+### Blockers / risks
+- Medical review required for homocysteine, liver, urea clusters before activation.
+- Frame adjudication blocks CBC/iron Batch B.
+
+### Recommended next sprint
+- P1-SCORING-HORMONAL-POLICY; then P1-11 Batch B (CBC/iron + manifest opt-in).
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

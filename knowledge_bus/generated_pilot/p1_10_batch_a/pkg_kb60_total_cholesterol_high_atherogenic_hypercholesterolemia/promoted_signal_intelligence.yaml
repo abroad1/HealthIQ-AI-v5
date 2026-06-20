@@ -1,0 +1,111 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb60_total_cholesterol_high_atherogenic_hypercholesterolemia
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_total_cholesterol_high_atherogenic_hypercholesterolemia
+  signal_id: signal_total_cholesterol_high
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: lipid_derived
+signals:
+- signal_id: signal_total_cholesterol_high
+  research_domain: lipid_transport
+  signal_system: lipid_transport
+  primary_metric:
+    biomarker_id: total_cholesterol
+    rationale: High total cholesterol is most clinically meaningful when it reflects
+      increased atherogenic lipoprotein burden rather than an isolated HDL-rich elevation.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: tc_hdl_ratio
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: A high TC:HDL ratio helps distinguish atherogenic cholesterol burden
+      from isolated total-cholesterol elevation driven less by apoB-rich particles.
+  - biomarker_id: ldl_cholesterol
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: High LDL cholesterol supports that elevated total cholesterol is being
+      carried in a more atherogenic apoB-rich fraction.
+  contradiction_markers:
+  - contradiction_id: ctr_ratio_not_elevated
+    marker_reference: tc_hdl_ratio
+    contradiction_rationale: A normal or low TC:HDL ratio weakens a clearly atherogenic
+      interpretation and raises the possibility of an HDL-rich profile.
+    contradiction_strength: strong
+  - contradiction_id: ctr_ldl_not_elevated_against_strong_apoB_frame
+    marker_reference: ldl_cholesterol
+    contradiction_rationale: If LDL cholesterol is not elevated, a strongly apoB-rich
+      hypercholesterolaemic frame is less secure from total cholesterol alone and
+      secondary or distributional explanations need more weight.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Exclude secondary causes and assess family history before promoting a hereditary
+      hypercholesterolaemia interpretation.
+    - Review the full lipid profile before treating isolated high total cholesterol
+      as equivalent to marked LDL-driven dyslipidaemia.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_total_cholesterol_high_with_high_ratio
+    resulting_state: at_risk
+    description: Escalate when total cholesterol is high and TC:HDL ratio is also
+      high, because this combination is more consistent with clinically relevant atherogenic
+      dyslipidaemia than with an isolated cholesterol elevation.
+    conditions:
+    - metric_id: tc_hdl_ratio
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_tc_cvd_meta_2022
+    - source_tc_hdl_aric_2019
+    - source_nice_lipid_modification_2023
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: High total cholesterol becomes more clinically persuasive
+      as an atherogenic signal when a cholesterol-to-HDL discordance also indicates
+      unfavorable lipoprotein balance.
+    threshold_notes: No disease-specific threshold should be invented beyond the reporting
+      laboratory range; severe hereditary suspicion requires family history, persistence,
+      and fuller lipid characterization.
+    sources:
+    - source_id: source_tc_cvd_meta_2022
+      paper_title: 'Serum Cholesterol Levels and Risk of Cardiovascular Death: A Systematic
+        Review and a Dose-Response Meta-Analysis of Prospective Cohort Studies'
+      journal: Nutrients
+      year: 2022
+    - source_id: source_tc_hdl_aric_2019
+      paper_title: 'TC/HDL-C Ratio Discordance with LDL-C and non-HDL-C and Incidence
+        of Atherosclerotic Cardiovascular Disease in Primary Prevention: The ARIC
+        Study'
+      journal: European Journal of Preventive Cardiology
+      year: 2019
+    - source_id: source_nice_lipid_modification_2023
+      paper_title: 'Cardiovascular disease: risk assessment and reduction, including
+        lipid modification'
+      journal: NICE Guideline NG238
+      year: 2023
+  confirmatory_test_refs:
+  - test_id: ct_full_lipid_profile_and_secondary_cause_review
+    rationale: A full lipid profile with review of secondary causes helps determine
+      whether high total cholesterol is truly atherogenic and whether specialist assessment
+      is warranted.

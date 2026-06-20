@@ -1,0 +1,111 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_alt_high_muscle_source_or_exertional_pattern
+  signal_id: signal_alt_high
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: liver_enzymes
+signals:
+- signal_id: signal_alt_high
+  research_domain: musculoskeletal
+  signal_system: mitochondrial
+  primary_metric:
+    biomarker_id: alt
+    rationale: Raised ALT can occasionally reflect exercise-related or myopathic enzyme
+      release when muscle markers are also abnormal and liver-specific context is
+      weak.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: creatine_kinase
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Marked creatine kinase elevation supports skeletal muscle injury or
+      exertional release as a contributor to raised ALT.
+  - biomarker_id: ast
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: AST often rises with muscle injury and can corroborate a non-hepatic
+      source when CK is elevated.
+  - biomarker_id: ggt
+    expected_direction: any
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: A normal GGT weakens a hepatobiliary source and supports consideration
+      of a muscle-origin transaminase pattern.
+  contradiction_markers:
+  - contradiction_id: ctr_high_ggt
+    marker_reference: ggt
+    contradiction_rationale: Raised GGT weakens a muscle-source interpretation and
+      supports concomitant liver involvement.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_normal_ast_weakens_hepatic_component_of_mixed
+    marker_reference: ast
+    contradiction_rationale: A normal AST weakens a genuine hepatic contributor to
+      a mixed muscle-and-liver pattern, as hepatocellular injury sufficient to raise
+      ALT typically elevates AST concurrently; its normalcy supports a predominantly
+      muscle-source explanation.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Review exercise, trauma, muscle symptoms, and medication exposures before concluding
+      that ALT is non-hepatic.
+    - Use repeat testing after rest and review liver-specific markers before dismissing
+      hepatocellular pathology.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_alt_high_with_marked_ck
+    resulting_state: at_risk
+    description: Escalate as a possible muscle-source pattern when ALT is high and
+      creatine kinase is concurrently above the laboratory range.
+    conditions:
+    - metric_id: creatine_kinase
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_alt_statpearls
+    - source_hackney_lft
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: ALT elevation can occasionally reflect muscle-source enzyme
+      release, particularly when creatine kinase is raised and liver-specific markers
+      do not support a hepatic source.
+    threshold_notes: This object relies on laboratory abnormality plus concordant
+      CK elevation rather than a fixed ALT level.
+    sources:
+    - source_id: source_alt_statpearls
+      paper_title: Alanine Aminotransferase (ALT) Test
+      journal: StatPearls
+      year: 2024
+    - source_id: source_hackney_lft
+      paper_title: ABNORMAL LIVER FUNCTION TESTS (LFTs) in ADULTS
+      journal: City and Hackney Clinical Commissioning Group pathway
+      year: 2016
+  confirmatory_test_refs:
+  - test_id: ct_repeat_alt_after_rest
+    rationale: Repeat ALT after a period of exercise avoidance helps assess whether
+      the elevation is transient and exertional.
+  - test_id: ct_creatine_kinase
+    rationale: Creatine kinase is the key confirmatory test for a muscle-source contribution
+      to ALT elevation.

@@ -1,0 +1,18 @@
+compile_id: p1_10_batch_a_pkg_kb52c_homocysteine_high_renal_clearance_reduction
+work_id: P1-10
+cluster_id: homocysteine_one_carbon
+compiler_name: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+compiled_at_utc: '2026-06-20T14:22:55Z'
+pilot_status: promoted_signal_intelligence_non_runtime
+runtime_active: false
+governance_runtime_activation_status: inactive_promoted_batch_a
+source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+source_spec_id: inv_homocysteine_high_renal_clearance_reduction
+source_hash_sha256: 92d98434b673415eddbf793583b229bb9b34a2dee3b3db97285b9ca019d6562c
+source_contract_version: 3.0.0
+target_package_id: pkg_kb52c_homocysteine_high_renal_clearance_reduction
+output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_renal_clearance_reduction
+output_hashes_sha256:
+  promoted_signal_intelligence.yaml: d1dfec9454700a8259b2189db53f5ae376d39c594439004dd7a1fb624b08a8f3
+validation:
+  promoted_signal_intelligence_validation: PASS

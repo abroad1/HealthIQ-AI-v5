@@ -1,0 +1,18 @@
+compile_id: p1_10_batch_a_pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context
+work_id: P1-10
+cluster_id: liver_enzymes
+compiler_name: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+compiled_at_utc: '2026-06-20T14:22:55Z'
+pilot_status: promoted_signal_intelligence_non_runtime
+runtime_active: false
+governance_runtime_activation_status: inactive_promoted_batch_a
+source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+source_spec_id: inv_ggt_high_hepatobiliary_cholestatic_context
+source_hash_sha256: 92d98434b673415eddbf793583b229bb9b34a2dee3b3db97285b9ca019d6562c
+source_contract_version: 3.0.0
+target_package_id: pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context
+output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context
+output_hashes_sha256:
+  promoted_signal_intelligence.yaml: ab89ccce3b5d110fc5e088365f0574d681acbb2c90fdc2b61a60f9c3f8ed8396
+validation:
+  promoted_signal_intelligence_validation: PASS

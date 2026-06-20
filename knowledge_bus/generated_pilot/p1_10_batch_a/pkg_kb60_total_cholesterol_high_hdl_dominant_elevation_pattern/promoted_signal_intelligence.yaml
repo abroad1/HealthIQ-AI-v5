@@ -1,0 +1,109 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb60_total_cholesterol_high_hdl_dominant_elevation_pattern
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_total_cholesterol_high_hdl_dominant_elevation_pattern
+  signal_id: signal_total_cholesterol_high
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: lipid_derived
+signals:
+- signal_id: signal_total_cholesterol_high
+  research_domain: lipid_transport
+  signal_system: lipid_transport
+  primary_metric:
+    biomarker_id: total_cholesterol
+    rationale: A high total cholesterol result can be less atherogenic when it occurs
+      with a low TC:HDL ratio, suggesting that HDL contributes materially to the total
+      cholesterol value.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: tc_hdl_ratio
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: A low TC:HDL ratio suggests that the total cholesterol elevation may
+      be partly driven by preserved or high HDL rather than by predominantly atherogenic
+      particles.
+  - biomarker_id: ldl_cholesterol
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: High LDL cholesterol argues against a benign HDL-rich explanation and
+      helps distinguish discordance from genuinely atherogenic hypercholesterolaemia.
+  contradiction_markers:
+  - contradiction_id: ctr_ldl_high_redirects_to_atherogenicity
+    marker_reference: ldl_cholesterol
+    contradiction_rationale: Elevated LDL cholesterol weakens an HDL-dominant explanation
+      and redirects interpretation toward more clearly atherogenic dyslipidaemia despite
+      the favorable ratio.
+    contradiction_strength: strong
+  - contradiction_id: ctr_ratio_not_favorable
+    marker_reference: tc_hdl_ratio
+    contradiction_rationale: If the ratio is not low, a discordant HDL-dominant interpretation
+      loses support and total cholesterol is more likely to reflect meaningful atherogenic
+      burden.
+    contradiction_strength: strong
+  missing_data:
+    policies:
+    - Do not use this frame in isolation; integrate age, diabetes status, smoking,
+      blood pressure, and fuller lipid fractions.
+    - Review the full lipid profile and overall cardiovascular risk before reassuring
+      on the basis of total cholesterol alone.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_total_cholesterol_high_with_low_ratio
+    resulting_state: at_risk
+    description: Escalate for structured review when total cholesterol is high but
+      TC:HDL ratio is low, because this discordant pattern should be distinguished
+      from straightforward atherogenic hypercholesterolaemia rather than assumed to
+      carry the same risk.
+    conditions:
+    - metric_id: tc_hdl_ratio
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_tc_hdl_womens_followup_2021
+    - source_tc_hdl_aric_2019
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: A low TC:HDL ratio can identify situations in which total
+      cholesterol alone overstates atherogenic risk because HDL contributes materially
+      to the total cholesterol concentration.
+    threshold_notes: This remains a pattern-based interpretation; no favorable disease
+      threshold should be invented beyond the reporting laboratory range and the broader
+      lipid context.
+    sources:
+    - source_id: source_tc_hdl_womens_followup_2021
+      paper_title: 'Total cholesterol/HDL-C ratio versus non-HDL-C as predictors for
+        ischemic heart disease: a 17-year follow-up study of women in southern Sweden'
+      journal: BMC Cardiovascular Disorders
+      year: 2021
+    - source_id: source_tc_hdl_aric_2019
+      paper_title: 'TC/HDL-C Ratio Discordance with LDL-C and non-HDL-C and Incidence
+        of Atherosclerotic Cardiovascular Disease in Primary Prevention: The ARIC
+        Study'
+      journal: European Journal of Preventive Cardiology
+      year: 2019
+  confirmatory_test_refs:
+  - test_id: ct_full_lipid_fraction_review_for_total_cholesterol_discordance
+    rationale: Review of the full lipid fractions helps determine whether high total
+      cholesterol is being driven by HDL-rich discordance or by a more atherogenic
+      lipoprotein profile.

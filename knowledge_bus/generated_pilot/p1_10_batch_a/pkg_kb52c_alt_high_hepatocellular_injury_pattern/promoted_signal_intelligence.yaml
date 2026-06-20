@@ -1,0 +1,108 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_alt_high_hepatocellular_injury_pattern
+  signal_id: signal_alt_high
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: liver_enzymes
+signals:
+- signal_id: signal_alt_high
+  research_domain: hepatic
+  signal_system: hepatic
+  primary_metric:
+    biomarker_id: alt
+    rationale: Raised ALT is most consistent with hepatocellular injury and is commonly
+      used to support liver-focused interpretation when muscle sources are less likely.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: ast
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Concurrent AST elevation supports a hepatocellular injury pattern,
+      although it is not liver-specific.
+  - biomarker_id: alp
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Raised ALP can shift interpretation toward a mixed or cholestatic process
+      rather than predominantly hepatocellular injury.
+  - biomarker_id: creatine_kinase
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: High creatine kinase helps distinguish muscle-source transaminase release
+      from primary liver injury.
+  contradiction_markers:
+  - contradiction_id: ctr_high_ck
+    marker_reference: creatine_kinase
+    contradiction_rationale: Marked creatine kinase elevation weakens a liver-first
+      interpretation and raises the possibility of muscle-source transaminase release.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_alp
+    marker_reference: alp
+    contradiction_rationale: A normal ALP weakens the interpretation of a mixed cholestatic
+      component and supports predominantly hepatocellular injury.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Review alcohol, medication, viral risk, and metabolic context before narrowing
+      the cause of hepatocellular injury.
+    - Use bilirubin, GGT, and imaging context to separate mixed liver injury from
+      isolated ALT elevation.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_alt_high_with_ast_and_without_muscle_source
+    resulting_state: at_risk
+    description: Escalate when ALT is high with corroborating transaminase abnormality
+      and no strong competing muscle source.
+    conditions:
+    - metric_id: ast
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_alt_statpearls
+    - source_lft_guide
+  evidence:
+    evidence_strength: strong
+    physiological_claim: Raised ALT is a useful marker of hepatocellular injury but
+      should be interpreted alongside cholestatic markers and muscle-source differentials.
+    threshold_notes: This object uses laboratory upper-bound abnormality rather than
+      disease-specific numerical cut-offs because meaningful thresholds vary by population
+      and context.
+    sources:
+    - source_id: source_alt_statpearls
+      paper_title: Alanine Aminotransferase (ALT) Test
+      journal: StatPearls
+      year: 2024
+    - source_id: source_lft_guide
+      paper_title: Liver function Tests in Adults - A Guide for GPs
+      journal: Royal United Hospitals Bath NHS Foundation Trust
+      year: 2022
+  confirmatory_test_refs:
+  - test_id: ct_ast
+    rationale: AST helps characterise whether the transaminase pattern is isolated
+      or part of broader hepatocellular injury.
+  - test_id: ct_creatine_kinase
+    rationale: Creatine kinase helps distinguish muscle injury from primary hepatic
+      ALT elevation when exercise or myopathy is plausible.

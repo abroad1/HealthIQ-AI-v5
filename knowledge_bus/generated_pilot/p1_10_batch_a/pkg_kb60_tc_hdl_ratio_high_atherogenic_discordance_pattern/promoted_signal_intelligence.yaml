@@ -1,0 +1,112 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb60_tc_hdl_ratio_high_atherogenic_discordance_pattern
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_tc_hdl_ratio_high_atherogenic_discordance_pattern
+  signal_id: signal_tc_hdl_ratio_high
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: lipid_derived
+signals:
+- signal_id: signal_tc_hdl_ratio_high
+  research_domain: lipid_transport
+  signal_system: lipid_transport
+  primary_metric:
+    biomarker_id: tc_hdl_ratio
+    rationale: A high total cholesterol:HDL ratio reflects an unfavorable cholesterol
+      distribution and can reveal atherogenic discordance even when total cholesterol
+      is not markedly elevated.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: total_cholesterol
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: High total cholesterol strengthens the inference that a high ratio
+      reflects clinically important cholesterol burden rather than a marginal ratio
+      shift.
+  - biomarker_id: ldl_cholesterol
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: High LDL cholesterol helps distinguish apoB-rich atherogenic burden
+      from ratio elevation driven mainly by low HDL or broader cardiometabolic context.
+  contradiction_markers:
+  - contradiction_id: ctr_total_cholesterol_not_high
+    marker_reference: total_cholesterol
+    contradiction_rationale: If total cholesterol is not elevated, the ratio may still
+      be informative but a severe cholesterol-burden interpretation becomes less secure.
+    contradiction_strength: weak
+  - contradiction_id: ctr_ldl_high_shifts_away_from_low_hdl_pattern
+    marker_reference: ldl_cholesterol
+    contradiction_rationale: Clearly elevated LDL cholesterol shifts interpretation
+      away from a primarily low-HDL cardiometabolic frame and toward a more apoB-rich
+      atherogenic dyslipidaemia pattern.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Interpret alongside the full lipid profile and overall risk assessment rather
+      than using the ratio as a sole treatment target.
+    - Review anthropometric, glycaemic, triglyceride, and metabolic context before
+      prioritizing a cardiometabolic interpretation.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_tc_hdl_ratio_high_with_high_total_cholesterol
+    resulting_state: at_risk
+    description: Escalate when TC:HDL ratio is high and total cholesterol is also
+      high, because this combination is more consistent with clinically relevant atherogenic
+      dyslipidaemia than with an isolated ratio disturbance.
+    conditions:
+    - metric_id: total_cholesterol
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_tc_hdl_aric_2019
+    - source_tc_hdl_womens_followup_2021
+    - source_nice_lipid_modification_2023
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: A high TC:HDL ratio is a clinically useful marker of unfavorable
+      cholesterol balance and can identify residual atherogenic risk beyond total
+      cholesterol alone.
+    threshold_notes: Interpretation should remain laboratory-range anchored and integrated
+      with LDL-C, non-HDL-C, and formal risk assessment rather than converted into
+      an isolated disease threshold.
+    sources:
+    - source_id: source_tc_hdl_aric_2019
+      paper_title: 'TC/HDL-C Ratio Discordance with LDL-C and non-HDL-C and Incidence
+        of Atherosclerotic Cardiovascular Disease in Primary Prevention: The ARIC
+        Study'
+      journal: European Journal of Preventive Cardiology
+      year: 2019
+    - source_id: source_tc_hdl_womens_followup_2021
+      paper_title: 'Total cholesterol/HDL-C ratio versus non-HDL-C as predictors for
+        ischemic heart disease: a 17-year follow-up study of women in southern Sweden'
+      journal: BMC Cardiovascular Disorders
+      year: 2021
+    - source_id: source_nice_lipid_modification_2023
+      paper_title: 'Cardiovascular disease: risk assessment and reduction, including
+        lipid modification'
+      journal: NICE Guideline NG238
+      year: 2023
+  confirmatory_test_refs:
+  - test_id: ct_full_lipid_profile_and_global_cvd_risk_review_for_ratio
+    rationale: Full lipid review and formal cardiovascular risk assessment help determine
+      whether a high TC:HDL ratio reflects clinically important atherogenic discordance.
