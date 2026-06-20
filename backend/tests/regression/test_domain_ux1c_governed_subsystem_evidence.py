@@ -225,6 +225,7 @@ def test_health_system_wave2_subsystems_prematurely_emitted_sentinel() -> None:
             "wave1_blood_sugar",
             "wave1_liver",
             "wave1_kidney",
+            "wave1_blood_iron_oxygen",
         }
     )
     from core.analytics.wave1_subsystem_evidence import assemble_wave1_subsystem_evidence

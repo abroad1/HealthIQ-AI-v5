@@ -48,7 +48,7 @@ def test_kidney_subsystem_evidence_from_panel():
     assert rows[0].subsystem_label == "Kidney filtration markers"
 
 
-def test_assembler_emits_four_domains_including_kidney():
+def test_assembler_emits_five_domains_including_kidney():
     scoring = {
         "health_system_scores": {
             "cardiovascular": {"overall_score": 72.0, "missing_biomarkers": []},
@@ -72,12 +72,13 @@ def test_assembler_emits_four_domains_including_kidney():
         derived_ratios_meta=None,
         panel_biomarker_ids=panel,
     )
-    assert len(rows) == 4
+    assert len(rows) == 5
     assert [r.domain_id for r in rows] == [
         "wave1_cardiovascular",
         "wave1_blood_sugar",
         "wave1_liver",
         "wave1_kidney",
+        "wave1_blood_iron_oxygen",
     ]
     kidney = rows[3]
     assert kidney.consumer_label == "Kidney function"

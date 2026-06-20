@@ -399,6 +399,19 @@ def confidence_sentence_for(
         return (
             "Confidence is limited — core kidney filtration markers are missing from this panel."
         )
+    if domain == "bio":
+        if t == "high":
+            return (
+                "Confidence is high — haemoglobin and haematocrit are both present on this panel."
+            )
+        if t == "medium":
+            return (
+                "Confidence is moderate — one core red-cell marker is present; "
+                "adding the other would strengthen the read."
+            )
+        return (
+            "Confidence is limited — core red-cell markers are missing from this panel."
+        )
     # liver
     panel = panel_biomarker_ids or set()
     if t == "high":
@@ -902,6 +915,10 @@ _GOVERNED_NEXT_STEP_REN = (
     "For kidney filtration markers, discuss out-of-range results with a clinician, "
     "especially if they are new, worsening, or you have symptoms or risk factors."
 )
+_GOVERNED_NEXT_STEP_BIO = (
+    "For red-cell and oxygen-carrying markers, discuss out-of-range results with a clinician, "
+    "especially if they are new, persistent, or you have relevant symptoms."
+)
 
 _ID_RENAL = "ph_renal_stress_v1"
 
@@ -1064,3 +1081,81 @@ def next_step_kidney(
     if s:
         return s
     return _GOVERNED_NEXT_STEP_REN
+
+
+def headline_bio(band: str) -> str:
+    """P1-3: non-diagnostic blood / iron / oxygen headline."""
+    b = (band or "").strip().lower()
+    if b in ("review", "watch"):
+        return "Your red-cell and oxygen-carrying markers may need follow-up in clinical context."
+    if b == "stable":
+        return "Your red-cell and oxygen-carrying markers look broadly stable on this panel."
+    return "Your red-cell and oxygen-carrying markers are within a broadly favourable range on this panel."
+
+
+def bio_contributor_primary(
+    by_id: Dict[str, Any],
+    active_sids: List[str],
+    sig_rows: List[Dict[str, Any]],
+    primary_idl: Optional[str],
+) -> str:
+    if primary_idl:
+        rec = idl_record(by_id, primary_idl)
+        if rec and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.subtitle:
+            text = rec.subtitle.strip().lower()
+            if "anaemia" not in text and "iron deficiency" not in text and "bleeding" not in text:
+                return rec.subtitle.strip()
+    for pref in ("signal_ferritin", "signal_hemoglobin", "signal_hgb"):
+        for r in sig_rows:
+            if not _active(r):
+                continue
+            sid = str(r.get("signal_id", ""))
+            if sid.startswith(pref) and sid in active_sids:
+                return governed_signal_line(sid, "bio")
+    if active_sids:
+        return (
+            "Red-cell and oxygen-carrying markers on this panel are outside their reference ranges."
+        )
+    return (
+        "Your red-cell and oxygen-carrying markers are within their reference ranges on this panel."
+    )
+
+
+def bio_consequence_primary(
+    by_id: Dict[str, Any],
+    primary_idl: Optional[str],
+    *,
+    contributor_sentence: str = "",
+    active_bio_signal_ids: Optional[List[str]] = None,
+) -> str:
+    if primary_idl:
+        rec = idl_record(by_id, primary_idl)
+        if rec and rec.why_it_matters and rec.severity_state != "not_observed" and rec.enabled_for_frontend:
+            text = str(rec.why_it_matters).strip().lower()
+            if not any(
+                term in text
+                for term in ("anaemia", "iron deficiency", "bleeding", "cancer", "haemochromatosis")
+            ):
+                return str(rec.why_it_matters).strip()
+    if active_bio_signal_ids:
+        return (
+            "Red-cell and iron-status markers can shift with diet, inflammation, and other factors; "
+            "they are worth discussing with a clinician if out of range or persistent."
+        )
+    return (
+        "Red-cell and oxygen-carrying markers help describe oxygen transport context; "
+        "a single panel snapshot is not a full haematological assessment."
+    )
+
+
+def next_step_blood_iron_oxygen(
+    insight_results: Optional[List[Dict[str, Any]]],
+    _narrative_report: Any,
+) -> str:
+    _ = _narrative_report
+    s = _first_recommendation_for_category_substrings(
+        insight_results, ("hematological", "hematologic", "blood", "iron", "oxygen")
+    )
+    if s:
+        return s
+    return _GOVERNED_NEXT_STEP_BIO

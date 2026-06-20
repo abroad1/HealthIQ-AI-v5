@@ -1,0 +1,49 @@
+schema_version: "1.0.0"
+artefact_id: wave1_bio_oxygen_carrying_capacity_v1
+domain_id: wave1_blood_iron_oxygen
+subsystem_id: wave1_bio_oxygen_carrying_capacity
+subsystem_label: Red-cell and oxygen-carrying markers
+visibility_tier: scored_subsystem
+source_spec_ids:
+  - inv_hgb_low_normocytic_underproduction_context
+  - inv_ferritin_low_iron_store_depletion
+compile_manifest_ref: knowledge_bus/compiled/manifests/p1_3_blood_iron_oxygen_card_evidence.yaml
+missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
+mechanism_line: Haemoglobin and haematocrit describe oxygen-carrying capacity on this panel; ferritin adds iron-storage context when present.
+subsystem_summary: >
+  Haemoglobin and haematocrit anchor red-cell and oxygen-carrying markers on this panel; ferritin
+  may add iron-storage context when uploaded but is optional for the scored subsystem view.
+evidence_limitations_line: >
+  This card focuses on red-cell and oxygen-carrying markers and does not diagnose anaemia, iron
+  deficiency, bleeding, or other haematological disease.
+markers:
+  - marker_id: hemoglobin
+    display_label: Haemoglobin
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Primary oxygen-carrying protein measured on routine blood panels.
+    presence_policy: required_for_subsystem
+  - marker_id: hematocrit
+    display_label: Haematocrit
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Packed red-cell fraction that complements haemoglobin on the same panel.
+    presence_policy: required_for_subsystem
+  - marker_id: ferritin
+    display_label: Ferritin
+    marker_role: confidence_contributor
+    relationship_kind: confidence_input
+    rationale_short: Iron-storage marker that can add context alongside red-cell markers when present.
+    presence_policy: optional_on_panel
+provenance:
+  artefact_kind: health_system_card_evidence_v1
+  compile_status: compile_pipeline
+  source_spec_provenance: explicit
+  package_refs:
+    - pkg_kb52c_hgb_low_normocytic_underproduction_context
+    - pkg_kb52c_hematocrit_low_anemia_or_hemodilution
+    - pkg_kb52c_ferritin_low_iron_store_depletion
+  notes: >
+    P1-3 compile-time card evidence for launch-core blood / iron / oxygen domain. Scoring uses
+    existing cbc rail (haemoglobin and haematocrit only). Launch-visible signals excluded pending
+    frame adjudication.

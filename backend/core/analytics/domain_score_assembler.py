@@ -36,10 +36,14 @@ from core.analytics.domain_narrative_wave1 import (
     next_step_blood_sugar,
     next_step_cardiovascular,
     next_step_kidney,
+    next_step_blood_iron_oxygen,
     next_step_liver,
     headline_ren,
+    headline_bio,
     ren_contributor_primary,
     ren_consequence_primary,
+    bio_contributor_primary,
+    bio_consequence_primary,
 )
 from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayLayerBundleV1
 from core.analytics.wave1_subsystem_evidence import (
@@ -53,6 +57,10 @@ _RAIL_CARDIOVASCULAR = "cardiovascular"
 _RAIL_METABOLIC = "metabolic"
 _RAIL_LIVER = "liver"
 _RAIL_KIDNEY = "kidney"
+_RAIL_CBC = "cbc"
+
+# P1-3: launch-visible blood/iron/oxygen signals excluded pending frame adjudication.
+_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS: frozenset[str] = frozenset()
 _BURDEN_HEPATIC = "hepatic"
 
 # D-4: user-safe caveat lines (replaces internal slug list for retail cards)
@@ -210,8 +218,24 @@ def _is_wave1_kidney(row: Dict[str, Any]) -> bool:
     return False
 
 
+def _is_wave1_blood_iron_oxygen(row: Dict[str, Any]) -> bool:
+    if not _active_signal_state(str(row.get("signal_state", ""))):
+        return False
+    sid = str(row.get("signal_id", "")).strip()
+    return sid in _BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS
+
+
 def _kidney_confidence_tier(panel: Set[str]) -> str:
     core = sum(1 for m in ("creatinine", "egfr") if m in panel)
+    if core >= 2:
+        return "high"
+    if core >= 1:
+        return "medium"
+    return "low"
+
+
+def _bio_confidence_tier(panel: Set[str]) -> str:
+    core = sum(1 for m in ("hemoglobin", "hematocrit") if m in panel)
     if core >= 2:
         return "high"
     if core >= 1:
@@ -372,6 +396,7 @@ _WAVE1_PLAIN_DESCRIPTOR: Dict[str, str] = {
     "wave1_blood_sugar": "Long-term blood sugar pattern",
     "wave1_liver": "Liver health from your blood markers",
     "wave1_kidney": "Kidney filtration markers from your blood test",
+    "wave1_blood_iron_oxygen": "Red-cell and oxygen-carrying markers from your blood test",
 }
 
 
@@ -524,8 +549,8 @@ def assemble_consumer_domain_scores_v1(
     intervention_cv_suffix: str = "",
 ) -> Tuple[List[ConsumerDomainScoreV1], Dict[str, Any]]:
     """
-    Build four Wave 1 domain rows. Always returns four entries in stable order:
-    cardiovascular, blood sugar, liver, kidney.
+    Build five Wave 1 domain rows. Always returns five entries in stable order:
+    cardiovascular, blood sugar, liver, kidney, blood / iron / oxygen.
 
     D-2: Populates consumer narrative fields from deterministic sources (IDL, D-1 bands/tiers, insights).
     D-6: Returns (rows, wave1_aligned_drivers_meta) for a single narrative authority + driving-strip alignment.
@@ -854,5 +879,63 @@ def assemble_consumer_domain_scores_v1(
             **_ren_extras,
         )
 
-    out_rows = [cv_block(), met_block(), liv_block(), ren_block()]
+    def bio_block() -> ConsumerDomainScoreV1:
+        data = _system_rail_data(hss, _RAIL_CBC)
+        raw_100 = _as_float_0_100(data.get("overall_score"))
+        score_01 = raw_100 / 100.0
+        band = _band_label_from_0_100(raw_100)
+        tier = cast(ConfidenceTierV1, _bio_confidence_tier(panel_biomarker_ids))
+        missing = _missing_for_rail(hss, _RAIL_CBC)
+        sids = _collect_signal_ids(sig_rows, _is_wave1_blood_iron_oxygen)
+        idl = None
+        ev: Dict[str, Any] = {
+            "layer3_system_pressure_id": "hematological__system_pressure",
+        }
+        _bio_extras = _wave1_card_contract_extras(
+            domain_id="wave1_blood_iron_oxygen",
+            hss=hss,
+            system_key=_RAIL_CBC,
+            missing_marker_ids=missing,
+            panel_biomarker_ids=panel_biomarker_ids,
+        )
+        _b_contrib = bio_contributor_primary(by_id, sids, sig_rows, idl)
+        _b_cons = bio_consequence_primary(
+            by_id,
+            idl,
+            contributor_sentence=_b_contrib,
+            active_bio_signal_ids=sids,
+        )
+        return ConsumerDomainScoreV1(
+            domain_id="wave1_blood_iron_oxygen",
+            card_schema_version="1.2",
+            consumer_label="Blood / iron / oxygen",
+            clinical_label="Red-Cell / Oxygen-Carrying Marker Context",
+            score=score_01,
+            band_label=band,
+            confidence_tier=tier,
+            active_signal_ids=sids,
+            primary_idl_record_id=idl,
+            missing_marker_ids=missing,
+            source_track="base:scoring_rail:cbc;narrative:primary_idl_single_authority_p1_3",
+            caveat_flags=[],
+            contributing_system_keys=["cbc"],
+            raw_evidence_refs=ev,
+            headline_sentence=headline_bio(band),
+            contributor_sentence=_b_contrib,
+            confidence_sentence=confidence_sentence_for(tier, "bio"),
+            consequence_sentence=_b_cons,
+            next_step_sentence=next_step_blood_iron_oxygen(
+                insight_results,
+                narrative_report_v1,
+            ),
+            evidence_anchor_sentence=_evidence_anchor_from_visible_subsystems(
+                _bio_extras.get("subsystems"),
+                domain="bio",
+                by_id=by_id,
+                primary_idl=idl,
+            ),
+            **_bio_extras,
+        )
+
+    out_rows = [cv_block(), met_block(), liv_block(), ren_block(), bio_block()]
     return out_rows, _wave1_aligned_drivers_meta(out_rows, sig_rows)

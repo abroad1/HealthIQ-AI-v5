@@ -25,13 +25,14 @@ def _minimal_graph(
     )
 
 
-def test_wave1_emits_three_domains_score_and_confidence_together():
+def test_wave1_emits_five_domains_score_and_confidence_together():
     scoring = {
         "health_system_scores": {
             "cardiovascular": {"overall_score": 72.0, "missing_biomarkers": []},
             "metabolic": {"overall_score": 68.0, "missing_biomarkers": ["insulin"]},
             "liver": {"overall_score": 75.0, "missing_biomarkers": []},
             "kidney": {"overall_score": 70.0, "missing_biomarkers": ["urea"]},
+            "cbc": {"overall_score": 68.0, "missing_biomarkers": []},
         }
     }
     panel = {
@@ -63,7 +64,7 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         derived_ratios_meta=dr,
         panel_biomarker_ids=panel,
     )
-    assert len(rows) == 4
+    assert len(rows) == 5
     assert wave1_meta.get("schema") == "wave1_aligned_drivers_v1"
     ids = [r.domain_id for r in rows]
     assert ids == [
@@ -71,6 +72,7 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         "wave1_blood_sugar",
         "wave1_liver",
         "wave1_kidney",
+        "wave1_blood_iron_oxygen",
     ]
     for r in rows:
         assert 0.0 <= r.score <= 1.0
@@ -104,6 +106,7 @@ def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
             "metabolic": {"overall_score": 80.0, "missing_biomarkers": []},
             "liver": {"overall_score": 80.0, "missing_biomarkers": []},
             "kidney": {"overall_score": 80.0, "missing_biomarkers": []},
+            "cbc": {"overall_score": 80.0, "missing_biomarkers": []},
         }
     }
     ig = _minimal_graph(signal_results=[], capacity={"hepatic": 80}, cluster_confidence={})
@@ -112,12 +115,21 @@ def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
         insight_graph=ig,
         idl_bundle=None,
         derived_ratios_meta=None,
-        panel_biomarker_ids={"alt", "glucose", "hba1c", "ldl_cholesterol", "creatinine", "egfr"},
+        panel_biomarker_ids={
+            "alt",
+            "glucose",
+            "hba1c",
+            "ldl_cholesterol",
+            "creatinine",
+            "egfr",
+            "hemoglobin",
+            "hematocrit",
+        },
         insight_results=None,
         narrative_report_v1=None,
     )
     ns = [r.next_step_sentence for r in rows]
-    assert len(set(ns)) == 4
+    assert len(set(ns)) == 5
 
 
 def test_liver_confidence_tier_uses_domain_not_cluster_rail():

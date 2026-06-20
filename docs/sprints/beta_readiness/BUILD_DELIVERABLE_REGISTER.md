@@ -88,6 +88,30 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-3 — Blood / iron / oxygen domain card
+
+**Status:** Complete  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate  
+
+### Delivered / ticked off
+- Second missing launch-core domain implemented as `wave1_blood_iron_oxygen` with compiled oxygen-carrying subsystem evidence.
+- Domain assembler, subsystem routing, narrative copy, replay contract, and targeted tests added. Scoring policy unchanged (existing cbc rail reused).
+
+### Carry-forwards
+- Launch-visible CBC / iron signal wiring deferred pending frame adjudication.
+- Iron / ferritin / transferrin scoring bands and TIBC/UIBC remain open.
+- Frontend render-only integration and P2 blood/iron prose substrate remain open.
+
+### Blockers / risks
+- Fifth domain increases replay/DTO surface area; frontend must remain render-only.
+- Kidney collision and P1-2 regression tests must stay green on merge.
+
+### Recommended next sprint
+- P1-4 — Thyroid / energy regulation domain card (after FT3 register reconciliation), or P2-1 prose substrate in parallel.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
