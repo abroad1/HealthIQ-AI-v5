@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-4-thyroid-energy-regulation-domain-card",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-20T10:30:39Z",
   "cursor_started_utc": "2026-06-20T10:28:12Z",
-  "head_sha": "dc10292ffc03c5d7dbe945b745452773bad9357d",
+  "head_sha": "81314c4bcc986007e34210ea7af7d8c92fb97441",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-4"
 }
