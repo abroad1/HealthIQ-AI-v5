@@ -234,6 +234,31 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-9 — Pass 3 research-to-runtime exploitation map
+
+**Status:** Complete  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- Direct inspection of 10 Pass 3 JSON files (173 v3.0.0 investigation specs extracted).
+- Research-to-runtime exploitation map and machine-readable matrix (18 material clusters).
+- Confirmed large unpromoted tail between Pass 3 JSON corpus and runtime-visible surfaces.
+
+### Carry-forwards
+- CBC/hematology Pass 3 cluster (22 specs) blocked on frame adjudication before signal promotion.
+- Thyroid/hormonal Pass 3 research blocked on hormonal policy + TSH authority.
+- MED-REV-1 hidden subsystems have Pass 3 backing but await medical-review promotion.
+
+### Blockers / risks
+- Promotion factory must use batch cohorts with STOP gates — not one-marker sprints or mass promotion.
+- KB-S24 YAML tracker (30 specs) is parallel line, not full Pass 3 JSON coverage.
+
+### Recommended next sprint
+- P1-SCORING-HORMONAL-POLICY (hormonal lab_range_only policy + rail enablement).
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
