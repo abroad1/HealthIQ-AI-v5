@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-7-research-to-runtime-adequacy-gate",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-20T12:37:05Z",
   "cursor_started_utc": "2026-06-20T12:34:07Z",
-  "head_sha": "e37cfb7086e9f617c0ea3df0a9eecce41f665dd7",
+  "head_sha": "429de68fedeb236438bff3eb657cfcd50b035c9c",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-7"
 }
