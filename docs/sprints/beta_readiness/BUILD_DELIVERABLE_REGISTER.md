@@ -72,7 +72,7 @@ Entries should not list every file touched or every non-change.
 
 ### Delivered / ticked off
 - First missing launch-core domain implemented as `wave1_kidney` with compiled filtration subsystem evidence.
-- Domain assembler, subsystem routing, scoring-policy eGFR inclusion, and targeted tests added.
+- Domain assembler, subsystem routing, kidney domain card implementation, and targeted tests added. eGFR scoring-policy inclusion deferred post-audit.
 
 ### Carry-forwards
 - Urea signal launch visibility deferred pending frame-index adjudication.

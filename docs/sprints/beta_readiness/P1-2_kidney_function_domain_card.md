@@ -9,7 +9,7 @@ Implemented the first missing launch-core domain — **kidney function** — as 
 - Domain assembler wiring in `domain_score_assembler.py`
 - Subsystem evidence routing in `wave1_subsystem_evidence.py`
 - Kidney narrative helpers in `domain_narrative_wave1.py`
-- Scoring policy: eGFR added to kidney system biomarkers with governed directionality
+- Scoring policy: eGFR `low_only_concern` directionality retained; eGFR system scoring deferred (audit correction)
 - Targeted unit/regression tests
 
 **Out of scope (per sprint):**
@@ -36,7 +36,7 @@ Implemented the first missing launch-core domain — **kidney function** — as 
 | `wave1_subsystem_evidence.py` | Add `wave1_kidney` domain order |
 | `domain_score_assembler.py` | Fourth domain block; egfr/creatinine signal collection; exclude urea signals from launch-visible active list |
 | `domain_narrative_wave1.py` | Kidney headline, contributor, consequence, confidence, next-step copy |
-| `scoring_policy.yaml` | Kidney system includes `egfr`; weights rebalanced; directionality for egfr/creatinine |
+| `scoring_policy.yaml` | Kidney system biomarkers unchanged (`creatinine`, `urea`); eGFR scoring bands removed post-audit; eGFR directionality retained |
 | `persisted_replay_contract_v1.py` | Add `wave1_kidney` to Wave 1 domain id set |
 | Tests | `test_p1_2_kidney_domain_card.py`; updates to assembler and UX1C regression tests |
 
