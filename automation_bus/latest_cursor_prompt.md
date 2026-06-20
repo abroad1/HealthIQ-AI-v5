@@ -1,79 +1,47 @@
 ---
-work_id: P1-7
-branch: work/P1-7-research-to-runtime-adequacy-gate
+work_id: P1-8
+branch: work/P1-8-scoring-lab-range-engine
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: MIXED
 ---
 
-# P1-7 — Research-to-Runtime Adequacy Gate for Remaining Systems and Subsystems
+# P1-8 — Scoring Lab-Range Engine
 
 ## Objective
 
-Run a programme-level research-to-runtime adequacy gate across the remaining HealthIQ AI systems and subsystem candidates before any further system-card or subsystem-card implementation continues.
+Implement the scoring-engine architecture required before thyroid / hormonal scoring can proceed safely.
 
-This sprint is part of the eight-block beta-readiness programme.
+P1-6R established that the current scoring architecture does not safely support lab-range-only thyroid scoring because biomarker bands are structurally required in the system orchestration path.
 
-It exists because P1-4, P1-5 and P1-6R exposed a broader risk:
+This sprint must add a governed, generic, lab-range-relative biomarker scoring capability that does not require hardcoded global/default biomarker bands.
 
-```text id="ox1l5n"
-HealthIQ AI may have rich upstream medical research, but not all of that research has been consistently promoted into governed runtime-safe artefacts:
-- compiled card evidence
-- signal authority
-- scoring rails
-- root-cause / WHY authority
-- subsystem evidence
-- prose / explainer assets
-- medical-review status
-- test fixtures
-- replay/audit surfaces
-```
+This is an enabling architecture sprint inside the eight-block beta-readiness programme.
 
-The purpose is to distinguish:
-
-```text id="clwzwp"
-research exists
-```
-
-from:
-
-```text id="v0o6qa"
-research is promoted, governed, testable, and runtime-safe
-```
-
-Do not implement any runtime system cards in this sprint.
-
-Do not promote any packages.
-
-Do not modify Knowledge Bus packages.
-
-Do not change scoring policy.
-
-Do not alter runtime behaviour.
-
-This sprint produces a readiness matrix and programme recommendation only.
+It must update the beta-readiness build register at closure.
 
 ---
 
-## Strategic framing
+## Strategic purpose
 
-This is not an investigation side quest.
+HealthIQ AI’s non-negotiable policy is:
 
-This is a beta-readiness programme gate.
-
-The output must tell the team:
-
-```text id="12sz4n"
-1. Which remaining systems/subsystems are genuinely ready for runtime card implementation.
-2. Which are research-present but not compiled/promoted.
-3. Which are blocked by governance drift.
-4. Which are blocked by scoring architecture.
-5. Which are blocked by thin prose/explainer/root-cause material.
-6. Which need medical-review or Pass 3 promotion before implementation.
-7. What the next build sprint should be.
+```text
+Use lab-provided reference ranges for biomarker interpretation where available.
+Do not substitute global/default reference ranges.
 ```
 
-This sprint must prevent thin runtime cards being created merely because the UI or domain model expects them.
+The current scoring engine creates a blocker for thyroid and any other marker where scoring should be relative to the lab-provided reference range rather than hardcoded scoring bands.
+
+This sprint must fix that engine-level limitation.
+
+It must not turn thyroid on.
+
+It must not add thyroid cards.
+
+It must not activate thyroid signals.
+
+It must not add TSH, FT3 or FT4 to production scoring policy unless the implementation is explicitly limited to a non-runtime test fixture.
 
 ---
 
@@ -81,7 +49,7 @@ This sprint must prevent thin runtime cards being created merely because the UI 
 
 Start from `main`.
 
-```powershell id="hss4jt"
+```powershell
 git switch main
 git pull origin main
 git status --short
@@ -91,16 +59,16 @@ git rev-parse origin/main
 
 Confirm:
 
-```text id="0he8aq"
-- current branch is main;
-- local main == origin/main;
-- working tree is clean.
+```text
+- current branch is main
+- local main == origin/main
+- working tree is clean
 ```
 
 Then create:
 
-```powershell id="fcz31t"
-git switch -c work/P1-7-research-to-runtime-adequacy-gate
+```powershell
+git switch -c work/P1-8-scoring-lab-range-engine
 ```
 
 Do not proceed if the working tree is dirty.
@@ -109,27 +77,22 @@ Confirm the Automation Bus active work package/state file if required by SOP.
 
 ---
 
-## Prerequisites
+## Required prerequisites on main
 
-Required files on `main`:
+These files must exist on `main`:
 
-```text id="eos9h4"
-docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
-docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md
-docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md
-docs/sprints/beta_readiness/P1-3_blood_iron_oxygen_domain_card.md
-docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md
-docs/sprints/beta_readiness/P1-5_ft3_thyroid_authority_reconciliation.md
+```text
 docs/sprints/beta_readiness/P1-6R_thyroid_scoring_architecture_recovery.md
-docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md
 docs/architecture/ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1.md
+docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md
+docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
 If any are missing, stop and report:
 
-```text id="9eg34d"
-P1-7 prerequisite beta-readiness evidence is not present on main. P1-7 must not proceed.
+```text
+P1-8 prerequisite beta-readiness evidence is not present on main. P1-8 must not proceed.
 ```
 
 ---
@@ -138,375 +101,383 @@ P1-7 prerequisite beta-readiness evidence is not present on main. P1-7 must not 
 
 Read these first, in this order:
 
-```text id="sh1m8s"
+```text
 docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
-docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md
-docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md
-docs/sprints/beta_readiness/P1-3_blood_iron_oxygen_domain_card.md
-docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md
-docs/sprints/beta_readiness/P1-5_ft3_thyroid_authority_reconciliation.md
 docs/sprints/beta_readiness/P1-6R_thyroid_scoring_architecture_recovery.md
-docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md
 docs/architecture/ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1.md
+docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md
+docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml
 docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md
-docs/architecture/User Health to Systems Map_FINAL.md
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
-Do not list the standard Knowledge Bus SOP or Automation Bus SOP as authority documents in the deliverable unless a specific governance requirement cannot otherwise be located.
+P1-6R and the thyroid scoring ADR are the immediate architectural trigger documents.
+
+Do not contradict them.
 
 ---
 
-## Additional files and directories to inspect
+## Files to inspect
 
-Inspect as needed. Do not modify.
+Inspect before modifying anything:
 
-```text id="so76r7"
-docs/AUTHORITY_MAP.md
-docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_COMPARISON_AND_PROGRAMME_RECOMMENDATION_2026-06-18.md
-docs/strategy/LAYER_ARCHITECTURE_AUTHORITY_INDEX_2026-06-17_r2.md
-knowledge_bus/
-knowledge_bus/governance/
-knowledge_bus/compiled/
-knowledge_bus/compiled/estate_index_v1.yaml
-knowledge_bus/compiled/health_system_cards/
-knowledge_bus/compiled/manifests/
-knowledge_bus/pathway_explainers_v1/
+```text
 backend/ssot/scoring_policy.yaml
-backend/core/analytics/
-backend/core/knowledge/
-backend/core/dto/
+backend/core/scoring/
+backend/tests/unit/test_scoring_rules.py
 backend/tests/
+docs/architecture/
 docs/intelligence/
 docs/testing/
-docs/architecture/
-docs/medical_review/
 ```
 
-If any listed path does not exist, record that honestly.
+Search for:
 
----
-
-## Required search/discovery terms
-
-Search the repository for system, subsystem, research, promotion and governance coverage using terms including:
-
-```text id="fnaevd"
-system
-subsystem
-health_system
-health system
-compiled card
-card evidence
-package_refs
-runtime_active_canonical
-compiled_not_promoted
-blocked
-deferred
-activation_eligibility
-medical review
-root cause
-WHY
-pathway explainer
-retail explainer
+```text
 scoring_policy
+BiomarkerRule
+calculate_biomarker_score
+reference_range
+lab_range
+range_low
+range_high
+bands
+direction_class
 system_weight
+min_biomarkers_required
 biomarkers
-Pass 3
-investigation spec
-research asset
-frame identity
-authority register
-signal intelligence
-promoted_signal_intelligence
+unit
 ```
 
-Also search for each health system or subsystem name found in:
+If scoring code is elsewhere, locate it and inspect it before changing anything.
 
-```text id="8xjn93"
-docs/architecture/User Health to Systems Map_FINAL.md
-knowledge_bus/compiled/estate_index_v1.yaml
-backend/core/knowledge/health_system_card_evidence.py
+---
+
+## Critical scope boundary
+
+This sprint may change scoring-engine architecture and directly related tests/docs only.
+
+It must not implement thyroid runtime behaviour.
+
+Do not modify:
+
+```text
+backend/core/analytics/domain_score_assembler.py
+backend/core/analytics/domain_narrative_wave1.py
 backend/core/analytics/wave1_subsystem_evidence.py
+backend/core/dto/persisted_replay_contract_v1.py
+backend/core/knowledge/health_system_card_evidence.py
+knowledge_bus/compiled/
+frontend/
+Gemini paths
+fallback parser paths
+Knowledge Bus source packages
+Pass 3 source material
 ```
 
-Do not rely on memory.
+Do not create:
 
-Every material claim must cite a source path.
-
----
-
-## Scope
-
-This sprint covers the remaining systems and subsystem candidates needed for beta-readiness, including but not limited to:
-
-```text id="wh3csc"
-- launch-core systems not fully implemented
-- subsystems named in the User Health to Systems Map
-- compiled health-system cards
-- subsystem evidence surfaces
-- package-backed but uncompiled research areas
-- governance-blocked areas
-- scoring-blocked areas
-- prose/explainer-thin areas
+```text
+- thyroid domain row
+- thyroid compiled card
+- thyroid narrative helpers
+- thyroid subsystem evidence wiring
+- thyroid DTO/replay contract entry
+- thyroid frontend rendering
+- thyroid Gemini prompt
+- thyroid production scoring rail activation
 ```
 
-Already implemented launch-core cards should still be assessed briefly for depth gaps and carry-forwards, but the focus is the remaining estate.
+Do not activate:
 
-Implemented so far:
-
-```text id="7dg33t"
-- original Wave 1 visible domains
-- P1-2 kidney function
-- P1-3 blood / iron / oxygen
-```
-
-Blocked or unresolved:
-
-```text id="uvj8p9"
-- P1-4 thyroid / energy regulation
-- hormonal scoring rail
-- TSH launch authority
-```
-
-Verify all of the above from source files before reporting.
-
----
-
-## Classification taxonomy
-
-Classify each remaining system/subsystem candidate into one primary readiness state:
-
-```text id="bub9o1"
-READY_FOR_RUNTIME_CARD
-READY_FOR_COMPILED_CARD_ONLY
-RESEARCH_PRESENT_RUNTIME_READY_AFTER_MINOR_WIRING
-RESEARCH_PRESENT_UNCOMPILED
-RESEARCH_PRESENT_UNMAPPED
-COMPILED_NOT_PROMOTED
-GOVERNANCE_CONFLICT
-SCORING_ARCHITECTURE_BLOCKED
-SIGNAL_AUTHORITY_BLOCKED
-ROOT_CAUSE_WHY_THIN
-PROSE_LAYER_THIN
-TEST_ESTATE_THIN
-MEDICAL_REVIEW_REQUIRED
-NOT_READY
-UNKNOWN_INSUFFICIENT_EVIDENCE
-```
-
-Use only one primary classification per row, but include secondary blockers where relevant.
-
-Do not overstate readiness.
-
-If evidence is mixed, choose the more conservative classification.
-
----
-
-## Readiness dimensions
-
-For each system/subsystem candidate, assess these dimensions:
-
-```text id="x4pcuh"
-1. Upstream research presence
-2. Knowledge Bus package presence
-3. Pass 3 / investigation-spec support
-4. Signal activation authority
-5. Medical-frame identity authority
-6. Root-cause / WHY authority
-7. Scoring-policy readiness
-8. Compiled card evidence presence
-9. Pathway/retail explainer readiness
-10. Clinician-report / narrative support
-11. Test fixture / regression coverage
-12. Replay/audit/provenance readiness
-13. Layer B runtime integration readiness
-14. Layer C / UX dependency
-```
-
-Rate each dimension:
-
-```text id="j8tnfi"
-Strong
-Partial
-Weak
-Absent
-Blocked
-Unknown
-Not applicable
+```text
+- FT3 low
+- FT3 high
+- FT4 high
+- FT4 low
+- TSH high
+- TSH low
+- thyroid antibodies
 ```
 
 ---
 
-## Required deliverable 1 — Adequacy gate report
+## Required architecture outcome
+
+Implement a generic scoring-policy capability that allows a biomarker rule to be valid without hardcoded bands when lab-provided ranges are available.
+
+The exact implementation must follow the existing codebase pattern, but the intended capability is:
+
+```text
+A biomarker can be scored relative to its lab-provided reference range without requiring policy-level optimal/normal/borderline/high/very_high/critical bands.
+```
+
+The design must preserve existing band-based scoring for all existing markers.
+
+No existing scored biomarker behaviour may drift.
+
+---
+
+## Permitted implementation directions
+
+Cursor must inspect the current implementation and choose the smallest safe change.
+
+Acceptable patterns may include, depending on existing architecture:
+
+```text
+- adding an explicit lab-range-relative scoring mode to BiomarkerRule
+- adding a bandless rule type in scoring policy loading
+- allowing selected biomarker rules to omit bands when rule_type/lab_range_mode declares that behaviour
+- separating rule construction requirements from band-based scoring requirements
+- adding schema validation for lab-range-only rules
+- adding tests proving bandless lab-range rules work and band-based rules remain unchanged
+```
+
+The chosen approach must be explicit, not implicit.
+
+Do not silently allow all bandless biomarkers.
+
+A bandless/lab-range-only rule must require an explicit declaration such as a rule type, scoring mode, or equivalent governed field.
+
+---
+
+## Prohibited implementation directions
+
+Do not:
+
+```text
+- add placeholder bands
+- add 0.0–1.0 pseudo-bands in clinical units
+- add common textbook/lab/NICE/NHS/ATA/BTA/ETA ranges
+- add thyroid-specific scoring thresholds
+- add thyroid markers to production scoring_policy.yaml
+- change non-thyroid biomarker weights
+- change existing scoring outputs for existing markers
+- weaken schema validation globally
+- make missing bands silently acceptable for all biomarkers
+- bypass unit checks
+- disable existing tests rather than fixing architecture
+```
+
+---
+
+## Required STOP conditions
+
+Stop and report a blocker if:
+
+```text
+- the existing scoring engine cannot be safely extended without broad rewrite;
+- the required change would create output drift in existing scoring systems;
+- schema expectations are too unclear to modify safely;
+- bandless lab-range scoring cannot be made explicit and governed;
+- tests cannot prove existing scored markers remain unchanged;
+- implementation would require thyroid scoring policy activation;
+- implementation would require domain assembler / DTO / compiled card changes.
+```
+
+If stopped, produce the report and register entry as Blocked / Partial. Do not make speculative code changes.
+
+---
+
+## Required design rules
+
+The final implementation must satisfy:
+
+```text
+1. Existing band-based scoring remains supported.
+2. Existing biomarker outputs are unchanged unless explicitly tested and justified.
+3. Lab-range-only scoring is opt-in, explicit and governed.
+4. Lab-provided ranges are used at scoring time.
+5. No global/default range is introduced.
+6. No placeholder bands are introduced.
+7. Unit checks remain meaningful.
+8. Absence of lab range must fail closed or return insufficient-data behaviour, not fabricate a score.
+9. Directionality handling remains explicit.
+10. The code path must be testable without activating thyroid in production.
+```
+
+---
+
+## Production scoring policy rule
+
+Do not enable the hormonal rail in production during this sprint.
+
+Do not add TSH / FT3 / FT4 to production `backend/ssot/scoring_policy.yaml` unless all of the following are true:
+
+```text
+- the entries are only for a non-runtime test fixture or isolated test policy;
+- they do not affect production scoring;
+- the final report clearly explains why production behaviour is unaffected.
+```
+
+Expected default:
+
+```text
+backend/ssot/scoring_policy.yaml remains unchanged except where a generic schema/version/comment field is absolutely required by the new architecture.
+```
+
+If the engine can be changed and tested without changing production scoring policy, prefer that.
+
+---
+
+## Required tests
+
+Add or update targeted tests proving the new scoring architecture.
+
+Tests must prove:
+
+```text
+1. A lab-range-only biomarker rule can be constructed without bands when explicitly declared.
+2. A lab-range-only biomarker can be scored using the lab-provided reference range.
+3. Missing lab range fails closed or returns insufficient data.
+4. Placeholder bands are not required.
+5. Existing band-based biomarker rules still construct and score as before.
+6. Existing scoring policy still validates.
+7. Existing non-thyroid scoring behaviour is not changed.
+8. Thyroid production scoring is not activated.
+9. No TSH / FT3 / FT4 production bands exist.
+10. Directionality is respected for low-only and high-only concerns where applicable.
+```
+
+Use test fixtures if needed.
+
+Do not add runtime thyroid domain tests because no thyroid domain is being implemented in this sprint.
+
+---
+
+## Required deliverable 1 — Implementation report
 
 Create:
 
-```text id="83yjjk"
-docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md
-```
-
-Use this structure exactly:
-
-```markdown id="gdls58"
-# P1-7 — Research-to-Runtime Adequacy Gate for Remaining Systems and Subsystems
-
-## 1. Executive summary
-- why this gate was run
-- what it found
-- whether the issue is isolated or systemic
-- which areas are ready
-- which areas are blocked
-- recommended next sprint
-
-## 2. Programme context
-- eight-block beta-readiness programme relationship
-- P1-2 kidney outcome
-- P1-3 blood / iron / oxygen outcome
-- P1-4 thyroid STOP
-- P1-5 FT3 reconciliation
-- P1-6R scoring architecture decision
-
-## 3. Method
-- authority documents read
-- directories inspected
-- search terms used
-- classification taxonomy
-- limitations
-
-## 4. Estate-level finding
-State whether the medical research estate is:
-- research-thin;
-- research-rich but unevenly promoted;
-- governance-conflicted;
-- scoring-blocked;
-- prose/explainer-thin;
-- test-thin;
-- or another evidenced formulation.
-
-## 5. Readiness matrix
-Create a table:
-
-| System / subsystem candidate | Primary classification | Upstream research | KB packages | Pass 3/spec support | Signal authority | Frame/root-cause authority | Scoring readiness | Compiled card evidence | Prose/explainer readiness | Test readiness | Runtime integration readiness | Evidence paths | Notes |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-
-Include all material candidates discovered.
-
-## 6. Ready or near-ready candidates
-For each candidate that is READY_FOR_RUNTIME_CARD, READY_FOR_COMPILED_CARD_ONLY, or RESEARCH_PRESENT_RUNTIME_READY_AFTER_MINOR_WIRING:
-- summarise evidence;
-- name missing minor gaps;
-- state safe next implementation shape.
-
-## 7. Blocked candidates
-Group candidates by blocker:
-- governance conflict
-- scoring architecture blocked
-- signal authority blocked
-- medical review required
-- root-cause/WHY thin
-- prose/explainer thin
-- test estate thin
-- unknown/insufficient evidence
-
-## 8. Research-to-runtime promotion gaps
-Explain where rich research exists but has not been promoted into:
-- runtime packages;
-- signal intelligence;
-- compiled card evidence;
-- root-cause/WHY authority;
-- scoring rails;
-- prose/explainer assets;
-- tests;
-- provenance/replay surfaces.
-
-## 9. Specific thyroid lesson
-Summarise what thyroid revealed about the wider estate:
-- FT3 register drift;
-- inert scoring rail;
-- TSH inactive authority;
-- scoring architecture band requirement;
-- why this pattern may recur elsewhere.
-
-## 10. Recommended programme sequencing
-Recommend the next 3–6 sprint sequence.
-
-Do not default to micro-sprints.
-Group work into outcome-based packages with internal STOP gates where appropriate.
-
-## 11. Immediate next sprint recommendation
-Name the single next sprint to run.
-
-Include:
-- title;
-- risk_level;
-- change_type;
-- expected scope;
-- STOP gates;
-- why it is the next best action.
-
-## 12. Carry-forwards by beta-readiness block
-Group carry-forwards under:
-- Block 1 Core health systems model
-- Block 2 Subsystems and depth model
-- Block 3 Layer B intelligence/prose substrate
-- Block 6 Medical safety, research provenance and governance
-- Block 7 Auditability, reproducibility and traceability
-- Block 5 UX/results page, only where relevant
-```
-
----
-
-## Required deliverable 2 — Machine-readable readiness matrix
-
-Create:
-
-```text id="asf7q6"
-docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml
+```text
+docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md
 ```
 
 Use this structure:
 
-```yaml id="y54hpd"
-work_id: P1-7
-classification_date: <YYYY-MM-DD>
-source_authorities:
-  - path: <path>
-    role: <role>
-summary:
-  estate_finding: <short finding>
-  ready_count: <number>
-  blocked_count: <number>
-  unknown_count: <number>
-  recommended_next_sprint: <title>
-candidates:
-  - id: <stable_slug>
-    name: <human readable name>
-    category: system | subsystem | domain | signal_cluster | unknown
-    primary_classification: READY_FOR_RUNTIME_CARD | READY_FOR_COMPILED_CARD_ONLY | RESEARCH_PRESENT_RUNTIME_READY_AFTER_MINOR_WIRING | RESEARCH_PRESENT_UNCOMPILED | RESEARCH_PRESENT_UNMAPPED | COMPILED_NOT_PROMOTED | GOVERNANCE_CONFLICT | SCORING_ARCHITECTURE_BLOCKED | SIGNAL_AUTHORITY_BLOCKED | ROOT_CAUSE_WHY_THIN | PROSE_LAYER_THIN | TEST_ESTATE_THIN | MEDICAL_REVIEW_REQUIRED | NOT_READY | UNKNOWN_INSUFFICIENT_EVIDENCE
-    dimensions:
-      upstream_research: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      kb_packages: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      pass3_spec_support: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      signal_authority: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      frame_root_cause_authority: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      scoring_readiness: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      compiled_card_evidence: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      prose_explainer_readiness: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      test_readiness: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      runtime_integration_readiness: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-    evidence_paths:
-      - <path>
-    secondary_blockers:
-      - <blocker>
-    recommended_action: <short action>
+```markdown
+# P1-8 — Scoring Lab-Range Engine
+
+## 1. Summary
+- what architecture blocker was addressed
+- whether lab-range-only scoring is now supported
+- whether production thyroid scoring remains blocked or unblocked
+- what changed
+
+## 2. Authority baseline
+- P1-6R decision
+- ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1
+- P1-7 adequacy finding
+- relevant layer boundary constraints
+
+## 3. Existing scoring architecture before P1-8
+- how band-based scoring worked
+- where bands were required
+- why thyroid was blocked
+
+## 4. Design decision
+- chosen lab-range-only rule pattern
+- why this pattern is explicit and governed
+- why it avoids global/default ranges
+- why it preserves existing scoring
+
+## 5. Runtime/code changes
+- files changed
+- functions/classes changed
+- schema/policy changes, if any
+- production scoring policy impact
+
+## 6. Safety boundaries
+Confirm:
+- no placeholder bands
+- no hardcoded global/default ranges
+- no thyroid signal activation
+- no thyroid domain card
+- no compiled thyroid card
+- no DTO/domain row
+- no frontend/Gemini/fallback parser
+- no Knowledge Bus source packages or Pass 3 artefacts changed
+
+## 7. Tests and validation
+- tests added/updated
+- commands run
+- results
+- any limitations
+
+## 8. Effect on thyroid programme
+State:
+- whether hormonal scoring rail can now be safely enabled in a later sprint
+- whether P1-4 retry is still blocked by TSH authority or other blockers
+- what must happen next
+
+## 9. Carry-forwards
+- hormonal rail enablement
+- TSH package authority
+- thyroid card retry
+- other systems that can benefit from lab-range-only scoring
+
+## 10. Recommended next sprint
+Recommend the next sprint with rationale.
 ```
 
-This matrix is a planning artefact only.
+---
 
-It must not be consumed at runtime.
+## Required deliverable 2 — ADR
 
-Do not place it in `backend/ssot/`, `knowledge_bus/compiled/`, or any runtime path.
+Create:
+
+```text
+docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md
+```
+
+Use this structure:
+
+```markdown
+# ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1
+
+## Status
+Accepted / Blocked
+
+## Context
+Explain:
+- lab-provided reference ranges are authoritative;
+- P1-6 failed by adding hardcoded thyroid bands;
+- P1-6R proved bands were structurally required before this sprint;
+- P1-8 introduces or blocks a governed lab-range-only scoring path.
+
+## Decision
+State whether lab-range-only biomarker rules are now supported.
+
+If supported, describe the explicit rule pattern.
+
+If blocked, explain why.
+
+## Non-negotiable constraints
+- no global/default ranges
+- no placeholder bands
+- no diagnostic thresholds
+- opt-in explicit rule type/mode
+- fail-closed when lab range is absent
+- preserve existing band-based scoring
+- no signal activation from scoring rules
+- no Layer C/Gemini/frontend reasoning
+
+## Consequences
+- what future scoring-policy sprints may do
+- what remains blocked
+- how this affects thyroid
+- how this affects other systems
+
+## Files reviewed
+List files reviewed.
+
+## Files changed
+List files changed.
+```
+
+Use `Status: Accepted` only if the engine capability has been implemented and tested.
+
+Use `Status: Blocked` if the sprint stops before implementation.
 
 ---
 
@@ -514,22 +485,22 @@ Do not place it in `backend/ssot/`, `knowledge_bus/compiled/`, or any runtime pa
 
 At closure, update:
 
-```text id="n4a49o"
+```text
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
 Append a short entry:
 
-```markdown id="nqjw35"
-## P1-7 — Research-to-runtime adequacy gate
+```markdown
+## P1-8 — Scoring lab-range engine
 
 **Status:** Complete / Partial / Blocked  
 **Date closed:** <YYYY-MM-DD>  
-**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+**Programme block(s):** Block 1 Core health systems model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
 
 ### Delivered / ticked off
 - <what this sprint completed against the beta-readiness programme>
-- <major adequacy finding or classification outcome>
+- <major scoring architecture outcome>
 
 ### Carry-forwards
 - <what still needs to be done later>
@@ -542,11 +513,39 @@ Append a short entry:
 - <next work package recommendation>
 ```
 
-Keep the register entry short.
+Keep the entry short.
 
 Do not list every file touched.
 
-Do not duplicate the full report.
+Do not duplicate the full implementation report.
+
+---
+
+## Expected changed file categories
+
+Expected if implementation proceeds:
+
+```text
+backend/core/scoring/
+backend/tests/
+docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md
+docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md
+docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+automation_bus/
+```
+
+`backend/ssot/scoring_policy.yaml` should usually remain unchanged.
+
+If it changes, the final report must explain exactly why and prove:
+
+```text
+- no production thyroid markers were added
+- no production thyroid bands were added
+- no non-thyroid weights changed
+- no existing scores drifted
+```
+
+No other product files should change.
 
 ---
 
@@ -554,36 +553,26 @@ Do not duplicate the full report.
 
 Do not modify:
 
-```text id="f2koc6"
-backend/
+```text
+backend/core/analytics/domain_score_assembler.py
+backend/core/analytics/domain_narrative_wave1.py
+backend/core/analytics/wave1_subsystem_evidence.py
+backend/core/dto/persisted_replay_contract_v1.py
+backend/core/knowledge/health_system_card_evidence.py
+knowledge_bus/compiled/
+knowledge_bus packages
+Pass 3 source material
 frontend/
-knowledge_bus/
+Gemini paths
+fallback parser paths
 ```
 
-Exception:
+Do not update:
 
-```text id="c8pdx5"
-You may read files under those directories, but must not change them.
-```
-
-Do not modify:
-
-```text id="0fxnr4"
+```text
 docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
 docs/AUTHORITY_MAP.md
 ```
-
-Do not modify any source package, compiled card, governance register, scoring policy, runtime code, tests, frontend, Gemini path, parser path, or Pass 3 source material.
-
-Expected product changes are limited to:
-
-```text id="ailajj"
-docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md
-docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-```
-
-Bus files may change as part of SOP lifecycle.
 
 ---
 
@@ -591,32 +580,25 @@ Bus files may change as part of SOP lifecycle.
 
 Run:
 
-```powershell id="uujhq2"
+```powershell
 git diff --stat
 git diff --name-only
 git status --short
 ```
 
-Validate the readiness matrix YAML if a YAML validation tool or existing validation pattern is available.
+Run relevant scoring tests, at minimum:
 
-If no YAML validation exists for this planning artefact, at minimum parse it with Python:
-
-```powershell id="h3i59j"
-python - <<'PY'
-import yaml
-from pathlib import Path
-path = Path("docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml")
-data = yaml.safe_load(path.read_text(encoding="utf-8"))
-assert data["work_id"] == "P1-7"
-assert isinstance(data.get("candidates"), list)
-assert data["candidates"], "matrix must contain at least one candidate"
-print("P1-7 readiness matrix YAML parsed successfully")
-PY
+```powershell
+python -m pytest backend/tests/unit/test_scoring_rules.py
 ```
 
-No runtime tests are required because this is CONTENT-only.
+Run any new or updated tests created by this sprint.
 
-If any code/runtime/source package/governance register file is changed, stop and report failure.
+If broader scoring tests exist, run the smallest relevant suite covering scoring policy loading, biomarker rule construction, and scoring behaviour.
+
+If tests cannot be run, state why.
+
+If tests fail because of this sprint, fix or report blocked.
 
 ---
 
@@ -624,17 +606,20 @@ If any code/runtime/source package/governance register file is changed, stop and
 
 Return:
 
-```text id="ab37eq"
+```text
 - branch name
 - main SHA baseline
+- scoring architecture decision
+- whether lab-range-only biomarker rules are now supported
 - files changed
-- estate-level finding
-- number of candidates classified
-- number ready / near-ready / blocked / unknown
+- whether backend/ssot/scoring_policy.yaml changed
+- whether any production thyroid scoring was added
+- whether any hardcoded/placeholder bands were added
+- tests run and results
+- whether existing band-based scoring remains unchanged
+- whether thyroid domain/card remains blocked or partially unblocked
 - recommended next sprint
-- top 5 blockers
-- confirmation no runtime/code/source package/scoring/governance files changed
-- validation run and results
+- confirmation no domain assembler / DTO / compiled card / frontend / Gemini / fallback / KB source / Pass 3 files changed
 - git diff --stat
 - git diff --name-only
 - git status --short
@@ -648,34 +633,36 @@ Do not merge until Claude audit, GPT architectural review and human approval.
 
 This sprint is complete only if:
 
-```text id="w08iq3"
-1. Adequacy gate report exists at:
-   docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md
+```text
+1. Implementation report exists at:
+   docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md
 
-2. Machine-readable readiness matrix exists at:
-   docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml
+2. ADR exists at:
+   docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md
 
-3. Build deliverable register is updated with a short P1-7 entry.
+3. The sprint either implements and tests a governed lab-range-only biomarker rule path, or stops with a clear blocker.
 
-4. The report explicitly answers whether the problem is isolated or broader/systemic.
+4. No hardcoded global/default reference ranges are introduced.
 
-5. The report classifies all material remaining system/subsystem candidates discovered from the authority documents and repository evidence.
+5. No placeholder clinical-unit bands are introduced.
 
-6. Each candidate has a primary classification from the approved taxonomy.
+6. Existing band-based scoring remains supported.
 
-7. Evidence paths are provided for material claims.
+7. Existing non-thyroid scoring behaviour does not drift.
 
-8. The matrix distinguishes research presence from runtime promotion readiness.
+8. Missing lab-provided range fails closed or returns insufficient-data behaviour.
 
-9. Thyroid is specifically analysed as a warning pattern for wider estate maturity.
+9. No thyroid signal is activated.
 
-10. The report recommends a 3–6 sprint programme sequence and a single immediate next sprint.
+10. No thyroid domain card, compiled card, DTO row, subsystem evidence, narrative helper, frontend rendering or Gemini path is created.
 
-11. No runtime code, backend code, frontend code, scoring policy, governance register, Knowledge Bus source package, compiled card, test, Gemini, fallback parser, or Pass 3 source file is changed.
+11. No Knowledge Bus source packages or Pass 3 artefacts are changed.
 
-12. Only the expected documentation/planning files and bus files are changed.
+12. Any scoring engine change is covered by targeted tests.
 
-13. Matrix YAML parses successfully.
+13. Build deliverable register is updated with a short P1-8 entry.
 
-14. Final report includes validation output and clean git status.
+14. Final report states whether hormonal scoring rail can now be safely enabled in a later sprint.
+
+15. Final report includes validation output and clean git status.
 ```
