@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BETA-BASELINE-REGISTER-1",
+  "work_id": "P1-1",
   "status": "HARDENED",
   "hardened_utc": "2026-06-20T00:00:00Z",
   "hardened_by": "Claude Sonnet 4.6 — SOP v1.3.1 Stage 2",
@@ -9,11 +9,11 @@
       "check": "front_matter_completeness",
       "result": "PASS",
       "fields_confirmed": [
-        "CONFIRMED: automation_bus/latest_cursor_prompt.md:2 — work_id: BETA-BASELINE-REGISTER-1",
-        "CONFIRMED: automation_bus/latest_cursor_prompt.md:3 — branch: work/BETA-BASELINE-REGISTER-1-final-strategy-and-register",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:2 — work_id: P1-1",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:3 — branch: work/P1-1-launch-core-domain-build-materials-map",
         "CONFIRMED: automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH (valid value)",
         "CONFIRMED: automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH (valid value)",
-        "CONFIRMED: automation_bus/latest_cursor_prompt.md:6 — change_type: CONTENT (valid value — docs-only sprint)"
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:6 — change_type: CONTENT (valid value — docs-only discovery sprint)"
       ]
     },
     {
@@ -21,98 +21,175 @@
       "result": "PASS",
       "all_required_paths_exist": true,
       "required_paths_checked": [
-        "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — exists (verified via Glob and Read)",
-        "CONFIRMED: docs/AUTHORITY_MAP.md — exists (verified via Glob and Read)",
-        "CONFIRMED: docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md — exists (verified via Glob; registered in AUTHORITY_MAP.md:54 as AUTHORITATIVE)",
-        "CONFIRMED: docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_COMPARISON_AND_PROGRAMME_RECOMMENDATION_2026-06-18.md — exists (verified via Glob)"
+        "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — exists (verified via Glob)",
+        "CONFIRMED: docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md — exists (verified via Glob)",
+        "CONFIRMED: docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_COMPARISON_AND_PROGRAMME_RECOMMENDATION_2026-06-18.md — exists (verified via Glob)",
+        "CONFIRMED: docs/strategy/LAYER_ARCHITECTURE_AUTHORITY_INDEX_2026-06-17_r2.md — exists (verified via Glob; r2 is the latest revision as confirmed by presence of both r1 and r2 in Glob output)",
+        "CONFIRMED: docs/architecture/User Health to Systems Map_FINAL.md — exists (verified via Glob)",
+        "CONFIRMED: docs/AUTHORITY_MAP.md — exists (verified via Bash ls docs/)",
+        "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — exists (verified via Glob; contains existing BETA-BASELINE-REGISTER-1 entry)"
       ],
-      "duplicate_authority_sources": "NONE detected. The definitive strategy doc (line 9) explicitly supersedes all prior 2026-06-18 drafts. AUTHORITY_MAP.md does not yet register the new doc — this sprint fills that gap. No conflicting authorities."
+      "supporting_paths_checked": [
+        "CONFIRMED: backend/ssot/scoring_policy.yaml — exists (verified via Bash ls backend/ssot/)",
+        "CONFIRMED: backend/core/analytics/domain_score_assembler.py — exists (verified via Bash ls backend/core/analytics/)",
+        "CONFIRMED: backend/core/analytics/wave1_subsystem_evidence.py — exists (verified via Bash ls backend/core/analytics/)",
+        "CONFIRMED: backend/core/contracts/narrative_payload_v1.py — exists (verified via Bash ls backend/core/contracts/)",
+        "CONFIRMED: backend/core/analytics/report_compiler_v1.py — exists (verified via Bash ls backend/core/analytics/)",
+        "CONFIRMED: backend/core/analytics/root_cause_compiler_v1.py — exists (verified via Bash ls backend/core/analytics/)",
+        "CONFIRMED: backend/ssot/retail_explainer_v1/registry.yaml — exists (verified via Bash ls backend/ssot/retail_explainer_v1/)",
+        "CONFIRMED: knowledge_bus/ — exists (verified via Bash ls knowledge_bus/)",
+        "CONFIRMED: knowledge_bus/compiled/ — exists (verified via Bash ls knowledge_bus/)",
+        "CONFIRMED: knowledge_bus/pathway_explainers_v1/ — exists (verified via Bash ls knowledge_bus/)",
+        "CONFIRMED: backend/tests/ — exists (verified via Bash ls backend/tests/)",
+        "CONFIRMED: docs/testing/ — exists (verified via Bash ls docs/testing/)"
+      ],
+      "duplicate_authority_sources": "NONE detected. docs/strategy/LAYER_ARCHITECTURE_AUTHORITY_INDEX_2026-06-17.md (r1) also exists — Cursor must use only the r2 version as instructed by the prompt.",
+      "package_count": "CONFIRMED: 187 packages found in knowledge_bus/packages/ (ls | wc -l = 187). Matches upper bound of 186/187 stated in strategy. Prompt §Package count discipline instructs to report this count and whether it explains the discrepancy."
     },
     {
       "check": "stage_2a_source_content_cross_reference",
       "result": "PASS",
-      "findings": [
+      "domain_package_coverage": [
         {
-          "claim": "Definitive strategy document is Version FINAL v1.0 and suitable as programme baseline",
-          "status": "CONFIRMED",
-          "citation": "docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md:2 — 'Version: FINAL v1.0'; line 7 — 'Status: Final consolidated strategy baseline for team review, ratification and use as the basis of the eight-block beta-readiness build strategy'"
+          "domain": "Blood / iron / oxygen",
+          "packages_found": [
+            "pkg_iron_deficiency_context",
+            "pkg_iron_overload_context",
+            "pkg_kb52c_ferritin_low_iron_store_depletion",
+            "pkg_kb52c_hematocrit_low_anemia_or_hemodilution",
+            "pkg_kb52c_mcv_high_megaloblastic_macrocytosis",
+            "pkg_kb52c_mcv_high_nonmegaloblastic_macrocytosis",
+            "pkg_kb58_mch_low_iron_restricted_erythropoiesis",
+            "pkg_kb58_mch_low_thalassemia_trait_pattern",
+            "pkg_kb58_mchc_high_spherocytic_hemolysis_pattern",
+            "pkg_kb58_mchc_low_hypochromic_iron_restriction",
+            "pkg_kb58_rbc_low_iron_restricted_anemia_pattern",
+            "pkg_kb58_rbc_low_regenerative_or_hemolytic_anemia_pattern",
+            "pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis",
+            "pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern",
+            "pkg_kb58_rdw_sd_high_iron_deficiency_anisocytosis",
+            "pkg_kb58_rdw_sd_high_regenerative_or_mixed_population_pattern",
+            "pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation",
+            "pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression",
+            "pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure",
+            "pkg_s24_ferritin_high_overload",
+            "pkg_s24_ferritin_low_iron_deficiency",
+            "pkg_s24_mcv_high_macrocytosis",
+            "pkg_b12_deficiency_context",
+            "pkg_kb45_active_b12_low_deficiency",
+            "pkg_kb52c_folate_high_supplementation_or_excess_exposure",
+            "pkg_kb52c_folate_low_folate_deficiency",
+            "pkg_kb52c_vitamin_b12_high_supplementation_or_secondary_elevation",
+            "pkg_kb52c_vitamin_b12_low_b12_deficiency_context",
+            "pkg_s24_folate_low_deficiency",
+            "pkg_s24_vitamin_b12_low_deficiency",
+            "pkg_kb52d_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency"
+          ],
+          "coverage_signal": "Strong — multiple series (kb52c, kb58, kb61, s24) covering haematocrit, MCH, MCHC, MCV, RBC, RDW, ferritin, transferrin, B12, folate."
         },
         {
-          "claim": "Document canonical path matches prompt",
-          "status": "CONFIRMED",
-          "citation": "docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md:8 — 'Intended repository path: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md' — matches prompt canonical path exactly"
+          "domain": "Thyroid / energy regulation",
+          "packages_found": [
+            "pkg_thyroid_tsh_context",
+            "pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis",
+            "pkg_kb47_free_t3_low_low_t3_syndrome",
+            "pkg_kb47_free_t4_high_thyrotoxicosis_context",
+            "pkg_kb47_free_t4_low_thyroid_hormone_deficiency",
+            "pkg_kb52c_tsh_high_primary_hypothyroid_pattern",
+            "pkg_kb52c_tsh_low_thyrotoxic_pattern",
+            "pkg_kb59_tgab_high_autoimmune_hypothyroid_pattern",
+            "pkg_kb59_tgab_high_euthyroid_autoimmune_risk",
+            "pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern",
+            "pkg_kb59_tpo_ab_high_euthyroid_autoimmune_risk",
+            "pkg_s24_tsh_high_hypothyroidism",
+            "pkg_s24_tsh_low_hyperthyroidism"
+          ],
+          "coverage_signal": "Moderate — TSH, FT3, FT4, TPO-Ab, TgAb covered. Signal safety constraints (FT3 low, context-dependent patterns) must be confirmed as present in package content by Cursor."
         },
         {
-          "claim": "Document explicitly supersedes prior 18 June 2026 drafts",
-          "status": "CONFIRMED",
-          "citation": "docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md:9 — 'Supersedes: all separate 18 June 2026 beta-readiness strategy drafts and synthesis drafts listed in Appendix A'"
-        },
-        {
-          "claim": "AUTHORITY_MAP.md Strategy section does not yet contain the new beta_readiness definitive strategy doc",
-          "status": "CONFIRMED — gap present, sprint addresses it",
-          "citation": "docs/AUTHORITY_MAP.md:24-38 — Strategy section lists five docs; none is the 2026-06-20 beta_readiness definitive strategy. Last updated 2026-05-04 (line 3), predating the new doc."
-        },
-        {
-          "claim": "AUTHORITY_MAP.md establishes clear AUTHORITATIVE entry pattern for strategy documents",
-          "status": "CONFIRMED",
-          "citation": "docs/AUTHORITY_MAP.md:26 — '| docs/strategy/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED.md | AUTHORITATIVE | Master strategic record. |' — pattern is one-line table row with path, status, brief note. Adding new doc follows this pattern unambiguously."
+          "domain": "Kidney function",
+          "packages_found": [
+            "pkg_kb47_egfr_low_chronic_kidney_function_reduction",
+            "pkg_kb47_egfr_low_hemodynamic_filtration_drop",
+            "pkg_kb52c_creatinine_high_reduced_glomerular_filtration",
+            "pkg_kb52c_creatinine_low_low_muscle_mass_or_low_generation",
+            "pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load",
+            "pkg_kb52c_urea_low_low_protein_or_reduced_urea_cycle_input",
+            "pkg_kb52c_albumin_low_inflammatory_hypoalbuminemia",
+            "pkg_kb52c_albumin_low_protein_loss_or_reduced_synthesis",
+            "pkg_s24_albumin_low_nutritional",
+            "pkg_s24_creatinine_high_renal",
+            "pkg_s24_urea_high_renal"
+          ],
+          "coverage_signal": "Moderate — eGFR (2 packages), creatinine, urea, albumin present. ACR not found in package list; Cursor should confirm in biosmarkers.yaml and record honestly if absent. Non-diagnostic safety wording must be verified in package content."
         }
-      ]
+      ],
+      "r1_vs_r2_risk": "docs/strategy/LAYER_ARCHITECTURE_AUTHORITY_INDEX_2026-06-17.md (r1) co-exists with r2. Cursor must use r2 only. No action required on r1 — prompt does not instruct deletion."
     },
     {
       "check": "stage_2b_behavioural_hardening",
       "result": "NOT_APPLICABLE",
-      "note": "change_type: CONTENT. Docs-only sprint — no Intelligence Core, no code, no analytical pipeline in scope. Behavioural hardening not required per SOP v1.3.1 §2B."
+      "note": "change_type: CONTENT. Pure documentation discovery sprint — no Intelligence Core components, no analytics code, no signal activation, no SSOT modification in scope. SOP v1.3.1 §2B does not apply."
     },
     {
       "check": "stop_conditions",
       "result": "PASS",
-      "explicit_prohibitions_confirmed": [
-        "Do not change runtime code — automation_bus/latest_cursor_prompt.md:17",
-        "Do not change tests — automation_bus/latest_cursor_prompt.md:18",
-        "Do not change frontend behaviour — automation_bus/latest_cursor_prompt.md:19",
-        "Do not change backend behaviour — automation_bus/latest_cursor_prompt.md:20",
-        "Do not begin P1-1 domain mapping — automation_bus/latest_cursor_prompt.md:21",
-        "Do not alter medical logic, parser logic, scoring, reports, Gemini, Layer B or Layer C runtime behaviour — automation_bus/latest_cursor_prompt.md:23",
-        "Do not rewrite the final strategy document — automation_bus/latest_cursor_prompt.md:24"
+      "explicit_scope_rules_confirmed": [
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:31 — 'Do not change runtime code.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:32 — 'Do not change backend code.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:33 — 'Do not change frontend code.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:34 — 'Do not change tests.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:35 — 'Do not change parser logic.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:36 — 'Do not change scoring logic.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:37 — 'Do not change Knowledge Bus packages.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:38 — 'Do not promote Pass 3 material.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:39 — 'Do not activate or suppress signals.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:40 — 'Do not alter reference ranges.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:41 — 'Do not touch Gemini.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:42 — 'Do not touch Layer C presentation logic.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:43 — 'Do not create new clinical interpretation logic.'",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:44 — 'Do not infer missing assets from memory.'"
       ],
-      "validation_requirements": "CONFIRMED — prompt lines 222-230 require git diff --stat, git diff --name-only, git status --short; only docs/ files may appear in output."
+      "validation_requirement": "CONFIRMED: automation_bus/latest_cursor_prompt.md:502-513 — git diff --stat, git diff --name-only, git status --short required; any code/test/frontend/backend/runtime file in diff = STOP and report failure.",
+      "expected_changed_files": [
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:487 — docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:488 — docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:491 — 'Bus files may also change as part of SOP lifecycle.'"
+      ]
     },
     {
       "check": "risk_level_review",
       "result": "ADVISORY",
-      "field": "risk_level",
       "current_value": "HIGH",
-      "note": "Docs-only sprint with CONTENT change_type. No Intelligence Core files in scope. HIGH is conservative and technically over-classified per SOP §10 HIGH risk triggers. However, HIGH is consistent with the approval controls specified in the prompt ('Do not merge until GPT architectural review and human approval' — prompt:250). Over-classification is safer than under-classification. Not a blocker.",
-      "action": "Accept HIGH — no correction required."
-    },
-    {
-      "check": "authority_map_update_constraint",
-      "result": "ADVISORY",
-      "note": "Prompt hedges AUTHORITY_MAP.md update with explicit escape: 'If unsure whether to update AUTHORITY_MAP.md, do not update it; instead record in the final report that it should be reviewed by GPT/human' (prompt:98). Update is permitted only if clearly appropriate per existing pattern. Source content confirms the pattern is clear and the gap is real — update is appropriate. However, update must be minimal (one row in Strategy section) and must appear in the final report.",
-      "citation": "automation_bus/latest_cursor_prompt.md:88-98; docs/AUTHORITY_MAP.md:26 (pattern reference)"
-    },
-    {
-      "check": "docs_sprints_directory",
-      "result": "ADVISORY",
-      "note": "docs/sprints/beta_readiness/ directory may not exist. Prompt explicitly covers this: 'If the directory does not exist, create it' (prompt:108). Cursor must create the full directory path before creating BUILD_DELIVERABLE_REGISTER.md.",
-      "citation": "automation_bus/latest_cursor_prompt.md:108"
+      "note": "Standard SOP §10 HIGH triggers do not apply to a docs-only discovery sprint (no Intelligence Core, no SSOT, no analytical code). HIGH is conservative but safe. It is consistent with the merge control specified in the prompt ('Do not merge until GPT architectural review and human approval' — automation_bus/latest_cursor_prompt.md:525). Not a blocker.",
+      "action": "Accept HIGH — no correction required. Overhead is review burden only, not safety risk."
     },
     {
       "check": "intelligence_core_exposure",
       "result": "PASS — NOT IN SCOPE",
-      "detail": "No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, update_cursor_status.py, signal evaluator, compiler, assembler, or any runtime file in scope. No Intelligence Core exposure."
+      "detail": "No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, update_cursor_status.py, signal evaluator, root cause compiler, assembler, or any runtime file targeted for modification. All backend paths listed in prompt are READ targets for mapping evidence only."
     },
     {
       "check": "forbidden_files_tooling_leakage",
       "result": "PASS",
-      "detail": "No .codex/, .vscode/, AGENTS.md tooling leakage risk. Only docs/ files in expected changed files list."
+      "detail": "No .codex/, .vscode/, AGENTS.md or tooling artefact risk. Only two docs/ files and bus lifecycle files in expected changed set."
     },
     {
       "check": "powershell_compatibility",
       "result": "PASS",
-      "detail": "All shell commands use PowerShell syntax: git switch, git pull, git status --short, git switch -c, git diff --stat, git diff --name-only. No bash-only constructs present."
+      "detail": "All shell commands use PowerShell-compatible syntax: git switch, git pull, git status --short, git switch -c, git diff --stat, git diff --name-only. No bash-only constructs (&&, /dev/null, etc.) present."
+    },
+    {
+      "check": "no_op_sprint_protection",
+      "result": "PASS",
+      "detail": "Three launch-core domains (blood/iron/oxygen, thyroid/energy regulation, kidney function) are confirmed absent from existing domain implementation. Sprint has real discovery and mapping work to perform. Not a no-op."
+    },
+    {
+      "check": "clinical_safety_requirements",
+      "result": "ADVISORY",
+      "note": "Prompt §Clinical safety discipline (lines 426-433) explicitly requires flagging safety/caution for thyroid, renal, anaemia, iron, oxygen signals. Cursor must not recommend activation without source support and must record medical review dependencies. FT3 low constraints and context-dependent thyroid patterns require explicit safety notes in the map. Non-diagnostic CKD language constraint in §7 is correctly scoped. These are execution requirements for Cursor — not hardening blockers.",
+      "action": "No change required. Safety discipline is well-specified in the prompt."
     }
   ],
-  "overall_verdict": "HARDENED — all four authority paths confirmed to exist with source content read and cross-referenced. Front matter valid (all five fields). Definitive strategy document confirmed FINAL v1.0, self-declares canonical path, explicitly supersedes prior drafts. AUTHORITY_MAP.md gap confirmed (doc not yet registered; last updated 2026-05-04). Entry pattern is clear; AUTHORITY_MAP update is appropriate. Three non-blocking advisories: (1) HIGH risk is conservative for CONTENT-only sprint but consistent with specified approval controls; (2) AUTHORITY_MAP update must be minimal and reported; (3) docs/sprints/beta_readiness/ directory must be created if absent. No Intelligence Core exposure. No behavioural risk. Cursor may proceed."
+  "overall_verdict": "HARDENED — all front matter fields confirmed (automation_bus/latest_cursor_prompt.md:2-6). All 7 required authority paths verified to exist. All 12 supporting reference paths verified to exist. Package count confirmed at 187 (upper bound of 186/187 per strategy). Domain package coverage verified: blood/iron/oxygen (31 packages), thyroid/energy regulation (13 packages), kidney function (11 packages). change_type: CONTENT correct for docs-only sprint. Stage 2B NOT_APPLICABLE. STOP conditions explicit and deterministic (lines 31-44, 502-513). No Intelligence Core exposure. No tooling leakage risk. Three non-blocking advisories: (1) HIGH risk is conservative but consistent with merge controls; (2) r1 LAYER_ARCHITECTURE_AUTHORITY_INDEX co-exists — Cursor must use r2 only; (3) clinical safety discipline for thyroid/renal/anaemia signals must be observed during mapping. Cursor may proceed."
 }

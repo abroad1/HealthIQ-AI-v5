@@ -39,6 +39,31 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-1 — Launch-core domain build-materials map
+
+**Status:** Complete  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate  
+
+### Delivered / ticked off
+- Evidence-backed build-materials map for all three missing launch-core domains (blood/iron/oxygen, thyroid/energy regulation, kidney function).
+- Knowledge Bus package count verified at 187 (matches strategy 186–187 range).
+- P1-2 first-domain recommendation recorded: kidney function (safest bounded implementation path).
+
+### Carry-forwards
+- All three domains lack compiled cards and Wave 1 domain assembler wiring.
+- Thyroid FT3 low register drift must be reconciled before thyroid domain implementation.
+- Blood/iron TIBC/UIBC and urea frame-index gaps remain open.
+
+### Blockers / risks
+- No domain is fully implementation-ready without P1-2+ domain-card and subsystem wiring work.
+- Thyroid domain carries highest clinical gating risk if sequenced before register hygiene.
+
+### Recommended next sprint
+- P1-2 — Kidney function launch-core domain card and subsystem wiring.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

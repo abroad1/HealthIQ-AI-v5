@@ -1,10 +1,10 @@
 {
-  "branch": "work/BETA-BASELINE-REGISTER-1-final-strategy-and-register",
+  "branch": "work/P1-1-launch-core-domain-build-materials-map",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T08:26:38Z",
-  "cursor_started_utc": "2026-06-20T08:20:17Z",
-  "head_sha": "eeb38aa27da87d949759353bb80260a7381a197b",
+  "cursor_completed_utc": "2026-06-20T08:56:24Z",
+  "cursor_started_utc": "2026-06-20T08:52:21Z",
+  "head_sha": "11c92c048e1eddd42a460147cfa001704b1b35b8",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "BETA-BASELINE-REGISTER-1"
+  "work_id": "P1-1"
 }
