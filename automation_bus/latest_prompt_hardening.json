@@ -1,5 +1,5 @@
 {
-  "work_id": "P1-8",
+  "work_id": "P1-9",
   "status": "HARDENED",
   "bus_version": "1.3.1",
   "hardened_utc": "2026-06-20T00:00:00Z",
@@ -8,20 +8,20 @@
     {
       "check": "front_matter.work_id",
       "result": "PASS",
-      "finding": "CONFIRMED — work_id 'P1-8' present.",
+      "finding": "CONFIRMED — work_id 'P1-9' present.",
       "citation": "automation_bus/latest_cursor_prompt.md:2"
     },
     {
       "check": "front_matter.branch",
       "result": "PASS",
-      "finding": "CONFIRMED — branch 'work/P1-8-scoring-lab-range-engine' present. Must match git branch at Stage 0 before any file modification.",
+      "finding": "CONFIRMED — branch 'work/P1-9-pass3-research-to-runtime-exploitation-map' present. Cursor must create this branch from main at Stage 0 before any file modification. Branch does not yet exist; creation is the first required action.",
       "citation": "automation_bus/latest_cursor_prompt.md:3"
     },
     {
       "check": "front_matter.risk_level",
-      "result": "PASS",
-      "finding": "CONFIRMED HIGH. Sprint modifies Intelligence Core: scoring_policy_registry.py (schema validator governing how rules are loaded) and rules.py (BiomarkerRule construction and scoring path). Both files are in backend/core/analytics/ and backend/core/scoring/ — HIGH risk directories per SOP §10. Any change to rule loading or validation logic is a behavioural change to Intelligence Core.",
-      "citation": "automation_bus/latest_cursor_prompt.md:4; SOP §10 HIGH risk triggers"
+      "result": "PASS — WITH FINDING",
+      "finding": "CONFIRMED HIGH declared. FINDING (non-blocker): None of the SOP v1.3.1 §10 HIGH risk triggers strictly apply to this sprint. All deliverables are documentation-only under docs/sprints/beta_readiness/. No Intelligence Core is touched, no behavioural logic modified, no output generation affected, no restricted file paths (backend/ssot/, backend/core/pipeline/, backend/core/analytics/, control-plane scripts) are changed. Over-classification as HIGH is not harmful — it adds an extra GPT architectural review gate before merge, which is appropriate given that the exploitation map will directly inform future HIGH-risk batch promotion sprints. Classification is conservative and defensible. Cursor should not reduce the risk level.",
+      "citation": "automation_bus/latest_cursor_prompt.md:4; SOP v1.3.1 §10 HIGH risk triggers"
     },
     {
       "check": "front_matter.execution_model",
@@ -32,131 +32,97 @@
     {
       "check": "front_matter.change_type",
       "result": "PASS",
-      "finding": "CONFIRMED MIXED. BEHAVIOUR component: scoring_policy_registry.py schema validator extension changes how biomarker rules are loaded; rules.py BiomarkerRule construction changes the rule object produced. CONTENT component: potential minor change to scoring_policy.yaml schema_version or comment field. MIXED is the correct classification; MIXED is governed using BEHAVIOUR controls per SOP §4.",
+      "finding": "CONFIRMED CONTENT. Sprint reads research corpus and produces planning/documentation artefacts only. All three deliverables (exploitation map .md, exploitation matrix .yaml, BUILD_DELIVERABLE_REGISTER.md update) are under docs/sprints/beta_readiness/. No backend code, no runtime behaviour, no package modification, no compiled card modification, no scoring policy change. CONTENT is the correct classification.",
       "citation": "automation_bus/latest_cursor_prompt.md:6; SOP §4 change_type definitions"
     },
     {
       "check": "stage_2a.prerequisites_all_present",
       "result": "PASS",
-      "finding": "CONFIRMED — all five prerequisite files verified present via Glob.",
+      "finding": "CONFIRMED — all six prerequisite files verified present on main via Glob.",
       "paths_verified": [
-        "CONFIRMED: docs/sprints/beta_readiness/P1-6R_thyroid_scoring_architecture_recovery.md — EXISTS",
-        "CONFIRMED: docs/architecture/ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1.md — EXISTS",
+        "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md — EXISTS",
+        "CONFIRMED: docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — EXISTS"
       ]
     },
     {
       "check": "stage_2a.first_authority_documents_present",
       "result": "PASS",
-      "finding": "CONFIRMED — all seven first-authority documents verified present via Glob.",
+      "finding": "CONFIRMED — all eight first-authority documents verified present via Glob.",
       "paths_verified": [
         "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-6R_thyroid_scoring_architecture_recovery.md — EXISTS",
-        "CONFIRMED: docs/architecture/ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md — EXISTS",
+        "CONFIRMED: docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md — EXISTS",
         "CONFIRMED: docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md — EXISTS",
+        "CONFIRMED: docs/architecture/User Health to Systems Map_FINAL.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — EXISTS"
       ]
     },
     {
-      "check": "stage_2a.scoring_engine_source_content_read",
-      "result": "CONFIRMED — SOURCE CONTENT READ",
-      "finding": "CONFIRMED. backend/core/scoring/rules.py read in full. backend/core/analytics/scoring_policy_registry.py read in full. backend/ssot/scoring_policy.yaml read in full. backend/core/scoring/engine.py read in full. backend/tests/unit/test_scoring_rules.py read (partial). backend/tests/test_scoring_lab_range_only.py read (partial). Cross-referenced against ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1 citation claims — all four architectural blocker citations confirmed accurate.",
-      "citation": "rules.py:131-145 (_build_biomarker_rule); scoring_policy_registry.py:69-78 (_validate_policy bands block); rules.py:154-156 (silent skip); engine.py:192 (system iteration)"
+      "check": "stage_2a.pass3_corpus_content_read_and_verified",
+      "result": "CONFIRMED — CORPUS REAL AND ACCESSIBLE",
+      "finding": "CONFIRMED. Pass 3 corpus directly inspected. Primary corpus path: knowledge_bus/research/investigation_specs/multi_llm_research/. Ten Pass 3 JSON files confirmed present: Batch_2_Pass_3.json, Batch_3_Pass_3.json, Batch_4_Pass_3.json, Batch_5_Pass_3.json, Batch_6_Pass_3.json, Batch_7_Pass_3.json (all in multi_llm_research/), plus four topic-grouped standalone Pass 3 files: cbc_hematology_pass_3.json, thyroid_antibodies_pass_3.json, lipid_derived_pass_3.json, transferrin_pass_3.json. Content verified via direct read of Batch_7_Pass_3.json (investigation_spec_contract_version: '3.0.0', spec_id: inv_neutrophils_high_acute_bacterial_inflammatory_response, with full hypotheses, supporting_markers, root_cause, WHY blocks) and cbc_hematology_pass_3.json (spec_id: inv_mch_low_iron_restricted_erythropoiesis, same v3.0.0 schema). Also present: knowledge_bus/research/medical_knowledge_ingestion/Medical_Knowledge_Investigation_3rd_Pass.md (third-pass authoring methodology). Archived Rev1 batch: knowledge_bus/research/investigation_specs/multi_llm_research/archived_ingested_batches/Batch_2_Pass_3_Rev1.json.",
+      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json:1-60 (content read); knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json:1-50 (content read)"
     },
     {
-      "check": "stage_2a.critical_blocker_1_schema_validator",
-      "result": "BLOCKER — CONFIRMED",
-      "finding": "CONFIRMED. scoring_policy_registry.py:69-70: 'if policy.get(\"scoring_type\") != \"range_position\": raise ValueError(...)'. This is a hard rejection of any scoring_type value other than 'range_position'. Lines 74-78: the six-band block iterates ['optimal','normal','borderline','high','very_high','critical'] and calls _validate_range_dict() for each — unconditionally. Any biomarker entry with a different scoring_type OR missing bands fails validation at module import, preventing the engine from starting. Sprint must extend this validator.",
-      "citation": "backend/core/analytics/scoring_policy_registry.py:69-78"
+      "check": "stage_2a.translation_tracker_cross_reference",
+      "result": "CONFIRMED — PROMOTION BASELINE ESTABLISHED",
+      "finding": "CONFIRMED. knowledge_bus/research/investigation_specs/_translation_tracker.yaml read in full (136 lines). Contains 30 entries, all status: 'tested', all with pkg_s24_* package_id. These 30 inv_*.yaml files are the individual investigation-spec YAML assets derived from batches (not the same files as the JSON Pass 3 batches). Every inv_*.yaml spec file in investigation_specs/ has a corresponding translated and tested pkg_s24_* package. This means the YAML-format single-spec corpus is fully promoted via KB-S24. The Pass 3 JSON batch files (Batch_N_Pass_3.json and topic files) are the upstream multi-signal research objects — the promotion status of their contents relative to the pkg_s24_* and compiled card estate is the core question P1-9 must map.",
+      "citation": "knowledge_bus/research/investigation_specs/_translation_tracker.yaml:1-136"
     },
     {
-      "check": "stage_2a.critical_blocker_2_rule_builder",
-      "result": "BLOCKER — CONFIRMED",
-      "finding": "CONFIRMED. rules.py:133: 'bands = item.get(\"bands\", {})'. Lines 135-140 unconditionally call self._to_tuple(bands['optimal']), self._to_tuple(bands['normal']), etc. If bands is {} (empty, because a bandless policy entry has no bands key), all six accesses raise KeyError at rule-load time. Sprint must add a conditional branch for lab_range_only rules that constructs a different rule or a modified BiomarkerRule without requiring band tuples.",
-      "citation": "backend/core/scoring/rules.py:131-145"
-    },
-    {
-      "check": "stage_2a.critical_blocker_3_biomarker_rule_dataclass",
-      "result": "BLOCKER — CONFIRMED",
-      "finding": "CONFIRMED. rules.py:84-96: BiomarkerRule dataclass has six non-optional Tuple[float,float] band fields (optimal_range, normal_range, borderline_range, high_range, very_high_range, critical_range) with no default values. These fields ARE referenced by _determine_score_range() (lines 565-578) and _calculate_range_score() (lines 580-598). HOWEVER: calculate_biomarker_score() (lines 361-436) does NOT call either method — they are confirmed dead in the live scoring path. Making bands Optional[Tuple[float,float]] = None is safe for the scoring path, but _determine_score_range() and _calculate_range_score() must be guarded to raise clearly if called on a bandless rule.",
-      "citation": "backend/core/scoring/rules.py:84-96, 565-598, 361-436"
-    },
-    {
-      "check": "stage_2a.lab_range_primitive_already_exists",
-      "result": "CONFIRMED SAFE — EXISTING CAPABILITY",
-      "finding": "CONFIRMED. calculate_biomarker_score() lines 382-425 already implements a complete lab-range-only scoring path: prioritises input_reference_range, applies HbA1c unit harmonisation, runs directionality overrides, and fails closed at lines 424-425 with UNSCORED_REASON when no lab range and not a derived ratio. The runtime scoring primitive is correct. The gap is exclusively in the load-time path: schema validation + rule construction + BiomarkerRule fields.",
-      "citation": "backend/core/scoring/rules.py:382-425"
-    },
-    {
-      "check": "stage_2a.unit_field_mandatory_for_bandless_rules",
-      "result": "HARDENING NOTE",
-      "finding": "CONFIRMED. rules.py:394-402: calculate_biomarker_score() calls get_biomarker_rule() and retrieves policy_unit from the rule. If policy_unit is non-empty AND value_unit is present, the coherence check fires. For bandless rules that ARE loaded into a system's biomarker list, this check will run at scoring time. Bandless policy entries MUST still declare 'unit' (non-empty string). The schema validator extension must enforce 'unit' as required for lab_range_only entries. A bandless rule with an empty unit field will silently skip the coherence check — technically safe but architecturally undesirable.",
-      "citation": "backend/core/scoring/rules.py:394-402"
-    },
-    {
-      "check": "stage_2a.policy_cache_singleton_risk",
-      "result": "HARDENING NOTE",
-      "finding": "CONFIRMED. scoring_policy_registry.py:28: '_policy_cache: Optional[LoadedScoringPolicy] = None' is module-level. load_scoring_policy() (lines 184-204) returns cache after first call. Any test that instantiates ScoringRules() gets the production policy (loaded at module import via line 21: '_POLICY = load_scoring_policy()'). Tests exercising bandless rule loading with a fixture YAML MUST reset _policy_cache to None AND patch _policy_path() to point to the fixture before instantiating ScoringRules. Alternatively, the sprint may add a ScoringRules(policy=LoadedScoringPolicy(...)) injection path. The chosen approach must be implemented consistently across all new tests.",
-      "citation": "backend/core/analytics/scoring_policy_registry.py:28; backend/core/scoring/rules.py:21"
-    },
-    {
-      "check": "stage_2a.hormonal_system_confirmed_inert",
-      "result": "CONFIRMED SAFE",
-      "finding": "CONFIRMED. scoring_policy.yaml:32-35: hormonal system has 'biomarkers: []' and 'system_weight: 0.0'. No thyroid markers present in the production policy. Sprint must NOT add TSH, FT3, FT4, or any thyroid-specific entry to the production scoring_policy.yaml. Tests must use a separate test-only fixture YAML.",
-      "citation": "backend/ssot/scoring_policy.yaml:32-35"
-    },
-    {
-      "check": "stage_2a.production_policy_change_scope",
-      "result": "CONFIRMED — PREFER NO CHANGE",
-      "finding": "CONFIRMED. The sprint can implement and test the full bandless architecture without modifying the production scoring_policy.yaml. The schema validator extension and rule builder changes are in Python code; a test fixture YAML carries the bandless test entries. If any change to scoring_policy.yaml is made (e.g. schema_version bump), the final report must prove: no production thyroid markers added, no production thyroid bands added, no non-thyroid weights changed, no existing scores drifted.",
-      "citation": "backend/ssot/scoring_policy.yaml; automation_bus/latest_cursor_prompt.md:§Production scoring policy rule"
+      "check": "stage_2a.p1_7_matrix_cross_reference",
+      "result": "CONFIRMED — ESTATE BASELINE READ",
+      "finding": "CONFIRMED. docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml read (first 40 lines). Confirmed: estate_finding = 'research-rich but unevenly promoted; governance and scoring architecture blockers recur'. ready_count: 4, near_ready_count: 4, blocked_count: 5, unknown_count: 1. P1-7 used compiled estate and runtime surfaces as the comparison axis; P1-9 must now inspect the upstream Pass 3 JSON corpus directly and map those signals against the same runtime surfaces. P1-7 already confirmed pass3_spec_support: Partial for cardiovascular — the P1-9 sprint will quantify what 'Partial' means at the source level.",
+      "citation": "docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml:1-40"
     },
     {
       "check": "stage_2a.no_duplicate_authority_sources",
       "result": "PASS",
-      "finding": "CONFIRMED. Scoring policy has one authority source: backend/ssot/scoring_policy.yaml, loaded via backend/core/analytics/scoring_policy_registry.py. No duplicate SSOT scoring policy sources detected. test_scoring_rules.py and test_scoring_lab_range_only.py both load the production policy via ScoringRules().",
-      "citation": "backend/core/analytics/scoring_policy_registry.py:31-33 (_policy_path)"
+      "finding": "CONFIRMED. Single Pass 3 corpus path: knowledge_bus/research/investigation_specs/multi_llm_research/. Single translation tracker: knowledge_bus/research/investigation_specs/_translation_tracker.yaml. No duplicate SSOT for research corpus. The investigation-spec-collection-batch*.json files (batch1-10 through batch51-56) in investigation_specs/ are separate collected-batch compilation artefacts distinct from the multi_llm_research Pass 3 files — Cursor must treat them as a separate corpus layer and not conflate them with true Pass 3 material unless content inspection confirms Pass 3 content inside.",
+      "citation": "knowledge_bus/research/investigation_specs/ (Glob scan)"
     },
     {
-      "check": "stage_2b.behavioural_hardening.scope_defined",
+      "check": "stage_2a.deliverable_paths_not_pre_existing",
       "result": "PASS",
-      "finding": "CONFIRMED. Behavioural scope: (1) scoring_policy_registry.py — extend _validate_policy() to accept lab_range_only scoring_type; (2) rules.py — extend _build_biomarker_rule() to produce bandless BiomarkerRule when scoring_type == lab_range_only; (3) BiomarkerRule dataclass — make band fields Optional with None default. No change to calculate_biomarker_score() scoring logic, no change to directionality path, no change to HbA1c harmonisation, no change to DERIVED_RATIOS/DERIVED_RATIO_POLICY_BOUNDS. The new path is activated only when scoring_type == 'lab_range_only' is explicitly declared in a policy entry.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Permitted implementation directions"
+      "finding": "CONFIRMED. Glob confirmed neither docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md nor docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml exist yet. Sprint will create them fresh. No pre-existing content to overwrite or inherit.",
+      "citation": "docs/sprints/beta_readiness/ (Glob scan — P1-9 files absent)"
     },
     {
-      "check": "stage_2b.behavioural_hardening.regression_targets",
+      "check": "stage_2a.prohibited_files_confirmed_outside_scope",
       "result": "PASS",
-      "finding": "CONFIRMED. Regression targets: (a) backend/tests/unit/test_scoring_rules.py — all existing tests must pass unchanged; (b) backend/tests/test_scoring_lab_range_only.py — all existing tests must pass unchanged; (c) any existing scoring policy validation test (test_scoring_policy_registry.py, test_scoring_policy_not_hardcoded.py per ADR Files reviewed). Production band-based biomarker scoring must produce identical outputs before and after the sprint. Cursor must run the full test suite covering scoring policy loading, biomarker rule construction, and scoring behaviour before finishing.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Validation; ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1 Files reviewed"
+      "finding": "CONFIRMED. Prohibited files (backend/, frontend/, knowledge_bus/ modifications; strategy baseline; AUTHORITY_MAP; any source package, compiled card, governance register, scoring policy, runtime code, test, Gemini path, fallback parser, Pass 3 source file) are all outside the declared deliverable paths. Permitted write paths are exclusively: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md, docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml, docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md. Bus lifecycle files may also change as SOP requires.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Prohibited changes; §Required deliverables"
     },
     {
-      "check": "stage_2b.behavioural_hardening.no_scope_creep",
-      "result": "PASS — CONFIRMED BOUNDARY",
-      "finding": "CONFIRMED. Scope is confined to: backend/core/scoring/ (rules.py, possibly __init__.py), backend/core/analytics/scoring_policy_registry.py, backend/tests/ (new tests only), docs deliverables (P1-8_scoring_lab_range_engine.md, ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md, BUILD_DELIVERABLE_REGISTER.md update). Prohibited files explicitly confirmed absent from scope: domain_score_assembler.py, domain_narrative_wave1.py, wave1_subsystem_evidence.py, persisted_replay_contract_v1.py, health_system_card_evidence.py, knowledge_bus/compiled/, frontend/, Gemini paths, fallback parsers, Knowledge Bus packages, Pass 3 source material.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Critical scope boundary; §Prohibited changes"
-    },
-    {
-      "check": "stage_2b.behavioural_hardening.determinism_risks",
+      "check": "stage_2a.validation_command_powershell_compatible",
       "result": "PASS",
-      "finding": "CONFIRMED. Determinism risk is LOW for the existing scoring path. The new bandless path is strictly opt-in via explicit scoring_type declaration — no existing biomarker entry in scoring_policy.yaml uses lab_range_only, so no existing scoring behaviour is reachable via the new code path. The only determinism risk is if the schema validator or rule builder changes introduce a side effect on existing rule loading. Mitigation: existing test suite must pass without modification; Cursor must verify all existing band-based biomarker rules still construct and score identically.",
-      "citation": "backend/ssot/scoring_policy.yaml:52-274 (all existing biomarkers use scoring_type: range_position)"
+      "finding": "CONFIRMED. The Python validation one-liner uses double-quote outer delimiter with single-quote Python string literals inside — no $ or backtick characters present. PowerShell will pass the inner string to Python correctly. Command asserts work_id=='P1-9', items is a non-empty list — adequate for CONTENT-only matrix validation.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Validation"
+    },
+    {
+      "check": "stage_2a.corpus_file_count_hardening_note",
+      "result": "HARDENING NOTE",
+      "finding": "CONFIRMED. The true Pass 3 corpus in multi_llm_research/ consists of 10 JSON files (6 batch-format + 4 topic-grouped). The investigation-spec-collection-batch*.json files (6 batch collections covering specs 1–56) in the parent investigation_specs/ directory use a different naming pattern and are a separate artefact layer — these appear to be structured compilation inputs, not Pass 3 research authoring output. Cursor must distinguish these two layers in the corpus discovery section and explicitly report: (1) paths of true Pass 3 files inspected, (2) whether batch-collection files were also inspected and what they contain, (3) any Pass 3 content that appears in both layers. Filename-only inference is explicitly prohibited by the prompt and must not substitute for content inspection.",
+      "citation": "knowledge_bus/research/investigation_specs/ and multi_llm_research/ (Glob scans)"
     },
     {
       "check": "stop_conditions.check",
       "result": "PASS — NO STOP CONDITIONS TRIGGERED",
-      "finding": "CONFIRMED. (1) Engine CAN be safely extended without broad rewrite — change is targeted to _validate_policy() and _build_biomarker_rule(). (2) No output drift in existing scoring systems — bandless path is opt-in, existing rules unchanged. (3) Schema expectations are clear enough to modify safely — _validate_policy() is well-structured. (4) Bandless lab-range scoring CAN be made explicit and governed via scoring_type field. (5) Tests CAN prove existing markers unchanged. (6) Implementation does NOT require thyroid scoring policy activation. (7) Implementation does NOT require domain assembler / DTO / compiled card changes. Sprint is executable.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Required STOP conditions"
+      "finding": "CONFIRMED. (1) All six prerequisites are present on main. (2) Pass 3 corpus exists and is real investigation-spec content in v3.0.0 schema. (3) Comparison targets (translation tracker, P1-7 matrix, compiled estate paths listed) all exist. (4) Deliverable write paths are docs-only with no intersection with prohibited files. (5) Working tree is clean (only automation_bus/latest_cursor_prompt.md modified per git status). Sprint is executable.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Required prerequisites; git status at hardening time"
     },
     {
       "check": "no_op_protection",
       "result": "PASS",
-      "finding": "CONFIRMED. ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1 documents four specific blocker points in the current code. All four confirmed by direct source reading. The architectural gap is real and unresolved before this sprint. Not a no-op.",
-      "citation": "docs/architecture/ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1.md:18-27; backend/core/analytics/scoring_policy_registry.py:69-78; backend/core/scoring/rules.py:131-145"
+      "finding": "CONFIRMED. P1-7 established that pass3_spec_support is 'Partial' for several launch-core domains, and the translation tracker shows 30 inv_*.yaml files promoted but does not map the JSON batch Pass 3 files against compiled cards, signal intelligence, WHY authority, or prose. The research-to-runtime exploitation map does not yet exist. This is not a no-op.",
+      "citation": "docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml:21-24 (summary block)"
     }
   ],
-  "overall_verdict": "HARDENED — All five front-matter fields confirmed. All prerequisites and first-authority documents present. Scoring engine source content read in full and cross-referenced against ADR citations — all four blocker citations confirmed accurate. Three CRITICAL implementation requirements surfaced: (1) scoring_policy_registry.py:69-78 must be extended to accept 'lab_range_only' as a valid scoring_type and skip the six-band block for that type; (2) rules.py:131-145 _build_biomarker_rule() must add a conditional branch for bandless rule construction; (3) BiomarkerRule band fields must become Optional[Tuple[float,float]] = None with guards on legacy band-dependent methods. Two HARDENING NOTES: (A) unit field is still mandatory for bandless rules — schema validator must enforce; (B) _policy_cache singleton requires explicit reset in test fixtures — must not be silently tested against production policy. No STOP conditions triggered. Existing scoring path is unaffected by the changes. Cursor may proceed under TWO_PHASE_START_FINISH governance."
+  "overall_verdict": "HARDENED — All five front-matter fields confirmed. change_type CONTENT is correct for a docs-only research mapping sprint. risk_level HIGH is a conservative over-classification but not a blocker — it appropriately gates the exploitation map behind GPT architectural review before batch promotions begin. All six prerequisites confirmed present on main. All eight first-authority documents confirmed present. Pass 3 corpus directly inspected: 10 JSON files in multi_llm_research/ confirmed real v3.0.0 investigation-spec content with hypotheses, supporting markers, and WHY/root-cause blocks. Translation tracker read in full — 30 inv_*.yaml specs all status: tested, establishing the single-spec promotion baseline. P1-7 readiness matrix estate finding confirmed ('research-rich but unevenly promoted'). Deliverable paths are clear, prohibited-file boundary is explicit, validation command is PowerShell-compatible. One HARDENING NOTE: Cursor must explicitly distinguish the true Pass 3 JSON files (multi_llm_research/) from the separate investigation-spec-collection-batch*.json artefacts and report both layers in corpus discovery. No STOP conditions triggered. Cursor may proceed under TWO_PHASE_START_FINISH governance."
 }
