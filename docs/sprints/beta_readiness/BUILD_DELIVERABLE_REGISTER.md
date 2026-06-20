@@ -161,6 +161,31 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-6R — Thyroid scoring architecture recovery
+
+**Status:** Complete  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance  
+
+### Delivered / ticked off
+- Recovery verification: failed P1-6 branch not merged; contamination artefacts absent from main.
+- Scoring architecture audit from code/tests: lab-range primitive exists but system orchestration requires six-band YAML blocks.
+- ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1 accepted: thyroid scoring blocked until scoring-engine architecture change.
+
+### Carry-forwards
+- Scoring-engine must gain governed lab-range-only biomarker membership pattern before hormonal policy sprint.
+- TSH kb52c launch authority and kb59 antibody inactivity unchanged.
+- FT3 low remains deferred/inactive.
+
+### Blockers / risks
+- P1-4 thyroid domain card remains blocked (scoring engine + TSH authority).
+- Adding hardcoded thyroid bands would repeat failed P1-6 anti-pattern.
+
+### Recommended next sprint
+- P1-SCORING-LAB-RANGE-ENGINE, then P1-SCORING-HORMONAL-POLICY, then TSH promotion governance, then P1-4 retry.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
