@@ -1,73 +1,56 @@
 ---
-work_id: P1-10
-branch: work/P1-10-pass3-launch-core-signal-intelligence-batch-a
+work_id: P1-11
+branch: work/P1-11-pass3-cbc-iron-oxygen-signal-intelligence-batch-b
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: CONTENT
 ---
 
-# P1-10 — Pass 3 Launch-Core Signal Intelligence Batch A
+# P1-11 — Pass 3 Signal Intelligence Batch B: CBC / Iron / Oxygen Frame-Adjudication Cohort
 
 ## Objective
 
-Promote a meaningful first batch of rich Pass 3 medical research into the governed HealthIQ AI signal-intelligence estate.
+Run the second Pass 3 signal-intelligence batch promotion sprint.
+
+This sprint focuses on the CBC / iron / oxygen-carrying-capacity research estate and must determine which related Pass 3 signal clusters can be safely promoted into governed non-runtime signal intelligence, and which must remain blocked or deferred because of unresolved frame authority.
 
 This sprint is part of the eight-block beta-readiness programme.
 
 It follows:
 
 ```text
-P1-7 — Research-to-runtime adequacy gate
-P1-8 — Scoring lab-range engine
-P1-9 — Pass 3 research-to-runtime exploitation map
+P1-9 — Pass 3 Research-to-Runtime Exploitation Map
+P1-10 — Pass 3 Launch-Core Signal Intelligence Batch A
 ```
 
-P1-9 established that the upstream Pass 3 research estate is rich, but a large part of that richness has not yet been promoted into governed signal intelligence, root-cause / WHY material, compiled-card support, scoring readiness, prose/explainer substrate, test coverage and runtime-readiness states.
+P1-10 established the reusable batch-promotion pattern:
 
-This sprint starts the batch-based promotion factory.
+```text
+Pass 3 investigation specs
+→ staged governed PSI artefacts
+→ compile manifests
+→ batch manifest
+→ build register entry
+→ no runtime activation
+```
 
-It must not become a one-marker micro-sprint.
-
-It must not become uncontrolled sitewide mass promotion.
-
-It must promote a sensible first cohort of related, high-value, launch-core or launch-adjacent signal clusters from Pass 3 into the appropriate governed signal-intelligence repository, with explicit inactive / blocked / review-required states where runtime activation is not yet safe.
+P1-11 must continue that pattern, using the specialist Knowledge Bus medical-intelligence promotion discipline.
 
 ## Strategic purpose
 
-HealthIQ AI’s defensible value is not simply that research exists.
+This sprint must continue batch-based Pass 3 ingestion without falling into micro-sprints.
 
-The strategic value is the repeatable, auditable production line that converts rich medical research into:
-
-```text
-governed signal intelligence
-safe activation conditions
-context requirements
-root-cause / WHY reasoning
-evidence and provenance
-scoring readiness
-prose/explainer substrate
-testable runtime artefacts
-```
-
-This sprint is the first production use of that promotion discipline.
-
-The business goal is to capture the richness of the Pass 3 research estate in a governed signal repository without prematurely exposing that intelligence to users.
-
-## Critical architectural rule
+The goal is to capture the richness of the CBC / iron / oxygen research estate while preserving medical safety, frame authority, and non-runtime staging.
 
 Promotion is not activation.
 
-This sprint may promote signal intelligence into governed repository structures.
+Do not make anything runtime-active.
 
-This sprint must not activate new runtime signals unless the existing governance model already allows that safely and the prompt explicitly permits it.
+Do not add production scoring policy.
 
-For this sprint, default all newly promoted or newly enriched signal intelligence to non-runtime-active states unless the existing repository schema requires a different explicit inactive state.
+Do not create or modify compiled runtime cards.
 
-Use repository-native state names only.
-
-Do not invent new lifecycle enums.
-
-If the required inactive / review / blocked state vocabulary is unclear, stop and report the blocker.
+Do not modify backend runtime, frontend, Gemini, parser, DTO, or domain assembler files.
 
 ## Branch and state checks
 
@@ -92,7 +75,7 @@ Confirm:
 Then create:
 
 ```powershell
-git switch -c work/P1-10-pass3-launch-core-signal-intelligence-batch-a
+git switch -c work/P1-11-pass3-cbc-iron-oxygen-signal-intelligence-batch-b
 ```
 
 Do not proceed if the working tree is dirty.
@@ -105,19 +88,18 @@ These files must exist on `main`:
 
 ```text
 docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
-docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md
-docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml
-docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md
-docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md
 docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
 docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
+docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
+docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 ```
 
 If any are missing, stop and report:
 
 ```text
-P1-10 prerequisite beta-readiness evidence is not present on main. P1-10 must not proceed.
+P1-11 prerequisite beta-readiness or governance evidence is not present on main. P1-11 must not proceed.
 ```
 
 ## First authority documents
@@ -128,82 +110,87 @@ Read these first, in this order:
 docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
 docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
 docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
-docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md
-docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml
-docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md
-docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md
+docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
+docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
+docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
+docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
+docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md
 docs/architecture/User Health to Systems Map_FINAL.md
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 ```
 
-The Pass 3 promotion protocol is included here because this sprint directly concerns research-to-signal promotion.
+Use the new `healthiq-knowledge-bus-medical-intelligence` agent rule if available.
 
-Do not list standard SOP files as authority documents in the deliverable unless a specific governance requirement cannot otherwise be located.
+If the agent rule is missing, continue under the approved sprint prompt, but record that the specialist agent rule was not available.
 
-## Authoritative signal repository discovery
+## Critical frame-adjudication gate
 
-Before writing any signal content, discover the authoritative signal-intelligence repository path and loader/validator.
+Before promoting any CBC / iron / oxygen signal intelligence, identify whether there are unresolved frame-authority conflicts.
 
-Search for:
+Search for and inspect evidence relating to:
 
 ```text
-promoted_signal_intelligence
-signal_intelligence
-signal intelligence
-activation_eligibility
-runtime_active
-signal_id
-signal_repository
-intelligence_model
-root_cause
-why
+CBC
+haematology
+hemoglobin
+haemoglobin
+hematocrit
+haematocrit
+RBC
+MCV
+MCH
+MCHC
+RDW
+platelets
+WBC
+neutrophils
+lymphocytes
+ferritin
+iron
+transferrin
+transferrin saturation
+TIBC
+UIBC
+oxygen carrying capacity
+anaemia
+anemia
+iron deficiency
+iron overload
+inflammation
+blood oxygen
 ```
 
-Inspect likely locations:
+Inspect relevant Pass 3 / investigation-spec files directly.
+
+Likely files may include, if present:
 
 ```text
-knowledge_bus/
-knowledge_bus/governance/
-knowledge_bus/compiled/
-knowledge_bus/manifests/
-backend/core/
-backend/core/knowledge/
-backend/core/analytics/
-backend/ssot/
-docs/architecture/
-docs/intelligence/
+knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+knowledge_bus/research/investigation_specs/multi_llm_research/iron_pass_3.json
+knowledge_bus/research/investigation_specs/multi_llm_research/Batch_*.json
 ```
 
-You must establish:
+Do not infer from filenames only.
+
+The sprint must classify each selected CBC / iron / oxygen cluster as one of:
 
 ```text
-- the authoritative file or files that represent promoted signal intelligence;
-- the schema or contract governing those files;
-- the validator, tests or loaders that consume them;
-- whether runtime currently consumes them;
-- whether they support inactive / blocked / review-required states;
-- whether a duplicate or legacy authority source exists.
+PROMOTE_TO_STAGED_PSI
+PROMOTE_PARTIAL_STAGED_PSI_WITH_BLOCKERS
+DEFER_FRAME_AUTHORITY_CONFLICT
+DEFER_MEDICAL_REVIEW_REQUIRED
+DEFER_INSUFFICIENT_SCHEMA_SUPPORT
+DEFER_NOT_BATCH_B_RELEVANT
 ```
 
-STOP if:
+Use these classifications only in the sprint report and Batch B manifest unless the governed artefact schema already supports them.
 
-```text
-- no authoritative signal repository can be identified;
-- multiple competing signal-intelligence authorities exist and no clear source of truth is documented;
-- there is no clear schema/contract for the target artefact;
-- adding entries would require inventing lifecycle states;
-- adding entries would make them runtime-active unintentionally.
-```
+Do not put unsupported classification fields into `promoted_signal_intelligence.yaml`.
 
-If stopped, produce the sprint report and build-register entry as Blocked. Do not create ad hoc signal files.
+## Batch B target scope
 
-## Batch A scope
-
-Use P1-9 to select the first batch.
-
-This batch should cover a meaningful cohort of high-value, launch-core or launch-adjacent research clusters, not individual isolated markers.
+Target a meaningful cohort, not a micro-sprint.
 
 Target size:
 
@@ -212,167 +199,142 @@ Minimum: 4 material clusters
 Maximum: 8 material clusters
 ```
 
-The intended Batch A candidates should be selected from P1-9’s highest-value unpromoted or partially promoted areas, prioritising:
+Candidate clusters to consider include, if supported by source research and repository evidence:
 
 ```text
-- launch-core relevance;
-- evidence richness in Pass 3;
-- downstream signal-intelligence gap;
-- scoring readiness or scoring-blocked clarity after P1-8;
-- ability to promote intelligence without runtime activation;
-- commercial value for HealthIQ’s systems-level interpretation.
+- haemoglobin low / oxygen-carrying-capacity pattern
+- haemoglobin high / concentration or erythrocytosis-context pattern
+- haematocrit high / low pattern
+- MCV low / microcytic-pattern context
+- MCV high / macrocytic-pattern context
+- RDW high / anisocytosis or mixed-pattern context
+- ferritin low / iron-store depletion context
+- ferritin high / inflammation or iron-overload-context pattern
+- transferrin saturation high / iron-overload-context pattern
+- transferrin saturation low / iron-availability context
+- platelet high / reactive-pattern context
+- platelet low / thrombocytopenia-context pattern
+- neutrophil high / inflammation or stress-response context
+- lymphocyte low / immune/stress-context pattern
 ```
 
-Expected candidate clusters to consider include, if supported by P1-9 and repository evidence:
+Do not force all of these into scope.
+
+Select the most coherent 4–8 clusters based on Pass 3 richness, launch-core relevance, downstream gap, and frame safety.
+
+If a cluster has unresolved frame authority, do not force promotion. Defer it and explain why.
+
+## Promotion target
+
+Use the same staging pattern as P1-10 unless the repository governance documents require a different pattern.
+
+Expected staged path:
 
 ```text
-- cardiovascular lipid / derived cluster
-- kidney / eGFR / creatinine / urea cluster
-- thyroid axis cluster
-- thyroid antibodies cluster
-- liver enzyme / liver stress cluster
-- homocysteine / one-carbon cluster
-- metabolic / glycaemic cluster if P1-9 identifies residual signal-depth gaps
-- CBC / iron / oxygen cluster only where frame authority does not block safe inactive promotion
+knowledge_bus/generated_pilot/p1_11_batch_b/
 ```
 
-Do not force all of these into the batch.
+Do not write directly into production package manifests unless explicitly required by the sprint and confirmed safe.
 
-Do not exceed the maximum batch size unless the report justifies why clusters are inseparable.
+Do not create a duplicate authority source.
 
-If the selected scope would become too large to preserve quality, stop after the first 4–6 highest-value clusters and record the remainder as Batch B carry-forward.
+If the authoritative PSI staging pattern from P1-10 is unavailable or invalid, stop and report.
 
-## Pass 3 depth requirement
+## Promotion rules
 
-For each selected cluster, inspect the related Pass 3 / investigation-spec research directly.
+For each selected cluster that is safe to promote, create staged, non-runtime PSI artefacts using the governed PSI schema.
 
-Do not rely only on:
+Each promoted PSI artefact must preserve, where the schema supports it:
 
 ```text
-- P1-9 summary
-- package files
-- compiled cards
-- estate index
-- runtime registers
-- previous sprint notes
+- stable signal identifier
+- source Pass 3 path and spec ID
+- biomarker(s)
+- directionality
+- activation concept
+- lab evidence requirements
+- context requirements
+- corroborating markers
+- contradiction / suppression conditions
+- non-diagnostic safety framing
+- root-cause / WHY substrate
+- system or subsystem mapping
+- evidence/provenance
 ```
 
-Use P1-9 as the map, but re-read the relevant Pass 3 source content for the selected Batch A clusters.
+Use repository-native schema vocabulary only.
 
-For each selected cluster, extract and preserve:
+Do not invent signal systems.
+
+Do not invent trigger directions.
+
+Do not use `signal_system: cardiovascular` if the PSI schema does not allow it.
+
+Do not use legacy `trigger_direction: both`; use valid vocabulary such as `bidirectional` or `context_dependent` where schema-supported.
+
+Do not add unsupported lifecycle fields to PSI.
+
+If readiness, runtime activation, medical-review, or scoring status cannot be stored in PSI, capture it in:
 
 ```text
-- biomarkers involved;
-- high/low/directional patterns;
-- biological rationale;
-- context requirements;
-- corroborating markers;
-- suppression/avoidance conditions;
-- safety cautions;
-- non-diagnostic wording constraints;
-- root-cause / WHY material;
-- system/subsystem mapping;
-- evidence/provenance references;
-- scoring implications;
-- prose/explainer implications;
-- whether runtime activation is safe, blocked, or deferred.
+- sprint report
+- Batch B manifest
+- compile manifest
 ```
 
-Do not flatten rich research into a one-line signal.
+## Runtime non-activation rule
 
-The purpose is to preserve usable medical intelligence, not merely to create a signal placeholder.
+All Batch B promoted artefacts must remain non-runtime-active.
 
-## Promotion principles
+Do not add production manifest opt-ins.
 
-For each selected cluster, create or enrich governed signal-intelligence entries according to the repository’s existing schema.
+Do not modify runtime loaders.
 
-Each promoted signal-intelligence entry must include, where the schema supports it:
+Do not modify compiled cards.
 
-```text
-- stable signal identifier;
-- source Pass 3 path/spec reference;
-- biomarker(s);
-- directionality;
-- activation concept;
-- required lab evidence;
-- contextual requirements;
-- corroborating markers;
-- suppression or non-activation conditions;
-- safety cautions;
-- root-cause / WHY explanation substrate;
-- system/subsystem mapping;
-- scoring readiness state;
-- medical-review status;
-- runtime visibility / activation state;
-- evidence/provenance;
-- test requirement or validation note.
-```
+Do not modify scoring policy.
 
-Use existing field names and schema conventions only.
+Do not modify backend runtime or frontend.
 
-Do not invent schema fields unless the existing schema explicitly allows extensions and the validator is updated accordingly.
-
-If schema extension is required, stop and report the proposed extension rather than implementing it in this sprint.
-
-## Runtime activation rule
-
-No newly promoted Batch A signal may become user-visible or runtime-active in this sprint.
-
-Default expected status:
-
-```text
-research-promoted / signal-intelligence-promoted / inactive / blocked / review-required
-```
-
-Use the repository’s real status terminology.
-
-If the only available status is runtime-active, stop.
+If a promotion would become runtime-consumed automatically, stop and report before writing it.
 
 ## Specific safety constraints
 
-Do not add diagnostic claims.
+Do not add diagnostic claims such as confirmed anaemia, iron deficiency, iron overload, infection, malignancy, bleeding, haemochromatosis, thrombocytopenia diagnosis, or immune disorder diagnosis.
+
+Use cautious educational wording only.
 
 Do not recommend treatment.
 
-Do not add user-facing prose that implies diagnosis.
+Do not add supplement or medication advice.
 
 Do not add global/default reference ranges.
 
-Do not override lab-provided reference ranges.
-
 Do not add placeholder scoring bands.
 
-Do not add new production scoring-policy entries.
+Do not override lab-provided reference ranges.
 
-Do not add thyroid production scoring.
-
-Do not activate FT3, FT4, TSH, thyroid antibody, eGFR, urea, lipid-derived or homocysteine signals unless a later sprint explicitly authorises activation.
-
-Do not change runtime interpretation behaviour.
+Do not infer symptoms unless present in source context.
 
 ## Permitted changes
 
 Expected product changes may include:
 
 ```text
-- governed signal-intelligence repository entries or enrichments, if the authoritative repository is identified;
-- associated signal-intelligence manifest entries, if required by the existing schema;
-- validation fixtures for the promoted signal-intelligence content, if the repository already has validation patterns;
-- documentation report;
-- build deliverable register entry.
+knowledge_bus/generated_pilot/p1_11_batch_b/
+docs/sprints/beta_readiness/P1-11_pass3_cbc_iron_oxygen_signal_intelligence_batch_b.md
+docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml
+docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+automation_bus/
 ```
 
-Expected documentation deliverables:
+Within `knowledge_bus/generated_pilot/p1_11_batch_b/`, expected artefacts may include:
 
 ```text
-docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
-docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+- batch compile manifest index
+- package-scoped promoted_signal_intelligence.yaml files
+- package-scoped compile_manifest.yaml files
 ```
-
-The manifest is a planning/audit artefact unless the existing repository contract says otherwise.
-
-Do not place the manifest in a runtime path.
 
 ## Prohibited changes
 
@@ -382,129 +344,118 @@ Do not modify:
 frontend/
 Gemini paths
 fallback parser paths
-backend/core/analytics/domain_score_assembler.py
-backend/core/analytics/domain_narrative_wave1.py
-backend/core/analytics/wave1_subsystem_evidence.py
-backend/core/dto/persisted_replay_contract_v1.py
-backend/core/knowledge/health_system_card_evidence.py
+backend/core/
 backend/ssot/scoring_policy.yaml
-knowledge_bus/source package files
-Pass 3 source files
-compiled health-system cards
-compiled subsystem cards
 runtime DTO contracts
-```
-
-Do not modify:
-
-```text
+domain assemblers
+narrative assemblers
+compiled runtime cards
+production package manifests
+Pass 3 source files
+investigation-spec source files
+Knowledge Bus source package files outside the approved staged Batch B target
 docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
 docs/AUTHORITY_MAP.md
 ```
-
-Do not create a duplicate signal repository.
-
-Do not create a parallel authority file because the real target was hard to find.
 
 ## Required deliverable 1 — Sprint report
 
 Create:
 
 ```text
-docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
+docs/sprints/beta_readiness/P1-11_pass3_cbc_iron_oxygen_signal_intelligence_batch_b.md
 ```
 
-Use this structure exactly:
+Use this structure:
 
 ```markdown
-# P1-10 — Pass 3 Launch-Core Signal Intelligence Batch A
+# P1-11 — Pass 3 Signal Intelligence Batch B: CBC / Iron / Oxygen Frame-Adjudication Cohort
 
 ## 1. Executive summary
 - why this sprint was run
-- what Batch A promoted
-- whether the authoritative signal repository was found
+- what Batch B promoted
+- what was deferred
+- whether frame authority blocked any clusters
 - whether runtime activation remains unchanged
-- estate-level value delivered
 - recommended next sprint
 
 ## 2. Programme context
 - relationship to eight-block beta-readiness
-- relationship to P1-7
-- relationship to P1-8
 - relationship to P1-9
-- why this sprint is batch-based rather than one-marker-at-a-time
+- relationship to P1-10
+- why this is batch-based rather than one-marker-at-a-time
 
-## 3. Signal repository discovery
-- paths searched
-- authoritative signal repository found
-- loader/validator found
-- schema/contract found
-- duplicate/legacy authority check
-- STOP concerns, if any
+## 3. Source research inspected
+For each Pass 3 file/spec inspected:
+- path
+- spec IDs
+- biomarkers/patterns
+- source themes
+- limitations
 
-## 4. Batch A selection rationale
+## 4. Frame-adjudication findings
+For each considered cluster:
+- frame authority status
+- selected classification
+- reason for promote/defer
+- safety constraints
+
+## 5. Batch B selection rationale
 - clusters considered
 - clusters selected
 - clusters deferred
 - why this is the right-sized batch
-- why this is not uncontrolled mass promotion
-
-## 5. Pass 3 source inspection
-For each selected cluster:
-- Pass 3 files/specs inspected
-- biomarkers/patterns found
-- rich research themes extracted
-- limitations
 
 ## 6. Promotion implementation
-For each selected cluster:
-- signal intelligence created or enriched
-- source evidence path
-- state/status applied
+For each promoted cluster:
+- PSI artefact path
+- compile manifest path
+- source evidence path/spec ID
 - runtime activation state
-- scoring readiness state
-- medical-review state
 - system/subsystem mapping
-- root-cause / WHY material captured
-- prose/explainer substrate captured
-- tests/validation implications
+- safety framing
+- downstream gaps
 
-## 7. Safety and non-activation confirmation
+## 7. Deferred clusters
+For each deferred cluster:
+- reason for deferral
+- blocker type
+- what is needed next
+
+## 8. Safety and non-activation confirmation
 Confirm:
 - no runtime activation
-- no frontend/Gemini change
 - no scoring_policy change
+- no backend/core change
+- no frontend/Gemini/parser change
+- no DTO/domain assembler change
 - no compiled card change
-- no DTO change
+- no production package manifest change
 - no Pass 3 source change
-- no Knowledge Bus source package change
+- no diagnostic/treatment claims
 - no global/default ranges
 - no placeholder bands
-- no diagnostic or treatment claims
 
-## 8. Validation
-- validators run
+## 9. Validation
+- PSI validators run
 - YAML parse checks
-- repository-specific validation
 - git diff checks
 - limitations
 
-## 9. Business value delivered
+## 10. Business value delivered
 Explain:
+- how this improves the blood / iron / oxygen signal estate
 - how much Pass 3 richness was captured
-- why Batch A improves HealthIQ’s defensibility
-- how this improves the signal estate without exposing unsafe runtime behaviour
-- what future batches can now copy as a pattern
+- why staged promotion improves defensibility without unsafe activation
 
-## 10. Carry-forwards
-- clusters deferred to Batch B
-- blockers requiring medical review
-- blockers requiring frame adjudication
-- blockers requiring scoring policy
-- blockers requiring prose/WHY uplift
-- blockers requiring runtime integration
+## 11. Carry-forwards
+- deferred clusters for Batch C or medical review
+- frame-authority decisions needed
+- scoring-policy needs
+- prose/WHY needs
+- runtime integration needs
 
-## 11. Recommended next sprint
+## 12. Recommended next sprint
 Recommend the next sprint with:
 - title
 - risk_level
@@ -514,36 +465,31 @@ Recommend the next sprint with:
 - rationale
 ```
 
-## Required deliverable 2 — Batch A manifest
+## Required deliverable 2 — Batch B manifest
 
 Create:
 
 ```text
-docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
+docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml
 ```
 
 Use this structure:
 
 ```yaml
-work_id: P1-10
+work_id: P1-11
 classification_date: <YYYY-MM-DD>
 source_authorities:
   - path: <path>
     role: <role>
-signal_repository:
-  authoritative_path: <path>
-  schema_or_contract_path: <path>
-  validator_or_loader_path: <path>
-  runtime_consumed: true | false | unknown
 batch:
-  name: Pass 3 Launch-Core Signal Intelligence Batch A
-  selection_basis:
-    - <reason>
-  clusters_selected: <number>
-  clusters_deferred: <number>
+  name: Pass 3 Signal Intelligence Batch B — CBC / Iron / Oxygen
+  selected_clusters: <number>
+  deferred_clusters: <number>
+  promoted_psi_files: <number>
 clusters:
   - id: <stable_cluster_slug>
     name: <human readable cluster name>
+    batch_classification: PROMOTE_TO_STAGED_PSI | PROMOTE_PARTIAL_STAGED_PSI_WITH_BLOCKERS | DEFER_FRAME_AUTHORITY_CONFLICT | DEFER_MEDICAL_REVIEW_REQUIRED | DEFER_INSUFFICIENT_SCHEMA_SUPPORT | DEFER_NOT_BATCH_B_RELEVANT
     source_pass3_paths:
       - <path>
     source_spec_ids:
@@ -555,28 +501,25 @@ clusters:
     subsystem_mapping:
       - <subsystem>
     promotion_action: created | enriched | deferred | blocked
-    signal_repository_entries:
-      - <signal_id_or_entry_path>
+    staged_psi_paths:
+      - <path>
+    compile_manifest_paths:
+      - <path>
     runtime_activation_state: inactive | blocked | review_required | not_runtime_consumed | unknown
-    scoring_readiness: ready | partial | blocked | deferred | not_applicable | unknown
-    medical_review_status: reviewed | partial | required | blocked | unknown
     downstream_gaps:
       - <gap>
     evidence_paths:
       - <path>
     recommended_next_action: <short action>
-deferred_clusters:
-  - id: <stable_cluster_slug>
-    reason: <reason>
 validation:
-  yaml_parse: pass | fail | not_run
-  repository_validator: pass | fail | not_run | not_found
+  manifest_yaml_parse: pass | fail | not_run
+  psi_validator: pass | fail | partial | not_run | not_found
   runtime_activation_check: pass | fail | not_run
 ```
 
-The manifest must describe what was promoted and what was deferred.
+The manifest is a planning and audit artefact.
 
-It must not be consumed by runtime unless an existing documented contract already says that this path is consumed.
+It must not be consumed by runtime.
 
 ## Required deliverable 3 — Build deliverable register update
 
@@ -589,7 +532,7 @@ docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 Append a short entry:
 
 ```markdown
-## P1-10 — Pass 3 launch-core signal intelligence Batch A
+## P1-11 — Pass 3 CBC / iron / oxygen signal intelligence Batch B
 
 **Status:** Complete / Partial / Blocked  
 **Date closed:** <YYYY-MM-DD>  
@@ -597,7 +540,7 @@ Append a short entry:
 
 ### Delivered / ticked off
 - <what this sprint completed against the beta-readiness programme>
-- <major signal-intelligence promotion outcome>
+- <major Batch B promotion or frame-adjudication outcome>
 
 ### Carry-forwards
 - <what still needs to be done later>
@@ -614,9 +557,9 @@ Keep the entry short.
 
 Do not list every file touched.
 
-Do not duplicate the full report.
+Do not duplicate the sprint report.
 
-## Required validation
+## Validation
 
 Run:
 
@@ -626,41 +569,41 @@ git diff --name-only
 git status --short
 ```
 
-Validate any changed YAML files with a PowerShell-compatible Python command.
-
-At minimum:
+Validate the Batch B manifest YAML:
 
 ```powershell
-python -c "import yaml; from pathlib import Path; p=Path('docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml'); data=yaml.safe_load(p.read_text(encoding='utf-8')); assert data['work_id']=='P1-10'; assert 'clusters' in data; print('P1-10 Batch A manifest YAML parsed successfully')"
+python -c "import yaml; from pathlib import Path; p=Path('docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml'); data=yaml.safe_load(p.read_text(encoding='utf-8')); assert data['work_id']=='P1-11'; assert 'clusters' in data; print('P1-11 Batch B manifest YAML parsed successfully')"
 ```
 
-Run any existing repository validators for the signal-intelligence artefact.
+Run the PSI validator against every new or changed `promoted_signal_intelligence.yaml`.
 
-If no validator exists, record this clearly.
+Do not rely only on self-asserted PASS fields in compile manifests.
 
-If a validator exists and fails, stop and report failure.
+Capture the exact validator command and output for all changed PSI files.
 
-Run targeted tests only if signal repository changes are covered by tests.
+If any validator fails, stop and report failure.
 
-Do not run broad unrelated suites unless necessary.
+If no validator exists, record this clearly and use YAML/schema/manual checks.
 
 ## Runtime non-activation validation
 
-Prove that runtime activation did not change.
-
-At minimum, report:
+Confirm:
 
 ```text
-- git diff --name-only
-- whether backend runtime files changed
-- whether scoring_policy.yaml changed
-- whether compiled cards changed
-- whether DTO/replay contracts changed
-- whether frontend/Gemini/fallback parser paths changed
-- whether any runtime-active flags were introduced or changed
+- no backend/core files changed
+- no backend/ssot/scoring_policy.yaml change
+- no frontend files changed
+- no Gemini or fallback parser files changed
+- no runtime DTO or assembler files changed
+- no compiled cards changed
+- no production package manifests changed
+- no Pass 3 source files changed
+- no staged PSI artefact is runtime-active
 ```
 
-If the repository uses explicit `runtime_active`, `activation_status`, `visibility`, or similar fields, search the diff and report all status changes.
+If compile manifests include `runtime_active`, confirm all are `false`.
+
+If PSI files include any runtime or visibility field, report all values.
 
 ## Required final report
 
@@ -669,20 +612,20 @@ Return:
 ```text
 - branch name
 - main SHA baseline
-- authoritative signal repository path found
-- schema/contract path found
-- validator/loader path found
-- Batch A clusters selected
+- specialist agent availability
+- source Pass 3 files/specs inspected
+- clusters considered
+- clusters promoted
 - clusters deferred
+- frame-authority blockers
 - files changed
-- whether runtime activation changed
+- runtime activation status
+- PSI validator commands and outputs
+- manifest YAML parse result
+- whether production package manifests changed
 - whether scoring_policy.yaml changed
 - whether backend/frontend/runtime files changed
 - whether Pass 3 source files changed
-- whether Knowledge Bus source packages changed
-- validation run and results
-- signal repository validator result, if any
-- manifest YAML parse result
 - recommended next sprint
 - git diff --stat
 - git diff --name-only
@@ -696,45 +639,45 @@ Do not merge until Claude audit, GPT architectural review and human approval.
 This sprint is complete only if:
 
 ```text
-1. The authoritative signal-intelligence repository path is identified, or the sprint stops as Blocked.
+1. CBC / iron / oxygen Pass 3 source research is directly inspected.
 
-2. The schema/contract and loader/validator status are documented.
+2. Frame authority is assessed before promotion.
 
-3. A meaningful Batch A cohort is selected from P1-9 findings.
+3. A meaningful Batch B cohort is considered.
 
-4. The batch includes multiple material clusters unless blocked by repository authority discovery.
+4. Safe clusters are promoted to staged, non-runtime PSI artefacts.
 
-5. Selected clusters are grounded in direct Pass 3 source inspection.
+5. Unsafe or conflicted clusters are deferred, not forced.
 
-6. Signal intelligence is created or enriched only in the governed repository.
+6. No runtime activation occurs.
 
-7. No duplicate or ad hoc signal repository is created.
+7. No production scoring policy is changed.
 
-8. Newly promoted/enriched signal intelligence is not made runtime-active.
+8. No backend/core, frontend, Gemini, parser, DTO, assembler or compiled-card files are changed.
 
-9. No production scoring policy is changed.
+9. No production package manifest is changed.
 
-10. No frontend, Gemini, fallback parser, DTO, compiled card or domain assembler file is changed.
+10. No Pass 3 or investigation-spec source file is changed.
 
-11. No Pass 3 source file is changed.
+11. PSI files use governed schema vocabulary only.
 
-12. No Knowledge Bus source package is changed.
+12. No unsupported lifecycle fields are inserted into PSI.
 
-13. Batch A report exists at:
-    docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
+13. No diagnostic or treatment claims are added.
 
-14. Batch A manifest exists at:
-    docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
+14. No global/default ranges or placeholder scoring bands are added.
 
-15. Build deliverable register is updated with a short P1-10 entry.
+15. PSI validator is run against every new or changed PSI file.
 
-16. YAML validation passes for the manifest.
+16. Batch B report exists at:
+    docs/sprints/beta_readiness/P1-11_pass3_cbc_iron_oxygen_signal_intelligence_batch_b.md
 
-17. Existing signal repository validator passes if one exists.
+17. Batch B manifest exists at:
+    docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml
 
-18. Runtime non-activation is explicitly confirmed.
+18. Build deliverable register is updated with a short P1-11 entry.
 
-19. The final report recommends the next batch or STOP-gated sprint.
+19. Manifest YAML validation passes.
 
 20. Final report includes validation output and clean git status.
 ```

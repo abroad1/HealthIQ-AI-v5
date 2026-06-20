@@ -1,5 +1,5 @@
 {
-  "work_id": "P1-10",
+  "work_id": "P1-11",
   "status": "HARDENED",
   "bus_version": "1.3.1",
   "hardened_utc": "2026-06-20T00:00:00Z",
@@ -8,108 +8,131 @@
     {
       "check": "front_matter.work_id",
       "result": "PASS",
-      "finding": "CONFIRMED — work_id 'P1-10' present.",
+      "finding": "CONFIRMED — work_id 'P1-11' present.",
       "citation": "automation_bus/latest_cursor_prompt.md:2"
     },
     {
       "check": "front_matter.branch",
       "result": "PASS",
-      "finding": "CONFIRMED — branch 'work/P1-10-pass3-launch-core-signal-intelligence-batch-a' present. Cursor must switch to main, pull, confirm clean, then create this branch before any file modification.",
+      "finding": "CONFIRMED — branch 'work/P1-11-pass3-cbc-iron-oxygen-signal-intelligence-batch-b' present. Cursor must start from main, confirm clean working tree, then create this branch before modifying any files.",
       "citation": "automation_bus/latest_cursor_prompt.md:3"
     },
     {
       "check": "front_matter.risk_level",
-      "result": "PASS — WITH FINDING",
-      "finding": "CONFIRMED HIGH declared. FINDING (non-blocker): By SOP v1.3.1 §10, the strict HIGH triggers (Intelligence Core, backend/ssot/, backend/core/pipeline/, backend/core/analytics/, control-plane scripts) are not triggered here — promoted_signal_intelligence.yaml files are explicitly deferred from runtime by ARCH-RT-5E and are not consumed by launch-critical Intelligence Core paths. However, the conservative HIGH classification is defensible: it gates the batch promotion behind Claude audit + GPT architectural review + dual approval before any PSI content lands. Cursor must not reduce the risk level.",
-      "citation": "automation_bus/latest_cursor_prompt.md:4; backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py:1-34; SOP v1.3.1 §10"
+      "result": "PASS",
+      "finding": "CONFIRMED HIGH declared. Consistent with P1-10 precedent (same KB promotion pattern). The strict SOP §10 technical HIGH triggers (Intelligence Core, backend/ssot/, backend/core/pipeline/, etc.) are not triggered — generated_pilot artefacts are explicitly deferred from runtime. The conservative HIGH classification is defensible: it gates Batch B behind Claude audit + GPT architectural review + dual approval before any PSI content lands. Cursor must not reduce the risk level.",
+      "citation": "automation_bus/latest_cursor_prompt.md:4; knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/compile_manifest.yaml:8 (pilot_status: promoted_signal_intelligence_non_runtime); SOP v1.3.1 §10"
     },
     {
       "check": "front_matter.execution_model",
       "result": "PASS",
       "finding": "CONFIRMED — TWO_PHASE_START_FINISH.",
-      "citation": "automation_bus/latest_cursor_prompt.md:5"
+      "citation": "automation_bus/latest_cursor_prompt.md:4"
     },
     {
       "check": "front_matter.change_type",
       "result": "PASS",
-      "finding": "CONFIRMED CONTENT. The promoted_signal_intelligence.yaml files this sprint creates are explicitly deferred from runtime by ARCH-RT-5E (enforced by test). The test at backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py:28-34 asserts that no launch-critical module imports the PSI loader, and the authority manifest classifies PSI wiring as 'deferred_non_launch_blocker'. Adding new PSI YAML entries does not change Intelligence Core emitted reasoning. CONTENT is correct.",
-      "citation": "automation_bus/latest_cursor_prompt.md:6; backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py:1-3 ('PSI launch decision: deferred; launch-critical paths must not import PSI loader'); SOP §4 change_type definitions"
+      "finding": "CONFIRMED CONTENT. Sprint creates only YAML artefacts (PSI files, compile manifests, batch manifest) and Markdown (sprint report, register update). All promoted PSI files remain runtime_active: false. No Intelligence Core code, scoring policy, or runtime loaders are modified.",
+      "citation": "automation_bus/latest_cursor_prompt.md:5; knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/compile_manifest.yaml:6 (pilot_status: promoted_signal_intelligence_non_runtime); SOP v1.3.1 §4 CONTENT definition"
     },
     {
       "check": "stage_2a.prerequisites_all_present",
       "result": "PASS",
-      "finding": "CONFIRMED — all 8 prerequisite files verified present on main via Glob.",
-      "paths_verified": [
-        "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md — EXISTS",
-        "CONFIRMED: docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — EXISTS"
-      ]
-    },
-    {
-      "check": "stage_2a.first_authority_documents_present",
-      "result": "PASS",
-      "finding": "CONFIRMED — all first-authority documents verified present, including the corrected promotion protocol path.",
+      "finding": "CONFIRMED — all 7 prerequisite files verified present on main via Glob.",
       "paths_verified": [
         "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md — EXISTS",
-        "CONFIRMED: docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md — EXISTS",
-        "CONFIRMED: docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md — EXISTS",
-        "CONFIRMED: docs/architecture/User Health to Systems Map_FINAL.md — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — EXISTS",
-        "CONFIRMED: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — EXISTS (corrected from root-level path; fix applied at latest_cursor_prompt.md:138)"
+        "CONFIRMED: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — EXISTS"
       ]
     },
     {
-      "check": "stage_2a.signal_repository_identified",
-      "result": "CONFIRMED — WITH HARDENING NOTES",
-      "finding": "CONFIRMED. The authoritative promoted signal intelligence repository is the knowledge_bus/packages/ directory tree. Each package directory may contain an optional promoted_signal_intelligence.yaml, opted-in via the 'promoted_signal_intelligence:' key in package_manifest.yaml. Schema authority: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml (status: LOCKED, version 1.0.0). Validator: backend/scripts/validate_promoted_signal_intelligence.py (exists). Loader: backend/core/knowledge/load_promoted_signal_intelligence.py (exists). Runtime status: NOT CONSUMED — ARCH-RT-5E deferred PSI from runtime (enforced by test). HARDENING NOTE 1: The PSI schema (LOCKED) does NOT contain lifecycle fields (runtime_activation_state, medical_review_status, scoring_readiness). These live in package_manifest.yaml (e.g. governance_runtime_activation_status: runtime_active_canonical). Cursor must not add these fields to promoted_signal_intelligence.yaml — the sprint report and Batch A manifest YAML are the correct artefacts for tracking lifecycle states per cluster. If the existing PSI schema cannot accommodate a required field, Cursor must stop and report, not extend the schema unilaterally. HARDENING NOTE 2: signal_system_allowed values are: metabolic, lipid_transport, hepatic, inflammatory, renal, vascular, hematologic, hormonal, mitochondrial, endocrine, bone, mineral, nutritional, other. 'cardiovascular' is NOT allowed. Cursor must map: cardiovascular lipid cluster → lipid_transport; kidney/eGFR → renal; thyroid → endocrine or hormonal; liver → hepatic; homocysteine/one-carbon → vascular. HARDENING NOTE 3: trigger_direction legacy value 'both' is obsolete — use bidirectional or context_dependent only.",
-      "citation": "knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml:1-14 (LOCKED); knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml:64-79 (signal_system_allowed); knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/package_manifest.yaml:8 (promoted_signal_intelligence opt-in pattern); knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/package_manifest.yaml:17 (governance_runtime_activation_status); backend/core/knowledge/load_promoted_signal_intelligence.py:15-40; backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py:1-3"
+      "check": "stage_2a.source_research_content_verified",
+      "result": "CONFIRMED — SOURCE CONTENT READ",
+      "finding": "CONFIRMED. Primary CBC source read in full (first 1718 of 3568 lines) plus all spec IDs grepped. transferrin_pass_3.json read in full. Relevant batch files grepped for CBC/iron/oxygen spec IDs. Findings: (1) cbc_hematology_pass_3.json contains 22 spec IDs covering mch (×2), mchc (×2), rdw_cv (×2), rdw_sd (×2), monocyte_pct (×2), monocytes_abs (×3), mpv (×2), pdw (×1), neutrophil_pct (×2), rbc (×4). Uses investigation_spec_contract_version: 3.0.0. signal_system: 'hematologic' throughout — matches PSI schema allowed values. trigger_direction values: 'high' or 'low' only — no obsolete 'both'. (2) transferrin_pass_3.json contains 3 spec IDs: inv_transferrin_high_iron_deficiency_transport_upregulation, inv_transferrin_low_inflammatory_negative_acute_phase_suppression, inv_transferrin_low_visceral_protein_depletion_or_synthetic_failure. (3) Batch_3_Pass_3.json: hematocrit (×3), lymphocyte_pct (×2), lymphocytes_abs (×2). (4) Batch_4_Pass_3.json: inv_ferritin_low_iron_store_depletion, inv_ferritin_high_iron_overload_context, inv_ferritin_high_inflammatory_hyperferritinemia. (5) Batch_6_Pass_3.json: inv_mcv_high_megaloblastic_macrocytosis, inv_mcv_high_nonmegaloblastic_macrocytosis, inv_mcv_low_microcytosis_iron_deficiency; plus lym_low/lym_high. (6) Batch_7_Pass_3.json: wbc (×3). CRITICAL FINDING: NO hemoglobin (hgb) or haemoglobin spec found in any Pass_3 file inspected. Candidate clusters 'haemoglobin low / oxygen-carrying-capacity' and 'haemoglobin high / erythrocytosis-context' have NO source research available. These clusters MUST be classified as DEFER_INSUFFICIENT_SCHEMA_SUPPORT and explicitly reported. Cursor must not invent hemoglobin spec content from memory.",
+      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json:1-1718 (partial read); grep spec_id results for all batch files; knowledge_bus/research/investigation_specs/multi_llm_research/transferrin_pass_3.json:1-540 (full read)"
     },
     {
-      "check": "stage_2a.p1_9_matrix_cross_reference",
-      "result": "CONFIRMED — SOURCE READ",
-      "finding": "CONFIRMED. P1-9 exploitation matrix read in full (650 lines). 18 items; 2 fully promoted, 13 unpromoted or partial, 3 blocked. Viable Batch A candidates from highest-value unpromoted areas: pass3_lipid_derived_cluster (RESEARCH_PRESENT_SIGNAL_INTELLIGENCE_MISSING, cardiovascular, signal intelligence missing, research Strong), pass3_liver_enzyme_batch_cluster (PROMOTED_HIDDEN_MED_REV1, Batch 4+5, medical_review Blocked — no activation change permitted), pass3_homocysteine_cv_cluster (PROMOTED_HIDDEN_MED_REV1, Batch 6, MED-REV-1 hidden), pass3_cardiovascular_vascular_strain (PROMOTED_HIDDEN_MED_REV1, Batch 4, MED-REV-1 hidden), pass3_kidney_egfr_cluster (RESEARCH_PRESENT_SCORING_BLOCKED — scoring deferred but PSI creation viable if no activation). Thyroid axis and antibody clusters are blocked or governance-conflicted — appropriate to defer. CBC/iron/neutrophil clusters carry frame adjudication blocks.",
-      "citation": "docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml:107-650 (full read)"
+      "check": "stage_2a.p1_10_staging_pattern_confirmed",
+      "result": "CONFIRMED",
+      "finding": "CONFIRMED. P1-10 compile manifest index and one representative PSI + compile_manifest read. Established pattern: (a) target root: knowledge_bus/generated_pilot/p1_11_batch_b/; (b) per-cluster subdirectory named pkg_<id>_<signal>_<pattern>/; (c) each contains promoted_signal_intelligence.yaml + compile_manifest.yaml; (d) batch root contains p1_11_batch_b_compile_manifest_index_v1.yaml; (e) all entries: runtime_active: false, governance_runtime_activation_status: inactive_promoted_batch_b; (f) PSI must include translation block with work_id: P1-11 and source fields; (g) promoted_signal_intelligence_contract_version: 1.0.0 required; (h) schema_version: 1.0.0 required.",
+      "citation": "knowledge_bus/generated_pilot/p1_10_batch_a/p1_10_batch_a_compile_manifest_index_v1.yaml:1-123; knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/promoted_signal_intelligence.yaml:1-9 (contract/schema version, translation block); knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/compile_manifest.yaml:1-18"
+    },
+    {
+      "check": "stage_2a.psi_schema_vocabulary_confirmed",
+      "result": "CONFIRMED",
+      "finding": "CONFIRMED. Schema read in full. Status: LOCKED. Key constraints: (1) signal_system_allowed includes 'hematologic' — all CBC/iron/oxygen signals correctly map here. (2) trigger_direction_allowed: high, low, bidirectional, context_dependent — 'both' is obsolete and must never appear. (3) Forbidden root keys: hypotheses, hypothesis_ranking, narrative, rendering, presentation, display, report_layout, ui_hints — investigation spec hypotheses must NOT be carried into PSI. (4) Required signal fields: signal_id, research_domain, signal_system, primary_metric, trigger_direction, activation, states, supporting_markers, contradiction_markers, missing_data, confidence, override_rules, evidence, confirmatory_test_refs. All derivable from investigation spec v3 source content. (5) Lifecycle fields (runtime_activation_state, medical_review_status, scoring_readiness) are NOT in the PSI schema — they belong in compile_manifest.yaml, sprint report, and Batch B manifest. Cursor must not add these to promoted_signal_intelligence.yaml.",
+      "citation": "knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml:1-174 (full read)"
+    },
+    {
+      "check": "stage_2a.psi_validator_confirmed",
+      "result": "CONFIRMED",
+      "finding": "CONFIRMED. backend/scripts/validate_promoted_signal_intelligence.py EXISTS. Must be run against every new or changed promoted_signal_intelligence.yaml file. Output must be recorded in sprint report §9 and final report. If validator is not found at runtime or fails, Cursor must stop and report failure — must not mark validation PASS via self-assertion.",
+      "citation": "backend/scripts/validate_promoted_signal_intelligence.py (Glob confirmed)"
+    },
+    {
+      "check": "stage_2a.transferrin_existing_packages_noted",
+      "result": "CONFIRMED — INFORMATIONAL",
+      "finding": "CONFIRMED. Three existing transferrin packages found in knowledge_bus/packages/: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation, pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression, pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure. Each contains research_brief.yaml, signal_library.yaml, package_manifest.yaml but NO promoted_signal_intelligence.yaml. Batch B may create PSI for these in the staged generated_pilot output — this does NOT create duplicate authority because the PSI is non-runtime and staged separately. Cursor should NOT modify the existing package_manifest.yaml files in knowledge_bus/packages/ unless specifically required to add the opt-in field.",
+      "citation": "knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/ (Glob scan); docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml:73-105 (pass3_transferrin_cluster entry)"
+    },
+    {
+      "check": "stage_2a.specialist_agent_rule_status",
+      "result": "CONFIRMED — FLAG",
+      "finding": "CONFIRMED. The healthiq-knowledge-bus-medical-intelligence.mdc agent rule EXISTS at .cursor/rules/healthiq-knowledge-bus-medical-intelligence.mdc in the project workspace (untracked per git status — not yet committed to main). Cursor CAN use it as a local workspace rule (Cursor reads .cursor/rules/ at startup). HARDENING FLAG: This file MUST NOT be committed to the sprint branch. It is a tooling/IDE configuration file analogous to .vscode/ — SOP v1.3.1 non-negotiable prohibits tooling-file leakage into governed sprint branches. Stage 4A closure must confirm .cursor/rules/healthiq-knowledge-bus-medical-intelligence.mdc is NOT staged or committed. If git status shows it as staged, unstage it before running finish.",
+      "citation": ".cursor/rules/healthiq-knowledge-bus-medical-intelligence.mdc:1-30 (confirmed exists, untracked); git status output (?? .cursor/rules/healthiq-knowledge-bus-medical-intelligence.mdc); SOP v1.3.1 non-negotiables (no tooling-file leakage)"
     },
     {
       "check": "stage_2a.no_duplicate_authority_sources",
       "result": "PASS",
-      "finding": "CONFIRMED. Single PSI schema: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml. Single validator: backend/scripts/validate_promoted_signal_intelligence.py. Single loader: backend/core/knowledge/load_promoted_signal_intelligence.py. No competing signal-intelligence authority source detected.",
-      "citation": "knowledge_bus/schema/ (Glob scan); backend/core/knowledge/ (Grep scan)"
+      "finding": "CONFIRMED. Single PSI schema: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml (LOCKED). Single validator: backend/scripts/validate_promoted_signal_intelligence.py. Single compile manifest schema: knowledge_bus/schema/compile_manifest_schema_v1.yaml. Staged Batch B output at generated_pilot/p1_11_batch_b/ is a NEW directory — no prior entries exist there. No competing authority detected.",
+      "citation": "knowledge_bus/schema/ (Glob scan); knowledge_bus/generated_pilot/ (Glob scan)"
     },
     {
       "check": "stage_2a.prohibited_files_confirmed_outside_scope",
       "result": "PASS",
-      "finding": "CONFIRMED. All strictly prohibited paths (frontend/, Gemini paths, fallback parsers, backend/core/analytics/domain_score_assembler.py, domain_narrative_wave1.py, wave1_subsystem_evidence.py, backend/core/dto/persisted_replay_contract_v1.py, backend/core/knowledge/health_system_card_evidence.py, backend/ssot/scoring_policy.yaml, Pass 3 source files, compiled health-system cards, compiled subsystem cards, runtime DTO contracts, strategy baseline, AUTHORITY_MAP) are all outside the declared permitted write scope. Permitted writes: knowledge_bus/packages/*/promoted_signal_intelligence.yaml (new files in existing packages), package_manifest.yaml updates for PSI opt-in key only where required, docs/sprints/beta_readiness/P1-10_*.md, docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml, docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md.",
+      "finding": "CONFIRMED. All prohibited paths (frontend/, Gemini, fallback parsers, backend/core/, backend/ssot/scoring_policy.yaml, runtime DTO contracts, domain/narrative assemblers, compiled runtime cards, production package manifests, Pass 3 source files, investigation-spec source files, docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md, docs/AUTHORITY_MAP.md) are well outside the declared permitted write scope. Permitted writes limited to: knowledge_bus/generated_pilot/p1_11_batch_b/, docs/sprints/beta_readiness/P1-11_*.md, docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml, docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md (append only), automation_bus/.",
       "citation": "automation_bus/latest_cursor_prompt.md:§Prohibited changes"
     },
     {
       "check": "stage_2a.validation_command_powershell_compatible",
       "result": "PASS",
-      "finding": "CONFIRMED. The Python validation one-liner uses double-quote outer delimiter with single-quote Python string literals inside — PowerShell compatible. Asserts work_id=='P1-10' and 'clusters' in data. Repository validator (validate_promoted_signal_intelligence.py) exists and must be run against each new PSI file.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Required validation"
-    },
-    {
-      "check": "stop_conditions.check",
-      "result": "PASS — NO STOP CONDITIONS TRIGGERED",
-      "finding": "CONFIRMED. (1) All 8 prerequisites present on main. (2) Promotion protocol authority document found at corrected path. (3) PSI schema, validator, and loader all identified. (4) No duplicate or competing signal-intelligence authority. (5) Viable Batch A clusters identified from P1-9 without inventing lifecycle enums. (6) PSI schema supports inactive promotion (ARCH-RT-5E defers from runtime by default). (7) Deliverable write paths are clear and non-intersecting with prohibited files. Sprint is executable.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§STOP conditions"
+      "finding": "CONFIRMED. The Python manifest validation one-liner in the prompt uses double-quote outer delimiter with single-quote Python string literals inside — PowerShell 5.1 compatible. Asserts work_id=='P1-11' and 'clusters' in data.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Validation one-liner"
     },
     {
       "check": "no_op_protection",
       "result": "PASS",
-      "finding": "CONFIRMED. P1-9 established that 13 of 18 Pass 3 clusters are unpromoted or partial. The signal intelligence estate for clusters such as lipid_derived, homocysteine_cv, liver_enzyme, vascular_strain, and kidney_egfr lacks governed PSI artefacts. This is not a no-op.",
-      "citation": "docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml:26-30 (summary: unpromoted_or_partial_count: 13)"
+      "finding": "CONFIRMED. P1-9 matrix shows pass3_cbc_hematology_cluster = RESEARCH_PRESENT_SIGNAL_INTELLIGENCE_MISSING and pass3_transferrin_cluster = PACKAGE_PRESENT_BUT_CARD_MISSING. No PSI artefacts exist in generated_pilot/ for CBC/iron/oxygen domain. P1-10 covered lipids, liver enzymes, homocysteine, urea, ApoB — explicitly not this cohort. Real work exists.",
+      "citation": "docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml:33-105; knowledge_bus/generated_pilot/ (Glob scan — no Batch B output directory exists)"
+    },
+    {
+      "check": "stop_conditions.check",
+      "result": "PASS — NO STOP CONDITIONS TRIGGERED",
+      "finding": "CONFIRMED. (1) All 7 prerequisites present on main. (2) Source research verified — viable Batch B cohort identifiable from mch, mchc, rdw, rbc, hematocrit, ferritin, transferrin, mcv clusters. (3) PSI schema, validator, compile manifest schema all confirmed. (4) No duplicate authority sources. (5) hemoglobin cluster deferral path is clear (DEFER_INSUFFICIENT_SCHEMA_SUPPORT). (6) Runtime non-activation guaranteed by generated_pilot staging pattern. Sprint is executable.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§STOP conditions"
+    },
+    {
+      "check": "hardening_note.hemoglobin_clusters_must_defer",
+      "result": "MANDATORY HARDENING NOTE",
+      "finding": "No hemoglobin (hgb/haemoglobin) Pass_3 investigation spec was found in any source file inspected (cbc_hematology_pass_3.json, transferrin_pass_3.json, Batch_3 through Batch_7 Pass_3 files). The candidate clusters 'haemoglobin low / oxygen-carrying-capacity pattern' and 'haemoglobin high / concentration or erythrocytosis-context pattern' have no source research to promote from. Cursor MUST classify both as DEFER_INSUFFICIENT_SCHEMA_SUPPORT and explain this explicitly in the sprint report §7 and Batch B manifest. Cursor must not invent hemoglobin spec content or carry over content from non-Pass_3 sources. These clusters are appropriate carry-forwards to a future batch when hemoglobin Pass_3 research is authored.",
+      "citation": "grep 'spec_id' on all Pass_3 files — no hemoglobin spec_id found"
+    },
+    {
+      "check": "hardening_note.psi_forbidden_fields",
+      "result": "MANDATORY HARDENING NOTE",
+      "finding": "The promoted_signal_intelligence_schema_v1.yaml explicitly forbids: hypotheses, hypothesis_ranking, narrative, rendering, presentation, display, report_layout, ui_hints at the root level. The investigation spec v3 sources contain rich hypothesis and narrative content that MUST NOT be carried into the promoted_signal_intelligence.yaml. PSI receives only the signal-layer primitives: activation, states, supporting_markers, contradiction_markers, missing_data, override_rules, evidence, confirmatory_test_refs. Lifecycle and governance fields (medical_review_status, scoring_readiness, runtime_activation_state) are captured in compile_manifest.yaml and sprint report only.",
+      "citation": "knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml:32-42 (forbidden_root_keys)"
+    },
+    {
+      "check": "hardening_note.mchc_high_frame_caution",
+      "result": "ADVISORY NOTE",
+      "finding": "inv_mchc_high_spherocytic_hemolysis_pattern (in cbc_hematology_pass_3.json) involves hereditary spherocytosis and hemolytic pathology — an area requiring medical review before clinical-facing interpretation. The PSI can be created as a staged non-runtime artefact, but the safety framing in the sprint report must note that MCHC-high signals involve hereditary membrane disorder and hemolytic interpretation that warrants DEFER_MEDICAL_REVIEW_REQUIRED or PROMOTE_PARTIAL_STAGED_PSI_WITH_BLOCKERS classification in the manifest. Do not use diagnostic language.",
+      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json:509-672 (inv_mchc_high_spherocytic_hemolysis_pattern)"
     }
   ],
-  "overall_verdict": "HARDENED. All five front-matter fields confirmed. One prior BLOCKER resolved: promotion protocol path corrected from bare root filename to docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md (fix applied at latest_cursor_prompt.md:138). All 8 prerequisites confirmed present. All first-authority documents confirmed present including corrected promotion protocol. PSI schema identified (LOCKED v1.0.0), validator confirmed, runtime wiring confirmed deferred by ARCH-RT-5E. change_type CONTENT is correctly classified. P1-9 exploitation matrix read in full — viable Batch A clusters identified. No duplicate authority sources. Prohibited file boundary explicit. Three hardening notes for Cursor: (1) lifecycle fields (runtime_activation_state, medical_review_status, scoring_readiness) belong in package_manifest.yaml, not in promoted_signal_intelligence.yaml — stop and report if schema extension would be required; (2) signal_system value 'cardiovascular' is not allowed — use lipid_transport, renal, hepatic, vascular, endocrine, hormonal; (3) trigger_direction value 'both' is obsolete — use bidirectional or context_dependent. No STOP conditions triggered. Cursor may proceed under TWO_PHASE_START_FINISH governance."
+  "overall_verdict": "HARDENED. All five front-matter fields confirmed. All 7 prerequisites confirmed present. All required source files read directly — content cross-referenced against PSI schema vocabulary. PSI schema (LOCKED v1.0.0), validator (validate_promoted_signal_intelligence.py), and P1-10 staging pattern all confirmed. change_type CONTENT correct. Three hardening notes for Cursor: (1) Hemoglobin clusters must be deferred DEFER_INSUFFICIENT_SCHEMA_SUPPORT — no Pass_3 hemoglobin spec exists in any inspected source file; (2) PSI forbidden fields (hypotheses, hypothesis_ranking, narrative) must not appear in promoted_signal_intelligence.yaml — signal-layer primitives only; (3) Tooling file .cursor/rules/healthiq-knowledge-bus-medical-intelligence.mdc is available for use but must NOT be committed to the sprint branch (SOP v1.3.1 tooling leakage prohibition — Stage 4A must verify). One advisory note: MCHC-high spherocytosis pattern warrants DEFER_MEDICAL_REVIEW_REQUIRED or PARTIAL classification. No STOP conditions triggered. Cursor may proceed under TWO_PHASE_START_FINISH governance."
 }
