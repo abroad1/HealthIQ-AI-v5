@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-3-blood-iron-oxygen-domain-card",
+  "branch": "work/P1-4-thyroid-energy-regulation-domain-card",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T10:15:03Z",
-  "cursor_started_utc": "2026-06-20T10:08:44Z",
-  "head_sha": "29856a8cc10ff22161a354c69a0bd79d98e3953e",
+  "cursor_started_utc": "2026-06-20T10:28:12Z",
+  "head_sha": "dc10292ffc03c5d7dbe945b745452773bad9357d",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-3"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-4"
 }
