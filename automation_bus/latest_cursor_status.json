@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-9-pass3-research-to-runtime-exploitation-map",
+  "branch": "work/P1-10-pass3-launch-core-signal-intelligence-batch-a",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T13:39:18Z",
-  "cursor_started_utc": "2026-06-20T13:34:26Z",
-  "head_sha": "c1348853d762a2fc80ca7caf00aeedd4eaf3ea9e",
+  "cursor_started_utc": "2026-06-20T14:22:35Z",
+  "head_sha": "905c46fde93a7aa5e04b3be5636149972b8428a5",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-9"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-10"
 }
