@@ -1,9 +1,10 @@
 {
   "branch": "work/BETA-BASELINE-REGISTER-1-final-strategy-and-register",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-20T08:26:38Z",
   "cursor_started_utc": "2026-06-20T08:20:17Z",
-  "head_sha": "89a1eb74a7508a653b74d1d8062bafbce4ffa7a8",
+  "head_sha": "eeb38aa27da87d949759353bb80260a7381a197b",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "BETA-BASELINE-REGISTER-1"
 }
