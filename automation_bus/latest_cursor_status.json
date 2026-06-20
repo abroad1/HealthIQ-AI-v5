@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-8-scoring-lab-range-engine",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-20T13:14:39Z",
   "cursor_started_utc": "2026-06-20T13:11:18Z",
-  "head_sha": "54963f982c50323bc17dc651cb391d1af4873c73",
+  "head_sha": "4442da2b72b887837326b1b00e6b0bd0aca5ecc7",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-8"
 }
