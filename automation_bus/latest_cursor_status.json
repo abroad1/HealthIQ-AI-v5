@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-2-kidney-function-domain-card",
+  "branch": "work/P1-3-blood-iron-oxygen-domain-card",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T09:35:51Z",
-  "cursor_started_utc": "2026-06-20T09:33:43Z",
-  "head_sha": "f9f861c3cffc83452cac386a06848f107383538b",
+  "cursor_started_utc": "2026-06-20T10:08:44Z",
+  "head_sha": "e714b6d10f80de496750363854e71075d222d8bc",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-2"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-3"
 }
