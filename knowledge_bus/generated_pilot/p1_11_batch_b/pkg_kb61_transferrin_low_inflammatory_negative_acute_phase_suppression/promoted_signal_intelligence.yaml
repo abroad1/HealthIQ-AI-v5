@@ -1,0 +1,113 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_transferrin_low_inflammatory_negative_acute_phase_suppression
+  signal_id: signal_transferrin_low
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: transferrin_transport
+signals:
+- signal_id: signal_transferrin_low
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: transferrin
+    rationale: Low transferrin commonly reflects negative acute-phase suppression in inflammatory states and can contribute
+      to functional iron-restriction patterns distinct from absolute iron deficiency.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: crp
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: High CRP supports an active inflammatory acute-phase response that suppresses transferrin as a negative acute-phase
+      reactant via cytokine-driven hepatic reprogramming.
+  - biomarker_id: ferritin
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: High ferritin is consistent with inflammatory iron sequestration moving in the opposite direction to transferrin,
+      helping distinguish this pattern from absolute iron deficiency where ferritin would be low.
+  - biomarker_id: rdw_cv
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Marked RDW-CV elevation competes with a purely inflammatory suppression pattern by indicating erythrocyte size
+      heterogeneity, suggesting the possibility of concurrent or mixed absolute iron deficiency rather than isolated functional
+      restriction.
+  contradiction_markers:
+  - contradiction_id: ctr_ferritin_not_elevated_weakens_inflammatory_sequestration
+    marker_reference: ferritin
+    contradiction_rationale: A ferritin value that is not elevated or is low weakens an inflammatory sequestration frame and
+      redirects suspicion toward absolute deficiency or another non-inflammatory cause of low transferrin.
+    contradiction_strength: strong
+  - contradiction_id: ctr_marked_anisocytosis_competes_with_pure_inflammatory_frame
+    marker_reference: rdw_cv
+    contradiction_rationale: Marked anisocytosis weakens a purely inflammatory suppression pattern and suggests mixed deficiency
+      or more established iron-restricted erythropoiesis may be present.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - If inflammatory markers are unavailable, keep negative acute-phase suppression as a cautious secondary explanation;
+      CBC context is required to evaluate whether anemia has developed.
+    - Review CRP, ferritin, and the broader anemia pattern before assigning an inflammatory iron-sequestration interpretation.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_transferrin_low_with_high_crp_and_high_ferritin
+    resulting_state: at_risk
+    description: Escalate when transferrin is low with CRP above the laboratory maximum and ferritin above the laboratory
+      maximum, as this combination is consistent with inflammatory negative-acute-phase suppression and functional iron restriction.
+    conditions:
+    - metric_id: crp
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: ferritin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_acute_phase_reactants_2023
+    - source_biochemistry_transferrin_2025
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Low transferrin is consistent with a negative acute-phase response and is most interpretable as an
+      inflammatory signal when ferritin and inflammatory markers move in the same direction, reflecting cytokine-driven hepatic
+      reprogramming.
+    threshold_notes: No disease-specific transferrin threshold is established for this mechanism; inflammatory context, the
+      wider iron panel, and soluble transferrin receptor offer more interpretive value than isolated transferrin magnitude.
+    sources:
+    - source_id: source_acute_phase_reactants_2023
+      paper_title: Physiology, Acute Phase Reactants
+      journal: StatPearls
+      year: 2023
+    - source_id: source_biochemistry_transferrin_2025
+      paper_title: Biochemistry, Transferrin
+      journal: StatPearls
+      year: 2025
+  confirmatory_test_refs:
+  - test_id: ct_crp_ferritin_and_iron_panel_review
+    rationale: CRP, ferritin, and the broader iron panel assist in distinguishing inflammatory transferrin suppression from
+      absolute iron deficiency by clarifying whether iron sequestration or store depletion is the dominant feature.
+  - test_id: ct_soluble_transferrin_receptor
+    rationale: Soluble transferrin receptor is relatively unaffected by inflammation and can help identify underlying absolute
+      iron deficiency in the context of anemia of inflammation when CRP and ferritin are ambiguous.

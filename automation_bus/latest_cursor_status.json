@@ -1,10 +1,10 @@
 {
-  "branch": "work/P1-10-pass3-launch-core-signal-intelligence-batch-a",
+  "branch": "work/P1-11-pass3-cbc-iron-oxygen-signal-intelligence-batch-b",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T14:26:25Z",
-  "cursor_started_utc": "2026-06-20T14:22:35Z",
-  "head_sha": "3b665971f03a7c9947e8546fb4ae59a2034be1ff",
+  "cursor_completed_utc": "2026-06-20T15:11:47Z",
+  "cursor_started_utc": "2026-06-20T15:07:37Z",
+  "head_sha": "be6e8c331f9dcb511d895484f078d5bdc9b0dcf4",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "P1-10"
+  "work_id": "P1-11"
 }

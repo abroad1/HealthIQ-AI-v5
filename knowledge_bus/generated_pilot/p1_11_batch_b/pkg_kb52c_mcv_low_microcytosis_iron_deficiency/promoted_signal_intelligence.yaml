@@ -1,0 +1,95 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_mcv_low_microcytosis_iron_deficiency
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_mcv_low_microcytosis_iron_deficiency
+  signal_id: signal_mcv_low
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: mcv_morphology
+signals:
+- signal_id: signal_mcv_low
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: mcv
+    rationale: Low MCV indicates microcytosis and is most informative when interpreted with hemoglobin and iron-status markers.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: ferritin
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Low ferritin supports iron deficiency as the cause of microcytosis.
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low hemoglobin supports that microcytosis is part of clinically relevant anemia rather than an isolated index
+      change.
+  - biomarker_id: rbc_count
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: A relatively high RBC count with microcytosis can support thalassemia-trait physiology rather than iron deficiency.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_or_high_ferritin_mcvlow
+    marker_reference: ferritin
+    contradiction_rationale: Normal or high ferritin weakens uncomplicated iron-deficient microcytosis.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_or_low_rbc_count_weakens_thalassemia_trait
+    marker_reference: rbc_count
+    contradiction_rationale: A normal or low red cell count weakens a thalassemia trait interpretation, as thalassemia trait
+      characteristically produces microcytic erythrocytosis with an elevated RBC count despite low MCV; absence of a raised
+      RBC count makes iron deficiency a more likely explanation for microcytosis.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Review ferritin before concluding that microcytosis is due to iron deficiency.
+    - Use ferritin and RBC count together before prioritising a thalassemia-trait explanation.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_mcv_low_with_low_ferritin
+    resulting_state: at_risk
+    description: Escalate when MCV is low and ferritin is low because the combination strongly supports clinically relevant
+      iron-deficient microcytosis.
+    conditions:
+    - metric_id: ferritin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_microcytosis_review
+  evidence:
+    evidence_strength: strong
+    physiological_claim: Low MCV commonly reflects microcytosis from iron deficiency or thalassemia-trait patterns, with iron
+      studies providing the key differential.
+    threshold_notes: This object is laboratory-range triggered and does not encode disease-specific microcytosis thresholds
+      beyond the reference range.
+    sources:
+    - source_id: source_microcytosis_review
+      paper_title: Microcytosis and macrocytosis differentiation in anemia workup
+      journal: Hematology review literature
+      year: 2025
+  confirmatory_test_refs:
+  - test_id: ct_iron_studies
+    rationale: Iron studies are central to distinguishing iron deficiency from other causes of microcytosis.
+  - test_id: ct_hemoglobinopathy_testing_if_needed
+    rationale: Hemoglobinopathy testing may be appropriate when microcytosis persists without iron deficiency.

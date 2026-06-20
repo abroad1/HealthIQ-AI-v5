@@ -1,0 +1,94 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_ferritin_high_inflammatory_hyperferritinemia
+  signal_id: signal_ferritin_high
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: ferritin_iron_stores
+signals:
+- signal_id: signal_ferritin_high
+  research_domain: inflammatory
+  signal_system: inflammatory
+  primary_metric:
+    biomarker_id: ferritin
+    rationale: Ferritin is also an acute-phase reactant, so high ferritin may reflect inflammatory activation rather than
+      iron excess.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: crp
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: High CRP strongly supports an inflammatory acute-phase explanation for ferritin elevation.
+  - biomarker_id: neutrophils_abs
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Neutrophilia can support active inflammatory physiology when ferritin is high.
+  - biomarker_id: transferrin_saturation
+    expected_direction: any
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: A non-elevated transferrin saturation helps redirect interpretation away from iron overload toward inflammatory
+      hyperferritinemia.
+  contradiction_markers:
+  - contradiction_id: ctr_elevated_transferrin_saturation_challenges_inflammatory
+    marker_reference: transferrin_saturation
+    contradiction_rationale: An elevated transferrin saturation challenges a purely inflammatory hyperferritinemia interpretation,
+      as inflammation typically suppresses transferrin saturation through iron sequestration; elevated saturation instead
+      supports a true iron loading pattern.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_crp_weakens_macrophage_activation
+    marker_reference: crp
+    contradiction_rationale: A normal or mildly elevated CRP weakens a macrophage activation or significant tissue injury
+      interpretation, as these processes typically drive substantial systemic inflammatory marker elevation alongside hyperferritinemia.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Integrate severity markers and syndrome context before moving beyond a general inflammatory interpretation.
+    - Review CRP and transferrin saturation before inferring excess iron from ferritin elevation.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_ferritin_high_with_crp_high
+    resulting_state: at_risk
+    description: Escalate when high ferritin coincides with high CRP, as this more strongly supports clinically active inflammatory
+      hyperferritinemia.
+    conditions:
+    - metric_id: crp
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_iron_deficiency_review_2020
+  evidence:
+    evidence_strength: strong
+    physiological_claim: Ferritin commonly rises in inflammation and tissue injury, so elevation does not by itself establish
+      increased iron stores.
+    threshold_notes: No ferritin-only disease threshold is asserted because inflammatory state materially changes interpretation.
+    sources:
+    - source_id: source_iron_deficiency_review_2020
+      paper_title: Diagnosis and management of iron deficiency in chronic inflammatory conditions
+      journal: Hematology ASH Education Program
+      year: 2020
+  confirmatory_test_refs:
+  - test_id: ct_crp_and_transferrin_saturation
+    rationale: CRP and transferrin saturation help separate inflammatory hyperferritinemia from true iron overload.

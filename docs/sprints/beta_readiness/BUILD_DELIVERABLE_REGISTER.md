@@ -284,6 +284,31 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-11 — Pass 3 CBC / iron / oxygen signal intelligence Batch B
+
+**Status:** Complete  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- Second governed Pass 3 → PSI batch promotion (18 staged PSI entries, 7 CBC/iron/oxygen clusters).
+- Frame adjudication completed: hemoglobin-primary and derived-metric clusters explicitly deferred with documented blockers.
+- Runtime activation unchanged; production package manifests and scoring policy untouched.
+
+### Carry-forwards
+- Hemoglobin Pass 3 research authoring required before primary oxygen-carrying promotion.
+- Medical-review cohort for MCHC spherocytic and clonal/marrow platelet patterns.
+- Manifest opt-in wiring for Batch A + Batch B deferred to post-review activation sprint.
+
+### Blockers / risks
+- `transferrin_saturation` derived-metric dependency remains unresolved for primary promotion.
+- Clonal myeloproliferative and marrow-suppression platelet frames require medical sign-off.
+
+### Recommended next sprint
+- P1-12 Batch C (leukocyte/residual CBC + hemoglobin research); then manifest opt-in governance sprint.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

@@ -1,0 +1,21 @@
+compile_id: p1_11_batch_b_pkg_kb52c_hematocrit_high_relative_hemoconcentration
+work_id: P1-11
+cluster_id: hematocrit_oxygen_capacity
+compiler_name: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+compiled_at_utc: '2026-06-20T15:08:14Z'
+pilot_status: promoted_signal_intelligence_non_runtime
+runtime_active: false
+governance_runtime_activation_status: inactive_promoted_batch_b
+source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+source_spec_id: inv_hematocrit_high_relative_hemoconcentration
+source_hash_sha256: 0f6fcabd79312906902cc8853112214a940136598b61378e803b140be0f30566
+source_contract_version: 3.0.0
+target_package_id: pkg_kb52c_hematocrit_high_relative_hemoconcentration
+output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_relative_hemoconcentration
+output_hashes_sha256:
+  promoted_signal_intelligence.yaml: f3ede349310518b0c065f0b8443976062c13c6403e2e94a0a35826f294b15d05
+validation:
+  promoted_signal_intelligence_validation: PASS
+  validator_output: 'validation_status: PASS
+
+    audit_path: C:\Users\abroa\HealthIQ-AI-v5\backend\artifacts\promoted_signal_intelligence_audit.md'

@@ -1,0 +1,434 @@
+work_id: P1-11
+classification_date: "2026-06-20"
+source_authorities:
+  - path: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
+    role: Batch B cluster selection and deferral baseline
+  - path: docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
+    role: reusable batch promotion pattern precedent
+  - path: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
+    role: promotion discipline and non-activation rule
+  - path: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml
+    role: governed PSI contract v1
+batch:
+  name: Pass 3 Signal Intelligence Batch B — CBC / Iron / Oxygen
+  selected_clusters: 7
+  deferred_clusters: 9
+  promoted_psi_files: 18
+clusters:
+  - id: ferritin_iron_stores
+    name: Ferritin iron-store and inflammatory-context cluster
+    batch_classification: PROMOTE_TO_STAGED_PSI
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+    source_spec_ids:
+      - inv_ferritin_low_iron_store_depletion
+      - inv_ferritin_high_iron_overload_context
+      - inv_ferritin_high_inflammatory_hyperferritinemia
+    biomarkers:
+      - ferritin
+      - iron
+      - crp
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_iron_stores
+    promotion_action: created
+    staged_psi_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_low_iron_store_depletion/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml
+    compile_manifest_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_low_iron_store_depletion/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/compile_manifest.yaml
+    runtime_activation_state: inactive
+    downstream_gaps:
+      - production package manifests not opt-in wired
+      - transferrin_saturation corroboration remains derived-metric dependent
+    evidence_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/p1_11_batch_b_compile_manifest_index_v1.yaml
+    recommended_next_action: medical review of ferritin overload vs inflammatory frames before manifest opt-in
+
+  - id: transferrin_transport
+    name: Transferrin transport / acute-phase cluster
+    batch_classification: PROMOTE_TO_STAGED_PSI
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/transferrin_pass_3.json
+    source_spec_ids:
+      - inv_transferrin_high_iron_deficiency_transport_upregulation
+      - inv_transferrin_low_inflammatory_negative_acute_phase_suppression
+      - inv_transferrin_low_visceral_protein_depletion_or_synthetic_failure
+    biomarkers:
+      - transferrin
+      - ferritin
+      - mch
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_iron_transport
+    promotion_action: created
+    staged_psi_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure/promoted_signal_intelligence.yaml
+    compile_manifest_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure/compile_manifest.yaml
+    runtime_activation_state: inactive
+    downstream_gaps:
+      - kb61 production packages lack promoted_signal_intelligence opt-in
+      - transferrin_saturation supporting marker not a canonical SSOT biomarker key
+    evidence_paths:
+      - knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/package_manifest.yaml
+    recommended_next_action: align kb61 manifest opt-in after medical review
+
+  - id: mcv_morphology
+    name: MCV microcytic / macrocytic morphology cluster
+    batch_classification: PROMOTE_TO_STAGED_PSI
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+    source_spec_ids:
+      - inv_mcv_low_microcytosis_iron_deficiency
+      - inv_mcv_high_megaloblastic_macrocytosis
+      - inv_mcv_high_nonmegaloblastic_macrocytosis
+    biomarkers:
+      - mcv
+      - folate
+      - active_b12
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_red_cell_morphology
+    promotion_action: created
+    staged_psi_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_low_microcytosis_iron_deficiency/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_high_megaloblastic_macrocytosis/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_high_nonmegaloblastic_macrocytosis/promoted_signal_intelligence.yaml
+    compile_manifest_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_low_microcytosis_iron_deficiency/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_high_megaloblastic_macrocytosis/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_high_nonmegaloblastic_macrocytosis/compile_manifest.yaml
+    runtime_activation_state: inactive
+    downstream_gaps:
+      - frame overlap with B12/folate standalone specs deferred to Batch C
+    evidence_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/p1_11_batch_b_compile_manifest_index_v1.yaml
+    recommended_next_action: cross-link with one-carbon cluster in Batch C
+
+  - id: hematocrit_oxygen_capacity
+    name: Hematocrit oxygen-carrying capacity proxy cluster
+    batch_classification: PROMOTE_TO_STAGED_PSI
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+    source_spec_ids:
+      - inv_hematocrit_high_absolute_erythrocytosis
+      - inv_hematocrit_high_relative_hemoconcentration
+      - inv_hematocrit_low_anemia_or_hemodilution
+    biomarkers:
+      - hematocrit
+      - rbc
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_oxygen_carrying_capacity
+    promotion_action: created
+    staged_psi_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_absolute_erythrocytosis/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_relative_hemoconcentration/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_low_anemia_or_hemodilution/promoted_signal_intelligence.yaml
+    compile_manifest_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_absolute_erythrocytosis/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_relative_hemoconcentration/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_low_anemia_or_hemodilution/compile_manifest.yaml
+    runtime_activation_state: inactive
+    downstream_gaps:
+      - no standalone hemoglobin Pass 3 spec; hematocrit used as governed proxy only
+    evidence_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/p1_11_batch_b_compile_manifest_index_v1.yaml
+    recommended_next_action: author hemoglobin Pass 3 research before primary oxygen-carrying promotion
+
+  - id: rdw_anisocytosis
+    name: RDW-CV anisocytosis / mixed-population cluster
+    batch_classification: PROMOTE_TO_STAGED_PSI
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    source_spec_ids:
+      - inv_rdw_cv_high_iron_deficiency_anisocytosis
+      - inv_rdw_cv_high_mixed_red_cell_population_pattern
+    biomarkers:
+      - rdw_cv
+      - mcv
+      - mch
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_anisocytosis
+    promotion_action: created
+    staged_psi_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/promoted_signal_intelligence.yaml
+    compile_manifest_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/compile_manifest.yaml
+    runtime_activation_state: inactive
+    downstream_gaps:
+      - rdw_sd variants deferred to avoid duplicate frame authority
+    evidence_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/p1_11_batch_b_compile_manifest_index_v1.yaml
+    recommended_next_action: Batch C rdw_sd parity review if clinically required
+
+  - id: rbc_count_patterns
+    name: RBC count anemia / erythrocytosis pattern cluster
+    batch_classification: PROMOTE_TO_STAGED_PSI
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    source_spec_ids:
+      - inv_rbc_low_iron_restricted_anemia_pattern
+      - inv_rbc_high_erythrocytosis_pattern
+    biomarkers:
+      - rbc
+      - mcv
+      - mch
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_red_cell_count
+    promotion_action: created
+    staged_psi_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/promoted_signal_intelligence.yaml
+    compile_manifest_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/compile_manifest.yaml
+    runtime_activation_state: inactive
+    downstream_gaps:
+      - thalassemia-trait high-RBC microcytic spec deferred to Batch C
+    evidence_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/p1_11_batch_b_compile_manifest_index_v1.yaml
+    recommended_next_action: promote thalassemia-trait RBC pattern in Batch C after frame review
+
+  - id: platelet_patterns
+    name: Platelet reactive / consumption-context cluster
+    batch_classification: PROMOTE_TO_STAGED_PSI
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+    source_spec_ids:
+      - inv_plt_high_reactive_thrombocytosis
+      - inv_plt_low_peripheral_consumption_or_immune_destruction
+    biomarkers:
+      - plt
+      - crp
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_platelet_reactive
+    promotion_action: created
+    staged_psi_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_high_reactive_thrombocytosis/promoted_signal_intelligence.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction/promoted_signal_intelligence.yaml
+    compile_manifest_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_high_reactive_thrombocytosis/compile_manifest.yaml
+      - knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction/compile_manifest.yaml
+    runtime_activation_state: inactive
+    downstream_gaps:
+      - clonal and marrow-suppression platelet specs require medical review before promotion
+    evidence_paths:
+      - knowledge_bus/generated_pilot/p1_11_batch_b/p1_11_batch_b_compile_manifest_index_v1.yaml
+    recommended_next_action: medical-review cohort for clonal platelet and marrow patterns
+
+  - id: hemoglobin_low_oxygen_carrying
+    name: Haemoglobin low / oxygen-carrying-capacity pattern
+    batch_classification: DEFER_INSUFFICIENT_SCHEMA_SUPPORT
+    source_pass3_paths: []
+    source_spec_ids: []
+    biomarkers:
+      - hemoglobin
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_oxygen_carrying_capacity
+    promotion_action: deferred
+    staged_psi_paths: []
+    compile_manifest_paths: []
+    runtime_activation_state: not_runtime_consumed
+    downstream_gaps:
+      - no Pass 3 investigation spec with hemoglobin primary marker found in inspected sources
+    evidence_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    recommended_next_action: author hemoglobin Pass 3 research before promotion
+
+  - id: hemoglobin_high_erythrocytosis
+    name: Haemoglobin high / erythrocytosis-context pattern
+    batch_classification: DEFER_INSUFFICIENT_SCHEMA_SUPPORT
+    source_pass3_paths: []
+    source_spec_ids: []
+    biomarkers:
+      - hemoglobin
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_oxygen_carrying_capacity
+    promotion_action: deferred
+    staged_psi_paths: []
+    compile_manifest_paths: []
+    runtime_activation_state: not_runtime_consumed
+    downstream_gaps:
+      - no standalone hemoglobin-high Pass 3 spec in repository
+    evidence_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+    recommended_next_action: author hemoglobin Pass 3 research
+
+  - id: transferrin_saturation_primary
+    name: Transferrin saturation high / low primary cluster
+    batch_classification: DEFER_INSUFFICIENT_SCHEMA_SUPPORT
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+    source_spec_ids: []
+    biomarkers:
+      - transferrin_saturation
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_iron_indices
+    promotion_action: deferred
+    staged_psi_paths: []
+    compile_manifest_paths: []
+    runtime_activation_state: not_runtime_consumed
+    downstream_gaps:
+      - transferrin_saturation appears only as supporting marker; no primary Pass 3 spec_id
+      - KB-S52A classifies derived metric as blocked without engine support
+    evidence_paths:
+      - knowledge_bus/research/KB-S52A_PREFLIGHT_AUDIT_Batches_3-7_Pass3.md
+    recommended_next_action: derived-metric SSOT tranche before primary saturation promotion
+
+  - id: mchc_spherocytic_hemolysis
+    name: MCHC high spherocytic / hemolysis-context pattern
+    batch_classification: DEFER_MEDICAL_REVIEW_REQUIRED
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    source_spec_ids:
+      - inv_mchc_high_spherocytic_hemolysis_pattern
+    biomarkers:
+      - mchc
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_hemolysis_context
+    promotion_action: blocked
+    staged_psi_paths: []
+    compile_manifest_paths: []
+    runtime_activation_state: review_required
+    downstream_gaps:
+      - hereditary spherocytosis and hemolytic framing requires medical sign-off
+    evidence_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    recommended_next_action: medical-review promotion after safety framing audit
+
+  - id: iron_serum_batch3
+    name: Serum iron low / high iron-panel cluster
+    batch_classification: DEFER_FRAME_AUTHORITY_CONFLICT
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+    source_spec_ids:
+      - inv_iron_low_absolute_iron_deficiency
+      - inv_iron_low_functional_iron_restriction_inflammation
+      - inv_iron_high_iron_overload_context
+      - inv_iron_high_hepatocellular_or_hemolytic_release
+    biomarkers:
+      - iron
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_iron_panel
+    promotion_action: deferred
+    staged_psi_paths: []
+    compile_manifest_paths: []
+    runtime_activation_state: blocked
+    downstream_gaps:
+      - overlaps ferritin/transferrin Batch B promotion; transferrin_saturation dependency unresolved
+    evidence_paths:
+      - knowledge_bus/research/KB-S52A_PREFLIGHT_AUDIT_Batches_3-7_Pass3.md
+    recommended_next_action: reconcile iron-panel frame authority in Batch C
+
+  - id: plt_clonal_myeloproliferative
+    name: Platelet high clonal / myeloproliferative pattern
+    batch_classification: DEFER_MEDICAL_REVIEW_REQUIRED
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+    source_spec_ids:
+      - inv_plt_high_clonal_myeloproliferative_thrombocytosis
+    biomarkers:
+      - plt
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_platelet_clonal
+    promotion_action: blocked
+    staged_psi_paths: []
+    compile_manifest_paths: []
+    runtime_activation_state: review_required
+    downstream_gaps:
+      - clonal myeloproliferative framing requires medical review before staging
+    evidence_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+    recommended_next_action: medical-review cohort
+
+  - id: plt_marrow_suppression
+    name: Platelet low marrow-suppression pattern
+    batch_classification: DEFER_MEDICAL_REVIEW_REQUIRED
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+    source_spec_ids:
+      - inv_plt_low_marrow_suppression_pattern
+    biomarkers:
+      - plt
+    system_mapping:
+      - hematologic
+    subsystem_mapping:
+      - wave1_hematologic_platelet_marrow
+    promotion_action: blocked
+    staged_psi_paths: []
+    compile_manifest_paths: []
+    runtime_activation_state: review_required
+    downstream_gaps:
+      - multilineage marrow suppression framing requires medical review
+    evidence_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+    recommended_next_action: medical-review cohort with neutrophil/WBC patterns
+
+  - id: leukocyte_neutrophil_lymphocyte
+    name: Neutrophil / lymphocyte / WBC leukocyte shift cluster
+    batch_classification: DEFER_NOT_BATCH_B_RELEVANT
+    source_pass3_paths:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+      - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+    source_spec_ids:
+      - inv_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+      - inv_lym_low_lymphopenia_stress_or_immunosuppression
+      - inv_wbc_high_reactive_leukocytosis
+    biomarkers:
+      - neutrophil_pct
+      - lymphocytes
+      - wbc
+    system_mapping:
+      - hematologic
+      - inflammatory
+    subsystem_mapping:
+      - wave1_hematologic_leukocyte_shift
+    promotion_action: deferred
+    staged_psi_paths: []
+    compile_manifest_paths: []
+    runtime_activation_state: not_runtime_consumed
+    downstream_gaps:
+      - inflammation overlap with second-wave inflammation estate; deferred to Batch C
+    evidence_paths:
+      - docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
+    recommended_next_action: Batch C leukocyte / inflammation frame adjudication
+validation:
+  manifest_yaml_parse: pass
+  psi_validator: pass
+  runtime_activation_check: pass

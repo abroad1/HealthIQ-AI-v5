@@ -1,0 +1,96 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_hematocrit_high_absolute_erythrocytosis
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_hematocrit_high_absolute_erythrocytosis
+  signal_id: signal_hematocrit_high
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: hematocrit_oxygen_capacity
+signals:
+- signal_id: signal_hematocrit_high
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: hematocrit
+    rationale: High hematocrit reflects increased red-cell fraction but needs distinction between absolute erythrocytosis
+      and hemoconcentration.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: hemoglobin
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: High hemoglobin supports that the elevated hematocrit reflects a true red-cell concentration increase.
+  - biomarker_id: erythropoietin
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: specialist
+    rationale: Low erythropoietin supports autonomous erythrocytosis such as polycythemia vera rather than a reactive hypoxic
+      drive.
+  - biomarker_id: jak2_v617f
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: JAK2 positivity is the key differential marker separating clonal erythrocytosis from most secondary causes.
+  contradiction_markers:
+  - contradiction_id: ctr_erythropoietin_high
+    marker_reference: erythropoietin
+    contradiction_rationale: High erythropoietin shifts interpretation toward secondary erythrocytosis rather than autonomous
+      clonal disease.
+    contradiction_strength: strong
+  - contradiction_id: ctr_jak2_positive
+    marker_reference: jak2_v617f
+    contradiction_rationale: JAK2 positivity weakens a simple secondary erythrocytosis interpretation.
+    contradiction_strength: strong
+  missing_data:
+    policies:
+    - Review oxygenation, smoking exposure, sleep-disordered breathing, and erythropoietin before narrowing the cause.
+    - Use repeat counts, JAK2 testing, and erythropoietin before assigning a clonal myeloproliferative frame.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_hematocrit_high_with_hemoglobin_high
+    resulting_state: at_risk
+    description: Escalate when high hematocrit coincides with high hemoglobin, as this strengthens a true erythrocytosis pattern.
+    conditions:
+    - metric_id: hemoglobin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_pv_update_2023
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: Persistently elevated hematocrit is a core feature of erythrocytosis and requires distinction between
+      clonal and secondary causes.
+    threshold_notes: Use laboratory abnormality and guideline-directed workup; do not create ungoverned diagnostic cutoffs
+      beyond authoritative criteria.
+    sources:
+    - source_id: source_pv_update_2023
+      paper_title: 'Polycythemia vera: 2024 update on diagnosis, risk-stratification, and management'
+      journal: American Journal of Hematology
+      year: 2023
+    - source_id: source_nice_polycythaemia_2024
+      paper_title: Polycythaemia/Erythrocytosis - NICE CKS
+      journal: NICE
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_repeat_hct_with_jak2_and_erythropoietin
+    rationale: Repeat hematocrit with JAK2 and erythropoietin testing helps distinguish clonal from secondary erythrocytosis.
