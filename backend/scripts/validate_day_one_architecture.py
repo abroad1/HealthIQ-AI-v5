@@ -88,8 +88,9 @@ def validate_wave1_card_estate(errors: List[str]) -> None:
     )
 
     rows = wave1_subsystem_authority_rows()
-    if len(rows) != 7:
-        _err(errors, f"expected 7 Wave 1 subsystems, got {len(rows)}")
+    expected_count = len(WAVE1_COMPILED_SUBSYSTEM_IDS)
+    if len(rows) != expected_count:
+        _err(errors, f"expected {expected_count} Wave 1 subsystems, got {len(rows)}")
     for row in rows:
         sid = row["subsystem_id"]
         if sid in WAVE1_COMPILED_SUBSYSTEM_IDS:
