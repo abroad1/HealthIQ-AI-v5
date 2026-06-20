@@ -29,7 +29,7 @@ signals:
     baseline_state: suboptimal
     escalation_state: at_risk
   supporting_markers:
-  - biomarker_id: hgb
+  - biomarker_id: hemoglobin
     expected_direction: low
     role: differential_marker
     relationship_kind: differential

@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_mcv_low_microcytosis_iron_deficiency
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_low_microcytosis_iron_deficiency
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: e687880a778884f2394dd38ac4c1cdc3a2005a11bb2e54e3e91570057c151872
+  promoted_signal_intelligence.yaml: 65c9b746c79d42ff4b1d893f6f44bd85bda1583a9331c4914d58aea3fe5d7fd8
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

@@ -34,7 +34,7 @@ signals:
     relationship_kind: differential
     availability: common
     rationale: Low ferritin supports iron deficiency as the cause of microcytosis.
-  - biomarker_id: hgb
+  - biomarker_id: hemoglobin
     expected_direction: low
     role: corroborator
     relationship_kind: corroboration
