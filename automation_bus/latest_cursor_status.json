@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-5-ft3-thyroid-authority-reconciliation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-20T11:02:43Z",
   "cursor_started_utc": "2026-06-20T10:58:09Z",
-  "head_sha": "59e6edbe42b2a4d309bd9650b767f906358e9a13",
+  "head_sha": "1472c4d1ab2fb4b65ad7a22ee55613478dcfdfae",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-5"
 }
