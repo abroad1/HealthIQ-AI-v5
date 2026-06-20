@@ -1,43 +1,44 @@
 ---
-work_id: P1-2
-branch: work/P1-2-kidney-function-domain-card
+work_id: P1-3
+branch: work/P1-3-blood-iron-oxygen-domain-card
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# P1-2 — Kidney Function Domain Card
+# P1-3 — Blood / Iron / Oxygen Domain Card
 
 ## Objective
 
-Implement the first missing launch-core domain selected by P1-1:
+Implement the second missing launch-core domain:
 
 ```text
-Kidney function
+Blood / iron / oxygen
 ```
 
-This sprint must implement a bounded, non-diagnostic kidney function domain card / domain output using existing governed assets identified by P1-1.
+This sprint must implement a bounded, non-diagnostic blood / iron / oxygen domain card / domain output using existing governed assets identified by P1-1.
 
-The purpose is to move HealthIQ AI from three visible launch-core domains towards complete launch-core system coverage, while preserving the corrected Layer A / Layer B / Layer C architecture.
+The purpose is to continue closing launch-core system coverage after P1-2 kidney function, while preserving the corrected Layer A / Layer B / Layer C architecture.
 
-This is a controlled HIGH-risk implementation sprint because it may touch Layer B runtime behaviour, domain assembly, scoring/display integration and tests.
+This is a controlled HIGH-risk implementation sprint because it may touch Layer B runtime behaviour, domain assembly, card evidence, scoring/display integration and tests.
 
 ---
 
 ## Prerequisite
 
-Do not start unless P1-1 has been merged to `main`.
+Do not start unless P1-2 has been merged to `main`.
 
-Required file on `main`:
+Required files on `main`:
 
 ```text
 docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md
+docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md
 ```
 
-If this file is not present on `main`, stop and report:
+If either file is not present on `main`, stop and report:
 
 ```text
-P1-1 is not present on main. P1-2 must not proceed.
+P1-1/P1-2 prerequisite evidence is not present on main. P1-3 must not proceed.
 ```
 
 ---
@@ -62,7 +63,7 @@ safety
 provenance
 ```
 
-Layer C, Gemini and frontend must not perform kidney-function reasoning.
+Layer C, Gemini and frontend must not perform blood / iron / oxygen reasoning.
 
 Do not create frontend medical inference.
 
@@ -72,7 +73,7 @@ Do not create or rely on fallback parser logic.
 
 Do not substitute global/default ranges where lab-provided ranges exist.
 
-Do not create diagnostic CKD language unless it is already governed, explicitly supported, non-diagnostic, and safe. The default posture is educational kidney-function interpretation, not diagnosis.
+Do not create diagnostic anaemia, iron deficiency, haemochromatosis, bleeding, hypoxia or haematological disease language unless already governed, explicitly supported, non-diagnostic, and safe. The default posture is educational interpretation of blood, red-cell and iron-status markers, not diagnosis.
 
 ---
 
@@ -84,7 +85,7 @@ Start from `main`.
 git switch main
 git pull
 git status --short
-git switch -c work/P1-2-kidney-function-domain-card
+git switch -c work/P1-3-blood-iron-oxygen-domain-card
 ```
 
 Do not proceed if the working tree is dirty.
@@ -100,13 +101,16 @@ Read these first, in this order:
 ```text
 docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
 docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md
+docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md
 docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
 P1-1 is the immediate scope authority for this implementation sprint.
 
-Do not exceed the kidney-function scope proven by P1-1.
+P1-2 is the implementation pattern reference for adding a bounded launch-core domain after the original three Wave 1 domains.
+
+Do not exceed the blood / iron / oxygen scope proven by P1-1.
 
 ---
 
@@ -121,11 +125,13 @@ docs/architecture/User Health to Systems Map_FINAL.md
 docs/AUTHORITY_MAP.md
 backend/ssot/scoring_policy.yaml
 backend/core/analytics/domain_score_assembler.py
+backend/core/analytics/domain_narrative_wave1.py
 backend/core/analytics/wave1_subsystem_evidence.py
 backend/core/contracts/narrative_payload_v1.py
+backend/core/dto/persisted_replay_contract_v1.py
+backend/core/knowledge/health_system_card_evidence.py
 backend/core/analytics/report_compiler_v1.py
 backend/core/analytics/root_cause_compiler_v1.py
-backend/ssot/retail_explainer_v1/registry.yaml
 knowledge_bus/
 knowledge_bus/compiled/
 knowledge_bus/pathway_explainers_v1/
@@ -141,41 +147,52 @@ If a path listed by P1-1 no longer exists or differs from the map, record that h
 
 ## Implementation scope
 
-Implement a bounded kidney function domain card / domain output using existing repository patterns.
+Implement a bounded blood / iron / oxygen domain card / domain output using existing repository patterns.
 
 The sprint may include, if required by the existing architecture:
 
 ```text
-- domain assembler wiring for kidney function
+- domain assembler wiring for blood / iron / oxygen
 - domain score/card output wiring
 - subsystem evidence wiring where supported
-- DTO/report inclusion where existing Layer B contracts require it
-- deterministic tests for the kidney function domain output
+- compiled health-system card evidence where supported
+- DTO/replay/report inclusion where existing Layer B contracts require it
+- deterministic tests for the blood / iron / oxygen domain output
 - minimal documentation of implementation decisions
 - build deliverable register update
 ```
 
-The sprint must stay inside the kidney-function scope identified by P1-1.
+The sprint must stay inside the scope identified by P1-1.
 
 ---
 
-## Kidney-function biomarker scope
+## Candidate biomarker scope
 
 Use only biomarkers supported by P1-1 and repository evidence.
 
-Likely candidate markers to verify from P1-1 and existing assets:
+Candidate markers to verify from P1-1 and existing assets include:
 
 ```text
-creatinine
-eGFR
-urea, only if supported
-electrolytes, only where clearly relevant and supported
-albumin/creatinine ratio, only if present and governed
+haemoglobin
+haematocrit
+red blood cell count
+MCV
+MCH
+MCHC
+RDW
+ferritin
+serum iron
+transferrin
+transferrin saturation
+TIBC / UIBC only if present and governed
+B12 / folate only if P1-1 and existing assets support inclusion in blood / oxygen interpretation
 ```
 
-Do not invent additional renal markers.
+Do not invent additional markers.
 
-Do not create new interpretation logic for unavailable markers.
+Do not add interpretation logic for unavailable markers.
+
+Do not use B12 or folate as a broad explanatory shortcut unless existing governed assets support it for this domain.
 
 If a marker is absent from an uploaded panel, handle it through existing missing-marker patterns only where those patterns are already governed.
 
@@ -183,7 +200,7 @@ If a marker is absent from an uploaded panel, handle it through existing missing
 
 ## Clinical safety rules
 
-Kidney-function output must remain:
+Blood / iron / oxygen output must remain:
 
 ```text
 educational
@@ -194,28 +211,44 @@ traceable
 proportionate
 ```
 
-Do not state or imply a diagnosis of CKD, kidney disease, renal failure or acute kidney injury unless an existing governed source explicitly allows the wording and the output remains non-diagnostic.
+Do not state or imply a diagnosis of:
+
+```text
+anaemia
+iron deficiency anaemia
+haemochromatosis
+internal bleeding
+malabsorption
+hypoxia
+polycythaemia
+bone marrow disease
+blood cancer
+```
+
+unless an existing governed source explicitly allows the wording and the output remains non-diagnostic.
 
 Preferred framing:
 
 ```text
-kidney filtration markers
-kidney function context
-markers that can relate to filtration or renal handling
-this may be worth discussing with a clinician if out of range
+red-cell and oxygen-carrying markers
+iron storage and transport context
+markers that can relate to oxygen transport or iron availability
+this pattern may be worth discussing with a clinician if out of range or persistent
 ```
 
 Avoid:
 
 ```text
-you have CKD
-this proves kidney disease
-renal failure
-diagnostic staging
+you have anaemia
+this proves iron deficiency
+this shows haemochromatosis
+this means internal bleeding
+this indicates cancer
 urgent disease claims
+diagnostic staging
 ```
 
-If existing governed assets already include more specific wording, preserve the safety constraints around that wording.
+If existing governed assets include more specific wording, preserve the safety constraints around that wording.
 
 ---
 
@@ -227,9 +260,13 @@ Do not hardcode global/default reference ranges.
 
 Do not introduce new global reference intervals.
 
+Do not rebalance existing biomarker weights unless explicitly justified by an existing governed scoring policy and P1-1 evidence.
+
+Do not repeat the P1-2 scoring-policy error: if implementation would require new range bands, new diagnostic thresholds, or a new scoring policy, stop and report the blocker rather than improvising.
+
 Derived calculations may only be used if already governed by existing code/policy and supported by P1-1.
 
-If implementation would require new range policy, stop and report that a separate safety/scoring/range sprint is required.
+If a derived marker such as transferrin saturation is already supplied by the lab, prefer the lab-supplied value and range. Do not calculate it unless the product already has a governed derived-ratio policy for that calculation.
 
 ---
 
@@ -237,7 +274,7 @@ If implementation would require new range policy, stop and report that a separat
 
 Inspect existing scoring rails before modifying anything.
 
-If kidney function scoring is already present in `backend/ssot/scoring_policy.yaml`, reuse it.
+If blood / iron / oxygen scoring is already present in `backend/ssot/scoring_policy.yaml`, reuse it.
 
 Do not rewrite scoring policy broadly.
 
@@ -248,20 +285,33 @@ If a minimal scoring-policy update appears necessary, only proceed if:
 ```text
 - P1-1 identified it as required or expected;
 - the existing scoring-policy structure clearly supports the change;
-- the change is bounded to kidney function;
+- the change is bounded to blood / iron / oxygen;
+- it does not introduce hardcoded global reference intervals;
+- it does not silently rebalance existing governed weights;
 - tests are added or updated;
 - the final report explains the policy change.
 ```
 
-If scoring-policy ambiguity is significant, stop and report the blocker rather than improvising.
+If scoring-policy ambiguity is significant, stop and report the blocker.
 
 ---
 
 ## Subsystem rules
 
-Only implement kidney subsystem groupings that are supported by P1-1 and repository evidence.
+Only implement subsystem groupings supported by P1-1 and repository evidence.
 
 Possible subsystem candidates must be evidence-backed.
+
+Potential areas to verify, not assume:
+
+```text
+oxygen carrying capacity
+red-cell indices
+iron storage
+iron transport
+iron availability
+nutrient-linked red-cell production
+```
 
 Do not invent polished subsystem names solely for UX.
 
@@ -273,11 +323,11 @@ Frontend must only render governed outputs.
 
 ## Prose, explainer and clinician-report rules
 
-This sprint may wire existing kidney-function material into governed Layer B surfaces if that is required by the runtime pattern.
+This sprint may wire existing blood / iron / oxygen material into governed Layer B surfaces if required by the runtime pattern.
 
-Do not create a broad prose expansion sprint inside P1-2.
+Do not create a broad prose expansion sprint inside P1-3.
 
-Do not write a full new kidney explainer estate.
+Do not write a full new blood / iron / oxygen explainer estate.
 
 Do not use Gemini to produce prose.
 
@@ -292,12 +342,13 @@ Do not:
 ```text
 - read raw Pass 3 material at runtime
 - read raw Knowledge Bus research files at runtime
-- modify Knowledge Bus packages
+- modify Knowledge Bus source packages
 - promote Pass 3 material
 - activate blocked/context-dependent signals
 - add frontend medical inference
 - add Gemini runtime calls
 - add fallback parser logic
+- introduce hardcoded clinical thresholds
 ```
 
 ---
@@ -306,7 +357,7 @@ Do not:
 
 ### 1. Runtime/domain implementation
 
-Implement the bounded kidney-function domain output according to existing architecture and P1-1 evidence.
+Implement the bounded blood / iron / oxygen domain output according to existing architecture and P1-1 evidence.
 
 The exact files are not prescribed because Cursor must inspect the current codebase and follow existing patterns.
 
@@ -314,10 +365,12 @@ Expected candidate areas may include:
 
 ```text
 backend/core/analytics/domain_score_assembler.py
+backend/core/analytics/domain_narrative_wave1.py
 backend/core/analytics/wave1_subsystem_evidence.py
-backend/core/analytics/report_compiler_v1.py
-backend/core/contracts/
+backend/core/dto/persisted_replay_contract_v1.py
+backend/core/knowledge/health_system_card_evidence.py
 backend/ssot/scoring_policy.yaml
+knowledge_bus/compiled/
 backend/tests/
 ```
 
@@ -325,18 +378,20 @@ Only modify what is necessary.
 
 ### 2. Tests
 
-Add or update targeted tests proving the kidney-function domain output works.
+Add or update targeted tests proving the blood / iron / oxygen domain output works.
 
 Tests should verify, as applicable:
 
 ```text
-- kidney function domain appears in the expected output surface
+- blood / iron / oxygen domain appears in the expected output surface
 - relevant biomarkers map correctly
 - missing biomarkers do not create fabricated claims
 - lab-provided ranges are respected
 - output remains non-diagnostic
+- unsupported disease claims are absent
 - no Layer C/Gemini/frontend inference is required
 - existing domains are not regressed
+- P1-2 kidney output is not regressed
 ```
 
 Run the most relevant existing test suite for affected files.
@@ -348,20 +403,20 @@ If a test cannot be run in the environment, state that honestly and provide the 
 Create:
 
 ```text
-docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md
+docs/sprints/beta_readiness/P1-3_blood_iron_oxygen_domain_card.md
 ```
 
 This should be concise and include:
 
 ```markdown
-# P1-2 — Kidney Function Domain Card
+# P1-3 — Blood / Iron / Oxygen Domain Card
 
 ## 1. Summary
 - what was implemented
 - what remains out of scope
 
 ## 2. P1-1 evidence used
-- key evidence from P1-1 that justified kidney function as first implementation domain
+- key evidence from P1-1 that justified this implementation scope
 
 ## 3. Runtime changes
 - concise description of the domain/card/scoring/report/test changes
@@ -369,7 +424,7 @@ This should be concise and include:
 ## 4. Safety boundaries
 - non-diagnostic wording
 - lab-range use
-- avoided unsupported CKD claims
+- avoided unsupported anaemia / iron deficiency / bleeding / hypoxia / haematological disease claims
 - no Gemini / no frontend inference
 
 ## 5. Tests and validation
@@ -397,7 +452,7 @@ docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 Append a short entry:
 
 ```markdown
-## P1-2 — Kidney function domain card
+## P1-3 — Blood / iron / oxygen domain card
 
 **Status:** Complete / Partial / Blocked  
 **Date closed:** <YYYY-MM-DD>  
@@ -432,16 +487,18 @@ Expected categories may include:
 
 ```text
 backend/core/analytics/
-backend/core/contracts/
+backend/core/dto/
+backend/core/knowledge/
 backend/ssot/
 backend/tests/
+knowledge_bus/compiled/
 docs/sprints/beta_readiness/
 automation_bus/
 ```
 
 Do not change frontend files unless the existing architecture requires a purely render-only snapshot/test update. If any frontend file appears necessary, stop and explain why before making the change if the workflow allows; otherwise record it as a blocker.
 
-Do not change Knowledge Bus packages or Pass 3 source material.
+Do not change Knowledge Bus source packages or raw Pass 3 source material.
 
 Do not update the final strategy baseline.
 
@@ -461,7 +518,7 @@ git status --short
 
 Run relevant tests.
 
-Suggested test discovery commands:
+Suggested test discovery command:
 
 ```powershell
 python -m pytest --collect-only
@@ -469,9 +526,20 @@ python -m pytest --collect-only
 
 Then run the smallest relevant tests for the touched backend/analytics/report/DTO paths.
 
+At minimum, run the equivalent tests covering:
+
+```text
+domain score assembler
+governed subsystem evidence
+blood / iron / oxygen domain card
+kidney domain card regression from P1-2
+scoring rules if scoring policy changed
+day-one architecture validator if compiled card estate changed
+```
+
 If existing project test commands are documented, use the documented commands.
 
-At minimum, the final report must state:
+The final report must state:
 
 ```text
 - tests run
@@ -493,7 +561,7 @@ Return:
 ```text
 - branch name
 - files changed
-- summary of kidney-function implementation
+- summary of blood / iron / oxygen implementation
 - whether scoring policy changed
 - whether report/DTO/compiler surfaces changed
 - tests run and results
@@ -503,7 +571,7 @@ Return:
 - confirmation no frontend inference added
 - confirmation no Gemini added
 - confirmation no fallback parser added
-- confirmation no Knowledge Bus packages or Pass 3 artefacts changed
+- confirmation no Knowledge Bus source packages or Pass 3 artefacts changed
 - validation output
 - git status --short
 ```
@@ -517,27 +585,31 @@ Do not merge until Claude audit, GPT architectural review and human approval.
 This sprint is complete only if:
 
 ```text
-1. Kidney function is implemented as a bounded launch-core domain/card output using existing governed assets and P1-1 evidence.
+1. Blood / iron / oxygen is implemented as a bounded launch-core domain/card output using existing governed assets and P1-1 evidence.
 
 2. The implementation remains Layer B governed and does not move medical reasoning into Layer C, Gemini or frontend.
 
-3. The output is non-diagnostic and does not make unsupported CKD/kidney disease claims.
+3. The output is non-diagnostic and does not make unsupported anaemia, iron deficiency, bleeding, hypoxia, haemochromatosis or haematological disease claims.
 
 4. Lab-provided reference ranges remain authoritative where available.
 
-5. No fallback parser logic is introduced.
+5. No hardcoded global/default reference ranges or diagnostic thresholds are introduced.
 
-6. No Gemini runtime or prompt path is introduced.
+6. No unauthorised scoring weight rebalancing is introduced.
 
-7. No Knowledge Bus packages or raw Pass 3 artefacts are modified or read at runtime.
+7. No fallback parser logic is introduced.
 
-8. Targeted tests are added or updated and run.
+8. No Gemini runtime or prompt path is introduced.
 
-9. Existing implemented domains are not regressed by the kidney-function addition.
+9. No Knowledge Bus source packages or raw Pass 3 artefacts are modified or read at runtime.
 
-10. `docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md` is created.
+10. Targeted tests are added or updated and run.
 
-11. `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md` is updated with a short P1-2 entry.
+11. Existing implemented domains, including P1-2 kidney, are not regressed.
 
-12. The final report clearly states carry-forwards into P2 prose/explainer work, P3 safety/provenance work, and P5 UX work where relevant.
+12. `docs/sprints/beta_readiness/P1-3_blood_iron_oxygen_domain_card.md` is created.
+
+13. `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md` is updated with a short P1-3 entry.
+
+14. The final report clearly states carry-forwards into P2 prose/explainer work, P3 safety/provenance work, and P5 UX work where relevant.
 ```

@@ -1,27 +1,27 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "P1-2",
+  "work_id": "P1-3",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-20T00:00:00Z",
+  "hardened_utc": "2026-06-20T12:00:00Z",
   "hardened_by": "Claude Sonnet 4.6 — SOP v1.3.1 Stage 2",
   "changes": [
     {
       "check": "front_matter.work_id",
       "result": "PASS",
-      "finding": "CONFIRMED — work_id 'P1-2' present.",
+      "finding": "CONFIRMED — work_id 'P1-3' present.",
       "citation": "automation_bus/latest_cursor_prompt.md:2"
     },
     {
       "check": "front_matter.branch",
       "result": "PASS",
-      "finding": "CONFIRMED — branch 'work/P1-2-kidney-function-domain-card' present. Must match git branch before any file modification (Stage 4 requirement).",
+      "finding": "CONFIRMED — branch 'work/P1-3-blood-iron-oxygen-domain-card' present. Must match git branch before any file modification (Stage 4 requirement).",
       "citation": "automation_bus/latest_cursor_prompt.md:3"
     },
     {
       "check": "front_matter.risk_level",
       "result": "PASS",
-      "finding": "CONFIRMED HIGH. Sprint touches Intelligence Core: domain_score_assembler.py (output assembly), wave1_subsystem_evidence.py (signal routing), scoring_policy.yaml (potential eGFR addition), compiled card estate (knowledge_bus/compiled/). Per SOP §3 and §10, any work touching Intelligence Core = HIGH regardless of file path.",
-      "citation": "automation_bus/latest_cursor_prompt.md:4; backend/core/analytics/domain_score_assembler.py:485-769; MEMORY.md §Intelligence Core"
+      "finding": "CONFIRMED HIGH. Sprint touches Intelligence Core: domain_score_assembler.py (output assembly), wave1_subsystem_evidence.py (signal routing), health_system_card_evidence.py (compiled subsystem registry), domain_narrative_wave1.py (narrative assembly), scoring_policy.yaml (potential cbc extension), compiled card estate (knowledge_bus/compiled/). Per SOP §3 and §10, any work touching Intelligence Core = HIGH regardless of file path.",
+      "citation": "automation_bus/latest_cursor_prompt.md:4"
     },
     {
       "check": "front_matter.execution_model",
@@ -32,14 +32,14 @@
     {
       "check": "front_matter.change_type",
       "result": "PASS",
-      "finding": "CONFIRMED MIXED. Compiled asset creation (knowledge_bus/compiled/ kidney card manifests) + behavioural Intelligence Core wiring (domain_score_assembler.py adds kidney domain block, wave1_subsystem_evidence.py adds kidney subsystem order). SOP §4: MIXED always governed using BEHAVIOUR controls.",
-      "citation": "automation_bus/latest_cursor_prompt.md:6; MEMORY.md §change_type Definitions"
+      "finding": "CONFIRMED MIXED. Compiled asset creation (knowledge_bus/compiled/ blood/iron/oxygen card manifests) + behavioural Intelligence Core wiring (domain_score_assembler.py adds domain block, wave1_subsystem_evidence.py adds domain order, health_system_card_evidence.py registers new subsystem IDs). SOP §4: MIXED always governed using BEHAVIOUR controls.",
+      "citation": "automation_bus/latest_cursor_prompt.md:6"
     },
     {
-      "check": "prerequisite.p1_1_on_main",
+      "check": "prerequisite.p1_2_on_main",
       "result": "PASS",
-      "finding": "CONFIRMED. Commit 381a815 'Merge branch work/P1-1-launch-core-domain-build-materials-map' is present on main. Required file docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md exists and content was read and verified. Prerequisite satisfied.",
-      "citation": "git log main HEAD~5 (381a815); docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md:1"
+      "finding": "CONFIRMED. Both required files are present on main: docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md (read and verified) and docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md (read and verified). P1-2 merge commit a077607 present in git log.",
+      "citation": "docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md:1; git log HEAD (a077607 Merge branch work/P1-2-kidney-function-domain-card)"
     },
     {
       "check": "stage_2a_authority_paths",
@@ -47,127 +47,134 @@
       "all_paths_exist": true,
       "paths_verified": [
         "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — exists",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md — exists; content read and verified",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md — exists; content read and cross-referenced",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md — exists; content read and cross-referenced",
         "CONFIRMED: docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md — exists",
         "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — exists",
-        "CONFIRMED: backend/ssot/scoring_policy.yaml — exists; content read and verified",
-        "CONFIRMED: backend/core/analytics/domain_score_assembler.py — exists; content read and verified",
-        "CONFIRMED: backend/core/analytics/wave1_subsystem_evidence.py — exists; content read and verified",
-        "CONFIRMED: backend/core/contracts/narrative_payload_v1.py — exists; content read and verified",
-        "CONFIRMED: backend/core/analytics/report_compiler_v1.py — exists; grep confirms zero kidney/renal references",
-        "CONFIRMED: backend/core/analytics/root_cause_compiler_v1.py — exists",
-        "CONFIRMED: backend/ssot/retail_explainer_v1/registry.yaml — exists"
+        "CONFIRMED: backend/ssot/scoring_policy.yaml — exists; content read and verified (lines 1-50: cbc system confirmed)",
+        "CONFIRMED: backend/core/analytics/domain_score_assembler.py — exists; content read and verified (4-domain state confirmed)",
+        "CONFIRMED: backend/core/analytics/wave1_subsystem_evidence.py — exists; content read and verified (4-domain state confirmed)",
+        "CONFIRMED: backend/core/knowledge/health_system_card_evidence.py — exists; content read and verified (8-subsystem frozenset confirmed)",
+        "CONFIRMED: knowledge_bus/compiled/estate_index_v1.yaml — exists; content read and verified (8 card artefacts, none blood/iron/oxygen)",
+        "CONFIRMED: knowledge_bus/research/KB-S57_CBC_TRANCHE_BLOCKER_REPORT.md — exists — Cursor must read before activating any CBC family signals",
+        "CONFIRMED: backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py — exists; lines 225-236 read and verified"
       ],
       "duplicate_authority_sources": "NONE detected."
     },
     {
-      "check": "stage_2a_source_cross_reference.scoring_policy",
-      "result": "PASS — CONTENT VERIFIED",
-      "finding": "Kidney system is present at lines 39-42: min_biomarkers_required=1, system_weight=0.15, biomarkers=['creatinine','urea']. eGFR is NOT in the kidney biomarkers list. Creatinine bands present at lines 170-183 (unit: µmol/L, weight: 0.6, age_adjustment: true, sex_adjustment: true). Urea bands present at lines 183-195 (unit: mmol/L, weight: 0.4). urea_creatinine_ratio is in derived_ratios at line 308.",
-      "citation": "backend/ssot/scoring_policy.yaml:39-42,170-195,308"
+      "check": "stage_2a_source_cross_reference.scoring_policy.cbc",
+      "result": "PASS — CONTENT VERIFIED; RISK SURFACED",
+      "finding": "CONFIRMED: cbc system present at scoring_policy.yaml:47-50. system_weight: 0.1, min_biomarkers_required: 2, biomarkers: ['hemoglobin', 'hematocrit', 'white_blood_cells', 'platelets']. Iron, ferritin, transferrin, RBC indices (mcv, mch, mchc, rdw) have NO scoring bands in scoring_policy.yaml. These markers will produce unscored_reason_missing_lab_reference_range via the cbc rail. This is expected behaviour. STOP GATE applies: if implementation requires creating new scoring bands for these markers, Cursor must stop and report the blocker per prompt §Scoring and policy rules.",
+      "citation": "backend/ssot/scoring_policy.yaml:47-50"
     },
     {
       "check": "stage_2a_source_cross_reference.domain_score_assembler",
       "result": "PASS — CONTENT VERIFIED",
-      "finding": "assemble_consumer_domain_scores_v1 at line 485. Docstring at line 499 states 'Always returns three entries in stable order: cardiovascular, blood sugar, liver.' Only three domain blocks exist: cv_block(), met_block(), liv_block(). out_rows = [cv_block(), met_block(), liv_block()] at line 769. No kidney block, no _is_wave1_kidney predicate. Kidney domain NOT present — correct gap confirmed.",
-      "citation": "backend/core/analytics/domain_score_assembler.py:485,499,769"
+      "finding": "CONFIRMED: domain_score_assembler.py currently wires 4 domains (lines 566-858): wave1_cardiovascular, wave1_blood_sugar, wave1_liver, wave1_kidney. No wave1_blood_iron_oxygen block exists. No _is_wave1_blood_iron_oxygen predicate exists. _WAVE1_PLAIN_DESCRIPTOR at line 371 has 4 entries (no blood/iron/oxygen). Pattern to follow for new domain: _is_wave1_kidney at line 199 uses signal_id allowlist (not system-field filtering).",
+      "citation": "backend/core/analytics/domain_score_assembler.py:199-210,371-375,806-858"
     },
     {
       "check": "stage_2a_source_cross_reference.wave1_subsystem_evidence",
       "result": "PASS — CONTENT VERIFIED",
-      "finding": "_WAVE1_DOMAIN_SUBSYSTEM_ORDER dict at lines 20-34 contains only wave1_cardiovascular, wave1_blood_sugar, wave1_liver. WAVE1_DOMAIN_IDS frozenset at line 36 auto-derived. Module docstring at lines 5-6: 'Wave 1 domains only: cardiovascular, blood sugar, liver.' assemble_wave1_flat_domain_evidence at line 88 only serves wave1_liver.",
-      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:5-6,20-36,63-65,88-89"
+      "finding": "CONFIRMED: _WAVE1_DOMAIN_SUBSYSTEM_ORDER at wave1_subsystem_evidence.py:20-37 has 4 entries (cv, blood_sugar, liver, kidney). WAVE1_DOMAIN_IDS frozenset at line 39 auto-derived from the dict. No blood/iron/oxygen entry exists. Sprint must add wave1_blood_iron_oxygen key with subsystem ID tuple.",
+      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:20-39"
     },
     {
-      "check": "stage_2a_source_cross_reference.consumer_domain_score_model",
+      "check": "stage_2a_source_cross_reference.health_system_card_evidence",
       "result": "PASS — CONTENT VERIFIED",
-      "finding": "ConsumerDomainScoreV1.domain_id at results.py:307 is a plain str (not enum) — 'wave1_kidney' is a valid new value without model changes. AnalysisDTO.consumer_domain_scores at line 448 is Optional[List[ConsumerDomainScoreV1]] — accepts variable-length list. No contract changes required for the model layer.",
-      "citation": "backend/core/models/results.py:298-396,448"
+      "finding": "CONFIRMED: WAVE1_COMPILED_SUBSYSTEM_IDS frozenset at health_system_card_evidence.py:26-37 has 8 subsystem IDs (met x2, cv x3, liv x2, ren x1). No blood/iron/oxygen subsystem ID. Sprint must add new ID(s) here. PILOT_COMPILED_SUBSYSTEM_IDS at line 50 is aliased to WAVE1_COMPILED_SUBSYSTEM_IDS — updating the frozenset updates both.",
+      "citation": "backend/core/knowledge/health_system_card_evidence.py:26-50"
     },
     {
-      "check": "stage_2b_behavioural_hardening.regression_risk.test_three_domains",
+      "check": "stage_2a_source_cross_reference.estate_index",
+      "result": "PASS — CONTENT VERIFIED",
+      "finding": "CONFIRMED: estate_index_v1.yaml has 8 card_evidence_artefacts (none blood/iron/oxygen). Sprint must append a new entry for the blood/iron/oxygen subsystem compiled card + manifest. Must follow existing schema (subsystem_id, artefact_path, compile_manifest_path, launch_classification: launch_included_compiled).",
+      "citation": "knowledge_bus/compiled/estate_index_v1.yaml:9-40"
+    },
+    {
+      "check": "stage_2a_source_cross_reference.p1_1_biomarker_scope",
+      "result": "PASS — CONTENT VERIFIED",
+      "finding": "CONFIRMED from P1-1 §5.2: In-scope biomarkers confirmed in backend/ssot/biomarkers.yaml — haemoglobin (~733), hematocrit (~749), rbc (~917), mcv (~936), mch (~958), mchc (~975), rdw_cv (~992), rdw_sd (~1012), ferritin (~586), iron (~1824), transferrin (~1844), transferrin_saturation (~1865), vitamin_b12 and folate (yes). ABSENT from SSOT and packages: tibc and uibc — must not use. Ferritin is tagged 'immune' system in SSOT — cross-system routing risk (see stage_2b check below).",
+      "citation": "P1-1_launch_core_domain_build_materials_map.md:108-123 (§5.2)"
+    },
+    {
+      "check": "stage_2b_behavioural_hardening.risk.test_wave1_domain_ids_set",
       "result": "RISK SURFACED — MANDATORY TEST UPDATE",
-      "finding": "CONFIRMED REGRESSION. test_domain_score_assembler_v1.py:63 asserts len(rows) == 3 in test test_wave1_emits_three_domains_score_and_confidence_together. Adding kidney domain changes assembler output from 3 to 4 rows. This test WILL fail unless updated. Cursor must update len(rows) == 3 to len(rows) == 4 (or the new correct count) and update the test fixture to include kidney scoring data. This is an expected, required update — not a pre-existing failure.",
-      "citation": "backend/tests/unit/test_domain_score_assembler_v1.py:28,63"
+      "finding": "CONFIRMED REGRESSION RISK: test_domain_ux1c_governed_subsystem_evidence.py:225-228 asserts exact set WAVE1_DOMAIN_IDS == {'wave1_cardiovascular', 'wave1_blood_sugar', 'wave1_liver', 'wave1_kidney'}. After P1-3 adds wave1_blood_iron_oxygen to wave1_subsystem_evidence.py, this assertion WILL fail unless Cursor updates the test to include 'wave1_blood_iron_oxygen' in the expected set. This is a required, expected test update — not a pre-existing failure.",
+      "citation": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py:225-228"
     },
     {
-      "check": "stage_2b_behavioural_hardening.regression_risk.assembler_docstring",
-      "result": "RISK SURFACED",
-      "finding": "domain_score_assembler.py:499 docstring 'Always returns three entries in stable order: cardiovascular, blood sugar, liver' must be updated to reflect addition of kidney domain.",
-      "citation": "backend/core/analytics/domain_score_assembler.py:499"
+      "check": "stage_2b_behavioural_hardening.risk.ferritin_cross_system_routing",
+      "result": "RISK SURFACED — IMPLEMENTATION GUARD REQUIRED",
+      "finding": "Ferritin is tagged 'immune' system in backend/ssot/biomarkers.yaml (~586), not 'cbc'. Any _is_wave1_blood_iron_oxygen signal predicate that filters by system == 'cbc' will silently exclude ferritin signals. Pattern to follow: _is_wave1_kidney at domain_score_assembler.py:199-210 uses explicit signal_id allowlist ('signal_egfr_low', 'signal_creatinine_high', 'signal_creatinine_low'). The blood/iron/oxygen signal predicate must use signal_id allowlist logic, not system-field matching.",
+      "citation": "backend/core/analytics/domain_score_assembler.py:199-210; P1-1_launch_core_domain_build_materials_map.md:§5.2"
     },
     {
-      "check": "stage_2b_behavioural_hardening.regression_risk.subsystem_docstring",
-      "result": "RISK SURFACED",
-      "finding": "wave1_subsystem_evidence.py:5-6 module docstring 'Wave 1 domains only: cardiovascular, blood sugar, liver' must be updated.",
-      "citation": "backend/core/analytics/wave1_subsystem_evidence.py:5-6"
+      "check": "stage_2b_behavioural_hardening.risk.wbc_platelet_leakage",
+      "result": "RISK SURFACED — IMPLEMENTATION GUARD REQUIRED",
+      "finding": "The cbc scoring rail includes white_blood_cells and platelets (scoring_policy.yaml:50). The _is_wave1_blood_iron_oxygen signal predicate must NOT use a broad cbc-system match that inadvertently pulls WBC or platelet signals into the blood/iron domain. Explicit signal_id allowlist required, listing only governed blood/iron/oxygen signal IDs.",
+      "citation": "backend/ssot/scoring_policy.yaml:50"
     },
     {
-      "check": "stage_2b_behavioural_hardening.collision_preservation",
-      "result": "PASS — PROTECTED",
-      "finding": "renal_filtration_axis collision model (primary: signal_egfr_low, supporting: signal_creatinine_high) is enforced in signal_evaluator.py, not in the domain assembler. Domain assembler additions do not alter signal evaluation. test_signal_authority_collision_enforcement.py must still pass after implementation — this is a STOP gate per P1-1 §10.",
-      "citation": "P1-1_launch_core_domain_build_materials_map.md:345-346"
+      "check": "stage_2b_behavioural_hardening.risk.b12_folate_scoring_rail",
+      "result": "ADVISORY",
+      "finding": "B12 and folate fall under 'nutritional' scoring system (scoring_policy.yaml:37-38: system_weight: 0.0, biomarkers: []). If B12/folate are included in the blood/iron/oxygen domain (permitted by P1-1 §5.2 for MCV/macrocytosis context), they cannot contribute scored output via the nutritional rail. They may appear as subsystem evidence markers only if the compiled card evidence supports it. Do not create scored B12/folate bands under cbc or any other system.",
+      "citation": "backend/ssot/scoring_policy.yaml:37-38; P1-1_launch_core_domain_build_materials_map.md:§5.2 vitamin_b12/folate row"
+    },
+    {
+      "check": "stage_2b_behavioural_hardening.stop_gate.blocked_signals",
+      "result": "STOP GATE CONFIRMED",
+      "finding": "P1-1 §5.3 CONFIRMED: signal_iron_deficiency_context, signal_iron_overload_context, signal_hemoglobin_low, signal_mcv_high are blocked_pending_frame_adjudication. signal_ferritin_high/signal_ferritin_low are runtime_loaded with mixed promotion safety and medical review required. CBC tranche blocker report (KB-S57_CBC_TRANCHE_BLOCKER_REPORT.md) documents unresolved batch governance. Cursor must read this report before deciding which signals to wire. Do NOT activate any blocked signal. Only use signals confirmed runtime_active_canonical or runtime_loaded without adjudication blocks.",
+      "citation": "P1-1_launch_core_domain_build_materials_map.md:§5.3 (lines 130-139); knowledge_bus/research/KB-S57_CBC_TRANCHE_BLOCKER_REPORT.md"
+    },
+    {
+      "check": "stage_2b_behavioural_hardening.stop_gate.scoring_new_bands",
+      "result": "STOP GATE CONFIRMED",
+      "finding": "cbc system scoring bands in scoring_policy.yaml cover only hemoglobin and hematocrit per §§235-248. Iron, ferritin, transferrin, mcv, mch, mchc, rdw have no bands. If domain implementation requires scoring these markers beyond their existing lab-range comparison, new bands would be required. Per prompt §Scoring and policy rules: 'if scoring-policy ambiguity is significant, stop and report the blocker.' Do not improvise new bands.",
+      "citation": "backend/ssot/scoring_policy.yaml:235-248"
+    },
+    {
+      "check": "stage_2b_behavioural_hardening.stop_gate.tibc_uibc",
+      "result": "STOP GATE CONFIRMED",
+      "finding": "CONFIRMED: tibc and uibc are ABSENT from backend/ssot/biomarkers.yaml and have no KB packages per P1-1 §5.2 and §5.7. Do not use TIBC or UIBC. Prompt explicitly: 'TIBC / UIBC only if present and governed' — they are not present.",
+      "citation": "P1-1_launch_core_domain_build_materials_map.md:§5.2 (tibc/uibc row), §5.7"
+    },
+    {
+      "check": "stage_2b_behavioural_hardening.regression_targets",
+      "result": "CONFIRMED — all must pass after implementation",
+      "finding": "Regression tests that must pass: (1) test_domain_ux1c_governed_subsystem_evidence.py — update WAVE1_DOMAIN_IDS assertion to include wave1_blood_iron_oxygen; (2) test_signal_authority_collision_enforcement.py — renal_filtration_axis must not be disturbed; (3) test_p1_2_kidney_domain_card.py — kidney domain must not regress; (4) test_domain_score_assembler_v1.py — assembler domain-count assertion needs updating. All four are named regression targets for Cursor's Stage 4A closure protocol.",
+      "citation": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py; backend/tests/regression/test_signal_authority_collision_enforcement.py; backend/tests/unit/test_p1_2_kidney_domain_card.py"
     },
     {
       "check": "stage_2b_behavioural_hardening.determinism.additive_only",
-      "result": "RISK SURFACED",
-      "finding": "Adding kidney domain to assemble_consumer_domain_scores_v1 changes emitted output (adds a 4th ConsumerDomainScoreV1 row). This is an intentional declared change. Cursor must explicitly confirm in the final report: (a) existing three domain rows are unmodified; (b) kidney row is additive only; (c) no existing signal routing, confidence calculation, or narrative assembly is altered by the kidney block.",
-      "citation": "backend/core/analytics/domain_score_assembler.py:769; SOP §Non-Negotiables: No silent output drift"
-    },
-    {
-      "check": "stage_2b_behavioural_hardening.stop_gate.urea_launch_visibility",
-      "result": "STOP GATE CONFIRMED",
-      "finding": "P1-1 §10 EXPLICIT STOP GATE: 'Stop if urea signals are launch-visible without frame-index adjudication.' Urea signals (kb52c, s24) are runtime_loaded but NOT in medical_frame_identity_index_v1.yaml per P1-1 §7.3. Urea appears in scoring_policy.yaml (scoring only) but must NOT surface in launch-visible domain card signal narrative without frame index adjudication. Cursor must not wire urea signals into narrative/display subsystem rows.",
-      "citation": "P1-1_launch_core_domain_build_materials_map.md:342,491-495; backend/ssot/scoring_policy.yaml:42"
-    },
-    {
-      "check": "stage_2b_behavioural_hardening.stop_gate.s24_creatinine_blocked_frame",
-      "result": "STOP GATE CONFIRMED",
-      "finding": "s24 creatinine eGFR frame is 'blocked_pending_medical_review'. Must NOT activate. Only kb52c signal_creatinine_high and signal_creatinine_low (runtime_active_canonical) and kb47 signal_egfr_low (runtime_active_canonical) should be wired into the kidney domain. s24 creatinine potassium frame: inactive — must not activate.",
-      "citation": "P1-1_launch_core_domain_build_materials_map.md:337-340"
-    },
-    {
-      "check": "stage_2b_behavioural_hardening.stop_gate.acr_uacr",
-      "result": "STOP GATE CONFIRMED",
-      "finding": "No standalone ACR/UACR signal package exists. SSOT has uacr biomarker but corroborator-override-only. Do NOT activate ACR/UACR signal without dedicated package and medical review. Scoring policy has no uacr entry. P1-1 §10 explicit: 'ACR/UACR standalone signal activation without dedicated package and medical review' is in the must-NOT list.",
-      "citation": "P1-1_launch_core_domain_build_materials_map.md:317,328,488"
-    },
-    {
-      "check": "stage_2b_behavioural_hardening.egfr_scoring_policy",
       "result": "ADVISORY",
-      "finding": "eGFR is not in scoring_policy.yaml kidney system biomarkers (creatinine + urea only, line 42). P1-1 §10 says 'Extend scoring policy kidney system to include eGFR if clinically governed (lab-value driven).' eGFR is lab-calculated, lab-provided, not a hardcoded range. If Cursor adds eGFR to scoring policy: must add only to the kidney system biomarkers list; must add full scoring bands at the same structural level as creatinine and urea; must add a targeted test; must confirm in the final report. If scoring-policy ambiguity is significant, STOP and report per prompt §Scoring and policy rules.",
-      "citation": "backend/ssot/scoring_policy.yaml:39-42; P1-1_launch_core_domain_build_materials_map.md:327-328"
+      "finding": "Adding wave1_blood_iron_oxygen domain block to domain_score_assembler.py changes emitted output (adds a new ConsumerDomainScoreV1 row). This is an intentional declared change. Cursor must confirm in the final report: (a) existing four domain rows are unmodified; (b) new row is additive only; (c) no existing signal routing, confidence calculation, or narrative assembly is altered by the new block.",
+      "citation": "backend/core/analytics/domain_score_assembler.py:858; SOP §Non-Negotiables: No silent output drift"
     },
     {
-      "check": "stage_2b_behavioural_hardening.compiled_card_estate",
-      "result": "ADVISORY — GAP CONFIRMED",
-      "finding": "knowledge_bus/compiled/estate_index_v1.yaml has seven Wave 1 subsystems, none renal. Sprint must create compiled card YAML manifests for kidney subsystems. PILOT_COMPILED_SUBSYSTEM_IDS in core/knowledge/health_system_card_evidence.py must be updated to register new kidney subsystem IDs so wave1_subsystem_evidence.py can pick them up. Cursor must follow the existing compiled card YAML schema exactly.",
-      "citation": "P1-1_launch_core_domain_build_materials_map.md:69; backend/core/analytics/wave1_subsystem_evidence.py:69-78"
-    },
-    {
-      "check": "stage_2b_behavioural_hardening.narrative_payload_forbidden_list",
+      "check": "stage_2b_behavioural_hardening.persisted_replay_contract",
       "result": "ADVISORY",
-      "finding": "narrative_payload_v1.py:181-187 defines WAVE1_HIDDEN_SUBSYSTEM_FORBIDDEN_AS_SCORE_BASIS. If any kidney subsystem is to be hidden from the score basis narrative (e.g., a secondary supporting subsystem), it must be added to this list. No action required if all kidney subsystems are visible scored subsystems.",
-      "citation": "backend/core/contracts/narrative_payload_v1.py:181-187"
+      "finding": "P1-2 implementation added wave1_kidney to Wave 1 domain id set in persisted_replay_contract_v1.py (P1-2 note §3). P1-3 must follow the same pattern: add 'wave1_blood_iron_oxygen' to the Wave 1 domain id set in backend/core/dto/persisted_replay_contract_v1.py.",
+      "citation": "docs/sprints/beta_readiness/P1-2_kidney_function_domain_card.md:37"
     },
     {
       "check": "stop_conditions.forbidden_files",
       "result": "PASS",
-      "finding": "Prompt explicitly prohibits: Knowledge Bus package modification, Pass 3 artefact modification, AUTHORITY_MAP update, final strategy baseline update, Gemini, frontend inference, fallback parser logic, activating blocked frames.",
+      "finding": "Prompt explicitly prohibits: Knowledge Bus package source modification, Pass 3 artefact modification, AUTHORITY_MAP update, final strategy baseline update, Gemini, frontend inference, fallback parser logic, activating blocked frames, hardcoded clinical thresholds. No duplicate authority sources detected.",
       "citation": "automation_bus/latest_cursor_prompt.md:§Runtime constraints,§Critical architectural boundary"
     },
     {
       "check": "stop_conditions.powershell_compatibility",
       "result": "PASS",
-      "finding": "All shell commands in prompt use PowerShell-compatible syntax: git switch, git pull, git status --short, git switch -c, git diff --stat, python -m pytest --collect-only. No bash-only constructs.",
+      "finding": "All shell commands in prompt use PowerShell-compatible syntax: git switch, git pull, git status --short, git switch -c, git diff --stat, git diff --name-only, python -m pytest --collect-only. No bash-only constructs.",
       "citation": "automation_bus/latest_cursor_prompt.md:§Branch and state checks,§Validation"
     },
     {
       "check": "no_op_protection",
       "result": "PASS",
-      "finding": "Gap confirmed: domain_score_assembler.py returns only 3 domains; no kidney block exists; wave1_subsystem_evidence.py has no kidney entry; estate_index_v1.yaml has no renal compiled card. This sprint has real implementation work.",
-      "citation": "backend/core/analytics/domain_score_assembler.py:769; backend/core/analytics/wave1_subsystem_evidence.py:20-34"
+      "finding": "Gap confirmed: domain_score_assembler.py has no wave1_blood_iron_oxygen block; wave1_subsystem_evidence.py has no blood/iron/oxygen domain entry; estate_index_v1.yaml has no blood/iron/oxygen compiled card; health_system_card_evidence.py WAVE1_COMPILED_SUBSYSTEM_IDS has no blood/iron entry. Real implementation work exists.",
+      "citation": "backend/core/analytics/domain_score_assembler.py:371-374; backend/core/analytics/wave1_subsystem_evidence.py:20-39; knowledge_bus/compiled/estate_index_v1.yaml:9-40; backend/core/knowledge/health_system_card_evidence.py:26-37"
     }
   ],
-  "overall_verdict": "HARDENED — All five front matter fields confirmed (automation_bus/latest_cursor_prompt.md:2-6). Prerequisite P1-1-on-main confirmed (commit 381a815). All 11 authority file paths verified to exist. Key source content read and cross-referenced: scoring_policy.yaml kidney system confirmed (creatinine + urea, no eGFR); domain_score_assembler.py confirmed as three-domain-only with no kidney block; wave1_subsystem_evidence.py confirmed as three-domain-only. Two STOP GATES surfaced and confirmed: (1) urea launch-visibility gate — do not wire urea into launch-visible narrative without frame-index adjudication; (2) s24 creatinine blocked frame — do not activate. One mandatory test update: test_domain_score_assembler_v1.py:63 asserts len(rows) == 3 and WILL fail when kidney is added — Cursor must update. Two docstrings must be updated (assembler + wave1 subsystem module). eGFR in scoring policy: advisory — add only if structured correctly, stop if ambiguous. No forbidden file exposure. No tooling leakage risk. Cursor may proceed under TWO_PHASE_START_FINISH governance."
+  "overall_verdict": "HARDENED — All five front matter fields confirmed (automation_bus/latest_cursor_prompt.md:2-6). Prerequisites P1-1 and P1-2 on main confirmed. All authority paths verified to exist. Key source content read and cross-referenced: scoring_policy.yaml cbc system confirmed (hemoglobin/hematocrit/wbc/platelets only — no iron/ferritin/transferrin bands); domain_score_assembler.py confirmed 4-domain-only with no blood/iron/oxygen block; wave1_subsystem_evidence.py confirmed 4-domain-only; health_system_card_evidence.py confirmed 8-subsystem frozenset with no blood/iron entry; estate_index_v1.yaml confirmed 8 compiled cards, none blood/iron/oxygen. Four hardening-elevated risks: (1) test_domain_ux1c_governed_subsystem_evidence.py:225-228 WAVE1_DOMAIN_IDS set assertion will fail — mandatory test update; (2) ferritin cross-system routing risk (immune tag vs cbc rail) — _is_wave1_blood_iron_oxygen must use signal_id allowlist not system-field match; (3) WBC/platelet leakage risk — same allowlist requirement; (4) B12/folate cannot contribute scoring via nutritional rail (weight 0.0). Two STOP GATES confirmed: (1) blocked signal activation prohibited — must read KB-S57 blocker report first; (2) new scoring bands for iron/ferritin/transferrin prohibited unless existing structure clearly supports. Cursor may proceed under TWO_PHASE_START_FINISH governance."
 }
