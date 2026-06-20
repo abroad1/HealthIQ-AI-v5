@@ -1,16 +1,16 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "EIGHT-BLOCK-PROGRAMME-1",
+  "work_id": "BETA-BASELINE-REGISTER-1",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-18T00:00:00Z",
+  "hardened_utc": "2026-06-20T00:00:00Z",
   "hardened_by": "Claude Sonnet 4.6 — SOP v1.3.1 Stage 2",
   "changes": [
     {
       "check": "front_matter_completeness",
       "result": "PASS",
       "fields_confirmed": [
-        "CONFIRMED: automation_bus/latest_cursor_prompt.md:2 — work_id: EIGHT-BLOCK-PROGRAMME-1",
-        "CONFIRMED: automation_bus/latest_cursor_prompt.md:3 — branch: work/EIGHT-BLOCK-PROGRAMME-1-comparison-and-roadmap",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:2 — work_id: BETA-BASELINE-REGISTER-1",
+        "CONFIRMED: automation_bus/latest_cursor_prompt.md:3 — branch: work/BETA-BASELINE-REGISTER-1-final-strategy-and-register",
         "CONFIRMED: automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH (valid value)",
         "CONFIRMED: automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH (valid value)",
         "CONFIRMED: automation_bus/latest_cursor_prompt.md:6 — change_type: CONTENT (valid value — docs-only sprint)"
@@ -21,121 +21,98 @@
       "result": "PASS",
       "all_required_paths_exist": true,
       "required_paths_checked": [
-        "CONFIRMED: docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md — exists (verified via Glob)",
-        "CONFIRMED: docs/strategy/LAYER_ARCHITECTURE_AUTHORITY_INDEX_2026-06-17_r2.md — exists",
-        "CONFIRMED: docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_LATE_DOCUMENT_ADDENDUM_2026-06-17.md — exists",
-        "CONFIRMED: docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_ESTATE_AUDIT_CURSOR_2026-06-17.md — exists",
-        "CONFIRMED: docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_ESTATE_AUDIT_CLAUDE_2026-06-17.md — exists",
-        "CONFIRMED: docs/strategy/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED.md — exists",
-        "CONFIRMED: docs/architecture/User Health to Systems Map_FINAL.md — exists",
-        "CONFIRMED: docs/architecture/ADR_WP2_layer_b_layer_c_contract_path_b.md — exists",
-        "CONFIRMED: backend/core/contracts/narrative_payload_v1.py — exists",
-        "CONFIRMED: docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md — exists",
-        "CONFIRMED: docs/testing/INTERNAL_UAT_RESULTS_PAGE_FULL_AUDIT_6bcbf1de_2026-06-16.md — exists",
-        "CONFIRMED: docs/testing/INTERNAL_UAT_RESULTS_PAGE_FULL_AUDIT_6bcbf1de_2026-06-17_r2.md — exists",
-        "CONFIRMED: docs/audit-papers/LAYER-BOUNDARY-RECONCILIATION-1_layer_boundary_reconciliation.md — exists",
-        "CONFIRMED: docs/AUTHORITY_MAP.md — exists"
+        "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — exists (verified via Glob and Read)",
+        "CONFIRMED: docs/AUTHORITY_MAP.md — exists (verified via Glob and Read)",
+        "CONFIRMED: docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md — exists (verified via Glob; registered in AUTHORITY_MAP.md:54 as AUTHORITATIVE)",
+        "CONFIRMED: docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_COMPARISON_AND_PROGRAMME_RECOMMENDATION_2026-06-18.md — exists (verified via Glob)"
       ],
-      "supporting_paths_checked": [
-        "CONFIRMED: docs/architecture/RETAIL_EXPLAINER_CONTENT_BOUNDARIES_v1.md — exists",
-        "CONFIRMED: docs/intelligence/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md — exists",
-        "CONFIRMED: docs/intelligence/PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_v1.md — exists",
-        "CONFIRMED: docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md — exists",
-        "CONFIRMED: docs/testing/HealthIQ_AI_Background_Testing_Operating_Model_v1.md — exists",
-        "CONFIRMED: docs/testing/HealthIQ_AI_Phase_1_Sentinel_Execution_Brief.md — exists",
-        "CONFIRMED: docs/testing/healthiq_sentinel_phase1_implementation_report.md — exists",
-        "CONFIRMED: knowledge_bus/governance/day_one_launch_estate_gate_v1.yaml — exists",
-        "CONFIRMED: backend/ssot/retail_explainer_v1/registry.yaml — exists",
-        "CONFIRMED: backend/ssot/scoring_policy.yaml — exists"
-      ],
-      "duplicate_authority_sources": "NONE detected. r2 layer index supersedes r1 by naming convention; prompt references r2 only. No conflicting authorities."
+      "duplicate_authority_sources": "NONE detected. The definitive strategy doc (line 9) explicitly supersedes all prior 2026-06-18 drafts. AUTHORITY_MAP.md does not yet register the new doc — this sprint fills that gap. No conflicting authorities."
     },
     {
-      "check": "stage_2b_source_cross_reference",
+      "check": "stage_2a_source_content_cross_reference",
       "result": "PASS",
       "findings": [
         {
-          "claim": "Claude audit states 187 Knowledge Bus packages",
+          "claim": "Definitive strategy document is Version FINAL v1.0 and suitable as programme baseline",
           "status": "CONFIRMED",
-          "citation": "docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_ESTATE_AUDIT_CLAUDE_2026-06-17.md:21 — '187 Knowledge Bus packages, 11 phenotype fixtures, 16 Sentinel-guarded defect classes'"
+          "citation": "docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md:2 — 'Version: FINAL v1.0'; line 7 — 'Status: Final consolidated strategy baseline for team review, ratification and use as the basis of the eight-block beta-readiness build strategy'"
         },
         {
-          "claim": "Cursor audit states 186 pkg_* packages",
+          "claim": "Document canonical path matches prompt",
           "status": "CONFIRMED",
-          "citation": "docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_ESTATE_AUDIT_CURSOR_2026-06-17.md:16 — '**186** `pkg_*` packages; **153** Pass 3 investigation specs'"
+          "citation": "docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md:8 — 'Intended repository path: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md' — matches prompt canonical path exactly"
         },
         {
-          "claim": "Package count discrepancy (186 vs 187) is real and must be reconciled in §7",
+          "claim": "Document explicitly supersedes prior 18 June 2026 drafts",
           "status": "CONFIRMED",
-          "citation": "Cursor line 16 (186) vs Claude line 21 (187) — genuine numeric disagreement; prompt §7 correctly targets this for reconciliation"
+          "citation": "docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md:9 — 'Supersedes: all separate 18 June 2026 beta-readiness strategy drafts and synthesis drafts listed in Appendix A'"
         },
         {
-          "claim": "Claude audit identifies 6 HIGH-severity UAT defects as unresolved",
-          "status": "CONFIRMED — STALE",
-          "citation": "docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_ESTATE_AUDIT_CLAUDE_2026-06-17.md:27 — '6 HIGH-severity UAT defects (2026-06-16) are unresolved'. Stale: UAT R2 (line 23) confirms HIGH 6 → 0 all resolved by sprint INTERNAL-UAT-RESULTS-TRUST-HARDENING-1."
+          "claim": "AUTHORITY_MAP.md Strategy section does not yet contain the new beta_readiness definitive strategy doc",
+          "status": "CONFIRMED — gap present, sprint addresses it",
+          "citation": "docs/AUTHORITY_MAP.md:24-38 — Strategy section lists five docs; none is the 2026-06-20 beta_readiness definitive strategy. Last updated 2026-05-04 (line 3), predating the new doc."
         },
         {
-          "claim": "UAT R2 resolves all 6 HIGH defects",
+          "claim": "AUTHORITY_MAP.md establishes clear AUTHORITATIVE entry pattern for strategy documents",
           "status": "CONFIRMED",
-          "citation": "docs/testing/INTERNAL_UAT_RESULTS_PAGE_FULL_AUDIT_6bcbf1de_2026-06-17_r2.md:23 — 'BLOCKER 0 → 0 · HIGH 6 → 0 · MEDIUM 6 → 5 · LOW 3 → 3'. Fix sprint: INTERNAL-UAT-RESULTS-TRUST-HARDENING-1 (commits b55e6e7, 16297cf, closure 12f1a7a)."
-        },
-        {
-          "claim": "ADR-LAYER-BOUNDARY-RECONCILIATION-1 is the governing canonical layer model",
-          "status": "CONFIRMED — with ratification nuance",
-          "citation": "docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md:5 — Status: 'Accepted — pending human ratification alongside beta-readiness roadmap planning.' The ADR is accepted but not yet formally ratified. Output paper must reflect this nuance and not present it as unconditionally ratified."
-        },
-        {
-          "claim": "Late-document addendum does not change core audit conclusions; v1.5 §2.3 strengthens Layer B/C assertions",
-          "status": "CONFIRMED",
-          "citation": "docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_LATE_DOCUMENT_ADDENDUM_2026-06-17.md:14 — 'Late discovery changes authority ranking and framing, not core estate conclusions.' Lines 77-81 confirm v1.5 §2.3 strengthens Layer B ownership of WHY/root-cause and Layer C as translation-only."
-        },
-        {
-          "claim": "ADR-LAYER-BOUNDARY-RECONCILIATION-1 Layer B definition covers WHY, clinician report, boilerplate asset selection",
-          "status": "CONFIRMED",
-          "citation": "docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md:75-78 — 'clinician report output (ClinicianReportV1, CSR assembly)', 'deterministic boilerplate and prose asset selection (which governed module to use)' explicitly listed under Layer B owns."
+          "citation": "docs/AUTHORITY_MAP.md:26 — '| docs/strategy/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED.md | AUTHORITATIVE | Master strategic record. |' — pattern is one-line table row with path, status, brief note. Adding new doc follows this pattern unambiguously."
         }
       ]
     },
     {
       "check": "stage_2b_behavioural_hardening",
       "result": "NOT_APPLICABLE",
-      "note": "change_type: CONTENT. Docs-only sprint — no Intelligence Core, no code, no analytical pipeline in scope. Behavioural hardening not required."
+      "note": "change_type: CONTENT. Docs-only sprint — no Intelligence Core, no code, no analytical pipeline in scope. Behavioural hardening not required per SOP v1.3.1 §2B."
     },
     {
       "check": "stop_conditions",
       "result": "PASS",
       "explicit_prohibitions_confirmed": [
-        "Do not change runtime code — automation_bus/latest_cursor_prompt.md:16",
-        "Do not change tests — automation_bus/latest_cursor_prompt.md:17",
-        "Do not change frontend behaviour — automation_bus/latest_cursor_prompt.md:18",
-        "Do not change backend behaviour — automation_bus/latest_cursor_prompt.md:19",
-        "Do not implement any roadmap item — automation_bus/latest_cursor_prompt.md:20",
-        "Do not implement Gemini — automation_bus/latest_cursor_prompt.md:21",
-        "Do not alter existing audits except one-line cross-reference if explicitly justified — automation_bus/latest_cursor_prompt.md:22",
-        "Do not create branches/forks other than specified work branch — automation_bus/latest_cursor_prompt.md:23"
+        "Do not change runtime code — automation_bus/latest_cursor_prompt.md:17",
+        "Do not change tests — automation_bus/latest_cursor_prompt.md:18",
+        "Do not change frontend behaviour — automation_bus/latest_cursor_prompt.md:19",
+        "Do not change backend behaviour — automation_bus/latest_cursor_prompt.md:20",
+        "Do not begin P1-1 domain mapping — automation_bus/latest_cursor_prompt.md:21",
+        "Do not alter medical logic, parser logic, scoring, reports, Gemini, Layer B or Layer C runtime behaviour — automation_bus/latest_cursor_prompt.md:23",
+        "Do not rewrite the final strategy document — automation_bus/latest_cursor_prompt.md:24"
       ],
-      "validation_requirements": "CONFIRMED — prompt lines 461-474 require git diff --stat and git diff --name-only; only docs/strategy/eight_block_beta_readiness/EIGHT_BLOCK_BETA_READINESS_COMPARISON_AND_PROGRAMME_RECOMMENDATION_2026-06-18.md may change."
+      "validation_requirements": "CONFIRMED — prompt lines 222-230 require git diff --stat, git diff --name-only, git status --short; only docs/ files may appear in output."
     },
     {
       "check": "risk_level_review",
       "result": "ADVISORY",
       "field": "risk_level",
       "current_value": "HIGH",
-      "note": "Docs-only sprint. No Intelligence Core files in scope. HIGH is conservative for a documentation sprint but not a kernel blocker. HIGH is justifiable: this strategic programme document governs sequencing of all future HIGH-risk sprints. GPT confirmation of intent is implicit in the prompt.",
+      "note": "Docs-only sprint with CONTENT change_type. No Intelligence Core files in scope. HIGH is conservative and technically over-classified per SOP §10 HIGH risk triggers. However, HIGH is consistent with the approval controls specified in the prompt ('Do not merge until GPT architectural review and human approval' — prompt:250). Over-classification is safer than under-classification. Not a blocker.",
       "action": "Accept HIGH — no correction required."
-    },
-    {
-      "check": "adr_ratification_advisory",
-      "result": "ADVISORY",
-      "note": "ADR-LAYER-BOUNDARY-RECONCILIATION-1 status is 'Accepted — pending human ratification' (ADR line 5). The output paper (§3, §6) must accurately reflect this pending status. Cursor must not describe the ADR as unconditionally adopted or use language implying full ratification without human sign-off. This is a content quality constraint, not a blocker.",
-      "citation": "docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md:5"
     },
     {
       "check": "authority_map_update_constraint",
       "result": "ADVISORY",
-      "note": "Prompt allows AUTHORITY_MAP.md update only if Cursor explicitly justifies why. Default is leave unchanged. Any update must be minimal (one-line entry) and explained in the required final report. This is not a blocker — it is a constrained permission.",
-      "citation": "automation_bus/latest_cursor_prompt.md:473"
+      "note": "Prompt hedges AUTHORITY_MAP.md update with explicit escape: 'If unsure whether to update AUTHORITY_MAP.md, do not update it; instead record in the final report that it should be reviewed by GPT/human' (prompt:98). Update is permitted only if clearly appropriate per existing pattern. Source content confirms the pattern is clear and the gap is real — update is appropriate. However, update must be minimal (one row in Strategy section) and must appear in the final report.",
+      "citation": "automation_bus/latest_cursor_prompt.md:88-98; docs/AUTHORITY_MAP.md:26 (pattern reference)"
+    },
+    {
+      "check": "docs_sprints_directory",
+      "result": "ADVISORY",
+      "note": "docs/sprints/beta_readiness/ directory may not exist. Prompt explicitly covers this: 'If the directory does not exist, create it' (prompt:108). Cursor must create the full directory path before creating BUILD_DELIVERABLE_REGISTER.md.",
+      "citation": "automation_bus/latest_cursor_prompt.md:108"
+    },
+    {
+      "check": "intelligence_core_exposure",
+      "result": "PASS — NOT IN SCOPE",
+      "detail": "No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, update_cursor_status.py, signal evaluator, compiler, assembler, or any runtime file in scope. No Intelligence Core exposure."
+    },
+    {
+      "check": "forbidden_files_tooling_leakage",
+      "result": "PASS",
+      "detail": "No .codex/, .vscode/, AGENTS.md tooling leakage risk. Only docs/ files in expected changed files list."
+    },
+    {
+      "check": "powershell_compatibility",
+      "result": "PASS",
+      "detail": "All shell commands use PowerShell syntax: git switch, git pull, git status --short, git switch -c, git diff --stat, git diff --name-only. No bash-only constructs present."
     }
   ],
-  "overall_verdict": "HARDENED — all 14 required authority paths and all 10 supporting paths confirmed present. Front matter valid (all 5 fields). Two stale findings confirmed and correctly targeted in §7: (1) Claude's '6 HIGH UAT defects unresolved' is superseded by R2 which shows HIGH 6→0; (2) package count discrepancy 186 (Cursor) vs 187 (Claude) is real and must be reconciled. Two non-blocking advisories: ADR is 'Accepted — pending human ratification' and must not be overstated; AUTHORITY_MAP update is conditional and must be justified. No behavioural hardening required. Cursor may proceed."
+  "overall_verdict": "HARDENED — all four authority paths confirmed to exist with source content read and cross-referenced. Front matter valid (all five fields). Definitive strategy document confirmed FINAL v1.0, self-declares canonical path, explicitly supersedes prior drafts. AUTHORITY_MAP.md gap confirmed (doc not yet registered; last updated 2026-05-04). Entry pattern is clear; AUTHORITY_MAP update is appropriate. Three non-blocking advisories: (1) HIGH risk is conservative for CONTENT-only sprint but consistent with specified approval controls; (2) AUTHORITY_MAP update must be minimal and reported; (3) docs/sprints/beta_readiness/ directory must be created if absent. No Intelligence Core exposure. No behavioural risk. Cursor may proceed."
 }
