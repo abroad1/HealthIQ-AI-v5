@@ -112,6 +112,30 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-4 — Thyroid / energy regulation domain card
+
+**Status:** Blocked  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate  
+
+### Delivered / ticked off
+- Phase 1 thyroid authority and FT3/register reconciliation completed and documented.
+- STOP decision recorded: unresolved FT3-low register conflict, inert hormonal scoring rail, inactive TSH runtime packages — no runtime implementation performed.
+
+### Carry-forwards
+- Reconcile FT3 low across Batch 2 thyroid governance registers before retry.
+- Define hormonal scoring rail or explicit unscored-card authority before domain assembler work.
+- kb52c TSH and kb59 antibody promotion/adjudication remain open.
+
+### Blockers / risks
+- Implementing now would require scoring-policy improvisation or activation of deferred/context-dependent signals.
+- A partial FT3/FT4-only domain without TSH would be clinically misleading at launch.
+
+### Recommended next sprint
+- P3-FT3-REGISTER-RECONCILIATION (governance) then P1-4 retry; or continue P2 prose substrate in parallel.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
