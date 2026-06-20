@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-6R-thyroid-scoring-architecture-recovery",
+  "branch": "work/P1-7-research-to-runtime-adequacy-gate",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T12:05:00Z",
-  "cursor_started_utc": "2026-06-20T12:00:38Z",
-  "head_sha": "6828c2317297957e07ddd3f8de065008dc165ff5",
+  "cursor_started_utc": "2026-06-20T12:34:07Z",
+  "head_sha": "e37cfb7086e9f617c0ea3df0a9eecce41f665dd7",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-6R"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-7"
 }
