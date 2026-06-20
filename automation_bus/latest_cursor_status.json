@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-7-research-to-runtime-adequacy-gate",
+  "branch": "work/P1-8-scoring-lab-range-engine",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T12:37:05Z",
-  "cursor_started_utc": "2026-06-20T12:34:07Z",
-  "head_sha": "429de68fedeb236438bff3eb657cfcd50b035c9c",
+  "cursor_started_utc": "2026-06-20T13:11:18Z",
+  "head_sha": "54963f982c50323bc17dc651cb391d1af4873c73",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-7"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-8"
 }
