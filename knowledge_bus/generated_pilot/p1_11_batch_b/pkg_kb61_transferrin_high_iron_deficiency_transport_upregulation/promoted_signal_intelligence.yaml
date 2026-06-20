@@ -1,0 +1,118 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_transferrin_high_iron_deficiency_transport_upregulation
+  signal_id: signal_transferrin_high
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: transferrin_transport
+signals:
+- signal_id: signal_transferrin_high
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: transferrin
+    rationale: High transferrin frequently reflects compensatory upregulation of iron-transport capacity when body iron availability
+      is reduced.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: ferritin
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low ferritin supports depleted iron stores rather than a nonspecific isolated rise in transferrin.
+  - biomarker_id: mch
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Low MCH supports that reduced iron availability is affecting erythrocyte hemoglobinization, consistent with
+      functional iron deficiency downstream of the transport upregulation.
+  - biomarker_id: transferrin_saturation
+    expected_direction: low
+    role: severity_marker
+    relationship_kind: severity
+    availability: specialist
+    rationale: Low transferrin saturation quantifies the degree to which available iron-binding capacity is unfilled, indicating
+      the functional severity of iron-transport upregulation relative to actual iron supply.
+  - biomarker_id: rdw_cv
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: High RDW-CV favors evolving iron deficiency or mixed deficiency over a non-deficiency cause of high transferrin,
+      such as pregnancy or oestrogen effect, by indicating erythrocyte size heterogeneity from iron-restricted production.
+  contradiction_markers:
+  - contradiction_id: ctr_ferritin_not_low_weakens_absolute_depletion
+    marker_reference: ferritin
+    contradiction_rationale: A ferritin value that is not low weakens an absolute iron-store depletion interpretation and
+      may warrant reassessment of whether the transferrin rise is driven by iron deficiency.
+    contradiction_strength: strong
+  - contradiction_id: ctr_no_anisocytosis_weakens_progressive_iron_restriction
+    marker_reference: rdw_cv
+    contradiction_rationale: A non-elevated RDW-CV weakens a more established progressive iron-restricted erythropoietic pattern,
+      making the high transferrin result less specific as an early restriction signal.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - If ferritin and saturation are unavailable, keep early iron restriction as a cautious secondary explanation rather than
+      an established diagnosis.
+    - Review ferritin and the broader iron panel before treating high transferrin as confirmation of iron deficiency.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_transferrin_high_with_low_ferritin_and_high_rdw_cv
+    resulting_state: at_risk
+    description: Escalate when transferrin is high with ferritin below the laboratory minimum and RDW-CV above the laboratory
+      maximum, as this combination is consistent with clinically relevant iron deficiency.
+    conditions:
+    - metric_id: ferritin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    - metric_id: rdw_cv
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_biochemistry_transferrin_2025
+    - source_iron_deficiency_adults_review_2025
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: High transferrin reflects increased iron-binding capacity in response to reduced body iron availability,
+      and provides greater clinical utility when ferritin, transferrin saturation, and erythrocyte indices are reviewed alongside
+      it.
+    threshold_notes: No disease-specific transferrin threshold should be utilized beyond the reporting laboratory range; ferritin,
+      transferrin saturation, and the broader iron profile are required for structured interpretation.
+    sources:
+    - source_id: source_biochemistry_transferrin_2025
+      paper_title: Biochemistry, Transferrin
+      journal: StatPearls
+      year: 2025
+    - source_id: source_iron_deficiency_adults_review_2025
+      paper_title: 'Iron Deficiency in Adults: A Review'
+      journal: JAMA
+      year: 2025
+  confirmatory_test_refs:
+  - test_id: ct_ferritin_and_complete_iron_panel
+    rationale: Ferritin with the broader iron panel, including transferrin saturation, helps distinguish true iron deficiency
+      from less specific or compensatory transferrin elevation and supports assessment of store depletion.
+  - test_id: ct_reticulocyte_hemoglobin_equivalent
+    rationale: Reticulocyte hemoglobin equivalent provides a measure of functional iron availability for erythropoiesis, helping
+      to identify iron-restricted production independently of storage markers.

@@ -1,0 +1,92 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_hematocrit_low_anemia_or_hemodilution
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_hematocrit_low_anemia_or_hemodilution
+  signal_id: signal_hematocrit_low
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: hematocrit_oxygen_capacity
+signals:
+- signal_id: signal_hematocrit_low
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: hematocrit
+    rationale: Low hematocrit generally reflects reduced red-cell mass or dilution and should be interpreted with hemoglobin
+      and red-cell indices.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low hemoglobin corroborates a true anemia pattern when hematocrit is reduced.
+  - biomarker_id: mcv
+    expected_direction: either
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: MCV helps classify the anemia mechanism and narrow likely causes.
+  - biomarker_id: albumin
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Low albumin may support hemodilution or broader systemic illness as an alternative or mixed explanation.
+  contradiction_markers:
+  - contradiction_id: ctr_albumin_low
+    marker_reference: albumin
+    contradiction_rationale: Marked hypoalbuminemia raises the possibility of hemodilution or mixed systemic illness rather
+      than isolated red-cell underproduction.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_mcv_abnormal
+    marker_reference: mcv
+    contradiction_rationale: Markedly abnormal red-cell indices strengthen a genuine anemia mechanism over simple dilution.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Review albumin, fluid status, and other CBC indices before labeling isolated anemia from hematocrit alone.
+    - Use hemoglobin and red-cell indices before inferring the underlying anemia type.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_hematocrit_low_with_hemoglobin_low
+    resulting_state: at_risk
+    description: Escalate when low hematocrit coincides with low hemoglobin, as this more strongly supports a true anemia
+      pattern.
+    conditions:
+    - metric_id: hemoglobin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_nice_polycythaemia_2024
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: Reduced hematocrit commonly reflects anemia but may also be influenced by plasma-volume expansion,
+      so CBC context remains important.
+    threshold_notes: Interpretation should follow laboratory abnormality and correlated CBC indices rather than hematocrit
+      alone.
+    sources:
+    - source_id: source_nice_polycythaemia_2024
+      paper_title: Polycythaemia/Erythrocytosis - NICE CKS
+      journal: NICE
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_cbc_indices_with_reticulocyte_context
+    rationale: CBC indices and reticulocyte context help determine whether low hematocrit reflects true anemia or dilution.

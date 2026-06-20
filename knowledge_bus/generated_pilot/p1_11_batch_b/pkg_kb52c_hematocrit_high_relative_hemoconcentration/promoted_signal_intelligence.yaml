@@ -1,0 +1,92 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_hematocrit_high_relative_hemoconcentration
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_hematocrit_high_relative_hemoconcentration
+  signal_id: signal_hematocrit_high
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: hematocrit_oxygen_capacity
+signals:
+- signal_id: signal_hematocrit_high
+  research_domain: vascular
+  signal_system: vascular
+  primary_metric:
+    biomarker_id: hematocrit
+    rationale: High hematocrit may arise from reduced plasma volume without a true increase in red-cell mass.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: hemoglobin
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: High hemoglobin often accompanies hemoconcentration but does not distinguish relative from absolute erythrocytosis.
+  - biomarker_id: albumin
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: A concentrated serum protein pattern can support plasma-volume contraction.
+  - biomarker_id: erythropoietin
+    expected_direction: either
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: Erythropoietin helps distinguish relative hemoconcentration from secondary erythropoietin-driven erythrocytosis.
+  contradiction_markers:
+  - contradiction_id: ctr_erythropoietin_high
+    marker_reference: erythropoietin
+    contradiction_rationale: High erythropoietin makes a simple relative hemoconcentration interpretation less likely.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_normal_albumin_weakens_concentration_component
+    marker_reference: albumin
+    contradiction_rationale: A normal or low albumin weakens the hemoconcentration component of a mixed erythrocytosis interpretation,
+      as genuine plasma volume contraction typically raises albumin concentration alongside hematocrit.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Repeat hematocrit after addressing transient volume depletion before assigning a durable erythrocytosis frame.
+    - Review albumin, urea or hydration context, and erythropoietin before concluding true erythrocytosis.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_hematocrit_high_with_albumin_high
+    resulting_state: at_risk
+    description: Escalate when high hematocrit coincides with high albumin, as this more strongly supports a concentrated
+      plasma-volume state.
+    conditions:
+    - metric_id: albumin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_nice_polycythaemia_2024
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Raised hematocrit can be relative when plasma volume is reduced, so persistence and mechanism testing
+      are important before labeling erythrocytosis.
+    threshold_notes: Use repeat testing and clinical context rather than assuming a single elevated hematocrit represents
+      increased red-cell mass.
+    sources:
+    - source_id: source_nice_polycythaemia_2024
+      paper_title: Polycythaemia/Erythrocytosis - NICE CKS
+      journal: NICE
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_repeat_hematocrit_after_volume_repletion
+    rationale: Repeat hematocrit after correction of suspected dehydration helps separate relative hemoconcentration from
+      persistent erythrocytosis.
