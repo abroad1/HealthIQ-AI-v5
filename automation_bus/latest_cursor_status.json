@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-10-pass3-launch-core-signal-intelligence-batch-a",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-20T14:26:25Z",
   "cursor_started_utc": "2026-06-20T14:22:35Z",
-  "head_sha": "905c46fde93a7aa5e04b3be5636149972b8428a5",
+  "head_sha": "3b665971f03a7c9947e8546fb4ae59a2034be1ff",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-10"
 }
