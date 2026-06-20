@@ -1,5 +1,5 @@
 {
-  "work_id": "P1-9",
+  "work_id": "P1-10",
   "status": "HARDENED",
   "bus_version": "1.3.1",
   "hardened_utc": "2026-06-20T00:00:00Z",
@@ -8,20 +8,20 @@
     {
       "check": "front_matter.work_id",
       "result": "PASS",
-      "finding": "CONFIRMED — work_id 'P1-9' present.",
+      "finding": "CONFIRMED — work_id 'P1-10' present.",
       "citation": "automation_bus/latest_cursor_prompt.md:2"
     },
     {
       "check": "front_matter.branch",
       "result": "PASS",
-      "finding": "CONFIRMED — branch 'work/P1-9-pass3-research-to-runtime-exploitation-map' present. Cursor must create this branch from main at Stage 0 before any file modification. Branch does not yet exist; creation is the first required action.",
+      "finding": "CONFIRMED — branch 'work/P1-10-pass3-launch-core-signal-intelligence-batch-a' present. Cursor must switch to main, pull, confirm clean, then create this branch before any file modification.",
       "citation": "automation_bus/latest_cursor_prompt.md:3"
     },
     {
       "check": "front_matter.risk_level",
       "result": "PASS — WITH FINDING",
-      "finding": "CONFIRMED HIGH declared. FINDING (non-blocker): None of the SOP v1.3.1 §10 HIGH risk triggers strictly apply to this sprint. All deliverables are documentation-only under docs/sprints/beta_readiness/. No Intelligence Core is touched, no behavioural logic modified, no output generation affected, no restricted file paths (backend/ssot/, backend/core/pipeline/, backend/core/analytics/, control-plane scripts) are changed. Over-classification as HIGH is not harmful — it adds an extra GPT architectural review gate before merge, which is appropriate given that the exploitation map will directly inform future HIGH-risk batch promotion sprints. Classification is conservative and defensible. Cursor should not reduce the risk level.",
-      "citation": "automation_bus/latest_cursor_prompt.md:4; SOP v1.3.1 §10 HIGH risk triggers"
+      "finding": "CONFIRMED HIGH declared. FINDING (non-blocker): By SOP v1.3.1 §10, the strict HIGH triggers (Intelligence Core, backend/ssot/, backend/core/pipeline/, backend/core/analytics/, control-plane scripts) are not triggered here — promoted_signal_intelligence.yaml files are explicitly deferred from runtime by ARCH-RT-5E and are not consumed by launch-critical Intelligence Core paths. However, the conservative HIGH classification is defensible: it gates the batch promotion behind Claude audit + GPT architectural review + dual approval before any PSI content lands. Cursor must not reduce the risk level.",
+      "citation": "automation_bus/latest_cursor_prompt.md:4; backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py:1-34; SOP v1.3.1 §10"
     },
     {
       "check": "front_matter.execution_model",
@@ -32,97 +32,84 @@
     {
       "check": "front_matter.change_type",
       "result": "PASS",
-      "finding": "CONFIRMED CONTENT. Sprint reads research corpus and produces planning/documentation artefacts only. All three deliverables (exploitation map .md, exploitation matrix .yaml, BUILD_DELIVERABLE_REGISTER.md update) are under docs/sprints/beta_readiness/. No backend code, no runtime behaviour, no package modification, no compiled card modification, no scoring policy change. CONTENT is the correct classification.",
-      "citation": "automation_bus/latest_cursor_prompt.md:6; SOP §4 change_type definitions"
+      "finding": "CONFIRMED CONTENT. The promoted_signal_intelligence.yaml files this sprint creates are explicitly deferred from runtime by ARCH-RT-5E (enforced by test). The test at backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py:28-34 asserts that no launch-critical module imports the PSI loader, and the authority manifest classifies PSI wiring as 'deferred_non_launch_blocker'. Adding new PSI YAML entries does not change Intelligence Core emitted reasoning. CONTENT is correct.",
+      "citation": "automation_bus/latest_cursor_prompt.md:6; backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py:1-3 ('PSI launch decision: deferred; launch-critical paths must not import PSI loader'); SOP §4 change_type definitions"
     },
     {
       "check": "stage_2a.prerequisites_all_present",
       "result": "PASS",
-      "finding": "CONFIRMED — all six prerequisite files verified present on main via Glob.",
+      "finding": "CONFIRMED — all 8 prerequisite files verified present on main via Glob.",
       "paths_verified": [
         "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md — EXISTS",
         "CONFIRMED: docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — EXISTS"
       ]
     },
     {
       "check": "stage_2a.first_authority_documents_present",
       "result": "PASS",
-      "finding": "CONFIRMED — all eight first-authority documents verified present via Glob.",
+      "finding": "CONFIRMED — all first-authority documents verified present, including the corrected promotion protocol path.",
       "paths_verified": [
         "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md — EXISTS",
         "CONFIRMED: docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md — EXISTS",
         "CONFIRMED: docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md — EXISTS",
         "CONFIRMED: docs/architecture/User Health to Systems Map_FINAL.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — EXISTS"
+        "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — EXISTS",
+        "CONFIRMED: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — EXISTS (corrected from root-level path; fix applied at latest_cursor_prompt.md:138)"
       ]
     },
     {
-      "check": "stage_2a.pass3_corpus_content_read_and_verified",
-      "result": "CONFIRMED — CORPUS REAL AND ACCESSIBLE",
-      "finding": "CONFIRMED. Pass 3 corpus directly inspected. Primary corpus path: knowledge_bus/research/investigation_specs/multi_llm_research/. Ten Pass 3 JSON files confirmed present: Batch_2_Pass_3.json, Batch_3_Pass_3.json, Batch_4_Pass_3.json, Batch_5_Pass_3.json, Batch_6_Pass_3.json, Batch_7_Pass_3.json (all in multi_llm_research/), plus four topic-grouped standalone Pass 3 files: cbc_hematology_pass_3.json, thyroid_antibodies_pass_3.json, lipid_derived_pass_3.json, transferrin_pass_3.json. Content verified via direct read of Batch_7_Pass_3.json (investigation_spec_contract_version: '3.0.0', spec_id: inv_neutrophils_high_acute_bacterial_inflammatory_response, with full hypotheses, supporting_markers, root_cause, WHY blocks) and cbc_hematology_pass_3.json (spec_id: inv_mch_low_iron_restricted_erythropoiesis, same v3.0.0 schema). Also present: knowledge_bus/research/medical_knowledge_ingestion/Medical_Knowledge_Investigation_3rd_Pass.md (third-pass authoring methodology). Archived Rev1 batch: knowledge_bus/research/investigation_specs/multi_llm_research/archived_ingested_batches/Batch_2_Pass_3_Rev1.json.",
-      "citation": "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json:1-60 (content read); knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json:1-50 (content read)"
+      "check": "stage_2a.signal_repository_identified",
+      "result": "CONFIRMED — WITH HARDENING NOTES",
+      "finding": "CONFIRMED. The authoritative promoted signal intelligence repository is the knowledge_bus/packages/ directory tree. Each package directory may contain an optional promoted_signal_intelligence.yaml, opted-in via the 'promoted_signal_intelligence:' key in package_manifest.yaml. Schema authority: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml (status: LOCKED, version 1.0.0). Validator: backend/scripts/validate_promoted_signal_intelligence.py (exists). Loader: backend/core/knowledge/load_promoted_signal_intelligence.py (exists). Runtime status: NOT CONSUMED — ARCH-RT-5E deferred PSI from runtime (enforced by test). HARDENING NOTE 1: The PSI schema (LOCKED) does NOT contain lifecycle fields (runtime_activation_state, medical_review_status, scoring_readiness). These live in package_manifest.yaml (e.g. governance_runtime_activation_status: runtime_active_canonical). Cursor must not add these fields to promoted_signal_intelligence.yaml — the sprint report and Batch A manifest YAML are the correct artefacts for tracking lifecycle states per cluster. If the existing PSI schema cannot accommodate a required field, Cursor must stop and report, not extend the schema unilaterally. HARDENING NOTE 2: signal_system_allowed values are: metabolic, lipid_transport, hepatic, inflammatory, renal, vascular, hematologic, hormonal, mitochondrial, endocrine, bone, mineral, nutritional, other. 'cardiovascular' is NOT allowed. Cursor must map: cardiovascular lipid cluster → lipid_transport; kidney/eGFR → renal; thyroid → endocrine or hormonal; liver → hepatic; homocysteine/one-carbon → vascular. HARDENING NOTE 3: trigger_direction legacy value 'both' is obsolete — use bidirectional or context_dependent only.",
+      "citation": "knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml:1-14 (LOCKED); knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml:64-79 (signal_system_allowed); knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/package_manifest.yaml:8 (promoted_signal_intelligence opt-in pattern); knowledge_bus/packages/pkg_kb47_dhea_high_androgen_excess_context/package_manifest.yaml:17 (governance_runtime_activation_status); backend/core/knowledge/load_promoted_signal_intelligence.py:15-40; backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py:1-3"
     },
     {
-      "check": "stage_2a.translation_tracker_cross_reference",
-      "result": "CONFIRMED — PROMOTION BASELINE ESTABLISHED",
-      "finding": "CONFIRMED. knowledge_bus/research/investigation_specs/_translation_tracker.yaml read in full (136 lines). Contains 30 entries, all status: 'tested', all with pkg_s24_* package_id. These 30 inv_*.yaml files are the individual investigation-spec YAML assets derived from batches (not the same files as the JSON Pass 3 batches). Every inv_*.yaml spec file in investigation_specs/ has a corresponding translated and tested pkg_s24_* package. This means the YAML-format single-spec corpus is fully promoted via KB-S24. The Pass 3 JSON batch files (Batch_N_Pass_3.json and topic files) are the upstream multi-signal research objects — the promotion status of their contents relative to the pkg_s24_* and compiled card estate is the core question P1-9 must map.",
-      "citation": "knowledge_bus/research/investigation_specs/_translation_tracker.yaml:1-136"
-    },
-    {
-      "check": "stage_2a.p1_7_matrix_cross_reference",
-      "result": "CONFIRMED — ESTATE BASELINE READ",
-      "finding": "CONFIRMED. docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml read (first 40 lines). Confirmed: estate_finding = 'research-rich but unevenly promoted; governance and scoring architecture blockers recur'. ready_count: 4, near_ready_count: 4, blocked_count: 5, unknown_count: 1. P1-7 used compiled estate and runtime surfaces as the comparison axis; P1-9 must now inspect the upstream Pass 3 JSON corpus directly and map those signals against the same runtime surfaces. P1-7 already confirmed pass3_spec_support: Partial for cardiovascular — the P1-9 sprint will quantify what 'Partial' means at the source level.",
-      "citation": "docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml:1-40"
+      "check": "stage_2a.p1_9_matrix_cross_reference",
+      "result": "CONFIRMED — SOURCE READ",
+      "finding": "CONFIRMED. P1-9 exploitation matrix read in full (650 lines). 18 items; 2 fully promoted, 13 unpromoted or partial, 3 blocked. Viable Batch A candidates from highest-value unpromoted areas: pass3_lipid_derived_cluster (RESEARCH_PRESENT_SIGNAL_INTELLIGENCE_MISSING, cardiovascular, signal intelligence missing, research Strong), pass3_liver_enzyme_batch_cluster (PROMOTED_HIDDEN_MED_REV1, Batch 4+5, medical_review Blocked — no activation change permitted), pass3_homocysteine_cv_cluster (PROMOTED_HIDDEN_MED_REV1, Batch 6, MED-REV-1 hidden), pass3_cardiovascular_vascular_strain (PROMOTED_HIDDEN_MED_REV1, Batch 4, MED-REV-1 hidden), pass3_kidney_egfr_cluster (RESEARCH_PRESENT_SCORING_BLOCKED — scoring deferred but PSI creation viable if no activation). Thyroid axis and antibody clusters are blocked or governance-conflicted — appropriate to defer. CBC/iron/neutrophil clusters carry frame adjudication blocks.",
+      "citation": "docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml:107-650 (full read)"
     },
     {
       "check": "stage_2a.no_duplicate_authority_sources",
       "result": "PASS",
-      "finding": "CONFIRMED. Single Pass 3 corpus path: knowledge_bus/research/investigation_specs/multi_llm_research/. Single translation tracker: knowledge_bus/research/investigation_specs/_translation_tracker.yaml. No duplicate SSOT for research corpus. The investigation-spec-collection-batch*.json files (batch1-10 through batch51-56) in investigation_specs/ are separate collected-batch compilation artefacts distinct from the multi_llm_research Pass 3 files — Cursor must treat them as a separate corpus layer and not conflate them with true Pass 3 material unless content inspection confirms Pass 3 content inside.",
-      "citation": "knowledge_bus/research/investigation_specs/ (Glob scan)"
-    },
-    {
-      "check": "stage_2a.deliverable_paths_not_pre_existing",
-      "result": "PASS",
-      "finding": "CONFIRMED. Glob confirmed neither docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md nor docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml exist yet. Sprint will create them fresh. No pre-existing content to overwrite or inherit.",
-      "citation": "docs/sprints/beta_readiness/ (Glob scan — P1-9 files absent)"
+      "finding": "CONFIRMED. Single PSI schema: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml. Single validator: backend/scripts/validate_promoted_signal_intelligence.py. Single loader: backend/core/knowledge/load_promoted_signal_intelligence.py. No competing signal-intelligence authority source detected.",
+      "citation": "knowledge_bus/schema/ (Glob scan); backend/core/knowledge/ (Grep scan)"
     },
     {
       "check": "stage_2a.prohibited_files_confirmed_outside_scope",
       "result": "PASS",
-      "finding": "CONFIRMED. Prohibited files (backend/, frontend/, knowledge_bus/ modifications; strategy baseline; AUTHORITY_MAP; any source package, compiled card, governance register, scoring policy, runtime code, test, Gemini path, fallback parser, Pass 3 source file) are all outside the declared deliverable paths. Permitted write paths are exclusively: docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md, docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml, docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md. Bus lifecycle files may also change as SOP requires.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Prohibited changes; §Required deliverables"
+      "finding": "CONFIRMED. All strictly prohibited paths (frontend/, Gemini paths, fallback parsers, backend/core/analytics/domain_score_assembler.py, domain_narrative_wave1.py, wave1_subsystem_evidence.py, backend/core/dto/persisted_replay_contract_v1.py, backend/core/knowledge/health_system_card_evidence.py, backend/ssot/scoring_policy.yaml, Pass 3 source files, compiled health-system cards, compiled subsystem cards, runtime DTO contracts, strategy baseline, AUTHORITY_MAP) are all outside the declared permitted write scope. Permitted writes: knowledge_bus/packages/*/promoted_signal_intelligence.yaml (new files in existing packages), package_manifest.yaml updates for PSI opt-in key only where required, docs/sprints/beta_readiness/P1-10_*.md, docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml, docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Prohibited changes"
     },
     {
       "check": "stage_2a.validation_command_powershell_compatible",
       "result": "PASS",
-      "finding": "CONFIRMED. The Python validation one-liner uses double-quote outer delimiter with single-quote Python string literals inside — no $ or backtick characters present. PowerShell will pass the inner string to Python correctly. Command asserts work_id=='P1-9', items is a non-empty list — adequate for CONTENT-only matrix validation.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Validation"
-    },
-    {
-      "check": "stage_2a.corpus_file_count_hardening_note",
-      "result": "HARDENING NOTE",
-      "finding": "CONFIRMED. The true Pass 3 corpus in multi_llm_research/ consists of 10 JSON files (6 batch-format + 4 topic-grouped). The investigation-spec-collection-batch*.json files (6 batch collections covering specs 1–56) in the parent investigation_specs/ directory use a different naming pattern and are a separate artefact layer — these appear to be structured compilation inputs, not Pass 3 research authoring output. Cursor must distinguish these two layers in the corpus discovery section and explicitly report: (1) paths of true Pass 3 files inspected, (2) whether batch-collection files were also inspected and what they contain, (3) any Pass 3 content that appears in both layers. Filename-only inference is explicitly prohibited by the prompt and must not substitute for content inspection.",
-      "citation": "knowledge_bus/research/investigation_specs/ and multi_llm_research/ (Glob scans)"
+      "finding": "CONFIRMED. The Python validation one-liner uses double-quote outer delimiter with single-quote Python string literals inside — PowerShell compatible. Asserts work_id=='P1-10' and 'clusters' in data. Repository validator (validate_promoted_signal_intelligence.py) exists and must be run against each new PSI file.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Required validation"
     },
     {
       "check": "stop_conditions.check",
       "result": "PASS — NO STOP CONDITIONS TRIGGERED",
-      "finding": "CONFIRMED. (1) All six prerequisites are present on main. (2) Pass 3 corpus exists and is real investigation-spec content in v3.0.0 schema. (3) Comparison targets (translation tracker, P1-7 matrix, compiled estate paths listed) all exist. (4) Deliverable write paths are docs-only with no intersection with prohibited files. (5) Working tree is clean (only automation_bus/latest_cursor_prompt.md modified per git status). Sprint is executable.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Required prerequisites; git status at hardening time"
+      "finding": "CONFIRMED. (1) All 8 prerequisites present on main. (2) Promotion protocol authority document found at corrected path. (3) PSI schema, validator, and loader all identified. (4) No duplicate or competing signal-intelligence authority. (5) Viable Batch A clusters identified from P1-9 without inventing lifecycle enums. (6) PSI schema supports inactive promotion (ARCH-RT-5E defers from runtime by default). (7) Deliverable write paths are clear and non-intersecting with prohibited files. Sprint is executable.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§STOP conditions"
     },
     {
       "check": "no_op_protection",
       "result": "PASS",
-      "finding": "CONFIRMED. P1-7 established that pass3_spec_support is 'Partial' for several launch-core domains, and the translation tracker shows 30 inv_*.yaml files promoted but does not map the JSON batch Pass 3 files against compiled cards, signal intelligence, WHY authority, or prose. The research-to-runtime exploitation map does not yet exist. This is not a no-op.",
-      "citation": "docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml:21-24 (summary block)"
+      "finding": "CONFIRMED. P1-9 established that 13 of 18 Pass 3 clusters are unpromoted or partial. The signal intelligence estate for clusters such as lipid_derived, homocysteine_cv, liver_enzyme, vascular_strain, and kidney_egfr lacks governed PSI artefacts. This is not a no-op.",
+      "citation": "docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml:26-30 (summary: unpromoted_or_partial_count: 13)"
     }
   ],
-  "overall_verdict": "HARDENED — All five front-matter fields confirmed. change_type CONTENT is correct for a docs-only research mapping sprint. risk_level HIGH is a conservative over-classification but not a blocker — it appropriately gates the exploitation map behind GPT architectural review before batch promotions begin. All six prerequisites confirmed present on main. All eight first-authority documents confirmed present. Pass 3 corpus directly inspected: 10 JSON files in multi_llm_research/ confirmed real v3.0.0 investigation-spec content with hypotheses, supporting markers, and WHY/root-cause blocks. Translation tracker read in full — 30 inv_*.yaml specs all status: tested, establishing the single-spec promotion baseline. P1-7 readiness matrix estate finding confirmed ('research-rich but unevenly promoted'). Deliverable paths are clear, prohibited-file boundary is explicit, validation command is PowerShell-compatible. One HARDENING NOTE: Cursor must explicitly distinguish the true Pass 3 JSON files (multi_llm_research/) from the separate investigation-spec-collection-batch*.json artefacts and report both layers in corpus discovery. No STOP conditions triggered. Cursor may proceed under TWO_PHASE_START_FINISH governance."
+  "overall_verdict": "HARDENED. All five front-matter fields confirmed. One prior BLOCKER resolved: promotion protocol path corrected from bare root filename to docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md (fix applied at latest_cursor_prompt.md:138). All 8 prerequisites confirmed present. All first-authority documents confirmed present including corrected promotion protocol. PSI schema identified (LOCKED v1.0.0), validator confirmed, runtime wiring confirmed deferred by ARCH-RT-5E. change_type CONTENT is correctly classified. P1-9 exploitation matrix read in full — viable Batch A clusters identified. No duplicate authority sources. Prohibited file boundary explicit. Three hardening notes for Cursor: (1) lifecycle fields (runtime_activation_state, medical_review_status, scoring_readiness) belong in package_manifest.yaml, not in promoted_signal_intelligence.yaml — stop and report if schema extension would be required; (2) signal_system value 'cardiovascular' is not allowed — use lipid_transport, renal, hepatic, vascular, endocrine, hormonal; (3) trigger_direction value 'both' is obsolete — use bidirectional or context_dependent. No STOP conditions triggered. Cursor may proceed under TWO_PHASE_START_FINISH governance."
 }

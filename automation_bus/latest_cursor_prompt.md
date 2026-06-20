@@ -1,77 +1,73 @@
 ---
-work_id: P1-9
-branch: work/P1-9-pass3-research-to-runtime-exploitation-map
+work_id: P1-10
+branch: work/P1-10-pass3-launch-core-signal-intelligence-batch-a
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: CONTENT
 ---
 
-# P1-9 — Pass 3 Research-to-Runtime Exploitation Map
+# P1-10 — Pass 3 Launch-Core Signal Intelligence Batch A
 
 ## Objective
 
-Deeply inspect the Pass 3 / investigation-spec research corpus and map what high-value medical research exists but has not yet been promoted into governed runtime-safe HealthIQ AI artefacts.
+Promote a meaningful first batch of rich Pass 3 medical research into the governed HealthIQ AI signal-intelligence estate.
 
 This sprint is part of the eight-block beta-readiness programme.
 
-It follows P1-7, which established that the estate is research-rich but unevenly promoted. P1-7 assessed the promoted/runtime-facing estate. P1-9 must now inspect the upstream Pass 3 research corpus directly.
-
-The purpose is to answer:
+It follows:
 
 ```text
-What medical intelligence exists in the Pass 3 research files that has not yet been promoted into:
-- package authority
-- signal intelligence
-- compiled card evidence
-- root-cause / WHY authority
-- scoring readiness
-- prose / explainer assets
-- test fixtures
-- replay/provenance surfaces
-- runtime-ready system or subsystem cards
+P1-7 — Research-to-runtime adequacy gate
+P1-8 — Scoring lab-range engine
+P1-9 — Pass 3 research-to-runtime exploitation map
 ```
 
-This sprint must distinguish:
+P1-9 established that the upstream Pass 3 research estate is rich, but a large part of that richness has not yet been promoted into governed signal intelligence, root-cause / WHY material, compiled-card support, scoring readiness, prose/explainer substrate, test coverage and runtime-readiness states.
 
-```text
-research exists
-```
+This sprint starts the batch-based promotion factory.
 
-from:
+It must not become a one-marker micro-sprint.
 
-```text
-research has been safely promoted into governed runtime artefacts
-```
+It must not become uncontrolled sitewide mass promotion.
 
----
+It must promote a sensible first cohort of related, high-value, launch-core or launch-adjacent signal clusters from Pass 3 into the appropriate governed signal-intelligence repository, with explicit inactive / blocked / review-required states where runtime activation is not yet safe.
 
 ## Strategic purpose
 
-This sprint is not a local thyroid investigation.
+HealthIQ AI’s defensible value is not simply that research exists.
 
-It is a programme-level research exploitation sprint.
+The strategic value is the repeatable, auditable production line that converts rich medical research into:
 
-HealthIQ AI’s defensible business value depends on having a repeatable, auditable production line for converting medical research into safe, deterministic, explainable runtime intelligence.
+```text
+governed signal intelligence
+safe activation conditions
+context requirements
+root-cause / WHY reasoning
+evidence and provenance
+scoring readiness
+prose/explainer substrate
+testable runtime artefacts
+```
 
-This sprint must create the map needed to industrialise that production line.
+This sprint is the first production use of that promotion discipline.
 
-Do not implement runtime behaviour.
+The business goal is to capture the richness of the Pass 3 research estate in a governed signal repository without prematurely exposing that intelligence to users.
 
-Do not promote packages.
+## Critical architectural rule
 
-Do not modify Knowledge Bus source packages.
+Promotion is not activation.
 
-Do not modify compiled cards.
+This sprint may promote signal intelligence into governed repository structures.
 
-Do not modify scoring policy.
+This sprint must not activate new runtime signals unless the existing governance model already allows that safely and the prompt explicitly permits it.
 
-Do not change backend or frontend code.
+For this sprint, default all newly promoted or newly enriched signal intelligence to non-runtime-active states unless the existing repository schema requires a different explicit inactive state.
 
-Do not activate signals.
+Use repository-native state names only.
 
-Do not create new medical claims.
+Do not invent new lifecycle enums.
 
----
+If the required inactive / review / blocked state vocabulary is unclear, stop and report the blocker.
 
 ## Branch and state checks
 
@@ -96,14 +92,12 @@ Confirm:
 Then create:
 
 ```powershell
-git switch -c work/P1-9-pass3-research-to-runtime-exploitation-map
+git switch -c work/P1-10-pass3-launch-core-signal-intelligence-batch-a
 ```
 
 Do not proceed if the working tree is dirty.
 
 Confirm the Automation Bus active work package/state file if required by SOP.
-
----
 
 ## Required prerequisites on main
 
@@ -115,16 +109,16 @@ docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md
 docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml
 docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md
 docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md
+docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
+docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
 If any are missing, stop and report:
 
 ```text
-P1-9 prerequisite beta-readiness evidence is not present on main. P1-9 must not proceed.
+P1-10 prerequisite beta-readiness evidence is not present on main. P1-10 must not proceed.
 ```
-
----
 
 ## First authority documents
 
@@ -132,6 +126,8 @@ Read these first, in this order:
 
 ```text
 docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
+docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
+docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
 docs/sprints/beta_readiness/P1-7_research_to_runtime_adequacy_gate.md
 docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml
 docs/sprints/beta_readiness/P1-8_scoring_lab_range_engine.md
@@ -139,410 +135,448 @@ docs/architecture/ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1.md
 docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md
 docs/architecture/User Health to Systems Map_FINAL.md
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 ```
 
-Do not list standard SOP files as authority documents in the output unless a specific requirement cannot otherwise be located.
+The Pass 3 promotion protocol is included here because this sprint directly concerns research-to-signal promotion.
 
----
+Do not list standard SOP files as authority documents in the deliverable unless a specific governance requirement cannot otherwise be located.
 
-## Pass 3 corpus discovery
+## Authoritative signal repository discovery
 
-Locate the Pass 3 / investigation-spec corpus.
+Before writing any signal content, discover the authoritative signal-intelligence repository path and loader/validator.
 
-Start by inspecting likely paths:
+Search for:
 
 ```text
-knowledge_bus/research/investigation_specs/
-knowledge_bus/research/investigation_specs/multi_llm_research/
-knowledge_bus/research/
+promoted_signal_intelligence
+signal_intelligence
+signal intelligence
+activation_eligibility
+runtime_active
+signal_id
+signal_repository
+intelligence_model
+root_cause
+why
 ```
 
-Search for files containing:
-
-```text
-investigation_spec
-pass_3
-Pass 3
-research_claims
-clinical_interpretation
-evidence
-biomarker
-signal
-activation
-medical_review
-```
-
-If the Pass 3 corpus is stored elsewhere, locate it using repository search.
-
-The report must state:
-
-```text
-- exact paths inspected
-- number of files found
-- file types found
-- whether each file appears to be a true Pass 3 / investigation-spec research asset
-- any expected corpus paths that were missing
-```
-
-Do not assume file locations from memory.
-
----
-
-## Depth requirement
-
-This sprint must inspect the upstream research corpus directly.
-
-Do not rely only on:
-
-```text
-- package files
-- compiled cards
-- estate index
-- readiness matrix
-- runtime registers
-- prior summaries
-```
-
-Those artefacts are useful comparison targets, but the central task is to inspect the Pass 3 / investigation-spec source material itself.
-
-For each material Pass 3 file, inspect enough content to determine:
-
-```text
-- biomarkers covered
-- signal/pattern concepts
-- clinical rationale
-- context requirements
-- evidence strength
-- contraindications / safety cautions
-- root-cause / WHY material
-- system/subsystem relevance
-- prose/explainer potential
-- promotion status, if indicated
-```
-
-Do not claim a file was assessed if only its filename was scanned.
-
-If the corpus is too large to read every line manually, use script-assisted extraction to index and summarise structured fields, but the output must still identify source paths and not rely on filename-only inference.
-
-Do not commit temporary scripts or temporary generated files unless explicitly needed as deliverables.
-
----
-
-## Comparison targets
-
-For each Pass 3 research item, compare against promoted/runtime-facing artefacts, including where present:
+Inspect likely locations:
 
 ```text
 knowledge_bus/
 knowledge_bus/governance/
 knowledge_bus/compiled/
-knowledge_bus/compiled/estate_index_v1.yaml
-knowledge_bus/compiled/health_system_cards/
-knowledge_bus/compiled/manifests/
-knowledge_bus/pathway_explainers_v1/
-backend/ssot/scoring_policy.yaml
-backend/core/analytics/
+knowledge_bus/manifests/
+backend/core/
 backend/core/knowledge/
-backend/core/dto/
-backend/tests/
-docs/intelligence/
-docs/testing/
+backend/core/analytics/
+backend/ssot/
 docs/architecture/
-docs/sprints/beta_readiness/P1-7_research_to_runtime_readiness_matrix.yaml
+docs/intelligence/
 ```
 
-Do not modify these files.
-
----
-
-## Classification taxonomy
-
-Classify each Pass 3 research item or cluster into one primary research-to-runtime state:
+You must establish:
 
 ```text
-FULLY_PROMOTED_RUNTIME_VISIBLE
-PROMOTED_RUNTIME_ACTIVE_SIGNAL_ONLY
-PROMOTED_COMPILED_CARD_ONLY
-PROMOTED_HIDDEN_MED_REV1
-PACKAGE_PRESENT_BUT_CARD_MISSING
-RESEARCH_PRESENT_PACKAGE_MISSING
-RESEARCH_PRESENT_SIGNAL_INTELLIGENCE_MISSING
-RESEARCH_PRESENT_ROOT_CAUSE_WHY_MISSING
-RESEARCH_PRESENT_SCORING_BLOCKED
-RESEARCH_PRESENT_PROSE_THIN
-RESEARCH_PRESENT_TEST_THIN
-RESEARCH_PRESENT_GOVERNANCE_CONFLICT
-RESEARCH_PRESENT_MEDICAL_REVIEW_REQUIRED
-RESEARCH_PRESENT_CONTEXT_MODEL_REQUIRED
-RESEARCH_PRESENT_UNMAPPED_TO_SYSTEM
-RESEARCH_PRESENT_UNMAPPED_TO_SUBSYSTEM
-NOT_LAUNCH_RELEVANT
-UNKNOWN_INSUFFICIENT_EVIDENCE
+- the authoritative file or files that represent promoted signal intelligence;
+- the schema or contract governing those files;
+- the validator, tests or loaders that consume them;
+- whether runtime currently consumes them;
+- whether they support inactive / blocked / review-required states;
+- whether a duplicate or legacy authority source exists.
 ```
 
-Use one primary classification per row, with secondary blockers where needed.
-
-Choose the conservative classification where evidence is mixed.
-
----
-
-## Required dimensions
-
-For each material research item or cluster, assess:
+STOP if:
 
 ```text
-1. Upstream research depth
-2. Biomarker / pattern clarity
-3. Signal activation readiness
-4. Package promotion status
-5. Compiled card evidence status
-6. Root-cause / WHY readiness
-7. Scoring readiness
-8. Prose / explainer readiness
-9. Medical-review status
-10. Context requirements
-11. Test readiness
-12. Runtime integration readiness
-13. System/subsystem mapping clarity
-14. Beta-readiness relevance
+- no authoritative signal repository can be identified;
+- multiple competing signal-intelligence authorities exist and no clear source of truth is documented;
+- there is no clear schema/contract for the target artefact;
+- adding entries would require inventing lifecycle states;
+- adding entries would make them runtime-active unintentionally.
 ```
 
-Use ratings:
+If stopped, produce the sprint report and build-register entry as Blocked. Do not create ad hoc signal files.
+
+## Batch A scope
+
+Use P1-9 to select the first batch.
+
+This batch should cover a meaningful cohort of high-value, launch-core or launch-adjacent research clusters, not individual isolated markers.
+
+Target size:
 
 ```text
-Strong
-Partial
-Weak
-Absent
-Blocked
-Unknown
-Not applicable
+Minimum: 4 material clusters
+Maximum: 8 material clusters
 ```
 
----
+The intended Batch A candidates should be selected from P1-9’s highest-value unpromoted or partially promoted areas, prioritising:
 
-## Required deliverable 1 — Exploitation report
+```text
+- launch-core relevance;
+- evidence richness in Pass 3;
+- downstream signal-intelligence gap;
+- scoring readiness or scoring-blocked clarity after P1-8;
+- ability to promote intelligence without runtime activation;
+- commercial value for HealthIQ’s systems-level interpretation.
+```
+
+Expected candidate clusters to consider include, if supported by P1-9 and repository evidence:
+
+```text
+- cardiovascular lipid / derived cluster
+- kidney / eGFR / creatinine / urea cluster
+- thyroid axis cluster
+- thyroid antibodies cluster
+- liver enzyme / liver stress cluster
+- homocysteine / one-carbon cluster
+- metabolic / glycaemic cluster if P1-9 identifies residual signal-depth gaps
+- CBC / iron / oxygen cluster only where frame authority does not block safe inactive promotion
+```
+
+Do not force all of these into the batch.
+
+Do not exceed the maximum batch size unless the report justifies why clusters are inseparable.
+
+If the selected scope would become too large to preserve quality, stop after the first 4–6 highest-value clusters and record the remainder as Batch B carry-forward.
+
+## Pass 3 depth requirement
+
+For each selected cluster, inspect the related Pass 3 / investigation-spec research directly.
+
+Do not rely only on:
+
+```text
+- P1-9 summary
+- package files
+- compiled cards
+- estate index
+- runtime registers
+- previous sprint notes
+```
+
+Use P1-9 as the map, but re-read the relevant Pass 3 source content for the selected Batch A clusters.
+
+For each selected cluster, extract and preserve:
+
+```text
+- biomarkers involved;
+- high/low/directional patterns;
+- biological rationale;
+- context requirements;
+- corroborating markers;
+- suppression/avoidance conditions;
+- safety cautions;
+- non-diagnostic wording constraints;
+- root-cause / WHY material;
+- system/subsystem mapping;
+- evidence/provenance references;
+- scoring implications;
+- prose/explainer implications;
+- whether runtime activation is safe, blocked, or deferred.
+```
+
+Do not flatten rich research into a one-line signal.
+
+The purpose is to preserve usable medical intelligence, not merely to create a signal placeholder.
+
+## Promotion principles
+
+For each selected cluster, create or enrich governed signal-intelligence entries according to the repository’s existing schema.
+
+Each promoted signal-intelligence entry must include, where the schema supports it:
+
+```text
+- stable signal identifier;
+- source Pass 3 path/spec reference;
+- biomarker(s);
+- directionality;
+- activation concept;
+- required lab evidence;
+- contextual requirements;
+- corroborating markers;
+- suppression or non-activation conditions;
+- safety cautions;
+- root-cause / WHY explanation substrate;
+- system/subsystem mapping;
+- scoring readiness state;
+- medical-review status;
+- runtime visibility / activation state;
+- evidence/provenance;
+- test requirement or validation note.
+```
+
+Use existing field names and schema conventions only.
+
+Do not invent schema fields unless the existing schema explicitly allows extensions and the validator is updated accordingly.
+
+If schema extension is required, stop and report the proposed extension rather than implementing it in this sprint.
+
+## Runtime activation rule
+
+No newly promoted Batch A signal may become user-visible or runtime-active in this sprint.
+
+Default expected status:
+
+```text
+research-promoted / signal-intelligence-promoted / inactive / blocked / review-required
+```
+
+Use the repository’s real status terminology.
+
+If the only available status is runtime-active, stop.
+
+## Specific safety constraints
+
+Do not add diagnostic claims.
+
+Do not recommend treatment.
+
+Do not add user-facing prose that implies diagnosis.
+
+Do not add global/default reference ranges.
+
+Do not override lab-provided reference ranges.
+
+Do not add placeholder scoring bands.
+
+Do not add new production scoring-policy entries.
+
+Do not add thyroid production scoring.
+
+Do not activate FT3, FT4, TSH, thyroid antibody, eGFR, urea, lipid-derived or homocysteine signals unless a later sprint explicitly authorises activation.
+
+Do not change runtime interpretation behaviour.
+
+## Permitted changes
+
+Expected product changes may include:
+
+```text
+- governed signal-intelligence repository entries or enrichments, if the authoritative repository is identified;
+- associated signal-intelligence manifest entries, if required by the existing schema;
+- validation fixtures for the promoted signal-intelligence content, if the repository already has validation patterns;
+- documentation report;
+- build deliverable register entry.
+```
+
+Expected documentation deliverables:
+
+```text
+docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
+docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
+docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+```
+
+The manifest is a planning/audit artefact unless the existing repository contract says otherwise.
+
+Do not place the manifest in a runtime path.
+
+## Prohibited changes
+
+Do not modify:
+
+```text
+frontend/
+Gemini paths
+fallback parser paths
+backend/core/analytics/domain_score_assembler.py
+backend/core/analytics/domain_narrative_wave1.py
+backend/core/analytics/wave1_subsystem_evidence.py
+backend/core/dto/persisted_replay_contract_v1.py
+backend/core/knowledge/health_system_card_evidence.py
+backend/ssot/scoring_policy.yaml
+knowledge_bus/source package files
+Pass 3 source files
+compiled health-system cards
+compiled subsystem cards
+runtime DTO contracts
+```
+
+Do not modify:
+
+```text
+docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
+docs/AUTHORITY_MAP.md
+```
+
+Do not create a duplicate signal repository.
+
+Do not create a parallel authority file because the real target was hard to find.
+
+## Required deliverable 1 — Sprint report
 
 Create:
 
 ```text
-docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
+docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
 ```
 
 Use this structure exactly:
 
 ```markdown
-# P1-9 — Pass 3 Research-to-Runtime Exploitation Map
+# P1-10 — Pass 3 Launch-Core Signal Intelligence Batch A
 
 ## 1. Executive summary
 - why this sprint was run
-- whether Pass 3 research was directly inspected
-- estate-level finding
-- highest-value unpromoted research areas
-- most common promotion gaps
+- what Batch A promoted
+- whether the authoritative signal repository was found
+- whether runtime activation remains unchanged
+- estate-level value delivered
 - recommended next sprint
 
 ## 2. Programme context
-- relationship to eight-block beta-readiness programme
-- relationship to P1-7 adequacy gate
-- relationship to P1-8 scoring lab-range engine
-- why this is not a local thyroid investigation
+- relationship to eight-block beta-readiness
+- relationship to P1-7
+- relationship to P1-8
+- relationship to P1-9
+- why this sprint is batch-based rather than one-marker-at-a-time
 
-## 3. Corpus discovery
+## 3. Signal repository discovery
 - paths searched
-- files found
-- files assessed
-- file types
+- authoritative signal repository found
+- loader/validator found
+- schema/contract found
+- duplicate/legacy authority check
+- STOP concerns, if any
+
+## 4. Batch A selection rationale
+- clusters considered
+- clusters selected
+- clusters deferred
+- why this is the right-sized batch
+- why this is not uncontrolled mass promotion
+
+## 5. Pass 3 source inspection
+For each selected cluster:
+- Pass 3 files/specs inspected
+- biomarkers/patterns found
+- rich research themes extracted
 - limitations
-- any expected paths missing
 
-## 4. Method
-- authority documents read
-- extraction/search approach
-- comparison targets
-- classification taxonomy
-- how filename-only inference was avoided
+## 6. Promotion implementation
+For each selected cluster:
+- signal intelligence created or enriched
+- source evidence path
+- state/status applied
+- runtime activation state
+- scoring readiness state
+- medical-review state
+- system/subsystem mapping
+- root-cause / WHY material captured
+- prose/explainer substrate captured
+- tests/validation implications
+
+## 7. Safety and non-activation confirmation
+Confirm:
+- no runtime activation
+- no frontend/Gemini change
+- no scoring_policy change
+- no compiled card change
+- no DTO change
+- no Pass 3 source change
+- no Knowledge Bus source package change
+- no global/default ranges
+- no placeholder bands
+- no diagnostic or treatment claims
+
+## 8. Validation
+- validators run
+- YAML parse checks
+- repository-specific validation
+- git diff checks
 - limitations
 
-## 5. Estate-level research finding
-State whether the upstream research estate is:
-- thin;
-- rich but unpromoted;
-- unevenly promoted;
-- governance-conflicted;
-- context-model blocked;
-- scoring blocked;
-- prose/WHY thin;
-- or another evidenced formulation.
+## 9. Business value delivered
+Explain:
+- how much Pass 3 richness was captured
+- why Batch A improves HealthIQ’s defensibility
+- how this improves the signal estate without exposing unsafe runtime behaviour
+- what future batches can now copy as a pattern
 
-## 6. Pass 3 research-to-runtime matrix
-Create a table:
+## 10. Carry-forwards
+- clusters deferred to Batch B
+- blockers requiring medical review
+- blockers requiring frame adjudication
+- blockers requiring scoring policy
+- blockers requiring prose/WHY uplift
+- blockers requiring runtime integration
 
-| Research item / cluster | Source Pass 3 path(s) | Biomarkers / patterns | System / subsystem mapping | Primary classification | Research depth | Package status | Signal authority | Compiled card status | Root-cause / WHY readiness | Scoring readiness | Prose / explainer readiness | Test readiness | Runtime readiness | Evidence paths | Recommended action |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-
-Include all material items discovered.
-
-## 7. Highest-value unpromoted research
-Identify the research items/clusters with the highest commercial/runtime value that are not yet fully promoted.
-
-For each:
-- why it matters;
-- what exists upstream;
-- what is missing downstream;
-- recommended promotion action.
-
-## 8. Launch-core impact
-Assess impact on launch-core systems:
-- cardiovascular / lipids / inflammation
-- blood sugar / metabolic
-- liver / detox
-- kidney function
-- blood / iron / oxygen
-- thyroid / energy regulation
-
-State which launch-core systems are already sufficiently promoted and which remain thin or blocked.
-
-## 9. Subsystem impact
-Assess impact on subsystem depth:
-- compiled but hidden MED-REV1 subsystems
-- orphaned compiled artefacts
-- subsystem candidates from User Health to Systems Map
-- subsystem candidates present in Pass 3 but not promoted
-
-## 10. Promotion gap analysis
-Group gaps by:
-- package missing
-- signal intelligence missing
-- compiled card missing
-- root-cause / WHY missing
-- scoring blocked
-- context model required
-- medical review required
-- prose/explainer thin
-- test/provenance thin
-- governance conflict
-
-## 11. Batch promotion strategy
-Recommend a batch-based promotion strategy.
-
-Do not recommend one-marker-at-a-time promotion unless clinically unavoidable.
-
-Do not recommend uncontrolled mass promotion.
-
-Define 3–6 proposed cohorts, for example:
-- launch-core blockers
-- MED-REV1 hidden compiled subsystems
-- research-present uncompiled clusters
-- scoring-ready lab-range-only candidates
-- context-dependent high-risk endocrine/androgen/thyroid candidates
-- prose/WHY uplift cohort
-
-For each cohort:
-- scope
-- expected value
-- risk
-- STOP gates
-- recommended sequencing
-
-## 12. Immediate next sprint recommendation
-Name the single next sprint.
-
-Include:
+## 11. Recommended next sprint
+Recommend the next sprint with:
 - title
 - risk_level
 - change_type
-- expected scope
+- scope
 - STOP gates
-- why it should be next
-
-## 13. Carry-forwards by beta-readiness block
-Group carry-forwards under:
-- Block 1 Core health systems model
-- Block 2 Subsystems and depth model
-- Block 3 Layer B intelligence/prose substrate
-- Block 6 Medical safety, research provenance and governance
-- Block 7 Auditability, reproducibility and traceability
-- Block 5 UX/results page, only where relevant
-
-## 14. Business interpretation
-Explain in business terms:
-- whether the research estate is a weakness or an underexploited asset;
-- what this means for HealthIQ AI’s defensibility;
-- how the promotion factory should become a strategic capability.
+- rationale
 ```
 
----
-
-## Required deliverable 2 — Machine-readable exploitation matrix
+## Required deliverable 2 — Batch A manifest
 
 Create:
 
 ```text
-docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
+docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
 ```
 
 Use this structure:
 
 ```yaml
-work_id: P1-9
+work_id: P1-10
 classification_date: <YYYY-MM-DD>
 source_authorities:
   - path: <path>
     role: <role>
-corpus:
-  inspected_paths:
-    - <path>
-  files_found: <number>
-  files_assessed: <number>
-  limitations:
-    - <limitation>
-summary:
-  estate_finding: <short finding>
-  material_items: <number>
-  fully_promoted_count: <number>
-  unpromoted_or_partial_count: <number>
-  blocked_count: <number>
-  recommended_next_sprint: <title>
-items:
-  - id: <stable_slug>
-    name: <human readable name>
+signal_repository:
+  authoritative_path: <path>
+  schema_or_contract_path: <path>
+  validator_or_loader_path: <path>
+  runtime_consumed: true | false | unknown
+batch:
+  name: Pass 3 Launch-Core Signal Intelligence Batch A
+  selection_basis:
+    - <reason>
+  clusters_selected: <number>
+  clusters_deferred: <number>
+clusters:
+  - id: <stable_cluster_slug>
+    name: <human readable cluster name>
     source_pass3_paths:
       - <path>
-    biomarkers_or_patterns:
-      - <name>
+    source_spec_ids:
+      - <spec_id>
+    biomarkers:
+      - <biomarker>
     system_mapping:
       - <system>
     subsystem_mapping:
       - <subsystem>
-    primary_classification: FULLY_PROMOTED_RUNTIME_VISIBLE | PROMOTED_RUNTIME_ACTIVE_SIGNAL_ONLY | PROMOTED_COMPILED_CARD_ONLY | PROMOTED_HIDDEN_MED_REV1 | PACKAGE_PRESENT_BUT_CARD_MISSING | RESEARCH_PRESENT_PACKAGE_MISSING | RESEARCH_PRESENT_SIGNAL_INTELLIGENCE_MISSING | RESEARCH_PRESENT_ROOT_CAUSE_WHY_MISSING | RESEARCH_PRESENT_SCORING_BLOCKED | RESEARCH_PRESENT_PROSE_THIN | RESEARCH_PRESENT_TEST_THIN | RESEARCH_PRESENT_GOVERNANCE_CONFLICT | RESEARCH_PRESENT_MEDICAL_REVIEW_REQUIRED | RESEARCH_PRESENT_CONTEXT_MODEL_REQUIRED | RESEARCH_PRESENT_UNMAPPED_TO_SYSTEM | RESEARCH_PRESENT_UNMAPPED_TO_SUBSYSTEM | NOT_LAUNCH_RELEVANT | UNKNOWN_INSUFFICIENT_EVIDENCE
-    dimensions:
-      upstream_research_depth: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      biomarker_pattern_clarity: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      signal_activation_readiness: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      package_promotion_status: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      compiled_card_status: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      root_cause_why_readiness: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      scoring_readiness: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      prose_explainer_readiness: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      medical_review_status: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      context_requirements: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      test_readiness: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-      runtime_integration_readiness: Strong | Partial | Weak | Absent | Blocked | Unknown | Not applicable
-    evidence_paths:
-      - <path>
+    promotion_action: created | enriched | deferred | blocked
+    signal_repository_entries:
+      - <signal_id_or_entry_path>
+    runtime_activation_state: inactive | blocked | review_required | not_runtime_consumed | unknown
+    scoring_readiness: ready | partial | blocked | deferred | not_applicable | unknown
+    medical_review_status: reviewed | partial | required | blocked | unknown
     downstream_gaps:
       - <gap>
-    recommended_action: <short action>
+    evidence_paths:
+      - <path>
+    recommended_next_action: <short action>
+deferred_clusters:
+  - id: <stable_cluster_slug>
+    reason: <reason>
+validation:
+  yaml_parse: pass | fail | not_run
+  repository_validator: pass | fail | not_run | not_found
+  runtime_activation_check: pass | fail | not_run
 ```
 
-This matrix is a planning artefact only.
+The manifest must describe what was promoted and what was deferred.
 
-It must not be consumed at runtime.
-
-Do not place it in `backend/ssot/`, `knowledge_bus/compiled/`, `knowledge_bus/governance/`, or any runtime path.
-
----
+It must not be consumed by runtime unless an existing documented contract already says that this path is consumed.
 
 ## Required deliverable 3 — Build deliverable register update
 
@@ -555,7 +589,7 @@ docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 Append a short entry:
 
 ```markdown
-## P1-9 — Pass 3 research-to-runtime exploitation map
+## P1-10 — Pass 3 launch-core signal intelligence Batch A
 
 **Status:** Complete / Partial / Blocked  
 **Date closed:** <YYYY-MM-DD>  
@@ -563,7 +597,7 @@ Append a short entry:
 
 ### Delivered / ticked off
 - <what this sprint completed against the beta-readiness programme>
-- <major Pass 3 exploitation or promotion-readiness finding>
+- <major signal-intelligence promotion outcome>
 
 ### Carry-forwards
 - <what still needs to be done later>
@@ -582,60 +616,7 @@ Do not list every file touched.
 
 Do not duplicate the full report.
 
----
-
-## Prohibited changes
-
-Do not modify:
-
-```text
-backend/
-frontend/
-knowledge_bus/
-```
-
-Exception:
-
-```text
-You may read files under those directories, but must not change them.
-```
-
-Do not modify:
-
-```text
-docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
-docs/AUTHORITY_MAP.md
-```
-
-Do not modify any:
-
-```text
-source package
-compiled card
-governance register
-scoring policy
-runtime code
-test file
-frontend file
-Gemini path
-fallback parser path
-Pass 3 source file
-Knowledge Bus source file
-```
-
-Expected product changes are limited to:
-
-```text
-docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
-docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-```
-
-Bus files may change as part of SOP lifecycle.
-
----
-
-## Validation
+## Required validation
 
 Run:
 
@@ -645,19 +626,41 @@ git diff --name-only
 git status --short
 ```
 
-Validate the exploitation matrix YAML.
+Validate any changed YAML files with a PowerShell-compatible Python command.
 
-If no specific schema validator exists, at minimum parse it with Python using a PowerShell-compatible command:
+At minimum:
 
 ```powershell
-python -c "import yaml; from pathlib import Path; p=Path('docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml'); data=yaml.safe_load(p.read_text(encoding='utf-8')); assert data['work_id']=='P1-9'; assert isinstance(data.get('items'), list); assert data['items'], 'matrix must contain at least one item'; print('P1-9 exploitation matrix YAML parsed successfully')"
+python -c "import yaml; from pathlib import Path; p=Path('docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml'); data=yaml.safe_load(p.read_text(encoding='utf-8')); assert data['work_id']=='P1-10'; assert 'clusters' in data; print('P1-10 Batch A manifest YAML parsed successfully')"
 ```
 
-No runtime tests are required because this is CONTENT-only.
+Run any existing repository validators for the signal-intelligence artefact.
 
-If any code/runtime/source package/governance register/test file is changed, stop and report failure.
+If no validator exists, record this clearly.
 
----
+If a validator exists and fails, stop and report failure.
+
+Run targeted tests only if signal repository changes are covered by tests.
+
+Do not run broad unrelated suites unless necessary.
+
+## Runtime non-activation validation
+
+Prove that runtime activation did not change.
+
+At minimum, report:
+
+```text
+- git diff --name-only
+- whether backend runtime files changed
+- whether scoring_policy.yaml changed
+- whether compiled cards changed
+- whether DTO/replay contracts changed
+- whether frontend/Gemini/fallback parser paths changed
+- whether any runtime-active flags were introduced or changed
+```
+
+If the repository uses explicit `runtime_active`, `activation_status`, `visibility`, or similar fields, search the diff and report all status changes.
 
 ## Required final report
 
@@ -666,18 +669,21 @@ Return:
 ```text
 - branch name
 - main SHA baseline
+- authoritative signal repository path found
+- schema/contract path found
+- validator/loader path found
+- Batch A clusters selected
+- clusters deferred
 - files changed
-- Pass 3 corpus paths inspected
-- number of Pass 3 files found
-- number of Pass 3 files assessed
-- estate-level finding
-- number of material research items/clusters classified
-- top unpromoted research assets
-- top downstream promotion gaps
-- recommended batch promotion strategy
-- recommended next sprint
-- confirmation no runtime/code/source package/scoring/governance/test files changed
+- whether runtime activation changed
+- whether scoring_policy.yaml changed
+- whether backend/frontend/runtime files changed
+- whether Pass 3 source files changed
+- whether Knowledge Bus source packages changed
 - validation run and results
+- signal repository validator result, if any
+- manifest YAML parse result
+- recommended next sprint
 - git diff --stat
 - git diff --name-only
 - git status --short
@@ -685,46 +691,50 @@ Return:
 
 Do not merge until Claude audit, GPT architectural review and human approval.
 
----
-
 ## Acceptance criteria
 
 This sprint is complete only if:
 
 ```text
-1. Exploitation report exists at:
-   docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
+1. The authoritative signal-intelligence repository path is identified, or the sprint stops as Blocked.
 
-2. Machine-readable exploitation matrix exists at:
-   docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
+2. The schema/contract and loader/validator status are documented.
 
-3. Build deliverable register is updated with a short P1-9 entry.
+3. A meaningful Batch A cohort is selected from P1-9 findings.
 
-4. Pass 3 / investigation-spec corpus paths are directly inspected and reported.
+4. The batch includes multiple material clusters unless blocked by repository authority discovery.
 
-5. The report states how many Pass 3 files were found and assessed.
+5. Selected clusters are grounded in direct Pass 3 source inspection.
 
-6. The report avoids filename-only inference.
+6. Signal intelligence is created or enriched only in the governed repository.
 
-7. The report distinguishes upstream research depth from downstream runtime promotion readiness.
+7. No duplicate or ad hoc signal repository is created.
 
-8. Material Pass 3 research items/clusters are classified using the approved taxonomy.
+8. Newly promoted/enriched signal intelligence is not made runtime-active.
 
-9. Launch-core impact is explicitly assessed.
+9. No production scoring policy is changed.
 
-10. Subsystem impact is explicitly assessed.
+10. No frontend, Gemini, fallback parser, DTO, compiled card or domain assembler file is changed.
 
-11. Highest-value unpromoted research areas are identified.
+11. No Pass 3 source file is changed.
 
-12. Batch promotion strategy is recommended rather than one-by-one or uncontrolled mass promotion.
+12. No Knowledge Bus source package is changed.
 
-13. A single immediate next sprint is recommended.
+13. Batch A report exists at:
+    docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
 
-14. Matrix YAML parses successfully.
+14. Batch A manifest exists at:
+    docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
 
-15. No runtime code, backend code, frontend code, scoring policy, governance register, Knowledge Bus source package, compiled card, test, Gemini, fallback parser, or Pass 3 source file is changed.
+15. Build deliverable register is updated with a short P1-10 entry.
 
-16. Only the expected documentation/planning files and bus files are changed.
+16. YAML validation passes for the manifest.
 
-17. Final report includes validation output and clean git status.
+17. Existing signal repository validator passes if one exists.
+
+18. Runtime non-activation is explicitly confirmed.
+
+19. The final report recommends the next batch or STOP-gated sprint.
+
+20. Final report includes validation output and clean git status.
 ```
