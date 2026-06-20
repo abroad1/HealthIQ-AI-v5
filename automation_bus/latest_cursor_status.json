@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-8-scoring-lab-range-engine",
+  "branch": "work/P1-9-pass3-research-to-runtime-exploitation-map",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T13:14:39Z",
-  "cursor_started_utc": "2026-06-20T13:11:18Z",
-  "head_sha": "4442da2b72b887837326b1b00e6b0bd0aca5ecc7",
+  "cursor_started_utc": "2026-06-20T13:34:26Z",
+  "head_sha": "c62290db9d3bbd9b6a3baf198f40a628cecf0314",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-8"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-9"
 }
