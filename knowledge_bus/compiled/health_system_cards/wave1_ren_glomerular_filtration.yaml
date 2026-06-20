@@ -1,0 +1,48 @@
+schema_version: "1.0.0"
+artefact_id: wave1_ren_glomerular_filtration_v1
+domain_id: wave1_kidney
+subsystem_id: wave1_ren_glomerular_filtration
+subsystem_label: Kidney filtration markers
+visibility_tier: scored_subsystem
+source_spec_ids:
+  - inv_creatinine_high_renal_v1
+  - inv_egfr_low_chronic_kidney_function_reduction
+compile_manifest_ref: knowledge_bus/compiled/manifests/p1_2_kidney_filtration_card_evidence.yaml
+missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
+mechanism_line: Creatinine and eGFR together describe kidney filtration context on this panel; urea adds handling context when present.
+subsystem_summary: >
+  Creatinine and eGFR anchor kidney filtration markers on this panel; urea may corroborate renal
+  handling when uploaded but is optional for the scored subsystem view.
+evidence_limitations_line: >
+  This card focuses on filtration markers and does not diagnose kidney disease, stage CKD, or replace clinician review.
+markers:
+  - marker_id: creatinine
+    display_label: Creatinine
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Waste-product marker commonly used with eGFR to estimate filtration context.
+    presence_policy: required_for_subsystem
+  - marker_id: egfr
+    display_label: eGFR
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Estimated filtration marker derived from creatinine and standard inputs when supplied by the lab.
+    presence_policy: required_for_subsystem
+  - marker_id: urea
+    display_label: Urea
+    marker_role: confidence_contributor
+    relationship_kind: confidence_input
+    rationale_short: Nitrogen-handling marker that can add context alongside filtration markers when present.
+    presence_policy: optional_on_panel
+provenance:
+  artefact_kind: health_system_card_evidence_v1
+  compile_status: compile_pipeline
+  source_spec_provenance: explicit
+  package_refs:
+    - pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+    - pkg_kb52c_creatinine_low_low_muscle_mass_or_low_generation
+    - pkg_kb47_egfr_low_chronic_kidney_function_reduction
+    - pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  notes: >
+    P1-2 compile-time card evidence for launch-core kidney function domain. Runtime-active canonical
+    creatinine and eGFR signals only; urea optional for confidence. No PSI runtime.

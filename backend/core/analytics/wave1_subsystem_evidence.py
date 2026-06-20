@@ -2,7 +2,7 @@
 DOMAIN-UX1C — Governed Wave 1 subsystem evidence for Health Systems Cards.
 
 Single authority for subsystem-to-marker mapping. Frontend must not duplicate.
-Wave 1 domains only: cardiovascular, blood sugar, liver.
+Wave 1 domains only: cardiovascular, blood sugar, liver, kidney.
 """
 
 from __future__ import annotations
@@ -30,6 +30,9 @@ _WAVE1_DOMAIN_SUBSYSTEM_ORDER: Dict[str, Tuple[str, ...]] = {
     "wave1_liver": (
         "wave1_liv_enzyme_pattern",
         "wave1_liv_processing_context",
+    ),
+    "wave1_kidney": (
+        "wave1_ren_glomerular_filtration",
     ),
 }
 

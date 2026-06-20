@@ -41,6 +41,7 @@ _WAVE1_DOMAIN_IDS = (
     "wave1_cardiovascular",
     "wave1_blood_sugar",
     "wave1_liver",
+    "wave1_kidney",
 )
 
 

@@ -53,6 +53,14 @@ def _minimal_rows(panel: set[str] | None = None):
                 "missing_biomarkers": [],
                 "biomarker_scores": [{"biomarker_name": "alt"}],
             },
+            "kidney": {
+                "overall_score": 72.0,
+                "missing_biomarkers": ["urea"],
+                "biomarker_scores": [
+                    {"biomarker_name": "creatinine"},
+                    {"biomarker_name": "egfr"},
+                ],
+            },
         }
     }
     ig = InsightGraphV1(
@@ -212,7 +220,12 @@ def test_health_system_subsystem_fake_status_emitted_sentinel() -> None:
 def test_health_system_wave2_subsystems_prematurely_emitted_sentinel() -> None:
     """Sentinel: health_system_wave2_subsystems_prematurely_emitted."""
     assert WAVE1_DOMAIN_IDS == frozenset(
-        {"wave1_cardiovascular", "wave1_blood_sugar", "wave1_liver"}
+        {
+            "wave1_cardiovascular",
+            "wave1_blood_sugar",
+            "wave1_liver",
+            "wave1_kidney",
+        }
     )
     from core.analytics.wave1_subsystem_evidence import assemble_wave1_subsystem_evidence
 

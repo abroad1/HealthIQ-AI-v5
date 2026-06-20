@@ -298,6 +298,10 @@ biomarker_directionality:
       direction_class: protective_high
     apoa1:
       direction_class: protective_high
+    egfr:
+      direction_class: low_only_concern
+    creatinine:
+      direction_class: high_only_concern
 
 derived_ratios:
   - "tc_hdl_ratio"

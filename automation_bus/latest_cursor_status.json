@@ -1,10 +1,10 @@
 {
-  "branch": "work/P1-1-launch-core-domain-build-materials-map",
+  "branch": "work/P1-2-kidney-function-domain-card",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T08:56:24Z",
-  "cursor_started_utc": "2026-06-20T08:52:21Z",
-  "head_sha": "11c92c048e1eddd42a460147cfa001704b1b35b8",
+  "cursor_completed_utc": "2026-06-20T09:35:51Z",
+  "cursor_started_utc": "2026-06-20T09:33:43Z",
+  "head_sha": "f9f861c3cffc83452cac386a06848f107383538b",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "P1-1"
+  "work_id": "P1-2"
 }
