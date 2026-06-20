@@ -1,6 +1,6 @@
 # HealthIQ AI — Document Authority Map
 
-**Last updated:** 2026-05-04  
+**Last updated:** 2026-06-20  
 **Status:** LIVE — update when document status changes  
 **Purpose:** Stop people reading the wrong documents. One page, fast answer.
 
@@ -27,6 +27,7 @@ Find the domain you care about. Look at the Status column.
 | `docs/strategy/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md` | AUTHORITATIVE | Read with parent. |
 | `docs/strategy/PRODUCT_REVIEW_AND_STRATEGIC_RESET_2026-04.md` | AUTHORITATIVE | April 2026 full review. |
 | `docs/strategy/RESET_SPRINT_PLAN_2026-04.md` | AUTHORITATIVE | 8-sprint reset plan. All complete. |
+| `docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md` | AUTHORITATIVE | Eight-block beta-readiness programme baseline. First authority for P1-1 and build programme. |
 | `docs/strategy/HealthIQ_Strategy_Stack_Document_Authority_Map.md` | SUPPORTING | Governance note on doc hierarchy. |
 | `docs/strategy/HealthIQ_Executive_GTM_Report_Updated_v2.md` | SUPPORTING | GTM context. |
 | `docs/strategy/HealthIQ_Phase1_Launch_Posture.md` | UNCLEAR | Currency uncertain. Verify against April review. |

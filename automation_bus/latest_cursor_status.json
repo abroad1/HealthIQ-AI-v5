@@ -1,10 +1,10 @@
 {
-  "branch": "work/EIGHT-BLOCK-PROGRAMME-1-comparison-and-roadmap",
+  "branch": "work/BETA-BASELINE-REGISTER-1-final-strategy-and-register",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-18T19:17:29Z",
-  "cursor_started_utc": "2026-06-18T19:13:00Z",
-  "head_sha": "c6124d402140ceacd864a0c0be0aba2f04939cc4",
+  "cursor_completed_utc": "2026-06-20T08:26:38Z",
+  "cursor_started_utc": "2026-06-20T08:20:17Z",
+  "head_sha": "eeb38aa27da87d949759353bb80260a7381a197b",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "EIGHT-BLOCK-PROGRAMME-1"
+  "work_id": "BETA-BASELINE-REGISTER-1"
 }
