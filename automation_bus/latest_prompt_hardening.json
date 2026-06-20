@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "P1-5",
+  "work_id": "P1-6R",
   "status": "HARDENED",
   "hardened_utc": "2026-06-20T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6) — SOP v1.3.1 Stage 2",
@@ -8,117 +8,120 @@
     {
       "check": "front_matter.work_id",
       "result": "PASS",
-      "finding": "CONFIRMED — work_id 'P1-5' present.",
+      "finding": "CONFIRMED — work_id 'P1-6R' present.",
       "citation": "automation_bus/latest_cursor_prompt.md:2"
     },
     {
       "check": "front_matter.branch",
       "result": "PASS",
-      "finding": "CONFIRMED — branch 'work/P1-5-ft3-thyroid-authority-reconciliation' present. Must match git branch at Stage 0 before any file modification.",
+      "finding": "CONFIRMED — branch 'work/P1-6R-thyroid-scoring-architecture-recovery' present. Must match git branch at Stage 0 before any file modification.",
       "citation": "automation_bus/latest_cursor_prompt.md:3"
     },
     {
       "check": "front_matter.risk_level",
       "result": "PASS",
-      "finding": "CONFIRMED HIGH. Sprint is MIXED and may touch governance YAML registers. root_cause_authority_register_v1.yaml is an Intelligence Core input loaded at runtime by backend/core/knowledge/compiled_output_authority_v1.py (line 39 via yaml.safe_load). Any change to it constitutes an Intelligence Core behavioural modification. HIGH is mandatory per SOP §3 and §10.",
-      "citation": "automation_bus/latest_cursor_prompt.md:4; backend/core/knowledge/compiled_output_authority_v1.py:17-18,39,52"
+      "finding": "CONFIRMED HIGH. Sprint follows a failed HIGH-risk sprint and produces an architectural decision that directly gates the next Intelligence Core sprint. HIGH is appropriate: dual approval before merge is warranted by governance stakes even though deliverables are docs-only.",
+      "citation": "automation_bus/latest_cursor_prompt.md:4"
     },
     {
       "check": "front_matter.execution_model",
       "result": "PASS",
-      "finding": "CONFIRMED — TWO_PHASE_START_FINISH. Phase 1 is read-only authority audit. Phase 2 is reconciliation decision and deliverable creation. No file writes in Phase 1.",
+      "finding": "CONFIRMED — TWO_PHASE_START_FINISH.",
       "citation": "automation_bus/latest_cursor_prompt.md:5"
     },
     {
       "check": "front_matter.change_type",
       "result": "PASS",
-      "finding": "CONFIRMED MIXED. Documentation deliverables = CONTENT. Governance YAML corrections (if any) may include root_cause_authority_register_v1.yaml = BEHAVIOUR (Intelligence Core input). MIXED is correct; BEHAVIOUR controls apply throughout per SOP §4.",
+      "finding": "CONFIRMED CONTENT. Deliverables are three documentation files only. No YAML under backend/ssot, no compiled KB, no code. CONTENT classification is correct.",
       "citation": "automation_bus/latest_cursor_prompt.md:6"
     },
     {
       "check": "prerequisite.files_on_main",
       "result": "PASS",
-      "finding": "CONFIRMED. All three prerequisite files present on main: docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md (verified), docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md (verified), docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md (verified). Prerequisite STOP condition is NOT triggered.",
-      "citation": "docs/sprints/beta_readiness/ directory listing — all three files confirmed present"
+      "finding": "CONFIRMED. All five prerequisite files present on main: P1-1_launch_core_domain_build_materials_map.md, P1-4_thyroid_energy_regulation_domain_card.md, P1-5_ft3_thyroid_authority_reconciliation.md, ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md, BUILD_DELIVERABLE_REGISTER.md. Prerequisite STOP condition is NOT triggered.",
+      "citation": "docs/sprints/beta_readiness/ and docs/architecture/ — all five files confirmed present via Glob"
     },
     {
-      "check": "stage_2a_authority_paths",
+      "check": "stage_2a.authority_paths",
       "result": "PASS",
-      "all_paths_exist": true,
+      "finding": "CONFIRMED — all seven authority documents verified to exist in repo.",
       "paths_verified": [
-        "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — exists",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md — exists",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md — exists; content read; P1-4 authority findings verified",
-        "CONFIRMED: docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md — exists",
-        "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — exists",
-        "CONFIRMED: knowledge_bus/governance/batch2_thyroid_gate_execution_register_v1.yaml — exists (Glob verified)",
-        "CONFIRMED: knowledge_bus/governance/batch2_full_coverage_activation_execution_register_v1.yaml — exists (Glob verified)",
-        "CONFIRMED: knowledge_bus/governance/batch2_context_clearance_register_v1.yaml — exists (Glob verified)",
-        "CONFIRMED: knowledge_bus/governance/medical_frame_identity_index_v1.yaml — exists (Glob verified)",
-        "CONFIRMED: knowledge_bus/governance/root_cause_authority_register_v1.yaml — exists (Glob verified)"
+        "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — exists (PowerShell Test-Path: True)",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-1_launch_core_domain_build_materials_map.md — exists (Glob verified)",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md — exists (Glob verified)",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-5_ft3_thyroid_authority_reconciliation.md — exists (Glob verified)",
+        "CONFIRMED: docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md — exists (Glob verified)",
+        "CONFIRMED: docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md — exists (Glob verified)",
+        "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — exists (PowerShell Test-Path: True)"
       ],
       "duplicate_authority_sources": "NONE detected."
     },
     {
-      "check": "stage_2a_p1_4_findings_verified",
-      "result": "PASS — SOURCE CONTENT READ AND CROSS-REFERENCED",
-      "finding": "CONFIRMED. P1-4 sprint doc read in full (docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md). All eight P1-4 blockers cited in the P1-5 prompt are confirmed from P1-4 authority text: (1) FT3 low deferred in thyroid gate register (P1-4 line 55-56); (2) FT3 low runtime_active_canonical in full_coverage register (P1-4 line 57-58); (3) FT3 low inactive/activation_eligibility:false in context_clearance register (P1-4 line 57-58); (4) FT3 low internal contradiction in medical_frame_identity_index (P1-4 line 58-59); (5) FT3 low ROOT_CAUSE_REQUIRES_FUTURE_MAPPING in root_cause_authority_register (P1-4 line 59-60); (6) hormonal scoring rail system_weight 0.0 no biomarkers (P1-4 line 21-22); (7) kb52c TSH packages inactive/not runtime-loaded (P1-4 line 47); (8) kb59 antibodies inactive (P1-4 line 48). All P1-4 stop conditions verified as real, not stale.",
-      "citation": "docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md:21-22,47,48,55-60"
+      "check": "stage_2a.p1-6_contamination_check",
+      "result": "PASS",
+      "finding": "CONFIRMED — all four P1-6 contamination files are absent from main. Branch work/P1-6-thyroid-launch-core-unlock-and-domain-card exists in repo but is not merged (last commit on main is 51f087d — P1-5 kernel COMPLETE, not P1-6).",
+      "paths_verified": [
+        "ABSENT: docs/sprints/beta_readiness/P1-6_thyroid_launch_core_unlock_and_domain_card.md — False",
+        "ABSENT: docs/architecture/ADR-THYROID-LAUNCH-CORE-UNLOCK-1.md — False",
+        "ABSENT: knowledge_bus/compiled/health_system_cards/wave1_thy_thyroid_axis.yaml — False",
+        "ABSENT: knowledge_bus/compiled/manifests/p1_6_thyroid_energy_axis_card_evidence.yaml — False"
+      ],
+      "citation": "PowerShell Test-Path checks; git log --oneline -5 showing main = 51f087d"
     },
     {
-      "check": "stage_2a_runtime_consumption.root_cause_authority_register",
-      "result": "CRITICAL FINDING — BEHAVIOUR-CLASS CHANGE IF MODIFIED",
-      "finding": "CONFIRMED. root_cause_authority_register_v1.yaml is loaded at runtime by backend/core/knowledge/compiled_output_authority_v1.py via _load_yaml at line 39 (function load_root_cause_authority_register, called at line 52). Path is hardcoded at line 17-18: _REPO_ROOT / 'knowledge_bus' / 'governance' / 'root_cause_authority_register_v1.yaml'. Any change to this file modifies Intelligence Core runtime inputs. Per prompt §Permitted changes last paragraph: if behavioural effect is uncertain, do NOT modify — record required correction in ADR only and leave unchanged for a later dedicated activation-control sprint.",
-      "citation": "backend/core/knowledge/compiled_output_authority_v1.py:17-18,39,52"
+      "check": "stage_2a.scoring_source_content.hormonal_rail_state",
+      "result": "CONFIRMED — SOURCE CONTENT READ",
+      "finding": "CONFIRMED. hormonal system in scoring_policy.yaml: min_biomarkers_required: 0, system_weight: 0.0, biomarkers: []. Rail is empty and carries zero scoring weight. No TSH, FT3, FT4, or thyroid antibodies present in any section of scoring_policy.yaml (biomarkers block lines 52-274 or biomarker_directionality.markers lines 288-308).",
+      "citation": "backend/ssot/scoring_policy.yaml:32-34 (hormonal block), lines 52-274 (biomarkers section, thyroid markers absent), lines 288-308 (directionality markers, thyroid markers absent)"
     },
     {
-      "check": "stage_2a_runtime_consumption.batch2_registers_and_medical_frame",
-      "result": "CONTENT-CLASS — NOT RUNTIME-LOADED BY backend/core/",
-      "finding": "CONFIRMED. batch2_thyroid_gate_execution_register_v1.yaml, batch2_full_coverage_activation_execution_register_v1.yaml, batch2_context_clearance_register_v1.yaml, and medical_frame_identity_index_v1.yaml are NOT loaded by any backend/core/ runtime code. grep over backend/core/ --include='*.py' returned zero matches for all four files. They are referenced only by backend/scripts/ validators and backend/tests/ governance/regression suites. Changes to these four files are CONTENT-class from a runtime behaviour standpoint, but associated tests may require expected-result updates if status corrections are applied.",
-      "citation": "grep -rn 'batch2_thyroid_gate|batch2_full_coverage|batch2_context_clearance|medical_frame_identity' backend/core/ --include='*.py' — zero matches returned"
+      "check": "stage_2a.scoring_source_content.bands_required_to_construct_biomarker_rule",
+      "result": "CONFIRMED — SOURCE CONTENT READ — CRITICAL ARCHITECTURAL FINDING",
+      "finding": "CONFIRMED. _build_biomarker_rule() at rules.py:131-145 uses direct dict key access: bands['optimal'], bands['normal'], bands['borderline'], bands['high'], bands['very_high'], bands['critical']. No .get() fallback. No default. Missing any band sub-key raises KeyError at rule-load time. All six band sub-keys are mandatory to construct a BiomarkerRule. This is the direct code evidence that the current architecture cannot support a bandless thyroid scoring entry.",
+      "citation": "backend/core/scoring/rules.py:131-145 (_build_biomarker_rule)"
     },
     {
-      "check": "stage_2b_behavioural_hardening.reconciliation_direction",
-      "result": "STOP GATE REINFORCED",
-      "finding": "The prompt prohibits permissive interpretation where registers conflict. The only permitted reconciliation direction is CONSERVATIVE: any ambiguous or conflicted thyroid signal must be assigned the most restrictive status across all relevant registers. Specifically for FT3 low: the gate register (deferred, activated:false) and clearance register (inactive, activation_eligibility:false) are the conservative anchors. The full_coverage register's runtime_active_canonical/ACTIVATE_WITH_GATES entry MUST NOT be treated as sufficient authority to activate FT3 low. If the batch2_full_coverage register is corrected, the correction must align it to deferred/inactive — NOT the reverse. Do not choose the permissive direction.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Phase 2 — Reconciliation decision; docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md:55-60"
+      "check": "stage_2a.scoring_source_content.silent_skip_if_no_bands",
+      "result": "CONFIRMED — SOURCE CONTENT READ",
+      "finding": "CONFIRMED. _load_biomarker_rules() at rules.py:153-156 iterates systems[system].biomarkers and looks up each in the YAML biomarkers dict. Guard at line 155: `if isinstance(policy_item, dict)` — silently skips biomarkers with no YAML entry. Consequence: adding TSH to hormonal biomarkers list without a bands YAML block would result in TSH being silently dropped at load time, never reaching calculate_biomarker_score via system orchestration.",
+      "citation": "backend/core/scoring/rules.py:147-163 (_load_biomarker_rules), specifically lines 153-156"
     },
     {
-      "check": "stage_2b_behavioural_hardening.root_cause_register_guard",
-      "result": "RISK SURFACED",
-      "finding": "root_cause_authority_register_v1.yaml records signal_free_t3_low as ROOT_CAUSE_REQUIRES_FUTURE_MAPPING. This is a conservative blocking status. Any correction to this entry must either: (a) make it MORE restrictive (blocked, permanently deferred, or similar), or (b) leave it unchanged. Under no circumstances may the status be changed to ROOT_CAUSE_GOVERNED_ACTIVE or any active status — that would constitute a permissive BEHAVIOUR change touching Intelligence Core. If uncertain about behavioural effect of any change to this file, leave it unchanged and document in ADR.",
-      "citation": "docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md:59-60; backend/core/knowledge/compiled_output_authority_v1.py:17-18"
-    },
-    {
-      "check": "stage_2b_behavioural_hardening.regression_targets",
-      "result": "CONFIRMED — must run if YAML register files are changed",
-      "finding": "If any governance YAML is changed, Cursor must run the corresponding validation: (1) root_cause_authority_register change → run backend/tests/governance/test_arch_completion_2_output_authority.py; (2) batch2_context_clearance change → run backend/tests/governance/test_batch2_context_clearance_register.py; (3) medical_frame_identity_index change → run backend/scripts/validate_medical_frame_identity_index.py; (4) any batch2 register change → run backend/tests/regression/test_batch2_thyroid_tsh_gating.py. If no schema validator exists for a YAML file, state that explicitly in the validation section. If no YAML files are changed (blocker-only outcome), no runtime test suite is required.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Validation; backend/tests/governance/ and backend/scripts/ verified to exist"
-    },
-    {
-      "check": "stage_2b_behavioural_hardening.determinism",
-      "result": "CONFIRMED — no output drift risk for documentation-only deliverables",
-      "finding": "Deliverables 1 and 2 (reconciliation report and ADR) are new documentation files — no existing runtime output is affected. BUILD_DELIVERABLE_REGISTER.md append is additive and documentation-only. If any governance YAML is corrected, the correction must be conservative (restricting, not enabling) and must not change any runtime signal activation status from inactive/deferred to active. Determinism is preserved by construction if no runtime code, compiled content, or scoring policy is changed.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Permitted changes; SOP §Non-Negotiables: No silent output drift"
+      "check": "stage_2a.scoring_source_content.lab_range_path",
+      "result": "CONFIRMED — SOURCE CONTENT READ",
+      "finding": "CONFIRMED. calculate_biomarker_score() at rules.py:361-436 CAN score a biomarker using only lab range (input_reference_range param) without a BiomarkerRule. If BiomarkerRule is None (line 395-402), policy_unit becomes empty string and unit coherence check is skipped. However, this path is NOT reachable via system orchestration for biomarkers absent from the SSOT biomarkers block — system orchestration at engine.py:192 iterates only biomarkers in system_rules.biomarkers, which requires a loaded BiomarkerRule (which requires bands). The lab-range-only primitive path is real but structurally inaccessible from system-level scoring without a scoring-engine architecture change.",
+      "citation": "backend/core/scoring/rules.py:361-436 (calculate_biomarker_score), backend/core/scoring/engine.py:192 (_score_health_system loop)"
     },
     {
       "check": "stop_conditions.forbidden_files",
       "result": "PASS",
-      "finding": "Explicit prohibition list confirmed: backend/core/analytics/domain_score_assembler.py, backend/core/analytics/domain_narrative_wave1.py, backend/core/analytics/wave1_subsystem_evidence.py, backend/core/dto/persisted_replay_contract_v1.py, backend/ssot/scoring_policy.yaml, knowledge_bus/compiled/, frontend/, Knowledge Bus source packages, Pass 3 material, medical-review conclusions, runtime test additions for thyroid implementation, Gemini, fallback parser logic. None of these are deliverables of this sprint.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Critical scope rule,§Prohibited changes"
+      "finding": "CONFIRMED. Forbidden file list is comprehensive and explicitly cited in prompt. Deliverables are all under docs/ — no code, no SSOT YAML, no compiled KB, no frontend, no Gemini, no fallback parser paths. CONTENT classification and STOP gates are coherent.",
+      "citation": "automation_bus/latest_cursor_prompt.md: §Critical scope rule, expected changed files list (lines 515-524)"
+    },
+    {
+      "check": "stop_conditions.code_change_gate",
+      "result": "PASS",
+      "finding": "CONFIRMED. Prompt explicitly states: 'If Cursor believes a code change is required to answer the question, stop and report why. Do not make the code change.' This is the correct STOP condition given Phase 3 is likely to conclude B or C. Cursor must NOT add a lab-range-only scoring mechanism — that is the NEXT sprint's scope.",
+      "citation": "automation_bus/latest_cursor_prompt.md:100-101"
     },
     {
       "check": "stop_conditions.powershell_compatibility",
       "result": "PASS",
-      "finding": "All shell commands in prompt use PowerShell-compatible syntax: git switch, git pull, git status --short, git switch -c, git diff --stat, git diff --name-only, git status --short. No bash-only constructs.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Branch and state checks,§Validation"
+      "finding": "CONFIRMED. All shell commands use PowerShell-compatible syntax: git switch, git pull, git status --short, git rev-parse, git switch -c, git diff --stat, git diff --name-only. No bash-only constructs detected.",
+      "citation": "automation_bus/latest_cursor_prompt.md: §Branch and state checks, §Validation"
+    },
+    {
+      "check": "stage_2b.behavioural_hardening",
+      "result": "NOT APPLICABLE",
+      "finding": "change_type: CONTENT. No Intelligence Core components modified. No scoring_policy.yaml change. No compiled KB. No pipeline logic. Stage 2B does not apply.",
+      "citation": "automation_bus/latest_cursor_prompt.md:6 (change_type: CONTENT), SOP §4 (Stage 2B applies to BEHAVIOUR/MIXED only)"
     },
     {
       "check": "no_op_protection",
       "result": "PASS",
-      "finding": "Real governance work exists: five register contradictions confirmed active from P1-4 findings (not stale). Three deliverable files to be created (P1-5 reconciliation report, ADR, BUILD_DELIVERABLE_REGISTER update). Reconciliation decision itself is a non-trivial governance determination requiring genuine file inspection and cross-reference. This sprint is not a no-op.",
-      "citation": "docs/sprints/beta_readiness/P1-4_thyroid_energy_regulation_domain_card.md:55-75"
+      "finding": "Real work exists: P1-6 failed with confirmed violations; scoring architecture truth must be established from code inspection; three deliverable files are genuinely new (recovery report, ADR, BUILD_DELIVERABLE_REGISTER append). Sprint is not a no-op.",
+      "citation": "automation_bus/latest_cursor_prompt.md:35-44 (P1-6 failure description)"
     }
   ],
-  "overall_verdict": "HARDENED — All five front-matter fields confirmed (automation_bus/latest_cursor_prompt.md:2-6). All three prerequisite files confirmed on main. All ten authority files and governance registers verified to exist. P1-4 source content read and all eight blocker findings cross-referenced as confirmed-real. CRITICAL RUNTIME FINDING: root_cause_authority_register_v1.yaml is loaded by backend/core/knowledge/compiled_output_authority_v1.py:39 via yaml.safe_load — any change to it is BEHAVIOUR-class; if behavioural effect is uncertain, leave unchanged and record correction in ADR only. batch2_* registers and medical_frame_identity_index_v1.yaml are NOT runtime-consumed by backend/core/ (grep confirmed zero matches). Reconciliation direction is conservative-only: no thyroid signal may become newly active; FT3 low must remain inactive/deferred; the permissive full_coverage entry must not be treated as authority. Regression targets named per changed file. If authority cannot be reconciled safely, sprint must produce ADR (Status: Blocked) and reconciliation report without YAML modifications — this is a valid and complete sprint outcome. Cursor may proceed under TWO_PHASE_START_FINISH governance."
+  "overall_verdict": "HARDENED — All five front-matter fields confirmed (automation_bus/latest_cursor_prompt.md:2-6). All seven authority paths verified to exist in repo. All five prerequisite files confirmed on main. All four P1-6 contamination files confirmed absent from main; failed branch is not merged. CRITICAL ARCHITECTURAL FINDING (from source content cross-reference, not inference): _build_biomarker_rule() at rules.py:131-145 requires all six band sub-keys via direct dict key access — no fallback, no default. BiomarkerRules without bands cannot be constructed; bandless biomarkers listed in a system are silently dropped at rules.py:155. A lab-range-only primitive path exists in calculate_biomarker_score() (rules.py:361-436) but is structurally inaccessible via system orchestration (engine.py:192) for biomarkers not loaded into system_rules.biomarkers. Phase 3 answer is expected to be B: architecture does NOT support lab-range-only thyroid scoring without hardcoded bands. Cursor must reach this conclusion independently from code inspection. If a code change appears required, Cursor must STOP and report — not implement. No SSOT YAML, code, compiled KB, or frontend files may be changed. Deliverables are docs-only. Cursor may proceed under TWO_PHASE_START_FINISH governance."
 }
