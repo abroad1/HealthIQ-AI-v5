@@ -1,8 +1,8 @@
 {
   "branch": "work/P1-2-kidney-function-domain-card",
   "bus_version": "1.2",
-  "cursor_started_utc": "2026-06-20T09:32:20Z",
-  "head_sha": "a2db5420eefb37467a95e0872c3de6ec91299640",
+  "cursor_started_utc": "2026-06-20T09:33:43Z",
+  "head_sha": "dfca0012f38d952959de8d81e80c7a3defbab3e3",
   "raw_stop_condition": null,
   "status": "IN_PROGRESS",
   "work_id": "P1-2"
