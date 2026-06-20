@@ -64,6 +64,30 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-2 — Kidney function domain card
+
+**Status:** Complete  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate  
+
+### Delivered / ticked off
+- First missing launch-core domain implemented as `wave1_kidney` with compiled filtration subsystem evidence.
+- Domain assembler, subsystem routing, scoring-policy eGFR inclusion, and targeted tests added.
+
+### Carry-forwards
+- Urea signal launch visibility deferred pending frame-index adjudication.
+- ACR/UACR standalone package still absent.
+- Frontend render-only integration and P2 kidney prose substrate remain open.
+
+### Blockers / risks
+- Fourth domain increases replay/DTO surface area; frontend must remain render-only.
+- Collision resolver regression must stay green on merge.
+
+### Recommended next sprint
+- P1-3 — Blood / iron / oxygen domain card (after CBC/adjudication hygiene), or P2-1 kidney prose substrate in parallel.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

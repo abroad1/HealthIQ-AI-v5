@@ -39,7 +39,7 @@ systems:
   kidney:
     min_biomarkers_required: 1
     system_weight: 0.15
-    biomarkers: ["creatinine", "urea"]
+    biomarkers: ["creatinine", "egfr", "urea"]
   liver:
     min_biomarkers_required: 1
     system_weight: 0.1
@@ -170,7 +170,7 @@ biomarkers:
   creatinine:
     scoring_type: "range_position"
     unit: "µmol/L"
-    weight: 0.6
+    weight: 0.35
     age_adjustment: true
     sex_adjustment: true
     bands:
@@ -180,10 +180,23 @@ biomarkers:
       high: {min: 133.0, max: 177.0}
       very_high: {min: 177.0, max: 265.0}
       critical: {min: 265.0, max: 884.0}
-  urea:
+  egfr:
+    scoring_type: "range_position"
+    unit: "mL/min/1.73m2"
+    weight: 0.45
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 90.0, max: 120.0}
+      normal: {min: 60.0, max: 89.0}
+      borderline: {min: 45.0, max: 59.0}
+      high: {min: 30.0, max: 44.0}
+      very_high: {min: 15.0, max: 29.0}
+      critical: {min: 0.0, max: 14.0}
+    urea:
     scoring_type: "range_position"
     unit: "mmol/L"
-    weight: 0.4
+    weight: 0.2
     age_adjustment: false
     sex_adjustment: false
     bands:
@@ -298,6 +311,10 @@ biomarker_directionality:
       direction_class: protective_high
     apoa1:
       direction_class: protective_high
+    egfr:
+      direction_class: low_only_concern
+    creatinine:
+      direction_class: high_only_concern
 
 derived_ratios:
   - "tc_hdl_ratio"

@@ -386,6 +386,19 @@ def confidence_sentence_for(
                 "could still refine the read."
             )
         return "Confidence is limited — additional glycaemic markers would strengthen the read."
+    if domain in ("ren", "kidney"):
+        if t == "high":
+            return (
+                "Confidence is high — creatinine and eGFR are both present on this panel."
+            )
+        if t == "medium":
+            return (
+                "Confidence is moderate — one core filtration marker is present; "
+                "adding the other would strengthen the read."
+            )
+        return (
+            "Confidence is limited — core kidney filtration markers are missing from this panel."
+        )
     # liver
     panel = panel_biomarker_ids or set()
     if t == "high":
@@ -619,6 +632,22 @@ def governed_signal_line(signal_id: str, domain: str) -> str:
             return "ALT is above the expected range, indicating hepatocellular strain in context."
         if "ggt" in s and "high" in s:
             return "GGT is elevated, a common marker of metabolic or alcohol-related liver load."
+    if domain in ("ren", "kidney"):
+        if "egfr" in s and "low" in s:
+            return (
+                "eGFR is below the reference range on this panel, a marker that can relate "
+                "to reduced kidney filtration."
+            )
+        if "creatinine" in s and "high" in s:
+            return (
+                "Creatinine is above the reference range, which can reflect reduced filtration "
+                "or other influences such as muscle mass."
+            )
+        if "creatinine" in s and "low" in s:
+            return (
+                "Creatinine is below the reference range, which can reflect lower muscle mass "
+                "or reduced generation rather than kidney disease alone."
+            )
     return "This pattern is worth following with a clinician in context of your other results."
 
 
@@ -869,6 +898,12 @@ _GOVERNED_NEXT_STEP_LIV = (
     "For liver enzyme follow-up, review these results with a clinician, "
     "including alcohol, medications, and any relevant liver history for correct interpretation."
 )
+_GOVERNED_NEXT_STEP_REN = (
+    "For kidney filtration markers, discuss out-of-range results with a clinician, "
+    "especially if they are new, worsening, or you have symptoms or risk factors."
+)
+
+_ID_RENAL = "ph_renal_stress_v1"
 
 
 def _first_recommendation_for_category_substrings(
@@ -960,3 +995,72 @@ def next_step_liver(
     if s:
         return s
     return _GOVERNED_NEXT_STEP_LIV
+
+
+def headline_ren(band: str) -> str:
+    """P1-2: non-diagnostic kidney filtration headline."""
+    b = (band or "").strip().lower()
+    if b in ("review", "watch"):
+        return "Your kidney filtration markers may need follow-up in clinical context."
+    if b == "stable":
+        return "Your kidney filtration markers look broadly stable on this panel."
+    return "Your kidney filtration markers are within a broadly favourable range on this panel."
+
+
+def ren_contributor_primary(
+    by_id: Dict[str, Any],
+    active_sids: List[str],
+    sig_rows: List[Dict[str, Any]],
+    primary_idl: Optional[str],
+) -> str:
+    if primary_idl:
+        rec = idl_record(by_id, primary_idl)
+        if rec and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.subtitle:
+            return rec.subtitle.strip()
+    for pref in ("signal_egfr", "signal_creatinine"):
+        for r in sig_rows:
+            if not _active(r):
+                continue
+            sid = str(r.get("signal_id", ""))
+            if sid.startswith(pref):
+                return governed_signal_line(sid, "kidney")
+    if active_sids:
+        return "Kidney filtration markers on this panel are outside their reference ranges."
+    return "Your kidney filtration markers are within their reference ranges on this panel."
+
+
+def ren_consequence_primary(
+    by_id: Dict[str, Any],
+    primary_idl: Optional[str],
+    *,
+    contributor_sentence: str = "",
+    active_renal_signal_ids: Optional[List[str]] = None,
+) -> str:
+    if primary_idl:
+        rec = idl_record(by_id, primary_idl)
+        if rec and rec.why_it_matters and rec.severity_state != "not_observed" and rec.enabled_for_frontend:
+            text = str(rec.why_it_matters).strip()
+            if "disease" not in text.lower() and "ckd" not in text.lower():
+                return text
+    if active_renal_signal_ids:
+        return (
+            "Filtration markers can shift with hydration, muscle mass, and medications; "
+            "they are worth discussing with a clinician if out of range."
+        )
+    return (
+        "Kidney filtration markers help describe how waste is cleared; "
+        "a single panel snapshot is not a full kidney assessment."
+    )
+
+
+def next_step_kidney(
+    insight_results: Optional[List[Dict[str, Any]]],
+    _narrative_report: Any,
+) -> str:
+    _ = _narrative_report
+    s = _first_recommendation_for_category_substrings(
+        insight_results, ("renal", "kidney", "filtration", "detox")
+    )
+    if s:
+        return s
+    return _GOVERNED_NEXT_STEP_REN

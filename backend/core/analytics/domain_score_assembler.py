@@ -35,7 +35,11 @@ from core.analytics.domain_narrative_wave1 import (
     met_uses_glycaemic_subsystem_narrative_authority,
     next_step_blood_sugar,
     next_step_cardiovascular,
+    next_step_kidney,
     next_step_liver,
+    headline_ren,
+    ren_contributor_primary,
+    ren_consequence_primary,
 )
 from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayLayerBundleV1
 from core.analytics.wave1_subsystem_evidence import (
@@ -48,6 +52,7 @@ from core.models.results import ConfidenceTierV1, ConsumerDomainScoreV1
 _RAIL_CARDIOVASCULAR = "cardiovascular"
 _RAIL_METABOLIC = "metabolic"
 _RAIL_LIVER = "liver"
+_RAIL_KIDNEY = "kidney"
 _BURDEN_HEPATIC = "hepatic"
 
 # D-4: user-safe caveat lines (replaces internal slug list for retail cards)
@@ -60,6 +65,7 @@ _LIVER_CAVEAT_USER_LINES = (
 _IDL_ORDER_CV = ("ph_lipid_residual_ldl_favourable_transport_v1", "ph_vascular_hcy_inflammation_v1")
 _IDL_ORDER_MET = ("ph_hba1c_metabolic_stress_v1",)
 _IDL_ORDER_LIV = ("ph_hepatic_alt_inflammatory_v1",)
+_IDL_ORDER_REN = ("ph_renal_stress_v1",)
 
 # Biomarker coverage: cardiovascular rail (ssot/scoring_policy systems.cardiovascular)
 _CV_RAIL_BIOMARKERS = (
@@ -188,6 +194,29 @@ def _is_wave1_liver(row: Dict[str, Any]) -> bool:
         if sid.startswith(pref):
             return True
     return False
+
+
+def _is_wave1_kidney(row: Dict[str, Any]) -> bool:
+    if not _active_signal_state(str(row.get("signal_state", ""))):
+        return False
+    sid = str(row.get("signal_id", ""))
+    primary = str(row.get("primary_metric", "")).strip()
+    if sid in ("signal_egfr_low", "signal_creatinine_high", "signal_creatinine_low"):
+        return True
+    if primary in ("creatinine", "egfr"):
+        return True
+    if sid.startswith("signal_egfr") or sid.startswith("signal_creatinine"):
+        return True
+    return False
+
+
+def _kidney_confidence_tier(panel: Set[str]) -> str:
+    core = sum(1 for m in ("creatinine", "egfr") if m in panel)
+    if core >= 2:
+        return "high"
+    if core >= 1:
+        return "medium"
+    return "low"
 
 
 def _collect_signal_ids(rows: List[Dict[str, Any]], pred) -> List[str]:
@@ -342,6 +371,7 @@ _WAVE1_PLAIN_DESCRIPTOR: Dict[str, str] = {
     "wave1_cardiovascular": "Heart, arteries and circulation",
     "wave1_blood_sugar": "Long-term blood sugar pattern",
     "wave1_liver": "Liver health from your blood markers",
+    "wave1_kidney": "Kidney filtration markers from your blood test",
 }
 
 
@@ -494,8 +524,8 @@ def assemble_consumer_domain_scores_v1(
     intervention_cv_suffix: str = "",
 ) -> Tuple[List[ConsumerDomainScoreV1], Dict[str, Any]]:
     """
-    Build three Wave 1 domain rows. Always returns three entries in stable order:
-    cardiovascular, blood sugar, liver.
+    Build four Wave 1 domain rows. Always returns four entries in stable order:
+    cardiovascular, blood sugar, liver, kidney.
 
     D-2: Populates consumer narrative fields from deterministic sources (IDL, D-1 bands/tiers, insights).
     D-6: Returns (rows, wave1_aligned_drivers_meta) for a single narrative authority + driving-strip alignment.
@@ -766,5 +796,63 @@ def assemble_consumer_domain_scores_v1(
             **_liv_extras,
         )
 
-    out_rows = [cv_block(), met_block(), liv_block()]
+    def ren_block() -> ConsumerDomainScoreV1:
+        data = _system_rail_data(hss, _RAIL_KIDNEY)
+        raw_100 = _as_float_0_100(data.get("overall_score"))
+        score_01 = raw_100 / 100.0
+        band = _band_label_from_0_100(raw_100)
+        tier = cast(ConfidenceTierV1, _kidney_confidence_tier(panel_biomarker_ids))
+        missing = _missing_for_rail(hss, _RAIL_KIDNEY)
+        sids = _collect_signal_ids(sig_rows, _is_wave1_kidney)
+        idl = _select_primary_idl(idl_bundle, _IDL_ORDER_REN)
+        ev: Dict[str, Any] = {
+            "layer3_system_pressure_id": "renal__system_pressure",
+        }
+        _ren_extras = _wave1_card_contract_extras(
+            domain_id="wave1_kidney",
+            hss=hss,
+            system_key=_RAIL_KIDNEY,
+            missing_marker_ids=missing,
+            panel_biomarker_ids=panel_biomarker_ids,
+        )
+        _r_contrib = ren_contributor_primary(by_id, sids, sig_rows, idl)
+        _r_cons = ren_consequence_primary(
+            by_id,
+            idl,
+            contributor_sentence=_r_contrib,
+            active_renal_signal_ids=sids,
+        )
+        return ConsumerDomainScoreV1(
+            domain_id="wave1_kidney",
+            card_schema_version="1.2",
+            consumer_label="Kidney function",
+            clinical_label="Renal Filtration / Kidney Function Context",
+            score=score_01,
+            band_label=band,
+            confidence_tier=tier,
+            active_signal_ids=sids,
+            primary_idl_record_id=idl,
+            missing_marker_ids=missing,
+            source_track="base:scoring_rail:kidney;narrative:primary_idl_single_authority_p1_2",
+            caveat_flags=[],
+            contributing_system_keys=["kidney"],
+            raw_evidence_refs=ev,
+            headline_sentence=headline_ren(band),
+            contributor_sentence=_r_contrib,
+            confidence_sentence=confidence_sentence_for(tier, "kidney"),
+            consequence_sentence=_r_cons,
+            next_step_sentence=next_step_kidney(
+                insight_results,
+                narrative_report_v1,
+            ),
+            evidence_anchor_sentence=_evidence_anchor_from_visible_subsystems(
+                _ren_extras.get("subsystems"),
+                domain="kidney",
+                by_id=by_id,
+                primary_idl=idl,
+            ),
+            **_ren_extras,
+        )
+
+    out_rows = [cv_block(), met_block(), liv_block(), ren_block()]
     return out_rows, _wave1_aligned_drivers_meta(out_rows, sig_rows)

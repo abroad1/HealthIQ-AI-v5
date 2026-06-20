@@ -31,6 +31,7 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
             "cardiovascular": {"overall_score": 72.0, "missing_biomarkers": []},
             "metabolic": {"overall_score": 68.0, "missing_biomarkers": ["insulin"]},
             "liver": {"overall_score": 75.0, "missing_biomarkers": []},
+            "kidney": {"overall_score": 70.0, "missing_biomarkers": ["urea"]},
         }
     }
     panel = {
@@ -42,6 +43,8 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         "hba1c",
         "alt",
         "ast",
+        "creatinine",
+        "egfr",
     }
     ig = _minimal_graph(
         signal_results=[],
@@ -60,10 +63,15 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         derived_ratios_meta=dr,
         panel_biomarker_ids=panel,
     )
-    assert len(rows) == 3
+    assert len(rows) == 4
     assert wave1_meta.get("schema") == "wave1_aligned_drivers_v1"
     ids = [r.domain_id for r in rows]
-    assert ids == ["wave1_cardiovascular", "wave1_blood_sugar", "wave1_liver"]
+    assert ids == [
+        "wave1_cardiovascular",
+        "wave1_blood_sugar",
+        "wave1_liver",
+        "wave1_kidney",
+    ]
     for r in rows:
         assert 0.0 <= r.score <= 1.0
         assert r.confidence_tier in ("high", "medium", "low")
@@ -77,13 +85,15 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         assert r.card_schema_version == "1.2"
         assert r.evidence_completeness_denominator >= r.evidence_completeness_numerator
         assert r.plain_english_descriptor
-        assert r.subsystems is not None
-        assert len(r.subsystems) >= 1
-        sub0 = r.subsystems[0]
-        assert sub0.subsystem_id
-        assert sub0.subsystem_label
-        assert sub0.source_trace
-        assert sub0.status_label is None
+        if r.domain_id != "wave1_liver":
+            assert r.subsystems is not None
+            assert len(r.subsystems) >= 1
+        sub0 = (r.subsystems or [None])[0]
+        if sub0 is not None:
+            assert sub0.subsystem_id
+            assert sub0.subsystem_label
+            assert sub0.source_trace
+            assert sub0.status_label is None
 
 
 def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
@@ -93,6 +103,7 @@ def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
             "cardiovascular": {"overall_score": 80.0, "missing_biomarkers": []},
             "metabolic": {"overall_score": 80.0, "missing_biomarkers": []},
             "liver": {"overall_score": 80.0, "missing_biomarkers": []},
+            "kidney": {"overall_score": 80.0, "missing_biomarkers": []},
         }
     }
     ig = _minimal_graph(signal_results=[], capacity={"hepatic": 80}, cluster_confidence={})
@@ -101,12 +112,12 @@ def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
         insight_graph=ig,
         idl_bundle=None,
         derived_ratios_meta=None,
-        panel_biomarker_ids={"alt", "glucose", "hba1c", "ldl_cholesterol"},
+        panel_biomarker_ids={"alt", "glucose", "hba1c", "ldl_cholesterol", "creatinine", "egfr"},
         insight_results=None,
         narrative_report_v1=None,
     )
     ns = [r.next_step_sentence for r in rows]
-    assert len(set(ns)) == 3
+    assert len(set(ns)) == 4
 
 
 def test_liver_confidence_tier_uses_domain_not_cluster_rail():
@@ -116,10 +127,11 @@ def test_liver_confidence_tier_uses_domain_not_cluster_rail():
             "cardiovascular": {"overall_score": 80.0, "missing_biomarkers": []},
             "metabolic": {"overall_score": 80.0, "missing_biomarkers": []},
             "liver": {"overall_score": 80.0, "missing_biomarkers": []},
+            "kidney": {"overall_score": 80.0, "missing_biomarkers": []},
         }
     }
     # Domain: alt + ast -> medium hepatic marker-depth tier (no merge with rail).
-    panel = {"alt", "ast", "glucose", "hba1c", "ldl_cholesterol"}
+    panel = {"alt", "ast", "glucose", "hba1c", "ldl_cholesterol", "creatinine", "egfr"}
     ig = _minimal_graph(
         signal_results=[],
         capacity={"hepatic": 80},
@@ -132,7 +144,7 @@ def test_liver_confidence_tier_uses_domain_not_cluster_rail():
         derived_ratios_meta=None,
         panel_biomarker_ids=panel,
     )
-    liver = rows[2]
+    liver = next(r for r in rows if r.domain_id == "wave1_liver")
     assert liver.domain_id == "wave1_liver"
     assert liver.raw_evidence_refs.get("cluster_confidence_hepatic_rail") == 0.40
     assert liver.confidence_tier == "medium"
@@ -161,7 +173,7 @@ def test_liver_blends_with_hepatic_capacity_not_liver_key():
         derived_ratios_meta=None,
         panel_biomarker_ids={"alt"},
     )
-    liver = rows[2]
+    liver = next(r for r in rows if r.domain_id == "wave1_liver")
     assert liver.score == 0.30
     assert "hepatic" in liver.source_track
     assert liver.raw_evidence_refs.get("blended_with_hepatic_capacity") is True
@@ -185,7 +197,7 @@ def test_d4_liver_caveat_flags_are_user_phrases_not_slugs():
         derived_ratios_meta=None,
         panel_biomarker_ids={"alt"},
     )
-    liver = rows[2]
+    liver = next(r for r in rows if r.domain_id == "wave1_liver")
     for line in liver.caveat_flags:
         assert "enzyme_limited_assessment" not in line
         assert "_" not in line

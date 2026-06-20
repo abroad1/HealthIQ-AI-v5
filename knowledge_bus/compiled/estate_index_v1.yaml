@@ -34,6 +34,10 @@ card_evidence_artefacts:
     artefact_path: knowledge_bus/compiled/health_system_cards/wave1_liv_processing_context.yaml
     compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_processing_context_card_evidence.yaml
     launch_classification: launch_included_compiled
+  - subsystem_id: wave1_ren_glomerular_filtration
+    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_ren_glomerular_filtration.yaml
+    compile_manifest_path: knowledge_bus/compiled/manifests/p1_2_kidney_filtration_card_evidence.yaml
+    launch_classification: launch_included_compiled
 
 compiled_hypothesis_artefacts:
   - signal_id: signal_vitamin_d_low

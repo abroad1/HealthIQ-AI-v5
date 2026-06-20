@@ -32,6 +32,7 @@ WAVE1_COMPILED_SUBSYSTEM_IDS: frozenset[str] = frozenset(
         "wave1_met_insulin_metabolic",
         "wave1_liv_enzyme_pattern",
         "wave1_liv_processing_context",
+        "wave1_ren_glomerular_filtration",
     }
 )
 # MED-REV-1 medical review v1: user-facing scored subsystems (Layer B emits DTO rows).
@@ -39,6 +40,7 @@ WAVE1_MED_REV1_SCORED_VISIBLE_SUBSYSTEM_IDS: frozenset[str] = frozenset(
     {
         "wave1_cv_lipid_transport",
         "wave1_met_glycaemic_control",
+        "wave1_ren_glomerular_filtration",
     }
 )
 # MED-REV-1: thin/support subsystems suppressed from default user view (hidden_v1).

@@ -1,0 +1,30 @@
+activation_keys_emitted: []
+collisions_detected: []
+compile_id: p1-2-kidney-filtration-card-evidence-001
+compile_mode: card_evidence
+compile_run_id: p1-2-kidney-filtration-card-evidence-001
+compiled_at_utc: '2026-06-20T09:00:00Z'
+compiled_by: p1-2-kidney-domain-card
+compiler_name: card_evidence_compile_pilot_v1
+compiler_version: 1.0.0
+estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml
+outputs:
+- domain_id: wave1_kidney
+  output_hash: pending_p1_2_closure
+  output_hash_algorithm: sha256
+  output_path: knowledge_bus/compiled/health_system_cards/wave1_ren_glomerular_filtration.yaml
+  output_type: health_system_card_evidence
+  subsystem_id: wave1_ren_glomerular_filtration
+policy_version: ADR-RT-004-v1
+provenance_status: pilot_evidence_only
+source_contract_version: 1.0.0
+source_specs:
+- source_hash: pending_p1_2_closure
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml
+  source_spec_id: inv_creatinine_high_renal_v1
+- source_hash: pending_p1_2_closure
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/packages/pkg_kb47_egfr_low_chronic_kidney_function_reduction/package_manifest.yaml
+  source_spec_id: inv_egfr_low_chronic_kidney_function_reduction
+translation_rules_version: 1.0.0
