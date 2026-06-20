@@ -193,7 +193,7 @@ biomarkers:
       high: {min: 30.0, max: 44.0}
       very_high: {min: 15.0, max: 29.0}
       critical: {min: 0.0, max: 14.0}
-    urea:
+  urea:
     scoring_type: "range_position"
     unit: "mmol/L"
     weight: 0.2
