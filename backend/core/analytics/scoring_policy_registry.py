@@ -37,6 +37,11 @@ def _canonical_json_sha256(obj: object) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
+SCORING_TYPE_RANGE_POSITION = "range_position"
+SCORING_TYPE_LAB_RANGE_ONLY = "lab_range_only"
+_ALLOWED_SCORING_TYPES = frozenset({SCORING_TYPE_RANGE_POSITION, SCORING_TYPE_LAB_RANGE_ONLY})
+
+
 def _validate_range_dict(name: str, value: Mapping[str, Any]) -> None:
     min_val = value.get("min")
     max_val = value.get("max")
@@ -66,8 +71,18 @@ def _validate_policy(raw: Dict[str, Any]) -> None:
             raise ValueError(f"Biomarker policy must be mapping: {biomarker_id}")
         if not isinstance(policy.get("weight"), (int, float)):
             raise ValueError(f"Biomarker weight must be numeric: {biomarker_id}")
-        if policy.get("scoring_type") != "range_position":
-            raise ValueError(f"Unsupported scoring_type for {biomarker_id}")
+        scoring_type = str(policy.get("scoring_type", SCORING_TYPE_RANGE_POSITION)).strip()
+        if scoring_type not in _ALLOWED_SCORING_TYPES:
+            raise ValueError(f"Unsupported scoring_type for {biomarker_id}: {scoring_type}")
+        if scoring_type == SCORING_TYPE_LAB_RANGE_ONLY:
+            unit = str(policy.get("unit", "")).strip()
+            if not unit:
+                raise ValueError(f"lab_range_only biomarker requires unit: {biomarker_id}")
+            if policy.get("bands") is not None:
+                raise ValueError(
+                    f"lab_range_only biomarker must not declare bands: {biomarker_id}"
+                )
+            continue
         bands = policy.get("bands")
         if not isinstance(bands, dict):
             raise ValueError(f"Bands must be mapping: {biomarker_id}")

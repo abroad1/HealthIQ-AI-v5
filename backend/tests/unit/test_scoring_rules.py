@@ -374,7 +374,11 @@ class TestScoringRules:
                 assert biomarker_rule.biomarker_name, "Should have biomarker name"
                 assert biomarker_rule.unit, "Should have unit"
                 assert biomarker_rule.weight > 0, "Should have positive weight"
-                
+
+                if biomarker_rule.is_lab_range_only:
+                    assert biomarker_rule.optimal_range is None
+                    continue
+
                 # Check range consistency (optimal should be within normal)
                 # Skip for tc_hdl_ratio (inverse ordering: lower is better)
                 if biomarker_rule.biomarker_name != "tc_hdl_ratio":

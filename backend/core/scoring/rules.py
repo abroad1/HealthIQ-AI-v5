@@ -15,7 +15,11 @@ from core.analytics.primitives import (
     position_in_one_sided_lab_range,
     position_in_range,
 )
-from core.analytics.scoring_policy_registry import load_scoring_policy
+from core.analytics.scoring_policy_registry import (
+    SCORING_TYPE_LAB_RANGE_ONLY,
+    SCORING_TYPE_RANGE_POSITION,
+    load_scoring_policy,
+)
 from core.units.registry import value_and_reference_units_coherent_for_numeric_compare
 
 _POLICY = load_scoring_policy()
@@ -84,16 +88,21 @@ class ScoreRange(Enum):
 class BiomarkerRule:
     """Rule definition for a single biomarker."""
     biomarker_name: str
-    optimal_range: Tuple[float, float]
-    normal_range: Tuple[float, float]
-    borderline_range: Tuple[float, float]
-    high_range: Tuple[float, float]
-    very_high_range: Tuple[float, float]
-    critical_range: Tuple[float, float]
-    unit: str
+    scoring_type: str = SCORING_TYPE_RANGE_POSITION
+    unit: str = ""
     weight: float = 1.0
     age_adjustment: bool = False
     sex_adjustment: bool = False
+    optimal_range: Optional[Tuple[float, float]] = None
+    normal_range: Optional[Tuple[float, float]] = None
+    borderline_range: Optional[Tuple[float, float]] = None
+    high_range: Optional[Tuple[float, float]] = None
+    very_high_range: Optional[Tuple[float, float]] = None
+    critical_range: Optional[Tuple[float, float]] = None
+
+    @property
+    def is_lab_range_only(self) -> bool:
+        return self.scoring_type == SCORING_TYPE_LAB_RANGE_ONLY
 
 
 @dataclass
@@ -129,19 +138,40 @@ class ScoringRules:
         return out
 
     def _build_biomarker_rule(self, biomarker_name: str, item: Dict[str, Any]) -> BiomarkerRule:
+        scoring_type = str(item.get("scoring_type", SCORING_TYPE_RANGE_POSITION)).strip()
+        unit = str(item.get("unit", "")).strip()
+        weight = float(item.get("weight", 1.0))
+        age_adjustment = bool(item.get("age_adjustment", False))
+        sex_adjustment = bool(item.get("sex_adjustment", False))
+        if scoring_type == SCORING_TYPE_LAB_RANGE_ONLY:
+            if not unit:
+                raise ValueError(f"lab_range_only biomarker requires unit: {biomarker_name}")
+            if item.get("bands") is not None:
+                raise ValueError(
+                    f"lab_range_only biomarker must not declare bands: {biomarker_name}"
+                )
+            return BiomarkerRule(
+                biomarker_name=biomarker_name,
+                scoring_type=SCORING_TYPE_LAB_RANGE_ONLY,
+                unit=unit,
+                weight=weight,
+                age_adjustment=age_adjustment,
+                sex_adjustment=sex_adjustment,
+            )
         bands = item.get("bands", {})
         return BiomarkerRule(
             biomarker_name=biomarker_name,
+            scoring_type=SCORING_TYPE_RANGE_POSITION,
+            unit=unit,
+            weight=weight,
+            age_adjustment=age_adjustment,
+            sex_adjustment=sex_adjustment,
             optimal_range=self._to_tuple(bands["optimal"]),
             normal_range=self._to_tuple(bands["normal"]),
             borderline_range=self._to_tuple(bands["borderline"]),
             high_range=self._to_tuple(bands["high"]),
             very_high_range=self._to_tuple(bands["very_high"]),
             critical_range=self._to_tuple(bands["critical"]),
-            unit=str(item.get("unit", "")),
-            weight=float(item.get("weight", 1.0)),
-            age_adjustment=bool(item.get("age_adjustment", False)),
-            sex_adjustment=bool(item.get("sex_adjustment", False)),
         )
 
     def _load_biomarker_rules(self) -> Dict[str, HealthSystemRules]:
@@ -562,8 +592,15 @@ class ScoringRules:
         
         return adjusted_value
     
+    def _require_band_ranges(self, rule: BiomarkerRule) -> None:
+        if rule.is_lab_range_only or rule.optimal_range is None:
+            raise ValueError(
+                f"Band-based scoring is not supported for lab_range_only rule: {rule.biomarker_name}"
+            )
+
     def _determine_score_range(self, value: float, rule: BiomarkerRule) -> ScoreRange:
         """Determine which score range a value falls into."""
+        self._require_band_ranges(rule)
         if rule.optimal_range[0] <= value <= rule.optimal_range[1]:
             return ScoreRange.OPTIMAL
         elif rule.normal_range[0] <= value <= rule.normal_range[1]:
@@ -584,6 +621,7 @@ class ScoringRules:
         score_range: ScoreRange
     ) -> float:
         """Calculate score (0-100) based on score range."""
+        self._require_band_ranges(rule)
         if score_range == ScoreRange.OPTIMAL:
             return 100.0
         elif score_range == ScoreRange.NORMAL:

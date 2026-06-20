@@ -211,6 +211,29 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-8 — Scoring lab-range engine
+
+**Status:** Complete  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- Governed `scoring_type: lab_range_only` biomarker rule path in scoring engine and policy validator.
+- ADR-SCORING-LAB-RANGE-ONLY-BIOMARKER-RULES-1 accepted; production scoring policy unchanged.
+
+### Carry-forwards
+- Hormonal rail population with lab_range_only thyroid markers (separate policy sprint).
+- TSH kb52c launch authority and P1-4 domain card retry remain blocked.
+
+### Blockers / risks
+- Enabling hormonal rail without TSH authority or medical sign-off remains prohibited.
+- Production thyroid scoring not activated by this sprint.
+
+### Recommended next sprint
+- P1-SCORING-HORMONAL-POLICY — add lab_range_only thyroid-axis entries and enable hormonal rail.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
