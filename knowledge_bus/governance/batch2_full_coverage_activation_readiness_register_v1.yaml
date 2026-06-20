@@ -144,7 +144,7 @@ packages:
   next_activation_prerequisite: External clinical sign-off
 - package_id: pkg_kb47_free_t3_low_low_t3_syndrome
   package_path: knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome
-  current_activation_state: runtime_active_canonical
+  current_activation_state: governance_deferred_inactive
   minimum_coverage_decision: EXCLUDE_FROM_MINIMUM_COVERAGE
   required_context_primitives:
   - clinical_context.illness_or_recovery_disclosure_status
@@ -155,7 +155,7 @@ packages:
   required_companion_biomarkers: [tsh, free_t4]
   missing_research_authority: cleared by BATCH2-FULL-COVERAGE-ACTIVATION-1 medical research authority
   missing_context_fields: []
-  runtime_readiness_status: RUNTIME_ACTIVE
-  package_metadata_readiness_status: RUNTIME_ACTIVE
-  activation_blocker_status: ACTIVATION_COMPLETE
-  next_activation_prerequisite: none — activated with enable_lower_bound and illness/medication gates
+  runtime_readiness_status: DEFERRED_PENDING_CONTEXT_GATES
+  package_metadata_readiness_status: DEFERRED_PENDING_CONTEXT_GATES
+  activation_blocker_status: SUPERSEDED_BY_P1_5_RECONCILIATION
+  next_activation_prerequisite: TSH + FT4 + illness/medication context gates plus dedicated activation-control sprint; not launch-visible per ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1

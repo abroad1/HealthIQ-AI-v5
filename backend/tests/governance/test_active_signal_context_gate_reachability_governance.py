@@ -15,11 +15,11 @@ POLICY = REPO_ROOT / "knowledge_bus/governance/active_signal_context_gate_reacha
 VALIDATOR = REPO_ROOT / "backend/scripts/validate_active_signal_context_gate_reachability.py"
 
 
-def test_batch2_active_package_count_is_five():
+def test_batch2_active_package_count_is_four():
     payload = yaml.safe_load(BATCH2_REGISTER.read_text(encoding="utf-8")) or {}
     activated = payload.get("activated_packages") or []
-    assert payload.get("activated_package_count") == 5
-    assert len(activated) == 5
+    assert payload.get("activated_package_count") == 4
+    assert len(activated) == 4
 
 
 def test_pregnancy_absent_from_questionnaire_policy():

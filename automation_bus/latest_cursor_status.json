@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-4-thyroid-energy-regulation-domain-card",
+  "branch": "work/P1-5-ft3-thyroid-authority-reconciliation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T10:30:39Z",
-  "cursor_started_utc": "2026-06-20T10:28:12Z",
-  "head_sha": "81314c4bcc986007e34210ea7af7d8c92fb97441",
+  "cursor_started_utc": "2026-06-20T10:58:09Z",
+  "head_sha": "59e6edbe42b2a4d309bd9650b767f906358e9a13",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-4"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-5"
 }

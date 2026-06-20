@@ -6,13 +6,15 @@ activation_utc: '2026-06-14'
 medical_research_authority: docs/Medical Research Documents/Batch_2_Thyroid_Androgen_Context_Authority_Review.md
 dhea_s_high_superseding_authority: docs/Medical Research Documents/DHEA-S_High_Activation_Medical_Research_Review.md
 runtime_activation_performed: true
-activated_package_count: 5
-kept_inactive_count: 4
+activated_package_count: 4
+kept_inactive_count: 5
+p1_5_reconciliation_notes:
+  work_id: P1-5
+  reconciled_utc: '2026-06-20'
+  summary: FT3 low removed from activated_packages; superseded by batch2_thyroid_gate_execution_register_v1.yaml deferred_thyroid_packages and ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.
+  authoritative_launch_position:
+    signal_free_t3_low: deferred_blocked_not_launch_visible
 activated_packages:
-- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
-  signal_id: signal_free_t3_low
-  activation_outcome: ACTIVATE_WITH_GATES_THIS_SPRINT
-  governance_runtime_activation_status: runtime_active_canonical
 - package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
   signal_id: signal_fai_high
   activation_outcome: ACTIVATE_WITH_GATES_THIS_SPRINT
@@ -34,6 +36,12 @@ activated_packages:
   governance_runtime_activation_status: runtime_active_canonical
   governance_runtime_activation_work_id: DHEA-S-HIGH-ACTIVATION-1_medical_authority_gated_runtime_activation
 kept_inactive_packages:
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  signal_id: signal_free_t3_low
+  outcome: SUPERSEDED_DEFERRED_BY_P1_5_RECONCILIATION
+  reason: BATCH2-THYROID-GATE-1 deferred FT3 low; permissive full-coverage activation claim corrected by P1-5
+  superseded_by_register: knowledge_bus/governance/batch2_thyroid_gate_execution_register_v1.yaml
+  governance_runtime_activation_status: inactive_deferred
 - package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
   outcome: DO_NOT_ACTIVATE
   reason: evidence insufficient per medical research authority

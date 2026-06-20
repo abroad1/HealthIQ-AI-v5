@@ -136,6 +136,31 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-5 — FT3 / thyroid authority reconciliation
+
+**Status:** Complete  
+**Date closed:** 2026-06-20  
+**Programme block(s):** Block 1 Core health systems model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance  
+
+### Delivered / ticked off
+- Conservative reconciliation of FT3 low register drift across frame index, full-coverage activation, and readiness registers.
+- ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1 accepted with authoritative launch positions for all thyroid patterns.
+- P1-4 retry preconditions explicitly documented (scoring rail + TSH authority still required).
+
+### Carry-forwards
+- Hormonal scoring rail remains inert; requires dedicated scoring sprint.
+- kb52c TSH and kb59 antibody packages remain inactive for launch.
+- FT3 low remains deferred pending future activation-control sprint.
+
+### Blockers / risks
+- P1-4 thyroid domain card still blocked until hormonal scoring and TSH launch authority are resolved.
+- Partial FT3/FT4-only domain without TSH remains clinically misleading.
+
+### Recommended next sprint
+- Hormonal scoring rail sprint, then TSH promotion governance, then P1-4 retry.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

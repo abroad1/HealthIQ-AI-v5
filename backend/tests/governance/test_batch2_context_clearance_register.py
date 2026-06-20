@@ -23,10 +23,10 @@ ANDROGEN_PACKAGE_IDS = {
 }
 
 ACTIVATED_BATCH2_FULL_COVERAGE_PACKAGE_IDS = {
-    "pkg_kb47_free_t3_low_low_t3_syndrome",
     "pkg_kb47_fai_high_biochemical_hyperandrogenism",
     "pkg_kb47_free_testosterone_high_androgen_excess_context",
     "pkg_kb47_free_testosterone_low_androgen_deficiency_context",
+    "pkg_kb47_dhea_high_androgen_excess_context",
 }
 
 
