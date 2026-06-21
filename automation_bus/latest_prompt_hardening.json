@@ -1,120 +1,166 @@
 {
+  "work_id": "P1-18",
   "bus_version": "1.3.1",
-  "work_id": "P1-17",
   "status": "HARDENED",
   "hardened_utc": "2026-06-21T00:00:00Z",
-  "hardened_by": "Claude Code",
+  "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "changes": [
     {
-      "check": "front_matter.work_id",
-      "result": "PASS",
-      "finding": "CONFIRMED — work_id P1-17 present.",
-      "citation": "automation_bus/latest_cursor_prompt.md:2"
-    },
-    {
-      "check": "front_matter.branch",
-      "result": "PASS",
-      "finding": "CONFIRMED — branch sprint/P1-17-remaining-psi-blocker-resolution present and well-formed.",
-      "citation": "automation_bus/latest_cursor_prompt.md:3"
-    },
-    {
-      "check": "front_matter.risk_level",
-      "result": "PASS",
-      "finding": "CONFIRMED HIGH. Sprint is MIXED change_type touching Knowledge Bus production PSI artefacts that feed Intelligence Core at runtime when loaded by downstream consumers. HIGH classification is mandatory per SOP §10 / MEMORY.md HIGH Risk Triggers.",
-      "citation": "automation_bus/latest_cursor_prompt.md:4"
-    },
-    {
-      "check": "front_matter.execution_model",
-      "result": "PASS",
-      "finding": "CONFIRMED — TWO_PHASE_START_FINISH.",
-      "citation": "automation_bus/latest_cursor_prompt.md:5"
-    },
-    {
-      "check": "front_matter.change_type",
-      "result": "PASS",
-      "finding": "CONFIRMED MIXED. Involves Knowledge Bus package manifest and PSI artefact changes (CONTENT) that may also affect emitted reasoning when Intelligence Core loads new PSI at runtime (BEHAVIOUR surface). MIXED governs with BEHAVIOUR controls per SOP §4.",
-      "citation": "automation_bus/latest_cursor_prompt.md:6"
-    },
-    {
-      "check": "stage_2a.authority_paths_all_present",
-      "result": "PASS",
-      "finding": "All 12 mandatory-read authority files independently verified present in the repository.",
-      "paths_verified": [
-        "CONFIRMED: docs/sprints/beta_readiness/P1-16_identity_adjudication_manifest.yaml — read in full (245 lines); 4 BLOCKED_PACKAGE_IDENTITY_UNRESOLVED + 4 READY_FOR_PRODUCTION_OPT_IN + 3 BLOCKED_BIOMARKER_IDENTITY_UNRESOLVED + 2 OUT_OF_SCOPE",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-16_psi_identity_blocker_remediation.md — read in full; Status: IMPLEMENTATION_COMPLETE; explicit statement: 'No deterministic identity-normalisation tooling exists in the repository'",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-15_production_psi_opt_in_mapping.yaml — read in full (324 lines); 4 BLOCKED_AMBIGUOUS_PACKAGE_MAPPING items confirmed with GPT Option B revert rationale",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml — read in full (300 lines); 7 BLOCKED_DERIVED_MARKER_DEPENDENCY items listed at lines 211-269",
-        "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — read in full; P1-16 entry present and closed",
-        "CONFIRMED: docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — exists (glob verified)",
-        "CONFIRMED: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — exists (glob verified)",
-        "CONFIRMED: knowledge_bus/schema/package_manifest_schema.yaml — exists (glob verified)",
-        "CONFIRMED: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml — exists (glob verified)",
-        "CONFIRMED: backend/scripts/validate_knowledge_package.py — exists (glob verified)",
-        "CONFIRMED: backend/scripts/validate_promoted_signal_intelligence.py — exists and read (lines 1-60 read: contract v1.0.0, schema v1.0.0, _FORBIDDEN_ROOT keys, _TRIGGERS, _SIGNAL_SYSTEMS defined)",
-        "CONFIRMED: backend/scripts/validate_staged_psi_activation_readiness.py — exists and read (lines 1-280 read: DERIVED_MARKER_IDS at line 32, load_ssot_keys at lines 105-110, classify_item at lines 147-170, audit_staged_batch logic at lines 173-279)"
-      ],
-      "citation": "Read tool and Glob tool results — all files independently verified this session"
-    },
-    {
-      "check": "stage_2a.no_duplicate_authority_sources",
-      "result": "PASS",
-      "finding": "CONFIRMED. Single SSOT: backend/ssot/biomarkers.yaml. Single PSI validator: backend/scripts/validate_promoted_signal_intelligence.py (DEFAULT_SCHEMA_PATH at line 19 = knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml). Single activation-readiness validator: backend/scripts/validate_staged_psi_activation_readiness.py. Single production package store: knowledge_bus/packages/. No competing authority sources detected.",
-      "citation": "backend/scripts/validate_promoted_signal_intelligence.py:19; backend/scripts/validate_staged_psi_activation_readiness.py:22-23"
-    },
-    {
-      "check": "stage_2a.4_identity_candidates_source_content_read",
-      "result": "CRITICAL FINDING — STOP GATE 1 PRE-CONFIRMED FOR ALL 4",
-      "finding": "CONFIRMED from direct file reads. (1) Staged PSI pkg_kb52c_rbc_high_erythrocytosis_pattern: internal package_id at line 3 = pkg_kb52c_rbc_high_erythrocytosis_pattern. Production package pkg_kb58_rbc_high_erythrocytosis_pattern exists (package_manifest.yaml:1 confirms package_id: pkg_kb58_rbc_high_erythrocytosis_pattern, source: cbc_hematology_pass_3.json, author: KB-S58). No promoted_signal_intelligence.yaml present. (2-4) Same pattern confirmed for rbc_low_iron_restricted_anemia_pattern, rdw_cv_high_iron_deficiency_anisocytosis, rdw_cv_high_mixed_red_cell_population_pattern from P1-16 manifest. No pkg_kb52c_rbc_* or pkg_kb52c_rdw_cv_* production packages exist in knowledge_bus/packages/ (Glob returns empty). No identity-normalisation tooling in repository (P1-16_psi_identity_blocker_remediation.md explicit). Cross-ID placement rejected GPT Option B in P1-15. STOP gate 1 fires for all 4. All 4 must be classified BLOCKED_PACKAGE_IDENTITY_UNRESOLVED or BLOCKED_REQUIRES_SOURCE_RESEARCH_ADJUDICATION.",
-      "citation": "knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/promoted_signal_intelligence.yaml:3; knowledge_bus/packages/pkg_kb58_rbc_high_erythrocytosis_pattern/package_manifest.yaml:1; docs/sprints/beta_readiness/P1-16_psi_identity_blocker_remediation.md:34; docs/sprints/beta_readiness/P1-15_production_psi_opt_in_mapping.yaml:232-239"
-    },
-    {
-      "check": "stage_2a.transferrin_saturation_ssot_status_read",
-      "result": "CRITICAL FINDING — SSOT PRESENT BUT VALIDATOR HARDCODES AS DERIVED",
-      "finding": "CONFIRMED: transferrin_saturation IS present in backend/ssot/biomarkers.yaml at line 1865 as a canonical top-level key (unit: '%', category: Iron Studies, data_type: numeric, system: nutritional). It is NOT missing from the SSOT. HOWEVER: backend/scripts/validate_staged_psi_activation_readiness.py line 32 hardcodes DERIVED_MARKER_IDS = frozenset({'transferrin_saturation'}). At line 261, the validator checks if sm_id in DERIVED_MARKER_IDS and appends 'derived-marker supporting dependency: transferrin_saturation' blocker regardless of SSOT presence. This means all 7 derived-marker candidates will remain blocked by the validator even though transferrin_saturation is a valid SSOT key. The only resolution is to remove transferrin_saturation from DERIVED_MARKER_IDS in backend/scripts/validate_staged_psi_activation_readiness.py — this is a backend script edit, which is out of Cursor's agent boundary (automation_bus/latest_cursor_prompt.md:49). STOP gate 2 fires for all 7 derived-marker candidates. All 7 must be classified BLOCKED_REQUIRES_CORE_BACKEND_AGENT.",
-      "citation": "backend/ssot/biomarkers.yaml:1865; backend/scripts/validate_staged_psi_activation_readiness.py:32 (DERIVED_MARKER_IDS = frozenset({'transferrin_saturation'})); backend/scripts/validate_staged_psi_activation_readiness.py:261-275 (derived-marker blocker logic)"
-    },
-    {
-      "check": "stage_2a.7_derived_marker_candidates_identified_and_read",
+      "stage": "2A",
+      "check": "Front matter — all five required fields present and valid",
       "result": "CONFIRMED",
-      "finding": "All 7 BLOCKED_DERIVED_MARKER_DEPENDENCY candidates confirmed from P1-14_activation_readiness_cohort_manifest.yaml lines 211-269: (1) pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia (batch_b), (2) pkg_kb52c_ferritin_high_iron_overload_context (batch_b), (3) pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation (batch_b), (4) pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release (batch_c — also BLOCKED_FRAME_AUTHORITY + BLOCKED_MEDICAL_REVIEW_REQUIRED), (5) pkg_kb52c_iron_high_iron_overload_context (batch_c — also BLOCKED_FRAME_AUTHORITY + BLOCKED_MEDICAL_REVIEW_REQUIRED), (6) pkg_kb52c_iron_low_absolute_iron_deficiency (batch_c — also BLOCKED_FRAME_AUTHORITY + BLOCKED_MEDICAL_REVIEW_REQUIRED), (7) pkg_kb52c_iron_low_functional_iron_restriction_inflammation (batch_c — also BLOCKED_FRAME_AUTHORITY + BLOCKED_MEDICAL_REVIEW_REQUIRED). Grep confirms transferrin_saturation as supporting_markers biomarker_id in staged PSI for candidates 1-3 and 4-7. Note: candidates 4-7 carry additional medical-review and frame-authority blockers independent of the derived-marker issue.",
-      "citation": "docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml:211-269; knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml (transferrin_saturation in supporting_markers confirmed via grep); knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release/promoted_signal_intelligence.yaml (transferrin_saturation confirmed)"
+      "evidence": "automation_bus/latest_cursor_prompt.md:1-7 — work_id: P1-18, branch: sprint/P1-18-blood-iron-oxygen-pass3-system-activation, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED"
     },
     {
-      "check": "stage_2b.behavioural_scope_defined",
+      "stage": "2A",
+      "check": "risk_level: HIGH is correct per SOP §10",
       "result": "CONFIRMED",
-      "finding": "Behavioural surface area is explicitly defined in the prompt. Cursor may only edit: Knowledge Bus package manifests, production PSI artefacts, sprint documentation, beta-readiness deliverable register, blocker/adjudication manifests. Cursor may NOT edit backend/ssot/, backend/core/, backend/scripts/, backend/tests/, frontend/, DTO/report/orchestrator/scoring/Gemini/parser/runtime files. All STOP gates (1-4) explicitly protect against scope creep into backend, medical content alteration, or cross-ID PSI placement. No Intelligence Core module is touched.",
-      "citation": "automation_bus/latest_cursor_prompt.md:30-57 (agent boundary); automation_bus/latest_cursor_prompt.md:143-158 (critical prohibitions)"
+      "evidence": "Sprint scope includes backend/scripts/validate_staged_psi_activation_readiness.py and backend/core/**/* — both are explicit HIGH risk triggers per SOP §10. HIGH is required and correct."
     },
     {
-      "check": "stage_2b.regression_targets_confirmed",
+      "stage": "2A",
+      "check": "change_type: MIXED is correct per SOP §4",
       "result": "CONFIRMED",
-      "finding": "Mandatory validation for any newly opted-in candidate per Phase 5: (1) validate_promoted_signal_intelligence.py per PSI, (2) validate_knowledge_package.py per package, (3) validate_staged_psi_activation_readiness.py rerun on full estate. P1-16 baseline: psi_files_found=41, production_opt_ins_found=42, activation_ready_count=4. If no candidates are opted in this sprint (all-STOP outcome), the validator must still be rerun and must not regress.",
-      "citation": "automation_bus/latest_cursor_prompt.md:319-342 (Phase 5 validation); docs/sprints/beta_readiness/P1-16_psi_identity_blocker_remediation.md:92-98 (P1-16 validation baseline)"
+      "evidence": "Sprint touches backend/scripts/ (BEHAVIOUR — DERIVED_MARKER_IDS policy) and backend/core/ (BEHAVIOUR — runtime wiring) while referencing governed Knowledge Bus signal_library.yaml content consumed by SignalRegistry at runtime. MIXED with BEHAVIOUR controls is correct."
     },
     {
-      "check": "stage_2b.scope_creep_risk_flagged",
-      "result": "RISK_FLAGGED — TWO RISKS SURFACED",
-      "finding": "Risk 1 — Cross-ID PSI placement via pkg_kb58_* packages: The 4 identity candidates have matching pkg_kb58_* production packages that contain no PSI. Cursor may attempt to place a PSI file into pkg_kb58_* packages based on the clinical equivalence of the underlying research. This is explicitly prohibited: the staged PSI internal package_id (pkg_kb52c_*) differs from the host production package_id (pkg_kb58_*), and no deterministic identity-normalisation tooling exists. STOP gate 1 fires. Do NOT do this. Risk 2 — Validator modification to unblock derived-marker candidates: The only path to resolving the 7 transferrin_saturation-blocked candidates is removing transferrin_saturation from DERIVED_MARKER_IDS at validate_staged_psi_activation_readiness.py:32. This is a backend/scripts/ file and is out of scope. Cursor must NOT modify it. Classify all 7 as BLOCKED_REQUIRES_CORE_BACKEND_AGENT and produce the Phase 6 handoff manifest.",
-      "citation": "backend/scripts/validate_staged_psi_activation_readiness.py:32; knowledge_bus/packages/pkg_kb58_rbc_high_erythrocytosis_pattern/ (no PSI present); automation_bus/latest_cursor_prompt.md:228-245 (STOP gate 1); automation_bus/latest_cursor_prompt.md:267-290 (STOP gate 2)"
-    },
-    {
-      "check": "stage_2b.no_op_sprint_outcome_confirmed_acceptable",
+      "stage": "2A",
+      "check": "execution_model: TWO_PHASE_START_FINISH is correct",
       "result": "CONFIRMED",
-      "finding": "Given STOP gate 1 fires for all 4 identity candidates and STOP gate 2 fires for all 7 derived-marker candidates, the sprint will produce report-only output. The prompt explicitly accounts for this: 'This sprint must not become report-only unless all candidates hit STOP gates' (automation_bus/latest_cursor_prompt.md:27). The contingency is covered — the 3 mandatory output artefacts (P1-17_blocker_resolution_manifest.yaml, P1-17_core_backend_handoff_manifest.yaml, P1-17_remaining_psi_blocker_resolution.md) and the BUILD_DELIVERABLE_REGISTER.md update remain mandatory deliverables regardless of opt-in count.",
-      "citation": "automation_bus/latest_cursor_prompt.md:27-28; automation_bus/latest_cursor_prompt.md:346-403 (Phase 6-7 mandatory outputs)"
+      "evidence": "automation_bus/latest_cursor_prompt.md:5 — confirmed. HIGH risk + MIXED change_type requires TWO_PHASE."
     },
     {
-      "check": "stage_2b.tooling_file_leakage_risk",
-      "result": "WARNING",
-      "finding": "Git status at conversation start shows automation_bus/latest_cursor_prompt.md as modified on main (working tree). The sprint branch sprint/P1-17-remaining-psi-blocker-resolution must be confirmed clean before start. SOP §14 prohibits tooling files (.codex/, .cursor/, .vscode/, AGENTS.md) in sprint branches. Prior session note: knowledge-bus-medical-intelligence Cursor rule was added; confirm it does not leak into sprint branch. Before finish: git status --short must show only in-scope files.",
-      "citation": "gitStatus (conversation context: M automation_bus/latest_cursor_prompt.md); automation_bus/latest_cursor_prompt.md:113-122 (tooling leakage prohibition)"
+      "stage": "2A",
+      "check": "Authority file: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md",
+      "result": "CONFIRMED — file exists",
+      "evidence": "docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — confirmed via Glob"
     },
     {
-      "check": "stage_2b.determinism_risks_surfaced",
-      "result": "CONFIRMED — RISKS IDENTIFIED",
-      "finding": "Determinism risk 1: If any candidate is incorrectly advanced to READY_FOR_PRODUCTION_OPT_IN without clearing STOP gate 1 or 2, a cross-ID PSI or validator-blocked PSI enters production — this would be an architectural defect. STOP gates prevent this if Cursor applies them correctly. Determinism risk 2: The transferrin_saturation SSOT presence (biomarkers.yaml:1865) may mislead Cursor into believing the 7 derived-marker candidates can be resolved at the Knowledge Bus level. They cannot — the blocker is the hardcoded DERIVED_MARKER_IDS in the validator, not SSOT absence. This hardening note must be understood before Phase 3 adjudication. Determinism risk 3: Candidates 4-7 of the derived-marker cohort carry medical-review and frame-authority blockers independent of the derived-marker issue. Even if the validator DERIVED_MARKER_IDS were fixed by a future backend sprint, these 4 candidates would still require medical review before opt-in. The handoff manifest must capture all blocking layers.",
-      "citation": "backend/ssot/biomarkers.yaml:1865; backend/scripts/validate_staged_psi_activation_readiness.py:32; docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml:234-269 (iron candidates with compound blockers)"
+      "stage": "2A",
+      "check": "Authority file: docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md",
+      "result": "CONFIRMED — file exists",
+      "evidence": "docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md — confirmed via Glob"
+    },
+    {
+      "stage": "2A",
+      "check": "Authority file: docs/sprints/beta_readiness/P1-17_core_backend_handoff_manifest.yaml — content read and verified",
+      "result": "CONFIRMED",
+      "evidence": "docs/sprints/beta_readiness/P1-17_core_backend_handoff_manifest.yaml:1-4 — manifest_date: 2026-06-21, total_handoff_candidates: 7, primary_blocker_class: DERIVED_MARKER_VALIDATOR_POLICY. Seven candidates classified, all citing validate_staged_psi_activation_readiness.py:32 as primary blocker domain."
+    },
+    {
+      "stage": "2A",
+      "check": "Authority file: docs/sprints/beta_readiness/P1-17_remaining_psi_blocker_resolution.md — content read and verified",
+      "result": "CONFIRMED",
+      "evidence": "docs/sprints/beta_readiness/P1-17_remaining_psi_blocker_resolution.md:7 — Status: IMPLEMENTATION_COMPLETE. Section 3 confirms: 'The blocker is not SSOT absence. transferrin_saturation is a canonical top-level SSOT key. The activation-readiness validator hardcodes it in DERIVED_MARKER_IDS.' Section 4 confirms: zero candidates opted in."
+    },
+    {
+      "stage": "2A",
+      "check": "Authority file: docs/sprints/beta_readiness/P1-16_identity_adjudication_manifest.yaml",
+      "result": "CONFIRMED — file exists",
+      "evidence": "docs/sprints/beta_readiness/P1-16_identity_adjudication_manifest.yaml — confirmed via Glob"
+    },
+    {
+      "stage": "2A",
+      "check": "Authority file: docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml",
+      "result": "CONFIRMED — file exists",
+      "evidence": "docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml — confirmed via Glob"
+    },
+    {
+      "stage": "2A",
+      "check": "Authority file: docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md",
+      "result": "CONFIRMED — file exists",
+      "evidence": "docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — confirmed via Glob"
+    },
+    {
+      "stage": "2A",
+      "check": "Authority file: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md",
+      "result": "CONFIRMED — file exists",
+      "evidence": "docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — confirmed via Glob"
+    },
+    {
+      "stage": "2A",
+      "check": "No duplicate authority sources detected",
+      "result": "CONFIRMED",
+      "evidence": "SignalRegistry loads from knowledge_bus/packages/*/signal_library.yaml only (backend/core/analytics/signal_evaluator.py:31-36). biomarkers.yaml is the single SSOT. validate_staged_psi_activation_readiness.py is the single activation-readiness validator. No competing loaders found."
+    },
+    {
+      "stage": "2A",
+      "check": "CRITICAL SOURCE CROSS-REF: transferrin_saturation is SSOT-canonical — confirmed at cited line",
+      "result": "CONFIRMED",
+      "evidence": "backend/ssot/biomarkers.yaml:1865 — 'transferrin_saturation:' is a top-level canonical key with unit: '%', description: 'Transferrin saturation (iron binding saturation; TSAT)', category: Iron Studies, data_type: numeric, system: nutritional. P1-17 handoff manifest citation at biomarkers.yaml:1865 is ACCURATE."
+    },
+    {
+      "stage": "2A",
+      "check": "CRITICAL SOURCE CROSS-REF: DERIVED_MARKER_IDS policy mismatch confirmed at cited line",
+      "result": "CONFIRMED — mismatch is real, policy change is the correct fix",
+      "evidence": "backend/scripts/validate_staged_psi_activation_readiness.py:32 — DERIVED_MARKER_IDS = frozenset({'transferrin_saturation'}). Blocker appended at lines 261-275 for any PSI with transferrin_saturation as a supporting_metrics entry, regardless of SSOT presence. P1-18 Phase 3 must adjudicate this; STOP gate 2 option A (lab-provided mode, SSOT-canonical, validator fix only) is confirmed as the safe resolution path."
+    },
+    {
+      "stage": "2A",
+      "check": "CRITICAL SOURCE CROSS-REF: pkg_kb61 signal_library.yaml — transferrin_saturation correctly in dependencies.biomarkers, NOT in derived_metrics",
+      "result": "CONFIRMED — confirms STOP gate 2 option A is safe",
+      "evidence": "knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/signal_library.yaml:44-51 — dependencies.biomarkers lists [ferritin, mch, rdw_cv, transferrin, transferrin_saturation]; dependencies.derived_metrics: []. The signal_library does NOT treat transferrin_saturation as a calculated derived metric. Removing it from DERIVED_MARKER_IDS is a validator policy correction only, not a medical content change."
+    },
+    {
+      "stage": "2A",
+      "check": "CRITICAL SOURCE CROSS-REF: pkg_kb61 production package confirmed (no promoted PSI); staged PSI confirmed present",
+      "result": "CONFIRMED — highest-readiness candidate in derived cohort is correctly identified",
+      "evidence": "Production: knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/package_manifest.yaml, research_brief.yaml, signal_library.yaml all exist; no promoted_signal_intelligence.yaml. Staged: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/promoted_signal_intelligence.yaml and compile_manifest.yaml confirmed present."
+    },
+    {
+      "stage": "2A",
+      "check": "CRITICAL SOURCE CROSS-REF: golden panel fixture already contains lab-provided transferrin_saturation",
+      "result": "CONFIRMED — runtime already handles lab-provided values",
+      "evidence": "backend/tests/fixtures/golden_panel_160.json:543 — transferrin_saturation present with value: 55.0, source: lab, reference_range with min/max bounds. Golden panel also in golden_panel_160_collision_free.json:543. Lab-provided path is already supported by the runtime input model."
+    },
+    {
+      "stage": "2A",
+      "check": "wave1_blood_iron_oxygen runtime entry points identified from actual files",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/analytics/wave1_subsystem_evidence.py:37-39 — wave1_blood_iron_oxygen mapped to single subsystem 'wave1_bio_oxygen_carrying_capacity'. Domain appears in: domain_score_assembler.py, domain_narrative_wave1.py, persisted_replay_contract_v1.py, regression test test_domain_ux1c_governed_subsystem_evidence.py. SignalRegistry is in backend/core/analytics/signal_evaluator.py (loads all knowledge_bus/packages/*/signal_library.yaml)."
+    },
+    {
+      "stage": "2A",
+      "check": "REGRESSION TARGET IDENTIFIED: test_validate_staged_psi_activation_readiness.py:101 — asserts DERIVED_MARKER_IDS classification",
+      "result": "CONFIRMED — this test MUST be updated when DERIVED_MARKER_IDS changes",
+      "evidence": "backend/tests/unit/test_validate_staged_psi_activation_readiness.py:101 — assert classify_item(['derived-marker supporting dependency: transferrin_saturation']) == 'BLOCKED_DERIVED_MARKER_DEPENDENCY'. If transferrin_saturation is removed from DERIVED_MARKER_IDS, this test assertion changes. Also line 170 confirms functional test. Phase 6 test update is mandatory — do NOT just make tests pass by removing assertions."
+    },
+    {
+      "stage": "2B",
+      "check": "Behavioural scope explicitly defined",
+      "result": "CONFIRMED",
+      "evidence": "Prompt §§15-401 define Phase 0-7 structure with three explicit STOP gates. Scope bounded to: (1) validate_staged_psi_activation_readiness.py DERIVED_MARKER_IDS policy, (2) backend/core/ wiring corrections for blood/iron/oxygen, (3) backend/tests/ additions. Frontend explicitly excluded (prompt:125). Medical content modification prohibited (prompt:142-158). Knowledge Bus medical content read-only unless strictly non-medical metadata for runtime integration."
+    },
+    {
+      "stage": "2B",
+      "check": "Regression targets confirmed and coverage-adequate",
+      "result": "CONFIRMED",
+      "evidence": "Phase 6 (prompt:320-325) mandates: (a) targeted backend tests for modified runtime/system/subsystem files, (b) existing wave1_blood_iron_oxygen tests, (c) SignalRegistry/SignalEvaluator tests if touched, (d) staged PSI activation-readiness validator rerun if derived-marker policy changed. Minimum test suite (Phase 4 prompt:265-271): normal control panel, triggering panel, partial/missing-marker panel, lab-provided transferrin_saturation case. All covered."
+    },
+    {
+      "stage": "2B",
+      "check": "No scope creep risk — STOP gates adequate",
+      "result": "CONFIRMED",
+      "evidence": "Files out-of-scope are explicitly enumerated (prompt:122-141): frontend/**, Gemini files, raw Pass 3 research under knowledge_bus/research/, generated_pilot/, scoring policy unless directly required. Three STOP gates with explicit trigger lists close all known creep vectors. Phase 2 target selection order is explicit (prompt:199-205)."
+    },
+    {
+      "stage": "2B",
+      "check": "Determinism risks surfaced",
+      "result": "THREE RISKS IDENTIFIED — all mitigated by STOP gates",
+      "evidence": "Risk 1: Removing transferrin_saturation from DERIVED_MARKER_IDS must be lab-provided-only; if a calculated path is required instead, STOP gate 2 fires and the calculation path becomes carry-forward — prompt correctly handles this. Risk 2: Signal firing changes must not alter unrelated domains; STOP gate 3 (prompt:276-283) closes this. Risk 3: test_validate_staged_psi_activation_readiness.py:101 assertion must be updated, not silently broken — Phase 6 mandate covers this but Cursor must understand the assertion content changes, not just that tests must pass."
+    },
+    {
+      "stage": "2B",
+      "check": "STOP gates protect behavioural correctness",
+      "result": "CONFIRMED — three gates well-placed",
+      "evidence": "STOP gate 1 (build target safety, prompt:207-220): rejects medical-review-blocked content, frontend, raw Pass 3 reads, global ranges, unresolved package identity. STOP gate 2 (derived-marker safety, prompt:239-250): rejects formula invention, calculation without governed policy, global ranges, medical content changes. STOP gate 3 (runtime safety, prompt:276-283): rejects ambiguous package identity, unresolved KB content, silent side effects on unrelated domains, untestable behaviour."
+    },
+    {
+      "stage": "2B",
+      "check": "Forbidden files prohibition present and enforced",
+      "result": "CONFIRMED",
+      "evidence": "prompt:136-141 — tooling files explicitly prohibited: .codex/, .cursor/, .vscode/, AGENTS.md. automation_bus/latest_gate_evidence.json and latest_gate_output.txt also explicitly protected. Knowledge Bus medical content and generated_pilot/ artefacts are read-only."
     }
   ],
-  "overall_verdict": "HARDENED. All 5 front-matter fields confirmed valid. All 12 mandatory authority files confirmed present. Two critical pre-confirmed findings: (1) STOP gate 1 fires for all 4 package-identity candidates — staged PSI internal package_id is pkg_kb52c_*, production packages exist only as pkg_kb58_*, no pkg_kb52c_rbc_*/rdw_cv_* production packages exist, no identity-normalisation tooling in repository, cross-ID placement rejected GPT Option B in P1-15; (2) STOP gate 2 fires for all 7 derived-marker candidates — transferrin_saturation IS in backend/ssot/biomarkers.yaml:1865 but is hardcoded in DERIVED_MARKER_IDS frozenset at backend/scripts/validate_staged_psi_activation_readiness.py:32, validator blocker is not an SSOT gap but a backend script constraint, editing the validator is out of agent boundary, all 7 must be classified BLOCKED_REQUIRES_CORE_BACKEND_AGENT. Sprint outcome is expected to be report-only with mandatory Phase 6 handoff manifest and Phase 7 sprint report as deliverables. Two scope-creep risks surfaced and documented."
+  "overall_verdict": "HARDENED. All 5 front-matter fields valid. All 8 mandatory authority files present and content-verified for the two key inputs (P1-17 handoff manifest, P1-17 blocker resolution). Critical source cross-references confirmed: (1) transferrin_saturation is SSOT-canonical at biomarkers.yaml:1865; (2) DERIVED_MARKER_IDS policy mismatch confirmed at validate_staged_psi_activation_readiness.py:32 — mismatch is real and resolvable via option A; (3) pkg_kb61 signal_library correctly uses dependencies.derived_metrics: [] confirming lab-provided mode is safe; (4) golden panel already handles lab-provided transferrin_saturation; (5) regression target test_validate_staged_psi_activation_readiness.py:101 identified and must be updated. Determinism risks surfaced and closed by STOP gates. No blockers found."
 }
