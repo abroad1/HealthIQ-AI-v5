@@ -1,26 +1,26 @@
 {
-  "work_id": "P1-13",
+  "work_id": "P1-14",
   "status": "HARDENED",
   "bus_version": "1.3.1",
-  "hardened_utc": "2026-06-21T08:00:00Z",
+  "hardened_utc": "2026-06-21T10:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6) — SOP v1.3.1 Stage 2",
   "changes": [
     {
       "check": "front_matter.work_id",
       "result": "PASS",
-      "finding": "CONFIRMED — work_id 'P1-13' present.",
+      "finding": "CONFIRMED — work_id 'P1-14' present.",
       "citation": "automation_bus/latest_cursor_prompt.md:2"
     },
     {
       "check": "front_matter.branch",
       "result": "PASS",
-      "finding": "CONFIRMED — branch 'work/P1-13-staged-psi-activation-readiness-gate' present. Cursor must start from main, confirm clean working tree and main == origin/main, then create this branch before modifying any files.",
+      "finding": "CONFIRMED — branch 'work/P1-14-staged-psi-hash-repair-and-activation-cohort-lock' present. Cursor must start from main, confirm clean working tree and local main == origin/main, then create this branch before modifying any files.",
       "citation": "automation_bus/latest_cursor_prompt.md:3"
     },
     {
       "check": "front_matter.risk_level",
       "result": "PASS",
-      "finding": "CONFIRMED HIGH. The sprint adds a new backend/scripts/ file and audits the PSI estate derived from Knowledge Bus governed content. Consistent with P1-10, P1-11, P1-12 precedent. SOP §10 technical HIGH triggers (Intelligence Core, backend/ssot/ modification, backend/core/) are not directly triggered — new validator script is report-only and does not modify any governed assets. Conservative HIGH is defensible: gates P1-13 behind Claude audit + GPT architectural review + dual approval before merge. Cursor must not reduce the risk level.",
+      "finding": "CONFIRMED HIGH. This sprint operates across 41 staged PSI compile manifests, runs the P1-13 activation-readiness validator, and locks the cohort map for downstream production planning. SOP §10 technical HIGH triggers (Intelligence Core, backend/ssot/ modification, backend/core/) are not directly triggered — only compile manifest hash values and docs artefacts are written. Conservative HIGH is defensible and appropriate: the sprint gates production activation planning. Cursor must not reduce the risk level.",
       "citation": "automation_bus/latest_cursor_prompt.md:4; SOP v1.3.1 §10"
     },
     {
@@ -32,13 +32,13 @@
     {
       "check": "front_matter.change_type",
       "result": "PASS",
-      "finding": "CONFIRMED MIXED. Sprint creates a new Python validator script (backend/scripts/validate_staged_psi_activation_readiness.py — code) plus docs artefacts (sprint report, activation-readiness manifest, BUILD_DELIVERABLE_REGISTER update). New code reads backend/ssot/biomarkers.yaml and staged PSI files but does not modify any governed assets. MIXED is correct per SOP §4: both code and content artefacts are involved. MIXED is governed using BEHAVIOUR controls.",
-      "citation": "automation_bus/latest_cursor_prompt.md:6; SOP v1.3.1 §4 MIXED definition"
+      "finding": "CONFIRMED CONTENT. P1-14 modifies only compile manifest hash values (non-executable audit data artefacts) and creates docs outputs. No code is created or modified. The validator (backend/scripts/validate_staged_psi_activation_readiness.py) already exists from P1-13 and is not modified. No Intelligence Core components are touched. Compile manifests are not consumed by runtime (runtime_consumed: false confirmed at p1_10_batch_a_compile_manifest_index_v1.yaml:7). CONTENT is correct per SOP §4 definition.",
+      "citation": "automation_bus/latest_cursor_prompt.md:6; SOP v1.3.1 §4 CONTENT definition; knowledge_bus/generated_pilot/p1_10_batch_a/p1_10_batch_a_compile_manifest_index_v1.yaml:7"
     },
     {
       "check": "stage_2a.prerequisite_docs_all_present",
       "result": "PASS",
-      "finding": "CONFIRMED — all 9 prerequisite docs verified present on main via Glob.",
+      "finding": "CONFIRMED — all 12 prerequisite files and all 3 batch directories verified present on main.",
       "paths_verified": [
         "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md — EXISTS",
@@ -47,137 +47,119 @@
         "CONFIRMED: docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-12_pass3_deferred_cbc_iron_hematology_batch_c.md — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/P1-12_signal_intelligence_batch_c_manifest.yaml — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_gate.md — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml — EXISTS",
         "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — EXISTS",
-        "CONFIRMED: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — EXISTS"
+        "CONFIRMED: backend/scripts/validate_staged_psi_activation_readiness.py — EXISTS (514 lines, read and verified)",
+        "CONFIRMED: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — EXISTS",
+        "CONFIRMED: knowledge_bus/generated_pilot/p1_10_batch_a/ — EXISTS",
+        "CONFIRMED: knowledge_bus/generated_pilot/p1_11_batch_b/ — EXISTS",
+        "CONFIRMED: knowledge_bus/generated_pilot/p1_12_batch_c/ — EXISTS"
       ],
-      "citation": "Glob scan on all 9 paths — all returned results"
+      "citation": "Directory listing and file presence checks on main"
     },
     {
-      "check": "stage_2a.staged_psi_directories_all_present",
-      "result": "PASS",
-      "finding": "CONFIRMED — all 3 staged PSI batch directories exist and are populated. p1_10_batch_a: 16 PSI files, 16 compile_manifests, 1 batch index. p1_11_batch_b: 18 PSI files, 18 compile_manifests, 1 batch index. p1_12_batch_c: 7 PSI files, 7 compile_manifests, 1 batch index. Total estate: 41 PSI files, 41 compile manifests, 3 batch index files.",
-      "citation": "Glob: knowledge_bus/generated_pilot/p1_10_batch_a/** (16 PSI), knowledge_bus/generated_pilot/p1_11_batch_b/** (18 PSI), knowledge_bus/generated_pilot/p1_12_batch_c/** (7 PSI); Python count: 41 PSI + 41 compile manifests"
-    },
-    {
-      "check": "stage_2a.runtime_active_status_verified",
-      "result": "CONFIRMED — ALL CLEAR",
-      "finding": "CONFIRMED. Python scan across all 41 compile manifests in all 3 batch directories: every entry has runtime_active: false. Zero exceptions. No staged PSI has been activated.",
-      "citation": "Python scan: all 41 compile_manifest.yaml files in knowledge_bus/generated_pilot/{p1_10_batch_a,p1_11_batch_b,p1_12_batch_c}/ — runtime_active = false in all"
-    },
-    {
-      "check": "stage_2a.existing_validator_coverage_assessed",
-      "result": "CONFIRMED — GAP IDENTIFIED, NEW VALIDATOR REQUIRED",
-      "finding": "CONFIRMED. backend/scripts/validate_promoted_signal_intelligence.py EXISTS (491 lines). It performs structural PSI schema validation but does NOT check biomarker_id canonicality against backend/ssot/biomarkers.yaml — no SSOT reference in that file at all. Python content search for 'ssot', 'biomarkers.yaml', 'canonical': zero matches. A new validate_staged_psi_activation_readiness.py is required — the existing validator does not cover activation-readiness checks (SSOT alignment, compile manifest presence/hash, runtime_active confirmation, production opt-in absence). No reuse/wrap of existing validator is forced; however Cursor must not duplicate existing structural checks unnecessarily.",
-      "citation": "backend/scripts/validate_promoted_signal_intelligence.py (Glob confirmed, 491 lines, no SSOT check); Python content search result: SSOT biomarker check: ABSENT"
-    },
-    {
-      "check": "stage_2a.ssot_canonical_keys_verified",
+      "check": "stage_2a.compile_manifest_hash_field_structure_verified",
       "result": "CONFIRMED — SOURCE CONTENT READ",
-      "finding": "CONFIRMED. backend/ssot/biomarkers.yaml read via Python key extraction. Canonical keys relevant to staged PSI estate include: alt, ggt, homocysteine, urea, apob, non_hdl_cholesterol, total_cholesterol, tc_hdl_ratio, ferritin, hematocrit, mcv, rdw_cv, rbc, platelets, transferrin, iron, transferrin_saturation, lymphocytes, lymphocytes_abs, neutrophils, neutrophils_abs, neutrophil_pct, monocyte_pct, monocytes_abs, white_blood_cells, crp, pdw, hemoglobin, cortisol. Key absences: 'lym', 'wbc', 'wbc_total', 'plt', 'non_hdl', 'hgb', 'erythropoietin', 'jak2_v617f', 'rbc_count' are NOT in SSOT canonical keys.",
-      "citation": "Python: yaml.safe_load('backend/ssot/biomarkers.yaml')['biomarkers'].keys() — full key list extracted"
+      "finding": "CONFIRMED. Hash field structure in compile manifests is unambiguous: field path is output_hashes_sha256.promoted_signal_intelligence.yaml containing a SHA-256 hex digest string. Structure is consistent across the estate (sampled manifest has it at lines 15-17). The repair operation is to recompute SHA-256 of each staged PSI file and write the updated value at this field. No structural ambiguity exists. No STOP condition for unclear hash field structure will be triggered.",
+      "citation": "knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/compile_manifest.yaml:15-17 — output_hashes_sha256.promoted_signal_intelligence.yaml: de9635eaae4a490395dedefb63f3a47dd95f29d39c5a106c8ba263a08367a531"
     },
     {
-      "check": "stage_2a.non_canonical_biomarker_ids_found",
-      "result": "CONFIRMED — CRITICAL ESTATE FINDING — 5 PRIMARY, 9 SUPPORTING NON-CANONICAL IDs",
-      "finding": "CONFIRMED. Python scan of all 41 PSI files against canonical SSOT keys. PRIMARY non-canonical (5 PSI files): (1) pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden [p1_10] -> primary 'non_hdl' (SSOT: 'non_hdl_cholesterol'); (2) pkg_kb52c_plt_high_reactive_thrombocytosis [p1_11] -> primary 'plt' (SSOT: 'platelets'); (3) pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction [p1_11] -> primary 'plt' (SSOT: 'platelets'); (4) pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression [p1_12] -> primary 'lym' (SSOT has 'lymphocytes' AND 'lymphocytes_abs' — identity ambiguous, medical decision required); (5) pkg_kb52c_wbc_high_reactive_leukocytosis [p1_12] -> primary 'wbc' (SSOT: 'white_blood_cells'). SUPPORTING non-canonical (9 instances): 'hgb' in urea_high [p1_10] (SSOT: 'hemoglobin'); 'erythropoietin' in hematocrit_high_absolute_erythrocytosis and hematocrit_high_relative_hemoconcentration [p1_11] (NOT in SSOT at all); 'jak2_v617f' in hematocrit_high_absolute_erythrocytosis [p1_11] (NOT in SSOT — genetic marker); 'rbc_count' in mcv_low_microcytosis_iron_deficiency [p1_11] (SSOT: 'rbc'); 'wbc' in plt_high and plt_low as supporting [p1_11]; 'wbc_total' in lym_low as supporting [p1_12]; 'lym' in wbc_high as supporting [p1_12]. The validator must report all of these — it must NOT decide canonical equivalents.",
-      "citation": "Python scan: all 41 PSI files in knowledge_bus/generated_pilot/ — biomarker IDs extracted and tested against backend/ssot/biomarkers.yaml canonical key set; knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression/promoted_signal_intelligence.yaml:17 (primary: lym); knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_wbc_high_reactive_leukocytosis/promoted_signal_intelligence.yaml:17 (primary: wbc)"
+      "check": "stage_2a.compile_manifest_psi_pairing_verified",
+      "result": "CONFIRMED — CLEAN ESTATE",
+      "finding": "CONFIRMED. P1-13 manifest (read: docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:22-23) reports 41 PSI files found and 41 compile manifests found — 1:1 pairing confirmed across all 3 batches. No orphan PSI files (missing compile manifest) and no orphan compile manifests (missing PSI file) were reported by P1-13. No STOP conditions for missing pairings will be triggered.",
+      "citation": "docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:21-23 — psi_files_found: 41, compile_manifests_found: 41"
     },
     {
-      "check": "stage_2a.transferrin_saturation_role_verified",
-      "result": "CONFIRMED — SUPPORTING MARKER ONLY, SSOT-CANONICAL BUT DERIVED",
-      "finding": "CONFIRMED. transferrin_saturation IS in SSOT canonical key list (confirmed by key extraction). It appears as a SUPPORTING marker only (never primary) in 7 PSI files: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia, pkg_kb52c_ferritin_high_iron_overload_context, pkg_kb52c_ferritin_low_iron_store_depletion, pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation, pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release, pkg_kb52c_iron_high_iron_overload_context, pkg_kb52c_iron_low_absolute_iron_deficiency [and iron_low_functional]. The sprint prompt identifies this as a BLOCKED_DERIVED_MARKER_DEPENDENCY carry-forward because transferrin_saturation is calculated from iron + transferrin (not directly measured as a standalone blood test in most labs). The validator should flag these 7 PSI files as having a derived-marker supporting dependency. This is NOT a primary-metric blocker for those PSIs, but is a supporting-marker dependency concern to report.",
-      "citation": "Python scan: transferrin_saturation found in 7 PSI files as supporting_marker; backend/ssot/biomarkers.yaml (transferrin_saturation canonical key confirmed)"
+      "check": "stage_2a.runtime_active_all_false_verified",
+      "result": "CONFIRMED — ALL CLEAR",
+      "finding": "CONFIRMED. P1-13 manifest items (all 41 read): every item shows runtime_active: 'false' and production_manifest_opt_in: 'false'. No staged PSI has been activated or opted into a production manifest. Validator STOP conditions relating to runtime activation will not be triggered.",
+      "citation": "docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:items[0..40] — runtime_active: 'false' in all 41 items; production_manifest_opt_in: 'false' in all 41 items"
     },
     {
-      "check": "stage_2a.hemoglobin_psi_absence_confirmed",
-      "result": "CONFIRMED — KNOWN CARRY-FORWARD",
-      "finding": "CONFIRMED. Python glob scan of all 41 PSI files across all 3 batches: zero PSI files with 'hemoglobin' or 'haemoglobin' in their path. No hemoglobin primary PSI exists in the staged estate. This is the known Pass 3 source-support gap flagged in the sprint prompt (§7 Specific known carry-forwards). It must be listed explicitly in the activation-readiness manifest and sprint report §7.",
-      "citation": "Python glob: knowledge_bus/generated_pilot/**/*.yaml glob for 'hemoglobin' — zero matches"
+      "check": "stage_2a.hash_mismatch_cause_verified",
+      "result": "CONFIRMED — STALE MANIFESTS, NOT CORRUPTED PSI CONTENT",
+      "finding": "CONFIRMED. P1-13 found compile_manifest_hash_mismatch in all 41 items. P1-13 also confirmed promoted_signal_intelligence_validation: PASS for structural validation (P1-13 manifest validation section: staged_psi_validator: pass). The hash mismatches are caused by stale hash values in the compile manifests (recorded at compile time, not updated since), not by corrupted or modified PSI content. Repairing hashes does not require editing PSI content. STOP condition 'a hash mismatch appears to be caused by missing or corrupted PSI content' will NOT be triggered.",
+      "citation": "docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:31 — compile_manifest_hash_mismatch: 41 (all hash mismatches); validation.staged_psi_validator: pass"
+    },
+    {
+      "check": "stage_2a.batch_index_files_do_not_contain_psi_hashes",
+      "result": "CONFIRMED — INDEX FILES MUST NOT BE EDITED",
+      "finding": "CONFIRMED. All 3 batch-level compile manifest index files exist (p1_10_batch_a_compile_manifest_index_v1.yaml, p1_11_batch_b_compile_manifest_index_v1.yaml, p1_12_batch_c_compile_manifest_index_v1.yaml). The p1_10 index was read in full (40 lines). It contains only: index_id, work_id, schema_version, compiler_version, generated_utc, pilot_output_root, runtime_consumed, clusters_selected, entries_promoted, and per-entry fields: cluster_id, package_id, spec_id, source_path, output_dir, runtime_active, promotion_action. There is NO output_hashes_sha256 field and NO PSI hash value in any entry. The prompt permits editing index files 'only if they contain hash values requiring synchronisation'. They do not. Cursor must NOT edit the batch index files.",
+      "citation": "knowledge_bus/generated_pilot/p1_10_batch_a/p1_10_batch_a_compile_manifest_index_v1.yaml:1-40 — no output_hashes_sha256 field present"
+    },
+    {
+      "check": "stage_2a.validator_script_verified",
+      "result": "CONFIRMED — SCRIPT EXISTS AND IS STRUCTURALLY SOUND",
+      "finding": "CONFIRMED. backend/scripts/validate_staged_psi_activation_readiness.py exists (514 lines, read in full). It is the P1-13 activation-readiness validator. It is report-only and does not mutate any files. Key structural findings: (1) uses hardcoded STAGED_BATCHES dict (lines 26-30) pointing to all 3 batch directories; (2) accepts --ssot, --psi-schema, --packages-root, --json, --fail-on-blocked args; (3) emits plain-text summary to stdout plus optional JSON via --json flag; (4) classify_item() priority logic at lines 147-170 handles multi-blocker priority correctly; (5) source_spec_id check at line 306 verifies each compile manifest has a source_spec_id. Script is ready for Phase 1 re-run.",
+      "citation": "backend/scripts/validate_staged_psi_activation_readiness.py:1-514 (read in full); STAGED_BATCHES at lines 26-30; main() CLI args at lines 456-485; classify_item() at lines 147-170"
+    },
+    {
+      "check": "stage_2a.validator_command_mismatch",
+      "result": "SOFT FLAG — NOT A BLOCKER",
+      "finding": "The prompt Phase 1 specifies the validator command as: python backend/scripts/validate_staged_psi_activation_readiness.py --staged-root knowledge_bus/generated_pilot --batches p1_10_batch_a p1_11_batch_b p1_12_batch_c. The actual script (lines 456-485) has NO --staged-root or --batches arguments. The correct invocation is simply: python backend/scripts/validate_staged_psi_activation_readiness.py (batches are hardcoded at lines 26-30 and default to all 3 batches). The prompt contains its own fallback: 'If the script uses different arguments, inspect the script help and run the correct equivalent.' This self-corrects. However, Cursor must NOT attempt to add --staged-root/--batches args to the script. Run without those flags.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Phase 1 (incorrect suggested command); backend/scripts/validate_staged_psi_activation_readiness.py:456-485 (actual CLI args); backend/scripts/validate_staged_psi_activation_readiness.py:26-30 (hardcoded STAGED_BATCHES)"
+    },
+    {
+      "check": "stage_2a.post_hash_expected_split_verified",
+      "result": "CONFIRMED — BASELINE FROM P1-13",
+      "finding": "CONFIRMED. P1-13 manifest hypothetical_if_hash_integrity_resolved (lines 37-42) projects: ACTIVATION_READY: 22, BLOCKED_BIOMARKER_IDENTITY: 9, BLOCKED_DERIVED_MARKER_DEPENDENCY: 7, BLOCKED_MEDICAL_REVIEW_REQUIRED: 3. These sum to 41 — consistent with the total estate. The classify_item() priority logic in the validator (lines 147-170) confirms this projection is plausible: once hash blockers are removed, packages with only hash mismatch will become ACTIVATION_READY, while those with additional blockers will surface the next-priority blocker. Cursor must not force this result — verify from actual validator output. If the split differs, report and explain.",
+      "citation": "docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:37-42 — hypothetical_if_hash_integrity_resolved block; backend/scripts/validate_staged_psi_activation_readiness.py:147-170 — classify_item() priority order"
+    },
+    {
+      "check": "stage_2a.source_spec_id_presence_spot_checked",
+      "result": "CONFIRMED — NO BLOCKED_SOURCE_SUPPORT EXPECTED FOR CLEAN CANDIDATES",
+      "finding": "CONFIRMED. Sampled compile manifest (pkg_kb52c_alt_high_hepatocellular_injury_pattern) shows source_spec_id: inv_alt_high_hepatocellular_injury_pattern at line 10. This field is present. The validator checks this at line 306 (if not manifest_doc.get('source_spec_id')). Based on P1-13 output (no BLOCKED_SOURCE_SUPPORT in P1-13 blocker counts), this field is present across the estate. No BLOCKED_SOURCE_SUPPORT cohort is expected to be material, but Cursor must confirm from actual validator output.",
+      "citation": "knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/compile_manifest.yaml:10 — source_spec_id: inv_alt_high_hepatocellular_injury_pattern; backend/scripts/validate_staged_psi_activation_readiness.py:306"
     },
     {
       "check": "stage_2a.no_duplicate_authority_sources",
       "result": "PASS",
-      "finding": "CONFIRMED. Single SSOT at backend/ssot/biomarkers.yaml. Single existing PSI structural validator at backend/scripts/validate_promoted_signal_intelligence.py. New P1-13 validator (validate_staged_psi_activation_readiness.py) is non-conflicting — different audit scope. No duplicate authority risk.",
-      "citation": "Glob: backend/scripts/validate_*.py (24 existing validators listed, none matching staged_psi_activation_readiness)"
+      "finding": "CONFIRMED. Single source of truth for PSI hash authority: individual compile_manifest.yaml files under each package directory. Single validator script: backend/scripts/validate_staged_psi_activation_readiness.py. No competing hash authority exists in batch index files (confirmed above). No duplicate authority risk.",
+      "citation": "Directory structure: knowledge_bus/generated_pilot/{batch}/{package_id}/compile_manifest.yaml pattern confirmed"
     },
     {
-      "check": "stage_2a.prohibited_files_outside_scope",
+      "check": "stage_2a.prohibited_files_verified_outside_scope",
       "result": "PASS",
-      "finding": "CONFIRMED. All prohibited paths (frontend/, Gemini, fallback parsers, backend/core/, backend/ssot/scoring_policy.yaml, backend/ssot/biomarkers.yaml [read-only by validator, not modified], runtime DTO contracts, domain/narrative assemblers, compiled runtime cards, production package manifests, Pass 3 source files, investigation-spec source files, staged PSI files from P1-10/P1-11/P1-12, staged compile manifests from P1-10/P1-11/P1-12, docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md, docs/AUTHORITY_MAP.md) are explicitly outside declared write scope. Permitted writes limited to: backend/scripts/validate_staged_psi_activation_readiness.py (new), backend/tests/unit/test_validate_staged_psi_activation_readiness.py (new), docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_gate.md (new), docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml (new), docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md (append-only), automation_bus/.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Prohibited changes"
+      "finding": "CONFIRMED. All prohibited paths are outside the declared write scope: frontend/, Gemini paths, fallback parser paths, backend/core/, backend/scripts/ (validator not modified), backend/tests/, backend/ssot/scoring_policy.yaml, backend/ssot/biomarkers.yaml, runtime DTO contracts, domain assemblers, narrative assemblers, compiled runtime cards, production package manifests, Pass 3 source files, investigation-spec source files, Knowledge Bus source package files, staged promoted_signal_intelligence.yaml files (PSI content must not change), docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md, docs/AUTHORITY_MAP.md. Permitted writes are limited to: compile_manifest.yaml hash fields only in p1_10_batch_a/, p1_11_batch_b/, p1_12_batch_c/; docs/sprints/beta_readiness/P1-14_staged_psi_hash_repair_and_activation_cohort_lock.md (new); docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml (new); docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md (append-only); automation_bus/.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Prohibited changes; §Permitted changes"
     },
     {
-      "check": "stage_2a.validation_command_powershell_compatible",
+      "check": "stage_2a.powershell_command_compatibility",
       "result": "PASS",
-      "finding": "CONFIRMED. The manifest YAML validation one-liner uses double-quote outer delimiter with single-quote Python string literals inside — PowerShell 5.1 compatible. Asserts work_id=='P1-13' and 'items' in data. No && operator used.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Validation (python -c one-liner)"
+      "finding": "CONFIRMED. All validation commands in the prompt use PowerShell-compatible syntax. The manifest YAML validation one-liner uses outer double-quotes with inner single-quote Python string literals — compatible with PowerShell 5.1. No && operator used. git commands are standard. Python script invocation is straightforward.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Validation (python -c one-liner); §Branch and state checks (git commands)"
     },
     {
-      "check": "stage_2b.behavioural_scope_defined",
-      "result": "PASS",
-      "finding": "CONFIRMED. Behavioural surface area of new validator script: reads backend/ssot/biomarkers.yaml (read-only), reads staged PSI files and compile manifests (read-only), emits report to stdout or file. No mutation of any file. No Intelligence Core components touched. No runtime activation logic. No output generation changes. Regression targets: all 41 staged PSI files and 41 compile manifests must remain unmodified after sprint execution (confirmable by git diff --name-only showing no changes to knowledge_bus/generated_pilot/).",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Workstream B (validator must not mutate files, must not activate anything, must not make medical decisions)"
+      "check": "stop_conditions.pre_assessment",
+      "result": "PASS — NO STOP CONDITIONS PRE-TRIGGERED",
+      "finding": "CONFIRMED. Phase 0 STOP conditions assessed: (1) PSI without matching compile manifest — NONE (41:41 confirmed). (2) compile manifest without matching PSI — NONE (41:41 confirmed). (3) hash field structure unclear — CLEAR (output_hashes_sha256.promoted_signal_intelligence.yaml confirmed). (4) hash mismatch caused by corrupted PSI content — NOT THE CASE (PSI structural validation passed in P1-13). (5) repairing hashes would require editing PSI content — NOT REQUIRED (hash repair is manifest-only). (6) repairing hashes would require production package changes — NOT REQUIRED (production packages are separate). Phase 1 STOP conditions: no pre-triggered conditions found. The estate is ready for Phase 0 hash repair.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Phase 0 STOP conditions; docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:21-23 and validation block"
     },
     {
-      "check": "stage_2b.determinism_risks",
-      "result": "LOW RISK — SURFACED",
-      "finding": "No determinism risks to analytical output. Validator is a standalone report-only tool. The only risk is if Cursor accidentally modifies staged PSI files during the audit or writes activation-readiness classifications into PSI files themselves (explicitly prohibited). STOP guard: the prompt states 'Do not put unsupported fields into PSI' and lists all 41 PSI files as prohibited changes. Cursor must verify at Stage 4A that git diff shows no changes to knowledge_bus/generated_pilot/.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Important boundary; §Prohibited changes; §Runtime non-activation validation"
-    },
-    {
-      "check": "stage_2b.no_op_protection",
-      "result": "PASS",
-      "finding": "CONFIRMED. Real work remains: 41 PSI files have never been audited against SSOT canonicality (confirmed: no such validator exists); 5 primary non-canonical biomarker IDs confirmed in estate; 9 supporting non-canonical IDs confirmed; hemoglobin PSI gap confirmed; no activation-readiness manifest exists. Sprint is not a no-op.",
-      "citation": "Python scan: 5 primary non-canonical IDs, 9 supporting non-canonical IDs; Glob: no existing validate_staged_psi_activation_readiness.py"
-    },
-    {
-      "check": "stop_conditions.check",
-      "result": "PASS — NO STOP CONDITIONS TRIGGERED",
-      "finding": "CONFIRMED. (1) All 9 prerequisite doc files present on main. (2) All 3 staged PSI batch directories exist and populated. (3) SSOT biomarkers.yaml readable and canonical keys extractable. (4) No existing duplicate validator. (5) All runtime_active: false in compile manifests. (6) No production manifest opt-ins found. Sprint is executable.",
-      "citation": "Glob scans on all prerequisite paths; Python scans on runtime_active status"
-    },
-    {
-      "check": "hardening_flag_1.lym_identity_must_not_be_decided",
+      "check": "hardening_flag_1.index_files_must_not_be_edited",
       "result": "MANDATORY HARDENING FLAG",
-      "finding": "pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression uses primary_metric.biomarker_id: 'lym'. 'lym' is NOT a canonical SSOT key. The SSOT has BOTH 'lymphocytes' and 'lymphocytes_abs' as separate canonical keys — the correct mapping is medically ambiguous (absolute lymphocyte count vs percentage-based vs relative). The sprint prompt explicitly states this is a carry-forward medical identity decision. Cursor must classify this PSI as BLOCKED_BIOMARKER_IDENTITY in the activation-readiness manifest and report. The validator must report 'lym is not a canonical SSOT biomarker key' but must NOT decide 'lym = lymphocytes_abs'. Do not attempt to resolve this in the sprint.",
-      "citation": "knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression/promoted_signal_intelligence.yaml:17 (biomarker_id: lym); Python SSOT key scan: 'lym' absent; SSOT has 'lymphocytes' and 'lymphocytes_abs' as separate keys; automation_bus/latest_cursor_prompt.md:§7 (lym identity decision carry-forward)"
+      "finding": "The prompt lists compile_manifest_index*.yaml files as conditionally permitted changes ('only if they contain hash values requiring synchronisation'). These files do NOT contain PSI hash values — confirmed by reading p1_10_batch_a_compile_manifest_index_v1.yaml in full. Cursor must not edit any batch index file during this sprint. Editing them would be an out-of-scope modification.",
+      "citation": "knowledge_bus/generated_pilot/p1_10_batch_a/p1_10_batch_a_compile_manifest_index_v1.yaml:1-40 — no output_hashes_sha256 field; automation_bus/latest_cursor_prompt.md:§Permitted changes (conditional clause)"
     },
     {
-      "check": "hardening_flag_2.wbc_identity_must_not_be_decided",
+      "check": "hardening_flag_2.psi_content_must_not_change",
       "result": "MANDATORY HARDENING FLAG",
-      "finding": "pkg_kb52c_wbc_high_reactive_leukocytosis uses primary_metric.biomarker_id: 'wbc'. 'wbc' is NOT a canonical SSOT key. The canonical SSOT key is 'white_blood_cells'. The validator must report this but must NOT decide 'wbc = white_blood_cells' — that is a future SSOT adjudication. This PSI must be classified BLOCKED_BIOMARKER_IDENTITY. Additionally, 'wbc_total' appears as a supporting marker in the lym_low PSI — also non-canonical, same SSOT key applies. Both must be reported without resolution.",
-      "citation": "knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_wbc_high_reactive_leukocytosis/promoted_signal_intelligence.yaml:17 (biomarker_id: wbc); Python SSOT key scan: 'wbc' absent, 'white_blood_cells' is canonical; automation_bus/latest_cursor_prompt.md:§7 (wbc identity/SSOT decision carry-forward)"
+      "finding": "The hash repair sprint modifies ONLY the output_hashes_sha256.promoted_signal_intelligence.yaml value in each compile_manifest.yaml. The promoted_signal_intelligence.yaml files themselves must remain byte-for-byte identical throughout the sprint. Cursor must confirm at Stage 4A that git diff shows zero changes to any promoted_signal_intelligence.yaml file. If any PSI content change is detected, STOP immediately.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Phase 0 (Do not edit PSI medical content); §Runtime non-activation validation (no staged promoted_signal_intelligence.yaml files changed); §Acceptance criteria: criteria 2-5"
     },
     {
-      "check": "hardening_flag_3.erythropoietin_jak2_not_in_ssot",
+      "check": "hardening_flag_3.validator_command_correction",
       "result": "MANDATORY HARDENING FLAG",
-      "finding": "'erythropoietin' appears as a supporting marker in pkg_kb52c_hematocrit_high_absolute_erythrocytosis and pkg_kb52c_hematocrit_high_relative_hemoconcentration [p1_11_batch_b]. 'jak2_v617f' appears as a supporting marker in pkg_kb52c_hematocrit_high_absolute_erythrocytosis [p1_11_batch_b]. Neither 'erythropoietin' nor 'jak2_v617f' is in the SSOT canonical key list — there is NO equivalent canonical key for either (not just a naming alias issue). These represent a qualitatively different category: markers for which no SSOT registration exists at all. The validator must report these as BLOCKED_BIOMARKER_IDENTITY at the supporting-marker level. The sprint must not decide whether to add these to SSOT — that is a separate SSOT authority decision.",
-      "citation": "Python SSOT key scan: 'erythropoietin' absent, 'jak2_v617f' absent (no canonical equivalent exists); knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_absolute_erythrocytosis/promoted_signal_intelligence.yaml (not yet read directly — Cursor must confirm biomarker_ids during implementation)"
+      "finding": "Cursor must NOT use the --staged-root or --batches arguments suggested in the prompt Phase 1 command. These arguments do not exist in the validator script. The correct command is: python backend/scripts/validate_staged_psi_activation_readiness.py. Optional useful flags: --json (for full JSON output) and --fail-on-blocked (to confirm non-zero exit if any PSI is blocked). Cursor may add --json to capture the full report. Do NOT modify the script to add the suggested arguments.",
+      "citation": "backend/scripts/validate_staged_psi_activation_readiness.py:456-485 (actual argument parser); automation_bus/latest_cursor_prompt.md:§Phase 1 fallback clause"
     },
     {
-      "check": "hardening_flag_4.plt_identity_is_known_alias_but_still_blocked",
+      "check": "hardening_flag_4.tooling_file_leakage",
       "result": "MANDATORY HARDENING FLAG",
-      "finding": "'plt' as primary metric in pkg_kb52c_plt_high_reactive_thrombocytosis and pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction [p1_11_batch_b] is not a canonical SSOT key. The canonical key is 'platelets'. Although 'plt' is a universally understood abbreviation, the validator must still report it as BLOCKED_BIOMARKER_IDENTITY and it must appear in the activation-readiness manifest as blocked. The identity decision (plt → platelets) is closer to a clerical correction than lym → lymphocytes/lymphocytes_abs, but it is still a future SSOT adjudication. Do not self-authorise this mapping in the sprint.",
-      "citation": "knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_high_reactive_thrombocytosis/promoted_signal_intelligence.yaml (primary: plt); Python SSOT key scan: 'plt' absent, 'platelets' is canonical"
-    },
-    {
-      "check": "hardening_flag_5.non_hdl_alias_is_blocked",
-      "result": "MANDATORY HARDENING FLAG",
-      "finding": "'non_hdl' as primary metric in pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden [p1_10_batch_a] is not a canonical SSOT key. The canonical key is 'non_hdl_cholesterol'. Similar to plt/platelets, this is a truncation alias. Validator must report BLOCKED_BIOMARKER_IDENTITY. Must appear in the activation-readiness manifest as blocked. Identity correction (non_hdl → non_hdl_cholesterol) is a future SSOT adjudication.",
-      "citation": "knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden/promoted_signal_intelligence.yaml (primary: non_hdl confirmed by Python scan); Python SSOT key scan: 'non_hdl' absent, 'non_hdl_cholesterol' is canonical"
-    },
-    {
-      "check": "hardening_note.validator_must_not_make_medical_decisions",
-      "result": "MANDATORY NOTE",
-      "finding": "The sprint prompt draws a hard boundary at §Important boundary: the validator may report 'lym is not a canonical SSOT biomarker key' but must not decide 'lym = lymphocytes_abs'. This applies to ALL non-canonical IDs identified. The validator's job is to enumerate discrepancies; resolution is a future sprint with medical and SSOT authority. Cursor must not add any canonical-mapping logic to the validator.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Important boundary"
-    },
-    {
-      "check": "hardening_note.tooling_file_leakage",
-      "result": "ADVISORY NOTE",
-      "finding": "Cursor must confirm at Stage 4A that no tooling files (.cursor/rules/, .vscode/, .codex/, AGENTS.md) are staged or committed to the sprint branch. SOP v1.3.1 non-negotiable: no tooling-file leakage into governed sprint branches. Precedent from P1-12 hardening.",
+      "finding": "Cursor must confirm at Stage 4A that no tooling files (.cursor/rules/, .vscode/, .codex/, AGENTS.md) are staged or committed to the sprint branch. SOP v1.3.1 non-negotiable: no tooling-file leakage into governed sprint branches.",
       "citation": "SOP v1.3.1 non-negotiables; automation_bus/latest_cursor_prompt.md:§Prohibited changes"
     }
   ],
-  "overall_verdict": "HARDENED. All 5 front-matter fields confirmed. All prerequisite docs (9 files) and staged PSI batch directories (3 directories, 41 PSI files, 41 compile manifests) confirmed present on main. SSOT canonical key list extracted from backend/ssot/biomarkers.yaml and cross-referenced against entire PSI estate. Key findings for Cursor: (1) All 41 compile manifests have runtime_active: false — clean baseline; (2) 5 PRIMARY non-canonical biomarker IDs found across p1_10, p1_11, p1_12 batches (non_hdl, plt×2, lym, wbc); (3) 9 SUPPORTING non-canonical biomarker IDs found (hgb, erythropoietin×2, jak2_v617f, rbc_count, wbc×2, wbc_total, lym); (4) erythropoietin and jak2_v617f have NO SSOT equivalent at all; (5) transferrin_saturation IS canonical but appears as supporting marker in 7 PSI files — derived-marker dependency carry-forward; (6) hemoglobin PSI absent from estate — known source-support gap; (7) No existing validator checks SSOT canonicality — new validator is required and not duplicative. No STOP conditions triggered. Five mandatory hardening flags pre-load known estate issues for Cursor's audit and classification work. Cursor may proceed under TWO_PHASE_START_FINISH governance."
+  "overall_verdict": "HARDENED. All 5 front-matter fields confirmed. All prerequisite files (12 files, 3 batch directories) confirmed present on main. Compile manifest hash field structure confirmed at output_hashes_sha256.promoted_signal_intelligence.yaml. All 41 PSI-manifest pairs confirmed (1:1 matching, no orphans). All runtime_active: false confirmed. Hash mismatch cause confirmed as stale manifests, not corrupted PSI content — no STOP conditions will be triggered by Phase 0. Batch-level index files confirmed to contain NO PSI hash fields — Cursor must not edit them. Validator script read and verified (514 lines, CLI args confirmed — correct invocation has no --staged-root or --batches flags). Post-hash expected split (22/9/7/3) confirmed as consistent with P1-13 hypothetical and validator priority logic. No STOP conditions pre-triggered. Four mandatory hardening flags documented. Cursor may proceed under TWO_PHASE_START_FINISH governance."
 }
