@@ -5,8 +5,11 @@ contract_verification_summary:
   target_packages_behavioural_impact: NONE
   existing_kb47_opt_ins_overlap_with_candidates: false
 summary:
-  READY_FOR_OPT_IN: 22
-opted_in_count: 22
+  production_psi_opt_ins_completed: 18
+  BLOCKED_AMBIGUOUS_PACKAGE_MAPPING: 4
+  READY_FOR_OPT_IN: 18
+  cross_id_opt_ins_remaining: 0
+opted_in_count: 18
 items:
 - staged_psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/promoted_signal_intelligence.yaml
   staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/compile_manifest.yaml
@@ -222,52 +225,72 @@ items:
   signal_id: signal_rbc_high
   primary_metric_biomarker_id: rbc
   staged_package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern
-  production_package_directory: knowledge_bus\packages\pkg_kb58_rbc_high_erythrocytosis_pattern
-  production_package_manifest_path: knowledge_bus\packages\pkg_kb58_rbc_high_erythrocytosis_pattern\package_manifest.yaml
+  production_package_directory: null
+  production_package_manifest_path: null
   pre_opt_in_package_validation_status: PASS
-  classification: READY_FOR_OPT_IN
-  mapping_note: mapped via source_spec_id inv_rbc_high_erythrocytosis_pattern
-  post_opt_in_package_validation_status: PASS
-  post_opt_in_psi_validation_status: PASS
+  classification: BLOCKED_AMBIGUOUS_PACKAGE_MAPPING
+  mapping_note: reverted cross-ID opt-in to pkg_kb58_rbc_high_erythrocytosis_pattern
+    per GPT Option B remediation
+  post_opt_in_package_validation_status: not_applicable
+  post_opt_in_psi_validation_status: not_applicable
+  blocker: Expected production package ID does not exist. Candidate was previously
+    mapped to pkg_kb58_rbc_high_erythrocytosis_pattern by source_spec_id, but GPT
+    architectural review rejected cross-ID production PSI placement for P1-15. Correct
+    production home requires a later package identity/provenance adjudication.
 - staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/promoted_signal_intelligence.yaml
   staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/compile_manifest.yaml
   source_spec_id: inv_rbc_low_iron_restricted_anemia_pattern
   signal_id: signal_rbc_low
   primary_metric_biomarker_id: rbc
   staged_package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
-  production_package_directory: knowledge_bus\packages\pkg_kb58_rbc_low_iron_restricted_anemia_pattern
-  production_package_manifest_path: knowledge_bus\packages\pkg_kb58_rbc_low_iron_restricted_anemia_pattern\package_manifest.yaml
+  production_package_directory: null
+  production_package_manifest_path: null
   pre_opt_in_package_validation_status: PASS
-  classification: READY_FOR_OPT_IN
-  mapping_note: mapped via source_spec_id inv_rbc_low_iron_restricted_anemia_pattern
-  post_opt_in_package_validation_status: PASS
-  post_opt_in_psi_validation_status: PASS
+  classification: BLOCKED_AMBIGUOUS_PACKAGE_MAPPING
+  mapping_note: reverted cross-ID opt-in to pkg_kb58_rbc_low_iron_restricted_anemia_pattern
+    per GPT Option B remediation
+  post_opt_in_package_validation_status: not_applicable
+  post_opt_in_psi_validation_status: not_applicable
+  blocker: Expected production package ID does not exist. Candidate was previously
+    mapped to pkg_kb58_rbc_low_iron_restricted_anemia_pattern by source_spec_id, but
+    GPT architectural review rejected cross-ID production PSI placement for P1-15.
+    Correct production home requires a later package identity/provenance adjudication.
 - staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/promoted_signal_intelligence.yaml
   staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/compile_manifest.yaml
   source_spec_id: inv_rdw_cv_high_iron_deficiency_anisocytosis
   signal_id: signal_rdw_cv_high
   primary_metric_biomarker_id: rdw_cv
   staged_package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
-  production_package_directory: knowledge_bus\packages\pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis
-  production_package_manifest_path: knowledge_bus\packages\pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis\package_manifest.yaml
+  production_package_directory: null
+  production_package_manifest_path: null
   pre_opt_in_package_validation_status: PASS
-  classification: READY_FOR_OPT_IN
-  mapping_note: mapped via source_spec_id inv_rdw_cv_high_iron_deficiency_anisocytosis
-  post_opt_in_package_validation_status: PASS
-  post_opt_in_psi_validation_status: PASS
+  classification: BLOCKED_AMBIGUOUS_PACKAGE_MAPPING
+  mapping_note: reverted cross-ID opt-in to pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis
+    per GPT Option B remediation
+  post_opt_in_package_validation_status: not_applicable
+  post_opt_in_psi_validation_status: not_applicable
+  blocker: Expected production package ID does not exist. Candidate was previously
+    mapped to pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis by source_spec_id,
+    but GPT architectural review rejected cross-ID production PSI placement for P1-15.
+    Correct production home requires a later package identity/provenance adjudication.
 - staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/promoted_signal_intelligence.yaml
   staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/compile_manifest.yaml
   source_spec_id: inv_rdw_cv_high_mixed_red_cell_population_pattern
   signal_id: signal_rdw_cv_high
   primary_metric_biomarker_id: rdw_cv
   staged_package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
-  production_package_directory: knowledge_bus\packages\pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern
-  production_package_manifest_path: knowledge_bus\packages\pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern\package_manifest.yaml
+  production_package_directory: null
+  production_package_manifest_path: null
   pre_opt_in_package_validation_status: PASS
-  classification: READY_FOR_OPT_IN
-  mapping_note: mapped via source_spec_id inv_rdw_cv_high_mixed_red_cell_population_pattern
-  post_opt_in_package_validation_status: PASS
-  post_opt_in_psi_validation_status: PASS
+  classification: BLOCKED_AMBIGUOUS_PACKAGE_MAPPING
+  mapping_note: reverted cross-ID opt-in to pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern
+    per GPT Option B remediation
+  post_opt_in_package_validation_status: not_applicable
+  post_opt_in_psi_validation_status: not_applicable
+  blocker: Expected production package ID does not exist. Candidate was previously
+    mapped to pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern by source_spec_id,
+    but GPT architectural review rejected cross-ID production PSI placement for P1-15.
+    Correct production home requires a later package identity/provenance adjudication.
 - staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression/promoted_signal_intelligence.yaml
   staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression/compile_manifest.yaml
   source_spec_id: inv_transferrin_low_inflammatory_negative_acute_phase_suppression
@@ -294,3 +317,7 @@ items:
   mapping_note: ''
   post_opt_in_package_validation_status: PASS
   post_opt_in_psi_validation_status: PASS
+remediation:
+  date: '2026-06-21'
+  decision: GPT Option B — revert 4 cross-ID pkg_kb52c_* staged PSI placements from
+    pkg_kb58_* production packages

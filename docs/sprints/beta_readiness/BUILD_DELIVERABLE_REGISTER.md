@@ -386,14 +386,14 @@ Entries should not list every file touched or every non-change.
 
 ### Delivered / ticked off
 - Verified production PSI opt-in contract: validation-governed only on launch-critical path with `behavioural_impact: NONE`.
-- Opted in all 22 P1-14 activation-ready candidates to production packages with byte-identical PSI copies.
+- Completed 18 ID-matched production PSI opt-ins with byte-identical PSI copies.
 
 ### Carry-forwards
-- 19 staged PSI remain blocked (biomarker, derived-marker, medical-review); 18 matching staged IDs now show production opt-in on audit.
-- Runtime activation sprint deferred until explicit governance authorisation beyond manifest opt-in.
+- 4 activation-ready candidates blocked pending package identity/provenance adjudication (`BLOCKED_AMBIGUOUS_PACKAGE_MAPPING`); cross-ID `pkg_kb52c_* → pkg_kb58_*` placements reverted per GPT Option B.
+- 19 other staged PSI remain blocked (biomarker, derived-marker, medical-review).
 
 ### Blockers / risks
-- kb47 production cohort retains `SIGNAL_RUNTIME_ACTIVATION`; must not conflate with this NONE-impact pilot cohort.
+- P1-15 no longer contains cross-ID production PSI placements; deferred cohort requires explicit package identity decision before opt-in.
 
 ### Recommended next sprint
 - P1-16 SSOT biomarker identity adjudication for blocked staged PSI cohort.
