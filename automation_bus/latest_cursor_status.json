@@ -1,9 +1,10 @@
 {
   "branch": "sprint/P1-17-remaining-psi-blocker-resolution",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-21T13:10:38Z",
   "cursor_started_utc": "2026-06-21T13:05:19Z",
-  "head_sha": "d4dc32c84cc5d018634b5bbcbeaf7d55a8a9393f",
+  "head_sha": "d89ce986a4b830fe7579e8782a42a932edec5bd9",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-17"
 }
