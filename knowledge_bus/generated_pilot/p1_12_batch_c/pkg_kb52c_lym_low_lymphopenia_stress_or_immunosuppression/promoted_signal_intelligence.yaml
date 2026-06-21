@@ -1,0 +1,98 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
+translation:
+  source: investigation_spec_v3_pass3_p1_12_batch_c
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_lym_low_lymphopenia_stress_or_immunosuppression
+  signal_id: signal_lym_low
+  compiler_version: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+  work_id: P1-12
+  cluster_id: leukocyte_shift
+signals:
+- signal_id: signal_lym_low
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: lym
+    rationale: Absolute lymphocyte count is a core white-cell parameter and low values indicate lymphopenia rather than a
+      specific diagnosis.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: neutrophils_abs
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Neutrophilia with lymphopenia supports a stress or glucocorticoid redistribution pattern.
+  - biomarker_id: cortisol
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: High cortisol supports a stress-related or glucocorticoid-related mechanism rather than primary lymphoid failure.
+  - biomarker_id: wbc_total
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low total white cell count suggests a broader leukopenic process rather than isolated redistribution alone.
+  contradiction_markers:
+  - contradiction_id: ctr_low_cortisol_lym
+    marker_reference: cortisol
+    contradiction_rationale: Low cortisol weakens a glucocorticoid-mediated redistribution explanation.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_low_neutrophils_lym
+    marker_reference: neutrophils_abs
+    contradiction_rationale: Low neutrophils weaken a classic stress leukogram interpretation.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_normal_wbc_total_weakens_marrow_suppression
+    marker_reference: wbc_total
+    contradiction_rationale: A normal total white cell count weakens a broader immune or marrow suppression interpretation
+      for low lymphocytes, as generalised marrow suppression or significant immune deficit would be expected to reduce overall
+      leucocyte production rather than producing isolated lymphopenia.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Review recent illness, steroid exposure, neutrophils, and cortisol before assigning a stress-related explanation.
+    - Review total white-cell count and repeat testing before concluding that lymphopenia reflects a chronic suppressive process.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_lym_low_with_low_wbc_total
+    resulting_state: at_risk
+    description: Escalate when lymphocytes are low and total white count is also low because the combination is more consistent
+      with a broader leukopenic process than isolated redistribution.
+    conditions:
+    - metric_id: wbc_total
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_lymphopenia_review
+  evidence:
+    evidence_strength: strong
+    physiological_claim: Low lymphocyte count commonly reflects acute stress, glucocorticoid effect, infection, systemic illness,
+      malnutrition, or immune suppression.
+    threshold_notes: No disease-specific absolute-count threshold is encoded here beyond the laboratory range.
+    sources:
+    - source_id: source_lymphopenia_review
+      paper_title: Lymphopenia mechanisms and evaluation
+      journal: Review literature
+      year: 2021
+  confirmatory_test_refs:
+  - test_id: ct_repeat_complete_blood_count
+    rationale: Repeat blood count helps determine whether lymphopenia is transient or persistent.
+  - test_id: ct_immune_and_infection_workup_if_persistent
+    rationale: Persistent unexplained lymphopenia may warrant immune and infection-focused evaluation.

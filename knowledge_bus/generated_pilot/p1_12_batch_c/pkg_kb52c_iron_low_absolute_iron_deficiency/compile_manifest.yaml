@@ -1,0 +1,21 @@
+compile_id: p1_12_batch_c_pkg_kb52c_iron_low_absolute_iron_deficiency
+work_id: P1-12
+cluster_id: iron_serum_panel
+compiler_name: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+compiled_at_utc: '2026-06-21T07:43:28Z'
+pilot_status: promoted_signal_intelligence_non_runtime
+runtime_active: false
+governance_runtime_activation_status: inactive_promoted_batch_c
+source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+source_spec_id: inv_iron_low_absolute_iron_deficiency
+source_hash_sha256: 0f6fcabd79312906902cc8853112214a940136598b61378e803b140be0f30566
+source_contract_version: 3.0.0
+target_package_id: pkg_kb52c_iron_low_absolute_iron_deficiency
+output_root: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency
+output_hashes_sha256:
+  promoted_signal_intelligence.yaml: 69a629dbe9297fbcd22b3336b7202503e0d17d4ba2afa28232f397fb45b99ee7
+validation:
+  promoted_signal_intelligence_validation: PASS
+  validator_output: 'validation_status: PASS
+
+    audit_path: C:\Users\abroa\HealthIQ-AI-v5\backend\artifacts\promoted_signal_intelligence_audit.md'

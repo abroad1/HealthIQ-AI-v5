@@ -1,0 +1,21 @@
+compile_id: p1_12_batch_c_pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+work_id: P1-12
+cluster_id: leukocyte_shift
+compiler_name: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+compiled_at_utc: '2026-06-21T07:43:28Z'
+pilot_status: promoted_signal_intelligence_non_runtime
+runtime_active: false
+governance_runtime_activation_status: inactive_promoted_batch_c
+source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+source_spec_id: inv_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+source_hash_sha256: 824bc35f02b4636f64876c35a9a50cbf60035b297b67b62c0b3daefdb5c19897
+source_contract_version: 3.0.0
+target_package_id: pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+output_root: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+output_hashes_sha256:
+  promoted_signal_intelligence.yaml: daa5529c6490087c32bc2a19cd7f1440964605ea5846e356b5248aa7f2500e94
+validation:
+  promoted_signal_intelligence_validation: PASS
+  validator_output: 'validation_status: PASS
+
+    audit_path: C:\Users\abroa\HealthIQ-AI-v5\backend\artifacts\promoted_signal_intelligence_audit.md'

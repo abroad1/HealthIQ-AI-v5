@@ -1,0 +1,97 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_iron_high_iron_overload_context
+translation:
+  source: investigation_spec_v3_pass3_p1_12_batch_c
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_iron_high_iron_overload_context
+  signal_id: signal_iron_high
+  compiler_version: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+  work_id: P1-12
+  cluster_id: iron_serum_panel
+signals:
+- signal_id: signal_iron_high
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: iron
+    rationale: High serum iron can indicate increased circulating iron availability but requires discrimination between overload
+      and transient release states.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: transferrin_saturation
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: High transferrin saturation supports excessive circulating iron burden and strengthens concern for overload.
+  - biomarker_id: ferritin
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: High ferritin can support increased iron stores, though it is not specific in inflammatory states.
+  - biomarker_id: alt
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Raised ALT helps distinguish hepatocellular release or liver disease from a primary iron-loading disorder.
+  contradiction_markers:
+  - contradiction_id: ctr_alt_high
+    marker_reference: alt
+    contradiction_rationale: Prominent liver injury can release iron and weaken a primary overload interpretation based on
+      serum iron alone.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_ferritin_normal
+    marker_reference: ferritin
+    contradiction_rationale: Normal ferritin weakens a durable tissue-loading interpretation from a single high serum iron
+      result.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Assess saturation persistence, transfusion history, and liver context before assigning hereditary loading.
+    - Use transferrin saturation and ferritin before assigning a true iron-overload frame.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_iron_high_with_transferrin_saturation_high
+    resulting_state: at_risk
+    description: Escalate when high serum iron coincides with high transferrin saturation, as this more strongly supports
+      a genuine iron-loading pattern.
+    conditions:
+    - metric_id: transferrin_saturation
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_iron_overload_review_2024
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: High serum iron is more suggestive of iron overload when transferrin saturation is elevated and ferritin
+      supports increased stores.
+    threshold_notes: Serum iron should not be treated as a stand-alone threshold for iron overload without saturation and
+      ferritin context.
+    sources:
+    - source_id: source_iron_overload_review_2024
+      paper_title: A Review of New Concepts in Iron Overload
+      journal: Gastroenterology & Hepatology
+      year: 2024
+    - source_id: source_bsh_ferritin_2024
+      paper_title: Investigation and management of a raised serum ferritin
+      journal: British Society for Haematology
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_transferrin_saturation_with_ferritin
+    rationale: Transferrin saturation with ferritin is needed to determine whether high serum iron represents true iron loading.

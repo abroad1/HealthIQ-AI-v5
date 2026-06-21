@@ -1,0 +1,21 @@
+compile_id: p1_12_batch_c_pkg_kb52c_wbc_high_reactive_leukocytosis
+work_id: P1-12
+cluster_id: leukocyte_shift
+compiler_name: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+compiled_at_utc: '2026-06-21T07:43:28Z'
+pilot_status: promoted_signal_intelligence_non_runtime
+runtime_active: false
+governance_runtime_activation_status: inactive_promoted_batch_c
+source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+source_spec_id: inv_wbc_high_reactive_leukocytosis
+source_hash_sha256: b0ad719175b92fa8e28e1600a12f6c87ce3063e09f0f94de5785b78d536b08a8
+source_contract_version: 3.0.0
+target_package_id: pkg_kb52c_wbc_high_reactive_leukocytosis
+output_root: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_wbc_high_reactive_leukocytosis
+output_hashes_sha256:
+  promoted_signal_intelligence.yaml: 0aa431be37a34e5803bbc90efdc171c81f1ad5e935b271aee9e6a6a7b867dc1e
+validation:
+  promoted_signal_intelligence_validation: PASS
+  validator_output: 'validation_status: PASS
+
+    audit_path: C:\Users\abroa\HealthIQ-AI-v5\backend\artifacts\promoted_signal_intelligence_audit.md'

@@ -1,0 +1,98 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+translation:
+  source: investigation_spec_v3_pass3_p1_12_batch_c
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+  signal_id: signal_neutrophil_pct_high
+  compiler_version: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+  work_id: P1-12
+  cluster_id: leukocyte_shift
+signals:
+- signal_id: signal_neutrophil_pct_high
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: neutrophil_pct
+    rationale: High neutrophil percentage reflects neutrophil predominance within the differential and should be interpreted
+      in relation to the absolute neutrophil count.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: monocyte_pct
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Lower monocyte percentage can support a reciprocal differential shift seen in stress or acute innate activation.
+  - biomarker_id: monocytes_abs
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Low absolute monocytes can support glucocorticoid-associated or stress-related leukocyte redistribution.
+  - biomarker_id: pdw
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: A high PDW can support an inflammatory or thromboinflammatory milieu when neutrophil predominance is present.
+  contradiction_markers:
+  - contradiction_id: ctr_monocyte_predominant_pattern
+    marker_reference: monocyte_pct
+    contradiction_rationale: A high monocyte percentage weakens a neutrophil-predominant interpretation and suggests an alternative
+      differential pattern.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_absence_of_redistribution_clues
+    marker_reference: monocytes_abs
+    contradiction_rationale: If absolute monocytes are not reduced, a strong redistribution explanation becomes less secure.
+    contradiction_strength: weak
+  missing_data:
+    policies:
+    - Confirm with absolute neutrophil count and total white-cell context before promoting clinically important neutrophilia.
+    - Review steroid exposure, recent stressors, and repeat differential counts when redistribution is plausible.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_neutrophil_pct_high_with_low_monocyte_pct
+    resulting_state: at_risk
+    description: Escalate when neutrophil percentage is high and monocyte percentage is low, because that combination supports
+      a pronounced neutrophil-predominant differential shift rather than a marginal isolated change.
+    conditions:
+    - metric_id: monocyte_pct
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_cbc_sepsis_review_2021
+    - source_neutropenia_review_2013
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: High neutrophil percentage is a differential-count pattern that often reflects neutrophil predominance,
+      but absolute counting remains essential for confirmation.
+    threshold_notes: Percentage shifts should remain lab-range anchored because reciprocal movement in other leukocyte fractions
+      can change neutrophil proportion without true neutrophilia.
+    sources:
+    - source_id: source_cbc_sepsis_review_2021
+      paper_title: The Value of a Complete Blood Count (CBC) for Sepsis Diagnosis and Prognosis
+      journal: Diagnostics (Basel)
+      year: 2021
+    - source_id: source_neutropenia_review_2013
+      paper_title: Evaluation and Management of Patients with Isolated Neutropenia
+      journal: Seminars in Hematology
+      year: 2013
+  confirmatory_test_refs:
+  - test_id: ct_absolute_neutrophil_count_and_repeat_diff
+    rationale: Absolute neutrophil count and repeat differential review help determine whether high neutrophil percentage
+      represents true neutrophilia or only a relative shift.

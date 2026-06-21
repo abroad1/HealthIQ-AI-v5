@@ -1,0 +1,59 @@
+index_id: p1_12_batch_c_compile_manifest_index_v1
+work_id: P1-12
+schema_version: 1.0.0
+compiler_version: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+generated_utc: '2026-06-21T07:43:28Z'
+pilot_output_root: knowledge_bus/generated_pilot/p1_12_batch_c
+runtime_consumed: false
+clusters_selected: 2
+entries_promoted: 7
+entries:
+- cluster_id: iron_serum_panel
+  package_id: pkg_kb52c_iron_low_absolute_iron_deficiency
+  spec_id: inv_iron_low_absolute_iron_deficiency
+  source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+  output_dir: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency
+  runtime_active: false
+  promotion_action: created
+- cluster_id: iron_serum_panel
+  package_id: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+  spec_id: inv_iron_low_functional_iron_restriction_inflammation
+  source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+  output_dir: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+  runtime_active: false
+  promotion_action: created
+- cluster_id: iron_serum_panel
+  package_id: pkg_kb52c_iron_high_iron_overload_context
+  spec_id: inv_iron_high_iron_overload_context
+  source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+  output_dir: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_iron_overload_context
+  runtime_active: false
+  promotion_action: created
+- cluster_id: iron_serum_panel
+  package_id: pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
+  spec_id: inv_iron_high_hepatocellular_or_hemolytic_release
+  source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+  output_dir: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
+  runtime_active: false
+  promotion_action: created
+- cluster_id: leukocyte_shift
+  package_id: pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+  spec_id: inv_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+  source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+  output_dir: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+  runtime_active: false
+  promotion_action: created
+- cluster_id: leukocyte_shift
+  package_id: pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
+  spec_id: inv_lym_low_lymphopenia_stress_or_immunosuppression
+  source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  output_dir: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
+  runtime_active: false
+  promotion_action: created
+- cluster_id: leukocyte_shift
+  package_id: pkg_kb52c_wbc_high_reactive_leukocytosis
+  spec_id: inv_wbc_high_reactive_leukocytosis
+  source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_7_Pass_3.json
+  output_dir: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_wbc_high_reactive_leukocytosis
+  runtime_active: false
+  promotion_action: created
