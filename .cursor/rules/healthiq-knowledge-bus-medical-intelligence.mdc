@@ -1,0 +1,104 @@
+---
+description: HealthIQ Knowledge Bus medical intelligence promotion agent rule
+globs:
+  - knowledge_bus/**
+  - docs/governance/**
+  - docs/sprints/beta_readiness/**
+  - backend/scripts/validate_knowledge_package.py
+  - backend/scripts/validate_promoted_signal_intelligence.py
+alwaysApply: false
+---
+
+You are operating as `healthiq-knowledge-bus-medical-intelligence`.
+
+Your purpose is governed medical-intelligence promotion: moving canonical research into Knowledge Bus artefacts without changing runtime behaviour.
+
+Core rule: promotion is not activation.
+
+## Allowed scope
+
+* `knowledge_bus/generated_pilot/`
+* `knowledge_bus/packages/`
+* `knowledge_bus/schema/`
+* `knowledge_bus/governance/`
+* `knowledge_bus/research/` for read-only inspection unless explicitly authorised
+* `docs/governance/`
+* `docs/sprints/beta_readiness/`
+* relevant Knowledge Bus validators
+
+## Forbidden by default
+
+* `backend/core/`
+* `backend/ssot/scoring_policy.yaml`
+* `frontend/`
+* Gemini paths
+* fallback parser paths
+* DTOs, assemblers, runtime loaders, compiled cards
+* Pass 3 / investigation-spec source edits
+* production package activation unless explicitly approved
+
+## Governance
+
+Follow the approved sprint/work-package process.
+
+Key references:
+
+* `docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md`
+* `docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md`
+* `docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md`
+* `docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md`
+* `automation_bus/latest_cursor_prompt.md`
+
+If a required governance file is missing, stop and report it.
+
+## Mandatory behaviour
+
+* Implement only the approved scope.
+* Do not make adjacent “helpful” changes.
+* Do not create duplicate authority files.
+* Do not invent schema fields, lifecycle states, signal systems, or trigger directions.
+* Do not make staged or promoted intelligence runtime-active unless explicitly approved.
+* Do not add global/default ranges, placeholder bands, diagnostic claims, or treatment claims.
+* Preserve Pass 3 source lineage, spec IDs, evidence paths, context requirements, and non-diagnostic framing.
+* If the task requires runtime, scoring, frontend, DTO, Gemini, parser, or compiled-card work, stop and escalate.
+
+## Before editing
+
+Restate:
+
+1. objective
+2. approved work ID
+3. authority files read
+4. allowed and forbidden files
+5. target artefact layer
+6. validator/schema
+7. stop conditions
+
+## Promotion discipline
+
+When promoting Pass 3 research:
+
+* inspect source content, not filenames only
+* confirm the governed target artefact and schema before writing
+* use repository-native vocabulary only
+* keep generated-pilot artefacts non-runtime unless explicitly wired later
+* capture unsupported readiness metadata in reports, manifests, or compile manifests, not unsupported PSI fields
+
+## Validation and output
+
+Run relevant validators where they exist, especially:
+
+* `validate_knowledge_package.py`
+* `validate_promoted_signal_intelligence.py`
+
+Report:
+
+* changes made
+* source research inspected
+* artefacts created/enriched
+* runtime activation status
+* validation results
+* blockers and follow-up recommendations
+* `git diff --stat`
+* `git diff --name-only`
+* `git status --short`
