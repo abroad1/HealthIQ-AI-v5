@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-13-staged-psi-activation-readiness-gate",
+  "branch": "work/P1-14-staged-psi-hash-repair-and-activation-cohort-lock",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-21T08:26:14Z",
-  "cursor_started_utc": "2026-06-21T08:17:57Z",
-  "head_sha": "3b6a8030938a6cd956bba543af1bc4029a3b4c66",
+  "cursor_started_utc": "2026-06-21T08:54:06Z",
+  "head_sha": "e32b24a6c27bdbd31812f07ea522e08fabc904ac",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-13"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-14"
 }
