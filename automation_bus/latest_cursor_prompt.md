@@ -1,265 +1,400 @@
 ---
-work_id: P1-15
-branch: sprint/P1-15-first-production-psi-opt-in-pilot
+work_id: P1-16
+branch: sprint/P1-16-psi-identity-blocker-remediation
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: MIXED
 ---
 
-# P1-15 — First Production PSI Opt-In Pilot with Contract STOP Gate
+# P1-16 — PSI Identity & Blocker Remediation Pack with Opt-In STOP Gate
 
 You are Cursor, implementing a governed HealthIQ AI Automation Bus work package.
 
-This is one outcome-based SOP package. Do not split contract verification and production opt-in into separate work packages. Use the internal STOP gates below.
+This is one outcome-based SOP package. Do not split package identity adjudication, biomarker identity adjudication, validation, and newly cleared PSI opt-in into separate work packages unless a STOP gate fires.
+
+This sprint must push the product forward with governable speed.
 
 ## Purpose
 
-Move the first activation-ready Promoted Signal Intelligence cohort from generated-pilot staging into governed production Knowledge Bus package manifest opt-in, only if repository evidence proves that production PSI opt-in remains validation-governed and does not currently create runtime, user-facing, scoring, DTO, Gemini, report, or frontend behaviour.
+Resolve identity/provenance blockers preventing staged Promoted Signal Intelligence from moving into governed production package opt-in.
+
+This package covers:
+
+1. The 4 P1-15 deferred `BLOCKED_AMBIGUOUS_PACKAGE_MAPPING` candidates.
+2. The 9 P1-14/P1-15 biomarker-identity blocked PSI candidates.
+3. Same-sprint production opt-in for any candidates safely resolved by this work package.
+
+This sprint must not become a report-only sprint.
 
 ## Current baseline
 
-P1-14 has been merged.
+P1-15 has been merged.
 
 Known baseline:
 
-* 41 staged compile-manifest hashes repaired.
-* P1-13 activation-readiness validator reran with zero hash mismatches.
-* Confirmed cohort split:
+- 18 clean, ID-matched production PSI opt-ins were completed.
+- 4 activation-ready candidates were deferred as `BLOCKED_AMBIGUOUS_PACKAGE_MAPPING`.
+- The 4 deferred candidates were not opted into production packages.
+- 9 staged PSI candidates remain blocked by biomarker identity issues.
+- 7 staged PSI candidates remain blocked by derived-marker dependency.
+- 3 staged PSI candidates remain blocked pending medical review.
+- No runtime behaviour was introduced by P1-15.
+- PSI remains non-user-facing unless explicitly activated later.
 
-  * 22 activation-ready candidates
-  * 9 biomarker-identity blocked
-  * 7 derived-marker blocked
-  * 3 medical-review required
-* No staged PSI content changed.
-* No medical content changed.
-* No production package manifests changed.
-* No runtime activation occurred.
+P1-16 must only address identity/provenance blockers. Do not address derived-marker blockers or medical-review blockers in this sprint.
 
-This sprint must start from that clean state.
+## Strategic outcome
+
+By the end of this sprint, HealthIQ should have:
+
+- a clear adjudication outcome for the 4 package-identity candidates;
+- a clear adjudication outcome for the 9 biomarker-identity candidates;
+- production package opt-in completed for any candidates safely cleared;
+- unresolved candidates explicitly classified with blocker reason;
+- no cross-ID PSI placement;
+- no runtime/user-facing activation.
 
 ## Mandatory files to read before editing
 
-Read these files before any repository change:
+Read these files before making repository changes:
 
-* docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml
-* docs/sprints/beta_readiness/P1-14_staged_psi_hash_repair_and_activation_cohort_lock.md
-* docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-* docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
-* knowledge_bus/schema/package_manifest_schema.yaml
-* knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml
-* backend/scripts/validate_knowledge_package.py
-* backend/scripts/validate_promoted_signal_intelligence.py
-* backend/scripts/validate_staged_psi_activation_readiness.py
+- docs/sprints/beta_readiness/P1-15_production_psi_opt_in_mapping.yaml
+- docs/sprints/beta_readiness/P1-15_first_production_psi_opt_in_pilot.md
+- docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml
+- docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+- docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
+- docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
+- backend/ssot/biomarkers.yaml
+- knowledge_bus/schema/package_manifest_schema.yaml
+- knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml
+- backend/scripts/validate_knowledge_package.py
+- backend/scripts/validate_promoted_signal_intelligence.py
+- backend/scripts/validate_staged_psi_activation_readiness.py
 
-Do not read historic P1-10, P1-11, P1-12, or P1-13 sprint files unless the P1-14 cohort manifest or sprint report is missing, inconsistent, or insufficient to identify source staged PSI artefacts.
+Use targeted search rather than broad historic reading.
 
-Use search, not broad manual reading, to discover actual current consumers/loaders:
+Only read historic P1-10, P1-11, P1-12 or P1-13 sprint artefacts if the P1-14/P1-15 artefacts are missing, inconsistent, or insufficient to identify the staged PSI source artefacts.
 
-* rg "promoted_signal_intelligence" .
-* rg "validate_promoted_signal_intelligence" .
-* rg "promoted_signal_intelligence_validation" .
-* rg "runtime_active" knowledge_bus backend docs
+Use search to identify current SSOT and package validation consumers:
 
-Inspect every relevant hit before deciding whether production opt-in is safe.
+- rg "biomarkers.yaml" backend knowledge_bus docs
+- rg "canonical" backend/ssot backend/scripts knowledge_bus
+- rg "alias" backend/ssot backend/scripts knowledge_bus
+- rg "promoted_signal_intelligence" backend knowledge_bus docs
+- rg "source_spec_id" knowledge_bus docs backend
 
-## Authority preflight
+Inspect relevant hits before editing.
 
-Before editing, verify and report:
+## Files in scope
 
-1. Authoritative production package store path.
-2. Authoritative package manifest schema path.
-3. Authoritative promoted signal intelligence schema path.
-4. Validator that enforces production package readiness.
-5. Validator that enforces PSI schema compliance.
-6. Whether any runtime loader currently consumes production package PSI.
-7. Whether adding `promoted_signal_intelligence:` to a production manifest currently has any effect beyond validation/status reporting.
-8. Whether production PSI placement would create a duplicate authority source.
-9. Whether production opt-in requires compile manifest regeneration.
+Permitted files, if justified by the STOP gates:
 
-If any answer is uncertain, STOP before production package edits.
+- docs/sprints/beta_readiness/P1-16_psi_identity_blocker_remediation.md
+- docs/sprints/beta_readiness/P1-16_identity_adjudication_manifest.yaml
+- docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+- backend/ssot/biomarkers.yaml
+- knowledge_bus/packages/<resolved_package>/package_manifest.yaml
+- knowledge_bus/packages/<resolved_package>/promoted_signal_intelligence.yaml
+
+Production PSI opt-in is allowed only for candidates cleared by this sprint.
+
+## Files out of scope
+
+Do not modify:
+
+- backend/core/
+- backend/scripts/
+- backend/tests/
+- frontend/
+- knowledge_bus/research/
+- knowledge_bus/generated_pilot/**/*
+- scoring policy files
+- Gemini files
+- DTO/report compiler/orchestrator files
+- docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
+- automation_bus/latest_gate_evidence.json
+- automation_bus/latest_gate_output.txt
+
+Do not allow tooling files into the sprint branch:
+
+- .codex/
+- .cursor/
+- .vscode/
+- AGENTS.md
+
+## Critical prohibitions
+
+Do not:
+
+- introduce fallback or dummy parsers;
+- substitute global/default biomarker ranges;
+- alter lab-range interpretation policy;
+- activate PSI at runtime;
+- make frontend, Gemini, DTO, report compiler, scoring or orchestrator consume PSI;
+- promote derived-marker blocked PSI;
+- promote medical-review blocked PSI;
+- cross-place PSI into a package whose manifest `package_id` differs from the PSI internal `package_id`;
+- hand-edit medical content to force validation;
+- create duplicate active medical authority;
+- create new production packages without explicit STOP-gate approval inside this sprint;
+- treat `source_spec_id` alone as sufficient for production identity if `package_id` conflicts remain unresolved.
 
 ## Phase 0 — Branch and Automation Bus preflight
 
-Confirm:
+Before implementation:
 
-* current branch is `sprint/P1-15-first-production-psi-opt-in-pilot`
-* `automation_bus/state/work_package_active.json` exists
-* active token has `work_id: P1-15`
-* active token branch matches this branch
-* working tree is clean
+1. Confirm current branch is:
+
+`sprint/P1-16-psi-identity-blocker-remediation`
+
+2. Confirm `automation_bus/state/work_package_active.json` exists.
+3. Confirm active token has `work_id: P1-16`.
+4. Confirm active token branch matches this branch.
+5. Confirm working tree is clean.
 
 If any condition fails, STOP.
 
-## Phase 1 — Production PSI opt-in contract verification
+## Phase 1 — Build the identity blocker working set
 
-Determine from repository evidence whether adding a production manifest field equivalent to:
+Create an initial working set from current artefacts.
 
-`promoted_signal_intelligence: promoted_signal_intelligence.yaml`
+The working set must include:
 
-would currently:
-
-* only trigger package validation/status reporting; or
-* alter runtime behaviour, emitted reasoning, scoring, DTOs, reports, frontend output, Gemini wording, or user-visible behaviour.
-
-This decision must be made from actual schema, validator, loader and consumer code.
-
-### STOP gate 1 — Runtime boundary
-
-STOP before editing production packages if production PSI opt-in currently affects or may affect:
-
-* signal activation
-* InsightGraph construction
-* root-cause output
-* report/compiler output
-* scoring
-* DTOs
-* frontend output
-* Gemini wording
-* user-visible behaviour
-* any backend/core runtime path
-
-If STOP gate 1 fires, create:
-
-* docs/sprints/beta_readiness/P1-15_production_psi_opt_in_contract_blocker.md
-
-Do not edit production package manifests.
-
-## Phase 2 — Existing production opt-in overlap check
-
-Find all current production package manifests containing `promoted_signal_intelligence:`.
-
-Confirm:
-
-1. package ID
-2. PSI path
-3. whether the PSI path exists
-4. whether the package validates
-5. whether it overlaps with any of the 41 staged P1-10/P1-11/P1-12 PSI artefacts
-6. whether it overlaps with any of the 22 activation-ready P1-14 candidates
-
-### STOP gate 2 — Existing opt-in conflict
-
-STOP before new opt-ins if:
-
-* any existing production opt-in ambiguously overlaps with the staged P1-10/P1-11/P1-12 PSI estate
-* any existing production opt-in is invalid in a way that makes this sprint unsafe
-* existing opt-ins create runtime behaviour not fully understood by Phase 1
-* the same staged PSI would be opted into multiple production packages without explicit rationale
-
-If STOP gate 2 fires, document the blocker and do not add new production opt-ins.
-
-## Phase 3 — Map activation-ready candidates to production packages
-
-Using P1-14 cohort manifest, classify each of the 22 activation-ready candidates.
+1. The 4 P1-15 candidates classified as `BLOCKED_AMBIGUOUS_PACKAGE_MAPPING`.
+2. The 9 P1-14/P1-15 candidates classified as biomarker-identity blocked.
 
 Create:
 
-* docs/sprints/beta_readiness/P1-15_production_psi_opt_in_mapping.yaml
+- docs/sprints/beta_readiness/P1-16_identity_adjudication_manifest.yaml
 
-For each candidate record:
+For each candidate, record:
 
-* staged PSI path
-* staged compile manifest path if available
-* source spec ID if available
-* signal ID if available
-* activation key if available
-* primary metric biomarker ID
-* production package directory
-* production package manifest path
-* pre-opt-in package validation status
-* classification
+- staged package ID
+- staged PSI path
+- staged compile manifest path if available
+- source spec ID if available
+- signal ID if available
+- activation key if available
+- primary metric biomarker ID
+- supporting biomarker IDs
+- blocker class at sprint start
+- proposed resolution path
+- adjudication status
+- production package candidate if any
+- validation status
+- opt-in status
 
-Allowed classifications:
+Allowed adjudication statuses:
 
-* READY_FOR_OPT_IN
-* ALREADY_OPTED_IN
-* BLOCKED_NO_PRODUCTION_PACKAGE
-* BLOCKED_AMBIGUOUS_PACKAGE_MAPPING
-* BLOCKED_EXISTING_CONFLICT
-* BLOCKED_VALIDATION_PRECHECK
-* BLOCKED_CONTRACT_UNSAFE
+- READY_FOR_PRODUCTION_OPT_IN
+- RESOLVED_ALREADY_OPTED_IN
+- BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+- BLOCKED_BIOMARKER_IDENTITY_UNRESOLVED
+- BLOCKED_REQUIRES_DERIVED_MARKER_POLICY
+- BLOCKED_REQUIRES_MEDICAL_REVIEW
+- BLOCKED_REQUIRES_SOURCE_RESEARCH_ADJUDICATION
+- BLOCKED_VALIDATION_FAILURE
+- OUT_OF_SCOPE_FOR_P1_16
 
-Do not guess production package mappings.
+Do not guess missing mappings.
 
-### STOP gate 3 — No safe cohort
+## Phase 2 — Package identity adjudication for the 4 deferred candidates
 
-STOP before production edits if zero candidates are classified as READY_FOR_OPT_IN.
+Adjudicate the four package-identity candidates:
 
-If some candidates are ready and others are blocked, proceed only with READY_FOR_OPT_IN candidates.
+- pkg_kb52c_rbc_high_erythrocytosis_pattern
+- pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+- pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+- pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
 
-## Phase 4 — Production PSI opt-in
+For each, determine from repository evidence whether:
 
-For each READY_FOR_OPT_IN candidate only:
+A. the correct production home is an existing `pkg_kb58_*` package;
+B. a `pkg_kb52c_*` production package should exist but is missing;
+C. the staged PSI artefact should be re-staged/regenerated under the `pkg_kb58_*` identity;
+D. the candidate must remain blocked pending package provenance/compile adjudication.
 
-1. Place the corresponding PSI artefact inside the mapped production package using the path required by the production manifest contract.
-2. Preserve PSI content exactly.
-3. Add the explicit `promoted_signal_intelligence:` entry to the production package manifest.
-4. Do not edit medical content.
-5. Do not edit staged PSI files.
-6. Do not edit staged compile manifests.
-7. Do not edit research_brief.yaml or signal_library.yaml.
-8. Do not edit schemas, validators, runtime code, frontend code, scoring, DTOs, Gemini, or report compilers.
+Evidence must include actual package manifest content, source document/source spec references, signal IDs, primary biomarker IDs, and any source provenance fields available.
+
+### STOP gate 1 — Package identity safety
+
+STOP before any production opt-in for the 4 package-identity candidates if:
+
+- the host production package ID would differ from the PSI internal `package_id`;
+- resolving the mismatch would require unsupported hand editing of medical content;
+- creating a new production package would duplicate an existing active signal package;
+- the correct production home cannot be proven from repository evidence;
+- `source_spec_id` is the only link and package identity remains inconsistent;
+- compile/provenance evidence is insufficient to justify identity migration.
+
+If STOP gate 1 fires for a candidate, leave that candidate blocked as `BLOCKED_PACKAGE_IDENTITY_UNRESOLVED`.
+
+Do not cross-place PSI into `pkg_kb58_*` unless the PSI internal `package_id` is also validly aligned to the host package identity through a deterministic, documented, non-medical identity-normalisation process.
+
+If such deterministic identity-normalisation support does not exist in the repository, do not invent it. Block the candidate.
+
+## Phase 3 — Biomarker identity adjudication for the 9 identity-blocked candidates
+
+For each biomarker-identity blocked candidate:
+
+1. Identify every non-canonical or unresolved biomarker ID.
+2. Determine whether the issue is:
+   - simple alias/synonym mismatch;
+   - outdated package/staged ID naming;
+   - missing SSOT alias;
+   - missing SSOT canonical biomarker;
+   - ambiguous medical concept;
+   - supporting-marker identity issue;
+   - derived-marker issue incorrectly classified as identity;
+   - medical-review issue incorrectly classified as identity.
+3. Check `backend/ssot/biomarkers.yaml`.
+4. Check relevant validators and SSOT lookup behaviour.
+5. Decide whether a safe one-to-one identity correction exists.
+
+Permitted resolutions:
+
+- add or correct a one-to-one alias in `backend/ssot/biomarkers.yaml`;
+- update a production PSI copy to use an already-established canonical biomarker ID, only if this is pure identity normalisation and does not change medical meaning;
+- classify as blocked where identity cannot be proven safely.
+
+### STOP gate 2 — Biomarker identity safety
+
+STOP for the affected candidate if:
+
+- the biomarker maps to more than one plausible canonical ID;
+- the proposed mapping changes medical meaning;
+- the marker is a derived metric requiring calculation/parsing policy;
+- the marker requires medical authority review;
+- the SSOT lacks enough evidence to add an alias safely;
+- resolving it would require backend parser/runtime changes outside this sprint;
+- resolving it would require global/default reference ranges;
+- resolving it would affect runtime interpretation beyond deterministic identity normalisation.
+
+If STOP gate 2 fires for a candidate, classify it clearly and do not opt it in.
+
+## Phase 4 — Implement safe identity resolutions
+
+Apply only adjudicated safe changes.
+
+Allowed implementation actions:
+
+1. Add or correct SSOT aliases in `backend/ssot/biomarkers.yaml` where a one-to-one identity mapping is proven.
+2. Create production PSI artefacts for resolved candidates only where:
+   - the host production package exists;
+   - the host manifest `package_id` matches the PSI internal `package_id`;
+   - package identity is not ambiguous;
+   - biomarker identity is canonical or safely normalised;
+   - no medical content change is required.
+3. Add `promoted_signal_intelligence:` to the production package manifest for resolved candidates only.
+4. Update the P1-16 adjudication manifest.
+
+Do not modify staged PSI files under `knowledge_bus/generated_pilot/`.
+
+If production PSI content differs from staged PSI because of identity normalisation, the sprint report must include an explicit field-level diff showing:
+
+- old ID
+- new ID
+- reason
+- SSOT evidence
+- confirmation that medical meaning did not change
+
+### STOP gate 3 — Production content integrity
+
+STOP or block the candidate if production PSI creation requires:
+
+- changing medical claims;
+- changing thresholds;
+- changing activation logic;
+- changing supporting marker relationships;
+- changing evidence strength;
+- changing interpretation text;
+- changing runtime behaviour;
+- unsupported package ID migration.
+
+Identity metadata and biomarker canonicalisation are the only content changes allowed, and only with evidence.
+
+## Phase 5 — Same-sprint opt-in for newly cleared candidates
+
+For any candidate classified `READY_FOR_PRODUCTION_OPT_IN`:
+
+1. Validate the host production package before opt-in if feasible.
+2. Add the production PSI artefact.
+3. Add the manifest opt-in.
+4. Validate the production PSI.
+5. Validate the production package.
+6. Rerun staged activation-readiness validation.
 
 Preferred outcome:
 
-* Opt in all 22 activation-ready candidates if all 22 pass the STOP gates and mapping checks.
-* If only a subset passes, opt in the passing subset and document blockers for the rest.
-* Do not arbitrarily limit the cohort once safety is proven.
+- Opt in every candidate safely cleared by P1-16.
+- Do not arbitrarily defer safe opt-ins to a future sprint.
+- Leave unresolved candidates explicitly blocked.
 
-### STOP gate 4 — Content integrity
+### STOP gate 4 — Opt-in safety
 
-STOP or exclude the affected candidate if any opted-in PSI file would require content modification to pass validation.
+STOP or block the affected candidate if:
 
-The correct response is to block the candidate, not edit the PSI medical content.
+- production package validation fails;
+- direct PSI validation fails;
+- staged activation-readiness validation regresses unexpectedly;
+- host package identity differs from PSI package identity;
+- opt-in causes runtime/user-facing behaviour;
+- validation failure would require medical content edits;
+- validation failure would require backend/core, backend/scripts, backend/tests, frontend, DTO, scoring or Gemini changes.
 
-## Phase 5 — Validation
+## Phase 6 — Validation
 
-Run:
+Required validation after changes:
 
-* package validation for every changed production package
-* direct PSI validation for each opted-in PSI, using the actual validator CLI supported by the repository
-* staged activation-readiness validation:
+1. Validate every changed production package:
 
-  * python backend/scripts/validate_staged_psi_activation_readiness.py
+`python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/<pkg_name>`
 
-Record exact commands and results in the sprint report.
+2. Validate every newly opted-in PSI artefact using the repository-supported CLI for:
 
-Do not modify validators or tests.
+`backend/scripts/validate_promoted_signal_intelligence.py`
+
+Inspect the script for exact supported arguments if necessary.
+
+3. Rerun:
+
+`python backend/scripts/validate_staged_psi_activation_readiness.py`
+
+4. Run any existing SSOT/biomarker validation script if one exists and is discoverable without adding new code.
+
+Do not edit validators or tests in this sprint.
 
 ### STOP gate 5 — Validation failure
 
-STOP or exclude the affected candidate if:
+If validation fails:
 
-* package validation fails
-* PSI validation fails
-* staged activation-readiness validation regresses
-* validation requires schema, validator, runtime, frontend, DTO, scoring or test changes
-* validation requires PSI content edits
+- fix only if the fix is within this sprint scope and does not require medical-content changes;
+- otherwise revert/exclude the affected candidate and classify it as blocked;
+- continue with other candidates only if safe.
 
-If only one candidate fails, revert/exclude that candidate and continue with the remaining passing candidates if safe.
-
-## Phase 6 — Documentation and register
+## Phase 7 — Documentation and register update
 
 Create:
 
-* docs/sprints/beta_readiness/P1-15_first_production_psi_opt_in_pilot.md
+- docs/sprints/beta_readiness/P1-16_psi_identity_blocker_remediation.md
 
 The report must include:
 
-1. contract verification evidence
-2. existing production opt-in overlap findings
-3. candidate mapping summary
-4. final opted-in cohort
-5. blocked candidates and blocker class
-6. validation commands and outputs
-7. confirmation that no runtime/user-facing activation occurred
-8. confirmation that no medical content changed
-9. confirmation that no blocked PSI cohorts were promoted
-10. recommended next product-forward package
+1. start-state blocker summary;
+2. package identity adjudication for the 4 deferred candidates;
+3. biomarker identity adjudication for the 9 identity-blocked candidates;
+4. SSOT changes made, if any;
+5. production PSI artefacts created or opted in, if any;
+6. candidates newly cleared;
+7. candidates still blocked and exact blocker class;
+8. validation commands and results;
+9. confirmation that no derived-marker or medical-review blocked PSI was promoted;
+10. confirmation that no runtime/user-facing activation occurred;
+11. recommended next outcome-based work package.
 
 Update:
 
-* docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+- docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 
 Keep the register entry lightweight.
 
@@ -267,71 +402,47 @@ Keep the register entry lightweight.
 
 Expected files may include:
 
-* docs/sprints/beta_readiness/P1-15_first_production_psi_opt_in_pilot.md
-* docs/sprints/beta_readiness/P1-15_production_psi_opt_in_mapping.yaml
-* docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-* knowledge_bus/packages/<selected_pkg>/package_manifest.yaml
-* knowledge_bus/packages/<selected_pkg>/promoted_signal_intelligence.yaml
+- docs/sprints/beta_readiness/P1-16_psi_identity_blocker_remediation.md
+- docs/sprints/beta_readiness/P1-16_identity_adjudication_manifest.yaml
+- docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+- backend/ssot/biomarkers.yaml
+- knowledge_bus/packages/<resolved_pkg>/package_manifest.yaml
+- knowledge_bus/packages/<resolved_pkg>/promoted_signal_intelligence.yaml
 
-If STOP gate 1 or 2 fires before opt-in, expected files may instead include:
-
-* docs/sprints/beta_readiness/P1-15_production_psi_opt_in_contract_blocker.md
-* docs/sprints/beta_readiness/P1-15_production_psi_opt_in_mapping.yaml, if mapping could be safely performed
-* docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-
-## Forbidden files
-
-Do not modify:
-
-* backend/core/
-* backend/scripts/
-* backend/tests/
-* backend/ssot/
-* frontend/
-* knowledge_bus/generated_pilot/**/promoted_signal_intelligence.yaml
-* knowledge_bus/generated_pilot/**/compile_manifest.yaml
-* knowledge_bus/research/
-* docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
-* automation_bus/latest_gate_evidence.json
-* automation_bus/latest_gate_output.txt
-
-Do not allow tooling files into the sprint branch, including:
-
-* .codex/
-* .cursor/
-* .vscode/
-* AGENTS.md
+Only include production package changes for candidates that pass all STOP gates.
 
 ## Acceptance criteria
 
 This sprint passes only if:
 
-1. Production PSI opt-in contract is verified from repository evidence.
-2. Existing production opt-ins are inventoried and overlap-checked.
-3. All 22 activation-ready candidates are mapped or explicitly blocked.
-4. Only activation-ready candidates are opted in.
-5. No identity-blocked, derived-marker-blocked or medical-review-blocked PSI is opted in.
-6. Every changed production package validates.
-7. Every opted-in PSI validates.
-8. Staged activation-readiness validation still passes.
-9. No staged PSI content is modified.
-10. No medical content is changed.
-11. No biomarker IDs are changed.
-12. No runtime, frontend, Gemini, DTO, scoring, report compiler, orchestrator or backend/core code is changed.
-13. No user-facing behaviour is introduced.
-14. Mapping and sprint report files are created.
-15. BUILD_DELIVERABLE_REGISTER is updated.
-16. The final report recommends the next outcome-based work package.
+1. All 4 P1-15 package-identity candidates are adjudicated.
+2. All 9 biomarker-identity blocked candidates are adjudicated.
+3. No candidate is cross-placed into a mismatched package ID.
+4. No derived-marker blocked PSI is promoted.
+5. No medical-review blocked PSI is promoted.
+6. Every SSOT change, if any, is a proven one-to-one identity correction.
+7. Every newly opted-in production PSI validates.
+8. Every changed production package validates.
+9. Staged activation-readiness validation runs successfully.
+10. No staged generated-pilot files are modified.
+11. No medical meaning is changed.
+12. No biomarker mapping is guessed.
+13. No backend/core, backend/scripts, backend/tests, frontend, DTO, scoring, Gemini or report compiler files are modified.
+14. No runtime/user-facing activation is introduced.
+15. P1-16 adjudication manifest exists and is complete.
+16. Sprint report exists and explains cleared and blocked candidates.
+17. BUILD_DELIVERABLE_REGISTER is updated.
+18. The final report recommends the next outcome-based package.
 
 ## Classification note
 
-This sprint is HIGH / CONTENT.
+This sprint is HIGH / MIXED.
 
-HIGH is required because production Knowledge Bus medical-intelligence assets are being opted into package manifests.
+HIGH applies because this sprint may touch `backend/ssot/biomarkers.yaml` and production Knowledge Bus medical-intelligence assets.
 
-CONTENT is valid only if Phase 1 proves production PSI opt-in does not alter emitted reasoning, runtime behaviour, ranking, scoring, output construction, or user-visible behaviour.
+MIXED applies because SSOT identity changes may affect downstream validation and potentially runtime canonicalisation, even if no runtime code is changed.
 
-If Phase 1 proves behaviour changes, STOP. Do not reclassify inside the sprint.
+If Phase 1 or Phase 3 proves that the required work would alter emitted reasoning, scoring, report output, DTOs, frontend output, Gemini output, or runtime signal activation, STOP before implementation and escalate.
 
 ## Closure requirements
 
@@ -339,26 +450,27 @@ Before finish, perform the mandatory Post-Implementation Closure Protocol.
 
 Run and report:
 
-* git branch --show-current
-* git status --short
-* git log --oneline -n 5
-* git diff --name-only
-* git diff --cached --name-only
-* git stash list
+- git branch --show-current
+- git status --short
+- git log --oneline -n 5
+- git diff --name-only
+- git diff --cached --name-only
+- git stash list
 
 Confirm:
 
-* branch matches this sprint branch
-* working tree is clean before finish
-* no unrelated tracked modifications remain
-* no stray tooling files are present
-* no ambiguous stash exists
-* latest commit contains only in-scope work
+- branch matches this sprint branch
+- working tree is clean before finish
+- no unrelated tracked modifications remain
+- no stray tooling files are present
+- no ambiguous stash exists
+- latest commit contains only in-scope work
 
 Then run:
 
-* python backend/scripts/run_work_package.py finish
+- python backend/scripts/run_work_package.py finish
 
 After successful finish, handle `automation_bus/latest_cursor_status.json` under Automation Bus SOP v1.3.1.
 
 Do not merge. Human merge authority is required.
+```
