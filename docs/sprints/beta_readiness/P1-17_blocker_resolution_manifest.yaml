@@ -1,0 +1,223 @@
+work_id: P1-17
+manifest_date: '2026-06-21'
+summary:
+  total_candidates: 11
+  package_identity_candidates: 4
+  derived_marker_candidates: 7
+  newly_opted_in: 0
+  blocked_package_identity: 4
+  blocked_requires_core_backend: 7
+  blocked_requires_medical_review_compound: 4
+candidates:
+  # --- Package-identity unresolved cohort (P1-16 carry-forward) ---
+  - candidate_id: p1_17_pkg_identity_001
+    activation_key: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    staged_package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/compile_manifest.yaml
+    source_spec_id: inv_rbc_high_erythrocytosis_pattern
+    signal_id: signal_rbc_high
+    package_id_in_staged_psi: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    proposed_production_package_id: pkg_kb58_rbc_high_erythrocytosis_pattern
+    primary_metric_biomarker_id: rbc
+    supporting_biomarker_ids: []
+    derived_metric_dependency: null
+    blocker_at_sprint_start: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    adjudication_result: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    opt_in_status: blocked_stop_gate_1
+    validation_result: not_applicable
+    core_backend_handoff_required: no
+    blocker_reason: Staged PSI package_id is pkg_kb52c_*; only pkg_kb58_* production package exists; cross-ID placement rejected P1-15 Option B; no identity-normalisation tooling in repository.
+  - candidate_id: p1_17_pkg_identity_002
+    activation_key: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    staged_package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/compile_manifest.yaml
+    source_spec_id: inv_rbc_low_iron_restricted_anemia_pattern
+    signal_id: signal_rbc_low
+    package_id_in_staged_psi: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    proposed_production_package_id: pkg_kb58_rbc_low_iron_restricted_anemia_pattern
+    primary_metric_biomarker_id: rbc
+    supporting_biomarker_ids: []
+    derived_metric_dependency: null
+    blocker_at_sprint_start: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    adjudication_result: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    opt_in_status: blocked_stop_gate_1
+    validation_result: not_applicable
+    core_backend_handoff_required: no
+    blocker_reason: Same pkg_kb52c_* vs pkg_kb58_* identity mismatch; STOP gate 1.
+  - candidate_id: p1_17_pkg_identity_003
+    activation_key: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    staged_package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/compile_manifest.yaml
+    source_spec_id: inv_rdw_cv_high_iron_deficiency_anisocytosis
+    signal_id: signal_rdw_cv_high
+    package_id_in_staged_psi: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    proposed_production_package_id: pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis
+    primary_metric_biomarker_id: rdw_cv
+    supporting_biomarker_ids: []
+    derived_metric_dependency: null
+    blocker_at_sprint_start: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    adjudication_result: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    opt_in_status: blocked_stop_gate_1
+    validation_result: not_applicable
+    core_backend_handoff_required: no
+    blocker_reason: Same pkg_kb52c_* vs pkg_kb58_* identity mismatch; STOP gate 1.
+  - candidate_id: p1_17_pkg_identity_004
+    activation_key: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+    staged_package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/compile_manifest.yaml
+    source_spec_id: inv_rdw_cv_high_mixed_red_cell_population_pattern
+    signal_id: signal_rdw_cv_high
+    package_id_in_staged_psi: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+    proposed_production_package_id: pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern
+    primary_metric_biomarker_id: rdw_cv
+    supporting_biomarker_ids: []
+    derived_metric_dependency: null
+    blocker_at_sprint_start: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    adjudication_result: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    opt_in_status: blocked_stop_gate_1
+    validation_result: not_applicable
+    core_backend_handoff_required: no
+    blocker_reason: Same pkg_kb52c_* vs pkg_kb58_* identity mismatch; STOP gate 1.
+  # --- Derived-marker / transferrin_saturation cohort (P1-14 carry-forward) ---
+  - candidate_id: p1_17_derived_001
+    activation_key: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    staged_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/compile_manifest.yaml
+    source_spec_id: inv_ferritin_high_inflammatory_hyperferritinemia
+    signal_id: signal_ferritin_high
+    package_id_in_staged_psi: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    proposed_production_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    primary_metric_biomarker_id: ferritin
+    supporting_biomarker_ids: [transferrin_saturation, white_blood_cells, crp]
+    derived_metric_dependency: transferrin_saturation
+    blocker_at_sprint_start: BLOCKED_DERIVED_MARKER_DEPENDENCY
+    adjudication_result: BLOCKED_REQUIRES_CORE_BACKEND_AGENT
+    opt_in_status: blocked_stop_gate_2
+    validation_result: not_applicable
+    core_backend_handoff_required: yes
+    blocker_reason: transferrin_saturation is canonical in SSOT (biomarkers.yaml:1865) but hardcoded in DERIVED_MARKER_IDS at validate_staged_psi_activation_readiness.py:32; no production host package exists for ferritin-high pattern.
+  - candidate_id: p1_17_derived_002
+    activation_key: pkg_kb52c_ferritin_high_iron_overload_context
+    staged_package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/compile_manifest.yaml
+    source_spec_id: inv_ferritin_high_iron_overload_context
+    signal_id: signal_ferritin_high
+    package_id_in_staged_psi: pkg_kb52c_ferritin_high_iron_overload_context
+    proposed_production_package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    primary_metric_biomarker_id: ferritin
+    supporting_biomarker_ids: [transferrin_saturation, alt, crp]
+    derived_metric_dependency: transferrin_saturation
+    blocker_at_sprint_start: BLOCKED_DERIVED_MARKER_DEPENDENCY
+    adjudication_result: BLOCKED_REQUIRES_CORE_BACKEND_AGENT
+    opt_in_status: blocked_stop_gate_2
+    validation_result: not_applicable
+    core_backend_handoff_required: yes
+    blocker_reason: Same DERIVED_MARKER_IDS validator constraint; no production host package for ferritin-high pattern.
+  - candidate_id: p1_17_derived_003
+    activation_key: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    staged_package_id: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/compile_manifest.yaml
+    source_spec_id: inv_transferrin_high_iron_deficiency_transport_upregulation
+    signal_id: signal_transferrin_high
+    package_id_in_staged_psi: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    proposed_production_package_id: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    primary_metric_biomarker_id: transferrin
+    supporting_biomarker_ids: [ferritin, mch, transferrin_saturation, rdw_cv]
+    derived_metric_dependency: transferrin_saturation
+    blocker_at_sprint_start: BLOCKED_DERIVED_MARKER_DEPENDENCY
+    adjudication_result: BLOCKED_REQUIRES_CORE_BACKEND_AGENT
+    opt_in_status: blocked_stop_gate_2
+    validation_result: not_applicable
+    core_backend_handoff_required: yes
+    blocker_reason: ID-matched production package exists but lacks PSI; opt-in blocked by DERIVED_MARKER_IDS validator constraint regardless of KB-only PSI placement.
+  - candidate_id: p1_17_derived_004
+    activation_key: pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
+    staged_package_id: pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
+    staged_psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release/compile_manifest.yaml
+    source_spec_id: inv_iron_high_hepatocellular_or_hemolytic_release
+    signal_id: signal_iron_high
+    package_id_in_staged_psi: pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
+    proposed_production_package_id: pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
+    primary_metric_biomarker_id: iron
+    supporting_biomarker_ids: [ferritin, transferrin_saturation, crp]
+    derived_metric_dependency: transferrin_saturation
+    blocker_at_sprint_start: BLOCKED_DERIVED_MARKER_DEPENDENCY
+    adjudication_result: BLOCKED_REQUIRES_CORE_BACKEND_AGENT
+    opt_in_status: blocked_stop_gate_2
+    validation_result: not_applicable
+    core_backend_handoff_required: yes
+    compound_blockers:
+      - BLOCKED_REQUIRES_MEDICAL_REVIEW
+      - documented frame-authority carry-forward
+    blocker_reason: DERIVED_MARKER_IDS validator constraint; no production host package; medical-review and frame-authority carry-forwards from P1-12 remain independent blockers.
+  - candidate_id: p1_17_derived_005
+    activation_key: pkg_kb52c_iron_high_iron_overload_context
+    staged_package_id: pkg_kb52c_iron_high_iron_overload_context
+    staged_psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_iron_overload_context/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_iron_overload_context/compile_manifest.yaml
+    source_spec_id: inv_iron_high_iron_overload_context
+    signal_id: signal_iron_high
+    package_id_in_staged_psi: pkg_kb52c_iron_high_iron_overload_context
+    proposed_production_package_id: pkg_kb52c_iron_high_iron_overload_context
+    primary_metric_biomarker_id: iron
+    supporting_biomarker_ids: [ferritin, transferrin_saturation, alt]
+    derived_metric_dependency: transferrin_saturation
+    blocker_at_sprint_start: BLOCKED_DERIVED_MARKER_DEPENDENCY
+    adjudication_result: BLOCKED_REQUIRES_CORE_BACKEND_AGENT
+    opt_in_status: blocked_stop_gate_2
+    validation_result: not_applicable
+    core_backend_handoff_required: yes
+    compound_blockers:
+      - BLOCKED_REQUIRES_MEDICAL_REVIEW
+      - documented frame-authority carry-forward
+    blocker_reason: Same compound blocker stack as derived_004.
+  - candidate_id: p1_17_derived_006
+    activation_key: pkg_kb52c_iron_low_absolute_iron_deficiency
+    staged_package_id: pkg_kb52c_iron_low_absolute_iron_deficiency
+    staged_psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency/compile_manifest.yaml
+    source_spec_id: inv_iron_low_absolute_iron_deficiency
+    signal_id: signal_iron_low
+    package_id_in_staged_psi: pkg_kb52c_iron_low_absolute_iron_deficiency
+    proposed_production_package_id: pkg_kb52c_iron_low_absolute_iron_deficiency
+    primary_metric_biomarker_id: iron
+    supporting_biomarker_ids: [ferritin, transferrin_saturation, crp]
+    derived_metric_dependency: transferrin_saturation
+    blocker_at_sprint_start: BLOCKED_DERIVED_MARKER_DEPENDENCY
+    adjudication_result: BLOCKED_REQUIRES_CORE_BACKEND_AGENT
+    opt_in_status: blocked_stop_gate_2
+    validation_result: not_applicable
+    core_backend_handoff_required: yes
+    compound_blockers:
+      - BLOCKED_REQUIRES_MEDICAL_REVIEW
+      - documented frame-authority carry-forward
+    blocker_reason: Same compound blocker stack; listed in MEDICAL_REVIEW_PACKAGE_IDS at validate_staged_psi_activation_readiness.py:52.
+  - candidate_id: p1_17_derived_007
+    activation_key: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+    staged_package_id: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+    staged_psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_functional_iron_restriction_inflammation/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_functional_iron_restriction_inflammation/compile_manifest.yaml
+    source_spec_id: inv_iron_low_functional_iron_restriction_inflammation
+    signal_id: signal_iron_low
+    package_id_in_staged_psi: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+    proposed_production_package_id: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+    primary_metric_biomarker_id: iron
+    supporting_biomarker_ids: [ferritin, transferrin_saturation, crp]
+    derived_metric_dependency: transferrin_saturation
+    blocker_at_sprint_start: BLOCKED_DERIVED_MARKER_DEPENDENCY
+    adjudication_result: BLOCKED_REQUIRES_CORE_BACKEND_AGENT
+    opt_in_status: blocked_stop_gate_2
+    validation_result: not_applicable
+    core_backend_handoff_required: yes
+    compound_blockers:
+      - BLOCKED_REQUIRES_MEDICAL_REVIEW
+      - documented frame-authority carry-forward
+    blocker_reason: Same compound blocker stack as derived_006.

@@ -1,0 +1,101 @@
+work_id: P1-17
+manifest_date: '2026-06-21'
+summary:
+  total_handoff_candidates: 7
+  primary_blocker_class: DERIVED_MARKER_VALIDATOR_POLICY
+  secondary_blocker_classes:
+    - missing_production_host_package
+    - medical_review_carry_forward
+    - frame_authority_carry_forward
+handoff_candidates:
+  - candidate_id: p1_17_derived_001
+    activation_key: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    blocking_reason: transferrin_saturation flagged as derived-marker dependency despite SSOT canonical presence
+    likely_core_backend_domains:
+      - backend/scripts/validate_staged_psi_activation_readiness.py
+      - backend/core/ (derived-metric calculation policy if runtime support required)
+    repository_evidence:
+      - backend/ssot/biomarkers.yaml:1865 — transferrin_saturation is a canonical top-level SSOT key
+      - backend/scripts/validate_staged_psi_activation_readiness.py:32 — DERIVED_MARKER_IDS = frozenset({'transferrin_saturation'})
+      - backend/scripts/validate_staged_psi_activation_readiness.py:261-275 — derived-marker blocker appended when supporting marker in DERIVED_MARKER_IDS
+      - knowledge_bus/packages/ — no pkg_kb52c_ferritin_high_* production package exists
+    why_medical_intelligence_did_not_edit: Validator and any derived-metric runtime policy are explicitly out of agent boundary per P1-17 prompt; Medical Intelligence agent may not edit backend/scripts/, backend/ssot/, or backend/core/.
+    expected_backend_agent_outcome: Adjudicate whether transferrin_saturation should remain in DERIVED_MARKER_IDS; if SSOT canonical, remove or replace with governed derived-metric policy; create production host packages where missing; rerun activation-readiness validator.
+    psi_opt_in_after_backend_resolution: yes — after validator policy resolved and production host packages exist with ID-matched package_id
+  - candidate_id: p1_17_derived_002
+    activation_key: pkg_kb52c_ferritin_high_iron_overload_context
+    blocking_reason: Same DERIVED_MARKER_IDS validator constraint; no production host package
+    likely_core_backend_domains:
+      - backend/scripts/validate_staged_psi_activation_readiness.py
+    repository_evidence:
+      - backend/ssot/biomarkers.yaml:1865
+      - backend/scripts/validate_staged_psi_activation_readiness.py:32
+      - knowledge_bus/packages/ — no pkg_kb52c_ferritin_high_iron_overload_context production package
+    why_medical_intelligence_did_not_edit: Agent boundary prohibits backend/scripts/ edits.
+    expected_backend_agent_outcome: Same as derived_001 for validator policy; production package creation may require governed KB package promotion sprint or core-engine host-package workflow.
+    psi_opt_in_after_backend_resolution: yes
+  - candidate_id: p1_17_derived_003
+    activation_key: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    blocking_reason: DERIVED_MARKER_IDS blocks activation-readiness even though ID-matched production package exists without PSI
+    likely_core_backend_domains:
+      - backend/scripts/validate_staged_psi_activation_readiness.py
+    repository_evidence:
+      - knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/package_manifest.yaml:1 — package_id matches staged PSI
+      - knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/ — no promoted_signal_intelligence.yaml present
+      - staged PSI supporting_markers include transferrin_saturation (p1_11_batch_b/.../promoted_signal_intelligence.yaml:45)
+      - backend/scripts/validate_staged_psi_activation_readiness.py:32
+    why_medical_intelligence_did_not_edit: KB-only PSI opt-in would not clear activation-readiness derived-marker blocker without validator policy change; validator edit is out of scope.
+    expected_backend_agent_outcome: Resolve DERIVED_MARKER_IDS policy for SSOT-canonical transferrin_saturation; then Medical Intelligence or follow-on sprint may opt-in PSI to existing production package.
+    psi_opt_in_after_backend_resolution: yes — highest readiness among derived cohort (ID-matched host package exists)
+  - candidate_id: p1_17_derived_004
+    activation_key: pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
+    blocking_reason: DERIVED_MARKER_IDS plus medical-review and frame-authority carry-forwards
+    likely_core_backend_domains:
+      - backend/scripts/validate_staged_psi_activation_readiness.py
+    repository_evidence:
+      - backend/scripts/validate_staged_psi_activation_readiness.py:32,52,62 — DERIVED_MARKER_IDS, MEDICAL_REVIEW_PACKAGE_IDS, FRAME_AUTHORITY_PACKAGE_IDS all reference this package_id
+      - knowledge_bus/packages/ — no pkg_kb52c_iron_high_* production package
+    why_medical_intelligence_did_not_edit: Compound blockers require backend validator policy and medical-review sign-off; both out of scope.
+    expected_backend_agent_outcome: Resolve derived-marker validator policy first; medical-review sprint required before opt-in regardless.
+    psi_opt_in_after_backend_resolution: conditional — only after validator policy and medical-review blockers cleared
+  - candidate_id: p1_17_derived_005
+    activation_key: pkg_kb52c_iron_high_iron_overload_context
+    blocking_reason: Same compound blocker stack as derived_004
+    likely_core_backend_domains:
+      - backend/scripts/validate_staged_psi_activation_readiness.py
+    repository_evidence:
+      - backend/scripts/validate_staged_psi_activation_readiness.py:32,52,62
+      - P1-14_activation_readiness_cohort_manifest.yaml:243-251
+    why_medical_intelligence_did_not_edit: Agent boundary; medical-review carry-forward active.
+    expected_backend_agent_outcome: Same as derived_004.
+    psi_opt_in_after_backend_resolution: conditional
+  - candidate_id: p1_17_derived_006
+    activation_key: pkg_kb52c_iron_low_absolute_iron_deficiency
+    blocking_reason: DERIVED_MARKER_IDS plus medical-review and frame-authority carry-forwards
+    likely_core_backend_domains:
+      - backend/scripts/validate_staged_psi_activation_readiness.py
+    repository_evidence:
+      - backend/scripts/validate_staged_psi_activation_readiness.py:32,52,62
+      - docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml:252-260
+    why_medical_intelligence_did_not_edit: Agent boundary prohibits validator and medical-content adjudication.
+    expected_backend_agent_outcome: Validator policy resolution plus dedicated medical-review sprint.
+    psi_opt_in_after_backend_resolution: conditional
+  - candidate_id: p1_17_derived_007
+    activation_key: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+    blocking_reason: Same compound blocker stack as derived_006
+    likely_core_backend_domains:
+      - backend/scripts/validate_staged_psi_activation_readiness.py
+    repository_evidence:
+      - backend/scripts/validate_staged_psi_activation_readiness.py:32,52,62
+      - docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml:261-269
+    why_medical_intelligence_did_not_edit: Agent boundary.
+    expected_backend_agent_outcome: Same as derived_006.
+    psi_opt_in_after_backend_resolution: conditional
+package_identity_note:
+  description: The 4 package-identity candidates are not core-backend handoffs in this sprint.
+  recommended_owner: source-research / package-provenance sprint (re-staging under pkg_kb58_* or governed pkg_kb52c_* production package creation with architectural approval)
+  candidates:
+    - pkg_kb52c_rbc_high_erythrocytosis_pattern
+    - pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    - pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    - pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern

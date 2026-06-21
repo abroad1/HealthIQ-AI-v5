@@ -425,6 +425,33 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-17 — Remaining PSI blocker resolution pack
+
+**Status:** Complete  
+**Date closed:** 2026-06-21  
+**Programme block(s):** Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- Adjudicated all 11 in-scope candidates (4 package-identity + 7 derived-marker); 0 production PSI opt-ins.
+- All 4 package-identity candidates remain `BLOCKED_PACKAGE_IDENTITY_UNRESOLVED` (STOP gate 1; no cross-ID placement).
+- All 7 derived-marker candidates classified `BLOCKED_REQUIRES_CORE_BACKEND_AGENT` (STOP gate 2; `DERIVED_MARKER_IDS` validator policy vs SSOT-canonical `transferrin_saturation`).
+- Core backend handoff manifest produced for derived-marker cohort.
+
+### Carry-forwards
+- 4 KB-S52c vs KB-S58 CBC package-identity candidates require source-research / re-staging sprint.
+- 7 iron-panel PSI require core-engine validator policy resolution before KB opt-in.
+- 4 iron Batch C PSI carry compound medical-review and frame-authority blockers independent of derived-marker issue.
+- 3 medical-review homocysteine PSI and 2 leukocyte PSI unchanged (out of scope).
+
+### Blockers / risks
+- `transferrin_saturation` is SSOT-canonical but hardcoded as derived in activation-readiness validator — Knowledge Bus-only resolution insufficient.
+- Cross-ID `pkg_kb52c_*` → `pkg_kb58_*` PSI placement remains architecturally forbidden.
+
+### Recommended next sprint
+- P1-DERIVED-METRIC-TRANSFERRIN-SAT-1 (core-engine): resolve `DERIVED_MARKER_IDS` policy; parallel package-provenance sprint for deferred CBC cohort.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
