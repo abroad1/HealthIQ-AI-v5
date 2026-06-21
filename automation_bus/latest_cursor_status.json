@@ -1,9 +1,10 @@
 {
   "branch": "sprint/P1-18-blood-iron-oxygen-pass3-system-activation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-21T14:10:30Z",
   "cursor_started_utc": "2026-06-21T14:06:12Z",
-  "head_sha": "109293bf1e8210de1048ea5dd100d86ce05c232e",
+  "head_sha": "91dca94bafdb96d53fc6a99e0d3d30b009ace1ad",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-18"
 }
