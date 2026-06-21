@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: f978d2a76411cb1054948dac0b1ff22179762da583817ed0668267bb5c83d1bf
+  promoted_signal_intelligence.yaml: 79721d94669d9edea4efe6bf216fd677457b6bf615322b061fd650200ed7d691
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

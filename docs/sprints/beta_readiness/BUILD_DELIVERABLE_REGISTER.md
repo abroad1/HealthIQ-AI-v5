@@ -357,6 +357,27 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-14 — Staged PSI hash repair and activation cohort lock
+
+**Status:** Complete  
+**Date closed:** 2026-06-21  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- Repaired SHA-256 hash integrity on all 41 staged compile manifests without altering PSI medical content.
+- Re-ran P1-13 activation-readiness validator and locked cohort map: 22 activation-ready candidates, 19 blocked across biomarker, derived-marker, and medical-review classes.
+
+### Carry-forwards
+- Production opt-in pilot for 22 activation-ready candidates; SSOT adjudication for 9 biomarker-blocked PSI; derived-metric review for 7 iron-panel PSI; medical review for 3 homocysteine/leukocyte PSI.
+
+### Blockers / risks
+- Blocked cohorts must not enter production opt-in until respective authority sprints complete.
+
+### Recommended next sprint
+- P1-15 production PSI opt-in pilot for activation-ready cohort only.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

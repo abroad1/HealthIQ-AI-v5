@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_mcv_high_nonmegaloblastic_macrocytosis
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_high_nonmegaloblastic_macrocytosis
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 772a5e8243980a80074aea4f1d5665bcc29c70ab271b2fb19df76cb0037cd502
+  promoted_signal_intelligence.yaml: 8da93c4de7e8d8248143bb0a660c4294c00538522f49f235e0ca362b4783e976
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

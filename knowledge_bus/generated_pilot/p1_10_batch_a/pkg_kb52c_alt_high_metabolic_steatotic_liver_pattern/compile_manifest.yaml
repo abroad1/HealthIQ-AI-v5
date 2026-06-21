@@ -13,6 +13,6 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
 output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: fafbad722c11367d59a3bce5356800de446336adc8820917c7a91f0eb77fd6a8
+  promoted_signal_intelligence.yaml: 1f62da4c7d5f378a417257dd327dea34acea8151a728e9bbcf371de9bdcde5b7
 validation:
   promoted_signal_intelligence_validation: PASS

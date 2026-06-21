@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_iron_high_iron_overload_context
 output_root: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_iron_overload_context
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: d767c491a85d64ee07ae6cb335c9aff90011bf8658b8f7328b75644c84b33efd
+  promoted_signal_intelligence.yaml: 09c01ded3502353f8e05cc36c8f555190463b5c6a6971ac0c1b57272f53ba9e4
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

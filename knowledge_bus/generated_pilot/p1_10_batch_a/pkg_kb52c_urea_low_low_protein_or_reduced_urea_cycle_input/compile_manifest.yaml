@@ -13,6 +13,6 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_urea_low_low_protein_or_reduced_urea_cycle_input
 output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_urea_low_low_protein_or_reduced_urea_cycle_input
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 33f893b79e6c28f44340a5fabb872bfe3168481646e42960b8f03e600cee64d7
+  promoted_signal_intelligence.yaml: ff264ebbc68e3348d7babb099f201e02ac6b583ea618de8fbeac04dab007dadb
 validation:
   promoted_signal_intelligence_validation: PASS

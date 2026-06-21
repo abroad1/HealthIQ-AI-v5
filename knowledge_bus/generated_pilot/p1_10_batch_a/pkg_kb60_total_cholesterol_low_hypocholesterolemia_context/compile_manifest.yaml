@@ -13,6 +13,6 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb60_total_cholesterol_low_hypocholesterolemia_context
 output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_total_cholesterol_low_hypocholesterolemia_context
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 682cd8edb0192aeff7ae9fda72e6087fb1afeb32451030bd078ef04e0209bd47
+  promoted_signal_intelligence.yaml: 61ef0c72248d0a25c6cd61830c40b88f43a5f744ccc6444258600fa8953aa3eb
 validation:
   promoted_signal_intelligence_validation: PASS

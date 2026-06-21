@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_wbc_high_reactive_leukocytosis
 output_root: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_wbc_high_reactive_leukocytosis
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 0aa431be37a34e5803bbc90efdc171c81f1ad5e935b271aee9e6a6a7b867dc1e
+  promoted_signal_intelligence.yaml: 7b1455f2ce4ab45eb5feb426769bb7cff8b9b201c1ae3665588bfb8c0bd3c11e
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

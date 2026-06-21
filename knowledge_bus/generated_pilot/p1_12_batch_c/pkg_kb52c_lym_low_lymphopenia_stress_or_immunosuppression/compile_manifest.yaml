@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
 output_root: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 733b6ce28592ded0f20ee4be42eb35f122090dbb965520f5266912d8a82d31d3
+  promoted_signal_intelligence.yaml: 29d02fc736fce259843e3873bc19a565896a46b156f1dc61a655e03f95e71ce2
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

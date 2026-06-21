@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 242eae39463e37fa5bd239b001b084dc59eb07dc9b5d0c98e5abc07927e68a69
+  promoted_signal_intelligence.yaml: 8da0045f259419a31df0ca5842a2c34e68d7274d0e5345a96ae60bfbbcbdfeca
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

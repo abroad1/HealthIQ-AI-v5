@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_hematocrit_high_absolute_erythrocytosis
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_absolute_erythrocytosis
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: c464d8b748478e1e48c4595deb403b1631a29e446d357ba4b68a4e3779b72a10
+  promoted_signal_intelligence.yaml: bac966c2b074428713bd73ff2f253ce08664cdc0b1f62a21ae8fcbbe1072a227
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

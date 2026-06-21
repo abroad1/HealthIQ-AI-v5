@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_mcv_high_megaloblastic_macrocytosis
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_high_megaloblastic_macrocytosis
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: e589355d1947c87b3d34de14d8a237e296546dc71f62785c8103a0c6a2f00873
+  promoted_signal_intelligence.yaml: 6f1d704e95053a253be9b56804c9c88522c5377ef8cc78d6385e63f4cc182d1b
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

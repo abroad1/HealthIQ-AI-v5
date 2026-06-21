@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_plt_high_reactive_thrombocytosis
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_high_reactive_thrombocytosis
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: d11b43a6c08c0c4ef4e71a2dc05f1a66ea134de03c0f9fd377ea09a21ca267d2
+  promoted_signal_intelligence.yaml: 1771ab6f6a2207e9c3d110a856f1f4c5127f53ff078af666ff6fc8ea7c391488
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

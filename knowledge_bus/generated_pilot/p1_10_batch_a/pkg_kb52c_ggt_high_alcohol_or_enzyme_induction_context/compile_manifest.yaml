@@ -13,6 +13,6 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_ggt_high_alcohol_or_enzyme_induction_context
 output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_ggt_high_alcohol_or_enzyme_induction_context
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 714e028bd26fd9f6fdcf368786e788711650c8fc43a7e5cb61390bc638e7f6e0
+  promoted_signal_intelligence.yaml: cd7472e11f64a83c4c0f864caab02fe6965c91e25fdebe3f438ebfdfe58032fe
 validation:
   promoted_signal_intelligence_validation: PASS

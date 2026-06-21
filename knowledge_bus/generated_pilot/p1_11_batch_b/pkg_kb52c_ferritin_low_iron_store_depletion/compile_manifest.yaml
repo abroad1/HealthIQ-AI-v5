@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_ferritin_low_iron_store_depletion
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_low_iron_store_depletion
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 11461d8af5a323542c9ac3fa74002867ed8f9c811ea4700e9f51ae4cf560a2b0
+  promoted_signal_intelligence.yaml: 76c9e8362c797a7056bcd2eba8197995cfaffa14c626417960480c7117ed5b7c
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

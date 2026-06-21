@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 7b5dd18a1563dee6346a0b1d4270edbae4f6c34a5a1a7db48901b4d6a776012d
+  promoted_signal_intelligence.yaml: fff754daf16457a35831535e9d1d5911b9046a290ad421b601b88fcd6d44cabe
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

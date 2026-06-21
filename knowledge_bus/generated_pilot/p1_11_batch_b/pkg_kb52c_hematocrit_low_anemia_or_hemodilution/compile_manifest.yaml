@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_hematocrit_low_anemia_or_hemodilution
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_low_anemia_or_hemodilution
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 7213c72c601ef2ac8cc9c4ff30202e0803f4973c42c0aa5f2a2fccda682a510a
+  promoted_signal_intelligence.yaml: 400c68ebd036f09d449b5dd6e1d031da5d395a26028902012d213850fe3a9bd3
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

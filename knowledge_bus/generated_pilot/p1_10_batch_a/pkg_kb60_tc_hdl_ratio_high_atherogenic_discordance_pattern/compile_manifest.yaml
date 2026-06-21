@@ -13,6 +13,6 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb60_tc_hdl_ratio_high_atherogenic_discordance_pattern
 output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_tc_hdl_ratio_high_atherogenic_discordance_pattern
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: f111d578a2a6bc22ae733243f7f8be03721171d96e12e06e52a9c1c768f3c138
+  promoted_signal_intelligence.yaml: 3875e40fda04346ff968e2d18266000f1ca9e3a73f1777ea67eecef830f91730
 validation:
   promoted_signal_intelligence_validation: PASS

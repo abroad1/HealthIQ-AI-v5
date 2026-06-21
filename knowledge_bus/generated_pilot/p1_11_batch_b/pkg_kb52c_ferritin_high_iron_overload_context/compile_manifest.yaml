@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_ferritin_high_iron_overload_context
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 04c48217d6ea020a8c623e42e888b27818e3e69c383a69b9fcb13fa03164ba08
+  promoted_signal_intelligence.yaml: 607660a9e77916651a3cbc345bd96ae20961f8764c851fea3f41270381712a1c
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

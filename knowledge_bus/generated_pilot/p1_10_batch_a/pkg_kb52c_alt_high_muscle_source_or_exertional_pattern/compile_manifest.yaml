@@ -13,6 +13,6 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
 output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 34035c0d926315fa798e5e1fe9edf40b4e3639b8f8dd65b42a7f72a32c9656ab
+  promoted_signal_intelligence.yaml: 957aee04fc0dbfaf719e25ff281fd57a4bcfbe9bd20bebd8358b4b7dff7bc206
 validation:
   promoted_signal_intelligence_validation: PASS

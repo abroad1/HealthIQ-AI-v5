@@ -13,6 +13,6 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context
 output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: ab89ccce3b5d110fc5e088365f0574d681acbb2c90fdc2b61a60f9c3f8ed8396
+  promoted_signal_intelligence.yaml: 1c21b72a7adb5a1962a4b45dc11c879a9f297af837e71fa3ced6c1a7d363c1a9
 validation:
   promoted_signal_intelligence_validation: PASS

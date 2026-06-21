@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_iron_low_absolute_iron_deficiency
 output_root: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 69a629dbe9297fbcd22b3336b7202503e0d17d4ba2afa28232f397fb45b99ee7
+  promoted_signal_intelligence.yaml: 5752eaee5ec70ef3a689db3d2a466587352694d69234981ae246d5faefb4579f
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

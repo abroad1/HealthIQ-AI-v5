@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: d077fe195bf9f10fc92175833d6dae6fdf2a0a1c64177ce2c0e2f3a4b28276ff
+  promoted_signal_intelligence.yaml: 56fbadc05409ea4a216ade0ec05607d130c4e74d27e8ebe1436e41c9243895ea
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
 output_root: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 7e6ce88f96e8371b0c33ce09c7b567e40e790a99d95f8fbd3ae9bc98f1a58223
+  promoted_signal_intelligence.yaml: ce917be883434600b5ff0363b487c9a01da96a05df4c5067fb000f8b0972b540
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

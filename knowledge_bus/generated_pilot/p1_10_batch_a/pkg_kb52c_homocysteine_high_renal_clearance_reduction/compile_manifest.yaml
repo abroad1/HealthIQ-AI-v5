@@ -13,6 +13,6 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_homocysteine_high_renal_clearance_reduction
 output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_renal_clearance_reduction
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: d1dfec9454700a8259b2189db53f5ae376d39c594439004dd7a1fb624b08a8f3
+  promoted_signal_intelligence.yaml: a6245e0e18fad229b5ec7b3da1cb646e790ec8f92144231d64c63929d7552096
 validation:
   promoted_signal_intelligence_validation: PASS

@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: e9e89a0518d9337a133d40fa9dfa7a5a1fc3975959ab1fa5ef17ff984b742621
+  promoted_signal_intelligence.yaml: 407a3d23f4e226ce5ad510df1a5d6d8f5b6fc6f080c4bed5f1e74d518166dccb
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

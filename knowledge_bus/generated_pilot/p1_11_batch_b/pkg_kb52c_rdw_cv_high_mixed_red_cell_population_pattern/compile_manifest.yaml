@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 6843b8f0e9a27c6b08fed05c3e28686a77d4198c648d3425a919627a829b07b1
+  promoted_signal_intelligence.yaml: 00799905907a321da2d943b6971903186dce3e2559dfd2b33294141d27b95e77
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

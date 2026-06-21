@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_hematocrit_high_relative_hemoconcentration
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_relative_hemoconcentration
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: f3ede349310518b0c065f0b8443976062c13c6403e2e94a0a35826f294b15d05
+  promoted_signal_intelligence.yaml: 62462359169f0cad544e73e60c52f7d6714f329f9395accf5e4fae61ad3fca94
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

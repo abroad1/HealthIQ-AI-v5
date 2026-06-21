@@ -13,6 +13,6 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
 output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: de9635eaae4a490395dedefb63f3a47dd95f29d39c5a106c8ba263a08367a531
+  promoted_signal_intelligence.yaml: eb2f4aee3578a567c73c8456c9b1eae6344ced3cd2dfb82afb1981b330b5134c
 validation:
   promoted_signal_intelligence_validation: PASS

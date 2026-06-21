@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
 output_root: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: daa5529c6490087c32bc2a19cd7f1440964605ea5846e356b5248aa7f2500e94
+  promoted_signal_intelligence.yaml: 1bcc1d32522387c2fbde782bf8e153ea9ed3748438e45003ad9b800326a31ab6
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

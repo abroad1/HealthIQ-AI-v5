@@ -13,6 +13,6 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb60_tc_hdl_ratio_low_hdl_dominant_pattern
 output_root: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_tc_hdl_ratio_low_hdl_dominant_pattern
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: e03f035b0981b4b59acb8d64c433cee44bcf5f1d534806ba7f5f3b067afc7c13
+  promoted_signal_intelligence.yaml: f4e302d4370f1c056afed2e08ff612462b24e56f8572e69f83abe1151653b111
 validation:
   promoted_signal_intelligence_validation: PASS

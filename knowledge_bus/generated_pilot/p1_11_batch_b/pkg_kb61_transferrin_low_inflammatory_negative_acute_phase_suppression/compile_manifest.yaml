@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 9c939c9cc7ae75a443b157c70602b2388abef1fb13f231a03399fb8adfcbdf52
+  promoted_signal_intelligence.yaml: d3c8126a56f13c5d3dce455b20768f1cd4b283ac3b189beb99d4873dbf8def0e
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS

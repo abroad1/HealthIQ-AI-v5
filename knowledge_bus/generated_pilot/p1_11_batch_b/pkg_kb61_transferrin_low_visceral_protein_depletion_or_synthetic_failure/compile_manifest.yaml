@@ -13,7 +13,7 @@ source_contract_version: 3.0.0
 target_package_id: pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure
 output_root: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure
 output_hashes_sha256:
-  promoted_signal_intelligence.yaml: 092613e811f3d4662308f8094f852e1a98d90723a93e59bd1d7afd79fa8acce8
+  promoted_signal_intelligence.yaml: 07a83eb5d91178be37086915732083dae486f37dab097db281bfc0c51bd3dd09
 validation:
   promoted_signal_intelligence_validation: PASS
   validator_output: 'validation_status: PASS
