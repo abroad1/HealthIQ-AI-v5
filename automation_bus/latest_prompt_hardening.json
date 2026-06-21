@@ -1,27 +1,27 @@
 {
-  "work_id": "P1-14",
-  "status": "HARDENED",
   "bus_version": "1.3.1",
-  "hardened_utc": "2026-06-21T10:00:00Z",
+  "work_id": "P1-15",
+  "status": "HARDENED",
+  "hardened_utc": "2026-06-21T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6) — SOP v1.3.1 Stage 2",
   "changes": [
     {
       "check": "front_matter.work_id",
       "result": "PASS",
-      "finding": "CONFIRMED — work_id 'P1-14' present.",
+      "finding": "CONFIRMED — work_id 'P1-15' present.",
       "citation": "automation_bus/latest_cursor_prompt.md:2"
     },
     {
       "check": "front_matter.branch",
       "result": "PASS",
-      "finding": "CONFIRMED — branch 'work/P1-14-staged-psi-hash-repair-and-activation-cohort-lock' present. Cursor must start from main, confirm clean working tree and local main == origin/main, then create this branch before modifying any files.",
+      "finding": "CONFIRMED — branch 'sprint/P1-15-first-production-psi-opt-in-pilot' present and well-formed.",
       "citation": "automation_bus/latest_cursor_prompt.md:3"
     },
     {
       "check": "front_matter.risk_level",
       "result": "PASS",
-      "finding": "CONFIRMED HIGH. This sprint operates across 41 staged PSI compile manifests, runs the P1-13 activation-readiness validator, and locks the cohort map for downstream production planning. SOP §10 technical HIGH triggers (Intelligence Core, backend/ssot/ modification, backend/core/) are not directly triggered — only compile manifest hash values and docs artefacts are written. Conservative HIGH is defensible and appropriate: the sprint gates production activation planning. Cursor must not reduce the risk level.",
-      "citation": "automation_bus/latest_cursor_prompt.md:4; SOP v1.3.1 §10"
+      "finding": "CONFIRMED HIGH. Production Knowledge Bus medical-intelligence assets are being opted into package manifests. Prompt §Classification note provides explicit rationale. SOP §10 HIGH triggers: production knowledge package content modification. Correct.",
+      "citation": "automation_bus/latest_cursor_prompt.md:4; automation_bus/latest_cursor_prompt.md:328-334"
     },
     {
       "check": "front_matter.execution_model",
@@ -32,134 +32,100 @@
     {
       "check": "front_matter.change_type",
       "result": "PASS",
-      "finding": "CONFIRMED CONTENT. P1-14 modifies only compile manifest hash values (non-executable audit data artefacts) and creates docs outputs. No code is created or modified. The validator (backend/scripts/validate_staged_psi_activation_readiness.py) already exists from P1-13 and is not modified. No Intelligence Core components are touched. Compile manifests are not consumed by runtime (runtime_consumed: false confirmed at p1_10_batch_a_compile_manifest_index_v1.yaml:7). CONTENT is correct per SOP §4 definition.",
-      "citation": "automation_bus/latest_cursor_prompt.md:6; SOP v1.3.1 §4 CONTENT definition; knowledge_bus/generated_pilot/p1_10_batch_a/p1_10_batch_a_compile_manifest_index_v1.yaml:7"
+      "finding": "CONFIRMED CONTENT. ARCH-RT-5E audit (read in full) classifies PSI as 'deferred_non_launch_blocker'. PSI is not consumed by any launch-critical Intelligence Core module. Adding promoted_signal_intelligence: to a production manifest only triggers validation/status reporting. No emitted reasoning, scoring, DTOs, reports, frontend output, or user-visible behaviour changes. CONTENT classification is valid per SOP §4 definition and explicitly conditioned in prompt §Classification note.",
+      "citation": "automation_bus/latest_cursor_prompt.md:6; docs/audit-papers/ARCH-RT-5E_psi_runtime_wiring_decision_audit.md:5 (decision: deferred_non_launch_blocker) and :50 (PSI remains validation/compile-time artefact only)"
     },
     {
-      "check": "stage_2a.prerequisite_docs_all_present",
+      "check": "stage_2a.authority_paths_all_present",
       "result": "PASS",
-      "finding": "CONFIRMED — all 12 prerequisite files and all 3 batch directories verified present on main.",
+      "finding": "CONFIRMED — all 8 mandatory authority files verified present in repository.",
       "paths_verified": [
-        "CONFIRMED: docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-11_pass3_cbc_iron_oxygen_signal_intelligence_batch_b.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-12_pass3_deferred_cbc_iron_hematology_batch_c.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-12_signal_intelligence_batch_c_manifest.yaml — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_gate.md — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml — EXISTS",
-        "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — EXISTS",
-        "CONFIRMED: backend/scripts/validate_staged_psi_activation_readiness.py — EXISTS (514 lines, read and verified)",
-        "CONFIRMED: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — EXISTS",
-        "CONFIRMED: knowledge_bus/generated_pilot/p1_10_batch_a/ — EXISTS",
-        "CONFIRMED: knowledge_bus/generated_pilot/p1_11_batch_b/ — EXISTS",
-        "CONFIRMED: knowledge_bus/generated_pilot/p1_12_batch_c/ — EXISTS"
+        "CONFIRMED: docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml — EXISTS (read in full, 300 lines, 22 ACTIVATION_READY_CANDIDATE items)",
+        "CONFIRMED: docs/sprints/beta_readiness/P1-14_staged_psi_hash_repair_and_activation_cohort_lock.md — EXISTS",
+        "CONFIRMED: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — EXISTS (read in full)",
+        "CONFIRMED: docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — EXISTS",
+        "CONFIRMED: knowledge_bus/schema/package_manifest_schema.yaml — EXISTS (read in full; promoted_signal_intelligence is optional string field; triggers validate_promoted_signal_intelligence.py when present)",
+        "CONFIRMED: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml — EXISTS (read in full; schema_version 1.0.0 LOCKED; trigger_direction_allowed: high|low|bidirectional|context_dependent; legacy 'both' is obsolete)",
+        "CONFIRMED: backend/scripts/validate_knowledge_package.py — EXISTS (read in full; promoted_signal_intelligence logic at lines 218-235: absent=SKIP, present=run validator)",
+        "CONFIRMED: backend/scripts/validate_promoted_signal_intelligence.py — EXISTS (read in full; 491 lines; deterministic structural validator; exit 0=PASS, exit 1=FAIL)",
+        "CONFIRMED: backend/scripts/validate_staged_psi_activation_readiness.py — EXISTS"
       ],
-      "citation": "Directory listing and file presence checks on main"
-    },
-    {
-      "check": "stage_2a.compile_manifest_hash_field_structure_verified",
-      "result": "CONFIRMED — SOURCE CONTENT READ",
-      "finding": "CONFIRMED. Hash field structure in compile manifests is unambiguous: field path is output_hashes_sha256.promoted_signal_intelligence.yaml containing a SHA-256 hex digest string. Structure is consistent across the estate (sampled manifest has it at lines 15-17). The repair operation is to recompute SHA-256 of each staged PSI file and write the updated value at this field. No structural ambiguity exists. No STOP condition for unclear hash field structure will be triggered.",
-      "citation": "knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/compile_manifest.yaml:15-17 — output_hashes_sha256.promoted_signal_intelligence.yaml: de9635eaae4a490395dedefb63f3a47dd95f29d39c5a106c8ba263a08367a531"
-    },
-    {
-      "check": "stage_2a.compile_manifest_psi_pairing_verified",
-      "result": "CONFIRMED — CLEAN ESTATE",
-      "finding": "CONFIRMED. P1-13 manifest (read: docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:22-23) reports 41 PSI files found and 41 compile manifests found — 1:1 pairing confirmed across all 3 batches. No orphan PSI files (missing compile manifest) and no orphan compile manifests (missing PSI file) were reported by P1-13. No STOP conditions for missing pairings will be triggered.",
-      "citation": "docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:21-23 — psi_files_found: 41, compile_manifests_found: 41"
-    },
-    {
-      "check": "stage_2a.runtime_active_all_false_verified",
-      "result": "CONFIRMED — ALL CLEAR",
-      "finding": "CONFIRMED. P1-13 manifest items (all 41 read): every item shows runtime_active: 'false' and production_manifest_opt_in: 'false'. No staged PSI has been activated or opted into a production manifest. Validator STOP conditions relating to runtime activation will not be triggered.",
-      "citation": "docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:items[0..40] — runtime_active: 'false' in all 41 items; production_manifest_opt_in: 'false' in all 41 items"
-    },
-    {
-      "check": "stage_2a.hash_mismatch_cause_verified",
-      "result": "CONFIRMED — STALE MANIFESTS, NOT CORRUPTED PSI CONTENT",
-      "finding": "CONFIRMED. P1-13 found compile_manifest_hash_mismatch in all 41 items. P1-13 also confirmed promoted_signal_intelligence_validation: PASS for structural validation (P1-13 manifest validation section: staged_psi_validator: pass). The hash mismatches are caused by stale hash values in the compile manifests (recorded at compile time, not updated since), not by corrupted or modified PSI content. Repairing hashes does not require editing PSI content. STOP condition 'a hash mismatch appears to be caused by missing or corrupted PSI content' will NOT be triggered.",
-      "citation": "docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:31 — compile_manifest_hash_mismatch: 41 (all hash mismatches); validation.staged_psi_validator: pass"
-    },
-    {
-      "check": "stage_2a.batch_index_files_do_not_contain_psi_hashes",
-      "result": "CONFIRMED — INDEX FILES MUST NOT BE EDITED",
-      "finding": "CONFIRMED. All 3 batch-level compile manifest index files exist (p1_10_batch_a_compile_manifest_index_v1.yaml, p1_11_batch_b_compile_manifest_index_v1.yaml, p1_12_batch_c_compile_manifest_index_v1.yaml). The p1_10 index was read in full (40 lines). It contains only: index_id, work_id, schema_version, compiler_version, generated_utc, pilot_output_root, runtime_consumed, clusters_selected, entries_promoted, and per-entry fields: cluster_id, package_id, spec_id, source_path, output_dir, runtime_active, promotion_action. There is NO output_hashes_sha256 field and NO PSI hash value in any entry. The prompt permits editing index files 'only if they contain hash values requiring synchronisation'. They do not. Cursor must NOT edit the batch index files.",
-      "citation": "knowledge_bus/generated_pilot/p1_10_batch_a/p1_10_batch_a_compile_manifest_index_v1.yaml:1-40 — no output_hashes_sha256 field present"
-    },
-    {
-      "check": "stage_2a.validator_script_verified",
-      "result": "CONFIRMED — SCRIPT EXISTS AND IS STRUCTURALLY SOUND",
-      "finding": "CONFIRMED. backend/scripts/validate_staged_psi_activation_readiness.py exists (514 lines, read in full). It is the P1-13 activation-readiness validator. It is report-only and does not mutate any files. Key structural findings: (1) uses hardcoded STAGED_BATCHES dict (lines 26-30) pointing to all 3 batch directories; (2) accepts --ssot, --psi-schema, --packages-root, --json, --fail-on-blocked args; (3) emits plain-text summary to stdout plus optional JSON via --json flag; (4) classify_item() priority logic at lines 147-170 handles multi-blocker priority correctly; (5) source_spec_id check at line 306 verifies each compile manifest has a source_spec_id. Script is ready for Phase 1 re-run.",
-      "citation": "backend/scripts/validate_staged_psi_activation_readiness.py:1-514 (read in full); STAGED_BATCHES at lines 26-30; main() CLI args at lines 456-485; classify_item() at lines 147-170"
-    },
-    {
-      "check": "stage_2a.validator_command_mismatch",
-      "result": "SOFT FLAG — NOT A BLOCKER",
-      "finding": "The prompt Phase 1 specifies the validator command as: python backend/scripts/validate_staged_psi_activation_readiness.py --staged-root knowledge_bus/generated_pilot --batches p1_10_batch_a p1_11_batch_b p1_12_batch_c. The actual script (lines 456-485) has NO --staged-root or --batches arguments. The correct invocation is simply: python backend/scripts/validate_staged_psi_activation_readiness.py (batches are hardcoded at lines 26-30 and default to all 3 batches). The prompt contains its own fallback: 'If the script uses different arguments, inspect the script help and run the correct equivalent.' This self-corrects. However, Cursor must NOT attempt to add --staged-root/--batches args to the script. Run without those flags.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Phase 1 (incorrect suggested command); backend/scripts/validate_staged_psi_activation_readiness.py:456-485 (actual CLI args); backend/scripts/validate_staged_psi_activation_readiness.py:26-30 (hardcoded STAGED_BATCHES)"
-    },
-    {
-      "check": "stage_2a.post_hash_expected_split_verified",
-      "result": "CONFIRMED — BASELINE FROM P1-13",
-      "finding": "CONFIRMED. P1-13 manifest hypothetical_if_hash_integrity_resolved (lines 37-42) projects: ACTIVATION_READY: 22, BLOCKED_BIOMARKER_IDENTITY: 9, BLOCKED_DERIVED_MARKER_DEPENDENCY: 7, BLOCKED_MEDICAL_REVIEW_REQUIRED: 3. These sum to 41 — consistent with the total estate. The classify_item() priority logic in the validator (lines 147-170) confirms this projection is plausible: once hash blockers are removed, packages with only hash mismatch will become ACTIVATION_READY, while those with additional blockers will surface the next-priority blocker. Cursor must not force this result — verify from actual validator output. If the split differs, report and explain.",
-      "citation": "docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:37-42 — hypothetical_if_hash_integrity_resolved block; backend/scripts/validate_staged_psi_activation_readiness.py:147-170 — classify_item() priority order"
-    },
-    {
-      "check": "stage_2a.source_spec_id_presence_spot_checked",
-      "result": "CONFIRMED — NO BLOCKED_SOURCE_SUPPORT EXPECTED FOR CLEAN CANDIDATES",
-      "finding": "CONFIRMED. Sampled compile manifest (pkg_kb52c_alt_high_hepatocellular_injury_pattern) shows source_spec_id: inv_alt_high_hepatocellular_injury_pattern at line 10. This field is present. The validator checks this at line 306 (if not manifest_doc.get('source_spec_id')). Based on P1-13 output (no BLOCKED_SOURCE_SUPPORT in P1-13 blocker counts), this field is present across the estate. No BLOCKED_SOURCE_SUPPORT cohort is expected to be material, but Cursor must confirm from actual validator output.",
-      "citation": "knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/compile_manifest.yaml:10 — source_spec_id: inv_alt_high_hepatocellular_injury_pattern; backend/scripts/validate_staged_psi_activation_readiness.py:306"
+      "citation": "Glob and Read verification — all 8 files confirmed"
     },
     {
       "check": "stage_2a.no_duplicate_authority_sources",
       "result": "PASS",
-      "finding": "CONFIRMED. Single source of truth for PSI hash authority: individual compile_manifest.yaml files under each package directory. Single validator script: backend/scripts/validate_staged_psi_activation_readiness.py. No competing hash authority exists in batch index files (confirmed above). No duplicate authority risk.",
-      "citation": "Directory structure: knowledge_bus/generated_pilot/{batch}/{package_id}/compile_manifest.yaml pattern confirmed"
+      "finding": "CONFIRMED. Single authoritative source for PSI schema: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml. Single validator for PSI: backend/scripts/validate_promoted_signal_intelligence.py. Single production package store: knowledge_bus/packages/. Single orchestration validator: backend/scripts/validate_knowledge_package.py. No competing authority sources exist.",
+      "citation": "backend/scripts/validate_knowledge_package.py:36 (PROMOTED_SIGNAL_VALIDATOR path); knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml:14 (schema_name, status: LOCKED)"
     },
     {
-      "check": "stage_2a.prohibited_files_verified_outside_scope",
+      "check": "stage_2a.stop_gate_1_runtime_boundary",
+      "result": "CONFIRMED — GATE DOES NOT FIRE",
+      "finding": "CONFIRMED from repository evidence. (1) load_promoted_signal_intelligence_for_package() is defined in backend/core/knowledge/load_promoted_signal_intelligence.py but is NOT imported by any launch-critical Intelligence Core module. (2) test_arch_rt5e_psi_runtime_wiring_decision.py enforces this as a machine-checked guard at CI (lines 28-34 assert no PSI import marker in 9 launch-critical paths). (3) ARCH-RT-5E audit table (lines 40-45) confirms: signal firing=No, card evidence=No, root-cause/WHY=No, report assembly=No, orchestrator=No. (4) The ARCH-RT-5E audit conclusion (line 50): 'PSI remains validation/compile-time artefact only.' (5) validate_knowledge_package.py PSI handling (lines 217-235): promoted_signal_intelligence key absent → status=SKIP; key present → run validate_promoted_signal_intelligence.py → PASS or FAIL. Effect is validation-only. Production PSI opt-in does NOT affect: signal activation, InsightGraph, root-cause output, report/compiler output, scoring, DTOs, frontend output, Gemini wording, or any backend/core runtime path.",
+      "citation": "docs/audit-papers/ARCH-RT-5E_psi_runtime_wiring_decision_audit.md:5 ('deferred_non_launch_blocker'), :28 ('Runtime-consumed anywhere in Intelligence Core? No'), :50 ('None. PSI remains validation/compile-time artefact only.'); backend/tests/unit/test_arch_rt5e_psi_runtime_wiring_decision.py:28-34 (machine-enforced import guard); backend/scripts/validate_knowledge_package.py:217-235"
+    },
+    {
+      "check": "stage_2a.existing_production_psi_opt_in_inventory",
+      "result": "CONFIRMED",
+      "finding": "CONFIRMED — exactly 20 production packages currently have promoted_signal_intelligence: in their manifests. All are pkg_kb47_* series. All 20 have matching promoted_signal_intelligence.yaml files on disk. Zero overlap with any of the 22 activation-ready candidates (which are all pkg_kb52c_*, pkg_kb60_*, pkg_kb61_* series). Existing opt-ins predate this sprint and are not affected by P1-15.",
+      "citation": "Grep: pattern=promoted_signal_intelligence, path=knowledge_bus/packages, output=files_with_matches: 40 results (20 manifests + 20 PSI files, all pkg_kb47_*); Glob: knowledge_bus/packages/*/promoted_signal_intelligence.yaml: 20 files"
+    },
+    {
+      "check": "stage_2a.22_target_production_packages_exist",
+      "result": "CONFIRMED",
+      "finding": "CONFIRMED — all 22 production package directories from the P1-14 activation-ready cohort exist in knowledge_bus/packages/. Sample spot-check: pkg_kb52c_alt_high_hepatocellular_injury_pattern/package_manifest.yaml (read at line 1): package_id confirmed, behavioural_impact: NONE, no promoted_signal_intelligence key present. Grep of knowledge_bus/packages for promoted_signal_intelligence in pkg_kb52c_*, pkg_kb60_*, pkg_kb61_* returns zero matches — confirming no existing PSI opt-in for any of the 22 target packages.",
+      "citation": "knowledge_bus/packages/pkg_kb52c_alt_high_hepatocellular_injury_pattern/package_manifest.yaml:1-13 (read in full, no promoted_signal_intelligence key); Glob: knowledge_bus/packages/*/package_manifest.yaml (confirms all 22 package dirs present)"
+    },
+    {
+      "check": "stage_2a.manifest_format_for_psi_opt_in",
+      "result": "CONFIRMED",
+      "finding": "CONFIRMED. Existing pkg_kb47_egfr_low_hemodynamic_filtration_drop/package_manifest.yaml (read at line 7) shows: 'promoted_signal_intelligence: promoted_signal_intelligence.yaml' — relative path format. The behavioural_impact: NONE field is retained unchanged alongside the PSI key. Adding PSI does NOT require changing behavioural_impact. The PSI key value must be the relative path to the PSI file within the package directory.",
+      "citation": "knowledge_bus/packages/pkg_kb47_egfr_low_hemodynamic_filtration_drop/package_manifest.yaml:7 (promoted_signal_intelligence: promoted_signal_intelligence.yaml) and :12 (behavioural_impact: NONE)"
+    },
+    {
+      "check": "stage_2a.staged_psi_to_production_mapping",
+      "result": "CONFIRMED",
+      "finding": "CONFIRMED. Staged PSI paths: knowledge_bus/generated_pilot/<batch>/<package_id>/promoted_signal_intelligence.yaml. Production package paths: knowledge_bus/packages/<package_id>/. Package IDs match exactly (e.g., pkg_kb52c_alt_high_hepatocellular_injury_pattern appears in both staged and production). Copy operation: read staged PSI → place in production package directory as promoted_signal_intelligence.yaml → add manifest key. Staged file must remain unmodified.",
+      "citation": "docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml:43 (psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/promoted_signal_intelligence.yaml); knowledge_bus/packages/pkg_kb52c_alt_high_hepatocellular_injury_pattern/package_manifest.yaml:1 (package_id confirmed matching)"
+    },
+    {
+      "check": "stage_2b.content_type_change_type_validation",
+      "result": "CONFIRMED",
+      "finding": "CONFIRMED. The only changes within production packages are: (1) new file: promoted_signal_intelligence.yaml (PSI content copy, no modification); (2) addition of promoted_signal_intelligence: field in package_manifest.yaml. Both are CONTENT per SOP §4 definition (non-executable data, governed content, YAML modification). The CONTENT classification is valid only if STOP gate 1 confirms no runtime effect — which it does (see stop_gate_1_runtime_boundary above).",
+      "citation": "SOP v1.3.1 §4 CONTENT definition; automation_bus/latest_cursor_prompt.md:328-334"
+    },
+    {
+      "check": "stage_2b.regression_risk_iter_why_enabled",
+      "result": "SOFT FLAG — NOT A BLOCKER",
+      "finding": "Adding PSI to 22 packages will change classify_package_type() return value from 'signal-only' to 'WHY-enabled' for all 22 (kb_lifecycle_contract_v1.py:171-174). iter_why_enabled_packages() (called at test_lc_s16_17_19_kb_surface_payload_contract.py:247) will iterate 22 additional packages. That regression test validates WHY-enabled package contract structure. If any of the 22 staged PSI files fail the KB surface payload contract assertions, STOP gate 5 will fire. Cursor should run 'pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py' as part of Phase 5 in addition to the three listed validators. NOT a blocker — STOP gate 5 covers this — but Phase 5 is safer with regression tests included.",
+      "citation": "backend/core/knowledge/kb_lifecycle_contract_v1.py:171-174 (classify_package_type WHY-enabled branch); backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py:247 (iter_why_enabled_packages call)",
+      "severity": "RECOMMENDATION"
+    },
+    {
+      "check": "stage_2b.tier_classification_note",
+      "result": "INFORMATIONAL — NOT A BLOCKER",
+      "finding": "infer_governed_tier() in kb_lifecycle_contract_v1.py (lines 223-231) grants 'v3_grade_rich_governed' tier only to pkg_kb47_* packages with PSI. For pkg_kb52c_*, pkg_kb60_*, pkg_kb61_* packages, the function returns 'post_kb_s49_unreviewed_batch' regardless of PSI status. Adding PSI to the 22 candidates will NOT promote them to 'v3_grade_rich_governed'. They will show package_type: WHY-enabled but governed_tier: post_kb_s49_unreviewed_batch in estate inventory tooling. Cursor should confirm test_lc_s18a_package_estate_inventory.py still passes after opt-in.",
+      "citation": "backend/core/knowledge/kb_lifecycle_contract_v1.py:223-231 (infer_governed_tier — POST_KB_S49_BATCH_PREFIXES includes pkg_kb52c_, pkg_kb60_, pkg_kb61_)",
+      "severity": "INFORMATIONAL"
+    },
+    {
+      "check": "stage_2b.blocked_cohort_must_not_be_opted_in",
+      "result": "CONFIRMED — PROMPT STOP GATES ENFORCE THIS",
+      "finding": "CONFIRMED. The 19 blocked candidates are named explicitly in P1-14 cohort manifest with machine-readable blocker fields. STOP gate 3 fires if zero READY_FOR_OPT_IN candidates exist. STOP gate 4 fires if any opted-in PSI would require content modification to pass validation. Sprint acceptance criteria items 4 and 5 reiterate: only activation-ready candidates may be opted in; identity-blocked, derived-marker-blocked and medical-review-blocked candidates must not be promoted. Prompt structure is sound for this protection.",
+      "citation": "docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml:130-299 (19 blocked items with explicit blocker fields); automation_bus/latest_cursor_prompt.md:184-188 (STOP gate 3); automation_bus/latest_cursor_prompt.md:209-213 (STOP gate 4)"
+    },
+    {
+      "check": "stage_2b.forbidden_files_guard",
+      "result": "CONFIRMED",
+      "finding": "CONFIRMED. Prompt §Forbidden files (lines 283-301) explicitly prohibits modification of: backend/core/, backend/scripts/, backend/tests/, backend/ssot/, frontend/, knowledge_bus/generated_pilot/**/promoted_signal_intelligence.yaml (staged PSI must not be edited), knowledge_bus/generated_pilot/**/compile_manifest.yaml, knowledge_bus/research/, docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md, automation_bus/latest_gate_evidence.json, automation_bus/latest_gate_output.txt. Tooling files (.codex/, .cursor/, .vscode/, AGENTS.md) must not enter the sprint branch. Permitted production package writes are scoped to: new promoted_signal_intelligence.yaml in target package dirs; promoted_signal_intelligence: manifest key in package_manifest.yaml for target packages; new documentation files.",
+      "citation": "automation_bus/latest_cursor_prompt.md:283-301"
+    },
+    {
+      "check": "stage_2b.powershell_compatibility",
       "result": "PASS",
-      "finding": "CONFIRMED. All prohibited paths are outside the declared write scope: frontend/, Gemini paths, fallback parser paths, backend/core/, backend/scripts/ (validator not modified), backend/tests/, backend/ssot/scoring_policy.yaml, backend/ssot/biomarkers.yaml, runtime DTO contracts, domain assemblers, narrative assemblers, compiled runtime cards, production package manifests, Pass 3 source files, investigation-spec source files, Knowledge Bus source package files, staged promoted_signal_intelligence.yaml files (PSI content must not change), docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md, docs/AUTHORITY_MAP.md. Permitted writes are limited to: compile_manifest.yaml hash fields only in p1_10_batch_a/, p1_11_batch_b/, p1_12_batch_c/; docs/sprints/beta_readiness/P1-14_staged_psi_hash_repair_and_activation_cohort_lock.md (new); docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml (new); docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md (append-only); automation_bus/.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Prohibited changes; §Permitted changes"
-    },
-    {
-      "check": "stage_2a.powershell_command_compatibility",
-      "result": "PASS",
-      "finding": "CONFIRMED. All validation commands in the prompt use PowerShell-compatible syntax. The manifest YAML validation one-liner uses outer double-quotes with inner single-quote Python string literals — compatible with PowerShell 5.1. No && operator used. git commands are standard. Python script invocation is straightforward.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Validation (python -c one-liner); §Branch and state checks (git commands)"
-    },
-    {
-      "check": "stop_conditions.pre_assessment",
-      "result": "PASS — NO STOP CONDITIONS PRE-TRIGGERED",
-      "finding": "CONFIRMED. Phase 0 STOP conditions assessed: (1) PSI without matching compile manifest — NONE (41:41 confirmed). (2) compile manifest without matching PSI — NONE (41:41 confirmed). (3) hash field structure unclear — CLEAR (output_hashes_sha256.promoted_signal_intelligence.yaml confirmed). (4) hash mismatch caused by corrupted PSI content — NOT THE CASE (PSI structural validation passed in P1-13). (5) repairing hashes would require editing PSI content — NOT REQUIRED (hash repair is manifest-only). (6) repairing hashes would require production package changes — NOT REQUIRED (production packages are separate). Phase 1 STOP conditions: no pre-triggered conditions found. The estate is ready for Phase 0 hash repair.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Phase 0 STOP conditions; docs/sprints/beta_readiness/P1-13_staged_psi_activation_readiness_manifest.yaml:21-23 and validation block"
-    },
-    {
-      "check": "hardening_flag_1.index_files_must_not_be_edited",
-      "result": "MANDATORY HARDENING FLAG",
-      "finding": "The prompt lists compile_manifest_index*.yaml files as conditionally permitted changes ('only if they contain hash values requiring synchronisation'). These files do NOT contain PSI hash values — confirmed by reading p1_10_batch_a_compile_manifest_index_v1.yaml in full. Cursor must not edit any batch index file during this sprint. Editing them would be an out-of-scope modification.",
-      "citation": "knowledge_bus/generated_pilot/p1_10_batch_a/p1_10_batch_a_compile_manifest_index_v1.yaml:1-40 — no output_hashes_sha256 field; automation_bus/latest_cursor_prompt.md:§Permitted changes (conditional clause)"
-    },
-    {
-      "check": "hardening_flag_2.psi_content_must_not_change",
-      "result": "MANDATORY HARDENING FLAG",
-      "finding": "The hash repair sprint modifies ONLY the output_hashes_sha256.promoted_signal_intelligence.yaml value in each compile_manifest.yaml. The promoted_signal_intelligence.yaml files themselves must remain byte-for-byte identical throughout the sprint. Cursor must confirm at Stage 4A that git diff shows zero changes to any promoted_signal_intelligence.yaml file. If any PSI content change is detected, STOP immediately.",
-      "citation": "automation_bus/latest_cursor_prompt.md:§Phase 0 (Do not edit PSI medical content); §Runtime non-activation validation (no staged promoted_signal_intelligence.yaml files changed); §Acceptance criteria: criteria 2-5"
-    },
-    {
-      "check": "hardening_flag_3.validator_command_correction",
-      "result": "MANDATORY HARDENING FLAG",
-      "finding": "Cursor must NOT use the --staged-root or --batches arguments suggested in the prompt Phase 1 command. These arguments do not exist in the validator script. The correct command is: python backend/scripts/validate_staged_psi_activation_readiness.py. Optional useful flags: --json (for full JSON output) and --fail-on-blocked (to confirm non-zero exit if any PSI is blocked). Cursor may add --json to capture the full report. Do NOT modify the script to add the suggested arguments.",
-      "citation": "backend/scripts/validate_staged_psi_activation_readiness.py:456-485 (actual argument parser); automation_bus/latest_cursor_prompt.md:§Phase 1 fallback clause"
-    },
-    {
-      "check": "hardening_flag_4.tooling_file_leakage",
-      "result": "MANDATORY HARDENING FLAG",
-      "finding": "Cursor must confirm at Stage 4A that no tooling files (.cursor/rules/, .vscode/, .codex/, AGENTS.md) are staged or committed to the sprint branch. SOP v1.3.1 non-negotiable: no tooling-file leakage into governed sprint branches.",
-      "citation": "SOP v1.3.1 non-negotiables; automation_bus/latest_cursor_prompt.md:§Prohibited changes"
+      "finding": "All validation commands in the prompt use standard Python invocation and git commands compatible with PowerShell. No bash-specific syntax used. Commands such as 'python backend/scripts/validate_staged_psi_activation_readiness.py', 'python backend/scripts/validate_knowledge_package.py --package-dir <path>', and 'python backend/scripts/validate_promoted_signal_intelligence.py --model <path>' are all PowerShell-compatible.",
+      "citation": "automation_bus/latest_cursor_prompt.md:§Phase 5 (Validation commands)"
     }
   ],
-  "overall_verdict": "HARDENED. All 5 front-matter fields confirmed. All prerequisite files (12 files, 3 batch directories) confirmed present on main. Compile manifest hash field structure confirmed at output_hashes_sha256.promoted_signal_intelligence.yaml. All 41 PSI-manifest pairs confirmed (1:1 matching, no orphans). All runtime_active: false confirmed. Hash mismatch cause confirmed as stale manifests, not corrupted PSI content — no STOP conditions will be triggered by Phase 0. Batch-level index files confirmed to contain NO PSI hash fields — Cursor must not edit them. Validator script read and verified (514 lines, CLI args confirmed — correct invocation has no --staged-root or --batches flags). Post-hash expected split (22/9/7/3) confirmed as consistent with P1-13 hypothetical and validator priority logic. No STOP conditions pre-triggered. Four mandatory hardening flags documented. Cursor may proceed under TWO_PHASE_START_FINISH governance."
+  "overall_verdict": "HARDENED. All 5 front-matter fields confirmed present and valid. All 8 mandatory authority files confirmed to exist in repository. STOP gate 1 evidence conclusive: ARCH-RT-5E audit + machine-enforced test guard confirm PSI is validation/compile-time only — no runtime, scoring, DTO, report, frontend, or Gemini effect. change_type: CONTENT validated as correct against this evidence. risk_level: HIGH confirmed appropriate for production KB medical asset modification. Exactly 20 existing PSI opt-ins (all pkg_kb47_*) confirmed with zero overlap against the 22 activation-ready candidates. All 22 target production package directories confirmed to exist with no existing PSI opt-in. Manifest opt-in format confirmed from pkg_kb47_* precedent. Two soft flags documented (regression test scope expansion, tier classification note) — both covered by STOP gate 5; neither is a blocker. Cursor may proceed under TWO_PHASE_START_FINISH governance."
 }
