@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-14-staged-psi-hash-repair-and-activation-cohort-lock",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-21T08:59:22Z",
   "cursor_started_utc": "2026-06-21T08:54:06Z",
-  "head_sha": "e32b24a6c27bdbd31812f07ea522e08fabc904ac",
+  "head_sha": "52612bba38d07903e608d9de89fde1c9f4ffc8f2",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-14"
 }
