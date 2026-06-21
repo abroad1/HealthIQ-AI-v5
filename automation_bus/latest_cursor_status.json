@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-11-pass3-cbc-iron-oxygen-signal-intelligence-batch-b",
+  "branch": "work/P1-12-pass3-deferred-cbc-iron-hematology-batch-c",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-20T15:11:47Z",
-  "cursor_started_utc": "2026-06-20T15:07:37Z",
-  "head_sha": "be6e8c331f9dcb511d895484f078d5bdc9b0dcf4",
+  "cursor_started_utc": "2026-06-21T07:43:05Z",
+  "head_sha": "310a7ee2d3ad5baaf76fe48c2c2c43ca77bee7a0",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-11"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-12"
 }
