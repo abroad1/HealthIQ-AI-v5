@@ -1,10 +1,9 @@
 {
-  "branch": "sprint/P1-16-psi-identity-blocker-remediation",
+  "branch": "sprint/P1-17-remaining-psi-blocker-resolution",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-21T11:56:56Z",
-  "cursor_started_utc": "2026-06-21T11:49:52Z",
-  "head_sha": "7a414b6ce58d6713fe7f6c262629aa70a627d3ed",
+  "cursor_started_utc": "2026-06-21T13:05:19Z",
+  "head_sha": "d4dc32c84cc5d018634b5bbcbeaf7d55a8a9393f",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-16"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-17"
 }
