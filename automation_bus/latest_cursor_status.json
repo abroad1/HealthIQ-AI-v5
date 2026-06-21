@@ -1,9 +1,10 @@
 {
   "branch": "work/P1-13-staged-psi-activation-readiness-gate",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-21T08:26:14Z",
   "cursor_started_utc": "2026-06-21T08:17:57Z",
-  "head_sha": "51f9a6df2efc3757878b0146e8fa05e55883d58e",
+  "head_sha": "3b6a8030938a6cd956bba543af1bc4029a3b4c66",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-13"
 }
