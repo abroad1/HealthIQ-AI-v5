@@ -1,56 +1,56 @@
 ---
-work_id: P1-11
-branch: work/P1-11-pass3-cbc-iron-oxygen-signal-intelligence-batch-b
+work_id: P1-12
+branch: work/P1-12-pass3-deferred-cbc-iron-hematology-batch-c
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: CONTENT
 ---
 
-# P1-11 — Pass 3 Signal Intelligence Batch B: CBC / Iron / Oxygen Frame-Adjudication Cohort
+# P1-12 — Pass 3 Signal Intelligence Batch C: Deferred CBC / Iron / Haematology Review Cohort
 
 ## Objective
 
-Run the second Pass 3 signal-intelligence batch promotion sprint.
+Run the third Pass 3 signal-intelligence batch promotion sprint.
 
-This sprint focuses on the CBC / iron / oxygen-carrying-capacity research estate and must determine which related Pass 3 signal clusters can be safely promoted into governed non-runtime signal intelligence, and which must remain blocked or deferred because of unresolved frame authority.
+This sprint focuses on the CBC / iron / haematology clusters deferred by P1-11 because of frame-authority, medical-review, or source-support blockers.
+
+This sprint must determine which deferred clusters can now be safely promoted into staged, non-runtime PSI artefacts, and which must remain deferred with a clear blocker.
 
 This sprint is part of the eight-block beta-readiness programme.
 
 It follows:
 
 ```text
-P1-9 — Pass 3 Research-to-Runtime Exploitation Map
 P1-10 — Pass 3 Launch-Core Signal Intelligence Batch A
+P1-11 — Pass 3 CBC / Iron / Oxygen Signal Intelligence Batch B
 ```
 
-P1-10 established the reusable batch-promotion pattern:
-
-```text
-Pass 3 investigation specs
-→ staged governed PSI artefacts
-→ compile manifests
-→ batch manifest
-→ build register entry
-→ no runtime activation
-```
-
-P1-11 must continue that pattern, using the specialist Knowledge Bus medical-intelligence promotion discipline.
-
-## Strategic purpose
-
-This sprint must continue batch-based Pass 3 ingestion without falling into micro-sprints.
-
-The goal is to capture the richness of the CBC / iron / oxygen research estate while preserving medical safety, frame authority, and non-runtime staging.
+P1-11 promoted the safe Batch B cohort and deferred conflicted clusters. P1-12 must now resolve the deferred cohort in a governed way without forcing unsafe medical intelligence into the signal estate.
 
 Promotion is not activation.
 
 Do not make anything runtime-active.
 
-Do not add production scoring policy.
+Do not change runtime behaviour.
 
-Do not create or modify compiled runtime cards.
+## Strategic purpose
 
-Do not modify backend runtime, frontend, Gemini, parser, DTO, or domain assembler files.
+This sprint prevents the Pass 3 ingestion programme from accumulating unresolved deferred medical-intelligence clusters.
+
+The goal is not to promote everything.
+
+The goal is to make a governed decision for each deferred CBC / iron / haematology cluster:
+
+```text
+promote safely to staged PSI
+promote partially with explicit blockers
+defer pending medical review
+defer pending frame-authority decision
+defer pending source research support
+defer pending schema support
+```
+
+This must remain a batch sprint, not one-marker-at-a-time work.
 
 ## Branch and state checks
 
@@ -75,7 +75,7 @@ Confirm:
 Then create:
 
 ```powershell
-git switch -c work/P1-11-pass3-cbc-iron-oxygen-signal-intelligence-batch-b
+git switch -c work/P1-12-pass3-deferred-cbc-iron-hematology-batch-c
 ```
 
 Do not proceed if the working tree is dirty.
@@ -92,6 +92,8 @@ docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
 docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
 docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
 docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
+docs/sprints/beta_readiness/P1-11_pass3_cbc_iron_oxygen_signal_intelligence_batch_b.md
+docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 ```
@@ -99,7 +101,7 @@ docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 If any are missing, stop and report:
 
 ```text
-P1-11 prerequisite beta-readiness or governance evidence is not present on main. P1-11 must not proceed.
+P1-12 prerequisite beta-readiness or governance evidence is not present on main. P1-12 must not proceed.
 ```
 
 ## First authority documents
@@ -108,10 +110,12 @@ Read these first, in this order:
 
 ```text
 docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
-docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
-docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
+docs/sprints/beta_readiness/P1-11_pass3_cbc_iron_oxygen_signal_intelligence_batch_b.md
+docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml
 docs/sprints/beta_readiness/P1-10_pass3_launch_core_signal_intelligence_batch_a.md
 docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
+docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_map.md
+docs/sprints/beta_readiness/P1-9_pass3_research_to_runtime_exploitation_matrix.yaml
 docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
 docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
@@ -120,131 +124,120 @@ docs/architecture/User Health to Systems Map_FINAL.md
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
-Use the new `healthiq-knowledge-bus-medical-intelligence` agent rule if available.
+Use the `healthiq-knowledge-bus-medical-intelligence` agent rule if available.
 
-If the agent rule is missing, continue under the approved sprint prompt, but record that the specialist agent rule was not available.
+If the agent rule is missing, continue under the approved sprint prompt, but record that the specialist rule was not available.
 
-## Critical frame-adjudication gate
+## Scope
 
-Before promoting any CBC / iron / oxygen signal intelligence, identify whether there are unresolved frame-authority conflicts.
+Use P1-11’s deferred clusters as the starting point.
 
-Search for and inspect evidence relating to:
-
-```text
-CBC
-haematology
-hemoglobin
-haemoglobin
-hematocrit
-haematocrit
-RBC
-MCV
-MCH
-MCHC
-RDW
-platelets
-WBC
-neutrophils
-lymphocytes
-ferritin
-iron
-transferrin
-transferrin saturation
-TIBC
-UIBC
-oxygen carrying capacity
-anaemia
-anemia
-iron deficiency
-iron overload
-inflammation
-blood oxygen
-```
-
-Inspect relevant Pass 3 / investigation-spec files directly.
-
-Likely files may include, if present:
+Candidate deferred clusters include, if present in P1-11 deliverables:
 
 ```text
-knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
-knowledge_bus/research/investigation_specs/multi_llm_research/iron_pass_3.json
-knowledge_bus/research/investigation_specs/multi_llm_research/Batch_*.json
+- haemoglobin low / oxygen-carrying-capacity pattern
+- haemoglobin high / erythrocytosis-context pattern
+- iron low
+- iron high
+- MCHC high / spherocytic-context pattern
+- platelet high / clonal-context pattern
+- platelet low / marrow-suppression-context pattern
+- any Batch B cluster classified as DEFER_FRAME_AUTHORITY_CONFLICT
+- any Batch B cluster classified as DEFER_MEDICAL_REVIEW_REQUIRED
+- any Batch B cluster classified as DEFER_INSUFFICIENT_SCHEMA_SUPPORT
 ```
+
+Do not assume these are safe to promote.
+
+For each deferred cluster, determine whether new or already-existing source evidence, schema support, frame authority, or medical-review evidence supports staged non-runtime PSI promotion.
+
+## Direct source inspection requirement
+
+For each cluster considered, inspect the relevant Pass 3 / investigation-spec content directly.
 
 Do not infer from filenames only.
 
-The sprint must classify each selected CBC / iron / oxygen cluster as one of:
+Inspect source research for:
+
+```text
+- biomarker identity
+- high/low/directional pattern
+- biological rationale
+- corroborating markers
+- contradiction or suppression markers
+- context requirements
+- safety cautions
+- non-diagnostic wording constraints
+- system/subsystem mapping
+- evidence/provenance references
+- whether source support is primary or only secondary/contextual
+```
+
+Important rule:
+
+Do not create a primary PSI signal for a biomarker if no direct primary Pass 3 investigation spec supports that biomarker/pattern.
+
+You may capture the blocker in the sprint report and manifest.
+
+## Adjudication classifications
+
+Classify each considered cluster using only the following sprint-level values:
 
 ```text
 PROMOTE_TO_STAGED_PSI
 PROMOTE_PARTIAL_STAGED_PSI_WITH_BLOCKERS
 DEFER_FRAME_AUTHORITY_CONFLICT
 DEFER_MEDICAL_REVIEW_REQUIRED
+DEFER_INSUFFICIENT_SOURCE_SUPPORT
 DEFER_INSUFFICIENT_SCHEMA_SUPPORT
-DEFER_NOT_BATCH_B_RELEVANT
+DEFER_NOT_BATCH_C_RELEVANT
 ```
 
-Use these classifications only in the sprint report and Batch B manifest unless the governed artefact schema already supports them.
+Use these only in the sprint report and Batch C manifest unless the governed PSI schema already supports them.
 
-Do not put unsupported classification fields into `promoted_signal_intelligence.yaml`.
+Do not put unsupported fields into `promoted_signal_intelligence.yaml`.
 
-## Batch B target scope
+## Medical-review boundary
 
-Target a meaningful cohort, not a micro-sprint.
+Cursor does not perform medical review.
 
-Target size:
+Cursor may only determine whether existing approved research/governance material supports promotion.
+
+If a cluster requires medical judgement beyond existing approved source material, classify it as:
 
 ```text
-Minimum: 4 material clusters
-Maximum: 8 material clusters
+DEFER_MEDICAL_REVIEW_REQUIRED
 ```
 
-Candidate clusters to consider include, if supported by source research and repository evidence:
+Do not promote it by inventing cautious wording.
 
-```text
-- haemoglobin low / oxygen-carrying-capacity pattern
-- haemoglobin high / concentration or erythrocytosis-context pattern
-- haematocrit high / low pattern
-- MCV low / microcytic-pattern context
-- MCV high / macrocytic-pattern context
-- RDW high / anisocytosis or mixed-pattern context
-- ferritin low / iron-store depletion context
-- ferritin high / inflammation or iron-overload-context pattern
-- transferrin saturation high / iron-overload-context pattern
-- transferrin saturation low / iron-availability context
-- platelet high / reactive-pattern context
-- platelet low / thrombocytopenia-context pattern
-- neutrophil high / inflammation or stress-response context
-- lymphocyte low / immune/stress-context pattern
-```
+Do not downgrade high-risk patterns to make them promotable.
 
-Do not force all of these into scope.
+## Expected promotion target
 
-Select the most coherent 4–8 clusters based on Pass 3 richness, launch-core relevance, downstream gap, and frame safety.
-
-If a cluster has unresolved frame authority, do not force promotion. Defer it and explain why.
-
-## Promotion target
-
-Use the same staging pattern as P1-10 unless the repository governance documents require a different pattern.
+Use the same staged non-runtime pattern as P1-10 and P1-11.
 
 Expected staged path:
 
 ```text
-knowledge_bus/generated_pilot/p1_11_batch_b/
+knowledge_bus/generated_pilot/p1_12_batch_c/
 ```
 
-Do not write directly into production package manifests unless explicitly required by the sprint and confirmed safe.
+Do not write directly into production package manifests.
 
-Do not create a duplicate authority source.
+Do not create production manifest opt-ins.
 
-If the authoritative PSI staging pattern from P1-10 is unavailable or invalid, stop and report.
+Do not modify production packages.
+
+Do not create a duplicate signal repository.
+
+If the P1-10/P1-11 staged PSI pattern is not available on main, stop and report.
 
 ## Promotion rules
 
-For each selected cluster that is safe to promote, create staged, non-runtime PSI artefacts using the governed PSI schema.
+For any cluster that is safe to promote, create staged non-runtime PSI artefacts using the governed PSI schema.
 
-Each promoted PSI artefact must preserve, where the schema supports it:
+Each PSI artefact must preserve, where schema-supported:
 
 ```text
 - stable signal identifier
@@ -256,7 +249,7 @@ Each promoted PSI artefact must preserve, where the schema supports it:
 - context requirements
 - corroborating markers
 - contradiction / suppression conditions
-- non-diagnostic safety framing
+- cautious non-diagnostic framing
 - root-cause / WHY substrate
 - system or subsystem mapping
 - evidence/provenance
@@ -268,23 +261,29 @@ Do not invent signal systems.
 
 Do not invent trigger directions.
 
-Do not use `signal_system: cardiovascular` if the PSI schema does not allow it.
+Do not use `trigger_direction: both`.
 
-Do not use legacy `trigger_direction: both`; use valid vocabulary such as `bidirectional` or `context_dependent` where schema-supported.
+Do not add unsupported lifecycle, scoring, review or runtime fields to PSI.
 
-Do not add unsupported lifecycle fields to PSI.
+Capture readiness metadata in the sprint report, Batch C manifest, or compile manifest only.
 
-If readiness, runtime activation, medical-review, or scoring status cannot be stored in PSI, capture it in:
+## Specific safety constraints
 
-```text
-- sprint report
-- Batch B manifest
-- compile manifest
-```
+Do not add diagnostic claims such as confirmed anaemia, iron deficiency, iron overload, infection, malignancy, bleeding, haemochromatosis, thrombocytopenia, myeloproliferative disorder, haemolysis, immune disorder, or marrow failure.
+
+Do not recommend treatment, medication, supplements, referral urgency, or investigation pathways.
+
+Do not add global/default reference ranges.
+
+Do not add placeholder scoring bands.
+
+Do not override lab-provided reference ranges.
+
+Do not infer symptoms unless present in approved source context.
 
 ## Runtime non-activation rule
 
-All Batch B promoted artefacts must remain non-runtime-active.
+All Batch C promoted artefacts must remain non-runtime-active.
 
 Do not add production manifest opt-ins.
 
@@ -298,37 +297,19 @@ Do not modify backend runtime or frontend.
 
 If a promotion would become runtime-consumed automatically, stop and report before writing it.
 
-## Specific safety constraints
-
-Do not add diagnostic claims such as confirmed anaemia, iron deficiency, iron overload, infection, malignancy, bleeding, haemochromatosis, thrombocytopenia diagnosis, or immune disorder diagnosis.
-
-Use cautious educational wording only.
-
-Do not recommend treatment.
-
-Do not add supplement or medication advice.
-
-Do not add global/default reference ranges.
-
-Do not add placeholder scoring bands.
-
-Do not override lab-provided reference ranges.
-
-Do not infer symptoms unless present in source context.
-
 ## Permitted changes
 
 Expected product changes may include:
 
 ```text
-knowledge_bus/generated_pilot/p1_11_batch_b/
-docs/sprints/beta_readiness/P1-11_pass3_cbc_iron_oxygen_signal_intelligence_batch_b.md
-docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml
+knowledge_bus/generated_pilot/p1_12_batch_c/
+docs/sprints/beta_readiness/P1-12_pass3_deferred_cbc_iron_hematology_batch_c.md
+docs/sprints/beta_readiness/P1-12_signal_intelligence_batch_c_manifest.yaml
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 automation_bus/
 ```
 
-Within `knowledge_bus/generated_pilot/p1_11_batch_b/`, expected artefacts may include:
+Within `knowledge_bus/generated_pilot/p1_12_batch_c/`, expected artefacts may include:
 
 ```text
 - batch compile manifest index
@@ -353,7 +334,7 @@ compiled runtime cards
 production package manifests
 Pass 3 source files
 investigation-spec source files
-Knowledge Bus source package files outside the approved staged Batch B target
+Knowledge Bus source package files outside the approved staged Batch C target
 docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
 docs/AUTHORITY_MAP.md
 ```
@@ -363,19 +344,19 @@ docs/AUTHORITY_MAP.md
 Create:
 
 ```text
-docs/sprints/beta_readiness/P1-11_pass3_cbc_iron_oxygen_signal_intelligence_batch_b.md
+docs/sprints/beta_readiness/P1-12_pass3_deferred_cbc_iron_hematology_batch_c.md
 ```
 
 Use this structure:
 
 ```markdown
-# P1-11 — Pass 3 Signal Intelligence Batch B: CBC / Iron / Oxygen Frame-Adjudication Cohort
+# P1-12 — Pass 3 Signal Intelligence Batch C: Deferred CBC / Iron / Haematology Review Cohort
 
 ## 1. Executive summary
 - why this sprint was run
-- what Batch B promoted
-- what was deferred
-- whether frame authority blocked any clusters
+- which P1-11 deferred clusters were reconsidered
+- what Batch C promoted
+- what remained deferred
 - whether runtime activation remains unchanged
 - recommended next sprint
 
@@ -383,28 +364,32 @@ Use this structure:
 - relationship to eight-block beta-readiness
 - relationship to P1-9
 - relationship to P1-10
+- relationship to P1-11
 - why this is batch-based rather than one-marker-at-a-time
 
-## 3. Source research inspected
+## 3. Deferred cluster baseline from P1-11
+For each deferred cluster:
+- P1-11 classification
+- P1-11 blocker
+- what P1-12 rechecked
+
+## 4. Source research inspected
 For each Pass 3 file/spec inspected:
 - path
 - spec IDs
 - biomarkers/patterns
 - source themes
+- whether support is primary or secondary/contextual
 - limitations
 
-## 4. Frame-adjudication findings
+## 5. Adjudication findings
 For each considered cluster:
-- frame authority status
-- selected classification
+- Batch C classification
 - reason for promote/defer
-- safety constraints
-
-## 5. Batch B selection rationale
-- clusters considered
-- clusters selected
-- clusters deferred
-- why this is the right-sized batch
+- source-support finding
+- frame-authority finding
+- medical-review finding
+- schema-support finding
 
 ## 6. Promotion implementation
 For each promoted cluster:
@@ -416,11 +401,12 @@ For each promoted cluster:
 - safety framing
 - downstream gaps
 
-## 7. Deferred clusters
-For each deferred cluster:
+## 7. Still-deferred clusters
+For each still-deferred cluster:
 - reason for deferral
 - blocker type
 - what is needed next
+- whether it should be medical-review, frame-authority, schema, or source-research work
 
 ## 8. Safety and non-activation confirmation
 Confirm:
@@ -440,17 +426,21 @@ Confirm:
 - PSI validators run
 - YAML parse checks
 - git diff checks
+- hash updates
 - limitations
 
 ## 10. Business value delivered
 Explain:
-- how this improves the blood / iron / oxygen signal estate
-- how much Pass 3 richness was captured
-- why staged promotion improves defensibility without unsafe activation
+- what deferred ambiguity was reduced
+- which research value was safely captured
+- why any remaining deferrals protect product safety
+- how this improves the signal estate without runtime activation
 
 ## 11. Carry-forwards
-- deferred clusters for Batch C or medical review
-- frame-authority decisions needed
+- clusters still requiring medical review
+- clusters still requiring frame adjudication
+- clusters still requiring source research
+- clusters still requiring schema support
 - scoring-policy needs
 - prose/WHY needs
 - runtime integration needs
@@ -465,37 +455,40 @@ Recommend the next sprint with:
 - rationale
 ```
 
-## Required deliverable 2 — Batch B manifest
+## Required deliverable 2 — Batch C manifest
 
 Create:
 
 ```text
-docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml
+docs/sprints/beta_readiness/P1-12_signal_intelligence_batch_c_manifest.yaml
 ```
 
 Use this structure:
 
 ```yaml
-work_id: P1-11
+work_id: P1-12
 classification_date: <YYYY-MM-DD>
 source_authorities:
   - path: <path>
     role: <role>
 batch:
-  name: Pass 3 Signal Intelligence Batch B — CBC / Iron / Oxygen
-  selected_clusters: <number>
+  name: Pass 3 Signal Intelligence Batch C — Deferred CBC / Iron / Haematology
+  considered_clusters: <number>
+  promoted_clusters: <number>
   deferred_clusters: <number>
   promoted_psi_files: <number>
 clusters:
   - id: <stable_cluster_slug>
     name: <human readable cluster name>
-    batch_classification: PROMOTE_TO_STAGED_PSI | PROMOTE_PARTIAL_STAGED_PSI_WITH_BLOCKERS | DEFER_FRAME_AUTHORITY_CONFLICT | DEFER_MEDICAL_REVIEW_REQUIRED | DEFER_INSUFFICIENT_SCHEMA_SUPPORT | DEFER_NOT_BATCH_B_RELEVANT
+    p1_11_classification: <classification>
+    p1_12_classification: PROMOTE_TO_STAGED_PSI | PROMOTE_PARTIAL_STAGED_PSI_WITH_BLOCKERS | DEFER_FRAME_AUTHORITY_CONFLICT | DEFER_MEDICAL_REVIEW_REQUIRED | DEFER_INSUFFICIENT_SOURCE_SUPPORT | DEFER_INSUFFICIENT_SCHEMA_SUPPORT | DEFER_NOT_BATCH_C_RELEVANT
     source_pass3_paths:
       - <path>
     source_spec_ids:
       - <spec_id>
     biomarkers:
       - <biomarker>
+    support_type: primary | secondary_contextual | absent | unclear
     system_mapping:
       - <system>
     subsystem_mapping:
@@ -532,7 +525,7 @@ docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 Append a short entry:
 
 ```markdown
-## P1-11 — Pass 3 CBC / iron / oxygen signal intelligence Batch B
+## P1-12 — Pass 3 deferred CBC / iron / haematology Batch C
 
 **Status:** Complete / Partial / Blocked  
 **Date closed:** <YYYY-MM-DD>  
@@ -540,7 +533,7 @@ Append a short entry:
 
 ### Delivered / ticked off
 - <what this sprint completed against the beta-readiness programme>
-- <major Batch B promotion or frame-adjudication outcome>
+- <major Batch C promotion or adjudication outcome>
 
 ### Carry-forwards
 - <what still needs to be done later>
@@ -569,10 +562,10 @@ git diff --name-only
 git status --short
 ```
 
-Validate the Batch B manifest YAML:
+Validate the Batch C manifest YAML:
 
 ```powershell
-python -c "import yaml; from pathlib import Path; p=Path('docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml'); data=yaml.safe_load(p.read_text(encoding='utf-8')); assert data['work_id']=='P1-11'; assert 'clusters' in data; print('P1-11 Batch B manifest YAML parsed successfully')"
+python -c "import yaml; from pathlib import Path; p=Path('docs/sprints/beta_readiness/P1-12_signal_intelligence_batch_c_manifest.yaml'); data=yaml.safe_load(p.read_text(encoding='utf-8')); assert data['work_id']=='P1-12'; assert 'clusters' in data; print('P1-12 Batch C manifest YAML parsed successfully')"
 ```
 
 Run the PSI validator against every new or changed `promoted_signal_intelligence.yaml`.
@@ -583,7 +576,7 @@ Capture the exact validator command and output for all changed PSI files.
 
 If any validator fails, stop and report failure.
 
-If no validator exists, record this clearly and use YAML/schema/manual checks.
+If compile manifests contain output hashes, update hashes after PSI edits and report the updated hashes.
 
 ## Runtime non-activation validation
 
@@ -613,15 +606,19 @@ Return:
 - branch name
 - main SHA baseline
 - specialist agent availability
+- P1-11 deferred clusters reconsidered
 - source Pass 3 files/specs inspected
-- clusters considered
 - clusters promoted
-- clusters deferred
+- clusters still deferred
+- source-support blockers
 - frame-authority blockers
+- medical-review blockers
+- schema-support blockers
 - files changed
 - runtime activation status
 - PSI validator commands and outputs
 - manifest YAML parse result
+- hash updates
 - whether production package manifests changed
 - whether scoring_policy.yaml changed
 - whether backend/frontend/runtime files changed
@@ -639,15 +636,15 @@ Do not merge until Claude audit, GPT architectural review and human approval.
 This sprint is complete only if:
 
 ```text
-1. CBC / iron / oxygen Pass 3 source research is directly inspected.
+1. P1-11 deferred CBC / iron / haematology clusters are reconsidered.
 
-2. Frame authority is assessed before promotion.
+2. Relevant Pass 3 source research is directly inspected.
 
-3. A meaningful Batch B cohort is considered.
+3. Source support is distinguished as primary, secondary/contextual, absent or unclear.
 
 4. Safe clusters are promoted to staged, non-runtime PSI artefacts.
 
-5. Unsafe or conflicted clusters are deferred, not forced.
+5. Unsafe or unsupported clusters remain deferred, not forced.
 
 6. No runtime activation occurs.
 
@@ -669,13 +666,13 @@ This sprint is complete only if:
 
 15. PSI validator is run against every new or changed PSI file.
 
-16. Batch B report exists at:
-    docs/sprints/beta_readiness/P1-11_pass3_cbc_iron_oxygen_signal_intelligence_batch_b.md
+16. Batch C report exists at:
+    docs/sprints/beta_readiness/P1-12_pass3_deferred_cbc_iron_hematology_batch_c.md
 
-17. Batch B manifest exists at:
-    docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml
+17. Batch C manifest exists at:
+    docs/sprints/beta_readiness/P1-12_signal_intelligence_batch_c_manifest.yaml
 
-18. Build deliverable register is updated with a short P1-11 entry.
+18. Build deliverable register is updated with a short P1-12 entry.
 
 19. Manifest YAML validation passes.
 
