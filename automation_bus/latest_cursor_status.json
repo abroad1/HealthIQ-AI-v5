@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-14-staged-psi-hash-repair-and-activation-cohort-lock",
+  "branch": "sprint/P1-15-first-production-psi-opt-in-pilot",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-21T08:59:22Z",
-  "cursor_started_utc": "2026-06-21T08:54:06Z",
-  "head_sha": "52612bba38d07903e608d9de89fde1c9f4ffc8f2",
+  "cursor_started_utc": "2026-06-21T10:14:53Z",
+  "head_sha": "d7fe032fd834efc3084ab63a98537e93a5fe1d47",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-14"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-15"
 }
