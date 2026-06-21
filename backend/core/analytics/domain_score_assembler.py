@@ -59,8 +59,9 @@ _RAIL_LIVER = "liver"
 _RAIL_KIDNEY = "kidney"
 _RAIL_CBC = "cbc"
 
-# P1-3: launch-visible blood/iron/oxygen signals excluded pending frame adjudication.
-_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS: frozenset[str] = frozenset()
+# P1-18: transferrin transport upregulation (pkg_kb61) — ID-matched production package.
+# Other CBC/iron signals remain excluded pending frame adjudication (P1-3 carry-forward).
+_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS: frozenset[str] = frozenset({"signal_transferrin_high"})
 _BURDEN_HEPATIC = "hepatic"
 
 # D-4: user-safe caveat lines (replaces internal slug list for retail cards)

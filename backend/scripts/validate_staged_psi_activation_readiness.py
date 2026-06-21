@@ -29,7 +29,10 @@ STAGED_BATCHES: dict[str, Path] = {
     "p1_12_batch_c": ROOT / "knowledge_bus" / "generated_pilot" / "p1_12_batch_c",
 }
 
-DERIVED_MARKER_IDS = frozenset({"transferrin_saturation"})
+# Metrics requiring runtime calculation before signal evaluation may be listed here.
+# Lab-provided SSOT-canonical markers must not appear (P1-18: transferrin_saturation is
+# canonical in biomarkers.yaml and accepted on the runtime input model as lab-provided).
+DERIVED_MARKER_IDS: frozenset[str] = frozenset()
 
 FORBIDDEN_PSI_ROOT_KEYS = frozenset(
     {

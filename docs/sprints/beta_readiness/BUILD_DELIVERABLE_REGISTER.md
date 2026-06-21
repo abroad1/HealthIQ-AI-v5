@@ -452,6 +452,31 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-18 — Blood/Iron/Oxygen Pass 3 System Activation Pack
+
+**Status:** Complete  
+**Date closed:** 2026-06-21  
+**Programme block(s):** Block 1 Core systems; Block 3 Layer B intelligence substrate; Block 6 Medical safety and governance; Block 7 Auditability  
+
+### Delivered / ticked off
+- Resolved `DERIVED_MARKER_IDS` validator policy for SSOT-canonical lab-provided `transferrin_saturation` (7 staged PSI now activation-ready).
+- Activated `signal_transferrin_high` on `wave1_blood_iron_oxygen` domain launch allowlist with test-backed runtime firing.
+- Runtime reality map, carry-forward manifest, and sprint report produced.
+
+### Carry-forwards
+- Knowledge Bus PSI opt-in for pkg_kb61 and ferritin-high host packages.
+- CBC pkg_kb52c identity cohort, iron Batch C medical-review PSI, calculated TSAT mode.
+- Additional CBC/iron launch signals pending frame adjudication.
+
+### Blockers / risks
+- PSI semantics remain validation-only until KB opt-in sprint completes.
+- Subsystem card evidence does not yet reflect fired signal state.
+
+### Recommended next sprint
+- P1-19-KB61-PSI-OPT-IN-1 (Knowledge Bus): production PSI opt-in for transferrin-high package; parallel CBC package-provenance sprint.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

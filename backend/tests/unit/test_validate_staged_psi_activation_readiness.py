@@ -144,7 +144,8 @@ def test_audit_staged_batch_detects_non_canonical_primary(tmp_path):
     assert items[0].compile_manifest_hash_status == "pass"
 
 
-def test_audit_staged_batch_detects_derived_marker_supporting(tmp_path):
+def test_audit_staged_batch_iron_low_blocked_for_medical_review_not_derived(tmp_path):
+    """P1-18: transferrin_saturation is SSOT-canonical; iron Batch C PSI remain medical-review blocked."""
     src_pkg = (
         ROOT
         / "knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency"
@@ -166,8 +167,35 @@ def test_audit_staged_batch_detects_derived_marker_supporting(tmp_path):
         production_opt_ins=set(),
         psi_schema_path=ROOT / "knowledge_bus" / "schema" / "promoted_signal_intelligence_schema_v1.yaml",
     )
-    assert items[0].activation_readiness == "BLOCKED_DERIVED_MARKER_DEPENDENCY"
-    assert any("transferrin_saturation" in b for b in items[0].blockers)
+    assert items[0].activation_readiness == "BLOCKED_MEDICAL_REVIEW_REQUIRED"
+    assert not any("derived-marker supporting dependency" in b for b in items[0].blockers)
+
+
+def test_audit_staged_batch_transferrin_high_activation_ready(tmp_path):
+    """P1-18: pkg_kb61 staged PSI clears derived-marker gate after SSOT-canonical policy fix."""
+    src_pkg = (
+        ROOT
+        / "knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation"
+    )
+    batch_root = tmp_path / "p1_test"
+    dest_pkg = batch_root / src_pkg.name
+    dest_pkg.mkdir(parents=True)
+    for name in ("promoted_signal_intelligence.yaml", "compile_manifest.yaml"):
+        dest_pkg.joinpath(name).write_bytes(src_pkg.joinpath(name).read_bytes())
+    _sync_manifest_hash(dest_pkg)
+
+    ssot_keys = load_ssot_keys(ROOT / "backend" / "ssot" / "biomarkers.yaml")
+    items = audit_staged_batch(
+        "p1_test",
+        batch_root,
+        ssot_keys=ssot_keys,
+        signal_systems={"hematologic", "inflammatory", "hepatic", "metabolic", "lipid_transport", "renal", "vascular", "hormonal", "mitochondrial", "endocrine", "bone", "mineral", "nutritional", "other"},
+        trigger_directions={"high", "low", "bidirectional", "context_dependent"},
+        production_opt_ins=set(),
+        psi_schema_path=ROOT / "knowledge_bus" / "schema" / "promoted_signal_intelligence_schema_v1.yaml",
+    )
+    assert items[0].activation_readiness == "ACTIVATION_READY"
+    assert not any("derived-marker" in b for b in items[0].blockers)
 
 
 def test_audit_all_staged_repo_estate_counts():
@@ -175,8 +203,8 @@ def test_audit_all_staged_repo_estate_counts():
     estate = report["staged_estate"]
     assert estate["psi_files_found"] == 41
     assert estate["compile_manifests_found"] == 41
-    assert report["summary"]["blocked_count"] == 41
-    assert report["summary"]["activation_ready_count"] == 0
+    assert report["summary"]["blocked_count"] == 34
+    assert report["summary"]["activation_ready_count"] == 7
 
 
 def test_cli_runs_on_repo_estate():
@@ -187,4 +215,4 @@ def test_cli_runs_on_repo_estate():
     proc = subprocess.run(cmd, capture_output=True, text=True, check=False, cwd=str(ROOT))
     assert proc.returncode == 0
     assert "psi_files_found: 41" in proc.stdout
-    assert "activation_ready_count: 0" in proc.stdout
+    assert "activation_ready_count: 7" in proc.stdout

@@ -1,0 +1,115 @@
+work_id: P1-18
+manifest_date: '2026-06-21'
+summary:
+  total_carry_forward_items: 12
+  implemented_runtime_signals: 1
+  validator_policy_resolved: transferrin_saturation
+carry_forward_items:
+  - item_id: p1_18_cf_001
+    activation_key: signal_hemoglobin_low
+    source_ref: knowledge_bus/packages/pkg_s24_hgb_low_anemia/signal_library.yaml
+    rich_content_at_risk: Anaemia pattern with multi-marker corroboration and differential framing
+    why_not_implemented: Frame adjudication backlog from P1-3; not on launch allowlist pending medical review
+    owner_agent: Medical Review
+    blocker_class: FRAME_AUTHORITY
+    launch_relevance: launch-critical
+    recommended_future_package: P1-CBC-SIGNAL-ADjudication-1
+  - item_id: p1_18_cf_002
+    activation_key: signal_ferritin_low
+    source_ref: knowledge_bus/packages/pkg_s24_ferritin_low_iron_deficiency/signal_library.yaml
+    rich_content_at_risk: Iron store depletion pattern with supporting hematologic context
+    why_not_implemented: Frame adjudication backlog; excluded from launch allowlist per P1-3 safety boundary
+    owner_agent: Medical Review
+    blocker_class: FRAME_AUTHORITY
+    launch_relevance: launch-critical
+    recommended_future_package: P1-CBC-SIGNAL-ADjudication-1
+  - item_id: p1_18_cf_003
+    activation_key: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    source_ref: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern
+    rich_content_at_risk: Erythrocytosis differential with RBC index corroboration
+    why_not_implemented: Package identity unresolved (KB-S52c vs KB-S58); STOP gate 1
+    owner_agent: Knowledge Bus
+    blocker_class: PACKAGE_IDENTITY
+    launch_relevance: beta-critical
+    recommended_future_package: P1-CBC-PACKAGE-PROVENANCE-1
+  - item_id: p1_18_cf_004
+    activation_key: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    source_ref: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    rich_content_at_risk: Iron-restricted anaemia RBC pattern with index corroboration
+    why_not_implemented: Package identity unresolved; STOP gate 1
+    owner_agent: Knowledge Bus
+    blocker_class: PACKAGE_IDENTITY
+    launch_relevance: beta-critical
+    recommended_future_package: P1-CBC-PACKAGE-PROVENANCE-1
+  - item_id: p1_18_cf_005
+    activation_key: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    source_ref: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    rich_content_at_risk: Anisocytosis iron-deficiency differential pattern
+    why_not_implemented: Package identity unresolved; STOP gate 1
+    owner_agent: Knowledge Bus
+    blocker_class: PACKAGE_IDENTITY
+    launch_relevance: beta-critical
+    recommended_future_package: P1-CBC-PACKAGE-PROVENANCE-1
+  - item_id: p1_18_cf_006
+    activation_key: pkg_kb52c_iron_low_absolute_iron_deficiency
+    source_ref: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency
+    rich_content_at_risk: Absolute iron deficiency with transferrin saturation severity semantics
+    why_not_implemented: Medical-review and frame-authority carry-forwards active; STOP gate 1
+    owner_agent: Medical Review
+    blocker_class: MEDICAL_REVIEW
+    launch_relevance: launch-critical
+    recommended_future_package: P1-IRON-BATCH-C-MEDICAL-REVIEW-1
+  - item_id: p1_18_cf_007
+    activation_key: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+    source_ref: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+    rich_content_at_risk: Functional iron restriction with inflammatory context modifiers
+    why_not_implemented: Medical-review and frame-authority carry-forwards; STOP gate 1
+    owner_agent: Medical Review
+    blocker_class: MEDICAL_REVIEW
+    launch_relevance: launch-critical
+    recommended_future_package: P1-IRON-BATCH-C-MEDICAL-REVIEW-1
+  - item_id: p1_18_cf_008
+    activation_key: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    source_ref: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/promoted_signal_intelligence.yaml
+    rich_content_at_risk: Full PSI semantics including override rules, contradiction markers, lifestyle modifiers
+    why_not_implemented: PSI opt-in to production package is Knowledge Bus scope; runtime signal_library firing only in P1-18
+    owner_agent: Knowledge Bus
+    blocker_class: PSI_OPT_IN_PENDING
+    launch_relevance: beta-critical
+    recommended_future_package: P1-19-KB61-PSI-OPT-IN-1
+  - item_id: p1_18_cf_009
+    activation_key: transferrin_saturation_calculated_mode
+    source_ref: backend/ssot/biomarkers.yaml:1865
+    rich_content_at_risk: Calculated TSAT when lab does not provide direct measurement
+    why_not_implemented: No governed calculation formula in SSOT; STOP gate 2 option D
+    owner_agent: Core Engine
+    blocker_class: DERIVED_METRIC_POLICY
+    launch_relevance: deferred
+    recommended_future_package: P1-TRANSFERRIN-SAT-CALC-POLICY-1
+  - item_id: p1_18_cf_010
+    activation_key: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    source_ref: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    rich_content_at_risk: Inflammatory hyperferritinemia differential with TSAT corroboration
+    why_not_implemented: No production host package; validator now activation-ready but KB opt-in sprint required
+    owner_agent: Knowledge Bus
+    blocker_class: MISSING_PRODUCTION_HOST
+    launch_relevance: beta-critical
+    recommended_future_package: P1-FERRITIN-HIGH-HOST-PACKAGE-1
+  - item_id: p1_18_cf_011
+    activation_key: wave1_bio_oxygen_carrying_capacity_subsystem_depth
+    source_ref: knowledge_bus/compiled/ — wave1_bio_oxygen_carrying_capacity
+    rich_content_at_risk: Compiled card evidence does not yet reflect fired signal_transferrin_high state
+    why_not_implemented: Subsystem card reflects panel presence/scoring rail only; signal-driven subsystem enrichment deferred
+    owner_agent: Core Engine
+    blocker_class: SUBSYSTEM_SIGNAL_INTEGRATION
+    launch_relevance: beta-critical
+    recommended_future_package: P1-19-BIO-SUBSYSTEM-SIGNAL-ENRICHMENT-1
+  - item_id: p1_18_cf_012
+    activation_key: pkg_kb58_cbc_cohort
+    source_ref: knowledge_bus/packages/pkg_kb58_*
+    rich_content_at_risk: Full KB-S58 CBC signal estate (RBC, RDW, MCH, leukocyte patterns)
+    why_not_implemented: Not selected as P1-18 build target; frame and package identity gates remain for pkg_kb52c staged PSI
+    owner_agent: Knowledge Bus
+    blocker_class: SCOPE_DEFERRED
+    launch_relevance: beta-critical
+    recommended_future_package: P1-CBC-PACKAGE-PROVENANCE-1
