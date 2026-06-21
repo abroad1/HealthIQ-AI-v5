@@ -1,10 +1,9 @@
 {
-  "branch": "sprint/P1-15-first-production-psi-opt-in-pilot",
+  "branch": "sprint/P1-16-psi-identity-blocker-remediation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-21T10:19:52Z",
-  "cursor_started_utc": "2026-06-21T10:14:53Z",
-  "head_sha": "033be6667c271893ad4b28d1544173c2428b2726",
+  "cursor_started_utc": "2026-06-21T11:49:52Z",
+  "head_sha": "1b48045a43a97b2326d88e397724550051dd2588",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-15"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-16"
 }
