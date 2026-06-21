@@ -1,10 +1,9 @@
 {
-  "branch": "sprint/P1-17-remaining-psi-blocker-resolution",
+  "branch": "sprint/P1-18-blood-iron-oxygen-pass3-system-activation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-21T13:10:38Z",
-  "cursor_started_utc": "2026-06-21T13:05:19Z",
-  "head_sha": "d89ce986a4b830fe7579e8782a42a932edec5bd9",
+  "cursor_started_utc": "2026-06-21T14:06:12Z",
+  "head_sha": "109293bf1e8210de1048ea5dd100d86ce05c232e",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-17"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-18"
 }
