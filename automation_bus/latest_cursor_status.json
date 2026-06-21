@@ -1,9 +1,10 @@
 {
   "branch": "sprint/P1-16-psi-identity-blocker-remediation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-21T11:56:56Z",
   "cursor_started_utc": "2026-06-21T11:49:52Z",
-  "head_sha": "1b48045a43a97b2326d88e397724550051dd2588",
+  "head_sha": "7a414b6ce58d6713fe7f6c262629aa70a627d3ed",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-16"
 }
