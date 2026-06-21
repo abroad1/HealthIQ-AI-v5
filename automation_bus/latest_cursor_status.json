@@ -1,9 +1,10 @@
 {
   "branch": "sprint/P1-15-first-production-psi-opt-in-pilot",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-21T10:19:52Z",
   "cursor_started_utc": "2026-06-21T10:14:53Z",
-  "head_sha": "d7fe032fd834efc3084ab63a98537e93a5fe1d47",
+  "head_sha": "033be6667c271893ad4b28d1544173c2428b2726",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-15"
 }
