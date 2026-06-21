@@ -334,6 +334,29 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-13 — Staged PSI activation-readiness gate
+
+**Status:** Complete  
+**Date closed:** 2026-06-21  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- Inventoried all 41 staged PSI artefacts from P1-10, P1-11 and P1-12 with activation-readiness classification per package.
+- Added report-only validator `validate_staged_psi_activation_readiness.py` with targeted unit tests; no staged PSI or compile manifest mutations.
+
+### Carry-forwards
+- Universal compile-manifest hash mismatch across 41 packages requires dedicated recompile sprint before opt-in.
+- SSOT biomarker identity adjudication for `wbc`, `lym`, `plt`, `non_hdl`; derived-marker review for `transferrin_saturation` (7 iron-panel PSI).
+- Medical-review, frame-authority and leukocyte system-mapping overlays from prior batches remain blocking after hash repair.
+
+### Blockers / risks
+- Zero artefacts activation-ready until manifest hash integrity and SSOT/derived-marker blockers are resolved through authority sprints.
+
+### Recommended next sprint
+- P1-14 staged compile manifest integrity recompile plus SSOT biomarker adjudication prep; parallel medical-review cohort for high-risk haematology frames.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

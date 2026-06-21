@@ -1,0 +1,658 @@
+work_id: P1-13
+classification_date: '2026-06-21'
+source_authorities:
+- path: docs/sprints/beta_readiness/P1-10_signal_intelligence_batch_a_manifest.yaml
+  role: Batch A staged PSI inventory and deferrals
+- path: docs/sprints/beta_readiness/P1-11_signal_intelligence_batch_b_manifest.yaml
+  role: Batch B staged PSI inventory and deferrals
+- path: docs/sprints/beta_readiness/P1-12_signal_intelligence_batch_c_manifest.yaml
+  role: Batch C staged PSI inventory and deferrals
+- path: backend/ssot/biomarkers.yaml
+  role: Read-only SSOT biomarker key reference (not modified)
+- path: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml
+  role: PSI structural validation schema
+- path: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
+  role: Staged promotion vs activation boundary
+staged_estate:
+  batches_inspected:
+  - p1_10_batch_a
+  - p1_11_batch_b
+  - p1_12_batch_c
+  psi_files_found: 41
+  compile_manifests_found: 41
+  production_opt_ins_found: 20
+summary:
+  activation_ready_count: 0
+  blocked_count: 41
+  top_blockers:
+  - BLOCKED_MANIFEST_OR_HASH (41)
+  blocker_presence_counts:
+    compile_manifest_hash_mismatch: 41
+    primary_non_canonical_biomarker_id: 5
+    supporting_non_canonical_biomarker_id: 9
+    derived_marker_dependency: 7
+    documented_medical_review_carry_forward: 9
+    documented_frame_authority_carry_forward: 4
+    documented_system_mapping_carry_forward: 3
+  hypothetical_if_hash_integrity_resolved:
+    ACTIVATION_READY: 22
+    BLOCKED_BIOMARKER_IDENTITY: 9
+    BLOCKED_DERIVED_MARKER_DEPENDENCY: 7
+    BLOCKED_MEDICAL_REVIEW_REQUIRED: 3
+items:
+- id: p1_10_batch_a__pkg_kb52c_alt_high_hepatocellular_injury_pattern
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_hepatocellular_injury_pattern/compile_manifest.yaml
+  primary_metric_biomarker_id: alt
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern/compile_manifest.yaml
+  primary_metric_biomarker_id: alt
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_muscle_source_or_exertional_pattern/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_alt_high_muscle_source_or_exertional_pattern/compile_manifest.yaml
+  primary_metric_biomarker_id: alt
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb52c_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern/compile_manifest.yaml
+  primary_metric_biomarker_id: apob
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb52c_ggt_high_alcohol_or_enzyme_induction_context
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_ggt_high_alcohol_or_enzyme_induction_context/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_ggt_high_alcohol_or_enzyme_induction_context/compile_manifest.yaml
+  primary_metric_biomarker_id: ggt
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context/compile_manifest.yaml
+  primary_metric_biomarker_id: ggt
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/compile_manifest.yaml
+  primary_metric_biomarker_id: homocysteine
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - documented medical-review carry-forward
+  recommended_next_action: medical-review sign-off required before opt-in
+- id: p1_10_batch_a__pkg_kb52c_homocysteine_high_renal_clearance_reduction
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_renal_clearance_reduction/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_renal_clearance_reduction/compile_manifest.yaml
+  primary_metric_biomarker_id: homocysteine
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - documented medical-review carry-forward
+  recommended_next_action: medical-review sign-off required before opt-in
+- id: p1_10_batch_a__pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load/compile_manifest.yaml
+  primary_metric_biomarker_id: urea
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: fail
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'supporting marker biomarker_id not in SSOT: hgb'
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb52c_urea_low_low_protein_or_reduced_urea_cycle_input
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_urea_low_low_protein_or_reduced_urea_cycle_input/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_urea_low_low_protein_or_reduced_urea_cycle_input/compile_manifest.yaml
+  primary_metric_biomarker_id: urea
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden/compile_manifest.yaml
+  primary_metric_biomarker_id: non_hdl
+  primary_metric_ssot_status: non_canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'primary_metric.biomarker_id not in SSOT: non_hdl'
+  recommended_next_action: SSOT biomarker identity adjudication required before opt-in
+- id: p1_10_batch_a__pkg_kb60_tc_hdl_ratio_high_atherogenic_discordance_pattern
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_tc_hdl_ratio_high_atherogenic_discordance_pattern/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_tc_hdl_ratio_high_atherogenic_discordance_pattern/compile_manifest.yaml
+  primary_metric_biomarker_id: tc_hdl_ratio
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb60_tc_hdl_ratio_low_hdl_dominant_pattern
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_tc_hdl_ratio_low_hdl_dominant_pattern/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_tc_hdl_ratio_low_hdl_dominant_pattern/compile_manifest.yaml
+  primary_metric_biomarker_id: tc_hdl_ratio
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb60_total_cholesterol_high_atherogenic_hypercholesterolemia
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_total_cholesterol_high_atherogenic_hypercholesterolemia/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_total_cholesterol_high_atherogenic_hypercholesterolemia/compile_manifest.yaml
+  primary_metric_biomarker_id: total_cholesterol
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb60_total_cholesterol_high_hdl_dominant_elevation_pattern
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_total_cholesterol_high_hdl_dominant_elevation_pattern/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_total_cholesterol_high_hdl_dominant_elevation_pattern/compile_manifest.yaml
+  primary_metric_biomarker_id: total_cholesterol
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_10_batch_a__pkg_kb60_total_cholesterol_low_hypocholesterolemia_context
+  batch: p1_10_batch_a
+  psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_total_cholesterol_low_hypocholesterolemia_context/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb60_total_cholesterol_low_hypocholesterolemia_context/compile_manifest.yaml
+  primary_metric_biomarker_id: total_cholesterol
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/compile_manifest.yaml
+  primary_metric_biomarker_id: ferritin
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'derived-marker supporting dependency: transferrin_saturation'
+  recommended_next_action: derived-marker runtime support review before opt-in
+- id: p1_11_batch_b__pkg_kb52c_ferritin_high_iron_overload_context
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/compile_manifest.yaml
+  primary_metric_biomarker_id: ferritin
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'derived-marker supporting dependency: transferrin_saturation'
+  recommended_next_action: derived-marker runtime support review before opt-in
+- id: p1_11_batch_b__pkg_kb52c_ferritin_low_iron_store_depletion
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_low_iron_store_depletion/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_low_iron_store_depletion/compile_manifest.yaml
+  primary_metric_biomarker_id: ferritin
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_hematocrit_high_absolute_erythrocytosis
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_absolute_erythrocytosis/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_absolute_erythrocytosis/compile_manifest.yaml
+  primary_metric_biomarker_id: hematocrit
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: fail
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'supporting marker biomarker_id not in SSOT: erythropoietin'
+  - 'supporting marker biomarker_id not in SSOT: jak2_v617f'
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_hematocrit_high_relative_hemoconcentration
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_relative_hemoconcentration/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_relative_hemoconcentration/compile_manifest.yaml
+  primary_metric_biomarker_id: hematocrit
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: fail
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'supporting marker biomarker_id not in SSOT: erythropoietin'
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_hematocrit_low_anemia_or_hemodilution
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_low_anemia_or_hemodilution/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_low_anemia_or_hemodilution/compile_manifest.yaml
+  primary_metric_biomarker_id: hematocrit
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_mcv_high_megaloblastic_macrocytosis
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_high_megaloblastic_macrocytosis/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_high_megaloblastic_macrocytosis/compile_manifest.yaml
+  primary_metric_biomarker_id: mcv
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_mcv_high_nonmegaloblastic_macrocytosis
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_high_nonmegaloblastic_macrocytosis/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_high_nonmegaloblastic_macrocytosis/compile_manifest.yaml
+  primary_metric_biomarker_id: mcv
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_mcv_low_microcytosis_iron_deficiency
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_low_microcytosis_iron_deficiency/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_low_microcytosis_iron_deficiency/compile_manifest.yaml
+  primary_metric_biomarker_id: mcv
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: fail
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'supporting marker biomarker_id not in SSOT: rbc_count'
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_plt_high_reactive_thrombocytosis
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_high_reactive_thrombocytosis/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_high_reactive_thrombocytosis/compile_manifest.yaml
+  primary_metric_biomarker_id: plt
+  primary_metric_ssot_status: non_canonical
+  supporting_marker_ssot_status: fail
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'primary_metric.biomarker_id not in SSOT: plt'
+  - 'supporting marker biomarker_id not in SSOT: wbc'
+  recommended_next_action: SSOT biomarker identity adjudication required before opt-in
+- id: p1_11_batch_b__pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction/compile_manifest.yaml
+  primary_metric_biomarker_id: plt
+  primary_metric_ssot_status: non_canonical
+  supporting_marker_ssot_status: fail
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'primary_metric.biomarker_id not in SSOT: plt'
+  - 'supporting marker biomarker_id not in SSOT: wbc'
+  recommended_next_action: SSOT biomarker identity adjudication required before opt-in
+- id: p1_11_batch_b__pkg_kb52c_rbc_high_erythrocytosis_pattern
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/compile_manifest.yaml
+  primary_metric_biomarker_id: rbc
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/compile_manifest.yaml
+  primary_metric_biomarker_id: rbc
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/compile_manifest.yaml
+  primary_metric_biomarker_id: rdw_cv
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/compile_manifest.yaml
+  primary_metric_biomarker_id: rdw_cv
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/compile_manifest.yaml
+  primary_metric_biomarker_id: transferrin
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'derived-marker supporting dependency: transferrin_saturation'
+  recommended_next_action: derived-marker runtime support review before opt-in
+- id: p1_11_batch_b__pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression/compile_manifest.yaml
+  primary_metric_biomarker_id: transferrin
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_11_batch_b__pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure
+  batch: p1_11_batch_b
+  psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure/compile_manifest.yaml
+  primary_metric_biomarker_id: transferrin
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  recommended_next_action: resolve reported blockers before opt-in
+- id: p1_12_batch_c__pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
+  batch: p1_12_batch_c
+  psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release/compile_manifest.yaml
+  primary_metric_biomarker_id: iron
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'derived-marker supporting dependency: transferrin_saturation'
+  - documented frame-authority carry-forward
+  - documented medical-review carry-forward
+  recommended_next_action: derived-marker runtime support review before opt-in
+- id: p1_12_batch_c__pkg_kb52c_iron_high_iron_overload_context
+  batch: p1_12_batch_c
+  psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_iron_overload_context/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_iron_overload_context/compile_manifest.yaml
+  primary_metric_biomarker_id: iron
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'derived-marker supporting dependency: transferrin_saturation'
+  - documented frame-authority carry-forward
+  - documented medical-review carry-forward
+  recommended_next_action: derived-marker runtime support review before opt-in
+- id: p1_12_batch_c__pkg_kb52c_iron_low_absolute_iron_deficiency
+  batch: p1_12_batch_c
+  psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency/compile_manifest.yaml
+  primary_metric_biomarker_id: iron
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'derived-marker supporting dependency: transferrin_saturation'
+  - documented frame-authority carry-forward
+  - documented medical-review carry-forward
+  recommended_next_action: derived-marker runtime support review before opt-in
+- id: p1_12_batch_c__pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+  batch: p1_12_batch_c
+  psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_functional_iron_restriction_inflammation/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_functional_iron_restriction_inflammation/compile_manifest.yaml
+  primary_metric_biomarker_id: iron
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - 'derived-marker supporting dependency: transferrin_saturation'
+  - documented frame-authority carry-forward
+  - documented medical-review carry-forward
+  recommended_next_action: derived-marker runtime support review before opt-in
+- id: p1_12_batch_c__pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
+  batch: p1_12_batch_c
+  psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression/compile_manifest.yaml
+  primary_metric_biomarker_id: lym
+  primary_metric_ssot_status: non_canonical
+  supporting_marker_ssot_status: fail
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - documented medical-review carry-forward
+  - documented system-mapping review carry-forward
+  - 'primary_metric.biomarker_id not in SSOT: lym'
+  - 'supporting marker biomarker_id not in SSOT: wbc_total'
+  recommended_next_action: SSOT biomarker identity adjudication required before opt-in
+- id: p1_12_batch_c__pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+  batch: p1_12_batch_c
+  psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift/compile_manifest.yaml
+  primary_metric_biomarker_id: neutrophil_pct
+  primary_metric_ssot_status: canonical
+  supporting_marker_ssot_status: pass
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - documented medical-review carry-forward
+  - documented system-mapping review carry-forward
+  recommended_next_action: medical-review sign-off required before opt-in
+- id: p1_12_batch_c__pkg_kb52c_wbc_high_reactive_leukocytosis
+  batch: p1_12_batch_c
+  psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_wbc_high_reactive_leukocytosis/promoted_signal_intelligence.yaml
+  compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_wbc_high_reactive_leukocytosis/compile_manifest.yaml
+  primary_metric_biomarker_id: wbc
+  primary_metric_ssot_status: non_canonical
+  supporting_marker_ssot_status: fail
+  runtime_active: 'false'
+  production_manifest_opt_in: 'false'
+  compile_manifest_hash_status: fail
+  activation_readiness: BLOCKED_MANIFEST_OR_HASH
+  blockers:
+  - compile manifest hash mismatch
+  - documented medical-review carry-forward
+  - documented system-mapping review carry-forward
+  - 'primary_metric.biomarker_id not in SSOT: wbc'
+  - 'supporting marker biomarker_id not in SSOT: lym'
+  recommended_next_action: SSOT biomarker identity adjudication required before opt-in
+validation:
+  manifest_yaml_parse: pass
+  staged_psi_validator: pass
+  unit_tests: pass
+  runtime_activation_check: pass
