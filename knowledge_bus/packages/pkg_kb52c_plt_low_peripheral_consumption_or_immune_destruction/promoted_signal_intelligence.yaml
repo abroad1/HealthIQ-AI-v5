@@ -1,0 +1,99 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_plt_low_peripheral_consumption_or_immune_destruction
+  signal_id: signal_plt_low
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: platelet_patterns
+signals:
+- signal_id: signal_plt_low
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: platelets
+    rationale: Thrombocytopenia may reflect peripheral platelet destruction or consumption as well as reduced marrow production,
+      and the distinction matters clinically.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Anaemia alongside thrombocytopenia raises concern for broader consumption, blood loss, or marrow processes
+      rather than isolated platelet destruction.
+  - biomarker_id: white_blood_cells
+    expected_direction: any
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: A relatively isolated platelet reduction with preserved white cell count can fit immune thrombocytopenia better
+      than global marrow suppression.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Elevated bilirubin can support haemolytic or consumptive microangiopathic context when thrombocytopenia is
+      not isolated.
+  contradiction_markers:
+  - contradiction_id: ctr_low_hgb_nonisolated
+    marker_reference: hemoglobin
+    contradiction_rationale: Concurrent anaemia weakens an isolated immune platelet destruction explanation and raises concern
+      for a broader process.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_preserved_wbc_isolated_pattern
+    marker_reference: white_blood_cells
+    contradiction_rationale: A preserved white cell count with isolated thrombocytopenia can weaken a broader consumptive
+      or marrow-level interpretation and make isolated immune thrombocytopenia more plausible.
+    contradiction_strength: weak
+  missing_data:
+    policies:
+    - Assess haemolysis markers and smear findings before inferring a thrombotic microangiopathic process from thrombocytopenia
+      alone.
+    - Review whether anaemia or leukocyte abnormalities are absent before favouring an isolated peripheral destruction frame.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_plt_low_with_low_hgb
+    resulting_state: at_risk
+    description: Escalate when thrombocytopenia is accompanied by anaemia, as combined cytopenia increases concern for consumption,
+      bleeding, or marrow pathology rather than isolated platelet destruction.
+    conditions:
+    - metric_id: hemoglobin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_thrombocytopenia_review_2024
+  evidence:
+    evidence_strength: strong
+    physiological_claim: Thrombocytopenia can be isolated or part of a more serious systemic process, so surrounding count
+      pattern and haemolytic context are central to interpretation.
+    threshold_notes: Escalation is based on accompanying count abnormalities and haemolytic context, not on invented platelet
+      cut-offs beyond the abnormal laboratory result.
+    sources:
+    - source_id: source_thrombocytopenia_review_2024
+      paper_title: Guideline and review literature on thrombocytopenia, isolated platelet reduction, and serious secondary
+        causes
+      journal: Guideline and review literature
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_blood_film
+    rationale: A blood film is important to exclude pseudothrombocytopenia and to look for schistocytes or other features
+      suggesting consumption or marrow pathology.

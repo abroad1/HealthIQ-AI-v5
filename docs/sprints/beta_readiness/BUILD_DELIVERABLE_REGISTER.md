@@ -400,6 +400,31 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-16 — PSI identity & blocker remediation pack
+
+**Status:** Complete  
+**Date closed:** 2026-06-21  
+**Programme block(s):** Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- Adjudicated all 4 P1-15 package-identity deferrals — all remain `BLOCKED_PACKAGE_IDENTITY_UNRESOLVED` (STOP gate 1; no cross-ID placement).
+- Adjudicated all 9 biomarker-identity blocked candidates; 4 production PSI opt-ins via canonical ID normalisation only (no SSOT edits).
+- Production opt-ins: urea high prerenal, non-HDL high, plt high reactive, plt low peripheral consumption.
+
+### Carry-forwards
+- 4 package-identity candidates require KB-S52c vs KB-S58 provenance / re-staging sprint.
+- 3 biomarker candidates blocked (erythropoietin/jak2/host-package gaps).
+- 2 leukocyte PSI remain medical-review out of scope.
+- 7 derived-marker and 3 medical-review staged PSI unchanged.
+
+### Blockers / risks
+- Cross-ID `pkg_kb52c_*` → `pkg_kb58_*` PSI placement remains architecturally forbidden without identity-normalisation tooling.
+
+### Recommended next sprint
+- P1-17 package provenance adjudication for deferred KB-S58 CBC cohort; parallel derived-marker authority sprint for iron-panel PSI.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

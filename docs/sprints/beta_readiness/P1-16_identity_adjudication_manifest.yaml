@@ -1,0 +1,244 @@
+work_id: P1-16
+manifest_date: '2026-06-21'
+summary:
+  total_candidates: 13
+  package_identity_candidates: 4
+  biomarker_identity_candidates: 9
+  newly_opted_in: 4
+  blocked_package_identity: 4
+  blocked_biomarker_identity: 3
+  out_of_scope_medical_review: 2
+candidates:
+  # --- P1-15 package-identity deferred cohort ---
+  - activation_key: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    staged_package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/compile_manifest.yaml
+    source_spec_id: inv_rbc_high_erythrocytosis_pattern
+    signal_id: signal_rbc_high
+    primary_metric_biomarker_id: rbc
+    supporting_biomarker_ids: []
+    blocker_class_at_start: BLOCKED_AMBIGUOUS_PACKAGE_MAPPING
+    proposed_resolution_path: adjudicate_pkg_kb58_vs_pkg_kb52c_provenance
+    adjudication_status: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    production_package_candidate: pkg_kb58_rbc_high_erythrocytosis_pattern
+    validation_status: not_applicable
+    opt_in_status: blocked_stop_gate_1
+    blocker_reason: Staged PSI package_id is pkg_kb52c_*; only pkg_kb58_* production package exists; cross-ID placement rejected in P1-15; no identity-normalisation tooling in repository.
+  - activation_key: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    staged_package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/compile_manifest.yaml
+    source_spec_id: inv_rbc_low_iron_restricted_anemia_pattern
+    signal_id: signal_rbc_low
+    primary_metric_biomarker_id: rbc
+    supporting_biomarker_ids: []
+    blocker_class_at_start: BLOCKED_AMBIGUOUS_PACKAGE_MAPPING
+    proposed_resolution_path: adjudicate_pkg_kb58_vs_pkg_kb52c_provenance
+    adjudication_status: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    production_package_candidate: pkg_kb58_rbc_low_iron_restricted_anemia_pattern
+    validation_status: not_applicable
+    opt_in_status: blocked_stop_gate_1
+    blocker_reason: Same as rbc_high — package_id mismatch; STOP gate 1.
+  - activation_key: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    staged_package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/compile_manifest.yaml
+    source_spec_id: inv_rdw_cv_high_iron_deficiency_anisocytosis
+    signal_id: signal_rdw_cv_high
+    primary_metric_biomarker_id: rdw_cv
+    supporting_biomarker_ids: []
+    blocker_class_at_start: BLOCKED_AMBIGUOUS_PACKAGE_MAPPING
+    proposed_resolution_path: adjudicate_pkg_kb58_vs_pkg_kb52c_provenance
+    adjudication_status: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    production_package_candidate: pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis
+    validation_status: not_applicable
+    opt_in_status: blocked_stop_gate_1
+    blocker_reason: Same — staged pkg_kb52c_* vs production pkg_kb58_* only.
+  - activation_key: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+    staged_package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/compile_manifest.yaml
+    source_spec_id: inv_rdw_cv_high_mixed_red_cell_population_pattern
+    signal_id: signal_rdw_cv_high
+    primary_metric_biomarker_id: rdw_cv
+    supporting_biomarker_ids: []
+    blocker_class_at_start: BLOCKED_AMBIGUOUS_PACKAGE_MAPPING
+    proposed_resolution_path: adjudicate_pkg_kb58_vs_pkg_kb52c_provenance
+    adjudication_status: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    production_package_candidate: pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern
+    validation_status: not_applicable
+    opt_in_status: blocked_stop_gate_1
+    blocker_reason: Same — package identity unresolved; STOP gate 1.
+  # --- Biomarker-identity blocked cohort ---
+  - activation_key: pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load
+    staged_package_id: pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load
+    staged_psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load/compile_manifest.yaml
+    source_spec_id: inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+    signal_id: signal_urea_high
+    primary_metric_biomarker_id: urea
+    supporting_biomarker_ids: [creatinine, egfr, hemoglobin]
+    blocker_class_at_start: BLOCKED_BIOMARKER_IDENTITY
+    proposed_resolution_path: production_psi_canonical_substitution_hgb_to_hemoglobin
+    adjudication_status: READY_FOR_PRODUCTION_OPT_IN
+    production_package_candidate: pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load
+    validation_status: pending
+    opt_in_status: opted_in
+    identity_normalisation:
+      - field: supporting_markers[2].biomarker_id
+        old_id: hgb
+        new_id: hemoglobin
+        ssot_evidence: backend/ssot/biomarkers.yaml hemoglobin aliases include hgb
+      - field: contradiction_markers[0].marker_reference
+        old_id: hgb
+        new_id: hemoglobin
+        ssot_evidence: alias mapping only; medical meaning unchanged
+  - activation_key: pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden
+    staged_package_id: pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden
+    staged_psi_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden/compile_manifest.yaml
+    source_spec_id: inv_non_hdl_high_atherogenic_lipoprotein_burden
+    signal_id: signal_non_hdl_high
+    primary_metric_biomarker_id: non_hdl_cholesterol
+    supporting_biomarker_ids: [apob, ldl_cholesterol, triglycerides]
+    blocker_class_at_start: BLOCKED_BIOMARKER_IDENTITY
+    proposed_resolution_path: production_psi_canonical_substitution_non_hdl_to_non_hdl_cholesterol
+    adjudication_status: READY_FOR_PRODUCTION_OPT_IN
+    production_package_candidate: pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden
+    validation_status: pending
+    opt_in_status: opted_in
+    identity_normalisation:
+      - field: primary_metric.biomarker_id
+        old_id: non_hdl
+        new_id: non_hdl_cholesterol
+        ssot_evidence: backend/ssot/biomarkers.yaml canonical key non_hdl_cholesterol
+  - activation_key: pkg_kb52c_hematocrit_high_absolute_erythrocytosis
+    staged_package_id: pkg_kb52c_hematocrit_high_absolute_erythrocytosis
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_absolute_erythrocytosis/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_absolute_erythrocytosis/compile_manifest.yaml
+    source_spec_id: inv_hematocrit_high_absolute_erythrocytosis
+    signal_id: signal_hematocrit_high
+    primary_metric_biomarker_id: hematocrit
+    supporting_biomarker_ids: [erythropoietin, jak2_v617f]
+    blocker_class_at_start: BLOCKED_BIOMARKER_IDENTITY
+    proposed_resolution_path: ssot_biomarker_addition_or_source_research
+    adjudication_status: BLOCKED_BIOMARKER_IDENTITY_UNRESOLVED
+    production_package_candidate: null
+    validation_status: not_applicable
+    opt_in_status: blocked_stop_gate_2
+    blocker_reason: erythropoietin and jak2_v617f absent from SSOT; no production host package exists.
+  - activation_key: pkg_kb52c_hematocrit_high_relative_hemoconcentration
+    staged_package_id: pkg_kb52c_hematocrit_high_relative_hemoconcentration
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_relative_hemoconcentration/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_hematocrit_high_relative_hemoconcentration/compile_manifest.yaml
+    source_spec_id: inv_hematocrit_high_relative_hemoconcentration
+    signal_id: signal_hematocrit_high
+    primary_metric_biomarker_id: hematocrit
+    supporting_biomarker_ids: [erythropoietin]
+    blocker_class_at_start: BLOCKED_BIOMARKER_IDENTITY
+    proposed_resolution_path: ssot_biomarker_addition
+    adjudication_status: BLOCKED_BIOMARKER_IDENTITY_UNRESOLVED
+    production_package_candidate: null
+    validation_status: not_applicable
+    opt_in_status: blocked_stop_gate_2
+    blocker_reason: erythropoietin absent from SSOT; no production host package.
+  - activation_key: pkg_kb52c_mcv_low_microcytosis_iron_deficiency
+    staged_package_id: pkg_kb52c_mcv_low_microcytosis_iron_deficiency
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_low_microcytosis_iron_deficiency/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_mcv_low_microcytosis_iron_deficiency/compile_manifest.yaml
+    source_spec_id: inv_mcv_low_microcytosis_iron_deficiency
+    signal_id: signal_mcv_low
+    primary_metric_biomarker_id: mcv
+    supporting_biomarker_ids: [rbc]
+    blocker_class_at_start: BLOCKED_BIOMARKER_IDENTITY
+    proposed_resolution_path: canonical_substitution_rbc_count_to_rbc
+    adjudication_status: BLOCKED_BIOMARKER_IDENTITY_UNRESOLVED
+    production_package_candidate: null
+    validation_status: not_applicable
+    opt_in_status: blocked_stop_gate_2
+    blocker_reason: Staged uses rbc_count; canonical is rbc, but no production host package exists for this signal pattern.
+  - activation_key: pkg_kb52c_plt_high_reactive_thrombocytosis
+    staged_package_id: pkg_kb52c_plt_high_reactive_thrombocytosis
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_high_reactive_thrombocytosis/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_high_reactive_thrombocytosis/compile_manifest.yaml
+    source_spec_id: inv_plt_high_reactive_thrombocytosis
+    signal_id: signal_plt_high
+    primary_metric_biomarker_id: platelets
+    supporting_biomarker_ids: [crp, ferritin, white_blood_cells]
+    blocker_class_at_start: BLOCKED_BIOMARKER_IDENTITY
+    proposed_resolution_path: production_psi_canonical_substitution_plt_wbc
+    adjudication_status: READY_FOR_PRODUCTION_OPT_IN
+    production_package_candidate: pkg_kb52c_plt_high_reactive_thrombocytosis
+    validation_status: pending
+    opt_in_status: opted_in
+    identity_normalisation:
+      - field: primary_metric.biomarker_id
+        old_id: plt
+        new_id: platelets
+        ssot_evidence: backend/ssot/biomarkers.yaml platelets aliases include plt
+      - field: supporting_markers[2].biomarker_id
+        old_id: wbc
+        new_id: white_blood_cells
+        ssot_evidence: backend/ssot/biomarkers.yaml white_blood_cells aliases include wbc
+  - activation_key: pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction
+    staged_package_id: pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction/compile_manifest.yaml
+    source_spec_id: inv_plt_low_peripheral_consumption_or_immune_destruction
+    signal_id: signal_plt_low
+    primary_metric_biomarker_id: platelets
+    supporting_biomarker_ids: [hemoglobin, white_blood_cells, bilirubin]
+    blocker_class_at_start: BLOCKED_BIOMARKER_IDENTITY
+    proposed_resolution_path: production_psi_canonical_substitution_plt_wbc_hgb
+    adjudication_status: READY_FOR_PRODUCTION_OPT_IN
+    production_package_candidate: pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction
+    validation_status: pending
+    opt_in_status: opted_in
+    identity_normalisation:
+      - field: primary_metric.biomarker_id
+        old_id: plt
+        new_id: platelets
+        ssot_evidence: platelets canonical; plt is alias
+      - field: supporting_markers[1].biomarker_id
+        old_id: wbc
+        new_id: white_blood_cells
+        ssot_evidence: white_blood_cells canonical; wbc is alias
+      - field: override_rules[0].conditions[0].metric_id
+        old_id: hgb
+        new_id: hemoglobin
+        ssot_evidence: hemoglobin canonical; hgb is alias
+      - field: contradiction_markers[0].marker_reference
+        old_id: hgb
+        new_id: hemoglobin
+        ssot_evidence: alias only
+  - activation_key: pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
+    staged_package_id: pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
+    staged_psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression/compile_manifest.yaml
+    source_spec_id: inv_lym_low_lymphopenia_stress_or_immunosuppression
+    signal_id: signal_lym_low
+    primary_metric_biomarker_id: lym
+    supporting_biomarker_ids: [wbc_total]
+    blocker_class_at_start: BLOCKED_BIOMARKER_IDENTITY
+    proposed_resolution_path: medical_review_and_lym_canonical_adjudication
+    adjudication_status: OUT_OF_SCOPE_FOR_P1_16
+    production_package_candidate: null
+    validation_status: not_applicable
+    opt_in_status: blocked_medical_review_carry_forward
+    blocker_reason: Medical-review and system-mapping carry-forward from P1-12; ambiguous lym identity; no production host package.
+  - activation_key: pkg_kb52c_wbc_high_reactive_leukocytosis
+    staged_package_id: pkg_kb52c_wbc_high_reactive_leukocytosis
+    staged_psi_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_wbc_high_reactive_leukocytosis/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_wbc_high_reactive_leukocytosis/compile_manifest.yaml
+    source_spec_id: inv_wbc_high_reactive_leukocytosis
+    signal_id: signal_wbc_high
+    primary_metric_biomarker_id: wbc
+    supporting_biomarker_ids: [lym]
+    blocker_class_at_start: BLOCKED_BIOMARKER_IDENTITY
+    proposed_resolution_path: medical_review_cohort
+    adjudication_status: OUT_OF_SCOPE_FOR_P1_16
+    production_package_candidate: null
+    validation_status: not_applicable
+    opt_in_status: blocked_medical_review_carry_forward
+    blocker_reason: Medical-review and system-mapping carry-forward; out of P1-16 scope per prompt.

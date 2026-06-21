@@ -1,0 +1,103 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+  signal_id: signal_urea_high
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: kidney_urea
+signals:
+- signal_id: signal_urea_high
+  research_domain: renal
+  signal_system: renal
+  primary_metric:
+    biomarker_id: urea
+    rationale: Raised urea may reflect reduced renal perfusion, increased catabolic
+      load, gastrointestinal bleeding, or intrinsic kidney impairment and should not
+      be interpreted in isolation.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: creatinine
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Raised creatinine corroborates impaired renal clearance or broader
+      renal context rather than an isolated urea fluctuation.
+  - biomarker_id: egfr
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Reduced eGFR supports impaired renal filtration as a mechanistic contributor
+      to high urea.
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Anaemia can help raise suspicion for gastrointestinal blood loss as
+      a competing explanation for elevated urea.
+  contradiction_markers:
+  - contradiction_id: ctr_low_hgb_gi_bleed_alt
+    marker_reference: hemoglobin
+    contradiction_rationale: Anaemia may redirect interpretation toward gastrointestinal
+      blood loss or another non-renal contributor to urea elevation.
+    contradiction_strength: weak
+  - contradiction_id: ctr_low_egfr_renal_driver
+    marker_reference: egfr
+    contradiction_rationale: Reduced eGFR strengthens a renal filtration explanation
+      and weakens a predominantly prerenal or catabolic interpretation.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Interpret urea alongside creatinine and eGFR before assigning kidney dysfunction
+      as the dominant explanation.
+    - Review hydration status, protein-catabolic context, and possible blood loss
+      if creatinine and eGFR do not strongly support intrinsic renal impairment.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_urea_high_with_low_egfr
+    resulting_state: at_risk
+    description: Escalate when urea is high and eGFR is reduced, as combined abnormality
+      is more consistent with significant renal filtration impairment than isolated
+      urea rise.
+    conditions:
+    - metric_id: egfr
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_urea_review_2024
+  evidence:
+    evidence_strength: strong
+    physiological_claim: Urea is influenced by renal function, volume status, protein
+      load, and catabolism, so interpretation depends on corroborating kidney and
+      blood indices.
+    threshold_notes: No urea-specific disease threshold is introduced beyond the abnormal
+      result; escalation uses accompanying renal impairment markers.
+    sources:
+    - source_id: source_urea_review_2024
+      paper_title: Review literature on blood urea interpretation in renal impairment
+        and prerenal states
+      journal: Review literature
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_repeat_renal_profile_with_hydration_review
+    rationale: Repeat renal profile with hydration and clinical review helps separate
+      persistent renal dysfunction from transient prerenal causes.

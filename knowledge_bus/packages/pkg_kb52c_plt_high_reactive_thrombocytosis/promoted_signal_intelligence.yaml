@@ -1,0 +1,94 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_plt_high_reactive_thrombocytosis
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_plt_high_reactive_thrombocytosis
+  signal_id: signal_plt_high
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: platelet_patterns
+signals:
+- signal_id: signal_plt_high
+  research_domain: inflammatory
+  signal_system: inflammatory
+  primary_metric:
+    biomarker_id: platelets
+    rationale: High platelet count can reflect reactive inflammatory states, iron deficiency, or myeloproliferative disease
+      and needs contextual differential interpretation.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: crp
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Raised CRP supports inflammatory cytokine signalling as a reactive driver of thrombocytosis.
+  - biomarker_id: ferritin
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Low ferritin supports iron deficiency as an alternative reactive explanation for thrombocytosis.
+  - biomarker_id: white_blood_cells
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Concurrent leukocytosis can support a broader reactive inflammatory pattern rather than isolated platelet elevation.
+  contradiction_markers:
+  - contradiction_id: ctr_low_ferritin_reactive_alt
+    marker_reference: ferritin
+    contradiction_rationale: Low ferritin redirects interpretation toward iron deficiency as a competing reactive explanation
+      for thrombocytosis.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_high_crp_reactive_inflammation
+    marker_reference: crp
+    contradiction_rationale: Raised CRP shifts interpretation toward inflammation-driven reactive thrombocytosis rather than
+      iron deficiency as the primary explanation.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Assess inflammatory markers and recent illness or inflammatory history before considering clonal thrombocytosis.
+    - Review ferritin alongside inflammatory context and red-cell indices before assuming iron deficiency is the main driver.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_plt_high_with_high_crp
+    resulting_state: at_risk
+    description: Escalate when thrombocytosis is accompanied by elevated CRP, as concurrent inflammatory activation makes
+      a sustained reactive process more plausible.
+    conditions:
+    - metric_id: crp
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_thrombocytosis_review_2024
+  evidence:
+    evidence_strength: strong
+    physiological_claim: Thrombocytosis is frequently reactive, especially in inflammatory states or iron deficiency, and
+      should be interpreted before assuming a primary clonal disorder.
+    threshold_notes: No disease-defining threshold is invented here beyond laboratory abnormality; escalation is linked to
+      corroborating inflammatory or differential context.
+    sources:
+    - source_id: source_thrombocytosis_review_2024
+      paper_title: Guideline and review literature on thrombocytosis, reactive causes, and initial evaluation
+      journal: Guideline and review literature
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_blood_film
+    rationale: A blood film can help confirm true thrombocytosis and assess whether additional hematologic abnormalities suggest
+      a reactive or clonal process.
