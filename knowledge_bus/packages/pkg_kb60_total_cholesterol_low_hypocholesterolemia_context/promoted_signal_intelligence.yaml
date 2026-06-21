@@ -1,0 +1,100 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb60_total_cholesterol_low_hypocholesterolemia_context
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_total_cholesterol_low_hypocholesterolemia_context
+  signal_id: signal_total_cholesterol_low
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: lipid_derived
+signals:
+- signal_id: signal_total_cholesterol_low
+  research_domain: lipid_transport
+  signal_system: lipid_transport
+  primary_metric:
+    biomarker_id: total_cholesterol
+    rationale: Low total cholesterol is less common than hypercholesterolaemia and
+      may reflect secondary illness, undernutrition, malabsorption, hyperthyroid states,
+      or less commonly primary low-apoB disorders.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: tc_hdl_ratio
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: A low TC:HDL ratio helps distinguish a broadly low-cholesterol state
+      from isolated HDL reduction or mixed lipid distortion.
+  - biomarker_id: ldl_cholesterol
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low LDL cholesterol supports that the low total cholesterol sits within
+      a broader low-apoB or hypocholesterolaemic pattern rather than reflecting only
+      HDL reduction.
+  contradiction_markers:
+  - contradiction_id: ctr_ratio_not_low
+    marker_reference: tc_hdl_ratio
+    contradiction_rationale: If the TC:HDL ratio is not low, the result may reflect
+      disproportionate HDL reduction rather than a genuinely broad low-cholesterol
+      state.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_ldl_not_low_against_primary_low_apob_pattern
+    marker_reference: ldl_cholesterol
+    contradiction_rationale: If LDL cholesterol is not reduced, a primary broad low-apoB
+      or hypobetalipoproteinaemic pattern becomes less convincing from total cholesterol
+      alone.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Repeat testing and fuller lipoprotein characterization are needed before retaining
+      a primary genetic low-cholesterol explanation.
+    - Review nutritional status, thyroid status, liver context, systemic illness,
+      and lipid-lowering exposure before interpreting isolated low total cholesterol.
+  confidence:
+    evidence_strength: exploratory
+  override_rules:
+  - rule_id: or_total_cholesterol_low_with_low_ratio
+    resulting_state: at_risk
+    description: Escalate for contextual review when total cholesterol is low and
+      TC:HDL ratio is also low, because that combination is more consistent with a
+      genuinely broad low-cholesterol pattern than with isolated HDL reduction.
+    conditions:
+    - metric_id: tc_hdl_ratio
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_hypolipidemia_review_2008
+  evidence:
+    evidence_strength: exploratory
+    physiological_claim: Low total cholesterol is usually a contextual finding that
+      warrants evaluation for secondary systemic or nutritional causes before a primary
+      lipid disorder is assumed.
+    threshold_notes: There is no universally accepted disease threshold for low total
+      cholesterol, so interpretation should remain laboratory-range anchored and clinically
+      contextual.
+    sources:
+    - source_id: source_hypolipidemia_review_2008
+      paper_title: 'Hypolipidemia: A Word of Caution'
+      journal: Libyan Journal of Medicine
+      year: 2008
+  confirmatory_test_refs:
+  - test_id: ct_repeat_lipid_profile_and_secondary_cause_review_for_low_tc
+    rationale: Repeat lipid testing with evaluation for nutritional, hepatic, thyroid,
+      inflammatory, and genetic contexts helps clarify whether low total cholesterol
+      is secondary or primary.

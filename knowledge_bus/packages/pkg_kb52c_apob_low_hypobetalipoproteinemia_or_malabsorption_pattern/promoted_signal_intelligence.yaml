@@ -1,0 +1,115 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern
+  signal_id: signal_apob_low
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: lipid_apob_depth
+signals:
+- signal_id: signal_apob_low
+  research_domain: lipid_transport
+  signal_system: lipid_transport
+  primary_metric:
+    biomarker_id: apob
+    rationale: Low apoB can reflect reduced atherogenic particle production or availability
+      and may be seen in hypobetalipoproteinaemia, malabsorption, or marked nutritional
+      constraint.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: ldl_cholesterol
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low LDL cholesterol usually accompanies low apoB and supports reduced
+      apoB-containing particle burden.
+  - biomarker_id: triglycerides
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low triglycerides can support broad reduction in circulating apoB-containing
+      lipoproteins.
+  - biomarker_id: alt
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Raised ALT may suggest hepatic steatosis in genetic hypobetalipoproteinaemia
+      and helps distinguish benign low-risk interpretation from inherited lipid export
+      disorders.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_ldl
+    marker_reference: ldl_cholesterol
+    contradiction_rationale: Normal LDL cholesterol weakens the interpretation of
+      broad apoB-particle reduction and raises the possibility of assay or transient
+      variation.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_high_alt
+    marker_reference: alt
+    contradiction_rationale: Elevated ALT weakens a simple undernutrition explanation
+      and can support hepatic fat retention seen in some inherited apoB-secretion
+      disorders.
+    contradiction_strength: weak
+  missing_data:
+    policies:
+    - Assess persistence, family pattern, liver context, and nutritional status before
+      interpreting low apoB as a primary disorder.
+    - Review weight change, gastrointestinal symptoms, and nutritional intake before
+      favouring a primary genetic explanation.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_apob_low_with_concordant_low_ldl
+    resulting_state: at_risk
+    description: Escalate for phenotype review when apoB is low with concordantly
+      low LDL-related measures rather than as an isolated laboratory anomaly.
+    conditions:
+    - metric_id: ldl_cholesterol
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_measurement_lipids
+    - source_apob_bridge
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Low apoB indicates low concentration of apoB-containing particles
+      and may reflect either benign low atherogenic burden or uncommon disorders of
+      lipoprotein production and absorption.
+    threshold_notes: No disease-specific cut-off is assumed; persistence and concordance
+      with LDL-related measures are required for meaningful interpretation.
+    sources:
+    - source_id: source_measurement_lipids
+      paper_title: The Measurement of Lipids, Lipoproteins, Apolipoproteins, Fatty
+        Acids, and Sterols, and Next Generation Lipidomics for the Diagnosis and Treatment
+        of Lipid Disorders
+      journal: Current Cardiology Reports
+      year: 2016
+    - source_id: source_apob_bridge
+      paper_title: 'Apolipoprotein B: Bridging the Gap Between Evidence and Clinical
+        Practice'
+      journal: Circulation
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_repeat_apob_and_ldl
+    rationale: Repeat apoB and LDL-related measures help confirm persistence of the
+      low-particle phenotype.
+  - test_id: ct_fat_soluble_vitamin_review
+    rationale: Review of nutritional absorption and fat-soluble vitamin status may
+      help when malabsorption is suspected.

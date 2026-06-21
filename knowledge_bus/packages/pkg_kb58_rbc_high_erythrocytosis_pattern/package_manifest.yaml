@@ -1,6 +1,7 @@
 package_id: pkg_kb58_rbc_high_erythrocytosis_pattern
 package_version: 1.0.0
-description: 'KB-S58 CBC package for inv_rbc_high_erythrocytosis_pattern. Source: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json.'
+description: 'KB-S58 CBC package for inv_rbc_high_erythrocytosis_pattern. Source:
+  knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json.'
 research_brief: research_brief.yaml
 signal_library: signal_library.yaml
 author: HealthIQ Knowledge Bus — KB-S58
@@ -9,3 +10,4 @@ source_document: knowledge_bus/research/investigation_specs/multi_llm_research/c
 translation_mode: creation
 behavioural_impact: NONE
 engine_compatibility: v5.x
+promoted_signal_intelligence: promoted_signal_intelligence.yaml

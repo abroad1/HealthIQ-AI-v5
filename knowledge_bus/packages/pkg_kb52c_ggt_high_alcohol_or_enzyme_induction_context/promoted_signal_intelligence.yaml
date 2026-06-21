@@ -1,0 +1,103 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_ggt_high_alcohol_or_enzyme_induction_context
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_ggt_high_alcohol_or_enzyme_induction_context
+  signal_id: signal_ggt_high
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: liver_enzymes
+signals:
+- signal_id: signal_ggt_high
+  research_domain: hepatic
+  signal_system: hepatic
+  primary_metric:
+    biomarker_id: ggt
+    rationale: GGT is inducible by alcohol and some medications, so isolated elevation
+      often requires context rather than direct disease attribution.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: alp
+    expected_direction: any
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Normal ALP weakens a cholestatic explanation and makes isolated enzyme
+      induction relatively more plausible.
+  - biomarker_id: mcv
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Higher MCV can support a chronic alcohol-related biochemical context,
+      although it is not specific.
+  - biomarker_id: alt
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: ALT helps assess whether there is concurrent hepatocellular injury
+      rather than isolated GGT induction.
+  contradiction_markers:
+  - contradiction_id: ctr_high_alp_induction
+    marker_reference: alp
+    contradiction_rationale: An elevated ALP weakens a simple induction explanation
+      and raises the likelihood of a hepatobiliary pattern.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_alt_metabolic
+    marker_reference: alt
+    contradiction_rationale: A normal ALT weakens a concurrent metabolic hepatocellular
+      stress interpretation.
+    contradiction_strength: weak
+  missing_data:
+    policies:
+    - Consider adiposity and metabolic markers where available before attributing
+      high GGT mainly to alcohol or drugs.
+    - Review alcohol intake, medication exposure, and the full liver enzyme pattern
+      before prioritising enzyme induction.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_ggt_high_with_high_mcv
+    resulting_state: at_risk
+    description: Escalate when GGT is high and MCV is also high because the combination
+      can support a more persistent exposure-related or chronic liver-stress context
+      than an isolated GGT rise.
+    conditions:
+    - metric_id: mcv
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_ggt_induction_review
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: High GGT with limited cholestatic corroboration may reflect
+      alcohol-related or medication-related enzyme induction.
+    threshold_notes: No alcohol-specific threshold is encoded here; the trigger remains
+      the laboratory abnormality.
+    sources:
+    - source_id: source_ggt_induction_review
+      paper_title: Gamma-glutamyl transferase as an inducible liver enzyme
+      journal: Review literature and clinical reference sources
+      year: 2025
+  confirmatory_test_refs:
+  - test_id: ct_repeat_liver_panel_after_exposure_review
+    rationale: Repeat testing after alcohol and medication review can help determine
+      whether GGT elevation is persistent or exposure-related.
+  - test_id: ct_liver_ultrasound_if_persistent
+    rationale: Persistent unexplained elevation may justify imaging for steatotic
+      or structural liver disease.

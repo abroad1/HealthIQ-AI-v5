@@ -1,0 +1,101 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_urea_low_low_protein_or_reduced_urea_cycle_input
+translation:
+  source: investigation_spec_v3_pass3_p1_10_batch_a
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_urea_low_low_protein_or_reduced_urea_cycle_input
+  signal_id: signal_urea_low
+  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
+  work_id: P1-10
+  cluster_id: kidney_urea
+signals:
+- signal_id: signal_urea_low
+  research_domain: nutritional
+  signal_system: nutritional
+  primary_metric:
+    biomarker_id: urea
+    rationale: Low urea is usually a contextual biochemical finding and may reflect
+      low protein intake, low substrate delivery, or impaired hepatic urea-cycle contribution.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: albumin
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low albumin can corroborate poor nutritional or systemic protein status
+      when urea is low.
+  - biomarker_id: alt
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Abnormal liver enzymes can redirect interpretation toward hepatic context
+      rather than simple low protein intake.
+  - biomarker_id: creatinine
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Lower creatinine may support low muscle mass or lower substrate turnover,
+      which can accompany low urea.
+  contradiction_markers:
+  - contradiction_id: ctr_high_alt_hepatic_alt
+    marker_reference: alt
+    contradiction_rationale: Abnormal liver enzyme context weakens a simple nutritional
+      explanation and raises the possibility of hepatic contribution to low urea.
+    contradiction_strength: weak
+  - contradiction_id: ctr_low_albumin_nutritional_frame
+    marker_reference: albumin
+    contradiction_rationale: Low albumin can support nutritional or systemic protein-status
+      explanations and weakens a liver-specific interpretation based on low urea alone.
+    contradiction_strength: weak
+  missing_data:
+    policies:
+    - Do not infer significant hepatic dysfunction from low urea alone; require supporting
+      liver context and broader clinical evidence.
+    - Interpret low urea with albumin, creatinine, and nutritional context before
+      inferring pathology.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_urea_low_with_low_albumin
+    resulting_state: at_risk
+    description: Escalate cautiously when low urea is accompanied by low albumin,
+      as combined reduction may suggest broader nutritional or systemic protein compromise.
+    conditions:
+    - metric_id: albumin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_low_urea_review_2024
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Low urea is usually contextual and often relates to low protein
+      substrate or systemic nutritional factors rather than a stand-alone disease
+      state.
+    threshold_notes: No disease-specific lower threshold is added; escalation remains
+      conservative and tied to corroborating nutritional context.
+    sources:
+    - source_id: source_low_urea_review_2024
+      paper_title: Review literature on low blood urea and contextual nutritional
+        or hepatic interpretation
+      journal: Review literature
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_repeat_urea_with_nutritional_and_liver_review
+    rationale: Repeat testing with nutritional and liver context helps determine whether
+      low urea is stable, benign, or part of a broader hepatic pattern.

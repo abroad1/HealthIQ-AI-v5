@@ -378,6 +378,28 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-15 — First production PSI opt-in pilot
+
+**Status:** Complete  
+**Date closed:** 2026-06-21  
+**Programme block(s):** Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- Verified production PSI opt-in contract: validation-governed only on launch-critical path with `behavioural_impact: NONE`.
+- Opted in all 22 P1-14 activation-ready candidates to production packages with byte-identical PSI copies.
+
+### Carry-forwards
+- 19 staged PSI remain blocked (biomarker, derived-marker, medical-review); 18 matching staged IDs now show production opt-in on audit.
+- Runtime activation sprint deferred until explicit governance authorisation beyond manifest opt-in.
+
+### Blockers / risks
+- kb47 production cohort retains `SIGNAL_RUNTIME_ACTIVATION`; must not conflate with this NONE-impact pilot cohort.
+
+### Recommended next sprint
+- P1-16 SSOT biomarker identity adjudication for blocked staged PSI cohort.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

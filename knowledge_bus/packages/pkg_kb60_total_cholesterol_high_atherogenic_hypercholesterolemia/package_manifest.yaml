@@ -10,3 +10,4 @@ source_document: knowledge_bus/research/investigation_specs/multi_llm_research/l
 translation_mode: creation
 behavioural_impact: NONE
 engine_compatibility: v5.x
+promoted_signal_intelligence: promoted_signal_intelligence.yaml

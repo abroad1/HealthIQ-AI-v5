@@ -1,0 +1,127 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_transferrin_low_visceral_protein_depletion_or_synthetic_failure
+  signal_id: signal_transferrin_low
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: transferrin_transport
+signals:
+- signal_id: signal_transferrin_low
+  research_domain: hepatic
+  signal_system: hepatic
+  primary_metric:
+    biomarker_id: transferrin
+    rationale: Low transferrin can reflect reduced visceral protein availability resulting from impaired hepatic synthesis,
+      protein loss, or nutritional depletion, representing a non-inflammatory pathway to hypotransferrinemia.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: albumin
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Low albumin supports a broader reduction in liver-synthesized visceral proteins rather than an isolated transferrin
+      abnormality, consistent with impaired hepatic output or accelerated visceral protein loss.
+  - biomarker_id: total_cholesterol
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low total cholesterol corroborates a broader hepatic synthetic or nutritional depletion context when multiple
+      liver-dependent outputs are simultaneously reduced.
+  - biomarker_id: urine_protein_creatinine_ratio
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: An elevated urine protein-creatinine ratio supports renal protein loss as a contributing mechanism driving
+      low transferrin and albumin, helping to distinguish a protein-loss nephropathy frame from a primary hepatic synthetic
+      failure frame.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: High CRP suggests interpretation may be better directed toward inflammation-driven negative acute-phase suppression
+      rather than a primary synthetic or protein-loss pattern.
+  contradiction_markers:
+  - contradiction_id: ctr_high_crp_competes_with_primary_synthetic_failure
+    marker_reference: crp
+    contradiction_rationale: Elevated CRP weakens a primary synthetic-failure interpretation, making inflammatory negative-acute-phase
+      suppression plausible; though the mechanisms can coexist, elevated CRP warrants specific inflammatory assessment.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_elevated_upcr_redirects_from_synthetic_to_loss
+    marker_reference: urine_protein_creatinine_ratio
+    contradiction_rationale: An elevated urine protein-creatinine ratio weakens isolated hepatic synthetic failure as an explanation
+      and suggests renal protein loss contributes to the reduction in transferrin and albumin.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_total_cholesterol_not_low_weakens_broad_visceral_depletion
+    marker_reference: total_cholesterol
+    contradiction_rationale: A total cholesterol result that is not low weakens the pattern for a broader visceral protein
+      depletion or malnutrition state, suggesting isolated inflammatory suppression or selective protein-loss may be more
+      likely.
+    contradiction_strength: weak
+  missing_data:
+    policies:
+    - Assess nutritional status, protein-loss pathways via urine protein, and inflammatory activity before attributing low
+      transferrin primarily to undernutrition or protein loss.
+    - Review albumin, liver-function tests, and inflammatory markers before considering hepatic synthetic impairment as the
+      primary mechanism.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_transferrin_low_with_low_albumin_and_low_total_cholesterol
+    resulting_state: at_risk
+    description: Escalate when transferrin is low with albumin below the laboratory minimum and total cholesterol below the
+      laboratory minimum, as this combination is consistent with broader visceral protein depletion or hepatic synthetic impairment.
+    conditions:
+    - metric_id: albumin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    - metric_id: total_cholesterol
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_biochemistry_transferrin_2025
+    - source_malnutrition_markers_2019
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Low transferrin may support identifying broader visceral protein depletion or impaired hepatic protein
+      synthesis, though this interpretation can be confounded by inflammation and requires concurrent assessment of albumin,
+      cholesterol, and urinary protein.
+    threshold_notes: No specific low-transferrin threshold is established for this outcome; associated visceral-protein markers,
+      liver-function metrics, and urinary protein measures are necessary to guide interpretation.
+    sources:
+    - source_id: source_biochemistry_transferrin_2025
+      paper_title: Biochemistry, Transferrin
+      journal: StatPearls
+      year: 2025
+    - source_id: source_malnutrition_markers_2019
+      paper_title: Nutritional Laboratory Markers in Malnutrition
+      journal: Journal of Clinical Medicine
+      year: 2019
+  confirmatory_test_refs:
+  - test_id: ct_albumin_liver_context_and_protein_loss_review
+    rationale: Review of albumin, hepatic function tests, and potential renal or gastrointestinal protein loss can help separate
+      synthetic failure from inflammation-driven or protein-loss-driven mechanisms for low transferrin.
+  - test_id: ct_urine_protein_creatinine_ratio_and_liver_function_panel
+    rationale: Combining urine protein-creatinine ratio with a liver function panel aids in evaluating whether renal protein
+      loss or intrinsic synthetic failure is the more prominent contributor.
