@@ -1,0 +1,95 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_wbc_high_reactive_leukocytosis
+translation:
+  source: investigation_spec_v3_pass3_p1_12_batch_c
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_wbc_high_reactive_leukocytosis
+  signal_id: signal_wbc_high
+  compiler_version: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+  work_id: P1-12
+  cluster_id: leukocyte_shift
+signals:
+- signal_id: signal_wbc_high
+  research_domain: inflammatory
+  signal_system: inflammatory
+  primary_metric:
+    biomarker_id: wbc
+    rationale: Leukocytosis is commonly reactive and should be interpreted against differential count patterns and inflammatory
+      corroboration before assuming hematologic disease.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: neutrophils
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Neutrophilia supports an acute inflammatory or bacterial-reactive driver of leukocytosis.
+  - biomarker_id: crp
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Raised CRP corroborates acute inflammatory activation as a cause of leukocytosis.
+  - biomarker_id: lym
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Lymphocyte predominance can shift interpretation away from neutrophil-driven bacterial inflammation toward
+      alternative reactive or lymphoid patterns.
+  contradiction_markers:
+  - contradiction_id: ctr_high_lym_alt_pattern
+    marker_reference: lym
+    contradiction_rationale: Lymphocyte predominance weakens a neutrophil-dominant inflammatory interpretation and suggests
+      an alternative leukocyte pattern.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_high_crp_neutro_reactive
+    marker_reference: crp
+    contradiction_rationale: Raised CRP supports an acute inflammatory state and weakens a non-neutrophil-predominant reactive
+      interpretation.
+    contradiction_strength: weak
+  missing_data:
+    policies:
+    - Assess differential count and CRP before assigning leukocytosis to a neutrophil-driven inflammatory process.
+    - Review differential count before assigning a non-neutrophil frame, and avoid over-interpreting isolated leukocytosis.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_wbc_high_with_high_neutrophils
+    resulting_state: at_risk
+    description: Escalate when leukocytosis is accompanied by neutrophilia, as this strengthens a clinically significant inflammatory
+      or infectious interpretation.
+    conditions:
+    - metric_id: neutrophils
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_leukocytosis_review_2024
+  evidence:
+    evidence_strength: strong
+    physiological_claim: Leukocytosis is frequently reactive, and differential-count context is important for interpreting
+      whether neutrophil-dominant inflammation is the likely driver.
+    threshold_notes: No disease-specific WBC threshold is introduced beyond laboratory abnormality; differential count pattern
+      determines escalation logic.
+    sources:
+    - source_id: source_leukocytosis_review_2024
+      paper_title: Review literature on leukocytosis, differential count patterns, and reactive causes
+      journal: Review literature
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_blood_film
+    rationale: A blood film helps clarify whether leukocytosis is reactive, left-shifted, or suggestive of a clonal hematologic
+      process.

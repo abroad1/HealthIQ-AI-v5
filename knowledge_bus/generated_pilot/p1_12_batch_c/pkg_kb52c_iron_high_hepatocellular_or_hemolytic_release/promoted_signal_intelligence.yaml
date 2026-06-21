@@ -1,0 +1,93 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
+translation:
+  source: investigation_spec_v3_pass3_p1_12_batch_c
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_iron_high_hepatocellular_or_hemolytic_release
+  signal_id: signal_iron_high
+  compiler_version: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+  work_id: P1-12
+  cluster_id: iron_serum_panel
+signals:
+- signal_id: signal_iron_high
+  research_domain: hepatic
+  signal_system: hepatic
+  primary_metric:
+    biomarker_id: iron
+    rationale: High serum iron can rise transiently when iron is released from injured hepatocytes or from increased red-cell
+      breakdown.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: alt
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Raised ALT supports hepatocellular injury as a source of transient serum iron elevation.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: High bilirubin can support hemolytic or hepatic release contexts that increase circulating iron.
+  - biomarker_id: transferrin_saturation
+    expected_direction: either
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Transferrin saturation helps distinguish a transient release pattern from sustained iron-loading physiology.
+  contradiction_markers:
+  - contradiction_id: ctr_transferrin_saturation_persistently_high
+    marker_reference: transferrin_saturation
+    contradiction_rationale: Persistently high transferrin saturation favors a durable iron-loading pattern over simple transient
+      release.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_alt_high_without_hemolysis
+    marker_reference: alt
+    contradiction_rationale: Predominant transaminitis without hemolysis features makes hepatocellular release more likely
+      than hemolytic release.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Assess hemolysis markers and repeat iron studies before narrowing interpretation.
+    - Review ALT, ferritin, and repeat iron studies before assigning true loading.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_iron_high_with_alt_high
+    resulting_state: at_risk
+    description: Escalate when high serum iron coincides with high ALT, as this more strongly supports hepatocellular release
+      or mixed liver-related interpretation.
+    conditions:
+    - metric_id: alt
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_bsh_ferritin_2024
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Raised serum iron can occur in liver injury and other release states, so isolated high iron does
+      not necessarily indicate iron overload.
+    threshold_notes: Interpretation should rely on pattern recognition across liver, hemolysis, and iron-transport markers
+      rather than a single serum iron value.
+    sources:
+    - source_id: source_bsh_ferritin_2024
+      paper_title: Investigation and management of a raised serum ferritin
+      journal: British Society for Haematology
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_repeat_iron_studies_with_liver_and_hemolysis_context
+    rationale: Repeat iron studies with liver and hemolysis markers help distinguish transient release from sustained overload.

@@ -1,0 +1,21 @@
+compile_id: p1_12_batch_c_pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
+work_id: P1-12
+cluster_id: leukocyte_shift
+compiler_name: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+compiled_at_utc: '2026-06-21T07:43:28Z'
+pilot_status: promoted_signal_intelligence_non_runtime
+runtime_active: false
+governance_runtime_activation_status: inactive_promoted_batch_c
+source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+source_spec_id: inv_lym_low_lymphopenia_stress_or_immunosuppression
+source_hash_sha256: 92d98434b673415eddbf793583b229bb9b34a2dee3b3db97285b9ca019d6562c
+source_contract_version: 3.0.0
+target_package_id: pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
+output_root: knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_lym_low_lymphopenia_stress_or_immunosuppression
+output_hashes_sha256:
+  promoted_signal_intelligence.yaml: 733b6ce28592ded0f20ee4be42eb35f122090dbb965520f5266912d8a82d31d3
+validation:
+  promoted_signal_intelligence_validation: PASS
+  validator_output: 'validation_status: PASS
+
+    audit_path: C:\Users\abroa\HealthIQ-AI-v5\backend\artifacts\promoted_signal_intelligence_audit.md'

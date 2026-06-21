@@ -1,0 +1,93 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_iron_low_absolute_iron_deficiency
+translation:
+  source: investigation_spec_v3_pass3_p1_12_batch_c
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_iron_low_absolute_iron_deficiency
+  signal_id: signal_iron_low
+  compiler_version: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+  work_id: P1-12
+  cluster_id: iron_serum_panel
+signals:
+- signal_id: signal_iron_low
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: iron
+    rationale: Low serum iron is nonspecific in isolation but can support iron deficiency when interpreted with iron stores
+      and transport markers.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: ferritin
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low ferritin strongly supports depleted iron stores when inflammation is not obscuring interpretation.
+  - biomarker_id: transferrin_saturation
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Low transferrin saturation supports inadequate circulating iron availability.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Inflammation helps distinguish absolute iron deficiency from inflammation-driven hypoferremia or mixed iron
+      restriction.
+  contradiction_markers:
+  - contradiction_id: ctr_crp_high_with_ferritin_normal
+    marker_reference: crp
+    contradiction_rationale: Inflammation with non-low ferritin weakens a pure absolute iron-deficiency interpretation and
+      raises iron-restriction alternatives.
+    contradiction_strength: strong
+  - contradiction_id: ctr_ferritin_robustly_normal
+    marker_reference: ferritin
+    contradiction_rationale: Clearly normal or high ferritin outside inflammatory settings weakens depleted-store interpretation.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Interpret low iron with ferritin, transferrin saturation, and inflammatory context before concluding depleted stores.
+    - Review ferritin, transferrin saturation, and red-cell indices before assigning mixed iron restriction.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_iron_low_with_ferritin_low
+    resulting_state: at_risk
+    description: Escalate when low serum iron coincides with low ferritin, as this more strongly supports depleted iron stores.
+    conditions:
+    - metric_id: ferritin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_iron_lab_guideline_2024
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: Low serum iron becomes more clinically meaningful for iron deficiency when accompanied by low ferritin
+      and low transferrin saturation.
+    threshold_notes: Serum iron should not be used alone as a disease threshold because of biological variability and inflammatory
+      effects.
+    sources:
+    - source_id: source_iron_lab_guideline_2024
+      paper_title: Guidelines for the Use of Laboratory Tests for Iron Deficiency
+      journal: Laboratory Medicine Guideline
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_ferritin_and_transferrin_saturation
+    rationale: Ferritin and transferrin saturation are needed to determine whether low serum iron reflects depleted stores
+      or restricted iron availability.

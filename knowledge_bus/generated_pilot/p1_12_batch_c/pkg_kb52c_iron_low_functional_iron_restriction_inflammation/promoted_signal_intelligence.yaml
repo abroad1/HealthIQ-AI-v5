@@ -1,0 +1,93 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+translation:
+  source: investigation_spec_v3_pass3_p1_12_batch_c
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_iron_low_functional_iron_restriction_inflammation
+  signal_id: signal_iron_low
+  compiler_version: p1_12_batch_c_pass3_psi_compiler_v1.0.0
+  work_id: P1-12
+  cluster_id: iron_serum_panel
+signals:
+- signal_id: signal_iron_low
+  research_domain: inflammatory
+  signal_system: inflammatory
+  primary_metric:
+    biomarker_id: iron
+    rationale: Low serum iron commonly occurs in inflammation because iron is sequestered away from plasma despite variable
+      total body stores.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: crp
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Raised CRP supports an inflammatory state capable of lowering circulating iron independently of absolute depletion.
+  - biomarker_id: ferritin
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Normal or high ferritin in inflammatory settings supports iron sequestration rather than simple store depletion.
+  - biomarker_id: transferrin_saturation
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Low transferrin saturation helps distinguish true iron-restricted erythropoiesis from a transient isolated
+      iron fluctuation.
+  contradiction_markers:
+  - contradiction_id: ctr_ferritin_low
+    marker_reference: ferritin
+    contradiction_rationale: Low ferritin argues against pure inflammatory sequestration and supports depleted iron stores.
+    contradiction_strength: strong
+  - contradiction_id: ctr_crp_normal
+    marker_reference: crp
+    contradiction_rationale: Normal inflammatory markers weaken a primary inflammation-driven hypoferremia interpretation.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Consider mixed iron deficiency and inflammation when ferritin is not clearly low but saturation remains reduced.
+    - Review ferritin and inflammatory markers before labeling low iron as depleted stores.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_iron_low_with_crp_high
+    resulting_state: at_risk
+    description: Escalate when low serum iron coincides with high CRP, as this more strongly supports inflammation-related
+      hypoferremia or mixed iron restriction.
+    conditions:
+    - metric_id: crp
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_iron_lab_guideline_2024
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Inflammation can lower circulating iron through sequestration and reduced availability even when
+      total iron stores are not fully depleted.
+    threshold_notes: No stand-alone serum iron cutoff should be used to define functional iron restriction without ferritin
+      and inflammatory context.
+    sources:
+    - source_id: source_iron_lab_guideline_2024
+      paper_title: Guidelines for the Use of Laboratory Tests for Iron Deficiency
+      journal: Laboratory Medicine Guideline
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_ferritin_crp_and_transferrin_saturation
+    rationale: Ferritin, CRP, and transferrin saturation help distinguish inflammation-driven iron restriction from absolute
+      deficiency.

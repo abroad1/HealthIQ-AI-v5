@@ -309,6 +309,31 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-12 — Pass 3 deferred CBC / iron / haematology Batch C
+
+**Status:** Complete  
+**Date closed:** 2026-06-21  
+**Programme block(s):** Block 1 Core health systems model; Block 2 Subsystems and depth model; Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety, research provenance and governance; Block 7 Auditability, reproducibility and traceability  
+
+### Delivered / ticked off
+- Re-adjudicated all eight P1-11 deferred CBC/iron/haematology clusters with direct Pass 3 source inspection.
+- Promoted 7 staged non-runtime PSI entries (iron panel partial + leukocyte shift); six clusters remain deferred with explicit blockers.
+- Reclassified hemoglobin and transferrin-saturation deferrals as source-support gaps, not schema gaps.
+
+### Carry-forwards
+- Hemoglobin Pass 3 research authoring required before primary oxygen-carrying promotion.
+- Medical-review cohort for MCHC spherocytic and clonal/marrow platelet patterns.
+- Manifest opt-in for Batch A/B/C staged PSI deferred to post-review activation sprint.
+
+### Blockers / risks
+- High-risk haematology frames (MCHC spherocytic, clonal/marrow platelet) require medical sign-off before staging.
+- transferrin_saturation derived-metric runtime dependency unresolved for primary promotion.
+
+### Recommended next sprint
+- P1-MED-REV-HEMATOLOGY-1 (medical-review cohort) plus hemoglobin Pass 3 research authoring.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
