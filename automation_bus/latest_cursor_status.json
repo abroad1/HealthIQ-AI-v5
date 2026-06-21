@@ -1,10 +1,9 @@
 {
-  "branch": "work/P1-12-pass3-deferred-cbc-iron-hematology-batch-c",
+  "branch": "work/P1-13-staged-psi-activation-readiness-gate",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-21T07:47:19Z",
-  "cursor_started_utc": "2026-06-21T07:43:05Z",
-  "head_sha": "94106222908c999f33dad3a3d5dcada7f5665346",
+  "cursor_started_utc": "2026-06-21T08:17:57Z",
+  "head_sha": "51f9a6df2efc3757878b0146e8fa05e55883d58e",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-12"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-13"
 }
