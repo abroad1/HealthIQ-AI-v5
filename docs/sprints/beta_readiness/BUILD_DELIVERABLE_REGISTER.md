@@ -501,6 +501,29 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-20 — CBC package provenance resolution and PSI opt-in
+
+**Status:** Complete  
+**Date closed:** 2026-06-22  
+**Programme block(s):** Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety and governance; Block 7 Auditability  
+
+### Delivered / ticked off
+- Confirmed canonical four-candidate CBC cohort (P1-19 cf_003–cf_006).
+- Provenance proved via shared `cbc_hematology_pass_3.json` source across staged compile manifests and `pkg_kb58_*` production hosts.
+- Re-homed and opted in 4 production PSI byte-copies under mapped `pkg_kb58_*` packages.
+
+### Carry-forwards
+- No remaining CBC package-provenance blockers from this sprint.
+- Ferritin-high authority collision and iron Batch C medical-review items unchanged (out of scope).
+
+### Blockers / risks
+- Staged activation-readiness validator continues to report `production_manifest_opt_in: false` for `pkg_kb52c_*` directory names — expected; production opt-in is under `pkg_kb58_*`.
+
+### Recommended next sprint
+- P1-FERRITIN-HIGH-AUTHORITY-RECONCILIATION-1.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

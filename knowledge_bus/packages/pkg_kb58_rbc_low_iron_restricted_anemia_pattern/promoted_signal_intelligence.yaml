@@ -1,0 +1,106 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_rbc_low_iron_restricted_anemia_pattern
+  signal_id: signal_rbc_low
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: rbc_count_patterns
+signals:
+- signal_id: signal_rbc_low
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: rbc
+    rationale: A low RBC count supports anemia and is most informative when interpreted with the red-cell indices that describe
+      morphology and hemoglobinization.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: mch
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Low MCH supports reduced hemoglobin content per cell within an iron-restricted anemia pattern.
+  - biomarker_id: mchc
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low MCHC reinforces hypochromia accompanying reduced erythrocyte number.
+  - biomarker_id: rdw_cv
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: High RDW-CV favors iron deficiency or mixed nutritional anemia over a more uniform compensated carrier state.
+  contradiction_markers:
+  - contradiction_id: ctr_absence_of_anisocytosis
+    marker_reference: rdw_cv
+    contradiction_rationale: A normal RDW-CV weakens classic progressive iron-deficiency anemia and makes a more uniform microcytic
+      process more plausible.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_compensated_high_rbc
+    marker_reference: mch
+    contradiction_rationale: A compensated microcytic pattern with preserved erythrocyte number would be less compatible with
+      this anemia-focused interpretation.
+    contradiction_strength: weak
+  missing_data:
+    policies:
+    - Confirm iron status biochemically before concluding that low RBC count is driven by iron deficiency.
+    - If iron studies and broader nutritional assessment are unavailable, keep mixed or inflammatory deficiency as a secondary
+      explanation.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_rbc_low_with_low_mch_and_high_rdw
+    resulting_state: at_risk
+    description: Escalate when RBC is low with low MCH and high RDW-CV, because that combination is more consistent with clinically
+      relevant iron-restricted anemia than with isolated count variation.
+    conditions:
+    - metric_id: mch
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    - metric_id: rdw_cv
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_rbc_indices_ida_vs_thal_2024
+    - source_ida_vs_thal_review_2023
+  evidence:
+    evidence_strength: strong
+    physiological_claim: A low RBC count is one component of anemia assessment and becomes much more informative when paired
+      with red-cell indices such as MCH, MCHC, and RDW.
+    threshold_notes: RBC count should remain laboratory-range anchored and not be converted into a disease-specific threshold
+      independent of hemoglobin or hematocrit.
+    sources:
+    - source_id: source_rbc_indices_ida_vs_thal_2024
+      paper_title: 'Diagnostic Performance of Red Blood Cell Indices in the Differential Diagnosis of Iron Deficiency Anemia
+        and the Thalassemia Trait in Chile: A Retrospective Study'
+      journal: Diagnostics (Basel)
+      year: 2024
+    - source_id: source_ida_vs_thal_review_2023
+      paper_title: Differential diagnosis between iron deficiency anemia and thalassemia trait-induced anemia
+      journal: Journal of Dental Sciences
+      year: 2023
+  confirmatory_test_refs:
+  - test_id: ct_iron_ferritin_and_smear
+    rationale: Iron studies, ferritin, and smear review help determine whether low RBC count reflects iron-restricted anemia
+      or another cause.

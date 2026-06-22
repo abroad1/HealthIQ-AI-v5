@@ -1,0 +1,6 @@
+work_id: P1-20
+manifest_date: '2026-06-22'
+summary:
+  cbc_package_provenance_carry_forwards_remaining: 0
+  note: All four P1-19 CBC package-identity candidates (cf_003–cf_006) successfully re-homed and opted in under pkg_kb58_* production hosts
+carry_forward_items: []

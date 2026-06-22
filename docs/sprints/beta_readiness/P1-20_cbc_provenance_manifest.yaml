@@ -1,0 +1,77 @@
+work_id: P1-20
+manifest_date: '2026-06-22'
+summary:
+  canonical_candidate_count: 4
+  provenance_confirmed: 4
+  re_homed_and_opted_in: 4
+  blocked: 0
+  advisory_duplication_note: Stage 0 pipeline advisory listed five CBC candidates; P1-19 carry-forward cf_003–cf_006 confirms exactly four distinct candidates
+candidates:
+  - carry_forward_id: p1_19_cf_003
+    staged_package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    production_package_id: pkg_kb58_rbc_high_erythrocytosis_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/promoted_signal_intelligence.yaml
+    staged_psi_internal_package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    staged_source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    source_spec_id: inv_rbc_high_erythrocytosis_pattern
+    production_manifest_path: knowledge_bus/packages/pkg_kb58_rbc_high_erythrocytosis_pattern/package_manifest.yaml
+    production_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    production_psi_prior_to_sprint: absent
+    staged_psi_sha256: 8da0045f259419a31df0ca5842a2c34e68d7274d0e5345a96ae60bfbbcbdfeca
+    production_psi_sha256_post_copy: 8da0045f259419a31df0ca5842a2c34e68d7274d0e5345a96ae60bfbbcbdfeca
+    provenance_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    re_homing_decision: byte_copy_to_pkg_kb58_host
+    opt_in_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    validation_result: PASS
+    blocker_class: null
+  - carry_forward_id: p1_19_cf_004
+    staged_package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    production_package_id: pkg_kb58_rbc_low_iron_restricted_anemia_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/promoted_signal_intelligence.yaml
+    staged_psi_internal_package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    staged_source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    source_spec_id: inv_rbc_low_iron_restricted_anemia_pattern
+    production_manifest_path: knowledge_bus/packages/pkg_kb58_rbc_low_iron_restricted_anemia_pattern/package_manifest.yaml
+    production_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    production_psi_prior_to_sprint: absent
+    staged_psi_sha256: 79721d94669d9edea4efe6bf216fd677457b6bf615322b061fd650200ed7d691
+    production_psi_sha256_post_copy: 79721d94669d9edea4efe6bf216fd677457b6bf615322b061fd650200ed7d691
+    provenance_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    re_homing_decision: byte_copy_to_pkg_kb58_host
+    opt_in_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    validation_result: PASS
+    blocker_class: null
+  - carry_forward_id: p1_19_cf_005
+    staged_package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    production_package_id: pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/promoted_signal_intelligence.yaml
+    staged_psi_internal_package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    staged_source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    source_spec_id: inv_rdw_cv_high_iron_deficiency_anisocytosis
+    production_manifest_path: knowledge_bus/packages/pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis/package_manifest.yaml
+    production_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    production_psi_prior_to_sprint: absent
+    staged_psi_sha256: fff754daf16457a35831535e9d1d5911b9046a290ad421b601b88fcd6d44cabe
+    production_psi_sha256_post_copy: fff754daf16457a35831535e9d1d5911b9046a290ad421b601b88fcd6d44cabe
+    provenance_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    re_homing_decision: byte_copy_to_pkg_kb58_host
+    opt_in_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    validation_result: PASS
+    blocker_class: null
+  - carry_forward_id: p1_19_cf_006
+    staged_package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+    production_package_id: pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/promoted_signal_intelligence.yaml
+    staged_psi_internal_package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+    staged_source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    source_spec_id: inv_rdw_cv_high_mixed_red_cell_population_pattern
+    production_manifest_path: knowledge_bus/packages/pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern/package_manifest.yaml
+    production_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    production_psi_prior_to_sprint: absent
+    staged_psi_sha256: 00799905907a321da2d943b6971903186dce3e2559dfd2b33294141d27b95e77
+    production_psi_sha256_post_copy: 00799905907a321da2d943b6971903186dce3e2559dfd2b33294141d27b95e77
+    provenance_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    re_homing_decision: byte_copy_to_pkg_kb58_host
+    opt_in_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    validation_result: PASS
+    blocker_class: null
