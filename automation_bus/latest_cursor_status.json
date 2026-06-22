@@ -1,9 +1,10 @@
 {
   "branch": "control/pre-sop-scoping-workflow-adoption",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-22T07:49:41Z",
   "cursor_started_utc": "2026-06-22T07:41:58Z",
-  "head_sha": "60e7e92eecc915fc9f9f227abfb2aa1c6f017536",
+  "head_sha": "1897139ca4703be8c971267e169c61a8a8eadfd2",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "CTRL-01"
 }
