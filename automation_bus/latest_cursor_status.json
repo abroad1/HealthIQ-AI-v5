@@ -1,10 +1,9 @@
 {
-  "branch": "sprint/P1-22-thyroid-activation-pack",
+  "branch": "sprint/P1-23-thyroid-intelligence-surface",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-22T20:55:00Z",
-  "cursor_started_utc": "2026-06-22T20:49:26Z",
-  "head_sha": "5196c45037ef617bad0a13272865aecb14731dab",
+  "cursor_started_utc": "2026-06-22T22:09:38Z",
+  "head_sha": "4dae7a6f4115f6d6bf9aa4942d1132d40e444b0f",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-22"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-23"
 }
