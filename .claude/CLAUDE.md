@@ -171,3 +171,5 @@ When invoked with `scope-advisory: <theme> — pre-SOP only, no hardening` or a 
 - Both advisory files are non-execution-authorising cache only; they do not replace formal hardening or kernel start.
 
 At Stage 5 audit close, set `pipeline_advisory_trigger` and `pipeline_advisory_reason` in `automation_bus/latest_audit_summary.md` when trigger criteria in v0.4 §6 are met. GPT must check these fields before authoring the next Stage A concept.
+
+**Stage D hardening with advisory present:** At Stage D hardening, if `automation_bus/latest_scope_advisory.md` is present: read it before hardening begins. Treat file:line citations as inherited structural evidence only if `git log --since="<advisory_date>" -- <cited_file>` returns no commits for each cited file. If any cited file has changed, re-verify the affected claims. If a sprint executed and closed between Stage B and Stage D, re-run the activation-readiness validator regardless of file-change status. Flag any material departure between the final SOP prompt and the advisory before proceeding.
