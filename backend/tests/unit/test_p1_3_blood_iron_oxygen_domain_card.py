@@ -30,7 +30,7 @@ def test_blood_iron_oxygen_compiled_card_artefact_loads():
     assert artefact.domain_id == "wave1_blood_iron_oxygen"
     assert artefact.subsystem_id == "wave1_bio_oxygen_carrying_capacity"
     marker_ids = {m.marker_id for m in artefact.markers}
-    assert marker_ids >= {"hemoglobin", "hematocrit", "ferritin"}
+    assert marker_ids >= {"hemoglobin", "hematocrit", "ferritin", "transferrin"}
 
 
 def test_blood_iron_oxygen_subsystem_evidence_from_panel():

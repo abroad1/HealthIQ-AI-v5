@@ -590,6 +590,27 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-24 — Bio-oxygen Subsystem Signal Depth
+
+**Status:** Complete  
+**Date closed:** 2026-06-22  
+**Programme block(s):** Block 3 Layer B intelligence substrate  
+
+### Delivered / ticked off
+- Enriched `wave1_bio_oxygen_carrying_capacity` with ferritin-high and transferrin-high PSI signal depth.
+- New P1-24 compile manifest; estate index updated; P1-3 manifest preserved.
+
+### Carry-forwards
+- None from P1-24.
+
+### Blockers / risks
+- None material for P1-24 scope.
+
+### Recommended next sprint
+- Programme carry-forwards (iron-low, TSAT, antibodies) per prior sprints.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

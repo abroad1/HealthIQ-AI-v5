@@ -123,7 +123,11 @@ def test_subsystem_rows_have_required_fields() -> None:
 
 
 @pytest.mark.regression
-def test_subsystem_marker_ids_are_canonical_and_partitioned() -> None:
+def test_bio_oxygen_subsystem_evidence_reflects_p1_24_card_depth() -> None:
+    artefact = get_card_evidence_artefact("wave1_bio_oxygen_carrying_capacity")
+    assert "inv_transferrin_high_iron_deficiency_transport_upregulation" in artefact.source_spec_ids
+    marker_ids = {m.marker_id for m in artefact.markers}
+    assert "transferrin" in marker_ids
     cv = next(r for r in _minimal_rows() if r.domain_id == "wave1_cardiovascular")
     lipid = next(s for s in cv.subsystems or [] if s.subsystem_id == "wave1_cv_lipid_transport")
     assert "total_cholesterol" in lipid.included_marker_ids

@@ -1,0 +1,38 @@
+work_id: P1-24
+manifest_date: '2026-06-22'
+summary:
+  phase_1_gate: PASS
+  compiled_card_enriched: true
+  p1_3_manifest_mutated: false
+canonical_test_target: backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py
+supplemental_test_target: backend/tests/unit/test_p1_24_bio_oxygen_subsystem_signal_depth.py
+schema_decisions:
+  ferritin_marker_role: confidence_contributor
+  ferritin_relationship_kind: confidence_input
+  transferrin_marker_role: contextual_marker
+  transferrin_relationship_kind: contextual_support
+  transferrin_presence_policy: optional_on_panel
+package_evidence:
+  - package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    investigation_spec_id: inv_ferritin_high_inflammatory_hyperferritinemia
+    signal_id: signal_ferritin_high
+    behavioural_impact: NONE
+    production_opt_in: true
+    validation_result: PASS
+  - package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    investigation_spec_id: inv_ferritin_high_iron_overload_context
+    signal_id: signal_ferritin_high
+    behavioural_impact: NONE
+    production_opt_in: true
+    validation_result: PASS
+  - package_id: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    investigation_spec_id: inv_transferrin_high_iron_deficiency_transport_upregulation
+    signal_id: signal_transferrin_high
+    behavioural_impact: NONE
+    production_opt_in: true
+    validation_result: PASS
+manifest_strategy:
+  new_manifest: knowledge_bus/compiled/manifests/p1_24_blood_iron_oxygen_card_evidence.yaml
+  superseded_manifest: knowledge_bus/compiled/manifests/p1_3_blood_iron_oxygen_card_evidence.yaml
+  p1_3_manifest_mutated: false
+  estate_index_updated: true
