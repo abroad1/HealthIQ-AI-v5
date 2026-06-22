@@ -173,8 +173,8 @@ def validate_package_provenance(errors: List[str]) -> None:
     )
 
     rows = scan_all_package_provenance()
-    if len(rows) != 186:
-        _err(errors, f"expected 186 classified packages, got {len(rows)}")
+    if len(rows) != 188:
+        _err(errors, f"expected 188 classified packages, got {len(rows)}")
     for row in rows:
         if row.classification not in ARCH_RT5D_CLASSIFICATIONS:
             _err(errors, f"unclassified package {row.package_id}: {row.classification!r}")
