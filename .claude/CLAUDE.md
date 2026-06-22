@@ -73,31 +73,11 @@ When the user explicitly asks Claude to implement something directly (e.g. Senti
 
 ## 8. Current project phase
 
-HealthIQ now has a real deterministic engine and a materially improved product shell.
+For current sprint state, build position, carry-forwards, and active priorities, read the live register:
 
-The following are complete (no longer the active focus):
-- trust bug fixes in the engine
-- integration stabilisation
-- results-page restructuring
-- PDF export
-- actions hub
-- trend view
-- pricing/paywall
-- targeted WHY expansion
+`docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
 
-Active focus as of 2026-05 (verified from git log):
-- Questionnaire UX redesign — Q-1 (guided section-by-section flow) and Q-2 (premium visual layer) in progress
-- Wave 1 domain card work — per-domain headline coherence, consequence copy, driver meta, next steps (D-2 through D-7 completed)
-- Liver/alias fix hardening (GGT trace alias, bilirubin venous alias)
-- Phase 1 Sentinel quality layer — `sentinel/` (report-only regression/alias/slug guard)
-
-Current priority is:
-- product quality
-- commercial readiness
-- clear user journey
-- evidence-grounded prioritisation of the next weak points
-
-Claude should resist drifting back into speculative engine work unless evidence justifies it.
+This file is updated at the close of every sprint and is the authoritative source. Do not rely on memory or CLAUDE.md for project phase — it will be stale.
 
 ## 9. Governing control planes
 
@@ -114,7 +94,9 @@ These SOPs are operational law and must be re-read when task-specific detail mat
 ## 10. Key authority files
 
 - `docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md`
-- `docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md`
+- `docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md`
+- `docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md`
+- `docs/AUTHORITY_MAP.md`
 - `knowledge_bus/research/investigation_specs/investigation_spec_schema_v3.0.0.yaml`
 - `backend/scripts/run_work_package.py`
 - `backend/scripts/golden_gate_local.py`
@@ -161,7 +143,7 @@ This applies to all direct Claude Code implementation work. If a task starts on 
 
 ## 14. Pre-SOP advisory mode (Stage 0 / Stage B)
 
-Authority: `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_4.md` (not merged into Automation Bus SOP except audit schema fields).
+Authority: `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_5.md` (not merged into Automation Bus SOP except audit schema fields).
 
 When invoked with `scope-advisory: <theme> — pre-SOP only, no hardening` or a pipeline advisory request:
 
@@ -170,6 +152,6 @@ When invoked with `scope-advisory: <theme> — pre-SOP only, no hardening` or a 
 - **Stage 0 (batch boundary):** write the prioritised sprint sequence to `automation_bus/latest_pipeline_advisory.md`.
 - Both advisory files are non-execution-authorising cache only; they do not replace formal hardening or kernel start.
 
-At Stage 5 audit close, set `pipeline_advisory_trigger` and `pipeline_advisory_reason` in `automation_bus/latest_audit_summary.md` when trigger criteria in v0.4 §6 are met. GPT must check these fields before authoring the next Stage A concept.
+At Stage 5 audit close, set `pipeline_advisory_trigger` and `pipeline_advisory_reason` in `automation_bus/latest_audit_summary.md` when trigger criteria in v0.5 §6 are met. GPT must check these fields before authoring the next Stage A concept.
 
 **Stage D hardening with advisory present:** At Stage D hardening, if `automation_bus/latest_scope_advisory.md` is present: read it before hardening begins. Treat file:line citations as inherited structural evidence only if `git log --since="<advisory_date>" -- <cited_file>` returns no commits for each cited file. If any cited file has changed, re-verify the affected claims. If a sprint executed and closed between Stage B and Stage D, re-run the activation-readiness validator regardless of file-change status. Flag any material departure between the final SOP prompt and the advisory before proceeding.
