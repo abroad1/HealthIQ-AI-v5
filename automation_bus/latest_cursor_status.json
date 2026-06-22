@@ -1,10 +1,9 @@
 {
-  "branch": "sprint/P1-21-ferritin-high-authority-reconciliation",
+  "branch": "sprint/P1-22-thyroid-activation-pack",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-22T18:17:30Z",
-  "cursor_started_utc": "2026-06-22T18:15:24Z",
-  "head_sha": "7bb5aae4dafd85322fdb5960076f80f7ce97d426",
+  "cursor_started_utc": "2026-06-22T20:49:26Z",
+  "head_sha": "d524577b58f7c7defe5dbdcc63cbdc7427c9cb10",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-21"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-22"
 }
