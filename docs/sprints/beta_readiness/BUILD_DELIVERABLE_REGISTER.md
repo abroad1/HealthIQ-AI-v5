@@ -546,6 +546,28 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-22 — Thyroid Activation Pack
+
+**Status:** Complete  
+**Date closed:** 2026-06-22  
+**Programme block(s):** Block 1 Core systems; Block 3 Layer B intelligence substrate; Block 6 Medical safety and governance  
+
+### Delivered / ticked off
+- First production `lab_range_only` hormonal scoring rail for TSH, FT4, FT3.
+- Bounded TSH authority ADR (scoring only; signal intelligence deferred).
+- `wave1_thyroid` sixth launch-core domain active with kb47 FT3/FT4 allowlist and TSH exclusion.
+
+### Carry-forwards
+- TSH kb52c signal intelligence promotion; FT3 low activation control; thyroid antibody packages; compiled subsystem card evidence.
+
+### Blockers / risks
+- Thyroid domain has no compiled subsystem card yet (empty subsystem routing).
+
+### Recommended next sprint
+- P1-TSH-KB52C-PROMOTION-1 and P1-22B-THYROID-SUBSYSTEM-CARD-1.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

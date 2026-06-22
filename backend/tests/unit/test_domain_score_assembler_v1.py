@@ -33,6 +33,7 @@ def test_wave1_emits_five_domains_score_and_confidence_together():
             "liver": {"overall_score": 75.0, "missing_biomarkers": []},
             "kidney": {"overall_score": 70.0, "missing_biomarkers": ["urea"]},
             "cbc": {"overall_score": 68.0, "missing_biomarkers": []},
+            "hormonal": {"overall_score": 70.0, "missing_biomarkers": []},
         }
     }
     panel = {
@@ -46,6 +47,8 @@ def test_wave1_emits_five_domains_score_and_confidence_together():
         "ast",
         "creatinine",
         "egfr",
+        "tsh",
+        "free_t4",
     }
     ig = _minimal_graph(
         signal_results=[],
@@ -64,7 +67,7 @@ def test_wave1_emits_five_domains_score_and_confidence_together():
         derived_ratios_meta=dr,
         panel_biomarker_ids=panel,
     )
-    assert len(rows) == 5
+    assert len(rows) == 6
     assert wave1_meta.get("schema") == "wave1_aligned_drivers_v1"
     ids = [r.domain_id for r in rows]
     assert ids == [
@@ -73,6 +76,7 @@ def test_wave1_emits_five_domains_score_and_confidence_together():
         "wave1_liver",
         "wave1_kidney",
         "wave1_blood_iron_oxygen",
+        "wave1_thyroid",
     ]
     for r in rows:
         assert 0.0 <= r.score <= 1.0
@@ -87,7 +91,7 @@ def test_wave1_emits_five_domains_score_and_confidence_together():
         assert r.card_schema_version == "1.2"
         assert r.evidence_completeness_denominator >= r.evidence_completeness_numerator
         assert r.plain_english_descriptor
-        if r.domain_id != "wave1_liver":
+        if r.domain_id not in ("wave1_liver", "wave1_thyroid"):
             assert r.subsystems is not None
             assert len(r.subsystems) >= 1
         sub0 = (r.subsystems or [None])[0]
@@ -107,6 +111,7 @@ def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
             "liver": {"overall_score": 80.0, "missing_biomarkers": []},
             "kidney": {"overall_score": 80.0, "missing_biomarkers": []},
             "cbc": {"overall_score": 80.0, "missing_biomarkers": []},
+            "hormonal": {"overall_score": 80.0, "missing_biomarkers": []},
         }
     }
     ig = _minimal_graph(signal_results=[], capacity={"hepatic": 80}, cluster_confidence={})
@@ -129,7 +134,7 @@ def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
         narrative_report_v1=None,
     )
     ns = [r.next_step_sentence for r in rows]
-    assert len(set(ns)) == 5
+    assert len(set(ns)) == 6
 
 
 def test_liver_confidence_tier_uses_domain_not_cluster_rail():

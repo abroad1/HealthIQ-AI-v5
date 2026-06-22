@@ -62,6 +62,8 @@ def test_assembler_emits_five_domains_including_kidney():
                     {"biomarker_name": "egfr"},
                 ],
             },
+            "cbc": {"overall_score": 70.0, "missing_biomarkers": []},
+            "hormonal": {"overall_score": 70.0, "missing_biomarkers": []},
         }
     }
     panel = {"creatinine", "egfr", "alt", "glucose", "hba1c", "ldl_cholesterol"}
@@ -72,8 +74,8 @@ def test_assembler_emits_five_domains_including_kidney():
         derived_ratios_meta=None,
         panel_biomarker_ids=panel,
     )
-    assert len(rows) == 5
-    assert [r.domain_id for r in rows] == [
+    assert len(rows) == 6
+    assert [r.domain_id for r in rows][:5] == [
         "wave1_cardiovascular",
         "wave1_blood_sugar",
         "wave1_liver",
@@ -104,6 +106,8 @@ def test_kidney_collects_egfr_and_creatinine_signals_only():
             "metabolic": {"overall_score": 80.0, "missing_biomarkers": []},
             "liver": {"overall_score": 80.0, "missing_biomarkers": []},
             "kidney": {"overall_score": 55.0, "missing_biomarkers": []},
+            "cbc": {"overall_score": 55.0, "missing_biomarkers": []},
+            "hormonal": {"overall_score": 55.0, "missing_biomarkers": []},
         }
     }
     signals = [

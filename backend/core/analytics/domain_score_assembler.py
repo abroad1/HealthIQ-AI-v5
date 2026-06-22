@@ -38,6 +38,10 @@ from core.analytics.domain_narrative_wave1 import (
     next_step_kidney,
     next_step_blood_iron_oxygen,
     next_step_liver,
+    headline_thy,
+    thy_contributor_primary,
+    thy_consequence_primary,
+    next_step_thyroid,
     headline_ren,
     headline_bio,
     ren_contributor_primary,
@@ -58,6 +62,24 @@ _RAIL_METABOLIC = "metabolic"
 _RAIL_LIVER = "liver"
 _RAIL_KIDNEY = "kidney"
 _RAIL_CBC = "cbc"
+_RAIL_HORMONAL = "hormonal"
+
+# P1-22: kb47 thyroid signals cleared by ADR; TSH signal intelligence explicitly excluded.
+_THYROID_LAUNCH_SIGNAL_IDS: frozenset[str] = frozenset(
+    {
+        "signal_free_t3_high",
+        "signal_free_t4_high",
+        "signal_free_t4_low",
+    }
+)
+_THYROID_EXCLUDED_SIGNAL_IDS: frozenset[str] = frozenset(
+    {
+        "signal_free_t3_low",
+        "signal_tsh_high",
+        "signal_tsh_low",
+        "signal_thyroid_tsh_context",
+    }
+)
 
 # P1-18: transferrin transport upregulation (pkg_kb61) — ID-matched production package.
 # Other CBC/iron signals remain excluded pending frame adjudication (P1-3 carry-forward).
@@ -224,6 +246,24 @@ def _is_wave1_blood_iron_oxygen(row: Dict[str, Any]) -> bool:
         return False
     sid = str(row.get("signal_id", "")).strip()
     return sid in _BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS
+
+
+def _is_wave1_thyroid(row: Dict[str, Any]) -> bool:
+    if not _active_signal_state(str(row.get("signal_state", ""))):
+        return False
+    sid = str(row.get("signal_id", "")).strip()
+    if sid in _THYROID_EXCLUDED_SIGNAL_IDS:
+        return False
+    return sid in _THYROID_LAUNCH_SIGNAL_IDS
+
+
+def _thyroid_confidence_tier(panel: Set[str]) -> str:
+    core = sum(1 for m in ("tsh", "free_t4") if m in panel)
+    if core >= 2:
+        return "high"
+    if core >= 1:
+        return "medium"
+    return "low"
 
 
 def _kidney_confidence_tier(panel: Set[str]) -> str:
@@ -398,6 +438,7 @@ _WAVE1_PLAIN_DESCRIPTOR: Dict[str, str] = {
     "wave1_liver": "Liver health from your blood markers",
     "wave1_kidney": "Kidney filtration markers from your blood test",
     "wave1_blood_iron_oxygen": "Red-cell and oxygen-carrying markers from your blood test",
+    "wave1_thyroid": "Thyroid-axis markers from your blood test",
 }
 
 
@@ -550,8 +591,8 @@ def assemble_consumer_domain_scores_v1(
     intervention_cv_suffix: str = "",
 ) -> Tuple[List[ConsumerDomainScoreV1], Dict[str, Any]]:
     """
-    Build five Wave 1 domain rows. Always returns five entries in stable order:
-    cardiovascular, blood sugar, liver, kidney, blood / iron / oxygen.
+    Build six Wave 1 domain rows. Always returns six entries in stable order:
+    cardiovascular, blood sugar, liver, kidney, blood / iron / oxygen, thyroid.
 
     D-2: Populates consumer narrative fields from deterministic sources (IDL, D-1 bands/tiers, insights).
     D-6: Returns (rows, wave1_aligned_drivers_meta) for a single narrative authority + driving-strip alignment.
@@ -938,5 +979,63 @@ def assemble_consumer_domain_scores_v1(
             **_bio_extras,
         )
 
-    out_rows = [cv_block(), met_block(), liv_block(), ren_block(), bio_block()]
+    def thy_block() -> ConsumerDomainScoreV1:
+        data = _system_rail_data(hss, _RAIL_HORMONAL)
+        raw_100 = _as_float_0_100(data.get("overall_score"))
+        score_01 = raw_100 / 100.0
+        band = _band_label_from_0_100(raw_100)
+        tier = cast(ConfidenceTierV1, _thyroid_confidence_tier(panel_biomarker_ids))
+        missing = _missing_for_rail(hss, _RAIL_HORMONAL)
+        sids = _collect_signal_ids(sig_rows, _is_wave1_thyroid)
+        idl = None
+        ev: Dict[str, Any] = {
+            "layer3_system_pressure_id": "thyroid__system_pressure",
+        }
+        _thy_extras = _wave1_card_contract_extras(
+            domain_id="wave1_thyroid",
+            hss=hss,
+            system_key=_RAIL_HORMONAL,
+            missing_marker_ids=missing,
+            panel_biomarker_ids=panel_biomarker_ids,
+        )
+        _t_contrib = thy_contributor_primary(by_id, sids, sig_rows, idl)
+        _t_cons = thy_consequence_primary(
+            by_id,
+            idl,
+            contributor_sentence=_t_contrib,
+            active_thyroid_signal_ids=sids,
+        )
+        return ConsumerDomainScoreV1(
+            domain_id="wave1_thyroid",
+            card_schema_version="1.2",
+            consumer_label="Thyroid / energy regulation",
+            clinical_label="Thyroid-Axis Marker Context",
+            score=score_01,
+            band_label=band,
+            confidence_tier=tier,
+            active_signal_ids=sids,
+            primary_idl_record_id=idl,
+            missing_marker_ids=missing,
+            source_track="base:scoring_rail:hormonal;narrative:lab_range_only_p1_22",
+            caveat_flags=[],
+            contributing_system_keys=["hormonal"],
+            raw_evidence_refs=ev,
+            headline_sentence=headline_thy(band),
+            contributor_sentence=_t_contrib,
+            confidence_sentence=confidence_sentence_for(tier, "thyroid"),
+            consequence_sentence=_t_cons,
+            next_step_sentence=next_step_thyroid(
+                insight_results,
+                narrative_report_v1,
+            ),
+            evidence_anchor_sentence=_evidence_anchor_from_visible_subsystems(
+                _thy_extras.get("subsystems"),
+                domain="thyroid",
+                by_id=by_id,
+                primary_idl=idl,
+            ),
+            **_thy_extras,
+        )
+
+    out_rows = [cv_block(), met_block(), liv_block(), ren_block(), bio_block(), thy_block()]
     return out_rows, _wave1_aligned_drivers_meta(out_rows, sig_rows)

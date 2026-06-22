@@ -43,6 +43,7 @@ _WAVE1_DOMAIN_IDS = (
     "wave1_liver",
     "wave1_kidney",
     "wave1_blood_iron_oxygen",
+    "wave1_thyroid",
 )
 
 

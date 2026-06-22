@@ -1,0 +1,42 @@
+work_id: P1-22
+manifest_date: '2026-06-22'
+lab_range_only_schema:
+  required_fields:
+    - scoring_type: lab_range_only
+    - unit: non-empty string
+    - weight: numeric
+  forbidden_fields:
+    - bands
+  lab_range_authority: lab-provided reference ranges via input_reference_range; missing range returns unscored sentinel
+  validator_paths:
+    - backend/core/analytics/scoring_policy_registry.py:77-85
+    - backend/core/scoring/rules.py:146-160
+  validation_command: python -m pytest backend/tests/unit/test_scoring_lab_range_only_rules.py backend/tests/unit/test_scoring_policy_registry.py -q
+implementation_decisions:
+  idp_1_system_weight:
+    field: hormonal.system_weight
+    prior_value: 0.0
+    decision: 0.1
+    rationale: Align with cbc/liver weight; hormonal rail now contributes to composite when thyroid markers present
+  idp_2_min_biomarkers_required:
+    field: hormonal.min_biomarkers_required
+    prior_value: 0
+    decision: 1
+    rationale: Require at least one thyroid-axis marker before hormonal system scores
+marker_boundary:
+  tsh:
+    scoring: lab_range_only
+    signal_intelligence: deferred
+    domain_allowlist: excluded
+  free_t4:
+    scoring: lab_range_only
+    signal_intelligence: signal_free_t4_high and signal_free_t4_low when active
+    domain_allowlist: included
+  free_t3_high:
+    scoring: lab_range_only
+    signal_intelligence: signal_free_t3_high with mandatory TSH-suppressed companion gate
+    domain_allowlist: included
+  free_t3_low:
+    scoring: excluded from launch allowlist
+    signal_intelligence: deferred per ADR
+    domain_allowlist: excluded

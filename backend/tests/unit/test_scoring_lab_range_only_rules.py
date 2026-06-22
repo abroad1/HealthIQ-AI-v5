@@ -209,18 +209,30 @@ class TestLabRangeOnlyEngineIntegration:
         assert biomarker_ids.isdisjoint(thyroid_ids)
 
 
-class TestProductionPolicyUnchanged:
-    def test_production_policy_has_no_lab_range_only_entries(self):
+class TestProductionPolicyThyroidLabRangeOnly:
+    def test_production_policy_has_lab_range_only_thyroid_markers(self):
         _reset_policy_cache()
         policy = scoring_policy_registry.load_scoring_policy()
-        for biomarker_id, spec in policy.raw.get("biomarkers", {}).items():
-            assert spec.get("scoring_type", SCORING_TYPE_RANGE_POSITION) == SCORING_TYPE_RANGE_POSITION, (
-                f"Unexpected scoring_type on production biomarker {biomarker_id}"
-            )
+        for marker_id in ("tsh", "free_t4", "free_t3"):
+            spec = policy.raw["biomarkers"][marker_id]
+            assert spec.get("scoring_type") == SCORING_TYPE_LAB_RANGE_ONLY
+            assert "bands" not in spec
 
-    def test_production_hormonal_rail_still_inert(self):
+    def test_production_hormonal_rail_active(self):
         _reset_policy_cache()
         policy = scoring_policy_registry.load_scoring_policy()
         hormonal = policy.raw["systems"]["hormonal"]
-        assert hormonal["biomarkers"] == []
-        assert hormonal["system_weight"] == 0.0
+        assert hormonal["biomarkers"] == ["tsh", "free_t4", "free_t3"]
+        assert hormonal["system_weight"] == 0.1
+        assert hormonal["min_biomarkers_required"] == 1
+
+    def test_non_thyroid_production_biomarkers_remain_range_position(self):
+        _reset_policy_cache()
+        policy = scoring_policy_registry.load_scoring_policy()
+        thyroid_ids = {"tsh", "free_t4", "free_t3"}
+        for biomarker_id, spec in policy.raw.get("biomarkers", {}).items():
+            if biomarker_id in thyroid_ids:
+                continue
+            assert spec.get("scoring_type", SCORING_TYPE_RANGE_POSITION) == SCORING_TYPE_RANGE_POSITION, (
+                f"Unexpected scoring_type on production biomarker {biomarker_id}"
+            )

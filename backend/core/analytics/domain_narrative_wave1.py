@@ -412,6 +412,18 @@ def confidence_sentence_for(
         return (
             "Confidence is limited — core red-cell markers are missing from this panel."
         )
+    if domain == "thyroid":
+        if t == "high":
+            return (
+                "Confidence is high — TSH and free T4 are both present on this panel."
+            )
+        if t == "medium":
+            return (
+                "Confidence is moderate — one core thyroid-axis marker is present on this panel."
+            )
+        return (
+            "Confidence is limited — core thyroid-axis markers are missing from this panel."
+        )
     # liver
     panel = panel_biomarker_ids or set()
     if t == "high":
@@ -919,6 +931,10 @@ _GOVERNED_NEXT_STEP_BIO = (
     "For red-cell and oxygen-carrying markers, discuss out-of-range results with a clinician, "
     "especially if they are new, persistent, or you have relevant symptoms."
 )
+_GOVERNED_NEXT_STEP_THY = (
+    "For thyroid-axis markers, discuss out-of-range results with a clinician, "
+    "especially if they are new, persistent, or you have relevant symptoms."
+)
 
 _ID_RENAL = "ph_renal_stress_v1"
 
@@ -1159,3 +1175,64 @@ def next_step_blood_iron_oxygen(
     if s:
         return s
     return _GOVERNED_NEXT_STEP_BIO
+
+
+def headline_thy(band: str) -> str:
+    """P1-22: non-diagnostic thyroid-axis headline (lab-range scoring only)."""
+    b = (band or "").strip().lower()
+    if b in ("review", "watch"):
+        return "Your thyroid-axis markers may need follow-up in clinical context."
+    if b == "stable":
+        return "Your thyroid-axis markers look broadly stable on this panel."
+    return "Your thyroid-axis markers are within a broadly favourable range on this panel."
+
+
+def thy_contributor_primary(
+    by_id: Dict[str, Any],
+    active_sids: List[str],
+    sig_rows: List[Dict[str, Any]],
+    primary_idl: Optional[str],
+) -> str:
+    _ = (by_id, primary_idl)
+    for pref in ("signal_free_t4", "signal_free_t3"):
+        for r in sig_rows:
+            if not _active(r):
+                continue
+            sid = str(r.get("signal_id", ""))
+            if sid.startswith(pref) and sid in active_sids:
+                return governed_signal_line(sid, "thyroid")
+    if active_sids:
+        return "Thyroid-axis markers on this panel are outside their reference ranges."
+    return "Your thyroid-axis markers are within their reference ranges on this panel."
+
+
+def thy_consequence_primary(
+    by_id: Dict[str, Any],
+    primary_idl: Optional[str],
+    *,
+    contributor_sentence: str = "",
+    active_thyroid_signal_ids: Optional[List[str]] = None,
+) -> str:
+    _ = (by_id, primary_idl, contributor_sentence)
+    if active_thyroid_signal_ids:
+        return (
+            "Thyroid-axis markers can shift with illness, medication, and other factors; "
+            "they are worth discussing with a clinician if out of range or persistent."
+        )
+    return (
+        "Thyroid-axis markers help describe hormone signalling context; "
+        "a single panel snapshot is not a full thyroid assessment."
+    )
+
+
+def next_step_thyroid(
+    insight_results: Optional[List[Dict[str, Any]]],
+    _narrative_report: Any,
+) -> str:
+    _ = _narrative_report
+    s = _first_recommendation_for_category_substrings(
+        insight_results, ("thyroid", "hormonal", "endocrine")
+    )
+    if s:
+        return s
+    return _GOVERNED_NEXT_STEP_THY

@@ -29,9 +29,9 @@ systems:
     system_weight: 0.15
     biomarkers: ["crp"]
   hormonal:
-    min_biomarkers_required: 0
-    system_weight: 0.0
-    biomarkers: []
+    min_biomarkers_required: 1
+    system_weight: 0.1
+    biomarkers: ["tsh", "free_t4", "free_t3"]
   nutritional:
     min_biomarkers_required: 0
     system_weight: 0.0
@@ -271,6 +271,24 @@ biomarkers:
       high: {min: 450.0, max: 600.0}
       very_high: {min: 600.0, max: 1000.0}
       critical: {min: 1000.0, max: 2000.0}
+  tsh:
+    scoring_type: lab_range_only
+    unit: "mIU/L"
+    weight: 0.35
+    age_adjustment: false
+    sex_adjustment: false
+  free_t4:
+    scoring_type: lab_range_only
+    unit: "pmol/L"
+    weight: 0.35
+    age_adjustment: false
+    sex_adjustment: false
+  free_t3:
+    scoring_type: lab_range_only
+    unit: "pmol/L"
+    weight: 0.30
+    age_adjustment: false
+    sex_adjustment: false
 
 # LC-S14 — governed lab-range directionality (replaces per-marker hardcoded scoring exceptions).
 biomarker_directionality:
@@ -302,6 +320,12 @@ biomarker_directionality:
       direction_class: low_only_concern
     creatinine:
       direction_class: high_only_concern
+    tsh:
+      direction_class: bidirectional_concern
+    free_t4:
+      direction_class: bidirectional_concern
+    free_t3:
+      direction_class: bidirectional_concern
 
 derived_ratios:
   - "tc_hdl_ratio"
