@@ -1,124 +1,113 @@
 {
-  "work_id": "P1-19",
+  "work_id": "P1-20",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-06-22T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
+  "blocker_count": 0,
   "changes": [
     {
       "stage": "2A",
-      "check": "Front matter — work_id",
+      "check": "Front matter — all five fields",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:2 — work_id: P1-19; not used in any prior commit or kernel package"
+      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id: P1-20; branch: sprint/P1-20-cbc-package-provenance-and-psi-opt-in; risk_level: HIGH; execution_model: TWO_PHASE_START_FINISH; change_type: CONTENT"
     },
     {
       "stage": "2A",
-      "check": "Front matter — branch",
+      "check": "change_type: CONTENT — correct",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:3 — sprint/P1-19-blood-iron-oxygen-kb-production-intelligence; branch does not yet exist and will be created by kernel start"
+      "evidence": "No signal_library changes, no new signal definitions, no Intelligence Core interaction, no backend code changes. Production PSI opt-in via byte-copy; behavioural_impact: NONE confirmed in all 4 pkg_kb58_* package_manifest.yaml files (line 11)"
     },
     {
       "stage": "2A",
-      "check": "Front matter — risk_level HIGH",
-      "result": "CONFIRMED",
-      "evidence": "backend/core/analytics/signal_evaluator.py:31-35 — _iter_signal_library_paths() iterates knowledge_bus/packages/*/signal_library.yaml; Phase 3 Gate 3D creates new production signal_library.yaml files loaded by Intelligence Core at runtime; SOP §10 HIGH trigger confirmed"
+      "check": "risk_level: HIGH — observation only",
+      "result": "CONFIRMED (non-blocking observation: STANDARD by SOP §10 triggers; no Intelligence Core, no backend/ssot or backend/core paths; conservative classification does not cause harm)",
+      "evidence": "knowledge_bus/packages/pkg_kb58_rbc_high_erythrocytosis_pattern/package_manifest.yaml:11 — behavioural_impact: NONE"
     },
     {
       "stage": "2A",
-      "check": "Front matter — execution_model",
+      "check": "Stage B scope advisory — file staleness check (§14)",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH; standard for all governed packages"
+      "evidence": "git log --since=2026-06-22 run against all 6 cited files: P1-19_pass3_carry_forward.yaml, P1-19_production_opt_in_manifest.yaml, pkg_kb58_rbc_high/package_manifest.yaml, pkg_kb58_rbc_low/package_manifest.yaml, pkg_kb58_rdw_cv_high_iron_deficiency/package_manifest.yaml, pkg_kb58_rdw_cv_high_mixed/package_manifest.yaml — all returned zero commits; evidence is current and inheritable"
     },
     {
       "stage": "2A",
-      "check": "Front matter — change_type MIXED",
+      "check": "Stage B amendments — all incorporated",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:6 — change_type: MIXED; correct per SOP §4: signal_evaluator.py:31-35 loads all production signal_library.yaml files at runtime; Phase 3 new package creation is governed content consumed by Intelligence Core. PSI opt-in alone (Phase 2) would be CONTENT — load_promoted_signal_intelligence_for_package() has no active runtime callers — but combined sprint scope is MIXED."
+      "evidence": "Amendment 1 (count=4): automation_bus/latest_cursor_prompt.md:30-31; Amendment 2 (bundle opt-in): prompt:24-26; Amendment 3 (identity proof gate): Phase 2 conditions 1-10"
     },
     {
       "stage": "2A",
-      "check": "Stage B advisory amendments — all 4 incorporated",
+      "check": "Candidate count — 4 not 5",
       "result": "CONFIRMED",
-      "evidence": "Amendment 1 (signal_library STOP gate): automation_bus/latest_cursor_prompt.md Signal-library rule section — existing packages excluded, new package creation from governed Pass 3 permitted, trace requirement present. Amendment 2 (Gate 3B duplicate authority): Phase 3 Gate 3B now includes signal_id collision check (Step 1) and clinical scope check (Step 2). Amendment 3 (full cohort): Phase 1 requires validator re-run and adjudication of full ACTIVATION_READY list. Amendment 4 (Pass 3 source sufficiency): Gate 3C present with BLOCKED_INSUFFICIENT_PASS3_SOURCE classification."
+      "evidence": "docs/sprints/beta_readiness/P1-19_pass3_carry_forward.yaml — 4 BLOCKED_PACKAGE_IDENTITY_UNRESOLVED items: cf_003 (rbc_high), cf_004 (rbc_low), cf_005 (rdw_cv_high_iron_deficiency_anisocytosis), cf_006 (rdw_cv_high_mixed_red_cell_population_pattern)"
     },
     {
       "stage": "2A",
-      "check": "Authority path — KNOWLEDGE_BUS_SOP_v1.3.1.md",
+      "check": "Staged PSI files — all 4 exist with expected pkg_kb52c_* package_id",
       "result": "CONFIRMED",
-      "evidence": "docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — confirmed present"
+      "evidence": "knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/promoted_signal_intelligence.yaml:3 — package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern; pkg_kb52c_rbc_low.../promoted_signal_intelligence.yaml:3 — package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern; pkg_kb52c_rdw_cv_high_iron_deficiency.../promoted_signal_intelligence.yaml:3 — package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis; pkg_kb52c_rdw_cv_high_mixed.../promoted_signal_intelligence.yaml:3 — package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern"
     },
     {
       "stage": "2A",
-      "check": "Authority path — KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md",
+      "check": "Compile manifests — source_path for all 4",
       "result": "CONFIRMED",
-      "evidence": "docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — confirmed present"
+      "evidence": "All 4 compile_manifest.yaml line 9: source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json; SHA256 824bc35f02b4636f64876c35a9a50cbf60035b297b67b62c0b3daefdb5c19897 consistent across all 4"
     },
     {
       "stage": "2A",
-      "check": "Authority path — schemas",
+      "check": "Production pkg_kb58 hosts — source_document match, no prior opt-in",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/schema/package_manifest_schema.yaml — confirmed present; knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml — confirmed present"
+      "evidence": "All 4 pkg_kb58_* package_manifest.yaml line 9: source_document: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json; no promoted_signal_intelligence field in any of the 4 manifests"
     },
     {
       "stage": "2A",
-      "check": "Authority path — sprint manifests",
+      "check": "Authority paths — validators and schemas",
       "result": "CONFIRMED",
-      "evidence": "docs/sprints/beta_readiness/P1-17_core_backend_handoff_manifest.yaml — confirmed present; P1-17_blocker_resolution_manifest.yaml — confirmed present; P1-14_activation_readiness_cohort_manifest.yaml — confirmed present"
+      "evidence": "backend/scripts/validate_promoted_signal_intelligence.py — EXISTS; backend/scripts/validate_knowledge_package.py — EXISTS; backend/scripts/validate_staged_psi_activation_readiness.py — EXISTS; knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml — EXISTS; knowledge_bus/schema/package_manifest_schema.yaml — EXISTS"
     },
     {
       "stage": "2A",
-      "check": "pkg_kb61 production host — no prior PSI opt-in",
+      "check": "Authority paths — governance and sprint files",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/package_manifest.yaml — exists; no promoted_signal_intelligence field present; behavioural_impact: NONE; package_id matches staged PSI target_package_id"
+      "evidence": "docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — EXISTS; docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — EXISTS; docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml — EXISTS; docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md — EXISTS"
     },
     {
       "stage": "2A",
-      "check": "Staged PSI validation — KB61 and ferritin-high",
+      "check": "Re-homing definition — no staged PSI edits",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/compile_manifest.yaml — validation: PASS; knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/compile_manifest.yaml — validation: PASS; knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/compile_manifest.yaml — validation: PASS"
+      "evidence": "automation_bus/latest_cursor_prompt.md:153-160 — re-homing definition: byte-copy only, do not alter file; prompt:259 — do not edit staged PSI; prompt:121 — all generated-pilot PSI files and compile manifests read-only; prompt:145 — do not place PSI without Phase 2 proof"
     },
     {
       "stage": "2A",
-      "check": "pkg_s24_ferritin_high_overload signal_id collision risk — gate present",
+      "check": "Hash-bound rule — present and correct",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_s24_ferritin_high_overload/signal_library.yaml defines signal_id: signal_ferritin_high; both ferritin-high staged PSI also declare signal_id: signal_ferritin_high; Gate 3B Step 1 now explicitly requires signal_id collision check before Gate 3D; collision resolver regression test added to Phase 5"
+      "evidence": "automation_bus/latest_cursor_prompt.md:162-166 — hash-bound generated-pilot rule section present; explains SHA256 mechanism; explains staged validator expected behaviour post opt-in; instructs document not fix"
     },
     {
       "stage": "2A",
-      "check": "Forbidden file scope",
+      "check": "Validator behaviour — staged PSI hash check confirmed read",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md Files out of scope — .codex/, .cursor/, .vscode/, AGENTS.md, backend/, frontend/, validators, tests, runtime loaders all explicitly excluded"
+      "evidence": "backend/scripts/validate_staged_psi_activation_readiness.py:196 — package_id = psi_path.parent.name (directory name, not YAML field); lines 312-327 — SHA256 of staged PSI compared against compile manifest output_hashes_sha256; lines 123-133 — production opt-in matched by directory name; byte-copy approach preserves hash, production validator matches by pkg_kb58_* directory name — no hash mismatch, no false BLOCKED_MANIFEST_OR_HASH"
     },
     {
       "stage": "2A",
-      "check": "No duplicate authority sources introduced",
+      "check": "Acceptance criteria — stale criteria removed",
       "result": "CONFIRMED",
-      "evidence": "Gate 3B Step 1 prevents creation of any production package whose signal_id already exists in another production signal_library.yaml; Gate 3D conditional on Gates 3A-3C passing; pkg_s24_ferritin_high_overload not modified"
+      "evidence": "automation_bus/latest_cursor_prompt.md acceptance criteria: criterion 12 — no generated-pilot files modified; criterion 13 — production PSI byte-copies; criterion 14 — manifest update limited to promoted_signal_intelligence field; criterion 18 — staged validator expected behaviour documented; criterion 21 — sprint report documents expected behaviour; no criterion referencing staged PSI package_id edit"
     },
     {
-      "stage": "2B",
-      "check": "Behavioural scope defined — MIXED controls",
+      "stage": "2A",
+      "check": "Forbidden files",
       "result": "CONFIRMED",
-      "evidence": "Phase 3 Gate 3D creates signal_library.yaml files; signal_evaluator.py:35 glob loads these at runtime; behavioural surface is signal evaluation for new ferritin-high signals; regression target backend/tests/regression/test_signal_authority_collision_enforcement.py added to Phase 5"
+      "evidence": "automation_bus/latest_cursor_prompt.md:112-130 — backend/, frontend/, .codex/, .cursor/, .vscode/, AGENTS.md, validators, tests, runtime loaders, compile manifests, signal_library.yaml, research_brief.yaml — all prohibited"
     },
     {
-      "stage": "2B",
-      "check": "No scope creep",
+      "stage": "2A",
+      "check": "No duplicate authority sources",
       "result": "CONFIRMED",
-      "evidence": "Phase 4 explicitly blocks CBC package-identity and iron Batch C medical-review candidates; backend/, frontend/, validators, tests all out of scope; no runtime or scoring files in scope"
-    },
-    {
-      "stage": "2B",
-      "check": "Determinism risks surfaced",
-      "result": "CONFIRMED",
-      "evidence": "signal_id: signal_ferritin_high collision risk identified; Gate 3B Step 1 provides deterministic STOP; if gate fires, sprint degrades to PSI opt-in only with no behavioural drift; no silent output drift possible under gate structure"
-    },
-    {
-      "stage": "2B",
-      "check": "Stage B advisory evidence current — git staleness check",
-      "result": "CONFIRMED",
-      "evidence": "git log --since=2026-06-22 over all advisory-cited files returned no commits; no sprint ran between Stage B and Stage D; advisory evidence fully inheritable"
+      "evidence": "No signal_library.yaml created or modified; no new signal definitions; production opt-in adds PSI to existing pkg_kb58_* host only; pkg_s24_ferritin_high_overload untouched"
     }
   ],
-  "overall_verdict": "HARDENED. All five front-matter fields valid. change_type: MIXED confirmed correct (signal_evaluator.py:31-35 loads all production signal_library.yaml at runtime). Gate 3B amended with explicit signal_id collision check (Step 1) before clinical scope check (Step 2). test_signal_authority_collision_enforcement.py added as mandatory Phase 5 regression target. All authority paths confirmed present. All 4 Stage B advisory amendments incorporated. No forbidden files in scope. No scope creep. Determinism risks gated. Ready for kernel start."
+  "overall_verdict": "HARDENED. Blocker resolved: re-homing definition amended to byte-copy only; staged PSI files and compile manifests are read-only in P1-20. Hash-bound rule section added. Stale acceptance criteria removed and replaced. Staged validator expected behaviour documented in prompt, Phase 4, and acceptance criteria. All five front-matter fields confirmed. All authority paths confirmed present. Source-path identity confirmed for all 4 candidates across staged compile manifests and production package manifests. No duplicate authority sources introduced. No scope creep. CONTENT change type correct. Ready for kernel start."
 }

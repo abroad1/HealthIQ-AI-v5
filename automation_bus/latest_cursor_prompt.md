@@ -1,110 +1,129 @@
 ---
-work_id: P1-19
-branch: sprint/P1-19-blood-iron-oxygen-kb-production-intelligence
+work_id: P1-20
+branch: sprint/P1-20-cbc-package-provenance-and-psi-opt-in
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 ---
 
-# P1-19 — Blood/Iron/Oxygen Knowledge Bus Production Intelligence Expansion
+# P1-20 — CBC Package Provenance Resolution and PSI Opt-In
 
 You are Cursor, acting as the Knowledge Bus / Medical Intelligence implementation agent.
 
 Implement this work package under Automation Bus SOP v1.3.1.
 
-This is a Knowledge Bus production-intelligence sprint. It is not a runtime sprint, not a frontend sprint, and not a Core Engine sprint.
+This is a Knowledge Bus provenance-resolution and production PSI opt-in sprint.
+
+It is not a runtime sprint, not a frontend sprint, not a Core Engine sprint, and not a medical-review sprint.
 
 ## Purpose
 
-Promote the newly unblocked blood/iron/oxygen Pass 3-derived PSI cohort into governed production Knowledge Bus artefacts where safe.
+Resolve the CBC package-identity mismatch blocking the `pkg_kb52c_*` staged PSI cohort from promotion into the existing `pkg_kb58_*` production packages.
 
-This sprint must avoid a single-file opt-in micro-sprint. The work must check the full current `ACTIVATION_READY` cohort and include every safe candidate that can be promoted without crossing STOP gates.
+If provenance is proven for each candidate, place the staged PSI into the correct `pkg_kb58_*` production package directory as a byte-copy, then opt it into production in the same sprint.
 
-The intended product movement is:
-
-* production PSI opt-in for clean activation-ready packages;
-* creation of missing ferritin-high production package hosts where evidence-backed;
-* blocker classification for unsafe candidates;
-* concise carry-forward of unresolved rich Pass 3 intelligence.
+Do not split successful provenance resolution and PSI opt-in into separate sprints. That would create unnecessary SOP overhead.
 
 ## Baseline
 
-CTRL-01 has adopted the Pre-SOP Prompt Scoping Workflow v0.4.
+Stage 0 Pipeline Advisory initially referenced five CBC candidates, but Stage B Mode 1 corrected this.
 
-Stage 0 pipeline advisory identified Sprint 1 as:
+The canonical candidate set is four candidates from `docs/sprints/beta_readiness/P1-19_pass3_carry_forward.yaml`, `cf_003` to `cf_006`.
 
-`KB61 PSI opt-in + ferritin-high host package`
+Stage B also confirmed that the four `pkg_kb58_*` production package manifests all cite:
 
-The advisory also stated that Sprint 1 should check whether any other staged PSI from the former derived-marker cohort is now activation-ready and eligible for the same opt-in pass. If yes, they must be bundled rather than split into micro-sprints.
+`knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json`
 
-Stage B Mode 1 advisory returned `AMEND`, not `SPLIT`. The sprint is throughput-justified if it includes:
+and that the staged PSI source paths match the same source document.
 
-1. KB61 PSI opt-in;
-2. ferritin-high host package creation where safe;
-3. all other currently activation-ready staged PSI that can be safely production-opted-in;
-4. candidate-level STOP gates for unsafe candidates.
+Therefore, if candidate-level provenance proof passes, opt-in should proceed in this sprint.
 
 ## Mandatory read list
 
 Read before editing:
 
 * `automation_bus/latest_pipeline_advisory.md`
-* `automation_bus/latest_scope_advisory.md` if present
+* `automation_bus/latest_scope_advisory.md`
 * `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_4.md`
 * `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-* `docs/sprints/beta_readiness/P1-18_blood_iron_oxygen_pass3_system_activation.md`
-* `docs/sprints/beta_readiness/P1-18_pass3_system_activation_carry_forward.yaml`
-* `docs/sprints/beta_readiness/P1-17_core_backend_handoff_manifest.yaml`
-* `docs/sprints/beta_readiness/P1-17_blocker_resolution_manifest.yaml`
+* `docs/sprints/beta_readiness/P1-19_pass3_carry_forward.yaml`
+* `docs/sprints/beta_readiness/P1-19_production_opt_in_manifest.yaml`
 * `docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml`
 * `docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md`
 * `docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md`
 * `docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md`
-* `knowledge_bus/schema/package_manifest_schema.yaml`
 * `knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml`
-* `backend/scripts/validate_knowledge_package.py`
+* `knowledge_bus/schema/package_manifest_schema.yaml`
 * `backend/scripts/validate_promoted_signal_intelligence.py`
+* `backend/scripts/validate_knowledge_package.py`
 * `backend/scripts/validate_staged_psi_activation_readiness.py`
 
 Use targeted search:
 
-* `rg "transferrin_high|ferritin_high|iron_overload|inflammatory_hyperferritinemia|iron_deficiency_transport" knowledge_bus docs backend`
-* `rg "pkg_kb61|pkg_kb52c_ferritin_high|pkg_s24_ferritin_high_overload" knowledge_bus docs`
-* `rg "ACTIVATION_READY|activation_ready_count|BLOCKED_MEDICAL_REVIEW_REQUIRED|FRAME_AUTHORITY|BLOCKED_PACKAGE_IDENTITY" docs/sprints/beta_readiness`
-* `rg "promoted_signal_intelligence" knowledge_bus/packages docs/sprints/beta_readiness`
-* `rg "white_blood_cells|crp|ferritin|transferrin_saturation|transferrin|iron" backend/ssot knowledge_bus docs`
+* `rg "pkg_kb52c_rbc_high_erythrocytosis_pattern|pkg_kb58_rbc_high_erythrocytosis_pattern" knowledge_bus docs`
+* `rg "pkg_kb52c_rbc_low_iron_restricted_anemia_pattern|pkg_kb58_rbc_low_iron_restricted_anemia_pattern" knowledge_bus docs`
+* `rg "pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis|pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis" knowledge_bus docs`
+* `rg "pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern|pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern" knowledge_bus docs`
+* `rg "cbc_hematology_pass_3.json" knowledge_bus/generated_pilot knowledge_bus/packages docs`
 
 Inspect relevant hits before editing.
+
+## Canonical candidate mapping
+
+The candidate set is exactly these four mappings unless hardening proves the repository state differs:
+
+1. `pkg_kb52c_rbc_high_erythrocytosis_pattern`
+   → `pkg_kb58_rbc_high_erythrocytosis_pattern`
+
+2. `pkg_kb52c_rbc_low_iron_restricted_anemia_pattern`
+   → `pkg_kb58_rbc_low_iron_restricted_anemia_pattern`
+
+3. `pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis`
+   → `pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis`
+
+4. `pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern`
+   → `pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern`
+
+Do not add a fifth candidate unless direct repository evidence proves a distinct fifth candidate exists in the P1-19 carry-forward manifest.
+
+If the Stage 0 advisory’s duplicated candidate appears again, record it as an advisory duplication, not a fifth implementation candidate.
 
 ## Files in scope
 
 Allowed if justified:
 
-* `docs/sprints/beta_readiness/P1-19_blood_iron_oxygen_kb_production_intelligence.md`
-* `docs/sprints/beta_readiness/P1-19_production_opt_in_manifest.yaml`
-* `docs/sprints/beta_readiness/P1-19_pass3_carry_forward.yaml`
+* `docs/sprints/beta_readiness/P1-20_cbc_package_provenance_and_psi_opt_in.md`
+* `docs/sprints/beta_readiness/P1-20_cbc_provenance_manifest.yaml`
+* `docs/sprints/beta_readiness/P1-20_pass3_carry_forward.yaml`
 * `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-* `knowledge_bus/packages/<safe_candidate>/package_manifest.yaml`
-* `knowledge_bus/packages/<safe_candidate>/research_brief.yaml`
-* `knowledge_bus/packages/<safe_candidate>/signal_library.yaml`
-* `knowledge_bus/packages/<safe_candidate>/promoted_signal_intelligence.yaml`
+* the staged PSI YAML file for each of the four mapped `pkg_kb52c_*` candidates under `knowledge_bus/generated_pilot/` — read-only for provenance verification; must not be edited
+* `knowledge_bus/packages/pkg_kb58_rbc_high_erythrocytosis_pattern/package_manifest.yaml`
+* `knowledge_bus/packages/pkg_kb58_rbc_high_erythrocytosis_pattern/promoted_signal_intelligence.yaml`
+* `knowledge_bus/packages/pkg_kb58_rbc_low_iron_restricted_anemia_pattern/package_manifest.yaml`
+* `knowledge_bus/packages/pkg_kb58_rbc_low_iron_restricted_anemia_pattern/promoted_signal_intelligence.yaml`
+* `knowledge_bus/packages/pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis/package_manifest.yaml`
+* `knowledge_bus/packages/pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis/promoted_signal_intelligence.yaml`
+* `knowledge_bus/packages/pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern/package_manifest.yaml`
+* `knowledge_bus/packages/pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern/promoted_signal_intelligence.yaml`
 
 ## Files out of scope
 
 Do not modify:
 
-* `backend/`
-* `frontend/`
+* backend/
+* frontend/
 * runtime loaders
 * parser files
 * DTO/report/Gemini/scoring files
 * tests
 * validators
-* raw Pass 3 research content except read-only evidence inspection
-* generated pilot PSI except read-only evidence inspection
-* existing production package `signal_library.yaml` files
-* existing production package `research_brief.yaml` files
-* existing production medical content
+* raw Pass 3 research content
+* generated-pilot files of any kind — all generated-pilot PSI files and compile manifests are read-only in P1-20
+* generated-pilot compile manifests
+* existing production `signal_library.yaml`
+* existing production `research_brief.yaml`
+* package manifests outside the four mapped `pkg_kb58_*` production hosts
+* production packages outside the four mapped `pkg_kb58_*` hosts
 * `.codex/`
 * `.cursor/`
 * `.vscode/`
@@ -115,35 +134,36 @@ Do not modify:
 Do not:
 
 * invent medical content;
-* infer missing medical logic from general clinical knowledge;
-* water down Pass 3 research;
-* simplify signal conditions to make package creation easier;
-* change thresholds, activation logic, modifiers, contradiction logic, evidence strength, supporting-marker relationships or interpretation meaning unless those values are directly traced to governed Pass 3 source;
+* rewrite medical interpretation text;
+* alter thresholds, activation rules, evidence strength, supporting markers, contradiction markers, clinical modifiers or meaning;
 * edit raw Pass 3 research;
-* edit generated-pilot staged PSI content;
-* cross-place PSI into a package with a different `package_id`;
-* opt in medical-review-blocked candidates;
-* opt in frame-authority-blocked candidates;
-* create duplicate active medical authority;
-* create thin placeholder packages;
-* alter runtime behaviour;
-* alter frontend presentation;
-* alter validators or tests.
+* edit generated-pilot compile manifests;
+* edit signal libraries;
+* edit research briefs;
+* create new signal definitions;
+* create new production package hosts;
+* place PSI into any production package whose provenance proof has not passed Phase 2;
+* opt in any candidate whose provenance proof fails;
+* edit backend, frontend, runtime, validator, parser, DTO, Gemini, scoring or test files;
+* use a fallback parser;
+* use global/default reference ranges.
 
-## Signal-library rule
+## Re-homing definition
 
-Existing production packages:
+For this sprint, re-homing means production placement only. Do not edit any generated-pilot file.
 
-* Do not edit `signal_library.yaml` in any existing production package.
-* Do not edit `research_brief.yaml` in any existing production package.
-* Do not alter existing signal logic.
+1. Copy the staged PSI byte-for-byte from `knowledge_bus/generated_pilot/p1_11_batch_b/<pkg_kb52c_*>/promoted_signal_intelligence.yaml` into the mapped `pkg_kb58_*` production package directory as `promoted_signal_intelligence.yaml`. Do not alter the file in any way.
+2. Add `promoted_signal_intelligence: promoted_signal_intelligence.yaml` to the mapped `pkg_kb58_*` production `package_manifest.yaml`. No other fields in the production manifest are changed.
+3. Validate the production PSI.
+4. Validate the production package.
 
-New production package creation:
+No other generated-pilot or production package edits are permitted.
 
-* Permitted only for candidates explicitly cleared by STOP gates.
-* For newly created production packages, `signal_library.yaml`, `research_brief.yaml`, and `package_manifest.yaml` may be authored only from governed Pass 3 source and/or validated staged compile artefacts.
-* Every signal condition, threshold, supporting marker, contradiction marker, modifier and context rule must trace to a cited field in the source Pass 3 investigation spec or validated compiled artefact.
-* If any required field is missing, thin, ambiguous or non-deterministic, STOP for that candidate.
+## Hash-bound generated-pilot rule
+
+The staged PSI and its compile manifest are hash-bound. The compile manifest records the SHA256 of the staged PSI under `output_hashes_sha256`. Editing the staged PSI would change its SHA256 and cause `validate_staged_psi_activation_readiness.py` to report `BLOCKED_MANIFEST_OR_HASH` for that candidate. Therefore all generated-pilot PSI files and compile manifests are read-only in P1-20. Do not rename generated-pilot directories.
+
+After opt-in, the staged activation-readiness validator will continue to report `production_manifest_opt_in: false` for these four candidates. This is expected behaviour: the validator derives package identity from the staged directory name (`pkg_kb52c_*`) and the production opt-in is registered under `pkg_kb58_*` — the names will never match. The production opt-in is structurally valid regardless. Document this in the sprint report; do not attempt to fix it.
 
 ## Phase 0 — Automation Bus preflight
 
@@ -151,245 +171,112 @@ Before implementation:
 
 1. Confirm current branch is:
 
-`sprint/P1-19-blood-iron-oxygen-kb-production-intelligence`
+`sprint/P1-20-cbc-package-provenance-and-psi-opt-in`
 
 2. Confirm `automation_bus/state/work_package_active.json` exists.
-3. Confirm active token has `work_id: P1-19`.
+3. Confirm active token has `work_id: P1-20`.
 4. Confirm token branch matches current branch.
 5. Confirm repo/stash/parked-file state is governed under the standard start prompt.
 
 If any condition fails, STOP.
 
-## Phase 1 — Establish current activation-ready cohort
+## Phase 1 — Confirm canonical candidate set
 
-Run:
+Read:
 
-`python backend/scripts/validate_staged_psi_activation_readiness.py`
+* `docs/sprints/beta_readiness/P1-19_pass3_carry_forward.yaml`
+* `docs/sprints/beta_readiness/P1-19_production_opt_in_manifest.yaml`
 
-Capture the full list of `ACTIVATION_READY` package IDs.
-
-Do not rely only on previous sprint reports.
+Confirm the canonical CBC candidate set is four candidates, not five.
 
 Create:
 
-`docs/sprints/beta_readiness/P1-19_production_opt_in_manifest.yaml`
+`docs/sprints/beta_readiness/P1-20_cbc_provenance_manifest.yaml`
 
-For each `ACTIVATION_READY` candidate record:
+For each candidate record:
 
-* candidate package ID;
+* carry-forward ID;
+* staged `pkg_kb52c_*` package ID;
+* mapped production `pkg_kb58_*` package ID;
 * staged PSI path;
-* staged compile manifest path;
-* source spec ID;
-* source path;
-* signal ID;
-* primary biomarker;
-* production package host status;
-* production package path if present;
-* production package ID;
-* PSI internal package ID;
-* current blocker class if any;
+* staged PSI current internal `package_id`;
+* staged source path;
+* production package manifest path;
+* production `source_document`;
+* whether production package already has `promoted_signal_intelligence`;
+* provenance decision;
+* re-homing decision;
 * opt-in decision;
 * validation result;
-* carry-forward owner if not promoted.
+* blocker class if not promoted.
 
 Allowed decisions:
 
-* `OPT_IN_EXISTING_HOST`
-* `CREATE_HOST_AND_OPT_IN`
+* `PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN`
 * `ALREADY_OPTED_IN`
-* `BLOCKED_MISSING_PRODUCTION_HOST`
-* `BLOCKED_DUPLICATE_AUTHORITY_RISK`
-* `BLOCKED_INSUFFICIENT_PASS3_SOURCE`
-* `BLOCKED_BIOMARKER_IDENTITY_UNRESOLVED`
-* `BLOCKED_MEDICAL_REVIEW_REQUIRED`
-* `BLOCKED_FRAME_AUTHORITY_UNRESOLVED`
+* `BLOCKED_SOURCE_DOCUMENT_MISMATCH`
 * `BLOCKED_PACKAGE_IDENTITY_UNRESOLVED`
-* `BLOCKED_REQUIRES_CORE_BACKEND_AGENT`
+* `BLOCKED_PRODUCTION_HOST_MISSING`
+* `BLOCKED_PRODUCTION_PSI_ALREADY_PRESENT`
 * `BLOCKED_VALIDATION_FAILURE`
-* `OUT_OF_SCOPE_FOR_P1_19`
+* `BLOCKED_REQUIRES_MEDICAL_REVIEW`
+* `BLOCKED_REQUIRES_CORE_BACKEND_AGENT`
+* `OUT_OF_SCOPE_FOR_P1_20`
 
-## Phase 2 — Existing-host opt-in pass
+## Phase 2 — Candidate-level provenance proof gate
 
-For each `ACTIVATION_READY` candidate:
+For each of the four candidates, prove provenance before editing.
 
-1. Check whether an ID-matched production host exists under `knowledge_bus/packages/`.
-2. Confirm production package manifest `package_id` matches PSI internal `package_id`.
-3. Confirm no medical-review blocker applies.
-4. Confirm no frame-authority blocker applies.
-5. Confirm no package-identity blocker applies.
-6. Confirm PSI validates.
-7. Confirm package validates.
+Provenance is confirmed only if all of the following are true:
 
-If all pass:
+1. Staged PSI exists.
+2. Staged PSI internal `package_id` currently equals the expected `pkg_kb52c_*` ID.
+3. Staged PSI or compile manifest cites source path:
+   `knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json`
+4. Mapped production `pkg_kb58_*` package manifest exists.
+5. Mapped production package manifest `package_id` equals the expected `pkg_kb58_*` ID.
+6. Mapped production package manifest `source_document` equals:
+   `knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json`
+7. Production package has no existing `promoted_signal_intelligence` field.
+8. No medical-review or frame-authority blocker exists for the candidate.
+9. No signal-library change is required.
+10. No medical content change is required.
 
-* copy or install production `promoted_signal_intelligence.yaml` from staged PSI;
-* update `package_manifest.yaml` to opt in:
-  `promoted_signal_intelligence: promoted_signal_intelligence.yaml`;
-* preserve `behavioural_impact` and existing manifest semantics;
-* classify as `OPT_IN_EXISTING_HOST`.
+If any condition fails, STOP for that candidate and classify in the provenance manifest.
 
-If any condition fails, STOP for that candidate and classify.
+Do not opt in failed candidates.
 
-Expected named candidate:
+## Phase 3 — Re-home and opt in successful candidates
 
-* `pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation`
+For each candidate passing Phase 2:
 
-Do not stop after KB61. Continue through the full activation-ready cohort.
+1. Copy the staged PSI byte-for-byte from `knowledge_bus/generated_pilot/p1_11_batch_b/<pkg_kb52c_*>/promoted_signal_intelligence.yaml` into the mapped production package directory as `promoted_signal_intelligence.yaml`. Do not edit the file.
+2. Add `promoted_signal_intelligence: promoted_signal_intelligence.yaml` to the mapped production `package_manifest.yaml`. Do not alter any other field in the production manifest.
+3. Validate the production PSI.
+4. Validate the production package.
+5. Record decision: `PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN`.
 
-## Phase 3 — Ferritin-high production host package gate
+Do not edit the staged PSI under `knowledge_bus/generated_pilot/`. Do not edit compile manifests.
 
-This phase applies only to:
+## Phase 4 — Post-change readiness validation
 
-* `pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia`
-* `pkg_kb52c_ferritin_high_iron_overload_context`
+Run:
 
-These candidates may proceed only if all gates below pass.
+* direct PSI validation for every new production PSI;
+* `python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/<pkg_kb58_package>` for each changed production package;
+* `python backend/scripts/validate_staged_psi_activation_readiness.py`.
 
-### Gate 3A — Production-host absence
-
-Confirm no ID-matched production package host already exists for each candidate.
-
-If an ID-matched production host exists, use the existing-host opt-in path instead.
-
-### Gate 3B — Duplicate-authority check
-
-Before creating either package, inspect:
-
-`knowledge_bus/packages/pkg_s24_ferritin_high_overload/`
-
-**Step 1 — signal_id collision check:**
-
-Read `pkg_s24_ferritin_high_overload/signal_library.yaml` and identify every `signal_id` defined there.
-
-For each proposed ferritin-high candidate, confirm that its `signal_id` (from the staged PSI) does not already exist in any production `signal_library.yaml` under `knowledge_bus/packages/`.
-
-If a collision exists:
-
-* STOP for that candidate;
-* do not create the package;
-* classify as `BLOCKED_DUPLICATE_AUTHORITY_RISK`;
-* record the colliding package and signal_id.
-
-Do not proceed to Gate 3D if a signal_id collision is found, regardless of clinical scope distinction.
-
-**Step 2 — clinical and authority scope check:**
-
-Compare the proposed ferritin-high candidate scope against `pkg_s24_ferritin_high_overload`.
-
-If there is overlap, duplicate medical authority, conflicting signal logic, or unclear authority boundary:
-
-* STOP for that candidate;
-* do not create the package;
-* classify as `BLOCKED_DUPLICATE_AUTHORITY_RISK`;
-* record the specific overlap risk.
-
-If scopes are clinically and architecturally distinct, proceed.
-
-Do not make unsupported clinical assertions to justify distinction.
-
-### Gate 3C — Pass 3 source sufficiency
-
-For each ferritin-high candidate, inspect the source Pass 3 / investigation spec evidence cited by the staged compile manifest.
-
-Known expected source IDs:
-
-* `inv_ferritin_high_inflammatory_hyperferritinemia`
-* `inv_ferritin_high_iron_overload_context`
-
-Confirm the source provides sufficient governed evidence for:
-
-* package identity;
-* signal ID;
-* primary biomarker;
-* trigger direction;
-* signal conditions;
-* thresholds or lab-range logic;
-* supporting markers;
-* contradiction markers;
-* context modifiers;
-* evidence/rationale required by `research_brief.yaml`;
-* package manifest fields;
-* any biomarker IDs used, including `white_blood_cells` and `crp` where applicable.
-
-Also confirm all biomarker IDs are SSOT-canonical.
-
-If source is thin, ambiguous, missing required fields, or requires approximation:
-
-* STOP for that candidate;
-* classify as `BLOCKED_INSUFFICIENT_PASS3_SOURCE`;
-* do not create the production package;
-* do not fill gaps.
-
-### Gate 3D — Deterministic package creation
-
-If Gates 3A–3C pass, create production package host:
-
-* `knowledge_bus/packages/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/`
-* `knowledge_bus/packages/pkg_kb52c_ferritin_high_iron_overload_context/`
-
-Create only:
-
-* `package_manifest.yaml`
-* `research_brief.yaml`
-* `signal_library.yaml`
-* `promoted_signal_intelligence.yaml`
-
-Every field must trace to governed source or validated staged artefacts.
-
-Do not create placeholder text.
-
-Do not create broad generic ferritin-high interpretation.
-
-Do not alter `pkg_s24_ferritin_high_overload`.
-
-Validate each new package and PSI.
-
-If validation fails and the fix would require medical content invention, revert/exclude that candidate and classify as `BLOCKED_VALIDATION_FAILURE`.
-
-## Phase 4 — Blocked candidates
-
-The following must remain blocked unless repository evidence proves a same-ID, non-medical, validation-clean path:
-
-CBC KB-S52c versus KB-S58 package-identity candidates:
-
-* `pkg_kb52c_rbc_high_erythrocytosis_pattern`
-* `pkg_kb52c_rbc_low_iron_restricted_anemia_pattern`
-* `pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis`
-* `pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern`
-
-Do not cross-place PSI into `pkg_kb58_*`.
-
-If same-ID provenance is not resolved, classify as:
-
-`BLOCKED_PACKAGE_IDENTITY_UNRESOLVED`
-
-Iron Batch C medical-review/frame-authority candidates must remain blocked unless already formally cleared by repo evidence before this sprint:
-
-* `BLOCKED_MEDICAL_REVIEW_REQUIRED`
-* `BLOCKED_FRAME_AUTHORITY_UNRESOLVED`
-
-Do not clear medical-review or frame-authority blockers inside this Knowledge Bus sprint.
-
-## Phase 5 — Validation
-
-Run applicable validation for every changed package and PSI.
-
-Required:
-
-* direct PSI validation for every newly installed production PSI;
-* `python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/<package>` for every changed or newly created package;
-* `python backend/scripts/validate_staged_psi_activation_readiness.py`
-* `pytest backend/tests/regression/test_signal_authority_collision_enforcement.py` — mandatory regression target if any new production `signal_library.yaml` was created.
-
-If the repository has a standard package-validation batch command, use it as well.
+If a standard Knowledge Bus validation batch command exists, run it as well.
 
 Do not edit validators to make validation pass.
 
-## Phase 6 — Carry-forward manifest
+The staged activation-readiness validator will continue to show `production_manifest_opt_in: false` for the four re-homed candidates. This is expected — see the Hash-bound generated-pilot rule above. Record the validator output as-is; do not treat this as a failure.
+
+## Phase 5 — Carry-forward manifest
 
 Create:
 
-`docs/sprints/beta_readiness/P1-19_pass3_carry_forward.yaml`
+`docs/sprints/beta_readiness/P1-20_pass3_carry_forward.yaml`
 
 Include only material unresolved items.
 
@@ -409,31 +296,26 @@ For each unresolved item record:
 * launch/beta relevance;
 * recommended future package.
 
-At minimum, carry forward:
+If all four CBC candidates are successfully opted in, record that there are no remaining CBC package-provenance carry-forwards from this sprint.
 
-* duplicate-authority blocked ferritin-high candidates, if any;
-* insufficient-source ferritin-high candidates, if any;
-* missing-production-host activation-ready candidates, if any;
-* CBC KB-S52c versus KB-S58 unresolved identity candidates;
-* iron Batch C medical-review/frame-authority candidates;
-* TSAT calculated mode if encountered, but do not expand its scope.
+Do not re-document unrelated P1-19 ferritin or TSAT blockers unless they are needed for next-sprint sequencing.
 
-## Phase 7 — Sprint report and build register
+## Phase 6 — Sprint report and build register
 
 Create:
 
-`docs/sprints/beta_readiness/P1-19_blood_iron_oxygen_kb_production_intelligence.md`
+`docs/sprints/beta_readiness/P1-20_cbc_package_provenance_and_psi_opt_in.md`
 
 Keep it concise.
 
 Maximum structure:
 
 1. start state;
-2. activation-ready cohort;
-3. production opt-ins completed;
-4. production packages created;
-5. candidates blocked and why;
-6. validation results;
+2. canonical candidate set;
+3. provenance proof results;
+4. re-homing and opt-ins completed;
+5. validation results;
+6. carry-forwards;
 7. recommended next sprint.
 
 Update:
@@ -452,29 +334,29 @@ Do not list every untouched file.
 
 ## Acceptance criteria
 
-P1-19 passes only if:
+P1-20 passes only if:
 
-1. Current activation-ready cohort is regenerated at sprint start.
-2. Every activation-ready candidate is adjudicated.
-3. Every safe existing-host candidate is opted in.
-4. KB61 is opted in if still activation-ready and ID-clean.
-5. Ferritin-high production host creation is attempted only through the STOP gates.
-6. No ferritin-high package is created if `pkg_s24_ferritin_high_overload` creates duplicate-authority risk.
-7. No ferritin-high package is created from thin or ambiguous Pass 3 source.
-8. No medical content is invented.
-9. No cross-ID PSI placement occurs.
-10. No generated-pilot content is edited.
-11. No raw Pass 3 research content is edited.
-12. No existing production `signal_library.yaml` files are edited.
-13. No backend, frontend, validator, test, runtime, parser, DTO, Gemini or scoring files are modified.
-14. No medical-review or frame-authority blocked candidate is opted in.
-15. Every changed/new PSI validates.
-16. Every changed/new package validates.
-17. Staged activation-readiness validator runs successfully after changes.
-18. Carry-forward manifest captures unresolved rich Pass 3 content with owner and blocker class.
-19. Build register is updated concisely.
-20. Sprint report is concise.
-21. Final audit includes `pipeline_advisory_trigger` and `pipeline_advisory_reason` per CTRL-01 adoption.
+1. The candidate set is confirmed from P1-19 carry-forward as four candidates.
+2. The Stage 0 duplicated fifth candidate is not implemented as a separate candidate.
+3. Each of the four candidates receives candidate-level provenance adjudication.
+4. Every successful candidate proves staged compile manifest `source_path` and production `source_document` both equal `knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json`.
+6. Every successful candidate is opted into the mapped `pkg_kb58_*` production package in the same sprint.
+7. No candidate is opted in if provenance proof fails.
+8. No medical content is invented or changed.
+9. No signal_library files are changed.
+10. No research_brief files are changed.
+11. No raw Pass 3 research files are changed.
+12. No generated-pilot files are modified — staged PSI files and compile manifests are read-only.
+13. Production PSI files are byte-copies of the staged PSI; no field is altered during copying.
+14. Production package manifests are updated only to add `promoted_signal_intelligence: promoted_signal_intelligence.yaml`; no other field is changed.
+15. No backend, frontend, runtime, parser, validator, test, DTO, Gemini or scoring files are modified.
+16. Every new production PSI validates.
+17. Every changed production package validates.
+18. Staged activation-readiness validator runs successfully after changes. The validator will continue to show `production_manifest_opt_in: false` for the four re-homed candidates because it matches by staged directory name; this is expected and must be documented in the sprint report, not treated as a failure.
+19. Carry-forward manifest captures any unresolved CBC items with owner and blocker class.
+20. Build register is updated concisely.
+21. Sprint report is concise and documents the staged-validator expected behaviour for re-homed packages.
+22. Final audit includes `pipeline_advisory_trigger` and `pipeline_advisory_reason`.
 
 ## Closure requirements
 
