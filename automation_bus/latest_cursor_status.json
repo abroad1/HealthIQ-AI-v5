@@ -1,10 +1,9 @@
 {
-  "branch": "sprint/P1-23-thyroid-intelligence-surface",
+  "branch": "sprint/P1-24-bio-oxygen-subsystem-signal-depth",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-22T22:20:11Z",
-  "cursor_started_utc": "2026-06-22T22:09:38Z",
-  "head_sha": "016f34a3fa1f5db4491000780cd8cc7f7b3d4ad4",
+  "cursor_started_utc": "2026-06-22T22:57:34Z",
+  "head_sha": "c1dbee1a3c2f325d5a60ed0008f3f99753b65520",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-23"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-24"
 }
