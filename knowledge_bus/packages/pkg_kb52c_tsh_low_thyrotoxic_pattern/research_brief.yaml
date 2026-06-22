@@ -1,18 +1,15 @@
 research_domain: thyroid
 sources:
 - source_id: source_ata_hyperthyroidism_2016
-  paper_title: 2016 American Thyroid Association Guidelines for Diagnosis and Management
-    of Hyperthyroidism and Other Causes of Thyrotoxicosis
+  paper_title: 2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis
   journal: Thyroid
   year: 2016
 biomarkers:
-- crp
-- free_t3
-- free_t4
 - tsh
-physiological_claim: Low TSH is a central biochemical sign of thyrotoxicosis, but
-  the broader thyroid hormone pattern determines whether the state is overt or subclinical.
+- free_t4
+- free_t3
+- crp
+physiological_claim: Low TSH is a central biochemical sign of thyrotoxicosis, but the broader thyroid hormone pattern determines whether the state is overt or subclinical.
 evidence_strength: consensus
-research_summary: KB-S52C Wave A ingestion from Batch_4_Pass_3.json; spec_id=inv_tsh_low_thyrotoxic_pattern;
-  signal_id=signal_tsh_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
-  / translation_remap_contract_KB-S52B_v1.
+research_summary: KB-S52C Pass 3 ingestion from Batch_4_Pass_3.json; spec_id=inv_tsh_low_thyrotoxic_pattern;
+  signal_id=signal_tsh_low; investigation_spec_contract_version=3.0.0.

@@ -1,0 +1,53 @@
+work_id: P1-23
+manifest_date: '2026-06-22'
+summary:
+  phase_1_gate: PASS
+  kb52c_packages_authored: 2
+  legacy_s24_deprecated: 2
+  tsh_signals_authorised_for_launch:
+    - signal_tsh_high
+    - signal_tsh_low
+medical_review_gate:
+  authority_document: docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md
+  sufficient_for_tsh_directional_activation: true_with_pass3_supplemental_authority
+  decision: PASS
+  blocker_class: null
+  rationale: >
+    FT3/FT4 signoff establishes TSH as first-line discriminator but does not sign off standalone
+    TSH high/low patterns. Governed Pass 3 v3.0.0 specs provide consensus content authority for
+    lab_range_exceeded TSH directional activation with FT4/FT3 context in PSI supporting_markers.
+source_spec_verification:
+  - spec_id: inv_tsh_high_primary_hypothyroid_pattern
+    contract_version: 3.0.0
+    signal_id: signal_tsh_high
+    status: PASS
+  - spec_id: inv_tsh_low_thyrotoxic_pattern
+    contract_version: 3.0.0
+    signal_id: signal_tsh_low
+    status: PASS
+canonical_biomarker_id_decisions:
+  - source_field: ldl
+    canonical_id: ldl_cholesterol
+    ssot_ref: backend/ssot/biomarkers.yaml:26
+    applied_in: pkg_kb52c_tsh_high_primary_hypothyroid_pattern/signal_library.yaml
+  - source_field: crp
+    canonical_id: crp
+    ssot_ref: backend/ssot/biomarkers.yaml:619
+    correction_required: false
+legacy_retirement:
+  - package_id: pkg_s24_tsh_high_hypothyroidism
+    method: in_place_manifest_deprecation
+    deprecated_by: pkg_kb52c_tsh_high_primary_hypothyroid_pattern
+  - package_id: pkg_s24_tsh_low_hyperthyroidism
+    method: in_place_manifest_deprecation
+    deprecated_by: pkg_kb52c_tsh_low_thyrotoxic_pattern
+candidates:
+  - production_package_id: pkg_kb52c_tsh_high_primary_hypothyroid_pattern
+    investigation_spec_id: inv_tsh_high_primary_hypothyroid_pattern
+    validation_result: PASS
+    opt_in_decision: PRODUCTION_OPT_IN
+  - production_package_id: pkg_kb52c_tsh_low_thyrotoxic_pattern
+    investigation_spec_id: inv_tsh_low_thyrotoxic_pattern
+    validation_result: PASS
+    opt_in_decision: PRODUCTION_OPT_IN
+phase_2_authority: ALLOWED

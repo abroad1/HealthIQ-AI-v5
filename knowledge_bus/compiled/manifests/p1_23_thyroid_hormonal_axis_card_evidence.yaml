@@ -1,0 +1,42 @@
+activation_keys_emitted: []
+collisions_detected: []
+compile_id: p1-23-thyroid-hormonal-axis-card-evidence-001
+compile_mode: card_evidence
+compile_run_id: p1-23-thyroid-hormonal-axis-card-evidence-001
+compiled_at_utc: '2026-06-22T22:30:00Z'
+compiled_by: p1-23-thyroid-intelligence-surface
+compiler_name: card_evidence_compile_pilot_v1
+compiler_version: 1.0.0
+estate_index_ref: knowledge_bus/compiled/estate_index_v1.yaml
+outputs:
+- domain_id: wave1_thyroid
+  output_hash: pending_p1_23_closure
+  output_hash_algorithm: sha256
+  output_path: knowledge_bus/compiled/health_system_cards/wave1_thy_hormonal_axis.yaml
+  output_type: health_system_card_evidence
+  subsystem_id: wave1_thy_hormonal_axis
+policy_version: ADR-THYROID-TSH-SIGNAL-INTELLIGENCE-ACTIVATION-1
+provenance_status: pilot_evidence_only
+source_contract_version: 1.0.0
+source_specs:
+- source_hash: pending_p1_23_closure
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  source_spec_id: inv_tsh_high_primary_hypothyroid_pattern
+- source_hash: pending_p1_23_closure
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+  source_spec_id: inv_tsh_low_thyrotoxic_pattern
+- source_hash: pending_p1_23_closure
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis/package_manifest.yaml
+  source_spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
+- source_hash: pending_p1_23_closure
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context/package_manifest.yaml
+  source_spec_id: inv_free_t4_high_thyrotoxicosis_context
+- source_hash: pending_p1_23_closure
+  source_hash_algorithm: sha256
+  source_path: knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency/package_manifest.yaml
+  source_spec_id: inv_free_t4_low_thyroid_hormone_deficiency
+translation_rules_version: 1.0.0

@@ -1,0 +1,97 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_tsh_low_thyrotoxic_pattern
+translation:
+  source: investigation_spec_v3_pass3_p1_23
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_tsh_low_thyrotoxic_pattern
+  signal_id: signal_tsh_low
+  compiler_version: p1_23_pass3_psi_compiler_v1.0.0
+  work_id: P1-23
+  cluster_id: thyroid_tsh_directional
+signals:
+- signal_id: signal_tsh_low
+  research_domain: thyroid
+  signal_system: hormonal
+  primary_metric:
+    biomarker_id: tsh
+    rationale: Low or suppressed TSH is a key biochemical marker of thyrotoxic physiology when interpreted
+      with circulating thyroid hormones.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: free_t4
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: High free T4 corroborates biologically significant thyrotoxic hormone excess.
+  - biomarker_id: free_t3
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: High free T3 can support T3-predominant or broader thyrotoxic physiology.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: optional
+    rationale: Inflammatory markers can help raise alternate thyroiditis or inflammatory contexts when
+      TSH is low.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_free_t4_weakens_overt_thyrotoxicosis
+    marker_reference: free_t4
+    contradiction_rationale: A normal free T4 alongside suppressed TSH weakens an overt thyrotoxic pattern
+      and supports a subclinical thyrotoxicosis interpretation, as overt thyrotoxicosis requires measurable
+      thyroid hormone elevation beyond the normal range.
+    contradiction_strength: strong
+  - contradiction_id: ctr_elevated_free_t3_challenges_subclinical_frame
+    marker_reference: free_t3
+    contradiction_rationale: A clearly elevated free T3 alongside suppressed TSH challenges a subclinical
+      or early thyrotoxicosis interpretation by indicating significant thyroid hormone excess already
+      present in the biologically active T3 fraction, suggesting overt rather than subclinical thyrotoxicosis.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Review free T4 and free T3 before classifying the pattern as overt or subclinical thyrotoxicosis.
+    - Repeat the thyroid panel to determine persistence and whether hormone excess becomes overt.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_tsh_low_with_free_t4_high
+    resulting_state: at_risk
+    description: Escalate when low TSH coincides with high free T4, as this more strongly supports
+      overt thyrotoxic physiology.
+    conditions:
+    - metric_id: free_t4
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_ata_hyperthyroidism_2016
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: Low TSH is a central biochemical sign of thyrotoxicosis, but the broader thyroid
+      hormone pattern determines whether the state is overt or subclinical.
+    threshold_notes: No extra numeric TSH cutoffs are asserted here beyond laboratory abnormality and hormonal
+      patterning.
+    sources:
+    - source_id: source_ata_hyperthyroidism_2016
+      paper_title: 2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis
+      journal: Thyroid
+      year: 2016
+  confirmatory_test_refs:
+  - test_id: ct_repeat_tsh_with_free_t4_and_free_t3
+    rationale: Repeat TSH with free T4 and free T3 helps determine whether the pattern is overt, subclinical,
+      or transient.

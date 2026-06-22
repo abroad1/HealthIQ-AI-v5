@@ -1,0 +1,24 @@
+work_id: P1-23
+manifest_date: '2026-06-22'
+carry_forward_items:
+  - item_id: p1_22_cf_002
+    reference: signal_free_t3_low
+    reason: ADR deferred/inactive; excluded from domain allowlist per ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1
+    blocker_class: FT3_LOW_DEFERRED
+    owner_agent: Medical Review
+    launch_relevance: deferred
+    recommended_future_package: P1-FT3-LOW-ACTIVATION-CONTROL-1
+  - item_id: p1_22_cf_003
+    reference: kb59 thyroid antibody packages
+    reason: Inactive in governance registers; out of P1-23 scope
+    blocker_class: ANTIBODY_INACTIVE
+    owner_agent: Knowledge Bus
+    launch_relevance: deferred
+    recommended_future_package: P1-THYROID-ANTIBODY-PROMOTION-1
+resolved_in_p1_23:
+  - item_id: p1_22_cf_001
+    resolution: kb52c TSH packages authored and allowlisted
+  - item_id: p1_22_cf_004
+    resolution: wave1_thy_hormonal_axis compiled card registered
+  - item_id: p1_22_cf_005
+    resolution: s24 deprecated; kb52c replacement path (not s24 revalidation)

@@ -7,3 +7,7 @@ author: HealthIQ Architecture Team
 created_at: '2026-03-12'
 source_document: knowledge_bus/research/investigation_specs/inv_tsh_low_hyperthyroidism_v1.yaml
 translation_mode: creation
+deprecated: true
+deprecated_by:
+  - pkg_kb52c_tsh_low_thyrotoxic_pattern
+deprecated_reason: Replacement by governed Pass 3 kb52c package per P1-23

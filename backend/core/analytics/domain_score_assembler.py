@@ -64,19 +64,19 @@ _RAIL_KIDNEY = "kidney"
 _RAIL_CBC = "cbc"
 _RAIL_HORMONAL = "hormonal"
 
-# P1-22: kb47 thyroid signals cleared by ADR; TSH signal intelligence explicitly excluded.
+# P1-23: kb47 FT3/FT4 + kb52c TSH directional signals; FT3-low and TSH context excluded.
 _THYROID_LAUNCH_SIGNAL_IDS: frozenset[str] = frozenset(
     {
         "signal_free_t3_high",
         "signal_free_t4_high",
         "signal_free_t4_low",
+        "signal_tsh_high",
+        "signal_tsh_low",
     }
 )
 _THYROID_EXCLUDED_SIGNAL_IDS: frozenset[str] = frozenset(
     {
         "signal_free_t3_low",
-        "signal_tsh_high",
-        "signal_tsh_low",
         "signal_thyroid_tsh_context",
     }
 )

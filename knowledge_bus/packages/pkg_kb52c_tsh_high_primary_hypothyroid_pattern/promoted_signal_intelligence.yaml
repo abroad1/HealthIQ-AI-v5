@@ -1,0 +1,98 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_tsh_high_primary_hypothyroid_pattern
+translation:
+  source: investigation_spec_v3_pass3_p1_23
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_tsh_high_primary_hypothyroid_pattern
+  signal_id: signal_tsh_high
+  compiler_version: p1_23_pass3_psi_compiler_v1.0.0
+  work_id: P1-23
+  cluster_id: thyroid_tsh_directional
+signals:
+- signal_id: signal_tsh_high
+  research_domain: thyroid
+  signal_system: hormonal
+  primary_metric:
+    biomarker_id: tsh
+    rationale: High TSH is a key marker of reduced thyroid hormone signaling at the pituitary level
+      and commonly indicates a primary hypothyroid pattern when free T4 is low or low-normal.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: free_t4
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low free T4 strongly corroborates primary thyroid hormone deficiency when TSH is high.
+  - biomarker_id: ldl_cholesterol
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: High LDL can support a metabolically relevant hypothyroid context.
+  - biomarker_id: free_t3
+    expected_direction: any
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Free T3 context helps distinguish early or subclinical TSH elevation from broader
+      overt hypothyroid hormone deficiency.
+  contradiction_markers:
+  - contradiction_id: ctr_preserved_free_t4_weakens_overt_primary_hypothyroid
+    marker_reference: free_t4
+    contradiction_rationale: A preserved or normal free T4 alongside elevated TSH weakens an overt
+      primary hypothyroid interpretation and supports a subclinical pattern, as overt primary hypothyroidism
+      requires both TSH elevation and free T4 suppression below the reference range.
+    contradiction_strength: strong
+  - contradiction_id: ctr_low_free_t3_challenges_subclinical_framing
+    marker_reference: free_t3
+    contradiction_rationale: A clearly low free T3 alongside elevated TSH challenges a purely subclinical
+      hypothyroid interpretation by suggesting more significant thyroid hormone deficiency than the
+      subclinical label typically implies, warranting reclassification toward overt or clinically relevant
+      hypothyroidism.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Review free T4 and repeat testing before distinguishing overt from subclinical hypothyroid patterns.
+    - Repeat TSH and free T4 to determine persistence and whether the pattern remains subclinical.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_tsh_high_with_free_t4_low
+    resulting_state: at_risk
+    description: Escalate when high TSH coincides with low free T4, as this more strongly supports
+      overt primary hypothyroid physiology.
+    conditions:
+    - metric_id: free_t4
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_ata_hyperthyroidism_2016
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: High TSH is central to identifying a hypothyroid biochemical pattern, but
+      overt versus subclinical interpretation depends on free T4.
+    threshold_notes: Interpretation should remain pattern based rather than threshold embellished beyond
+      laboratory abnormality.
+    sources:
+    - source_id: source_ata_hyperthyroidism_2016
+      paper_title: 2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis
+      journal: Thyroid
+      year: 2016
+  confirmatory_test_refs:
+  - test_id: ct_repeat_tsh_with_free_t4
+    rationale: Repeat TSH with free T4 helps distinguish persistent subclinical elevation from overt
+      primary hypothyroid physiology.

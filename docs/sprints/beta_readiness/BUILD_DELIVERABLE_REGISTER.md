@@ -568,6 +568,28 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-23 — Thyroid Intelligence Surface Completion
+
+**Status:** Complete  
+**Date closed:** 2026-06-22  
+**Programme block(s):** Block 1 Core systems; Block 3 Layer B intelligence substrate; Block 6 Medical safety and governance  
+
+### Delivered / ticked off
+- kb52c TSH packages from Pass 3 Batch_4; legacy s24 TSH deprecated in-place.
+- `signal_tsh_high` and `signal_tsh_low` on thyroid domain allowlist.
+- `wave1_thy_hormonal_axis` compiled subsystem card registered and runtime evidence emitted.
+
+### Carry-forwards
+- FT3 low activation control; thyroid antibody packages.
+
+### Blockers / risks
+- None material for P1-23 scope.
+
+### Recommended next sprint
+- P1-24 bio-oxygen card depth or deferred thyroid narrative enrichment.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

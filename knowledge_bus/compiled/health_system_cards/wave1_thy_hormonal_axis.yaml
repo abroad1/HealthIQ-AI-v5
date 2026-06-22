@@ -1,0 +1,53 @@
+schema_version: "1.0.0"
+artefact_id: wave1_thy_hormonal_axis_v1
+domain_id: wave1_thyroid
+subsystem_id: wave1_thy_hormonal_axis
+subsystem_label: Thyroid hormonal axis
+visibility_tier: scored_subsystem
+source_spec_ids:
+  - inv_tsh_high_primary_hypothyroid_pattern
+  - inv_tsh_low_thyrotoxic_pattern
+  - inv_free_t3_high_t3_predominant_thyrotoxicosis
+  - inv_free_t4_high_thyrotoxicosis_context
+  - inv_free_t4_low_thyroid_hormone_deficiency
+compile_manifest_ref: knowledge_bus/compiled/manifests/p1_23_thyroid_hormonal_axis_card_evidence.yaml
+missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
+mechanism_line: TSH anchors pituitary-thyroid feedback on this panel; free T4 and free T3 add hormone-pattern context when present.
+subsystem_summary: >
+  TSH anchors thyroid hormonal axis markers on this panel; free T4 and free T3 may add hormone-pattern
+  context when uploaded but are optional for the scored subsystem view.
+evidence_limitations_line: >
+  This card focuses on thyroid hormonal axis markers and does not diagnose hypothyroidism, thyrotoxicosis,
+  or other thyroid disease.
+markers:
+  - marker_id: tsh
+    display_label: TSH
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Primary pituitary-thyroid feedback marker on routine thyroid panels.
+    presence_policy: required_for_subsystem
+  - marker_id: free_t4
+    display_label: Free T4
+    marker_role: score_contributor
+    relationship_kind: direct_score_input
+    rationale_short: Circulating thyroid hormone marker that classifies TSH abnormalities when present.
+    presence_policy: required_for_subsystem
+  - marker_id: free_t3
+    display_label: Free T3
+    marker_role: confidence_contributor
+    relationship_kind: confidence_input
+    rationale_short: Active thyroid hormone fraction that can add pattern context alongside TSH and free T4.
+    presence_policy: optional_on_panel
+provenance:
+  artefact_kind: health_system_card_evidence_v1
+  compile_status: compile_pipeline
+  source_spec_provenance: explicit
+  package_refs:
+    - pkg_kb52c_tsh_high_primary_hypothyroid_pattern
+    - pkg_kb52c_tsh_low_thyrotoxic_pattern
+    - pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+    - pkg_kb47_free_t4_high_thyrotoxicosis_context
+    - pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  notes: >
+    P1-23 compile-time card evidence for launch-core thyroid domain. Scoring uses existing hormonal
+    rail (TSH, free T4, free T3 lab-range-only). TSH directional signals activated per P1-23 allowlist.

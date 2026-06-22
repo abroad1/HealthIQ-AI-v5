@@ -1,15 +1,15 @@
 library:
-  package_id: KBP-4778
+  package_id: KBP-5231
   schema_version: 2.0.0
   package_version: 1.0.0
-  library_name: KB-S52C Wave A — Tsh Low Thyrotoxic Pattern
+  library_name: KB-S52C — TSH Low Thyrotoxic Pattern
   description: Ingested from inv_tsh_low_thyrotoxic_pattern (Batch_4_Pass_3.json).
-    KB-S52C Wave A resolver-clean tranche.
+    KB-S52C TSH low tranche.
 signals:
 - signal_id: signal_tsh_low
-  name: Tsh Low Thyrotoxic Pattern
-  description: Low or suppressed TSH is a key biochemical marker of thyrotoxic physiology
-    when interpreted with circulating thyroid hormones.
+  name: TSH Low Thyrotoxic Pattern
+  description: Low or suppressed TSH is a key biochemical marker of thyrotoxic physiology when
+    interpreted with circulating thyroid hormones.
   system: hormonal
   primary_metric: tsh
   trigger_direction: low
@@ -18,8 +18,7 @@ signals:
     expected_direction: high
     role: corroborator
     availability: common
-    rationale: High free T4 corroborates biologically significant thyrotoxic hormone
-      excess.
+    rationale: High free T4 corroborates biologically significant thyrotoxic hormone excess.
   - biomarker_id: free_t3
     expected_direction: high
     role: mechanism_marker
@@ -29,8 +28,8 @@ signals:
     expected_direction: high
     role: differential_marker
     availability: optional
-    rationale: Inflammatory markers can help raise alternate thyroiditis or inflammatory
-      contexts when TSH is low.
+    rationale: Inflammatory markers can help raise alternate thyroiditis or inflammatory contexts
+      when TSH is low.
   dependencies:
     biomarkers:
     - crp
@@ -46,8 +45,8 @@ signals:
   thresholds:
   - threshold_id: signal_tsh_low_lab_range_activation_placeholder
     metric_id: tsh
-    operator: '>='
-    value: 9999.0
+    operator: <=
+    value: 0.0
     severity: at_risk
     description: Validator placeholder; runtime activation uses lab_range_exceeded.
   activation_logic: lab_range_exceeded
@@ -59,8 +58,8 @@ signals:
   override_rules:
   - rule_id: or_tsh_low_with_free_t4_high
     resulting_state: at_risk
-    description: Escalate when low TSH coincides with high free T4, as this more strongly
-      supports overt thyrotoxic physiology.
+    description: Escalate when low TSH coincides with high free T4, as this more strongly supports
+      overt thyrotoxic physiology.
     conditions:
     - metric_id: free_t4
       operator: '>'
@@ -79,14 +78,13 @@ signals:
     - free_t3
     - crp
   explanation:
-    mechanism: Pituitary TSH secretion is suppressed when circulating thyroid hormone
-      signaling is excessive for physiologic demand.
-    biological_pathway: Hypothalamic-pituitary-thyroid feedback suppression in overt,
-      subclinical, or inflammatory thyroid hormone excess states.
-    interpretation: This is a pattern-level thyroid abnormality whose significance
-      depends on free hormone results and clinical context.
-    implications: The next step is usually to classify the pattern as overt or subclinical
-      and then investigate cause.
-    supporting_marker_roles: Free T4 corroborates overt hormone excess, free T3 supports
-      T3-predominant physiology, and CRP can help differentiate inflammatory thyroid
-      contexts.
+    mechanism: Pituitary TSH secretion is suppressed when circulating thyroid hormone signaling
+      is excessive for physiologic demand.
+    biological_pathway: Hypothalamic-pituitary-thyroid feedback suppression in overt, subclinical,
+      or inflammatory thyroid hormone excess states.
+    interpretation: This is a pattern-level thyroid abnormality whose significance depends on free
+      hormone results and clinical context.
+    implications: The next step is usually to classify the pattern as overt or subclinical and then
+      investigate cause.
+    supporting_marker_roles: Free T4 corroborates overt hormone excess, free T3 supports T3-predominant
+      physiology, and CRP can help differentiate inflammatory thyroid contexts.

@@ -172,6 +172,21 @@ def test_ft3_low_not_in_thyroid_domain_allowlist():
             "primary_metric": "free_t3",
             "system": "hormonal",
         },
+    ]
+    rows, _ = assemble_consumer_domain_scores_v1(
+        scoring_result=_full_scoring_fixture(),
+        insight_graph=_minimal_graph(signal_results=signals),
+        idl_bundle=None,
+        derived_ratios_meta=None,
+        panel_biomarker_ids=_base_panel(),
+    )
+    thy = rows[5]
+    assert thy.domain_id == "wave1_thyroid"
+    assert thy.active_signal_ids == []
+
+
+def test_tsh_high_fires_in_thyroid_domain_after_p1_23():
+    signals = [
         {
             "signal_id": "signal_tsh_high",
             "signal_state": "at_risk",
@@ -187,8 +202,64 @@ def test_ft3_low_not_in_thyroid_domain_allowlist():
         panel_biomarker_ids=_base_panel(),
     )
     thy = rows[5]
-    assert thy.domain_id == "wave1_thyroid"
+    assert thy.active_signal_ids == ["signal_tsh_high"]
+
+
+def test_tsh_low_fires_in_thyroid_domain_after_p1_23():
+    signals = [
+        {
+            "signal_id": "signal_tsh_low",
+            "signal_state": "at_risk",
+            "primary_metric": "tsh",
+            "system": "hormonal",
+        },
+    ]
+    rows, _ = assemble_consumer_domain_scores_v1(
+        scoring_result=_full_scoring_fixture(),
+        insight_graph=_minimal_graph(signal_results=signals),
+        idl_bundle=None,
+        derived_ratios_meta=None,
+        panel_biomarker_ids=_base_panel(),
+    )
+    thy = rows[5]
+    assert thy.active_signal_ids == ["signal_tsh_low"]
+
+
+def test_signal_thyroid_tsh_context_remains_excluded():
+    signals = [
+        {
+            "signal_id": "signal_thyroid_tsh_context",
+            "signal_state": "at_risk",
+            "primary_metric": "tsh",
+            "system": "hormonal",
+        },
+    ]
+    rows, _ = assemble_consumer_domain_scores_v1(
+        scoring_result=_full_scoring_fixture(),
+        insight_graph=_minimal_graph(signal_results=signals),
+        idl_bundle=None,
+        derived_ratios_meta=None,
+        panel_biomarker_ids=_base_panel(),
+    )
+    thy = rows[5]
     assert thy.active_signal_ids == []
+
+
+def test_thyroid_subsystem_evidence_row_emitted():
+    from core.analytics.wave1_subsystem_evidence import assemble_wave1_subsystem_evidence
+
+    panel = {"tsh", "free_t4", "free_t3"}
+    rows = assemble_wave1_subsystem_evidence(
+        domain_id="wave1_thyroid",
+        panel_biomarker_ids=panel,
+        rail_biomarker_scores=[
+            {"biomarker_name": "tsh"},
+            {"biomarker_name": "free_t4"},
+        ],
+    )
+    assert len(rows) == 1
+    assert rows[0].subsystem_id == "wave1_thy_hormonal_axis"
+    assert rows[0].subsystem_label == "Thyroid hormonal axis"
 
 
 def test_thyroid_domain_includes_ft4_high_when_active():
@@ -214,7 +285,7 @@ def test_thyroid_domain_includes_ft4_high_when_active():
         panel_biomarker_ids=_base_panel(),
     )
     thy = rows[5]
-    assert thy.active_signal_ids == ["signal_free_t4_high"]
+    assert thy.active_signal_ids == ["signal_free_t4_high", "signal_tsh_low"]
     joined = " ".join(
         [
             thy.headline_sentence or "",

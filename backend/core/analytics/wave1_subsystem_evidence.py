@@ -37,7 +37,9 @@ _WAVE1_DOMAIN_SUBSYSTEM_ORDER: Dict[str, Tuple[str, ...]] = {
     "wave1_blood_iron_oxygen": (
         "wave1_bio_oxygen_carrying_capacity",
     ),
-    "wave1_thyroid": (),
+    "wave1_thyroid": (
+        "wave1_thy_hormonal_axis",
+    ),
 }
 
 WAVE1_DOMAIN_IDS: FrozenSet[str] = frozenset(_WAVE1_DOMAIN_SUBSYSTEM_ORDER.keys())
