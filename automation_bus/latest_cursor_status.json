@@ -1,10 +1,9 @@
 {
-  "branch": "sprint/P1-20-cbc-package-provenance-and-psi-opt-in",
+  "branch": "sprint/P1-21-ferritin-high-authority-reconciliation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-22T10:47:11Z",
-  "cursor_started_utc": "2026-06-22T10:40:07Z",
-  "head_sha": "61af3277bba74fde91e624bcba6bc1282b9bb94a",
+  "cursor_started_utc": "2026-06-22T18:02:30Z",
+  "head_sha": "8a6f97401c266fd1c49bf7436ec4a223828f3c0c",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-20"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-21"
 }
