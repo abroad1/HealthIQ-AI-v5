@@ -1,113 +1,119 @@
 {
-  "work_id": "P1-20",
+  "work_id": "P1-21",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-22T00:00:00Z",
+  "hardened_utc": "2026-06-22T12:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "blocker_count": 0,
   "changes": [
     {
       "stage": "2A",
-      "check": "Front matter — all five fields",
+      "check": "Front matter — all five required fields",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id: P1-20; branch: sprint/P1-20-cbc-package-provenance-and-psi-opt-in; risk_level: HIGH; execution_model: TWO_PHASE_START_FINISH; change_type: CONTENT"
+      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id: P1-21; branch: sprint/P1-21-ferritin-high-authority-reconciliation; risk_level: STANDARD; execution_model: TWO_PHASE_START_FINISH; change_type: CONTENT"
     },
     {
       "stage": "2A",
       "check": "change_type: CONTENT — correct",
       "result": "CONFIRMED",
-      "evidence": "No signal_library changes, no new signal definitions, no Intelligence Core interaction, no backend code changes. Production PSI opt-in via byte-copy; behavioural_impact: NONE confirmed in all 4 pkg_kb58_* package_manifest.yaml files (line 11)"
+      "evidence": "No signal evaluator changes. No Intelligence Core interaction. Work is: (1) create ADR document, (2) add deprecation fields to pkg_s24 manifest (in-place), (3) create two pkg_kb52c production package directories with YAML files only, (4) byte-copy PSI from generated_pilot. CONTENT classification is correct per SOP §4."
     },
     {
       "stage": "2A",
-      "check": "risk_level: HIGH — observation only",
-      "result": "CONFIRMED (non-blocking observation: STANDARD by SOP §10 triggers; no Intelligence Core, no backend/ssot or backend/core paths; conservative classification does not cause harm)",
-      "evidence": "knowledge_bus/packages/pkg_kb58_rbc_high_erythrocytosis_pattern/package_manifest.yaml:11 — behavioural_impact: NONE"
-    },
-    {
-      "stage": "2A",
-      "check": "Stage B scope advisory — file staleness check (§14)",
+      "check": "risk_level: STANDARD — correct",
       "result": "CONFIRMED",
-      "evidence": "git log --since=2026-06-22 run against all 6 cited files: P1-19_pass3_carry_forward.yaml, P1-19_production_opt_in_manifest.yaml, pkg_kb58_rbc_high/package_manifest.yaml, pkg_kb58_rbc_low/package_manifest.yaml, pkg_kb58_rdw_cv_high_iron_deficiency/package_manifest.yaml, pkg_kb58_rdw_cv_high_mixed/package_manifest.yaml — all returned zero commits; evidence is current and inheritable"
+      "evidence": "automation_bus/latest_scope_advisory.md:109 — 'Risk level: STANDARD (no signal_library creation; no new signal_ids; no signal evaluator changes; no scoring policy changes)'. No HIGH-risk trigger from SOP §10: no Intelligence Core, no backend/ssot/, no backend/core/, no backend/scripts/run_work_package.py or golden_gate_local.py. STANDARD requires Claude audit + GPT architectural review before merge — advisory §154 confirms this."
     },
     {
       "stage": "2A",
-      "check": "Stage B amendments — all incorporated",
+      "check": "Stage B scope advisory — file staleness check per v0.4 §14",
       "result": "CONFIRMED",
-      "evidence": "Amendment 1 (count=4): automation_bus/latest_cursor_prompt.md:30-31; Amendment 2 (bundle opt-in): prompt:24-26; Amendment 3 (identity proof gate): Phase 2 conditions 1-10"
+      "evidence": "git log --since=2026-06-22 run against all four advisory-cited files: knowledge_bus/packages/pkg_s24_ferritin_high_overload/signal_library.yaml, knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml, knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/promoted_signal_intelligence.yaml, backend/tests/regression/test_signal_authority_collision_enforcement.py — all returned zero commits. Advisory evidence is current and inheritable."
     },
     {
       "stage": "2A",
-      "check": "Candidate count — 4 not 5",
+      "check": "Activation-readiness validator re-run (P1-20 closed before Stage D)",
       "result": "CONFIRMED",
-      "evidence": "docs/sprints/beta_readiness/P1-19_pass3_carry_forward.yaml — 4 BLOCKED_PACKAGE_IDENTITY_UNRESOLVED items: cf_003 (rbc_high), cf_004 (rbc_low), cf_005 (rdw_cv_high_iron_deficiency_anisocytosis), cf_006 (rdw_cv_high_mixed_red_cell_population_pattern)"
+      "evidence": "validate_staged_psi_activation_readiness.py executed programmatically. Both ferritin-high candidates: activation_readiness: ACTIVATION_READY, blockers: [], primary_metric_ssot_status: canonical, supporting_marker_ssot_status: pass, compile_manifest_hash_status: pass, runtime_active: false, production_manifest_opt_in: false. BLOCKED_DUPLICATE_AUTHORITY_RISK is a governance advisory classification only — not a validator status."
     },
     {
       "stage": "2A",
-      "check": "Staged PSI files — all 4 exist with expected pkg_kb52c_* package_id",
+      "check": "pkg_s24_ferritin_high_overload — legacy status verified by source content read",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/promoted_signal_intelligence.yaml:3 — package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern; pkg_kb52c_rbc_low.../promoted_signal_intelligence.yaml:3 — package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern; pkg_kb52c_rdw_cv_high_iron_deficiency.../promoted_signal_intelligence.yaml:3 — package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis; pkg_kb52c_rdw_cv_high_mixed.../promoted_signal_intelligence.yaml:3 — package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern"
+      "evidence": "knowledge_bus/packages/pkg_s24_ferritin_high_overload/signal_library.yaml:8 — signal_id: signal_ferritin_high; signal_library.yaml:32-35 — threshold 9999.0, description 'Validator-compatibility placeholder; runtime activation is lab-range driven'; signal_library.yaml:1 — library.package_id: KBP-2404; package_manifest.yaml:7 — created_at: 2026-03-12; NO promoted_signal_intelligence.yaml exists in directory."
     },
     {
       "stage": "2A",
-      "check": "Compile manifests — source_path for all 4",
+      "check": "PSI hash — inflammatory hyperferritinemia (freshly computed, not inherited)",
       "result": "CONFIRMED",
-      "evidence": "All 4 compile_manifest.yaml line 9: source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json; SHA256 824bc35f02b4636f64876c35a9a50cbf60035b297b67b62c0b3daefdb5c19897 consistent across all 4"
+      "evidence": "SHA256 computed: 56fbadc05409ea4a216ade0ec05607d130c4e74d27e8ebe1436e41c9243895ea. Compile manifest expected (knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/compile_manifest.yaml:16): 56fbadc05409ea4a216ade0ec05607d130c4e74d27e8ebe1436e41c9243895ea. MATCH. promoted_signal_intelligence_validation: PASS (compile_manifest.yaml:18)."
     },
     {
       "stage": "2A",
-      "check": "Production pkg_kb58 hosts — source_document match, no prior opt-in",
+      "check": "PSI hash — iron overload context (freshly computed, not inherited)",
       "result": "CONFIRMED",
-      "evidence": "All 4 pkg_kb58_* package_manifest.yaml line 9: source_document: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json; no promoted_signal_intelligence field in any of the 4 manifests"
+      "evidence": "SHA256 computed: 607660a9e77916651a3cbc345bd96ae20961f8764c851fea3f41270381712a1c. Compile manifest expected (knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/compile_manifest.yaml:16): 607660a9e77916651a3cbc345bd96ae20961f8764c851fea3f41270381712a1c. MATCH. promoted_signal_intelligence_validation: PASS (compile_manifest.yaml:18)."
     },
     {
       "stage": "2A",
-      "check": "Authority paths — validators and schemas",
+      "check": "Production package ID naming — pkg_kb52c is the correct production family for ferritin signals",
       "result": "CONFIRMED",
-      "evidence": "backend/scripts/validate_promoted_signal_intelligence.py — EXISTS; backend/scripts/validate_knowledge_package.py — EXISTS; backend/scripts/validate_staged_psi_activation_readiness.py — EXISTS; knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml — EXISTS; knowledge_bus/schema/package_manifest_schema.yaml — EXISTS"
+      "evidence": "knowledge_bus/packages/pkg_kb52c_ferritin_low_iron_store_depletion/package_manifest.yaml:1 — package_id: pkg_kb52c_ferritin_low_iron_store_depletion; package_manifest.yaml:3 — 'KB-S52C Wave A package for inv_ferritin_low_iron_store_depletion'; package_manifest.yaml:13 — promoted_signal_intelligence: promoted_signal_intelligence.yaml. pkg_kb52c is already the active production series for ferritin signals. The staged package IDs pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia and pkg_kb52c_ferritin_high_iron_overload_context ARE the correct final production package IDs. No renaming needed. Advisory concern re staging-vs-production naming does NOT apply to this series (cf. CBC packages which required kb52c→kb58 renaming)."
     },
     {
       "stage": "2A",
-      "check": "Authority paths — governance and sprint files",
+      "check": "No runtime/backend/scoring hardcoded blocking reference to pkg_s24_ferritin_high_overload or KBP-2404",
       "result": "CONFIRMED",
-      "evidence": "docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — EXISTS; docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — EXISTS; docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml — EXISTS; docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md — EXISTS"
+      "evidence": "grep across all repo files for pkg_s24_ferritin_high_overload and KBP-2404 found 24 files. Backend runtime hits only: (1) backend/scripts/build_pass3_frame_coverage_audit.py:31 — non-runtime audit script, excluded from 'Out of scope' list, not a STOP condition; (2) backend/tests/unit/test_signal_evaluator.py:1444 — non-regression unit test, out of scope but see retirement constraint below; (3) backend/tests/unit/test_investigation_narrative_contract.py:22 — same. All remaining references are docs/, knowledge_bus/governance/, knowledge_bus/research/ — documentation and governance files, not runtime blocking references. No domain assembler, scoring policy, or signal evaluator hardcodes this package."
     },
     {
       "stage": "2A",
-      "check": "Re-homing definition — no staged PSI edits",
-      "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:153-160 — re-homing definition: byte-copy only, do not alter file; prompt:259 — do not edit staged PSI; prompt:121 — all generated-pilot PSI files and compile manifests read-only; prompt:145 — do not place PSI without Phase 2 proof"
+      "check": "pkg_s24 retirement method constraint — in-place deprecation required (NOT directory move)",
+      "result": "CONFIRMED — STOP GATE FOR CURSOR",
+      "evidence": "backend/tests/unit/test_signal_evaluator.py:1437-1469 — _KB_S24_PACKAGE_DIRS list includes pkg_s24_ferritin_high_overload; line 1892 reads knowledge_bus/packages/pkg_s24_ferritin_high_overload/signal_library.yaml; line 1895 asserts len(signals) == 1. Moving directory → FileNotFoundError at collection. Removing signal entry → AssertionError at line 1895. backend/tests/unit/test_investigation_narrative_contract.py:22 — same package in _KB_S25_PACKAGE_DIRS; line 73 reads signal_library.yaml. Both are NON-REGRESSION tests, out of scope for modification in P1-21. CURSOR MUST use in-place manifest-level deprecation: add deprecated: true and deprecated_by: [pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia, pkg_kb52c_ferritin_high_iron_overload_context] to package_manifest.yaml ONLY. Do NOT move the directory. Do NOT remove or modify the signal entry in signal_library.yaml. The prompt Phase 3 fallback clause ('if moving directories would break tooling...') applies and IS the required path."
     },
     {
       "stage": "2A",
-      "check": "Hash-bound rule — present and correct",
+      "check": "Multi-package same signal_id pattern — established precedent confirmed",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:162-166 — hash-bound generated-pilot rule section present; explains SHA256 mechanism; explains staged validator expected behaviour post opt-in; instructs document not fix"
+      "evidence": "knowledge_bus/packages/pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression/signal_library.yaml — signal_id: signal_transferrin_low (schema_version: 2.0.0); knowledge_bus/packages/pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure/signal_library.yaml — signal_id: signal_transferrin_low (schema_version: 2.0.0). Both coexist as active production packages. Repo already supports multiple pkg_kb* packages sharing one signal_id. Ferritin-high pair will follow this exact pattern."
     },
     {
       "stage": "2A",
-      "check": "Validator behaviour — staged PSI hash check confirmed read",
+      "check": "Collision regression test — no ferritin references, no fixture update needed",
       "result": "CONFIRMED",
-      "evidence": "backend/scripts/validate_staged_psi_activation_readiness.py:196 — package_id = psi_path.parent.name (directory name, not YAML field); lines 312-327 — SHA256 of staged PSI compared against compile manifest output_hashes_sha256; lines 123-133 — production opt-in matched by directory name; byte-copy approach preserves hash, production validator matches by pkg_kb58_* directory name — no hash mismatch, no false BLOCKED_MANIFEST_OR_HASH"
+      "evidence": "backend/tests/regression/test_signal_authority_collision_enforcement.py — reviewed in full (312 lines). Tests renal_filtration_axis collision governance only. No reference to pkg_s24_ferritin_high_overload, signal_ferritin_high, or KBP-2404. No fixture update required after pkg_s24 in-place deprecation. pkg_s24_creatinine_high_renal at line 157 is unrelated (renal, not ferritin). Test count and collision enforcement remain fully intact."
     },
     {
       "stage": "2A",
-      "check": "Acceptance criteria — stale criteria removed",
+      "check": "Authority paths — all mandatory read-list files exist",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md acceptance criteria: criterion 12 — no generated-pilot files modified; criterion 13 — production PSI byte-copies; criterion 14 — manifest update limited to promoted_signal_intelligence field; criterion 18 — staged validator expected behaviour documented; criterion 21 — sprint report documents expected behaviour; no criterion referencing staged PSI package_id edit"
+      "evidence": "backend/scripts/validate_promoted_signal_intelligence.py — EXISTS; backend/scripts/validate_knowledge_package.py — EXISTS; backend/scripts/validate_staged_psi_activation_readiness.py — EXISTS; knowledge_bus/schema/package_manifest_schema.yaml — EXISTS; knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml — EXISTS; docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — EXISTS; docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — EXISTS; docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md — EXISTS; backend/tests/regression/test_signal_authority_collision_enforcement.py — EXISTS; knowledge_bus/packages/pkg_s24_ferritin_high_overload/ — EXISTS (all 3 files confirmed)."
     },
     {
       "stage": "2A",
-      "check": "Forbidden files",
+      "check": "Staged generated-pilot artefacts — both candidates exist with compile manifests",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:112-130 — backend/, frontend/, .codex/, .cursor/, .vscode/, AGENTS.md, validators, tests, runtime loaders, compile manifests, signal_library.yaml, research_brief.yaml — all prohibited"
+      "evidence": "knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml — EXISTS; compile_manifest.yaml:1 — compile_id: p1_11_batch_b_pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia; knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/promoted_signal_intelligence.yaml — EXISTS; compile_manifest.yaml:1 — compile_id: p1_11_batch_b_pkg_kb52c_ferritin_high_iron_overload_context."
     },
     {
       "stage": "2A",
-      "check": "No duplicate authority sources",
+      "check": "No duplicate authority sources introduced",
       "result": "CONFIRMED",
-      "evidence": "No signal_library.yaml created or modified; no new signal definitions; production opt-in adds PSI to existing pkg_kb58_* host only; pkg_s24_ferritin_high_overload untouched"
+      "evidence": "Both new production packages claim signal_id: signal_ferritin_high — same pattern as pkg_kb61 transferrin_low pair. pkg_s24 receives manifest-level deprecated flag, not signal_library modification. pkg_kb52c_ferritin_low_iron_store_depletion is unrelated and untouched. No new signal IDs created. No signal_library.yaml files modified."
+    },
+    {
+      "stage": "2A",
+      "check": "Forbidden files — no runtime/frontend/evaluator/parser/DTO scope creep",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:142-159 — explicit prohibition list includes backend runtime/evaluator code, frontend, parser files, DTO/report/Gemini/scoring files, validators, non-regression tests, raw Pass 3 research, generated-pilot artefacts, compile manifests, unrelated Knowledge Bus packages, ferritin-low packages, TSAT files, .codex/, .cursor/, .vscode/, AGENTS.md. Hardening finding: signal_library.yaml within pkg_s24_ferritin_high_overload must also not be modified (non-regression test dependency)."
+    },
+    {
+      "stage": "2B",
+      "check": "Behavioural scope check — CONTENT only, no Intelligence Core interaction",
+      "result": "NOT_APPLICABLE",
+      "evidence": "change_type: CONTENT. Sprint creates new YAML package files, adds deprecation metadata to one existing manifest, and byte-copies two PSI files into new production directories. No code changes. No signal evaluator interaction. No analytical pipeline modification. No output structure change. Behavioural hardening (2B) is not applicable."
     }
   ],
-  "overall_verdict": "HARDENED. Blocker resolved: re-homing definition amended to byte-copy only; staged PSI files and compile manifests are read-only in P1-20. Hash-bound rule section added. Stale acceptance criteria removed and replaced. Staged validator expected behaviour documented in prompt, Phase 4, and acceptance criteria. All five front-matter fields confirmed. All authority paths confirmed present. Source-path identity confirmed for all 4 candidates across staged compile manifests and production package manifests. No duplicate authority sources introduced. No scope creep. CONTENT change type correct. Ready for kernel start."
+  "overall_verdict": "HARDENED. All five front-matter fields confirmed. Both PSI hashes freshly verified — both match compile manifests exactly. Both staged packages independently confirmed ACTIVATION_READY by validator re-run. Production naming resolved: pkg_kb52c IS the ferritin production series; staged IDs are the correct production IDs — no renaming required. KEY CONSTRAINT FOR CURSOR: pkg_s24 retirement must use in-place manifest-level deprecation only (add deprecated: true + deprecated_by: [...] to package_manifest.yaml). Do NOT move or delete the pkg_s24_ferritin_high_overload directory. Do NOT modify signal_library.yaml within that package. Non-regression tests at test_signal_evaluator.py:1892 and test_investigation_narrative_contract.py:73 load this directory and assert len(signals)==1 — directory move or signal entry removal both break out-of-scope tests. Collision regression test requires no update. No runtime hardcoded blocking references found. No new signal IDs. No Intelligence Core interaction. Ready for kernel start."
 }
