@@ -146,6 +146,9 @@ Find the domain you care about. Look at the Status column.
 | `docs/governance/healthiq-frontend-shell.md` | SUPPORTING | Frontend shell agent definition. |
 | `docs/governance/healthiq-qa-uat.md` | SUPPORTING | QA/UAT agent definition. |
 | `docs/governance/healthiq-docs-hygiene.md` | SUPPORTING | Docs hygiene agent definition. |
+| `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_4.md` | AUTHORITATIVE | Pre-SOP prompt scoping working convention (Stages 0, A–E). Separate from Automation Bus SOP. |
+| `automation_bus/latest_scope_advisory.md` | SUPPORTING | Per-sprint Stage B advisory cache. Advisory only — does not authorise execution. |
+| `automation_bus/latest_pipeline_advisory.md` | SUPPORTING | Stage 0 batch pipeline advisory cache. Advisory only — does not authorise execution. |
 | `docs/archive/superseded/AUTOMATION_BUS_SOP_v1.3.md` | SUPERSEDED | Moved to archive. |
 | `docs/archive/superseded/AUTOMATION_BUS_SOP_v1.2.md` | SUPERSEDED | Moved to archive. |
 | `docs/archive/superseded/KNOWLEDGE_BUS_SOP_v1.2.md` | SUPERSEDED | Moved to archive. |

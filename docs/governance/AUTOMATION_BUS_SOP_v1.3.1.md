@@ -762,8 +762,12 @@ content_review: COMPLETE | NOT_APPLICABLE
 behaviour_review: COMPLETE | NOT_APPLICABLE
 recommendation:
 escalation_required: true | false
+pipeline_advisory_trigger: true | false
+pipeline_advisory_reason: "<one-line reason, or omitted if false>"
 ---
 ```
+
+At Stage 5 audit close, Claude must include `pipeline_advisory_trigger` and `pipeline_advisory_reason` in every audit summary YAML header. These fields are not Automation Bus execution stages; they signal whether GPT should request pipeline advisory before the next Stage A concept. Criteria and workflow are governed by the separate Pre-SOP Prompt Scoping Workflow (see `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_4.md`).
 
 ### Required Body Sections
 
