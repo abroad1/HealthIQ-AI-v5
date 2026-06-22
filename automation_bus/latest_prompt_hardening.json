@@ -1,181 +1,143 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "P1-23",
+  "work_id": "P1-24",
   "status": "HARDENED",
   "hardened_utc": "2026-06-22T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6, Stage 2, SOP v1.3.1)",
   "blocker_count": 0,
   "changes": [
     {
-      "stage": "2A",
-      "check": "Front matter — all five required fields",
+      "stage": "2",
+      "check": "Front matter — all five required fields present",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id: P1-23; branch: sprint/P1-23-thyroid-intelligence-surface; risk_level: HIGH; execution_model: TWO_PHASE_START_FINISH; change_type: MIXED. All five fields present and populated."
+      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id: P1-24; branch: sprint/P1-24-bio-oxygen-subsystem-signal-depth; risk_level: STANDARD; execution_model: SINGLE_PHASE; change_type: CONTENT. All five fields present and populated."
+    },
+    {
+      "stage": "2",
+      "check": "execution_model: SINGLE_PHASE — correct",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:5. All six prompt phases (0-6) are within a single Cursor execution. No inter-agent STOP gate requires a second kernel start/finish cycle. Knowledge Bus role is read-only evidence access only. SINGLE_PHASE is correct. Amended from TWO_PHASE_START_FINISH (blocker B1 resolved)."
+    },
+    {
+      "stage": "2",
+      "check": "change_type: CONTENT — correct",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:6. All writes confined to knowledge_bus/compiled/ (YAML data assets), backend tests, and sprint artefacts. No Intelligence Core executable code changes. No signal evaluator, domain assembler, scoring policy, or domain allowlist writes. CONTENT is the correct classification per SOP v1.3.1 §4."
+    },
+    {
+      "stage": "2",
+      "check": "risk_level: STANDARD — correct",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:4. No HIGH risk triggers apply: no backend/ssot/ writes, no backend/core/pipeline/ writes, no backend/core/analytics/ writes, no run_work_package.py / golden_gate_local.py / update_cursor_status.py writes, no Intelligence Core component modifications. STANDARD with Claude audit is the correct classification per SOP v1.3.1 §10."
     },
     {
       "stage": "2A",
-      "check": "risk_level: HIGH — correct",
+      "check": "Authority path — wave1_bio_oxygen_carrying_capacity.yaml",
       "result": "CONFIRMED",
-      "evidence": "HIGH required per SOP §10: sprint touches Intelligence Core — domain_score_assembler.py _THYROID_LAUNCH_SIGNAL_IDS / _THYROID_EXCLUDED_SIGNAL_IDS (lines 68-82) governs which signals participate in thyroid domain output; wave1_subsystem_evidence.py subsystem routing; health_system_card_evidence.py compiled card registry. All three are Intelligence Core components per SOP §3."
+      "evidence": "knowledge_bus/compiled/health_system_cards/wave1_bio_oxygen_carrying_capacity.yaml — read in full. schema_version: 1.0.0; artefact_id: wave1_bio_oxygen_carrying_capacity_v1; 3 markers (hemoglobin, hematocrit, ferritin); 2 source_spec_ids (inv_hgb_low_normocytic_underproduction_context, inv_ferritin_low_iron_store_depletion); compile_manifest_ref: knowledge_bus/compiled/manifests/p1_3_blood_iron_oxygen_card_evidence.yaml. File exists and is valid."
     },
     {
       "stage": "2A",
-      "check": "change_type: MIXED — correct",
+      "check": "Authority path — p1_3_blood_iron_oxygen_card_evidence.yaml (read-only; must not be mutated)",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:6. Phase 1 (kb52c package creation, PSI opt-in, s24 deprecation) = CONTENT. Phase 2 (domain allowlist update in domain_score_assembler.py, compiled card registration in health_system_card_evidence.py + wave1_subsystem_evidence.py) = BEHAVIOUR touching Intelligence Core. MIXED is the correct classification per SOP §4. GPT Amendment 8 from Stage B scope advisory correctly incorporated."
+      "evidence": "knowledge_bus/compiled/manifests/p1_3_blood_iron_oxygen_card_evidence.yaml — read in full. compile_run_id: p1-3-blood-iron-oxygen-card-evidence-001; provenance_status: pilot_evidence_only; source_specs: hgb_low + ferritin_low only. File exists. Explicitly listed as forbidden in latest_cursor_prompt.md:124. Must not be modified."
     },
     {
       "stage": "2A",
-      "check": "execution_model: TWO_PHASE_START_FINISH — correct",
+      "check": "Authority path — estate_index_v1.yaml",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:5. Phase 1 (Knowledge Bus: kb52c authoring, s24 deprecation, PSI opt-in, Medical Review gate) has mandatory STOP gates before Phase 2 (Core Engine: domain allowlist, compiled card, tests) may begin. TWO_PHASE_START_FINISH is the correct execution model. Phase 2 is explicitly conditioned on all Phase 1 gate outcomes (latest_cursor_prompt.md:449)."
+      "evidence": "knowledge_bus/compiled/estate_index_v1.yaml — read in full. wave1_bio_oxygen_carrying_capacity entry at lines 41-44: artefact_path and compile_manifest_path both present; currently points to p1_3 manifest. P1-24 must update compile_manifest_path to p1_24_blood_iron_oxygen_card_evidence.yaml. File exists and is in scope."
     },
     {
       "stage": "2A",
-      "check": "Stage B scope advisory — file staleness check per v0.5 §14",
+      "check": "Authority path — health_system_card_evidence_schema_v1.yaml (schema authority)",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_scope_advisory.md advisory date: 2026-06-22 (today, under 48 hours). All files cited in the advisory verified to exist. No new commits against any cited file between advisory generation and this hardening (same session, no intervening commits). Advisory structural evidence is eligible for inheritance where files are on the mandatory-fresh list."
+      "evidence": "knowledge_bus/schema/health_system_card_evidence_schema_v1.yaml — read in full. marker_role allowed values (lines 122-131): score_contributor, confidence_contributor, contextual_marker, mechanism_marker, differential_marker, exclusion_marker, missing_for_confidence, optional_deeper_marker. relationship_kind allowed values (lines 133-143): direct_score_input, confidence_input, contextual_support, mechanism_context, differential_context, exclusion_gate, optional_depth. presence_policy allowed values (lines 148-152): required_for_subsystem, optional_on_panel, contextual_only. All suggested values in amended prompt are schema-valid."
     },
     {
       "stage": "2A",
-      "check": "Stage B amendments — all eight incorporated in formal SOP prompt",
+      "check": "Authority path — compile_manifest_schema_v1.yaml",
       "result": "CONFIRMED",
-      "evidence": "Amendment 1 (kb52c creation + s24 deprecation, not revalidation): latest_cursor_prompt.md:196-209. Amendment 2 (Medical Review gate verbatim): latest_cursor_prompt.md:213-221. Amendment 3 (exactly two TSH signal IDs for allowlist): latest_cursor_prompt.md:225-237. Amendment 4 (SSOT canonical ID verification sub-step): latest_cursor_prompt.md:333-348. Amendment 5 (compiled card source spec citation requirements): latest_cursor_prompt.md:481-491. Amendment 6 (named tests to update/add): latest_cursor_prompt.md:519-544. Amendment 7 (forbidden files — domain_narrative_wave1.py, signal_evaluator.py explicit): latest_cursor_prompt.md:176-177. Amendment 8 (change_type: MIXED in front matter): latest_cursor_prompt.md:6. No material departure from Stage B advisory."
+      "evidence": "knowledge_bus/schema/compile_manifest_schema_v1.yaml — read in full. Required root fields verified: compile_id, compiler_name, compiler_version, compile_mode, source_contract_version, source_specs, outputs, translation_rules_version, compiled_at_utc, compiled_by, provenance_status. provenance_status allowed values: complete, partial, legacy_retained, blocked_pending_spec_extraction, pilot_evidence_only. P1-24 manifest should use provenance_status: complete."
     },
     {
       "stage": "2A",
-      "check": "Authority path — backend/core/analytics/domain_score_assembler.py (target file, mandatory-fresh read)",
+      "check": "Source spec ID — inv_ferritin_high_inflammatory_hyperferritinemia",
       "result": "CONFIRMED",
-      "evidence": "backend/core/analytics/domain_score_assembler.py:68-82 (read in prior session, no intervening commits). _THYROID_LAUNCH_SIGNAL_IDS frozenset contains: signal_free_t3_high, signal_free_t4_high, signal_free_t4_low. _THYROID_EXCLUDED_SIGNAL_IDS frozenset contains: signal_free_t3_low, signal_tsh_high, signal_tsh_low, signal_thyroid_tsh_context. P1-23 must move signal_tsh_high and signal_tsh_low from excluded to launch set only."
+      "evidence": "knowledge_bus/packages/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml:7 — investigation_spec_id: inv_ferritin_high_inflammatory_hyperferritinemia. package_manifest.yaml:10 — behavioural_impact: NONE. File exists. Spec ID is traceable and exact."
     },
     {
       "stage": "2A",
-      "check": "Authority path — backend/core/analytics/wave1_subsystem_evidence.py (target file)",
+      "check": "Source spec ID — inv_ferritin_high_iron_overload_context",
       "result": "CONFIRMED",
-      "evidence": "backend/core/analytics/wave1_subsystem_evidence.py:41 — wave1_thyroid: () confirmed as empty tuple. P1-23 must change this to wave1_thyroid: (\"wave1_thy_hormonal_axis\",) once compiled card is registered and Phase 1 gates pass."
+      "evidence": "knowledge_bus/packages/pkg_kb52c_ferritin_high_iron_overload_context/promoted_signal_intelligence.yaml:7 — investigation_spec_id: inv_ferritin_high_iron_overload_context. package_manifest.yaml:10 — behavioural_impact: NONE. File exists. Spec ID is traceable and exact."
     },
     {
       "stage": "2A",
-      "check": "Authority path — backend/core/knowledge/health_system_card_evidence.py (target file)",
+      "check": "Source spec ID — inv_transferrin_high_iron_deficiency_transport_upregulation",
       "result": "CONFIRMED",
-      "evidence": "backend/core/knowledge/health_system_card_evidence.py:26-38 — WAVE1_COMPILED_SUBSYSTEM_IDS frozenset contains 9 entries: wave1_met_glycaemic_control, wave1_cv_lipid_transport, wave1_cv_homocysteine_pathway, wave1_cv_vascular_strain, wave1_met_insulin_metabolic, wave1_liv_enzyme_pattern, wave1_liv_processing_context, wave1_ren_glomerular_filtration, wave1_bio_oxygen_carrying_capacity. wave1_thy_hormonal_axis absent — must be added in P1-23."
+      "evidence": "knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/promoted_signal_intelligence.yaml:7 — investigation_spec_id: inv_transferrin_high_iron_deficiency_transport_upregulation. package_manifest.yaml:10 — behavioural_impact: NONE. File exists. Spec ID is traceable and exact."
     },
     {
       "stage": "2A",
-      "check": "Authority path — Batch_4_Pass_3.json source specs (mandatory-fresh for ingestion sprint)",
+      "check": "Transferrin marker_role: contextual_marker — schema-valid and PSI-governed",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json — both TSH specs confirmed v3.0.0: inv_tsh_high_primary_hypothyroid_pattern (signal_tsh_high, trigger_direction: high) and inv_tsh_low_thyrotoxic_pattern (signal_tsh_low, trigger_direction: low). Source document for both kb52c TSH packages is this file."
+      "evidence": "health_system_card_evidence_schema_v1.yaml:127 — contextual_marker is an allowed marker_role value. pkg_kb61 promoted_signal_intelligence.yaml: transferrin is the primary_metric for signal_transferrin_high; signal_system: hematologic; its role in the iron domain is to add transport-capacity context when co-present with ferritin and other iron markers. contextual_marker / contextual_support is the correct schema-valid derivation. Blocker B2 resolved by amendment to latest_cursor_prompt.md. Runtime enforcement at backend/core/knowledge/health_system_card_evidence.py:56-67 (_MARKER_ROLES) will accept contextual_marker."
     },
     {
       "stage": "2A",
-      "check": "SSOT canonical biomarker IDs — ldl (mandatory-fresh read)",
+      "check": "compile_manifest_ref update — Phase 2 gap (A3) resolved",
       "result": "CONFIRMED",
-      "evidence": "backend/ssot/biomarkers.yaml:26-29. Canonical key is ldl_cholesterol. Aliases: ldl, ldl_chol. Batch_4_Pass_3.json inv_tsh_high spec uses 'ldl' (non-canonical alias). kb52c signal_library.yaml for tsh_high must substitute ldl_cholesterol in all supporting_metrics and dependencies.biomarkers fields. Prompt Step 1C (latest_cursor_prompt.md:333-348) explicitly requires this verification and correction. STOP is required if any field cannot be mapped without medical interpretation."
+      "evidence": "latest_cursor_prompt.md Phase 2 Required updates item 4 (amended): explicit instruction to update compile_manifest_ref from p1_3_blood_iron_oxygen_card_evidence.yaml to p1_24_blood_iron_oxygen_card_evidence.yaml. This is a required card field per health_system_card_evidence_schema_v1.yaml:18. The gap is closed."
     },
     {
       "stage": "2A",
-      "check": "SSOT canonical biomarker IDs — crp (mandatory-fresh read)",
+      "check": "No duplicate authority sources",
       "result": "CONFIRMED",
-      "evidence": "backend/ssot/biomarkers.yaml:619-624. crp IS the canonical key. Aliases include hs_crp, high_sensitivity_crp, c-reactive_protein_crp_(venous). Batch_4_Pass_3.json inv_tsh_low spec uses 'crp' — this is canonical. No correction required for crp."
+      "evidence": "Single compiled card file for wave1_bio_oxygen_carrying_capacity. Single compile manifest (p1_3, to be superseded by p1_24 — not duplicated). Single estate index entry for this subsystem. No duplicate PSI package sources for ferritin-high or transferrin-high signals. Knowledge Bus package files are read-only in this sprint."
     },
     {
       "stage": "2A",
-      "check": "Authority path — thyroid clinical signoff (mandatory-fresh read)",
+      "check": "Forbidden files — p1_3 manifest and all Knowledge Bus package files protected",
       "result": "CONFIRMED",
-      "evidence": "docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md:1-31 — read in full. Signoff covers FT3 high (approved with caveats; TSH-suppressed gate required), FT3 low (blocked — TSH + FT4 + illness context required), FT4 high (approved with caveats; TSH mandatory), FT4 low (approved with caveats; TSH mandatory). CRITICAL: signoff positions TSH as a mandatory GATE marker for the four FT3/FT4 patterns. It does NOT explicitly cover TSH HIGH (primary hypothyroid signal) or TSH LOW (thyrotoxic signal) as standalone primary clinical patterns requiring Medical Review. This creates genuine gate ambiguity at Phase 1A. The formal SOP prompt correctly handles this with a mandatory 1A assessment gate (latest_cursor_prompt.md:295-321): Cursor must determine whether existing signoff is sufficient and STOP with BLOCKED_MEDICAL_REVIEW_REQUIRED if not satisfied."
+      "evidence": "latest_cursor_prompt.md:124-145. Explicit forbidden list includes: p1_3_blood_iron_oxygen_card_evidence.yaml; all knowledge_bus/packages/ content; promoted_signal_intelligence.yaml files; signal_library.yaml files; research_brief.yaml files; package_manifest.yaml files; backend signal evaluator; backend scoring policy; domain allowlist files; frontend files; .codex/; .cursor/; .vscode/; AGENTS.md."
     },
     {
       "stage": "2A",
-      "check": "kb47 thyroid package manifests — source spec IDs for compiled card (mandatory-fresh read)",
+      "check": "Advisory file-change check — Stage D preamble applied",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis/package_manifest.yaml:3 — source spec inv_free_t3_high_t3_predominant_thyrotoxicosis from Batch_2_Pass_3.json. knowledge_bus/packages/pkg_kb47_free_t4_high_thyrotoxicosis_context/package_manifest.yaml:2 — source spec inv_free_t4_high_thyrotoxicosis_context from Batch_2_Pass_3.json. knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency/package_manifest.yaml:2 — source spec inv_free_t4_low_thyroid_hormone_deficiency from Batch_2_Pass_3.json. All three are traceable to existing files. wave1_thy_hormonal_axis.yaml compiled card source_spec_ids must draw from these three IDs plus inv_tsh_high_primary_hypothyroid_pattern and inv_tsh_low_thyrotoxic_pattern from Batch_4_Pass_3.json."
+      "evidence": "git log --since=2026-06-22 returned no commits for any advisory-cited file. Stage B advisory date: 2026-06-22. No sprint executed and closed between Stage B and Stage D. All structural evidence from Stage B scope advisory is eligible for inheritance. No activation-readiness rerun required."
     },
     {
       "stage": "2A",
-      "check": "Compiled card YAML schema — example read (mandatory-fresh)",
+      "check": "Stage B amendments — all five confirmed incorporated",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml:1-40 — required fields: schema_version, artefact_id, domain_id, subsystem_id, subsystem_label, visibility_tier, source_spec_ids (list), compile_manifest_ref, missing_policy_line, mechanism_line, subsystem_summary, evidence_limitations_line, markers (list with marker_id, display_label, marker_role, relationship_kind, rationale_short, presence_policy), provenance (artefact_kind, compile_status, source_spec_provenance, package_refs, notes). wave1_thy_hormonal_axis.yaml must conform to this structure."
+      "evidence": "Amendment 1 (risk: STANDARD/CONTENT closed): latest_cursor_prompt.md:4,6. Amendment 2 (transferrin marker explicitly authorised): latest_cursor_prompt.md:181-197. Amendment 3 (new P1-24 manifest, not mutation of P1-3): latest_cursor_prompt.md:201-220. Amendment 4 (three spec IDs named exactly): latest_cursor_prompt.md:149-153. Amendment 5 (estate_index_v1.yaml explicitly in scope): latest_cursor_prompt.md:103. No material departure from Stage B advisory."
     },
     {
       "stage": "2A",
-      "check": "Authority path — P1-21 ferritin-high deprecation pattern (s24 precedent)",
+      "check": "Canonical test modules confirmed",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/package_manifest.yaml:1-13 — confirms kb52c package structure: package_id, package_version, description, research_brief, signal_library, promoted_signal_intelligence, author, created_at, source_document, translation_mode, behavioural_impact, engine_compatibility. This is the pattern for new kb52c TSH packages. s24 deprecation pattern: package_manifest.yaml must add deprecated: true, deprecated_by, deprecated_reason metadata. Signal_library.yaml and research_brief.yaml must not be modified."
+      "evidence": "backend/tests/regression/test_domain_ux1c_governed_subsystem_evidence.py — read in full; confirmed as canonical regression test for governed subsystem evidence emission. backend/tests/unit/test_p1_3_blood_iron_oxygen_domain_card.py — read in full; line 33 uses >= (superset check) so adding transferrin will not break existing assertion. Both named in latest_cursor_prompt.md:80-82."
     },
     {
       "stage": "2A",
-      "check": "No duplicate authority sources detectable",
+      "check": "WAVE1_COMPILED_SUBSYSTEM_IDS — wave1_bio_oxygen_carrying_capacity already registered",
       "result": "CONFIRMED",
-      "evidence": "Single domain assembler: backend/core/analytics/domain_score_assembler.py. Single compiled card registry: backend/core/knowledge/health_system_card_evidence.py. Single subsystem routing: backend/core/analytics/wave1_subsystem_evidence.py. TSH signal ID claimed by s24 packages — no kb52c TSH packages exist yet (Batch_4_Pass_3.json is research input, not a runtime package). Prompt Phase 1D correctly requires s24 deprecation before kb52c opt-in to resolve the claim transfer."
-    },
-    {
-      "stage": "2B",
-      "check": "Behavioural scope defined (MIXED type mandatory check)",
-      "result": "CONFIRMED",
-      "evidence": "Phase 2 behavioural surface explicitly defined: (1) domain_score_assembler.py — _THYROID_LAUNCH_SIGNAL_IDS and _THYROID_EXCLUDED_SIGNAL_IDS updated (exactly two signal IDs move); (2) health_system_card_evidence.py — WAVE1_COMPILED_SUBSYSTEM_IDS extended to include wave1_thy_hormonal_axis; (3) wave1_subsystem_evidence.py:41 — wave1_thyroid subsystem tuple populated. Each change directly affects Intelligence Core output. Phase 1 content changes (kb52c packages, PSI opt-ins) generate no runtime behaviour change without Phase 2 allowlist update."
-    },
-    {
-      "stage": "2B",
-      "check": "Regression targets identified",
-      "result": "CONFIRMED",
-      "evidence": "latest_cursor_prompt.md:519-544. Named regression targets: (1) test_ft3_low_not_in_thyroid_domain_allowlist — must be split; signal_free_t3_low exclusion must remain a named independent assertion; (2) test_thyroid_domain_includes_ft4_high_when_active — signal_tsh_low now appears in active_signal_ids; (3) test_signal_thyroid_tsh_context_remains_excluded — must be added; (4) FT3-high companion gate preservation; (5) existing six launch-core domain ordering stability; (6) compiled thyroid subsystem evidence row emitted; (7) no scoring policy change in P1-23."
-    },
-    {
-      "stage": "2B",
-      "check": "STOP conditions protect behavioural correctness",
-      "result": "CONFIRMED",
-      "evidence": "Five candidate STOP gates confirmed in formal SOP prompt: Gate 1A (Medical Review authority) at latest_cursor_prompt.md:295-321 — STOP with BLOCKED_MEDICAL_REVIEW_REQUIRED if not satisfied; Gate 1B (source spec v3.0.0) at latest_cursor_prompt.md:314-330 — STOP if absent, malformed, or insufficient; Gate 1C (SSOT canonical IDs) at latest_cursor_prompt.md:333-348 — STOP if any field fails canonical validation; Gate 1D (s24 deprecation before kb52c opt-in) at latest_cursor_prompt.md:352-373 — STOP if collision unresolvable; Gate Phase2 precondition (latest_cursor_prompt.md:449) — Phase 2 must not begin unless Phase 1 gates pass. Gate 5 test boundary: signal_free_t3_low exclusion must remain named independent assertion (latest_cursor_prompt.md:247-248)."
-    },
-    {
-      "stage": "2B",
-      "check": "Determinism preserved — no unintended behavioural drift",
-      "result": "CONFIRMED",
-      "evidence": "Allowlist update (frozenset mutation) is stateless and deterministic. Compiled card YAML is a static read-only asset. PSI opt-ins operate via the established lab_range_exceeded path already in production. signal_evaluator.py is explicitly out of scope (latest_cursor_prompt.md:176) — no companion gate logic changes. domain_narrative_wave1.py is explicitly out of scope (latest_cursor_prompt.md:177) — thy_contributor_primary fallback handles TSH signal IDs safely. No LLM paths introduced. No scoring policy changes. No non-deterministic elements introduced."
-    },
-    {
-      "stage": "2B",
-      "check": "No scope creep — out-of-scope files protected",
-      "result": "CONFIRMED",
-      "evidence": "latest_cursor_prompt.md:174-194. Explicit prohibited modifications: backend/core/analytics/domain_narrative_wave1.py, backend/core/analytics/signal_evaluator.py, backend/ssot/scoring_policy.yaml, frontend files, Gemini files, Layer C files, raw Pass 3 research, generated-pilot files, non-TSH KB package medical content, pkg_thyroid_tsh_context/, FT3-low packages, FT3-high companion-gate logic, iron/ferritin/CBC packages, TSAT/transferrin policy, parser files, .codex/, .cursor/, .vscode/, AGENTS.md."
-    },
-    {
-      "stage": "2B",
-      "check": "Output structure change — intentional and bounded",
-      "result": "CONFIRMED",
-      "evidence": "Intended output changes: (1) signal_tsh_high and signal_tsh_low fire in thyroid domain allowlist (new signals in domain output); (2) wave1_thyroid subsystem evidence row emitted (was empty tuple, becomes non-empty); (3) compiled thyroid subsystem card active at runtime. All three are declared sprint product outputs. Existing domain card structures for all other five launch-core domains are explicitly protected by regression test requirements (latest_cursor_prompt.md:543)."
-    },
-    {
-      "stage": "2B",
-      "check": "Ranking and ordering stable",
-      "result": "CONFIRMED",
-      "evidence": "latest_cursor_prompt.md:543 — existing six launch-core domain ordering must remain stable. wave1_thy_hormonal_axis is being ADDED to WAVE1_COMPILED_SUBSYSTEM_IDS; no existing entry is being reordered or removed. _WAVE1_DOMAIN_SUBSYSTEM_ORDER changes only for wave1_thyroid (empty tuple → single entry). No other domain subsystem orders may be modified (latest_cursor_prompt.md:511)."
-    },
-    {
-      "stage": "2B",
-      "check": "Content review completeness (MIXED type required)",
-      "result": "CONFIRMED",
-      "evidence": "Phase 1 CONTENT scope: two kb52c TSH packages from governed Pass 3 v3.0.0 specs (inv_tsh_high_primary_hypothyroid_pattern, inv_tsh_low_thyrotoxic_pattern). Both source specs confirmed at v3.0.0 in Batch_4_Pass_3.json. Content derivation path: Pass 3 spec → research_brief.yaml + signal_library.yaml + promoted_signal_intelligence.yaml. Forbidden: inventing medical content (latest_cursor_prompt.md:397), editing raw research (latest_cursor_prompt.md:398), using global reference ranges (latest_cursor_prompt.md:400). Content review scope is bounded and governed."
+      "evidence": "backend/core/knowledge/health_system_card_evidence.py:36 — wave1_bio_oxygen_carrying_capacity present in WAVE1_COMPILED_SUBSYSTEM_IDS frozenset. No code change required to register the subsystem — it is already active. P1-24 changes only the compiled YAML content, not the registry."
     }
   ],
-  "hardening_findings": [
-    {
-      "id": "HF-001",
-      "classification": "MANDATORY_CURSOR_ACTION — not a hardening blocker",
-      "finding": "Batch_4_Pass_3.json inv_tsh_high_primary_hypothyroid_pattern uses 'ldl' as a biomarker ID in supporting_metrics/dependencies. SSOT canonical key is 'ldl_cholesterol' (backend/ssot/biomarkers.yaml:26). Cursor must substitute ldl_cholesterol in kb52c signal_library.yaml before authoring. The formal SOP prompt already requires this at Phase 1C (latest_cursor_prompt.md:333-348). No correction to the prompt is needed — the gate is present and correct.",
-      "evidence": "backend/ssot/biomarkers.yaml:26 (ldl_cholesterol canonical); Batch_4_Pass_3.json:inv_tsh_high spec (ldl alias used); latest_cursor_prompt.md:341-343 (SSOT verification sub-step)"
-    },
-    {
-      "id": "HF-002",
-      "classification": "ADVISORY — gate correctly placed in prompt",
-      "finding": "The thyroid clinical signoff document (thyroid_blood_marker_interpretation_clinical_signoff.md:1-31) covers FT3/FT4 patterns with TSH as a mandatory gate marker. It does NOT explicitly address TSH HIGH (primary hypothyroid pattern) or TSH LOW (thyrotoxic pattern) as standalone primary clinical signal patterns. Whether the existing signoff is sufficient for TSH directional signal activation is a runtime Medical Review judgment call that Cursor must make at Phase 1A. The formal SOP prompt correctly handles this with a hard STOP gate at latest_cursor_prompt.md:295-321. No prompt amendment is required — the gate is present and appropriately framed.",
-      "evidence": "docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md:24 (overall verdict APPROVE_SUBSET — covers FT3/FT4 only); latest_cursor_prompt.md:295-321 (Phase 1A Medical Review gate with BLOCKED_MEDICAL_REVIEW_REQUIRED STOP class)"
-    },
-    {
-      "id": "HF-003",
-      "classification": "CONFIRMED — NO ISSUE",
-      "finding": "crp in Batch_4_Pass_3.json inv_tsh_low spec is canonical. backend/ssot/biomarkers.yaml:619 confirms crp is the canonical key. No correction required.",
-      "evidence": "backend/ssot/biomarkers.yaml:619 (crp canonical)"
-    }
+  "advisory_inheritance_status": {
+    "stage_b_advisory_date": "2026-06-22",
+    "git_log_check_result": "No commits for any advisory-cited file since 2026-06-22. All Stage B structural evidence valid.",
+    "sprint_executed_between_advisory_and_hardening": false,
+    "activation_readiness_rerun_required": false,
+    "material_departure_from_advisory": "None."
+  },
+  "prompt_amendments_applied": [
+    "A1: execution_model changed from TWO_PHASE_START_FINISH to SINGLE_PHASE (latest_cursor_prompt.md:5)",
+    "A2: marker_role suggestion changed from context_contributor to contextual_marker; relationship_kind: contextual_support added (latest_cursor_prompt.md:192-194)",
+    "A3: compile_manifest_ref update added as explicit Phase 2 Required update item 4 (latest_cursor_prompt.md Phase 2 section)"
   ],
-  "overall_verdict": "HARDENED. No blockers. All five front-matter fields confirmed. All authority paths read from source. All eight Stage B GPT amendments confirmed incorporated with no material departure from advisory. Two mandatory Cursor actions flagged (HF-001: ldl → ldl_cholesterol at Phase 1C; HF-002: Medical Review gate judgment at Phase 1A) — both are already gated correctly in the formal SOP prompt and are not hardening blockers. Medical Review gate ambiguity (HF-002) is the highest-risk gate in this sprint; if Cursor cannot confirm existing signoff is sufficient for TSH directional patterns, Phase 1A must STOP with BLOCKED_MEDICAL_REVIEW_REQUIRED before any kb52c opt-in or allowlist change proceeds. Phase 2 must not begin unless all Phase 1 gates pass. Sprint is cleared for kernel start and Cursor implementation."
+  "overall_verdict": "HARDENED. All five front-matter fields confirmed valid. All authority paths read from source. All three target PSI packages verified with exact investigation_spec_ids and behavioural_impact: NONE. Both former blockers resolved by direct prompt amendment. Schema-valid marker values confirmed for all proposed marker additions. compile_manifest_ref gap closed. Advisory inheritance valid. No forbidden files at risk. Sprint is cleared for kernel start."
 }
