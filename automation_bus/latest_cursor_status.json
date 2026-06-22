@@ -1,9 +1,10 @@
 {
   "branch": "sprint/P1-24-bio-oxygen-subsystem-signal-depth",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-22T23:01:52Z",
   "cursor_started_utc": "2026-06-22T22:57:34Z",
-  "head_sha": "c1dbee1a3c2f325d5a60ed0008f3f99753b65520",
+  "head_sha": "cd111bc31449a1b8a179e0477fd4f1d08e62d754",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-24"
 }
