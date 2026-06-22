@@ -1,10 +1,9 @@
 {
-  "branch": "sprint/P1-18-blood-iron-oxygen-pass3-system-activation",
+  "branch": "control/pre-sop-scoping-workflow-adoption",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-21T14:10:30Z",
-  "cursor_started_utc": "2026-06-21T14:06:12Z",
-  "head_sha": "91dca94bafdb96d53fc6a99e0d3d30b009ace1ad",
+  "cursor_started_utc": "2026-06-22T07:41:58Z",
+  "head_sha": "60e7e92eecc915fc9f9f227abfb2aa1c6f017536",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-18"
+  "status": "IN_PROGRESS",
+  "work_id": "CTRL-01"
 }
