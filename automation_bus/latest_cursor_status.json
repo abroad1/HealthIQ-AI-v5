@@ -1,9 +1,10 @@
 {
   "branch": "sprint/P1-22-thyroid-activation-pack",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-22T20:55:00Z",
   "cursor_started_utc": "2026-06-22T20:49:26Z",
-  "head_sha": "d524577b58f7c7defe5dbdcc63cbdc7427c9cb10",
+  "head_sha": "5196c45037ef617bad0a13272865aecb14731dab",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-22"
 }
