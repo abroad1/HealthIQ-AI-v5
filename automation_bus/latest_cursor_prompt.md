@@ -1,50 +1,71 @@
 ---
-work_id: P1-22
-branch: sprint/P1-22-thyroid-activation-pack
+work_id: P1-23
+branch: sprint/P1-23-thyroid-intelligence-surface
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: BEHAVIOUR
+change_type: MIXED
 ---
 
-# P1-22 — Thyroid Activation Pack
+# P1-23 — Thyroid Intelligence Surface Completion
 
-You are Cursor, acting as the Core Engine implementation agent with Knowledge Bus / governance read-only support.
+You are Cursor, acting as the Knowledge Bus + Core Engine implementation agent.
 
 Implement this work package under Automation Bus SOP v1.3.1.
 
-This is an outcome-based runtime activation sprint.
+This is a HIGH-risk mixed CONTENT + BEHAVIOUR sprint.
 
-It is not a Knowledge Bus package-promotion sprint.
 It is not a frontend sprint.
-It is not a Gemini/report-prose sprint.
+It is not a Gemini sprint.
+It is not a report-prose sprint.
+It is not a broad thyroid redesign sprint.
 It is not a Medical Review sprint.
 
 ## Purpose
 
-Deliver `wave1_thyroid` as an active launch-core runtime domain by bundling the necessary preconditions and implementation into one governed package:
+Complete the `wave1_thyroid` intelligence surface after P1-22 activated thyroid as the sixth launch-core domain.
 
-1. populate the hormonal `lab_range_only` scoring rail for the thyroid-axis marker set;
-2. record a bounded TSH authority decision;
-3. implement the `wave1_thyroid` domain assembler/card/subsystem routing;
-4. enable TSH, FT4 and FT3-high-safe thyroid scoring/firing where authorised;
-5. keep TSH signal intelligence and FT3 low runtime activation explicitly deferred.
+P1-22 made thyroid live but shallow:
 
-This sprint must not split hormonal scoring, TSH authority, and thyroid domain activation into separate micro-sprints. They are internal phases of one outcome-based package.
+* TSH participates in lab-range-only scoring only;
+* TSH signal intelligence remains deferred;
+* `wave1_thyroid` routes with an empty subsystem tuple;
+* no compiled thyroid subsystem card exists.
+
+P1-23 must close the beta-critical thyroid intelligence gaps by:
+
+1. authoring and opting in modern kb52c TSH packages from governed Pass 3 investigation specs;
+2. deprecating the legacy s24 TSH packages in-place;
+3. moving only authorised TSH directional signals into the thyroid launch allowlist;
+4. authoring and registering the compiled thyroid subsystem card;
+5. ensuring thyroid subsystem evidence is emitted at runtime;
+6. preserving all P1-22 boundaries for FT3-low, `signal_thyroid_tsh_context`, FT3-high companion gating and TSH clinical authority.
 
 ## Stage 0 / Stage B baseline
 
-The v0.5 Stage 0 pipeline advisory reduced the previous thyroid sequence into one outcome-based P1-22 package by absorbing:
+Stage 0 v0.5 advisory identified P1-23 as the highest-value next package.
 
-* hormonal scoring policy;
-* TSH launch-authority decision;
-* thyroid domain card retry.
+Stage B Mode 2 amended the scope:
 
-Stage B Mode 1 confirmed this shape with amendments:
+1. Do not attempt s24 revalidation as the launch path.
+2. Author two new kb52c TSH packages from `Batch_4_Pass_3.json`.
+3. Deprecate the legacy s24 TSH packages before kb52c opt-in.
+4. Add an explicit Medical Review authority gate before any TSH allowlist update.
+5. Move exactly two TSH signal IDs into launch if gates pass:
 
-1. TSH scoring and TSH signal intelligence must be distinguished.
-2. FT3 high is already cleared by ADR, with mandatory TSH-suppressed companion gate.
-3. FT3 low remains deferred and excluded.
-4. `lab_range_only` is first production use, so schema must be verified before scoring-policy writes.
+   * `signal_tsh_high`
+   * `signal_tsh_low`
+6. Keep excluded:
+
+   * `signal_free_t3_low`
+   * `signal_thyroid_tsh_context`
+7. Author and register:
+
+   * `knowledge_bus/compiled/health_system_cards/wave1_thy_hormonal_axis.yaml`
+8. Do not modify:
+
+   * `backend/core/analytics/domain_narrative_wave1.py`
+   * `backend/core/analytics/signal_evaluator.py`
+   * `backend/ssot/scoring_policy.yaml`
 
 ## Mandatory read list
 
@@ -52,26 +73,48 @@ Read before editing:
 
 * `automation_bus/latest_pipeline_advisory.md`
 * `automation_bus/latest_scope_advisory.md`
-* `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_5.md` if present, otherwise v0.4 plus amended §6 notes
+* `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_5.md`
 * `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-* P1-8 scoring ADR / scoring sprint report / scoring implementation notes
+* `docs/sprints/beta_readiness/P1-22_pass3_carry_forward.yaml`
+* `docs/sprints/beta_readiness/P1-22_thyroid_activation_pack.md`
+* `docs/sprints/beta_readiness/P1-22_thyroid_activation_manifest.yaml`
+* `docs/architecture/ADR-THYROID-TSH-LAUNCH-SCORING-ONLY-1.md`
 * `docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md`
-* any existing thyroid ADRs, thyroid sprint reports or P1-4 blocker reports
-* `backend/ssot/scoring_policy.yaml`
-* scoring policy validator and schema code used for `scoring_type: lab_range_only`
-* current scoring tests
-* current domain score assembler / domain card / subsystem routing code
-* existing launch-core domain examples to mirror implementation pattern
-* current thyroid-related Knowledge Bus package manifests / signal libraries as read-only evidence only
-* current thyroid-related tests
+* `docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md`
+* `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json`
+* `knowledge_bus/governance/batch2_thyroid_gate_execution_register_v1.yaml`
+* `backend/ssot/biomarkers.yaml`
+* `backend/core/analytics/domain_score_assembler.py`
+* `backend/core/analytics/wave1_subsystem_evidence.py`
+* `backend/core/knowledge/health_system_card_evidence.py`
+* existing compiled health-system card examples under:
+
+  * `knowledge_bus/compiled/health_system_cards/`
+* existing thyroid Knowledge Bus packages:
+
+  * `knowledge_bus/packages/pkg_s24_tsh_high_hypothyroidism/`
+  * `knowledge_bus/packages/pkg_s24_tsh_low_hyperthyroidism/`
+  * `knowledge_bus/packages/pkg_thyroid_tsh_context/`
+* kb47 FT3/FT4 package manifests needed to trace thyroid compiled card source spec IDs
+* existing tests covering:
+
+  * thyroid activation;
+  * domain assembler;
+  * domain allowlists;
+  * compiled health-system card evidence;
+  * signal authority / package validation;
+  * FT3-low exclusion;
+  * FT3-high companion gate behaviour.
 
 Use targeted search:
 
-* `rg "lab_range_only|hormonal|scoring_type|scoring_policy" backend docs`
-* `rg "wave1_thyroid|thyroid|TSH|FT4|FT3|free_t3|free_t4|thyroid_stimulating" backend docs knowledge_bus`
-* `rg "FT3 low|FT3 high|TSH suppressed|TSH-suppressed|companion gate" docs backend knowledge_bus`
-* `rg "wave1_.*domain|domain card|domain_score_assembler|subsystem routing" backend`
-* `rg "pkg_kb52c.*tsh|signal_tsh|signal_ft4|signal_ft3" knowledge_bus docs backend`
+* `rg "signal_tsh_high|signal_tsh_low|signal_thyroid_tsh_context|signal_free_t3_low" backend knowledge_bus docs`
+* `rg "pkg_s24_tsh_high_hypothyroidism|pkg_s24_tsh_low_hyperthyroidism|pkg_thyroid_tsh_context" knowledge_bus docs backend`
+* `rg "inv_tsh_high_primary_hypothyroid_pattern|inv_tsh_low_thyrotoxic_pattern" knowledge_bus`
+* `rg "wave1_thyroid|wave1_thy_hormonal_axis|WAVE1_COMPILED_SUBSYSTEM_IDS" backend knowledge_bus docs`
+* `rg "health_system_card_evidence_schema|assemble_subsystem_from_compiled_card_evidence|compiled_subsystem" backend knowledge_bus`
+* `rg "ft3_low|signal_free_t3_low|companion gate|TSH-suppressed" backend docs knowledge_bus`
+* `rg "ldl|crp|supporting_metrics|dependencies" knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json backend/ssot/biomarkers.yaml`
 
 Inspect relevant hits before editing.
 
@@ -79,90 +122,153 @@ Inspect relevant hits before editing.
 
 Allowed if justified:
 
-* `backend/ssot/scoring_policy.yaml`
-* scoring policy schema/validator files only if required to support existing P1-8 `lab_range_only` contract without weakening validation
-* backend domain assembler / domain card / subsystem routing files required to implement `wave1_thyroid`
-* backend tests for scoring policy, thyroid domain routing, signal gating and regression coverage
-* concise ADR / decision note for bounded TSH launch treatment:
+### Knowledge Bus package creation / deprecation
 
-  * use existing ADR location if present;
-  * otherwise create under `docs/architecture/`
-* `docs/sprints/beta_readiness/P1-22_thyroid_activation_pack.md`
-* `docs/sprints/beta_readiness/P1-22_thyroid_activation_manifest.yaml`
-* `docs/sprints/beta_readiness/P1-22_pass3_carry_forward.yaml`
+* New package directory:
+
+  * `knowledge_bus/packages/pkg_kb52c_tsh_high_primary_hypothyroid_pattern/`
+* New package directory:
+
+  * `knowledge_bus/packages/pkg_kb52c_tsh_low_thyrotoxic_pattern/`
+* Within each new kb52c package:
+
+  * `package_manifest.yaml`
+  * `research_brief.yaml`
+  * `signal_library.yaml`
+  * `promoted_signal_intelligence.yaml`
+* Legacy package manifests only:
+
+  * `knowledge_bus/packages/pkg_s24_tsh_high_hypothyroidism/package_manifest.yaml`
+  * `knowledge_bus/packages/pkg_s24_tsh_low_hyperthyroidism/package_manifest.yaml`
+
+### Compiled thyroid card
+
+* `knowledge_bus/compiled/health_system_cards/wave1_thy_hormonal_axis.yaml`
+* `backend/core/knowledge/health_system_card_evidence.py`
+* `backend/core/analytics/wave1_subsystem_evidence.py`
+
+### Core Engine allowlist
+
+* `backend/core/analytics/domain_score_assembler.py`
+
+### Tests
+
+Allowed test updates/additions for P1-23 scope only, including but not limited to:
+
+* `backend/tests/unit/test_p1_22_thyroid_activation_pack.py`
+* domain assembler tests
+* compiled card evidence tests
+* package/PSI validation tests if existing patterns require them
+* regression tests required to preserve FT3-low exclusion and TSH/context boundaries
+
+### Sprint artefacts
+
+* `docs/architecture/ADR-THYROID-TSH-SIGNAL-INTELLIGENCE-ACTIVATION-1.md`
+* `docs/sprints/beta_readiness/P1-23_thyroid_intelligence_surface_completion.md`
+* `docs/sprints/beta_readiness/P1-23_thyroid_intelligence_manifest.yaml`
+* `docs/sprints/beta_readiness/P1-23_pass3_carry_forward.yaml`
 * `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
 
 ## Files out of scope
 
 Do not modify:
 
-* frontend/
+* `backend/core/analytics/domain_narrative_wave1.py`
+* `backend/core/analytics/signal_evaluator.py`
+* `backend/ssot/scoring_policy.yaml`
+* frontend files
 * Gemini files
-* report prose / DTO presentation files unless hardening proves they are part of backend card DTO contract and unavoidable
+* report prose / Layer C presentation files
 * raw Pass 3 research
-* Knowledge Bus package medical content
-* Knowledge Bus `signal_library.yaml`
-* Knowledge Bus `research_brief.yaml`
-* Knowledge Bus `promoted_signal_intelligence.yaml`
-* Knowledge Bus package manifests except read-only inspection
 * generated-pilot files
-* parser files
-* TSAT / transferrin saturation policy
+* non-TSH Knowledge Bus package medical content
+* `knowledge_bus/packages/pkg_thyroid_tsh_context/`
+* FT3-low packages or activation-control files
+* FT3-high companion-gate logic
 * iron/ferritin/CBC packages
-* ferritin-low packages
+* TSAT / transferrin saturation policy
+* parser files
 * `.codex/`
 * `.cursor/`
 * `.vscode/`
 * `AGENTS.md`
 
-## Critical clinical / architectural boundaries
+## Critical boundaries
 
-### TSH boundary
+### TSH package path
 
-TSH participates in hormonal `lab_range_only` scoring at launch.
+Do not attempt to revalidate s24 packages as the launch path.
 
-TSH signal intelligence is not promoted in this sprint.
+P1-23 must close cf_005 by replacing the legacy s24 path with modern kb52c authority:
 
-The bounded TSH decision must state:
+* author `pkg_kb52c_tsh_high_primary_hypothyroid_pattern`;
+* author `pkg_kb52c_tsh_low_thyrotoxic_pattern`;
+* deprecate the s24 TSH packages in-place;
+* document that cf_005 is closed by kb52c replacement, not s24 revalidation.
 
-* TSH enters the `lab_range_only` scoring policy;
-* TSH signal intelligence from kb52c packages remains deferred;
-* the thyroid domain card must not imply that TSH clinical-context intelligence is active at launch;
-* TSH can contribute lab-range scoring/status only.
+The phrase “s24 revalidation path” must not appear as a live option in sprint artefacts.
 
-STOP if domain card wording, DTO fields, assembler wiring or tests imply that TSH signal intelligence / kb52c clinical context is active at launch.
+### Medical Review gate
 
-### FT4 boundary
+Before proceeding to domain allowlist update, confirm whether:
 
-FT4 may enter the hormonal `lab_range_only` scoring rail and `wave1_thyroid` domain routing where existing authority supports launch use.
+`docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md`
 
-Do not alter FT4 Knowledge Bus medical content.
+constitutes sufficient Medical Review authority for TSH directional signal activation, or whether a new Medical Review intake is required.
 
-### FT3 boundary
+STOP and escalate to GPT if Medical Review is required and not satisfied.
 
-FT3 high is already cleared by ADR with a mandatory TSH-suppressed companion gate.
+Do not move TSH signals into the launch allowlist unless this gate is resolved.
 
-P1-22 must treat FT3 high as eligible for:
+### TSH allowlist boundary
 
-* hormonal `lab_range_only` scoring;
-* `wave1_thyroid` domain allowlist;
-* only with the mandatory TSH-suppressed companion gate required by ADR.
+If all Phase 1 gates pass, move exactly these signal IDs into `_THYROID_LAUNCH_SIGNAL_IDS`:
 
-FT3 low remains excluded from all domain allowlists.
+* `signal_tsh_high`
+* `signal_tsh_low`
 
-No FT3 low runtime activation path may be introduced in P1-22.
+Keep these excluded:
 
-STOP if implementation would activate FT3 low, imply FT3 low launch visibility, or remove/loosen the mandatory TSH-suppressed companion gate for FT3 high.
+* `signal_free_t3_low`
+* `signal_thyroid_tsh_context`
 
-### Lab-range authority
+Do not move `signal_thyroid_tsh_context` into launch.
 
-Lab-provided reference ranges remain authoritative.
+Do not add a broad context signal for TSH.
 
-Do not introduce global/default thyroid reference ranges.
+Do not add any additional TSH signal IDs unless hardening identifies a canonical naming issue and GPT approves before implementation.
 
-Do not calculate clinical normality from non-lab reference bands.
+### FT3-low boundary
 
-Do not add hardcoded thyroid ranges unless they are test fixtures clearly isolated from production scoring.
+`signal_free_t3_low` must remain excluded.
+
+No FT3-low activation path may be introduced.
+
+Tests must preserve `signal_free_t3_low` exclusion as a named independent assertion after any refactor.
+
+### FT3-high boundary
+
+Preserve existing FT3-high companion-gate behaviour.
+
+Do not modify `signal_evaluator.py`.
+
+Do not loosen or bypass the mandatory pre-emission gate for FT3-high.
+
+### Scoring boundary
+
+Do not modify `backend/ssot/scoring_policy.yaml`.
+
+P1-22 already implemented thyroid lab-range-only scoring.
+
+P1-23 is signal intelligence + compiled subsystem evidence, not scoring-policy work.
+
+### Narrative boundary
+
+Do not modify `domain_narrative_wave1.py`.
+
+The existing thyroid narrative fallback is acceptable for TSH signal IDs in this sprint.
+
+TSH-specific narrative enrichment is deferred to a future governed narrative sprint.
 
 ## Phase 0 — Automation Bus preflight
 
@@ -170,146 +276,287 @@ Before implementation:
 
 1. Confirm current branch is:
 
-`sprint/P1-22-thyroid-activation-pack`
+`sprint/P1-23-thyroid-intelligence-surface`
 
 2. Confirm `automation_bus/state/work_package_active.json` exists.
-3. Confirm active token has `work_id: P1-22`.
+3. Confirm active token has `work_id: P1-23`.
 4. Confirm token branch matches current branch.
 5. Confirm repo/stash/parked-file state is governed under the standard start prompt.
 
 If any condition fails, STOP.
 
-## Phase 1 — Scoring policy schema and authority gate
+## Phase 1 — Knowledge Bus authority and PSI opt-in gate
 
-Phase 1 must complete and validate before Phase 2 begins.
+Phase 1 must complete before any Core Engine allowlist or compiled-card runtime registration.
 
-### 1A — Confirm `lab_range_only` schema before writing
+### 1A — Medical Review authority check
 
-Before editing `backend/ssot/scoring_policy.yaml`, inspect the P1-8 scoring policy validator/schema and confirm the required YAML shape for `scoring_type: lab_range_only`.
+Before package authoring or allowlist planning, inspect:
 
-Record in:
+`docs/Medical Research Documents/thyroid_blood_marker_interpretation_clinical_signoff.md`
 
-`docs/sprints/beta_readiness/P1-22_thyroid_activation_manifest.yaml`
+and relevant thyroid ADRs.
 
-For the schema record:
+Determine whether existing clinical signoff is sufficient for TSH directional signal activation.
 
-* required fields;
-* forbidden fields;
-* whether hardcoded `bands` are omitted;
-* how lab-provided ranges are consumed;
-* validation command to prove correctness.
+Record the decision in:
 
-STOP if the schema is ambiguous, unsupported or would require inventing hardcoded ranges.
+`docs/sprints/beta_readiness/P1-23_thyroid_intelligence_manifest.yaml`
 
-### 1B — Confirm marker set
+If existing signoff is not sufficient, STOP and classify:
 
-Confirm the Phase 1 scoring-policy marker set:
+`BLOCKED_MEDICAL_REVIEW_REQUIRED`
 
-* TSH — scoring only; no signal intelligence;
-* FT4 — scoring and domain use where authorised;
-* FT3 high — scoring and domain use with mandatory TSH-suppressed companion gate;
-* FT3 low — excluded/deferred.
+Do not proceed to TSH package opt-in or Core Engine allowlist changes.
 
-Record the marker decision in the activation manifest.
+### 1B — Source specification verification
 
-STOP if repo evidence contradicts this boundary.
+Verify in `Batch_4_Pass_3.json`:
 
-### 1C — Populate hormonal scoring rail
+* `inv_tsh_high_primary_hypothyroid_pattern`
+* `inv_tsh_low_thyrotoxic_pattern`
 
-Populate `backend/ssot/scoring_policy.yaml` for the confirmed thyroid-axis marker set using `scoring_type: lab_range_only`.
+Confirm each has:
 
-Do not add hardcoded production bands.
+* `investigation_spec_contract_version: 3.0.0`
+* correct intended signal ID:
 
-Do not change unrelated scoring rails or unrelated biomarker scoring policy.
+  * `signal_tsh_high`
+  * `signal_tsh_low`
+* sufficient source fields for package authoring;
+* source traceability suitable for package manifests and PSI.
 
-If a marker cannot be represented cleanly under `lab_range_only`, STOP for that marker and carry it forward.
+STOP if either source spec is absent, not v3.0.0, malformed, or insufficient.
 
-### 1D — Bounded TSH authority decision
+### 1C — SSOT canonical biomarker ID verification
 
-Create a concise ADR / decision note for TSH launch treatment.
+Before authoring `signal_library.yaml` for kb52c TSH packages, verify all `supporting_metrics` and `dependencies.biomarkers` fields against:
 
-The ADR must state:
+`backend/ssot/biomarkers.yaml`
 
-* TSH enters lab-range-only scoring at launch;
-* TSH signal intelligence is not promoted in P1-22;
-* TSH kb52c clinical context remains deferred;
-* thyroid domain output must not imply TSH signal intelligence is present;
-* P1-22 may use TSH as scoring/status context only.
+Specifically verify / normalise any source references such as:
 
-Keep this ADR concise.
+* `ldl`
+* `crp`
 
-Do not create a broad thyroid medical authority paper.
+Use canonical IDs required by the SSOT and validator.
 
-### 1E — Phase 1 validation gate
+STOP if any field fails canonical validation or cannot be mapped without medical interpretation.
 
-Run scoring-policy validation and relevant scoring tests.
+Do not invent canonical mappings.
 
-Required proof:
+Record canonical ID decisions in the P1-23 manifest.
 
-* `lab_range_only` entries validate;
-* lab-provided ranges remain authoritative;
-* no global/default ranges added;
-* no unrelated scoring behaviour changed unexpectedly;
-* FT3 low remains excluded;
-* FT3 high retains mandatory TSH-suppressed companion gate;
-* TSH signal intelligence remains deferred.
+### 1D — Legacy s24 deprecation before kb52c opt-in
 
-If Phase 1 validation fails, STOP. Do not proceed to Phase 2.
+Before kb52c production opt-in:
 
-## Phase 2 — Thyroid runtime domain activation
+* add deprecation metadata to:
 
-Proceed to Phase 2 only after Phase 1 passes.
+  * `pkg_s24_tsh_high_hypothyroidism/package_manifest.yaml`
+  * `pkg_s24_tsh_low_hyperthyroidism/package_manifest.yaml`
 
-### 2A — Implement `wave1_thyroid`
+Use the P1-21 ferritin-high in-place deprecation pattern.
 
-Implement the thyroid launch-core domain following established launch-core domain patterns.
+Deprecation metadata must state:
 
-Expected runtime/product output:
+* deprecated: true
+* deprecated_by:
 
-* `wave1_thyroid` domain active;
-* thyroid domain assembler/card/subsystem routing implemented;
-* TSH scoring/status visible only as lab-range-only scoring, not signal intelligence;
-* FT4 scoring/firing visible where authorised;
-* FT3 high scoring/firing visible only with mandatory TSH-suppressed companion gate;
-* FT3 low absent from allowlists and not launch-visible.
+  * relevant kb52c replacement package
+* deprecated_reason:
 
-### 2B — Tests
+  * replacement by governed Pass 3 kb52c package per P1-23
 
-Add/update tests proving:
+Do not modify s24 `signal_library.yaml` or `research_brief.yaml`.
 
-* thyroid domain appears as active launch-core domain;
-* TSH lab-range-only scoring works without implying TSH signal intelligence;
-* FT4 thyroid scoring/routing works;
-* FT3 high requires mandatory TSH-suppressed companion gate;
-* FT3 low does not activate and is not in thyroid domain allowlists;
-* lab-provided ranges remain authoritative;
-* no global/default ranges introduced;
-* existing launch-core domains are not regressed;
-* scoring policy validation passes;
-* snapshot/replay or domain assembler tests are updated only where expected.
+STOP if the signal authority collision cannot be resolved cleanly.
 
-### 2C — No frontend/report prose work
+### 1E — Author kb52c TSH packages
 
-Do not implement frontend display changes, Gemini wording, report prose or marketing copy.
+Author exactly two new production packages:
 
-If backend DTO/card contract must expose thyroid domain data for existing render-only frontend to consume, keep it minimal and backend-contract focused.
+1. `knowledge_bus/packages/pkg_kb52c_tsh_high_primary_hypothyroid_pattern/`
+
+   * from `inv_tsh_high_primary_hypothyroid_pattern`
+   * signal ID: `signal_tsh_high`
+
+2. `knowledge_bus/packages/pkg_kb52c_tsh_low_thyrotoxic_pattern/`
+
+   * from `inv_tsh_low_thyrotoxic_pattern`
+   * signal ID: `signal_tsh_low`
+
+For each package create:
+
+* `package_manifest.yaml`
+* `research_brief.yaml`
+* `signal_library.yaml`
+* `promoted_signal_intelligence.yaml`
+
+All content must be derived from governed Pass 3 source artefacts.
+
+Do not invent medical content.
+
+Do not edit raw research.
+
+Do not edit generated-pilot files.
+
+Do not use global/default reference ranges.
+
+### 1F — PSI opt-in validation
+
+Validate both packages and both PSI files using the repository’s established validators.
+
+Required outcome:
+
+* package validation passes;
+* PSI validation passes;
+* no signal ID collision remains;
+* activation readiness / production opt-in scanner detects the new TSH PSI opt-ins;
+* production opt-in count increases by the expected amount, unless a STOP gate prevents one candidate.
+
+If either package fails validation, STOP for that candidate and carry forward with blocker class.
+
+### 1G — Phase 1 decision record
+
+Create a concise ADR:
+
+`docs/architecture/ADR-THYROID-TSH-SIGNAL-INTELLIGENCE-ACTIVATION-1.md`
+
+It must record:
+
+* existing TSH scoring-only boundary from P1-22;
+* Medical Review authority decision;
+* kb52c replacement path;
+* s24 packages deprecated, not revalidated;
+* exact TSH signal IDs authorised for launch:
+
+  * `signal_tsh_high`
+  * `signal_tsh_low`
+* excluded TSH context signal:
+
+  * `signal_thyroid_tsh_context`
+* FT3-low remains excluded;
+* Phase 2 allowlist/card work may proceed only because Phase 1 gates passed.
+
+Keep it concise.
+
+Do not write a long narrative architecture paper.
+
+## Phase 2 — Core Engine thyroid intelligence surface
+
+Proceed to Phase 2 only if Phase 1 gates pass.
+
+### 2A — Domain allowlist update
+
+Update `backend/core/analytics/domain_score_assembler.py`.
+
+Move exactly:
+
+* `signal_tsh_high`
+* `signal_tsh_low`
+
+from `_THYROID_EXCLUDED_SIGNAL_IDS` to `_THYROID_LAUNCH_SIGNAL_IDS`.
+
+Keep excluded:
+
+* `signal_free_t3_low`
+* `signal_thyroid_tsh_context`
+
+Update the comment around the thyroid launch allowlist to reflect P1-23 authority extension.
+
+Do not modify FT3-high companion-gate logic.
+
+Do not modify `signal_evaluator.py`.
+
+### 2B — Compiled thyroid subsystem card
+
+Create:
+
+`knowledge_bus/compiled/health_system_cards/wave1_thy_hormonal_axis.yaml`
+
+Required fields:
+
+* `subsystem_id: wave1_thy_hormonal_axis`
+* `domain_id: wave1_thyroid`
+* `visibility_tier: scored_subsystem`
+* source spec IDs must be traceable and not invented.
+
+Source spec IDs must be read from:
+
+* `Batch_4_Pass_3.json` for the two TSH source specs;
+* kb47 package manifests for FT3 / FT4 source spec IDs.
+
+STOP if any source spec ID cannot be traced to an existing file.
+
+Do not invent marker roles, relationship kinds or presence policies.
+
+Use existing compiled health-system card examples and schema as authority.
+
+### 2C — Register compiled thyroid subsystem card
+
+Update:
+
+* `backend/core/knowledge/health_system_card_evidence.py`
+* `backend/core/analytics/wave1_subsystem_evidence.py`
+
+Register:
+
+* `wave1_thy_hormonal_axis`
+
+Update `wave1_thyroid` subsystem order from empty tuple to:
+
+`("wave1_thy_hormonal_axis",)`
+
+Do not modify unrelated domain subsystem orders.
+
+### 2D — Tests
+
+Update or add tests exactly protecting the P1-23 boundaries.
+
+Required test changes:
+
+1. Update `test_ft3_low_not_in_thyroid_domain_allowlist` by splitting it into two tests:
+
+   * `signal_free_t3_low` remains excluded;
+   * `signal_tsh_high` now fires in the thyroid domain when active.
+
+2. Update `test_thyroid_domain_includes_ft4_high_when_active` so:
+
+   * `signal_tsh_low` appears in `active_signal_ids` when active;
+   * it is no longer incorrectly filtered out.
+
+3. Add:
+
+   * `test_tsh_high_fires_in_thyroid_domain_after_p1_23`
+   * `test_tsh_low_fires_in_thyroid_domain_after_p1_23`
+   * `test_signal_thyroid_tsh_context_remains_excluded`
+   * `test_thyroid_subsystem_evidence_row_emitted`
+
+Also ensure tests continue to prove:
+
+* FT3-low remains excluded;
+* `signal_thyroid_tsh_context` remains excluded;
+* FT3-high companion gate remains preserved;
+* existing six launch-core domain ordering remains stable;
+* compiled thyroid subsystem evidence is emitted at runtime;
+* no scoring policy change occurred in P1-23.
 
 ## Phase 3 — Carry-forward manifest
 
 Create:
 
-`docs/sprints/beta_readiness/P1-22_pass3_carry_forward.yaml`
+`docs/sprints/beta_readiness/P1-23_pass3_carry_forward.yaml`
 
-Include only material unresolved items.
+Include only unresolved items.
 
-Expected carry-forwards may include:
+Expected resolved if sprint succeeds:
 
-* TSH signal intelligence / kb52c promotion deferred;
-* FT3 low runtime activation deferred;
-* any thyroid marker unable to enter `lab_range_only` scoring safely;
-* any domain routing issue blocked by external authority.
+* cf_001: TSH signal intelligence deferred;
+* cf_004: wave1_thyroid compiled subsystem card evidence missing;
+* cf_005: legacy s24 TSH revalidation.
 
-For each item record:
+If any are unresolved, record:
 
 * item ID;
 * marker/package reference;
@@ -317,29 +564,31 @@ For each item record:
 * blocker class;
 * owner agent:
 
-  * Core Engine
   * Knowledge Bus
+  * Core Engine
   * Medical Review
   * Frontend/Presentation
 * launch/beta relevance;
 * recommended future package.
 
-Do not re-document unrelated iron/ferritin/CBC carry-forwards.
+Do not re-document unrelated iron/ferritin/CBC items unless newly affected.
+
+Do not include P1-24 bio-oxygen card depth unless P1-23 touches it, which it should not.
 
 ## Phase 4 — Sprint report and build register
 
 Create:
 
-`docs/sprints/beta_readiness/P1-22_thyroid_activation_pack.md`
+`docs/sprints/beta_readiness/P1-23_thyroid_intelligence_surface_completion.md`
 
 Keep it concise.
 
 Maximum structure:
 
 1. start state;
-2. Phase 1 scoring/authority outcome;
-3. Phase 2 runtime activation outcome;
-4. marker boundary decisions;
+2. Phase 1 Knowledge Bus outcome;
+3. Phase 2 Core Engine outcome;
+4. authority decisions;
 5. validation results;
 6. carry-forwards;
 7. recommended next sprint.
@@ -360,33 +609,44 @@ Do not list every untouched file.
 
 ## Acceptance criteria
 
-P1-22 passes only if:
+P1-23 passes only if:
 
-1. `lab_range_only` schema is verified before scoring-policy edits.
-2. Hormonal scoring rail is populated only for authorised thyroid-axis marker scope.
-3. TSH enters scoring only, not signal intelligence.
-4. TSH authority decision note records signal intelligence deferral.
-5. Domain output does not imply TSH kb52c clinical context is active.
-6. FT4 is included only where launch authority supports it.
-7. FT3 high is included with mandatory TSH-suppressed companion gate.
-8. FT3 low remains excluded from all allowlists and activation paths.
-9. No global/default thyroid reference ranges are introduced.
-10. Lab-provided ranges remain authoritative.
-11. Phase 1 validation passes before Phase 2 begins.
-12. `wave1_thyroid` domain is active at runtime after Phase 2.
-13. Thyroid domain assembler/card/subsystem routing is implemented.
-14. Tests prove thyroid domain activation.
-15. Tests prove TSH scoring without TSH signal intelligence.
-16. Tests prove FT3 high companion-gate behaviour.
-17. Tests prove FT3 low remains inactive/deferred.
-18. Existing launch-core domains do not regress.
-19. No Knowledge Bus medical content is edited.
-20. No raw Pass 3 research is edited.
-21. No frontend/Gemini/report prose work is introduced.
-22. Carry-forward manifest captures deferred thyroid items with owner and blocker class.
-23. Build register is updated concisely.
-24. Sprint report is concise.
-25. Final audit includes `pipeline_advisory_trigger` and `pipeline_advisory_reason`.
+1. Existing Medical Review authority for TSH directional activation is explicitly assessed before package opt-in or allowlist change.
+2. Sprint stops if Medical Review is required and not satisfied.
+3. `pkg_kb52c_tsh_high_primary_hypothyroid_pattern` is authored from `inv_tsh_high_primary_hypothyroid_pattern`.
+4. `pkg_kb52c_tsh_low_thyrotoxic_pattern` is authored from `inv_tsh_low_thyrotoxic_pattern`.
+5. Both source specs are confirmed v3.0.0.
+6. SSOT canonical biomarker IDs are verified before `signal_library.yaml` authoring.
+7. s24 TSH packages are deprecated in-place before kb52c opt-in.
+8. s24 `signal_library.yaml` and `research_brief.yaml` are not modified.
+9. No raw Pass 3 research is edited.
+10. No generated-pilot files are edited.
+11. No medical content is invented.
+12. Both kb52c TSH packages validate.
+13. Both PSI files validate.
+14. Production opt-in scanner detects the new TSH PSI opt-ins if gates pass.
+15. No unresolved signal ID collision remains.
+16. Phase 1 ADR records kb52c replacement and s24 deprecation.
+17. Phase 2 does not begin unless Phase 1 gates pass.
+18. Exactly `signal_tsh_high` and `signal_tsh_low` are added to `_THYROID_LAUNCH_SIGNAL_IDS`.
+19. `signal_free_t3_low` remains excluded.
+20. `signal_thyroid_tsh_context` remains excluded.
+21. `signal_evaluator.py` is not modified.
+22. `domain_narrative_wave1.py` is not modified.
+23. `backend/ssot/scoring_policy.yaml` is not modified.
+24. `wave1_thy_hormonal_axis.yaml` is created with traceable source spec IDs.
+25. `wave1_thy_hormonal_axis` is registered in compiled card evidence registry.
+26. `wave1_thyroid` subsystem order is updated from empty tuple to `("wave1_thy_hormonal_axis",)`.
+27. Tests prove TSH high fires in thyroid domain.
+28. Tests prove TSH low fires in thyroid domain.
+29. Tests prove `signal_thyroid_tsh_context` remains excluded.
+30. Tests prove FT3-low remains excluded.
+31. Tests prove thyroid subsystem evidence row is emitted.
+32. Existing launch-core domain order remains stable.
+33. Carry-forward manifest captures unresolved items only.
+34. Build register is updated concisely.
+35. Sprint report is concise.
+36. Final audit includes `pipeline_advisory_trigger` and `pipeline_advisory_reason`.
 
 ## Validation commands
 
@@ -394,14 +654,16 @@ Run all relevant existing validation commands.
 
 At minimum:
 
-* scoring policy validator / schema validation command identified in Phase 1A;
-* relevant scoring policy tests;
-* thyroid domain/domain assembler tests;
-* regression tests for launch-core domain routing;
+* validators for each new Knowledge Bus package;
+* validators for each new `promoted_signal_intelligence.yaml`;
+* activation readiness / production opt-in scanner;
+* compiled health-system card schema validation for `wave1_thy_hormonal_axis.yaml`;
+* unit tests covering thyroid domain allowlist and subsystem evidence;
+* regression tests for compiled card evidence and domain assembly;
 * architecture/governance tests required by Automation Bus finish;
 * `python backend/scripts/run_work_package.py finish`.
 
-Do not invent new validation tooling unless existing test patterns require a new test file.
+Do not edit validators to make validation pass.
 
 ## Closure requirements
 
