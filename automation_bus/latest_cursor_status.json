@@ -1,9 +1,10 @@
 {
   "branch": "sprint/P1-23-thyroid-intelligence-surface",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-22T22:20:11Z",
   "cursor_started_utc": "2026-06-22T22:09:38Z",
-  "head_sha": "4dae7a6f4115f6d6bf9aa4942d1132d40e444b0f",
+  "head_sha": "016f34a3fa1f5db4491000780cd8cc7f7b3d4ad4",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-23"
 }
