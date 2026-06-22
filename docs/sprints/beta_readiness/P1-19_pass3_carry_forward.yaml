@@ -1,0 +1,69 @@
+work_id: P1-19
+manifest_date: '2026-06-22'
+summary:
+  total_items: 8
+carry_forward_items:
+  - item_id: p1_19_cf_001
+    candidate_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    rich_pass3_content_at_risk: Inflammatory hyperferritinemia PSI with TSAT corroboration, CRP/WBC context, contradiction markers
+    why_not_implemented: Gate 3B Step 1 signal_id collision — signal_ferritin_high already in pkg_s24_ferritin_high_overload
+    blocker_class: BLOCKED_DUPLICATE_AUTHORITY_RISK
+    owner_agent: Knowledge Bus
+    launch_beta_relevance: beta-critical
+    recommended_future_package: P1-FERRITIN-HIGH-AUTHORITY-RECONCILIATION-1
+  - item_id: p1_19_cf_002
+    candidate_package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    rich_pass3_content_at_risk: Iron overload context PSI with TSAT/ALT/CRP differential framing
+    why_not_implemented: Gate 3B Step 1 signal_id collision with pkg_s24_ferritin_high_overload
+    blocker_class: BLOCKED_DUPLICATE_AUTHORITY_RISK
+    owner_agent: Knowledge Bus
+    launch_beta_relevance: beta-critical
+    recommended_future_package: P1-FERRITIN-HIGH-AUTHORITY-RECONCILIATION-1
+  - item_id: p1_19_cf_003
+    candidate_package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    rich_pass3_content_at_risk: Erythrocytosis pattern PSI with RBC index semantics
+    why_not_implemented: Package identity unresolved KB-S52c vs KB-S58; cross-ID opt-in forbidden
+    blocker_class: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    owner_agent: Knowledge Bus
+    launch_beta_relevance: beta-critical
+    recommended_future_package: P1-CBC-PACKAGE-PROVENANCE-1
+  - item_id: p1_19_cf_004
+    candidate_package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    rich_pass3_content_at_risk: Iron-restricted anaemia RBC pattern PSI
+    why_not_implemented: Package identity unresolved
+    blocker_class: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    owner_agent: Knowledge Bus
+    launch_beta_relevance: beta-critical
+    recommended_future_package: P1-CBC-PACKAGE-PROVENANCE-1
+  - item_id: p1_19_cf_005
+    candidate_package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    rich_pass3_content_at_risk: Anisocytosis iron-deficiency differential PSI
+    why_not_implemented: Package identity unresolved
+    blocker_class: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    owner_agent: Knowledge Bus
+    launch_beta_relevance: beta-critical
+    recommended_future_package: P1-CBC-PACKAGE-PROVENANCE-1
+  - item_id: p1_19_cf_006
+    candidate_package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+    rich_pass3_content_at_risk: Mixed red-cell population pattern PSI
+    why_not_implemented: Package identity unresolved
+    blocker_class: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    owner_agent: Knowledge Bus
+    launch_beta_relevance: beta-critical
+    recommended_future_package: P1-CBC-PACKAGE-PROVENANCE-1
+  - item_id: p1_19_cf_007
+    candidate_package_id: pkg_kb52c_iron_low_absolute_iron_deficiency
+    rich_pass3_content_at_risk: Absolute iron deficiency PSI with TSAT severity semantics
+    why_not_implemented: Medical-review and frame-authority blockers; out of P1-19 scope
+    blocker_class: BLOCKED_MEDICAL_REVIEW_REQUIRED
+    owner_agent: Medical Review
+    launch_beta_relevance: launch-critical
+    recommended_future_package: P1-IRON-BATCH-C-MEDICAL-REVIEW-1
+  - item_id: p1_19_cf_008
+    candidate_package_id: transferrin_saturation_calculated_mode
+    rich_pass3_content_at_risk: Calculated TSAT when lab does not provide direct measurement
+    why_not_implemented: No governed calculation formula in SSOT; scope not expanded in P1-19
+    blocker_class: DERIVED_METRIC_POLICY
+    owner_agent: Core Engine
+    launch_beta_relevance: deferred
+    recommended_future_package: P1-TRANSFERRIN-SAT-CALC-POLICY-1

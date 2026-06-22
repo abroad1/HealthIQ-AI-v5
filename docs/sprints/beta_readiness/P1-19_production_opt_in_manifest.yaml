@@ -1,0 +1,117 @@
+work_id: P1-19
+manifest_date: '2026-06-22'
+validator_baseline:
+  activation_ready_count_at_start: 7
+  production_opt_ins_at_start: 42
+  command: python backend/scripts/validate_staged_psi_activation_readiness.py
+summary:
+  total_activation_ready_at_start: 7
+  opted_in: 1
+  blocked_duplicate_authority: 2
+  blocked_package_identity: 4
+candidates:
+  - candidate_package_id: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/compile_manifest.yaml
+    source_spec_id: inv_transferrin_high_iron_deficiency_transport_upregulation
+    source_path: knowledge_bus/research/investigation_specs/multi_llm_research/transferrin_pass_3.json
+    signal_id: signal_transferrin_high
+    primary_biomarker: transferrin
+    production_host_status: exists_id_matched
+    production_package_path: knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    production_package_id: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    psi_internal_package_id: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    blocker_class_at_start: none
+    opt_in_decision: OPT_IN_EXISTING_HOST
+    validation_result: PASS
+    carry_forward_owner: null
+  - candidate_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/compile_manifest.yaml
+    source_spec_id: inv_ferritin_high_inflammatory_hyperferritinemia
+    source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+    signal_id: signal_ferritin_high
+    primary_biomarker: ferritin
+    production_host_status: absent
+    production_package_path: null
+    production_package_id: null
+    psi_internal_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    blocker_class_at_start: none
+    opt_in_decision: BLOCKED_DUPLICATE_AUTHORITY_RISK
+    validation_result: not_applicable
+    carry_forward_owner: Knowledge Bus
+    blocker_reason: Gate 3B Step 1 — signal_id signal_ferritin_high already in pkg_s24_ferritin_high_overload/signal_library.yaml:8
+  - candidate_package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/compile_manifest.yaml
+    source_spec_id: inv_ferritin_high_iron_overload_context
+    source_path: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+    signal_id: signal_ferritin_high
+    primary_biomarker: ferritin
+    production_host_status: absent
+    production_package_path: null
+    production_package_id: null
+    psi_internal_package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    blocker_class_at_start: none
+    opt_in_decision: BLOCKED_DUPLICATE_AUTHORITY_RISK
+    validation_result: not_applicable
+    carry_forward_owner: Knowledge Bus
+    blocker_reason: Gate 3B Step 1 — signal_id signal_ferritin_high collision with pkg_s24_ferritin_high_overload
+  - candidate_package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_high_erythrocytosis_pattern/compile_manifest.yaml
+    source_spec_id: inv_rbc_high_erythrocytosis_pattern
+    source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    signal_id: signal_rbc_high
+    primary_biomarker: rbc
+    production_host_status: mismatched_pkg_kb58_only
+    production_package_path: knowledge_bus/packages/pkg_kb58_rbc_high_erythrocytosis_pattern
+    production_package_id: pkg_kb58_rbc_high_erythrocytosis_pattern
+    psi_internal_package_id: pkg_kb52c_rbc_high_erythrocytosis_pattern
+    blocker_class_at_start: none
+    opt_in_decision: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    validation_result: not_applicable
+    carry_forward_owner: Knowledge Bus
+    blocker_reason: Phase 4 — staged pkg_kb52c_* vs production pkg_kb58_* only; cross-ID forbidden
+  - candidate_package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rbc_low_iron_restricted_anemia_pattern/compile_manifest.yaml
+    source_spec_id: inv_rbc_low_iron_restricted_anemia_pattern
+    source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    signal_id: signal_rbc_low
+    primary_biomarker: rbc
+    production_host_status: mismatched_pkg_kb58_only
+    production_package_path: knowledge_bus/packages/pkg_kb58_rbc_low_iron_restricted_anemia_pattern
+    production_package_id: pkg_kb58_rbc_low_iron_restricted_anemia_pattern
+    psi_internal_package_id: pkg_kb52c_rbc_low_iron_restricted_anemia_pattern
+    opt_in_decision: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    validation_result: not_applicable
+    carry_forward_owner: Knowledge Bus
+  - candidate_package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis/compile_manifest.yaml
+    source_spec_id: inv_rdw_cv_high_iron_deficiency_anisocytosis
+    source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    signal_id: signal_rdw_cv_high
+    primary_biomarker: rdw_cv
+    production_host_status: mismatched_pkg_kb58_only
+    production_package_path: knowledge_bus/packages/pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis
+    production_package_id: pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis
+    psi_internal_package_id: pkg_kb52c_rdw_cv_high_iron_deficiency_anisocytosis
+    opt_in_decision: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    validation_result: not_applicable
+    carry_forward_owner: Knowledge Bus
+  - candidate_package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/promoted_signal_intelligence.yaml
+    staged_compile_manifest_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern/compile_manifest.yaml
+    source_spec_id: inv_rdw_cv_high_mixed_red_cell_population_pattern
+    source_path: knowledge_bus/research/investigation_specs/multi_llm_research/cbc_hematology_pass_3.json
+    signal_id: signal_rdw_cv_high
+    primary_biomarker: rdw_cv
+    production_host_status: mismatched_pkg_kb58_only
+    production_package_path: knowledge_bus/packages/pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern
+    production_package_id: pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern
+    psi_internal_package_id: pkg_kb52c_rdw_cv_high_mixed_red_cell_population_pattern
+    opt_in_decision: BLOCKED_PACKAGE_IDENTITY_UNRESOLVED
+    validation_result: not_applicable
+    carry_forward_owner: Knowledge Bus

@@ -477,6 +477,30 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-19 — Blood/Iron/Oxygen KB production intelligence expansion
+
+**Status:** Complete  
+**Date closed:** 2026-06-22  
+**Programme block(s):** Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety and governance; Block 7 Auditability  
+
+### Delivered / ticked off
+- Regenerated activation-ready cohort (7); adjudicated all candidates.
+- Production PSI opt-in for `pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation` (ID-matched byte-copy).
+- Ferritin-high host creation blocked at Gate 3B (`signal_ferritin_high` collision with `pkg_s24_ferritin_high_overload`).
+
+### Carry-forwards
+- 2 ferritin-high PSI require authority reconciliation before host package creation.
+- 4 CBC `pkg_kb52c_*` vs `pkg_kb58_*` identity candidates unchanged.
+- Iron Batch C medical-review PSI and calculated TSAT mode unchanged.
+
+### Blockers / risks
+- Duplicate `signal_ferritin_high` authority prevents Pass 3 ferritin-high production packages without architectural resolution.
+
+### Recommended next sprint
+- P1-FERRITIN-HIGH-AUTHORITY-RECONCILIATION-1; parallel P1-CBC-PACKAGE-PROVENANCE-1.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
