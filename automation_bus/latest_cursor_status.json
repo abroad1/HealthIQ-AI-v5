@@ -1,10 +1,9 @@
 {
-  "branch": "sprint/P1-19-blood-iron-oxygen-kb-production-intelligence",
+  "branch": "sprint/P1-20-cbc-package-provenance-and-psi-opt-in",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-22T09:15:47Z",
-  "cursor_started_utc": "2026-06-22T09:10:35Z",
-  "head_sha": "6065bbd74e55626f1fdd7e33c8a9a5106e2c5c27",
+  "cursor_started_utc": "2026-06-22T10:40:07Z",
+  "head_sha": "a83794e514d3590110df679655c9ae021bc0aaf7",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-19"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-20"
 }
