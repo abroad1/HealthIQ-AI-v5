@@ -1,9 +1,10 @@
 {
   "branch": "sprint/P1-20-cbc-package-provenance-and-psi-opt-in",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-22T10:47:11Z",
   "cursor_started_utc": "2026-06-22T10:40:07Z",
-  "head_sha": "a83794e514d3590110df679655c9ae021bc0aaf7",
+  "head_sha": "61af3277bba74fde91e624bcba6bc1282b9bb94a",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-20"
 }
