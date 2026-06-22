@@ -1,5 +1,5 @@
 {
-  "work_id": "CTRL-01",
+  "work_id": "P1-19",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-06-22T00:00:00Z",
@@ -7,76 +7,118 @@
   "changes": [
     {
       "stage": "2A",
-      "check": "Front matter — all five required fields present and valid",
+      "check": "Front matter — work_id",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md front matter — work_id: CTRL-01, branch: control/pre-sop-scoping-workflow-adoption, risk_level: LOW, execution_model: TWO_PHASE_START_FINISH, change_type: CONTENT (corrected from DOCS per hardening; CONTENT confirmed correct per AUTOMATION_BUS_SOP_v1.3.1.md:80-91)"
+      "evidence": "automation_bus/latest_cursor_prompt.md:2 — work_id: P1-19; not used in any prior commit or kernel package"
     },
     {
       "stage": "2A",
-      "check": "change_type: CONTENT is correct per SOP §4",
+      "check": "Front matter — branch",
       "result": "CONFIRMED",
-      "evidence": "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md:91 — CONTENT definition explicitly includes 'Documentation-only changes that do not alter emitted reasoning'. CTRL-01 modifies only two YAML fields in the SOP audit schema and adds one concise section to CLAUDE.md. No emitted reasoning changes. CONTENT is correct."
+      "evidence": "automation_bus/latest_cursor_prompt.md:3 — sprint/P1-19-blood-iron-oxygen-kb-production-intelligence; branch does not yet exist and will be created by kernel start"
     },
     {
       "stage": "2A",
-      "check": "risk_level: LOW is correct",
+      "check": "Front matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "evidence": "No SOP §10 HIGH-trigger paths touched. No backend/core, backend/scripts, backend/ssot, Intelligence Core, or control-plane scripts in scope. Docs-only package. LOW is correct."
+      "evidence": "backend/core/analytics/signal_evaluator.py:31-35 — _iter_signal_library_paths() iterates knowledge_bus/packages/*/signal_library.yaml; Phase 3 Gate 3D creates new production signal_library.yaml files loaded by Intelligence Core at runtime; SOP §10 HIGH trigger confirmed"
     },
     {
       "stage": "2A",
-      "check": "execution_model: TWO_PHASE_START_FINISH is correct",
+      "check": "Front matter — execution_model",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md front matter:5 — confirmed. Standard for all governed packages."
+      "evidence": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH; standard for all governed packages"
     },
     {
       "stage": "2A",
-      "check": "Authority path — v0.4 pre-SOP workflow document",
-      "result": "CONFIRMED — file exists",
-      "evidence": "docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_4.md — confirmed present. Contains Stage 0 Pipeline Advisory, Stage A-E workflow, trigger rules, advisory modes, canonical output format, evidence cache, throughput rules, documentation discipline, invocation templates, and audit schema requirement."
+      "check": "Front matter — change_type MIXED",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:6 — change_type: MIXED; correct per SOP §4: signal_evaluator.py:31-35 loads all production signal_library.yaml files at runtime; Phase 3 new package creation is governed content consumed by Intelligence Core. PSI opt-in alone (Phase 2) would be CONTENT — load_promoted_signal_intelligence_for_package() has no active runtime callers — but combined sprint scope is MIXED."
     },
     {
       "stage": "2A",
-      "check": "Authority path — AUTOMATION_BUS_SOP_v1.3.1.md — audit schema section identified",
+      "check": "Stage B advisory amendments — all 4 incorporated",
       "result": "CONFIRMED",
-      "evidence": "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md:751-765 — audit YAML header schema confirmed. Current terminal field: escalation_required at line 764. Two new fields (pipeline_advisory_trigger, pipeline_advisory_reason) insert after line 764. No other SOP sections are modified."
+      "evidence": "Amendment 1 (signal_library STOP gate): automation_bus/latest_cursor_prompt.md Signal-library rule section — existing packages excluded, new package creation from governed Pass 3 permitted, trace requirement present. Amendment 2 (Gate 3B duplicate authority): Phase 3 Gate 3B now includes signal_id collision check (Step 1) and clinical scope check (Step 2). Amendment 3 (full cohort): Phase 1 requires validator re-run and adjudication of full ACTIVATION_READY list. Amendment 4 (Pass 3 source sufficiency): Gate 3C present with BLOCKED_INSUFFICIENT_PASS3_SOURCE classification."
     },
     {
       "stage": "2A",
-      "check": "Authority path — CLAUDE.md location confirmed",
+      "check": "Authority path — KNOWLEDGE_BUS_SOP_v1.3.1.md",
       "result": "CONFIRMED",
-      "evidence": ".claude/CLAUDE.md — confirmed via Glob as the active project instruction file. This is the correct target for the new Stage 0/Stage B advisory guidance section."
+      "evidence": "docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — confirmed present"
     },
     {
       "stage": "2A",
-      "check": "SOP separation preserved — pre-SOP workflow not merged into Automation Bus SOP",
+      "check": "Authority path — KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md",
       "result": "CONFIRMED",
-      "evidence": "Prompt explicitly prohibits: merging workflow into Automation Bus SOP, rewriting Automation Bus stages, altering Stage D/E execution rules, making pipeline advisory an Automation Bus execution stage. Only change to SOP is two audit schema fields at lines 764-765."
+      "evidence": "docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — confirmed present"
     },
     {
       "stage": "2A",
-      "check": "Scope boundary — no runtime, product, or intelligence files in scope",
+      "check": "Authority path — schemas",
       "result": "CONFIRMED",
-      "evidence": "Files out of scope list explicitly excludes: backend/, frontend/, knowledge_bus package content, generated pilot PSI, raw Pass 3 research, validators, tests, runtime loaders, DTO/report/Gemini/scoring files, package manifests, signal libraries, promoted signal intelligence files. Scope is cleanly bounded to three files: AUTOMATION_BUS_SOP_v1.3.1.md (two fields), .claude/CLAUDE.md (one section), v0.4 workflow doc (preserve/register)."
+      "evidence": "knowledge_bus/schema/package_manifest_schema.yaml — confirmed present; knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml — confirmed present"
     },
     {
       "stage": "2A",
-      "check": "Advisory files documented as non-execution-authorising",
+      "check": "Authority path — sprint manifests",
       "result": "CONFIRMED",
-      "evidence": "Acceptance criterion 6 requires advisory files documented as advisory only. v0.4 §10 states both automation_bus/latest_scope_advisory.md and automation_bus/latest_pipeline_advisory.md 'are advisory only. They are not Automation Bus state artefacts and do not authorise execution.' Consistent."
+      "evidence": "docs/sprints/beta_readiness/P1-17_core_backend_handoff_manifest.yaml — confirmed present; P1-17_blocker_resolution_manifest.yaml — confirmed present; P1-14_activation_readiness_cohort_manifest.yaml — confirmed present"
+    },
+    {
+      "stage": "2A",
+      "check": "pkg_kb61 production host — no prior PSI opt-in",
+      "result": "CONFIRMED",
+      "evidence": "knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/package_manifest.yaml — exists; no promoted_signal_intelligence field present; behavioural_impact: NONE; package_id matches staged PSI target_package_id"
+    },
+    {
+      "stage": "2A",
+      "check": "Staged PSI validation — KB61 and ferritin-high",
+      "result": "CONFIRMED",
+      "evidence": "knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/compile_manifest.yaml — validation: PASS; knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/compile_manifest.yaml — validation: PASS; knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/compile_manifest.yaml — validation: PASS"
+    },
+    {
+      "stage": "2A",
+      "check": "pkg_s24_ferritin_high_overload signal_id collision risk — gate present",
+      "result": "CONFIRMED",
+      "evidence": "knowledge_bus/packages/pkg_s24_ferritin_high_overload/signal_library.yaml defines signal_id: signal_ferritin_high; both ferritin-high staged PSI also declare signal_id: signal_ferritin_high; Gate 3B Step 1 now explicitly requires signal_id collision check before Gate 3D; collision resolver regression test added to Phase 5"
+    },
+    {
+      "stage": "2A",
+      "check": "Forbidden file scope",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md Files out of scope — .codex/, .cursor/, .vscode/, AGENTS.md, backend/, frontend/, validators, tests, runtime loaders all explicitly excluded"
     },
     {
       "stage": "2A",
       "check": "No duplicate authority sources introduced",
       "result": "CONFIRMED",
-      "evidence": "v0.4 workflow document is the single authority for the pre-SOP scoping workflow. CLAUDE.md section will reference it, not duplicate it. AUTOMATION_BUS_SOP_v1.3.1.md addition is additive (two fields) not duplicative. No competing governance documents created."
+      "evidence": "Gate 3B Step 1 prevents creation of any production package whose signal_id already exists in another production signal_library.yaml; Gate 3D conditional on Gates 3A-3C passing; pkg_s24_ferritin_high_overload not modified"
     },
     {
-      "stage": "2A",
-      "check": "P1-19 pipeline advisory trigger expectation recorded in acceptance criteria",
+      "stage": "2B",
+      "check": "Behavioural scope defined — MIXED controls",
       "result": "CONFIRMED",
-      "evidence": "Acceptance criterion 12: 'P1-19 closure expectation is recorded: if P1-19 creates multi-domain carry-forwards, audit should set pipeline_advisory_trigger: true.' P1-19 carry-forward analysis confirms multiple agent domains (KB, Medical Review, Core Engine) — trigger condition will be met at P1-19 audit close."
+      "evidence": "Phase 3 Gate 3D creates signal_library.yaml files; signal_evaluator.py:35 glob loads these at runtime; behavioural surface is signal evaluation for new ferritin-high signals; regression target backend/tests/regression/test_signal_authority_collision_enforcement.py added to Phase 5"
+    },
+    {
+      "stage": "2B",
+      "check": "No scope creep",
+      "result": "CONFIRMED",
+      "evidence": "Phase 4 explicitly blocks CBC package-identity and iron Batch C medical-review candidates; backend/, frontend/, validators, tests all out of scope; no runtime or scoring files in scope"
+    },
+    {
+      "stage": "2B",
+      "check": "Determinism risks surfaced",
+      "result": "CONFIRMED",
+      "evidence": "signal_id: signal_ferritin_high collision risk identified; Gate 3B Step 1 provides deterministic STOP; if gate fires, sprint degrades to PSI opt-in only with no behavioural drift; no silent output drift possible under gate structure"
+    },
+    {
+      "stage": "2B",
+      "check": "Stage B advisory evidence current — git staleness check",
+      "result": "CONFIRMED",
+      "evidence": "git log --since=2026-06-22 over all advisory-cited files returned no commits; no sprint ran between Stage B and Stage D; advisory evidence fully inheritable"
     }
   ],
-  "overall_verdict": "HARDENED. All five front-matter fields valid after change_type correction (DOCS → CONTENT confirmed by user). Audit schema insertion point confirmed at AUTOMATION_BUS_SOP_v1.3.1.md:764. CLAUDE.md target confirmed at .claude/CLAUDE.md. v0.4 workflow doc confirmed present. Scope is cleanly docs-only — three files, zero runtime impact. Stage D/E unchanged. Two new audit fields are the only SOP change. No blockers remaining."
+  "overall_verdict": "HARDENED. All five front-matter fields valid. change_type: MIXED confirmed correct (signal_evaluator.py:31-35 loads all production signal_library.yaml at runtime). Gate 3B amended with explicit signal_id collision check (Step 1) before clinical scope check (Step 2). test_signal_authority_collision_enforcement.py added as mandatory Phase 5 regression target. All authority paths confirmed present. All 4 Stage B advisory amendments incorporated. No forbidden files in scope. No scope creep. Determinism risks gated. Ready for kernel start."
 }
