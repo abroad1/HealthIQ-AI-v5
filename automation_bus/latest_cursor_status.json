@@ -1,9 +1,10 @@
 {
   "branch": "sprint/P1-21-ferritin-high-authority-reconciliation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-22T18:17:30Z",
   "cursor_started_utc": "2026-06-22T18:15:24Z",
-  "head_sha": "964dd5c03f6524f90c4a9abe9567941da96dfc7a",
+  "head_sha": "7bb5aae4dafd85322fdb5960076f80f7ce97d426",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-21"
 }
