@@ -1,166 +1,82 @@
 {
-  "work_id": "P1-18",
+  "work_id": "CTRL-01",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-21T00:00:00Z",
+  "hardened_utc": "2026-06-22T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "changes": [
     {
       "stage": "2A",
       "check": "Front matter — all five required fields present and valid",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:1-7 — work_id: P1-18, branch: sprint/P1-18-blood-iron-oxygen-pass3-system-activation, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED"
+      "evidence": "automation_bus/latest_cursor_prompt.md front matter — work_id: CTRL-01, branch: control/pre-sop-scoping-workflow-adoption, risk_level: LOW, execution_model: TWO_PHASE_START_FINISH, change_type: CONTENT (corrected from DOCS per hardening; CONTENT confirmed correct per AUTOMATION_BUS_SOP_v1.3.1.md:80-91)"
     },
     {
       "stage": "2A",
-      "check": "risk_level: HIGH is correct per SOP §10",
+      "check": "change_type: CONTENT is correct per SOP §4",
       "result": "CONFIRMED",
-      "evidence": "Sprint scope includes backend/scripts/validate_staged_psi_activation_readiness.py and backend/core/**/* — both are explicit HIGH risk triggers per SOP §10. HIGH is required and correct."
+      "evidence": "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md:91 — CONTENT definition explicitly includes 'Documentation-only changes that do not alter emitted reasoning'. CTRL-01 modifies only two YAML fields in the SOP audit schema and adds one concise section to CLAUDE.md. No emitted reasoning changes. CONTENT is correct."
     },
     {
       "stage": "2A",
-      "check": "change_type: MIXED is correct per SOP §4",
+      "check": "risk_level: LOW is correct",
       "result": "CONFIRMED",
-      "evidence": "Sprint touches backend/scripts/ (BEHAVIOUR — DERIVED_MARKER_IDS policy) and backend/core/ (BEHAVIOUR — runtime wiring) while referencing governed Knowledge Bus signal_library.yaml content consumed by SignalRegistry at runtime. MIXED with BEHAVIOUR controls is correct."
+      "evidence": "No SOP §10 HIGH-trigger paths touched. No backend/core, backend/scripts, backend/ssot, Intelligence Core, or control-plane scripts in scope. Docs-only package. LOW is correct."
     },
     {
       "stage": "2A",
       "check": "execution_model: TWO_PHASE_START_FINISH is correct",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:5 — confirmed. HIGH risk + MIXED change_type requires TWO_PHASE."
+      "evidence": "automation_bus/latest_cursor_prompt.md front matter:5 — confirmed. Standard for all governed packages."
     },
     {
       "stage": "2A",
-      "check": "Authority file: docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md",
+      "check": "Authority path — v0.4 pre-SOP workflow document",
       "result": "CONFIRMED — file exists",
-      "evidence": "docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — confirmed via Glob"
+      "evidence": "docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_4.md — confirmed present. Contains Stage 0 Pipeline Advisory, Stage A-E workflow, trigger rules, advisory modes, canonical output format, evidence cache, throughput rules, documentation discipline, invocation templates, and audit schema requirement."
     },
     {
       "stage": "2A",
-      "check": "Authority file: docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md",
-      "result": "CONFIRMED — file exists",
-      "evidence": "docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md — confirmed via Glob"
-    },
-    {
-      "stage": "2A",
-      "check": "Authority file: docs/sprints/beta_readiness/P1-17_core_backend_handoff_manifest.yaml — content read and verified",
+      "check": "Authority path — AUTOMATION_BUS_SOP_v1.3.1.md — audit schema section identified",
       "result": "CONFIRMED",
-      "evidence": "docs/sprints/beta_readiness/P1-17_core_backend_handoff_manifest.yaml:1-4 — manifest_date: 2026-06-21, total_handoff_candidates: 7, primary_blocker_class: DERIVED_MARKER_VALIDATOR_POLICY. Seven candidates classified, all citing validate_staged_psi_activation_readiness.py:32 as primary blocker domain."
+      "evidence": "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md:751-765 — audit YAML header schema confirmed. Current terminal field: escalation_required at line 764. Two new fields (pipeline_advisory_trigger, pipeline_advisory_reason) insert after line 764. No other SOP sections are modified."
     },
     {
       "stage": "2A",
-      "check": "Authority file: docs/sprints/beta_readiness/P1-17_remaining_psi_blocker_resolution.md — content read and verified",
+      "check": "Authority path — CLAUDE.md location confirmed",
       "result": "CONFIRMED",
-      "evidence": "docs/sprints/beta_readiness/P1-17_remaining_psi_blocker_resolution.md:7 — Status: IMPLEMENTATION_COMPLETE. Section 3 confirms: 'The blocker is not SSOT absence. transferrin_saturation is a canonical top-level SSOT key. The activation-readiness validator hardcodes it in DERIVED_MARKER_IDS.' Section 4 confirms: zero candidates opted in."
+      "evidence": ".claude/CLAUDE.md — confirmed via Glob as the active project instruction file. This is the correct target for the new Stage 0/Stage B advisory guidance section."
     },
     {
       "stage": "2A",
-      "check": "Authority file: docs/sprints/beta_readiness/P1-16_identity_adjudication_manifest.yaml",
-      "result": "CONFIRMED — file exists",
-      "evidence": "docs/sprints/beta_readiness/P1-16_identity_adjudication_manifest.yaml — confirmed via Glob"
-    },
-    {
-      "stage": "2A",
-      "check": "Authority file: docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml",
-      "result": "CONFIRMED — file exists",
-      "evidence": "docs/sprints/beta_readiness/P1-14_activation_readiness_cohort_manifest.yaml — confirmed via Glob"
-    },
-    {
-      "stage": "2A",
-      "check": "Authority file: docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md",
-      "result": "CONFIRMED — file exists",
-      "evidence": "docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — confirmed via Glob"
-    },
-    {
-      "stage": "2A",
-      "check": "Authority file: docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md",
-      "result": "CONFIRMED — file exists",
-      "evidence": "docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — confirmed via Glob"
-    },
-    {
-      "stage": "2A",
-      "check": "No duplicate authority sources detected",
+      "check": "SOP separation preserved — pre-SOP workflow not merged into Automation Bus SOP",
       "result": "CONFIRMED",
-      "evidence": "SignalRegistry loads from knowledge_bus/packages/*/signal_library.yaml only (backend/core/analytics/signal_evaluator.py:31-36). biomarkers.yaml is the single SSOT. validate_staged_psi_activation_readiness.py is the single activation-readiness validator. No competing loaders found."
+      "evidence": "Prompt explicitly prohibits: merging workflow into Automation Bus SOP, rewriting Automation Bus stages, altering Stage D/E execution rules, making pipeline advisory an Automation Bus execution stage. Only change to SOP is two audit schema fields at lines 764-765."
     },
     {
       "stage": "2A",
-      "check": "CRITICAL SOURCE CROSS-REF: transferrin_saturation is SSOT-canonical — confirmed at cited line",
+      "check": "Scope boundary — no runtime, product, or intelligence files in scope",
       "result": "CONFIRMED",
-      "evidence": "backend/ssot/biomarkers.yaml:1865 — 'transferrin_saturation:' is a top-level canonical key with unit: '%', description: 'Transferrin saturation (iron binding saturation; TSAT)', category: Iron Studies, data_type: numeric, system: nutritional. P1-17 handoff manifest citation at biomarkers.yaml:1865 is ACCURATE."
+      "evidence": "Files out of scope list explicitly excludes: backend/, frontend/, knowledge_bus package content, generated pilot PSI, raw Pass 3 research, validators, tests, runtime loaders, DTO/report/Gemini/scoring files, package manifests, signal libraries, promoted signal intelligence files. Scope is cleanly bounded to three files: AUTOMATION_BUS_SOP_v1.3.1.md (two fields), .claude/CLAUDE.md (one section), v0.4 workflow doc (preserve/register)."
     },
     {
       "stage": "2A",
-      "check": "CRITICAL SOURCE CROSS-REF: DERIVED_MARKER_IDS policy mismatch confirmed at cited line",
-      "result": "CONFIRMED — mismatch is real, policy change is the correct fix",
-      "evidence": "backend/scripts/validate_staged_psi_activation_readiness.py:32 — DERIVED_MARKER_IDS = frozenset({'transferrin_saturation'}). Blocker appended at lines 261-275 for any PSI with transferrin_saturation as a supporting_metrics entry, regardless of SSOT presence. P1-18 Phase 3 must adjudicate this; STOP gate 2 option A (lab-provided mode, SSOT-canonical, validator fix only) is confirmed as the safe resolution path."
-    },
-    {
-      "stage": "2A",
-      "check": "CRITICAL SOURCE CROSS-REF: pkg_kb61 signal_library.yaml — transferrin_saturation correctly in dependencies.biomarkers, NOT in derived_metrics",
-      "result": "CONFIRMED — confirms STOP gate 2 option A is safe",
-      "evidence": "knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/signal_library.yaml:44-51 — dependencies.biomarkers lists [ferritin, mch, rdw_cv, transferrin, transferrin_saturation]; dependencies.derived_metrics: []. The signal_library does NOT treat transferrin_saturation as a calculated derived metric. Removing it from DERIVED_MARKER_IDS is a validator policy correction only, not a medical content change."
-    },
-    {
-      "stage": "2A",
-      "check": "CRITICAL SOURCE CROSS-REF: pkg_kb61 production package confirmed (no promoted PSI); staged PSI confirmed present",
-      "result": "CONFIRMED — highest-readiness candidate in derived cohort is correctly identified",
-      "evidence": "Production: knowledge_bus/packages/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/package_manifest.yaml, research_brief.yaml, signal_library.yaml all exist; no promoted_signal_intelligence.yaml. Staged: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation/promoted_signal_intelligence.yaml and compile_manifest.yaml confirmed present."
-    },
-    {
-      "stage": "2A",
-      "check": "CRITICAL SOURCE CROSS-REF: golden panel fixture already contains lab-provided transferrin_saturation",
-      "result": "CONFIRMED — runtime already handles lab-provided values",
-      "evidence": "backend/tests/fixtures/golden_panel_160.json:543 — transferrin_saturation present with value: 55.0, source: lab, reference_range with min/max bounds. Golden panel also in golden_panel_160_collision_free.json:543. Lab-provided path is already supported by the runtime input model."
-    },
-    {
-      "stage": "2A",
-      "check": "wave1_blood_iron_oxygen runtime entry points identified from actual files",
+      "check": "Advisory files documented as non-execution-authorising",
       "result": "CONFIRMED",
-      "evidence": "backend/core/analytics/wave1_subsystem_evidence.py:37-39 — wave1_blood_iron_oxygen mapped to single subsystem 'wave1_bio_oxygen_carrying_capacity'. Domain appears in: domain_score_assembler.py, domain_narrative_wave1.py, persisted_replay_contract_v1.py, regression test test_domain_ux1c_governed_subsystem_evidence.py. SignalRegistry is in backend/core/analytics/signal_evaluator.py (loads all knowledge_bus/packages/*/signal_library.yaml)."
+      "evidence": "Acceptance criterion 6 requires advisory files documented as advisory only. v0.4 §10 states both automation_bus/latest_scope_advisory.md and automation_bus/latest_pipeline_advisory.md 'are advisory only. They are not Automation Bus state artefacts and do not authorise execution.' Consistent."
     },
     {
       "stage": "2A",
-      "check": "REGRESSION TARGET IDENTIFIED: test_validate_staged_psi_activation_readiness.py:101 — asserts DERIVED_MARKER_IDS classification",
-      "result": "CONFIRMED — this test MUST be updated when DERIVED_MARKER_IDS changes",
-      "evidence": "backend/tests/unit/test_validate_staged_psi_activation_readiness.py:101 — assert classify_item(['derived-marker supporting dependency: transferrin_saturation']) == 'BLOCKED_DERIVED_MARKER_DEPENDENCY'. If transferrin_saturation is removed from DERIVED_MARKER_IDS, this test assertion changes. Also line 170 confirms functional test. Phase 6 test update is mandatory — do NOT just make tests pass by removing assertions."
-    },
-    {
-      "stage": "2B",
-      "check": "Behavioural scope explicitly defined",
+      "check": "No duplicate authority sources introduced",
       "result": "CONFIRMED",
-      "evidence": "Prompt §§15-401 define Phase 0-7 structure with three explicit STOP gates. Scope bounded to: (1) validate_staged_psi_activation_readiness.py DERIVED_MARKER_IDS policy, (2) backend/core/ wiring corrections for blood/iron/oxygen, (3) backend/tests/ additions. Frontend explicitly excluded (prompt:125). Medical content modification prohibited (prompt:142-158). Knowledge Bus medical content read-only unless strictly non-medical metadata for runtime integration."
+      "evidence": "v0.4 workflow document is the single authority for the pre-SOP scoping workflow. CLAUDE.md section will reference it, not duplicate it. AUTOMATION_BUS_SOP_v1.3.1.md addition is additive (two fields) not duplicative. No competing governance documents created."
     },
     {
-      "stage": "2B",
-      "check": "Regression targets confirmed and coverage-adequate",
+      "stage": "2A",
+      "check": "P1-19 pipeline advisory trigger expectation recorded in acceptance criteria",
       "result": "CONFIRMED",
-      "evidence": "Phase 6 (prompt:320-325) mandates: (a) targeted backend tests for modified runtime/system/subsystem files, (b) existing wave1_blood_iron_oxygen tests, (c) SignalRegistry/SignalEvaluator tests if touched, (d) staged PSI activation-readiness validator rerun if derived-marker policy changed. Minimum test suite (Phase 4 prompt:265-271): normal control panel, triggering panel, partial/missing-marker panel, lab-provided transferrin_saturation case. All covered."
-    },
-    {
-      "stage": "2B",
-      "check": "No scope creep risk — STOP gates adequate",
-      "result": "CONFIRMED",
-      "evidence": "Files out-of-scope are explicitly enumerated (prompt:122-141): frontend/**, Gemini files, raw Pass 3 research under knowledge_bus/research/, generated_pilot/, scoring policy unless directly required. Three STOP gates with explicit trigger lists close all known creep vectors. Phase 2 target selection order is explicit (prompt:199-205)."
-    },
-    {
-      "stage": "2B",
-      "check": "Determinism risks surfaced",
-      "result": "THREE RISKS IDENTIFIED — all mitigated by STOP gates",
-      "evidence": "Risk 1: Removing transferrin_saturation from DERIVED_MARKER_IDS must be lab-provided-only; if a calculated path is required instead, STOP gate 2 fires and the calculation path becomes carry-forward — prompt correctly handles this. Risk 2: Signal firing changes must not alter unrelated domains; STOP gate 3 (prompt:276-283) closes this. Risk 3: test_validate_staged_psi_activation_readiness.py:101 assertion must be updated, not silently broken — Phase 6 mandate covers this but Cursor must understand the assertion content changes, not just that tests must pass."
-    },
-    {
-      "stage": "2B",
-      "check": "STOP gates protect behavioural correctness",
-      "result": "CONFIRMED — three gates well-placed",
-      "evidence": "STOP gate 1 (build target safety, prompt:207-220): rejects medical-review-blocked content, frontend, raw Pass 3 reads, global ranges, unresolved package identity. STOP gate 2 (derived-marker safety, prompt:239-250): rejects formula invention, calculation without governed policy, global ranges, medical content changes. STOP gate 3 (runtime safety, prompt:276-283): rejects ambiguous package identity, unresolved KB content, silent side effects on unrelated domains, untestable behaviour."
-    },
-    {
-      "stage": "2B",
-      "check": "Forbidden files prohibition present and enforced",
-      "result": "CONFIRMED",
-      "evidence": "prompt:136-141 — tooling files explicitly prohibited: .codex/, .cursor/, .vscode/, AGENTS.md. automation_bus/latest_gate_evidence.json and latest_gate_output.txt also explicitly protected. Knowledge Bus medical content and generated_pilot/ artefacts are read-only."
+      "evidence": "Acceptance criterion 12: 'P1-19 closure expectation is recorded: if P1-19 creates multi-domain carry-forwards, audit should set pipeline_advisory_trigger: true.' P1-19 carry-forward analysis confirms multiple agent domains (KB, Medical Review, Core Engine) — trigger condition will be met at P1-19 audit close."
     }
   ],
-  "overall_verdict": "HARDENED. All 5 front-matter fields valid. All 8 mandatory authority files present and content-verified for the two key inputs (P1-17 handoff manifest, P1-17 blocker resolution). Critical source cross-references confirmed: (1) transferrin_saturation is SSOT-canonical at biomarkers.yaml:1865; (2) DERIVED_MARKER_IDS policy mismatch confirmed at validate_staged_psi_activation_readiness.py:32 — mismatch is real and resolvable via option A; (3) pkg_kb61 signal_library correctly uses dependencies.derived_metrics: [] confirming lab-provided mode is safe; (4) golden panel already handles lab-provided transferrin_saturation; (5) regression target test_validate_staged_psi_activation_readiness.py:101 identified and must be updated. Determinism risks surfaced and closed by STOP gates. No blockers found."
+  "overall_verdict": "HARDENED. All five front-matter fields valid after change_type correction (DOCS → CONTENT confirmed by user). Audit schema insertion point confirmed at AUTOMATION_BUS_SOP_v1.3.1.md:764. CLAUDE.md target confirmed at .claude/CLAUDE.md. v0.4 workflow doc confirmed present. Scope is cleanly docs-only — three files, zero runtime impact. Stage D/E unchanged. Two new audit fields are the only SOP change. No blockers remaining."
 }
