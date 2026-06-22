@@ -1,10 +1,9 @@
 {
-  "branch": "control/pre-sop-scoping-workflow-adoption",
+  "branch": "sprint/P1-19-blood-iron-oxygen-kb-production-intelligence",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-22T07:49:41Z",
-  "cursor_started_utc": "2026-06-22T07:41:58Z",
-  "head_sha": "1897139ca4703be8c971267e169c61a8a8eadfd2",
+  "cursor_started_utc": "2026-06-22T09:10:35Z",
+  "head_sha": "78fdba974743b77683c5de91d2b1fb3631624cc8",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "CTRL-01"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-19"
 }
