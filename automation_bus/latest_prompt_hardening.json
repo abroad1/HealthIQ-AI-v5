@@ -1,119 +1,189 @@
 {
-  "work_id": "P1-21",
   "bus_version": "1.3.1",
+  "work_id": "P1-22",
   "status": "HARDENED",
-  "hardened_utc": "2026-06-22T12:00:00Z",
-  "hardened_by": "Claude Code (claude-sonnet-4-6)",
+  "hardened_utc": "2026-06-22T00:00:00Z",
+  "hardened_by": "Claude Code (claude-sonnet-4-6, Stage 2, SOP v1.3.1)",
   "blocker_count": 0,
   "changes": [
     {
       "stage": "2A",
       "check": "Front matter — all five required fields",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id: P1-21; branch: sprint/P1-21-ferritin-high-authority-reconciliation; risk_level: STANDARD; execution_model: TWO_PHASE_START_FINISH; change_type: CONTENT"
+      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id: P1-22; branch: sprint/P1-22-thyroid-activation-pack; risk_level: HIGH; execution_model: TWO_PHASE_START_FINISH; change_type: BEHAVIOUR. All five fields present."
     },
     {
       "stage": "2A",
-      "check": "change_type: CONTENT — correct",
+      "check": "risk_level: HIGH — correct",
       "result": "CONFIRMED",
-      "evidence": "No signal evaluator changes. No Intelligence Core interaction. Work is: (1) create ADR document, (2) add deprecation fields to pkg_s24 manifest (in-place), (3) create two pkg_kb52c production package directories with YAML files only, (4) byte-copy PSI from generated_pilot. CONTENT classification is correct per SOP §4."
+      "evidence": "HIGH required per SOP §10: sprint changes behavioural logic (scoring_policy.yaml additions activate hormonal scoring path); changes output generation (new runtime domain card emitted); touches backend/ssot/ (scoring_policy.yaml). Both triggers satisfied independently."
     },
     {
       "stage": "2A",
-      "check": "risk_level: STANDARD — correct",
+      "check": "change_type: BEHAVIOUR — correct",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_scope_advisory.md:109 — 'Risk level: STANDARD (no signal_library creation; no new signal_ids; no signal evaluator changes; no scoring policy changes)'. No HIGH-risk trigger from SOP §10: no Intelligence Core, no backend/ssot/, no backend/core/, no backend/scripts/run_work_package.py or golden_gate_local.py. STANDARD requires Claude audit + GPT architectural review before merge — advisory §154 confirms this."
+      "evidence": "Sprint adds new scoring rail entries and implements a new domain card/assembler predicate. Both alter the analytical output construction path. BEHAVIOUR classification is correct per SOP §4. MIXED not required: no new governed Knowledge Bus content is authored or promoted in this sprint."
     },
     {
       "stage": "2A",
-      "check": "Stage B scope advisory — file staleness check per v0.4 §14",
+      "check": "execution_model: TWO_PHASE_START_FINISH — correct",
       "result": "CONFIRMED",
-      "evidence": "git log --since=2026-06-22 run against all four advisory-cited files: knowledge_bus/packages/pkg_s24_ferritin_high_overload/signal_library.yaml, knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml, knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/promoted_signal_intelligence.yaml, backend/tests/regression/test_signal_authority_collision_enforcement.py — all returned zero commits. Advisory evidence is current and inheritable."
+      "evidence": "Phase 1 (scoring/authority) has a mandatory validation gate before Phase 2 (domain activation). TWO_PHASE_START_FINISH is correct. Phase 1 validation failure is a hard STOP for Phase 2 per automation_bus/latest_cursor_prompt.md:257."
     },
     {
       "stage": "2A",
-      "check": "Activation-readiness validator re-run (P1-20 closed before Stage D)",
+      "check": "Stage B scope advisory — file staleness check per v0.5 §14",
       "result": "CONFIRMED",
-      "evidence": "validate_staged_psi_activation_readiness.py executed programmatically. Both ferritin-high candidates: activation_readiness: ACTIVATION_READY, blockers: [], primary_metric_ssot_status: canonical, supporting_marker_ssot_status: pass, compile_manifest_hash_status: pass, runtime_active: false, production_manifest_opt_in: false. BLOCKED_DUPLICATE_AUTHORITY_RISK is a governance advisory classification only — not a validator status."
+      "evidence": "automation_bus/latest_scope_advisory.md dated 2026-06-22 (today, <48 hours). git log --since=2026-06-22 against both cited files: docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md and backend/ssot/scoring_policy.yaml — both returned zero commits. Advisory evidence is current and safe to inherit as structural evidence."
     },
     {
       "stage": "2A",
-      "check": "pkg_s24_ferritin_high_overload — legacy status verified by source content read",
+      "check": "Stage B amendments — all four incorporated in SOP prompt",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_s24_ferritin_high_overload/signal_library.yaml:8 — signal_id: signal_ferritin_high; signal_library.yaml:32-35 — threshold 9999.0, description 'Validator-compatibility placeholder; runtime activation is lab-range driven'; signal_library.yaml:1 — library.package_id: KBP-2404; package_manifest.yaml:7 — created_at: 2026-03-12; NO promoted_signal_intelligence.yaml exists in directory."
+      "evidence": "Amendment 1 (TSH scoring vs signal intelligence distinction): automation_bus/latest_cursor_prompt.md:122-133. Amendment 2 (FT3-high cleared by ADR with mandatory companion gate): prompt:143-156. Amendment 3 (FT3-low excluded from all allowlists): prompt:153-155, 213-214. Amendment 4 (lab_range_only first production use — schema verify before writing): prompt:186-202. No material departure from Stage B advisory."
     },
     {
       "stage": "2A",
-      "check": "PSI hash — inflammatory hyperferritinemia (freshly computed, not inherited)",
+      "check": "Authority path — backend/ssot/scoring_policy.yaml",
       "result": "CONFIRMED",
-      "evidence": "SHA256 computed: 56fbadc05409ea4a216ade0ec05607d130c4e74d27e8ebe1436e41c9243895ea. Compile manifest expected (knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/compile_manifest.yaml:16): 56fbadc05409ea4a216ade0ec05607d130c4e74d27e8ebe1436e41c9243895ea. MATCH. promoted_signal_intelligence_validation: PASS (compile_manifest.yaml:18)."
+      "evidence": "backend/ssot/scoring_policy.yaml:1 exists. policy_version: '1.2.0'. schema_version: '1.0'. Hormonal system current state: line 32 min_biomarkers_required: 0; line 33 system_weight: 0.0; line 34 biomarkers: []. No lab_range_only entries exist anywhere in the current file — confirmed by reading entire file."
     },
     {
       "stage": "2A",
-      "check": "PSI hash — iron overload context (freshly computed, not inherited)",
+      "check": "Authority path — backend/core/analytics/scoring_policy_registry.py",
       "result": "CONFIRMED",
-      "evidence": "SHA256 computed: 607660a9e77916651a3cbc345bd96ae20961f8764c851fea3f41270381712a1c. Compile manifest expected (knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/compile_manifest.yaml:16): 607660a9e77916651a3cbc345bd96ae20961f8764c851fea3f41270381712a1c. MATCH. promoted_signal_intelligence_validation: PASS (compile_manifest.yaml:18)."
+      "evidence": "backend/core/analytics/scoring_policy_registry.py:1 exists. Line 41: SCORING_TYPE_LAB_RANGE_ONLY = 'lab_range_only'. Line 42: _ALLOWED_SCORING_TYPES = frozenset including both scoring types. Validator _validate_policy at line 54."
     },
     {
       "stage": "2A",
-      "check": "Production package ID naming — pkg_kb52c is the correct production family for ferritin signals",
+      "check": "Authority path — backend/core/scoring/rules.py",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb52c_ferritin_low_iron_store_depletion/package_manifest.yaml:1 — package_id: pkg_kb52c_ferritin_low_iron_store_depletion; package_manifest.yaml:3 — 'KB-S52C Wave A package for inv_ferritin_low_iron_store_depletion'; package_manifest.yaml:13 — promoted_signal_intelligence: promoted_signal_intelligence.yaml. pkg_kb52c is already the active production series for ferritin signals. The staged package IDs pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia and pkg_kb52c_ferritin_high_iron_overload_context ARE the correct final production package IDs. No renaming needed. Advisory concern re staging-vs-production naming does NOT apply to this series (cf. CBC packages which required kb52c→kb58 renaming)."
+      "evidence": "backend/core/scoring/rules.py:1 exists. BiomarkerRule.is_lab_range_only property at lines 104-105. _build_biomarker_rule lab_range_only branch at lines 146-160."
     },
     {
       "stage": "2A",
-      "check": "No runtime/backend/scoring hardcoded blocking reference to pkg_s24_ferritin_high_overload or KBP-2404",
+      "check": "Authority path — ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md",
       "result": "CONFIRMED",
-      "evidence": "grep across all repo files for pkg_s24_ferritin_high_overload and KBP-2404 found 24 files. Backend runtime hits only: (1) backend/scripts/build_pass3_frame_coverage_audit.py:31 — non-runtime audit script, excluded from 'Out of scope' list, not a STOP condition; (2) backend/tests/unit/test_signal_evaluator.py:1444 — non-regression unit test, out of scope but see retirement constraint below; (3) backend/tests/unit/test_investigation_narrative_contract.py:22 — same. All remaining references are docs/, knowledge_bus/governance/, knowledge_bus/research/ — documentation and governance files, not runtime blocking references. No domain assembler, scoring policy, or signal evaluator hardcodes this package."
+      "evidence": "docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md:1 exists. Status: Accepted. Date: 2026-06-20. FT3/FT4/TSH launch positions table at lines 30-34."
     },
     {
       "stage": "2A",
-      "check": "pkg_s24 retirement method constraint — in-place deprecation required (NOT directory move)",
-      "result": "CONFIRMED — STOP GATE FOR CURSOR",
-      "evidence": "backend/tests/unit/test_signal_evaluator.py:1437-1469 — _KB_S24_PACKAGE_DIRS list includes pkg_s24_ferritin_high_overload; line 1892 reads knowledge_bus/packages/pkg_s24_ferritin_high_overload/signal_library.yaml; line 1895 asserts len(signals) == 1. Moving directory → FileNotFoundError at collection. Removing signal entry → AssertionError at line 1895. backend/tests/unit/test_investigation_narrative_contract.py:22 — same package in _KB_S25_PACKAGE_DIRS; line 73 reads signal_library.yaml. Both are NON-REGRESSION tests, out of scope for modification in P1-21. CURSOR MUST use in-place manifest-level deprecation: add deprecated: true and deprecated_by: [pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia, pkg_kb52c_ferritin_high_iron_overload_context] to package_manifest.yaml ONLY. Do NOT move the directory. Do NOT remove or modify the signal entry in signal_library.yaml. The prompt Phase 3 fallback clause ('if moving directories would break tooling...') applies and IS the required path."
-    },
-    {
-      "stage": "2A",
-      "check": "Multi-package same signal_id pattern — established precedent confirmed",
+      "check": "Authority path — backend/core/analytics/domain_score_assembler.py",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression/signal_library.yaml — signal_id: signal_transferrin_low (schema_version: 2.0.0); knowledge_bus/packages/pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure/signal_library.yaml — signal_id: signal_transferrin_low (schema_version: 2.0.0). Both coexist as active production packages. Repo already supports multiple pkg_kb* packages sharing one signal_id. Ferritin-high pair will follow this exact pattern."
+      "evidence": "backend/core/analytics/domain_score_assembler.py:1 exists. _is_wave1_* predicate pattern at lines 155-227 for cardiovascular, blood_sugar, liver, kidney, blood_iron_oxygen. wave1_thyroid predicate not yet implemented — Phase 2 must add it following the established pattern."
     },
     {
       "stage": "2A",
-      "check": "Collision regression test — no ferritin references, no fixture update needed",
+      "check": "Authority path — test_scoring_lab_range_only_rules.py",
       "result": "CONFIRMED",
-      "evidence": "backend/tests/regression/test_signal_authority_collision_enforcement.py — reviewed in full (312 lines). Tests renal_filtration_axis collision governance only. No reference to pkg_s24_ferritin_high_overload, signal_ferritin_high, or KBP-2404. No fixture update required after pkg_s24 in-place deprecation. pkg_s24_creatinine_high_renal at line 157 is unrelated (renal, not ferritin). Test count and collision enforcement remain fully intact."
+      "evidence": "backend/tests/unit/test_scoring_lab_range_only_rules.py:1 exists. Uses fixture hormonal system with lab_range_only entry (fixture_lab_range_marker, unit: mIU/L, no bands). Authoritative test pattern for production thyroid scoring policy tests."
     },
     {
       "stage": "2A",
-      "check": "Authority paths — all mandatory read-list files exist",
+      "check": "Authority path — test_batch2_thyroid_tsh_gating.py",
       "result": "CONFIRMED",
-      "evidence": "backend/scripts/validate_promoted_signal_intelligence.py — EXISTS; backend/scripts/validate_knowledge_package.py — EXISTS; backend/scripts/validate_staged_psi_activation_readiness.py — EXISTS; knowledge_bus/schema/package_manifest_schema.yaml — EXISTS; knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml — EXISTS; docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md — EXISTS; docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md — EXISTS; docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md — EXISTS; backend/tests/regression/test_signal_authority_collision_enforcement.py — EXISTS; knowledge_bus/packages/pkg_s24_ferritin_high_overload/ — EXISTS (all 3 files confirmed)."
+      "evidence": "backend/tests/regression/test_batch2_thyroid_tsh_gating.py exists per repository grep. Regression target for Phase 2 TSH companion-gate behaviour."
     },
     {
       "stage": "2A",
-      "check": "Staged generated-pilot artefacts — both candidates exist with compile manifests",
+      "check": "lab_range_only schema — required fields (mandatory-fresh source read)",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml — EXISTS; compile_manifest.yaml:1 — compile_id: p1_11_batch_b_pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia; knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/promoted_signal_intelligence.yaml — EXISTS; compile_manifest.yaml:1 — compile_id: p1_11_batch_b_pkg_kb52c_ferritin_high_iron_overload_context."
+      "evidence": "backend/core/analytics/scoring_policy_registry.py:77-85 and backend/core/scoring/rules.py:146-160. Required fields: (1) scoring_type: 'lab_range_only'; (2) unit: non-empty string — ValueError if empty (registry:79-80, rules:147-148); (3) weight: numeric (registry:72-73). Optional: age_adjustment (bool), sex_adjustment (bool). No other fields required."
     },
     {
       "stage": "2A",
-      "check": "No duplicate authority sources introduced",
+      "check": "lab_range_only schema — forbidden fields (mandatory-fresh source read)",
       "result": "CONFIRMED",
-      "evidence": "Both new production packages claim signal_id: signal_ferritin_high — same pattern as pkg_kb61 transferrin_low pair. pkg_s24 receives manifest-level deprecated flag, not signal_library modification. pkg_kb52c_ferritin_low_iron_store_depletion is unrelated and untouched. No new signal IDs created. No signal_library.yaml files modified."
+      "evidence": "backend/core/analytics/scoring_policy_registry.py:81-84: if policy.get('bands') is not None raises ValueError('lab_range_only biomarker must not declare bands: {id}'). backend/core/scoring/rules.py:149-151: same guard in _build_biomarker_rule. No hardcoded production bands permitted for these markers under any circumstances."
     },
     {
       "stage": "2A",
-      "check": "Forbidden files — no runtime/frontend/evaluator/parser/DTO scope creep",
+      "check": "lab_range_only runtime scoring behaviour — unscored sentinel (mandatory-fresh source read)",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:142-159 — explicit prohibition list includes backend runtime/evaluator code, frontend, parser files, DTO/report/Gemini/scoring files, validators, non-regression tests, raw Pass 3 research, generated-pilot artefacts, compile manifests, unrelated Knowledge Bus packages, ferritin-low packages, TSAT files, .codex/, .cursor/, .vscode/, AGENTS.md. Hardening finding: signal_library.yaml within pkg_s24_ferritin_high_overload must also not be modified (non-regression test dependency)."
+      "evidence": "backend/core/scoring/rules.py:453-455. When no lab reference range supplied: returns (0.0, ScoreRange.CRITICAL, UNSCORED_REASON) where UNSCORED_REASON = 'missing_lab_reference_range' from scoring_policy.yaml:17. Lab-provided range is sole authority — no SSOT/global range fallback for lab-provided biomarkers."
+    },
+    {
+      "stage": "2A",
+      "check": "System biomarker registration constraint — dual-entry requirement",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/analytics/scoring_policy_registry.py:100-108. Every biomarker in a system's biomarkers list must exist in the top-level biomarkers dict — ValueError if missing. Phase 1C must add BOTH: (1) system-level entries (hormonal.biomarkers: [tsh, free_t4, free_t3]) AND (2) biomarker-level entries in the top-level biomarkers section of scoring_policy.yaml."
+    },
+    {
+      "stage": "2A",
+      "check": "Canonical thyroid marker keys in SSOT",
+      "result": "CONFIRMED",
+      "evidence": "backend/ssot/biomarkers.yaml:678 — free_t4 (aliases: free_thyroxine). :713 — tsh (aliases: thyroid_stimulating_hormone, thyrotropin; unit: mIU/L). :1158 — free_t3 (unit: pmol/L). Cursor must use keys tsh, free_t4, free_t3 exactly in scoring_policy.yaml entries."
+    },
+    {
+      "stage": "2A",
+      "check": "ADR FT3/FT4/TSH launch positions — freshly read, not inherited",
+      "result": "CONFIRMED",
+      "evidence": "docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md:30-34. FT3 low — Deferred/inactive/not launch-visible. FT3 high — Runtime active canonical WITH mandatory TSH-suppressed companion gate. FT4 high — Runtime active canonical WITH mandatory TSH-suppressed companion gate. FT4 low — Runtime active canonical WITH mandatory TSH-present companion gate. TSH high/TSH low — Not launch-active (kb52c packages not runtime-loaded). ADR blocks TSH signal intelligence, not lab-range-only scoring. Phase 1D bounded-scope decision is the anticipated resolution per ADR Consequences section."
+    },
+    {
+      "stage": "2A",
+      "check": "P1-22 sprint output files — no pre-existing files",
+      "result": "CONFIRMED",
+      "evidence": "Glob of docs/sprints/beta_readiness/P1-22* returned no matches. All four output files (P1-22_thyroid_activation_pack.md, P1-22_thyroid_activation_manifest.yaml, P1-22_pass3_carry_forward.yaml; BUILD_DELIVERABLE_REGISTER.md update) are new creates. No overwrite risk."
+    },
+    {
+      "stage": "2A",
+      "check": "No duplicate authority sources",
+      "result": "CONFIRMED",
+      "evidence": "Single scoring policy SSOT: backend/ssot/scoring_policy.yaml. Single validator: backend/core/analytics/scoring_policy_registry.py. Single rules consumer: backend/core/scoring/rules.py. Single domain assembler: backend/core/analytics/domain_score_assembler.py. No duplicate paths detected."
     },
     {
       "stage": "2B",
-      "check": "Behavioural scope check — CONTENT only, no Intelligence Core interaction",
-      "result": "NOT_APPLICABLE",
-      "evidence": "change_type: CONTENT. Sprint creates new YAML package files, adds deprecation metadata to one existing manifest, and byte-copies two PSI files into new production directories. No code changes. No signal evaluator interaction. No analytical pipeline modification. No output structure change. Behavioural hardening (2B) is not applicable."
+      "check": "Behavioural scope defined (BEHAVIOUR type mandatory check)",
+      "result": "CONFIRMED",
+      "evidence": "Phase 1 surface: hormonal system scoring path activated by adding TSH, FT4, FT3-high entries to scoring_policy.yaml — any panel with these markers now scores via the hormonal system, changing the scoring calculation path. Phase 2 surface: new _is_wave1_thyroid predicate in domain_score_assembler.py; wave1_thyroid domain card emitted in runtime analytical output. Both surfaces explicitly bounded in prompt."
+    },
+    {
+      "stage": "2B",
+      "check": "Regression targets identified",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:280-289. Targets: (1) test_scoring_lab_range_only_rules.py — scoring policy validation; (2) test_batch2_thyroid_tsh_gating.py — TSH companion gate; (3) test_domain_score_assembler_v1.py — domain assembly; (4) test_domain_ux1a_wave1_health_systems_card_scaffold.py — launch-core scaffold; (5) test_med_rev1_wave1_subsystem_visibility.py — subsystem visibility. All five existing launch-core domains (CV, metabolic, liver, kidney, blood_iron_oxygen) must not regress."
+    },
+    {
+      "stage": "2B",
+      "check": "STOP conditions protect behavioural correctness",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:133 — STOP if TSH signal intelligence implied in card/assembler wiring/tests. :155-156 — STOP if FT3-low activated or TSH-suppressed companion gate loosened for FT3-high. :202 — STOP if lab_range_only schema ambiguous or requires inventing hardcoded ranges. :257 — STOP if Phase 1 validation fails before Phase 2. All critical boundary violations are hard STOP conditions."
+    },
+    {
+      "stage": "2B",
+      "check": "Determinism preserved — no non-deterministic elements",
+      "result": "CONFIRMED",
+      "evidence": "lab_range_only scoring: lab range → position_in_range → score curve → score. Fully deterministic. FT3-high companion gate: hard boolean runtime condition (TSH-suppressed required). TSH lab-range scoring: stateless. No LLM input paths in scope. No non-deterministic elements introduced."
+    },
+    {
+      "stage": "2B",
+      "check": "No scope creep",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:98-116 — explicit prohibitions on frontend, Gemini, KB medical content, KB signal_library.yaml, research_brief.yaml, promoted_signal_intelligence.yaml, TSAT, iron/ferritin/CBC packages, ferritin-low packages, tooling files. Phase 2C (prompt:293-296) explicitly forbids frontend/report prose/Gemini wording."
+    },
+    {
+      "stage": "2B",
+      "check": "Output structure change — intentional and bounded",
+      "result": "CONFIRMED",
+      "evidence": "New wave1_thyroid domain card is the declared product output of this sprint. Existing domain card structures are explicitly protected by regression tests requirement (prompt:288). Output structure change is the goal, not a side effect."
     }
   ],
-  "overall_verdict": "HARDENED. All five front-matter fields confirmed. Both PSI hashes freshly verified — both match compile manifests exactly. Both staged packages independently confirmed ACTIVATION_READY by validator re-run. Production naming resolved: pkg_kb52c IS the ferritin production series; staged IDs are the correct production IDs — no renaming required. KEY CONSTRAINT FOR CURSOR: pkg_s24 retirement must use in-place manifest-level deprecation only (add deprecated: true + deprecated_by: [...] to package_manifest.yaml). Do NOT move or delete the pkg_s24_ferritin_high_overload directory. Do NOT modify signal_library.yaml within that package. Non-regression tests at test_signal_evaluator.py:1892 and test_investigation_narrative_contract.py:73 load this directory and assert len(signals)==1 — directory move or signal entry removal both break out-of-scope tests. Collision regression test requires no update. No runtime hardcoded blocking references found. No new signal IDs. No Intelligence Core interaction. Ready for kernel start."
+  "implementation_decision_points": [
+    {
+      "id": "IDP-1",
+      "field": "hormonal.system_weight",
+      "current_value": "0.0",
+      "source": "backend/ssot/scoring_policy.yaml:33",
+      "required_action": "Cursor must decide whether to change from 0.0. If 0.0 is retained, hormonal system contributes nothing to the overall composite score — thyroid markers score at system level but do not affect the overall report score. If this is not the intended behaviour, system_weight must be set to a non-zero value. Decision must be recorded in Phase 1A activation manifest before editing scoring_policy.yaml."
+    },
+    {
+      "id": "IDP-2",
+      "field": "hormonal.min_biomarkers_required",
+      "current_value": "0",
+      "source": "backend/ssot/scoring_policy.yaml:32",
+      "required_action": "After adding thyroid markers, Cursor must decide whether min_biomarkers_required remains 0 (system fires with no thyroid markers present) or increases to 1 or more. Decision must be recorded in Phase 1A activation manifest before editing scoring_policy.yaml."
+    }
+  ],
+  "overall_verdict": "HARDENED. No blockers. All five front-matter fields confirmed. All authority paths verified. lab_range_only schema fully verified from source (scoring_policy_registry.py:77-85, rules.py:146-160): required fields are scoring_type, unit (non-empty), weight; bands key is forbidden. Canonical thyroid marker keys confirmed: tsh, free_t4, free_t3. ADR launch positions freshly read (not inherited): FT3-high cleared with mandatory TSH-suppressed companion gate; FT3-low deferred; TSH signal intelligence not launch-active — lab-range-only scoring permitted via Phase 1D bounded-scope decision. Two implementation decision points (IDP-1: system_weight, IDP-2: min_biomarkers_required) surfaced that Cursor must resolve and document in Phase 1A manifest before writing scoring_policy.yaml — these are not hardening blockers. Phase 1 validation gate must pass before Phase 2 begins. Highest-risk boundary: TSH signal intelligence STOP condition — any test, assembler wiring, DTO field, or card copy implying kb52c clinical context is active must trigger an immediate STOP."
 }

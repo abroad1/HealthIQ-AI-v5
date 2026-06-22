@@ -1,80 +1,50 @@
 ---
-work_id: P1-21
-branch: sprint/P1-21-ferritin-high-authority-reconciliation
-risk_level: STANDARD
+work_id: P1-22
+branch: sprint/P1-22-thyroid-activation-pack
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: BEHAVIOUR
 ---
 
-# P1-21 — Ferritin-High Signal Authority Reconciliation and PSI Promotion
+# P1-22 — Thyroid Activation Pack
 
-You are Cursor, acting as the Knowledge Bus / Medical Intelligence implementation agent.
+You are Cursor, acting as the Core Engine implementation agent with Knowledge Bus / governance read-only support.
 
 Implement this work package under Automation Bus SOP v1.3.1.
 
-This is a Knowledge Bus authority-reconciliation and production PSI promotion sprint.
+This is an outcome-based runtime activation sprint.
 
-It is not a runtime sprint, not a frontend sprint, not a Core Engine sprint, and not a Medical Review sprint.
+It is not a Knowledge Bus package-promotion sprint.
+It is not a frontend sprint.
+It is not a Gemini/report-prose sprint.
+It is not a Medical Review sprint.
 
 ## Purpose
 
-Resolve the ferritin-high signal authority collision blocking promotion of the Pass 3 ferritin-high PSI cohort.
+Deliver `wave1_thyroid` as an active launch-core runtime domain by bundling the necessary preconditions and implementation into one governed package:
 
-The authorised architectural direction is Option A from Stage B advisory:
+1. populate the hormonal `lab_range_only` scoring rail for the thyroid-axis marker set;
+2. record a bounded TSH authority decision;
+3. implement the `wave1_thyroid` domain assembler/card/subsystem routing;
+4. enable TSH, FT4 and FT3-high-safe thyroid scoring/firing where authorised;
+5. keep TSH signal intelligence and FT3 low runtime activation explicitly deferred.
 
-Retire legacy `pkg_s24_ferritin_high_overload` from active signal authority and migrate ferritin-high authority into modern `pkg_kb*` production packages using the governed Pass 3 ferritin-high PSI artefacts.
+This sprint must not split hormonal scoring, TSH authority, and thyroid domain activation into separate micro-sprints. They are internal phases of one outcome-based package.
 
-This sprint must record the authority decision, prove retirement safety, create the modern production package hosts, install the two validated Pass 3 PSIs, and validate the resulting Knowledge Bus package estate.
+## Stage 0 / Stage B baseline
 
-## Authority decision to record before implementation
+The v0.5 Stage 0 pipeline advisory reduced the previous thyroid sequence into one outcome-based P1-22 package by absorbing:
 
-Before modifying package files, create a concise ADR / decision note recording:
+* hormonal scoring policy;
+* TSH launch-authority decision;
+* thyroid domain card retry.
 
-`ADR-FERRITIN-HIGH-SIGNAL-AUTHORITY-RECONCILIATION-1`
+Stage B Mode 1 confirmed this shape with amendments:
 
-Location:
-
-* use the repository’s existing ADR / architecture decision location if present;
-* otherwise create under `docs/architecture/`.
-
-The ADR must record:
-
-1. `pkg_s24_ferritin_high_overload` is legacy authority.
-2. `pkg_s24` owns `signal_ferritin_high` only through a legacy `signal_library.yaml`.
-3. `pkg_s24` has no `promoted_signal_intelligence.yaml`.
-4. `pkg_s24` uses a validator-compatibility placeholder threshold and is not the governed Pass 3 intelligence authority.
-5. The two Pass 3 ferritin-high candidates are distinct clinical interpretive frames:
-
-   * inflammatory hyperferritinemia;
-   * iron-overload context.
-6. The repository already supports multiple modern packages sharing one `signal_id` where they represent distinct PSI contexts.
-7. Option A is selected:
-
-   * retire `pkg_s24_ferritin_high_overload` from active authority;
-   * promote the two Pass 3 ferritin-high contexts into modern `pkg_kb*` production packages;
-   * keep `signal_ferritin_high` as the signal ID;
-   * do not create new signal IDs;
-   * do not change runtime evaluator behaviour.
-8. Options B and C are rejected:
-
-   * Option B creates unnecessary signal-evaluator surface risk;
-   * Option C creates an incoherent mixed legacy/modern package host.
-9. No medical content is invented or changed.
-
-Keep the ADR concise. Do not write a long narrative paper.
-
-## Baseline evidence
-
-Stage B advisory found:
-
-* `knowledge_bus/packages/pkg_s24_ferritin_high_overload/signal_library.yaml` defines `signal_id: signal_ferritin_high`;
-* `pkg_s24` has no `promoted_signal_intelligence.yaml`;
-* `pkg_s24` uses legacy `library.package_id: KBP-2404`;
-* `pkg_s24` uses a placeholder threshold of `9999.0`;
-* the two staged Pass 3 PSIs are validated and distinct;
-* existing production precedent supports multiple packages sharing the same signal ID where each package has distinct PSI context.
-
-Use Stage B advisory as inherited structural evidence only where still current. Re-verify all fresh claims required by hardening.
+1. TSH scoring and TSH signal intelligence must be distinguished.
+2. FT3 high is already cleared by ADR, with mandatory TSH-suppressed companion gate.
+3. FT3 low remains deferred and excluded.
+4. `lab_range_only` is first production use, so schema must be verified before scoring-policy writes.
 
 ## Mandatory read list
 
@@ -82,35 +52,26 @@ Read before editing:
 
 * `automation_bus/latest_pipeline_advisory.md`
 * `automation_bus/latest_scope_advisory.md`
-* `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_4.md`
+* `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_5.md` if present, otherwise v0.4 plus amended §6 notes
 * `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-* `docs/sprints/beta_readiness/P1-19_pass3_carry_forward.yaml`
-* `docs/sprints/beta_readiness/P1-19_production_opt_in_manifest.yaml`
-* `docs/sprints/beta_readiness/P1-19_blood_iron_oxygen_kb_production_intelligence.md`
-* `docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md`
-* `docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md`
-* `docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md`
-* `knowledge_bus/schema/package_manifest_schema.yaml`
-* `knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml`
-* `backend/scripts/validate_promoted_signal_intelligence.py`
-* `backend/scripts/validate_knowledge_package.py`
-* `backend/scripts/validate_staged_psi_activation_readiness.py`
-* `backend/tests/regression/test_signal_authority_collision_enforcement.py`
-* `knowledge_bus/packages/pkg_s24_ferritin_high_overload/package_manifest.yaml`
-* `knowledge_bus/packages/pkg_s24_ferritin_high_overload/research_brief.yaml`
-* `knowledge_bus/packages/pkg_s24_ferritin_high_overload/signal_library.yaml`
-* staged generated-pilot artefacts and compile manifests for:
-
-  * `pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia`
-  * `pkg_kb52c_ferritin_high_iron_overload_context`
+* P1-8 scoring ADR / scoring sprint report / scoring implementation notes
+* `docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md`
+* any existing thyroid ADRs, thyroid sprint reports or P1-4 blocker reports
+* `backend/ssot/scoring_policy.yaml`
+* scoring policy validator and schema code used for `scoring_type: lab_range_only`
+* current scoring tests
+* current domain score assembler / domain card / subsystem routing code
+* existing launch-core domain examples to mirror implementation pattern
+* current thyroid-related Knowledge Bus package manifests / signal libraries as read-only evidence only
+* current thyroid-related tests
 
 Use targeted search:
 
-* `rg "pkg_s24_ferritin_high_overload|KBP-2404|signal_ferritin_high" .`
-* `rg "pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia|pkg_kb52c_ferritin_high_iron_overload_context" knowledge_bus docs`
-* `rg "ferritin_high|hyperferritinemia|iron_overload_context" knowledge_bus docs backend`
-* `rg "promoted_signal_intelligence" knowledge_bus/packages/pkg_s24_ferritin_high_overload knowledge_bus/generated_pilot`
-* `rg "signal_ferritin_high" backend knowledge_bus docs`
+* `rg "lab_range_only|hormonal|scoring_type|scoring_policy" backend docs`
+* `rg "wave1_thyroid|thyroid|TSH|FT4|FT3|free_t3|free_t4|thyroid_stimulating" backend docs knowledge_bus`
+* `rg "FT3 low|FT3 high|TSH suppressed|TSH-suppressed|companion gate" docs backend knowledge_bus`
+* `rg "wave1_.*domain|domain card|domain_score_assembler|subsystem routing" backend`
+* `rg "pkg_kb52c.*tsh|signal_tsh|signal_ft4|signal_ft3" knowledge_bus docs backend`
 
 Inspect relevant hits before editing.
 
@@ -118,66 +79,90 @@ Inspect relevant hits before editing.
 
 Allowed if justified:
 
-* ADR / decision note:
+* `backend/ssot/scoring_policy.yaml`
+* scoring policy schema/validator files only if required to support existing P1-8 `lab_range_only` contract without weakening validation
+* backend domain assembler / domain card / subsystem routing files required to implement `wave1_thyroid`
+* backend tests for scoring policy, thyroid domain routing, signal gating and regression coverage
+* concise ADR / decision note for bounded TSH launch treatment:
 
-  * `docs/architecture/ADR-FERRITIN-HIGH-SIGNAL-AUTHORITY-RECONCILIATION-1.md`
-  * or equivalent existing ADR location;
-* `docs/sprints/beta_readiness/P1-21_ferritin_high_authority_reconciliation.md`
-* `docs/sprints/beta_readiness/P1-21_ferritin_high_promotion_manifest.yaml`
-* `docs/sprints/beta_readiness/P1-21_pass3_carry_forward.yaml`
+  * use existing ADR location if present;
+  * otherwise create under `docs/architecture/`
+* `docs/sprints/beta_readiness/P1-22_thyroid_activation_pack.md`
+* `docs/sprints/beta_readiness/P1-22_thyroid_activation_manifest.yaml`
+* `docs/sprints/beta_readiness/P1-22_pass3_carry_forward.yaml`
 * `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-* retirement/archive treatment for:
-
-  * `knowledge_bus/packages/pkg_s24_ferritin_high_overload/`
-* new modern production package directories for the two ferritin-high Pass 3 contexts;
-* within those new package directories only:
-
-  * `package_manifest.yaml`
-  * `research_brief.yaml`
-  * `signal_library.yaml`
-  * `promoted_signal_intelligence.yaml`
-* `backend/tests/regression/test_signal_authority_collision_enforcement.py` only if the existing regression fixture has a hardcoded `pkg_s24` expectation that must be updated after authority migration.
 
 ## Files out of scope
 
 Do not modify:
 
-* backend runtime/evaluator code;
-* frontend;
-* parser files;
-* DTO/report/Gemini/scoring files;
-* validators;
-* non-regression tests;
-* raw Pass 3 research content;
-* generated-pilot artefacts;
-* compile manifests;
-* unrelated Knowledge Bus packages;
-* ferritin-low packages;
-* TSAT / transferrin saturation policy files;
+* frontend/
+* Gemini files
+* report prose / DTO presentation files unless hardening proves they are part of backend card DTO contract and unavoidable
+* raw Pass 3 research
+* Knowledge Bus package medical content
+* Knowledge Bus `signal_library.yaml`
+* Knowledge Bus `research_brief.yaml`
+* Knowledge Bus `promoted_signal_intelligence.yaml`
+* Knowledge Bus package manifests except read-only inspection
+* generated-pilot files
+* parser files
+* TSAT / transferrin saturation policy
+* iron/ferritin/CBC packages
+* ferritin-low packages
 * `.codex/`
 * `.cursor/`
 * `.vscode/`
 * `AGENTS.md`
 
-## Critical prohibitions
+## Critical clinical / architectural boundaries
 
-Do not:
+### TSH boundary
 
-* invent medical content;
-* rewrite medical interpretation meaning;
-* approximate missing Pass 3 fields;
-* change signal evaluator behaviour;
-* introduce new signal IDs;
-* split `signal_ferritin_high` into separate runtime signals;
-* attach multiple PSI files to `pkg_s24`;
-* mix legacy `pkg_s24` schema with modern PSI context;
-* alter ferritin-low packages;
-* alter TSAT calculated-mode policy;
-* edit generated-pilot staged PSI;
-* edit compile manifests;
-* edit raw Pass 3 research;
-* use a fallback parser;
-* use global/default reference ranges.
+TSH participates in hormonal `lab_range_only` scoring at launch.
+
+TSH signal intelligence is not promoted in this sprint.
+
+The bounded TSH decision must state:
+
+* TSH enters the `lab_range_only` scoring policy;
+* TSH signal intelligence from kb52c packages remains deferred;
+* the thyroid domain card must not imply that TSH clinical-context intelligence is active at launch;
+* TSH can contribute lab-range scoring/status only.
+
+STOP if domain card wording, DTO fields, assembler wiring or tests imply that TSH signal intelligence / kb52c clinical context is active at launch.
+
+### FT4 boundary
+
+FT4 may enter the hormonal `lab_range_only` scoring rail and `wave1_thyroid` domain routing where existing authority supports launch use.
+
+Do not alter FT4 Knowledge Bus medical content.
+
+### FT3 boundary
+
+FT3 high is already cleared by ADR with a mandatory TSH-suppressed companion gate.
+
+P1-22 must treat FT3 high as eligible for:
+
+* hormonal `lab_range_only` scoring;
+* `wave1_thyroid` domain allowlist;
+* only with the mandatory TSH-suppressed companion gate required by ADR.
+
+FT3 low remains excluded from all domain allowlists.
+
+No FT3 low runtime activation path may be introduced in P1-22.
+
+STOP if implementation would activate FT3 low, imply FT3 low launch visibility, or remove/loosen the mandatory TSH-suppressed companion gate for FT3 high.
+
+### Lab-range authority
+
+Lab-provided reference ranges remain authoritative.
+
+Do not introduce global/default thyroid reference ranges.
+
+Do not calculate clinical normality from non-lab reference bands.
+
+Do not add hardcoded thyroid ranges unless they are test fixtures clearly isolated from production scoring.
 
 ## Phase 0 — Automation Bus preflight
 
@@ -185,194 +170,177 @@ Before implementation:
 
 1. Confirm current branch is:
 
-`sprint/P1-21-ferritin-high-authority-reconciliation`
+`sprint/P1-22-thyroid-activation-pack`
 
 2. Confirm `automation_bus/state/work_package_active.json` exists.
-3. Confirm active token has `work_id: P1-21`.
+3. Confirm active token has `work_id: P1-22`.
 4. Confirm token branch matches current branch.
 5. Confirm repo/stash/parked-file state is governed under the standard start prompt.
 
 If any condition fails, STOP.
 
-## Phase 1 — Mandatory authority and naming gate
+## Phase 1 — Scoring policy schema and authority gate
 
-Before package creation or retirement:
+Phase 1 must complete and validate before Phase 2 begins.
 
-### 1A — hardcoded reference check
+### 1A — Confirm `lab_range_only` schema before writing
 
-Search the repo for:
+Before editing `backend/ssot/scoring_policy.yaml`, inspect the P1-8 scoring policy validator/schema and confirm the required YAML shape for `scoring_type: lab_range_only`.
 
-* `pkg_s24_ferritin_high_overload`
-* `KBP-2404`
-* `signal_ferritin_high`
+Record in:
 
-Specifically inspect:
+`docs/sprints/beta_readiness/P1-22_thyroid_activation_manifest.yaml`
 
-* backend Python;
-* domain assembler config;
-* scoring policy;
-* signal evaluator paths;
-* Knowledge Bus loaders;
-* regression tests;
-* package manifests.
+For the schema record:
 
-If any runtime/backend/scoring path hardcodes `pkg_s24_ferritin_high_overload` or `KBP-2404`, STOP unless the fix is a non-behavioural authority reference update within scope.
+* required fields;
+* forbidden fields;
+* whether hardcoded `bands` are omitted;
+* how lab-provided ranges are consumed;
+* validation command to prove correctness.
 
-Do not modify runtime/evaluator code in this sprint.
+STOP if the schema is ambiguous, unsupported or would require inventing hardcoded ranges.
 
-### 1B — production package ID naming gate
+### 1B — Confirm marker set
 
-Resolve the exact target production package IDs before creating directories.
+Confirm the Phase 1 scoring-policy marker set:
 
-Do not use the staged `pkg_kb52c_*` IDs as final production package IDs unless hardening proves that `pkg_kb52c` is the correct production naming family for ferritin-high.
+* TSH — scoring only; no signal intelligence;
+* FT4 — scoring and domain use where authorised;
+* FT3 high — scoring and domain use with mandatory TSH-suppressed companion gate;
+* FT3 low — excluded/deferred.
 
-Preferred naming must follow the repository’s current `pkg_kb*` production naming convention and the P1-20 precedent for resolving staging IDs into production hosts.
+Record the marker decision in the activation manifest.
 
-Candidate production package IDs must be explicitly recorded in:
+STOP if repo evidence contradicts this boundary.
 
-`docs/sprints/beta_readiness/P1-21_ferritin_high_promotion_manifest.yaml`
+### 1C — Populate hormonal scoring rail
 
-For each proposed ID, record:
+Populate `backend/ssot/scoring_policy.yaml` for the confirmed thyroid-axis marker set using `scoring_type: lab_range_only`.
 
-* staged source package ID;
-* proposed production package ID;
-* naming rationale;
-* nearest production naming precedent;
-* collision check result;
-* final decision.
+Do not add hardcoded production bands.
 
-If production naming is ambiguous, STOP before creating packages and classify:
+Do not change unrelated scoring rails or unrelated biomarker scoring policy.
 
-`BLOCKED_PRODUCTION_PACKAGE_ID_NAMING_UNRESOLVED`
+If a marker cannot be represented cleanly under `lab_range_only`, STOP for that marker and carry it forward.
 
-### 1C — source hash and staged PSI integrity gate
+### 1D — Bounded TSH authority decision
 
-For both staged candidates:
+Create a concise ADR / decision note for TSH launch treatment.
 
-* read compile manifest;
-* confirm PSI source hash;
-* confirm `promoted_signal_intelligence_validation: PASS`;
-* verify staged PSI SHA256 matches compile manifest expected hash;
-* confirm staged PSI has not changed since compilation.
+The ADR must state:
 
-If hash verification fails, STOP for that candidate and classify:
+* TSH enters lab-range-only scoring at launch;
+* TSH signal intelligence is not promoted in P1-22;
+* TSH kb52c clinical context remains deferred;
+* thyroid domain output must not imply TSH signal intelligence is present;
+* P1-22 may use TSH as scoring/status context only.
 
-`BLOCKED_MANIFEST_OR_HASH`
+Keep this ADR concise.
 
-Do not edit generated-pilot files.
+Do not create a broad thyroid medical authority paper.
 
-## Phase 2 — Record authority decision
+### 1E — Phase 1 validation gate
 
-Create the ADR / decision note.
+Run scoring-policy validation and relevant scoring tests.
 
-The ADR must be written before authority migration occurs.
+Required proof:
 
-Record Option A as authorised and cite repo evidence.
+* `lab_range_only` entries validate;
+* lab-provided ranges remain authoritative;
+* no global/default ranges added;
+* no unrelated scoring behaviour changed unexpectedly;
+* FT3 low remains excluded;
+* FT3 high retains mandatory TSH-suppressed companion gate;
+* TSH signal intelligence remains deferred.
 
-If hardcoded reference checks or naming checks fail, the ADR may instead record a deferral decision and implementation must stop.
+If Phase 1 validation fails, STOP. Do not proceed to Phase 2.
 
-## Phase 3 — Retire legacy `pkg_s24` authority
+## Phase 2 — Thyroid runtime domain activation
 
-Retire `knowledge_bus/packages/pkg_s24_ferritin_high_overload` from active production authority.
+Proceed to Phase 2 only after Phase 1 passes.
 
-Preferred method:
+### 2A — Implement `wave1_thyroid`
 
-* use the repository’s established archive/deprecation pattern if one exists;
-* otherwise move the package out of active `knowledge_bus/packages/` into a clearly documented archive/deprecated package location if validation and repo conventions allow;
-* if moving directories would break tooling or package enumeration, replace active authority by neutralising/removing the collision only through an explicitly documented, validator-clean deprecation mechanism.
+Implement the thyroid launch-core domain following established launch-core domain patterns.
 
-Do not delete history silently.
+Expected runtime/product output:
 
-Do not leave `pkg_s24` claiming active `signal_ferritin_high` authority in `knowledge_bus/packages/`.
+* `wave1_thyroid` domain active;
+* thyroid domain assembler/card/subsystem routing implemented;
+* TSH scoring/status visible only as lab-range-only scoring, not signal intelligence;
+* FT4 scoring/firing visible where authorised;
+* FT3 high scoring/firing visible only with mandatory TSH-suppressed companion gate;
+* FT3 low absent from allowlists and not launch-visible.
 
-After retirement, run the signal authority collision regression test.
+### 2B — Tests
 
-If the package cannot be retired cleanly without changing runtime code or breaking validation, STOP and classify:
+Add/update tests proving:
 
-`BLOCKED_LEGACY_AUTHORITY_RETIREMENT_PATH_UNRESOLVED`
+* thyroid domain appears as active launch-core domain;
+* TSH lab-range-only scoring works without implying TSH signal intelligence;
+* FT4 thyroid scoring/routing works;
+* FT3 high requires mandatory TSH-suppressed companion gate;
+* FT3 low does not activate and is not in thyroid domain allowlists;
+* lab-provided ranges remain authoritative;
+* no global/default ranges introduced;
+* existing launch-core domains are not regressed;
+* scoring policy validation passes;
+* snapshot/replay or domain assembler tests are updated only where expected.
 
-## Phase 4 — Create modern ferritin-high production packages
+### 2C — No frontend/report prose work
 
-For each candidate passing Phase 1:
+Do not implement frontend display changes, Gemini wording, report prose or marketing copy.
 
-* create the resolved modern production package directory;
-* create:
+If backend DTO/card contract must expose thyroid domain data for existing render-only frontend to consume, keep it minimal and backend-contract focused.
 
-  * `package_manifest.yaml`
-  * `research_brief.yaml`
-  * `signal_library.yaml`
-  * `promoted_signal_intelligence.yaml`
-
-`promoted_signal_intelligence.yaml` must be a byte-copy from the staged generated-pilot PSI.
-
-`signal_library.yaml`, `research_brief.yaml`, and `package_manifest.yaml` may be authored only from governed Pass 3 source and/or validated staged compile artefacts.
-
-Every field must trace to source evidence.
-
-Do not create placeholder thresholds.
-
-Do not invent clinical text.
-
-Do not weaken or merge the two distinct clinical contexts.
-
-Both packages should retain:
-
-`signal_id: signal_ferritin_high`
-
-unless hardening proves this is invalid. Do not create new signal IDs.
-
-## Phase 5 — Validation
-
-Run applicable validation:
-
-* direct PSI validation for both new production PSI files;
-* `python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus/packages/<new_package>` for both new packages;
-* `python backend/scripts/validate_staged_psi_activation_readiness.py`;
-* `python -m pytest backend/tests/regression/test_signal_authority_collision_enforcement.py` or repository-equivalent command.
-
-If a standard Knowledge Bus package validation batch exists, run it as well.
-
-Do not edit validators to make validation pass.
-
-If regression test requires fixture update because `pkg_s24` was retired, update only that regression fixture/test expectation and explain why.
-
-## Phase 6 — Carry-forward manifest
+## Phase 3 — Carry-forward manifest
 
 Create:
 
-`docs/sprints/beta_readiness/P1-21_pass3_carry_forward.yaml`
+`docs/sprints/beta_readiness/P1-22_pass3_carry_forward.yaml`
 
-Include only unresolved items.
+Include only material unresolved items.
 
-For each unresolved item record:
+Expected carry-forwards may include:
+
+* TSH signal intelligence / kb52c promotion deferred;
+* FT3 low runtime activation deferred;
+* any thyroid marker unable to enter `lab_range_only` scoring safely;
+* any domain routing issue blocked by external authority.
+
+For each item record:
 
 * item ID;
-* package/candidate reference;
+* marker/package reference;
 * reason not implemented;
 * blocker class;
-* owner agent;
+* owner agent:
+
+  * Core Engine
+  * Knowledge Bus
+  * Medical Review
+  * Frontend/Presentation
 * launch/beta relevance;
-* recommended next package.
+* recommended future package.
 
-Do not re-document unrelated P1-20 CBC items.
+Do not re-document unrelated iron/ferritin/CBC carry-forwards.
 
-Do not include ferritin-low or TSAT unless accidentally encountered and explicitly out of scope.
-
-## Phase 7 — Sprint report and build register
+## Phase 4 — Sprint report and build register
 
 Create:
 
-`docs/sprints/beta_readiness/P1-21_ferritin_high_authority_reconciliation.md`
+`docs/sprints/beta_readiness/P1-22_thyroid_activation_pack.md`
 
 Keep it concise.
 
 Maximum structure:
 
 1. start state;
-2. authority decision;
-3. legacy package retirement result;
-4. production package creation result;
-5. validation result;
+2. Phase 1 scoring/authority outcome;
+3. Phase 2 runtime activation outcome;
+4. marker boundary decisions;
+5. validation results;
 6. carry-forwards;
 7. recommended next sprint.
 
@@ -392,33 +360,48 @@ Do not list every untouched file.
 
 ## Acceptance criteria
 
-P1-21 passes only if:
+P1-22 passes only if:
 
-1. `pkg_s24_ferritin_high_overload` authority status is explicitly resolved.
-2. ADR / decision note records Option A before implementation.
-3. Repo is searched for `pkg_s24_ferritin_high_overload`, `KBP-2404`, and `signal_ferritin_high`.
-4. No runtime/backend/scoring hardcoded dependency on `pkg_s24` is left unresolved.
-5. Target modern production package IDs are explicitly resolved and recorded before creation.
-6. Staged PSI hashes are verified against compile manifests before copy.
-7. No generated-pilot files are modified.
-8. No raw Pass 3 research is modified.
-9. No ferritin-low package is modified.
-10. No TSAT calculated-mode policy is modified.
-11. No new signal IDs are introduced.
-12. `signal_ferritin_high` remains the signal ID for both modern Pass 3 ferritin-high packages.
-13. Two modern production packages are created only if naming, hash, source and validation gates pass.
-14. `promoted_signal_intelligence.yaml` files are byte-copies from staged artefacts.
-15. No medical content is invented.
-16. No placeholder thresholds are created.
-17. Every changed/new PSI validates.
-18. Every changed/new package validates.
-19. Signal authority collision regression passes.
-20. No runtime/frontend/parser/validator/DTO/Gemini/scoring changes occur.
-21. Any regression test edit is limited to reflecting `pkg_s24` retirement and must not weaken collision enforcement.
-22. Carry-forward manifest captures unresolved items, if any.
+1. `lab_range_only` schema is verified before scoring-policy edits.
+2. Hormonal scoring rail is populated only for authorised thyroid-axis marker scope.
+3. TSH enters scoring only, not signal intelligence.
+4. TSH authority decision note records signal intelligence deferral.
+5. Domain output does not imply TSH kb52c clinical context is active.
+6. FT4 is included only where launch authority supports it.
+7. FT3 high is included with mandatory TSH-suppressed companion gate.
+8. FT3 low remains excluded from all allowlists and activation paths.
+9. No global/default thyroid reference ranges are introduced.
+10. Lab-provided ranges remain authoritative.
+11. Phase 1 validation passes before Phase 2 begins.
+12. `wave1_thyroid` domain is active at runtime after Phase 2.
+13. Thyroid domain assembler/card/subsystem routing is implemented.
+14. Tests prove thyroid domain activation.
+15. Tests prove TSH scoring without TSH signal intelligence.
+16. Tests prove FT3 high companion-gate behaviour.
+17. Tests prove FT3 low remains inactive/deferred.
+18. Existing launch-core domains do not regress.
+19. No Knowledge Bus medical content is edited.
+20. No raw Pass 3 research is edited.
+21. No frontend/Gemini/report prose work is introduced.
+22. Carry-forward manifest captures deferred thyroid items with owner and blocker class.
 23. Build register is updated concisely.
 24. Sprint report is concise.
 25. Final audit includes `pipeline_advisory_trigger` and `pipeline_advisory_reason`.
+
+## Validation commands
+
+Run all relevant existing validation commands.
+
+At minimum:
+
+* scoring policy validator / schema validation command identified in Phase 1A;
+* relevant scoring policy tests;
+* thyroid domain/domain assembler tests;
+* regression tests for launch-core domain routing;
+* architecture/governance tests required by Automation Bus finish;
+* `python backend/scripts/run_work_package.py finish`.
+
+Do not invent new validation tooling unless existing test patterns require a new test file.
 
 ## Closure requirements
 
