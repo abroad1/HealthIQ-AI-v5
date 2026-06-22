@@ -7,3 +7,8 @@ author: HealthIQ Architecture Team
 created_at: '2026-03-12'
 source_document: knowledge_bus/research/investigation_specs/inv_ferritin_high_overload_v1.yaml
 translation_mode: creation
+deprecated: true
+deprecated_by:
+  - pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+  - pkg_kb52c_ferritin_high_iron_overload_context
+deprecated_reason: Option A authority migration per ADR-FERRITIN-HIGH-SIGNAL-AUTHORITY-RECONCILIATION-1

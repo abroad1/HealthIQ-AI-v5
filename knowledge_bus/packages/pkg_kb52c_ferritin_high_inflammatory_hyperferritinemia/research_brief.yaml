@@ -1,0 +1,16 @@
+research_domain: inflammatory
+sources:
+- source_id: source_iron_deficiency_review_2020
+  paper_title: Diagnosis and management of iron deficiency in chronic inflammatory conditions
+  journal: Hematology ASH Education Program
+  year: 2020
+biomarkers:
+- crp
+- ferritin
+- neutrophils_abs
+- transferrin_saturation
+physiological_claim: Ferritin commonly rises in inflammation and tissue injury, so elevation
+  does not by itself establish increased iron stores.
+evidence_strength: strong
+research_summary: KB-S52C Pass 3 ingestion from Batch_4_Pass_3.json; spec_id=inv_ferritin_high_inflammatory_hyperferritinemia;
+  signal_id=signal_ferritin_high; investigation_spec_contract_version=3.0.0.

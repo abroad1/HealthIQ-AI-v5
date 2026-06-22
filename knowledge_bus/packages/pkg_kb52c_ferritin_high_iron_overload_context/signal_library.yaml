@@ -1,0 +1,92 @@
+library:
+  package_id: KBP-4761
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C — Ferritin High Iron Overload Context
+  description: Ingested from inv_ferritin_high_iron_overload_context (Batch_4_Pass_3.json).
+    KB-S52C ferritin-high iron-overload context tranche.
+signals:
+- signal_id: signal_ferritin_high
+  name: Ferritin High Iron Overload Context
+  description: High ferritin can reflect increased iron stores, but interpretation requires
+    discrimination from inflammatory hyperferritinemia.
+  system: hematologic
+  primary_metric: ferritin
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: transferrin_saturation
+    expected_direction: high
+    role: corroborator
+    availability: specialist
+    rationale: Raised transferrin saturation supports increased circulating iron availability
+      and strengthens an iron overload frame.
+  - biomarker_id: alt
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Liver enzyme abnormalities can support hepatic iron deposition or parallel liver
+      injury in high-ferritin states.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: CRP helps distinguish inflammatory hyperferritinemia from ferritin elevation
+      driven mainly by iron overload.
+  dependencies:
+    biomarkers:
+    - alt
+    - crp
+    - ferritin
+    - transferrin_saturation
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_ferritin_high_lab_range_activation_placeholder
+    metric_id: ferritin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_ferritin_high_with_transferrin_saturation_high
+    resulting_state: at_risk
+    description: Escalate when high ferritin coincides with high transferrin saturation, as this
+      more strongly supports iron overload than inflammatory hyperferritinemia.
+    conditions:
+    - metric_id: transferrin_saturation
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_bsg_iron_guideline_2021
+  output:
+    signal_value: ferritin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: ferritin
+    supporting_markers:
+    - transferrin_saturation
+    - alt
+    - crp
+  explanation:
+    mechanism: Ferritin reflects stored and released iron; when transferrin saturation is concordantly
+      elevated, excess iron availability becomes more plausible than isolated inflammatory elevation.
+    biological_pathway: Iron storage, transferrin saturation dynamics, and hepatic iron handling
+      pathways relevant to ferritin interpretation.
+    interpretation: Ferritin elevation gains specificity for iron overload when transferrin saturation
+      is concordantly raised and inflammatory markers do not dominate the pattern.
+    implications: Transferrin saturation and inflammatory markers should be reviewed before attributing
+      high ferritin primarily to iron overload.
+    supporting_marker_roles: Raised transferrin saturation corroborates iron overload; ALT supports
+      hepatic context; CRP differentiates inflammatory hyperferritinemia.

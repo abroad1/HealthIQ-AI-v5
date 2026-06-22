@@ -524,6 +524,28 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-21 — Ferritin-high signal authority reconciliation and PSI promotion
+
+**Status:** Complete  
+**Date closed:** 2026-06-22  
+**Programme block(s):** Block 3 Layer B intelligence/prose substrate; Block 6 Medical safety and governance; Block 7 Auditability  
+
+### Delivered / ticked off
+- ADR Option A recorded (`ADR-FERRITIN-HIGH-SIGNAL-AUTHORITY-RECONCILIATION-1`).
+- `pkg_s24_ferritin_high_overload` deprecated in-place; two `pkg_kb52c_*` ferritin-high production packages created with byte-copied PSI.
+- Both packages validate; collision regression passes.
+
+### Carry-forwards
+- Iron Batch C medical-review PSI and TSAT calculated mode unchanged (out of scope).
+
+### Blockers / risks
+- pkg_s24 directory retained for test compatibility; active authority migrated to pkg_kb52c hosts.
+
+### Recommended next sprint
+- Iron Batch C medical-review sprint or bio-oxygen subsystem enrichment per P1-18 carry-forward.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

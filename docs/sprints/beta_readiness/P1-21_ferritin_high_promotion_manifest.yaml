@@ -1,0 +1,50 @@
+work_id: P1-21
+manifest_date: '2026-06-22'
+summary:
+  candidates: 2
+  provenance_confirmed: 2
+  production_packages_created: 2
+  legacy_deprecated: 1
+naming_resolution:
+  - staged_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    proposed_production_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    naming_rationale: pkg_kb52c is established ferritin production family (cf. pkg_kb52c_ferritin_low_iron_store_depletion)
+    nearest_precedent: pkg_kb52c_ferritin_low_iron_store_depletion
+    collision_check: no existing production host
+    final_decision: use_staged_id_as_production_id
+  - staged_package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    proposed_production_package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    naming_rationale: same KB-S52C ferritin production series
+    nearest_precedent: pkg_kb52c_ferritin_low_iron_store_depletion
+    collision_check: no existing production host
+    final_decision: use_staged_id_as_production_id
+candidates:
+  - carry_forward_id: p1_19_cf_001
+    staged_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    production_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/promoted_signal_intelligence.yaml
+    staged_psi_internal_package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    staged_psi_sha256: 56fbadc05409ea4a216ade0ec05607d130c4e74d27e8ebe1436e41c9243895ea
+    compile_manifest_hash_status: pass
+    provenance_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    opt_in_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    validation_result: PASS
+  - carry_forward_id: p1_19_cf_002
+    staged_package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    production_package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    staged_psi_path: knowledge_bus/generated_pilot/p1_11_batch_b/pkg_kb52c_ferritin_high_iron_overload_context/promoted_signal_intelligence.yaml
+    staged_psi_internal_package_id: pkg_kb52c_ferritin_high_iron_overload_context
+    staged_psi_sha256: 607660a9e77916651a3cbc345bd96ae20961f8764c851fea3f41270381712a1c
+    compile_manifest_hash_status: pass
+    provenance_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    opt_in_decision: PROVENANCE_CONFIRMED_REHOME_AND_OPT_IN
+    validation_result: PASS
+legacy_retirement:
+  package_id: pkg_s24_ferritin_high_overload
+  method: in_place_manifest_deprecation
+  signal_library_modified: false
+  directory_moved: false
+  deprecated_by:
+    - pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+    - pkg_kb52c_ferritin_high_iron_overload_context
+  adr: docs/architecture/ADR-FERRITIN-HIGH-SIGNAL-AUTHORITY-RECONCILIATION-1.md

@@ -1,0 +1,92 @@
+library:
+  package_id: KBP-4760
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C — Ferritin High Inflammatory Hyperferritinemia
+  description: Ingested from inv_ferritin_high_inflammatory_hyperferritinemia (Batch_4_Pass_3.json).
+    KB-S52C ferritin-high inflammatory context tranche.
+signals:
+- signal_id: signal_ferritin_high
+  name: Ferritin High Inflammatory Hyperferritinemia
+  description: Ferritin is also an acute-phase reactant, so high ferritin may reflect inflammatory
+    activation rather than iron excess.
+  system: inflammatory
+  primary_metric: ferritin
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: crp
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: High CRP strongly supports an inflammatory acute-phase explanation for ferritin
+      elevation.
+  - biomarker_id: neutrophils_abs
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Neutrophilia can support active inflammatory physiology when ferritin is high.
+  - biomarker_id: transferrin_saturation
+    expected_direction: any
+    role: differential_marker
+    availability: specialist
+    rationale: A non-elevated transferrin saturation helps redirect interpretation away from iron
+      overload toward inflammatory hyperferritinemia.
+  dependencies:
+    biomarkers:
+    - crp
+    - ferritin
+    - neutrophils_abs
+    - transferrin_saturation
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_ferritin_high_lab_range_activation_placeholder
+    metric_id: ferritin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_ferritin_high_with_crp_high
+    resulting_state: at_risk
+    description: Escalate when high ferritin coincides with high CRP, as this more strongly
+      supports clinically active inflammatory hyperferritinemia.
+    conditions:
+    - metric_id: crp
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_iron_deficiency_review_2020
+  output:
+    signal_value: ferritin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: ferritin
+    supporting_markers:
+    - crp
+    - neutrophils_abs
+    - transferrin_saturation
+  explanation:
+    mechanism: Ferritin rises as an acute-phase reactant during inflammation and tissue injury,
+      reflecting macrophage activation and cytokine-driven synthesis rather than iron loading
+      alone.
+    biological_pathway: Acute-phase response, macrophage iron sequestration, and inflammatory
+      cytokine signalling affecting ferritin synthesis.
+    interpretation: High ferritin in this context is consistent with inflammatory hyperferritinemia
+      and does not by itself establish increased iron stores.
+    implications: CRP and transferrin saturation help separate inflammatory hyperferritinemia
+      from true iron overload before inferring excess iron from ferritin elevation alone.
+    supporting_marker_roles: High CRP and neutrophilia corroborate active inflammation; transferrin
+      saturation acts as a differential marker redirecting away from iron overload when not elevated.

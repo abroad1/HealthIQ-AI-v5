@@ -1,0 +1,16 @@
+research_domain: hematologic
+sources:
+- source_id: source_bsg_iron_guideline_2021
+  paper_title: British Society of Gastroenterology guidelines for the management of iron deficiency anaemia in adults
+  journal: Gut
+  year: 2021
+biomarkers:
+- alt
+- crp
+- ferritin
+- transferrin_saturation
+physiological_claim: Ferritin elevation is not specific for iron overload, but concordant
+  transferrin saturation materially increases the plausibility of excess iron stores.
+evidence_strength: moderate
+research_summary: KB-S52C Pass 3 ingestion from Batch_4_Pass_3.json; spec_id=inv_ferritin_high_iron_overload_context;
+  signal_id=signal_ferritin_high; investigation_spec_contract_version=3.0.0.

@@ -1,0 +1,96 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_ferritin_high_iron_overload_context
+translation:
+  source: investigation_spec_v3_pass3_p1_11_batch_b
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_ferritin_high_iron_overload_context
+  signal_id: signal_ferritin_high
+  compiler_version: p1_11_batch_b_pass3_psi_compiler_v1.0.0
+  work_id: P1-11
+  cluster_id: ferritin_iron_stores
+signals:
+- signal_id: signal_ferritin_high
+  research_domain: hematologic
+  signal_system: hematologic
+  primary_metric:
+    biomarker_id: ferritin
+    rationale: High ferritin can reflect increased iron stores, but interpretation requires discrimination from inflammatory
+      hyperferritinemia.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: transferrin_saturation
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: specialist
+    rationale: Raised transferrin saturation supports increased circulating iron availability and strengthens an iron overload
+      frame.
+  - biomarker_id: alt
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Liver enzyme abnormalities can support hepatic iron deposition or parallel liver injury in high-ferritin states.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: CRP helps distinguish inflammatory hyperferritinemia from ferritin elevation driven mainly by iron overload.
+  contradiction_markers:
+  - contradiction_id: ctr_elevated_crp_challenges_true_overload
+    marker_reference: crp
+    contradiction_rationale: An elevated CRP challenges a true iron overload or excess storage interpretation by indicating
+      that high ferritin may reflect acute-phase inflammatory elevation rather than genuine iron accumulation, requiring transferrin
+      saturation to clarify.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_alt_weakens_hepatic_iron_context
+    marker_reference: alt
+    contradiction_rationale: A normal ALT weakens a hepatic iron-related ferritin elevation interpretation, as clinically
+      significant hepatic iron deposition or hepatic disease contributing to ferritin release is typically accompanied by
+      hepatocellular injury markers.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Assess liver enzymes and alcohol or metabolic liver context before assigning primary hereditary iron overload.
+    - Review transferrin saturation and inflammatory markers before attributing high ferritin to iron overload.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_ferritin_high_with_transferrin_saturation_high
+    resulting_state: at_risk
+    description: Escalate when high ferritin coincides with high transferrin saturation, as this more strongly supports iron
+      overload than inflammatory hyperferritinemia.
+    conditions:
+    - metric_id: transferrin_saturation
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_bsg_iron_guideline_2021
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Ferritin elevation is not specific for iron overload, but concordant transferrin saturation materially
+      increases the plausibility of excess iron stores.
+    threshold_notes: Interpretation should remain laboratory and context anchored rather than assigning iron overload from
+      ferritin magnitude alone.
+    sources:
+    - source_id: source_bsg_iron_guideline_2021
+      paper_title: British Society of Gastroenterology guidelines for the management of iron deficiency anaemia in adults
+      journal: Gut
+      year: 2021
+  confirmatory_test_refs:
+  - test_id: ct_transferrin_saturation_repeat_ferritin
+    rationale: Transferrin saturation with repeat ferritin helps separate iron overload from nonspecific ferritin elevation.
