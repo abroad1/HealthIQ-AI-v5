@@ -1,0 +1,114 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+  signal_id: signal_tpo_ab_high
+signals:
+- signal_id: signal_tpo_ab_high
+  research_domain: thyroid
+  signal_system: endocrine
+  primary_metric:
+    biomarker_id: tpo_ab
+    rationale: Elevated thyroid peroxidase antibodies support an autoimmune thyroid
+      context when paired with raised TSH and available free T4; not diagnostic on its own.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: tsh
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Raised TSH corroborates primary thyroid hormone insufficiency in the
+      setting of thyroid peroxidase antibody elevation.
+  - biomarker_id: free_t4
+    expected_direction: low
+    role: severity_marker
+    relationship_kind: severity
+    availability: common
+    rationale: Low free T4 helps grade biochemical severity alongside antibody positivity.
+  - biomarker_id: free_t3
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: A hyperthyroid hormone pattern redirects interpretation away from a
+      hypothyroid biochemistry frame.
+  - biomarker_id: tgab
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Concurrent thyroglobulin antibody positivity strengthens broader thyroid
+      autoimmunity context but is not required for emission.
+  contradiction_markers:
+  - contradiction_id: ctr_nonsuppressed_tsh
+    marker_reference: tsh
+    contradiction_rationale: TSH within the laboratory reference range weakens interpretation
+      of antibody elevation as supporting current primary hypothyroid biochemistry.
+    contradiction_strength: strong
+  - contradiction_id: ctr_suppressed_tsh
+    marker_reference: tsh
+    contradiction_rationale: Suppressed TSH redirects away from a primary hypothyroid
+      biochemistry frame toward thyrotoxic or alternative contexts.
+    contradiction_strength: strong
+  missing_data:
+    policies:
+    - Do not infer hypothyroidism or specific thyroid disease labels from antibody elevation
+      without corroborating thyroid function markers.
+    - Interpret TPO antibody elevation as contextual pattern support, not a stand-alone
+      diagnosis.
+  confidence:
+    evidence_strength: strong
+  override_rules:
+  - rule_id: or_tpo_ab_high_with_primary_hypothyroid_pattern
+    resulting_state: at_risk
+    description: Escalate when high TPO antibodies coexist with raised TSH and low free
+      T4, as this combination more strongly supports active autoimmune thyroid biochemistry
+      than isolated antibody positivity.
+    conditions:
+    - metric_id: tsh
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: free_t4
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_tpo_nice_hypothyroid_context
+    - source_tpo_ata_autoimmune_guidance
+  evidence:
+    evidence_strength: strong
+    physiological_claim: TPO antibody positivity supports autoimmune thyroid context
+      when primary hypothyroid biochemistry is present; antibody elevation alone is
+      not sufficient for disease attribution.
+    threshold_notes: Emission requires TPO antibody above the laboratory range and
+      TSH above the laboratory range with free T4 present.
+    sources:
+    - source_id: source_tpo_nice_hypothyroid_context
+      paper_title: NICE guideline on thyroid disease assessment and management
+      journal: NICE guideline NG145
+      year: 2019
+    - source_id: source_tpo_ata_autoimmune_guidance
+      paper_title: American Thyroid Association autoimmune thyroiditis patient guidance
+      journal: American Thyroid Association
+      year: 2023
+  confirmatory_test_refs:
+  - test_id: ct_repeat_thyroid_panel_with_tpo_ab
+    rationale: Repeat thyroid function testing helps confirm persistence of the biochemical
+      pattern alongside antibody elevation.

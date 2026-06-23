@@ -8,5 +8,6 @@ author: HealthIQ Knowledge Bus — KB-S59
 created_at: '2026-04-01'
 source_document: knowledge_bus/research/investigation_specs/multi_llm_research/thyroid_antibodies_pass_3.json
 translation_mode: creation
-behavioural_impact: NONE
+behavioural_impact: SIGNAL_RUNTIME_ACTIVATION
+promoted_signal_intelligence: promoted_signal_intelligence.yaml
 engine_compatibility: v5.x

@@ -64,6 +64,35 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
+  runtime_context_requirements:
+    missing_context_behaviour: suppress_signal
+    required_context:
+    - context_type: biomarker
+      key: tsh
+      requirement: present
+    - context_type: biomarker
+      key: free_t4
+      requirement: present
+    - context_type: medication
+      key: thyroid_medication_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_yes
+      - answered_no
+      - not_answered
+    - context_type: clinical_context
+      key: pregnancy_status
+      requirement: disclosure_state
+      allowed_values:
+      - answered_no
+      - not_answered
+      - not_applicable
+  mandatory_pre_emission_gates:
+  - gate_id: require_tsh_elevated
+    metric_id: tsh
+    comparator_type: lab_range_boundary
+    boundary: above_max
+    condition_type: all_of
   override_rules:
   - rule_id: or_tpo_ab_high_with_primary_hypothyroid_pattern
     resulting_state: at_risk

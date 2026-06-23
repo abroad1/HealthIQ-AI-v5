@@ -1,0 +1,29 @@
+work_id: P1-25
+manifest_date: '2026-06-23'
+summary:
+  mr_v2_authority: docs/Medical Research Documents/Medical_Research_Activation_Review_Deferred_Wave_1_Items_v2.md
+  adr: docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md
+  ft3_low_candidate: PASS
+  tpo_ab_hypothyroid_candidate: PASS
+medical_review_gate:
+  authority_document: Medical_Research_Activation_Review_Deferred_Wave_1_Items_v2.md
+  decision: PASS
+  blocker_class: null
+candidates:
+  - production_package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+    investigation_spec_id: inv_free_t3_low_low_t3_syndrome
+    signal_id: signal_free_t3_low
+    validation_result: PASS
+    opt_in_decision: PRODUCTION_OPT_IN
+    gates:
+      - mandatory_pre_emission_tsh_not_below_min
+      - runtime_context_requirements
+  - production_package_id: pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern
+    investigation_spec_id: inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+    signal_id: signal_tpo_ab_high
+    validation_result: PASS
+    opt_in_decision: PRODUCTION_OPT_IN
+    gates:
+      - mandatory_pre_emission_tsh_above_max
+      - runtime_context_requirements
+phase_2_authority: ALLOWED

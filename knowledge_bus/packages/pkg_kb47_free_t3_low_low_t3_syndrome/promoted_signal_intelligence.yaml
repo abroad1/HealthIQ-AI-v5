@@ -39,13 +39,13 @@ signals:
     role: differential_marker
     relationship_kind: differential
     availability: common
-    rationale: TSH context is essential for separating low T3 syndrome from primary
+    rationale: TSH context is essential for separating contextual low FT3 patterns from primary
       thyroid failure.
   contradiction_markers:
   - contradiction_id: ctr_primary_hypothyroid_pattern
     marker_reference: tsh
     contradiction_rationale: A clearly elevated TSH with low free T4 shifts interpretation
-      toward primary thyroid hormone deficiency rather than isolated low T3 syndrome.
+      toward primary thyroid hormone deficiency rather than an isolated contextual low FT3 pattern.
     contradiction_strength: strong
   - contradiction_id: ctr_elevated_tsh_redirects_from_conversion_deficit
     marker_reference: tsh
@@ -65,7 +65,7 @@ signals:
   - rule_id: or_free_t3_low_with_free_t4_low
     resulting_state: at_risk
     description: Escalate when low free T3 coincides with low free T4, as this is
-      less consistent with isolated low T3 syndrome and more concerning for broader
+      less consistent with an isolated contextual low FT3 pattern and more concerning for broader
       thyroid hormone deficiency or severe systemic illness.
     conditions:
     - metric_id: free_t4

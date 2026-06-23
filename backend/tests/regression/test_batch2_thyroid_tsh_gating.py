@@ -6,6 +6,7 @@ from pathlib import Path
 
 import yaml
 
+from core.analytics.runtime_context_evaluator import build_runtime_context_snapshot
 from core.analytics.signal_evaluator import SignalEvaluator, SignalRegistry
 from core.knowledge.signal_activation_identity_v1 import resolve_activation_identity
 
@@ -15,6 +16,7 @@ THYROID_LAB_RANGES = {
     "free_t3": {"min": 2.0, "max": 4.4},
     "free_t4": {"min": 0.8, "max": 1.8},
     "tsh": {"min": 0.4, "max": 4.5},
+    "tpo_ab": {"min": 0.0, "max": 34.0},
 }
 
 
@@ -43,12 +45,19 @@ def _load_package_signal(package_dir: str, signal_id: str) -> dict:
     raise AssertionError(f"signal {signal_id} not found in {path}")
 
 
-def _evaluate_signal(signal: dict, biomarkers: dict[str, float]) -> list:
+def _evaluate_signal(
+    signal: dict,
+    biomarkers: dict[str, float],
+    *,
+    runtime_context=None,
+    lab_ranges: dict | None = None,
+) -> list:
     evaluator = SignalEvaluator(_SingleSignalRegistry(signal))
     return evaluator.evaluate_all(
         signal_biomarkers=biomarkers,
         signal_derived={},
-        lab_ranges=THYROID_LAB_RANGES,
+        lab_ranges=lab_ranges or THYROID_LAB_RANGES,
+        runtime_context=runtime_context,
     )
 
 
@@ -128,16 +137,55 @@ def test_ft4_low_emits_when_ft4_low_and_tsh_present():
     assert _signal_ids(results) == {"signal_free_t4_low"}
 
 
-def test_ft3_low_frame_deferred_after_p1_5_reconciliation():
+def _tpo_ab_runtime_context():
+    return build_runtime_context_snapshot(questionnaire_responses={"long_term_medications": []})
+
+
+def test_ft3_low_frame_active_after_p1_25_mr_v2():
     index_path = REPO_ROOT / "knowledge_bus/governance/medical_frame_identity_index_v1.yaml"
     text = index_path.read_text(encoding="utf-8")
     assert "frame_batch2_free_t3_low_low_t3_syndrome" in text
     assert "source_package_id: pkg_kb47_free_t3_low_low_t3_syndrome" in text
-    assert "P1-5-RECONCILIATION-1" in text
     section_start = text.index("frame_batch2_free_t3_low_low_t3_syndrome")
-    section = text[section_start : section_start + 700]
-    assert "promotion_state: compiled_not_promoted" in section
-    assert "runtime_authority_status: inactive" in section
+    section = text[section_start : section_start + 1600]
+    assert "promotion_state: runtime_active_canonical" in section
+    assert "runtime_authority_status: active" in section
+    assert "P1-25-MR-V2-ACTIVATION-1" in section
+
+
+def test_ft3_low_suppresses_when_tsh_suppressed():
+    signal = _load_package_signal(
+        "pkg_kb47_free_t3_low_low_t3_syndrome",
+        "signal_free_t3_low",
+    )
+    results = _evaluate_signal(signal, {"free_t3": 1.5, "tsh": 0.2, "free_t4": 1.2})
+    assert _signal_ids(results) == set()
+
+
+def test_tpo_ab_high_suppresses_when_tsh_within_range():
+    signal = _load_package_signal(
+        "pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern",
+        "signal_tpo_ab_high",
+    )
+    results = _evaluate_signal(
+        signal,
+        {"tpo_ab": 50.0, "tsh": 2.0, "free_t4": 1.2},
+        runtime_context=_tpo_ab_runtime_context(),
+    )
+    assert _signal_ids(results) == set()
+
+
+def test_tpo_ab_high_emits_when_tpo_ab_and_tsh_elevated_with_ft4():
+    signal = _load_package_signal(
+        "pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern",
+        "signal_tpo_ab_high",
+    )
+    results = _evaluate_signal(
+        signal,
+        {"tpo_ab": 50.0, "tsh": 5.0, "free_t4": 1.2},
+        runtime_context=_tpo_ab_runtime_context(),
+    )
+    assert _signal_ids(results) == {"signal_tpo_ab_high"}
 
 
 def test_androgen_packages_remain_inactive_in_frame_index():

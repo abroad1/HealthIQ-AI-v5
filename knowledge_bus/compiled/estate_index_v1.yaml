@@ -44,7 +44,7 @@ card_evidence_artefacts:
     launch_classification: launch_included_compiled
   - subsystem_id: wave1_thy_hormonal_axis
     artefact_path: knowledge_bus/compiled/health_system_cards/wave1_thy_hormonal_axis.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/p1_23_thyroid_hormonal_axis_card_evidence.yaml
+    compile_manifest_path: knowledge_bus/compiled/manifests/p1_25_thyroid_completion_card_evidence.yaml
     launch_classification: launch_included_compiled
 
 compiled_hypothesis_artefacts:

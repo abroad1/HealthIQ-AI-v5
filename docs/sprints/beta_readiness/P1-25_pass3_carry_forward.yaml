@@ -1,0 +1,41 @@
+work_id: P1-25
+manifest_date: '2026-06-23'
+carry_forward_items:
+  - item_id: p1_25_cf_questionnaire_ft3_context
+    reference: signal_free_t3_low runtime context fields
+    reason: >
+      FT3-low requires illness/recovery, calorie restriction, fasting, and thyroid medication
+      disclosure fields not fully present in questionnaire.json; production path remains fail-closed
+      until questionnaire alignment.
+    blocker_class: QUESTIONNAIRE_CONTEXT_ALIGNMENT
+    owner_agent: Product / questionnaire / frontend-input workflow
+    launch_relevance: non_blocking_fail_closed
+    recommended_future_package: P1-QUESTIONNAIRE-THYROID-CONTEXT-1
+  - item_id: p1_25_cf_biotin_disclosure
+    reference: biotin_or_assay_interference_disclosure
+    reason: >
+      Optional eighth FT3-low context requirement not added; runtime_context_semantics_model_v1
+      has no biotin primitive. Documented as signal-library schema follow-on.
+    blocker_class: SCHEMA_FOLLOW_ON
+    owner_agent: Knowledge Bus
+    launch_relevance: deferred_optional
+    recommended_future_package: P1-RUNTIME-CONTEXT-BIOTIN-1
+  - item_id: p1_25_cf_tpo_ab_euthyroid
+    reference: pkg_kb59_tpo_ab_high_euthyroid_autoimmune_risk
+    reason: MR-v2 defers TPOAb euthyroid context post-launch
+    blocker_class: ANTIBODY_EUTHYROID_DEFERRED
+    owner_agent: Medical Review
+    launch_relevance: deferred
+    recommended_future_package: P1-TPOAB-EUTHYROID-ACTIVATION-1
+  - item_id: p1_25_cf_tgab
+    reference: pkg_kb59_tgab packages
+    reason: MR-v2 defers TgAb; corroborator-only
+    blocker_class: TGAB_DEFERRED
+    owner_agent: Medical Review
+    launch_relevance: deferred
+    recommended_future_package: P1-TGAB-ACTIVATION-1
+resolved_in_p1_25:
+  - item_id: p1_22_cf_002
+    resolution: signal_free_t3_low activated with MR-v2 strict gates and allowlist inclusion
+  - item_id: p1_22_cf_003
+    resolution: partially_closed — TPOAb hypothyroid biochemistry frame activated; euthyroid and TgAb remain deferred

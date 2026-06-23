@@ -89,6 +89,12 @@ signals:
       - answered_no
       - not_answered
       - not_applicable
+  mandatory_pre_emission_gates:
+  - gate_id: require_tsh_not_suppressed
+    metric_id: tsh
+    comparator_type: lab_range_boundary
+    boundary: not_below_min
+    condition_type: all_of
   override_rules:
   - rule_id: or_free_t3_low_with_free_t4_low
     resulting_state: at_risk
@@ -116,9 +122,9 @@ signals:
       during systemic stress, inflammation, or illness.
     biological_pathway: Peripheral deiodination and adaptive thyroid hormone metabolism
       during illness.
-    interpretation: An isolated low free T3 is more consistent with a contextual low
-      T3 syndrome than primary thyroid failure in many clinical settings, though the
-      broader thyroid panel is needed to confirm this interpretation.
+    interpretation: An isolated low free T3 is more consistent with a contextual reduced
+      peripheral T3 availability pattern than primary thyroid failure in many clinical
+      settings, though the broader thyroid panel is needed to confirm this interpretation.
     implications: The key question is whether the pattern normalizes with recovery
       or whether the broader thyroid panel indicates genuine thyroid hormone deficiency.
     supporting_marker_roles: Free T4 and TSH are mainly differential markers that

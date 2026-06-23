@@ -611,6 +611,29 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-25 — Thyroid MR-v2 Activation Completion
+
+**Status:** Complete  
+**Date closed:** 2026-06-23  
+**Programme block(s):** Block 3 Layer B intelligence substrate  
+
+### Delivered / ticked off
+- MR-v2-cleared activation of `signal_free_t3_low` and `signal_tpo_ab_high` with strict pre-emission gates.
+- ADR-THYROID-MR-V2-ACTIVATION-1; thyroid allowlist and medical frame governance updated.
+- TPOAb PSI authored; `wave1_thy_hormonal_axis` enriched with FT3-low and TPOAb depth.
+
+### Carry-forwards
+- Questionnaire alignment for FT3-low context fields (fail-closed in production).
+- TPOAb euthyroid context and TgAb packages remain deferred.
+
+### Blockers / risks
+- None material for P1-25 scope; FT3-low remains fail-closed without full questionnaire context.
+
+### Recommended next sprint
+- Questionnaire thyroid context alignment or deferred antibody tranche.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

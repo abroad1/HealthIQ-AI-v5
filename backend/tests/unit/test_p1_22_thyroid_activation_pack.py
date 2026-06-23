@@ -164,7 +164,7 @@ def test_ft3_high_requires_tsh_suppressed_companion_gate():
     assert allowed[0].signal_id == "signal_free_t3_high"
 
 
-def test_ft3_low_not_in_thyroid_domain_allowlist():
+def test_ft3_low_in_thyroid_domain_allowlist_after_p1_25():
     signals = [
         {
             "signal_id": "signal_free_t3_low",
@@ -182,7 +182,7 @@ def test_ft3_low_not_in_thyroid_domain_allowlist():
     )
     thy = rows[5]
     assert thy.domain_id == "wave1_thyroid"
-    assert thy.active_signal_ids == []
+    assert thy.active_signal_ids == ["signal_free_t3_low"]
 
 
 def test_tsh_high_fires_in_thyroid_domain_after_p1_23():
