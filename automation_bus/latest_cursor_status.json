@@ -1,10 +1,9 @@
 {
-  "branch": "sprint/P1-24-bio-oxygen-subsystem-signal-depth",
+  "branch": "feature/p1-25-thyroid-mr-v2-activation-completion",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-22T23:01:52Z",
-  "cursor_started_utc": "2026-06-22T22:57:34Z",
-  "head_sha": "cd111bc31449a1b8a179e0477fd4f1d08e62d754",
+  "cursor_started_utc": "2026-06-23T21:40:07Z",
+  "head_sha": "59bf4d74376a4cfd450e82f4948b3250cd5a12cb",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-24"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-25"
 }
