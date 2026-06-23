@@ -1,9 +1,10 @@
 {
   "branch": "feature/p1-25-thyroid-mr-v2-activation-completion",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-23T21:49:14Z",
   "cursor_started_utc": "2026-06-23T21:40:07Z",
-  "head_sha": "59bf4d74376a4cfd450e82f4948b3250cd5a12cb",
+  "head_sha": "47d03eaef503ce5ba9c3e5e25a81e11802a1c7f8",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-25"
 }
