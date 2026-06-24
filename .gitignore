@@ -44,9 +44,8 @@ reports/forensics/
 !.cursor/rules/
 !.cursor/rules/**
 
-# Local Claude Code state; keep shared CLAUDE.md
+# Local Claude Code state; keep shared CLAUDE.md and project skills
 .claude/settings.local.json
-.claude/skills/
 **/__pycache__/
 .pytest_cache/
 *.pyc
