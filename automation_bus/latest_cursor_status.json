@@ -1,9 +1,10 @@
 {
   "branch": "feature/p1-26-mr-v2-iron-homocysteine-signal-activation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-26T07:14:56Z",
   "cursor_started_utc": "2026-06-26T07:04:39Z",
-  "head_sha": "edd01341126ceb74d650509a07a5b68895fa094a",
+  "head_sha": "db51fc6f9a52ef6d740a2dabe30f9fe413d51bb4",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P1-26"
 }
