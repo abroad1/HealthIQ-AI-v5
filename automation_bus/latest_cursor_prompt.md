@@ -1,76 +1,88 @@
 ---
-work_id: P1-25
-branch: feature/p1-25-thyroid-mr-v2-activation-completion
+work_id: P1-26
+branch: feature/p1-26-mr-v2-iron-homocysteine-signal-activation
 risk_level: HIGH
-execution_model: SINGLE_PHASE
+execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# P1-25 — Thyroid MR-v2 Activation Completion
+# P1-26 — MR-v2 Cleared Signal Activation Cohort: Iron + Homocysteine
 
 You are Cursor, acting as a combined Knowledge Bus + Core Engine implementation agent under Automation Bus SOP v1.3.1.
 
 This is a HIGH-risk MIXED sprint.
 
-This sprint implements the MR-v2-cleared thyroid activation package as one outcome-based sprint:
+This sprint implements the MR-v2-cleared iron and homocysteine activation cohort as one outcome-based package.
 
-1. FT3-low / reduced peripheral T3 availability context.
-2. TPOAb-high / autoimmune thyroid context supporting hypothyroid biochemistry.
+Candidate set:
 
-Do not split this into separate FT3-only, TPOAb-only, ADR-only, allowlist-only, or card-only sprints unless a hard STOP gate fires.
+1. Iron low / absolute iron deficiency context.
+2. Iron low / functional inflammatory restriction context.
+3. Iron high / iron overload context.
+4. Homocysteine high / B-vitamin processing context.
+5. Homocysteine high / renal clearance context.
+
+Do not split this into separate iron-only, homocysteine-only, PSI-only, allowlist-only, package-only, card-only or test-only sprints unless a hard STOP gate fires.
+
+Do not run another advisory.
+
+## Controlling scoping facts
+
+Use the completed P1-26 scope advisory as current scoping authority.
+
+Key facts:
+
+* P1-26 remains one sprint.
+* No whole-sprint blocker exists.
+* All five candidate package paths are present.
+* All five candidates have staged PSI available.
+* Three iron candidates require new production package folders.
+* Two homocysteine production packages already exist but lack `promoted_signal_intelligence.yaml`.
+* Iron requires `domain_score_assembler.py` change: add `signal_iron_low` and `signal_iron_high` to `_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS`.
+* Homocysteine requires no `domain_score_assembler.py` change because `_is_wave1_cardiovascular` already routes `signal_homocysteine_high` by predicate.
+* Directly reported `transferrin_saturation` is SSOT-canonical.
+* No calculated TSAT mode is required or allowed.
+* No obvious prohibited user-facing wording blocker was found.
+* Compiled card enrichment is safe for:
+
+  * `wave1_bio_oxygen_carrying_capacity`
+  * `wave1_cv_homocysteine_pathway`
 
 ## Authority inputs
 
 Read before editing:
 
+* `automation_bus/latest_audit_summary.md`
 * `automation_bus/latest_pipeline_advisory.md`
 * `automation_bus/latest_pipeline_advisory_throughput_challenge.md`
 * `automation_bus/latest_scope_advisory.md`
-* latest `automation_bus/latest_audit_summary.md`
 * `docs/Medical Research Documents/Medical_Research_Activation_Review_Deferred_Wave_1_Items_v2.md`
 * `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-* latest P1-22, P1-23 and P1-24 sprint artefacts
-* `docs/architecture/ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md`
-* `docs/architecture/ADR-THYROID-TSH-LAUNCH-SCORING-ONLY-1.md`
-* `docs/architecture/ADR-THYROID-TSH-SIGNAL-INTELLIGENCE-ACTIVATION-1.md`
-* `docs/architecture/ADR-THYROID-SCORING-LAB-RANGE-ARCHITECTURE-1.md`
+* `docs/sprints/beta_readiness/P1-25_pass3_carry_forward.yaml`
+* `docs/sprints/beta_readiness/P1-25_thyroid_mr_v2_activation_completion.md`
 
-Treat MR-v2 as the medical activation authority.
+Use production package examples only if needed for schema pattern confirmation:
 
-Treat `latest_pipeline_advisory_throughput_challenge.md` and `latest_scope_advisory.md` as the current scoping authority.
+* P1-21 ferritin-high package pattern
+* P1-23 TSH package pattern
+* P1-25 TPOAb package pattern
 
-Do not make new medical judgements.
+Do not broaden into advisory work.
 
 ## Sprint purpose
 
-Deliver one governed thyroid activation package that:
+Deliver one governed activation cohort that:
 
-* activates `signal_free_t3_low` only under strict MR-v2 gates;
-* activates `signal_tpo_ab_high` only under strict MR-v2 gates;
-* updates the thyroid domain allowlist once;
-* creates the required ADR authority document;
-* hardens the relevant Knowledge Bus signal libraries;
-* authors the missing TPOAb PSI;
-* updates medical frame governance;
-* enriches the compiled thyroid subsystem card;
-* updates regression and activation tests;
-* records carry-forwards clearly.
-
-## Expected product output
-
-After successful P1-25:
-
-* FT3-low is no longer categorically deferred.
-* FT3-low can fire only when all deterministic safety gates are satisfied.
-* FT3-low must not fire when required context is absent.
-* FT3-low must not fire when TSH is suppressed below the lab-provided range.
-* TPOAb-high can fire only when TPOAb is above the lab-provided range, TSH is above the lab-provided range, and FT4 is present.
-* TPOAb-high must not fire in euthyroid biochemistry.
-* TPOAb-high must not diagnose Hashimoto’s disease or autoimmune thyroid disease.
-* The thyroid launch allowlist includes both `signal_free_t3_low` and `signal_tpo_ab_high`.
-* `wave1_thy_hormonal_axis` includes FT3-low and TPOAb source-spec depth.
-* Prior FT3-low deferral is closed.
-* kb59 thyroid antibody deferral is partially closed: TPOAb hypothyroid frame only.
+* creates production packages for three iron candidates;
+* promotes staged PSI for three iron candidates;
+* completes production PSI for two homocysteine candidates;
+* updates iron runtime allowlist in `domain_score_assembler.py`;
+* leaves homocysteine assembler routing unchanged;
+* enforces MR-v2 gates using directly reported TSAT only;
+* avoids unsafe diagnostic wording;
+* updates compiled card evidence for iron and homocysteine;
+* updates tests and sprint artefacts;
+* records candidate-level outcomes and carry-forwards.
 
 ## Files in scope
 
@@ -78,62 +90,125 @@ After successful P1-25:
 
 * `backend/core/analytics/domain_score_assembler.py`
 
-Expected allowlist changes:
+Allowed changes only:
 
-* remove `signal_free_t3_low` from `_THYROID_EXCLUDED_SIGNAL_IDS`;
-* add `signal_free_t3_low` to `_THYROID_LAUNCH_SIGNAL_IDS`;
-* add `signal_tpo_ab_high` to `_THYROID_LAUNCH_SIGNAL_IDS`;
-* keep `signal_thyroid_tsh_context` excluded;
-* update the thyroid comment to reference P1-25 and `ADR-THYROID-MR-V2-ACTIVATION-1`.
+* add `signal_iron_low` to `_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS`;
+* add `signal_iron_high` to `_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS`;
+* update the iron comment to record that MR-v2 dated 2026-06-23 is the frame adjudication resolving the prior P1-3/P1-18 iron carry-forward;
+* do not alter homocysteine routing;
+* do not alter scoring logic, ranking logic, assembler structure, signal evaluator logic, or other domain constants.
 
-### Knowledge Bus package files
+### Iron production packages to create
 
-* `knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml`
-* `knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/promoted_signal_intelligence.yaml`
-* `knowledge_bus/packages/pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern/signal_library.yaml`
-* `knowledge_bus/packages/pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern/promoted_signal_intelligence.yaml`
-* `knowledge_bus/packages/pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern/package_manifest.yaml`
+Create full production package folders:
 
-### Governance / authority
+* `knowledge_bus/packages/pkg_kb52c_iron_low_absolute_iron_deficiency/`
+* `knowledge_bus/packages/pkg_kb52c_iron_low_functional_iron_restriction_inflammation/`
+* `knowledge_bus/packages/pkg_kb52c_iron_high_iron_overload_context/`
 
-* `knowledge_bus/governance/medical_frame_identity_index_v1.yaml`
-* `docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md`
+Each production package must include the required current package structure, expected to include:
+
+* `research_brief.yaml`
+* `signal_library.yaml`
+* `package_manifest.yaml`
+* `promoted_signal_intelligence.yaml`
+
+Use the staged PSI from:
+
+* `knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency/`
+* `knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_functional_iron_restriction_inflammation/`
+* `knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_iron_overload_context/`
+
+Follow the P1-21 ferritin-high production package pattern.
+
+Do not byte-copy blindly if current production package schema requires additional fields.
+
+### Homocysteine production packages to complete
+
+Update existing production package folders:
+
+* `knowledge_bus/packages/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/`
+* `knowledge_bus/packages/pkg_kb52c_homocysteine_high_renal_clearance_reduction/`
+
+Create:
+
+* `promoted_signal_intelligence.yaml` in each package.
+
+Use staged PSI from:
+
+* `knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/`
+* `knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_renal_clearance_reduction/`
+
+Update each homocysteine `package_manifest.yaml` to reflect production PSI availability and runtime surfacing accurately.
+
+Manifest amendment rule:
+
+* Do not imply a new homocysteine assembler allowlist activation.
+* Predicate routing is already live.
+* If active package pattern supports `SIGNAL_RUNTIME_ACTIVATION`, use it only if it means production PSI/runtime surfacing.
+* If that value specifically implies a newly added allowlist switch, choose the closest accurate package status used by existing active predicate-routed packages.
+* Record the decision in the sprint report.
 
 ### Compiled card estate
 
-* `knowledge_bus/compiled/health_system_cards/wave1_thy_hormonal_axis.yaml`
-* `knowledge_bus/compiled/manifests/p1_25_thyroid_completion_card_evidence.yaml`
+Update:
+
+* `knowledge_bus/compiled/health_system_cards/wave1_bio_oxygen_carrying_capacity.yaml`
+* `knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml`
 * `knowledge_bus/compiled/estate_index_v1.yaml`
+
+Create:
+
+* `knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml`
+
+Expected card changes:
+
+* add passing iron source specs and package refs to `wave1_bio_oxygen_carrying_capacity`;
+* preserve P1-24 transferrin-high enrichment;
+* update `wave1_cv_homocysteine_pathway` from legacy `pkg_s24` / legacy source-spec references to the new KB-S52C homocysteine package refs and source-spec IDs;
+* update relevant `compile_manifest_ref`;
+* update estate index paths for changed cards only;
+* do not add stopped candidates as active card depth.
 
 ### Tests
 
-* `backend/tests/unit/test_p1_22_thyroid_activation_pack.py`
-* `backend/tests/regression/test_batch2_thyroid_tsh_gating.py`
-* `backend/tests/unit/test_p1_25_thyroid_completion.py`
+Create:
+
+* `backend/tests/unit/test_p1_26_iron_homocysteine_activation.py`
+
+Use existing test files only if current repo pattern requires a different placement.
 
 ### Sprint artefacts
 
-* `docs/sprints/beta_readiness/P1-25_thyroid_completion_manifest.yaml`
-* `docs/sprints/beta_readiness/P1-25_pass3_carry_forward.yaml`
-* `docs/sprints/beta_readiness/P1-25_thyroid_mr_v2_activation_completion.md`
+Create:
+
+* `docs/sprints/beta_readiness/P1-26_iron_homocysteine_manifest.yaml`
+* `docs/sprints/beta_readiness/P1-26_pass3_carry_forward.yaml`
+* `docs/sprints/beta_readiness/P1-26_iron_homocysteine_mr_v2_activation.md`
+
+Update:
+
 * `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
 
 ## Files out of scope
 
 Do not modify:
 
-* `backend/core/analytics/signal_evaluator.py` unless a hard STOP gate proves deterministic FT3-low safety cannot otherwise be achieved and human approval is obtained before broadening scope.
-* `backend/ssot/scoring_policy.yaml`
+* `backend/core/analytics/signal_evaluator.py`
 * `backend/ssot/biomarkers.yaml`
 * `backend/ssot/questionnaire.json`
-* TgAb packages
-* TPOAb euthyroid packages or context
-* `signal_thyroid_tsh_context`
+* `backend/ssot/scoring_policy.yaml`
+* calculated TSAT logic
+* parser files
 * frontend files
 * Gemini files
 * report prose / Layer C prose substrate
-* parser files
-* unrelated thyroid packages
+* thyroid files
+* WBC packages
+* lymphocyte packages
+* neutrophil packages
+* TgAb / TPOAb files
+* `pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release`
 * unrelated Knowledge Bus packages
 * `.codex/`
 * `.cursor/`
@@ -146,421 +221,360 @@ Before implementation:
 
 1. Confirm current branch is:
 
-`feature/p1-25-thyroid-mr-v2-activation-completion`
+`feature/p1-26-mr-v2-iron-homocysteine-signal-activation`
 
 2. Confirm `automation_bus/state/work_package_active.json` exists.
-3. Confirm active token has `work_id: P1-25`.
+3. Confirm active token has `work_id: P1-26`.
 4. Confirm token branch matches current branch.
 5. Confirm repo/stash/parked-file state is governed under the standard start prompt.
-6. Re-verify that the files named in the Stage B advisory have not changed since the advisory date.
-7. If any named file has changed, re-read and re-validate affected assumptions before editing.
+6. Confirm P1-25 is closed and merged before beginning.
+7. Confirm no advisory or fork/background agent is running for P1-26.
 
 STOP if preflight fails.
 
-## Phase 1 — Authority and current-state verification
+## Phase 1 — Authority and B1 verification
 
 ### 1A — MR-v2 authority verification
 
-Read MR-v2 and extract the thyroid decisions for:
+Read MR-v2 sections covering:
 
-* FT3 low / reduced peripheral T3 availability context;
-* TPOAb high / autoimmune thyroid context supporting hypothyroid biochemistry;
-* TPOAb euthyroid context;
-* TgAb packages.
+* iron low / absolute iron deficiency;
+* iron low / functional inflammatory restriction;
+* iron high / overload context;
+* homocysteine high / B-vitamin processing context;
+* homocysteine high / renal-clearance context.
 
 Confirm:
 
-* FT3-low is cleared with strict gates.
-* TPOAb hypothyroid context is cleared with strict gates.
-* TPOAb euthyroid context remains deferred post-launch.
-* TgAb remains deferred / corroborator-only.
-* No Hashimoto’s diagnosis wording is allowed.
-* No hypothyroidism diagnosis may be made from FT3-low.
+* all five candidates are medically cleared with strict gates;
+* calculated TSAT remains blocked;
+* directly reported TSAT may be used;
+* hepatocellular / haemolytic release is not a standalone iron-high activation;
+* WBC / lymphocyte / neutrophil work remains out of scope.
 
-STOP if MR-v2 is missing or contradicts these decisions.
+STOP affected candidate if MR-v2 does not support activation.
 
-### 1B — Existing thyroid ADR verification
+### 1B — B1 fact verification
 
-Read the existing thyroid ADRs.
+Verify only the minimum blocker facts before editing:
 
-Create a new ADR:
+1. all five candidate package paths exist;
+2. staged PSI exists for all five candidates;
+3. `_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS` is the correct iron allowlist constant;
+4. homocysteine is already routed to cardiovascular by predicate and requires no assembler change;
+5. no candidate depends on calculated TSAT;
+6. no obvious prohibited wording exists in user-facing PSI fields.
 
-`docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md`
+If any B1 fact is stale, apply candidate-level STOP gates rather than expanding scope.
 
-Do not amend existing ADRs.
+## Phase 2 — Iron implementation
 
-The new ADR must:
+### 2A — Create iron production packages
 
-* cite MR-v2 dated 2026-06-23 as the current medical authority;
-* supersede Decision 3 from `ADR-THYROID-TSH-SIGNAL-INTELLIGENCE-ACTIVATION-1.md` where FT3-low was kept excluded;
-* partially supersede the thyroid antibody deferral in `ADR-THYROID-FT3-AUTHORITY-RECONCILIATION-1.md` for TPOAb hypothyroid frame only;
-* leave TPOAb euthyroid and TgAb deferred;
-* record required gates for FT3-low and TPOAb;
-* prohibit diagnostic wording.
+For each passing iron candidate, create a production package folder under `knowledge_bus/packages/` with current production structure.
 
-ADR creation is required in this sprint.
+Candidates:
 
-STOP if an ADR cannot be created safely.
+1. `pkg_kb52c_iron_low_absolute_iron_deficiency`
+2. `pkg_kb52c_iron_low_functional_iron_restriction_inflammation`
+3. `pkg_kb52c_iron_high_iron_overload_context`
 
-### 1C — Package state verification
+Each package must include:
 
-Verify:
+* `research_brief.yaml`
+* `signal_library.yaml`
+* `package_manifest.yaml`
+* `promoted_signal_intelligence.yaml`
 
-FT3-low package:
+Use staged PSI as the content source. Follow current active package patterns. Do not invent unsupported medical content.
 
-* `pkg_kb47_free_t3_low_low_t3_syndrome`
-* `signal_id: signal_free_t3_low`
-* `promoted_signal_intelligence.yaml` exists
-* `signal_library.yaml` exists
-* package status supports activation after MR-v2 clearance
+### 2B — Iron low / absolute iron deficiency context
 
-TPOAb package:
+Candidate must require:
 
-* `pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern`
-* `signal_id: signal_tpo_ab_high`
-* `signal_library.yaml` exists
-* `promoted_signal_intelligence.yaml` does not currently exist and must be created
-* `package_manifest.yaml` exists and currently needs behavioural-impact update after activation
-
-STOP affected candidate if package identity is unclear.
-
-## Phase 2 — FT3-low implementation
-
-### 2A — Required FT3-low gates
-
-FT3-low must not be allowlisted unless deterministic gating can enforce:
-
-* FT3 below lab-provided range;
-* TSH present;
-* FT4 present;
-* thyroid medication context requirement;
-* illness/recovery context requirement;
-* calorie restriction context requirement;
-* fasting / low-energy availability context requirement;
-* pregnancy/postpartum safety handling;
-* biotin / assay-interference disclosure handling;
-* no emission when TSH is below the lab-provided range;
-* no diagnostic hypothyroidism framing;
-* no diagnostic “low T3 syndrome” framing.
-
-### 2B — Existing context-gate behaviour
-
-The Stage B advisory found that several questionnaire fields are absent and that FT3-low will fail closed in production until questionnaire alignment exists.
-
-Preserve this fail-closed behaviour.
-
-Do not modify `backend/ssot/questionnaire.json` in this sprint.
-
-Create a carry-forward item for questionnaire context alignment.
-
-### 2C — Biotin / assay-interference gate
-
-Add `biotin_or_assay_interference_disclosure` as an eighth runtime context requirement if supported by schema v2.0.0.
-
-Design it so that `not_answered` and `not_applicable` do not further suppress the signal.
+* serum iron below lab-provided range;
+* ferritin below lab-provided range;
+* directly reported `transferrin_saturation` low;
+* CRP/inflammation contradiction handling where available;
+* supplement / recent iron infusion context where available;
+* no “iron deficiency diagnosis” wording;
+* no treatment advice.
 
 Candidate STOP:
 
-* If this cannot be added within schema constraints, document it as a signal-library schema follow-on.
-* Do not block FT3-low solely for this if all other safety gates are preserved.
+* if directly reported TSAT is not required in the candidate gate;
+* if staged PSI assumes calculated TSAT;
+* if ferritin-low is not required;
+* if unsafe diagnosis wording cannot be corrected.
 
-### 2D — TSH-suppressed suppression gate
+### 2C — Iron low / functional inflammatory restriction context
 
-This is a GPT safety amendment to the Stage B advisory.
+Candidate must require:
 
-FT3-low must not be added to `_THYROID_LAUNCH_SIGNAL_IDS` unless the sprint can deterministically prevent FT3-low emission when TSH is below the lab-provided range.
-
-Cursor must verify whether existing signal-library / evaluator semantics support one of the following:
-
-* a negative / suppression-on-condition gate;
-* a “require TSH not below minimum” gate;
-* an equivalent deterministic gate that prevents emission when TSH is suppressed.
-
-Candidate STOP:
-
-* If deterministic TSH-suppressed suppression cannot be implemented without editing `backend/core/analytics/signal_evaluator.py`, do not add `signal_free_t3_low` to the thyroid launch allowlist in this sprint.
-* Record FT3-low as still blocked by evaluator gate semantics.
-* Proceed with TPOAb if its gates are valid.
-* Do not silently activate FT3-low without this suppression.
-
-Do not broaden into `signal_evaluator.py` without explicit human approval.
-
-### 2E — FT3-low PSI wording review
-
-Review `promoted_signal_intelligence.yaml`.
-
-If any consumer-facing field uses unsafe wording such as:
-
-* “low T3 syndrome” as a diagnosis;
-* hypothyroidism wording;
-* thyroid failure wording;
-
-then reframe to MR-v2-safe language such as:
-
-* “reduced peripheral T3 availability pattern”
-* “contextual low FT3 pattern”
-* “non-diagnostic low FT3 context”
-
-If the field is internal-only and not user-visible, document this.
+* serum iron below lab-provided range;
+* directly reported `transferrin_saturation` low;
+* ferritin normal/high or explicitly non-low;
+* CRP high or declared inflammation/infection context where available;
+* contradiction if ferritin is low;
+* no “anaemia of inflammation” diagnosis wording;
+* no treatment advice.
 
 Candidate STOP:
 
-* If unsafe consumer-facing wording cannot be corrected, do not activate FT3-low.
+* if directly reported TSAT is not required;
+* if ferritin state does not distinguish functional restriction from absolute deficiency;
+* if inflammation/CRP context cannot be represented;
+* if unsafe diagnosis wording cannot be corrected.
 
-## Phase 3 — TPOAb implementation
+### 2D — Iron high / overload context
 
-### 3A — Required TPOAb gates
+Candidate must require:
 
-TPOAb must not be allowlisted unless deterministic gating can enforce:
-
-* TPOAb above lab-provided range;
-* TSH present and above lab-provided range;
-* FT4 present;
-* no emission when TSH is within range;
-* no emission when TSH is suppressed;
-* no emission when FT4 is absent;
-* thyroid medication context represented safely;
-* pregnancy/postpartum context represented safely;
-* no Hashimoto’s diagnosis wording;
-* no autoimmune thyroid disease diagnosis wording;
-* no “immune system attacking thyroid” wording;
-* no “thyroid will fail” wording.
-
-### 3B — TPOAb signal library hardening
-
-Update:
-
-`knowledge_bus/packages/pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern/signal_library.yaml`
-
-Required changes:
-
-* add `runtime_context_requirements`;
-* require `tsh` present;
-* require `free_t4` present;
-* add thyroid medication context with `not_answered` allowed if appropriate;
-* add pregnancy/postpartum context with `not_answered` allowed if appropriate;
-* add `mandatory_pre_emission_gate` requiring `tsh` `above_max`.
+* serum iron above lab-provided range;
+* directly reported `transferrin_saturation` high;
+* ferritin above lab-provided range;
+* liver markers checked where available;
+* recent iron ingestion / infusion caveat where available;
+* hepatocellular / haemolytic release handled only as caveat or suppressor, not standalone signal;
+* no haemochromatosis diagnosis wording;
+* no treatment advice.
 
 Candidate STOP:
 
-* If `boundary: above_max` is not supported by the signal evaluator, do not add `signal_tpo_ab_high` to the launch allowlist.
-* Record carry-forward for evaluator support.
-* Continue FT3-low if valid.
+* if directly reported TSAT is not required;
+* if ferritin-high is not required;
+* if staged PSI frames haemochromatosis diagnostically;
+* if hepatocellular/haemolytic material becomes standalone signal content.
 
-### 3C — TPOAb PSI authoring
+## Phase 3 — Homocysteine implementation
 
-Create:
+### 3A — Homocysteine high / B-vitamin processing context
 
-`knowledge_bus/packages/pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern/promoted_signal_intelligence.yaml`
+Candidate must require:
 
-Use `pkg_kb47` PSI as the structural template.
+* homocysteine above lab-provided range;
+* active B12 and/or vitamin B12 context;
+* folate present;
+* MCV retained as useful context where available;
+* renal contradiction handled through the separate renal-clearance frame where applicable;
+* no consumer-facing “methylation impairment” wording;
+* no primary cardiovascular-risk claim;
+* no diagnosis or treatment advice.
 
-Derive content from:
-
-* `pkg_kb59` signal library;
-* MR-v2 Section F;
-* existing package manifest / research brief if present.
-
-Required wording constraints:
-
-* no “Hashimoto’s disease” diagnosis;
-* no “autoimmune thyroid disease” diagnosis;
-* no “your immune system is attacking your thyroid”;
-* no “your thyroid will fail”;
-* no “you have hypothyroidism”.
-
-Use neutral framing such as:
-
-* “thyroid peroxidase antibody elevation pattern”
-* “autoimmune thyroid context supporting hypothyroid biochemistry”
-* “not diagnostic on its own”
+Internal package identity may contain `methylation_impairment` if user-facing PSI fields do not.
 
 Candidate STOP:
 
-* If PSI authoring requires new medical interpretation not covered by MR-v2 or package source, stop TPOAb and record carry-forward.
-* Do not invent medical content.
+* if active B12 / vitamin B12 and folate cannot be required or represented;
+* if user-facing “methylation impairment” wording cannot be corrected;
+* if the frame becomes a primary cardiovascular-risk claim.
 
-### 3D — TPOAb package manifest
+### 3B — Homocysteine high / renal-clearance context
 
-Update:
+Candidate must require:
 
-`package_manifest.yaml`
+* homocysteine above lab-provided range;
+* creatinine and/or eGFR supportive context;
+* B12 / folate contradiction handling;
+* no kidney disease diagnosis wording;
+* no treatment advice.
 
-`behavioural_impact` must no longer remain `NONE` if allowlist activation makes the signal contribute to thyroid domain scoring.
+Candidate STOP:
 
-Match the declaration pattern used by other active-signal packages.
+* if creatinine/eGFR cannot be required or represented;
+* if wording implies kidney disease diagnosis;
+* if B-vitamin contradiction handling cannot be represented.
 
-## Phase 4 — Thyroid allowlist update
+### 3C — Homocysteine routing
+
+Do not modify `domain_score_assembler.py` for homocysteine if the current predicate already routes `signal_homocysteine_high` to cardiovascular.
+
+If the predicate is absent or materially different from the advisory finding:
+
+* stop homocysteine candidates;
+* do not create a new assembler route without explicit human approval;
+* proceed with iron candidates if valid.
+
+## Phase 4 — Iron allowlist update
 
 Update:
 
 `backend/core/analytics/domain_score_assembler.py`
 
-Required post-sprint target if both candidates pass:
+Only if at least one relevant iron candidate passes.
 
-* `_THYROID_LAUNCH_SIGNAL_IDS` contains:
+Expected target:
 
-  * `signal_free_t3_high`
-  * `signal_free_t4_high`
-  * `signal_free_t4_low`
-  * `signal_tsh_high`
-  * `signal_tsh_low`
-  * `signal_free_t3_low`
-  * `signal_tpo_ab_high`
+* `_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS` includes:
 
-* `_THYROID_EXCLUDED_SIGNAL_IDS` contains:
+  * existing active signals, including `signal_transferrin_high`;
+  * `signal_iron_low` if at least one iron-low candidate passes;
+  * `signal_iron_high` if iron-high overload candidate passes.
 
-  * `signal_thyroid_tsh_context`
+If both iron-low candidates STOP:
 
-If FT3-low candidate STOP fires:
+* do not add `signal_iron_low`.
 
-* do not add `signal_free_t3_low`;
-* keep it excluded;
-* document carry-forward.
+If iron-high overload STOPs:
 
-If TPOAb candidate STOP fires:
+* do not add `signal_iron_high`.
 
-* do not add `signal_tpo_ab_high`;
-* document carry-forward.
+Update comment at the iron allowlist section to record:
 
-Do not activate any other thyroid signals.
+* P1-3/P1-18 iron frame carry-forward resolved by MR-v2 dated 2026-06-23;
+* P1-26 activated governed iron-low and iron-high contexts.
 
-## Phase 5 — Medical frame governance update
+Do not change scoring/ranking logic.
 
-Update:
+Do not modify homocysteine routing.
 
-`knowledge_bus/governance/medical_frame_identity_index_v1.yaml`
+## Phase 5 — Compiled card enrichment
 
-Required changes:
-
-* update FT3-low frame from inactive/deferred to active / cleared by MR-v2, if FT3-low candidate passes;
-* add TPOAb hypothyroid frame entry, if TPOAb candidate passes;
-* keep TPOAb euthyroid context deferred;
-* keep TgAb deferred;
-* preserve `signal_thyroid_tsh_context` exclusion.
-
-Do not overstate authority.
-
-## Phase 6 — Compiled thyroid card enrichment
+### 5A — Blood / iron / oxygen card
 
 Update:
 
-`knowledge_bus/compiled/health_system_cards/wave1_thy_hormonal_axis.yaml`
+`knowledge_bus/compiled/health_system_cards/wave1_bio_oxygen_carrying_capacity.yaml`
 
-If both candidates pass:
+Include passing iron candidates only.
 
-* add `inv_free_t3_low_low_t3_syndrome` to `source_spec_ids`;
-* add `inv_tpo_ab_high_autoimmune_hypothyroid_pattern` to `source_spec_ids`;
-* add TPOAb as a marker entry:
+Expected enrichment:
 
-  * `marker_role: contextual_marker`
-  * `relationship_kind: contextual_support`
-  * `presence_policy: optional_on_panel`
-* update FT3 marker rationale to reflect both high and low FT3 contexts;
-* update mechanism line and subsystem summary;
-* update `compile_manifest_ref`.
+* add `inv_iron_low_absolute_iron_deficiency` if absolute iron-low passes;
+* add `inv_iron_low_functional_iron_restriction_inflammation` if functional iron-low passes;
+* add `inv_iron_high_iron_overload_context` if iron-high overload passes;
+* add corresponding package refs;
+* update mechanism/subsystem summary only to reflect activated governed context;
+* preserve P1-24 transferrin-high enrichment;
+* do not add unactivated candidates.
+
+### 5B — Homocysteine card
+
+Update:
+
+`knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml`
+
+If both homocysteine candidates pass:
+
+* replace or supersede legacy `pkg_s24` / legacy source-spec references with KB-S52C source specs and package refs;
+* add:
+
+  * `inv_homocysteine_high_b_vitamin_related_methylation_impairment`
+  * `inv_homocysteine_high_renal_clearance_reduction`
+* update package refs to:
+
+  * `pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment`
+  * `pkg_kb52c_homocysteine_high_renal_clearance_reduction`
+* update compile manifest reference.
+
+If one homocysteine candidate stops:
+
+* include only the passing candidate;
+* do not remove legacy context unless the new card remains coherent.
+
+If ownership or schema is unexpectedly unclear:
+
+* do not create a new card;
+* record carry-forward for homocysteine compiled-card ownership;
+* keep production PSI activation if otherwise valid.
+
+### 5C — Compile manifest and estate index
 
 Create:
 
-`knowledge_bus/compiled/manifests/p1_25_thyroid_completion_card_evidence.yaml`
+`knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml`
 
 Update:
 
 `knowledge_bus/compiled/estate_index_v1.yaml`
 
-If only one candidate passes, enrich the card only for the passing candidate.
+Update estate index paths only for cards actually changed.
 
-Do not add unactivated source specs to the compiled card as active depth.
-
-## Phase 7 — Tests
-
-Update existing tests that are expected to change:
-
-* `backend/tests/unit/test_p1_22_thyroid_activation_pack.py`
-
-  * update `test_ft3_low_not_in_thyroid_domain_allowlist`
-  * retain TSH high/low tests
-  * retain `signal_thyroid_tsh_context` exclusion test
-  * retain FT3-high companion-gate test
-
-* `backend/tests/regression/test_batch2_thyroid_tsh_gating.py`
-
-  * update `test_ft3_low_frame_deferred_after_p1_5_reconciliation` only if FT3-low candidate passes;
-  * retain FT3-high / FT4 / TSH regression tests.
+## Phase 6 — Tests
 
 Create:
 
-`backend/tests/unit/test_p1_25_thyroid_completion.py`
+`backend/tests/unit/test_p1_26_iron_homocysteine_activation.py`
 
-Required test coverage:
+Required tests:
 
-FT3-low:
+### Domain allowlist
 
-* `signal_free_t3_low` is in thyroid launch allowlist if candidate passes;
-* FT3-low suppresses when context fields are missing;
-* FT3-low fires when all gates are mocked as satisfied;
-* FT3-low suppresses when TSH is absent;
-* FT3-low suppresses when FT4 is absent;
-* FT3-low suppresses when TSH is below lab-provided range;
-* FT3-low does not emit unsafe diagnostic wording.
+* `test_iron_low_signal_in_blood_iron_oxygen_allowlist_after_p1_26`
+* `test_iron_high_signal_in_blood_iron_oxygen_allowlist_after_p1_26`
+* assert `signal_transferrin_high` remains active
+* assert homocysteine assembler routing remains unchanged
 
-TPOAb:
+### Iron gates
 
-* `signal_tpo_ab_high` is in thyroid launch allowlist if candidate passes;
-* TPOAb fires when TPOAb is above range, TSH is above range and FT4 is present;
-* TPOAb suppresses when TSH is within range;
-* TPOAb suppresses when TSH is absent;
-* TPOAb suppresses when TSH is below range;
-* TPOAb suppresses when FT4 is absent;
-* TPOAb override / escalation behaviour is covered if existing signal library includes it;
-* TPOAb PSI contains no prohibited wording.
+* `test_iron_low_absolute_fires_with_ferritin_low_and_tsat_low`
+* `test_iron_low_absolute_suppresses_without_tsat`
+* `test_iron_low_functional_fires_with_crp_high_and_ferritin_normal`
+* `test_iron_low_functional_suppresses_when_ferritin_low`
+* `test_iron_high_overload_fires_with_tsat_high_and_ferritin_above_range`
+* `test_iron_high_overload_suppresses_without_tsat`
+* `test_iron_high_overload_ctr_alt_high_weakens_overload_interpretation`
 
-Compiled card:
+### Homocysteine gates
 
-* thyroid card includes only passing candidate source specs;
-* TPOAb marker entry exists only if TPOAb passes;
-* estate index points to the P1-25 manifest if card enrichment occurs.
+* `test_homocysteine_b_vitamin_fires_with_active_b12_and_folate_present`
+* `test_homocysteine_renal_fires_with_creatinine_high`
+* `test_homocysteine_no_methylation_impairment_wording_in_consumer_fields`
+* test no primary cardiovascular-risk framing
+* test no kidney disease diagnosis wording
 
-## Phase 8 — Carry-forward management
+### Compiled card tests
 
-Create:
+* `test_wave1_bio_oxygen_card_includes_iron_source_specs`
+* `test_wave1_cv_homocysteine_card_updated_to_kb52c_packages`
 
-`docs/sprints/beta_readiness/P1-25_pass3_carry_forward.yaml`
+### Wording tests
 
-Must record:
+Assert user-facing PSI fields do not contain prohibited phrases:
 
-* cf_A / FT3-low:
+* “iron deficiency diagnosis”
+* “anaemia of inflammation”
+* “haemochromatosis”
+* “methylation impairment”
+* “kidney disease”
+* primary cardiovascular-risk framing
+* treatment advice
 
-  * `closed` if FT3-low candidate passes;
-  * otherwise carry forward with exact blocker.
+Use exact phrase checks plus targeted safe-frame checks where current test pattern supports it.
 
-* cf_B / kb59 thyroid antibodies:
-
-  * `partially_closed` if TPOAb hypothyroid passes;
-  * remaining deferred:
-
-    * TPOAb euthyroid context;
-    * TgAb packages.
-
-* questionnaire context alignment:
-
-  * FT3-low context fields absent from questionnaire;
-  * FT3-low fail-closed in production until questionnaire alignment;
-  * owner: Product / questionnaire / frontend-input workflow;
-  * not a blocker to safe activation if fail-closed behaviour is proven.
-
-* conditional evaluator gate carry-forward:
-
-  * only if deterministic TSH-suppressed suppression cannot be implemented;
-  * if this fires, FT3-low must not be allowlisted.
-
-Do not re-document unrelated carry-forwards.
-
-## Phase 9 — Sprint report and build register
+## Phase 7 — Carry-forward management
 
 Create:
 
-`docs/sprints/beta_readiness/P1-25_thyroid_mr_v2_activation_completion.md`
+`docs/sprints/beta_readiness/P1-26_pass3_carry_forward.yaml`
+
+Record each candidate as:
+
+* `closed` if activated;
+* `stopped` if candidate STOP fired;
+* `deferred` if blocked by scope/identity/schema.
+
+Must include if relevant:
+
+* calculated TSAT remains deferred / blocked;
+* WBC / lymphocyte / neutrophil remain out of scope;
+* hepatocellular/haemolytic iron-high release remains non-standalone;
+* homocysteine compiled-card ownership if unexpectedly unclear;
+* any stopped candidate with exact reason.
+
+Expected carry-forward closures if all candidates pass:
+
+* P1-3 / iron signal wiring deferred pending frame adjudication: closed for `signal_iron_low` and `signal_iron_high`;
+* P1-18 additional CBC/iron launch signals pending frame adjudication: closed for iron-low and iron-high;
+* Homocysteine medical-review blocker from P1-10/P1-14: closed for both homocysteine frames.
+
+Do not re-document unrelated thyroid carry-forwards except as already closed by P1-25.
+
+## Phase 8 — Sprint report and build register
+
+Create:
+
+`docs/sprints/beta_readiness/P1-26_iron_homocysteine_mr_v2_activation.md`
 
 Keep concise.
 
@@ -568,9 +582,9 @@ Maximum structure:
 
 1. start state;
 2. MR-v2 authority used;
-3. FT3-low implementation result;
-4. TPOAb implementation result;
-5. ADR / governance updates;
+3. iron implementation result;
+4. homocysteine implementation result;
+5. allowlist / routing result;
 6. compiled card updates;
 7. validation results;
 8. carry-forwards;
@@ -578,7 +592,7 @@ Maximum structure:
 
 Create:
 
-`docs/sprints/beta_readiness/P1-25_thyroid_completion_manifest.yaml`
+`docs/sprints/beta_readiness/P1-26_iron_homocysteine_manifest.yaml`
 
 Update:
 
@@ -588,61 +602,55 @@ Keep the register entry lightweight.
 
 ## Validation
 
-Run all relevant existing validation.
+Run all relevant validation.
 
 At minimum:
 
-* package validation for modified Knowledge Bus packages;
-* PSI validation for new / modified PSI;
+* package validation for new/modified Knowledge Bus packages;
+* PSI validation for new/modified PSI;
 * signal library validation;
+* package manifest validation;
 * compiled card validation;
 * estate index validation;
-* medical frame identity index validation if available;
-* thyroid activation unit tests;
-* thyroid gating regression tests;
-* new P1-25 test file;
-* architecture / governance tests required by Automation Bus finish;
+* domain score assembler / allowlist tests;
+* P1-26 activation tests;
+* relevant blood/iron/oxygen regression tests;
+* relevant cardiovascular/homocysteine tests if present;
+* architecture/governance tests required by Automation Bus finish;
 * `python backend/scripts/run_work_package.py finish`.
 
 Do not edit validators to force a pass.
 
 ## Acceptance criteria
 
-P1-25 passes only if:
+P1-26 passes only if:
 
 1. Front matter remains `risk_level: HIGH`, `change_type: MIXED`.
 2. Automation Bus preflight passes.
 3. MR-v2 authority is cited and used.
-4. `ADR-THYROID-MR-V2-ACTIVATION-1.md` is created.
-5. Existing ADRs are not destructively amended.
-6. `signal_thyroid_tsh_context` remains excluded.
-7. No TgAb or TPOAb euthyroid context is activated.
-8. No frontend, Gemini, report prose or questionnaire files are modified.
-9. FT3-low is only allowlisted if deterministic TSH-suppressed suppression is enforceable.
-10. FT3-low suppresses when required context fields are absent.
-11. FT3-low suppresses when TSH is absent.
-12. FT3-low suppresses when FT4 is absent.
-13. FT3-low suppresses when TSH is below lab-provided range.
-14. FT3-low fires when all gates are satisfied.
-15. FT3-low PSI wording is MR-v2 safe.
-16. TPOAb is only allowlisted if TSH `above_max` mandatory gate is supported.
-17. TPOAb suppresses when TSH is within range.
-18. TPOAb suppresses when TSH is below range.
-19. TPOAb suppresses when TSH is absent.
-20. TPOAb suppresses when FT4 is absent.
-21. TPOAb fires when TPOAb high + TSH high + FT4 present.
-22. TPOAb PSI is created if TPOAb passes.
-23. TPOAb PSI contains no prohibited diagnostic wording.
-24. `pkg_kb59` behavioural impact is updated if activated.
-25. Medical frame identity index is updated to match actual activation outcome.
-26. Thyroid compiled card is enriched only for passing candidates.
-27. P1-25 compile manifest is created if card enrichment occurs.
-28. Estate index points to P1-25 manifest if card enrichment occurs.
-29. Existing thyroid activation tests are updated correctly.
-30. New P1-25 tests pass.
-31. P1-25 carry-forward file records questionnaire alignment and any candidate stops.
-32. Build register is updated concisely.
-33. Final audit includes `pipeline_advisory_trigger` and `pipeline_advisory_reason`.
+4. All five candidates are attempted unless a candidate STOP fires.
+5. Candidate-level STOP gates are applied independently.
+6. No calculated TSAT mode is introduced.
+7. Iron candidates use directly reported `transferrin_saturation` only.
+8. `signal_iron_low` is allowlisted only if at least one iron-low candidate passes.
+9. `signal_iron_high` is allowlisted only if iron-high overload candidate passes.
+10. `signal_transferrin_high` remains active.
+11. Homocysteine assembler routing is not modified.
+12. Homocysteine production PSI is completed for passing candidates.
+13. Homocysteine package manifests accurately reflect production PSI/runtime surfacing without falsely implying a new assembler allowlist change.
+14. No prohibited diagnostic wording remains in user-facing PSI fields.
+15. No treatment advice is introduced.
+16. No WBC, lymphocyte, neutrophil, thyroid, frontend, Gemini, prose, questionnaire, parser, scoring-policy or signal-evaluator files are modified.
+17. `wave1_bio_oxygen_carrying_capacity` is enriched only for passing iron candidates.
+18. `wave1_cv_homocysteine_pathway` is updated only for passing homocysteine candidates.
+19. Estate index is updated only for changed compiled cards.
+20. Tests prove iron allowlist behaviour.
+21. Tests prove iron MR-v2 gates.
+22. Tests prove homocysteine MR-v2 gates.
+23. Tests prove prohibited wording is absent.
+24. P1-26 carry-forward file records candidate outcomes and remaining blockers.
+25. Build register is updated concisely.
+26. Final audit includes `pipeline_advisory_trigger` and `pipeline_advisory_reason`.
 
 ## Closure requirements
 

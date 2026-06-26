@@ -1,107 +1,117 @@
 {
-  "work_id": "P1-25",
+  "work_id": "P1-26",
   "status": "HARDENED",
   "bus_version": "1.3.1",
-  "hardened_utc": "2026-06-23T00:00:00Z",
+  "hardened_utc": "2026-06-26T00:00:00Z",
   "hardened_by": "Claude Code",
   "changes": [
     {
       "check": "front_matter_all_five_fields",
       "status": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id:P1-25, branch:feature/p1-25-thyroid-mr-v2-activation-completion, risk_level:HIGH, execution_model:SINGLE_PHASE, change_type:MIXED"
+      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id:P1-26, branch:feature/p1-26-mr-v2-iron-homocysteine-signal-activation, risk_level:HIGH, execution_model:TWO_PHASE_START_FINISH, change_type:MIXED"
     },
     {
-      "check": "risk_level_high_justified",
+      "check": "risk_level_high_change_type_mixed_justified",
       "status": "CONFIRMED",
-      "evidence": "backend/core/analytics/domain_score_assembler.py:68-82 — Intelligence Core allowlist change; SOP §10 HIGH trigger mandatory regardless of file path"
+      "evidence": "BEHAVIOUR: backend/core/analytics/domain_score_assembler.py:88 — _BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS; Intelligence Core per SOP §10. CONTENT: iron production package authoring, homocysteine PSI promotion, compiled card enrichment. MIXED governs under BEHAVIOUR controls per SOP §4. HIGH mandatory for Intelligence Core allowlist change"
     },
     {
-      "check": "change_type_mixed_justified",
+      "check": "execution_model_two_phase_start_finish_justified",
       "status": "CONFIRMED",
-      "evidence": "BEHAVIOUR: domain_score_assembler.py:68-82. CONTENT: KB signal_libraries, PSI authoring, ADR, governance index, compiled card, estate_index. MIXED governs under BEHAVIOUR controls per SOP §4"
+      "evidence": "Phase 1-3 (Phase A): KB package creation, signal_library authoring, PSI promotion. Phase 4-8 (Phase B): domain allowlist update, card enrichment, test verification. Allowlist change (Intelligence Core) correctly deferred to Phase 4 after package validation passes"
     },
     {
-      "check": "authority_path_domain_score_assembler",
+      "check": "allowlist_constant_location_verified",
       "status": "CONFIRMED",
-      "evidence": "backend/core/analytics/domain_score_assembler.py:68-82 — _THYROID_LAUNCH_SIGNAL_IDS (5 signals, lines 68-76), _THYROID_EXCLUDED_SIGNAL_IDS (signal_free_t3_low at line 79, signal_thyroid_tsh_context at line 80). signal_tpo_ab_high absent from both sets"
+      "evidence": "backend/core/analytics/domain_score_assembler.py:88 — _BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS: frozenset({'signal_transferrin_high'}). Comment at :86-87: 'P1-18: transferrin transport upregulation (pkg_kb61) — ID-matched production package. Other CBC/iron signals remain excluded pending frame adjudication (P1-3 carry-forward).' MR-v2 supplies the frame adjudication. Only this constant is in scope"
     },
     {
-      "check": "authority_path_pkg_kb47_signal_library",
+      "check": "signal_ids_confirmed_against_psi",
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/signal_library.yaml:3 — schema_version:2.0.0; lines 52-92 — 7 runtime_context_requirements; no mandatory_pre_emission_gates; no biotin gate. thyroid_medication, illness_or_recovery, calorie_restriction, fasting gates allow only answered_yes/answered_no — questionnaire gap confirmed; fail-closed behaviour confirmed"
+      "evidence": "knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency/promoted_signal_intelligence.yaml — signal_id: signal_iron_low. knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_iron_overload_context/promoted_signal_intelligence.yaml — signal_id: signal_iron_high. Both match SOP Phase 4 allowlist additions exactly"
     },
     {
-      "check": "authority_path_pkg_kb47_psi",
+      "check": "homocysteine_predicate_active_no_assembler_change_required",
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb47_free_t3_low_low_t3_syndrome/promoted_signal_intelligence.yaml:1-95 — PSI present; no consumer-facing diagnostic wording. 'contextual low T3 syndrome' is at signal_library.yaml:119 (internal explanation field only), NOT in PSI"
+      "evidence": "backend/core/analytics/domain_score_assembler.py:189 — `if 'homocysteine' in sid or 'non_hdl' in primary: return True` inside _is_wave1_cardiovascular. signal_homocysteine_high contains 'homocysteine'; predicate routes to cardiovascular without any allowlist constant. Advisory finding confirmed clean. Phase 3C instruction to skip assembler change is correct"
     },
     {
-      "check": "authority_path_pkg_kb59_signal_library",
+      "check": "advisory_currency_verified",
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern/signal_library.yaml:1-113 — schema_version:2.0.0; no runtime_context_requirements section; no mandatory_pre_emission_gates section; override_rules line 78 uses boundary:above_max — schema parses this token today. Both sections must be added before allowlist activation"
+      "evidence": "git log --since=2026-06-24 on domain_score_assembler.py, wave1_bio_oxygen_carrying_capacity.yaml, wave1_cv_homocysteine_pathway.yaml returned empty. Advisory dated 2026-06-24 remains current. All structural claims with file:line citations are inheritable per CLAUDE.md §14"
     },
     {
-      "check": "authority_path_pkg_kb59_manifest",
+      "check": "staged_psi_all_five_candidates_present",
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern/package_manifest.yaml:11 — behavioural_impact:NONE; must be updated after allowlist activation per prompt Phase 3D"
+      "evidence": "knowledge_bus/generated_pilot/p1_12_batch_c/: pkg_kb52c_iron_low_absolute_iron_deficiency, pkg_kb52c_iron_low_functional_iron_restriction_inflammation, pkg_kb52c_iron_high_iron_overload_context — all present. knowledge_bus/generated_pilot/p1_10_batch_a/: pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment, pkg_kb52c_homocysteine_high_renal_clearance_reduction — both present"
     },
     {
-      "check": "gate_mechanism_template_confirmed",
+      "check": "iron_production_packages_absent_creation_is_correct",
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis/signal_library.yaml:51-56 — mandatory_pre_emission_gates operational: gate_id:require_tsh_suppressed, metric_id:tsh, comparator_type:lab_range_boundary, boundary:below_min, condition_type:all_of"
+      "evidence": "knowledge_bus/packages/ directory listing: pkg_kb52c_iron_low_absolute_iron_deficiency, pkg_kb52c_iron_low_functional_iron_restriction_inflammation, pkg_kb52c_iron_high_iron_overload_context — none present. Phase 2A CREATE instruction is correct. No conflicting production package exists"
     },
     {
-      "check": "evaluator_above_max_support_in_mandatory_gates",
+      "check": "homocysteine_production_packages_exist_psi_absent",
       "status": "CONFIRMED",
-      "evidence": "backend/core/analytics/signal_evaluator.py:210 — above_max normalises to 'upper'; lines 241-244 — evaluates as observed > high; lines 382-422 — _passes_mandatory_pre_emission_gates calls _evaluate_single_condition for lab_range_boundary comparator. TPOAb Phase 3B candidate STOP does NOT fire. No signal_evaluator.py changes required"
+      "evidence": "knowledge_bus/packages/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/: package_manifest.yaml, research_brief.yaml, signal_library.yaml — present; promoted_signal_intelligence.yaml — ABSENT. Same for pkg_kb52c_homocysteine_high_renal_clearance_reduction/. Phase 3 CREATE PSI instruction is correct"
     },
     {
-      "check": "evaluator_not_below_min_for_ft3_low_tsh_suppression",
+      "check": "homocysteine_manifests_current_behavioural_impact",
       "status": "CONFIRMED",
-      "evidence": "backend/core/analytics/signal_evaluator.py:217-218 — not_below_min token normalised; lines 253-256 — evaluates as observed >= low; gate fails when TSH < lab_min. boundary:not_below_min in mandatory_pre_emission_gates suppresses FT3-low when TSH is below lab range. Phase 2D candidate STOP does NOT fire. No signal_evaluator.py changes required"
+      "evidence": "pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/package_manifest.yaml:11 — behavioural_impact: NONE. pkg_kb52c_homocysteine_high_renal_clearance_reduction/package_manifest.yaml:11 — behavioural_impact: NONE. Both confirmed pre-sprint state"
     },
     {
-      "check": "mr_v2_authority_covers_both_candidates",
-      "status": "CONFIRMED",
-      "evidence": "docs/Medical Research Documents/Medical_Research_Activation_Review_Deferred_Wave_1_Items_v2.md — Section A: ft3_low ACTIVATE_WITH_STRICT_GATES; Section F: tpo_ab_high hypothyroid ACTIVATE_WITH_STRICT_GATES; TPOAb euthyroid: DEFER_POST_LAUNCH; TgAb: DEFER_POST_LAUNCH"
+      "check": "homocysteine_manifest_amendment_rule_tightened",
+      "status": "HARDENED_WITH_ADDITION",
+      "evidence": "SOP Phase 3 lines 143-151 say to 'choose the closest accurate package status used by existing active predicate-routed packages' without naming one. Ambiguity risk: Cursor may use SIGNAL_RUNTIME_ACTIVATION and rationalise it as 'runtime surfacing', but that value implies an assembler allowlist switch was made — which is false for homocysteine. Explicit instruction added: retain behavioural_impact:NONE for both homocysteine manifests. Rationale: the behavioural_impact field records assembler-layer changes only; predicate routing was live before this sprint; PSI promotion is content-layer. SIGNAL_RUNTIME_ACTIVATION must not be used for these two packages. Record rationale in sprint report"
     },
     {
-      "check": "advisory_file_change_verification",
+      "check": "compiled_cards_exist_state_matches_advisory",
       "status": "CONFIRMED",
-      "evidence": "git log --since=2026-06-23 -- [all advisory-cited files] returned empty. Advisory dated 2026-06-23 (same day). No named files changed. All Stage B structural claims with file:line citations inheritable per v0.5 §14"
+      "evidence": "knowledge_bus/compiled/health_system_cards/wave1_bio_oxygen_carrying_capacity.yaml:7-12 — 5 source_spec_ids (hgb_low, ferritin_low, ferritin_high_inflammatory, ferritin_high_iron_overload, transferrin_high); compile_manifest_ref: p1_24. knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml:7-9 — source_spec_ids: [inv_homocysteine_high_metabolic]; compile_manifest_ref: arch_rt5b; package_refs: [pkg_s24_homocysteine_high_metabolic]. Both match advisory description exactly"
+    },
+    {
+      "check": "homocysteine_card_provenance_fields_update_required",
+      "status": "HARDENED_WITH_ADDITION",
+      "evidence": "wave1_cv_homocysteine_pathway.yaml:22 — compile_status: pilot_manual; :23 — source_spec_provenance: inferred_from_package_manifest. When Cursor replaces legacy pkg_s24 with KB-S52C explicit spec IDs, these provenance fields must also be updated: compile_status to compile_pipeline; source_spec_provenance to explicit. Reference: wave1_bio_oxygen_carrying_capacity.yaml:51-52 — pattern to follow. SOP does not mention this update; added as hardening requirement"
+    },
+    {
+      "check": "tsat_gate_uses_ssot_canonical_key",
+      "status": "CONFIRMED",
+      "evidence": "SOP Phase 2B:297, Phase 2C:315, Phase 2D:332 — all require 'directly reported transferrin_saturation'. Advisory §SSOT marker availability:86 — transferrin_saturation EXISTS (canonical). SOP out-of-scope:201 — 'calculated TSAT logic'. Acceptance criteria:634 — 'No calculated TSAT mode is introduced'. Gate key must be transferrin_saturation throughout all three iron signal_library.yaml files"
+    },
+    {
+      "check": "five_candidate_stop_gates_all_present",
+      "status": "CONFIRMED",
+      "evidence": "Phase 2B:303-309 — iron_low_absolute STOP on TSAT absent, calculated TSAT assumed, ferritin-low not required, unsafe wording. Phase 2C:320-327 — iron_low_functional STOP on TSAT absent, ferritin state indistinct, CRP absent, unsafe wording. Phase 2D:342-348 — iron_high_overload STOP on TSAT absent, ferritin-high absent, haemochromatosis framing, hepatocellular standalone. Phase 3A:365-371 — b_vitamin STOP on B12/folate absent, consumer methylation wording, CV-risk primary frame. Phase 3B:380-386 — renal STOP on creatinine/eGFR absent, kidney disease diagnosis, B-vitamin contradiction absent. All five independent gates present"
     },
     {
       "check": "forbidden_files_not_in_scope",
       "status": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:122-140 — signal_evaluator.py, scoring_policy.yaml, biomarkers.yaml, questionnaire.json, TgAb packages, TPOAb euthyroid, frontend, Gemini, report prose, .codex/, .cursor/, .vscode/, AGENTS.md all explicitly excluded"
+      "evidence": "automation_bus/latest_cursor_prompt.md:195-217 — explicitly excludes: signal_evaluator.py, biomarkers.yaml, questionnaire.json, scoring_policy.yaml, calculated TSAT logic, parser files, frontend, Gemini, report prose, thyroid, WBC/lymphocyte/neutrophil packages, TgAb/TPOAb, pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release, .codex/.cursor/.vscode/, AGENTS.md. Acceptance criteria:643 — explicit prohibition matches out-of-scope list"
     },
     {
-      "check": "behavioural_scope_defined",
+      "check": "transferrin_high_regression_guard_present",
       "status": "CONFIRMED",
-      "evidence": "BEHAVIOUR surface: domain_score_assembler.py:68-82 only. 2 signals added to _THYROID_LAUNCH_SIGNAL_IDS, signal_free_t3_low moved from _THYROID_EXCLUDED_SIGNAL_IDS, comment updated. No other Intelligence Core files modified. Allowlist change is a deterministic set operation. Gate enforcement is deterministic per signal_evaluator.py"
+      "evidence": "SOP Phase 6:505 — 'assert signal_transferrin_high remains active'. Explicit regression guard in test suite requirement. Acceptance criteria:638 — 'signal_transferrin_high remains active'. Allowlist constant expansion must not drop existing member"
     },
     {
-      "check": "regression_targets_identified",
+      "check": "homocysteine_assembler_routing_regression_guard_present",
       "status": "CONFIRMED",
-      "evidence": "Prompt Phase 7: test_p1_22_thyroid_activation_pack.py:167 test_ft3_low_not_in_thyroid_domain_allowlist (update required), test_batch2_thyroid_tsh_gating.py:131 test_ft3_low_frame_deferred_after_p1_5_reconciliation (update required if FT3-low passes). Retain: TSH high/low, signal_thyroid_tsh_context exclusion, FT3-high companion gate, FT3-high/FT4/TSH regression tests"
+      "evidence": "SOP Phase 6:506 — 'assert homocysteine assembler routing remains unchanged'. Prevents any inadvertent change to _is_wave1_cardiovascular predicate at domain_score_assembler.py:189. Regression test covers both iron additions and homocysteine routing stability"
     },
     {
-      "check": "tpo_ab_psi_authoring_bounded",
+      "check": "iron_hepatocellular_standalone_correctly_excluded",
       "status": "CONFIRMED",
-      "evidence": "pkg_kb59 promoted_signal_intelligence.yaml confirmed absent. pkg_kb59/signal_library.yaml:96-112 — complete clinical framing for PSI derivation. pkg_kb47 PSI is structural template. MR-v2 Section F wording prohibitions explicit. In-sprint authoring achievable without novel medical content"
-    },
-    {
-      "check": "unaddressed_regression_test_flag",
-      "status": "FLAGGED",
-      "evidence": "Additional FT3-low tests not named in prompt: test_batch2_context_clearance_register.py:75 (reads historical batch2 register — assessed non-breaking); test_batch2_minimum_coverage_decision_register.py:65 (historical register — assessed non-breaking); test_batch2_full_coverage_activation.py:105,117,128,142 (activation scenarios — verify at Stage 4A); test_runtime_context_evaluation.py:223,237 (fail-closed tests — assessed valid after P1-25). Not a sprint STOP. Full test suite must pass at Stage 4A before finish"
+      "evidence": "SOP:211 out-of-scope — pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release. Phase 2D:345-347 — STOP if hepatocellular material becomes standalone signal content. Advisory:37 — 'iron_high_hepatocellular_or_hemolytic_release as standalone signal — deferred by MR-v2'. Suppressor role (ctr_alt_high contradiction in iron_high_overload PSI) retained as caveat only"
     }
   ],
   "advisory_inheritance_status": {
-    "stage_b_advisory_date": "2026-06-23",
-    "git_log_check_result": "No commits for any advisory-cited file since 2026-06-23. All Stage B structural evidence valid.",
+    "stage_b_advisory_date": "2026-06-24",
+    "git_log_check_result": "No commits for domain_score_assembler.py, wave1_bio_oxygen_carrying_capacity.yaml, or wave1_cv_homocysteine_pathway.yaml since 2026-06-24. Advisory structural evidence remains current.",
     "sprint_executed_between_advisory_and_hardening": false,
     "activation_readiness_rerun_required": false,
-    "material_departure_from_advisory": "Two positive resolutions: (1) FT3-low TSH-suppressed suppression gate implementable via boundary:not_below_min without evaluator changes (Phase 2D STOP does not fire). (2) TPOAb above_max mandatory gate confirmed supported (Phase 3B STOP does not fire)."
+    "material_departure_from_advisory": "Two hardening additions beyond advisory scope: (1) explicit behavioural_impact:NONE retention instruction for homocysteine manifests — prevents ambiguous SIGNAL_RUNTIME_ACTIVATION misuse. (2) homocysteine card compile_status and source_spec_provenance update required when replacing legacy refs — not noted in advisory or SOP draft."
   },
-  "overall_verdict": "HARDENED. All five front-matter fields confirmed valid. All authority paths read from source. Both candidate STOP conditions resolve positively — no evaluator changes required for either gate mechanism. Unaddressed regression test flag is a Stage 4A verification item only, not a sprint STOP. Sprint cleared for kernel start."
+  "overall_verdict": "HARDENED. All five front-matter fields confirmed valid. Advisory currency verified — no commits on scoped files since 2026-06-24. Signal IDs signal_iron_low and signal_iron_high confirmed against PSI. Allowlist constant _BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS confirmed at domain_score_assembler.py:88. Homocysteine predicate confirmed active at domain_score_assembler.py:189 — no assembler change required. Two hardening additions applied: (1) behavioural_impact must remain NONE for both homocysteine manifests — do not use SIGNAL_RUNTIME_ACTIVATION; (2) homocysteine card compile_status and source_spec_provenance must be updated to compile_pipeline and explicit respectively. All five candidate-level STOP gates present. Sprint cleared for kernel start."
 }
