@@ -1,10 +1,9 @@
 {
-  "branch": "feature/p1-25-thyroid-mr-v2-activation-completion",
+  "branch": "feature/p1-26-mr-v2-iron-homocysteine-signal-activation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-23T21:49:14Z",
-  "cursor_started_utc": "2026-06-23T21:40:07Z",
-  "head_sha": "47d03eaef503ce5ba9c3e5e25a81e11802a1c7f8",
+  "cursor_started_utc": "2026-06-26T07:04:39Z",
+  "head_sha": "edd01341126ceb74d650509a07a5b68895fa094a",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-25"
+  "status": "IN_PROGRESS",
+  "work_id": "P1-26"
 }
