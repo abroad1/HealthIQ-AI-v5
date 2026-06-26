@@ -44,11 +44,13 @@ def test_pack_metadata():
 def test_two_benchmark_domains():
     data = _load_pack()
     domains = data.get("domains")
-    assert isinstance(domains, list) and len(domains) == 2
+    assert isinstance(domains, list) and len(domains) == 4
     ids = {d.get("domain_id") for d in domains}
     assert ids == {
         "one_carbon_methylation_functional_v1",
         "lipid_transport_functional_v1",
+        "blood_iron_oxygen_functional_v1",
+        "thyroid_hormone_antibody_functional_v1",
     }
 
 
@@ -76,5 +78,9 @@ def test_pathway_cross_refs():
     data = _load_pack()
     oc = next(x for x in data["domains"] if x["domain_id"] == "one_carbon_methylation_functional_v1")
     lip = next(x for x in data["domains"] if x["domain_id"] == "lipid_transport_functional_v1")
+    iron = next(x for x in data["domains"] if x["domain_id"] == "blood_iron_oxygen_functional_v1")
+    thy = next(x for x in data["domains"] if x["domain_id"] == "thyroid_hormone_antibody_functional_v1")
     assert oc.get("related_pathway_explainer_id") == "one_carbon_methylation_homocysteine_v1"
     assert lip.get("related_pathway_explainer_id") == "lipid_transport_cholesterol_handling_v1"
+    assert iron.get("related_pathway_explainer_id") == "blood_iron_oxygen_handling_v1"
+    assert thy.get("related_pathway_explainer_id") == "thyroid_hormone_antibody_context_v1"

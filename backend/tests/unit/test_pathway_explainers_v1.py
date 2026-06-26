@@ -27,14 +27,16 @@ def test_pack_version_and_authority():
     assert "pathway_explainers_v1" in str(data.get("authority", ""))
 
 
-def test_two_benchmark_pathways_present():
+def test_four_benchmark_pathways_present():
     data = _load_pack()
     pathways = data.get("pathways")
-    assert isinstance(pathways, list) and len(pathways) == 2
+    assert isinstance(pathways, list) and len(pathways) == 4
     ids = {p.get("pathway_id") for p in pathways}
     assert ids == {
         "one_carbon_methylation_homocysteine_v1",
         "lipid_transport_cholesterol_handling_v1",
+        "blood_iron_oxygen_handling_v1",
+        "thyroid_hormone_antibody_context_v1",
     }
 
 

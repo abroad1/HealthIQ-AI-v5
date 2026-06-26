@@ -143,6 +143,32 @@ pathways:
       patterns can reflect increased circulating availability, storage loading, or release from
       injured tissues depending on the wider panel. Interpretation reads these markers as a
       coordinated transport-and-delivery story rather than a single-value label.
+    iron_transport_and_storage_context: |
+      Serum iron measures traffic at sampling; ferritin and transferrin saturation help place
+      that traffic against storage and loading. The same low iron value can mean different
+      physiology when ferritin is low versus when inflammatory markers are elevated with
+      relatively preserved ferritin.
+    ferritin_and_saturation_together: |
+      Ferritin and transferrin saturation belong in the same read because they answer different
+      facets of the iron network: storage signal versus transport loading. Neither replaces the
+      other when judging whether low iron reflects store depletion, redistribution, or mixed
+      patterns.
+    low_and_high_iron_patterns: |
+      Low iron with concordant low ferritin and low saturation often supports depleted-store
+      physiology in many contexts. High iron with high saturation and rising ferritin raises
+      questions about loading or release that must be read with liver and inflammatory context
+      rather than from serum iron alone.
+    red_cell_oxygen_delivery_link: |
+      Red-cell indices and haemoglobinisation sit adjacent to iron transport because marrow
+      demand and oxygen delivery depend on iron availability. MCV and related indices can shift
+      alongside iron patterns when erythroid dynamics change.
+    markers_belong_together: |
+      Serum iron, ferritin, transferrin saturation, and red-cell indices are read as a
+      coordinated story about transport, stores, and delivery—not interchangeable duplicates.
+    why_matters_beyond_a_single_iron_reading: |
+      Cardiometabolic and haematological surveillance uses pattern coherence: isolated iron
+      shifts without corroboration across stores and transport markers warrant bounded follow-up
+      rather than a single-number label.
     interpretive_caution: |
       Educational pathway prose only. It does not establish iron deficiency, inflammation-driven
       iron restriction, storage-loading disorders, or treatment need without clinician review and
@@ -167,6 +193,29 @@ pathways:
       align; isolated antibody elevation is intentionally bounded and non-diagnostic. The
       interpretive move is pattern coherence across the thyroid panel and trajectory over time,
       not a single-marker disease attribution.
+    free_t3_in_thyroid_traffic: |
+      Free T3 reflects the active hormone fraction reaching tissues. It can fall with systemic
+      illness, altered conversion, or broader thyroid hormone constraint—context that must be read
+      with TSH and free T4 rather than as an isolated gland-failure proxy.
+    tpo_antibody_context_only: |
+      TPO antibody elevation marks immune recognition of thyroid tissue. It strengthens context
+      when thyroid function markers align; it does not, by itself, define disease course or
+      treatment need.
+    tsh_and_t4_discordance: |
+      TSH and free T4 help separate isolated low T3 patterns from broader hormone deficiency
+      frames. Discordance across the panel is common and is the reason thyroid interpretation
+      resists single-marker closure.
+    conversion_and_systemic_illness_link: |
+      Non-thyroid illness, nutritional state, and medication effects can lower T3 without implying
+      long-term intrinsic thyroid disease—another reason the full panel and clinical context
+      matter.
+    markers_belong_together: |
+      Free T3, TSH, free T4, and TPO antibodies answer different facets of thyroid traffic and
+      immune context; they are read together, not as redundant substitutes.
+    why_matters_beyond_isolated_t3: |
+      Metabolic rate, lipid handling, and energy context track with thyroid hormone patterns over
+      time. A single low T3 without corroboration leaves interpretive weight intentionally
+      bounded.
     interpretive_caution: |
       Educational pathway prose only. It does not diagnose hypothyroidism, name specific thyroid
       diseases, predict thyroid failure, or recommend treatment.
