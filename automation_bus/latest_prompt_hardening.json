@@ -1,117 +1,104 @@
 {
-  "work_id": "P1-26",
+  "work_id": "P2-1",
   "status": "HARDENED",
   "bus_version": "1.3.1",
   "hardened_utc": "2026-06-26T00:00:00Z",
   "hardened_by": "Claude Code",
+  "scope_advisory_reference": "automation_bus/latest_scope_advisory.md — P2-1 Prose Substrate Cohort (2026-06-26). Advisory recommended STANDARD/CONTENT predating STOP-1 finding. GPT escalation to HIGH/MIXED after STOP-1 is architecturally correct.",
   "changes": [
     {
       "check": "front_matter_all_five_fields",
       "status": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id:P1-26, branch:feature/p1-26-mr-v2-iron-homocysteine-signal-activation, risk_level:HIGH, execution_model:TWO_PHASE_START_FINISH, change_type:MIXED"
+      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id:P2-1, branch:feature/prose-substrate-wave1-wired, risk_level:HIGH, execution_model:SINGLE_PHASE, change_type:MIXED. All five mandatory fields present."
     },
     {
       "check": "risk_level_high_change_type_mixed_justified",
       "status": "CONFIRMED",
-      "evidence": "BEHAVIOUR: backend/core/analytics/domain_score_assembler.py:88 — _BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS; Intelligence Core per SOP §10. CONTENT: iron production package authoring, homocysteine PSI promotion, compiled card enrichment. MIXED governs under BEHAVIOUR controls per SOP §4. HIGH mandatory for Intelligence Core allowlist change"
+      "evidence": "HIGH justified: narrative_compiler_lc_s3_assembly_v1.py is the output assembly module and narrative_report_compiler_v1.py is the narrative compiler — both qualify as Intelligence Core under SOP §10 ('output assembly'). Any modification to Intelligence Core is HIGH by default. Scope advisory STANDARD/CONTENT classification predated STOP-1 which revealed Python changes to these files are required for runtime-reachable prose. MIXED justified: sprint contains both BEHAVIOUR changes (_LEAD_SIGNAL_HINTS additions in two Intelligence Core Python files) and CONTENT changes (KB YAML authoring). MIXED governs under BEHAVIOUR controls per SOP §4. Both classifications confirmed correct post-STOP-1."
     },
     {
-      "check": "execution_model_two_phase_start_finish_justified",
+      "check": "execution_model_single_phase_verified",
       "status": "CONFIRMED",
-      "evidence": "Phase 1-3 (Phase A): KB package creation, signal_library authoring, PSI promotion. Phase 4-8 (Phase B): domain allowlist update, card enrichment, test verification. Allowlist change (Intelligence Core) correctly deferred to Phase 4 after package validation passes"
+      "evidence": "automation_bus/latest_cursor_prompt.md: six sequential phases with no gated allowlist switch separating package validation from engine activation. No TWO_PHASE_START_FINISH trigger: _LEAD_SIGNAL_HINTS is a local constant in each Python file, not an assembler-layer allowlist requiring deferred activation. SINGLE_PHASE correct."
     },
     {
-      "check": "allowlist_constant_location_verified",
+      "check": "behaviour_scope_exactly_two_python_files",
       "status": "CONFIRMED",
-      "evidence": "backend/core/analytics/domain_score_assembler.py:88 — _BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS: frozenset({'signal_transferrin_high'}). Comment at :86-87: 'P1-18: transferrin transport upregulation (pkg_kb61) — ID-matched production package. Other CBC/iron signals remain excluded pending frame adjudication (P1-3 carry-forward).' MR-v2 supplies the frame adjudication. Only this constant is in scope"
+      "evidence": "automation_bus/latest_cursor_prompt.md:91-96 — 'Only these Python files may be modified: backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py; backend/core/analytics/narrative_report_compiler_v1.py'. Acceptance criteria AC3: 'Only the two declared Python files are modified for behaviour wiring'. No other Python files appear under behaviour scope."
     },
     {
-      "check": "signal_ids_confirmed_against_psi",
+      "check": "python_changes_limited_to_lead_signal_hints_additions",
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency/promoted_signal_intelligence.yaml — signal_id: signal_iron_low. knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_iron_overload_context/promoted_signal_intelligence.yaml — signal_id: signal_iron_high. Both match SOP Phase 4 allowlist additions exactly"
+      "evidence": "automation_bus/latest_cursor_prompt.md:99-116 — allowed changes limited to extending _LEAD_SIGNAL_HINTS with signal_iron_low, signal_iron_high, signal_free_t3_low, signal_tpo_ab_high. Explicit prohibitions listed: routing logic, entity loop, compiler structure, payload structure, infer_yaml_flags_from_payload() logic, _SECONDARY_SIGNAL_HINTS, scoring/ranking/signal activation/domain assembler logic. Acceptance criteria AC4 confirms. Phase 2 repeats identical constraint."
     },
     {
-      "check": "homocysteine_predicate_active_no_assembler_change_required",
+      "check": "lead_hint_sets_currently_identical_iron_thyroid_absent",
       "status": "CONFIRMED",
-      "evidence": "backend/core/analytics/domain_score_assembler.py:189 — `if 'homocysteine' in sid or 'non_hdl' in primary: return True` inside _is_wave1_cardiovascular. signal_homocysteine_high contains 'homocysteine'; predicate routes to cardiovascular without any allowlist constant. Advisory finding confirmed clean. Phase 3C instruction to skip assembler change is correct"
+      "evidence": "narrative_compiler_lc_s3_assembly_v1.py:32-37 — _LEAD_SIGNAL_HINTS = frozenset({'signal_homocysteine_high', 'signal_homocysteine_elevation_context', 'signal_mcv_high'}). narrative_report_compiler_v1.py:38-42 — _LEAD_SIGNAL_HINTS: Set[str] = {'signal_homocysteine_high', 'signal_homocysteine_elevation_context', 'signal_mcv_high'}. Members identical. signal_iron_low, signal_iron_high, signal_free_t3_low, signal_tpo_ab_high absent from both. SOP Phase 1 STOP condition ('STOP if the two Python files use incompatible hint mechanisms') will pass."
     },
     {
-      "check": "advisory_currency_verified",
+      "check": "secondary_hint_sets_identical_lipid_signals_present",
       "status": "CONFIRMED",
-      "evidence": "git log --since=2026-06-24 on domain_score_assembler.py, wave1_bio_oxygen_carrying_capacity.yaml, wave1_cv_homocysteine_pathway.yaml returned empty. Advisory dated 2026-06-24 remains current. All structural claims with file:line citations are inheritable per CLAUDE.md §14"
+      "evidence": "narrative_compiler_lc_s3_assembly_v1.py:39-47 — _SECONDARY_SIGNAL_HINTS = frozenset({'signal_ldl_cholesterol_high', 'signal_hdl_cholesterol_high', 'signal_non_hdl_high', 'signal_lipid_transport_dysfunction', 'signal_triglycerides_high'}). narrative_report_compiler_v1.py:43-49 — identical members as Set[str]. Both secondary sets match. SOP prohibition on modifying _SECONDARY_SIGNAL_HINTS correctly scoped."
     },
     {
-      "check": "staged_psi_all_five_candidates_present",
-      "status": "CONFIRMED",
-      "evidence": "knowledge_bus/generated_pilot/p1_12_batch_c/: pkg_kb52c_iron_low_absolute_iron_deficiency, pkg_kb52c_iron_low_functional_iron_restriction_inflammation, pkg_kb52c_iron_high_iron_overload_context — all present. knowledge_bus/generated_pilot/p1_10_batch_a/: pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment, pkg_kb52c_homocysteine_high_renal_clearance_reduction — both present"
-    },
-    {
-      "check": "iron_production_packages_absent_creation_is_correct",
-      "status": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/ directory listing: pkg_kb52c_iron_low_absolute_iron_deficiency, pkg_kb52c_iron_low_functional_iron_restriction_inflammation, pkg_kb52c_iron_high_iron_overload_context — none present. Phase 2A CREATE instruction is correct. No conflicting production package exists"
-    },
-    {
-      "check": "homocysteine_production_packages_exist_psi_absent",
-      "status": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/: package_manifest.yaml, research_brief.yaml, signal_library.yaml — present; promoted_signal_intelligence.yaml — ABSENT. Same for pkg_kb52c_homocysteine_high_renal_clearance_reduction/. Phase 3 CREATE PSI instruction is correct"
-    },
-    {
-      "check": "homocysteine_manifests_current_behavioural_impact",
-      "status": "CONFIRMED",
-      "evidence": "pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/package_manifest.yaml:11 — behavioural_impact: NONE. pkg_kb52c_homocysteine_high_renal_clearance_reduction/package_manifest.yaml:11 — behavioural_impact: NONE. Both confirmed pre-sprint state"
-    },
-    {
-      "check": "homocysteine_manifest_amendment_rule_tightened",
+      "check": "lead_hint_set_type_mismatch_must_be_aligned",
       "status": "HARDENED_WITH_ADDITION",
-      "evidence": "SOP Phase 3 lines 143-151 say to 'choose the closest accurate package status used by existing active predicate-routed packages' without naming one. Ambiguity risk: Cursor may use SIGNAL_RUNTIME_ACTIVATION and rationalise it as 'runtime surfacing', but that value implies an assembler allowlist switch was made — which is false for homocysteine. Explicit instruction added: retain behavioural_impact:NONE for both homocysteine manifests. Rationale: the behavioural_impact field records assembler-layer changes only; predicate routing was live before this sprint; PSI promotion is content-layer. SIGNAL_RUNTIME_ACTIVATION must not be used for these two packages. Record rationale in sprint report"
+      "evidence": "narrative_compiler_lc_s3_assembly_v1.py:32 uses frozenset({...}); narrative_report_compiler_v1.py:38 uses Set[str] = {...}. Members are currently identical, so this is not a blocker. However, the mutable Set[str] form allows _LEAD_SIGNAL_HINTS.add() calls at runtime — which is an immutability gap relative to the frozenset form. Hardening addition: after Phase 2 additions, both files must use frozenset for _LEAD_SIGNAL_HINTS. If aligning the type in narrative_report_compiler_v1.py requires changing 'Set[str]' to 'FrozenSet[str]' and the assignment form, this is a formatting-class change not a logic change; it is permitted under Phase 2 scope. Cursor must not change the members, only the container type. Record in Phase 1 verification."
     },
     {
-      "check": "compiled_cards_exist_state_matches_advisory",
+      "check": "kb_yaml_paths_match_compiler_hardwired_paths",
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/compiled/health_system_cards/wave1_bio_oxygen_carrying_capacity.yaml:7-12 — 5 source_spec_ids (hgb_low, ferritin_low, ferritin_high_inflammatory, ferritin_high_iron_overload, transferrin_high); compile_manifest_ref: p1_24. knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml:7-9 — source_spec_ids: [inv_homocysteine_high_metabolic]; compile_manifest_ref: arch_rt5b; package_refs: [pkg_s24_homocysteine_high_metabolic]. Both match advisory description exactly"
+      "evidence": "narrative_report_compiler_v1.py:34 — _ENTITIES_PATH = 'knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml'. :35 — _PATHWAY_PATH = 'knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml'. :36 — _FUNCTIONAL_PATH = 'knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml'. All three KB YAML files confirmed present (Glob). SOP Phase 3 content additions target the correct files."
     },
     {
-      "check": "homocysteine_card_provenance_fields_update_required",
+      "check": "interpretation_entity_schema_and_lead_role_verified",
+      "status": "CONFIRMED",
+      "evidence": "knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml:20-35 — existing entries confirm required fields: interpretation_entity_id, compiler_role, phenotype_id, idl_internal_id, pathway_explainer_id, functional_interpretation_domain_id. Existing lead entity uses compiler_role: benchmark_lead_domain (line 21); secondary uses benchmark_secondary_domain (line 31). New iron and thyroid entities must use compiler_role: benchmark_lead_domain. SOP Phase 3A field list matches schema exactly."
+    },
+    {
+      "check": "entity_loop_semantics_verification_must_precede_phase_3a",
       "status": "HARDENED_WITH_ADDITION",
-      "evidence": "wave1_cv_homocysteine_pathway.yaml:22 — compile_status: pilot_manual; :23 — source_spec_provenance: inferred_from_package_manifest. When Cursor replaces legacy pkg_s24 with KB-S52C explicit spec IDs, these provenance fields must also be updated: compile_status to compile_pipeline; source_spec_provenance to explicit. Reference: wave1_bio_oxygen_carrying_capacity.yaml:51-52 — pattern to follow. SOP does not mention this update; added as hardening requirement"
+      "evidence": "narrative_report_compiler_v1.py:623-626 — entity loop begins: rows = (entities_doc or {}).get('interpretation_entities'); if isinstance(rows, list): for row in rows: if not isinstance(row, dict): [loop continues]. The loop body past line 626 was not read during hardening. The compiler has one lead slot; if loop logic is last-match, multiple benchmark_lead_domain entries will collide silently (last one wins regardless of signal). SOP Phase 3A addresses this with a STOP gate but does not front-load the verification into Phase 1. Hardening addition: Phase 1 targeted reads must include narrative_report_compiler_v1.py lines 626-670 (entity loop body) to determine first-match vs last-match semantics BEFORE Phase 3A begins. Cursor must record the finding explicitly in Phase 1 output. If last-match: entity ordering in YAML is load-bearing and must be explicitly controlled for iron and thyroid entries. If first-match: only the first matching lead entity fires regardless of ordering. Either way, Cursor must state the semantics and confirm the collision behaviour is handled before proceeding to YAML authoring."
     },
     {
-      "check": "tsat_gate_uses_ssot_canonical_key",
+      "check": "no_routing_redesign_no_frame_level_discrimination",
       "status": "CONFIRMED",
-      "evidence": "SOP Phase 2B:297, Phase 2C:315, Phase 2D:332 — all require 'directly reported transferrin_saturation'. Advisory §SSOT marker availability:86 — transferrin_saturation EXISTS (canonical). SOP out-of-scope:201 — 'calculated TSAT logic'. Acceptance criteria:634 — 'No calculated TSAT mode is introduced'. Gate key must be transferrin_saturation throughout all three iron signal_library.yaml files"
+      "evidence": "automation_bus/latest_cursor_prompt.md:72-83 — 'Important limitation' section explicitly defers: frame-level routing for signal_iron_low absolute vs functional distinction; signal_homocysteine_high B-vitamin vs renal distinction; simultaneous prose for all 6 domains; more than one lead block; routing redesign; entity-loop semantics changes; per-frame signal identity additions; ranking/scoring changes. Phase 3B pathway explainer content: 'covers iron-low and iron-high as a domain-level pattern only; does not distinguish absolute vs functional iron-low at routing level'. Acceptance criteria AC21/AC22 confirm carry-forward requirement."
     },
     {
-      "check": "five_candidate_stop_gates_all_present",
+      "check": "kb_content_scope_limited_to_three_yaml_files",
       "status": "CONFIRMED",
-      "evidence": "Phase 2B:303-309 — iron_low_absolute STOP on TSAT absent, calculated TSAT assumed, ferritin-low not required, unsafe wording. Phase 2C:320-327 — iron_low_functional STOP on TSAT absent, ferritin state indistinct, CRP absent, unsafe wording. Phase 2D:342-348 — iron_high_overload STOP on TSAT absent, ferritin-high absent, haemochromatosis framing, hepatocellular standalone. Phase 3A:365-371 — b_vitamin STOP on B12/folate absent, consumer methylation wording, CV-risk primary frame. Phase 3B:380-386 — renal STOP on creatinine/eGFR absent, kidney disease diagnosis, B-vitamin contradiction absent. All five independent gates present"
+      "evidence": "automation_bus/latest_cursor_prompt.md:118-165 — Knowledge Bus content scope confined to: benchmark_interpretation_entities_v1.yaml (Phase 3A), pathway_explainers_v1.yaml (Phase 3B), functional_interpretation_v1.yaml (Phase 3C). No other KB files in content scope. PSI package files listed as 'read-only source reference' only (out-of-scope line 207-208). Scope advisory STOP-3 gate confirmed: any compiler infrastructure change escalates immediately."
     },
     {
-      "check": "forbidden_files_not_in_scope",
+      "check": "tests_cover_four_new_signals_and_regression",
       "status": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:195-217 — explicitly excludes: signal_evaluator.py, biomarkers.yaml, questionnaire.json, scoring_policy.yaml, calculated TSAT logic, parser files, frontend, Gemini, report prose, thyroid, WBC/lymphocyte/neutrophil packages, TgAb/TPOAb, pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release, .codex/.cursor/.vscode/, AGENTS.md. Acceptance criteria:643 — explicit prohibition matches out-of-scope list"
+      "evidence": "automation_bus/latest_cursor_prompt.md:376-401 — Phase 4 test list includes: test_iron_low_signal_triggers_lead_pathway_block, test_iron_high_signal_triggers_lead_pathway_block, test_thyroid_ft3_low_triggers_lead_pathway_block, test_thyroid_tpoab_triggers_lead_pathway_block. Regression tests: test_homocysteine_lead_block_unchanged, test_lipid_secondary_block_unchanged, test both Python hint sets remain aligned. Narrative output tests: representative payload with each new signal as top finding produces non-placeholder lead narrative. Claim boundary tests. Missing-block fallback test. Coverage matches user hardening instruction."
     },
     {
-      "check": "transferrin_high_regression_guard_present",
+      "check": "carry_forward_records_required_deferrals",
       "status": "CONFIRMED",
-      "evidence": "SOP Phase 6:505 — 'assert signal_transferrin_high remains active'. Explicit regression guard in test suite requirement. Acceptance criteria:638 — 'signal_transferrin_high remains active'. Allowlist constant expansion must not drop existing member"
+      "evidence": "automation_bus/latest_cursor_prompt.md:406-420 — Phase 5 carry-forward YAML must record: signal_iron_low absolute vs functional routing deferred; signal_homocysteine_high B-vitamin vs renal routing deferred; full six-domain simultaneous prose deferred (one-lead/one-secondary model constraint); routing redesign deferred as P2-FRAME-ROUTING-ARCHITECTURE-1; any entity-loop collision or ordering limitation discovered; any stopped content block with exact reason. Both deferrals required by user hardening instruction present."
     },
     {
-      "check": "homocysteine_assembler_routing_regression_guard_present",
+      "check": "kb_content_governed_and_prohibited_wording_explicit",
       "status": "CONFIRMED",
-      "evidence": "SOP Phase 6:506 — 'assert homocysteine assembler routing remains unchanged'. Prevents any inadvertent change to _is_wave1_cardiovascular predicate at domain_score_assembler.py:189. Regression test covers both iron additions and homocysteine routing stability"
+      "evidence": "automation_bus/latest_cursor_prompt.md:324-365 — content source authority limited to P1-25 thyroid PSI/sprint report/compiled card evidence and P1-26 iron PSI/sprint report/compiled card evidence. 'Do not invent medical content.' Prohibited iron wording listed (8 items including 'iron deficiency diagnosis', 'anaemia of inflammation', 'haemochromatosis', treatment advice). Prohibited thyroid wording listed (6 items including 'hypothyroidism diagnosis', 'Hashimoto's disease', 'your immune system is attacking your thyroid', treatment advice). Claim boundary assertions required in test suite."
     },
     {
-      "check": "iron_hepatocellular_standalone_correctly_excluded",
+      "check": "forbidden_files_confirmed_absent_from_behaviour_scope",
       "status": "CONFIRMED",
-      "evidence": "SOP:211 out-of-scope — pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release. Phase 2D:345-347 — STOP if hepatocellular material becomes standalone signal content. Advisory:37 — 'iron_high_hepatocellular_or_hemolytic_release as standalone signal — deferred by MR-v2'. Suppressor role (ctr_alt_high contradiction in iron_high_overload PSI) retained as caveat only"
+      "evidence": "automation_bus/latest_cursor_prompt.md:189-216 — 'Files out of scope' explicitly names: narrative_payload_builder_v1.py, narrative_brief_enforcement_v1.py, narrative_payload_v1.py, narrative_report_v1.py, orchestrator.py, results.py, scoring files, signal activation files, parser files, questionnaire files, frontend files, Gemini files, report redesign files, PSI package files, compiled card files (except read-only), WBC/lymphocyte/neutrophil files, TSAT calculated-mode files, TgAb/TPOAb euthyroid files. Acceptance criteria AC20 repeats the prohibition. User hardening instruction list fully covered."
     }
   ],
   "advisory_inheritance_status": {
-    "stage_b_advisory_date": "2026-06-24",
-    "git_log_check_result": "No commits for domain_score_assembler.py, wave1_bio_oxygen_carrying_capacity.yaml, or wave1_cv_homocysteine_pathway.yaml since 2026-06-24. Advisory structural evidence remains current.",
-    "sprint_executed_between_advisory_and_hardening": false,
-    "activation_readiness_rerun_required": false,
-    "material_departure_from_advisory": "Two hardening additions beyond advisory scope: (1) explicit behavioural_impact:NONE retention instruction for homocysteine manifests — prevents ambiguous SIGNAL_RUNTIME_ACTIVATION misuse. (2) homocysteine card compile_status and source_spec_provenance update required when replacing legacy refs — not noted in advisory or SOP draft."
+    "stage_b_advisory_date": "2026-06-26",
+    "advisory_risk_classification": "STANDARD/CONTENT (predated STOP-1 finding)",
+    "gpt_risk_classification": "HIGH/MIXED (post-STOP-1, Intelligence Core Python changes required)",
+    "escalation_justified": true,
+    "escalation_rationale": "STOP-1 revealed _LEAD_SIGNAL_HINTS controls runtime pathway inclusion and requires Python changes in Intelligence Core files. Advisory OUT scope explicitly listed these files; after STOP-1 they moved IN. HIGH/MIXED replaces advisory STANDARD/CONTENT correctly. No material divergence on KB YAML scope, carry-forward requirements, or out-of-scope signals.",
+    "material_departure_from_advisory": "Two hardening additions beyond SOP draft scope: (1) _LEAD_SIGNAL_HINTS type mismatch between files (frozenset vs Set[str]) — Cursor must align to frozenset after additions; (2) entity-loop semantics verification must be front-loaded into Phase 1 before Phase 3A YAML authoring begins — loop body at narrative_report_compiler_v1.py:626+ not read in SOP draft; first-match vs last-match semantics are load-bearing for multi-entity lead safety."
   },
-  "overall_verdict": "HARDENED. All five front-matter fields confirmed valid. Advisory currency verified — no commits on scoped files since 2026-06-24. Signal IDs signal_iron_low and signal_iron_high confirmed against PSI. Allowlist constant _BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS confirmed at domain_score_assembler.py:88. Homocysteine predicate confirmed active at domain_score_assembler.py:189 — no assembler change required. Two hardening additions applied: (1) behavioural_impact must remain NONE for both homocysteine manifests — do not use SIGNAL_RUNTIME_ACTIVATION; (2) homocysteine card compile_status and source_spec_provenance must be updated to compile_pipeline and explicit respectively. All five candidate-level STOP gates present. Sprint cleared for kernel start."
+  "overall_verdict": "HARDENED. All five front-matter fields confirmed valid. HIGH/MIXED escalation from advisory STANDARD/CONTENT is architecturally correct after STOP-1 revealed Intelligence Core Python changes required. SINGLE_PHASE confirmed — no assembler-layer gated allowlist switch. Behaviour scope confirmed to exactly two Python files with _LEAD_SIGNAL_HINTS additions only. Both hint sets verified identical pre-sprint; iron and thyroid signals absent from both; homocysteine lead and lipid secondary members present. KB YAML file paths confirmed against compiler hardwired paths. Interpretation entity schema verified. Tests cover all four new signals plus homocysteine lead and lipid secondary regression. Carry-forward requirements for frame-level routing and six-domain prose confirmed. Two hardening additions: (1) align _LEAD_SIGNAL_HINTS container type to frozenset in both files; (2) Phase 1 must read entity-loop body (narrative_report_compiler_v1.py:626-670) and record first-match vs last-match semantics before Phase 3A YAML authoring. Sprint cleared for kernel start."
 }

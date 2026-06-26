@@ -1,190 +1,186 @@
 ---
-work_id: P1-26
-branch: feature/p1-26-mr-v2-iron-homocysteine-signal-activation
+work_id: P2-1
+branch: feature/prose-substrate-wave1-wired
 risk_level: HIGH
-execution_model: TWO_PHASE_START_FINISH
+execution_model: SINGLE_PHASE
 change_type: MIXED
 ---
 
-# P1-26 — MR-v2 Cleared Signal Activation Cohort: Iron + Homocysteine
+# P2-1 — Prose Substrate Wave 1 Wired
 
-You are Cursor, acting as a combined Knowledge Bus + Core Engine implementation agent under Automation Bus SOP v1.3.1.
+You are Cursor, acting as a combined Core Engine + Knowledge Bus implementation agent under Automation Bus SOP v1.3.1.
 
 This is a HIGH-risk MIXED sprint.
 
-This sprint implements the MR-v2-cleared iron and homocysteine activation cohort as one outcome-based package.
+This sprint delivers the first runtime-reachable governed prose substrate for newly activated Wave 1 signals by wiring bounded Layer C pathway selection for iron and thyroid signals and authoring the associated Knowledge Bus pathway / functional interpretation YAML content.
 
-Candidate set:
+## Controlling scoping decisions
 
-1. Iron low / absolute iron deficiency context.
-2. Iron low / functional inflammatory restriction context.
-3. Iron high / iron overload context.
-4. Homocysteine high / B-vitamin processing context.
-5. Homocysteine high / renal clearance context.
+Use the completed P2-1 scope advisory and STOP-1 verification as current scoping authority.
 
-Do not split this into separate iron-only, homocysteine-only, PSI-only, allowlist-only, package-only, card-only or test-only sprints unless a hard STOP gate fires.
+Material findings:
 
-Do not run another advisory.
+* Layer C infrastructure already exists.
+* `NarrativePayloadV1`, `NarrativeReportV1`, `compile_narrative_report_v1()`, `narrative_compiler_lc_s3_assembly_v1.py`, `narrative_payload_builder_v1.py`, and claim-boundary enforcement already exist.
+* P2-1 is not a greenfield Layer C infrastructure build.
+* The compiler currently uses a two-slot model:
 
-## Controlling scoping facts
+  * one lead pathway block;
+  * one secondary pathway block.
+* Runtime inclusion is controlled by `_LEAD_SIGNAL_HINTS` and `_SECONDARY_SIGNAL_HINTS`.
+* These signal-hint sets are duplicated in:
 
-Use the completed P1-26 scope advisory as current scoping authority.
-
-Key facts:
-
-* P1-26 remains one sprint.
-* No whole-sprint blocker exists.
-* All five candidate package paths are present.
-* All five candidates have staged PSI available.
-* Three iron candidates require new production package folders.
-* Two homocysteine production packages already exist but lack `promoted_signal_intelligence.yaml`.
-* Iron requires `domain_score_assembler.py` change: add `signal_iron_low` and `signal_iron_high` to `_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS`.
-* Homocysteine requires no `domain_score_assembler.py` change because `_is_wave1_cardiovascular` already routes `signal_homocysteine_high` by predicate.
-* Directly reported `transferrin_saturation` is SSOT-canonical.
-* No calculated TSAT mode is required or allowed.
-* No obvious prohibited user-facing wording blocker was found.
-* Compiled card enrichment is safe for:
-
-  * `wave1_bio_oxygen_carrying_capacity`
-  * `wave1_cv_homocysteine_pathway`
-
-## Authority inputs
-
-Read before editing:
-
-* `automation_bus/latest_audit_summary.md`
-* `automation_bus/latest_pipeline_advisory.md`
-* `automation_bus/latest_pipeline_advisory_throughput_challenge.md`
-* `automation_bus/latest_scope_advisory.md`
-* `docs/Medical Research Documents/Medical_Research_Activation_Review_Deferred_Wave_1_Items_v2.md`
-* `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-* `docs/sprints/beta_readiness/P1-25_pass3_carry_forward.yaml`
-* `docs/sprints/beta_readiness/P1-25_thyroid_mr_v2_activation_completion.md`
-
-Use production package examples only if needed for schema pattern confirmation:
-
-* P1-21 ferritin-high package pattern
-* P1-23 TSH package pattern
-* P1-25 TPOAb package pattern
-
-Do not broaden into advisory work.
+  * `backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py`
+  * `backend/core/analytics/narrative_report_compiler_v1.py`
+* The current lead hint set covers homocysteine / MCV.
+* The current secondary hint set covers lipid signals.
+* Iron and thyroid signals are not currently wired into the lead hint set.
+* The payload path does not provide richer routing than the legacy path; it uses the same signal-hint mechanism.
+* Therefore, runtime-reachable P2-1 prose requires bounded Python behaviour changes.
 
 ## Sprint purpose
 
-Deliver one governed activation cohort that:
+Deliver a bounded, runtime-reachable prose substrate by:
 
-* creates production packages for three iron candidates;
-* promotes staged PSI for three iron candidates;
-* completes production PSI for two homocysteine candidates;
-* updates iron runtime allowlist in `domain_score_assembler.py`;
-* leaves homocysteine assembler routing unchanged;
-* enforces MR-v2 gates using directly reported TSAT only;
-* avoids unsafe diagnostic wording;
-* updates compiled card evidence for iron and homocysteine;
-* updates tests and sprint artefacts;
-* records candidate-level outcomes and carry-forwards.
+1. Extending existing lead signal hint sets to include newly activated iron and thyroid signals.
+2. Adding Knowledge Bus interpretation entity entries for iron and thyroid.
+3. Adding pathway explainer YAML content for iron and thyroid.
+4. Adding functional interpretation YAML content for iron and thyroid.
+5. Preserving existing homocysteine lead routing.
+6. Preserving existing lipid secondary routing.
+7. Testing that iron and thyroid signals now trigger lead pathway prose.
+8. Explicitly deferring frame-level routing and full multi-domain simultaneous prose.
+
+## Product output
+
+After P2-1:
+
+* `signal_iron_low` can trigger a governed lead prose block.
+* `signal_iron_high` can trigger a governed lead prose block.
+* `signal_free_t3_low` can trigger a governed lead prose block.
+* `signal_tpo_ab_high` can trigger a governed lead prose block.
+* Existing homocysteine lead prose behaviour still works.
+* Existing lipid secondary prose behaviour still works.
+* The compiler returns valid `NarrativeReportV1` output with governed pathway / functional prose for the newly wired signal families when they are selected as the lead finding.
+* No frontend work is required.
+* No Gemini work is required.
+* No new medical meaning is invented outside governed PSI / package / card evidence.
+
+## Important limitation
+
+P2-1 does not solve frame-level prose routing.
+
+Explicitly out of scope:
+
+* distinguishing `signal_iron_low` absolute deficiency frame from functional inflammatory restriction frame at compiler-routing level;
+* distinguishing `signal_homocysteine_high` B-vitamin frame from renal-clearance frame at compiler-routing level;
+* simultaneous prose blocks for all 6 domains;
+* more than one lead block;
+* routing redesign;
+* changing entity-loop semantics;
+* adding per-frame signal identity;
+* changing ranking/scoring or top-finding selection.
+
+If frame-level routing is required, record a future carry-forward:
+
+`P2-FRAME-ROUTING-ARCHITECTURE-1`
 
 ## Files in scope
 
-### HIGH-risk behaviour / Intelligence Core
+### Behaviour — Core Engine / Layer C assembly
 
-* `backend/core/analytics/domain_score_assembler.py`
+Only these Python files may be modified:
+
+* `backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py`
+* `backend/core/analytics/narrative_report_compiler_v1.py`
 
 Allowed changes only:
 
-* add `signal_iron_low` to `_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS`;
-* add `signal_iron_high` to `_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS`;
-* update the iron comment to record that MR-v2 dated 2026-06-23 is the frame adjudication resolving the prior P1-3/P1-18 iron carry-forward;
-* do not alter homocysteine routing;
-* do not alter scoring logic, ranking logic, assembler structure, signal evaluator logic, or other domain constants.
+* extend `_LEAD_SIGNAL_HINTS` with:
 
-### Iron production packages to create
+  * `signal_iron_low`
+  * `signal_iron_high`
+  * `signal_free_t3_low`
+  * `signal_tpo_ab_high`
 
-Create full production package folders:
+The two files must contain matching lead signal hint sets after the change.
 
-* `knowledge_bus/packages/pkg_kb52c_iron_low_absolute_iron_deficiency/`
-* `knowledge_bus/packages/pkg_kb52c_iron_low_functional_iron_restriction_inflammation/`
-* `knowledge_bus/packages/pkg_kb52c_iron_high_iron_overload_context/`
+Do not modify:
 
-Each production package must include the required current package structure, expected to include:
+* routing logic;
+* entity loop;
+* compiler structure;
+* payload structure;
+* `infer_yaml_flags_from_payload()` logic, except if formatting or comment update is unavoidable and no logic changes occur;
+* `_SECONDARY_SIGNAL_HINTS`, unless a hardening check proves an existing test requires formatting-only alignment;
+* any scoring, ranking, signal activation, or domain assembler logic.
 
-* `research_brief.yaml`
-* `signal_library.yaml`
-* `package_manifest.yaml`
-* `promoted_signal_intelligence.yaml`
-
-Use the staged PSI from:
-
-* `knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_absolute_iron_deficiency/`
-* `knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_low_functional_iron_restriction_inflammation/`
-* `knowledge_bus/generated_pilot/p1_12_batch_c/pkg_kb52c_iron_high_iron_overload_context/`
-
-Follow the P1-21 ferritin-high production package pattern.
-
-Do not byte-copy blindly if current production package schema requires additional fields.
-
-### Homocysteine production packages to complete
-
-Update existing production package folders:
-
-* `knowledge_bus/packages/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/`
-* `knowledge_bus/packages/pkg_kb52c_homocysteine_high_renal_clearance_reduction/`
-
-Create:
-
-* `promoted_signal_intelligence.yaml` in each package.
-
-Use staged PSI from:
-
-* `knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/`
-* `knowledge_bus/generated_pilot/p1_10_batch_a/pkg_kb52c_homocysteine_high_renal_clearance_reduction/`
-
-Update each homocysteine `package_manifest.yaml` to reflect production PSI availability and runtime surfacing accurately.
-
-Manifest amendment rule:
-
-* Do not imply a new homocysteine assembler allowlist activation.
-* Predicate routing is already live.
-* If active package pattern supports `SIGNAL_RUNTIME_ACTIVATION`, use it only if it means production PSI/runtime surfacing.
-* If that value specifically implies a newly added allowlist switch, choose the closest accurate package status used by existing active predicate-routed packages.
-* Record the decision in the sprint report.
-
-### Compiled card estate
+### Content — Knowledge Bus prose substrate YAML
 
 Update:
 
-* `knowledge_bus/compiled/health_system_cards/wave1_bio_oxygen_carrying_capacity.yaml`
-* `knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml`
-* `knowledge_bus/compiled/estate_index_v1.yaml`
+* `knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml`
+* `knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml`
+* `knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml`
 
-Create:
+Required content additions:
 
-* `knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml`
+1. Iron / blood-iron-oxygen lead entity:
 
-Expected card changes:
+   * connects the lead compiler role to the iron pathway explainer ID;
+   * connects to iron functional interpretation domain ID;
+   * uses governed source material from P1-26 iron PSI and compiled card evidence.
 
-* add passing iron source specs and package refs to `wave1_bio_oxygen_carrying_capacity`;
-* preserve P1-24 transferrin-high enrichment;
-* update `wave1_cv_homocysteine_pathway` from legacy `pkg_s24` / legacy source-spec references to the new KB-S52C homocysteine package refs and source-spec IDs;
-* update relevant `compile_manifest_ref`;
-* update estate index paths for changed cards only;
-* do not add stopped candidates as active card depth.
+2. Thyroid lead entity:
+
+   * connects the lead compiler role to the thyroid pathway explainer ID;
+   * connects to thyroid functional interpretation domain ID;
+   * uses governed source material from P1-25 thyroid PSI and compiled card evidence.
+
+3. Iron pathway explainer:
+
+   * neutral, non-diagnostic prose;
+   * covers iron-low and iron-high as a domain-level pattern only;
+   * does not distinguish absolute vs functional iron-low at routing level;
+   * does not diagnose iron deficiency, anaemia of inflammation, haemochromatosis, inflammation, liver disease, haemolysis, or treatment need.
+
+4. Thyroid pathway explainer:
+
+   * neutral, non-diagnostic prose;
+   * covers FT3-low and TPOAb-high as thyroid-domain context only;
+   * does not diagnose hypothyroidism, Hashimoto’s disease, autoimmune thyroid disease, thyroid failure, or immune attack.
+
+5. Iron functional interpretation:
+
+   * explains what the blood/iron/oxygen axis reflects at a high level;
+   * must be derived from governed PSI/card evidence;
+   * no treatment advice.
+
+6. Thyroid functional interpretation:
+
+   * explains what thyroid hormone/antibody context reflects at a high level;
+   * must be derived from governed PSI/card evidence;
+   * no diagnosis or treatment advice.
+
+Existing homocysteine and lipid content must be preserved unless a schema-level addition requires non-destructive formatting.
 
 ### Tests
 
-Create:
+Create or update tests in the appropriate test location.
 
-* `backend/tests/unit/test_p1_26_iron_homocysteine_activation.py`
+Expected new test file:
 
-Use existing test files only if current repo pattern requires a different placement.
+* `backend/tests/unit/test_p2_1_prose_substrate_wave1_wired.py`
+
+If repo convention requires another name/location, use that convention.
 
 ### Sprint artefacts
 
 Create:
 
-* `docs/sprints/beta_readiness/P1-26_iron_homocysteine_manifest.yaml`
-* `docs/sprints/beta_readiness/P1-26_pass3_carry_forward.yaml`
-* `docs/sprints/beta_readiness/P1-26_iron_homocysteine_mr_v2_activation.md`
+* `docs/sprints/beta_readiness/P2-1_prose_substrate_wave1_wired_manifest.yaml`
+* `docs/sprints/beta_readiness/P2-1_prose_substrate_carry_forward.yaml`
+* `docs/sprints/beta_readiness/P2-1_prose_substrate_wave1_wired_completion.md`
 
 Update:
 
@@ -194,22 +190,26 @@ Update:
 
 Do not modify:
 
+* `backend/core/analytics/domain_score_assembler.py`
 * `backend/core/analytics/signal_evaluator.py`
-* `backend/ssot/biomarkers.yaml`
-* `backend/ssot/questionnaire.json`
-* `backend/ssot/scoring_policy.yaml`
-* calculated TSAT logic
+* `backend/core/analytics/narrative_payload_builder_v1.py`
+* `backend/core/analytics/narrative_brief_enforcement_v1.py`
+* `backend/core/contracts/narrative_payload_v1.py`
+* `backend/core/contracts/narrative_report_v1.py`
+* `backend/core/pipeline/orchestrator.py`
+* `backend/core/models/results.py`
+* scoring files
+* signal activation files
 * parser files
+* questionnaire files
 * frontend files
 * Gemini files
-* report prose / Layer C prose substrate
-* thyroid files
-* WBC packages
-* lymphocyte packages
-* neutrophil packages
-* TgAb / TPOAb files
-* `pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release`
-* unrelated Knowledge Bus packages
+* report redesign files
+* PSI package files unless read-only source reference is needed
+* compiled card files unless read-only source reference is needed
+* WBC / lymphocyte / neutrophil files
+* TSAT calculated-mode files
+* TgAb / TPOAb euthyroid files
 * `.codex/`
 * `.cursor/`
 * `.vscode/`
@@ -221,378 +221,228 @@ Before implementation:
 
 1. Confirm current branch is:
 
-`feature/p1-26-mr-v2-iron-homocysteine-signal-activation`
+`feature/prose-substrate-wave1-wired`
 
 2. Confirm `automation_bus/state/work_package_active.json` exists.
-3. Confirm active token has `work_id: P1-26`.
+3. Confirm active token has `work_id: P2-1`.
 4. Confirm token branch matches current branch.
-5. Confirm repo/stash/parked-file state is governed under the standard start prompt.
-6. Confirm P1-25 is closed and merged before beginning.
-7. Confirm no advisory or fork/background agent is running for P1-26.
+5. Confirm repo/stash/parked-file state is governed.
+6. Confirm P1-25 and P1-26 are merged.
+7. Confirm no advisory or fork/background agent is running for P2-1.
 
 STOP if preflight fails.
 
-## Phase 1 — Authority and B1 verification
+## Phase 1 — Source verification
 
-### 1A — MR-v2 authority verification
+Perform targeted verification only.
 
-Read MR-v2 sections covering:
+Read:
 
-* iron low / absolute iron deficiency;
-* iron low / functional inflammatory restriction;
-* iron high / overload context;
-* homocysteine high / B-vitamin processing context;
-* homocysteine high / renal-clearance context.
+* current `_LEAD_SIGNAL_HINTS` and `_SECONDARY_SIGNAL_HINTS` in `narrative_compiler_lc_s3_assembly_v1.py`;
+* current matching hint sets in `narrative_report_compiler_v1.py`;
+* existing interpretation entity YAML shape;
+* existing pathway explainer YAML shape;
+* existing functional interpretation YAML shape;
+* P1-25 thyroid completion report / package artefacts as source authority;
+* P1-26 iron/homocysteine completion report / package artefacts as source authority.
+
+Do not broaden into a repo audit.
 
 Confirm:
 
-* all five candidates are medically cleared with strict gates;
-* calculated TSAT remains blocked;
-* directly reported TSAT may be used;
-* hepatocellular / haemolytic release is not a standalone iron-high activation;
-* WBC / lymphocyte / neutrophil work remains out of scope.
+* the two lead hint sets currently match;
+* the expected existing homocysteine hints are present;
+* the expected existing lipid secondary hints are present;
+* YAML schema/shape is understood.
 
-STOP affected candidate if MR-v2 does not support activation.
+STOP if the two Python files use incompatible hint mechanisms.
 
-### 1B — B1 fact verification
+## Phase 2 — Behaviour wiring
 
-Verify only the minimum blocker facts before editing:
+Update both Python files:
 
-1. all five candidate package paths exist;
-2. staged PSI exists for all five candidates;
-3. `_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS` is the correct iron allowlist constant;
-4. homocysteine is already routed to cardiovascular by predicate and requires no assembler change;
-5. no candidate depends on calculated TSAT;
-6. no obvious prohibited wording exists in user-facing PSI fields.
+* `backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py`
+* `backend/core/analytics/narrative_report_compiler_v1.py`
 
-If any B1 fact is stale, apply candidate-level STOP gates rather than expanding scope.
+Add to `_LEAD_SIGNAL_HINTS`:
 
-## Phase 2 — Iron implementation
+* `signal_iron_low`
+* `signal_iron_high`
+* `signal_free_t3_low`
+* `signal_tpo_ab_high`
 
-### 2A — Create iron production packages
+Requirements:
 
-For each passing iron candidate, create a production package folder under `knowledge_bus/packages/` with current production structure.
+* both files must have identical lead hint additions;
+* preserve existing homocysteine / MCV lead hints;
+* preserve existing lipid secondary hints;
+* no routing logic changes;
+* no entity-loop changes;
+* no compiler structural changes.
 
-Candidates:
+STOP if adding hints alone is insufficient to make lead YAML inclusion true for the target signals. Do not redesign routing inside P2-1.
 
-1. `pkg_kb52c_iron_low_absolute_iron_deficiency`
-2. `pkg_kb52c_iron_low_functional_iron_restriction_inflammation`
-3. `pkg_kb52c_iron_high_iron_overload_context`
+## Phase 3 — Knowledge Bus content authoring
 
-Each package must include:
-
-* `research_brief.yaml`
-* `signal_library.yaml`
-* `package_manifest.yaml`
-* `promoted_signal_intelligence.yaml`
-
-Use staged PSI as the content source. Follow current active package patterns. Do not invent unsupported medical content.
-
-### 2B — Iron low / absolute iron deficiency context
-
-Candidate must require:
-
-* serum iron below lab-provided range;
-* ferritin below lab-provided range;
-* directly reported `transferrin_saturation` low;
-* CRP/inflammation contradiction handling where available;
-* supplement / recent iron infusion context where available;
-* no “iron deficiency diagnosis” wording;
-* no treatment advice.
-
-Candidate STOP:
-
-* if directly reported TSAT is not required in the candidate gate;
-* if staged PSI assumes calculated TSAT;
-* if ferritin-low is not required;
-* if unsafe diagnosis wording cannot be corrected.
-
-### 2C — Iron low / functional inflammatory restriction context
-
-Candidate must require:
-
-* serum iron below lab-provided range;
-* directly reported `transferrin_saturation` low;
-* ferritin normal/high or explicitly non-low;
-* CRP high or declared inflammation/infection context where available;
-* contradiction if ferritin is low;
-* no “anaemia of inflammation” diagnosis wording;
-* no treatment advice.
-
-Candidate STOP:
-
-* if directly reported TSAT is not required;
-* if ferritin state does not distinguish functional restriction from absolute deficiency;
-* if inflammation/CRP context cannot be represented;
-* if unsafe diagnosis wording cannot be corrected.
-
-### 2D — Iron high / overload context
-
-Candidate must require:
-
-* serum iron above lab-provided range;
-* directly reported `transferrin_saturation` high;
-* ferritin above lab-provided range;
-* liver markers checked where available;
-* recent iron ingestion / infusion caveat where available;
-* hepatocellular / haemolytic release handled only as caveat or suppressor, not standalone signal;
-* no haemochromatosis diagnosis wording;
-* no treatment advice.
-
-Candidate STOP:
-
-* if directly reported TSAT is not required;
-* if ferritin-high is not required;
-* if staged PSI frames haemochromatosis diagnostically;
-* if hepatocellular/haemolytic material becomes standalone signal content.
-
-## Phase 3 — Homocysteine implementation
-
-### 3A — Homocysteine high / B-vitamin processing context
-
-Candidate must require:
-
-* homocysteine above lab-provided range;
-* active B12 and/or vitamin B12 context;
-* folate present;
-* MCV retained as useful context where available;
-* renal contradiction handled through the separate renal-clearance frame where applicable;
-* no consumer-facing “methylation impairment” wording;
-* no primary cardiovascular-risk claim;
-* no diagnosis or treatment advice.
-
-Internal package identity may contain `methylation_impairment` if user-facing PSI fields do not.
-
-Candidate STOP:
-
-* if active B12 / vitamin B12 and folate cannot be required or represented;
-* if user-facing “methylation impairment” wording cannot be corrected;
-* if the frame becomes a primary cardiovascular-risk claim.
-
-### 3B — Homocysteine high / renal-clearance context
-
-Candidate must require:
-
-* homocysteine above lab-provided range;
-* creatinine and/or eGFR supportive context;
-* B12 / folate contradiction handling;
-* no kidney disease diagnosis wording;
-* no treatment advice.
-
-Candidate STOP:
-
-* if creatinine/eGFR cannot be required or represented;
-* if wording implies kidney disease diagnosis;
-* if B-vitamin contradiction handling cannot be represented.
-
-### 3C — Homocysteine routing
-
-Do not modify `domain_score_assembler.py` for homocysteine if the current predicate already routes `signal_homocysteine_high` to cardiovascular.
-
-If the predicate is absent or materially different from the advisory finding:
-
-* stop homocysteine candidates;
-* do not create a new assembler route without explicit human approval;
-* proceed with iron candidates if valid.
-
-## Phase 4 — Iron allowlist update
+### 3A — Interpretation entities
 
 Update:
 
-`backend/core/analytics/domain_score_assembler.py`
+`knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml`
 
-Only if at least one relevant iron candidate passes.
+Add non-conflicting entity entries for:
 
-Expected target:
+* iron / blood-iron-oxygen lead context;
+* thyroid lead context.
 
-* `_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS` includes:
+Each entity must include required schema fields, including:
 
-  * existing active signals, including `signal_transferrin_high`;
-  * `signal_iron_low` if at least one iron-low candidate passes;
-  * `signal_iron_high` if iron-high overload candidate passes.
+* `interpretation_entity_id`
+* `compiler_role`
+* `phenotype_id`
+* `idl_internal_id`
+* `pathway_explainer_id`
+* `functional_interpretation_domain_id`
 
-If both iron-low candidates STOP:
+Use existing naming conventions.
 
-* do not add `signal_iron_low`.
+Because the compiler has one lead slot, entity ordering / collision behaviour must be handled carefully:
 
-If iron-high overload STOPs:
+* Do not create an ordering that silently causes all new lead entities to collapse to the wrong block.
+* If entity-loop last-match behaviour makes multiple lead entities unsafe, STOP and record routing redesign carry-forward.
+* Do not redesign the entity loop in this sprint.
 
-* do not add `signal_iron_high`.
-
-Update comment at the iron allowlist section to record:
-
-* P1-3/P1-18 iron frame carry-forward resolved by MR-v2 dated 2026-06-23;
-* P1-26 activated governed iron-low and iron-high contexts.
-
-Do not change scoring/ranking logic.
-
-Do not modify homocysteine routing.
-
-## Phase 5 — Compiled card enrichment
-
-### 5A — Blood / iron / oxygen card
+### 3B — Pathway explainers
 
 Update:
 
-`knowledge_bus/compiled/health_system_cards/wave1_bio_oxygen_carrying_capacity.yaml`
+`knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml`
 
-Include passing iron candidates only.
+Add pathway explainer entries for:
 
-Expected enrichment:
+* iron / blood-iron-oxygen;
+* thyroid hormone/antibody context.
 
-* add `inv_iron_low_absolute_iron_deficiency` if absolute iron-low passes;
-* add `inv_iron_low_functional_iron_restriction_inflammation` if functional iron-low passes;
-* add `inv_iron_high_iron_overload_context` if iron-high overload passes;
-* add corresponding package refs;
-* update mechanism/subsystem summary only to reflect activated governed context;
-* preserve P1-24 transferrin-high enrichment;
-* do not add unactivated candidates.
+Use governed source material only from:
 
-### 5B — Homocysteine card
+* P1-25 thyroid PSI / sprint report / compiled card evidence;
+* P1-26 iron PSI / sprint report / compiled card evidence;
+* existing production PSI fields;
+* existing compiled card evidence.
 
-Update:
+Do not invent medical content.
 
-`knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml`
-
-If both homocysteine candidates pass:
-
-* replace or supersede legacy `pkg_s24` / legacy source-spec references with KB-S52C source specs and package refs;
-* add:
-
-  * `inv_homocysteine_high_b_vitamin_related_methylation_impairment`
-  * `inv_homocysteine_high_renal_clearance_reduction`
-* update package refs to:
-
-  * `pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment`
-  * `pkg_kb52c_homocysteine_high_renal_clearance_reduction`
-* update compile manifest reference.
-
-If one homocysteine candidate stops:
-
-* include only the passing candidate;
-* do not remove legacy context unless the new card remains coherent.
-
-If ownership or schema is unexpectedly unclear:
-
-* do not create a new card;
-* record carry-forward for homocysteine compiled-card ownership;
-* keep production PSI activation if otherwise valid.
-
-### 5C — Compile manifest and estate index
-
-Create:
-
-`knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml`
-
-Update:
-
-`knowledge_bus/compiled/estate_index_v1.yaml`
-
-Update estate index paths only for cards actually changed.
-
-## Phase 6 — Tests
-
-Create:
-
-`backend/tests/unit/test_p1_26_iron_homocysteine_activation.py`
-
-Required tests:
-
-### Domain allowlist
-
-* `test_iron_low_signal_in_blood_iron_oxygen_allowlist_after_p1_26`
-* `test_iron_high_signal_in_blood_iron_oxygen_allowlist_after_p1_26`
-* assert `signal_transferrin_high` remains active
-* assert homocysteine assembler routing remains unchanged
-
-### Iron gates
-
-* `test_iron_low_absolute_fires_with_ferritin_low_and_tsat_low`
-* `test_iron_low_absolute_suppresses_without_tsat`
-* `test_iron_low_functional_fires_with_crp_high_and_ferritin_normal`
-* `test_iron_low_functional_suppresses_when_ferritin_low`
-* `test_iron_high_overload_fires_with_tsat_high_and_ferritin_above_range`
-* `test_iron_high_overload_suppresses_without_tsat`
-* `test_iron_high_overload_ctr_alt_high_weakens_overload_interpretation`
-
-### Homocysteine gates
-
-* `test_homocysteine_b_vitamin_fires_with_active_b12_and_folate_present`
-* `test_homocysteine_renal_fires_with_creatinine_high`
-* `test_homocysteine_no_methylation_impairment_wording_in_consumer_fields`
-* test no primary cardiovascular-risk framing
-* test no kidney disease diagnosis wording
-
-### Compiled card tests
-
-* `test_wave1_bio_oxygen_card_includes_iron_source_specs`
-* `test_wave1_cv_homocysteine_card_updated_to_kb52c_packages`
-
-### Wording tests
-
-Assert user-facing PSI fields do not contain prohibited phrases:
+Prohibited wording for iron:
 
 * “iron deficiency diagnosis”
+* “you have iron deficiency”
 * “anaemia of inflammation”
 * “haemochromatosis”
-* “methylation impairment”
-* “kidney disease”
-* primary cardiovascular-risk framing
-* treatment advice
+* “iron overload disorder”
+* “you need iron”
+* treatment advice.
 
-Use exact phrase checks plus targeted safe-frame checks where current test pattern supports it.
+Prohibited wording for thyroid:
 
-## Phase 7 — Carry-forward management
+* “hypothyroidism diagnosis”
+* “you have hypothyroidism”
+* “Hashimoto’s disease”
+* “autoimmune thyroid disease” as a diagnosis;
+* “your immune system is attacking your thyroid”
+* “your thyroid will fail”
+* treatment advice.
+
+### 3C — Functional interpretation
+
+Update:
+
+`knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml`
+
+Add functional interpretation entries for:
+
+* blood/iron/oxygen pathway context;
+* thyroid pathway context.
+
+Keep content domain-level.
+
+Do not attempt frame-level interpretation.
+
+## Phase 4 — Tests
+
+Create or update tests proving:
+
+### Behaviour wiring
+
+* `test_iron_low_signal_triggers_lead_pathway_block`
+* `test_iron_high_signal_triggers_lead_pathway_block`
+* `test_thyroid_ft3_low_triggers_lead_pathway_block`
+* `test_thyroid_tpoab_triggers_lead_pathway_block`
+* `test_homocysteine_lead_block_unchanged`
+* `test_lipid_secondary_block_unchanged`
+* test both Python hint sets remain aligned.
+
+### Narrative output
+
+* representative payload with `signal_iron_low` as top finding produces a non-placeholder lead narrative;
+* representative payload with `signal_iron_high` as top finding produces a non-placeholder lead narrative;
+* representative payload with `signal_free_t3_low` as top finding produces a non-placeholder lead narrative;
+* representative payload with `signal_tpo_ab_high` as top finding produces a non-placeholder lead narrative;
+* compiler returns valid `NarrativeReportV1`;
+* no crash if a pathway block is missing;
+* missing block fallback remains graceful.
+
+### Claim boundaries
+
+Assert generated prose / YAML content does not contain prohibited diagnostic or treatment wording.
+
+### Regression
+
+* existing homocysteine lead pathway behaviour still works;
+* existing lipid secondary pathway behaviour still works.
+
+## Phase 5 — Carry-forward management
 
 Create:
 
-`docs/sprints/beta_readiness/P1-26_pass3_carry_forward.yaml`
+`docs/sprints/beta_readiness/P2-1_prose_substrate_carry_forward.yaml`
 
-Record each candidate as:
+Must record:
 
-* `closed` if activated;
-* `stopped` if candidate STOP fired;
-* `deferred` if blocked by scope/identity/schema.
+* frame-level routing deferred:
 
-Must include if relevant:
+  * `signal_iron_low` absolute vs functional distinction;
+  * `signal_homocysteine_high` B-vitamin vs renal distinction;
+* full six-domain simultaneous prose coverage deferred due to one-lead / one-secondary compiler model;
+* routing redesign deferred:
 
-* calculated TSAT remains deferred / blocked;
-* WBC / lymphocyte / neutrophil remain out of scope;
-* hepatocellular/haemolytic iron-high release remains non-standalone;
-* homocysteine compiled-card ownership if unexpectedly unclear;
-* any stopped candidate with exact reason.
+  * `P2-FRAME-ROUTING-ARCHITECTURE-1`;
+* any entity-loop collision or ordering limitation discovered;
+* any stopped content block with exact reason.
 
-Expected carry-forward closures if all candidates pass:
+Do not re-document unrelated WBC / TSAT / TgAb carry-forwards unless directly relevant to prose substrate.
 
-* P1-3 / iron signal wiring deferred pending frame adjudication: closed for `signal_iron_low` and `signal_iron_high`;
-* P1-18 additional CBC/iron launch signals pending frame adjudication: closed for iron-low and iron-high;
-* Homocysteine medical-review blocker from P1-10/P1-14: closed for both homocysteine frames.
-
-Do not re-document unrelated thyroid carry-forwards except as already closed by P1-25.
-
-## Phase 8 — Sprint report and build register
+## Phase 6 — Sprint report and build register
 
 Create:
 
-`docs/sprints/beta_readiness/P1-26_iron_homocysteine_mr_v2_activation.md`
+`docs/sprints/beta_readiness/P2-1_prose_substrate_wave1_wired_completion.md`
 
 Keep concise.
 
 Maximum structure:
 
 1. start state;
-2. MR-v2 authority used;
-3. iron implementation result;
-4. homocysteine implementation result;
-5. allowlist / routing result;
-6. compiled card updates;
-7. validation results;
-8. carry-forwards;
-9. recommended next sprint.
+2. confirmed compiler limitation;
+3. behaviour wiring result;
+4. YAML content result;
+5. tests / validation result;
+6. known limitations;
+7. carry-forwards;
+8. recommended next sprint.
 
 Create:
 
-`docs/sprints/beta_readiness/P1-26_iron_homocysteine_manifest.yaml`
+`docs/sprints/beta_readiness/P2-1_prose_substrate_wave1_wired_manifest.yaml`
 
 Update:
 
@@ -606,16 +456,15 @@ Run all relevant validation.
 
 At minimum:
 
-* package validation for new/modified Knowledge Bus packages;
-* PSI validation for new/modified PSI;
-* signal library validation;
-* package manifest validation;
-* compiled card validation;
-* estate index validation;
-* domain score assembler / allowlist tests;
-* P1-26 activation tests;
-* relevant blood/iron/oxygen regression tests;
-* relevant cardiovascular/homocysteine tests if present;
+* tests for the two modified Python hint sets;
+* P2-1 prose substrate tests;
+* existing narrative compiler tests;
+* relevant claim-boundary tests;
+* YAML/schema validation for:
+
+  * interpretation entities;
+  * pathway explainers;
+  * functional interpretation;
 * architecture/governance tests required by Automation Bus finish;
 * `python backend/scripts/run_work_package.py finish`.
 
@@ -623,34 +472,32 @@ Do not edit validators to force a pass.
 
 ## Acceptance criteria
 
-P1-26 passes only if:
+P2-1 passes only if:
 
 1. Front matter remains `risk_level: HIGH`, `change_type: MIXED`.
 2. Automation Bus preflight passes.
-3. MR-v2 authority is cited and used.
-4. All five candidates are attempted unless a candidate STOP fires.
-5. Candidate-level STOP gates are applied independently.
-6. No calculated TSAT mode is introduced.
-7. Iron candidates use directly reported `transferrin_saturation` only.
-8. `signal_iron_low` is allowlisted only if at least one iron-low candidate passes.
-9. `signal_iron_high` is allowlisted only if iron-high overload candidate passes.
-10. `signal_transferrin_high` remains active.
-11. Homocysteine assembler routing is not modified.
-12. Homocysteine production PSI is completed for passing candidates.
-13. Homocysteine package manifests accurately reflect production PSI/runtime surfacing without falsely implying a new assembler allowlist change.
-14. No prohibited diagnostic wording remains in user-facing PSI fields.
-15. No treatment advice is introduced.
-16. No WBC, lymphocyte, neutrophil, thyroid, frontend, Gemini, prose, questionnaire, parser, scoring-policy or signal-evaluator files are modified.
-17. `wave1_bio_oxygen_carrying_capacity` is enriched only for passing iron candidates.
-18. `wave1_cv_homocysteine_pathway` is updated only for passing homocysteine candidates.
-19. Estate index is updated only for changed compiled cards.
-20. Tests prove iron allowlist behaviour.
-21. Tests prove iron MR-v2 gates.
-22. Tests prove homocysteine MR-v2 gates.
-23. Tests prove prohibited wording is absent.
-24. P1-26 carry-forward file records candidate outcomes and remaining blockers.
-25. Build register is updated concisely.
-26. Final audit includes `pipeline_advisory_trigger` and `pipeline_advisory_reason`.
+3. Only the two declared Python files are modified for behaviour wiring.
+4. Python changes are limited to `_LEAD_SIGNAL_HINTS` additions.
+5. `_SECONDARY_SIGNAL_HINTS` behaviour remains unchanged.
+6. Existing homocysteine lead routing remains unchanged.
+7. Existing lipid secondary routing remains unchanged.
+8. `signal_iron_low` triggers lead YAML inclusion.
+9. `signal_iron_high` triggers lead YAML inclusion.
+10. `signal_free_t3_low` triggers lead YAML inclusion.
+11. `signal_tpo_ab_high` triggers lead YAML inclusion.
+12. Iron pathway YAML is authored from governed P1-26 PSI/card evidence.
+13. Thyroid pathway YAML is authored from governed P1-25 PSI/card evidence.
+14. Iron functional interpretation YAML is present.
+15. Thyroid functional interpretation YAML is present.
+16. Generated narrative output is non-placeholder for the four newly wired signal IDs when each is top finding.
+17. No prohibited diagnostic or treatment wording is introduced.
+18. Compiler returns valid `NarrativeReportV1`.
+19. Missing-pathway fallback remains graceful.
+20. No signal activation, scoring, domain allowlist, signal evaluator, parser, questionnaire, frontend, Gemini, payload schema, report schema, payload builder or claim-boundary files are modified.
+21. Frame-level routing limitation is recorded as carry-forward.
+22. Full six-domain simultaneous prose limitation is recorded as carry-forward.
+23. Build register is updated concisely.
+24. Final audit includes `pipeline_advisory_trigger` and `pipeline_advisory_reason`.
 
 ## Closure requirements
 
