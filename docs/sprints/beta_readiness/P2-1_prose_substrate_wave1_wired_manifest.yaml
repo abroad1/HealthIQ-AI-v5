@@ -1,0 +1,25 @@
+work_id: P2-1
+title: Prose Substrate Wave 1 Wired
+status: complete
+date_closed: "2026-06-26"
+risk_level: HIGH
+change_type: MIXED
+branch: feature/prose-substrate-wave1-wired
+
+behaviour_files:
+  - backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py
+  - backend/core/analytics/narrative_report_compiler_v1.py
+
+content_files:
+  - knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml
+  - knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml
+  - knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml
+
+tests:
+  - backend/tests/unit/test_p2_1_prose_substrate_wave1_wired.py
+
+lead_signals_wired:
+  - signal_iron_low
+  - signal_iron_high
+  - signal_free_t3_low
+  - signal_tpo_ab_high

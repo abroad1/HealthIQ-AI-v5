@@ -123,3 +123,50 @@ pathways:
       This text is educational and supports later compiler narration. It does not determine
       treatment thresholds, diagnose familial disorders, or replace guideline-based clinical
       decisions using full risk calculators and examination.
+
+  - pathway_id: blood_iron_oxygen_handling_v1
+    benchmark_domain: blood_iron_oxygen
+    display_title: Blood iron transport, oxygen carriage, and circulating iron availability
+    related_signal_themes:
+      - serum_iron
+      - iron_stores
+      - oxygen_delivery
+    pathway_role: |
+      Circulating iron sits in a transport network that links dietary absorption, liver and
+      marrow demand, storage proteins, and the oxygen-carrying capacity of red cells. Serum
+      iron is a snapshot of traffic at one moment—not a direct measure of total body stores or
+      tissue sufficiency on its own.
+    system_in_action: |
+      Transferrin carries iron in the bloodstream; ferritin reflects storage context; transferrin
+      saturation summarises how fully transport proteins are loaded. Low patterns can reflect
+      depleted stores, redistribution during inflammation, or increased marrow demand. High
+      patterns can reflect increased circulating availability, storage loading, or release from
+      injured tissues depending on the wider panel. Interpretation reads these markers as a
+      coordinated transport-and-delivery story rather than a single-value label.
+    interpretive_caution: |
+      Educational pathway prose only. It does not establish iron deficiency, inflammation-driven
+      iron restriction, storage-loading disorders, or treatment need without clinician review and
+      corroborating context.
+
+  - pathway_id: thyroid_hormone_antibody_context_v1
+    benchmark_domain: thyroid_hormonal_axis
+    display_title: Thyroid hormone activity and antibody-related context
+    related_signal_themes:
+      - free_t3
+      - thyroid_antibodies
+      - tsh_context
+    pathway_role: |
+      The thyroid axis regulates how much active hormone reaches tissues. Free T3 is the
+      biologically active fraction at the cell-facing step, while thyroid peroxidase antibodies
+      mark immune recognition of thyroid tissue without, by themselves, defining a disease course.
+      Patterns are read in the context of the full thyroid panel and clinical setting.
+    system_in_action: |
+      Low free T3 can appear when peripheral conversion or systemic demand shifts hormone
+      traffic, when broader thyroid hormone output is constrained, or during significant illness.
+      Elevated TPO antibodies add autoimmune recognition context when TSH and free T4 patterns
+      align; isolated antibody elevation is intentionally bounded and non-diagnostic. The
+      interpretive move is pattern coherence across the thyroid panel and trajectory over time,
+      not a single-marker disease attribution.
+    interpretive_caution: |
+      Educational pathway prose only. It does not diagnose hypothyroidism, name specific thyroid
+      diseases, predict thyroid failure, or recommend treatment.

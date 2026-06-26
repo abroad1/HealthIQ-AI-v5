@@ -41,12 +41,14 @@ def test_pack_metadata_and_deferred_vascular():
     assert isinstance(xs.get("rationale", ""), str) and len(xs["rationale"].strip()) > 50
 
 
-def test_two_interpretation_entities_with_bindings():
+def test_four_interpretation_entities_with_bindings():
     data = _load(_ENTITIES)
     rows = data.get("interpretation_entities")
-    assert isinstance(rows, list) and len(rows) == 2
+    assert isinstance(rows, list) and len(rows) == 4
     ids = {r.get("interpretation_entity_id") for r in rows}
     assert ids == {
+        "int_benchmark_blood_iron_oxygen_lead_v1",
+        "int_benchmark_thyroid_hormone_antibody_lead_v1",
         "int_benchmark_one_carbon_homocysteine_macrocytosis_v1",
         "int_benchmark_lipid_residual_ldl_favourable_transport_v1",
     }

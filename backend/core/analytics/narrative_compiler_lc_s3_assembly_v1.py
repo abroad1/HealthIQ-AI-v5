@@ -34,6 +34,10 @@ _LEAD_SIGNAL_HINTS = frozenset(
         "signal_homocysteine_high",
         "signal_homocysteine_elevation_context",
         "signal_mcv_high",
+        "signal_iron_low",
+        "signal_iron_high",
+        "signal_free_t3_low",
+        "signal_tpo_ab_high",
     }
 )
 _SECONDARY_SIGNAL_HINTS = frozenset(

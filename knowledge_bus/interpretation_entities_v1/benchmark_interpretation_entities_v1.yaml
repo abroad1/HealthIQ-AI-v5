@@ -17,6 +17,26 @@ cross_system_vascular_synthesis:
     the locked benchmark narrative requires a named cross-system entity beyond int_benchmark_* bindings.
 
 interpretation_entities:
+  - interpretation_entity_id: int_benchmark_blood_iron_oxygen_lead_v1
+    compiler_role: benchmark_lead_domain
+    phenotype_id: ph_blood_iron_oxygen_benchmark_lead_v1
+    idl_internal_id: ph_blood_iron_oxygen_benchmark_lead_v1
+    pathway_explainer_id: blood_iron_oxygen_handling_v1
+    functional_interpretation_domain_id: blood_iron_oxygen_functional_v1
+    overlaps_note: |
+      Domain-level iron transport prose only; absolute vs functional iron-low frames are not
+      distinguished at compiler routing in P2-1 (see P2-FRAME-ROUTING-ARCHITECTURE-1).
+
+  - interpretation_entity_id: int_benchmark_thyroid_hormone_antibody_lead_v1
+    compiler_role: benchmark_lead_domain
+    phenotype_id: ph_thyroid_hormone_antibody_benchmark_lead_v1
+    idl_internal_id: ph_thyroid_hormone_antibody_benchmark_lead_v1
+    pathway_explainer_id: thyroid_hormone_antibody_context_v1
+    functional_interpretation_domain_id: thyroid_hormone_antibody_functional_v1
+    overlaps_note: |
+      FT3-low and TPOAb-high thyroid-domain context only; hypothyroid or autoimmune disease
+      labels are not emitted from this binding layer.
+
   - interpretation_entity_id: int_benchmark_one_carbon_homocysteine_macrocytosis_v1
     compiler_role: benchmark_lead_domain
     phenotype_id: ph_one_carbon_homocysteine_macrocytosis_v1

@@ -655,6 +655,29 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P2-1 — Prose Substrate Wave 1 Wired
+
+**Status:** Complete  
+**Date closed:** 2026-06-26  
+**Programme block(s):** Block 3 Layer B intelligence/prose substrate  
+
+### Delivered / ticked off
+- Iron and thyroid signals wired into `_LEAD_SIGNAL_HINTS` for runtime lead YAML inclusion.
+- Governed KB pathway / functional prose for blood-iron-oxygen and thyroid hormone/antibody domains.
+- P2-1 regression tests; homocysteine lead and lipid secondary behaviour preserved.
+
+### Carry-forwards
+- Frame-level routing (`P2-FRAME-ROUTING-ARCHITECTURE-1`) for signal-specific lead prose selection.
+- Full six-domain simultaneous prose deferred (one-lead / one-secondary model).
+
+### Blockers / risks
+- Entity-loop last-match limits signal-specific lead prose until routing redesign.
+
+### Recommended next sprint
+- P2-FRAME-ROUTING-ARCHITECTURE-1.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

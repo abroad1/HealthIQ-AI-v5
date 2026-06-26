@@ -1,0 +1,24 @@
+work_id: P2-1
+carry_forwards:
+
+  frame_level_routing_deferred:
+    - signal_id: signal_iron_low
+      note: Absolute deficiency vs functional inflammatory restriction not distinguished at compiler routing.
+    - signal_id: signal_homocysteine_high
+      note: B-vitamin vs renal-clearance frames not distinguished at compiler routing.
+
+  simultaneous_prose_deferred:
+    reason: One-lead / one-secondary compiler model cannot emit all six Wave 1 domains simultaneously.
+    follow_on: P2-FRAME-ROUTING-ARCHITECTURE-1
+
+  routing_redesign:
+    id: P2-FRAME-ROUTING-ARCHITECTURE-1
+    reason: Entity loop uses last-match overwrite for benchmark_lead_domain rows; signal-specific lead prose selection requires architectural routing work.
+
+  entity_loop_collision:
+    semantics: last_match_overwrite
+    location: backend/core/analytics/narrative_report_compiler_v1.py
+    note: |
+      Homocysteine lead entity is ordered last to preserve homocysteine regression prose. Iron and
+      thyroid entities are present for KB binding and future routing; runtime lead YAML block still
+      resolves to the final lead entity until frame-level routing is implemented.

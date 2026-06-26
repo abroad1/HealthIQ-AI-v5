@@ -110,3 +110,89 @@ domains:
       (e.g. rising triglycerides with static LDL summaries that obscure particle load). Such patterns
       warrant structured reassessment and may shift the emphasis toward pharmacologic or specialist
       pathways per guidelines.
+
+  - domain_id: blood_iron_oxygen_functional_v1
+    benchmark_domain: blood_iron_oxygen
+    display_title: Functional read — blood iron transport and oxygen-delivery context
+    related_pathway_explainer_id: blood_iron_oxygen_handling_v1
+
+    functional_reading: |
+      A functional read treats low or high serum iron as transport-and-availability patterning
+      across iron, ferritin, transferrin saturation, and red-cell indices—not as an automatic
+      store-depletion or overload label. Low iron with low ferritin and low saturation supports
+      depleted-store physiology in many contexts; low iron with inflammatory markers may reflect
+      redistribution rather than isolated dietary insufficiency. High iron patterns are weighed
+      against saturation, ferritin, and liver-related markers before attributing durable loading.
+
+    why_beyond_itself: |
+      Iron markers sit adjacent to oxygen delivery, erythropoiesis, and inflammatory state. The
+      pattern matters because it links marrow demand, storage dynamics, and cardiometabolic
+      surveillance—not as a solitary numeric label, but as a reproducible question about whether
+      transport, stores, and demand align over time.
+
+    confidence_grade_label: moderate_by_default
+    confidence_supports_reading: |
+      Confidence strengthens when iron direction aligns with ferritin, transferrin saturation,
+      and red-cell indices, repeat measures confirm the pattern, and acute illness or recent
+      transfusion do not confound the draw.
+
+    confidence_limits: |
+      Certainty is limited when only serum iron is available, when inflammation obscures ferritin,
+      when transferrin saturation is not measured, or when recent supplementation or bleeding
+      events are unknown.
+
+    clarification_paths:
+      - Repeat iron studies with ferritin, transferrin saturation, and full blood count on stable clinical footing.
+      - Review inflammatory markers when low iron could reflect redistribution rather than store depletion.
+      - Use clinician-directed follow-up when high iron patterns persist with corroborating storage or liver markers.
+
+    monitoring_improvement_signals: |
+      Improvement is suggested by durable movement of iron and related indices toward the
+      individual's prior baseline or care-setting targets, with concordant ferritin and
+      saturation when they were part of the same story.
+
+    monitoring_persistence_signals: |
+      Persistence means little change despite addressable factors, or re-emergence after an
+      apparent response—raising priority for structured follow-up without inferring a specific
+      disease label from the panel alone.
+
+  - domain_id: thyroid_hormone_antibody_functional_v1
+    benchmark_domain: thyroid_hormonal_axis
+    display_title: Functional read — thyroid hormone and antibody patterning
+    related_pathway_explainer_id: thyroid_hormone_antibody_context_v1
+
+    functional_reading: |
+      A functional read treats low free T3 as a thyroid-axis traffic signal that must be read
+      with TSH and free T4: isolated low T3 often reflects systemic demand or conversion shifts
+      rather than intrinsic gland failure. TPO antibody elevation adds immune-recognition context
+      when thyroid function markers align; it is not sufficient alone for disease attribution.
+      The move is bounded pattern coherence, not diagnostic closure.
+
+    why_beyond_itself: |
+      Thyroid hormone patterns influence metabolic rate, lipid handling, and energy context.
+      Antibody markers add longitudinal surveillance weight when they cluster with function
+      changes over time—not as a stand-alone immune narrative divorced from hormone traffic.
+
+    confidence_grade_label: moderate_by_default
+    confidence_supports_reading: |
+      Confidence strengthens when free T3 direction aligns with TSH and free T4, repeat measures
+      confirm the pattern, and sampling is not distorted by acute illness, biotin interference,
+      or major weight change around the draw.
+
+    confidence_limits: |
+      Certainty weakens with isolated low T3, absent TSH or free T4, unknown assay interference,
+      or acute systemic illness that commonly lowers T3 without defining long-term thyroid disease.
+
+    clarification_paths:
+      - Repeat thyroid panel under consistent conditions with TSH and free T4 when available.
+      - Review illness severity and medication context before attributing low T3 to intrinsic thyroid disease.
+      - Use clinician-guided follow-up when antibody elevation persists with evolving function markers.
+
+    monitoring_improvement_signals: |
+      Improvement is reflected by durable stabilisation of free T3 toward prior baseline alongside
+      concordant TSH and free T4 when they were part of the same interpretive frame.
+
+    monitoring_persistence_signals: |
+      Persistence is little change despite addressable factors, or widening discordance between
+      free T3, TSH, and free T4—warranting structured reassessment without naming a specific
+      thyroid disease from the panel alone.

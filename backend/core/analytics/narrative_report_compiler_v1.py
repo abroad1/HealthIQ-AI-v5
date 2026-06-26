@@ -7,7 +7,7 @@ Consumes governed knowledge_bus assets (N-5..N-7) and orchestrator meta; no LLM.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Set
+from typing import Any, Dict, FrozenSet, List, Mapping, Optional, Sequence, Set
 
 import yaml
 
@@ -35,11 +35,17 @@ _ENTITIES_PATH = _REPO_ROOT / "knowledge_bus" / "interpretation_entities_v1" / "
 _PATHWAY_PATH = _REPO_ROOT / "knowledge_bus" / "pathway_explainers_v1" / "pathway_explainers_v1.yaml"
 _FUNCTIONAL_PATH = _REPO_ROOT / "knowledge_bus" / "functional_interpretation_v1" / "functional_interpretation_v1.yaml"
 
-_LEAD_SIGNAL_HINTS: Set[str] = {
-    "signal_homocysteine_high",
-    "signal_homocysteine_elevation_context",
-    "signal_mcv_high",
-}
+_LEAD_SIGNAL_HINTS: FrozenSet[str] = frozenset(
+    {
+        "signal_homocysteine_high",
+        "signal_homocysteine_elevation_context",
+        "signal_mcv_high",
+        "signal_iron_low",
+        "signal_iron_high",
+        "signal_free_t3_low",
+        "signal_tpo_ab_high",
+    }
+)
 _SECONDARY_SIGNAL_HINTS: Set[str] = {
     "signal_ldl_cholesterol_high",
     "signal_hdl_cholesterol_high",
