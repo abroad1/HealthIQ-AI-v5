@@ -1,10 +1,9 @@
 {
-  "branch": "feature/p1-26-mr-v2-iron-homocysteine-signal-activation",
+  "branch": "feature/prose-substrate-wave1-wired",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-26T07:14:56Z",
-  "cursor_started_utc": "2026-06-26T07:04:39Z",
-  "head_sha": "db51fc6f9a52ef6d740a2dabe30f9fe413d51bb4",
+  "cursor_started_utc": "2026-06-26T09:04:28Z",
+  "head_sha": "602ff998d6fc631a54ab31d8db603439795a6fbc",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P1-26"
+  "status": "IN_PROGRESS",
+  "work_id": "P2-1"
 }
