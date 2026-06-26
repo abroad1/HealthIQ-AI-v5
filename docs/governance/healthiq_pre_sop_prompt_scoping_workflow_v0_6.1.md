@@ -470,7 +470,7 @@ The gate checks form, proportionality, and structural compliance. It does not ve
 
 ---
 
-## 16. Summary decision
+## 18. Summary decision
 
 Adopt v0.6.1 as the controlling Pre-SOP throughput amendment.
 
