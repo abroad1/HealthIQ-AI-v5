@@ -13,12 +13,6 @@ carry_forwards:
 
   routing_redesign:
     id: P2-FRAME-ROUTING-ARCHITECTURE-1
-    reason: Entity loop uses last-match overwrite for benchmark_lead_domain rows; signal-specific lead prose selection requires architectural routing work.
-
-  entity_loop_collision:
-    semantics: last_match_overwrite
-    location: backend/core/analytics/narrative_report_compiler_v1.py
-    note: |
-      Homocysteine lead entity is ordered last to preserve homocysteine regression prose. Iron and
-      thyroid entities are present for KB binding and future routing; runtime lead YAML block still
-      resolves to the final lead entity until frame-level routing is implemented.
+    reason: |
+      Signal-scoped lead entity selection resolves domain prose for the top finding. Frame-level
+      discrimination and multi-domain simultaneous prose remain future architecture work.

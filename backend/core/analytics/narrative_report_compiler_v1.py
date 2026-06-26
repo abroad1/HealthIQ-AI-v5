@@ -86,6 +86,79 @@ def _join_blocks(parts: Sequence[str]) -> str:
     return "\n\n".join(cleaned)
 
 
+def _resolve_lead_signal_id(
+    *,
+    narrative_payload_v1: Optional[NarrativePayloadV1],
+    insight_graph: Optional[Mapping[str, Any]],
+) -> str:
+    """Lead signal for YAML entity selection: payload rank-1 else first fired lead hint in graph order."""
+    if narrative_payload_v1 is not None and narrative_payload_v1.top_findings:
+        sid = str(narrative_payload_v1.top_findings[0].signal_id).strip()
+        if sid in _LEAD_SIGNAL_HINTS:
+            return sid
+        return ""
+    if insight_graph and isinstance(insight_graph, dict):
+        for row in insight_graph.get("signal_results") or []:
+            if not isinstance(row, dict):
+                continue
+            sid = str(row.get("signal_id", "")).strip()
+            state = str(row.get("signal_state", "")).strip().lower()
+            if not sid or state not in {"suboptimal", "at_risk"}:
+                continue
+            if sid in _LEAD_SIGNAL_HINTS:
+                return sid
+    return ""
+
+
+def _entity_declared_signal_ids(row: Mapping[str, Any]) -> Optional[Set[str]]:
+    raw = row.get("signal_ids")
+    if raw is None:
+        return None
+    if isinstance(raw, list):
+        scoped = {str(x).strip() for x in raw if str(x).strip()}
+        return scoped if scoped else None
+    return None
+
+
+def _select_lead_entity_row(
+    rows: Sequence[Mapping[str, Any]],
+    lead_signal_id: str,
+) -> Optional[Dict[str, Any]]:
+    if not lead_signal_id:
+        return None
+    fallback_unscoped: Optional[Dict[str, Any]] = None
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        if str(row.get("compiler_role", "")).strip() != "benchmark_lead_domain":
+            continue
+        scope = _entity_declared_signal_ids(row)
+        if scope is None:
+            if fallback_unscoped is None:
+                fallback_unscoped = row
+            continue
+        if lead_signal_id in scope:
+            return row
+    return fallback_unscoped
+
+
+def _compose_domain_block(
+    row: Mapping[str, Any],
+    pathways_by_id: Mapping[str, Mapping[str, Any]],
+    domains_by_id: Mapping[str, Mapping[str, Any]],
+) -> str:
+    peid = str(row.get("pathway_explainer_id", "")).strip()
+    fdid = str(row.get("functional_interpretation_domain_id", "")).strip()
+    pathway = pathways_by_id.get(peid, {})
+    domain = domains_by_id.get(fdid, {})
+    return _join_blocks(
+        [
+            _pathway_section(pathway) if pathway else "",
+            _functional_section(domain) if domain else "",
+        ]
+    )
+
+
 def _humanize_biomarker_id(biomarker_id: str) -> str:
     s = str(biomarker_id or "").strip().replace("_", " ")
     if not s:
@@ -623,15 +696,33 @@ def compile_narrative_report_v1(
         include_lead_yaml = bool(fired & _LEAD_SIGNAL_HINTS)
         include_secondary_yaml = bool(fired & _SECONDARY_SIGNAL_HINTS)
 
+    lead_signal_id = _resolve_lead_signal_id(
+        narrative_payload_v1=narrative_payload_v1,
+        insight_graph=insight_graph,
+    )
+
     lead_text = ""
     secondary_text = ""
 
     rows = (entities_doc or {}).get("interpretation_entities")
     if isinstance(rows, list):
+        if include_lead_yaml and lead_signal_id:
+            lead_row = _select_lead_entity_row(rows, lead_signal_id)
+            if lead_row is not None:
+                lead_text = _compose_domain_block(lead_row, pathways_by_id, domains_by_id)
+                if lead_text:
+                    compiler_meta["assets_resolved"].append("lead_domain_composed")
+                    compiler_meta["lead_entity_id"] = str(
+                        lead_row.get("interpretation_entity_id", "")
+                    ).strip()
+            else:
+                compiler_meta["skipped"].append("lead_domain_no_signal_scoped_entity")
         for row in rows:
             if not isinstance(row, dict):
                 continue
             role = str(row.get("compiler_role", "")).strip()
+            if role != "benchmark_secondary_domain" or not include_secondary_yaml:
+                continue
             peid = str(row.get("pathway_explainer_id", "")).strip()
             fdid = str(row.get("functional_interpretation_domain_id", "")).strip()
             pathway = pathways_by_id.get(peid, {})
@@ -642,12 +733,8 @@ def compile_narrative_report_v1(
                     _functional_section(domain) if domain else "",
                 ]
             )
-            if role == "benchmark_lead_domain" and include_lead_yaml:
-                lead_text = block
-                compiler_meta["assets_resolved"].append("lead_domain_composed")
-            elif role == "benchmark_secondary_domain" and include_secondary_yaml:
-                secondary_text = block
-                compiler_meta["assets_resolved"].append("secondary_domain_composed")
+            secondary_text = block
+            compiler_meta["assets_resolved"].append("secondary_domain_composed")
 
     lead_pathway_block = lead_text
     secondary_pathway_block = secondary_text

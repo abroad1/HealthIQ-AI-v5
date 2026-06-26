@@ -1,4 +1,4 @@
-"""P2-1 — prose substrate wave 1 wired (iron / thyroid lead hints + KB YAML)."""
+"""P2-1 — prose substrate wave 1 wired (iron / thyroid lead hints + signal-scoped routing)."""
 
 from __future__ import annotations
 
@@ -29,12 +29,12 @@ _ENTITIES = _REPO / "knowledge_bus" / "interpretation_entities_v1" / "benchmark_
 _PATHWAYS = _REPO / "knowledge_bus" / "pathway_explainers_v1" / "pathway_explainers_v1.yaml"
 _FUNCTIONAL = _REPO / "knowledge_bus" / "functional_interpretation_v1" / "functional_interpretation_v1.yaml"
 
-_NEW_LEAD_SIGNALS = (
-    "signal_iron_low",
-    "signal_iron_high",
-    "signal_free_t3_low",
-    "signal_tpo_ab_high",
-)
+_IRON_SIGNALS = ("signal_iron_low", "signal_iron_high")
+_THYROID_SIGNALS = ("signal_free_t3_low", "signal_tpo_ab_high")
+
+_HOMOCYSTEINE_MARKERS = ("homocysteine", "one-carbon", "methylation")
+_IRON_MARKERS = ("iron", "transferrin", "ferritin")
+_THYROID_MARKERS = ("thyroid", "free t3", "tpo")
 
 _PROHIBITED_IRON = (
     "iron deficiency diagnosis",
@@ -91,34 +91,85 @@ def _insight_graph_lead_only(signal_id: str) -> dict:
     }
 
 
+def _assert_markers_present(text: str, markers: tuple[str, ...]) -> None:
+    low = text.lower()
+    assert any(m in low for m in markers), f"expected one of {markers} in lead narrative"
+
+
+def _assert_markers_absent(text: str, markers: tuple[str, ...]) -> None:
+    low = text.lower()
+    assert not any(m in low for m in markers), f"did not expect {markers} in lead narrative"
+
+
 def test_python_lead_hint_sets_remain_aligned() -> None:
     assert LC3_LEAD_HINTS == COMPILER_LEAD_HINTS
-    for sid in _NEW_LEAD_SIGNALS:
+    for sid in _IRON_SIGNALS + _THYROID_SIGNALS:
         assert sid in LC3_LEAD_HINTS
 
 
-@pytest.mark.parametrize("signal_id", _NEW_LEAD_SIGNALS)
+@pytest.mark.parametrize("signal_id", _IRON_SIGNALS + _THYROID_SIGNALS)
 def test_lead_signal_triggers_yaml_inclusion_flags(signal_id: str) -> None:
     payload = _payload_for_lead_signal(signal_id)
     inc_lead, _ = infer_yaml_flags_from_payload(payload)
     assert inc_lead is True
 
 
-@pytest.mark.parametrize(
-    ("test_name", "signal_id"),
-    [
-        ("iron_low", "signal_iron_low"),
-        ("iron_high", "signal_iron_high"),
-        ("thyroid_ft3_low", "signal_free_t3_low"),
-        ("thyroid_tpoab", "signal_tpo_ab_high"),
-    ],
-)
-def test_signal_triggers_lead_pathway_block(test_name: str, signal_id: str) -> None:
-    del test_name
-    ig = _insight_graph_lead_only(signal_id)
-    rep = compile_narrative_report_v1(analysis_id=f"p2-1-{signal_id}", meta={}, insight_graph=ig, idl_bundle=None)
+@pytest.mark.parametrize("signal_id", _IRON_SIGNALS)
+def test_iron_top_finding_routes_iron_domain_prose_legacy(signal_id: str) -> None:
+    rep = compile_narrative_report_v1(
+        analysis_id=f"p2-1-iron-legacy-{signal_id}",
+        meta={},
+        insight_graph=_insight_graph_lead_only(signal_id),
+        idl_bundle=None,
+    )
     assert rep.lead_narrative.strip()
-    assert "lead_domain_composed" in rep.meta.get("assets_resolved", [])
+    _assert_markers_present(rep.lead_narrative, _IRON_MARKERS)
+    _assert_markers_absent(rep.lead_narrative, _HOMOCYSTEINE_MARKERS)
+    assert rep.meta.get("lead_entity_id") == "int_benchmark_blood_iron_oxygen_lead_v1"
+
+
+@pytest.mark.parametrize("signal_id", _THYROID_SIGNALS)
+def test_thyroid_top_finding_routes_thyroid_domain_prose_legacy(signal_id: str) -> None:
+    rep = compile_narrative_report_v1(
+        analysis_id=f"p2-1-thy-legacy-{signal_id}",
+        meta={},
+        insight_graph=_insight_graph_lead_only(signal_id),
+        idl_bundle=None,
+    )
+    assert rep.lead_narrative.strip()
+    _assert_markers_present(rep.lead_narrative, _THYROID_MARKERS)
+    _assert_markers_absent(rep.lead_narrative, _HOMOCYSTEINE_MARKERS)
+    assert rep.meta.get("lead_entity_id") == "int_benchmark_thyroid_hormone_antibody_lead_v1"
+
+
+@pytest.mark.parametrize("signal_id", _IRON_SIGNALS)
+def test_iron_top_finding_routes_iron_domain_prose_payload(signal_id: str) -> None:
+    payload = _payload_for_lead_signal(signal_id)
+    rep = compile_narrative_report_v1(
+        analysis_id=f"p2-1-iron-payload-{signal_id}",
+        meta={},
+        insight_graph={"primary_driver_system_id": "hematologic"},
+        idl_bundle=None,
+        narrative_payload_v1=payload,
+    )
+    assert rep.lead_narrative.strip()
+    _assert_markers_present(rep.lead_narrative, _IRON_MARKERS)
+    _assert_markers_absent(rep.lead_narrative, _HOMOCYSTEINE_MARKERS)
+
+
+@pytest.mark.parametrize("signal_id", _THYROID_SIGNALS)
+def test_thyroid_top_finding_routes_thyroid_domain_prose_payload(signal_id: str) -> None:
+    payload = _payload_for_lead_signal(signal_id)
+    rep = compile_narrative_report_v1(
+        analysis_id=f"p2-1-thy-payload-{signal_id}",
+        meta={},
+        insight_graph={"primary_driver_system_id": "thyroid"},
+        idl_bundle=None,
+        narrative_payload_v1=payload,
+    )
+    assert rep.lead_narrative.strip()
+    _assert_markers_present(rep.lead_narrative, _THYROID_MARKERS)
+    _assert_markers_absent(rep.lead_narrative, _HOMOCYSTEINE_MARKERS)
 
 
 def test_homocysteine_lead_block_unchanged() -> None:
@@ -128,8 +179,9 @@ def test_homocysteine_lead_block_unchanged() -> None:
     }
     rep = compile_narrative_report_v1(analysis_id="p2-1-hcy", meta={}, insight_graph=ig, idl_bundle=None)
     assert rep.lead_narrative
-    low = rep.lead_narrative.lower()
-    assert "homocysteine" in low or "one-carbon" in low
+    _assert_markers_present(rep.lead_narrative, _HOMOCYSTEINE_MARKERS)
+    _assert_markers_absent(rep.lead_narrative, _IRON_MARKERS[:1])
+    assert rep.meta.get("lead_entity_id") == "int_benchmark_one_carbon_homocysteine_macrocytosis_v1"
 
 
 def test_lipid_secondary_block_unchanged() -> None:
@@ -142,18 +194,29 @@ def test_lipid_secondary_block_unchanged() -> None:
     assert "lipid" in low or "ldl" in low
 
 
-@pytest.mark.parametrize("signal_id", _NEW_LEAD_SIGNALS)
-def test_payload_lead_signal_produces_non_placeholder_narrative(signal_id: str) -> None:
-    payload = _payload_for_lead_signal(signal_id)
-    rep = compile_narrative_report_v1(
-        analysis_id=f"p2-1-payload-{signal_id}",
-        meta={},
-        insight_graph={"primary_driver_system_id": "hematologic"},
-        idl_bundle=None,
-        narrative_payload_v1=payload,
+def test_lead_fallback_graceful_when_no_signal_scoped_entity_matches(monkeypatch, tmp_path) -> None:
+    from core.analytics import narrative_report_compiler_v1 as mod
+
+    scoped_only = tmp_path / "entities.yaml"
+    scoped_only.write_text(
+        """
+interpretation_entities:
+  - interpretation_entity_id: int_benchmark_one_carbon_homocysteine_macrocytosis_v1
+    compiler_role: benchmark_lead_domain
+    phenotype_id: ph_one_carbon_homocysteine_macrocytosis_v1
+    idl_internal_id: ph_one_carbon_homocysteine_macrocytosis_v1
+    pathway_explainer_id: one_carbon_methylation_homocysteine_v1
+    functional_interpretation_domain_id: one_carbon_methylation_functional_v1
+    signal_ids:
+      - signal_homocysteine_high
+""",
+        encoding="utf-8",
     )
-    assert rep.lead_narrative.strip()
-    assert rep.meta.get("narrative_payload_v1_present") is True
+    monkeypatch.setattr(mod, "_ENTITIES_PATH", scoped_only)
+    ig = _insight_graph_lead_only("signal_iron_low")
+    rep = compile_narrative_report_v1(analysis_id="p2-1-fallback", meta={}, insight_graph=ig, idl_bundle=None)
+    assert not rep.lead_narrative.strip()
+    assert "lead_domain_no_signal_scoped_entity" in rep.meta.get("skipped", [])
 
 
 def test_compiler_no_raise_when_pathway_assets_missing(monkeypatch, tmp_path) -> None:

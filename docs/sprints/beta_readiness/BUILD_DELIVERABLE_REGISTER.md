@@ -671,10 +671,10 @@ Entries should not list every file touched or every non-change.
 - Full six-domain simultaneous prose deferred (one-lead / one-secondary model).
 
 ### Blockers / risks
-- Entity-loop last-match limits signal-specific lead prose until routing redesign.
+- Frame-level routing and multi-domain simultaneous prose remain deferred.
 
 ### Recommended next sprint
-- P2-FRAME-ROUTING-ARCHITECTURE-1.
+- P2-FRAME-ROUTING-ARCHITECTURE-1 if frame-level or multi-slot prose is required.
 
 ---
 

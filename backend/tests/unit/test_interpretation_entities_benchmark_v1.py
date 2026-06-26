@@ -61,3 +61,6 @@ def test_four_interpretation_entities_with_bindings():
         assert r.get("functional_interpretation_domain_id") in domain_ids
         assert r.get("phenotype_id")
         assert r.get("idl_internal_id") == r.get("phenotype_id")
+        if r.get("compiler_role") == "benchmark_lead_domain":
+            scope = r.get("signal_ids")
+            assert isinstance(scope, list) and len(scope) >= 1

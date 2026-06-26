@@ -9,23 +9,23 @@ P1-25 and P1-26 activated thyroid and iron/homocysteine MR-v2 signals. Layer C i
 
 ## 2. Confirmed compiler limitation
 
-Entity loop assigns one lead block via last-match overwrite across `benchmark_lead_domain` rows. Frame-level signal-to-entity routing is out of scope for P2-1.
+Frame-level signal-to-frame discrimination remains out of scope. Lead entity selection is signal-scoped via optional `signal_ids` on interpretation entities.
 
 ## 3. Behaviour wiring result
 
-Extended `_LEAD_SIGNAL_HINTS` in both narrative compiler modules with `signal_iron_low`, `signal_iron_high`, `signal_free_t3_low`, and `signal_tpo_ab_high`. Aligned container type to `frozenset` in `narrative_report_compiler_v1.py`. Secondary lipid hints unchanged.
+Extended `_LEAD_SIGNAL_HINTS` in both narrative compiler modules with iron and thyroid signals. Added signal-aware lead entity selection in `narrative_report_compiler_v1.py` so the top finding routes to the matching `benchmark_lead_domain` entity. Secondary lipid hints unchanged.
 
 ## 4. YAML content result
 
-Added iron and thyroid interpretation entities, pathway explainers, and functional interpretation domains from governed P1-25/P1-26 PSI framing. Homocysteine and lipid content preserved.
+Added iron and thyroid interpretation entities (with `signal_ids`), pathway explainers, and functional interpretation domains from governed P1-25/P1-26 PSI framing. Homocysteine and lipid content preserved.
 
 ## 5. Tests / validation result
 
-P2-1 unit tests cover hint alignment, YAML inclusion flags, lead block emission, homocysteine/lipid regression, claim boundaries, and missing-asset graceful handling.
+P2-1 unit tests assert domain-specific lead prose routing for iron, thyroid, and homocysteine; lipid secondary regression; graceful fallback when no scoped entity matches; and claim boundaries.
 
 ## 6. Known limitations
 
-Lead prose content follows last-match entity ordering (homocysteine entity last for regression). Signal-specific iron/thyroid pathway prose selection awaits `P2-FRAME-ROUTING-ARCHITECTURE-1`.
+Lead prose is one block per report. Frame-level iron-low absolute vs functional and homocysteine B-vitamin vs renal frames remain deferred. Simultaneous six-domain prose awaits `P2-FRAME-ROUTING-ARCHITECTURE-1` if multi-slot design is required.
 
 ## 7. Carry-forwards
 

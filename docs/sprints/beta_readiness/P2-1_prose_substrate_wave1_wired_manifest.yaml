@@ -10,6 +10,9 @@ behaviour_files:
   - backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py
   - backend/core/analytics/narrative_report_compiler_v1.py
 
+behaviour_notes:
+  - Lead entity selection is signal-scoped via interpretation entity signal_ids and top finding signal ID.
+
 content_files:
   - knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml
   - knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml

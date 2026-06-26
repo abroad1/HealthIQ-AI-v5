@@ -23,6 +23,9 @@ interpretation_entities:
     idl_internal_id: ph_blood_iron_oxygen_benchmark_lead_v1
     pathway_explainer_id: blood_iron_oxygen_handling_v1
     functional_interpretation_domain_id: blood_iron_oxygen_functional_v1
+    signal_ids:
+      - signal_iron_low
+      - signal_iron_high
     overlaps_note: |
       Domain-level iron transport prose only; absolute vs functional iron-low frames are not
       distinguished at compiler routing in P2-1 (see P2-FRAME-ROUTING-ARCHITECTURE-1).
@@ -33,6 +36,9 @@ interpretation_entities:
     idl_internal_id: ph_thyroid_hormone_antibody_benchmark_lead_v1
     pathway_explainer_id: thyroid_hormone_antibody_context_v1
     functional_interpretation_domain_id: thyroid_hormone_antibody_functional_v1
+    signal_ids:
+      - signal_free_t3_low
+      - signal_tpo_ab_high
     overlaps_note: |
       FT3-low and TPOAb-high thyroid-domain context only; hypothyroid or autoimmune disease
       labels are not emitted from this binding layer.
@@ -43,6 +49,10 @@ interpretation_entities:
     idl_internal_id: ph_one_carbon_homocysteine_macrocytosis_v1
     pathway_explainer_id: one_carbon_methylation_homocysteine_v1
     functional_interpretation_domain_id: one_carbon_methylation_functional_v1
+    signal_ids:
+      - signal_homocysteine_high
+      - signal_homocysteine_elevation_context
+      - signal_mcv_high
     overlaps_note: |
       When inflammatory signals are present, ph_vascular_hcy_inflammation_v1 may co-apply for
       vascular-risk emphasis; the compiler should compose without merging governed authorities.
