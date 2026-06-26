@@ -1,9 +1,10 @@
 {
   "branch": "feature/prose-substrate-wave1-wired",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-26T09:13:23Z",
   "cursor_started_utc": "2026-06-26T09:04:28Z",
-  "head_sha": "602ff998d6fc631a54ab31d8db603439795a6fbc",
+  "head_sha": "eed6a6472ff70fdf1a95fdfcd6a62faf65e9e034",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P2-1"
 }
