@@ -141,17 +141,67 @@ Branch naming convention (follow existing repo pattern):
 
 This applies to all direct Claude Code implementation work. If a task starts on `main` without a branch, stop, create the branch, and continue there. Do not ask for permission to create a branch — just do it as the first step.
 
-## 14. Pre-SOP advisory mode (Stage 0 / Stage B)
+## 14. Pre-SOP advisory mode (Pipeline Advisory Gate / Stage B)
 
-Authority: `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_5.md` (not merged into Automation Bus SOP except audit schema fields).
+Authority: `docs/governance/healthiq_pre_sop_prompt_scoping_workflow_v0_6.1.md`
 
-When invoked with `scope-advisory: <theme> — pre-SOP only, no hardening` or a pipeline advisory request:
+Do not use the bare phrase "Stage 0" in advisory prompts. Use "Pipeline Advisory Gate" for pre-SOP sequencing and "Automation Bus Stage 0 Branch Alignment" for the formal lifecycle stage.
 
-- This is advisory only — do not write `automation_bus/latest_prompt_hardening.json`, do not start Automation Bus stages, and do not modify the repository.
-- **Stage B (per-sprint):** write findings to `automation_bus/latest_scope_advisory.md` where practical; use file:line citations for structural claims Stage D may inherit.
-- **Stage 0 (batch boundary):** write the prioritised sprint sequence to `automation_bus/latest_pipeline_advisory.md`.
-- Both advisory files are non-execution-authorising cache only; they do not replace formal hardening or kernel start.
+### Advisory Receipt Gate — mandatory, every advisory prompt
 
-At Stage 5 audit close, set `pipeline_advisory_trigger` and `pipeline_advisory_reason` in `automation_bus/latest_audit_summary.md` when trigger criteria in v0.5 §6 are met. GPT must check these fields before authoring the next Stage A concept.
+When any prompt contains `scope-advisory`, `pipeline advisory`, `Stage B`, `throughput check`, `blocker check`, or `pre-SOP`, Claude's **first output must be the Advisory Receipt Gate** before reading any file, running any search, or launching any agent:
 
-**Stage D hardening with advisory present:** At Stage D hardening, if `automation_bus/latest_scope_advisory.md` is present: read it before hardening begins. Treat file:line citations as inherited structural evidence only if `git log --since="<advisory_date>" -- <cited_file>` returns no commits for each cited file. If any cited file has changed, re-verify the affected claims. If a sprint executed and closed between Stage B and Stage D, re-run the activation-readiness validator regardless of file-change status. Flag any material departure between the final SOP prompt and the advisory before proceeding.
+```
+ADVISORY RECEIPT GATE
+Declared mode: B0 | B1 | B2 | MISSING
+Mandatory file reads requested: [number]
+Mandatory searches requested: [number]
+Structured questions requested: [number]
+Fork/background agent requested: yes/no
+Mode compliance: PASS | FAIL
+Decision: PROCEED | REJECT_AND_NARROW | REQUIRE_MODE_DECLARATION | REQUIRE_B2_AUTHORISATION
+```
+
+If mode is missing: stop and respond `Mode missing. Please redeclare as B0, B1 or B2 before I proceed.`
+If B1 limits exceeded (>7 files, >6 questions, >3 searches, or fork agent): stop and respond with exact counts and ask for narrowing or explicit B2 authorisation.
+Default if ambiguous: B1. State `Mode ambiguous; defaulting to B1 lean blocker check.`
+Do not infer B2 from prompt complexity or candidate count.
+
+### SOP Prompt Receipt Gate — mandatory, every hardening engagement
+
+When any prompt is submitted for Stage D hardening or formal SOP execution, Claude's **first output must be the SOP Prompt Receipt Gate** before reading any file or beginning hardening:
+
+```
+PROMPT RECEIPT GATE
+Front matter complete: YES | NO — missing fields: [list]
+Declared risk_level: HIGH | STANDARD | LOW
+Declared change_type: CONTENT | BEHAVIOUR | MIXED
+Files in scope: [count] — [list]
+Behaviour changes touch Intelligence Core: YES | NO
+Tests listed for BEHAVIOUR changes: YES | NO | NOT APPLICABLE
+Scope proportionality: PASS | FAIL — [reason if fail]
+Scope creep signals: [list] | NONE
+Decision: ACCEPT | REJECT_AND_RETURN
+```
+
+REJECT immediately if: any mandatory front matter field is missing; a CONTENT prompt lists Intelligence Core files; a BEHAVIOUR/MIXED prompt lists no tests; the prompt embeds discovery instructions (broad grep, "also check", "read everything in"). On REJECT, state the exact fix required and return the prompt to GPT. Do not begin hardening.
+
+### Advisory modes
+
+- **B0** — no advisory; GPT writes SOP directly.
+- **B1** — lean blocker check; max 7 files, 6 questions, 3 searches; no fork/background agent; one concise blocker note only.
+- **B2** — full scoping advisory; explicit authorisation required; valid only when: new programme lane, unknown architecture, unclear agent ownership, conflicting authority, no identified next sprint, or user explicitly requests full resequencing.
+
+### Advisory file targets
+
+- Stage B (per-sprint): write to `automation_bus/latest_scope_advisory.md`
+- Pipeline Advisory Gate (batch boundary): write to `automation_bus/latest_pipeline_advisory.md`
+- Both files are non-execution-authorising cache only.
+
+### Pipeline advisory trigger
+
+At Stage 5 audit close, set `pipeline_advisory_trigger` and `pipeline_advisory_reason` in `automation_bus/latest_audit_summary.md` when trigger criteria in v0.6.1 §13 are met.
+
+### Stage D hardening with advisory present
+
+If `automation_bus/latest_scope_advisory.md` is present: read it before hardening begins. Treat file:line citations as inherited structural evidence only if `git log --since="<advisory_date>" -- <cited_file>` returns no commits for each cited file. If any cited file has changed, re-verify the affected claims. Flag any material departure before proceeding.
