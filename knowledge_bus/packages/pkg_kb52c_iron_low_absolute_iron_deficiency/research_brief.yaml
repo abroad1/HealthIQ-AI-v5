@@ -1,0 +1,16 @@
+research_domain: hematologic
+sources:
+- source_id: source_iron_lab_guideline_2024
+  paper_title: Guidelines for the Use of Laboratory Tests for Iron Deficiency
+  journal: Laboratory Medicine Guideline
+  year: 2024
+biomarkers:
+- iron
+- ferritin
+- transferrin_saturation
+- crp
+physiological_claim: Low serum iron becomes more clinically meaningful for depleted iron stores when
+  accompanied by low ferritin and low directly reported transferrin saturation.
+evidence_strength: consensus
+research_summary: KB-S52C Pass 3 ingestion from Batch_3_Pass_3.json; spec_id=inv_iron_low_absolute_iron_deficiency;
+  signal_id=signal_iron_low; investigation_spec_contract_version=3.0.0; P1-26 MR-v2 production promotion.

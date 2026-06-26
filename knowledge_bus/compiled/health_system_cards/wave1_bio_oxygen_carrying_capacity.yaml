@@ -10,14 +10,16 @@ source_spec_ids:
   - inv_ferritin_high_inflammatory_hyperferritinemia
   - inv_ferritin_high_iron_overload_context
   - inv_transferrin_high_iron_deficiency_transport_upregulation
-compile_manifest_ref: knowledge_bus/compiled/manifests/p1_24_blood_iron_oxygen_card_evidence.yaml
+  - inv_iron_low_absolute_iron_deficiency
+  - inv_iron_low_functional_iron_restriction_inflammation
+  - inv_iron_high_iron_overload_context
+compile_manifest_ref: knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml
 missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
-mechanism_line: Haemoglobin and haematocrit describe oxygen-carrying capacity on this panel; ferritin adds iron-storage and high-ferritin pattern context when present; transferrin may add iron-transport context when uploaded.
+mechanism_line: Haemoglobin and haematocrit describe oxygen-carrying capacity on this panel; ferritin and serum iron add iron-storage and iron-availability context when present; transferrin may add iron-transport context when uploaded.
 subsystem_summary: >
   Haemoglobin and haematocrit anchor red-cell and oxygen-carrying markers on this panel; ferritin
-  may add iron-storage, inflammatory hyperferritinemia, or iron overload context when uploaded;
-  transferrin may add compensatory iron-transport context when present but is optional for the scored
-  subsystem view.
+  and serum iron may add low- and high-iron pattern context when uploaded; transferrin may add
+  compensatory iron-transport context when present but is optional for the scored subsystem view.
 evidence_limitations_line: >
   This card focuses on red-cell and oxygen-carrying markers and does not diagnose anaemia, iron
   deficiency, bleeding, or other haematological disease.
@@ -46,6 +48,12 @@ markers:
     relationship_kind: contextual_support
     rationale_short: High transferrin frequently reflects compensatory upregulation of iron-transport capacity when body iron availability is reduced.
     presence_policy: optional_on_panel
+  - marker_id: iron
+    display_label: Serum iron
+    marker_role: contextual_marker
+    relationship_kind: contextual_support
+    rationale_short: Low or high serum iron may add absolute deficiency, inflammatory restriction, or overload context when paired with ferritin and directly reported transferrin saturation.
+    presence_policy: optional_on_panel
 provenance:
   artefact_kind: health_system_card_evidence_v1
   compile_status: compile_pipeline
@@ -57,8 +65,9 @@ provenance:
     - pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
     - pkg_kb52c_ferritin_high_iron_overload_context
     - pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+    - pkg_kb52c_iron_low_absolute_iron_deficiency
+    - pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+    - pkg_kb52c_iron_high_iron_overload_context
   notes: >
-    P1-24 compile-time card evidence enrichment for launch-core blood / iron / oxygen domain.
-    Supersedes p1_3_blood_iron_oxygen_card_evidence.yaml for the current compiled card version;
-    P1-3 manifest remains unchanged for provenance history. Scoring uses existing cbc rail
-    (haemoglobin and haematocrit only). No PSI runtime.
+    P1-26 compile-time card evidence enrichment for launch-core blood / iron / oxygen domain.
+    Preserves P1-24 transferrin-high depth. Iron MR-v2 activation adds governed serum-iron context.

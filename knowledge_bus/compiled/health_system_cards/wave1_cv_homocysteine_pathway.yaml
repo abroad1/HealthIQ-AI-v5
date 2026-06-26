@@ -5,10 +5,17 @@ subsystem_id: wave1_cv_homocysteine_pathway
 subsystem_label: Homocysteine pathway
 visibility_tier: hidden_v1
 source_spec_ids:
-  - inv_homocysteine_high_metabolic
-compile_manifest_ref: knowledge_bus/compiled/manifests/arch_rt5b_homocysteine_pathway_card_evidence.yaml
+  - inv_homocysteine_high_b_vitamin_related_methylation_impairment
+  - inv_homocysteine_high_renal_clearance_reduction
+compile_manifest_ref: knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml
 missing_policy_line: Missing markers reduce confidence for this subsystem; they are not treated as absent clinical results.
-mechanism_line: Homocysteine reflects methylation and vascular context on this panel.
+mechanism_line: Homocysteine reflects B-vitamin processing and renal clearance context on this panel; not a stand-alone cardiovascular risk marker.
+subsystem_summary: >
+  Homocysteine may add B-vitamin processing or renal-clearance context when uploaded alongside
+  supporting markers; interpretation remains contextual and non-diagnostic.
+evidence_limitations_line: >
+  This card does not diagnose vitamin deficiency, kidney disease, or cardiovascular disease from
+  homocysteine alone.
 markers:
   - marker_id: homocysteine
     display_label: Homocysteine
@@ -18,10 +25,11 @@ markers:
     presence_policy: required_for_subsystem
 provenance:
   artefact_kind: health_system_card_evidence_v1
-  compile_status: pilot_manual
-  source_spec_provenance: inferred_from_package_manifest
+  compile_status: compile_pipeline
+  source_spec_provenance: explicit
   package_refs:
-    - pkg_s24_homocysteine_high_metabolic
+    - pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment
+    - pkg_kb52c_homocysteine_high_renal_clearance_reduction
   notes: >
-    ARCH-RT-5B estate promotion. source_spec_ids inferred from package manifest
-    source_document; not canonical directory-derived runtime provenance. No PSI runtime.
+    P1-26 compile-time card evidence for KB-S52C homocysteine frames. Supersedes legacy pkg_s24
+    references. Predicate cardiovascular routing unchanged; no new assembler allowlist switch.

@@ -1,0 +1,29 @@
+work_id: P1-26
+manifest_date: '2026-06-26'
+summary:
+  mr_v2_authority: docs/Medical Research Documents/Medical_Research_Activation_Review_Deferred_Wave_1_Items_v2.md
+  iron_candidates: 3
+  homocysteine_candidates: 2
+  homocysteine_manifest_decision: behavioural_impact NONE retained — predicate routing pre-live; PSI promotion only
+candidates:
+  - production_package_id: pkg_kb52c_iron_low_absolute_iron_deficiency
+    investigation_spec_id: inv_iron_low_absolute_iron_deficiency
+    signal_id: signal_iron_low
+    validation_result: PASS
+  - production_package_id: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+    investigation_spec_id: inv_iron_low_functional_iron_restriction_inflammation
+    signal_id: signal_iron_low
+    validation_result: PASS
+  - production_package_id: pkg_kb52c_iron_high_iron_overload_context
+    investigation_spec_id: inv_iron_high_iron_overload_context
+    signal_id: signal_iron_high
+    validation_result: PASS
+  - production_package_id: pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment
+    investigation_spec_id: inv_homocysteine_high_b_vitamin_related_methylation_impairment
+    signal_id: signal_homocysteine_high
+    validation_result: PASS
+  - production_package_id: pkg_kb52c_homocysteine_high_renal_clearance_reduction
+    investigation_spec_id: inv_homocysteine_high_renal_clearance_reduction
+    signal_id: signal_homocysteine_high
+    validation_result: PASS
+phase_2_authority: ALLOWED

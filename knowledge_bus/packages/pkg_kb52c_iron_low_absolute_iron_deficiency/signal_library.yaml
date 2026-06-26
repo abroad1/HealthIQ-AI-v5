@@ -1,0 +1,103 @@
+library:
+  package_id: KBP-4731
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C — Iron Low Absolute Iron Deficiency Context
+  description: Ingested from inv_iron_low_absolute_iron_deficiency (Batch_3_Pass_3.json).
+    MR-v2 absolute iron deficiency context tranche.
+signals:
+- signal_id: signal_iron_low
+  name: Iron Low Absolute Iron Deficiency Context
+  description: Low serum iron can support depleted iron stores when ferritin and directly
+    reported transferrin saturation are concordantly reduced.
+  system: hematologic
+  primary_metric: iron
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: ferritin
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low ferritin supports depleted iron stores when inflammation is not obscuring interpretation.
+  - biomarker_id: transferrin_saturation
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low directly reported transferrin saturation supports inadequate circulating iron availability.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Inflammation helps distinguish absolute iron restriction from inflammation-driven hypoferremia.
+  dependencies:
+    biomarkers:
+    - crp
+    - ferritin
+    - iron
+    - transferrin_saturation
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_iron_low_lab_range_activation_placeholder
+    metric_id: iron
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  mandatory_pre_emission_gates:
+  - gate_id: require_transferrin_saturation_present
+    metric_id: transferrin_saturation
+    comparator_type: biomarker_present
+  - gate_id: require_transferrin_saturation_low
+    metric_id: transferrin_saturation
+    comparator_type: lab_range_boundary
+    boundary: below_min
+    condition_type: all_of
+  - gate_id: require_ferritin_low
+    metric_id: ferritin
+    comparator_type: lab_range_boundary
+    boundary: below_min
+    condition_type: all_of
+  override_rules:
+  - rule_id: or_iron_low_with_ferritin_low
+    resulting_state: at_risk
+    description: Escalate when low serum iron coincides with low ferritin, as this more strongly
+      supports depleted iron stores.
+    conditions:
+    - metric_id: ferritin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_iron_lab_guideline_2024
+  output:
+    signal_value: iron
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: iron
+    supporting_markers:
+    - ferritin
+    - transferrin_saturation
+    - crp
+  explanation:
+    mechanism: Circulating iron falls when body iron stores are depleted or when iron delivery
+      into plasma is limited.
+    biological_pathway: Iron storage, transferrin-mediated transport, and iron mobilization from
+      reticuloendothelial stores.
+    interpretation: Low serum iron is more consistent with a contextual absolute iron restriction
+      pattern when ferritin and directly reported transferrin saturation are concordantly reduced.
+    implications: Ferritin, directly reported transferrin saturation, and inflammatory markers
+      should be reviewed before attributing low iron to depleted stores.
+    supporting_marker_roles: Low ferritin corroborates store depletion; low transferrin saturation
+      supports reduced circulating availability; CRP differentiates inflammatory restriction.

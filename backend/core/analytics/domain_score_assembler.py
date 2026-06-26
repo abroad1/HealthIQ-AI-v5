@@ -83,9 +83,10 @@ _THYROID_EXCLUDED_SIGNAL_IDS: frozenset[str] = frozenset(
     }
 )
 
-# P1-18: transferrin transport upregulation (pkg_kb61) — ID-matched production package.
-# Other CBC/iron signals remain excluded pending frame adjudication (P1-3 carry-forward).
-_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS: frozenset[str] = frozenset({"signal_transferrin_high"})
+# P1-26 (MR-v2 2026-06-23): P1-3/P1-18 iron frame carry-forward resolved; transferrin-high plus governed iron-low/iron-high.
+_BLOOD_IRON_OXYGEN_LAUNCH_SIGNAL_IDS: frozenset[str] = frozenset(
+    {"signal_transferrin_high", "signal_iron_low", "signal_iron_high"}
+)
 _BURDEN_HEPATIC = "hepatic"
 
 # D-4: user-safe caveat lines (replaces internal slug list for retail cards)

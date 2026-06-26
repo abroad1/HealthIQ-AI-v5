@@ -1,0 +1,16 @@
+research_domain: inflammatory
+sources:
+- source_id: source_iron_lab_guideline_2024
+  paper_title: Guidelines for the Use of Laboratory Tests for Iron Deficiency
+  journal: Laboratory Medicine Guideline
+  year: 2024
+biomarkers:
+- iron
+- ferritin
+- transferrin_saturation
+- crp
+physiological_claim: Inflammation can lower circulating iron through sequestration and reduced availability
+  even when total iron stores are not fully depleted.
+evidence_strength: moderate
+research_summary: KB-S52C Pass 3 ingestion from Batch_3_Pass_3.json; spec_id=inv_iron_low_functional_iron_restriction_inflammation;
+  signal_id=signal_iron_low; investigation_spec_contract_version=3.0.0; P1-26 MR-v2 production promotion.

@@ -634,6 +634,27 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P1-26 — MR-v2 Iron + Homocysteine Signal Activation
+
+**Status:** Complete  
+**Date closed:** 2026-06-26  
+**Programme block(s):** Block 3 Layer B intelligence substrate  
+
+### Delivered / ticked off
+- Five MR-v2-cleared iron and homocysteine candidates activated with directly reported TSAT gates.
+- Iron allowlist extended; homocysteine predicate routing unchanged; compiled cards enriched.
+
+### Carry-forwards
+- Calculated TSAT blocked; hepatocellular iron-high standalone deferred; WBC cohort out of scope.
+
+### Blockers / risks
+- None material for P1-26 scope.
+
+### Recommended next sprint
+- Programme backlog per prior carry-forwards.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

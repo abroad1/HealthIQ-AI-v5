@@ -4,7 +4,7 @@ artifact_version: 1
 generated_date: '2026-03-28'
 packages_root: knowledge_bus/packages
 inventory_counts:
-  pkg_directories_total: 188
+  pkg_directories_total: 191
   governed_packages_in_inventory: 185
   excluded_placeholders: 1
   review_queue_packages: 112

@@ -57,6 +57,12 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
+  mandatory_pre_emission_gates:
+  - gate_id: require_creatinine_high
+    metric_id: creatinine
+    comparator_type: lab_range_boundary
+    boundary: above_max
+    condition_type: all_of
   override_rules:
   - rule_id: or_homocysteine_high_with_high_creatinine
     resulting_state: at_risk
@@ -84,8 +90,8 @@ signals:
       are reduced.
     biological_pathway: Creatinine helps distinguish renal accumulation from a primarily
       folate- or B12-driven methylation defect.
-    interpretation: High homocysteine in renal impairment is a contextual biochemical
-      consequence and should not be over-interpreted as a vitamin deficiency by default.
+    interpretation: High homocysteine in renal impairment is a contextual biochemical consequence
+      and should not be over-interpreted as a vitamin deficiency by default.
     implications: This pattern may justify renal interpretation before assuming primary
       nutritional deficiency.
     supporting_marker_roles: Creatinine is the key mechanism marker, folate helps

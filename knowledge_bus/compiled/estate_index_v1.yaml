@@ -16,7 +16,7 @@ card_evidence_artefacts:
     launch_classification: launch_included_compiled
   - subsystem_id: wave1_cv_homocysteine_pathway
     artefact_path: knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_homocysteine_pathway_card_evidence.yaml
+    compile_manifest_path: knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml
     launch_classification: launch_included_compiled
   - subsystem_id: wave1_cv_vascular_strain
     artefact_path: knowledge_bus/compiled/health_system_cards/wave1_cv_vascular_strain.yaml
@@ -40,7 +40,7 @@ card_evidence_artefacts:
     launch_classification: launch_included_compiled
   - subsystem_id: wave1_bio_oxygen_carrying_capacity
     artefact_path: knowledge_bus/compiled/health_system_cards/wave1_bio_oxygen_carrying_capacity.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/p1_24_blood_iron_oxygen_card_evidence.yaml
+    compile_manifest_path: knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml
     launch_classification: launch_included_compiled
   - subsystem_id: wave1_thy_hormonal_axis
     artefact_path: knowledge_bus/compiled/health_system_cards/wave1_thy_hormonal_axis.yaml

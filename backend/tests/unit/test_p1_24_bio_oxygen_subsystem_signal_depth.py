@@ -8,7 +8,7 @@ from core.knowledge.health_system_card_evidence import get_card_evidence_artefac
 
 def test_bio_oxygen_card_includes_p1_24_source_spec_ids():
     artefact = get_card_evidence_artefact("wave1_bio_oxygen_carrying_capacity")
-    assert artefact.compile_manifest_ref.endswith("p1_24_blood_iron_oxygen_card_evidence.yaml")
+    assert artefact.compile_manifest_ref.endswith("p1_26_iron_homocysteine_card_evidence.yaml")
     assert {
         "inv_ferritin_high_inflammatory_hyperferritinemia",
         "inv_ferritin_high_iron_overload_context",
@@ -45,4 +45,4 @@ def test_bio_oxygen_subsystem_evidence_emits_enriched_card_with_transferrin():
     row = rows[0]
     assert row.subsystem_id == "wave1_bio_oxygen_carrying_capacity"
     assert "transferrin" in row.included_marker_ids
-    assert "p1_24_blood_iron_oxygen_card_evidence.yaml" in row.compile_manifest_ref
+    assert "p1_26_iron_homocysteine_card_evidence.yaml" in row.compile_manifest_ref

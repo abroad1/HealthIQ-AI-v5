@@ -57,6 +57,13 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
+  mandatory_pre_emission_gates:
+  - gate_id: require_folate_present
+    metric_id: folate
+    comparator_type: biomarker_present
+  - gate_id: require_active_b12_present
+    metric_id: active_b12
+    comparator_type: biomarker_present
   override_rules:
   - rule_id: or_homocysteine_high_with_low_active_b12
     resulting_state: at_risk

@@ -1,0 +1,13 @@
+package_id: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+package_version: 1.0.0
+description: 'KB-S52C package for inv_iron_low_functional_iron_restriction_inflammation (signal_iron_low).
+  Source: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json.'
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+author: HealthIQ Knowledge Bus — KB-S52C
+created_at: '2026-06-26'
+source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+translation_mode: creation
+behavioural_impact: SIGNAL_RUNTIME_ACTIVATION
+engine_compatibility: v5.x
+promoted_signal_intelligence: promoted_signal_intelligence.yaml

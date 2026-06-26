@@ -1,0 +1,31 @@
+work_id: P1-26
+manifest_date: '2026-06-26'
+carry_forward_items:
+  - item_id: p1_26_cf_calculated_tsat
+    reference: calculated transferrin_saturation
+    reason: MR-v2 and sprint scope require directly reported TSAT only; calculated TSAT remains blocked
+    blocker_class: CALCULATED_TSAT_DEFERRED
+    owner_agent: Core Engine
+    launch_relevance: deferred
+    recommended_future_package: P1-TSAT-CALCULATED-MODE-1
+  - item_id: p1_26_cf_iron_hepatocellular
+    reference: pkg_kb52c_iron_high_hepatocellular_or_hemolytic_release
+    reason: MR-v2 defers hepatocellular/haemolytic release as standalone iron-high activation
+    blocker_class: IRON_HEPATOCELLULAR_DEFERRED
+    owner_agent: Medical Review
+    launch_relevance: deferred
+    recommended_future_package: P1-IRON-HEPATOCELLULAR-1
+  - item_id: p1_26_cf_wbc_lymph_neut
+    reference: WBC / lymphocyte / neutrophil packages
+    reason: Out of P1-26 MR-v2 cohort scope
+    blocker_class: OUT_OF_SCOPE
+    owner_agent: Programme
+    launch_relevance: deferred
+    recommended_future_package: per programme backlog
+resolved_in_p1_26:
+  - item_id: p1_3_iron_signal_wiring
+    resolution: signal_iron_low and signal_iron_high allowlisted with MR-v2 gated production packages
+  - item_id: p1_18_iron_launch_signals
+    resolution: iron-low and iron-high frame adjudication closed for absolute, functional, and overload contexts
+  - item_id: p1_10_homocysteine_medical_review
+    resolution: both homocysteine KB-S52C frames promoted with production PSI; card updated from legacy pkg_s24
