@@ -143,9 +143,11 @@ This applies to all direct Claude Code implementation work. If a task starts on 
 
 ## 14. Pre-SOP advisory mode (Pipeline Advisory Gate / Stage B)
 
-Authority: `docs/governance/healthiq_pre_sop_prompt_scoping_workflow_v0_6.1.md`
+Authority: `docs/governance/healthiq_pre_sop_prompt_scoping_workflow_v0_6.2.md`
 
 Do not use the bare phrase "Stage 0" in advisory prompts. Use "Pipeline Advisory Gate" for pre-SOP sequencing and "Automation Bus Stage 0 Branch Alignment" for the formal lifecycle stage.
+
+**Default path:** GPT writes SOP directly → Claude Stage D hardening → REJECT_AND_RETURN with exact corrections if wrong → GPT resubmits once → Stage D proceeds. Advisory is not the default.
 
 ### Advisory Receipt Gate — mandatory, every advisory prompt
 
@@ -154,16 +156,19 @@ When any prompt contains `scope-advisory`, `pipeline advisory`, `Stage B`, `thro
 ```
 ADVISORY RECEIPT GATE
 Declared mode: B0 | B1 | B2 | MISSING
-Mandatory file reads requested: [number]
-Mandatory searches requested: [number]
-Structured questions requested: [number]
+Mandatory file reads requested: [n]
+Mandatory searches requested: [n]
+Structured questions requested: [n]
 Fork/background agent requested: yes/no
+Repo/code-discovery requested: yes/no
+Programme sequencing decision requested: yes/no
 Mode compliance: PASS | FAIL
-Decision: PROCEED | REJECT_AND_NARROW | REQUIRE_MODE_DECLARATION | REQUIRE_B2_AUTHORISATION
+Decision: PROCEED | REJECT_AND_NARROW | REQUIRE_MODE_DECLARATION | REQUIRE_B2_AUTHORISATION | SEND_TO_STAGE_D
 ```
 
 If mode is missing: stop and respond `Mode missing. Please redeclare as B0, B1 or B2 before I proceed.`
-If B1 limits exceeded (>7 files, >6 questions, >3 searches, or fork agent): stop and respond with exact counts and ask for narrowing or explicit B2 authorisation.
+If B1 limits exceeded (>7 files, >6 questions, >3 searches, or fork agent): stop and respond with exact counts and ask to narrow, authorise B2, or move to Stage D.
+`SEND_TO_STAGE_D` when the prompt is asking code/repo-discovery questions answerable by Stage D hardening.
 Default if ambiguous: B1. State `Mode ambiguous; defaulting to B1 lean blocker check.`
 Do not infer B2 from prompt complexity or candidate count.
 
@@ -179,28 +184,36 @@ Declared change_type: CONTENT | BEHAVIOUR | MIXED
 Files in scope: [count] — [list]
 Behaviour changes touch Intelligence Core: YES | NO
 Tests listed for BEHAVIOUR changes: YES | NO | NOT APPLICABLE
-Scope proportionality: PASS | FAIL — [reason if fail]
+Scope proportionality: PASS | FAIL — [reason]
+Advisory duplication detected: YES | NO
 Scope creep signals: [list] | NONE
 Decision: ACCEPT | REJECT_AND_RETURN
 ```
 
-REJECT immediately if: any mandatory front matter field is missing; a CONTENT prompt lists Intelligence Core files; a BEHAVIOUR/MIXED prompt lists no tests; the prompt embeds discovery instructions (broad grep, "also check", "read everything in"). On REJECT, state the exact fix required and return the prompt to GPT. Do not begin hardening.
+Mandatory front matter: `work_id`, `branch`, `risk_level`, `execution_model`, `change_type`. Any missing = REJECT.
+REJECT if: CONTENT prompt lists Intelligence Core files; BEHAVIOUR/MIXED lists no tests; prompt embeds open-ended discovery ("also check", "verify all", "read everything in"); scope proportionality fails per v0.6.2. On REJECT, state exact fix and return to GPT. Do not begin hardening.
 
 ### Advisory modes
 
-- **B0** — no advisory; GPT writes SOP directly.
-- **B1** — lean blocker check; max 7 files, 6 questions, 3 searches; no fork/background agent; one concise blocker note only.
-- **B2** — full scoping advisory; explicit authorisation required; valid only when: new programme lane, unknown architecture, unclear agent ownership, conflicting authority, no identified next sprint, or user explicitly requests full resequencing.
+- **B0** — no advisory; GPT writes SOP directly when next sprint is identified and unknowns are file paths, schema, loader behaviour, risk class, or test placement.
+- **B1A** — pipeline throughput review at batch boundaries; output to `automation_bus/latest_pipeline_advisory.md`.
+- **B1B** — lean blocker check when sprint is sequenced and one small blocker fact is needed before SOP authoring.
+- **B1** hard limits (B1A and B1B): max 7 file reads, 6 questions, 3 searches; no broad repo discovery; no fork/background agent; no implementation plan.
+- **B2** — strategic/programmatic decisions only; explicit authorisation required. Not triggered by HIGH risk, multiple files, or unknown code architecture verifiable in Stage D.
 
 ### Advisory file targets
 
-- Stage B (per-sprint): write to `automation_bus/latest_scope_advisory.md`
-- Pipeline Advisory Gate (batch boundary): write to `automation_bus/latest_pipeline_advisory.md`
+- Stage B (per-sprint): `automation_bus/latest_scope_advisory.md` (B2 only when conclusion is not invalidated by immediate Stage D code inspection)
+- Pipeline Advisory Gate (batch boundary): `automation_bus/latest_pipeline_advisory.md` (B1A)
 - Both files are non-execution-authorising cache only.
+
+### Stage D vs B2
+
+Code/repo-discovery questions (which files, schema shape, routing behaviour, tests needed) belong in Stage D hardening, not B2 advisory. Do not convert hardening into scope advisory.
 
 ### Pipeline advisory trigger
 
-At Stage 5 audit close, set `pipeline_advisory_trigger` and `pipeline_advisory_reason` in `automation_bus/latest_audit_summary.md` when trigger criteria in v0.6.1 §13 are met.
+At Stage 5 audit close, set `pipeline_advisory_trigger` and `pipeline_advisory_reason` in `automation_bus/latest_audit_summary.md` when trigger criteria in v0.6.2 are met.
 
 ### Stage D hardening with advisory present
 
