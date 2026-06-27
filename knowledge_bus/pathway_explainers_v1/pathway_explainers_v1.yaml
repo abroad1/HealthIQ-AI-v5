@@ -219,3 +219,39 @@ pathways:
     interpretive_caution: |
       Educational pathway prose only. It does not diagnose hypothyroidism, name specific thyroid
       diseases, predict thyroid failure, or recommend treatment.
+
+  - pathway_id: renal_filtration_handling_v1
+    benchmark_domain: renal
+    display_title: Kidney filtration, waste clearance, and fluid balance
+    related_signal_themes:
+      - creatinine
+      - egfr
+      - urea
+      - electrolytes
+    pathway_role: |
+      The kidneys filter blood, remove metabolic waste, and help regulate fluid and electrolytes.
+      Creatinine and urea are common blood signals used in educational materials about filtration
+      and clearance—not full kidney assessments by themselves.
+    system_in_action: |
+      Glomerular filtration estimates (eGFR) combine creatinine with standard inputs to summarise
+      kidney function for monitoring. Urea reflects protein metabolism and clearance together.
+      Electrolytes such as sodium and potassium describe complementary fluid and mineral balance
+      signals that clinicians integrate with symptoms and urine testing when used.
+    creatinine_and_egfr_together: |
+      Creatinine production links to muscle mass; eGFR equations translate creatinine into a
+      filtration summary. Both are snapshots that shift with hydration, illness, and medications.
+    urea_in_renal_context: |
+      Urea rises with reduced clearance, high protein intake, or dehydration in some settings.
+      It is read with creatinine and eGFR rather than as an isolated kidney label.
+    electrolytes_and_fluid_balance: |
+      Sodium and potassium help describe extracellular and intracellular balance. They complement
+      filtration markers when reviewing kidney-related physiology in educational panels.
+    markers_belong_together: |
+      Creatinine, eGFR, urea, and relevant electrolytes describe overlapping facets of renal and
+      fluid physiology—they are interpreted as a coordinated story, not interchangeable duplicates.
+    why_matters_beyond_a_single_creatinine: |
+      Kidney surveillance in population health uses pattern coherence over time: isolated shifts
+      without corroboration or clinical context leave interpretive weight intentionally bounded.
+    interpretive_caution: |
+      Educational pathway prose only. It does not diagnose chronic kidney disease, establish
+      treatment thresholds, or replace clinician review with urine tests and examination when needed.

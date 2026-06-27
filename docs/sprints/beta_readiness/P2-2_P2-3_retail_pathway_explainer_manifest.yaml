@@ -1,0 +1,19 @@
+work_id: P2-2+P2-3
+title: Retail and Pathway Explainer Expansion
+status: complete
+date_closed: "2026-06-27"
+risk_level: STANDARD
+change_type: CONTENT
+branch: feature/p2-2-p2-3-retail-pathway-explainer-expansion
+
+content_files:
+  - backend/ssot/retail_explainer_v1/registry.yaml
+  - knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml
+  - knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml
+
+mechanical_hygiene:
+  - knowledge_bus/packages/pkg_kb52c_iron_low_absolute_iron_deficiency/signal_library.yaml
+  - knowledge_bus/packages/pkg_kb52c_iron_low_functional_iron_restriction_inflammation/signal_library.yaml
+  - knowledge_bus/packages/pkg_kb52c_iron_high_iron_overload_context/signal_library.yaml
+
+retail_biomarker_count: 40

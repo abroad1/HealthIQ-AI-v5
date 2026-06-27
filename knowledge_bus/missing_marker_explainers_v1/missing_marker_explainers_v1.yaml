@@ -1,0 +1,89 @@
+# Missing-marker explainer pack v1 — governed educational cautions (P2-3 bootstrap)
+#
+# Explains why absent supporting markers can limit interpretation specificity.
+# Does not diagnose, order tests, or recommend treatment.
+
+schema_version: "1.0.0"
+pack_version: "1.0.0"
+authority: knowledge_bus/missing_marker_explainers_v1
+
+missing_markers:
+  - missing_marker_id: missing_ferritin_iron_context_v1
+    biomarker_id: ferritin
+    benchmark_domain: blood_iron_oxygen
+    display_title: Ferritin not available on this panel
+    caution_when_absent: |
+      When ferritin is not measured, interpretation of serum iron and transferrin saturation can
+      be less specific because ferritin helps place iron traffic against storage context.
+    interpretive_limit: |
+      Without ferritin, educational discussion of iron patterns remains bounded to circulating
+      transport signals only; store-depletion versus inflammatory redistribution cannot be
+      distinguished from iron markers alone.
+    interpretive_caution: |
+      This is general education only. Absence of a marker does not imply an obligation to order tests or
+      start treatment without clinician guidance.
+
+  - missing_marker_id: missing_transferrin_saturation_iron_context_v1
+    biomarker_id: transferrin_saturation
+    benchmark_domain: blood_iron_oxygen
+    display_title: Transferrin saturation not available on this panel
+    caution_when_absent: |
+      When transferrin saturation is not available, the loading of iron transport proteins cannot
+      be summarised alongside serum iron and ferritin.
+    interpretive_limit: |
+      Interpretation of iron availability patterns may be less specific without saturation context;
+      this does not establish iron deficiency or overload by itself.
+    interpretive_caution: |
+      This is general education only. Missing data does not imply a required test order.
+
+  - missing_marker_id: missing_free_t4_thyroid_context_v1
+    biomarker_id: free_t4
+    benchmark_domain: thyroid_hormonal_axis
+    display_title: Free T4 not available on this panel
+    caution_when_absent: |
+      When free T4 is not measured, thyroid hormone output context alongside TSH and free T3 may
+      be incomplete for panel-level educational review.
+    interpretive_limit: |
+      Isolated TSH or free T3 shifts without free T4 leave thyroid traffic interpretation less
+      specific; this is not a hypothyroid or hyperthyroid label.
+    interpretive_caution: |
+      This is general education only. Absence of free T4 does not diagnose thyroid disease.
+
+  - missing_marker_id: missing_tsh_thyroid_context_v1
+    biomarker_id: tsh
+    benchmark_domain: thyroid_hormonal_axis
+    display_title: TSH not available on this panel
+    caution_when_absent: |
+      When TSH is not measured, pituitary–thyroid axis context for free T3 and free T4 may be
+      incomplete in educational materials.
+    interpretive_limit: |
+      Thyroid hormone values without TSH can make pattern coherence less specific; clinical panels
+      usually include TSH when thyroid assessment is intended.
+    interpretive_caution: |
+      This is general education only. Missing TSH does not imply treatment need.
+
+  - missing_marker_id: missing_egfr_renal_context_v1
+    biomarker_id: egfr
+    benchmark_domain: renal
+    display_title: eGFR not available on this panel
+    caution_when_absent: |
+      When eGFR is not reported, filtration summaries derived from creatinine may not be present
+      even if creatinine itself was measured.
+    interpretive_limit: |
+      Creatinine alone reflects muscle metabolism and clearance signals together; without eGFR or
+      repeat context, kidney function education remains less specific.
+    interpretive_caution: |
+      This is general education only. Missing eGFR is not a diagnosis of kidney disease.
+
+  - missing_marker_id: missing_b12_homocysteine_context_v1
+    biomarker_id: vitamin_b12
+    benchmark_domain: methylation_one_carbon
+    display_title: Vitamin B12 not available on this panel
+    caution_when_absent: |
+      When vitamin B12 is not measured, homocysteine and folate-related educational context may be
+      less complete for one-carbon pathway discussion.
+    interpretive_limit: |
+      Elevated homocysteine without B12 or folate limits specificity about remethylation versus
+      other influences; this does not prove vitamin deficiency.
+    interpretive_caution: |
+      This is general education only. Missing B12 does not mandate supplementation without clinical review.

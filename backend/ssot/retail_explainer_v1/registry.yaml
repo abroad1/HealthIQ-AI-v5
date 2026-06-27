@@ -212,6 +212,284 @@ biomarkers:
       This is general education only. It is not a diagnosis and does not replace advice from a
       qualified clinician about your own results.
 
+  iron:
+    title: "Iron (serum iron)"
+    body: |
+      Serum iron measures iron circulating in the blood at the time of sampling. It reflects
+      transport traffic rather than total body iron stores on its own.
+
+      Iron sits in a network with ferritin, transferrin, and transferrin saturation; interpretation
+      depends on the wider panel and clinical context, not this marker in isolation.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  transferrin:
+    title: "Transferrin"
+    body: |
+      Transferrin is a transport protein that carries iron in the bloodstream. Its concentration
+      can shift with iron status, inflammation, and liver synthetic function.
+
+      Transferrin is read alongside serum iron, ferritin, and saturation to describe iron traffic
+      rather than as a standalone label.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  transferrin_saturation:
+    title: "Transferrin saturation"
+    body: |
+      Transferrin saturation summarises how fully iron transport proteins are loaded. It helps
+      place serum iron and ferritin in context when assessing circulating iron availability.
+
+      A single value reflects sampling timing and the wider iron/inflammatory picture; repeat and
+      panel context matter for interpretation.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  crp:
+    title: "CRP (C‑reactive protein)"
+    body: |
+      CRP is an acute-phase protein that rises with inflammation and tissue injury. In educational
+      materials it is often grouped with immune and cardiovascular context markers.
+
+      CRP is non-specific: elevation does not, by itself, identify a cause. Results are interpreted
+      with symptoms, history, and other laboratory signals.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  mcv:
+    title: "MCV (mean cell volume)"
+    body: |
+      MCV describes the average size of red blood cells. It sits adjacent to haemoglobin and iron
+      markers when reviewing oxygen-carrying capacity and erythroid dynamics.
+
+      Cell volume shifts with nutrition, marrow activity, and other physiological factors; it is
+      interpreted as part of a blood-count pattern, not in isolation.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  vitamin_b12:
+    title: "Vitamin B12"
+    body: |
+      Vitamin B12 supports DNA synthesis, nerve function, and red-cell production. Blood levels
+      reflect intake, absorption, and tissue need over recent time.
+
+      B12 is often read with folate and homocysteine-related markers in one-carbon metabolism
+      education, but individual results still require clinical context.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  active_b12:
+    title: "Active B12 (holotranscobalamin)"
+    body: |
+      Active B12 measures the fraction of vitamin B12 available for cellular uptake. It is
+      sometimes used alongside total B12 when assessing functional B12 status in research and
+      clinical practice.
+
+      Interpretation depends on assay method, other B12-related markers, and the full clinical
+      picture—not this value alone.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  folate:
+    title: "Folate (serum folate)"
+    body: |
+      Folate is a B vitamin involved in DNA synthesis and one-carbon metabolism. Serum folate
+      reflects recent intake and absorption but does not fully describe tissue stores.
+
+      Folate is commonly reviewed with B12 and homocysteine in educational materials about
+      methylation and erythropoiesis, with panel-level interpretation remaining essential.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  homocysteine:
+    title: "Homocysteine"
+    body: |
+      Homocysteine sits in one-carbon metabolism pathways linked to B vitamins, folate, and vascular
+      education contexts. Elevated values can reflect multiple physiological influences.
+
+      Homocysteine is a pathway-level signal read with related vitamins and clinical context—not a
+      standalone disease label from a single reading.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  free_t3:
+    title: "Free T3 (free triiodothyronine)"
+    body: |
+      Free T3 is the biologically active thyroid hormone fraction available to tissues. It is
+      interpreted with TSH and free T4 as part of thyroid panel education.
+
+      Isolated shifts can reflect systemic illness, conversion dynamics, or broader thyroid hormone
+      traffic; the full panel and clinical setting matter.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  free_t4:
+    title: "Free T4 (free thyroxine)"
+    body: |
+      Free T4 reflects circulating thyroxine not bound to carrier proteins. It helps describe thyroid
+      hormone output alongside TSH and, when measured, free T3.
+
+      Thyroid hormones influence metabolic rate and energy context; laboratory grouping supports
+      panel review rather than single-value conclusions.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  tpo_ab:
+    title: "TPO antibodies (thyroid peroxidase antibodies)"
+    body: |
+      TPO antibodies mark immune recognition of thyroid peroxidase, an enzyme involved in thyroid
+      hormone synthesis. Antibody elevation adds context when read with thyroid function markers.
+
+      Antibody positivity alone is not a diagnosis; interpretation depends on TSH, free T4, free T3,
+      and clinical follow-up as appropriate.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  bilirubin:
+    title: "Bilirubin"
+    body: |
+      Bilirubin is a breakdown product of haemoglobin processing. Blood levels reflect production,
+      liver handling, and excretion pathways.
+
+      Bilirubin shifts with haemolysis, liver chemistry, and bile flow patterns; it is interpreted
+      with other liver tests and clinical context, not from one value alone.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  ggt:
+    title: "GGT (gamma‑glutamyl transferase)"
+    body: |
+      GGT is an enzyme found in liver and bile duct tissues. It often rises with cholestatic or
+      hepatobiliary stress signals and is read alongside ALT, AST, and bilirubin.
+
+      GGT can also be influenced by medications and alcohol exposure in population education
+      materials; clinical correlation remains essential.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  urea:
+    title: "Urea (blood urea nitrogen context)"
+    body: |
+      Urea is a waste product of protein metabolism cleared by the kidneys. Blood urea reflects
+      kidney filtration, hydration, and protein intake together.
+
+      Urea is interpreted with creatinine, eGFR, and clinical context rather than as an isolated
+      kidney function label.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  urate:
+    title: "Urate (uric acid)"
+    body: |
+      Urate is the end product of purine metabolism. Blood urate reflects production, renal
+      clearance, and dietary factors.
+
+      Urate is commonly discussed in metabolic and kidney education contexts; interpretation depends
+      on the wider panel, symptoms, and repeat measures when relevant.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  apoa1:
+    title: "Apolipoprotein A1 (ApoA1)"
+    body: |
+      ApoA1 is the main protein on HDL particles and participates in reverse cholesterol transport
+      education. It complements HDL cholesterol and broader lipid particle summaries.
+
+      ApoA1 is one facet of lipid transport architecture, not a standalone cardiovascular
+      diagnosis from a single measurement.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  lipoprotein_a:
+    title: "Lipoprotein(a)"
+    body: |
+      Lipoprotein(a) is an LDL-like particle with an additional protein component. It is discussed
+      in long-term cardiovascular risk education alongside other lipid markers.
+
+      Values are influenced by genetics and assay methods; clinical use varies by guideline and
+      must be interpreted with full risk context.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  alp:
+    title: "ALP (alkaline phosphatase)"
+    body: |
+      ALP is an enzyme found in liver, bone, and other tissues. Blood ALP can rise with bile flow
+      changes, bone turnover, or growth in younger individuals.
+
+      ALP is interpreted with GGT, bilirubin, and clinical context to help separate hepatic from
+      bone-related patterns when needed.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  albumin:
+    title: "Albumin"
+    body: |
+      Albumin is the major protein synthesized by the liver and helps maintain fluid balance in the
+      bloodstream. Low values can reflect synthetic function, nutrition, or inflammation-related
+      redistribution.
+
+      Albumin is read with liver enzymes, kidney markers, and clinical history—not as a single
+      organ diagnosis.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  potassium:
+    title: "Potassium"
+    body: |
+      Potassium is a key electrolyte for nerve and muscle function, including heart rhythm
+      education contexts. Blood levels reflect intake, renal handling, and cell shifts.
+
+      Potassium interpretation depends on sampling conditions, medications, and concurrent
+      electrolyte results.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  sodium:
+    title: "Sodium"
+    body: |
+      Sodium is a major extracellular electrolyte involved in fluid balance. Blood sodium reflects
+      hydration status, renal regulation, and hormonal control together.
+
+      Single sodium values are interpreted with clinical context and other electrolytes rather than
+      as isolated labels.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  magnesium:
+    title: "Magnesium"
+    body: |
+      Magnesium supports enzyme function, muscle activity, and bone physiology. Blood magnesium
+      measures circulating levels, which may not fully reflect total body stores.
+
+      Magnesium is interpreted with symptoms, medications, and related electrolytes when clinicians
+      review results.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
 systems:
   metabolic:
     title: "Metabolic system (educational overview)"

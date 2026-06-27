@@ -678,6 +678,28 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P2-2+P2-3 — Retail and Pathway Explainer Expansion
+
+**Status:** Complete  
+**Date closed:** 2026-06-27  
+**Programme block(s):** Block 3 Layer B intelligence/prose substrate  
+
+### Delivered / ticked off
+- Retail biomarker explainer coverage expanded from 17 to 40 governed entries.
+- Renal pathway explainer added; missing-marker explainer pack bootstrapped.
+- P1-26 M1 mechanical package_id header correction on three iron signal_library files.
+
+### Carry-forwards
+- Remaining biomarkers without retail entries; 10 non-iron KBP-473x headers; P2-FRAME-ROUTING, P2-4, Gemini, TSAT, WBC deferred/blocked.
+
+### Blockers / risks
+- None material for CONTENT scope.
+
+### Recommended next sprint
+- P2-FRAME-ROUTING-ARCHITECTURE-1 or continued retail coverage tranche.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

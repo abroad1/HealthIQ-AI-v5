@@ -1,0 +1,25 @@
+work_id: P2-2+P2-3
+carry_forwards:
+
+  markers_not_covered:
+    note: Remaining biomarkers in biomarkers.yaml without retail explainer entries deferred to future content sprints.
+
+  pathway_deferred:
+    - hepatic_inflammation_standalone_pathway
+    - metabolic_insulin_resistance_standalone_pathway
+
+  missing_marker_deferred:
+    note: Additional missing-marker entries for lipid and liver subsystems deferred until subsystem card gaps are prioritised.
+
+  p1_26_m1_adjacent:
+    note: |
+      KBP-473x legacy package_id headers persist in 10 non-iron pkg_kb52c_* signal_library.yaml files;
+      requires separate housekeeping sprint.
+
+  p2_frame_routing: P2-FRAME-ROUTING-ARCHITECTURE-1
+  p2_4_narrative_payload: deferred
+  gemini_activation: deferred
+  wbc_lymphocyte_neutrophil: blocked
+  calculated_tsat: blocked
+
+p1_26_m1_status: closed
