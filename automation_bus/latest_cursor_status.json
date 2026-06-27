@@ -1,10 +1,9 @@
 {
-  "branch": "feature/prose-substrate-wave1-wired",
+  "branch": "feature/p2-2-p2-3-retail-pathway-explainer-expansion",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-26T09:13:23Z",
-  "cursor_started_utc": "2026-06-26T09:04:28Z",
-  "head_sha": "eed6a6472ff70fdf1a95fdfcd6a62faf65e9e034",
+  "cursor_started_utc": "2026-06-27T22:33:45Z",
+  "head_sha": "ee13717668c57386e6e40dc6081199be47fdcc48",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P2-1"
+  "status": "IN_PROGRESS",
+  "work_id": "P2-2+P2-3"
 }
