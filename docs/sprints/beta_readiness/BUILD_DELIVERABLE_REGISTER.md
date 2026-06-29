@@ -700,6 +700,28 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P2-4 — NarrativePayload Brief Hardening
+
+**Status:** Complete  
+**Date closed:** 2026-06-29  
+**Programme block(s):** Block 3 Layer B → Layer C brief contract  
+
+### Delivered / ticked off
+- `NarrativePayloadV1` v1.1 hardened as governed B→C brief contract (LLM deny-default, deny-all semantics, caveat validation, missing-marker representability).
+- P2-4 contract tests prove section intents, boundaries, Wave 1 hidden subsystem alignment, and Layer C compiler compatibility.
+- Gemini remains inactive; CEO approval gate preserved in carry-forward.
+
+### Carry-forwards
+- Builder `future_llm_may_rewrite` explicit opt-in on consumer surfaces; P2-FRAME-ROUTING; P4-1/P4-2 blocked on CEO approval.
+
+### Blockers / risks
+- Gemini production activation requires CEO approval and P4-1 design sprint.
+
+### Recommended next sprint
+- P4-1 Gemini activation design (CEO gate) or P2-FRAME-ROUTING-ARCHITECTURE-1.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

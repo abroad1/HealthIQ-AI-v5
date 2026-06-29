@@ -1,0 +1,16 @@
+work_id: P2-4
+title: NarrativePayload Brief Hardening
+status: complete
+date_closed: "2026-06-29"
+risk_level: HIGH
+change_type: BEHAVIOUR
+branch: feature/p2-4-narrativepayload-brief-hardening
+
+contract_files:
+  - backend/core/contracts/narrative_payload_v1.py
+
+test_files:
+  - backend/tests/unit/test_p2_4_narrativepayload_brief_hardening.py
+
+contract_outcome: hardened
+schema_version: v1.1

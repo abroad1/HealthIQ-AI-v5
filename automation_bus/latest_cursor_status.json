@@ -1,10 +1,10 @@
 {
-  "branch": "feature/p2-2-p2-3-retail-pathway-explainer-expansion",
+  "branch": "feature/p2-4-narrativepayload-brief-hardening",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-27T22:41:36Z",
-  "cursor_started_utc": "2026-06-27T22:39:20Z",
-  "head_sha": "90ebf056d1f0a15bec0de3ecfd52751b5c0f143d",
+  "cursor_completed_utc": "2026-06-29T16:40:40Z",
+  "cursor_started_utc": "2026-06-29T16:35:51Z",
+  "head_sha": "4b3cc42555b37f318cc99b7f65ee03890816be52",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "P2-2+P2-3"
+  "work_id": "P2-4"
 }
