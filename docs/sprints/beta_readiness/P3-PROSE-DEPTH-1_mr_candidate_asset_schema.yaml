@@ -1,0 +1,132 @@
+schema_version: "1.0.0"
+schema_id: mr_candidate_prose_asset_schema_v1
+work_id: P3-PROSE-DEPTH-1
+authority: docs/planning-papers/DYNAMIC-PROSE-ARCH-1_dynamic_personalised_prose_architecture_review.md
+runtime_consumed: false
+candidate_only: true
+
+description: |
+  Governed schema for Medical Research (MR) LLM-authored candidate prose assets.
+  MR output starts as CANDIDATE. Candidate assets are not runtime assets and must not
+  be consumed directly in production. Approved assets require later promotion/compile work.
+
+allowed_asset_types:
+  - base_biomarker_explainer
+  - result_direction_explainer
+  - system_explainer
+  - subsystem_explainer
+  - pathway_explainer
+  - signal_frame_explainer
+  - lifestyle_modifier_fragment
+  - medication_modifier_fragment
+  - supplement_modifier_fragment
+  - missing_marker_caveat
+  - weak_evidence_fallback
+  - positive_resilience_qualifier
+  - clinician_detail
+  - retail_user_summary
+
+allowed_review_status:
+  - CANDIDATE
+  - NEEDS_MEDICAL_REVIEW
+  - APPROVED
+  - REJECTED
+  - DEPRECATED
+
+allowed_audience:
+  - retail_consumer
+  - clinician
+  - internal_review
+
+allowed_evidence_strength:
+  - strong
+  - moderate
+  - weak
+  - educational_only
+  - unknown
+
+required_fields:
+  asset_id:
+    type: string
+    description: Stable unique id; snake_case with version suffix recommended.
+  asset_type:
+    type: enum
+    enum_ref: allowed_asset_types
+  audience:
+    type: enum
+    enum_ref: allowed_audience
+  scope:
+    type: string
+    description: What this asset explains (biomarker, pathway, modifier class, frame, etc.).
+  personalisation_axes:
+    type: list
+    description: Axes that materially change wording (not reference range alone).
+    items: string
+    default: []
+  trigger_conditions:
+    type: object
+    description: Governed conditions under which the asset may be selected (not runtime-bound in this sprint).
+  evidence_refs:
+    type: list
+    description: Citations or governed source pointers for non-educational claims.
+    items: string
+  evidence_strength:
+    type: enum
+    enum_ref: allowed_evidence_strength
+  safety_boundaries:
+    type: object
+    required_keys:
+      - no_diagnosis
+      - no_treatment_recommendation
+      - no_supplement_or_medication_advice
+    description: Explicit safety flags; all must be true for candidate submission.
+  review_status:
+    type: enum
+    enum_ref: allowed_review_status
+    default: CANDIDATE
+  destination_mapping:
+    type: object
+    description: |
+      Target production location after promotion (registry path, pack id, section id).
+      Must remain null or placeholder until promotion sprint.
+    properties:
+      target_pack: { type: string, nullable: true }
+      target_registry_key: { type: string, nullable: true }
+      narrative_section_id: { type: string, nullable: true }
+  prose_content:
+    type: object
+    description: Structured prose fields (title, body, caveat lines) — not free runtime injection.
+  max_word_count:
+    type: integer
+    minimum: 1
+  authored_by:
+    type: string
+  authored_utc:
+    type: string
+    format: iso8601
+  source_asset_ids:
+    type: list
+    description: Existing governed assets normalised or extended by this candidate.
+    items: string
+    default: []
+  supersedes_asset_ids:
+    type: list
+    description: Weak or unsafe assets this candidate replaces if approved.
+    items: string
+    default: []
+  notes_for_medical_reviewer:
+    type: string
+
+safety_rules:
+  mr_llm_output_starts_as: CANDIDATE
+  candidate_assets_are_not_runtime: true
+  approved_assets_require_promotion: true
+  no_treatment_recommendations: true
+  no_diagnostic_wording: true
+  lab_reference_ranges_authority: Layer_A_only
+  gemini_must_not_infer_modifiers: true
+
+promotion_discipline:
+  production_consumption: forbidden_until_approved_and_compiled
+  runtime_loaders: out_of_scope_for_mr_batch
+  compile_step: future_sprint

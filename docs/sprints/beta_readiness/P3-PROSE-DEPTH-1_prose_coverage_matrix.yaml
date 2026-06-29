@@ -1,0 +1,388 @@
+schema_version: "1.0.0"
+matrix_id: prose_coverage_matrix_v1
+work_id: P3-PROSE-DEPTH-1
+generated_utc: "2026-06-29"
+authority: DYNAMIC-PROSE-ARCH-1
+runtime_consumed: false
+inventory_only: true
+
+summary:
+  retail_explainer_count: 40
+  ssot_biomarker_panel_count: 104
+  retail_gap_count: 64
+  launch_core_retail_target: "~79 base biomarkers (programme estimate)"
+  pathway_explainer_count: 5
+  pathway_gap_domains: [wave1_liver, wave1_blood_sugar]
+  missing_marker_entry_count: 6
+  context_modifier_catalogue_entries: 35
+  context_modifier_runtime_active: 0
+  intervention_class_count: 8
+  supplement_modifier_entries: 7
+  positive_resilience_qualifiers: missing_as_dedicated_asset_type
+  frame_level_prose: deferred
+
+classification_legend:
+  asset_quality: [reusable, reusable_with_edit, supersede, unsafe_or_obsolete, missing, unknown]
+  mr_action: [none, evidence_check, normalise_existing, draft_new_candidate, defer_medical_review, defer_architecture]
+  runtime_ready: "true only for existing production assets already wired"
+  candidate_only: "true for MR batch targets and modifier fragments"
+
+retail_explainers:
+  registry_location: backend/ssot/retail_explainer_v1/registry.yaml
+  existing_count: 40
+  rows:
+    - biomarker_id: glucose
+      existing_asset_found: true
+      current_location: backend/ssot/retail_explainer_v1/registry.yaml
+      asset_quality: reusable
+      normalisation_required: false
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - biomarker_id: hba1c
+      existing_asset_found: true
+      current_location: backend/ssot/retail_explainer_v1/registry.yaml
+      asset_quality: reusable
+      normalisation_required: false
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - biomarker_id: iron
+      existing_asset_found: true
+      current_location: backend/ssot/retail_explainer_v1/registry.yaml
+      asset_quality: reusable
+      normalisation_required: false
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - biomarker_id: tsh
+      existing_asset_found: true
+      current_location: backend/ssot/retail_explainer_v1/registry.yaml
+      asset_quality: reusable
+      normalisation_required: false
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - biomarker_id: egfr
+      existing_asset_found: true
+      current_location: backend/ssot/retail_explainer_v1/registry.yaml
+      asset_quality: reusable
+      normalisation_required: false
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+
+retail_gaps_beta_priority:
+  note: Subset of 64 SSOT biomarkers without retail entries; MR Batch 001 targets top 10.
+  rows:
+    - biomarker_id: cystatin_c
+      existing_asset_found: false
+      current_location: null
+      asset_quality: missing
+      normalisation_required: false
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - biomarker_id: uacr
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - biomarker_id: white_blood_cells
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - biomarker_id: platelets
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - biomarker_id: creatine_kinase
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - biomarker_id: calcium
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - biomarker_id: cortisol
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - biomarker_id: shbg
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - biomarker_id: free_testosterone
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - biomarker_id: total_protein
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+  deferred_remaining_gaps: 54
+  beta_blocking_decision: "Programme decision needed — full 79/79 vs prioritised subset (see carry-forward)"
+
+pathway_explainers:
+  registry_location: knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml
+  rows:
+    - pathway_id: one_carbon_methylation_homocysteine_v1
+      wave1_domain: wave1_cardiovascular
+      existing_asset_found: true
+      asset_quality: reusable
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - pathway_id: lipid_transport_cholesterol_handling_v1
+      wave1_domain: wave1_cardiovascular
+      existing_asset_found: true
+      asset_quality: reusable
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - pathway_id: blood_iron_oxygen_handling_v1
+      wave1_domain: wave1_blood_iron_oxygen
+      existing_asset_found: true
+      asset_quality: reusable
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - pathway_id: thyroid_hormone_antibody_context_v1
+      wave1_domain: wave1_thyroid
+      existing_asset_found: true
+      asset_quality: reusable
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - pathway_id: renal_filtration_handling_v1
+      wave1_domain: wave1_kidney
+      existing_asset_found: true
+      asset_quality: reusable
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - pathway_id: hepatic_enzyme_processing_v1
+      wave1_domain: wave1_liver
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - pathway_id: glycaemic_insulin_metabolic_v1
+      wave1_domain: wave1_blood_sugar
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+
+missing_marker_caveats:
+  registry_location: knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml
+  existing_count: 6
+  rows:
+    - missing_marker_id: missing_ferritin_iron_context_v1
+      existing_asset_found: true
+      asset_quality: reusable
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - missing_marker_id: missing_egfr_renal_context_v1
+      existing_asset_found: true
+      asset_quality: reusable
+      mr_action: none
+      runtime_ready: true
+      candidate_only: false
+      requires_medical_review: false
+    - missing_marker_id: missing_alt_hepatic_context_v1
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - missing_marker_id: missing_apob_lipid_context_v1
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - missing_marker_id: missing_insulin_metabolic_context_v1
+      existing_asset_found: false
+      asset_quality: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+
+lifestyle_modifier_classes:
+  catalogue_location: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+  runtime_active: false
+  rows:
+    - modifier_id: mod_q_lifestyle_alcohol
+      existing_asset_found: true
+      asset_quality: reusable
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - modifier_id: mod_q_lifestyle_smoking
+      existing_asset_found: true
+      asset_quality: reusable
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - modifier_id: mod_q_lifestyle_exercise
+      existing_asset_found: true
+      asset_quality: reusable
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - modifier_id: mod_q_hydration
+      existing_asset_found: true
+      asset_quality: reusable
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+
+medication_modifier_classes:
+  registry_location: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+  rows:
+    - intervention_class_id: lipid_lowering_statin
+      existing_asset_found: true
+      asset_quality: reusable
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - intervention_class_id: biguanide_metformin
+      existing_asset_found: true
+      asset_quality: reusable
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - intervention_class_id: raas_inhibitor
+      existing_asset_found: true
+      asset_quality: reusable
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+
+supplement_modifier_classes:
+  catalogue_location: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+  rows:
+    - modifier_id: mod_sup_creatine
+      existing_asset_found: true
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - modifier_id: mod_sup_iron
+      existing_asset_found: true
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - modifier_id: mod_sup_b12
+      existing_asset_found: true
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - modifier_id: mod_sup_folate
+      existing_asset_found: true
+      prose_fragment: missing
+      mr_action: draft_new_candidate
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+    - modifier_id: mod_sup_vitamin_d
+      existing_asset_found: true
+      prose_fragment: missing
+      mr_action: defer_medical_review
+      runtime_ready: false
+      candidate_only: true
+      requires_medical_review: true
+
+positive_resilience_qualifiers:
+  existing_asset_found: false
+  asset_quality: missing
+  mr_action: draft_new_candidate
+  runtime_ready: false
+  candidate_only: true
+  requires_medical_review: true
+  note: Dedicated asset type not yet in production; requires governing signal state per DYNAMIC-PROSE-ARCH-1
+
+frame_level_prose:
+  existing_asset_found: partial
+  current_location: knowledge_bus/interpretation_entities_v1/; narrative compiler lead routing
+  asset_quality: reusable_with_edit
+  mr_action: defer_architecture
+  runtime_ready: partial
+  candidate_only: false
+  requires_medical_review: true
+  note: P2-FRAME-ROUTING-ARCHITECTURE-1 deferred; one lead block per report today
+
+signal_frame_explainers:
+  existing_asset_found: partial
+  wired_domains: [iron, thyroid, homocysteine, lipid]
+  asset_quality: reusable_with_edit
+  mr_action: evidence_check
+  runtime_ready: partial
+  candidate_only: false
+  requires_medical_review: true
