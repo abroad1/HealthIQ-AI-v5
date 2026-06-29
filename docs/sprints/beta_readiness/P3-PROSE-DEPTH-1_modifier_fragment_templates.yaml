@@ -1,17 +1,24 @@
-schema_version: "1.0.0"
+schema_version: "1.0.1"
 pack_id: modifier_fragment_templates_v1
 work_id: P3-PROSE-DEPTH-1
+patch_id: P3-PROSE-DEPTH-1A
 authority: DYNAMIC-PROSE-ARCH-1
 runtime_consumed: false
 candidate_only: true
 
+modifier_fragment_rule: >
+  Modifier fragments are additive only. They must attach to a marker-state or pathway context.
+  They must not replace the marker-state explainer and must not provide generic disclaimer wording.
+
 principles:
   modifiers_are_additive: true
   modifiers_do_not_replace_base_prose: true
+  modifiers_do_not_replace_marker_state_explainers: true
   no_causation_without_evidence: true
   no_advice: true
   gemini_must_not_infer_modifier_relationships: true
   max_fragment_words_default: 60
+  suppress_generic_caution_only_fragments: true
 
 fragment_types:
 
@@ -19,6 +26,32 @@ fragment_types:
     structure:
       modifier_id: string
       applies_to_biomarker_ids: list
+      compatible_range_states:
+        type: list
+        description: Range states this fragment may attach to (in_range, high, low, borderline).
+        example: [high, borderline]
+      applies_to_interpretation:
+        type: list
+        description: Whether fragment applies to high, low, in-range or borderline interpretation.
+        allowed: [in_range, high, low, borderline]
+      context_dependencies:
+        required: true
+        fields:
+          supporting_markers: list
+          missing_markers: list
+          pattern_dependencies: list
+          lifestyle_context: list
+          medication_context: list
+          supplement_context: list
+          confidence_limiters: list
+      requires_marker_state_explainer_present:
+        type: boolean
+        description: If true, a matching marker-state explainer must exist before this fragment is used.
+        default: true
+      suppress_if_generic_caution_only:
+        type: boolean
+        description: Suppress fragment when it would add only generic caution without interpretive value.
+        default: true
       trigger_band: string
       additive_fragment: string
       evidence_refs: list
@@ -28,6 +61,7 @@ fragment_types:
         - supplement_advice
         - medication_advice
         - causation_without_evidence
+        - generic_clinical_disclaimer_wording
       max_word_count: 60
       destination_mapping:
         narrative_section_id: body_overview
@@ -42,12 +76,35 @@ fragment_types:
     structure:
       intervention_class_id: string
       applies_to_biomarker_ids: list
+      compatible_range_states:
+        type: list
+        example: [high, low, in_range]
+      applies_to_interpretation:
+        type: list
+        allowed: [in_range, high, low, borderline]
+      context_dependencies:
+        required: true
+        fields:
+          supporting_markers: list
+          missing_markers: list
+          pattern_dependencies: list
+          lifestyle_context: list
+          medication_context: list
+          supplement_context: list
+          confidence_limiters: list
+      requires_marker_state_explainer_present:
+        type: boolean
+        default: true
+      suppress_if_generic_caution_only:
+        type: boolean
+        default: true
       additive_fragment: string
       evidence_refs: list
       prohibited_claims:
         - dose_change_advice
         - start_stop_medication
         - diagnosis
+        - generic_clinical_disclaimer_wording
       max_word_count: 60
       destination_mapping:
         narrative_section_id: marker_evidence
@@ -61,11 +118,34 @@ fragment_types:
     structure:
       modifier_id: string
       applies_to_biomarker_ids: list
+      compatible_range_states:
+        type: list
+        example: [high, low]
+      applies_to_interpretation:
+        type: list
+        allowed: [in_range, high, low, borderline]
+      context_dependencies:
+        required: true
+        fields:
+          supporting_markers: list
+          missing_markers: list
+          pattern_dependencies: list
+          lifestyle_context: list
+          medication_context: list
+          supplement_context: list
+          confidence_limiters: list
+      requires_marker_state_explainer_present:
+        type: boolean
+        default: true
+      suppress_if_generic_caution_only:
+        type: boolean
+        default: true
       additive_fragment: string
       evidence_refs: list
       prohibited_claims:
         - supplement_recommendation
         - diagnosis
+        - generic_clinical_disclaimer_wording
       max_word_count: 55
       destination_mapping:
         narrative_section_id: body_overview
@@ -81,6 +161,9 @@ fragment_types:
     structure:
       conflict_id: string
       competing_modifiers: list
+      compatible_range_states: list
+      context_dependencies:
+        required: true
       resolution_rule: suppress_weaker | append_both_with_caution | defer_to_clinician_section
       suppression_note: string
       max_word_count: 40
@@ -91,8 +174,9 @@ fragment_types:
       rule_id: string
       when: string
       suppress_fragment_ids: list
+      suppress_if_generic_caution_only: true
       rationale: string
-    note: Prevents contradictory modifier stacking; not runtime-active.
+    note: Prevents contradictory modifier stacking and generic-only caution fragments; not runtime-active.
 
 required_evidence:
   non_educational_claims_require_citation: true
@@ -106,6 +190,7 @@ prohibited_claims_global:
   - medication_action
   - supplement_recommendation
   - test_ordering_obligation
+  - generic_clinical_disclaimer_wording
 
 destination_mapping_placeholder:
   production_status: not_bound

@@ -1,7 +1,7 @@
-# P3-PROSE-DEPTH-1 — MR candidate asset templates (skeletal; CANDIDATE only)
+# P3-PROSE-DEPTH-1 / P3-PROSE-DEPTH-1A — MR candidate asset templates (skeletal; CANDIDATE only)
 # Do not promote to production without medical review and compile/promotion sprint.
 
-schema_version: "1.0.0"
+schema_version: "1.0.1"
 template_pack_id: mr_candidate_templates_v1
 review_status_default: CANDIDATE
 
@@ -12,6 +12,15 @@ templates:
     asset_type: base_biomarker_explainer
     audience: retail_consumer
     scope: biomarker_id_placeholder
+    range_state: not_applicable
+    context_dependencies:
+      supporting_markers: []
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: []
+      confidence_limiters: []
     personalisation_axes: []
     trigger_conditions:
       biomarker_present: true
@@ -32,13 +41,187 @@ templates:
       title: "[Biomarker display name]"
       body: |
         [Educational description of what the marker measures and why it is discussed on panels.
-        Non-diagnostic. UK consumer-facing. General education only.]
+        Non-diagnostic. UK consumer-facing. Does not explain in-range/high/low/borderline interpretation.]
+    interpretive_limitations:
+      - "Base explainer does not cover marker-state interpretation; see marker-state explainer assets."
     max_word_count: 180
-    authored_by: MR_LLM
+    authored_by: MR_LLM_CANDIDATE
     authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
     source_asset_ids: []
     supersedes_asset_ids: []
-    notes_for_medical_reviewer: "Confirm educational framing; no diagnostic or treatment language."
+    notes_for_medical_reviewer: "Confirm educational framing only; does not replace marker-state explainers."
+
+  marker_in_range_context_explainer:
+    asset_id: candidate_marker_in_range_EXAMPLE_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: biomarker_id_placeholder
+    range_state: in_range
+    context_dependencies:
+      supporting_markers: ["[marker_id_that_strengthens_context]"]
+      missing_markers: ["[marker_id_whose_absence_limits_context]"]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: []
+      confidence_limiters: ["[specific reason interpretation remains cautious]"]
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    evidence_refs: []
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: biomarker_id_placeholder_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        [Explain what an in-range result may cautiously suggest in context.
+        Include what strengthens or limits interpretation. Do not diagnose. Do not use generic disclaimer wording.]
+      clinician: null
+    interpretive_limitations:
+      - "[Specific limit — e.g. single timepoint cannot confirm trend without prior results.]"
+    max_word_count: 120
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm in-range wording uses lab-derived range only; no fixed thresholds in prose."
+
+  marker_high_context_explainer:
+    asset_id: candidate_marker_high_EXAMPLE_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: biomarker_id_placeholder
+    range_state: high
+    context_dependencies:
+      supporting_markers: ["[marker_id_that_strengthens_context]"]
+      missing_markers: ["[marker_id_whose_absence_limits_context]"]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: []
+      confidence_limiters: ["[specific reason interpretation remains cautious]"]
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    evidence_refs: []
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: biomarker_id_placeholder_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        [Explain what a high result may cautiously suggest in context.
+        Include what strengthens or limits interpretation. Do not diagnose. Do not use generic disclaimer wording.]
+      clinician: null
+    interpretive_limitations:
+      - "[Specific limit — e.g. without related marker X, particle-number context cannot be separated.]"
+    max_word_count: 120
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "High-state wording must not imply diagnosis or treatment action."
+
+  marker_low_context_explainer:
+    asset_id: candidate_marker_low_EXAMPLE_v1
+    asset_type: marker_low_context_explainer
+    audience: retail_consumer
+    scope: biomarker_id_placeholder
+    range_state: low
+    context_dependencies:
+      supporting_markers: ["[marker_id_that_strengthens_context]"]
+      missing_markers: ["[marker_id_whose_absence_limits_context]"]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: []
+      confidence_limiters: ["[specific reason interpretation remains cautious]"]
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: low
+    evidence_refs: []
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: biomarker_id_placeholder_low
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        [Explain what a low result may cautiously suggest in context.
+        Include what strengthens or limits interpretation. Do not diagnose. Do not use generic disclaimer wording.]
+      clinician: null
+    interpretive_limitations:
+      - "[Specific limit — e.g. low value alone does not establish deficiency without storage-marker context.]"
+    max_word_count: 120
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Low-state wording must not imply deficiency diagnosis."
+
+  marker_borderline_context_explainer:
+    asset_id: candidate_marker_borderline_EXAMPLE_v1
+    asset_type: marker_borderline_context_explainer
+    audience: retail_consumer
+    scope: biomarker_id_placeholder
+    range_state: borderline
+    context_dependencies:
+      supporting_markers: ["[marker_id_that_strengthens_context]"]
+      missing_markers: ["[marker_id_whose_absence_limits_context]"]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: []
+      confidence_limiters: ["[specific reason borderline interpretation remains uncertain]"]
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: borderline
+    evidence_refs: []
+    evidence_strength: weak
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: biomarker_id_placeholder_borderline
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        [Explain what a borderline result may cautiously suggest in context.
+        Include what strengthens or limits interpretation. Do not diagnose. Do not use generic disclaimer wording.]
+      clinician: null
+    interpretive_limitations:
+      - "[Specific limit — e.g. borderline band depends on lab reference interval, not fixed prose thresholds.]"
+    max_word_count: 120
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Include only where borderline wording is clinically useful for this marker."
 
   signal_frame_explainer:
     asset_id: candidate_signal_frame_EXAMPLE_v1

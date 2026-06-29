@@ -1,6 +1,7 @@
-schema_version: "1.0.0"
+schema_version: "1.0.1"
 schema_id: mr_candidate_prose_asset_schema_v1
 work_id: P3-PROSE-DEPTH-1
+patch_id: P3-PROSE-DEPTH-1A
 authority: docs/planning-papers/DYNAMIC-PROSE-ARCH-1_dynamic_personalised_prose_architecture_review.md
 runtime_consumed: false
 candidate_only: true
@@ -12,6 +13,10 @@ description: |
 
 allowed_asset_types:
   - base_biomarker_explainer
+  - marker_in_range_context_explainer
+  - marker_high_context_explainer
+  - marker_low_context_explainer
+  - marker_borderline_context_explainer
   - result_direction_explainer
   - system_explainer
   - subsystem_explainer
@@ -25,6 +30,20 @@ allowed_asset_types:
   - positive_resilience_qualifier
   - clinician_detail
   - retail_user_summary
+
+asset_type_notes:
+  base_biomarker_explainer: |
+    Educational only — describes what the marker measures and why it appears on panels.
+    Does not replace marker-state explainers (in-range, high, low, borderline).
+  marker_state_explainers: |
+    Required product pattern for beta-relevant biomarkers. Each explains interpretation
+    in a specific lab-derived range state with supporting/missing-marker context.
+
+marker_state_explainer_principle: >
+  For each beta-relevant biomarker, HealthIQ should aim to support:
+  base educational explainer + in-range context explainer + high context explainer + low context explainer,
+  plus borderline context where clinically useful.
+  These are candidate authoring targets only and do not imply runtime activation.
 
 allowed_review_status:
   - CANDIDATE
@@ -116,6 +135,57 @@ required_fields:
     default: []
   notes_for_medical_reviewer:
     type: string
+  range_state:
+    required: true
+    allowed_values:
+      - in_range
+      - high
+      - low
+      - borderline
+      - not_applicable
+    description: >
+      The biomarker range state this asset is designed to explain.
+      Base educational assets, pathway assets, modifier fragments and missing-marker caveats may use not_applicable.
+      Marker-state explainers must use in_range, high, low or borderline.
+  context_dependencies:
+    required: true
+    fields:
+      supporting_markers:
+        type: list
+        description: Markers that strengthen or clarify this interpretation.
+      missing_markers:
+        type: list
+        description: Markers whose absence limits interpretation.
+      pattern_dependencies:
+        type: list
+        description: Signal, frame, system or pathway states that must be present before this asset is used.
+      lifestyle_context:
+        type: list
+        description: Lifestyle factors that may modify interpretation if independently supported.
+      medication_context:
+        type: list
+        description: Medication classes that may modify interpretation if independently supported.
+      supplement_context:
+        type: list
+        description: Supplement factors that may modify interpretation if independently supported.
+      confidence_limiters:
+        type: list
+        description: Reasons the explanation should remain cautious or limited.
+  interpretive_limitations:
+    type: list
+    description: Specific interpretive limits for this asset (not generic disclaimer boilerplate).
+    items: string
+
+prohibited_generic_asset_wording:
+  prohibited_unless_safety_escalation_triggered:
+    - "General education only"
+    - "Discuss any concerns with a clinician"
+    - "Speak to your doctor"
+    - "Consult your healthcare provider"
+    - "Seek medical advice"
+  replacement_principle: >
+    Asset-level caveats should explain the specific interpretive limitation,
+    not fall back to generic clinical-disclaimer wording.
 
 safety_rules:
   mr_llm_output_starts_as: CANDIDATE

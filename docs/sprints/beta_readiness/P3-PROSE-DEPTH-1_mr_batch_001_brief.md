@@ -1,6 +1,7 @@
 # P3-PROSE-DEPTH-1 — MR Batch 001 Brief (Candidate Assets Only)
 
 **Work ID:** P3-PROSE-DEPTH-1  
+**Patch:** P3-PROSE-DEPTH-1A (directional marker-state schema)  
 **Batch ID:** MR-BATCH-001  
 **Output status:** `CANDIDATE` only — do not write to runtime or production registries.
 
@@ -31,6 +32,58 @@ Modifiers are **additive caveats** (1–2 sentences), not paragraph replacements
 
 ---
 
+## Directional marker-state explainers
+
+Future MR output **must not stop at `base_biomarker_explainer`**.
+
+For each selected missing retail biomarker, MR should create where clinically meaningful:
+
+| Asset type | Required when |
+|------------|---------------|
+| `base_biomarker_explainer` | Always — educational only; does not replace marker-state explainers |
+| `marker_in_range_context_explainer` | Clinically meaningful for beta marker |
+| `marker_high_context_explainer` | Clinically meaningful for beta marker |
+| `marker_low_context_explainer` | Clinically meaningful for beta marker |
+| `marker_borderline_context_explainer` | Only where borderline wording is clinically useful |
+
+### Rules for marker-state explainers
+
+- These are **candidate-only** assets — not runtime, not approved.
+- **Do not use fixed reference ranges** in prose; defer range interpretation to **lab-derived ranges** (Layer A).
+- Explain **what changes interpretation** (supporting markers, missing markers, medication/supplement/lifestyle context).
+- Name relevant **supporting markers** and **missing-marker limitations** in `context_dependencies`.
+- Use **`interpretive_limitations`** for specific caveats — not generic boilerplate.
+- **Avoid generic “discuss with clinician” wording** unless a safety escalation trigger applies (see schema `prohibited_generic_asset_wording`).
+- **Do not create sex- or age-specific wording** unless medically justified beyond reference-range stratification.
+
+### Caveat style examples
+
+**Bad:**
+
+```text
+General education only; discuss any concerns about blood sugar with a clinician.
+```
+
+**Good:**
+
+```text
+This is easier to interpret alongside HbA1c trend, fasting glucose and relevant medication context.
+```
+
+**Bad:**
+
+```text
+Speak to your doctor if you are worried.
+```
+
+**Good:**
+
+```text
+Without a related marker such as ApoB, HealthIQ cannot fully separate cholesterol quantity from particle-number context.
+```
+
+---
+
 ## Batch 001 scope (beta-critical depth)
 
 ### 1. Hepatic pathway explainer candidate
@@ -49,7 +102,7 @@ Modifiers are **additive caveats** (1–2 sentences), not paragraph replacements
 
 ### 3. Top 10 missing retail biomarker explainers (beta priority)
 
-Author `base_biomarker_explainer` candidates for:
+For **each** biomarker below, author the full marker-state set per **Directional marker-state explainers** (base + in-range + high + low + borderline where useful):
 
 | Priority | biomarker_id | Rationale |
 |----------|--------------|-----------|
@@ -63,6 +116,8 @@ Author `base_biomarker_explainer` candidates for:
 | 8 | shbg | Hormone interpretation context |
 | 9 | free_testosterone | Androgen panel gap |
 | 10 | total_protein | Liver/nutrition context |
+
+Do not submit only `base_biomarker_explainer` for these markers.
 
 Source gap inventory: `P3-PROSE-DEPTH-1_prose_coverage_matrix.yaml` (retail section).
 
