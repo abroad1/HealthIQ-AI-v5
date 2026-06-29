@@ -1,0 +1,32 @@
+work_id: P2-4
+carry_forwards:
+
+  narrative_payload_contract:
+    outcome: hardened
+    note: |
+      NarrativePayloadV1 v1.1 hardened with deny-default LLM rewrite, documented deny-all
+      may_translate_section_ids semantics, no-new-findings prohibited action, required_caveats
+      validation when section_intents present, report_story_priority validation, optional
+      missing_marker_caution_refs field, and clinician-reserved allowlist guard.
+
+  gemini_activation:
+    status: deferred
+    note: CEO approval required before Gemini narrative activation in production.
+
+  p4_gemini_sprints:
+    p4_1: blocked_pending_ceo_approval
+    p4_2: blocked_pending_ceo_approval
+    note: P2-4 completes B→C brief contract gate; P4-1/P4-2 remain blocked on CEO approval.
+
+  p2_frame_routing: P2-FRAME-ROUTING-ARCHITECTURE-1
+  note: Frame-level routing remains deferred.
+
+  builder_alignment_deferred:
+    note: |
+      narrative_payload_builder_v1.py may need future_llm_may_rewrite=True on consumer
+      wording surfaces and hero_main_finding allowlist review — out of P2-4 scope.
+
+  pipeline_advisory_trigger: true
+  pipeline_advisory_reason: |
+    P2-4 NarrativePayload hardening complete; P4-1 Gemini activation design is next
+    blocked only by CEO approval gate.

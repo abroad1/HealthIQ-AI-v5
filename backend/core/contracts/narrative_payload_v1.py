@@ -9,15 +9,18 @@ and future LLM translation constraints.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, List, Literal, Optional
+from typing import Dict, List, Literal, Optional, Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
 from core.contracts.report_v1 import ReportTopFindingV1, ReportV1
 from core.contracts.root_cause_v1 import RootCauseV1
 
 NARRATIVE_PAYLOAD_SCHEMA_VERSION = "v1.1"
+
+# Governed source key for P2-2+P2-3 missing-marker caution pack (permitted_source_fields / evidence).
+MISSING_MARKER_EVIDENCE_SOURCE_KEY = "missing_marker_explainers_v1"
 
 
 class NarrativeIntentCodeV1(str, Enum):
@@ -49,6 +52,15 @@ class NarrativeSectionIdV1(str, Enum):
     technical_clinician_detail = "technical_clinician_detail"
 
 
+# Sections that must never appear on the LLM translation allowlist.
+LLM_CLINICIAN_RESERVED_SECTION_IDS: frozenset[str] = frozenset(
+    {
+        NarrativeSectionIdV1.clinician_synthesis.value,
+        NarrativeSectionIdV1.technical_clinician_detail.value,
+    }
+)
+
+
 class NarrativeSectionVisibilityV1(str, Enum):
     visible_default = "visible_default"
     collapsed_default = "collapsed_default"
@@ -71,8 +83,12 @@ class NarrativeSectionIntentV1(BaseModel):
     default_visibility: NarrativeSectionVisibilityV1 = NarrativeSectionVisibilityV1.visible_default
     fallback_rule: Literal["omit_section_if_sources_missing"] = "omit_section_if_sources_missing"
     future_llm_may_rewrite: bool = Field(
-        default=True,
-        description="Whether a future LLM translator may rephrase this section within constraints.",
+        default=False,
+        description=(
+            "Whether a future LLM translator may rephrase this section within constraints. "
+            "Defaults deny rewrite; only wording/presentation surfaces should opt in explicitly. "
+            "Co-authoritative with NarrativeLlmTranslationConstraintsV1.may_translate_section_ids."
+        ),
     )
 
 
@@ -131,7 +147,22 @@ class NarrativeLlmTranslationConstraintsV1(BaseModel):
     llm_role: Literal["translate_governed_brief_only"] = "translate_governed_brief_only"
     prohibited_actions: List[str] = Field(default_factory=list)
     must_preserve_fields: List[str] = Field(default_factory=list)
-    may_translate_section_ids: List[str] = Field(default_factory=list)
+    may_translate_section_ids: List[str] = Field(
+        default_factory=list,
+        description=(
+            "Allowlist of section_ids the LLM may rephrase. "
+            "Empty list means deny-all: no sections may be LLM-translated."
+        ),
+    )
+
+    @field_validator("may_translate_section_ids")
+    @classmethod
+    def _validate_translate_section_ids(cls, values: List[str]) -> List[str]:
+        valid = {member.value for member in NarrativeSectionIdV1}
+        for section_id in values:
+            if section_id not in valid:
+                raise ValueError(f"invalid may_translate_section_id: {section_id}")
+        return values
 
 
 class NarrativePayloadV1(BaseModel):
@@ -153,6 +184,49 @@ class NarrativePayloadV1(BaseModel):
     required_caveats: List[str] = Field(default_factory=list)
     claim_boundaries: NarrativeClaimBoundaryV1
     future_llm_translation_constraints: Optional[NarrativeLlmTranslationConstraintsV1] = None
+    missing_marker_caution_refs: Optional[List[str]] = Field(
+        default=None,
+        description=(
+            "Optional governed missing-marker caution refs (missing_marker_id values). "
+            "Populated when P2-2+P2-3 caution fields are surfaced on the brief."
+        ),
+    )
+
+    @field_validator("report_story_priority")
+    @classmethod
+    def _validate_report_story_priority(cls, values: List[str]) -> List[str]:
+        valid = {member.value for member in NarrativeSectionIdV1}
+        for section_id in values:
+            if section_id not in valid:
+                raise ValueError(f"invalid report_story_priority section_id: {section_id}")
+        return values
+
+    @model_validator(mode="after")
+    def _validate_brief_safety_constraints(self) -> Self:
+        constraints = self.future_llm_translation_constraints
+        may_translate = list(constraints.may_translate_section_ids) if constraints else []
+        any_rewrite_flag = any(
+            intent.future_llm_may_rewrite for intent in self.section_intents.values()
+        )
+
+        if may_translate and constraints is None:
+            raise ValueError(
+                "future_llm_translation_constraints required when may_translate_section_ids is non-empty"
+            )
+        if any_rewrite_flag and constraints is None:
+            raise ValueError(
+                "future_llm_translation_constraints required when any section has future_llm_may_rewrite=True"
+            )
+        if self.section_intents and not self.required_caveats:
+            raise ValueError("required_caveats must be non-empty when section_intents are present")
+
+        for reserved in LLM_CLINICIAN_RESERVED_SECTION_IDS:
+            if reserved in may_translate:
+                raise ValueError(
+                    f"clinician-reserved section {reserved} must not appear in may_translate_section_ids"
+                )
+
+        return self
 
 
 DEFAULT_PROHIBITED_CLAIM_PATTERNS: List[str] = [
@@ -168,6 +242,11 @@ DEFAULT_PROHIBITED_CLAIM_PATTERNS: List[str] = [
     "supplement recommendation",
 ]
 
+DEFAULT_REQUIRED_CAVEATS: List[str] = [
+    "non_diagnostic_interpretation",
+    "general_education_only",
+]
+
 DEFAULT_LLM_PROHIBITED_ACTIONS: List[str] = [
     "reason_independently",
     "inspect_raw_biomarkers_outside_brief",
@@ -176,8 +255,12 @@ DEFAULT_LLM_PROHIBITED_ACTIONS: List[str] = [
     "expose_raw_pass3_hypotheses",
     "expose_contradiction_markers_unless_governed",
     "expose_confirmatory_tests_unless_governed",
+    # Explicit no-new-findings guard (also partially covered by reason_independently).
+    "introduce_findings_not_in_governed_brief",
 ]
 
+# MED-REV-1 hidden_v1 subsystems — must not be described as visible score basis.
+# Aligns with WAVE1_MED_REV1_HIDDEN_SUBSYSTEM_IDS in health_system_card_evidence.py.
 WAVE1_HIDDEN_SUBSYSTEM_FORBIDDEN_AS_SCORE_BASIS: List[str] = [
     "wave1_cv_homocysteine_pathway",
     "wave1_cv_vascular_strain",
@@ -185,3 +268,15 @@ WAVE1_HIDDEN_SUBSYSTEM_FORBIDDEN_AS_SCORE_BASIS: List[str] = [
     "wave1_liv_enzyme_pattern",
     "wave1_liv_processing_context",
 ]
+
+GOVERNED_BRIEF_CORE_SECTION_INTENT_IDS: frozenset[str] = frozenset(
+    {
+        NarrativeSectionIdV1.retail_summary.value,
+        NarrativeSectionIdV1.lead_narrative.value,
+        NarrativeSectionIdV1.body_overview.value,
+        NarrativeSectionIdV1.next_steps_narrative.value,
+        NarrativeSectionIdV1.clinician_synthesis.value,
+        NarrativeSectionIdV1.missing_evidence_limitations.value,
+        NarrativeSectionIdV1.health_systems_context.value,
+    }
+)
