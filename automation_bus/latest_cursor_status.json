@@ -1,9 +1,10 @@
 {
   "branch": "feature/p3-prose-depth-1-prose-library-depth-modifier-schema",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-06-29T19:09:11Z",
   "cursor_started_utc": "2026-06-29T19:06:33Z",
-  "head_sha": "f7136983cabd9f062fa854f46d781d172eb6c6ef",
+  "head_sha": "2ddc7b9f655f66c51e735c1610ab78c165f184aa",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P3-PROSE-DEPTH-1"
 }
