@@ -42,6 +42,6 @@ carry_forwards:
     current_state: 40/104 SSOT biomarkers with retail entries; ~64 gaps.
 
   pipeline_advisory_trigger: true
-  pipeline_advisory_reason: |
+  pipeline_advisory_reason: >
     P3-PROSE-DEPTH-1 foundations complete; recommend MR Batch 001 candidate generation
-  as next sprint, then medical review and promotion/import — not P4-1 or runtime activation.
+    as next sprint, then medical review and promotion/import — not P4-1 or runtime activation.
