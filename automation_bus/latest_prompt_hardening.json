@@ -1,104 +1,178 @@
 {
-  "work_id": "P2-2+P2-3",
-  "status": "HARDENED",
   "bus_version": "1.3.1",
-  "hardened_utc": "2026-06-27T00:00:00Z",
+  "work_id": "P2-4",
+  "status": "HARDENED",
+  "hardening_date": "2026-06-29",
   "hardened_by": "Claude Code",
-  "scope_advisory_reference": "automation_bus/latest_pipeline_advisory.md — Post-P2-1 Pipeline Throughput Review (2026-06-27). Advisory recommends P2-2+P2-3 combined STANDARD/CONTENT sprint as next sprint. Advisory validity confirmed: git log --since=2026-06-27 returns no commits to advisory-cited files.",
-  "changes": [
+  "source_prompt": "automation_bus/latest_cursor_prompt.md",
+  "sequencing_authority": "automation_bus/latest_pipeline_advisory.md",
+  "risk_level": "HIGH",
+  "change_type": "BEHAVIOUR",
+  "execution_model": "SINGLE_PHASE",
+
+  "stage_2a_authority_verification": {
+    "primary_contract_file": {
+      "path": "backend/core/contracts/narrative_payload_v1.py",
+      "status": "CONFIRMED_EXISTS",
+      "evidence": "File read at Stage D. Schema version NARRATIVE_PAYLOAD_SCHEMA_VERSION = 'v1.1' at line 20. Primary class NarrativePayloadV1 defined at line 137."
+    },
+    "governing_adr": {
+      "path": "docs/architecture/ADR_WP2_layer_b_layer_c_contract_path_b.md",
+      "status": "CONFIRMED_EXISTS",
+      "evidence": "File read at Stage D. Status: Accepted. Establishes NarrativePayloadV1 as the formal Layer B → Layer C handoff object. LLM validation scope: translate_governed_brief_only. Layer C must not invent, alter, reorder, reinterpret, or strengthen analytical truth (ADR §Context)."
+    },
+    "pipeline_advisory": {
+      "path": "automation_bus/latest_pipeline_advisory.md",
+      "status": "CONFIRMED_EXISTS",
+      "evidence": "File written 2026-06-29. P2-4 declared RECOMMENDED NEXT SPRINT. Verdict: PROCEED_TO_SOP. No B2 advisory required."
+    },
+    "read_only_reference_files_declared_in_source_prompt": [
+      "backend/core/contracts/narrative_report_v1.py",
+      "backend/core/analytics/narrative_payload_builder_v1.py",
+      "backend/core/analytics/narrative_report_compiler_v1.py",
+      "backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py",
+      "backend/core/analytics/narrative_brief_enforcement_v1.py"
+    ],
+    "read_only_reference_files_existence": "NOT_VERIFIED_AT_STAGE_D — existence must be verified by Cursor at Phase 0 preflight. These are read-only; modifying any of them is a STOP gate."
+  },
+
+  "stage_2b_contract_gap_assessment": {
+    "source": "Direct read of backend/core/contracts/narrative_payload_v1.py",
+    "gaps_identified": 8,
+    "contract_is_already_sufficient": false,
+    "rationale": "Multiple material gaps found in the existing contract (see hardening_additions). Contract changes are expected. HIGH/BEHAVIOUR classification is confirmed appropriate. HA-9 lower-risk closure gate remains available if Cursor's Phase 1-2 analysis disproves these gaps from read-only reference files."
+  },
+
+  "hardening_additions": [
     {
-      "check": "front_matter_all_five_fields",
-      "status": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:2-6 — work_id:P2-2+P2-3, branch:feature/p2-2-p2-3-retail-pathway-explainer-expansion, risk_level:STANDARD, execution_model:SINGLE_PHASE, change_type:CONTENT. All five mandatory fields present."
+      "id": "HA-1",
+      "title": "future_llm_may_rewrite defaults True on all sections including clinician-reserved and analytical outputs",
+      "severity": "HIGH",
+      "location": "narrative_payload_v1.py:73 — NarrativeSectionIntentV1.future_llm_may_rewrite = Field(default=True, ...)",
+      "observation": "The field defaults True for every NarrativeSectionIntentV1 regardless of section. This includes clinician_synthesis (line 49), which is clinician-reserved per NarrativeClaimBoundaryV1.clinician_only_reserved=True at line 92; hero_main_finding (line 43); and primary_finding_why (line 44). These sections carry Layer B analytical conclusions. An LLM rewriting clinician_synthesis or hero_main_finding without an enforcement gate would violate the ADR_WP2 constraint that Layer C must not alter analytical truth.",
+      "required_action": "Audit each NarrativeSectionIdV1 member (lines 34–50) against a permitted/denied classification. Sections that are wording/presentation surfaces (retail_summary, body_overview, next_steps_narrative, whats_working_well) may retain future_llm_may_rewrite=True. Sections that carry Layer B analytical output or are clinician-only (clinician_synthesis, hero_main_finding, primary_finding_why, technical_clinician_detail) must default to future_llm_may_rewrite=False or be explicitly excluded from may_translate_section_ids. Choose the approach consistent with NarrativeLlmTranslationConstraintsV1.may_translate_section_ids — either field drives the permit/deny decision, but both must be consistent. Add test: assert that clinician_synthesis and hero_main_finding are not in the permitted LLM translation surface when the default payload is built.",
+      "stop_gate": "If the per-section classification requires modifying narrative_payload_builder_v1.py to populate future_llm_may_rewrite correctly per section, STOP and return REJECT_AND_RETURN to Claude with exact file and reason. The contract can declare the correct default; builder population is a separate concern."
     },
     {
-      "check": "risk_level_standard_confirmed",
-      "status": "CONFIRMED",
-      "evidence": "All files in scope are Knowledge Bus prose assets (YAML content files) and tests. No Intelligence Core files (narrative compilers, signal evaluator, domain assembler, pipeline logic, payload/report schemas) appear in scope. Explicit files-out-of-scope list at automation_bus/latest_cursor_prompt.md:94-117 names every IC module by path. STANDARD confirmed under SOP §3/§10: no IC, no ssot/, no pipeline/, no scoring policy files touched."
+      "id": "HA-2",
+      "title": "may_translate_section_ids empty-list semantics are undocumented — deny-all vs unrestricted ambiguous",
+      "severity": "HIGH",
+      "location": "narrative_payload_v1.py:134 — NarrativeLlmTranslationConstraintsV1.may_translate_section_ids: List[str] = Field(default_factory=list)",
+      "observation": "Field defaults to empty list with no docstring or validator specifying the empty-list interpretation. If a future Gemini integration reads this field and treats empty as 'no restriction specified' rather than 'deny all', the LLM translation boundary collapses silently. The ADR_WP2 requires translation only; this field is the primary mechanism for scoping that translation.",
+      "required_action": "Add a Field description: 'Allowlist of section_ids the LLM may rephrase. Empty list means no sections may be translated (deny-all). Must be non-empty to permit any LLM output.' Add a Pydantic validator on NarrativeLlmTranslationConstraintsV1 asserting that if may_translate_section_ids is empty, it is treated as deny-all (not as unconstrained). Add test: a NarrativeLlmTranslationConstraintsV1 with empty may_translate_section_ids must be invalid if any future_llm_may_rewrite=True section exists in the same payload — or alternatively enforce that empty = valid deny-all. Add test: assert empty may_translate_section_ids does not permit LLM processing of any section_id.",
+      "stop_gate": "Do not modify Gemini integration code. Constraint belongs on the contract schema only."
     },
     {
-      "check": "change_type_content_confirmed",
-      "status": "CONFIRMED",
-      "evidence": "Sprint adds/extends YAML content in retail explainer registry (backend/ssot/retail_explainer_v1/registry.yaml) and pathway explainer pack (knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml). No Python runtime behaviour changes. Conditional P1-26 M1 correction is header metadata naming only — package_id field value update in YAML headers, not signal logic. CONTENT classification holds."
+      "id": "HA-3",
+      "title": "WAVE1_HIDDEN_SUBSYSTEM_FORBIDDEN_AS_SCORE_BASIS missing new-domain hidden subsystems",
+      "severity": "STANDARD",
+      "location": "narrative_payload_v1.py:181–188 — WAVE1_HIDDEN_SUBSYSTEM_FORBIDDEN_AS_SCORE_BASIS",
+      "observation": "The constant lists five subsystem IDs: wave1_cv_homocysteine_pathway, wave1_cv_vascular_strain, wave1_met_insulin_metabolic, wave1_liv_enzyme_pattern, wave1_liv_processing_context. These are from the original Wave 1 estate. P1-2/P1-3/P1-22/P1-23 added wave1_blood_iron_oxygen, wave1_kidney, and wave1_thyroid as active domains. BUILD_DELIVERABLE_REGISTER.md P1-7 notes five MED-REV-1 hidden subsystems from the original estate. If blood/iron, kidney, or thyroid have hidden subsystems under MED-REV-1 collapse, they must appear in this constant to prevent their description as score basis.",
+      "required_action": "Read backend/core/analytics/wave1_subsystem_evidence.py (read-only reference) and cross-reference the subsystem registry with BUILD_DELIVERABLE_REGISTER.md P1-7 and P1-2/P1-3/P1-22/P1-23 entries. If new-domain hidden subsystems exist, add their IDs to WAVE1_HIDDEN_SUBSYSTEM_FORBIDDEN_AS_SCORE_BASIS. Do not invent IDs — source only from the subsystem evidence file. Add test asserting that all currently-known MED-REV-1 hidden subsystem IDs appear in the constant.",
+      "stop_gate": "If hidden subsystem IDs cannot be determined without modifying an Intelligence Core file, STOP and return REJECT_AND_RETURN. Do not guess subsystem IDs."
     },
     {
-      "check": "execution_model_single_phase_confirmed",
-      "status": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:1-401 — seven sequential phases, no gated activation switch, no allowlist toggle separating content authoring from content activation. Content YAML files are loaded directly at runtime without a feature flag gate requiring a deferred second phase. SINGLE_PHASE correct."
+      "id": "HA-4",
+      "title": "DEFAULT_LLM_PROHIBITED_ACTIONS missing explicit prohibition on introducing findings not in the brief",
+      "severity": "STANDARD",
+      "location": "narrative_payload_v1.py:171–179 — DEFAULT_LLM_PROHIBITED_ACTIONS (7 entries)",
+      "observation": "The list contains decide_findings_or_hierarchy (line 174), which covers ranking alteration. However, there is no explicit prohibition on an LLM introducing a medical finding not present in the governed Layer B brief (e.g., inventing a signal interpretation from raw biomarker values). reason_independently partially covers this but is broader. PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_v1.md makes Layer B finding authority explicit — the LLM must not originate findings.",
+      "required_action": "Verify whether any existing entry in DEFAULT_LLM_PROHIBITED_ACTIONS (inspect_raw_biomarkers_outside_brief, decide_findings_or_hierarchy, reason_independently) already covers the 'introduce findings not present in the brief' case. If covered by existing wording: add a code comment citing the coverage. If not covered: add 'introduce_findings_not_in_governed_brief' to the list. Add test asserting this entry is present in the default list.",
+      "stop_gate": "No stop gate — change is to the constant only, not runtime signal or scoring logic."
     },
     {
-      "check": "p2_2_p2_3_combination_safe",
-      "status": "CONFIRMED",
-      "evidence": "Both P2-2 (retail biomarker explainers in backend/ssot/retail_explainer_v1/registry.yaml) and P2-3 (pathway/missing-marker explainers in knowledge_bus/pathway_explainers_v1/) target non-overlapping YAML files within the same Knowledge Bus prose surface. Same risk class, same change_type, same execution agent, no cross-file dependency that would require phased separation. Combination is structurally sound."
+      "id": "HA-5",
+      "title": "future_llm_translation_constraints is Optional=None — payload may carry no LLM boundary",
+      "severity": "HIGH",
+      "location": "narrative_payload_v1.py:155 — NarrativePayloadV1.future_llm_translation_constraints: Optional[NarrativeLlmTranslationConstraintsV1] = None",
+      "observation": "If the payload builder produces payloads with this field as None, any future Gemini activation path receives no LLM constraint object. The contract does not currently enforce that this field is non-None when section_intents are present or when future_llm_may_rewrite=True on any section. A None value silently removes all LLM translation boundaries.",
+      "required_action": "Read narrative_payload_builder_v1.py (read-only) to determine whether the builder always populates future_llm_translation_constraints. If always populated: add a test asserting the field is non-None on a builder-produced payload. If sometimes None: add a Pydantic validator on NarrativePayloadV1 requiring future_llm_translation_constraints is non-None when any NarrativeSectionIntentV1 has future_llm_may_rewrite=True. Document the validator intent clearly.",
+      "stop_gate": "If resolving the None case requires modifying narrative_payload_builder_v1.py (read-only), STOP and return REJECT_AND_RETURN to Claude with exact file and reason. Do not modify the builder in this sprint. The contract can require non-None via a validator; builder population is a deferred sprint."
     },
     {
-      "check": "retail_explainer_registry_path_confirmed",
-      "status": "CONFIRMED",
-      "evidence": "backend/core/ssot/retail_explainer_registry_v1.py:21 — _registry_path() resolves to 'backend/ssot/retail_explainer_v1/registry.yaml'. File confirmed present with 17 biomarker entries (glucose, hba1c, insulin, total_cholesterol, ldl_cholesterol, hdl_cholesterol, triglycerides, non_hdl_cholesterol, apob, creatinine, egfr, alt, ast, hemoglobin, ferritin, vitamin_d, tsh) and 10 system entries. Coverage target of ≥40 biomarker entries requires authoring at least 23 new entries."
+      "id": "HA-6",
+      "title": "required_caveats carries no minimum-content validation — empty list produces a payload with no safety caveats",
+      "severity": "STANDARD",
+      "location": "narrative_payload_v1.py:153 — NarrativePayloadV1.required_caveats: List[str] = Field(default_factory=list)",
+      "observation": "The field accepts an empty list with no minimum-count or content constraint. A payload with empty required_caveats would carry no governed safety caveats into the Layer C surface, violating the retail explainer content boundary requirement that all consumer-facing content carries the general-education disclaimer.",
+      "required_action": "Define a DEFAULT_REQUIRED_CAVEATS constant (analogous to DEFAULT_PROHIBITED_CLAIM_PATTERNS at line 158) containing the mandatory governed safety strings, e.g. ['not_diagnostic', 'general_education_only']. Add a Pydantic validator or Field(min_length=1) asserting required_caveats is non-empty. Add test asserting that a minimal valid NarrativePayloadV1 instance carries at least one caveat from the default set.",
+      "stop_gate": "No stop gate — change is to the contract schema and a new constant only."
     },
     {
-      "check": "biomarker_key_ssot_gate_blocker",
-      "status": "HARDENED_WITH_ADDITION",
-      "evidence": "backend/tests/enforcement/test_retail_explainer_registry_b1b.py:51-59 — test_retail_explainer_registry_b1b_keys_match_ssot() loads backend/ssot/biomarkers.yaml and asserts every key in registry.yaml biomarkers section exists in biomarkers.yaml. Any key added to registry.yaml that is absent from biomarkers.yaml will cause an enforcement test failure and block the finish gate. Hardening addition: Phase 1 must explicitly read backend/ssot/biomarkers.yaml to extract all canonical biomarker_ids before Phase 2 authoring begins. Cursor must cross-check every planned new key against this list. Record confirmed keys and any gaps (e.g. a desired marker absent from biomarkers.yaml cannot be added to the registry). Do not add registry entries for non-canonical ids."
+      "id": "HA-7",
+      "title": "report_story_priority accepts arbitrary strings, not validated against NarrativeSectionIdV1",
+      "severity": "LOW",
+      "location": "narrative_payload_v1.py:148 — NarrativePayloadV1.report_story_priority: List[str]",
+      "observation": "Field is unvalidated List[str]. A caller could insert arbitrary strings not present in NarrativeSectionIdV1. A downstream consumer silently ignoring unrecognised section IDs would produce incorrect narrative ordering without a visible error.",
+      "required_action": "Change type to List[NarrativeSectionIdV1] or add a Pydantic validator asserting all values are valid NarrativeSectionIdV1 members. Add test asserting that an invalid section ID in report_story_priority raises a validation error.",
+      "stop_gate": "No stop gate — additive type constraint only."
     },
     {
-      "check": "registry_educational_text_gate",
-      "status": "HARDENED_WITH_ADDITION",
-      "evidence": "backend/tests/enforcement/test_retail_explainer_registry_b1b.py:69-70 — test_retail_explainer_registry_b1b_nonempty_educational_text() checks body.lower() contains 'general education' or 'educational'. Every new biomarker entry body must include one of these phrases. Existing entries confirm the closing sentence pattern: 'This is general education only. It is not a diagnosis and does not replace advice from a qualified clinician about your own results.' Hardening addition: all 23+ new biomarker entries must carry this closing sentence verbatim or equivalent. This is not optional — it is an enforcement gate check."
+      "id": "HA-8",
+      "title": "Missing-marker caution pathway from P2-2+P2-3 must be explicitly verified as representable without a new contract field",
+      "severity": "STANDARD",
+      "location": "narrative_payload_v1.py:48 — NarrativeSectionIdV1.missing_evidence_limitations; narrative_payload_v1.py:95–110 — NarrativeEvidenceBoundaryV1",
+      "observation": "The P2-2+P2-3 missing-marker pack carries three content fields per entry: caution_when_absent, interpretive_limit, interpretive_caution (from knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml). The existing contract has a missing_evidence_limitations section and NarrativeEvidenceBoundaryV1 with allowed_evidence_sources, forbidden_as_score_basis, must_not_claim. It is not confirmed that the existing structure can carry all three P2-2+P2-3 caution fields without ambiguity or information loss.",
+      "required_action": "In Phase 2 gap assessment, verify that missing_evidence_limitations + NarrativeEvidenceBoundaryV1 fields can represent caution_when_absent, interpretive_limit, and interpretive_caution without structural ambiguity. If sufficient: add a test asserting this representation with a concrete fixture. If insufficient: add an Optional[List[str]] or Optional[Dict[str, str]] field to NarrativePayloadV1 for structured missing-marker caution passthrough. Define this field as Optional so the builder does not need updating in this sprint.",
+      "stop_gate": "If the builder must be updated to populate a new field, STOP and return REJECT_AND_RETURN. The contract may add an Optional field; builder population is a deferred sprint."
     },
     {
-      "check": "pathway_test_count_gate_blocker",
-      "status": "HARDENED_WITH_ADDITION",
-      "evidence": "backend/tests/unit/test_pathway_explainers_v1.py:32 — test_four_benchmark_pathways_present() asserts len(pathways) == 4 exactly. Current four IDs: one_carbon_methylation_homocysteine_v1, lipid_transport_cholesterol_handling_v1, blood_iron_oxygen_handling_v1, thyroid_hormone_antibody_context_v1. Adding any new pathway entry to pathway_explainers_v1.yaml will break this assertion and fail Phase 5 validation. Hardening addition: Phase 5 must update test_four_benchmark_pathways_present to assert the new pathway count and updated ID set. Do not weaken the test — replace the exact-count and exact-ID assertions with updated values. This is a mandatory test update, not a test weakening."
-    },
-    {
-      "check": "existing_pathways_must_not_be_duplicated",
-      "status": "HARDENED_WITH_ADDITION",
-      "evidence": "knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml confirmed to contain blood_iron_oxygen_handling_v1 and thyroid_hormone_antibody_context_v1 as existing entries. Phase 3 additions for blood/iron/oxygen and thyroid domains must UPDATE these existing entries (extend or enrich field content) rather than add duplicate pathway_ids. New entries may be created only for kidney and homocysteine/cardiovascular context (if governed) where no existing pathway_id exists. Cursor must check existing pathway_ids before authoring to prevent duplication."
-    },
-    {
-      "check": "pathway_explainer_schema_multi_field_required",
-      "status": "CONFIRMED",
-      "evidence": "backend/tests/unit/test_pathway_explainers_v1.py:77-81 — test_no_giant_unstructured_only_blob() checks len(text_fields) >= 8 per pathway (text fields excluding display_title). Existing entries confirm each pathway uses named fields: pathway_role, system_in_action, markers_belong_together, why_matters_beyond_a_single_marker_reading, interpretive_caution, and domain-specific fields (e.g. homocysteine_in_this_pathway). Any new or updated pathway entry must follow this multi-field schema with at least 8 named text fields — not a single body key."
-    },
-    {
-      "check": "missing_marker_infrastructure_does_not_exist",
-      "status": "HARDENED_WITH_ADDITION",
-      "evidence": "Glob search for knowledge_bus/**/*missing* and backend/**/*missing_marker* returns no files. No missing_marker_explainer YAML file or directory exists anywhere in the repository. Phase 3 references 'N-7 missing-marker entries' as if an existing registry is being extended, but this is new infrastructure. Hardening addition: Phase 3 missing-marker work must bootstrap a new governed file. Before creating this file, Cursor must: (1) determine the appropriate location and schema consistent with the pathway_explainers_v1 pattern; (2) create a companion test file for the new structure; (3) apply the same STOP gate — if content boundaries cannot safely govern the proposed missing-marker entry, defer. If missing-marker bootstrap is blocked, record in carry-forward and continue with retail and pathway work. Do not invent a schema without a governed source anchor."
-    },
-    {
-      "check": "p1_26_m1_scope_clarification",
-      "status": "HARDENED_WITH_ADDITION",
-      "evidence": "Grep for KBP-473 across knowledge_bus/ returns 13 files, not 3. All 13 are pkg_kb52c_* signal_library.yaml files with package_id: KBP-473x in the library header. The three iron files are: pkg_kb52c_iron_low_absolute_iron_deficiency/signal_library.yaml (KBP-4731), pkg_kb52c_iron_low_functional_iron_restriction_inflammation/signal_library.yaml, pkg_kb52c_iron_high_iron_overload_context/signal_library.yaml. The remaining 10 files contain KBP-473x naming across basophil, apob, and bilirubin packages. Hardening addition: this sprint may correct ONLY the three iron files if the sprint touches the iron explainer source area. Do not correct the remaining 10 basophil/apob/bilirubin files — this would broaden scope beyond the conditional gate. Phase 6 carry-forward must explicitly record 'M1-adjacent naming defect: KBP-473x persists in 10 non-iron pkg_kb52c_* signal_library.yaml files — requires a separate housekeeping sprint.' The SOP prompt's phrase 'three iron signal_library.yaml headers' is architecturally correct as a scope limit, not an error."
-    },
-    {
-      "check": "content_boundary_rules_confirmed",
-      "status": "CONFIRMED",
-      "evidence": "docs/architecture/RETAIL_EXPLAINER_CONTENT_BOUNDARIES_v1.md confirmed present. It defines: BiomarkerEducationalExplainerV1 must be reusable, non-personalised, must not state patient-specific conclusions. SystemEducationalExplainerV1 must read as general education, not proof of individual illness. Symptom relevance is deferred and must not appear. Contribution context is cluster membership only — no mechanism/causality/symptom inference. Source SSOT file is backend/ssot/retail_explainer_v1/registry.yaml. These boundaries are fully reflected in acceptance criteria at automation_bus/latest_cursor_prompt.md:350-355. No reference ranges, no diagnosis, no treatment advice in retail entries — confirmed and covered."
-    },
-    {
-      "check": "out_of_scope_intelligence_core_files_confirmed",
-      "status": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:94-117 — files-out-of-scope explicitly names all IC modules: narrative_report_compiler_v1.py, narrative_compiler_lc_s3_assembly_v1.py, narrative_payload_builder_v1.py, narrative_brief_enforcement_v1.py, narrative_payload_v1.py, narrative_report_v1.py, domain_score_assembler.py, signal_evaluator.py, scoring policy files, signal activation files, parser files, questionnaire files, frontend files, Gemini files, payload/report schema files, compiled card routing files (except read-only reference), production PSI package files (except read-only reference), calculated TSAT files, WBC/lymphocyte/neutrophil files, TPOAb euthyroid or TgAb deferred files. Scope boundary correctly drawn."
-    },
-    {
-      "check": "advisory_validity_confirmed",
-      "status": "CONFIRMED",
-      "evidence": "git log --since=2026-06-27 -- automation_bus/latest_pipeline_advisory.md knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml backend/ssot/retail_explainer_v1/registry.yaml returns no output (no commits since advisory date). Advisory claims for current build position, coverage count (~17/79 biomarkers), and candidate sprint sequencing are valid and may be inherited per CLAUDE.md §14."
-    },
-    {
-      "check": "deferred_items_confirmed_out_of_scope",
-      "status": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:44,112-117 — P2-FRAME-ROUTING-ARCHITECTURE-1 (HIGH/BEHAVIOUR, frame-level lead entity discrimination), P2-4 NarrativePayload hardening (HIGH/BEHAVIOUR), Gemini activation (P4-1/P4-2, requires P2-4 and CEO approval), calculated TSAT (Core Engine derived-metric governance), WBC/lymphocyte/neutrophil (Core Engine SSOT canonical identity) are all explicitly out of scope. Advisory latest_pipeline_advisory.md:113-119 confirms blocked status for each. No sprint action required."
+      "id": "HA-9",
+      "title": "Lower-risk closure gate — mandatory STOP if contract is confirmed fully sufficient by Phase 2",
+      "severity": "HIGH",
+      "location": "Source prompt: Phase 2; acceptance criteria #1; pipeline_advisory.md HA-9",
+      "observation": "If Cursor's Phase 1-2 analysis — based on direct read of narrative_payload_v1.py and read-only reference files — concludes that HA-1 through HA-8 are already fully addressed by the existing contract and builder and require only test additions (no contract field changes), the sprint must be reclassified. Proceeding as HIGH/BEHAVIOUR for a test-only sprint misclassifies the risk and is unnecessary.",
+      "required_action": "After completing Phase 1-2 gap assessment: if ALL of the following are true — (a) per-section future_llm_may_rewrite is safely gated by builder or enforced elsewhere; (b) may_translate_section_ids empty-list is documented as deny-all in existing consumer code; (c) WAVE1_HIDDEN_SUBSYSTEM_FORBIDDEN_AS_SCORE_BASIS already includes all current hidden subsystem IDs; (d) DEFAULT_LLM_PROHIBITED_ACTIONS already explicitly covers the no-new-findings case; (e) future_llm_translation_constraints is always non-None in builder output; (f) required_caveats always has minimum content in builder output; (g) report_story_priority is already typed or validated elsewhere — STOP immediately. Do not write contract code. Return a structured conclusion to Cursor status: 'P2-4 contract confirmed sufficient. All gaps addressed by existing builder and consumers. Evidence-only closure available. Tests required: [enumerate]. Risk reclassification to STANDARD/CONTENT or LOW/CONTENT justified.' Claude will then issue a REJECT_AND_RETURN with the evidence-only closure path for GPT to re-author the SOP at lower risk level.",
+      "stop_gate": "This gate is mandatory and must be evaluated before writing any contract code."
     }
   ],
-  "advisory_inheritance_status": {
-    "stage_b_advisory_date": "2026-06-27",
-    "advisory_risk_classification": "STANDARD/CONTENT",
-    "gpt_risk_classification": "STANDARD/CONTENT",
-    "escalation_justified": false,
-    "escalation_rationale": "No escalation required. Stage D verification confirms no Intelligence Core files in scope. Advisory risk classification is correct and unchanged.",
-    "material_departure_from_advisory": "Four hardening additions beyond SOP draft scope: (1) Biomarker key SSOT gate — every new registry key must be verified against backend/ssot/biomarkers.yaml before authoring; enforcement test at test_retail_explainer_registry_b1b.py:51 is a live gate; (2) Pathway test count update — test_pathway_explainers_v1.py:32 asserts len==4 and must be updated to reflect new pathway count after Phase 3 additions; (3) Missing-marker infrastructure does not exist — Phase 3 must bootstrap new governed file from scratch, not extend an existing registry; (4) M1 scope clarification — KBP-473x naming defect affects 13 files, not 3; sprint corrects only the 3 iron files; 10 others must be recorded in carry-forward."
+
+  "stage_2b_scope_integrity_checks": {
+    "gemini_activation_out_of_scope": {
+      "status": "CONFIRMED",
+      "evidence": "Source prompt Phase 3: 'Do not activate Gemini.' Phase 2 STOP gate explicitly lists Gemini activation as a trigger for STOP. Acceptance criterion #9: 'No Gemini activation occurs.'"
+    },
+    "ceo_approval_gate_preserved": {
+      "status": "CONFIRMED",
+      "evidence": "Source prompt Phase 5 carry-forward: 'CEO approval remains required before Gemini narrative activation in production.' Acceptance criterion #15 requires this be recorded in carry-forward."
+    },
+    "intelligence_core_files_read_only": {
+      "status": "CONFIRMED",
+      "evidence": "Source prompt Phase 3: 'modify only backend/core/contracts/narrative_payload_v1.py'. Read-only reference files named at source prompt lines 80–88. Out-of-scope list at source prompt lines 93–117 names every IC module by path including narrative_payload_builder_v1.py, narrative_report_compiler_v1.py, narrative_compiler_lc_s3_assembly_v1.py, narrative_brief_enforcement_v1.py, domain_score_assembler.py, signal_evaluator.py."
+    },
+    "out_of_scope_classification_complete": {
+      "status": "CONFIRMED",
+      "evidence": "Source prompt lines 93–117: 18 explicit out-of-scope file classes. Covers Gemini, frontend, signal activation, scoring policy, domain assembler, signal evaluator, parser, questionnaire, retail explainer, pathway explainer, missing-marker explainer, production PSI, compiled cards, frame-level routing, FRAME-ROUTING sprint files, WBC/lymphocyte/neutrophil, calculated TSAT, tooling config directories. No missing classes identified."
+    },
+    "advisory_adherence": {
+      "status": "CONFIRMED",
+      "evidence": "Pipeline advisory 2026-06-29 declares P2-4 RECOMMENDED NEXT SPRINT, PROCEED_TO_SOP, no B2 required. STOP gates from advisory (FRAME-ROUTING needs B2, Gemini needs CEO approval) are preserved verbatim in source prompt."
+    },
+    "risk_level_high_confirmed": {
+      "status": "CONFIRMED",
+      "evidence": "NarrativePayloadV1 governs the B→C output handoff. Changes to claim boundaries, LLM translation constraints, evidence boundaries, or prohibited claim patterns affect the governed output pipeline. This meets the Intelligence Core / output assembly criterion for HIGH risk. The source prompt correctly declares HIGH."
+    }
   },
-  "overall_verdict": "HARDENED. All five front-matter fields confirmed valid. STANDARD/CONTENT/SINGLE_PHASE classification confirmed — no Intelligence Core files in scope, no runtime behaviour changes, no allowlist gate requiring two-phase separation. P2-2+P2-3 combination is structurally sound. Advisory validity confirmed (no commits since 2026-06-27). Retail explainer registry confirmed at 17 biomarker entries; ≥40 target requires minimum 23 new entries. Four hardening additions: (1) all new biomarker keys must be pre-verified against backend/ssot/biomarkers.yaml to pass enforcement gate at test_retail_explainer_registry_b1b.py:51; (2) all new entry bodies must include 'general education' or 'educational' phrase to pass enforcement gate at test_retail_explainer_registry_b1b.py:69; (3) test_pathway_explainers_v1.py:32 asserts len==4 and must be updated in Phase 5 after new pathway entries are added; (4) missing-marker explainer infrastructure does not exist and must be bootstrapped as a new governed file with companion tests. M1 scope confirmed: 3 iron files only; 10 other KBP-473x files must be deferred to carry-forward. Sprint cleared for kernel start."
+
+  "stage_2b_layer_c_consumer_compatibility_gate": {
+    "note": "Acceptance criterion #12 requires existing Layer C consumers remain compatible. The source prompt does not define 'compatible' precisely. Hardening adds a definition.",
+    "compatibility_definition": "Compatible means: (a) all existing import statements referencing NarrativePayloadV1 in read-only consumer files continue to resolve without error after contract changes; (b) all fields currently accessed by narrative_report_compiler_v1.py, narrative_compiler_lc_s3_assembly_v1.py, and narrative_brief_enforcement_v1.py remain present with unchanged types; (c) new Optional fields do not break existing consumers that do not reference them; (d) any Required field addition or type narrowing of an existing field is a STOP gate requiring REJECT_AND_RETURN.",
+    "test_requirement": "At minimum one test must verify that a NarrativePayloadV1 instance constructed with only the fields used by the current Layer C compiler passes Pydantic validation without error after any contract changes in this sprint."
+  },
+
+  "rejection_conditions": [
+    "Any modification to narrative_payload_builder_v1.py → REJECT_AND_RETURN (read-only reference file)",
+    "Any modification to narrative_report_compiler_v1.py → REJECT_AND_RETURN (read-only reference file)",
+    "Any modification to narrative_compiler_lc_s3_assembly_v1.py → REJECT_AND_RETURN (read-only reference file)",
+    "Any modification to narrative_brief_enforcement_v1.py → REJECT_AND_RETURN (read-only reference file)",
+    "Any Gemini activation or Gemini feature-flag enable → REJECT_AND_RETURN",
+    "Any signal activation, scoring policy, domain assembler, signal evaluator, parser, questionnaire, retail explainer, pathway explainer, missing-marker, compiled card, or production PSI modification → REJECT_AND_RETURN",
+    "Any frontend file modification → REJECT_AND_RETURN",
+    "Any Required field removal from NarrativePayloadV1 that breaks existing Layer C consumer imports → REJECT_AND_RETURN",
+    "Phase 2 confirms contract is fully sufficient with no changes required → REJECT_AND_RETURN via HA-9 lower-risk closure gate; do not proceed as HIGH/BEHAVIOUR"
+  ],
+
+  "pipeline_advisory_trigger_instruction": "At Stage 5 audit close, set pipeline_advisory_trigger: true if P2-4 passes and P4-1 Gemini activation sprint is now sequentially unblocked. Set pipeline_advisory_reason: 'P2-4 NarrativePayload hardening complete; P4-1 Gemini activation design is next blocked only by CEO approval gate.'",
+
+  "overall_verdict": "HARDENED. All five front-matter fields confirmed valid. HIGH/BEHAVIOUR/SINGLE_PHASE classification confirmed — NarrativePayloadV1 governs the B→C output pipeline; changes to LLM constraints and claim boundaries are BEHAVIOUR-class. Primary authority paths confirmed by direct file read (narrative_payload_v1.py:1, ADR_WP2:1). Eight material gaps identified in the contract from direct content inspection (HA-1 through HA-8): future_llm_may_rewrite defaults True on clinician-reserved sections; may_translate_section_ids empty-list semantics undocumented; WAVE1_HIDDEN_SUBSYSTEM_FORBIDDEN_AS_SCORE_BASIS absent for new domains; DEFAULT_LLM_PROHIBITED_ACTIONS missing no-new-findings explicit entry; future_llm_translation_constraints may be None; required_caveats has no minimum-count validation; report_story_priority is untyped; missing-marker caution pathway sufficiency unverified. HA-9 lower-risk closure gate: if Phase 2 disproves all gaps from read-only reference files, Cursor must STOP and return evidence-only closure conclusion before writing contract code. Gemini activation remains out of scope. CEO approval gate preserved. Layer C consumer compatibility gate defined. Sprint cleared for kernel start."
 }
