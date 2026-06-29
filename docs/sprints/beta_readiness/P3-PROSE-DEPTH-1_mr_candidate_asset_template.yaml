@@ -1,0 +1,244 @@
+# P3-PROSE-DEPTH-1 — MR candidate asset templates (skeletal; CANDIDATE only)
+# Do not promote to production without medical review and compile/promotion sprint.
+
+schema_version: "1.0.0"
+template_pack_id: mr_candidate_templates_v1
+review_status_default: CANDIDATE
+
+templates:
+
+  base_biomarker_explainer:
+    asset_id: candidate_base_biomarker_EXAMPLE_v1
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: biomarker_id_placeholder
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    evidence_refs:
+      - "educational: general physiology reference — MR to cite"
+    evidence_strength: educational_only
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: biomarker_id_placeholder
+      narrative_section_id: null
+    prose_content:
+      title: "[Biomarker display name]"
+      body: |
+        [Educational description of what the marker measures and why it is discussed on panels.
+        Non-diagnostic. UK consumer-facing. General education only.]
+    max_word_count: 180
+    authored_by: MR_LLM
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm educational framing; no diagnostic or treatment language."
+
+  signal_frame_explainer:
+    asset_id: candidate_signal_frame_EXAMPLE_v1
+    asset_type: signal_frame_explainer
+    audience: retail_consumer
+    scope: signal_id / frame_id placeholder
+    personalisation_axes: []
+    trigger_conditions:
+      signal_active: true
+      frame_id: frame_placeholder
+    evidence_refs: []
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/interpretation_entities_v1/
+      target_registry_key: entity_id_placeholder
+      narrative_section_id: lead_narrative
+    prose_content:
+      lead_block: "[Pattern-and-association language tied to governed signal/frame only.]"
+    max_word_count: 220
+    authored_by: MR_LLM
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Frame routing deferred; candidate for future P2-FRAME-ROUTING alignment."
+
+  pathway_explainer:
+    asset_id: candidate_pathway_EXAMPLE_v1
+    asset_type: pathway_explainer
+    audience: retail_consumer
+    scope: wave1_domain_placeholder
+    personalisation_axes: []
+    trigger_conditions:
+      pathway_context_relevant: true
+    evidence_refs: []
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml
+      target_registry_key: pathway_id_placeholder
+      narrative_section_id: next_steps_narrative
+    prose_content:
+      display_title: "[Pathway title]"
+      overview: "[Educational pathway context — not a diagnosis.]"
+      interpretive_caution: "General education only; discuss results with a clinician."
+    max_word_count: 250
+    authored_by: MR_LLM
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm non-diagnostic pathway framing."
+
+  lifestyle_modifier_fragment:
+    asset_id: candidate_lifestyle_mod_EXAMPLE_v1
+    asset_type: lifestyle_modifier_fragment
+    audience: retail_consumer
+    scope: mod_q_lifestyle_placeholder
+    personalisation_axes: [lifestyle_band]
+    trigger_conditions:
+      modifier_id: mod_placeholder
+      modifier_fires: true
+    evidence_refs: []
+    evidence_strength: weak
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+      target_registry_key: modifier_id_placeholder
+      narrative_section_id: body_overview
+    prose_content:
+      additive_fragment: "[1–2 sentences additive caveat; does not replace base explainer.]"
+    max_word_count: 60
+    authored_by: MR_LLM
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Additive only; no causation claim unless evidence supports."
+
+  medication_modifier_fragment:
+    asset_id: candidate_medication_mod_EXAMPLE_v1
+    asset_type: medication_modifier_fragment
+    audience: retail_consumer
+    scope: intervention_class_placeholder
+    personalisation_axes: [medication_class]
+    trigger_conditions:
+      intervention_class_reported: true
+    evidence_refs: []
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+      target_registry_key: intervention_class_id_placeholder
+      narrative_section_id: marker_evidence
+    prose_content:
+      additive_fragment: "[Interpretation context only — not dose or action advice.]"
+    max_word_count: 60
+    authored_by: MR_LLM
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "No medication change advice."
+
+  supplement_modifier_fragment:
+    asset_id: candidate_supplement_mod_EXAMPLE_v1
+    asset_type: supplement_modifier_fragment
+    audience: retail_consumer
+    scope: mod_sup_placeholder
+    personalisation_axes: [supplement_use]
+    trigger_conditions:
+      supplement_modifier_id: mod_sup_placeholder
+    evidence_refs: []
+    evidence_strength: weak
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+      target_registry_key: mod_sup_placeholder
+      narrative_section_id: body_overview
+    prose_content:
+      additive_fragment: "[Supplement may affect interpretation context — educational only.]"
+    max_word_count: 55
+    authored_by: MR_LLM
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "No supplement recommendation."
+
+  missing_marker_caveat:
+    asset_id: candidate_missing_marker_EXAMPLE_v1
+    asset_type: missing_marker_caveat
+    audience: retail_consumer
+    scope: biomarker_id_placeholder
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_absent_on_panel: true
+    evidence_refs: []
+    evidence_strength: educational_only
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml
+      target_registry_key: missing_marker_id_placeholder
+      narrative_section_id: missing_evidence_limitations
+    prose_content:
+      caution_when_absent: "[Why absence limits specificity.]"
+      interpretive_limit: "[What cannot be concluded.]"
+      interpretive_caution: "General education only; absence does not imply required testing."
+    max_word_count: 120
+    authored_by: MR_LLM
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Align with P2-3 missing-marker pack structure."
+
+  positive_resilience_qualifier:
+    asset_id: candidate_resilience_EXAMPLE_v1
+    asset_type: positive_resilience_qualifier
+    audience: retail_consumer
+    scope: wave1_domain_or_signal_placeholder
+    personalisation_axes: []
+    trigger_conditions:
+      earned_signal_state: stable_or_reassuring
+      governing_signal_required: true
+    evidence_refs: []
+    evidence_strength: weak
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_positive_resilience_pack_v1
+      target_registry_key: qualifier_id_placeholder
+      narrative_section_id: whats_working_well
+    prose_content:
+      additive_fragment: "[Balanced reassurance only when signal state earns it.]"
+    max_word_count: 50
+    authored_by: MR_LLM
+    authored_utc: "YYYY-MM-DDTHH:MM:SSZ"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Must not reassure without governing signal state."

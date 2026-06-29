@@ -1,10 +1,10 @@
 {
-  "branch": "feature/p2-4-narrativepayload-brief-hardening",
+  "branch": "feature/p3-prose-depth-1-prose-library-depth-modifier-schema",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-29T16:40:40Z",
-  "cursor_started_utc": "2026-06-29T16:35:51Z",
-  "head_sha": "4b3cc42555b37f318cc99b7f65ee03890816be52",
+  "cursor_completed_utc": "2026-06-29T19:09:11Z",
+  "cursor_started_utc": "2026-06-29T19:06:33Z",
+  "head_sha": "2ddc7b9f655f66c51e735c1610ab78c165f184aa",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "P2-4"
+  "work_id": "P3-PROSE-DEPTH-1"
 }

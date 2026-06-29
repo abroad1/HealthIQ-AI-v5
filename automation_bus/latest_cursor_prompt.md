@@ -1,316 +1,467 @@
 ---
-work_id: P2-4
-branch: feature/p2-4-narrativepayload-brief-hardening
-risk_level: HIGH
+work_id: P3-PROSE-DEPTH-1
+branch: feature/p3-prose-depth-1-prose-library-depth-modifier-schema
+risk_level: STANDARD
 execution_model: SINGLE_PHASE
-change_type: BEHAVIOUR
+change_type: CONTENT
 ---
 
-# P2-4 — NarrativePayload Brief Hardening
+# P3-PROSE-DEPTH-1 — Prose Library Depth and Modifier Schema Sprint
 
-You are Cursor, acting as Core Engine implementation agent under Automation Bus SOP v1.3.1.
+You are Cursor, acting as implementation agent for HealthIQ AI under the standard Automation Bus and Knowledge Bus governance rules.
 
-This is a HIGH-risk BEHAVIOUR sprint.
+This is a STANDARD / CONTENT sprint.
 
-This sprint audits and hardens `NarrativePayloadV1` v1.1 as the governed B→C brief contract required before future Gemini narrative activation.
+This sprint must create the governed foundations for scalable prose-library population.
 
-Do not run another advisory.
+It must not activate Gemini, modify runtime behaviour, bind modifiers at runtime, change Intelligence Core logic, or promote candidate prose into production assets.
 
 ## Sprint purpose
 
-P2-4 must confirm that the NarrativePayload contract is sufficient to govern future constrained Gemini narrative generation.
+HealthIQ AI needs a scalable, governed prose library that supports personalised marker-level and system-level explanation without creating an unmaintainable bespoke-paragraph monster.
 
-It must verify and, only where necessary, harden:
+The architecture review `DYNAMIC-PROSE-ARCH-1` concluded:
 
-1. section intents;
-2. slot definitions;
-3. anti-hallucination constraints;
-4. claim-boundary / evidence-boundary fields;
-5. field completeness for the currently active Wave 1 domains;
-6. compatibility with the prose substrate delivered in P2-1 and P2-2+P2-3.
+* HealthIQ should use **hybrid minimum viable composition**;
+* do not build a new composition engine;
+* do not build thousands of bespoke prose paragraphs;
+* use the existing `NarrativePayloadV1` / `NarrativeReportV1` path;
+* extend the existing governed asset model with content depth, modifier fragments, MR candidate asset schema, review status, destination mapping and compile/promotion discipline;
+* MR LLM assets must remain candidate assets until reviewed and promoted.
 
-This sprint does not activate Gemini.
+This sprint creates the content-factory foundations.
+
+It does not populate production runtime prose directly.
 
 ## Product output
 
-At completion:
+At completion, the repo should contain:
 
-* `NarrativePayloadV1` is confirmed or hardened as the safe Layer B→Layer C brief contract.
-* The contract can carry sufficient governed structure for future Gemini wording/presentation.
-* Tests prove that the contract supports active Wave 1 prose substrate needs.
-* Tests prove anti-hallucination / no-invention constraints are present and enforceable at the contract level.
-* A sprint report records whether the contract changed or was confirmed sufficient as-is.
+1. a governed MR candidate prose asset schema;
+2. an illustrative MR candidate asset template;
+3. a prose asset coverage matrix for beta/launch-core coverage;
+4. a first MR work-batch brief for candidate prose generation;
+5. modifier prose fragment authoring templates for high-value lifestyle/medication/supplement modifier classes;
+6. sprint artefacts documenting what exists, what is missing, what is candidate-only, and what requires medical review;
+7. no runtime activation of new prose, modifiers, Gemini, or frontend behaviour.
 
-## Controlling advisory
+## Controlling authority and source reads
 
-Use `automation_bus/latest_pipeline_advisory.md` as sequencing authority.
+This sprint must not re-run the architecture review.
 
-Key advisory facts:
+Use `DYNAMIC-PROSE-ARCH-1` as the primary architecture authority. It already concluded that HealthIQ should use hybrid minimum viable composition and extend the existing governed prose path rather than build a new composition engine.
 
-* P2-2+P2-3 is complete.
-* Retail explainer coverage is now 40/~79 biomarkers.
-* Pathway entries are now 5.
-* Missing-marker entries are bootstrapped.
-* Layer B prose substrate is now deep enough for P2-4.
-* P2-4 is the next programme unlock.
-* P2-4 must complete before P4-1/P4-2 Gemini activation.
-* Gemini remains inactive.
-* CEO approval is required before Gemini narrative is enabled in production.
+### Mandatory authority reads
 
-## Files in scope
+1. `docs/planning-papers/DYNAMIC-PROSE-ARCH-1_dynamic_personalised_prose_architecture_review.md`
+2. `docs/planning-papers/PROSE-INVENTORY-1_prose_library_prose_to_ux_architecture_inventory_review.md`, if present
+3. `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+4. `docs/sprints/beta_readiness/P2-2_P2-3_retail_pathway_explainer_completion.md`
+5. `docs/sprints/beta_readiness/P2-4_narrativepayload_brief_hardening_completion.md`
 
-Expected primary file:
+### Mandatory asset/source reads for the coverage matrix
 
-* `backend/core/contracts/narrative_payload_v1.py`
+6. `backend/ssot/retail_explainer_v1/registry.yaml`
+7. `knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml`
+8. `knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml`
+9. `knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml`, if present
+10. `knowledge_bus/interventions/intervention_effects_registry_v1.yaml`, if present
 
-Expected tests:
+### Optional reference only if needed for boundary clarification
 
-* existing NarrativePayload contract tests, if present;
-* new or updated P2-4 tests under the current backend test convention.
+* `docs/architecture/ADR_WP2_layer_b_layer_c_contract_path_b.md`
+* `docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md`
+* `docs/sprints/beta_readiness/P2-1_prose_substrate_wave1_wired_completion.md`
+* `docs/architecture/RETAIL_EXPLAINER_CONTENT_BOUNDARIES_v1.md`
+* `docs/intelligence/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md`
 
-Expected documentation / sprint artefacts:
+Do not expand this into another architecture review.
 
-* `docs/sprints/beta_readiness/P2-4_narrativepayload_brief_hardening_manifest.yaml`
-* `docs/sprints/beta_readiness/P2-4_narrativepayload_brief_hardening_completion.md`
-* `docs/sprints/beta_readiness/P2-4_carry_forward.yaml`
-* `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+## Core principle
 
-Read-only reference files may include:
+The prose model is hybrid minimum viable composition:
 
-* `backend/core/contracts/narrative_report_v1.py`
-* `backend/core/analytics/narrative_payload_builder_v1.py`
-* `backend/core/analytics/narrative_report_compiler_v1.py`
-* `backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py`
-* `backend/core/analytics/narrative_brief_enforcement_v1.py`
-* P2-1 completion artefacts
-* P2-2+P2-3 completion artefacts
-* ADR_WP2 Layer B / Layer C contract authority
+`base explainer + signal/frame explainer + pathway explainer + additive modifier fragment + missing-marker caveat + resilience/caution qualifier`
 
-Do not modify read-only reference files unless Stage D hardening returns `REJECT_AND_RETURN` and GPT explicitly expands scope.
+Do not create bespoke paragraphs for every age/sex/result/lifestyle/medication/supplement combination.
 
-## Files out of scope
+Do not create sex-specific or age-specific assets unless `DYNAMIC-PROSE-ARCH-1`, existing medical governance, or later medical review justifies that the axis materially changes interpretation, not merely the reference range.
+
+## Scope
+
+This sprint is allowed to create or update documentation, schema, candidate templates, coverage matrices and sprint artefacts only.
+
+Expected new files:
+
+1. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_prose_library_depth_modifier_schema_completion.md`
+2. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_manifest.yaml`
+3. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_carry_forward.yaml`
+4. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_prose_coverage_matrix.yaml`
+5. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_schema.yaml`
+6. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_template.yaml`
+7. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_batch_001_brief.md`
+8. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_modifier_fragment_templates.yaml`
+9. update `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+
+If the repo already has a better canonical location for candidate prose schemas or planning artefacts, use that location instead, but record the decision in the manifest.
+
+## Out of scope
 
 Do not modify:
 
-* Gemini activation files;
-* Gemini prompt templates;
+* runtime loaders;
+* signal evaluators;
+* scoring policy;
+* domain assembler;
+* root-cause compiler;
+* `narrative_payload_builder_v1.py`;
+* `narrative_report_compiler_v1.py`;
+* `narrative_compiler_lc_s3_assembly_v1.py`;
+* `NarrativePayloadV1`;
+* `NarrativeReportV1`;
 * frontend files;
-* report redesign files;
-* signal activation files;
-* scoring policy files;
-* `domain_score_assembler.py`;
-* `signal_evaluator.py`;
+* Gemini files;
+* prompt templates;
+* production PSI packages;
+* compiled health-system cards;
+* production signal libraries;
+* production retail explainer registry;
+* production pathway explainers;
+* production missing-marker explainers;
+* production context modifier catalogue;
+* production intervention effects registry;
 * parser files;
 * questionnaire files;
-* retail explainer registry files;
-* pathway explainer files;
-* missing-marker explainer files;
-* production PSI package files;
-* compiled card files;
-* frame-level routing files;
-* P2-FRAME-ROUTING-ARCHITECTURE-1 files;
-* WBC / lymphocyte / neutrophil files;
-* calculated TSAT files;
 * `.codex/`;
 * `.cursor/`;
 * `.vscode/`;
 * `AGENTS.md`.
 
-If any out-of-scope file appears necessary, STOP and return to GPT.
+No runtime behaviour change is authorised.
+
+No production asset promotion is authorised.
+
+No Gemini activation is authorised.
+
+No context modifier runtime binding is authorised.
+
+No medical claim should be promoted as approved content in this sprint.
 
 ## Phase 0 — Automation Bus preflight
 
-Before implementation:
+Before modifying files:
 
 1. Confirm current branch is:
 
-`feature/p2-4-narrativepayload-brief-hardening`
+`feature/p3-prose-depth-1-prose-library-depth-modifier-schema`
 
 2. Confirm `automation_bus/state/work_package_active.json` exists.
-3. Confirm active token has `work_id: P2-4`.
-4. Confirm token branch matches current branch.
+3. Confirm active token has `work_id: P3-PROSE-DEPTH-1`.
+4. Confirm active token branch matches current branch.
 5. Confirm repo/stash/parked-file state is governed.
-6. Confirm P2-2+P2-3 is merged.
-7. Confirm no advisory or fork/background agent is running for this sprint.
+6. Confirm P2-4 is merged.
+7. Confirm no P4-1 implementation is running in parallel.
+8. Confirm this sprint is CONTENT-only.
 
 STOP if preflight fails.
 
-## Phase 1 — Authority and contract verification
+## Phase 1 — Inventory existing prose assets
 
-Read the minimum necessary files to verify:
+Create a coverage matrix that identifies existing, partial, missing and deferred prose asset coverage.
 
-1. current `NarrativePayloadV1` structure;
-2. existing section intents;
-3. existing slot / field definitions;
-4. existing anti-hallucination constraints;
-5. evidence / claim boundary fields;
-6. how `NarrativePayloadV1` is consumed by current Layer C compiler/report assembly;
-7. whether P2-1 and P2-2+P2-3 prose substrate outputs are representable without contract gaps.
+Do not rewrite existing assets.
 
-Required authority:
+Do not duplicate existing assets.
 
-* ADR_WP2 Layer B / Layer C contract path;
-* latest pipeline advisory;
-* P2-1 completion report;
-* P2-2+P2-3 completion report.
+For each relevant asset row, classify:
 
-Do not perform broad repo discovery.
+* `existing_asset_found: true | false`
+* `current_location`
+* `asset_quality: reusable | reusable_with_edit | supersede | unsafe_or_obsolete | missing | unknown`
+* `normalisation_required: true | false`
+* `mr_action: none | evidence_check | normalise_existing | draft_new_candidate | defer_medical_review | defer_architecture`
+* `runtime_ready: true | false`
+* `candidate_only: true | false`
+* `requires_medical_review: true | false`
 
-## Phase 2 — Gap assessment
+Coverage matrix must include at least:
 
-Assess whether `NarrativePayloadV1` already supports:
+1. all existing retail explainer entries already present;
+2. all known missing retail biomarker explainers from the launch/beta panel, if discoverable from existing registry scope;
+3. pathway explainers currently present;
+4. pathway explainers missing for launch-core domains, especially hepatic and metabolic;
+5. missing-marker caveats currently present;
+6. missing-marker caveat gaps for Wave 1 / launch-core panel where discoverable;
+7. known lifestyle modifier classes from the context modifier catalogue;
+8. known medication modifier classes from the intervention effects registry or governance docs;
+9. known supplement modifier classes, especially creatine, iron, B12, vitamin D, folate, protein, testosterone/hormone supplementation if documented;
+10. positive/resilience qualifier status;
+11. frame-level prose status, noting that frame routing remains deferred.
 
-* retail summary intent;
-* lead narrative intent;
-* body overview intent;
-* next steps narrative intent;
-* clinician synthesis intent;
-* active Wave 1 domain representation;
-* source provenance;
-* claim boundaries;
-* evidence boundaries;
-* prohibited claim patterns;
-* LLM translation constraints;
-* missing-marker caution context;
-* no-diagnosis / no-treatment constraints;
-* future Gemini presentation-only use.
+The matrix is an inventory and planning artefact. It must not be consumed by runtime.
 
-If the current contract is sufficient, make no contract change. Strengthen tests and close the sprint as “contract confirmed sufficient”.
+## Phase 2 — MR candidate prose asset schema
 
-If the current contract is insufficient, make the smallest necessary contract hardening change.
+Create a schema file:
 
-STOP if the gap requires:
+`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_schema.yaml`
 
-* Gemini activation;
-* frontend change;
-* report schema redesign;
-* payload builder redesign;
-* claim-boundary engine redesign;
-* signal activation change;
-* scoring change;
-* routing architecture change.
+It must define required fields for MR-authored candidate prose assets.
 
-## Phase 3 — Contract hardening
+At minimum include:
 
-If changes are required, modify only:
+* `asset_id`
+* `asset_type`
+* `audience`
+* `scope`
+* `personalisation_axes`
+* `trigger_conditions`
+* `evidence_refs`
+* `evidence_strength`
+* `safety_boundaries`
+* `review_status`
+* `destination_mapping`
+* `prose_content`
+* `max_word_count`
+* `authored_by`
+* `authored_utc`
+* `source_asset_ids`, where normalising existing prose
+* `supersedes_asset_ids`, where replacing weak/unsafe prose
+* `notes_for_medical_reviewer`
 
-* `backend/core/contracts/narrative_payload_v1.py`
+Allowed `asset_type` values must include:
 
-Allowed changes may include:
+* `base_biomarker_explainer`
+* `result_direction_explainer`
+* `system_explainer`
+* `subsystem_explainer`
+* `pathway_explainer`
+* `signal_frame_explainer`
+* `lifestyle_modifier_fragment`
+* `medication_modifier_fragment`
+* `supplement_modifier_fragment`
+* `missing_marker_caveat`
+* `weak_evidence_fallback`
+* `positive_resilience_qualifier`
+* `clinician_detail`
+* `retail_user_summary`
 
-* clarifying section intent fields;
-* adding or tightening brief-slot definitions;
-* strengthening LLM translation constraints;
-* strengthening prohibited claim / anti-hallucination boundary fields;
-* adding missing provenance or source-boundary fields if required by the existing architecture;
-* adding documentation comments / typed model constraints consistent with repo style.
+Allowed `review_status` values must include:
 
-Do not change runtime signal logic.
+* `CANDIDATE`
+* `NEEDS_MEDICAL_REVIEW`
+* `APPROVED`
+* `REJECTED`
+* `DEPRECATED`
 
-Do not activate Gemini.
+The schema must make clear:
 
-Do not create free-text generation behaviour.
+* MR LLM output starts as `CANDIDATE`;
+* candidate assets are not runtime assets;
+* candidate assets must not be consumed directly in production;
+* approved assets require later promotion/compile work;
+* no treatment recommendations are allowed;
+* no diagnostic wording is allowed;
+* lab-derived reference ranges remain the only interpretation authority where ranges are used.
 
-Do not weaken any existing safety boundary.
-
-## Phase 4 — Tests
-
-Create or update tests proving:
-
-* `NarrativePayloadV1` contains all required section intents;
-* brief slots are present and deterministic;
-* provenance / evidence boundary fields are present;
-* anti-hallucination / no-invention constraints are present;
-* prohibited claim patterns or equivalent guard fields are present;
-* future Gemini use is constrained to wording/presentation and cannot create medical meaning;
-* active Wave 1 domains can be represented;
-* missing-marker caution context can be represented where applicable;
-* existing Layer C compiler/report assembly consumers still accept the contract;
-* no Gemini activation path is enabled.
-
-If contract unchanged, tests must prove sufficiency rather than merely asserting no change.
-
-## Phase 5 — Carry-forward management
-
-Create:
-
-`docs/sprints/beta_readiness/P2-4_carry_forward.yaml`
-
-Record:
-
-* whether `NarrativePayloadV1` was changed or confirmed sufficient;
-* any deferred Gemini activation requirement;
-* CEO approval remains required before Gemini narrative activation;
-* P4-1/P4-2 status after P2-4;
-* P2-FRAME-ROUTING-ARCHITECTURE-1 remains deferred;
-* any contract gaps deferred because they require broader architecture;
-* any tests or validators still needed before Gemini.
-
-## Phase 6 — Completion report and build register
+## Phase 3 — Candidate asset template
 
 Create:
 
-`docs/sprints/beta_readiness/P2-4_narrativepayload_brief_hardening_completion.md`
+`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_template.yaml`
 
-Keep concise.
+This should be a reusable template MR can fill.
 
-Maximum structure:
+It must show:
+
+* one generic base biomarker explainer template;
+* one signal/frame explainer template;
+* one pathway explainer template;
+* one lifestyle modifier fragment template;
+* one medication modifier fragment template;
+* one supplement modifier fragment template;
+* one missing-marker caveat template;
+* one positive/resilience qualifier template.
+
+These can be skeletal examples. Do not author clinically definitive prose unless the source wording already exists in governed documents.
+
+All examples must have:
+
+`review_status: CANDIDATE`
+
+## Phase 4 — MR Batch 001 brief
+
+Create:
+
+`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_batch_001_brief.md`
+
+This is the instruction pack for the Medical Research LLM.
+
+It must request candidate prose assets only.
+
+Batch 001 should focus on beta-critical depth, not the whole universe.
+
+Include at least:
+
+1. hepatic pathway explainer candidate;
+2. metabolic/glycaemic pathway explainer candidate;
+3. top 10 missing retail biomarker explainers by launch/beta relevance, using the coverage matrix;
+4. missing-marker caveat candidates for hepatic/metabolic/lipid/kidney contexts where gaps are identified;
+5. lifestyle modifier fragment candidates for:
+
+   * alcohol/hepatic markers;
+   * smoking/inflammation context, if supported by existing catalogue;
+   * exercise/creatinine or muscle enzyme context, if supported by existing catalogue;
+   * hydration/creatinine or renal concentration context, if supported by existing catalogue;
+6. medication modifier fragment candidates for:
+
+   * statins/lipid interpretation;
+   * metformin/glucose or B12 context, if supported by existing registry;
+   * NSAID/renal context, if supported by existing registry;
+7. supplement modifier fragment candidates for:
+
+   * creatine/creatinine;
+   * iron supplements/ferritin/iron interpretation;
+   * B12/folate supplementation context.
+
+The brief must instruct MR:
+
+* do not write directly to runtime files;
+* do not claim diagnosis;
+* do not recommend treatment, dose changes, supplements or medication actions;
+* cite evidence for each non-educational claim;
+* state uncertainty;
+* use cautious UK consumer-facing language;
+* separate retail and clinician variants only where required;
+* only create sex/age-specific wording where medically justified;
+* mark all assets `CANDIDATE`;
+* identify any asset requiring medical review before activation.
+
+## Phase 5 — Modifier fragment templates
+
+Create:
+
+`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_modifier_fragment_templates.yaml`
+
+This should define template structures for additive modifier fragments.
+
+Include:
+
+* lifestyle modifier fragment;
+* medication modifier fragment;
+* supplement modifier fragment;
+* conflict-resolution fragment;
+* suppression rule note;
+* maximum fragment length;
+* required evidence;
+* prohibited claims;
+* target destination mapping placeholder.
+
+Emphasise:
+
+* modifiers are additive caveats, not paragraph replacements;
+* modifiers must not imply causation unless evidence supports it;
+* modifiers must not provide advice;
+* Gemini must never infer modifier relationships.
+
+## Phase 6 — Completion report
+
+Create:
+
+`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_prose_library_depth_modifier_schema_completion.md`
+
+Use this structure:
 
 1. start state;
-2. authority reviewed;
-3. contract sufficiency assessment;
-4. changes made, if any;
-5. validation result;
-6. Gemini readiness impact;
-7. carry-forwards;
-8. recommended next sprint.
+2. architecture authority reviewed;
+3. existing assets found;
+4. coverage gaps identified;
+5. schema created;
+6. MR Batch 001 scope;
+7. modifier template scope;
+8. what remains candidate-only;
+9. what requires medical review;
+10. what requires future runtime/promotion work;
+11. recommended next sprint.
+
+## Phase 7 — Manifest and carry-forward
 
 Create:
 
-`docs/sprints/beta_readiness/P2-4_narrativepayload_brief_hardening_manifest.yaml`
+`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_manifest.yaml`
+
+Include:
+
+* files created/updated;
+* no runtime files changed;
+* no production assets changed;
+* no Gemini activation;
+* no modifier runtime binding;
+* no medical content promoted to approved runtime status;
+* candidate-only status.
+
+Create:
+
+`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_carry_forward.yaml`
+
+Include at least:
+
+* MR Batch 001 needs medical research completion;
+* MR candidate assets need medical review before promotion;
+* runtime promotion/import route remains future work;
+* modifier binding remains future work;
+* frame routing remains deferred;
+* P4-1 Gemini activation design remains CEO-gated;
+* product-quality frontend UAT remains blocked by content depth, frame routing, modifier activation, Gemini pilot and Journey v6 IA work;
+* decision needed on whether full 79/79 retail coverage is beta-blocking or whether prioritised subset is acceptable.
 
 Update:
 
 `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
 
-Keep the register entry lightweight.
+Keep the entry concise.
 
 ## Validation
 
-Run all relevant validation.
+Run available documentation/schema validation relevant to the repo.
 
 At minimum:
 
-* NarrativePayload contract tests;
-* Layer C report / compiler consumer regression tests, if present;
-* claim-boundary / anti-hallucination tests, if present;
-* P2-1 and P2-2+P2-3 relevant prose substrate regressions, if affected;
-* architecture/governance tests required by Automation Bus finish;
-* `python backend/scripts/run_work_package.py finish`.
+* YAML parse validation for all new `.yaml` files;
+* existing repository doc lint/validation if available;
+* grep or equivalent check confirming no runtime/production asset files were modified;
+* Automation Bus finish command:
 
-Do not edit validators to force a pass.
+`python backend/scripts/run_work_package.py finish`
+
+Do not modify validators to force a pass.
 
 ## Acceptance criteria
 
-P2-4 passes only if:
+This sprint passes only if:
 
-1. Front matter remains `risk_level: HIGH`, `change_type: BEHAVIOUR`, unless Stage D returns `REJECT_AND_RETURN` with a lower-risk evidence-only closure path.
-2. Automation Bus preflight passes.
-3. `NarrativePayloadV1` is either hardened or explicitly confirmed sufficient with test evidence.
-4. Section intents are present and tested.
-5. Brief slots are present and tested.
-6. Evidence/provenance boundary fields are present and tested.
-7. Anti-hallucination / no-invention constraints are present and tested.
-8. Future Gemini use remains constrained to wording/presentation only.
-9. No Gemini activation occurs.
-10. No frontend files are modified.
-11. No signal activation, scoring, domain assembler, signal evaluator, parser, questionnaire, retail explainer, pathway explainer, missing-marker, compiled card or production PSI files are modified.
-12. Existing Layer C consumers remain compatible.
-13. Active Wave 1 domains can be represented by the contract.
-14. Missing-marker caution context can be represented where applicable.
-15. Carry-forward records Gemini activation prerequisites and CEO approval requirement.
-16. Build register is updated concisely.
-17. Final audit includes `pipeline_advisory_trigger` and `pipeline_advisory_reason`.
+1. Automation Bus preflight passes.
+2. Risk remains STANDARD.
+3. Change type remains CONTENT.
+4. No runtime behaviour files are modified.
+5. No Intelligence Core files are modified.
+6. No frontend files are modified.
+7. No Gemini files or prompt templates are modified.
+8. No production prose registry/YAML assets are modified.
+9. No production PSI or compiled card files are modified.
+10. No context modifier is activated.
+11. No medical content is promoted to `APPROVED` runtime status.
+12. Coverage matrix exists and identifies existing/partial/missing/deferred asset status.
+13. Existing assets are mapped before new candidate work is requested.
+14. MR candidate asset schema exists.
+15. MR candidate asset template exists.
+16. MR Batch 001 brief exists and is usable by Medical Research LLM.
+17. Modifier fragment templates exist.
+18. All MR-generated or MR-targeted content is explicitly candidate-only.
+19. Medical review requirements are recorded.
+20. Carry-forward records runtime promotion, modifier activation, frame routing, P4-1 CEO gate and frontend UAT blockers.
+21. Build register is updated.
+22. Final audit includes `pipeline_advisory_trigger: true` and explains whether next work should be MR Batch 001, prose promotion/import, frame routing, P4-1, or another content-depth tranche.
 
 ## Closure requirements
 

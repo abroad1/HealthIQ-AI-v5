@@ -1,0 +1,32 @@
+work_id: P3-PROSE-DEPTH-1
+title: Prose Library Depth and Modifier Schema
+status: complete
+date_closed: "2026-06-29"
+risk_level: STANDARD
+change_type: CONTENT
+branch: feature/p3-prose-depth-1-prose-library-depth-modifier-schema
+
+files_created:
+  - docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_prose_library_depth_modifier_schema_completion.md
+  - docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_manifest.yaml
+  - docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_carry_forward.yaml
+  - docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_prose_coverage_matrix.yaml
+  - docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_schema.yaml
+  - docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_template.yaml
+  - docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_batch_001_brief.md
+  - docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_modifier_fragment_templates.yaml
+
+files_updated:
+  - docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+
+authority_notes:
+  prose_inventory_path_correction: docs/audit-papers/PROSE-INVENTORY-1_prose_library_prose_to_ux_architecture_inventory_review.md
+
+runtime_files_changed: false
+production_assets_changed: false
+intelligence_core_changed: false
+frontend_changed: false
+gemini_activation: false
+modifier_runtime_binding: false
+medical_content_promoted_to_approved: false
+candidate_only_status: true

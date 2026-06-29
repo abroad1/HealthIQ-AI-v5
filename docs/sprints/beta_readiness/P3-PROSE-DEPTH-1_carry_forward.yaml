@@ -1,0 +1,47 @@
+work_id: P3-PROSE-DEPTH-1
+carry_forwards:
+
+  mr_batch_001:
+    status: needs_medical_research_completion
+    brief: docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_batch_001_brief.md
+    note: MR LLM must author candidate assets only; no runtime writes.
+
+  mr_candidate_review:
+    status: required_before_promotion
+    note: All MR output remains CANDIDATE until medical review and promotion sprint.
+
+  runtime_promotion:
+    status: future_work
+    note: Import/compile route from candidate assets to production registries not implemented.
+
+  modifier_binding:
+    status: future_work
+    note: Context modifier catalogue entries remain runtime_active false.
+
+  frame_routing:
+    sprint: P2-FRAME-ROUTING-ARCHITECTURE-1
+    status: deferred
+
+  p4_gemini:
+    p4_1: blocked_ceo_approval
+    p4_2: blocked_ceo_approval
+    note: NarrativePayload contract ready; Gemini activation not authorised.
+
+  frontend_uat:
+    status: blocked
+    blockers:
+      - content_depth_gaps
+      - frame_routing_deferred
+      - modifier_activation_deferred
+      - gemini_pilot_deferred
+      - journey_v6_ia_work
+
+  beta_retail_coverage_decision:
+    question: Is full 79/79 retail explainer coverage beta-blocking?
+    alternative: Prioritised subset (MR Batch 001 top 10 + pathways) may suffice for controlled beta.
+    current_state: 40/104 SSOT biomarkers with retail entries; ~64 gaps.
+
+  pipeline_advisory_trigger: true
+  pipeline_advisory_reason: >
+    P3-PROSE-DEPTH-1 foundations complete; recommend MR Batch 001 candidate generation
+    as next sprint, then medical review and promotion/import — not P4-1 or runtime activation.

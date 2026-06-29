@@ -722,6 +722,29 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## P3-PROSE-DEPTH-1 — Prose Library Depth and Modifier Schema
+
+**Status:** Complete  
+**Date closed:** 2026-06-29  
+**Programme block(s):** Block 3 Layer B prose content factory  
+
+### Delivered / ticked off
+- MR candidate prose asset schema, templates, and modifier fragment templates created.
+- Prose coverage matrix inventories retail (40), pathway (5), missing-marker (6), modifier, and gap status.
+- MR Batch 001 brief defines beta-critical candidate generation scope (pathways, top 10 retail gaps, modifiers).
+- No runtime, production asset, Intelligence Core, or Gemini changes.
+
+### Carry-forwards
+- MR Batch 001 execution; medical review; promotion/import route; modifier binding; frame routing; P4-1 CEO gate; 79/79 vs subset decision.
+
+### Blockers / risks
+- None for CONTENT scope; runtime activation intentionally deferred.
+
+### Recommended next sprint
+- MR Batch 001 candidate prose generation (Medical Research LLM).
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
