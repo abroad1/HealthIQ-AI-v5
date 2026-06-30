@@ -1,0 +1,3270 @@
+﻿# MR-BATCH-001B — Candidate Prose Assets
+# Rework of MR-BATCH-001 with directional marker-state expansion
+# Do not overwrite: MR-BATCH-001_candidate_prose_assets.yaml (original preserved)
+schema_version: "1.0.1"
+batch_id: MR-BATCH-001B
+work_id: P3-PROSE-DEPTH-1
+parent_batch_id: MR-BATCH-001
+authored_utc_all: "2026-06-29T00:00:00Z"
+review_status_all: CANDIDATE
+authored_by_all: MR_LLM_CANDIDATE
+candidate_only: true
+source_schema: docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_schema.yaml
+rework_purpose: "Prose quality rework and directional marker-state expansion of MR-BATCH-001"
+total_assets: 69
+# MR-BATCH-001B — Part A: Pathway Explainers + Cystatin C, UACR, WBC (base + directional)
+# Section: hepatic pathway, glycaemic pathway, cystatin_c (base+4), uacr (base+4), wbc (base+3)
+# Part A assets: CANDIDATE only; MR_LLM_CANDIDATE; authored_utc 2026-06-29T00:00:00Z
+
+assets:
+
+
+  # ─────────────────────────────────────────────────────────────────
+  # PATHWAY EXPLAINERS (REWORKED)
+  # ─────────────────────────────────────────────────────────────────
+
+  - asset_id: hepatic_enzyme_processing_pathway_v1_b
+    asset_type: pathway_explainer
+    audience: retail_consumer
+    scope: "wave1_liver / hepatic enzyme and processing context"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      pathway_context_relevant: true
+      wave1_domain: wave1_liver
+    context_dependencies:
+      supporting_markers: [alt, ast, ggt, alp, bilirubin, albumin]
+      missing_markers: [alt, ggt]
+      pattern_dependencies: []
+      lifestyle_context: [alcohol_use]
+      medication_context: [statins, hepatotoxic_medications]
+      supplement_context: []
+      confidence_limiters:
+        - "Single elevated reading without pattern context is less specific than trend data"
+        - "Partial hepatic panels (missing ALT or GGT) reduce interpretive specificity"
+    evidence_refs:
+      - "NICE CG87 / NG141 Alcohol-use disorders (liver section)"
+      - "EASL Clinical Practice Guidelines on non-invasive tests for liver fibrosis/cirrhosis 2021"
+      - "NHS Inform — Liver Function Tests (current)"
+    evidence_strength: moderate
+    interpretive_limitations:
+      - "Interpretation is most informative when ALT, GGT, ALP and bilirubin are all present — a partial hepatic panel reduces specificity."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml
+      target_registry_key: hepatic_enzyme_processing_v1
+      narrative_section_id: next_steps_narrative
+    prose_content:
+      display_title: "Liver enzyme context"
+      overview: |
+        Liver enzymes in the blood are signals of what is happening inside liver cells — not simply numbers on a report. When liver cells are under stress, they release enzymes into the circulation; the pattern, degree, and combination of elevations carries more meaning than any single value. The hepatic panel typically includes ALT (a marker closely tied to liver cell health), AST (also found in muscle), GGT (sensitive to alcohol-related strain and biliary changes), and ALP (raised in both liver and bone conditions). Bilirubin and albumin add further context about how the liver is managing its processing and synthetic functions. A mildly elevated reading on one occasion, in a person with no symptoms and no other abnormalities, is often not significant — but it depends on which enzyme, how elevated, and the full clinical picture. Alcohol, certain medications, exercise, fatty change in liver tissue, and viral infections can all affect these markers. What HealthIQ can assess is the pattern across the available markers; where the panel is incomplete, interpretive confidence is lower.
+      clinician: null
+    max_word_count: 220
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [hepatic_enzyme_processing_pathway_v1]
+    supersedes_asset_ids: [hepatic_enzyme_processing_pathway_v1]
+    notes_for_medical_reviewer: |
+      Confirm non-diagnostic framing throughout. Review ALT/AST/GGT/ALP mechanism descriptions for clinical accuracy. Verify UK terminology consistent with NHS/RCPath conventions. Check that "fatty change" wording does not imply NAFLD diagnosis.
+
+  - asset_id: glycaemic_insulin_metabolic_pathway_v1_b
+    asset_type: pathway_explainer
+    audience: retail_consumer
+    scope: "wave1_blood_sugar / glycaemic and insulin-metabolic context"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      pathway_context_relevant: true
+      wave1_domain: wave1_blood_sugar
+    context_dependencies:
+      supporting_markers: [fasting_glucose, hba1c, insulin, c_peptide]
+      missing_markers: [hba1c, insulin]
+      pattern_dependencies: []
+      lifestyle_context: [dietary_pattern, physical_activity]
+      medication_context: [metformin, glp1_agonists, sglt2_inhibitors, insulin_therapy]
+      supplement_context: []
+      confidence_limiters:
+        - "A single fasting glucose without HbA1c provides only a time-point snapshot"
+        - "Glucose is sensitive to pre-test food, drink, stress and illness"
+    evidence_refs:
+      - "NICE NG28 Type 2 diabetes in adults (2015, updated 2022)"
+      - "NICE NG17 Type 1 diabetes (2015, updated 2022)"
+      - "NHS Inform — Blood Sugar Tests (current)"
+      - "ADA/EASD Consensus Report on management of hyperglycaemia in type 2 diabetes 2021"
+    evidence_strength: moderate
+    interpretive_limitations:
+      - "A single fasting glucose reading is more useful alongside HbA1c; without both, only a single time-point picture is available."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml
+      target_registry_key: glycaemic_insulin_metabolic_v1
+      narrative_section_id: next_steps_narrative
+    prose_content:
+      display_title: "Blood sugar and metabolic context"
+      overview: |
+        Blood glucose regulation sits at the centre of how the body converts food into energy and protects organs from the effects of sustained high or low sugar levels. Glucose is the primary fuel for most cells, and the pancreas produces insulin to move glucose from the bloodstream into tissues. Two markers give different windows into this system: fasting glucose captures a single moment, reflecting what the blood sugar is doing in a steady state; HbA1c reflects the average over approximately 8–12 weeks by measuring how much glucose has attached to haemoglobin in red blood cells. Together they provide a longitudinal and point-in-time view. Insulin itself, where measured, adds context about how hard the pancreas is working to achieve that glucose level — a useful but not routine addition. These markers are all sensitive to recent food and drink, the timing of the blood draw, illness, stress, and — for those taking glucose-lowering medication — to treatment effects. HealthIQ uses the combination of available markers to characterise the glycaemic picture; where markers are absent, interpretation is limited to the data available.
+      clinician: null
+    max_word_count: 220
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [glycaemic_insulin_metabolic_pathway_v1]
+    supersedes_asset_ids: [glycaemic_insulin_metabolic_pathway_v1]
+    notes_for_medical_reviewer: |
+      Confirm no condition named in user. Review HbA1c 8–12 week window (reflects ~3-month RBC lifespan; 8–12 week wording is standard). Verify ADA/EASD citation appropriate for HbA1c time-window claim in UK context (NICE NG28 primary).
+
+  # ─────────────────────────────────────────────────────────────────
+  # CYSTATIN C — BASE + DIRECTIONAL
+  # ─────────────────────────────────────────────────────────────────
+
+  - asset_id: cystatin_c_base_explainer_v1_b
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: cystatin_c
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    context_dependencies:
+      supporting_markers: [creatinine, egfr]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: [creatine]
+      confidence_limiters:
+        - "Single reading does not establish trend; renal markers are more informative in series"
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease (2021)"
+      - "NHS — Kidney function tests (current)"
+      - "Inker LA et al. Estimating GFR using serum cystatin C alone and in combination with serum creatinine. NEJM 2012;367:20–29"
+      - "RCPath guidance on eGFR reporting (current)"
+    evidence_strength: strong
+    interpretive_limitations:
+      - "Cystatin C is still influenced by thyroid status, steroid use and smoking — it is not entirely muscle-mass independent."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: cystatin_c
+      narrative_section_id: null
+    prose_content:
+      title: "Cystatin C"
+      body: |
+        Kidney filtration is something the body does quietly, continuously, and at a rate that standard creatinine measurements can sometimes misrepresent — especially if someone has unusually low or high muscle mass. Cystatin C fills that gap. It is a small protein produced at a stable rate by cells throughout the body, then filtered by the kidneys. Because its production rate does not depend on muscle, it gives a filtration estimate (eGFR) that is less biased by body composition than creatinine alone. When used alongside creatinine-based eGFR, it can either reinforce confidence in the filtration picture or signal that the two estimates need reconciling. Cystatin C is most useful when creatinine-based eGFR returns an unexpected or borderline value — it provides a second line of evidence. Thyroid status, corticosteroid use and smoking can also influence cystatin C levels, so context matters here too.
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [cystatin_c_base_explainer_v1]
+    supersedes_asset_ids: [cystatin_c_base_explainer_v1]
+    notes_for_medical_reviewer: |
+      Confirm "less biased by body composition" wording accurately reflects NICE NG203 and Inker 2012 evidence. Verify thyroid/steroid/smoking effects on cystatin C are clinically accurate. Review that the asset does not imply cystatin C is always required.
+
+  - asset_id: cystatin_c_in_range_context_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: cystatin_c
+    range_state: in_range
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    context_dependencies:
+      supporting_markers: [creatinine, egfr]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: [creatine]
+      confidence_limiters:
+        - "Single in-range reading does not confirm long-term filtration stability without trend data"
+        - "Cystatin C can be influenced by thyroid status and steroid use independently of kidney function"
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease (2021)"
+      - "Inker LA et al. Estimating GFR using serum cystatin C alone and in combination with serum creatinine. NEJM 2012;367:20–29"
+    evidence_strength: strong
+    interpretive_limitations:
+      - "An in-range cystatin C on a single occasion does not establish a stable filtration trend; previous results are needed to assess direction."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: cystatin_c_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A cystatin C result within the laboratory's reference range supports the picture that kidney filtration is not flagging a concern at this time. When combined with an in-range creatinine and eGFR, it reinforces confidence in the renal filtration assessment — two independent estimates pointing in the same direction carry more weight than either alone. Cystatin C is less influenced by muscle mass than creatinine, so an in-range reading is particularly reassuring where body composition might otherwise make creatinine harder to interpret. The single-timepoint nature of this result means it cannot confirm long-term stability; prior readings are the only basis for assessing trend.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm in-range framing does not constitute false reassurance — single reading, not a trend. Verify that "reinforces confidence" is proportionate given that cystatin C has its own confounders (thyroid, steroids).
+
+  - asset_id: cystatin_c_high_context_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: cystatin_c
+    range_state: high
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    context_dependencies:
+      supporting_markers: [creatinine, egfr]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [corticosteroids]
+      supplement_context: []
+      confidence_limiters:
+        - "Cystatin C can be raised by corticosteroid use and hyperthyroidism independently of filtration rate"
+        - "Single elevated reading is less specific than a sustained or rising trend"
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease (2021)"
+      - "Inker LA et al. Estimating GFR using serum cystatin C alone and in combination with serum creatinine. NEJM 2012;367:20–29"
+    evidence_strength: strong
+    interpretive_limitations:
+      - "A raised cystatin C without a concurrent or recent creatinine-based eGFR makes it harder to characterise the degree of filtration change."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: cystatin_c_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A cystatin C above the laboratory's reference range suggests the kidneys may be filtering at a reduced rate. Because cystatin C is less influenced by muscle mass than creatinine, a raised reading carries particular weight when creatinine appears borderline or within range — the two estimates disagreeing is itself a signal worth taking seriously. The combination of a raised cystatin C and a reduced creatinine-based eGFR gives stronger grounds for follow-up than either marker alone. Corticosteroid use and thyroid overactivity can raise cystatin C independently of kidney filtration, so these factors are relevant context when interpreting a raised result.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Review "worth taking seriously" — ensure this does not imply diagnosis or alarm beyond what evidence supports. Confirm corticosteroid and hyperthyroid effects on cystatin C are clinically accurate. Check that no fixed threshold or diagnostic category is implied.
+
+  - asset_id: cystatin_c_low_context_v1
+    asset_type: marker_low_context_explainer
+    audience: retail_consumer
+    scope: cystatin_c
+    range_state: low
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: low
+    context_dependencies:
+      supporting_markers: [creatinine, egfr]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Low cystatin C does not carry specific clinical interpretation in this context"
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease (2021)"
+      - "RCPath guidance on eGFR reporting (current)"
+    evidence_strength: moderate
+    interpretive_limitations:
+      - "A low cystatin C does not confer additional protective significance beyond what an in-range creatinine and eGFR already indicate."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: cystatin_c_low
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A cystatin C result below the laboratory's reference range is not a clinically significant finding. Low cystatin C does not indicate that filtration is unusually strong, nor does it carry a specific protective interpretation. It is generally unremarkable and does not change the renal assessment derived from creatinine and eGFR. The focus in this context remains on the in-range and above-range findings in the broader kidney panel.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that low cystatin C has no significant clinical interpretation in routine practice. Verify that characterising low as "unremarkable" is consistent with RCPath and NICE NG203 guidance.
+
+  - asset_id: cystatin_c_borderline_context_v1
+    asset_type: marker_borderline_context_explainer
+    audience: retail_consumer
+    scope: cystatin_c
+    range_state: borderline
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: borderline
+    context_dependencies:
+      supporting_markers: [creatinine, egfr]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [corticosteroids]
+      supplement_context: []
+      confidence_limiters:
+        - "Borderline cystatin C combined with borderline creatinine-based eGFR increases the signal strength"
+        - "Cystatin C confounders (thyroid, steroids) are most relevant when the result is at the margin"
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease (2021)"
+      - "Inker LA et al. Estimating GFR using serum cystatin C alone and in combination with serum creatinine. NEJM 2012;367:20–29"
+    evidence_strength: moderate
+    interpretive_limitations:
+      - "Borderline cystatin C is sensitive to the laboratory's specific reference interval; the margin of uncertainty is wider here than in clearly elevated readings."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: cystatin_c_borderline
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A cystatin C in the upper part of the reference range — approaching but not exceeding the limit — warrants attention when considered alongside the rest of the renal panel. On its own, a borderline cystatin C is not a strong signal. However, when a borderline creatinine-based eGFR is also present, the two markers together increase the case for monitoring rather than simply observing. Cystatin C confounders such as corticosteroid use or thyroid status are particularly relevant when the result is at the margin, as they can push a result into borderline territory without a true change in filtration rate.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm clinical validity of "borderline" cystatin C interpretation — many labs do not use a borderline category for this marker; the asset should survive in contexts where borderline is defined by HealthIQ's own staging. Verify steroid and thyroid confounder claim is accurate.
+
+  # ─────────────────────────────────────────────────────────────────
+  # UACR — BASE + DIRECTIONAL
+  # ─────────────────────────────────────────────────────────────────
+
+  - asset_id: uacr_base_explainer_v1_b
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: uacr
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    context_dependencies:
+      supporting_markers: [egfr, creatinine, cystatin_c, blood_pressure, hba1c]
+      missing_markers: [egfr]
+      pattern_dependencies: []
+      lifestyle_context: [physical_exertion, hydration]
+      medication_context: [raas_inhibitors]
+      supplement_context: []
+      confidence_limiters:
+        - "UACR is highly sensitive to transient factors; single-sample results are less reliable than repeat measurements"
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease — UACR staging (2021)"
+      - "NICE NG28 Type 2 diabetes — renal monitoring (2015, updated 2022)"
+      - "NHS — Kidney function tests (current)"
+    evidence_strength: strong
+    interpretive_limitations:
+      - "A single UACR sample is sensitive to timing, exertion, hydration, and urinary infection; repeat testing under standardised conditions is needed to confirm any finding."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: uacr
+      narrative_section_id: null
+    prose_content:
+      title: "Urine albumin-to-creatinine ratio (UACR)"
+      body: |
+        The kidneys act as a precision filter — keeping proteins where they belong (in the blood) while clearing waste products into urine. UACR measures how much albumin, the blood's most abundant protein, is appearing in the urine relative to creatinine. Even small amounts of albumin in the urine can indicate that the filtration membrane is under strain. Because albumin should largely stay in the blood, finding it in the urine in persistently raised amounts is a sensitive early signal of kidney stress — and a useful marker in anyone with high blood pressure or diabetes, where kidney strain is a recognised risk. The ratio form (albumin relative to creatinine) corrects for urine concentration, making results more comparable across different hydration states. However, single-sample UACR is sensitive to exertion, transient illness, urinary infection, and the time of day — which is why repeat confirmation is standard practice before acting on the finding.
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [uacr_base_explainer_v1]
+    supersedes_asset_ids: [uacr_base_explainer_v1]
+    notes_for_medical_reviewer: |
+      Confirm NICE NG203 and NG28 alignment for UACR staging and clinical context. Review that "kidney stress" wording does not imply CKD diagnosis. Verify creatinine-correction explanation is accurate. Confirm repeat testing note is consistent with NICE guidance.
+
+  - asset_id: uacr_in_range_context_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: uacr
+    range_state: in_range
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    context_dependencies:
+      supporting_markers: [egfr, creatinine, blood_pressure, hba1c]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [physical_exertion, hydration]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Single in-range UACR may be transiently normalised by dehydration, sample timing, or suppressed by low-protein intake"
+        - "In-range UACR does not exclude early kidney stress if sampling conditions were not standardised"
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease — UACR staging (2021)"
+      - "NICE NG28 Type 2 diabetes — renal monitoring (2015, updated 2022)"
+    evidence_strength: strong
+    interpretive_limitations:
+      - "An in-range UACR is reassuring when confirmed on repeat testing; a single in-range result in someone with high blood pressure or diabetes is less conclusive."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: uacr_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A UACR within the laboratory's reference range indicates that albumin is not appearing in the urine at raised concentrations on this sample. This is the expected finding in someone whose kidney filtering membrane is functioning without obvious strain. Where the overall renal panel — eGFR, creatinine — is also within range, an in-range UACR adds to a broadly reassuring filtration picture. The main limitation is that UACR on a single sample can be transiently low due to timing, hydration, or low physical exertion before sampling; transient illness or infection, conversely, can mask what might otherwise be an elevated result. In higher-risk contexts (diabetes, high blood pressure), periodic repeat testing matters even when a result is in range.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Review "broadly reassuring" wording — ensure this does not constitute false reassurance in high-risk populations. Verify that the caveat about repeat testing in diabetes/hypertension is consistent with NICE NG28 and NG203 surveillance recommendations.
+
+  - asset_id: uacr_high_context_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: uacr
+    range_state: high
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    context_dependencies:
+      supporting_markers: [egfr, creatinine, blood_pressure, hba1c]
+      missing_markers: [hba1c, blood_pressure]
+      pattern_dependencies: []
+      lifestyle_context: [physical_exertion, hydration]
+      medication_context: [raas_inhibitors]
+      supplement_context: []
+      confidence_limiters:
+        - "A raised UACR on a single sample may reflect transient factors rather than persistent kidney stress"
+        - "Confirmation on repeat testing under standardised conditions is required before clinical significance can be established"
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease — UACR staging (2021)"
+      - "NICE NG28 Type 2 diabetes — renal monitoring (2015, updated 2022)"
+    evidence_strength: strong
+    interpretive_limitations:
+      - "A single raised UACR should not be interpreted as confirming kidney damage without repeat testing; transient causes are common."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: uacr_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A UACR above the laboratory's reference range indicates that albumin is passing into the urine at a rate higher than expected. The kidney filtering membrane is allowing through a protein it would normally retain. Common contributing factors include sustained high blood pressure, elevated blood glucose, and kidney filtering membrane stress — but transient causes such as intense physical exertion, urinary infection, or illness in the days before sampling can also produce a temporarily raised result. The finding is most clinically meaningful as part of a pattern across at least two samples taken under standardised conditions. Where the eGFR is also reduced, the renal picture is more complete; where eGFR is within range, a raised UACR may represent an earlier signal.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm NICE NG203 staging thresholds not referenced directly in prose (no fixed numbers). Verify that "filtering membrane" language is accessible and accurate. Review that "common contributing factors" list does not imply diagnosis. Confirm repeat-testing requirement aligns with NICE guidance.
+
+  - asset_id: uacr_low_context_v1
+    asset_type: marker_low_context_explainer
+    audience: retail_consumer
+    scope: uacr
+    range_state: low
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: low
+    context_dependencies:
+      supporting_markers: []
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Low UACR has no specific clinical interpretation beyond confirming absence of detectable albuminuria"
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease — UACR staging (2021)"
+    evidence_strength: moderate
+    interpretive_limitations:
+      - "A low UACR simply means albumin is below the assay detection threshold; it carries no additional protective interpretation."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: uacr_low
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A UACR below the laboratory reference range simply means that albumin is not detectable in the urine sample above the assay threshold. This is the expected finding in a normally functioning kidney panel and carries no additional clinical significance beyond confirming the absence of detectable albuminuria. It does not indicate that kidney filtration is unusually effective or protected. The renal assessment in this state rests on the eGFR and creatinine results rather than the UACR.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that low UACR has no specific clinical significance beyond absence of detectable albuminuria. Verify characterisation is consistent with NICE NG203 UACR staging framework.
+
+  - asset_id: uacr_borderline_context_v1
+    asset_type: marker_borderline_context_explainer
+    audience: retail_consumer
+    scope: uacr
+    range_state: borderline
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: borderline
+    context_dependencies:
+      supporting_markers: [egfr, creatinine, blood_pressure, hba1c]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [physical_exertion, hydration, urinary_infection_recent]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Borderline UACR is particularly sensitive to sampling conditions and transient factors"
+        - "Cannot be interpreted as either normal or abnormal without repeat confirmation"
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease — UACR staging (2021)"
+      - "NICE NG28 Type 2 diabetes — renal monitoring (2015, updated 2022)"
+    evidence_strength: moderate
+    interpretive_limitations:
+      - "A borderline UACR depends heavily on the specific laboratory reference interval and should not be used as the sole basis for any clinical conclusion."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: uacr_borderline
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A UACR at the margin of the reference range — not clearly elevated but not confidently in range — is one of the less conclusive positions for this marker. UACR is more sensitive to sampling conditions than most blood markers; physical exertion before the sample, timing within the day, urinary infection, and hydration can all push a result into this borderline territory. A borderline single result should not be treated as either normal or abnormal. Repeat testing under standardised conditions — first morning urine where possible, and away from recent intense exercise or illness — is the appropriate response. Where eGFR and creatinine are also at the margin, the combined picture is worth monitoring more closely.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm "first morning urine" recommendation is consistent with NICE NG203 UACR sampling guidance. Review that the borderline framing does not imply clinical action beyond monitoring. Verify that risk-context (diabetes, hypertension) is appropriate to flag without over-alarming.
+
+  # ─────────────────────────────────────────────────────────────────
+  # WHITE BLOOD CELLS — BASE + DIRECTIONAL (no borderline)
+  # ─────────────────────────────────────────────────────────────────
+
+  - asset_id: white_blood_cells_base_explainer_v1_b
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: white_blood_cells
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    context_dependencies:
+      supporting_markers: [neutrophils, lymphocytes, monocytes, eosinophils, basophils, crp, platelets]
+      missing_markers: [wbc_differential]
+      pattern_dependencies: []
+      lifestyle_context: [smoking, physical_stress]
+      medication_context: [immunosuppressants, corticosteroids, chemotherapy]
+      supplement_context: []
+      confidence_limiters:
+        - "Total WBC count without a differential subtype breakdown limits interpretation significantly"
+    evidence_refs:
+      - "RCPath — Full Blood Count interpretation guidance (current)"
+      - "NHS Inform — Full Blood Count (current)"
+      - "BSH guidelines on investigation and management of leucocyte disorders"
+    evidence_strength: strong
+    interpretive_limitations:
+      - "Total WBC count alone is rarely conclusive; the subtype differential is needed to interpret the clinical direction of any abnormality."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: white_blood_cells
+      narrative_section_id: null
+    prose_content:
+      title: "White blood cells (WBC)"
+      body: |
+        White blood cells are the body's immune patrol — a diverse army of cells, each with a specific role in fighting infection, managing inflammation, and maintaining immune surveillance. They are produced in the bone marrow and continuously circulate in the blood at levels that reflect the current immune state. A full blood count measures the total WBC and, in a differential, the five main subtypes: neutrophils (rapid responders to bacterial infection and tissue damage), lymphocytes (involved in viral defence and immune memory), monocytes, eosinophils (relevant in allergy and parasitic responses), and basophils. Total WBC alone tells you the overall level of immune activity; the differential tells you why. An elevated total count may reflect infection, inflammation, physiological stress, certain medications, or haematological causes. A low total count can reflect viral suppression, specific medications, or bone marrow effects. The two directions have entirely different interpretive pathways.
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [white_blood_cells_base_explainer_v1]
+    supersedes_asset_ids: [white_blood_cells_base_explainer_v1]
+    notes_for_medical_reviewer: |
+      Confirm WBC subtype descriptions (neutrophils, lymphocytes, monocytes, eosinophils, basophils) are accurate per RCPath FBC guidance. Review that no named haematological condition is implied. Verify word count within limit.
+
+  - asset_id: wbc_in_range_context_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: white_blood_cells
+    range_state: in_range
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    context_dependencies:
+      supporting_markers: [neutrophils, lymphocytes, crp, platelets]
+      missing_markers: [wbc_differential]
+      pattern_dependencies: []
+      lifestyle_context: [smoking]
+      medication_context: [corticosteroids, immunosuppressants]
+      supplement_context: []
+      confidence_limiters:
+        - "An in-range total WBC does not exclude a differential subtype imbalance if the full differential is not available"
+        - "Certain medications and smoking can shift individual subtypes while keeping the total count within range"
+    evidence_refs:
+      - "RCPath — Full Blood Count interpretation guidance (current)"
+      - "BSH guidelines on investigation and management of leucocyte disorders"
+    evidence_strength: strong
+    interpretive_limitations:
+      - "An in-range total WBC without a differential subtype breakdown cannot confirm that all immune cell subtypes are balanced."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: wbc_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A total white blood cell count within the laboratory's reference range indicates that the overall level of circulating immune cells is not elevated or suppressed to a degree that would flag an obvious immune signal at this time. This is reassuring as a headline finding. However, the total count can mask shifts within the differential — for example, one subtype may be high while another is low, producing an apparently normal total. The full differential (neutrophils, lymphocytes, and other subtypes) provides a more complete picture of the immune state than the total alone. CRP and platelet count provide additional inflammatory context where available.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that "can mask shifts within the differential" is clinically accurate. Review that the asset does not over-imply that an in-range result requires further investigation. Verify CRP mention is appropriate as a contextual marker.
+
+  - asset_id: wbc_high_context_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: white_blood_cells
+    range_state: high
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    context_dependencies:
+      supporting_markers: [neutrophils, lymphocytes, crp, temperature_if_known, platelets]
+      missing_markers: [wbc_differential]
+      pattern_dependencies: []
+      lifestyle_context: [smoking, physical_stress]
+      medication_context: [corticosteroids, lithium, colony_stimulating_factors]
+      supplement_context: []
+      confidence_limiters:
+        - "A raised total WBC without a differential cannot identify which immune pathway is active"
+        - "Physiological stress at the time of sampling (vigorous exercise, acute illness) can transiently raise WBC"
+    evidence_refs:
+      - "RCPath — Full Blood Count interpretation guidance (current)"
+      - "BSH guidelines on investigation and management of leucocyte disorders"
+    evidence_strength: strong
+    interpretive_limitations:
+      - "A raised total WBC without a differential subtype count cannot determine whether the elevation reflects infection, inflammation, medication effect, or haematological cause."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: wbc_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A total white blood cell count above the laboratory's reference range indicates that the immune system is more active than baseline. The most common short-term causes are infection, inflammation, physiological or psychological stress, and certain medications — including corticosteroids, which are a well-recognised cause of a raised neutrophil count. The critical question is which subtype is driving the elevation: raised neutrophils point in a different direction from raised lymphocytes or eosinophils. Without the differential breakdown, the total count tells you there is an immune signal but not what it means. A raised CRP alongside a raised WBC strengthens the picture of an active inflammatory or infective state.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm corticosteroid-induced neutrophilia is well established and accurately described. Verify that no specific named infection or condition is implied. Review "immune signal" phrasing — ensure it does not alarm without clinical context.
+
+  - asset_id: wbc_low_context_v1
+    asset_type: marker_low_context_explainer
+    audience: retail_consumer
+    scope: white_blood_cells
+    range_state: low
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: low
+    context_dependencies:
+      supporting_markers: [neutrophils, lymphocytes, platelets, haemoglobin]
+      missing_markers: [wbc_differential]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [immunosuppressants, chemotherapy, antiviral_medications, antithyroid_drugs]
+      supplement_context: []
+      confidence_limiters:
+        - "Low total WBC without a differential cannot identify which subtype is affected or the clinical direction"
+        - "Some medications are recognised causes of low WBC and are critical context"
+    evidence_refs:
+      - "RCPath — Full Blood Count interpretation guidance (current)"
+      - "BSH guidelines on investigation and management of leucocyte disorders"
+    evidence_strength: strong
+    interpretive_limitations:
+      - "A low total WBC without a differential subtype count limits interpretation to confirming suppression is present — not its cause or subtype pattern."
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: wbc_low
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A total white blood cell count below the laboratory's reference range indicates that circulating immune cells are reduced. The clinical significance depends almost entirely on which subtype is low and the degree of reduction. A low neutrophil count carries different implications from a low lymphocyte count. Common causes include certain viral infections (which can temporarily suppress WBC), specific medications such as immunosuppressants or antithyroid drugs, and effects on bone marrow function. Medication history is particularly important context here. Where the count is only mildly below range and other full blood count markers are in range, the finding is less specific; a more marked or combined reduction across cell lines warrants closer attention.
+      clinician: null
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm medication causes of low WBC (immunosuppressants, antithyroid drugs) are accurately characterised. Review "effects on bone marrow function" wording — ensure it does not imply a bone marrow condition. Verify that "warrants closer attention" does not constitute clinical direction beyond the educational scope.
+  # ── SECTION B: platelets, creatine_kinase, calcium ──────────────────────────
+
+  # PLATELETS BASE (REWORKED)
+  - asset_id: platelets_base_explainer_v1_b
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: platelets
+    range_state: not_applicable
+    context_dependencies:
+      supporting_markers: [haemoglobin, white_blood_cells, mean_platelet_volume]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [anticoagulants, chemotherapy, nsaids]
+      supplement_context: []
+      confidence_limiters:
+        - "Single timepoint; platelet counts fluctuate with acute illness, medication changes, and sample handling."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    evidence_refs:
+      - "RCPath — Full Blood Count interpretation guidance (current)"
+      - "BSH guidelines on investigation and management of thrombocytopaenia and reactive thrombocytosis (current)"
+      - "NHS Inform — Full Blood Count (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: platelets
+      narrative_section_id: null
+    prose_content:
+      title: "Platelets"
+      body: |
+        Platelets are the body's first-responder clot-forming cells. When a blood vessel wall is breached, they rush to the site, clump together, and form the initial seal that stops bleeding. They are produced in the bone marrow and cleared continuously, so the count in circulation reflects a live balance between production and removal. Both too few and too many platelets can matter clinically — a very low count may affect clotting capacity, while a persistently high count can occasionally be significant in the right context. The platelet count is measured as part of a full blood count (FBC), and its significance depends heavily on the full FBC picture, medication history, recent illness, and any clinical symptoms. A platelet count read in isolation, without that surrounding context, gives only a partial picture.
+    interpretive_limitations:
+      - "Platelet count must be interpreted alongside the full FBC, medication history, and clinical context — a single number in isolation has limited standalone meaning."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [platelets_base_explainer_v1]
+    supersedes_asset_ids: [platelets_base_explainer_v1]
+    notes_for_medical_reviewer: |
+      Confirm that the clotting mechanism description is accurate. Review that neither thrombocytopenia nor thrombocytosis is named as a condition the user has. Verify "first-responder" analogy does not overstate platelet function.
+
+  # PLATELETS IN RANGE
+  - asset_id: platelets_in_range_context_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: platelets
+    range_state: in_range
+    context_dependencies:
+      supporting_markers: [haemoglobin, white_blood_cells]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [anticoagulants]
+      supplement_context: []
+      confidence_limiters:
+        - "Single timepoint; platelet counts can shift with acute illness or medication changes."
+        - "In-range count does not guarantee normal platelet function — function testing is separate from count."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    evidence_refs:
+      - "RCPath — Full Blood Count interpretation guidance (current)"
+      - "BSH guidelines on thrombocytopaenia and reactive thrombocytosis (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: platelets_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A platelet count within the laboratory's reference range indicates that the bone marrow is producing and releasing platelets at a rate that keeps circulating numbers in the expected zone. In combination with normal haemoglobin and white cell count, an in-range platelet count contributes to a reassuring full blood count picture. Platelet counts can shift transiently with infection, inflammation, or certain medications, so a single in-range reading is most useful as part of a broader pattern. It does not assess platelet function, which is a separate question from count alone.
+      clinician: null
+    interpretive_limitations:
+      - "In-range count does not assess platelet function; function and count are separate parameters."
+      - "Single timepoint — acute illness or medication changes can shift platelet count without being reflected here."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm no false reassurance where platelet function disorder is clinically possible."
+
+  # PLATELETS HIGH
+  - asset_id: platelets_high_context_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: platelets
+    range_state: high
+    context_dependencies:
+      supporting_markers: [crp, ferritin, white_blood_cells, haemoglobin]
+      missing_markers: [iron_stores]
+      pattern_dependencies: []
+      lifestyle_context: [recent_illness, recent_surgery]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Reactive thrombocytosis (due to iron deficiency, inflammation, or infection) is far more common than primary causes."
+        - "Mechanism and significance cannot be determined without supporting markers and clinical history."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    evidence_refs:
+      - "BSH guidelines on investigation and management of thrombocytopaenia and reactive thrombocytosis (current)"
+      - "RCPath — Full Blood Count interpretation guidance (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: platelets_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A raised platelet count (thrombocytosis) can have several causes. The most common by far is a reactive response — the bone marrow temporarily produces more platelets in response to iron deficiency, inflammation, infection, or the physiological stress of surgery or illness. Less commonly, a raised count may reflect a primary haematological process. Reactive thrombocytosis tends to resolve when the underlying cause does. The significance of a raised platelet count depends heavily on accompanying inflammatory markers, iron stores, white cell count, and the broader clinical picture. Without these, a raised count alone cannot be characterised further.
+      clinician: null
+    interpretive_limitations:
+      - "Cannot distinguish reactive from primary thrombocytosis without inflammatory markers, iron stores, and clinical history."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm reactive causes listed are accurate and complete per BSH guidance. Ensure no named haematological condition is implied."
+
+  # PLATELETS LOW
+  - asset_id: platelets_low_context_v1
+    asset_type: marker_low_context_explainer
+    audience: retail_consumer
+    scope: platelets
+    range_state: low
+    context_dependencies:
+      supporting_markers: [haemoglobin, white_blood_cells, mean_platelet_volume]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [anticoagulants, chemotherapy, nsaids, heparin]
+      supplement_context: []
+      confidence_limiters:
+        - "EDTA-related platelet clumping (pseudothrombocytopenia) can cause a falsely low count — a blood film or repeat in citrate tube may be needed to exclude this."
+        - "Clinical significance depends on degree of reduction and whether symptoms are present."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: low
+    evidence_refs:
+      - "BSH guidelines on investigation and management of thrombocytopaenia and reactive thrombocytosis (current)"
+      - "RCPath — Full Blood Count interpretation guidance (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: platelets_low
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A low platelet count (thrombocytopenia) can arise from several mechanisms: reduced production from the bone marrow, increased platelet destruction or consumption in the circulation, or a laboratory artefact where platelets clump together during sample processing. This clumping effect — caused by the anticoagulant used in standard blood tubes — can make the count appear lower than it truly is and requires a blood film or repeat sample to exclude. Medication effects, viral illness, and nutritional factors can also lower platelet count. The significance of a low result depends on the degree of reduction, the full blood count picture, medication history, and any bruising or bleeding symptoms.
+      clinician: null
+    interpretive_limitations:
+      - "EDTA-related platelet clumping can cause a falsely low count; this is common and must be considered before clinical significance is attributed."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm EDTA clumping description is accurate. Ensure no bleeding disorder is implied. Verify 'thrombocytopenia' terminology is appropriate for retail audience."
+
+  # PLATELETS BORDERLINE
+  - asset_id: platelets_borderline_context_v1
+    asset_type: marker_borderline_context_explainer
+    audience: retail_consumer
+    scope: platelets
+    range_state: borderline
+    context_dependencies:
+      supporting_markers: [haemoglobin, white_blood_cells]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "A single borderline-low reading in isolation has limited interpretive weight without a prior result for trend comparison."
+        - "Borderline band is lab-specific; meaning is context-dependent."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: borderline
+    evidence_refs:
+      - "BSH guidelines on thrombocytopaenia and reactive thrombocytosis (current)"
+      - "RCPath — Full Blood Count interpretation guidance (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: platelets_borderline
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A platelet count at the lower edge of the reference range warrants more attention if it is accompanied by other full blood count abnormalities, or if repeat testing shows a declining trend. A single borderline-low reading with an otherwise normal FBC and no symptoms carries less interpretive weight on its own. Borderline-low counts can reflect transient causes — recent viral illness, mild nutritional factors, or normal biological variation — rather than a sustained reduction. Trend over time is more informative than any single borderline result.
+      clinician: null
+    interpretive_limitations:
+      - "Borderline significance cannot be established from a single result; trend comparison with a prior count is the most informative next step."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Borderline-low only; borderline-high not authored as standalone asset — high context explainer covers the reactive context adequately."
+
+  # CREATINE KINASE BASE (REWORKED)
+  - asset_id: creatine_kinase_base_explainer_v1_b
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: creatine_kinase
+    range_state: not_applicable
+    context_dependencies:
+      supporting_markers: [alt, ast, myoglobin]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [vigorous_exercise, eccentric_loading]
+      medication_context: [statins]
+      supplement_context: []
+      confidence_limiters:
+        - "Degree of elevation and timing relative to exercise or medication context are essential to interpretation."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    evidence_refs:
+      - "NICE guidance on statin-associated muscle symptoms (2014, updated)"
+      - "MHRA statin safety review — Drug Safety Update 2014"
+      - "RCPath clinical biochemistry reference guidance (current)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: creatine_kinase
+      narrative_section_id: null
+    prose_content:
+      title: "Creatine kinase (CK)"
+      body: |
+        Muscle cells run a constant energy-recycling process, and creatine kinase (CK) is the enzyme at the centre of it. When muscle fibres are put under stress — from hard exercise, an injury, or certain medications — CK leaks from the muscle cells into the bloodstream, where it can be measured. A temporary spike after vigorous exercise, particularly resistance or unaccustomed activity, is a normal physiological response and typically resolves within a day or two. CK is also monitored in people taking statins, where muscle effects are a recognised but relatively uncommon side effect. CK is found in both skeletal and cardiac muscle; the isoform pattern matters clinically, though routine panels usually measure total CK. Interpretation depends on the degree of elevation, timing relative to physical activity, current medications — particularly statins — and whether muscle symptoms are present. Without this context, a single CK reading has limited standalone meaning.
+    interpretive_limitations:
+      - "CK interpretation requires knowledge of recent exercise, medication context (especially statins), and degree of elevation — a number without context is hard to interpret."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [creatine_kinase_base_explainer_v1]
+    supersedes_asset_ids: [creatine_kinase_base_explainer_v1]
+    notes_for_medical_reviewer: |
+      Confirm cardiac CK mention does not cause alarm — isoforms not routinely measured; clarify if needed. Verify statin muscle effect frequency described as "relatively uncommon" aligns with NICE/MHRA guidance. Confirm "eccentric loading" or "resistance activity" wording is retail-accessible.
+
+  # CK IN RANGE
+  - asset_id: creatine_kinase_in_range_context_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: creatine_kinase
+    range_state: in_range
+    context_dependencies:
+      supporting_markers: [alt, ast]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [vigorous_exercise]
+      medication_context: [statins]
+      supplement_context: []
+      confidence_limiters:
+        - "CK is not a complete muscle safety screen; in-range CK does not exclude all muscle pathology."
+        - "Timing relative to exercise affects the reading — a post-exercise sample may underrepresent true resting CK."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    evidence_refs:
+      - "NICE guidance on statin-associated muscle symptoms (2014, updated)"
+      - "MHRA statin safety review — Drug Safety Update 2014"
+      - "RCPath clinical biochemistry reference guidance (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: creatine_kinase_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A CK within the laboratory's reference range indicates that muscle fibre stress or damage is not producing detectable enzyme leakage at elevated levels at this time. For people taking statins, an in-range CK alongside the absence of muscle symptoms is a useful piece of reassurance, as muscle effects from statins are typically reflected in raised CK alongside symptoms. CK naturally varies with physical activity level — samples taken shortly after intense exercise may not reflect a true resting baseline. In-range CK does not assess muscle function or exclude all muscle-related processes; it reflects enzyme leakage into the bloodstream only.
+      clinician: null
+    interpretive_limitations:
+      - "In-range CK does not constitute a complete muscle safety assessment; timing relative to exercise is relevant."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm statin/in-range CK reassurance wording is appropriately qualified — MHRA guidance is risk-stratified, not binary."
+
+  # CK HIGH
+  - asset_id: creatine_kinase_high_context_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: creatine_kinase
+    range_state: high
+    context_dependencies:
+      supporting_markers: [alt, ast, myoglobin]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [vigorous_exercise, recent_heavy_activity]
+      medication_context: [statins]
+      supplement_context: []
+      confidence_limiters:
+        - "Degree of elevation matters enormously — mild post-exercise rise differs fundamentally from markedly elevated CK with symptoms."
+        - "Without knowing recency of exercise, medication use, and whether symptoms are present, significance cannot be determined."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    evidence_refs:
+      - "NICE guidance on statin-associated muscle symptoms (2014, updated)"
+      - "MHRA statin safety review — Drug Safety Update 2014"
+      - "RCPath clinical biochemistry reference guidance (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: creatine_kinase_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A raised CK indicates that muscle fibres are releasing this enzyme into the bloodstream at a higher than usual rate. The most common and benign cause is vigorous or unaccustomed exercise — particularly resistance training — in the 24 to 72 hours before the sample was taken. This kind of rise is transient and expected. A persistently raised CK, or a markedly elevated result without an obvious exercise explanation, warrants more attention — particularly in someone taking a statin, where muscle effects are a recognised consideration. The significance of a raised CK depends on the degree of elevation, the timing relative to activity, current medications, and whether any muscle pain, weakness, or dark urine is present.
+      clinician: null
+    interpretive_limitations:
+      - "Degree of elevation and exercise timing are critical context — a mildly raised post-exercise CK and a markedly raised resting CK are different findings requiring different interpretation."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm 'dark urine' mention (rhabdomyolysis signal) is appropriate at retail level — this is a safety-relevant signal, not alarmist. Verify MHRA statin/CK wording is consistent with current monitoring advice. Note that this asset does not recommend CK monitoring; it contextualises an existing result.
+
+  # CK BORDERLINE
+  - asset_id: creatine_kinase_borderline_context_v1
+    asset_type: marker_borderline_context_explainer
+    audience: retail_consumer
+    scope: creatine_kinase
+    range_state: borderline
+    context_dependencies:
+      supporting_markers: [alt, ast]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [vigorous_exercise]
+      medication_context: [statins]
+      supplement_context: []
+      confidence_limiters:
+        - "Borderline CK is common after moderate exercise; without activity context the reading is hard to interpret."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: borderline
+    evidence_refs:
+      - "NICE guidance on statin-associated muscle symptoms (2014, updated)"
+      - "RCPath clinical biochemistry reference guidance (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: creatine_kinase_borderline
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A CK at the upper edge of the laboratory's reference range is common after moderate or recent exercise and does not indicate muscle damage in that context. A borderline reading without an obvious exercise explanation — particularly in someone on a statin or with any muscle symptoms — is worth monitoring on repeat, especially if other muscle-related or metabolic markers are also borderline. In most cases, a single borderline CK reading with no symptoms and a plausible activity explanation does not require action.
+      clinician: null
+    interpretive_limitations:
+      - "Exercise timing is the most important context for borderline CK; without it, the reading cannot be characterised."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm borderline CK wording does not create unnecessary concern. Verify statin context mention is accurate without overweighting this scenario."
+
+  # Note: CK LOW not authored. Low CK has no established clinical significance at retail level.
+  # See rework_report for rationale.
+
+  # CALCIUM BASE (REWORKED)
+  - asset_id: calcium_base_explainer_v1_b
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: calcium
+    range_state: not_applicable
+    context_dependencies:
+      supporting_markers: [albumin, vitamin_d, pth, egfr]
+      missing_markers: [pth, vitamin_d]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [thiazide_diuretics, lithium, calcium_supplements, bisphosphonates]
+      supplement_context: [calcium_supplements, vitamin_d_supplements]
+      confidence_limiters:
+        - "Total calcium is affected by albumin concentration; corrected calcium or ionised calcium is often more interpretively useful."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    evidence_refs:
+      - "NICE CKS Hypercalcaemia (current)"
+      - "NICE CKS Hypocalcaemia (current)"
+      - "NHS — Blood calcium test (current)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+      - "RCPath clinical biochemistry guidance (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: calcium
+      narrative_section_id: null
+    prose_content:
+      title: "Calcium"
+      body: |
+        Calcium does far more than build bones — it triggers every heartbeat, drives muscle contraction, enables nerve signalling, and plays a role in blood clotting. It is one of the body's most tightly regulated minerals, maintained within a narrow range by parathyroid hormone (PTH) and vitamin D working in concert. Standard blood tests measure total calcium, which includes a fraction bound to albumin and a smaller biologically active ionised fraction. Because albumin affects the total reading, many laboratories report a corrected calcium figure that adjusts for albumin concentration — this is often more meaningful than total calcium alone. Calcium is most interpretable alongside albumin, vitamin D, PTH, and renal function. Without these, a total calcium reading can be misleading.
+    interpretive_limitations:
+      - "Total calcium must be considered alongside albumin concentration; a corrected calcium figure is needed before drawing conclusions from a total calcium reading."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [calcium_base_explainer_v1]
+    supersedes_asset_ids: [calcium_base_explainer_v1]
+    notes_for_medical_reviewer: |
+      Confirm biological roles listed are accurate (heartbeat/muscle/nerve/clotting). Verify corrected calcium description matches UK lab practice. Ensure no condition (hyperparathyroidism, hypercalcaemia) is named as a diagnosis.
+
+  # CALCIUM IN RANGE
+  - asset_id: calcium_in_range_context_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: calcium
+    range_state: in_range
+    context_dependencies:
+      supporting_markers: [albumin, vitamin_d, pth, egfr]
+      missing_markers: [pth, vitamin_d]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: [calcium_supplements, vitamin_d_supplements]
+      confidence_limiters:
+        - "In-range total calcium may mask a low ionised (active) calcium if albumin is also low."
+        - "PTH and vitamin D not always included on same panel; their absence limits the completeness of calcium interpretation."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    evidence_refs:
+      - "NICE CKS Hypercalcaemia (current)"
+      - "NICE CKS Hypocalcaemia (current)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: calcium_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A calcium result within the laboratory's reference range indicates that the tightly regulated calcium balance system — driven by PTH and vitamin D — is keeping circulating calcium within expected limits. Where albumin is also within range, the corrected calcium and total calcium tell a similar story, which strengthens the interpretation. Calcium can appear in range even when PTH or vitamin D are abnormal, as the regulatory system may be compensating. The picture is more complete when calcium is viewed alongside albumin, vitamin D, and renal function on the same panel.
+      clinician: null
+    interpretive_limitations:
+      - "In-range total calcium does not confirm normal calcium regulation if PTH and vitamin D are not also available — the body may be compensating."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm PTH compensation pathway description is accurate. Ensure no false reassurance where hyperparathyroidism is compensating to maintain normocalcaemia."
+
+  # CALCIUM HIGH
+  - asset_id: calcium_high_context_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: calcium
+    range_state: high
+    context_dependencies:
+      supporting_markers: [albumin, pth, vitamin_d, egfr]
+      missing_markers: [pth, vitamin_d]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [thiazide_diuretics, lithium, calcium_supplements]
+      supplement_context: [vitamin_d_supplements, calcium_supplements]
+      confidence_limiters:
+        - "Mechanism of raised calcium (PTH-driven, vitamin D excess, medication effect, or other) cannot be determined without PTH and vitamin D results."
+        - "Must account for albumin — a high total calcium with low albumin may reflect a lower corrected calcium."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    evidence_refs:
+      - "NICE CKS Hypercalcaemia (current)"
+      - "NICE CG161 Hyperparathyroidism (current, if applicable)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: calcium_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A raised calcium result indicates that more calcium is circulating than the laboratory's reference range expects. The regulatory system that keeps calcium in balance — primarily parathyroid hormone (PTH) and vitamin D — may be producing more calcium release from bone or intestinal absorption than is being cleared. Common reasons for raised calcium include parathyroid-related changes, excess vitamin D intake, certain medications including some diuretics, or less commonly other causes. The albumin level matters here: where albumin is also raised, a corrected calcium figure helps determine whether the elevation is real. Identifying the mechanism requires PTH and vitamin D to be available alongside the calcium result.
+      clinician: null
+    interpretive_limitations:
+      - "The cause of raised calcium cannot be established without PTH and vitamin D; total calcium alone does not reveal the mechanism."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm NICE CKS Hypercalcaemia causes listed are accurate and appropriately non-diagnostic. Review that malignancy is not named as a cause (appropriate omission at retail level). Verify albumin/corrected calcium explanation is accurate.
+
+  # CALCIUM LOW
+  - asset_id: calcium_low_context_v1
+    asset_type: marker_low_context_explainer
+    audience: retail_consumer
+    scope: calcium
+    range_state: low
+    context_dependencies:
+      supporting_markers: [albumin, pth, vitamin_d, egfr, magnesium]
+      missing_markers: [pth, vitamin_d]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [bisphosphonates, proton_pump_inhibitors]
+      supplement_context: [vitamin_d_supplements]
+      confidence_limiters:
+        - "Low total calcium with low albumin may reflect a normal ionised (active) calcium — corrected calcium is essential before interpreting a low total calcium."
+        - "PTH and vitamin D status are needed to understand the mechanism of any true low calcium."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: low
+    evidence_refs:
+      - "NICE CKS Hypocalcaemia (current)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: calcium_low
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A low calcium result needs to be interpreted carefully before drawing conclusions. Total calcium in the blood includes a fraction bound to albumin, so if albumin is also low, the total calcium figure can appear reduced even when the biologically active (ionised) fraction is actually normal. A corrected calcium calculation accounts for this — it is an important first step in interpreting any low calcium reading. Where corrected calcium is genuinely low, possible contributors include low vitamin D, changes in parathyroid function, magnesium status, or kidney function, among others. PTH and vitamin D results are needed to characterise the mechanism further.
+      clinician: null
+    interpretive_limitations:
+      - "Low total calcium must always be interpreted alongside albumin — a corrected calcium is required to determine whether the reduction is real."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm that corrected calcium explanation is technically accurate. Review that hypoparathyroidism is not named as a condition the user has. Verify low albumin/low total calcium relationship is explained clearly."
+
+  # CALCIUM BORDERLINE
+  - asset_id: calcium_borderline_context_v1
+    asset_type: marker_borderline_context_explainer
+    audience: retail_consumer
+    scope: calcium
+    range_state: borderline
+    context_dependencies:
+      supporting_markers: [albumin, pth, vitamin_d]
+      missing_markers: [pth, vitamin_d]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: [vitamin_d_supplements, calcium_supplements]
+      confidence_limiters:
+        - "Borderline total calcium without albumin and corrected calcium cannot be meaningfully interpreted."
+        - "Single timepoint — calcium fluctuates with hydration, recent dietary calcium, and time of day."
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: borderline
+    evidence_refs:
+      - "NICE CKS Hypercalcaemia (current)"
+      - "NICE CKS Hypocalcaemia (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: calcium_borderline
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A calcium result at the upper or lower edge of the laboratory range is best interpreted alongside albumin, which adjusts the total calcium reading to give a corrected figure. A borderline total calcium can sometimes reflect a normal corrected calcium once albumin is accounted for — or it can indicate a genuinely marginal result that benefits from context. Vitamin D and PTH are the key regulatory markers that would clarify what is driving a calcium reading at the boundary of the range. Without these, a borderline calcium result is interpretively limited.
+      clinician: null
+    interpretive_limitations:
+      - "Borderline total calcium without albumin (for corrected value), PTH, and vitamin D cannot be reliably characterised."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: "Confirm borderline wording applies to both upper and lower boundary. Verify that the explanation is appropriate for retail audience without directing unnecessary investigation."
+
+  # ─── CORTISOL ───────────────────────────────────────────────────────────────
+
+  - asset_id: cortisol_base_explainer_v1_b
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: cortisol
+    range_state: not_applicable
+    context_dependencies:
+      supporting_markers: [dhea_s, acth]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [acute_psychological_stress, sleep_disruption]
+      medication_context: [glucocorticoids, hormonal_contraceptives, exogenous_steroids]
+      supplement_context: []
+      confidence_limiters:
+        - "Cortisol varies markedly across the day; interpretive value depends entirely on sampling time relative to waking"
+        - "Acute situational stress at the time of blood draw can transiently raise cortisol independent of any underlying axis issue"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    evidence_refs:
+      - "Society for Endocrinology. Assessing Cortisol. Position statement, 2016."
+      - "NICE CKS Addison's disease (current)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: cortisol
+      narrative_section_id: null
+    prose_content:
+      title: "Cortisol"
+      body: |
+        Cortisol is the body's primary stress hormone — it mobilises energy, dials down inflammation, and modulates blood pressure in response to physical or psychological demand. It is produced by the adrenal glands under instruction from the pituitary and hypothalamus, a signalling chain known as the HPA axis. Cortisol follows a strong diurnal rhythm: levels are typically at their peak shortly after waking and fall steeply across the day, reaching their lowest late at night. This rhythm makes timing critical — a reading that looks elevated at 9 am may be entirely expected, while the same number at midnight would not be. Cortisol is also influenced by glucocorticoid medications, some hormonal contraceptives, and acute stress at the time of sampling. A single cortisol reading without knowing the exact sampling time relative to waking loses most of its interpretive value — the HPA axis dynamic, not the snapshot, is what matters clinically.
+      clinician: null
+    interpretive_limitations:
+      - "A single cortisol value cannot characterise HPA axis function; dynamic testing or paired sampling is required for clinical assessment."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [cortisol_base_explainer_v1]
+    supersedes_asset_ids: [cortisol_base_explainer_v1]
+    notes_for_medical_reviewer: |
+      Confirm diurnal rhythm description accurate. Review that glucocorticoid and contraceptive effects are correctly stated. Dynamic testing (Synacthen) deliberately omitted as appropriate for retail educational level — confirm this is acceptable.
+
+  - asset_id: cortisol_in_range_context_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: cortisol
+    range_state: in_range
+    context_dependencies:
+      supporting_markers: [dhea_s, acth]
+      missing_markers: [dhea_s, second_cortisol_timepoint]
+      pattern_dependencies: []
+      lifestyle_context: [acute_stress_at_sampling, sleep_quality]
+      medication_context: [glucocorticoids, hormonal_contraceptives]
+      supplement_context: []
+      confidence_limiters:
+        - "In-range requires the sampling time to be known; without it, the reference interval cannot be correctly applied"
+        - "A single in-range reading does not confirm that the full diurnal rhythm is intact"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    evidence_refs:
+      - "Society for Endocrinology. Assessing Cortisol. Position statement, 2016."
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: cortisol_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A cortisol result within the laboratory's expected range at a known sampling time suggests that the HPA axis is producing cortisol at typical levels for that time of day. In the morning, an in-range result is broadly reassuring for that moment. Later in the day, the reference interval shifts downward, and in-range is expected even at lower levels. This reading reflects a single point on a curve that changes substantially across a 24-hour period. It does not confirm that the diurnal rhythm is intact or that cortisol response to stress is normal — those questions require either a second timepoint or clinical evaluation.
+      clinician: null
+    interpretive_limitations:
+      - "A single in-range cortisol value cannot exclude diurnal rhythm disruption or HPA axis dysfunction; dynamic testing or paired morning/evening samples are required for clinical assessment."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that reference interval shifting across the day is accurately characterised. Review that the asset does not create false reassurance from a single in-range result.
+
+  - asset_id: cortisol_high_context_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: cortisol
+    range_state: high
+    context_dependencies:
+      supporting_markers: [acth, dhea_s]
+      missing_markers: [second_cortisol_timepoint, sampling_time_documentation]
+      pattern_dependencies: []
+      lifestyle_context: [acute_stress_at_sampling, poor_sleep, high_physiological_demand]
+      medication_context: [glucocorticoids, exogenous_steroids, hormonal_contraceptives]
+      supplement_context: []
+      confidence_limiters:
+        - "Without a documented sampling time, an elevated cortisol cannot be classified as abnormally high vs expected diurnal peak"
+        - "Acute situational stress at blood draw can transiently raise cortisol to above-range levels in healthy individuals"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    evidence_refs:
+      - "Society for Endocrinology. Assessing Cortisol. Position statement, 2016."
+      - "NICE CKS Addison's disease (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: cortisol_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A cortisol above the laboratory's reference range may have several explanations that depend almost entirely on when the sample was taken. In the early morning — when cortisol naturally peaks — a high reading may still be at the upper end of physiological variation. Later in the day, the same reading would be more notable. Acute stress at the time of the blood draw, poor sleep, illness, or intense physical activity can all transiently push cortisol above range. Glucocorticoid medications, including some topical or inhaled preparations, can also affect the measurement. A single above-range reading requires sampling time and clinical context before any interpretation is possible. Without a documented sampling time, a high cortisol cannot be meaningfully classified.
+      clinician: null
+    interpretive_limitations:
+      - "A high cortisol reading requires documented sampling time and clinical context; it cannot be interpreted as abnormal without both."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that the causes listed (stress, sleep, medications) are well supported. Review that "topical or inhaled" glucocorticoid mention does not overstate their systemic cortisol effect. Ensure no implied diagnosis of Cushing's or adrenal disorder.
+
+  - asset_id: cortisol_low_context_v1
+    asset_type: marker_low_context_explainer
+    audience: retail_consumer
+    scope: cortisol
+    range_state: low
+    context_dependencies:
+      supporting_markers: [acth, dhea_s, synacthen_stimulation_result]
+      missing_markers: [second_cortisol_timepoint, acth]
+      pattern_dependencies: []
+      lifestyle_context: [sampling_time_evening_expected_low]
+      medication_context: [glucocorticoids_chronic_use, exogenous_steroids]
+      supplement_context: []
+      confidence_limiters:
+        - "A low cortisol in the late evening is expected and physiologically normal — the reference interval must be time-appropriate"
+        - "Chronic glucocorticoid use can suppress adrenal output and produce a genuinely low cortisol on withdrawal"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: low
+    evidence_refs:
+      - "Society for Endocrinology. Assessing Cortisol. Position statement, 2016."
+      - "NICE CKS Addison's disease (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: cortisol_low
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A cortisol below the laboratory's reference range carries very different weight depending on when the sample was taken. Late in the evening, low cortisol is physiologically expected — the diurnal rhythm falls to its lowest at this time. The same reading at 8–9 am, when cortisol is normally at its highest, is more clinically significant and warrants careful review. The morning is when this test has its greatest discriminatory value: a low cortisol at that time indicates that the adrenal glands are not producing the expected morning surge. Chronic use of glucocorticoid medications (including some long-term inhalers or topical steroids) can suppress adrenal output and produce a genuinely low cortisol. Establishing the sampling time is essential before drawing any conclusion from a below-range result.
+      clinician: null
+    interpretive_limitations:
+      - "A low cortisol requires the sampling time to interpret; without it, the result cannot be classified as physiological or concerning."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that morning low cortisol as the key discriminatory window is accurately stated per Society for Endocrinology guidance. Review that glucocorticoid suppression mention is clinically accurate. Ensure no implied diagnosis of adrenal insufficiency.
+
+  - asset_id: cortisol_borderline_context_v1
+    asset_type: marker_borderline_context_explainer
+    audience: retail_consumer
+    scope: cortisol
+    range_state: borderline
+    context_dependencies:
+      supporting_markers: [acth, dhea_s]
+      missing_markers: [sampling_time_documentation, second_cortisol_timepoint]
+      pattern_dependencies: []
+      lifestyle_context: [acute_stress_at_sampling]
+      medication_context: [glucocorticoids]
+      supplement_context: []
+      confidence_limiters:
+        - "Borderline cortisol at any time of day requires sampling time before it can be interpreted"
+        - "The borderline band is narrower and more clinically meaningful in a morning sample than at any other time"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: borderline
+    evidence_refs:
+      - "Society for Endocrinology. Assessing Cortisol. Position statement, 2016."
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: cortisol_borderline
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A borderline cortisol — sitting close to but within the edge of the laboratory's reference interval — is particularly sensitive to sampling time. The morning is when this test has its highest discriminatory power: the normal range at that time is relatively narrow and cortisol is expected to be at its peak. A borderline-low reading at 9 am is more clinically meaningful than a borderline-low reading at noon, when the expected level is already falling. A borderline-high reading in the late afternoon may simply reflect slower-than-typical decline. In either direction, a borderline result prompts the question of whether a second, time-documented sample would give a clearer picture.
+      clinician: null
+    interpretive_limitations:
+      - "Borderline cortisol cannot be interpreted without a documented sampling time; the borderline band shifts across the day and the same number may be normal at one time and notable at another."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm borderline cortisol interpretation guidance is consistent with Society for Endocrinology position statement. Review that asset does not imply that borderline results always require further action.
+
+  # ─── SHBG ───────────────────────────────────────────────────────────────────
+
+  - asset_id: shbg_base_explainer_v1_b
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: shbg
+    range_state: not_applicable
+    context_dependencies:
+      supporting_markers: [total_testosterone, free_testosterone, oestradiol, thyroid_function]
+      missing_markers: [total_testosterone, free_testosterone]
+      pattern_dependencies: []
+      lifestyle_context: [body_weight, physical_activity]
+      medication_context: [hormonal_contraceptives, thyroid_hormone_replacement, androgenic_medications]
+      supplement_context: []
+      confidence_limiters:
+        - "SHBG must be interpreted alongside total and free testosterone; a SHBG value in isolation gives no usable information about hormone bioavailability"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    evidence_refs:
+      - "NHS — Sex hormone tests (current)"
+      - "NICE CKS Testosterone deficiency (current)"
+      - "Dunn JF et al. Transport of steroid hormones. J Clin Endocrinol Metab 1981"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: shbg
+      narrative_section_id: null
+    prose_content:
+      title: "SHBG (sex hormone-binding globulin)"
+      body: |
+        SHBG acts as the transport and availability regulator for sex hormones. The liver produces this protein, and it binds testosterone and oestradiol tightly — determining how much hormone is biologically active rather than just circulating. Only the fraction not bound to SHBG (or loosely bound to albumin) is immediately available to cells. This means SHBG level directly shapes how much usable hormone the body has access to, even when total hormone levels appear typical. SHBG is influenced by thyroid function, insulin levels, body weight, and certain medications including hormonal contraceptives and thyroid hormone replacement. High SHBG reduces the proportion of hormone available to tissues; low SHBG has the opposite effect. SHBG must be interpreted alongside total testosterone and free testosterone — a SHBG result without these markers gives an incomplete picture of hormone bioavailability.
+      clinician: null
+    interpretive_limitations:
+      - "SHBG without paired total and free testosterone cannot be used to assess androgen bioavailability."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [shbg_base_explainer_v1]
+    supersedes_asset_ids: [shbg_base_explainer_v1]
+    notes_for_medical_reviewer: |
+      Confirm liver production and binding mechanism accurate. Review insulin/body weight relationship characterisation. Verify medication effects (contraceptive/thyroid) consistent with current guidance.
+
+  - asset_id: shbg_in_range_context_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: shbg
+    range_state: in_range
+    context_dependencies:
+      supporting_markers: [total_testosterone, free_testosterone, oestradiol]
+      missing_markers: [total_testosterone, free_testosterone]
+      pattern_dependencies: []
+      lifestyle_context: [body_weight]
+      medication_context: [hormonal_contraceptives, thyroid_hormone_replacement]
+      supplement_context: []
+      confidence_limiters:
+        - "In-range SHBG does not confirm adequate hormone bioavailability without total and free testosterone"
+        - "SHBG reference ranges differ between sexes and shift with age; the lab-derived range must be used"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    evidence_refs:
+      - "NICE CKS Testosterone deficiency (current)"
+      - "Dunn JF et al. Transport of steroid hormones. J Clin Endocrinol Metab 1981"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: shbg_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        SHBG within the laboratory's reference range indicates that the sex hormone transport protein is present at concentrations within the expected band for this individual's demographic. This means neither an unusually large proportion of testosterone or oestradiol is bound and withheld from tissues, nor is an unusually small proportion. Even with in-range SHBG, the actual bioavailability of sex hormones depends on total testosterone and free testosterone levels — both of which should be considered alongside SHBG. An in-range SHBG with low total testosterone still results in reduced hormone availability overall.
+      clinician: null
+    interpretive_limitations:
+      - "SHBG in range does not confirm adequate sex hormone bioavailability; total and free testosterone are essential for the full picture."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that in-range SHBG interpretive framing is clinically accurate. Review final sentence for accuracy.
+
+  - asset_id: shbg_high_context_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: shbg
+    range_state: high
+    context_dependencies:
+      supporting_markers: [total_testosterone, free_testosterone, thyroid_function, oestradiol]
+      missing_markers: [free_testosterone, total_testosterone]
+      pattern_dependencies: []
+      lifestyle_context: [lower_body_weight]
+      medication_context: [hormonal_contraceptives, thyroid_hormone_replacement]
+      supplement_context: []
+      confidence_limiters:
+        - "High SHBG significance depends on total and free testosterone context; without both, the impact on bioavailability cannot be quantified"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    evidence_refs:
+      - "NICE CKS Testosterone deficiency (current)"
+      - "Dunn JF et al. Transport of steroid hormones. J Clin Endocrinol Metab 1981"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: shbg_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        Raised SHBG means a higher proportion of circulating testosterone or oestradiol is bound to this transport protein and therefore less available to tissues. High SHBG is associated with hyperthyroidism, certain hormonal contraceptives, thyroid hormone replacement therapy, older age, and lower body weight. The practical effect is that a person with raised SHBG may have total testosterone that appears within range, while free testosterone — the biologically active fraction — is reduced. Whether this matters depends on the degree of SHBG elevation and what the free testosterone and total testosterone show. High SHBG is a context modifier for those other measurements, not an independent finding.
+      clinician: null
+    interpretive_limitations:
+      - "The clinical significance of high SHBG cannot be assessed without free and total testosterone; SHBG alone does not indicate any specific condition."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm associations (hyperthyroidism, contraceptives, age, lower weight) are well supported. Review that no condition is implied diagnostically.
+
+  - asset_id: shbg_low_context_v1
+    asset_type: marker_low_context_explainer
+    audience: retail_consumer
+    scope: shbg
+    range_state: low
+    context_dependencies:
+      supporting_markers: [total_testosterone, free_testosterone, fasting_insulin, thyroid_function]
+      missing_markers: [free_testosterone, fasting_insulin]
+      pattern_dependencies: []
+      lifestyle_context: [higher_body_weight, visceral_adiposity]
+      medication_context: [androgenic_medications, anabolic_steroids]
+      supplement_context: []
+      confidence_limiters:
+        - "Low SHBG without free and total testosterone cannot quantify the effect on hormone bioavailability"
+        - "The association with insulin resistance is epidemiological; low SHBG does not diagnose insulin resistance"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: low
+    evidence_refs:
+      - "NICE CKS Testosterone deficiency (current)"
+      - "Dunn JF et al. Transport of steroid hormones. J Clin Endocrinol Metab 1981"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: shbg_low
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        Reduced SHBG means a smaller proportion of circulating sex hormones is bound to the transport protein, leaving a greater fraction unbound and biologically active. Low SHBG is associated with insulin resistance, higher body weight, hypothyroidism, and some androgenic medications. The practical effect is that total testosterone may appear within its reference range while free testosterone is elevated — because less is being held in reserve. Whether this is relevant depends on the full hormonal context. Low SHBG alone is not a diagnosis; it is a context modifier that prompts review of free and total testosterone together and, where relevant, metabolic markers such as fasting glucose or insulin.
+      clinician: null
+    interpretive_limitations:
+      - "Low SHBG is associated with metabolic and hormonal patterns but does not diagnose any condition; free and total testosterone are required before the bioavailability picture is complete."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm insulin resistance / low SHBG association is characterised as epidemiological, not diagnostic. Review that androgenic medication mention is appropriate for educational context.
+
+  # ─── FREE TESTOSTERONE ──────────────────────────────────────────────────────
+
+  - asset_id: free_testosterone_base_explainer_v1_b
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: free_testosterone
+    range_state: not_applicable
+    context_dependencies:
+      supporting_markers: [total_testosterone, shbg, albumin, lh, fsh]
+      missing_markers: [shbg, total_testosterone]
+      pattern_dependencies: []
+      lifestyle_context: [time_of_sampling_morning_preferred]
+      medication_context: [testosterone_replacement_therapy, hormonal_medications]
+      supplement_context: []
+      confidence_limiters:
+        - "Calculated free testosterone accuracy depends on accurate SHBG and albumin values — errors in either propagate into the free testosterone estimate"
+        - "Direct free testosterone assays have significant methodological variation between laboratories"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    evidence_refs:
+      - "NICE CKS Testosterone deficiency (current)"
+      - "Hackett G et al. British Society for Sexual Medicine guidelines on adult testosterone deficiency. J Sex Med 2017;14:1504–1523"
+      - "Bhasin S et al. Testosterone therapy in men with hypogonadism. Endocrine Society Clinical Practice Guideline 2018"
+      - "NHS — Sex hormone tests (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: free_testosterone
+      narrative_section_id: null
+    prose_content:
+      title: "Free testosterone"
+      body: |
+        Only a small fraction of testosterone in the bloodstream is immediately available to cells — this is free testosterone, unbound to transport proteins. Because total testosterone includes protein-bound fractions that may not be biologically active, free testosterone often gives a more complete picture of androgen availability, particularly where SHBG is abnormal. Most testosterone circulates either tightly bound to SHBG or loosely bound to albumin; the free fraction is typically less than three per cent of the total. Free testosterone values are commonly calculated from total testosterone, SHBG, and albumin rather than measured directly, because direct assay methods vary considerably between laboratories. Testosterone levels also follow a diurnal pattern — typically higher in the morning — so the timing of sampling matters. Free testosterone measurement methods vary considerably; calculated estimates depend on accurate SHBG and albumin values, and without these the calculation may be unreliable.
+      clinician: null
+    interpretive_limitations:
+      - "Free testosterone is most interpretable alongside total testosterone and SHBG; the three values together give a better picture than any single one."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [free_testosterone_base_explainer_v1]
+    supersedes_asset_ids: [free_testosterone_base_explainer_v1]
+    notes_for_medical_reviewer: |
+      Confirm three-fraction description accurate. Review that "<3% free" figure is appropriately general. Verify BSSM and Endocrine Society references applicable in UK context. Confirm calculated vs direct assay distinction is correct.
+
+  - asset_id: free_testosterone_in_range_context_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: free_testosterone
+    range_state: in_range
+    context_dependencies:
+      supporting_markers: [total_testosterone, shbg, lh]
+      missing_markers: [shbg, total_testosterone]
+      pattern_dependencies: []
+      lifestyle_context: [time_of_sampling]
+      medication_context: [testosterone_replacement_therapy]
+      supplement_context: []
+      confidence_limiters:
+        - "Free testosterone reference ranges vary by assay method and are not standardised across all laboratories"
+        - "An in-range calculated free testosterone depends on accurate SHBG and albumin inputs"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    evidence_refs:
+      - "NICE CKS Testosterone deficiency (current)"
+      - "Hackett G et al. BSSM guidelines on adult testosterone deficiency. J Sex Med 2017"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: free_testosterone_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        Free testosterone within the laboratory's reference range suggests that the immediately available androgen fraction is not reduced below expected limits for this individual at the time of testing. This is most informative alongside total testosterone and SHBG — together, the three markers give a clearer picture of androgen status than any single value. An in-range free testosterone is reassuring in its own context, but the interpretation carries more weight when the calculation method is known, the sample was taken in the morning when testosterone is typically at its daily peak, and SHBG values are reliable.
+      clinician: null
+    interpretive_limitations:
+      - "Free testosterone reference ranges and assay methods vary; the lab-specific method should be confirmed before drawing conclusions."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that morning sampling preference and method dependency are accurately represented. Review that no diagnostic assurance is given from an in-range result alone.
+
+  - asset_id: free_testosterone_high_context_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: free_testosterone
+    range_state: high
+    context_dependencies:
+      supporting_markers: [total_testosterone, shbg, lh, fsh]
+      missing_markers: [shbg, total_testosterone]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [testosterone_replacement_therapy, androgenic_medications, anabolic_steroids]
+      supplement_context: [prohormone_supplements]
+      confidence_limiters:
+        - "High free testosterone without knowing SHBG and total testosterone cannot identify the underlying mechanism"
+        - "Exogenous testosterone or androgenic supplements are common causes in retail-panel populations"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    evidence_refs:
+      - "NICE CKS Testosterone deficiency (current)"
+      - "Hackett G et al. BSSM guidelines on adult testosterone deficiency. J Sex Med 2017"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: free_testosterone_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A free testosterone above the laboratory's reference range may reflect elevated total testosterone production, reduced SHBG leaving more testosterone unbound, or both. Where SHBG is low, elevated free testosterone can coexist with normal or even modest total testosterone — the two values change what the high free testosterone means. Exogenous testosterone therapy, androgenic medications, and certain supplements can also raise free testosterone. Without knowing SHBG and total testosterone, the mechanism behind an elevated free testosterone cannot be identified, and the finding is difficult to interpret beyond noting that bioavailable androgen is elevated.
+      clinician: null
+    interpretive_limitations:
+      - "High free testosterone requires SHBG and total testosterone to identify whether the mechanism is reduced binding, increased production, or exogenous source."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that causes listed are clinically accurate and appropriately non-diagnostic. Review that exogenous testosterone mention is appropriate for retail audience.
+
+  - asset_id: free_testosterone_low_context_v1
+    asset_type: marker_low_context_explainer
+    audience: retail_consumer
+    scope: free_testosterone
+    range_state: low
+    context_dependencies:
+      supporting_markers: [total_testosterone, shbg, lh, fsh, albumin]
+      missing_markers: [shbg, total_testosterone, lh]
+      pattern_dependencies: []
+      lifestyle_context: [age, body_weight, sleep_quality]
+      medication_context: [hormonal_medications, glucocorticoids, opioids]
+      supplement_context: []
+      confidence_limiters:
+        - "Low free testosterone cannot be attributed to reduced production vs increased binding without total testosterone and SHBG"
+        - "Age-related decline in free testosterone is well recognised; the lab reference range should account for age where possible"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: low
+    evidence_refs:
+      - "NICE CKS Testosterone deficiency (current)"
+      - "Hackett G et al. BSSM guidelines on adult testosterone deficiency. J Sex Med 2017"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: free_testosterone_low
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        Low free testosterone means the fraction of immediately bioavailable androgen is below what the laboratory's reference range considers typical. This can happen through two distinct routes: reduced total testosterone production from the testes or ovaries, or raised SHBG binding a greater proportion of the available testosterone. In the first case, total testosterone will also tend to be low. In the second, total testosterone may sit within range while free testosterone is reduced — meaning SHBG is the key variable. Establishing which mechanism is responsible requires total testosterone and SHBG together. Factors associated with reduced free testosterone include advancing age, certain medications including opioids and glucocorticoids, and conditions affecting the hormonal axis.
+      clinician: null
+    interpretive_limitations:
+      - "Low free testosterone cannot be mechanistically explained without total testosterone and SHBG; treatment decisions require clinical evaluation, not panel interpretation alone."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm two-mechanism description (reduced production vs raised SHBG) is clinically accurate. Review opioid and glucocorticoid mention for accuracy. Ensure no implied diagnosis of hypogonadism.
+
+  - asset_id: free_testosterone_borderline_context_v1
+    asset_type: marker_borderline_context_explainer
+    audience: retail_consumer
+    scope: free_testosterone
+    range_state: borderline
+    context_dependencies:
+      supporting_markers: [total_testosterone, shbg, lh, fsh]
+      missing_markers: [total_testosterone, shbg]
+      pattern_dependencies: []
+      lifestyle_context: [time_of_sampling, age]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Borderline free testosterone is highly sensitive to the assay method and calculation inputs; a small change in SHBG or albumin shifts the calculated value"
+        - "The clinical significance of a borderline result depends on symptom context and is not determinable from panel values alone"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: borderline
+    evidence_refs:
+      - "NICE CKS Testosterone deficiency (current)"
+      - "Hackett G et al. BSSM guidelines on adult testosterone deficiency. J Sex Med 2017"
+    evidence_strength: weak
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: free_testosterone_borderline
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A borderline free testosterone — sitting at the edge of the laboratory's reference interval — warrants interpretation alongside total testosterone and SHBG together. The relationship between these three values matters more than any individual number at the margin. Calculated free testosterone is particularly sensitive at the borderline: small differences in the SHBG or albumin values used in the calculation can shift the result into or out of range. A borderline result on a morning sample holds more weight than an afternoon result, because testosterone levels are naturally lower later in the day. Whether a borderline free testosterone is clinically relevant depends on context that panels alone cannot provide.
+      clinician: null
+    interpretive_limitations:
+      - "Borderline free testosterone interpretation requires total testosterone and SHBG; calculated estimates at the borderline are sensitive to input values and should not be used in isolation."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that calculated free testosterone sensitivity at the borderline is accurately characterised. Review evidence_strength (weak assigned — borderline interpretation is inherently uncertain). Confirm no clinical action is implied.
+
+  # ─── TOTAL PROTEIN ──────────────────────────────────────────────────────────
+
+  - asset_id: total_protein_base_explainer_v1_b
+    asset_type: base_biomarker_explainer
+    audience: retail_consumer
+    scope: total_protein
+    range_state: not_applicable
+    context_dependencies:
+      supporting_markers: [albumin, globulins, alt, bilirubin]
+      missing_markers: [albumin]
+      pattern_dependencies: []
+      lifestyle_context: [hydration_status, nutritional_intake]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Total protein without paired albumin does not allow the globulin fraction to be estimated"
+        - "Hydration status can significantly shift total protein by concentrating or diluting the sample"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      result_direction: any
+    evidence_refs:
+      - "RCPath — Liver function test interpretation (current)"
+      - "NHS Inform — Liver function tests (current)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+      - "NICE guidance on myeloma — globulin context (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: backend/ssot/retail_explainer_v1/registry.yaml
+      target_registry_key: total_protein
+      narrative_section_id: null
+    prose_content:
+      title: "Total protein"
+      body: |
+        The blood contains a rich mix of proteins — transport carriers, immune defenders, clotting factors, and structural scaffolding for tissues. Total protein measures their combined concentration, and since the liver manufactures most of them, this reading reflects both nutritional status and liver synthetic capacity. The two main contributors are albumin (the most abundant protein, involved in transport and osmotic pressure) and globulins (which include immune proteins and a range of other functional proteins). Total protein on its own is limited; its value comes from comparison with albumin. If albumin is within range but total protein is raised, the globulin fraction is elevated. If albumin is low and total protein is also low, the picture is different again. Total protein is most interpretable alongside a separate albumin measurement — without albumin, the globulin fraction (which includes immune proteins) cannot be estimated.
+      clinician: null
+    interpretive_limitations:
+      - "Total protein without albumin does not allow albumin-globulin breakdown; the two should always be interpreted together."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [total_protein_base_explainer_v1]
+    supersedes_asset_ids: [total_protein_base_explainer_v1]
+    notes_for_medical_reviewer: |
+      Confirm globulin fraction description accurate. Review that elevated globulins mention does not imply myeloma or other named condition. Verify hydration effect on total protein is well recognised.
+
+  - asset_id: total_protein_in_range_context_v1
+    asset_type: marker_in_range_context_explainer
+    audience: retail_consumer
+    scope: total_protein
+    range_state: in_range
+    context_dependencies:
+      supporting_markers: [albumin, alt, globulins]
+      missing_markers: [albumin]
+      pattern_dependencies: []
+      lifestyle_context: [hydration_status]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "An in-range total protein may mask a low albumin offset by elevated globulins — albumin is needed to distinguish this pattern"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: in_range
+    evidence_refs:
+      - "RCPath — Liver function test interpretation (current)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: total_protein_in_range
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        Total protein within the laboratory's reference range indicates that the combined concentration of serum proteins is within expected limits. This is broadly reassuring but depends on what is happening in each of the two main fractions. A low albumin offset by elevated globulins can produce an in-range total protein figure that obscures what is actually happening beneath. This is why albumin is the critical companion reading. Where albumin is also in range, an in-range total protein is more straightforwardly interpretable — it suggests that liver synthesis of albumin is not impaired and that the immune fraction is not markedly elevated.
+      clinician: null
+    interpretive_limitations:
+      - "An in-range total protein does not exclude a shifted albumin-globulin balance; albumin must be reviewed alongside it."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm the albumin-globulin masking scenario is clinically accurate and educationally appropriate. Review that no conditions are named diagnostically.
+
+  - asset_id: total_protein_high_context_v1
+    asset_type: marker_high_context_explainer
+    audience: retail_consumer
+    scope: total_protein
+    range_state: high
+    context_dependencies:
+      supporting_markers: [albumin, globulins]
+      missing_markers: [albumin]
+      pattern_dependencies: []
+      lifestyle_context: [dehydration, hydration_status]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "A raised total protein driven by dehydration is a common and transient artefact; a repeat under better hydrated conditions may be informative"
+        - "Without albumin, raised total protein cannot be attributed to either fraction"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: high
+    evidence_refs:
+      - "RCPath — Liver function test interpretation (current)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: total_protein_high
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A raised total protein most commonly reflects dehydration at the time of sampling — when circulating volume is reduced, all proteins become relatively more concentrated, pushing the measured value upward. This is a transient and benign effect. If dehydration is not the explanation, the next question is which protein fraction is elevated. If albumin is within range, the excess is in the globulin component — the immune and functional proteins. Elevated globulins can reflect a heightened immune response, chronic inflammation, or other processes, and where the elevation is marked or unexplained, further investigation may be appropriate. Without a paired albumin, a raised total protein cannot be attributed to a specific fraction.
+      clinician: null
+    interpretive_limitations:
+      - "Raised total protein requires albumin to establish whether it is dehydration, elevated globulins, or a combination — total protein alone cannot distinguish these."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm dehydration as leading cause is clinically accurate. Review that "further investigation may be appropriate" for elevated globulins does not constitute a clinical recommendation. Ensure no named condition implied.
+
+  - asset_id: total_protein_low_context_v1
+    asset_type: marker_low_context_explainer
+    audience: retail_consumer
+    scope: total_protein
+    range_state: low
+    context_dependencies:
+      supporting_markers: [albumin, alt, creatinine, egfr]
+      missing_markers: [albumin]
+      pattern_dependencies: []
+      lifestyle_context: [nutritional_intake, protein_intake]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Without albumin, the cause of low total protein — albumin depletion, globulin depletion, or both — cannot be determined"
+        - "Overhydration at sampling can artefactually lower total protein"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: low
+    evidence_refs:
+      - "RCPath — Liver function test interpretation (current)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: total_protein_low
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        Low total protein indicates that the combined concentration of serum proteins is below the expected range. The primary question is whether this reflects low albumin, low globulins, or both. Albumin is the most abundant protein and is synthesised by the liver; a low albumin is associated with poor nutritional intake, impaired liver synthesis, or protein loss through the kidneys or gut. Globulins may be reduced in certain immune conditions. Overhydration at the time of sampling can also dilute circulating proteins and produce a transient low reading. Without albumin measured alongside total protein, the cause cannot be identified. Where albumin is also low, liver markers and renal markers together help characterise the picture further.
+      clinician: null
+    interpretive_limitations:
+      - "Low total protein without albumin cannot be attributed to reduced synthesis, protein loss, or a sampling artefact — albumin is essential for interpretation."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm albumin synthesis/loss framework is clinically accurate. Review that no named liver or renal condition is implied. Verify overhydration as artefact cause is well recognised.
+
+  - asset_id: total_protein_borderline_context_v1
+    asset_type: marker_borderline_context_explainer
+    audience: retail_consumer
+    scope: total_protein
+    range_state: borderline
+    context_dependencies:
+      supporting_markers: [albumin, alt]
+      missing_markers: [albumin]
+      pattern_dependencies: []
+      lifestyle_context: [hydration_status]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "A borderline total protein almost always requires albumin before any interpretation is warranted"
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_present: true
+      lab_derived_range_state: borderline
+    evidence_refs:
+      - "RCPath — Liver function test interpretation (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_marker_state_prose_pack_v1
+      target_registry_key: total_protein_borderline
+      narrative_section_id: marker_evidence
+    prose_content:
+      retail: >
+        A borderline total protein — at the low or high edge of the laboratory's expected range — is almost always best interpreted alongside albumin. If albumin is within range and total protein is borderline-high, the globulin fraction is mildly elevated. If albumin is within range and total protein is borderline-low, the globulin component is modestly reduced. In either case, the clinical weight of a borderline total protein is limited without the albumin context; hydration at the time of sampling can shift the value in either direction by a small amount.
+      clinician: null
+    interpretive_limitations:
+      - "A borderline total protein is almost uninformative without albumin; the two should always be reviewed together."
+    max_word_count: 150
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: []
+    supersedes_asset_ids: []
+    notes_for_medical_reviewer: |
+      Confirm that borderline total protein interpretation via albumin context is clinically standard practice. Review that no clinical action is implied.
+
+  # ─── MISSING-MARKER CAVEATS ──────────────────────────────────────────────────
+
+  - asset_id: missing_alt_hepatic_context_v1_b
+    asset_type: missing_marker_caveat
+    audience: retail_consumer
+    scope: "alt / hepatic context"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_absent_on_panel: true
+      absent_marker: alt
+    context_dependencies:
+      supporting_markers: [ggt, ast, alp, bilirubin]
+      missing_markers: [alt]
+      pattern_dependencies: []
+      lifestyle_context: [alcohol_use]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Hepatic cell-level stress is harder to characterise without ALT specifically."
+    interpretive_limitations:
+      - "Other hepatic markers (GGT, ALP, bilirubin) provide partial context but cannot substitute for ALT in assessing hepatocellular enzyme release."
+    evidence_refs:
+      - "NICE CG160 Non-alcoholic fatty liver disease (2016)"
+      - "EASL Clinical Practice Guidelines on non-invasive tests for liver fibrosis/cirrhosis 2021"
+      - "RCPath liver function tests guidance (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml
+      target_registry_key: missing_alt_hepatic_context_v1_b
+      narrative_section_id: missing_evidence_limitations
+    prose_content:
+      caution_when_absent: "ALT (alanine aminotransferase) sits at the centre of hepatic cell-health assessment. When liver cells are under stress, ALT is one of the first enzymes to rise in the bloodstream — and without it, that signal is absent from the panel."
+      interpretive_limit: "The remaining markers still provide biliary and broader enzyme context, but the picture of hepatocellular activity specifically is incomplete."
+      interpretive_caution: "Without ALT, the hepatic panel can still comment on biliary and broader enzyme patterns, but hepatocellular stress specifically is harder to assess."
+    max_word_count: 90
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [missing_alt_hepatic_context_v1]
+    supersedes_asset_ids: [missing_alt_hepatic_context_v1]
+    notes_for_medical_reviewer: |
+      Verify that "hepatocellular stress" is appropriately educational without implying hepatocellular disease diagnosis. Confirm ALT described as a core hepatic marker is consistent with NHS/EASL guidance. Prohibited generic wording removed; interpretive_caution is now specific.
+
+  - asset_id: missing_ggt_hepatic_context_v1_b
+    asset_type: missing_marker_caveat
+    audience: retail_consumer
+    scope: "ggt / hepatic context"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_absent_on_panel: true
+      absent_marker: ggt
+    context_dependencies:
+      supporting_markers: [alt, ast, alp, bilirubin]
+      missing_markers: [ggt]
+      pattern_dependencies: []
+      lifestyle_context: [alcohol_use]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Alcohol-sensitive and biliary-sensitive hepatic context is less complete without GGT."
+    interpretive_limitations:
+      - "ALT and ALP can raise similar questions about hepatic or biliary stress, but GGT adds specificity to alcohol-related and biliary contexts that other markers cannot provide alone."
+    evidence_refs:
+      - "NICE CG115 Alcohol-use disorders (liver section)"
+      - "EASL Clinical Practice Guidelines on liver diseases (current)"
+      - "RCPath guidance on hepatic markers (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml
+      target_registry_key: missing_ggt_hepatic_context_v1_b
+      narrative_section_id: missing_evidence_limitations
+    prose_content:
+      caution_when_absent: "GGT (gamma-glutamyl transferase) is particularly sensitive to alcohol-related hepatic stress and to biliary conditions. Without GGT, this specific dimension of the hepatic picture is absent — ALT and ALP tell a different story, not the same one."
+      interpretive_limit: "Contextualising other liver markers against a background of possible alcohol use or biliary involvement is less precise without GGT present."
+      interpretive_caution: "Without GGT, the alcohol-sensitive and biliary-sensitive layer of hepatic interpretation is reduced — other markers cannot fully substitute for this context."
+    max_word_count: 90
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [missing_ggt_hepatic_context_v1]
+    supersedes_asset_ids: [missing_ggt_hepatic_context_v1]
+    notes_for_medical_reviewer: |
+      Confirm GGT sensitivity to alcohol and biliary conditions is accurately characterised. Review that "biliary" does not imply cholestasis diagnosis. Prohibited generic wording replaced with specific interpretive statement.
+
+  - asset_id: missing_apob_lipid_context_v1_b
+    asset_type: missing_marker_caveat
+    audience: retail_consumer
+    scope: "apob / lipid context"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_absent_on_panel: true
+      absent_marker: apob
+    context_dependencies:
+      supporting_markers: [ldl_cholesterol, non_hdl_cholesterol, triglycerides, hdl_cholesterol]
+      missing_markers: [apob]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [lipid_lowering_statin]
+      supplement_context: []
+      confidence_limiters:
+        - "LDL cholesterol quantity and ApoB-defined particle number can diverge — particularly in high-triglyceride or low-LDL configurations."
+    interpretive_limitations:
+      - "Without ApoB, atherogenic particle burden is estimated from cholesterol concentration alone, which may under- or over-represent risk in discordant lipid patterns."
+    evidence_refs:
+      - "ESC/EAS Guidelines for the Management of Dyslipidaemias. Eur Heart J 2019;41:111–188"
+      - "NICE CG181 Cardiovascular disease risk assessment (2014, updated 2023)"
+      - "Sniderman AD et al. JAMA Cardiology 2019;4(12):1287–1295"
+      - "HEART UK lipid guidance (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml
+      target_registry_key: missing_apob_lipid_context_v1_b
+      narrative_section_id: missing_evidence_limitations
+    prose_content:
+      caution_when_absent: "ApoB marks atherogenic lipoprotein particles directly — one molecule per particle, regardless of how much cholesterol each particle carries. Where LDL cholesterol is normal but particle number is high (or vice versa), ApoB is what distinguishes them."
+      interpretive_limit: "Without ApoB, HealthIQ cannot fully separate cholesterol quantity from particle-number context — a distinction that matters most in borderline lipid configurations."
+      interpretive_caution: "LDL cholesterol and non-HDL cholesterol still provide useful cardiovascular lipid context; ApoB adds particle-number specificity that standard lipid markers cannot supply."
+    max_word_count: 90
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [missing_apob_lipid_context_v1]
+    supersedes_asset_ids: [missing_apob_lipid_context_v1]
+    notes_for_medical_reviewer: |
+      Confirm ESC/EAS 2019 and NICE CG181 alignment. Note NICE CG181 does not mandate ApoB for routine risk assessment — missing-marker framing is appropriate. Review that "discordant lipid patterns" is accessible for retail consumers or consider simplification.
+
+  - asset_id: missing_insulin_metabolic_context_v1_b
+    asset_type: missing_marker_caveat
+    audience: retail_consumer
+    scope: "fasting_insulin / metabolic context"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_absent_on_panel: true
+      absent_marker: insulin
+    context_dependencies:
+      supporting_markers: [glucose, hba1c]
+      missing_markers: [fasting_insulin]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [biguanide_metformin, glp1_agonist]
+      supplement_context: []
+      confidence_limiters:
+        - "Fasting insulin is not routinely included on standard NHS panels."
+        - "Glucose and HbA1c reflect glycaemic outcome but not the degree of compensatory insulin output."
+    interpretive_limitations:
+      - "Without fasting insulin, HealthIQ cannot assess whether glucose is being maintained within range by normal or by high insulin output — a distinction relevant to metabolic context."
+    evidence_refs:
+      - "DeFronzo RA et al. Type 2 diabetes mellitus. Nature Reviews Disease Primers 2015"
+      - "NICE NG28 Type 2 diabetes in adults (2015, updated 2022)"
+      - "NHS metabolic testing context (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml
+      target_registry_key: missing_insulin_metabolic_context_v1_b
+      narrative_section_id: missing_evidence_limitations
+    prose_content:
+      caution_when_absent: "Glucose and HbA1c show whether blood sugar is being controlled — but not what the pancreas is doing to achieve that. Fasting insulin fills this gap: it reflects how much insulin output is needed to keep glucose in range."
+      interpretive_limit: "Without fasting insulin, the metabolic picture is limited to outcomes (glucose, HbA1c) without the underlying secretion context."
+      interpretive_caution: "Glucose and HbA1c remain the primary accessible glycaemic markers; fasting insulin, where absent, leaves the insulin secretion and resistance picture incomplete."
+    max_word_count: 90
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [missing_insulin_metabolic_context_v1]
+    supersedes_asset_ids: [missing_insulin_metabolic_context_v1]
+    notes_for_medical_reviewer: |
+      Confirm "insulin secretion and resistance" is educationally appropriate without implying insulin resistance diagnosis. Review that caveat does not recommend fasting insulin testing. Prohibited generic wording removed.
+
+  - asset_id: missing_hba1c_metabolic_context_v1_b
+    asset_type: missing_marker_caveat
+    audience: retail_consumer
+    scope: "hba1c / metabolic glycaemic context (partial panel)"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_absent_on_panel: true
+      absent_marker: hba1c
+      glucose_present: true
+    context_dependencies:
+      supporting_markers: [glucose]
+      missing_markers: [hba1c]
+      pattern_dependencies: []
+      lifestyle_context: [recent_illness, fasting_duration]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "A single fasting glucose is sensitive to short-term factors that do not affect HbA1c."
+    interpretive_limitations:
+      - "Without HbA1c, glycaemic context is limited to a single time-point — transient factors such as illness, stress, or fasting variability can affect glucose but would leave HbA1c unchanged."
+    evidence_refs:
+      - "NICE NG28 Type 2 diabetes in adults (2015, updated 2022)"
+      - "WHO Use of glycated haemoglobin (HbA1c) in the diagnosis of diabetes mellitus 2011"
+      - "NHS — Blood sugar tests (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml
+      target_registry_key: missing_hba1c_metabolic_context_v1_b
+      narrative_section_id: missing_evidence_limitations
+    prose_content:
+      caution_when_absent: "HbA1c reflects how red blood cells have been exposed to glucose over approximately 8–12 weeks — making it much less vulnerable to day-to-day variation than a fasting glucose. Without it, the glycaemic picture is a single frame rather than a trend."
+      interpretive_limit: "A glucose reading in isolation can be affected by recent illness, fasting duration, or physiological stress; HbA1c smooths out these transient effects. Without HbA1c, these short-term influences cannot be separated from underlying glycaemic pattern."
+      interpretive_caution: "A fasting glucose without HbA1c provides only a single time-point; factors such as recent illness or fasting variability affect glucose but not HbA1c, making the combination more robust."
+    max_word_count: 90
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [missing_hba1c_metabolic_context_v1]
+    supersedes_asset_ids: [missing_hba1c_metabolic_context_v1]
+    notes_for_medical_reviewer: |
+      Confirm 8–12 week HbA1c window is accurate (reflects RBC lifespan ~2–3 months; the stated range is accepted in NICE NG28 and ADA literature). Verify caveat does not direct users to order HbA1c. Prohibited generic wording removed.
+
+  - asset_id: missing_cystatin_c_renal_context_v1_b
+    asset_type: missing_marker_caveat
+    audience: retail_consumer
+    scope: "cystatin_c / renal filtration context"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      biomarker_absent_on_panel: true
+      absent_marker: cystatin_c
+      egfr_present: true
+    context_dependencies:
+      supporting_markers: [creatinine, egfr]
+      missing_markers: [cystatin_c]
+      pattern_dependencies: []
+      lifestyle_context: [exercise_intensity, muscle_mass]
+      medication_context: []
+      supplement_context: [creatine_supplementation]
+      confidence_limiters:
+        - "Creatinine-based eGFR is the standard primary estimate; cystatin C is most useful when creatinine-based results are borderline or muscle mass is atypical."
+    interpretive_limitations:
+      - "Where creatinine-based eGFR returns an unexpected or borderline result in someone with low or high muscle mass, the absence of cystatin C means no alternative filtration estimate is available."
+    evidence_refs:
+      - "NICE NG203 Chronic kidney disease (2021)"
+      - "Inker LA et al. Estimating GFR using serum cystatin C alone and in combination with serum creatinine. NEJM 2012;367:20–29"
+      - "RCPath eGFR reporting guidance (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml
+      target_registry_key: missing_cystatin_c_renal_context_v1_b
+      narrative_section_id: missing_evidence_limitations
+    prose_content:
+      caution_when_absent: "Cystatin C is filtered by the kidneys at a roughly constant rate, independent of muscle mass. That makes it useful when creatinine-based eGFR may be misleading — in people who are very lean, very muscular, or taking creatine. Without it, the filtration estimate rests on creatinine alone."
+      interpretive_limit: "Where creatinine-based eGFR is borderline or where muscle mass is likely to be atypical, the absence of cystatin C means there is no independent filtration cross-check available."
+      interpretive_caution: "Creatinine-based eGFR is sufficient as the primary filtration estimate in most contexts; cystatin C adds a muscle-mass-independent alternative where the creatinine picture is uncertain."
+    max_word_count: 90
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [missing_cystatin_c_renal_context_v1]
+    supersedes_asset_ids: [missing_cystatin_c_renal_context_v1]
+    notes_for_medical_reviewer: |
+      Confirm NICE NG203 endorsement of cystatin C as alternative GFR estimator is accurately reflected. Review that final sentence does not instruct testing. Prohibited generic wording removed. Creatine supplement context added to confidence_limiters.
+
+  # ─── LIFESTYLE MODIFIER FRAGMENTS ────────────────────────────────────────────
+
+  - asset_id: lifestyle_alcohol_hepatic_markers_fragment_v1_b
+    asset_type: lifestyle_modifier_fragment
+    audience: retail_consumer
+    scope: "mod_q_lifestyle_alcohol / hepatic markers context"
+    range_state: not_applicable
+    personalisation_axes:
+      - lifestyle_band
+    trigger_conditions:
+      modifier_id: mod_q_lifestyle_alcohol
+      modifier_fires: true
+      applies_to:
+        - ggt
+        - alt
+        - ast
+        - triglycerides
+    context_dependencies:
+      supporting_markers: [ggt, alt, ast, triglycerides]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [alcohol_use]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Association only — many other factors raise the same markers; alcohol cannot be confirmed as the cause from a blood result alone."
+    interpretive_limitations:
+      - "GGT is particularly alcohol-sensitive but is not specific to alcohol — biliary and other hepatic conditions also raise GGT. Alcohol context is additive interpretation, not confirmation."
+    evidence_refs:
+      - "NICE CG115 Alcohol-use disorders: harmful drinking and alcohol dependence (liver section)"
+      - "NICE NG49 Cirrhosis in over 16s: assessment and management"
+      - "NHS — Liver function tests and alcohol context (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+      target_registry_key: mod_q_lifestyle_alcohol
+      narrative_section_id: body_overview
+    prose_content:
+      additive_fragment: "Regular or heavy alcohol use is associated with raised GGT, ALT, and AST, and can accompany elevated triglycerides. GGT is especially sensitive to this pattern. This is a recognised association; the markers can rise for many reasons, and alcohol context shapes interpretation but does not confirm a cause."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [lifestyle_alcohol_hepatic_markers_fragment_v1]
+    supersedes_asset_ids: [lifestyle_alcohol_hepatic_markers_fragment_v1]
+    notes_for_medical_reviewer: |
+      Confirm NICE CG115 supports GGT/ALT/AST/triglyceride associations with alcohol. Review that fragment does not recommend reducing alcohol intake. Causation claim appropriately hedged.
+
+  - asset_id: lifestyle_smoking_inflammation_fragment_v1_b
+    asset_type: lifestyle_modifier_fragment
+    audience: retail_consumer
+    scope: "mod_q_lifestyle_smoking / inflammation markers context"
+    range_state: not_applicable
+    personalisation_axes:
+      - lifestyle_band
+    trigger_conditions:
+      modifier_id: mod_q_lifestyle_smoking
+      modifier_fires: true
+      applies_to:
+        - crp
+        - white_blood_cells
+    context_dependencies:
+      supporting_markers: [crp, white_blood_cells]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [smoking_status]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Evidence is moderate — no UK guideline directly quantifies the magnitude of CRP or WBC elevation attributable to smoking in a retail interpretation context."
+        - "Inflammation markers have many causes; smoking status is one contextual factor among several."
+    interpretive_limitations:
+      - "The smoking-inflammation association is well-documented in epidemiological literature but not quantified to a level that allows precise interpretation of any individual result."
+    evidence_refs:
+      - "Yanbaeva DG et al. Systemic effects of smoking. Chest 2007;131:1557–1566"
+      - "NICE guideline on cardiovascular risk assessment — CRP context (current)"
+      - "Public Health England — Smoking and inflammation (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+      target_registry_key: mod_q_lifestyle_smoking
+      narrative_section_id: body_overview
+    prose_content:
+      additive_fragment: "Current smoking is associated with a modestly raised baseline inflammatory state, which may be reflected in markers such as CRP and white blood cell count. This is a recognised association; how much it affects any individual result depends on smoking intensity and other contextual factors."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [lifestyle_smoking_inflammation_fragment_v1]
+    supersedes_asset_ids: [lifestyle_smoking_inflammation_fragment_v1]
+    notes_for_medical_reviewer: |
+      Evidence_strength remains moderate — no specific UK guideline quantifies CRP/WBC elevation in smokers for retail interpretation. Fragment does not recommend smoking cessation. Reviewer should consider whether evidence_strength should be downgraded to weak.
+
+  - asset_id: lifestyle_exercise_creatinine_ck_fragment_v1_b
+    asset_type: lifestyle_modifier_fragment
+    audience: retail_consumer
+    scope: "mod_q_lifestyle_exercise / creatinine and creatine kinase context"
+    range_state: not_applicable
+    personalisation_axes:
+      - lifestyle_band
+    trigger_conditions:
+      modifier_id: mod_q_lifestyle_exercise
+      modifier_fires: true
+      applies_to:
+        - creatinine
+        - creatine_kinase
+    context_dependencies:
+      supporting_markers: [creatinine, creatine_kinase, egfr]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [exercise_intensity, exercise_timing_relative_to_test]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Effect magnitude depends on exercise type, intensity, and timing relative to sample collection."
+    interpretive_limitations:
+      - "Post-exercise CK and creatinine rises are transient. Without knowing the timing and intensity of recent activity, the degree of influence on any result cannot be precisely estimated."
+    evidence_refs:
+      - "NICE guidance on statin muscle monitoring (current)"
+      - "RCPath clinical biochemistry reference guidance (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+      target_registry_key: mod_q_lifestyle_exercise
+      narrative_section_id: body_overview
+    prose_content:
+      additive_fragment: "Recent vigorous exercise — particularly heavy resistance or unaccustomed loading — can temporarily raise creatinine and creatine kinase. This is a well-recognised physiological effect and typically resolves within one to two days. It may transiently reduce the apparent precision of eGFR calculations."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [lifestyle_exercise_creatinine_ck_fragment_v1]
+    supersedes_asset_ids: [lifestyle_exercise_creatinine_ck_fragment_v1]
+    notes_for_medical_reviewer: |
+      "Eccentric" simplified to "heavy resistance or unaccustomed loading" for retail readability. "Typically resolves within one to two days" added for useful specificity. Confirm this timeframe is accurate (CK typically peaks 24–72h post-exercise; creatinine normalises sooner).
+
+  - asset_id: lifestyle_hydration_creatinine_renal_fragment_v1_b
+    asset_type: lifestyle_modifier_fragment
+    audience: retail_consumer
+    scope: "mod_q_hydration / creatinine and renal concentration context"
+    range_state: not_applicable
+    personalisation_axes:
+      - lifestyle_band
+    trigger_conditions:
+      modifier_id: mod_q_hydration
+      modifier_fires: true
+      applies_to:
+        - creatinine
+        - egfr
+    context_dependencies:
+      supporting_markers: [creatinine, egfr]
+      missing_markers: [urine_osmolality]
+      pattern_dependencies: []
+      lifestyle_context: [hydration_status]
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "Dehydration effect on creatinine is physiologically well established but not directly quantifiable from the blood result alone."
+    interpretive_limitations:
+      - "Hydration status at the time of sampling is not directly measurable from a standard serum result; the degree of influence is contextual."
+    evidence_refs:
+      - "Delanaye P et al. Creatinine-based equations to measure GFR: focus on current limitations and use in practice. Nephrol Dial Transplant 2012;27(6):2235–2243"
+      - "RCPath eGFR interpretation guidance (current)"
+      - "NHS — Kidney function tests (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+      target_registry_key: mod_q_hydration
+      narrative_section_id: body_overview
+    prose_content:
+      additive_fragment: "Mild dehydration at the time of sampling can concentrate creatinine in the blood, causing it to appear higher than usual and reducing the calculated eGFR. This is a recognised and typically transient effect that resolves when hydration is normal. Sampling conditions are relevant context for borderline renal results."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [lifestyle_hydration_creatinine_renal_fragment_v1]
+    supersedes_asset_ids: [lifestyle_hydration_creatinine_renal_fragment_v1]
+    notes_for_medical_reviewer: |
+      "Concentrate creatinine in the blood" clarifies haemoconcentration mechanism for retail reader. Fragment does not advise repeat testing — mentions context relevance only. Evidence_strength moderate; no direct UK guideline on dehydration-creatinine but physiology well established.
+
+  # ─── MEDICATION MODIFIER FRAGMENTS ───────────────────────────────────────────
+
+  - asset_id: medication_statin_lipid_context_fragment_v1_b
+    asset_type: medication_modifier_fragment
+    audience: retail_consumer
+    scope: "lipid_lowering_statin / lipid and muscle monitoring context"
+    range_state: not_applicable
+    personalisation_axes:
+      - medication_class
+    trigger_conditions:
+      intervention_class_reported: true
+      intervention_class_id: lipid_lowering_statin
+    context_dependencies:
+      supporting_markers: [ldl_cholesterol, non_hdl_cholesterol, creatine_kinase, alt, ast]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [lipid_lowering_statin]
+      supplement_context: []
+      confidence_limiters:
+        - "Routine ALT monitoring is not universally required at standard statin doses per current NICE and MHRA guidance."
+        - "Statin dose, type, and duration all influence the degree of lipid reduction expected."
+    interpretive_limitations:
+      - "The degree of expected LDL reduction varies by statin type and dose; interpreting lipid results requires knowing which statin is taken and for how long."
+    evidence_refs:
+      - "NICE CG181 Cardiovascular disease risk assessment (2014, updated 2023)"
+      - "Cholesterol Treatment Trialists Collaboration. Lancet 2010;376:1670–1681"
+      - "NICE guidance on statin muscle and liver monitoring (current)"
+      - "MHRA statin safety review 2014"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+      target_registry_key: lipid_lowering_statin
+      narrative_section_id: marker_evidence
+    prose_content:
+      additive_fragment: "Statins are designed to lower LDL and related atherogenic lipid markers — lipid results should be interpreted knowing a statin is being taken and for how long. Muscle-related CK elevation is an uncommon but recognised effect; hepatic enzyme changes are possible but not universally expected at standard doses."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [medication_statin_lipid_context_fragment_v1]
+    supersedes_asset_ids: [medication_statin_lipid_context_fragment_v1]
+    notes_for_medical_reviewer: |
+      KEY REWORK: Original fragment stated "hepatic enzymes may warrant monitoring in some individuals" — flagged as potentially overstating routine monitoring. Revised to "possible but not universally expected at standard doses" to align with NICE CG181 and MHRA 2014 guidance that routine ALT monitoring is not mandated at standard doses. Reviewer should confirm this revised wording is appropriately calibrated to current guidance.
+
+  - asset_id: medication_metformin_glucose_b12_fragment_v1_b
+    asset_type: medication_modifier_fragment
+    audience: retail_consumer
+    scope: "biguanide_metformin / glucose, HbA1c, and B12 context"
+    range_state: not_applicable
+    personalisation_axes:
+      - medication_class
+    trigger_conditions:
+      intervention_class_reported: true
+      intervention_class_id: biguanide_metformin
+    context_dependencies:
+      supporting_markers: [glucose, hba1c, serum_b12, homocysteine]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [biguanide_metformin]
+      supplement_context: [mod_sup_b12]
+      confidence_limiters:
+        - "B12 depletion with metformin occurs in a proportion of users, not universally; long-term use and dose are relevant factors."
+    interpretive_limitations:
+      - "Glucose and HbA1c results in someone taking metformin reflect both intrinsic glycaemic control and the medication's lowering effect; the two cannot be separated from the result alone."
+    evidence_refs:
+      - "NICE NG28 Type 2 diabetes in adults — metformin first-line (2015, updated 2022)"
+      - "de Jager J et al. BMJ 2010;340:c2181"
+      - "NHS BNF metformin entry (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+      target_registry_key: biguanide_metformin
+      narrative_section_id: marker_evidence
+    prose_content:
+      additive_fragment: "Metformin lowers blood glucose and affects glucose and HbA1c readings — results should be interpreted knowing metformin is being taken and the duration of use. Long-term metformin is associated with reduced B12 absorption in some people; where B12 or homocysteine markers are also present, this context is relevant."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [medication_metformin_glucose_b12_fragment_v1]
+    supersedes_asset_ids: [medication_metformin_glucose_b12_fragment_v1]
+    notes_for_medical_reviewer: |
+      Confirm metformin/B12 depletion is well established (de Jager et al. BMJ 2010; NICE NG28 note). Fragment does not recommend B12 supplementation. "In some people" qualifier retained — effect is not universal.
+
+  - asset_id: medication_raas_inhibitor_renal_context_fragment_v1_b
+    asset_type: medication_modifier_fragment
+    audience: retail_consumer
+    scope: "raas_inhibitor / creatinine and eGFR interpretation context"
+    range_state: not_applicable
+    personalisation_axes:
+      - medication_class
+    trigger_conditions:
+      intervention_class_reported: true
+      intervention_class_id: raas_inhibitor
+    context_dependencies:
+      supporting_markers: [creatinine, egfr, potassium]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [raas_inhibitor]
+      supplement_context: []
+      confidence_limiters:
+        - "Clinically significant creatinine rises with ACE inhibitors/ARBs do require clinical review — the pharmacological effect does not explain all rises."
+        - "Concomitant NSAID or dehydration can amplify RAAS-related renal haemodynamic effects."
+    interpretive_limitations:
+      - "The acceptable magnitude of creatinine rise with RAAS inhibitor initiation is defined in clinical guidance; rises beyond expected thresholds warrant clinical review regardless of medication context."
+    evidence_refs:
+      - "NICE NG203 CKD — ACE inhibitor and ARB renal monitoring (2021)"
+      - "NICE CG181 Cardiovascular disease risk (current)"
+      - "NHS BNF ACE inhibitor and ARB entries (current)"
+      - "MHRA guidance on RAAS inhibitors and renal function (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/interventions/intervention_effects_registry_v1.yaml
+      target_registry_key: raas_inhibitor
+      narrative_section_id: marker_evidence
+    prose_content:
+      additive_fragment: "ACE inhibitors and ARBs can cause modest rises in creatinine and reductions in eGFR, particularly in the early weeks of treatment. This is a recognised pharmacological effect and does not necessarily indicate kidney harm — though larger or unexpected rises warrant clinical review. Renal marker interpretation should account for RAAS inhibitor use."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [medication_raas_inhibitor_renal_context_fragment_v1]
+    supersedes_asset_ids: [medication_raas_inhibitor_renal_context_fragment_v1]
+    notes_for_medical_reviewer: |
+      "Does not necessarily indicate kidney harm" is intentionally cautious — clinically significant rises do warrant review. "Larger or unexpected rises warrant clinical review" adds appropriate qualifier without recommending medication action. Confirm NICE NG203 acceptable creatinine rise threshold is not needed in prose (lab/clinical review handles this). Fragment does not advise stopping or adjusting medication.
+
+  # ─── SUPPLEMENT MODIFIER FRAGMENTS ───────────────────────────────────────────
+
+  - asset_id: supplement_creatine_creatinine_context_fragment_v1_b
+    asset_type: supplement_modifier_fragment
+    audience: retail_consumer
+    scope: "mod_sup_creatine / creatinine interpretation context"
+    range_state: not_applicable
+    personalisation_axes:
+      - supplement_use
+    trigger_conditions:
+      supplement_modifier_id: mod_sup_creatine
+      supplement_reported: true
+    context_dependencies:
+      supporting_markers: [creatinine, egfr, cystatin_c]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: [exercise_intensity]
+      medication_context: []
+      supplement_context: [mod_sup_creatine]
+      confidence_limiters:
+        - "The degree of creatinine rise depends on creatine dose and loading phase."
+    interpretive_limitations:
+      - "Creatinine-based eGFR may underestimate true filtration during creatine supplementation; cystatin C is less affected by dietary creatine and provides a useful comparator."
+    evidence_refs:
+      - "Gualano B et al. Eur J Appl Physiol 2011;111:749–756"
+      - "Perrone RD et al. Clin Chem 1992;38:1933–1953"
+      - "NHS — Kidney function tests (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+      target_registry_key: mod_sup_creatine
+      narrative_section_id: body_overview
+    prose_content:
+      additive_fragment: "Creatine supplementation raises creatinine and can lower calculated eGFR — not because kidney function has changed, but because there is more creatine substrate circulating. Where creatine is being taken, cystatin C provides a filtration estimate less affected by this metabolic artefact."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [supplement_creatine_creatinine_context_fragment_v1]
+    supersedes_asset_ids: [supplement_creatine_creatinine_context_fragment_v1]
+    notes_for_medical_reviewer: |
+      "Not because kidney function has changed" makes the mechanism explicit and reduces consumer anxiety. Confirm Gualano et al. 2011 supports this claim. Cystatin C comparator mention aligns with NICE NG203.
+
+  - asset_id: supplement_iron_ferritin_interpretation_fragment_v1_b
+    asset_type: supplement_modifier_fragment
+    audience: retail_consumer
+    scope: "mod_sup_iron / ferritin and iron panel interpretation"
+    range_state: not_applicable
+    personalisation_axes:
+      - supplement_use
+    trigger_conditions:
+      supplement_modifier_id: mod_sup_iron
+      supplement_reported: true
+    context_dependencies:
+      supporting_markers: [ferritin, transferrin_saturation, serum_iron]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: [mod_sup_iron]
+      confidence_limiters:
+        - "Ferritin is also an acute-phase reactant — inflammation can raise ferritin independently of iron stores or supplementation."
+    interpretive_limitations:
+      - "When iron supplementation is ongoing, ferritin and transferrin saturation may reflect recent intake as much as true tissue stores."
+    evidence_refs:
+      - "BSH guidelines on the investigation and management of iron deficiency 2021"
+      - "NHS — Iron deficiency investigation (current)"
+      - "Tietz NW. Fundamentals of Clinical Chemistry and Molecular Diagnostics. 7th ed. Elsevier, 2015"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+      target_registry_key: mod_sup_iron
+      narrative_section_id: body_overview
+    prose_content:
+      additive_fragment: "Iron supplementation can raise serum ferritin and transferrin saturation. When actively supplementing, higher values may reflect recent intake rather than tissue iron stores. The timing of supplementation relative to the blood test and the dose taken are relevant when interpreting iron panel results."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [supplement_iron_ferritin_interpretation_fragment_v1]
+    supersedes_asset_ids: [supplement_iron_ferritin_interpretation_fragment_v1]
+    notes_for_medical_reviewer: |
+      Ferritin as acute-phase reactant noted in confidence_limiters but deliberately excluded from prose (would complicate the fragment beyond word limit). Consider flagging for a separate inflammation/ferritin interaction note in a future batch. Fragment does not advise stopping iron supplements.
+
+  - asset_id: supplement_b12_b12_homocysteine_context_fragment_v1_b
+    asset_type: supplement_modifier_fragment
+    audience: retail_consumer
+    scope: "mod_sup_b12 / B12 and homocysteine interpretation context"
+    range_state: not_applicable
+    personalisation_axes:
+      - supplement_use
+    trigger_conditions:
+      supplement_modifier_id: mod_sup_b12
+      supplement_reported: true
+    context_dependencies:
+      supporting_markers: [serum_b12, homocysteine]
+      missing_markers: [folate]
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: [biguanide_metformin]
+      supplement_context: [mod_sup_b12]
+      confidence_limiters:
+        - "B12 supplementation can mask underlying deficiency — serum B12 may appear normal while functional deficiency exists."
+    interpretive_limitations:
+      - "Raised homocysteine despite apparent B12 sufficiency may reflect functional B12 deficiency, folate inadequacy, or other causes."
+    evidence_refs:
+      - "NICE CKS Vitamin B12 deficiency (current)"
+      - "Refsum H et al. Annu Rev Med 1998;49:31–62"
+      - "NHS — Vitamin B12 test (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+      target_registry_key: mod_sup_b12
+      narrative_section_id: body_overview
+    prose_content:
+      additive_fragment: "B12 supplementation can raise serum B12, potentially masking underlying deficiency on a standard blood test. Where homocysteine is also reported, B12 adequacy is relevant context — low B12 is associated with raised homocysteine. A raised homocysteine despite supplementation is worth discussing with a clinician."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [supplement_b12_b12_homocysteine_context_fragment_v1]
+    supersedes_asset_ids: [supplement_b12_b12_homocysteine_context_fragment_v1]
+    notes_for_medical_reviewer: |
+      "Worth discussing with a clinician" retained in final sentence because raised homocysteine despite supplementation is a specific clinical signal (not a generic disclaimer). This is a targeted safety-relevant statement, not prohibited generic wording. Confirm NICE CKS supports B12 supplementation masking deficiency.
+
+  - asset_id: supplement_folate_homocysteine_context_fragment_v1_b
+    asset_type: supplement_modifier_fragment
+    audience: retail_consumer
+    scope: "mod_sup_folate / folate and homocysteine interpretation context"
+    range_state: not_applicable
+    personalisation_axes:
+      - supplement_use
+    trigger_conditions:
+      supplement_modifier_id: mod_sup_folate
+      supplement_reported: true
+    context_dependencies:
+      supporting_markers: [serum_folate, homocysteine, serum_b12]
+      missing_markers: []
+      pattern_dependencies: []
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: [mod_sup_folate, mod_sup_b12]
+      confidence_limiters:
+        - "Homocysteine is co-regulated by both folate and B12; supplementing one without knowing the status of the other limits the interpretive value."
+    interpretive_limitations:
+      - "Folate supplementation can raise serum folate rapidly; homocysteine interpretation is more informative when both B12 and folate status are available."
+    evidence_refs:
+      - "NICE CKS Folate deficiency (current)"
+      - "Refsum H et al. Annu Rev Med 1998;49:31–62"
+      - "NHS — Folate test (current)"
+    evidence_strength: strong
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml
+      target_registry_key: mod_sup_folate
+      narrative_section_id: body_overview
+    prose_content:
+      additive_fragment: "Folate supplementation raises serum folate and, where folate status was previously low, can reduce homocysteine. When interpreting folate or homocysteine levels, recent supplementation is relevant context. Homocysteine reflects both folate and B12 status — the picture is most complete when both are available."
+    max_word_count: 65
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [supplement_folate_homocysteine_context_fragment_v1]
+    supersedes_asset_ids: [supplement_folate_homocysteine_context_fragment_v1]
+    notes_for_medical_reviewer: |
+      Confirm folate-homocysteine lowering relationship is well established. "Previously low" qualifier retained — effect is conditional on prior folate insufficiency. Final sentence on B12/folate interdependence is factually accurate.
+
+  # ─── RESILIENCE QUALIFIERS ───────────────────────────────────────────────────
+
+  - asset_id: resilience_renal_stable_panel_qualifier_v1_b
+    asset_type: positive_resilience_qualifier
+    audience: retail_consumer
+    scope: "wave1_kidney / renal filtration markers"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      earned_signal_state: stable_or_reassuring
+      governing_signal_required: true
+      required_markers_within_range:
+        - egfr
+        - creatinine
+      no_declining_trend: true
+    context_dependencies:
+      supporting_markers: [egfr, creatinine, cystatin_c]
+      missing_markers: []
+      pattern_dependencies: [renal_stable_signal]
+      lifestyle_context: []
+      medication_context: []
+      supplement_context: []
+      confidence_limiters:
+        - "This qualifier fires only when a governing signal state confirms stability — not on range alone."
+        - "Single-timepoint stability does not exclude trends visible over serial results."
+    interpretive_limitations:
+      - "Stability at this reading does not rule out slowly progressive changes detectable only across serial measurements."
+    evidence_refs:
+      - "NICE NG203 CKD staging — stable eGFR interpretation (2021)"
+      - "NHS — Kidney function tests (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_positive_resilience_pack_v1
+      target_registry_key: resilience_renal_stable_panel_qualifier_v1_b
+      narrative_section_id: whats_working_well
+    prose_content:
+      additive_fragment: "Where kidney filtration markers — including eGFR and creatinine — sit within the laboratory's reference range with no pattern suggesting a declining trend, this part of the panel does not indicate current renal strain in this context."
+    max_word_count: 45
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [resilience_renal_stable_panel_qualifier_v1]
+    supersedes_asset_ids: [resilience_renal_stable_panel_qualifier_v1]
+    notes_for_medical_reviewer: |
+      "Does not suggest" changed to "does not indicate" for slightly stronger clarity while remaining appropriately hedged. Qualifier must only fire when governing signal state is confirmed — not range alone. Confirm interpretive_limitations adequately guards against false reassurance.
+
+  - asset_id: resilience_lipid_stable_pattern_qualifier_v1_b
+    asset_type: positive_resilience_qualifier
+    audience: retail_consumer
+    scope: "wave1_cardiovascular / lipid markers"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      earned_signal_state: stable_or_reassuring
+      governing_signal_required: true
+      required_markers_within_range:
+        - ldl_cholesterol
+        - non_hdl_cholesterol
+        - triglycerides
+      no_single_marker_pattern_of_concern: true
+    context_dependencies:
+      supporting_markers: [ldl_cholesterol, non_hdl_cholesterol, triglycerides, hdl_cholesterol]
+      missing_markers: [apob]
+      pattern_dependencies: [lipid_stable_signal]
+      lifestyle_context: []
+      medication_context: [lipid_lowering_statin]
+      supplement_context: []
+      confidence_limiters:
+        - "ApoB absence means particle-number context is not fully available."
+        - "Statin use affects interpretation — lipid results on treatment do not represent untreated state."
+    interpretive_limitations:
+      - "Lipid markers within range do not fully characterise cardiovascular risk, which depends on multiple factors beyond lipid levels alone."
+    evidence_refs:
+      - "NICE CG181 Cardiovascular disease risk assessment (2014, updated 2023)"
+      - "NHS — Cholesterol test (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_positive_resilience_pack_v1
+      target_registry_key: resilience_lipid_stable_pattern_qualifier_v1_b
+      narrative_section_id: whats_working_well
+    prose_content:
+      additive_fragment: "Where LDL cholesterol, non-HDL cholesterol, and triglycerides all sit within the laboratory's reference range with no pattern of individual concern, the lipid panel does not indicate a current atherogenic lipid signal in this context."
+    max_word_count: 45
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [resilience_lipid_stable_pattern_qualifier_v1]
+    supersedes_asset_ids: [resilience_lipid_stable_pattern_qualifier_v1]
+    notes_for_medical_reviewer: |
+      "Atherogenic lipid signal" is more specific than prior version's generic "pattern of concern." Qualifier must fire only when governing signal state is confirmed. ApoB absence noted in confidence_limiters as a residual gap. Statin context added — lipid results on statin therapy represent treated state.
+
+  - asset_id: resilience_hepatic_no_enzyme_strain_qualifier_v1_b
+    asset_type: positive_resilience_qualifier
+    audience: retail_consumer
+    scope: "wave1_liver / hepatic enzyme markers"
+    range_state: not_applicable
+    personalisation_axes: []
+    trigger_conditions:
+      earned_signal_state: stable_or_reassuring
+      governing_signal_required: true
+      required_markers_within_range:
+        - alt
+        - bilirubin
+      no_pattern_of_concern: true
+    context_dependencies:
+      supporting_markers: [alt, bilirubin, ggt, ast, alp]
+      missing_markers: []
+      pattern_dependencies: [hepatic_stable_signal]
+      lifestyle_context: [alcohol_use]
+      medication_context: [lipid_lowering_statin]
+      supplement_context: []
+      confidence_limiters:
+        - "Enzymes within range do not exclude all hepatic conditions — some liver conditions produce normal enzyme patterns."
+        - "Governing signal state required before firing; range alone is not sufficient."
+    interpretive_limitations:
+      - "Within-range hepatic enzymes do not rule out all liver conditions; some hepatic processes (including early fibrosis) may not raise standard enzyme markers."
+    evidence_refs:
+      - "EASL Clinical Practice Guidelines on non-invasive tests for liver fibrosis/cirrhosis 2021"
+      - "NICE CG87 / NG141 Alcohol-use disorders (liver section)"
+      - "NHS Inform — Liver function tests (current)"
+    evidence_strength: moderate
+    safety_boundaries:
+      no_diagnosis: true
+      no_treatment_recommendation: true
+      no_supplement_or_medication_advice: true
+    review_status: CANDIDATE
+    destination_mapping:
+      target_pack: TBD_positive_resilience_pack_v1
+      target_registry_key: resilience_hepatic_no_enzyme_strain_qualifier_v1_b
+      narrative_section_id: whats_working_well
+    prose_content:
+      additive_fragment: "Where ALT and bilirubin sit within the laboratory's reference range with no pattern suggesting hepatic enzyme strain, this part of the panel does not indicate current liver cell stress in this context."
+    max_word_count: 45
+    authored_by: MR_LLM_CANDIDATE
+    authored_utc: "2026-06-29T00:00:00Z"
+    source_asset_ids: [resilience_hepatic_no_enzyme_strain_qualifier_v1]
+    supersedes_asset_ids: [resilience_hepatic_no_enzyme_strain_qualifier_v1]
+    notes_for_medical_reviewer: |
+      "Does not indicate current liver cell stress" is carefully worded — the interpretive_limitations explicitly note that within-range enzymes do not exclude all hepatic conditions (e.g. early fibrosis). Governing signal state required before this fires. Reviewer should confirm the limitation is sufficient to prevent false reassurance.
