@@ -395,7 +395,7 @@ assets:
     prose_content:
       title: "Urine albumin-to-creatinine ratio (UACR)"
       body: |
-        The kidneys act as a precision filter — keeping proteins where they belong (in the blood) while clearing waste products into urine. UACR measures how much albumin, the blood's most abundant protein, is appearing in the urine relative to creatinine. Even small amounts of albumin in the urine can indicate that the filtration membrane is under strain. Because albumin should largely stay in the blood, finding it in the urine in persistently raised amounts is a sensitive early signal of kidney stress — and a useful marker in anyone with high blood pressure or diabetes, where kidney strain is a recognised risk. The ratio form (albumin relative to creatinine) corrects for urine concentration, making results more comparable across different hydration states. However, single-sample UACR is sensitive to exertion, transient illness, urinary infection, and the time of day — which is why repeat confirmation is standard practice before acting on the finding.
+        The kidneys act as a precision filter — keeping proteins in the blood while clearing waste into urine. UACR measures how much albumin appears in urine relative to creatinine. Even small amounts can indicate the filtration membrane is under strain. Because albumin should largely stay in the blood, persistently raised urine albumin is a sensitive early signal of kidney stress — especially with hypertension or diabetes. The ratio corrects for urine concentration, making results more comparable across hydration states. Single-sample UACR is sensitive to exertion, illness, infection, and time of day — repeat confirmation is standard before acting on a finding.
     max_word_count: 150
     authored_by: MR_LLM_CANDIDATE
     authored_utc: "2026-06-29T00:00:00Z"
@@ -773,6 +773,9 @@ assets:
     supersedes_asset_ids: []
     notes_for_medical_reviewer: |
       Confirm medication causes of low WBC (immunosuppressants, antithyroid drugs) are accurately characterised. Review "effects on bone marrow function" wording — ensure it does not imply a bone marrow condition. Verify that "warrants closer attention" does not constitute clinical direction beyond the educational scope.
+
+  # Note: WBC BORDERLINE not authored at candidate stage. Borderline total WBC often reflects differential subtype shifts or transient immune activity; high and low context explainers cover the substantive directions. Defer standalone borderline asset unless medical review confirms distinct retail utility.
+
   # ── SECTION B: platelets, creatine_kinase, calcium ──────────────────────────
 
   # PLATELETS BASE (REWORKED)
@@ -813,7 +816,7 @@ assets:
       body: |
         Platelets are the body's first-responder clot-forming cells. When a blood vessel wall is breached, they rush to the site, clump together, and form the initial seal that stops bleeding. They are produced in the bone marrow and cleared continuously, so the count in circulation reflects a live balance between production and removal. Both too few and too many platelets can matter clinically — a very low count may affect clotting capacity, while a persistently high count can occasionally be significant in the right context. The platelet count is measured as part of a full blood count (FBC), and its significance depends heavily on the full FBC picture, medication history, recent illness, and any clinical symptoms. A platelet count read in isolation, without that surrounding context, gives only a partial picture.
     interpretive_limitations:
-      - "Platelet count must be interpreted alongside the full FBC, medication history, and clinical context — a single number in isolation has limited standalone meaning."
+      - "Platelet count must be interpreted alongside the full FBC, recent illness or inflammation, and medications such as anticoagulants or chemotherapy — a single number in isolation has limited standalone meaning."
     max_word_count: 150
     authored_by: MR_LLM_CANDIDATE
     authored_utc: "2026-06-29T00:00:00Z"
@@ -1044,7 +1047,7 @@ assets:
     prose_content:
       title: "Creatine kinase (CK)"
       body: |
-        Muscle cells run a constant energy-recycling process, and creatine kinase (CK) is the enzyme at the centre of it. When muscle fibres are put under stress — from hard exercise, an injury, or certain medications — CK leaks from the muscle cells into the bloodstream, where it can be measured. A temporary spike after vigorous exercise, particularly resistance or unaccustomed activity, is a normal physiological response and typically resolves within a day or two. CK is also monitored in people taking statins, where muscle effects are a recognised but relatively uncommon side effect. CK is found in both skeletal and cardiac muscle; the isoform pattern matters clinically, though routine panels usually measure total CK. Interpretation depends on the degree of elevation, timing relative to physical activity, current medications — particularly statins — and whether muscle symptoms are present. Without this context, a single CK reading has limited standalone meaning.
+        Muscle cells run a constant energy-recycling process, and creatine kinase (CK) is the enzyme at the centre of it. When muscle fibres are put under stress — from hard exercise, an injury, or certain medications — CK leaks into the bloodstream, where it can be measured. A temporary spike after vigorous or unaccustomed exercise is normal and typically resolves within a day or two. CK is also monitored on statins, where muscle effects are recognised but relatively uncommon. CK is found in skeletal and cardiac muscle; isoform pattern matters clinically, though routine panels measure total CK. Interpretation depends on degree of elevation, timing relative to activity, medications — particularly statins — and whether muscle symptoms are present. Without this context, a single CK reading has limited standalone meaning.
     interpretive_limitations:
       - "CK interpretation requires knowledge of recent exercise, medication context (especially statins), and degree of elevation — a number without context is hard to interpret."
     max_word_count: 150
@@ -1472,7 +1475,7 @@ assets:
     prose_content:
       title: "Cortisol"
       body: |
-        Cortisol is the body's primary stress hormone — it mobilises energy, dials down inflammation, and modulates blood pressure in response to physical or psychological demand. It is produced by the adrenal glands under instruction from the pituitary and hypothalamus, a signalling chain known as the HPA axis. Cortisol follows a strong diurnal rhythm: levels are typically at their peak shortly after waking and fall steeply across the day, reaching their lowest late at night. This rhythm makes timing critical — a reading that looks elevated at 9 am may be entirely expected, while the same number at midnight would not be. Cortisol is also influenced by glucocorticoid medications, some hormonal contraceptives, and acute stress at the time of sampling. A single cortisol reading without knowing the exact sampling time relative to waking loses most of its interpretive value — the HPA axis dynamic, not the snapshot, is what matters clinically.
+        Cortisol is the body's primary stress hormone — it mobilises energy, dials down inflammation, and modulates blood pressure in response to physical or psychological demand. It is produced by the adrenal glands under instruction from the pituitary and hypothalamus, a signalling chain known as the HPA axis. Cortisol follows a strong diurnal rhythm: levels are typically at their peak shortly after waking and fall steeply across the day, reaching their lowest late at night. This rhythm makes timing critical — a reading that looks elevated at 9 am may be entirely expected, while the same number at midnight would not be. Cortisol is also influenced by glucocorticoid medications, some hormonal contraceptives, and acute stress at the time of sampling. A single cortisol reading without sampling time relative to waking loses most interpretive value — the HPA axis dynamic, not the snapshot, is what matters.
       clinician: null
     interpretive_limitations:
       - "A single cortisol value cannot characterise HPA axis function; dynamic testing or paired sampling is required for clinical assessment."
@@ -1852,6 +1855,8 @@ assets:
     supersedes_asset_ids: []
     notes_for_medical_reviewer: |
       Confirm insulin resistance / low SHBG association is characterised as epidemiological, not diagnostic. Review that androgenic medication mention is appropriate for educational context.
+
+  # Note: SHBG BORDERLINE not authored at candidate stage. Borderline SHBG at the reference margin depends heavily on total and free testosterone together; in-range, high, and low explainers carry the interpretive weight. Defer standalone borderline asset unless medical review confirms distinct retail utility.
 
   # ─── FREE TESTOSTERONE ──────────────────────────────────────────────────────
 
@@ -2544,9 +2549,9 @@ assets:
       target_registry_key: missing_hba1c_metabolic_context_v1_b
       narrative_section_id: missing_evidence_limitations
     prose_content:
-      caution_when_absent: "HbA1c reflects how red blood cells have been exposed to glucose over approximately 8–12 weeks — making it much less vulnerable to day-to-day variation than a fasting glucose. Without it, the glycaemic picture is a single frame rather than a trend."
-      interpretive_limit: "A glucose reading in isolation can be affected by recent illness, fasting duration, or physiological stress; HbA1c smooths out these transient effects. Without HbA1c, these short-term influences cannot be separated from underlying glycaemic pattern."
-      interpretive_caution: "A fasting glucose without HbA1c provides only a single time-point; factors such as recent illness or fasting variability affect glucose but not HbA1c, making the combination more robust."
+      caution_when_absent: "HbA1c reflects glucose exposure over roughly 8–12 weeks — far less swayed by day-to-day variation than a single fasting glucose. Without it, glycaemic context is a snapshot, not a trend."
+      interpretive_limit: "Fasting glucose can shift with recent illness, stress, or fasting timing; HbA1c is largely unaffected by those short-term factors. Absence of HbA1c limits how confidently single glucose readings reflect longer-term pattern."
+      interpretive_caution: "HealthIQ cannot separate transient glucose fluctuation from underlying glycaemic pattern when HbA1c is absent from the panel."
     max_word_count: 90
     authored_by: MR_LLM_CANDIDATE
     authored_utc: "2026-06-29T00:00:00Z"
@@ -2591,9 +2596,9 @@ assets:
       target_registry_key: missing_cystatin_c_renal_context_v1_b
       narrative_section_id: missing_evidence_limitations
     prose_content:
-      caution_when_absent: "Cystatin C is filtered by the kidneys at a roughly constant rate, independent of muscle mass. That makes it useful when creatinine-based eGFR may be misleading — in people who are very lean, very muscular, or taking creatine. Without it, the filtration estimate rests on creatinine alone."
-      interpretive_limit: "Where creatinine-based eGFR is borderline or where muscle mass is likely to be atypical, the absence of cystatin C means there is no independent filtration cross-check available."
-      interpretive_caution: "Creatinine-based eGFR is sufficient as the primary filtration estimate in most contexts; cystatin C adds a muscle-mass-independent alternative where the creatinine picture is uncertain."
+      caution_when_absent: "Cystatin C is filtered at a steady rate, independent of muscle mass — useful when creatinine-based eGFR may mislead in very lean or muscular people, or with creatine use. Without it, filtration rests on creatinine alone."
+      interpretive_limit: "If creatinine-based eGFR is borderline or muscle mass is atypical, absent cystatin C removes an independent cross-check."
+      interpretive_caution: "Creatinine-based eGFR is usually sufficient; cystatin C mainly adds value where the creatinine picture is uncertain."
     max_word_count: 90
     authored_by: MR_LLM_CANDIDATE
     authored_utc: "2026-06-29T00:00:00Z"
@@ -3067,14 +3072,14 @@ assets:
       target_registry_key: mod_sup_b12
       narrative_section_id: body_overview
     prose_content:
-      additive_fragment: "B12 supplementation can raise serum B12, potentially masking underlying deficiency on a standard blood test. Where homocysteine is also reported, B12 adequacy is relevant context — low B12 is associated with raised homocysteine. A raised homocysteine despite supplementation is worth discussing with a clinician."
+      additive_fragment: "B12 supplementation can raise serum B12, potentially masking deficiency on a standard blood test. Where homocysteine is also reported, low B12 is associated with raised homocysteine. If homocysteine remains raised despite reported B12 supplementation, HealthIQ should treat this as a confidence limiter rather than assuming B12 status is adequate."
     max_word_count: 65
     authored_by: MR_LLM_CANDIDATE
     authored_utc: "2026-06-29T00:00:00Z"
     source_asset_ids: [supplement_b12_b12_homocysteine_context_fragment_v1]
     supersedes_asset_ids: [supplement_b12_b12_homocysteine_context_fragment_v1]
     notes_for_medical_reviewer: |
-      "Worth discussing with a clinician" retained in final sentence because raised homocysteine despite supplementation is a specific clinical signal (not a generic disclaimer). This is a targeted safety-relevant statement, not prohibited generic wording. Confirm NICE CKS supports B12 supplementation masking deficiency.
+      Confirm NICE CKS supports B12 supplementation masking deficiency. Raised homocysteine despite supplementation framed as confidence limiter, not clinician deferral. Confirm folate co-regulation remains covered in interpretive_limitations field.
 
   - asset_id: supplement_folate_homocysteine_context_fragment_v1_b
     asset_type: supplement_modifier_fragment
