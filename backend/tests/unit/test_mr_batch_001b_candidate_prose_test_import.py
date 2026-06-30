@@ -251,11 +251,8 @@ def test_mr_batch_001b_write_test_output_report(candidate_pack) -> None:
             continue
         lines.append(f"- **Selected asset IDs:** {', '.join(composed.asset_ids)}")
         lines.append("")
-        snippet = composed.rendered
-        if len(snippet) > 1200:
-            snippet = snippet[:1197] + "..."
         lines.append("```text")
-        lines.append(snippet)
+        lines.append(composed.rendered)
         lines.append("```")
         lines.append("")
 
