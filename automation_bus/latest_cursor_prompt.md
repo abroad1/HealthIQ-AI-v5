@@ -1,339 +1,1017 @@
 ---
-work_id: ARCH-GOV-BASELINE-1
-branch: feature/arch-gov-baseline-1-programme-baseline-governance-reset
+work_id: ARCH-RT-IDENTITY-PROV-1
+branch: feature/arch-rt-identity-prov-1-runtime-identity-provenance-integrity
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: BEHAVIOUR
+stage_b_mode: MODE_2
+knowledge_bus_impact: YES
+medical_review_gate: CONDITIONAL
 ---
 
-# ARCH-GOV-BASELINE-1 — Programme Baseline and Governance Reset
+# ARCH-RT-IDENTITY-PROV-1 — Runtime Identity and Provenance Integrity
 
-## 1. Purpose
+## 1. Product outcome
 
-Create one trustworthy, mechanically usable programme baseline from which all later HealthIQ AI sprint planning can proceed.
+Deliver one coherent runtime integrity outcome:
 
-This work package must reconcile the current governance authority stack, publish the verified codebase maturity baseline, repair stale audit/test expectations, close narrow CI-enforcement gaps, and record recent governance exceptions honestly.
+> Every active signal result must retain its activation-frame identity through downstream reasoning, clinician reporting, API contracts and frontend consumption, while carrying an honest, traceable provenance status that distinguishes explicit research authority from inferred, legacy, unresolved or blocked lineage.
 
-This is not a product-feature sprint.
+This work package combines two dependent workstreams:
 
-This sprint must not:
+### Workstream A — Activation-frame preservation
 
-- introduce new medical reasoning;
-- alter clinical thresholds;
-- activate PSI;
-- change signal firing;
-- change root-cause selection;
-- change card-evidence medical content;
-- change prose selection;
-- change Gemini authority;
-- select or author the next implementation sprint.
+Preserve `activation_key` and its source-spec frame through:
 
-The intended outcome is:
+- signal interaction construction;
+- root-cause compilation;
+- report compilation;
+- output-authority provenance construction;
+- clinician-report contracts;
+- API/DTO assembly;
+- persistence and replay paths where present;
+- frontend type contracts and render-only consumers;
+- deterministic tests and golden evidence.
 
-> Future agents can identify the authoritative governance documents, understand the actual current build maturity, and rely on green tests and CI signals without inheriting stale programme claims.
+### Workstream B — Explicit provenance closure
 
----
+Establish and enforce an honest provenance contract for the active launch-critical signal estate:
 
-## 2. Mandatory governance model
+- explicit `source_spec_id` where deterministically evidenced;
+- explicit classification of inferred, unresolved, legacy, or blocked lineage;
+- no silent conversion of inferred lineage into explicit authority;
+- compile-manifest reference consistency;
+- beta-critical gate coverage;
+- traceability from source authority to package, activation frame, runtime result, clinician report and output provenance.
 
-This work package is governed by the full Automation Bus lifecycle.
-
-Required sequence:
-
-1. Confirm branch alignment and clean repository state.
-2. Complete authority and reality preflight.
-3. Harden this prompt through Claude Code.
-4. Run kernel start.
-5. Implement only the authorised scope.
-6. Complete post-implementation closure protocol.
-7. Run kernel finish and deterministic gate.
-8. Produce independent audit evidence.
-9. Do not merge without explicit human authority.
-
-The standard hardening invocation is:
-
-> **harden work_id: ARCH-GOV-BASELINE-1 — verify source content and produce evidence checklist**
+This is a single outcome-based package, not two micro-sprints.
 
 ---
 
-## 3. Authoritative audit inputs
+## 2. Why this package is required
 
-Read every file listed below in full before changing anything.
+The independently verified executable audits and subsequent prompt hardening established that:
 
-### Independent repository audits
+1. `SignalRegistry` correctly stores signals by `activation_key`.
+2. Duplicate activation keys fail closed.
+3. Multiple frames can coexist at registry/evaluator level.
+4. At least five downstream production surfaces lose or collapse frame-specific identity:
+   - `backend/core/analytics/signal_interaction_builder.py`;
+   - `backend/core/analytics/root_cause_compiler_v1.py`;
+   - `backend/core/analytics/report_compiler_v1.py`;
+   - `backend/core/analytics/output_authority_provenance_builder_v1.py`;
+   - `backend/core/contracts/clinician_report_v1.py`, mirrored by `frontend/app/types/analysis.ts`, where a list of root-cause findings is reduced to a single optional finding.
+5. The five known surfaces are not assumed exhaustive; a full consumer search is required.
+6. The audited package estate contained 191 provenance rows and zero explicit `source_spec_id`.
+7. Two provenance scanners exist and differ in classification taxonomy over the same estate.
+8. `knowledge_bus/schema/package_manifest_schema.yaml` does not currently expose the `source_spec_id` field already required by accepted architecture policy.
+9. `compile_manifest_ref` and `compile_manifest_path` naming are both present and require authority reconciliation.
+10. Controlled beta cannot safely claim frame-correct reasoning or explicit provenance until these gaps are resolved.
 
-```text
-docs/audit-papers/CURSOR_sprint_governance_and_codebase_maturity_audit.md
-docs/audit-papers/CLAUDE_CODE_sprint_governance_and_codebase_maturity_audit.md
-docs/audit-papers/CURSOR_executable_codebase_and_runtime_reality_audit.md
-docs/audit-papers/CLAUDE_CODE_independent_executable_architecture_assurance_audit.md
-```
-
-### Current governance and continuity documents
-
-```text
-docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
-docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
-docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
-docs/governance/healthiq_pre_sop_prompt_scoping_workflow_v0_6.2.md
-docs/AUTHORITY_MAP.md
-docs/SPRINT_STATUS.md
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md
-docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
-```
-
-### MR-BATCH-001B continuity documents
-
-```text
-docs/sprints/beta_readiness/MR-BATCH-001B_test_import_completion.md
-docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_test_output.md
-docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_assets.yaml
-```
-
-### Current test and CI evidence
-
-Locate and read the current repository versions of:
-
-```text
-backend/tests/unit/test_arch_rt5d_package_provenance.py
-backend/tests/unit/test_golden_panel_runner.py
-backend/tests/unit/test_wave1_liver_marker_mapping_fix.py
-.github/workflows/architecture-gate.yml
-.github/workflows/ci.yml
-.github/workflows/golden_gate.yml
-backend/scripts/run_architecture_validation_gate.py
-backend/scripts/validate_day_one_architecture.py
-backend/scripts/validate_day_one_launch_estate_gate.py
-backend/scripts/golden_gate_local.py
-```
-
-Do not assume paths from this prompt are correct if the repository has moved them. Resolve actual paths and record any path correction in the implementation report.
-
----
-
-## 4. Stage 1A — Authority preflight
-
-Before modifying files, verify and report:
-
-1. The authoritative current Automation Bus SOP path.
-2. The authoritative current Knowledge Bus SOP path.
-3. The status and authority level of the Pass 3 promotion protocol.
-4. The authoritative pre-SOP scoping workflow path and version.
-5. The current programme continuity register.
-6. The current day-one architecture carry-forward document.
-7. Whether `docs/AUTHORITY_MAP.md` contains:
-   - an obsolete Knowledge Bus SOP reference;
-   - a stale or non-existent pre-SOP workflow reference;
-   - missing Pass 3 promotion protocol entries;
-   - duplicate or conflicting current/superseded documents.
-8. Whether `docs/SPRINT_STATUS.md` still presents itself as current despite being superseded by later continuity records.
-9. Whether both day-one FINAL variants exist and which one is current.
-10. Whether any other file outside the proposed scope duplicates the same authority function.
-
-Produce a pre-change authority table in the sprint implementation report.
-
-### Authority rule
-
-This sprint may correct references and classifications.
-
-It must not create a new parallel authority document where an existing document can be corrected or explicitly superseded.
-
----
-
-## 5. Stage 1B — Reality check
-
-Confirm that the defects still exist on the current branch before implementation.
-
-At minimum verify:
-
-- `docs/AUTHORITY_MAP.md` remains stale or internally conflicting;
-- the Pass 3 protocol remains marked DRAFT;
-- `docs/SPRINT_STATUS.md` remains stale;
-- MR-BATCH-001B completion/output papers still conflict with the latest benchmark-only classification;
-- `automation_bus/latest_*` remains stale relative to HEAD;
-- `knowledge_bus/current/latest_knowledge_status.json` is absent or otherwise inconsistent with documented expectations;
-- RT-5D provenance tests still contain stale inventory expectations;
-- golden-panel tests still contain obsolete mock signatures or equivalent stale assumptions;
-- `golden_gate.yml` does not provide the intended `main`/`develop` push coverage;
-- bilirubin/`total_bilirubin` regression protection still passes on the current baseline;
-- architecture and launch-estate gates pass before changes.
-
-If a claimed defect no longer exists, do not recreate it. Re-scope that item out and record the evidence.
-
-If the authority structure differs materially from the audit baseline, STOP and escalate before editing.
-
----
-
-## 6. Required deliverables
-
-### Deliverable A — Authoritative current-state baseline
-
-Create:
+The current authoritative programme baseline is:
 
 ```text
 docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md
 ```
 
-The baseline must state verified current reality, not historical aspiration.
+This work package must begin from that baseline.
 
-It must include:
+---
 
-1. Repository baseline:
-   - branch;
-   - HEAD used for verification;
-   - audit date;
-   - source audits.
-2. Authoritative governance stack.
-3. Current programme continuity stack.
-4. Current production authorities.
-5. Current maturity by the eight beta-readiness blocks.
-6. Verified delivered capabilities.
-7. Documented-but-undelivered capabilities.
-8. Built-but-unwired capabilities.
-9. Test-only and candidate-only assets.
-10. Active blockers before controlled beta.
-11. Explicit supersession notes for stale maturity claims.
-12. A statement that this document is the authoritative maturity baseline for future Stage 0 planning until superseded by a later approved baseline.
+## 3. Mandatory governance model
 
-It must explicitly record:
+This package requires full Automation Bus governance and Knowledge Bus validation.
 
-- six Wave 1 domains are built and wired;
-- compiled card evidence is active authority;
-- hard-coded card evidence is not active;
-- activation-key identity is active;
-- end-to-end multi-frame preservation is incomplete;
-- package manifests have zero explicit `source_spec_id` across the scanned estate at the audited baseline;
-- PSI is built but intentionally unwired;
-- WHY authority is dual;
-- production prose exists but frame routing and modifier binding are not delivered;
-- MR-BATCH-001B is benchmark/test-only and not medically approved or promotable;
-- Gemini is non-authoritative;
-- controlled beta is not yet authorised.
+Required sequence:
 
-Do not invent completion percentages.
+1. Confirm branch, HEAD and clean repository state.
+2. Complete Stage 1A authority preflight.
+3. Complete Stage 1B repository reality check.
+4. Complete **Stage B Mode 2 architecture hardening** before implementation.
+5. Claude Code must harden this revised prompt and produce the evidence checklist.
+6. Run Automation Bus kernel start only after hardening returns no blocking correction.
+7. Execute Phase 1 discovery and produce the mandatory architecture-extension ADR.
+8. Honour Internal STOP Gate 1 before behaviour changes.
+9. Implement only the approved design.
+10. Run Knowledge Bus validators for every modified package or governed knowledge artefact.
+11. Honour Internal STOP Gate 2 before any medical-authority or frame-binding promotion.
+12. Complete post-implementation closure protocol.
+13. Run kernel finish and deterministic gates.
+14. Obtain independent Claude audit.
+15. Do not merge without explicit human authority.
 
-### Deliverable B — Governance authority reconciliation
+Required hardening invocation:
 
-Update `docs/AUTHORITY_MAP.md` so it accurately identifies:
+> **harden work_id: ARCH-RT-IDENTITY-PROV-1 — Stage B Mode 2; verify subordinate ADR authority, runtime identity, clinician-report cardinality, provenance schema migration, compile-manifest naming, fail-closed behaviour, and evidence checklist**
 
-- Automation Bus SOP v1.3.1;
-- Knowledge Bus SOP v1.3.1;
-- Pass 3 promotion protocol v1.1 with its true current status;
-- pre-SOP workflow v0.6.2;
-- BUILD_DELIVERABLE_REGISTER as lightweight continuity only;
-- the new current-state baseline;
-- the updated day-one plan;
-- audit papers as evidence, not ongoing authority;
-- legacy and superseded governance locations.
+---
 
-Remove or correct dangling and obsolete references.
+## 4. Governing authority and required reading
 
-Do not silently change the Pass 3 protocol from DRAFT to APPROVED.
+Read every applicable file in full before implementation.
 
-If formal approval authority is not evidenced, retain DRAFT and state that it is an operative companion pending governance ratification.
-
-### Deliverable C — Stale continuity-document handling
-
-Handle `docs/SPRINT_STATUS.md` without deleting history.
-
-Preferred approach:
-
-- add a clear superseded/stale banner at the top;
-- identify the current continuity register and current-state baseline;
-- preserve historical content below the banner.
-
-Do not rewrite historical sprint records as though they were authored today.
-
-### Deliverable D — MR-BATCH-001B authority correction
-
-Update:
+### Current programme baseline and audits
 
 ```text
-docs/sprints/beta_readiness/MR-BATCH-001B_test_import_completion.md
-docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_test_output.md
+docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md
+docs/audit-papers/CURSOR_executable_codebase_and_runtime_reality_audit.md
+docs/audit-papers/CLAUDE_CODE_independent_executable_architecture_assurance_audit.md
+docs/audit-papers/ARCH-GOV-BASELINE-1_implementation_and_verification_report.md
+docs/audit-papers/ARCH-GOV-BASELINE-1_historical_governance_exception_record.md
+docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
-Add clear supersession/continuity notes stating:
+### Governing architecture and knowledge contracts
 
-- Round 1 benchmark/test fixture only;
-- not medically approved;
-- not for promotion;
-- not for production runtime;
-- must not proceed to medical review as a promotion route;
-- useful only as evidence for future Round 2 prose pipeline design.
+Locate and read the current repository versions of:
 
-Do not alter the candidate prose assets themselves.
+```text
+docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
+docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
 
-### Deliverable E — Historical governance-exception record
+docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
+docs/architecture/ADR-RT-002_signal_identity_and_registry_architecture.md
+docs/architecture/ADR-RT-003_hypothesis_and_root_cause_transition_architecture.md
+docs/architecture/ADR-RT-004_compile_manifest_and_provenance_policy.md
+
+knowledge_bus/compiled/estate_index_v1.yaml
+knowledge_bus/schema/package_manifest_schema.yaml
+knowledge_bus/research/investigation_specs/investigation_spec_schema_v3.0.0.yaml
+
+backend/core/knowledge/signal_activation_identity_v1.py
+backend/core/analytics/signal_evaluator.py
+backend/core/analytics/signal_interaction_builder.py
+backend/core/analytics/root_cause_compiler_v1.py
+backend/core/analytics/report_compiler_v1.py
+backend/core/analytics/output_authority_provenance_builder_v1.py
+backend/core/contracts/clinician_report_v1.py
+backend/core/knowledge/launch_estate_v1.py
+backend/core/knowledge/package_provenance_scan_v1.py
+backend/core/knowledge/compiled_hypothesis.py
+backend/core/knowledge/root_cause_registry_v1.py
+frontend/app/types/analysis.ts
+```
+
+If an ADR filename differs slightly from the names above, resolve the actual accepted file path and record the correction before proceeding.
+
+### DTO, persistence, replay and frontend consumers
+
+Locate and read all production consumers of:
+
+```text
+activation_key
+signal_id
+source_spec_id
+compile_manifest_ref
+compile_manifest_path
+provenance
+root_cause
+root_causes
+signal_interactions
+signal_results
+clinician_report
+```
+
+This must include:
+
+- backend DTO models and serializers;
+- clinician-report contracts;
+- API response builders;
+- persistence or replay contracts;
+- report DTOs;
+- frontend result consumers;
+- any audit/evidence payloads.
+
+### Pass 3 protocol status
+
+`KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md` remains DRAFT.
+
+It may be consulted as supporting design input but must not be treated as approved promotion authority.
+
+No PSI activation or Pass 3 promotion is authorised by this package.
+
+---
+
+## 5. Architectural subordination rule
+
+The new ADR required by this package is an **implementation-extension ADR** subordinate to accepted ADR-RT-001 through ADR-RT-004.
+
+It must not reopen settled decisions on:
+
+- research-to-runtime authority;
+- activation identity;
+- registry keying;
+- rejection of one-frame-per-direction simplification;
+- compiled versus legacy hypothesis transition;
+- compile-manifest authority;
+- explicit provenance policy.
+
+If current code makes an accepted ADR impossible to implement as written, STOP and escalate for human architecture adjudication.
+
+The package may extend accepted policy into downstream contracts, schema migration and runtime enforcement. It may not replace accepted policy by convenience.
+
+---
+
+## 6. Stage 1A — Authority preflight
+
+Before changing code, report:
+
+1. The current authoritative source of activation identity.
+2. The exact accepted decisions in ADR-RT-002 that this package must operationalise.
+3. The exact accepted decisions in ADR-RT-003 that constrain root-cause migration and frame binding.
+4. The exact accepted decisions in ADR-RT-004 that constrain `source_spec_id`, compile manifests and provenance.
+5. The current authoritative package provenance scanners.
+6. The difference between:
+   - `launch_estate_v1.scan_package_provenance`;
+   - `package_provenance_scan_v1.scan_all_package_provenance`.
+7. The authoritative schema fields currently available for:
+   - package source authority;
+   - investigation-spec identity;
+   - compile-manifest identity;
+   - runtime activation identity;
+   - output provenance.
+8. Whether package manifests currently permit explicit `source_spec_id`.
+9. Why the manifest schema extension required by ADR-RT-004 is absent despite prior ARCH-RT work.
+10. Whether signal-library entries or compiled artefacts already carry source-spec identity.
+11. Whether runtime activation-key construction currently infers identity when explicit provenance is absent.
+12. Whether `knowledge_bus/current/latest_knowledge_status.json` exists and is authoritative on the current branch.
+13. Which launch-critical package or signal set is actually consumed by production runtime.
+14. Which documents or code comments still describe compiled vitamin-D WHY as shadow-only despite active runtime promotion.
+15. Where `compile_manifest_ref` is used.
+16. Where `compile_manifest_path` is used.
+17. Whether those fields are:
+    - aliases;
+    - internal path versus stable logical reference;
+    - genuinely conflicting contract names.
+18. Whether BUILD_DELIVERABLE_REGISTER lacks historical continuity entries for ARCH-RT-1, ARCH-RT-2 and ARCH-RT-3.
+19. Whether any authority conflict requires human adjudication before implementation.
+
+If the package manifest schema cannot represent the accepted explicit provenance contract, this package owns a safe versioned or backward-compatible schema correction.
+
+---
+
+## 7. Stage 1B — Repository reality check
+
+Reproduce the current defects before modifying anything.
+
+At minimum prove:
+
+### Multi-frame behaviour
+
+- distinct frames sharing one `signal_id` can coexist in `SignalRegistry`;
+- duplicate `activation_key` collisions fail closed;
+- evaluator output preserves `activation_key`;
+- each known collapse surface still loses frame identity:
+  - interaction builder;
+  - root-cause compiler;
+  - report compiler;
+  - output-authority provenance builder;
+  - clinician-report contract and frontend mirror;
+- the clinician-report path reduces an upstream list of root-cause findings to a single optional value;
+- no later consumer reconstructs the lost frame safely;
+- current tests prove registry coexistence but do not prove end-to-end frame preservation;
+- a repository-wide search identifies any additional collapse surface not listed above.
+
+### Provenance
+
+- current package/provenance row count;
+- current explicit `source_spec_id` count;
+- classification counts from both scanners;
+- active launch-critical packages/signals;
+- which active paths have compile-manifest-backed provenance;
+- which active paths use inferred, unparsed, unresolved or legacy provenance;
+- whether runtime or DTO output can distinguish explicit from inferred provenance;
+- whether any package marked blocked or unresolved is still consumed by production runtime;
+- the current manifest schema gap;
+- the current `compile_manifest_ref` / `compile_manifest_path` drift.
+
+### Adjacent controls
+
+- PSI remains absent from production imports;
+- MR-BATCH-001B remains test-only;
+- narrative Gemini remains default-off and non-authoritative;
+- architecture gate passes before changes;
+- current stale PSI activation-readiness test status is recorded but not automatically pulled into scope;
+- missing ARCH-RT-1/2/3 continuity entries are historical documentation gaps, not evidence that the underlying code is absent.
+
+If the audit findings no longer reproduce, STOP and escalate with evidence.
+
+---
+
+## 8. Mandatory Stage B Mode 2 architecture-extension ADR
+
+Before implementation, create:
+
+```text
+docs/architecture/ADR-RT-IDENTITY-PROV-001_activation_frame_and_provenance_integrity.md
+```
+
+The ADR must be drafted during Phase 1 and reviewed through prompt hardening before behaviour changes.
+
+The ADR must explicitly state that it is subordinate to ADR-RT-001 through ADR-RT-004.
+
+It must decide and document:
+
+### A. Canonical runtime identity
+
+The canonical unit of active signal identity must remain:
+
+```text
+activation_key = signal_id::source_spec_id
+```
+
+or the exact equivalent already fixed by ADR-RT-002.
+
+The ADR must define:
+
+- `signal_id` as signal-family identity;
+- `source_spec_id` as activation-frame/research-source identity;
+- `activation_key` as runtime frame identity;
+- legacy behaviour when explicit `source_spec_id` is absent;
+- compatibility and migration rules;
+- collision behaviour;
+- ordering guarantees;
+- replay guarantees.
+
+### B. Downstream preservation rule
+
+Every downstream structure that can contain more than one frame for the same `signal_id` must:
+
+- preserve `activation_key`;
+- avoid unqualified dictionaries keyed solely by `signal_id`;
+- avoid first-match selection by `signal_id`;
+- avoid cardinality reduction from list to single item unless explicitly governed;
+- expose family-level aggregation only where intentionally designed;
+- make any family-level collapse deterministic, named, tested and non-lossy.
+
+### C. Clinician-report cardinality rule
+
+The ADR must define how clinician reports represent multiple authorised root-cause findings.
+
+It must address:
+
+- backend `ClinicianSectionsV1.root_cause`;
+- upstream `List[RootCauseFindingV1]`;
+- frontend `analysis.ts` mirror;
+- backward compatibility for existing single-root-cause consumers;
+- additive contract migration where possible;
+- rendering behaviour when multiple frames or root causes coexist;
+- prohibition on silent selection of a single “first” finding.
+
+### D. Root-cause authority rule
+
+The ADR must define how root-cause compilation selects the correct frame.
+
+It must not:
+
+- silently use the first result matching `signal_id`;
+- attach one frame’s WHY to another frame;
+- convert family-level legacy hypotheses into frame-specific authority without evidence.
+
+Where a legacy root-cause asset is family-level only, the output must identify that status honestly.
+
+### E. Provenance status model
+
+Define a closed, deterministic provenance classification such as:
+
+```text
+EXPLICIT_SPEC
+COMPILED_MANIFEST
+SOURCE_DOCUMENT_DERIVED
+LEGACY_INFERRED
+UNRESOLVED
+BLOCKED
+```
+
+Exact enum names may differ if repository conventions require it.
+
+The model must distinguish:
+
+- explicit authority;
+- deterministic derivation;
+- inference;
+- missing/unresolved authority;
+- promotion-blocked state.
+
+### F. Manifest schema migration
+
+Define the safe correction for the missing `source_spec_id` manifest field.
+
+The ADR must specify:
+
+- whether the existing manifest schema is extended additively;
+- whether a versioned schema revision is required;
+- how historical promoted packages remain valid;
+- how the bounded launch-critical cohort migrates;
+- how legacy packages are represented without falsely claiming explicit provenance;
+- how Knowledge Bus validation distinguishes old and new schema states.
+
+### G. Compile-manifest naming authority
+
+Define the canonical role of:
+
+```text
+compile_manifest_ref
+compile_manifest_path
+```
+
+The ADR must state whether:
+
+- one is the stable logical reference and one an internal path;
+- one is deprecated;
+- aliases are temporarily accepted;
+- migration must be additive;
+- consumer-facing DTOs must exclude filesystem paths.
+
+Do not perform a blind global rename.
+
+### H. Launch-critical enforcement policy
+
+Define the minimum provenance requirement for:
+
+- runtime execution;
+- internal development;
+- controlled beta;
+- medical-content promotion.
+
+Do not automatically make all 191 packages runtime-fatal.
+
+The design must:
+
+- remain backward-compatible for non-beta legacy packages unless explicitly approved otherwise;
+- fail closed for identity collisions;
+- fail honestly for beta-readiness claims;
+- prevent inferred lineage from being represented as explicit lineage.
+
+### I. Migration boundary
+
+The ADR must define:
+
+- which active launch-critical packages/signals are in this sprint’s migration cohort;
+- which packages remain legacy or unresolved;
+- how unresolved items are recorded;
+- whether any active item must be blocked from controlled beta;
+- how later packages inherit the explicit provenance requirement.
+
+---
+
+## 9. Internal STOP Gate 1 — Architecture approval
+
+After the ADR and migration inventory are drafted, STOP before production changes if any of the following applies:
+
+1. The canonical identity contract conflicts with ADR-RT-002.
+2. The proposed WHY handling conflicts with ADR-RT-003.
+3. The proposed provenance contract conflicts with ADR-RT-004.
+4. The canonical identity contract requires changing medical signal meaning.
+5. Two active frames cannot be distinguished from existing source evidence.
+6. Root-cause frame selection requires new medical interpretation.
+7. Explicit provenance cannot be established without guessing or unsupported authority.
+8. Package schema changes would invalidate promoted immutable packages without a migration mechanism.
+9. Runtime fail-closed enforcement would disable a material part of the application.
+10. DTO or clinician-report changes would be breaking without a compatibility plan.
+11. Replay compatibility cannot be preserved.
+12. The migration cohort cannot be bounded safely.
+13. Human approval is required for displaying simultaneous frames or multiple root causes.
+14. `compile_manifest_ref` / `compile_manifest_path` semantics cannot be reconciled safely.
+15. The new ADR would re-decide accepted policy rather than extend it.
+
+If none apply, record `STOP_GATE_1: PASS` in the implementation report and continue.
+
+---
+
+## 10. Workstream A — Activation-frame preservation
+
+### Deliverable A1 — Canonical signal-result indexing
+
+Replace downstream lossy indexing with an explicit structure that supports:
+
+- lookup by `activation_key`;
+- grouping by `signal_id`;
+- deterministic ordering;
+- legacy single-frame compatibility;
+- explicit detection of duplicate or malformed activation identity.
+
+Do not scatter bespoke fixes across individual files.
+
+Prefer one shared, tested helper or domain object used by all affected consumers.
+
+### Deliverable A2 — Signal interaction preservation
+
+Update signal-interaction construction so simultaneous frames are not overwritten.
+
+The interaction output must:
+
+- retain participating `activation_key`s;
+- preserve signal-family identity;
+- distinguish frame-level interaction from family-level interaction;
+- remain deterministic;
+- avoid changing medical interaction rules unless explicitly required and approved.
+
+### Deliverable A3 — Root-cause frame selection
+
+Update root-cause compilation so:
+
+- compiled frame-specific hypotheses match by `activation_key` or explicit frame identity;
+- legacy family-level hypotheses are labelled as family-level;
+- no first-match-by-`signal_id` behaviour remains where multiple frames exist;
+- ambiguous multi-frame WHY fails safely or returns an explicit unresolved/family-level status;
+- no new medical WHY content is created.
+
+### Deliverable A4 — Report compilation
+
+Update report compilation so:
+
+- internal maps do not overwrite same-family frames;
+- report sections retain frame identity;
+- family-level presentation is explicitly aggregated rather than accidental;
+- existing single-frame outputs remain stable where clinically and contractually appropriate.
+
+### Deliverable A5 — Output authority and provenance builder
+
+Update output-authority indexing so:
+
+- evidence rows are keyed by `activation_key`;
+- provenance can be traced per frame;
+- same-family frames do not overwrite each other;
+- family-level summaries are explicit derived views.
+
+### Deliverable A6 — Clinician-report contract migration
+
+Update clinician-report contracts so:
+
+- multiple authorised root-cause findings can be represented without loss;
+- the backend no longer collapses an upstream list into one optional value;
+- frontend types mirror the additive backend contract;
+- legacy single-root-cause clients remain supported where practical;
+- no arbitrary first-item selection is introduced;
+- frontend remains render-only.
+
+### Deliverable A7 — DTO, persistence and replay compatibility
+
+Update applicable contracts to preserve activation identity.
+
+Requirements:
+
+- additive schema changes are preferred;
+- legacy fields may remain temporarily for compatibility;
+- no client should infer activation identity from free text;
+- replay of old single-frame records must remain deterministic;
+- new multi-frame records must round-trip without loss;
+- frontend must not calculate clinical meaning.
+
+---
+
+## 11. Workstream B — Explicit provenance closure
+
+### Deliverable B1 — Canonical provenance contract
+
+Implement the ADR provenance classification in the appropriate schema/model layer.
+
+Each active signal result or output-authority record must be able to state:
+
+- provenance status;
+- `source_spec_id` when explicit;
+- source document or package reference where applicable;
+- canonical compile-manifest reference where applicable;
+- package identifier;
+- whether lineage is explicit, derived, inferred, unresolved or blocked.
+
+Do not expose internal filesystem paths to consumer-facing UI.
+
+### Deliverable B2 — Package manifest schema correction
+
+Correct the absent `source_spec_id` manifest field through a safe, governed migration.
+
+Requirements:
+
+- preserve validity of historical packages where required;
+- prefer additive or versioned schema evolution;
+- validate the bounded launch-critical cohort;
+- do not rewrite promoted package history silently;
+- document why prior ARCH-RT continuity claimed the extension while the live schema lacked it;
+- add tests preventing regression of the required field/contract.
+
+### Deliverable B3 — Scanner reconciliation
+
+Reconcile the two provenance scanners so:
+
+- their purposes are explicit;
+- overlapping facts use consistent terminology;
+- materially conflicting classification of the same package is eliminated or deliberately explained;
+- one authoritative beta-readiness view is defined;
+- tests identify accidental taxonomy drift.
+
+Do not delete useful scanner functionality merely to produce matching counts.
+
+### Deliverable B4 — Compile-manifest contract normalisation
+
+Reconcile `compile_manifest_ref` and `compile_manifest_path`.
+
+Requirements:
+
+- identify the canonical stable logical reference;
+- retain internal paths only where technically necessary;
+- prevent filesystem paths leaking into consumer DTOs;
+- support temporary aliases if backward compatibility requires them;
+- add deterministic validation and migration tests;
+- avoid blind global renaming.
+
+### Deliverable B5 — Active launch-cohort inventory
+
+Produce:
+
+```text
+docs/architecture/ARCH-RT-IDENTITY-PROV-1_launch_critical_provenance_inventory.md
+```
+
+For each active launch-critical package/signal include:
+
+- package ID;
+- signal ID;
+- source-spec ID;
+- activation key;
+- provenance status;
+- source authority reference;
+- compile-manifest reference where present;
+- runtime consumer;
+- beta eligibility;
+- unresolved action.
+
+This inventory must be generated or verified deterministically from repository evidence.
+
+### Deliverable B6 — Explicit provenance migration
+
+For the bounded launch-critical cohort:
+
+- populate explicit `source_spec_id` only where repository evidence proves the mapping;
+- update package/schema fields through Knowledge Bus governance;
+- preserve immutable-history principles;
+- create versioned migration or replacement artefacts where required;
+- validate every modified package.
+
+Do not invent source-spec IDs.
+
+Where explicit mapping cannot be proven:
+
+- classify the item `UNRESOLVED` or `BLOCKED`;
+- keep runtime behaviour backward-compatible unless the ADR says otherwise;
+- mark it ineligible for controlled beta if required.
+
+### Deliverable B7 — Runtime provenance propagation
+
+Propagate honest provenance through:
+
+```text
+package/source authority
+→ activation identity
+→ signal result
+→ interaction/root-cause/report
+→ clinician report
+→ output-authority provenance
+→ DTO/replay evidence
+```
+
+Do not make the frontend calculate or repair provenance.
+
+### Deliverable B8 — Beta-readiness gate
+
+Add a deterministic gate that evaluates the launch-critical cohort against the ADR provenance policy.
+
+The gate must:
+
+- fail if explicit lineage is falsely claimed;
+- fail if activation keys collide;
+- fail if a launch-critical multi-frame result is collapsed;
+- fail if clinician-report cardinality discards authorised findings;
+- report unresolved/blocked items precisely;
+- distinguish runtime compatibility from controlled-beta eligibility;
+- avoid blocking unrelated legacy packages merely because they are outside the launch cohort.
+
+Integrate the gate into the existing architecture validation flow without creating a duplicate governance system.
+
+---
+
+## 12. Historical continuity reconciliation
+
+The BUILD register contains no historical entries for ARCH-RT-1, ARCH-RT-2 and ARCH-RT-3 despite those accepted architecture outcomes being merged.
+
+Do not fabricate retrospective contemporaneous entries.
+
+Create one concise reconciliation note within the Package 2 BUILD-register entry or a directly linked continuity note that:
+
+- identifies the accepted ADR/work-package outcomes;
+- cites repository commit or document evidence;
+- states that the entries were historically absent;
+- does not claim that original closure evidence existed when it did not;
+- does not alter the authority of ADR-RT-001 through ADR-RT-004.
+
+This is a continuity repair subordinate to Package 2, not a separate sprint.
+
+---
+
+## 13. Internal STOP Gate 2 — Medical and authority review
+
+Before promoting any explicit source mapping or changing root-cause frame binding, STOP if:
+
+- source evidence supports more than one plausible `source_spec_id`;
+- a legacy family-level hypothesis would be assigned to a specific frame;
+- multi-frame interaction semantics would change;
+- clinician-report aggregation would change clinical emphasis;
+- a package would move from blocked/unresolved to beta-eligible without clear research authority;
+- any new medical statement or interpretation is required.
+
+For mechanical identity/cardinality preservation with no medical meaning change, medical review is not required.
+
+For ambiguous frame binding or authority promotion, obtain targeted medical review before continuing.
+
+Record each reviewed item and decision.
+
+---
+
+## 14. Test requirements
+
+Create or update tests proving the production path, not only isolated helpers.
+
+### Required multi-frame tests
+
+At minimum cover:
+
+1. Two distinct activation frames sharing one `signal_id` load simultaneously.
+2. Both can fire independently.
+3. Interaction building preserves both.
+4. Root-cause compilation does not attach the wrong frame.
+5. Report compilation preserves both or performs an explicit named aggregation.
+6. Output-authority provenance retains both.
+7. Clinician-report contracts retain all authorised root-cause findings.
+8. Frontend type contracts accept and preserve the additive multi-finding shape.
+9. DTO serialization retains both frames.
+10. Persistence/replay round-trip retains both.
+11. Duplicate activation keys fail closed.
+12. Legacy single-frame output remains compatible.
+13. Unresolved frame-specific WHY is represented honestly.
+14. Ordering is deterministic across repeated runs.
+15. Any additional collapse surface found in Stage 1B is covered.
+
+### Required provenance tests
+
+At minimum cover:
+
+1. Explicit provenance is reported as explicit.
+2. Derived provenance is not reported as explicit.
+3. Inferred provenance is labelled inferred.
+4. Unresolved provenance is not silently promoted.
+5. Canonical compile-manifest references resolve.
+6. Internal compile-manifest paths do not leak into consumer DTOs.
+7. Source-spec IDs resolve to authoritative investigation specs.
+8. Package-manifest schema accepts the new governed contract.
+9. Historical package compatibility is preserved.
+10. Scanner outputs agree on shared facts.
+11. Launch-critical gate fails on false explicit claims.
+12. Launch-critical gate reports blocked items without blocking unrelated legacy packages.
+13. Runtime result → DTO → clinician report → replay provenance round-trip is lossless.
+14. Schema and naming drift regression tests prevent recurrence.
+
+### Regression requirements
+
+Run and preserve:
+
+- architecture validation gate;
+- launch-estate gate;
+- signal evaluator and activation identity suites;
+- interaction-map tests;
+- root-cause compiler tests;
+- report compiler tests;
+- clinician-report contract tests;
+- output-authority provenance tests;
+- compiled hypothesis tests;
+- card-evidence tests;
+- replay/auditability tests;
+- golden-panel tests;
+- PSI isolation tests;
+- MR-BATCH isolation tests;
+- narrative NO-LLM tests;
+- relevant frontend type/render tests.
+
+The pre-existing stale `test_validate_staged_psi_activation_readiness.py` failures may be refreshed only if the changed provenance inventory directly alters the same authoritative counts. Otherwise leave them as a disclosed carry-forward.
+
+Do not weaken assertions to obtain green tests.
+
+---
+
+## 15. Knowledge Bus requirements
+
+For each modified package or governed knowledge artefact:
+
+1. Run the canonical package validator directly.
+2. Record exact command and PASS/FAIL output.
+3. Do not use the unreliable lifecycle controller as promotion authority for `pkg_*`.
+4. Do not promote without validator PASS.
+5. Do not update `latest_knowledge_status.json` unless an actual package promotion occurs.
+6. Do not treat `backend/artifacts/knowledge_status.json` as a substitute for the authoritative current status file.
+7. Preserve package immutability:
+   - prefer versioned replacement/migration artefacts;
+   - never silently rewrite historical meaning.
+8. Do not activate PSI.
+9. Do not promote MR-BATCH-001B.
+10. Do not use the DRAFT Pass 3 protocol as sole promotion authority.
+
+---
+
+## 16. Expected implementation scope
+
+Likely production files include, subject to repository reality:
+
+```text
+backend/core/knowledge/signal_activation_identity_v1.py
+backend/core/analytics/signal_interaction_builder.py
+backend/core/analytics/root_cause_compiler_v1.py
+backend/core/analytics/report_compiler_v1.py
+backend/core/analytics/output_authority_provenance_builder_v1.py
+backend/core/contracts/clinician_report_v1.py
+backend/core/knowledge/launch_estate_v1.py
+backend/core/knowledge/package_provenance_scan_v1.py
+backend/core/pipeline/
+backend/core/models/
+backend/app/models/
+backend/app/routes/
+backend/scripts/run_architecture_validation_gate.py
+backend/scripts/validate_day_one_architecture.py
+knowledge_bus/schema/package_manifest_schema.yaml
+knowledge_bus/packages/<bounded launch-critical cohort only>
+frontend/app/types/analysis.ts
+frontend/app/<direct render-only consumers only>
+docs/architecture/
+docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+backend/tests/
+frontend tests
+```
+
+This list is indicative, not permission for broad edits.
+
+Every touched file must be directly necessary to the stated outcome.
+
+---
+
+## 17. Forbidden scope
+
+Do not:
+
+- activate or wire PSI;
+- promote Pass 3 intelligence;
+- promote MR-BATCH-001B;
+- create new medical prose;
+- change medical thresholds;
+- change signal activation criteria;
+- expand clinical hypotheses;
+- migrate the remaining legacy WHY estate beyond what is required for correct frame identity;
+- redesign the results page;
+- enable Gemini;
+- change narrative LLM authority;
+- perform broad package cleanup unrelated to the launch-critical cohort;
+- fix the dangling v0_4 reference inside the LOCKED Automation Bus SOP;
+- select or author Package 3;
+- claim controlled-beta readiness.
+
+Do not use this package to solve Layer B prose routing or modifier binding. Those belong to Package 3 after identity and provenance are settled.
+
+---
+
+## 18. Acceptance criteria
+
+The package is complete only when all applicable criteria pass.
+
+### Architecture decision
+
+- [ ] ADR exists and is explicitly subordinate to ADR-RT-001 through ADR-RT-004.
+- [ ] No accepted architecture policy was reopened without STOP escalation.
+- [ ] Migration cohort is explicitly bounded.
+- [ ] STOP Gate 1 is recorded.
+- [ ] Any required medical/authority decisions are recorded through STOP Gate 2.
+
+### Multi-frame preservation
+
+- [ ] No affected downstream production consumer accidentally collapses distinct activation frames by bare `signal_id`.
+- [ ] No clinician-report contract silently reduces multiple authorised root-cause findings to one.
+- [ ] Family-level aggregation is explicit, named and tested.
+- [ ] Root-cause frame binding cannot attach the wrong frame.
+- [ ] Output-authority provenance is frame-specific.
+- [ ] DTO, clinician-report and replay paths preserve activation identity.
+- [ ] Frontend types mirror the additive backend contract and remain render-only.
+- [ ] Legacy single-frame behaviour remains compatible.
+- [ ] Duplicate activation keys still fail closed.
+- [ ] Repository-wide search confirms no unaddressed collapse surface remains in the launch path.
+
+### Provenance
+
+- [ ] Package-manifest schema can represent the accepted explicit provenance contract.
+- [ ] Historical package compatibility is preserved.
+- [ ] Provenance status distinguishes explicit, derived, inferred, unresolved and blocked lineage.
+- [ ] No inferred provenance is presented as explicit.
+- [ ] Both scanners have reconciled shared facts and documented distinct purposes.
+- [ ] `compile_manifest_ref` and `compile_manifest_path` have a governed canonical relationship.
+- [ ] Consumer DTOs do not leak internal filesystem paths.
+- [ ] Launch-critical inventory exists and is reproducible.
+- [ ] Every launch-critical item has an explicit status.
+- [ ] Every resolvable launch-critical item has evidence-backed `source_spec_id`.
+- [ ] Unresolvable items are not guessed and are marked beta-ineligible where required.
+- [ ] Compile-manifest and source-spec references resolve.
+- [ ] Runtime, clinician-report and DTO outputs propagate provenance honestly.
+
+### Continuity
+
+- [ ] Missing ARCH-RT-1/2/3 BUILD continuity is reconciled without fabricated retrospective closure claims.
+
+### Gates and regression
+
+- [ ] New launch-critical identity/provenance gate passes.
+- [ ] Architecture validation gate passes.
+- [ ] Launch-estate gate passes.
+- [ ] Required multi-frame end-to-end tests pass.
+- [ ] Required provenance tests pass.
+- [ ] Clinician-report contract tests pass.
+- [ ] Root-cause, report, card, replay and golden regressions pass.
+- [ ] PSI remains unwired.
+- [ ] MR-BATCH-001B remains test-only.
+- [ ] Gemini remains non-authoritative.
+
+### Scope integrity
+
+- [ ] No new medical content was authored.
+- [ ] No signal threshold or firing rule changed.
+- [ ] No broad legacy WHY migration occurred.
+- [ ] No PSI activation occurred.
+- [ ] No Package 3 implementation was started.
+- [ ] Controlled beta was not declared.
+
+---
+
+## 19. STOP conditions
+
+STOP immediately and report evidence if:
+
+1. Stage 1A authority cannot identify trustworthy source-spec authority.
+2. The current branch does not contain the merged Package 1 baseline.
+3. ADR-RT-002, ADR-RT-003 or ADR-RT-004 conflicts with the proposed design.
+4. Multi-frame collapse cannot be fixed additively without changing medical meaning.
+5. Root-cause frame selection is clinically ambiguous.
+6. Clinician-report multi-finding support requires product-policy selection without approval.
+7. Explicit `source_spec_id` mappings would need to be invented.
+8. Package immutability cannot be preserved.
+9. A schema migration would invalidate active packages without a safe versioned path.
+10. Runtime compatibility would require silently discarding a frame.
+11. Replay compatibility cannot be maintained.
+12. A launch-critical package has no defensible authority but is required for continued runtime operation.
+13. `compile_manifest_ref` / `compile_manifest_path` cannot be reconciled without a breaking change.
+14. Knowledge Bus validation fails for a modified package.
+15. Architecture or launch-estate gates fail for an unexplained reason.
+16. PSI, MR-BATCH-001B or Gemini would need to be activated.
+17. The work expands into prose routing, modifiers or broad WHY content migration.
+18. Unrelated working-tree changes or tooling leakage are present.
+19. Human product or medical policy approval is required and has not been obtained.
+20. The package would re-decide accepted ADR policy instead of extending it.
+
+---
+
+## 20. Required implementation report
 
 Create:
 
 ```text
-docs/audit-papers/ARCH-GOV-BASELINE-1_historical_governance_exception_record.md
+docs/audit-papers/ARCH-RT-IDENTITY-PROV-1_implementation_and_verification_report.md
 ```
 
-Record, without fabricating retrospective hardening:
+Include:
 
-- P3-PROSE-DEPTH-1A lacks a demonstrated full Automation Bus lifecycle trail;
-- MR-BATCH-001B lacks a demonstrated full Automation Bus lifecycle trail;
-- MR-BATCH-001B touched `backend/tests/`, so the `/docs/`-only bypass does not clearly apply;
-- the content-level risk was limited by isolation from production paths;
-- the work remains accepted as historical repository state unless a specific defect is found;
-- future work must not use this exception as precedent for bypassing governance.
+1. Executive outcome.
+2. Baseline branch and SHA.
+3. Authority preflight.
+4. Accepted ADR decisions inherited.
+5. Reality-check evidence.
+6. Stage B Mode 2 architecture-extension decision summary.
+7. STOP Gate 1 disposition.
+8. Migration cohort.
+9. Files changed.
+10. Workstream A implementation.
+11. Clinician-report contract migration.
+12. Workstream B implementation.
+13. Manifest-schema migration.
+14. Compile-manifest naming reconciliation.
+15. Knowledge Bus validation evidence.
+16. Medical/authority review decisions.
+17. Before/after multi-frame evidence.
+18. Before/after clinician-report cardinality evidence.
+19. Before/after provenance evidence.
+20. Commands and exit codes.
+21. Acceptance-criteria table.
+22. STOP-condition assessment.
+23. Remaining unresolved or beta-ineligible items.
+24. Historical BUILD continuity reconciliation.
+25. Confirmation that PSI, MR-BATCH and Gemini authority remain unchanged.
+26. Carry-forwards for Package 3.
 
-This document must not claim that hardening occurred retrospectively.
+---
 
-### Deliverable F — Test and inventory refresh
-
-Update stale, deterministic test expectations to current repository reality.
-
-At minimum address:
-
-- current package/provenance row count;
-- current compiled card count;
-- current kb52c or equivalent package classification count;
-- obsolete golden-panel mock signatures;
-- any other directly related stale expectation exposed while fixing these failures.
-
-Rules:
-
-- derive expected inventory from the current authoritative inventory contract where possible;
-- do not weaken tests merely to make them pass;
-- do not replace exact invariant tests with vague assertions;
-- do not modify production behaviour to satisfy stale tests;
-- distinguish stable invariants from inherently changing estate counts;
-- where exact counts are intentionally retained, document the authority source for those counts.
-
-### Deliverable G — CI enforcement correction
-
-Review `.github/workflows/golden_gate.yml`.
-
-Ensure the intended golden/enforcement suite is triggered for the normal protected development flow, including `main` and `develop` where appropriate.
-
-Do not duplicate an existing CI job unnecessarily.
-
-If adding direct push coverage would create redundant or conflicting workflows, STOP and propose a single consolidated correction rather than layering another job.
-
-Preserve NO-LLM enforcement for deterministic golden paths.
-
-### Deliverable H — Narrow unresolved verification closure
-
-Run and record:
-
-- bilirubin/`total_bilirubin` regression test;
-- relevant replay/auditability tests or validators already present;
-- architecture validation gate;
-- launch estate gate;
-- refreshed provenance tests;
-- refreshed golden-panel tests;
-- MR-BATCH isolation tests;
-- PSI isolation tests;
-- relevant frontend tests if CI workflow changes affect them.
-
-If replay/auditability cannot be fully verified using existing tests, record the exact remaining unknown in the baseline. Do not invent a new replay subsystem in this sprint.
-
-### Deliverable I — Build-register continuity entry
+## 21. Build-register continuity
 
 Append one concise entry to:
 
@@ -341,239 +1019,29 @@ Append one concise entry to:
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
-The entry must record:
+Record:
 
-- the work package outcome;
-- the files changed;
+- outcome delivered;
+- inherited ADR authority;
+- activation-frame preservation status;
+- clinician-report cardinality status;
+- provenance cohort and unresolved count;
+- manifest-schema migration status;
+- compile-manifest naming decision;
 - gates/tests run;
-- unresolved carry-forwards;
-- that no product capability or medical content was added;
-- that future Stage 0 planning must start from the new current-state baseline.
+- medical review decisions;
+- historical ARCH-RT-1/2/3 continuity reconciliation;
+- remaining Package 3 dependencies;
+- no beta authorisation;
+- no PSI or MR-BATCH promotion.
 
-The register remains lightweight continuity only.
-
----
-
-## 7. Allowed implementation scope
-
-Expected scope is limited to:
-
-```text
-docs/AUTHORITY_MAP.md
-docs/SPRINT_STATUS.md
-docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md
-docs/audit-papers/ARCH-GOV-BASELINE-1_historical_governance_exception_record.md
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-docs/sprints/beta_readiness/MR-BATCH-001B_test_import_completion.md
-docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_test_output.md
-backend/tests/unit/test_arch_rt5d_package_provenance.py
-backend/tests/unit/test_golden_panel_runner.py
-.github/workflows/golden_gate.yml
-```
-
-Additional directly related test or documentation files may be changed only if repository reality proves they are required to complete the stated outcome.
-
-Any expansion beyond governance documentation, tests, and CI configuration requires STOP and escalation.
+The BUILD register remains continuity only, not architecture authority.
 
 ---
 
-## 8. Forbidden scope
+## 22. Closure requirements
 
-Do not modify:
-
-```text
-backend/core/
-backend/ssot/
-backend/app/
-knowledge_bus/packages/
-knowledge_bus/compiled/
-knowledge_bus/root_cause/
-knowledge_bus/pathway_explainers_v1/
-knowledge_bus/functional_explainers_v1/
-frontend/app/
-```
-
-Do not modify:
-
-- signal activation logic;
-- thresholds;
-- scoring;
-- card content;
-- root-cause content;
-- prose content;
-- package manifests;
-- compiled artefacts;
-- Gemini runtime policy;
-- PSI loader or consumers;
-- Automation Bus execution scripts;
-- Knowledge Bus validator behaviour;
-- evidence artefacts produced by prior work packages.
-
-Do not regenerate governed intelligence artefacts.
-
----
-
-## 9. Required implementation method
-
-### Phase 1 — Evidence capture
-
-Before changes, capture:
-
-```powershell
-git branch --show-current
-git status --short
-git log --oneline -n 20
-python backend/scripts/validate_day_one_architecture.py
-python backend/scripts/validate_day_one_launch_estate_gate.py
-python backend/scripts/run_architecture_validation_gate.py
-```
-
-Run the failing targeted tests and preserve their before-state output.
-
-### Phase 2 — Authority and baseline update
-
-Complete Deliverables A–E.
-
-Do not change tests or CI until the authoritative baseline and document classifications are drafted from verified evidence.
-
-### Phase 3 — Test and CI repair
-
-Complete Deliverables F–H.
-
-### Phase 4 — Continuity and final evidence
-
-Complete Deliverable I, rerun all required validation, and prepare closure evidence.
-
----
-
-## 10. Required test commands
-
-Use repository-supported commands and environment conventions.
-
-At minimum run the repository-equivalent of:
-
-```powershell
-$env:PYTHONPATH = "backend"
-$env:HEALTHIQ_MODE = "test"
-
-python backend/scripts/validate_day_one_architecture.py
-python backend/scripts/validate_day_one_launch_estate_gate.py
-python backend/scripts/run_architecture_validation_gate.py
-
-pytest backend/tests/unit/test_arch_rt5d_package_provenance.py -q
-pytest backend/tests/unit/test_golden_panel_runner.py -q
-pytest backend/tests/unit/test_wave1_liver_marker_mapping_fix.py -q
-pytest backend/tests -k "mr_batch_001b or arch_rt5e" -q
-```
-
-Also run any workflow-specific tests needed to prove the CI change is syntactically valid and non-duplicative.
-
-Do not update snapshots or governed artefacts to manufacture a pass.
-
----
-
-## 11. Acceptance criteria
-
-The sprint is complete only when all applicable criteria pass.
-
-### Governance authority
-
-- [ ] `docs/AUTHORITY_MAP.md` points to the correct current governance documents.
-- [ ] No non-existent pre-SOP file is presented as authoritative.
-- [ ] Knowledge Bus SOP v1.3.1 is correctly classified.
-- [ ] Pass 3 protocol v1.1 retains an honest status.
-- [ ] `docs/SPRINT_STATUS.md` is clearly marked superseded/stale.
-- [ ] Historical audit papers are classified as evidence, not authority.
-
-### Current-state baseline
-
-- [ ] The new baseline exists.
-- [ ] Every major maturity claim is supported by the independent audits or current execution evidence.
-- [ ] Stale strategy claims are explicitly superseded.
-- [ ] No unsupported percentage is used.
-- [ ] Future Stage 0 planning is directed to the baseline.
-
-### MR-BATCH-001B
-
-- [ ] Completion/output documents cannot reasonably be read as authorising medical review or promotion.
-- [ ] Candidate assets remain unchanged.
-- [ ] Isolation tests pass.
-
-### Governance exception
-
-- [ ] Missing historical lifecycle evidence is recorded honestly.
-- [ ] No retrospective hardening is fabricated.
-- [ ] The exception is explicitly non-precedential.
-
-### Tests and CI
-
-- [ ] RT-5D provenance tests pass against current authorised inventory.
-- [ ] Golden-panel tests pass with current production signatures.
-- [ ] Bilirubin regression test passes.
-- [ ] PSI isolation tests pass.
-- [ ] Architecture validation gate passes.
-- [ ] Launch-estate gate passes.
-- [ ] Golden/enforcement workflow covers the intended protected development flow without unnecessary duplication.
-- [ ] NO-LLM deterministic enforcement remains intact.
-
-### Scope integrity
-
-- [ ] No product runtime code changed.
-- [ ] No medical content changed.
-- [ ] No governed package or compiled artefact changed.
-- [ ] No PSI or Gemini activation occurred.
-- [ ] No next sprint was selected or authored.
-
----
-
-## 12. STOP conditions
-
-STOP immediately and report evidence if:
-
-1. Current repository authority differs materially from the two independent audits.
-2. Fixing stale tests requires changing production runtime behaviour.
-3. Correcting provenance tests requires modifying package manifests or compiled artefacts.
-4. Golden-panel failures expose a real production defect rather than stale test mocks.
-5. Bilirubin regression protection fails.
-6. Architecture or launch-estate gates fail before implementation for a reason unrelated to known stale tests.
-7. CI correction would duplicate or conflict with an existing protected-branch workflow.
-8. Any required change touches Intelligence Core or medical-content paths.
-9. Pass 3 protocol status cannot be represented honestly without a human governance decision.
-10. A governance document appears legally or clinically authoritative beyond the evidence available.
-11. Any unrelated working-tree changes or tooling-file leakage are present.
-12. The sprint would need to select or implement one of the later architecture packages.
-
----
-
-## 13. Required implementation report
-
-Create:
-
-```text
-docs/audit-papers/ARCH-GOV-BASELINE-1_implementation_and_verification_report.md
-```
-
-Include:
-
-1. Executive outcome.
-2. Pre-change authority table.
-3. Reality-check results.
-4. Files changed.
-5. Exact changes by deliverable.
-6. Before/after failing-test evidence.
-7. CI trigger comparison.
-8. Commands executed and exit codes.
-9. Acceptance-criteria table.
-10. STOP-condition assessment.
-11. Remaining unknowns.
-12. Carry-forwards for later Stage 0 planning.
-13. Confirmation that no product runtime or medical content changed.
-
----
-
-## 14. Closure requirements
-
-Before `finish`, execute the mandatory Post-Implementation Closure Protocol from the Automation Bus SOP.
+Before `finish`, complete the mandatory Post-Implementation Closure Protocol.
 
 At minimum report:
 
@@ -586,19 +1054,20 @@ git diff --cached --name-only
 git stash list
 ```
 
-Classify all modified, staged, untracked, tooling, and out-of-scope files.
+Classify all modified, staged, untracked, tooling and out-of-scope files.
 
 Do not use stash as routine closure convenience.
 
 Do not run `finish` until:
 
-- the current branch matches the prompt;
-- all changes are in scope;
-- all required tests pass;
-- the working tree is closure-ready;
-- no tooling files are leaking into scope;
-- no unrelated audit files remain unclassified.
+- branch matches this prompt;
+- Stage B Mode 2 and STOP gates are recorded;
+- all modified packages have validator evidence;
+- all required gates and tests pass;
+- no unrelated files are present;
+- implementation report and BUILD register entry are complete;
+- working tree is closure-ready.
 
-After successful `finish`, handle the kernel-generated COMPLETE status exactly as required by the SOP and confirm the branch is clean.
+After successful `finish`, handle the kernel-generated COMPLETE status exactly as required by the Automation Bus SOP and confirm the branch is clean.
 
 Do not merge without explicit human authority.
