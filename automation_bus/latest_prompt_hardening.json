@@ -1,189 +1,187 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "P3-PROSE-DEPTH-1",
+  "work_id": "ARCH-GOV-BASELINE-1",
   "status": "HARDENED",
-  "hardening_date": "2026-06-29",
+  "hardening_date": "2026-07-25",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "risk_level": "STANDARD",
-  "change_type": "CONTENT",
-  "execution_model": "SINGLE_PHASE",
+  "risk_level": "HIGH",
+  "change_type": "MIXED",
+  "execution_model": "TWO_PHASE_START_FINISH",
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type"],
-    "declared_risk_level": "STANDARD",
-    "declared_change_type": "CONTENT",
+    "declared_risk_level": "HIGH",
+    "declared_change_type": "MIXED",
     "files_in_scope_count": 10,
     "files_in_scope": [
-      "docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_prose_library_depth_modifier_schema_completion.md",
-      "docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_manifest.yaml",
-      "docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_carry_forward.yaml",
-      "docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_prose_coverage_matrix.yaml",
-      "docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_schema.yaml",
-      "docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_template.yaml",
-      "docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_batch_001_brief.md",
-      "docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_modifier_fragment_templates.yaml",
-      "docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md (update only)"
+      "docs/AUTHORITY_MAP.md",
+      "docs/SPRINT_STATUS.md",
+      "docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md (new)",
+      "docs/audit-papers/ARCH-GOV-BASELINE-1_historical_governance_exception_record.md (new)",
+      "docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md (append only)",
+      "docs/sprints/beta_readiness/MR-BATCH-001B_test_import_completion.md",
+      "docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_test_output.md",
+      "backend/tests/unit/test_arch_rt5d_package_provenance.py",
+      "backend/tests/unit/test_golden_panel_runner.py",
+      ".github/workflows/golden_gate.yml"
     ],
-    "behaviour_changes_touch_intelligence_core": "NO",
-    "tests_required": "NOT APPLICABLE — CONTENT sprint",
-    "scope_proportionality": "PASS — all output files are documentation/schema/planning artefacts; no runtime file appears in expected output",
-    "advisory_duplication_detected": "NO — latest_scope_advisory.md is scoped to P2-1; no P3-PROSE-DEPTH-1 advisory present",
-    "scope_creep_signals": "NONE",
+    "behaviour_changes_touch_intelligence_core": "NO — backend/core/, backend/ssot/, backend/app/, knowledge_bus/{packages,compiled,root_cause,pathway_explainers_v1,functional_explainers_v1}/, frontend/app/ are explicitly forbidden in prompt §8",
+    "tests_required": "YES — §10 lists explicit pytest/validation-gate commands; correctly required because MIXED change_type carries BEHAVIOUR controls even though no Intelligence Core file is touched",
+    "scope_proportionality": "PASS — HIGH is proportionate: scope includes a CI gate file (golden_gate.yml) and two invariant-bearing test files whose incorrect repair could silently weaken enforcement; governance/doc files carry no runtime risk on their own",
+    "advisory_duplication_detected": "NO — prompt performs its own Stage 1A/1B preflight inline rather than citing a separate B1/B2 advisory file; no latest_scope_advisory.md entry exists for this work_id",
+    "scope_creep_signals": "ONE bounded clause in §7 (\"additional directly related test or documentation files may be changed only if repository reality proves they are required\"), paired with an explicit STOP+escalation requirement for anything beyond governance/docs/tests/CI. Not open-ended discovery language — does not trigger REJECT.",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "primary_architecture_authority": {
-      "path": "docs/planning-papers/DYNAMIC-PROSE-ARCH-1_dynamic_personalised_prose_architecture_review.md",
-      "status": "CONFIRMED_EXISTS",
-      "evidence": "File read at Stage D. Date: 2026-06-29. Executive decision: RECOMMEND_HYBRID_MINIMUM_VIABLE_COMPOSITION confirmed at §1. Conclusions attributed to this document in the sprint prompt are all accurate."
+    "independent_audits": {
+      "paths": [
+        "docs/audit-papers/CURSOR_sprint_governance_and_codebase_maturity_audit.md",
+        "docs/audit-papers/CLAUDE_CODE_sprint_governance_and_codebase_maturity_audit.md",
+        "docs/audit-papers/CURSOR_executable_codebase_and_runtime_reality_audit.md",
+        "docs/audit-papers/CLAUDE_CODE_independent_executable_architecture_assurance_audit.md"
+      ],
+      "status": "CONFIRMED_EXISTS — all 4",
+      "evidence": "All four audit papers verified present on disk; all authored earlier in this same session at current HEAD, so no drift-since-audit re-verification was required (git log shows no intervening commits)."
     },
-    "prose_inventory_authority": {
-      "path_in_prompt": "docs/planning-papers/PROSE-INVENTORY-1_prose_library_prose_to_ux_architecture_inventory_review.md",
-      "actual_path": "docs/audit-papers/PROSE-INVENTORY-1_prose_library_prose_to_ux_architecture_inventory_review.md",
-      "status": "PATH_ERROR",
-      "evidence": "File confirmed to exist at docs/audit-papers/ not docs/planning-papers/ as declared in sprint prompt line 58. Correction C1 required — see corrections below."
+    "governance_and_continuity_documents": {
+      "status": "CONFIRMED_EXISTS — all 9 listed",
+      "evidence": "AUTOMATION_BUS_SOP_v1.3.1.md, KNOWLEDGE_BUS_SOP_v1.3.1.md, KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md, healthiq_pre_sop_prompt_scoping_workflow_v0_6.2.md, AUTHORITY_MAP.md, SPRINT_STATUS.md, BUILD_DELIVERABLE_REGISTER.md, healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md, HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md all confirmed present via direct filesystem check."
     },
-    "build_deliverable_register": {
-      "path": "docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md",
-      "status": "CONFIRMED_EXISTS"
+    "mr_batch_001b_continuity_documents": {
+      "status": "CONFIRMED_EXISTS — all 3",
+      "evidence": "MR-BATCH-001B_test_import_completion.md, MR-BATCH-001B_candidate_prose_test_output.md, MR-BATCH-001B_candidate_prose_assets.yaml all confirmed present."
     },
-    "p2_2_p2_3_completion": {
-      "path": "docs/sprints/beta_readiness/P2-2_P2-3_retail_pathway_explainer_completion.md",
-      "status": "CONFIRMED_EXISTS"
+    "test_and_ci_evidence_files": {
+      "status": "CONFIRMED_EXISTS — 9 of 10; 1 correctly anticipated absent",
+      "evidence": "test_arch_rt5d_package_provenance.py, test_golden_panel_runner.py, test_wave1_liver_marker_mapping_fix.py, architecture-gate.yml, ci.yml, golden_gate.yml, run_architecture_validation_gate.py, validate_day_one_architecture.py, validate_day_one_launch_estate_gate.py, golden_gate_local.py all confirmed present at the paths given in the prompt — no path correction required (unlike the P3-PROSE-DEPTH-1 hardening pass, this prompt's paths are all accurate)."
     },
-    "p2_4_completion": {
-      "path": "docs/sprints/beta_readiness/P2-4_narrativepayload_brief_hardening_completion.md",
-      "status": "CONFIRMED_EXISTS"
-    },
-    "retail_explainer_registry": {
-      "path": "backend/ssot/retail_explainer_v1/registry.yaml",
-      "status": "CONFIRMED_EXISTS",
-      "evidence": "File read at Stage D. Partial coverage confirmed — approximately 40/79 entries based on DYNAMIC-PROSE-ARCH-1 §3 table cross-reference."
-    },
-    "pathway_explainers": {
-      "path": "knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml",
-      "status": "CONFIRMED_EXISTS"
-    },
-    "missing_marker_explainers": {
-      "path": "knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml",
-      "status": "CONFIRMED_EXISTS"
-    },
-    "context_modifier_catalogue": {
-      "path": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml",
-      "status": "CONFIRMED_EXISTS",
-      "evidence": "DYNAMIC-PROSE-ARCH-1 §3 confirms 35 entries, all runtime_active: false."
-    },
-    "intervention_effects_registry": {
-      "path": "knowledge_bus/interventions/intervention_effects_registry_v1.yaml",
-      "status": "CONFIRMED_EXISTS"
+    "knowledge_bus_current_status": {
+      "path": "knowledge_bus/current/latest_knowledge_status.json",
+      "status": "CONFIRMED_ABSENT",
+      "evidence": "knowledge_bus/current/ contains only .gitkeep. This matches the prompt's own Stage 1B expectation (§5 bullet 6) that this file 'is absent or otherwise inconsistent' — the prompt correctly anticipated the current state rather than asserting a false claim."
     }
   },
 
-  "corrections": [
-    {
-      "id": "C1",
-      "severity": "BLOCKING_BEFORE_EXECUTION",
-      "location": "automation_bus/latest_cursor_prompt.md line 58",
-      "observation": "PROSE-INVENTORY-1 path declared in the sprint prompt is wrong. Prompt states: docs/planning-papers/PROSE-INVENTORY-1_prose_library_prose_to_ux_architecture_inventory_review.md. Actual location: docs/audit-papers/PROSE-INVENTORY-1_prose_library_prose_to_ux_architecture_inventory_review.md. Cursor will look in docs/planning-papers/ and fail to find the file, even though it exists and is marked 'if present'.",
-      "required_action": "GPT must correct line 58 of the sprint prompt from docs/planning-papers/ to docs/audit-papers/ before the kernel start and Cursor execution. This is a factual path correction, not a scope change."
+  "stage_1a_1b_reality_check_independent_reverification": {
+    "authority_map_stale_or_conflicting": {
+      "status": "CONFIRMED",
+      "evidence": "docs/AUTHORITY_MAP.md:142 lists 'docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md' as AUTHORITATIVE (not v1.3.1, which is the repo's actual locked SOP per CLAUDE.md §9 and this project's active governance stack); both KNOWLEDGE_BUS_SOP_v1.3.md and KNOWLEDGE_BUS_SOP_v1.3.1.md coexist on disk, a real duplicate/conflict. Separately, AUTHORITY_MAP.md:149 cites 'docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_4.md' as AUTHORITATIVE; repo-wide search confirms no v0_4 file exists anywhere in the repository. The actual current pre-SOP document, docs/governance/healthiq_pre_sop_prompt_scoping_workflow_v0_6.2.md, is not referenced anywhere in AUTHORITY_MAP.md. Additionally, AUTHORITY_MAP.md's Governance/Control-Plane table (lines 136-163) contains zero entries for the Pass 3 Promotion Protocol."
+    },
+    "pass3_protocol_still_draft": {
+      "status": "CONFIRMED",
+      "evidence": "docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md:4 reads 'Status: DRAFT FOR GOVERNANCE REVIEW'. Line 6 'Companion To' also cites 'KNOWLEDGE_BUS_SOP_v1.3.md' rather than v1.3.1 — a second, independent instance of the same dangling version reference, this time inside the protocol document itself, not just the authority map."
+    },
+    "sprint_status_stale": {
+      "status": "CONFIRMED",
+      "evidence": "docs/SPRINT_STATUS.md:3-4 self-declares 'Last updated: 2026-05-04' and 'Status: LIVE — update this document when sprint status changes'. It is not referenced anywhere in docs/AUTHORITY_MAP.md's tables (orphaned from the authority map entirely) and predates the current BUILD_DELIVERABLE_REGISTER.md continuity record by roughly 11 weeks against today's 2026-07-25 audit date."
+    },
+    "mr_batch_001b_docs_conflict_with_benchmark_only_classification": {
+      "status": "CONFIRMED",
+      "evidence": "docs/sprints/beta_readiness/MR-BATCH-001B_test_import_completion.md:70 states 'Medical review of MR-BATCH-001B, then a promotion sprint mapping approved assets into governed packs with explicit runtime candidate flag (still non-public until approved).' docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_test_output.md:289 similarly states 'Run medical review on MR-BATCH-001B, then design a promotion/import sprint that maps approved assets into governed packs...'. Both documents correctly label current status as CANDIDATE/TEST-ONLY (lines 66 and 3 respectively) but both also actively describe a medical-review-to-promotion pathway as a recommended next step, which conflicts with the benchmark-only, not-for-promotion classification this work package is required to record (Deliverable D). This is a genuine, file-and-line-confirmed conflict, not a hypothetical one."
+    },
+    "automation_bus_latest_stale_relative_to_head": {
+      "status": "CONFIRMED",
+      "evidence": "automation_bus/latest_audit_summary.md and automation_bus/latest_gate_evidence.json are untracked/gitignored working files; their content is frozen at work_id P3-PROSE-DEPTH-1 (audit_schema_version 1.3.1, gate_status PASS, dated to the P3-PROSE-DEPTH-1 close). automation_bus/latest_cursor_status.json and automation_bus/latest_prompt_hardening.json (pre-overwrite) were both last committed 2026-06-29, a full month before the most recent repository commits (MR-BATCH-001B series, up to 2026-07-25 09:13 local HEAD)."
+    },
+    "rt5d_provenance_tests_stale_inventory": {
+      "status": "CONFIRMED",
+      "evidence": "pytest run of backend/tests/unit/test_arch_rt5d_package_provenance.py produced 4 failures, all pure hardcoded-count mismatches against current scanner output: test_all_packages_classified expects len(rows)==186, actual 191; test_classification_counts_match_inventory expects batch_json_blocked_pending_spec_extraction==142, actual 147; test_kb52c_packages_classified_batch_blocked expects 67 kb52c packages, actual 72; test_estate_index_covers_launch_artefacts expects 7 card_evidence_artefacts, actual 10. No assertion failure indicates a logic or provenance-authority defect — all four are stale literal integers."
+    },
+    "golden_panel_tests_stale_expectations_not_production_defects": {
+      "status": "CONFIRMED",
+      "evidence": "pytest run of backend/tests/unit/test_golden_panel_runner.py produced 2 failures. (1) test_golden_panel_signal_results_carry_explanation_metadata:678 defines a local monkeypatch stub `_stub_evaluate_all(self, signal_biomarkers, signal_derived, lab_ranges, reference_profiles=None)` that omits the `runtime_context` keyword argument now passed by orchestrator_phases_v1.py:148 / orchestrator.py:1270 in production. This causes a TypeError inside the orchestrator's signal-evaluation phase, which the orchestrator catches and logs ('Analysis failed'), producing a downstream ValueError about a missing stamped explainability_report as a secondary symptom of the same root cause — confirmed by isolating and re-running the two tests independently. (2) test_primary_markers_never_use_policy_or_ssot_ranges:384 asserts interpretation == 'Not scored - no reference range available'; current production output is 'Not scored - missing_lab_reference_range' (isolated run confirms this exact string diff, unrelated to the LLM-insight warnings also visible in that test's captured output, which come from a separate, non-golden-path insights subsystem and do not affect the assertion under test). Both failures are confirmed stale-expectation defects. No STOP condition (prompt §12 item 4) is triggered."
+    },
+    "golden_gate_yml_missing_main_develop_coverage": {
+      "status": "CONFIRMED",
+      "evidence": ".github/workflows/golden_gate.yml:3-8 triggers only `on: pull_request` and `push: branches: [sprint17/biomarker-expansion-ab-panel]`. Neither main nor develop is present in the push branch list."
+    },
+    "bilirubin_regression_passes": {
+      "status": "CONFIRMED",
+      "evidence": "backend/tests/regression/test_bilirubin_alias_regression.py: 8/8 passed on current baseline, prior to any implementation."
+    },
+    "architecture_and_launch_estate_gates_pass_before_changes": {
+      "status": "CONFIRMED",
+      "evidence": "python backend/scripts/run_architecture_validation_gate.py -> architecture_validation_gate: PASS, exit 0. python backend/scripts/validate_day_one_launch_estate_gate.py -> day_one_launch_estate_gate: PASS, exit 0. python backend/scripts/validate_day_one_architecture.py -> day_one_architecture_validation: PASS, exit 0."
+    },
+    "work_package_active_token_clean": {
+      "status": "CONFIRMED",
+      "evidence": "automation_bus/state/work_package_active.json is absent — no stale execution token from a prior work package."
+    },
+    "day_one_final_variants": {
+      "status": "CONFIRMED — both exist",
+      "evidence": "docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md and docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md both exist; the prompt's §3 references only the _FINAL_updated.md variant, correctly treating it as current, but Stage 1A item 9 requires this be explicitly reported in the pre-change authority table since both files self-present as FINAL."
+    },
+    "mr_batch_001b_isolation_and_supporting_tests_currently_green": {
+      "status": "CONFIRMED",
+      "evidence": "pytest backend/tests -k \"mr_batch_001b or arch_rt5e\" -q -> 13 passed, 2 skipped (unrelated DB tests, HEALTHIQ_ENABLE_DB_TESTS gate). pytest backend/tests/unit/test_wave1_liver_marker_mapping_fix.py -q -> 4 passed."
     }
-  ],
+  },
 
   "stage_2b_scope_integrity_checks": {
-    "reject_criteria_all_clear": {
+    "forbidden_scope_list_correctly_excludes_intelligence_core": {
       "status": "CONFIRMED",
-      "evidence": "All reject criteria specified in hardening invocation checked explicitly in the out-of-scope list (prompt lines 110–138). No runtime behaviour modification, production asset modification, modifier runtime binding, NarrativePayloadV1 modification, NarrativeReportV1 modification, Gemini activation, frontend files, signal logic, scoring, parser, or questionnaire code in any sprint output file."
+      "evidence": "Prompt §8 forbids backend/core/, backend/ssot/, backend/app/, knowledge_bus/{packages,compiled,root_cause,pathway_explainers_v1,functional_explainers_v1}/, frontend/app/, plus a named list of behaviours (signal activation, thresholds, scoring, card/root-cause/prose content, package manifests, compiled artefacts, Gemini policy, PSI, Automation Bus/Knowledge Bus execution scripts). This is consistent with CLAUDE.md §7 non-negotiables and §6 role boundaries — no scope-widening risk identified."
     },
-    "risk_classification_confirmed": {
+    "risk_and_change_type_classification_consistent": {
       "status": "CONFIRMED",
-      "evidence": "All 10 output files are documentation, schema, candidate templates, coverage matrix, MR brief, or modifier fragment templates. No Intelligence Core file in output list. CONTENT/STANDARD classification is correct."
+      "evidence": "HIGH is justified per SOP §3/§10 (memory: HIGH also applies to control-plane scripts) because .github/workflows/golden_gate.yml is a CI enforcement/control-plane file even though no Intelligence Core file is in scope. MIXED is justified because scope spans CONTENT (governance docs) and BEHAVIOUR (test expectation values, CI trigger config) simultaneously — MIXED correctly carries BEHAVIOUR controls per standing project convention."
     },
-    "architecture_authority_claims_verified": {
-      "hybrid_minimum_viable_composition": "CONFIRMED — DYNAMIC-PROSE-ARCH-1 §1 executive decision",
-      "no_new_composition_engine": "CONFIRMED — DYNAMIC-PROSE-ARCH-1 §1 line 15",
-      "extend_existing_governed_path": "CONFIRMED — DYNAMIC-PROSE-ARCH-1 §3 confirms NarrativePayloadV1 and compile_narrative_report_v1 are wired",
-      "hepatic_metabolic_pathway_prose_absent": "CONFIRMED — DYNAMIC-PROSE-ARCH-1 §3 table lists 5 pathway explainers (homocysteine, lipid, iron, thyroid, renal); §2 states 'hepatic and metabolic domains still absent'",
-      "retail_explainer_partial_40_of_79": "CONFIRMED — DYNAMIC-PROSE-ARCH-1 §3 table",
-      "missing_marker_caveats_6_bootstrapped": "CONFIRMED — DYNAMIC-PROSE-ARCH-1 §3 table",
-      "supplement_modifiers_7_in_catalogue": "CONFIRMED — DYNAMIC-PROSE-ARCH-1 §3 note lines 129–131",
-      "context_modifier_catalogue_35_entries_all_inactive": "CONFIRMED — DYNAMIC-PROSE-ARCH-1 §3 table",
-      "sex_age_specific_prose_deferred": "CONFIRMED — DYNAMIC-PROSE-ARCH-1 §2 lines 68–71"
-    },
-    "phase_0_preflight_actionable": {
+    "stop_conditions_anticipate_actual_failure_modes": {
       "status": "CONFIRMED",
-      "evidence": "8 discrete checklist items with explicit STOP condition. No ambiguity."
+      "evidence": "Prompt §12 items 2-4 (production runtime change required to fix tests / provenance test fix requiring manifest changes / golden-panel failure exposing a real defect) were independently checked against the actual failure content above and none apply — all four RT-5D failures and both golden-panel failures are confirmed stale-literal/stale-stub only."
     },
-    "coverage_matrix_sources_available": {
+    "governance_exception_deliverable_scope_accurate": {
       "status": "CONFIRMED",
-      "evidence": "All 5 mandatory asset reads confirmed present. All 11 coverage matrix categories (prompt lines 186–199) are mappable to confirmed source files."
+      "evidence": "Deliverable E requires recording that P3-PROSE-DEPTH-1A and MR-BATCH-001B lack a demonstrated full Automation Bus lifecycle trail. This matches the finding already independently reached and evidenced in docs/audit-papers/CURSOR_sprint_governance_and_codebase_maturity_audit.md (headline finding of that report) — no new claim is being introduced here, the deliverable is asking this work package to formally record an already-evidenced fact."
     },
-    "candidate_only_discipline_enforced": {
-      "status": "CONFIRMED",
-      "evidence": "review_status: CANDIDATE required on all MR-targeted content (prompt lines 258–265, 288). No promoted content authorised (acceptance criterion 11). Manifest must confirm no production asset changed (Phase 7)."
-    },
-    "gemini_not_activated": {
-      "status": "CONFIRMED",
-      "evidence": "Sprint prompt lines 141–142, 365–366, acceptance criteria #7. Gemini named in out-of-scope list (line 125)."
-    },
-    "ceo_gate_preserved_in_carry_forward": {
-      "status": "CONFIRMED",
-      "evidence": "Carry-forward requirements (prompt lines 413–417) include 'P4-1 Gemini activation design remains CEO-gated'. Acceptance criterion 20 requires this be recorded."
-    },
-    "scope_advisory_status": {
-      "latest_scope_advisory_present": true,
-      "advisory_work_id": "P2-1",
-      "advisory_date": "2026-06-26",
-      "applies_to_this_sprint": false,
-      "inherited_evidence": "NONE — P2-1 advisory covers Layer C pathway YAML authoring; no file:line citations relevant to P3-PROSE-DEPTH-1 scope"
+    "pre_existing_uncommitted_working_tree_state_flagged": {
+      "status": "OBSERVATION — not a hardening blocker",
+      "evidence": "git status --porcelain shows automation_bus/latest_cursor_prompt.md as locally modified (M) relative to its last commit, and three new untracked audit-papers files from this session. Prompt §14 closure protocol already requires classifying all modified/untracked/tooling files before finish — this is flagged here so the implementer does not treat the modified prompt file itself as unexplained scope creep at closure."
     }
   },
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 17,
+    "checklist_count": 15,
     "all_confirmed": true,
-    "correction_required": true,
-    "correction_id": "C1",
+    "correction_required": false,
     "items": [
-      {"id": 1, "claim": "DYNAMIC-PROSE-ARCH-1 concluded hybrid minimum viable composition", "source": "DYNAMIC-PROSE-ARCH-1 §1", "evidence": "RECOMMEND_HYBRID_MINIMUM_VIABLE_COMPOSITION executive decision", "status": "CONFIRMED"},
-      {"id": 2, "claim": "Do not build a new composition engine", "source": "DYNAMIC-PROSE-ARCH-1 §1 line 15", "evidence": "does not need a new composition engine", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Use existing NarrativePayloadV1 / NarrativeReportV1 path", "source": "DYNAMIC-PROSE-ARCH-1 §3 lines 98–111", "evidence": "NarrativePayloadV1 hardened at P2-4; compile_narrative_report_v1 wired", "status": "CONFIRMED"},
-      {"id": 4, "claim": "Retail explainer coverage partial (~40/79)", "source": "DYNAMIC-PROSE-ARCH-1 §3 table", "evidence": "Partial — 40/~79", "status": "CONFIRMED"},
-      {"id": 5, "claim": "Pathway explainers: hepatic and metabolic missing", "source": "DYNAMIC-PROSE-ARCH-1 §3 table + §2", "evidence": "5 present (homocysteine, lipid, iron, thyroid, renal); hepatic and metabolic absent", "status": "CONFIRMED"},
-      {"id": 6, "claim": "Missing-marker caveats: 6 bootstrapped entries", "source": "DYNAMIC-PROSE-ARCH-1 §3 table", "evidence": "Bootstrapped — 6 entries", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Context modifier catalogue: 35 entries, all runtime_active: false", "source": "DYNAMIC-PROSE-ARCH-1 §3 table", "evidence": "35 entries catalogued, all runtime_active: false", "status": "CONFIRMED"},
-      {"id": 8, "claim": "Supplement modifiers (creatine, iron, B12, vitamin D, folate, protein, testosterone) documented in catalogue", "source": "DYNAMIC-PROSE-ARCH-1 §3 lines 129–131", "evidence": "seven supplement modifier entries explicitly named, all inactive", "status": "CONFIRMED"},
-      {"id": 9, "claim": "PROSE-INVENTORY-1 if present — file is present", "source": "Glob search", "evidence": "File confirmed at docs/audit-papers/ — path in prompt is WRONG (docs/planning-papers/)", "status": "CONFIRMED — C1 correction required"},
-      {"id": 10, "claim": "retail_explainer_v1/registry.yaml is the retail explainer source", "source": "backend/ssot/retail_explainer_v1/registry.yaml", "evidence": "File exists; read confirms YAML biomarker entries (glucose, hba1c confirmed)", "status": "CONFIRMED"},
-      {"id": 11, "claim": "pathway_explainers_v1.yaml as pathway source", "source": "knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml", "evidence": "File confirmed present", "status": "CONFIRMED"},
-      {"id": 12, "claim": "missing_marker_explainers_v1.yaml as caveat source", "source": "knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml", "evidence": "File confirmed present", "status": "CONFIRMED"},
-      {"id": 13, "claim": "context_modifier_catalogue_draft_v1.yaml as lifestyle/supplement source", "source": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml", "evidence": "File confirmed present", "status": "CONFIRMED"},
-      {"id": 14, "claim": "intervention_effects_registry_v1.yaml as medication modifier source", "source": "knowledge_bus/interventions/intervention_effects_registry_v1.yaml", "evidence": "File confirmed present", "status": "CONFIRMED"},
-      {"id": 15, "claim": "No runtime or Intelligence Core files in expected output", "source": "Sprint out-of-scope list (prompt lines 110–138)", "evidence": "28 named files/dirs + 9 exclusion categories; all expected output in docs/sprints/beta_readiness/", "status": "CONFIRMED"},
-      {"id": 16, "claim": "P2-4 completion doc exists (referenced by architecture review)", "source": "docs/sprints/beta_readiness/P2-4_narrativepayload_brief_hardening_completion.md", "evidence": "File confirmed present; DYNAMIC-PROSE-ARCH-1 §3 confirms P2-4 hardening complete", "status": "CONFIRMED"},
-      {"id": 17, "claim": "Sex/age-specific prose deferred unless medically justified", "source": "DYNAMIC-PROSE-ARCH-1 §2 lines 68–71", "evidence": "sex handles reference range at Layer A; prose separation unwarranted until signal requires it", "status": "CONFIRMED"}
+      {"id": 1, "claim": "AUTHORITY_MAP.md cites an obsolete Knowledge Bus SOP version (v1.3, not v1.3.1)", "source": "docs/AUTHORITY_MAP.md:142", "evidence": "Line reads 'docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md | AUTHORITATIVE'; both v1.3.md and v1.3.1.md exist on disk", "status": "CONFIRMED"},
+      {"id": 2, "claim": "AUTHORITY_MAP.md cites a non-existent pre-SOP scoping document (v0_4)", "source": "docs/AUTHORITY_MAP.md:149", "evidence": "Repo-wide search for *v0_4* returns zero matches; actual current file is docs/governance/healthiq_pre_sop_prompt_scoping_workflow_v0_6.2.md, unreferenced in AUTHORITY_MAP.md", "status": "CONFIRMED"},
+      {"id": 3, "claim": "AUTHORITY_MAP.md is missing Pass 3 promotion protocol entries", "source": "docs/AUTHORITY_MAP.md:136-163", "evidence": "Grep for 'pass.?3|pass3' in the Governance/Control-Plane section returns no matches", "status": "CONFIRMED"},
+      {"id": 4, "claim": "Pass 3 protocol remains marked DRAFT", "source": "docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md:4", "evidence": "'Status: DRAFT FOR GOVERNANCE REVIEW'", "status": "CONFIRMED"},
+      {"id": 5, "claim": "docs/SPRINT_STATUS.md remains stale and self-presents as current", "source": "docs/SPRINT_STATUS.md:3-4", "evidence": "'Last updated: 2026-05-04', 'Status: LIVE'; not cross-referenced in AUTHORITY_MAP.md", "status": "CONFIRMED"},
+      {"id": 6, "claim": "MR-BATCH-001B completion docs conflict with benchmark-only classification", "source": "MR-BATCH-001B_test_import_completion.md:70; MR-BATCH-001B_candidate_prose_test_output.md:289", "evidence": "Both describe a medical-review-to-promotion pathway as a next step despite current CANDIDATE/TEST-ONLY status", "status": "CONFIRMED"},
+      {"id": 7, "claim": "automation_bus/latest_* is stale relative to HEAD", "source": "automation_bus/latest_audit_summary.md header; git log on latest_cursor_status.json / latest_prompt_hardening.json", "evidence": "Frozen at work_id P3-PROSE-DEPTH-1; last committed 2026-06-29 vs HEAD 2026-07-25", "status": "CONFIRMED"},
+      {"id": 8, "claim": "knowledge_bus/current/latest_knowledge_status.json is absent", "source": "knowledge_bus/current/ directory listing", "evidence": "Only .gitkeep present", "status": "CONFIRMED"},
+      {"id": 9, "claim": "RT-5D provenance tests contain stale inventory expectations", "source": "backend/tests/unit/test_arch_rt5d_package_provenance.py (pytest run)", "evidence": "4/4 targeted tests fail on hardcoded counts: 186 vs 191, 142 vs 147, 67 vs 72, 7 vs 10", "status": "CONFIRMED"},
+      {"id": 10, "claim": "Golden-panel tests contain obsolete mock signature / stale expectations, not a production defect", "source": "backend/tests/unit/test_golden_panel_runner.py:678, :384 (pytest run, isolated)", "evidence": "Stub missing runtime_context kwarg; stale literal interpretation string", "status": "CONFIRMED"},
+      {"id": 11, "claim": "golden_gate.yml does not provide main/develop push coverage", "source": ".github/workflows/golden_gate.yml:3-8", "evidence": "push.branches only lists sprint17/biomarker-expansion-ab-panel", "status": "CONFIRMED"},
+      {"id": 12, "claim": "Bilirubin/total_bilirubin regression protection still passes on current baseline", "source": "backend/tests/regression/test_bilirubin_alias_regression.py (pytest run)", "evidence": "8/8 passed", "status": "CONFIRMED"},
+      {"id": 13, "claim": "Architecture and launch-estate gates pass before changes", "source": "run_architecture_validation_gate.py, validate_day_one_launch_estate_gate.py, validate_day_one_architecture.py (executed)", "evidence": "All three report PASS, exit 0", "status": "CONFIRMED"},
+      {"id": 14, "claim": "No stale active work-package token present", "source": "automation_bus/state/work_package_active.json", "evidence": "File absent", "status": "CONFIRMED"},
+      {"id": 15, "claim": "Both day-one FINAL variants exist", "source": "docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md, _FINAL_updated.md", "evidence": "Both present on disk; prompt correctly treats _FINAL_updated as current but Stage 1A requires this be explicitly reported", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Any modification to narrative_payload_builder_v1.py — REJECT_AND_RETURN",
-    "Any modification to narrative_report_compiler_v1.py — REJECT_AND_RETURN",
-    "Any modification to narrative_compiler_lc_s3_assembly_v1.py — REJECT_AND_RETURN",
-    "Any modification to NarrativePayloadV1 — REJECT_AND_RETURN",
-    "Any modification to NarrativeReportV1 — REJECT_AND_RETURN",
-    "Any Gemini activation — REJECT_AND_RETURN",
-    "Any frontend file modification — REJECT_AND_RETURN",
-    "Any signal evaluator, scoring policy, domain assembler, root-cause compiler modification — REJECT_AND_RETURN",
-    "Any parser or questionnaire file modification — REJECT_AND_RETURN",
-    "Any production prose registry/YAML asset modification — REJECT_AND_RETURN",
-    "Any production PSI or compiled card modification — REJECT_AND_RETURN",
-    "Any context modifier runtime binding activation — REJECT_AND_RETURN",
-    "Any medical content promoted to APPROVED runtime status — REJECT_AND_RETURN"
+    "Any modification to backend/core/, backend/ssot/, backend/app/ — REJECT_AND_RETURN",
+    "Any modification to knowledge_bus/packages/, compiled/, root_cause/, pathway_explainers_v1/, functional_explainers_v1/ — REJECT_AND_RETURN",
+    "Any modification to frontend/app/ — REJECT_AND_RETURN",
+    "Any change to signal activation logic, thresholds, scoring, card content, root-cause content, prose content — REJECT_AND_RETURN",
+    "Any change to package manifests or compiled artefacts — REJECT_AND_RETURN",
+    "Any change to Gemini runtime policy or PSI loader/consumers — REJECT_AND_RETURN",
+    "Any change to Automation Bus or Knowledge Bus execution scripts — REJECT_AND_RETURN",
+    "Any silent change of Pass 3 protocol status from DRAFT to APPROVED without evidenced governance ratification — REJECT_AND_RETURN",
+    "Any modification to MR-BATCH-001B candidate prose assets themselves — REJECT_AND_RETURN",
+    "Any weakening of RT-5D or golden-panel test assertions beyond correcting stale literals/stub signatures to current authoritative values — REJECT_AND_RETURN",
+    "Any golden_gate.yml change that duplicates or conflicts with an existing protected-branch workflow rather than a single consolidated correction — REJECT_AND_RETURN (STOP condition 7)",
+    "Selection or authoring of the next implementation sprint — REJECT_AND_RETURN"
   ],
 
-  "pipeline_advisory_trigger_instruction": "At Stage 5 audit close, set pipeline_advisory_trigger: true. Set pipeline_advisory_reason to reflect which of the following is next: MR Batch 001 prose generation, prose promotion/import sprint, frame routing architecture, P4-1 CEO-gated Gemini activation design, or another content-depth tranche. Acceptance criterion 22 requires this determination.",
+  "pipeline_advisory_trigger_instruction": "At Stage 5 audit close, evaluate pipeline_advisory_trigger against SOP v1.3.1 §6 criteria. Given this work package establishes the authoritative current-state baseline and closes out four independent audit passes, a pipeline advisory at batch boundary is plausible — tick all six criteria explicitly rather than substituting judgment, per standing project convention.",
 
-  "overall_verdict": "HARDENED. All five front-matter fields confirmed valid. STANDARD/CONTENT/SINGLE_PHASE classification confirmed — all output is documentation, schema, candidate templates, coverage matrix, MR brief, and modifier fragment templates with no runtime file in scope. One blocking correction raised (C1): PROSE-INVENTORY-1 path in prompt line 58 must be corrected from docs/planning-papers/ to docs/audit-papers/ before Cursor execution. All reject criteria clear. All architecture authority claims verified from direct file reads of DYNAMIC-PROSE-ARCH-1. All 10 mandatory and conditional asset reads confirmed present. Sprint cleared for kernel start after C1 correction is applied to the prompt."
+  "overall_verdict": "HARDENED. All five front-matter fields confirmed valid. HIGH/MIXED/TWO_PHASE_START_FINISH classification confirmed proportionate — CI gate file and invariant-bearing test files justify HIGH even with zero Intelligence Core files in scope. All 18 authority-input paths independently confirmed to exist (one, knowledge_bus/current/latest_knowledge_status.json, is correctly anticipated as absent by the prompt itself). All 15 Stage 1A/1B reality-check claims in the prompt were independently re-verified against current repository state — every one is confirmed true, including the two most consequential: (a) both golden-panel test failures are confirmed stale-expectation defects (stub signature and literal string), not production defects, so no STOP condition is triggered; (b) all four RT-5D provenance test failures are confirmed pure stale-count mismatches. No path corrections required (unlike the prior P3-PROSE-DEPTH-1 hardening pass). No unsupported claim, no scope ambiguity, no contradiction between the prompt and verified repository reality was found. Cleared for kernel start."
 }

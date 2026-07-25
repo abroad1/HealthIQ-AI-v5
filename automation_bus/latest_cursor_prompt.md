@@ -1,494 +1,604 @@
 ---
-work_id: P3-PROSE-DEPTH-1
-branch: feature/p3-prose-depth-1-prose-library-depth-modifier-schema
-risk_level: STANDARD
-execution_model: SINGLE_PHASE
-change_type: CONTENT
+work_id: ARCH-GOV-BASELINE-1
+branch: feature/arch-gov-baseline-1-programme-baseline-governance-reset
+risk_level: HIGH
+execution_model: TWO_PHASE_START_FINISH
+change_type: MIXED
 ---
 
-# P3-PROSE-DEPTH-1 — Prose Library Depth and Modifier Schema Sprint
+# ARCH-GOV-BASELINE-1 — Programme Baseline and Governance Reset
 
-You are Cursor, acting as implementation agent for HealthIQ AI under the standard Automation Bus and Knowledge Bus governance rules.
+## 1. Purpose
 
-This is a STANDARD / CONTENT sprint.
+Create one trustworthy, mechanically usable programme baseline from which all later HealthIQ AI sprint planning can proceed.
 
-This sprint must create the governed foundations for scalable prose-library population.
+This work package must reconcile the current governance authority stack, publish the verified codebase maturity baseline, repair stale audit/test expectations, close narrow CI-enforcement gaps, and record recent governance exceptions honestly.
 
-It must not activate Gemini, modify runtime behaviour, bind modifiers at runtime, change Intelligence Core logic, or promote candidate prose into production assets.
+This is not a product-feature sprint.
 
-## Sprint purpose
+This sprint must not:
 
-HealthIQ AI needs a scalable, governed prose library that supports personalised marker-level and system-level explanation without creating an unmaintainable bespoke-paragraph monster.
+- introduce new medical reasoning;
+- alter clinical thresholds;
+- activate PSI;
+- change signal firing;
+- change root-cause selection;
+- change card-evidence medical content;
+- change prose selection;
+- change Gemini authority;
+- select or author the next implementation sprint.
 
-The architecture review `DYNAMIC-PROSE-ARCH-1` concluded:
+The intended outcome is:
 
-* HealthIQ should use **hybrid minimum viable composition**;
-* do not build a new composition engine;
-* do not build thousands of bespoke prose paragraphs;
-* use the existing `NarrativePayloadV1` / `NarrativeReportV1` path;
-* extend the existing governed asset model with content depth, modifier fragments, MR candidate asset schema, review status, destination mapping and compile/promotion discipline;
-* MR LLM assets must remain candidate assets until reviewed and promoted.
+> Future agents can identify the authoritative governance documents, understand the actual current build maturity, and rely on green tests and CI signals without inheriting stale programme claims.
 
-This sprint creates the content-factory foundations.
+---
 
-It does not populate production runtime prose directly.
+## 2. Mandatory governance model
 
-## Product output
+This work package is governed by the full Automation Bus lifecycle.
 
-At completion, the repo should contain:
+Required sequence:
 
-1. a governed MR candidate prose asset schema;
-2. an illustrative MR candidate asset template;
-3. a prose asset coverage matrix for beta/launch-core coverage;
-4. a first MR work-batch brief for candidate prose generation;
-5. modifier prose fragment authoring templates for high-value lifestyle/medication/supplement modifier classes;
-6. sprint artefacts documenting what exists, what is missing, what is candidate-only, and what requires medical review;
-7. no runtime activation of new prose, modifiers, Gemini, or frontend behaviour.
+1. Confirm branch alignment and clean repository state.
+2. Complete authority and reality preflight.
+3. Harden this prompt through Claude Code.
+4. Run kernel start.
+5. Implement only the authorised scope.
+6. Complete post-implementation closure protocol.
+7. Run kernel finish and deterministic gate.
+8. Produce independent audit evidence.
+9. Do not merge without explicit human authority.
 
-## Controlling authority and source reads
+The standard hardening invocation is:
 
-This sprint must not re-run the architecture review.
+> **harden work_id: ARCH-GOV-BASELINE-1 — verify source content and produce evidence checklist**
 
-Use `DYNAMIC-PROSE-ARCH-1` as the primary architecture authority. It already concluded that HealthIQ should use hybrid minimum viable composition and extend the existing governed prose path rather than build a new composition engine.
+---
 
-### Mandatory authority reads
+## 3. Authoritative audit inputs
 
-1. `docs/planning-papers/DYNAMIC-PROSE-ARCH-1_dynamic_personalised_prose_architecture_review.md`
-2. `docs/planning-papers/PROSE-INVENTORY-1_prose_library_prose_to_ux_architecture_inventory_review.md`, if present
-3. `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-4. `docs/sprints/beta_readiness/P2-2_P2-3_retail_pathway_explainer_completion.md`
-5. `docs/sprints/beta_readiness/P2-4_narrativepayload_brief_hardening_completion.md`
+Read every file listed below in full before changing anything.
 
-### Mandatory asset/source reads for the coverage matrix
+### Independent repository audits
 
-6. `backend/ssot/retail_explainer_v1/registry.yaml`
-7. `knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml`
-8. `knowledge_bus/missing_marker_explainers_v1/missing_marker_explainers_v1.yaml`
-9. `knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml`, if present
-10. `knowledge_bus/interventions/intervention_effects_registry_v1.yaml`, if present
+```text
+docs/audit-papers/CURSOR_sprint_governance_and_codebase_maturity_audit.md
+docs/audit-papers/CLAUDE_CODE_sprint_governance_and_codebase_maturity_audit.md
+docs/audit-papers/CURSOR_executable_codebase_and_runtime_reality_audit.md
+docs/audit-papers/CLAUDE_CODE_independent_executable_architecture_assurance_audit.md
+```
 
-### Optional reference only if needed for boundary clarification
+### Current governance and continuity documents
 
-* `docs/architecture/ADR_WP2_layer_b_layer_c_contract_path_b.md`
-* `docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md`
-* `docs/sprints/beta_readiness/P2-1_prose_substrate_wave1_wired_completion.md`
-* `docs/architecture/RETAIL_EXPLAINER_CONTENT_BOUNDARIES_v1.md`
-* `docs/intelligence/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md`
+```text
+docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
+docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md
+docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md
+docs/governance/healthiq_pre_sop_prompt_scoping_workflow_v0_6.2.md
+docs/AUTHORITY_MAP.md
+docs/SPRINT_STATUS.md
+docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md
+docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md
+```
 
-Do not expand this into another architecture review.
+### MR-BATCH-001B continuity documents
 
-## Core principle
+```text
+docs/sprints/beta_readiness/MR-BATCH-001B_test_import_completion.md
+docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_test_output.md
+docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_assets.yaml
+```
 
-The prose model is hybrid minimum viable composition:
+### Current test and CI evidence
 
-`base explainer + signal/frame explainer + pathway explainer + additive modifier fragment + missing-marker caveat + resilience/caution qualifier`
+Locate and read the current repository versions of:
 
-Do not create bespoke paragraphs for every age/sex/result/lifestyle/medication/supplement combination.
+```text
+backend/tests/unit/test_arch_rt5d_package_provenance.py
+backend/tests/unit/test_golden_panel_runner.py
+backend/tests/unit/test_wave1_liver_marker_mapping_fix.py
+.github/workflows/architecture-gate.yml
+.github/workflows/ci.yml
+.github/workflows/golden_gate.yml
+backend/scripts/run_architecture_validation_gate.py
+backend/scripts/validate_day_one_architecture.py
+backend/scripts/validate_day_one_launch_estate_gate.py
+backend/scripts/golden_gate_local.py
+```
 
-Do not create sex-specific or age-specific assets unless `DYNAMIC-PROSE-ARCH-1`, existing medical governance, or later medical review justifies that the axis materially changes interpretation, not merely the reference range.
+Do not assume paths from this prompt are correct if the repository has moved them. Resolve actual paths and record any path correction in the implementation report.
 
-## Scope
+---
 
-This sprint is allowed to create or update documentation, schema, candidate templates, coverage matrices and sprint artefacts only.
+## 4. Stage 1A — Authority preflight
 
-Expected new files:
+Before modifying files, verify and report:
 
-1. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_prose_library_depth_modifier_schema_completion.md`
-2. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_manifest.yaml`
-3. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_carry_forward.yaml`
-4. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_prose_coverage_matrix.yaml`
-5. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_schema.yaml`
-6. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_template.yaml`
-7. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_batch_001_brief.md`
-8. `docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_modifier_fragment_templates.yaml`
-9. update `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+1. The authoritative current Automation Bus SOP path.
+2. The authoritative current Knowledge Bus SOP path.
+3. The status and authority level of the Pass 3 promotion protocol.
+4. The authoritative pre-SOP scoping workflow path and version.
+5. The current programme continuity register.
+6. The current day-one architecture carry-forward document.
+7. Whether `docs/AUTHORITY_MAP.md` contains:
+   - an obsolete Knowledge Bus SOP reference;
+   - a stale or non-existent pre-SOP workflow reference;
+   - missing Pass 3 promotion protocol entries;
+   - duplicate or conflicting current/superseded documents.
+8. Whether `docs/SPRINT_STATUS.md` still presents itself as current despite being superseded by later continuity records.
+9. Whether both day-one FINAL variants exist and which one is current.
+10. Whether any other file outside the proposed scope duplicates the same authority function.
 
-If the repo already has a better canonical location for candidate prose schemas or planning artefacts, use that location instead, but record the decision in the manifest.
+Produce a pre-change authority table in the sprint implementation report.
 
-## Out of scope
+### Authority rule
 
-Do not modify:
+This sprint may correct references and classifications.
 
-* runtime loaders;
-* signal evaluators;
-* scoring policy;
-* domain assembler;
-* root-cause compiler;
-* `narrative_payload_builder_v1.py`;
-* `narrative_report_compiler_v1.py`;
-* `narrative_compiler_lc_s3_assembly_v1.py`;
-* `NarrativePayloadV1`;
-* `NarrativeReportV1`;
-* frontend files;
-* Gemini files;
-* prompt templates;
-* production PSI packages;
-* compiled health-system cards;
-* production signal libraries;
-* production retail explainer registry;
-* production pathway explainers;
-* production missing-marker explainers;
-* production context modifier catalogue;
-* production intervention effects registry;
-* parser files;
-* questionnaire files;
-* `.codex/`;
-* `.cursor/`;
-* `.vscode/`;
-* `AGENTS.md`.
-
-No runtime behaviour change is authorised.
-
-No production asset promotion is authorised.
-
-No Gemini activation is authorised.
-
-No context modifier runtime binding is authorised.
-
-No medical claim should be promoted as approved content in this sprint.
-
-## Phase 0 — Automation Bus preflight
-
-Before modifying files:
-
-1. Confirm current branch is:
-
-`feature/p3-prose-depth-1-prose-library-depth-modifier-schema`
-
-2. Confirm `automation_bus/state/work_package_active.json` exists.
-3. Confirm active token has `work_id: P3-PROSE-DEPTH-1`.
-4. Confirm active token branch matches current branch.
-5. Confirm repo/stash/parked-file state is governed.
-6. Confirm P2-4 is merged.
-7. Confirm no P4-1 implementation is running in parallel.
-8. Confirm this sprint is CONTENT-only.
-
-STOP if preflight fails.
-
-## Phase 1 — Inventory existing prose assets
-
-Create a coverage matrix that identifies existing, partial, missing and deferred prose asset coverage.
-
-Do not rewrite existing assets.
-
-Do not duplicate existing assets.
-
-For each relevant asset row, classify:
-
-* `existing_asset_found: true | false`
-* `current_location`
-* `asset_quality: reusable | reusable_with_edit | supersede | unsafe_or_obsolete | missing | unknown`
-* `normalisation_required: true | false`
-* `mr_action: none | evidence_check | normalise_existing | draft_new_candidate | defer_medical_review | defer_architecture`
-* `runtime_ready: true | false`
-* `candidate_only: true | false`
-* `requires_medical_review: true | false`
-
-Coverage matrix must include at least:
-
-1. all existing retail explainer entries already present;
-2. all known missing retail biomarker explainers from the launch/beta panel, if discoverable from existing registry scope;
-3. pathway explainers currently present;
-4. pathway explainers missing for launch-core domains, especially hepatic and metabolic;
-5. missing-marker caveats currently present;
-6. missing-marker caveat gaps for Wave 1 / launch-core panel where discoverable;
-7. known lifestyle modifier classes from the context modifier catalogue;
-8. known medication modifier classes from the intervention effects registry or governance docs;
-9. known supplement modifier classes, especially creatine, iron, B12, vitamin D, folate, protein, testosterone/hormone supplementation if documented;
-10. positive/resilience qualifier status;
-11. frame-level prose status, noting that frame routing remains deferred.
-
-The matrix is an inventory and planning artefact. It must not be consumed by runtime.
-
-## Phase 2 — MR candidate prose asset schema
-
-Create a schema file:
-
-`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_schema.yaml`
-
-It must define required fields for MR-authored candidate prose assets.
-
-At minimum include:
-
-* `asset_id`
-* `asset_type`
-* `audience`
-* `scope`
-* `personalisation_axes`
-* `trigger_conditions`
-* `evidence_refs`
-* `evidence_strength`
-* `safety_boundaries`
-* `review_status`
-* `destination_mapping`
-* `prose_content`
-* `max_word_count`
-* `authored_by`
-* `authored_utc`
-* `source_asset_ids`, where normalising existing prose
-* `supersedes_asset_ids`, where replacing weak/unsafe prose
-* `notes_for_medical_reviewer`
-
-Allowed `asset_type` values must include:
-
-* `base_biomarker_explainer`
-* `result_direction_explainer`
-* `system_explainer`
-* `subsystem_explainer`
-* `pathway_explainer`
-* `signal_frame_explainer`
-* `lifestyle_modifier_fragment`
-* `medication_modifier_fragment`
-* `supplement_modifier_fragment`
-* `missing_marker_caveat`
-* `weak_evidence_fallback`
-* `positive_resilience_qualifier`
-* `clinician_detail`
-* `retail_user_summary`
-
-Allowed `review_status` values must include:
-
-* `CANDIDATE`
-* `NEEDS_MEDICAL_REVIEW`
-* `APPROVED`
-* `REJECTED`
-* `DEPRECATED`
-
-The schema must make clear:
-
-* MR LLM output starts as `CANDIDATE`;
-* candidate assets are not runtime assets;
-* candidate assets must not be consumed directly in production;
-* approved assets require later promotion/compile work;
-* no treatment recommendations are allowed;
-* no diagnostic wording is allowed;
-* lab-derived reference ranges remain the only interpretation authority where ranges are used.
-
-## Phase 3 — Candidate asset template
+It must not create a new parallel authority document where an existing document can be corrected or explicitly superseded.
+
+---
+
+## 5. Stage 1B — Reality check
+
+Confirm that the defects still exist on the current branch before implementation.
+
+At minimum verify:
+
+- `docs/AUTHORITY_MAP.md` remains stale or internally conflicting;
+- the Pass 3 protocol remains marked DRAFT;
+- `docs/SPRINT_STATUS.md` remains stale;
+- MR-BATCH-001B completion/output papers still conflict with the latest benchmark-only classification;
+- `automation_bus/latest_*` remains stale relative to HEAD;
+- `knowledge_bus/current/latest_knowledge_status.json` is absent or otherwise inconsistent with documented expectations;
+- RT-5D provenance tests still contain stale inventory expectations;
+- golden-panel tests still contain obsolete mock signatures or equivalent stale assumptions;
+- `golden_gate.yml` does not provide the intended `main`/`develop` push coverage;
+- bilirubin/`total_bilirubin` regression protection still passes on the current baseline;
+- architecture and launch-estate gates pass before changes.
+
+If a claimed defect no longer exists, do not recreate it. Re-scope that item out and record the evidence.
+
+If the authority structure differs materially from the audit baseline, STOP and escalate before editing.
+
+---
+
+## 6. Required deliverables
+
+### Deliverable A — Authoritative current-state baseline
 
 Create:
 
-`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_candidate_asset_template.yaml`
+```text
+docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md
+```
 
-This should be a reusable template MR can fill.
+The baseline must state verified current reality, not historical aspiration.
 
-It must show:
+It must include:
 
-* one generic base biomarker explainer template;
-* one signal/frame explainer template;
-* one pathway explainer template;
-* one lifestyle modifier fragment template;
-* one medication modifier fragment template;
-* one supplement modifier fragment template;
-* one missing-marker caveat template;
-* one positive/resilience qualifier template.
+1. Repository baseline:
+   - branch;
+   - HEAD used for verification;
+   - audit date;
+   - source audits.
+2. Authoritative governance stack.
+3. Current programme continuity stack.
+4. Current production authorities.
+5. Current maturity by the eight beta-readiness blocks.
+6. Verified delivered capabilities.
+7. Documented-but-undelivered capabilities.
+8. Built-but-unwired capabilities.
+9. Test-only and candidate-only assets.
+10. Active blockers before controlled beta.
+11. Explicit supersession notes for stale maturity claims.
+12. A statement that this document is the authoritative maturity baseline for future Stage 0 planning until superseded by a later approved baseline.
 
-These can be skeletal examples. Do not author clinically definitive prose unless the source wording already exists in governed documents.
+It must explicitly record:
 
-All examples must have:
+- six Wave 1 domains are built and wired;
+- compiled card evidence is active authority;
+- hard-coded card evidence is not active;
+- activation-key identity is active;
+- end-to-end multi-frame preservation is incomplete;
+- package manifests have zero explicit `source_spec_id` across the scanned estate at the audited baseline;
+- PSI is built but intentionally unwired;
+- WHY authority is dual;
+- production prose exists but frame routing and modifier binding are not delivered;
+- MR-BATCH-001B is benchmark/test-only and not medically approved or promotable;
+- Gemini is non-authoritative;
+- controlled beta is not yet authorised.
 
-`review_status: CANDIDATE`
+Do not invent completion percentages.
 
-## Phase 4 — MR Batch 001 brief
+### Deliverable B — Governance authority reconciliation
 
-Create:
+Update `docs/AUTHORITY_MAP.md` so it accurately identifies:
 
-`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_mr_batch_001_brief.md`
+- Automation Bus SOP v1.3.1;
+- Knowledge Bus SOP v1.3.1;
+- Pass 3 promotion protocol v1.1 with its true current status;
+- pre-SOP workflow v0.6.2;
+- BUILD_DELIVERABLE_REGISTER as lightweight continuity only;
+- the new current-state baseline;
+- the updated day-one plan;
+- audit papers as evidence, not ongoing authority;
+- legacy and superseded governance locations.
 
-This is the instruction pack for the Medical Research LLM.
+Remove or correct dangling and obsolete references.
 
-It must request candidate prose assets only.
+Do not silently change the Pass 3 protocol from DRAFT to APPROVED.
 
-Batch 001 should focus on beta-critical depth, not the whole universe.
+If formal approval authority is not evidenced, retain DRAFT and state that it is an operative companion pending governance ratification.
 
-Include at least:
+### Deliverable C — Stale continuity-document handling
 
-1. hepatic pathway explainer candidate;
-2. metabolic/glycaemic pathway explainer candidate;
-3. top 10 missing retail biomarker explainers by launch/beta relevance, using the coverage matrix;
-4. missing-marker caveat candidates for hepatic/metabolic/lipid/kidney contexts where gaps are identified;
-5. lifestyle modifier fragment candidates for:
+Handle `docs/SPRINT_STATUS.md` without deleting history.
 
-   * alcohol/hepatic markers;
-   * smoking/inflammation context, if supported by existing catalogue;
-   * exercise/creatinine or muscle enzyme context, if supported by existing catalogue;
-   * hydration/creatinine or renal concentration context, if supported by existing catalogue;
-6. medication modifier fragment candidates for:
+Preferred approach:
 
-   * statins/lipid interpretation;
-   * metformin/glucose or B12 context, if supported by existing registry;
-   * NSAID/renal context, if supported by existing registry;
-7. supplement modifier fragment candidates for:
+- add a clear superseded/stale banner at the top;
+- identify the current continuity register and current-state baseline;
+- preserve historical content below the banner.
 
-   * creatine/creatinine;
-   * iron supplements/ferritin/iron interpretation;
-   * B12/folate supplementation context.
+Do not rewrite historical sprint records as though they were authored today.
 
-The brief must instruct MR:
-
-* do not write directly to runtime files;
-* do not claim diagnosis;
-* do not recommend treatment, dose changes, supplements or medication actions;
-* cite evidence for each non-educational claim;
-* state uncertainty;
-* use cautious UK consumer-facing language;
-* separate retail and clinician variants only where required;
-* only create sex/age-specific wording where medically justified;
-* mark all assets `CANDIDATE`;
-* identify any asset requiring medical review before activation.
-
-## Phase 5 — Modifier fragment templates
-
-Create:
-
-`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_modifier_fragment_templates.yaml`
-
-This should define template structures for additive modifier fragments.
-
-Include:
-
-* lifestyle modifier fragment;
-* medication modifier fragment;
-* supplement modifier fragment;
-* conflict-resolution fragment;
-* suppression rule note;
-* maximum fragment length;
-* required evidence;
-* prohibited claims;
-* target destination mapping placeholder.
-
-Emphasise:
-
-* modifiers are additive caveats, not paragraph replacements;
-* modifiers must not imply causation unless evidence supports it;
-* modifiers must not provide advice;
-* Gemini must never infer modifier relationships.
-
-## Phase 6 — Completion report
-
-Create:
-
-`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_prose_library_depth_modifier_schema_completion.md`
-
-Use this structure:
-
-1. start state;
-2. architecture authority reviewed;
-3. existing assets found;
-4. coverage gaps identified;
-5. schema created;
-6. MR Batch 001 scope;
-7. modifier template scope;
-8. what remains candidate-only;
-9. what requires medical review;
-10. what requires future runtime/promotion work;
-11. recommended next sprint.
-
-## Phase 7 — Manifest and carry-forward
-
-Create:
-
-`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_manifest.yaml`
-
-Include:
-
-* files created/updated;
-* no runtime files changed;
-* no production assets changed;
-* no Gemini activation;
-* no modifier runtime binding;
-* no medical content promoted to approved runtime status;
-* candidate-only status.
-
-Create:
-
-`docs/sprints/beta_readiness/P3-PROSE-DEPTH-1_carry_forward.yaml`
-
-Include at least:
-
-* MR Batch 001 needs medical research completion;
-* MR candidate assets need medical review before promotion;
-* runtime promotion/import route remains future work;
-* modifier binding remains future work;
-* frame routing remains deferred;
-* P4-1 Gemini activation design remains CEO-gated;
-* product-quality frontend UAT remains blocked by content depth, frame routing, modifier activation, Gemini pilot and Journey v6 IA work;
-* decision needed on whether full 79/79 retail coverage is beta-blocking or whether prioritised subset is acceptable.
+### Deliverable D — MR-BATCH-001B authority correction
 
 Update:
 
-`docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+```text
+docs/sprints/beta_readiness/MR-BATCH-001B_test_import_completion.md
+docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_test_output.md
+```
 
-Keep the entry concise.
+Add clear supersession/continuity notes stating:
 
-## Validation
+- Round 1 benchmark/test fixture only;
+- not medically approved;
+- not for promotion;
+- not for production runtime;
+- must not proceed to medical review as a promotion route;
+- useful only as evidence for future Round 2 prose pipeline design.
 
-Run available documentation/schema validation relevant to the repo.
+Do not alter the candidate prose assets themselves.
 
-At minimum:
+### Deliverable E — Historical governance-exception record
 
-* YAML parse validation for all new `.yaml` files;
-* existing repository doc lint/validation if available;
-* grep or equivalent check confirming no runtime/production asset files were modified;
-* Automation Bus finish command:
+Create:
 
-`python backend/scripts/run_work_package.py finish`
+```text
+docs/audit-papers/ARCH-GOV-BASELINE-1_historical_governance_exception_record.md
+```
 
-Do not modify validators to force a pass.
+Record, without fabricating retrospective hardening:
 
-## Acceptance criteria
+- P3-PROSE-DEPTH-1A lacks a demonstrated full Automation Bus lifecycle trail;
+- MR-BATCH-001B lacks a demonstrated full Automation Bus lifecycle trail;
+- MR-BATCH-001B touched `backend/tests/`, so the `/docs/`-only bypass does not clearly apply;
+- the content-level risk was limited by isolation from production paths;
+- the work remains accepted as historical repository state unless a specific defect is found;
+- future work must not use this exception as precedent for bypassing governance.
 
-This sprint passes only if:
+This document must not claim that hardening occurred retrospectively.
 
-1. Automation Bus preflight passes.
-2. Risk remains STANDARD.
-3. Change type remains CONTENT.
-4. No runtime behaviour files are modified.
-5. No Intelligence Core files are modified.
-6. No frontend files are modified.
-7. No Gemini files or prompt templates are modified.
-8. No production prose registry/YAML assets are modified.
-9. No production PSI or compiled card files are modified.
-10. No context modifier is activated.
-11. No medical content is promoted to `APPROVED` runtime status.
-12. Coverage matrix exists and identifies existing/partial/missing/deferred asset status.
-13. Existing assets are mapped before new candidate work is requested.
-14. MR candidate asset schema exists.
-15. MR candidate asset template exists.
-16. MR Batch 001 brief exists and is usable by Medical Research LLM.
-17. Modifier fragment templates exist.
-18. All MR-generated or MR-targeted content is explicitly candidate-only.
-19. Medical review requirements are recorded.
-20. Carry-forward records runtime promotion, modifier activation, frame routing, P4-1 CEO gate and frontend UAT blockers.
-21. Build register is updated.
-22. Final audit includes `pipeline_advisory_trigger: true` and explains whether next work should be MR Batch 001, prose promotion/import, frame routing, P4-1, or another content-depth tranche.
+### Deliverable F — Test and inventory refresh
 
-## Closure requirements
+Update stale, deterministic test expectations to current repository reality.
 
-Before finish, perform the mandatory Post-Implementation Closure Protocol.
+At minimum address:
 
-Run and report:
+- current package/provenance row count;
+- current compiled card count;
+- current kb52c or equivalent package classification count;
+- obsolete golden-panel mock signatures;
+- any other directly related stale expectation exposed while fixing these failures.
 
-* `git branch --show-current`
-* `git status --short`
-* `git log --oneline -n 5`
-* `git diff --name-only`
-* `git diff --cached --name-only`
-* `git stash list`
+Rules:
 
-Confirm:
+- derive expected inventory from the current authoritative inventory contract where possible;
+- do not weaken tests merely to make them pass;
+- do not replace exact invariant tests with vague assertions;
+- do not modify production behaviour to satisfy stale tests;
+- distinguish stable invariants from inherently changing estate counts;
+- where exact counts are intentionally retained, document the authority source for those counts.
 
-* branch matches this sprint branch;
-* no unrelated tracked/untracked files;
-* no tooling leakage;
-* no stash ambiguity;
-* no parked files outside the repository;
-* latest commit contains only in-scope work.
+### Deliverable G — CI enforcement correction
 
-Then run:
+Review `.github/workflows/golden_gate.yml`.
 
-`python backend/scripts/run_work_package.py finish`
+Ensure the intended golden/enforcement suite is triggered for the normal protected development flow, including `main` and `develop` where appropriate.
 
-After successful finish, handle `automation_bus/latest_cursor_status.json` under Automation Bus SOP v1.3.1.
+Do not duplicate an existing CI job unnecessarily.
 
-Do not merge. Human merge authority is required.
+If adding direct push coverage would create redundant or conflicting workflows, STOP and propose a single consolidated correction rather than layering another job.
+
+Preserve NO-LLM enforcement for deterministic golden paths.
+
+### Deliverable H — Narrow unresolved verification closure
+
+Run and record:
+
+- bilirubin/`total_bilirubin` regression test;
+- relevant replay/auditability tests or validators already present;
+- architecture validation gate;
+- launch estate gate;
+- refreshed provenance tests;
+- refreshed golden-panel tests;
+- MR-BATCH isolation tests;
+- PSI isolation tests;
+- relevant frontend tests if CI workflow changes affect them.
+
+If replay/auditability cannot be fully verified using existing tests, record the exact remaining unknown in the baseline. Do not invent a new replay subsystem in this sprint.
+
+### Deliverable I — Build-register continuity entry
+
+Append one concise entry to:
+
+```text
+docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+```
+
+The entry must record:
+
+- the work package outcome;
+- the files changed;
+- gates/tests run;
+- unresolved carry-forwards;
+- that no product capability or medical content was added;
+- that future Stage 0 planning must start from the new current-state baseline.
+
+The register remains lightweight continuity only.
+
+---
+
+## 7. Allowed implementation scope
+
+Expected scope is limited to:
+
+```text
+docs/AUTHORITY_MAP.md
+docs/SPRINT_STATUS.md
+docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md
+docs/audit-papers/ARCH-GOV-BASELINE-1_historical_governance_exception_record.md
+docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+docs/sprints/beta_readiness/MR-BATCH-001B_test_import_completion.md
+docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_test_output.md
+backend/tests/unit/test_arch_rt5d_package_provenance.py
+backend/tests/unit/test_golden_panel_runner.py
+.github/workflows/golden_gate.yml
+```
+
+Additional directly related test or documentation files may be changed only if repository reality proves they are required to complete the stated outcome.
+
+Any expansion beyond governance documentation, tests, and CI configuration requires STOP and escalation.
+
+---
+
+## 8. Forbidden scope
+
+Do not modify:
+
+```text
+backend/core/
+backend/ssot/
+backend/app/
+knowledge_bus/packages/
+knowledge_bus/compiled/
+knowledge_bus/root_cause/
+knowledge_bus/pathway_explainers_v1/
+knowledge_bus/functional_explainers_v1/
+frontend/app/
+```
+
+Do not modify:
+
+- signal activation logic;
+- thresholds;
+- scoring;
+- card content;
+- root-cause content;
+- prose content;
+- package manifests;
+- compiled artefacts;
+- Gemini runtime policy;
+- PSI loader or consumers;
+- Automation Bus execution scripts;
+- Knowledge Bus validator behaviour;
+- evidence artefacts produced by prior work packages.
+
+Do not regenerate governed intelligence artefacts.
+
+---
+
+## 9. Required implementation method
+
+### Phase 1 — Evidence capture
+
+Before changes, capture:
+
+```powershell
+git branch --show-current
+git status --short
+git log --oneline -n 20
+python backend/scripts/validate_day_one_architecture.py
+python backend/scripts/validate_day_one_launch_estate_gate.py
+python backend/scripts/run_architecture_validation_gate.py
+```
+
+Run the failing targeted tests and preserve their before-state output.
+
+### Phase 2 — Authority and baseline update
+
+Complete Deliverables A–E.
+
+Do not change tests or CI until the authoritative baseline and document classifications are drafted from verified evidence.
+
+### Phase 3 — Test and CI repair
+
+Complete Deliverables F–H.
+
+### Phase 4 — Continuity and final evidence
+
+Complete Deliverable I, rerun all required validation, and prepare closure evidence.
+
+---
+
+## 10. Required test commands
+
+Use repository-supported commands and environment conventions.
+
+At minimum run the repository-equivalent of:
+
+```powershell
+$env:PYTHONPATH = "backend"
+$env:HEALTHIQ_MODE = "test"
+
+python backend/scripts/validate_day_one_architecture.py
+python backend/scripts/validate_day_one_launch_estate_gate.py
+python backend/scripts/run_architecture_validation_gate.py
+
+pytest backend/tests/unit/test_arch_rt5d_package_provenance.py -q
+pytest backend/tests/unit/test_golden_panel_runner.py -q
+pytest backend/tests/unit/test_wave1_liver_marker_mapping_fix.py -q
+pytest backend/tests -k "mr_batch_001b or arch_rt5e" -q
+```
+
+Also run any workflow-specific tests needed to prove the CI change is syntactically valid and non-duplicative.
+
+Do not update snapshots or governed artefacts to manufacture a pass.
+
+---
+
+## 11. Acceptance criteria
+
+The sprint is complete only when all applicable criteria pass.
+
+### Governance authority
+
+- [ ] `docs/AUTHORITY_MAP.md` points to the correct current governance documents.
+- [ ] No non-existent pre-SOP file is presented as authoritative.
+- [ ] Knowledge Bus SOP v1.3.1 is correctly classified.
+- [ ] Pass 3 protocol v1.1 retains an honest status.
+- [ ] `docs/SPRINT_STATUS.md` is clearly marked superseded/stale.
+- [ ] Historical audit papers are classified as evidence, not authority.
+
+### Current-state baseline
+
+- [ ] The new baseline exists.
+- [ ] Every major maturity claim is supported by the independent audits or current execution evidence.
+- [ ] Stale strategy claims are explicitly superseded.
+- [ ] No unsupported percentage is used.
+- [ ] Future Stage 0 planning is directed to the baseline.
+
+### MR-BATCH-001B
+
+- [ ] Completion/output documents cannot reasonably be read as authorising medical review or promotion.
+- [ ] Candidate assets remain unchanged.
+- [ ] Isolation tests pass.
+
+### Governance exception
+
+- [ ] Missing historical lifecycle evidence is recorded honestly.
+- [ ] No retrospective hardening is fabricated.
+- [ ] The exception is explicitly non-precedential.
+
+### Tests and CI
+
+- [ ] RT-5D provenance tests pass against current authorised inventory.
+- [ ] Golden-panel tests pass with current production signatures.
+- [ ] Bilirubin regression test passes.
+- [ ] PSI isolation tests pass.
+- [ ] Architecture validation gate passes.
+- [ ] Launch-estate gate passes.
+- [ ] Golden/enforcement workflow covers the intended protected development flow without unnecessary duplication.
+- [ ] NO-LLM deterministic enforcement remains intact.
+
+### Scope integrity
+
+- [ ] No product runtime code changed.
+- [ ] No medical content changed.
+- [ ] No governed package or compiled artefact changed.
+- [ ] No PSI or Gemini activation occurred.
+- [ ] No next sprint was selected or authored.
+
+---
+
+## 12. STOP conditions
+
+STOP immediately and report evidence if:
+
+1. Current repository authority differs materially from the two independent audits.
+2. Fixing stale tests requires changing production runtime behaviour.
+3. Correcting provenance tests requires modifying package manifests or compiled artefacts.
+4. Golden-panel failures expose a real production defect rather than stale test mocks.
+5. Bilirubin regression protection fails.
+6. Architecture or launch-estate gates fail before implementation for a reason unrelated to known stale tests.
+7. CI correction would duplicate or conflict with an existing protected-branch workflow.
+8. Any required change touches Intelligence Core or medical-content paths.
+9. Pass 3 protocol status cannot be represented honestly without a human governance decision.
+10. A governance document appears legally or clinically authoritative beyond the evidence available.
+11. Any unrelated working-tree changes or tooling-file leakage are present.
+12. The sprint would need to select or implement one of the later architecture packages.
+
+---
+
+## 13. Required implementation report
+
+Create:
+
+```text
+docs/audit-papers/ARCH-GOV-BASELINE-1_implementation_and_verification_report.md
+```
+
+Include:
+
+1. Executive outcome.
+2. Pre-change authority table.
+3. Reality-check results.
+4. Files changed.
+5. Exact changes by deliverable.
+6. Before/after failing-test evidence.
+7. CI trigger comparison.
+8. Commands executed and exit codes.
+9. Acceptance-criteria table.
+10. STOP-condition assessment.
+11. Remaining unknowns.
+12. Carry-forwards for later Stage 0 planning.
+13. Confirmation that no product runtime or medical content changed.
+
+---
+
+## 14. Closure requirements
+
+Before `finish`, execute the mandatory Post-Implementation Closure Protocol from the Automation Bus SOP.
+
+At minimum report:
+
+```powershell
+git branch --show-current
+git status --short
+git log --oneline -n 5
+git diff --name-only
+git diff --cached --name-only
+git stash list
+```
+
+Classify all modified, staged, untracked, tooling, and out-of-scope files.
+
+Do not use stash as routine closure convenience.
+
+Do not run `finish` until:
+
+- the current branch matches the prompt;
+- all changes are in scope;
+- all required tests pass;
+- the working tree is closure-ready;
+- no tooling files are leaking into scope;
+- no unrelated audit files remain unclassified.
+
+After successful `finish`, handle the kernel-generated COMPLETE status exactly as required by the SOP and confirm the branch is clean.
+
+Do not merge without explicit human authority.
