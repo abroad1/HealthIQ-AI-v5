@@ -1,10 +1,9 @@
 {
-  "branch": "feature/p3-prose-depth-1-prose-library-depth-modifier-schema",
+  "branch": "feature/arch-gov-baseline-1-programme-baseline-governance-reset",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-06-29T19:09:11Z",
-  "cursor_started_utc": "2026-06-29T19:06:33Z",
-  "head_sha": "2ddc7b9f655f66c51e735c1610ab78c165f184aa",
+  "cursor_started_utc": "2026-07-25T10:06:07Z",
+  "head_sha": "7aac586a086366e845b37d0f28f15d9bd3330cef",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "P3-PROSE-DEPTH-1"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-GOV-BASELINE-1"
 }
