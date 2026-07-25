@@ -777,15 +777,24 @@ Entries should not list every file touched or every non-change.
 - 69 MR-BATCH-001B candidate assets retained as `CANDIDATE` in sprint docs pack.
 - Test-only loader (`backend/tests/support/mr_candidate_prose_test_v1.py`) with `candidate_test_mode=True` isolation.
 - Inspection report and unit tests for representative marker-state / modifier / missing-marker / resilience composition; report untruncated for full prose review.
+- Retained as **ROUND_1_BENCHMARK / TEST FIXTURE** — useful for assessing candidate prose quality and future pipeline design; assets remain candidate/test-only.
+- Not medically approved; not source of truth for the prose library; not for production promotion.
 
 ### Carry-forwards
-- Medical review before any promotion; runtime promotion/import route still future work; modifier binding and frame routing deferred; P4-1 Gemini remains CEO-gated; 79/79 vs prioritised retail subset decision still open.
+- MR-BATCH-001B must not proceed to medical review or promotion.
+- Round 2 medical prose work requires a new primary research pipeline and a different primary research LLM.
+- MR-BATCH-001B is the Round 1 benchmark to beat, not production source content.
+- Promotion/import route remains a future design need, but only for future medically accepted Round 2 assets.
+- Modifier binding and frame routing deferred; P4-1 Gemini remains CEO-gated; 79/79 vs prioritised retail subset decision still open.
 
 ### Blockers / risks
 - Narrative compiler / production registries still do not consume candidate assets (intentional).
+- Claude Code / MR-BATCH-001B research execution is not trusted as a scalable medical research pipeline due to overlarge run, encoding corruption, scratchpad salvage requirement, and residual medical/prose concerns.
+- Risk that future agents misread MR-BATCH-001B as promotion-ready unless benchmark-only status is explicit.
 
 ### Recommended next sprint
-- Medical review of MR-BATCH-001B, then a promotion/import sprint with an explicit non-public candidate flag until approval.
+- `SPRINT-BUILD-PLAN-AUDIT-1 — Sprint build plan to actual codebase audit`
+- Purpose: Audit the sprint build plan against the actual codebase and build register before selecting the next implementation sprint.
 
 ---
 
