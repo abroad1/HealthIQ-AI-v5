@@ -74,6 +74,11 @@ def main() -> int:
             None,
         ),
         (
+            "validate_launch_critical_provenance_reachability_gate",
+            [py, str(scripts / "validate_launch_critical_provenance_reachability_gate.py")],
+            None,
+        ),
+        (
             "validate_launch_path_frame_identity_gate",
             [py, str(scripts / "validate_launch_path_frame_identity_gate.py")],
             None,

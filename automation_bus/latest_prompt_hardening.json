@@ -1,68 +1,80 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-PKG1",
+  "work_id": "ARCH-CONV-PKG2",
   "status": "HARDENED",
-  "hardening_date": "2026-07-25",
+  "hardening_date": "2026-07-26",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
   "risk_level": "HIGH",
-  "change_type": "BEHAVIOUR",
+  "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
   "stage_b_mode": "MODE_2",
   "runtime_change": "YES",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "HIGH/BEHAVIOUR, but scope is exactly the 5 named surfaces I already hold deep, independently-verified context on from the Gate 0 audit completed earlier this session, plus 2 shared identity-helper files newly inspected here. No genuinely disjoint large-volume research cluster exists that would benefit from forking; direct reads were faster and avoided re-deriving context a fork would reconstruct from scratch."
+    "rationale": "HIGH/MIXED, but the subsystems in scope (signal_evaluator.py load path, provenance_status_v1.py, report_compiler_v1.py consume side, the 20 pkg_kb47_* cohort) were already deeply and independently verified across the Gate 0 and PKG1 audits earlier in this session. Re-deriving via direct grep/read was faster and more reliable than forking, which would have reconstructed context I already hold verified."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type", "stage_b_mode", "runtime_change"],
     "declared_risk_level": "HIGH",
-    "declared_change_type": "BEHAVIOUR",
-    "behaviour_changes_touch_intelligence_core": "YES — backend/core/analytics/*.py, correctly classified HIGH",
-    "tests_required": "YES — 12 minimum test items plus 10 existing-suite categories to run",
-    "scope_proportionality": "PASS — bounded to 5 named surfaces, 8 STOP conditions, 13-item forbidden-scope list, single Gate-1-output decision",
+    "declared_change_type": "MIXED",
+    "behaviour_changes_touch_intelligence_core": "YES — signal registry/evaluator, report compiler, package-manifest parsing; correctly classified HIGH",
+    "tests_required": "YES — 14 minimum test items plus 12 existing-suite categories",
+    "scope_proportionality": "PASS — bounded to Gate 0 cohort (pkg_kb47_*) plus shared loader/gate infrastructure; explicit 'do not expand to all 191 manifests'; 9 STOP conditions; 11-item forbidden-scope list",
     "advisory_duplication_detected": "NO",
-    "scope_creep_signals": "One soft-bounded discovery clause ('inspect existing shared activation-identity helpers... before creating new abstractions') — legitimate anti-duplication check, not open-ended verify-everything language",
+    "scope_creep_signals": "The 9-topic 'inspect current production code for' clause is broader than a fixed file list, but every topic maps to a known existing subsystem already characterised in this session (not open-ended verify-everything language) and is necessary groundwork for the required 'one canonical loader-eligibility function.' Not a reject trigger.",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
     "required_input_docs": {
-      "status": "CONFIRMED_EXISTS — all 7",
-      "evidence": "Planning paper; CONTROLLED_BETA_ARCHITECTURE_COHORT.md; CONVERGENCE_VIABILITY_ASSESSMENT.md; WHY_MIGRATION_PILOT_COHORT.md; OPEN_ARCHITECTURE_OBLIGATIONS_CC.md; RECONCILIATION_VARIANCE_CC_VS_CURSOR.md; ADR-RT-IDENTITY-PROV-001 — all confirmed present in this session (Gate 0 hardening/audit) or freshly re-checked."
+      "status": "CONFIRMED_EXISTS — all 8",
+      "evidence": "Planning paper; CONTROLLED_BETA_ARCHITECTURE_COHORT.md; CONVERGENCE_VIABILITY_ASSESSMENT.md; OPEN_ARCHITECTURE_OBLIGATIONS_CC.md; RECONCILIATION_VARIANCE_CC_VS_CURSOR.md; ADR-RT-004_compile_manifest_and_package_provenance_policy.md (glob resolved); ADR-RT-IDENTITY-PROV-001; ARCH-RT-IDENTITY-PROV-1_launch_critical_provenance_inventory.md; ARCH-CONV-PKG1_implementation_and_verification_report.md — all confirmed present."
     },
     "output_paths_correctly_new": {
       "status": "CONFIRMED",
-      "evidence": "Neither docs/architecture/ARCH-CONV-PKG1_frame_identity_surface_design.md nor docs/audit-papers/ARCH-CONV-PKG1_implementation_and_verification_report.md exist yet."
+      "evidence": "None of the 3 required PKG2 deliverable paths exist yet."
     },
     "branch_state": {
       "status": "CONFIRMED, expected pre-kernel-start state",
-      "evidence": "Current branch is main (HEAD e725a75, merge of 'ARCH-CONV-GATE0 controlled-beta cohort and convergence viability (REDESIGN)' — confirms Gate 0 was human-ratified and merged). Target branch feature/arch-conv-pkg1-frame-identity-closure does not yet exist. Working tree shows only the expected automation_bus/latest_cursor_prompt.md Stage-1 handoff modification."
+      "evidence": "Current branch is main (HEAD 4d3fdfc, merge of 'ARCH-CONV-PKG1 launch-path frame identity closure' — confirms PKG1 was human-ratified and merged). Target branch feature/arch-conv-pkg2-provenance-reachability does not yet exist. Working tree shows only the expected latest_cursor_prompt.md Stage-1 handoff modification."
     }
   },
 
   "independent_premise_verification": {
-    "five_surfaces_current_state_unchanged_since_gate0": {
+    "central_defect_claim_reconfirmed_on_current_head": {
+      "status": "CONFIRMED, unchanged since Gate 0",
+      "evidence": "signal_evaluator.py:33-36 (_iter_signal_library_paths) still globs every */signal_library.yaml under knowledge_bus/packages/ with zero provenance/eligibility filter. Line 528 attaches provenance_status to SignalResult purely as a carried metadata field (defaulting to LEGACY_INFERRED if absent), never consulted to gate loading. The prompt's premise — 'provenance-blocked packages can still load, fire, rank and appear in user-facing output' — is accurate and unresolved as of this HEAD (post-PKG1, which correctly did not touch this in-scope)."
+    },
+    "existing_provenance_status_model_is_real_and_reusable": {
       "status": "CONFIRMED",
-      "evidence": "git log -1 for each of the 5 named files plus the 2 shared identity helpers shows the most recent touching commit is d877d0d (P3-LAYERB-INTEL-1, pre-dates Gate 0) — none were modified by the Gate 0 (docs-only) package. All findings from this session's Gate 0 work remain current: interpretation_display_layer_publish_v1.py, domain_score_assembler.py, narrative_report_compiler_v1.py, intervention_selector_v1.py bare-signal_id-keyed; signal_interaction_builder.py activation_key is output-decoration only."
+      "evidence": "backend/core/knowledge/provenance_status_v1.py defines classify_package_provenance_status() (6-state honest classification: EXPLICIT_SPEC, COMPILED_MANIFEST, SOURCE_DOCUMENT_DERIVED, LEGACY_INFERRED, UNRESOLVED, BLOCKED) and is_beta_eligible_explicit_lineage(). Both are real, tested functions — 'reuse the existing provenance status model' is grounded, not aspirational."
     },
-    "shared_identity_helpers_are_real_and_reusable_not_a_vague_ask": {
-      "status": "CONFIRMED, with an important nuance surfaced (see below)",
-      "evidence": "backend/core/knowledge/signal_activation_identity_v1.py provides build_activation_key/resolve_activation_identity (Package 2 canonical). backend/core/knowledge/signal_result_index_v1.py provides index_by_activation_key (fail-closed on duplicates), group_by_signal_id, rows_for_signal_id, participating_activation_keys (frame-safe), and confidence_by_signal_family. The prompt's instruction 'Prefer one canonical shared identity/index helper over five bespoke mappings' and 'Reuse Package 2 identity contracts' point at genuinely existing, adequate infrastructure — not aspirational."
+    "important_nuance_not_stated_by_the_prompt": {
+      "status": "NEW FINDING — material to Phase 1 framing",
+      "evidence": "grep confirms classify_package_provenance_status/is_beta_eligible_explicit_lineage are currently called ONLY by backend/scripts/validate_identity_provenance_gate.py (an offline audit/reporting script) and its test — never by signal_evaluator.py, report_compiler_v1.py, or any runtime consumption path. The prompt's shared-rules section says 'Do not create separate eligibility logic in registry, evaluator and report compiler' as if consolidating scattered duplicate logic were the task. In reality there is currently ZERO runtime-enforced eligibility logic anywhere — the existing function is a pure reporting classifier with no enforcement caller. The actual task is to wire this existing classifier into a new enforcement point (most naturally at package discovery/load time in signal_evaluator.py), not to de-duplicate pre-existing redundant checks. This is a framing correction Cursor's Phase 1 decision document should make explicit, since 'consolidate duplicate logic' and 'add the first enforcement point' imply different risk profiles and different STOP-gate triggers (the latter is more likely to surface unexpected behavioural regressions, since nothing has ever gated this path before)."
     },
-    "signal_interaction_builder_root_cause_is_more_nuanced_than_gate0_characterised": {
-      "status": "NEW FINDING — material to Phase 1 / STOP Gate 1",
-      "evidence": "signal_interaction_builder.py's confidence_by_signal is confidence_by_signal_family() from the shared helper file itself — whose own docstring explicitly documents it as 'Family-level confidence for interaction-chain medians' and instructs 'Participating activation_keys are not collapsed — callers must also retain participating_activation_keys separately' (signal_result_index_v1.py:92-103). Separately, node_ids/edges (lines 59-66 of signal_interaction_builder.py) are loaded from knowledge_bus/interaction_maps/interaction_map_v1.yaml via load_interaction_map_v1() — a static, human-authored clinical policy graph (confirmed 23 signal_id-keyed nodes on disk) whose edges encode family-level clinical relationships (e.g. 'ALT high co-occurs with AST high'), not per-research-frame relationships. This means the collapse at this surface is NOT obviously an accidental bug parallel to the other 4 surfaces — it may be, in whole or part, the shared helper's own documented intentional family-level design plus a family-level clinical policy asset that was never meant to be frame-keyed. Phase 1's per-surface design document MUST explicitly resolve this before implementation, and STOP Gate 1's carve-out ('intentional, safe family-level aggregation... would alter approved product meaning') may directly apply here in a way it does not for the other 4 surfaces."
+    "kb47_cohort_size_reconfirmed": {
+      "status": "CONFIRMED",
+      "evidence": "20 pkg_kb47_* directories confirmed again on current HEAD (unchanged since Gate 0 and PKG1)."
+    },
+    "manifest_schema_unchanged": {
+      "status": "CONFIRMED",
+      "evidence": "knowledge_bus/schema/package_manifest_schema.yaml still schema_version 1.1.0, consistent with 'update package manifests through the governed schema' being a real, addressable target, not requiring a new schema version to be invented first."
+    },
+    "golden_panel_infrastructure_exists": {
+      "status": "CONFIRMED",
+      "evidence": "backend/tests/enforcement/test_golden_panel_snapshot_not_raw.py and backend/tests/fixtures/golden_panel_160*.json confirmed present — 'run the relevant golden and representative panels' is actionable against real fixtures, not aspirational tooling."
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "Phase 1 exposure document for signal_interaction_builder.py should explicitly separate two questions the prompt currently bundles as one 'partial migration' problem: (a) should the STATIC interaction-map policy graph (nodes/edges, clinically authored at signal_id/family level) be re-keyed to activation_key at all, given interaction rules are authored per biomarker relationship not per research frame; and (b) should the RUNTIME matching/aggregation step (confidence_by_signal_family, participating_activation_keys) change. It is plausible the correct fix is confined to (b) plus making the existing family-level design explicit/documented/tested per the prompt's own Required Behaviour #5 wording ('family-level interaction logic must be explicit rather than accidental'), rather than a full re-keying of the interaction map itself. Recommend this be the first thing resolved in the design document, since it changes the size and risk of the whole surface-5 fix.",
-    "Required Behaviour #5 already anticipates exactly this ambiguity ('output metadata must reflect actual internal identity behaviour... Do not treat participating_activation_keys output decoration as sufficient') — but the shared helper's own docstring frames the current behaviour as intentional design, not oversight. Cursor should treat this as a case where the prompt's default expectation (make it frame-safe) and the existing shared-helper's documented intent (family-level is correct for interaction chains) may conflict, and should either reconcile them explicitly in the design doc or invoke STOP Gate 1 rather than silently picking one interpretation.",
-    "The other 4 surfaces (interpretation_display_layer_publish_v1.py, domain_score_assembler.py, narrative_report_compiler_v1.py, intervention_selector_v1.py) operate on live fired-signal rows/consumer output, not a static clinical policy graph — the 'is this intentional family-level policy' question is much less likely to apply to them, and Gate 0's characterisation of those 4 as straightforward bare-signal_id collapse still stands unchanged."
+    "Phase 1's cohort decision table should explicitly note, for every pkg_kb47_* row, that today's status quo is 'loadable and fires with zero enforcement' (not merely 'inconsistently enforced') — this is a stronger and more specific baseline than the prompt's own wording implies, and it raises the stakes of the golden/representative-output review in §5: since nothing has ever excluded these packages before, ANY change to the loader-eligibility policy is a first-time behavioural change for whichever of the 20 currently fire in practice, not a tightening of an existing partial control.",
+    "Because there is no existing runtime enforcement point to extend, 'one canonical loader eligibility function' will need a new call site inside signal_evaluator.py's load loop (or an equivalent single choke point before SignalResult construction) — Cursor's Phase 1 document should identify the exact proposed call site before implementation, since STOP condition 5 ('controlled-beta cohort cannot be isolated from wider estate') is easiest to accidentally trip if the new gate is placed somewhere that also affects non-cohort packages sharing the same load loop.",
+    "Recommend Cursor's Phase 1 explicitly confirm whether any of the 20 pkg_kb47_* packages currently appear in golden_panel_160.json / golden_panel_160_collision_free.json fixtures before deciding dispositions — this directly informs 'appears in golden or representative outputs' column and was left UNVERIFIABLE-without-a-rerun by both Gate 0 and PKG1; this package is the natural place to finally resolve it, and STOP condition 1 depends on knowing the answer, not assuming it."
   ],
 
   "stage_2c_evidence_checklist": {
@@ -70,26 +82,26 @@
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "All 7 required input docs exist", "source": "Glob / prior session confirmation", "evidence": "All 7 confirmed present", "status": "CONFIRMED"},
-      {"id": 2, "claim": "Both required output paths are correctly new", "source": "Glob", "evidence": "Neither the design doc nor the verification report exists yet", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Branch state is expected pre-kernel-start; Gate 0 was merged", "source": "git log; git branch --list; git status --short", "evidence": "HEAD e725a75 (Gate 0 merge commit present); target branch not yet created; only latest_cursor_prompt.md modified", "status": "CONFIRMED"},
-      {"id": 4, "claim": "The 5 named surfaces are unchanged since Gate 0's independent verification", "source": "git log -1 per file", "evidence": "Most recent touching commit for all 5 is d877d0d, pre-dating Gate 0", "status": "CONFIRMED"},
-      {"id": 5, "claim": "Shared Package 2 identity helpers exist and provide the primitives the prompt assumes", "source": "Direct read, signal_activation_identity_v1.py and signal_result_index_v1.py", "evidence": "build_activation_key, index_by_activation_key, group_by_signal_id, participating_activation_keys, confidence_by_signal_family all present and functional", "status": "CONFIRMED"},
-      {"id": 6, "claim": "signal_interaction_builder.py's confidence lookup uses the shared helper's own documented family-level function, not an ad-hoc bare-signal_id dict", "source": "Direct read, signal_result_index_v1.py:140-156 docstring and signal_interaction_builder.py:154", "evidence": "confidence_by_signal_family is called directly; its docstring self-documents family-level intent", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Interaction-map node/edge identity derives from a static, clinically-authored policy YAML, not live per-frame signal instances", "source": "Direct read, signal_interaction_builder.py:41-87; file existence + node count check on knowledge_bus/interaction_maps/interaction_map_v1.yaml", "evidence": "load_interaction_map_v1() loads and validates the YAML; 23 signal_id-keyed nodes confirmed on disk", "status": "CONFIRMED"}
+      {"id": 1, "claim": "All 8 required input docs exist", "source": "Glob per path", "evidence": "All 8 confirmed present", "status": "CONFIRMED"},
+      {"id": 2, "claim": "All 3 required output paths are correctly new", "source": "Glob per path", "evidence": "None of the 3 deliverables exist yet", "status": "CONFIRMED"},
+      {"id": 3, "claim": "Branch state expected; PKG1 merged", "source": "git log; git branch --list; git status --short", "evidence": "HEAD 4d3fdfc is the PKG1 merge commit; target branch not yet created; only latest_cursor_prompt.md modified", "status": "CONFIRMED"},
+      {"id": 4, "claim": "Zero runtime enforcement of provenance status exists today", "source": "Direct grep of signal_evaluator.py and report_compiler_v1.py for provenance_status/BLOCKED filters", "evidence": "provenance_status is carried as metadata only (signal_evaluator.py:528); no suppression logic at any call site", "status": "CONFIRMED — reconfirms and sharpens the prior Gate 0 finding" },
+      {"id": 5, "claim": "The existing provenance classification functions have zero runtime callers today (reporting-only)", "source": "Repo-wide grep for classify_package_provenance_status / is_beta_eligible_explicit_lineage", "evidence": "Only callers are validate_identity_provenance_gate.py (offline script) and its test", "status": "CONFIRMED" },
+      {"id": 6, "claim": "kb47 launch-critical cohort is still exactly 20 packages", "source": "Direct directory count", "evidence": "20 pkg_kb47_* directories", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Golden panel fixtures/tests referenced by the prompt exist and are real", "source": "Glob/find", "evidence": "golden_panel_160.json, golden_panel_160_collision_free.json, test_golden_panel_snapshot_not_raw.py all present", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Any change to provenance eligibility, runtime reachability, or source_spec_id attachment — REJECT_AND_RETURN",
     "Any WHY/hypothesis/prose/PSI/Gemini/threshold/signal-firing change — REJECT_AND_RETURN",
-    "Any frontend redesign beyond additive identity metadata — REJECT_AND_RETURN",
+    "Any invented source_spec_id not backed by a real research artefact — REJECT_AND_RETURN",
+    "Any package directory removal used as a substitute for governed non-reachability — REJECT_AND_RETURN",
+    "Any expansion beyond the Gate 0 pkg_kb47_* cohort to the full 191/192-package estate — REJECT_AND_RETURN",
+    "Any user-visible finding suppressed without a documented golden/representative-output impact review and explicit human approval — REJECT_AND_RETURN",
+    "Any new eligibility logic duplicated separately across registry/evaluator/report compiler instead of one canonical function — REJECT_AND_RETURN",
     "Any architecture-completion or beta-readiness declaration — REJECT_AND_RETURN",
-    "Any invented clinical frame-priority policy without an approved ADR — REJECT_AND_RETURN",
-    "Re-keying the interaction-map policy YAML to activation_key without first resolving whether that changes approved clinical meaning (see nuance above) — REJECT_AND_RETURN or escalate via STOP Gate 1",
-    "Any package-scope growth beyond 25% without human reauthorisation, or more than one unplanned follow-on package — REJECT_AND_RETURN",
-    "A GO/CORRECT/STOP/V6 recommendation issued without evidencing all Gate 1 acceptance criteria against live code — REJECT_AND_RETURN"
+    "A GO/CORRECT/STOP/V6 recommendation issued without evidencing all Gate 2 acceptance criteria against live code and real golden-output diffs — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 7 required input documents and both target output paths confirmed. Branch state confirmed expected pre-kernel-start; Gate 0's REDESIGN outcome is confirmed merged to main, so this package correctly builds on a human-ratified baseline. All 5 named surfaces confirmed unchanged since Gate 0's independent verification earlier this session. The prompt's assumption that reusable Package 2 identity infrastructure exists (signal_activation_identity_v1.py, signal_result_index_v1.py) is confirmed genuine, not aspirational. One material, non-blocking finding surfaced for Cursor's mandatory Phase 1 design document: signal_interaction_builder.py's 'partial migration' is not a simple parallel to the other 4 surfaces — its confidence lookup calls the shared helper's own documented family-level function, and its node/edge identity derives from a static, clinically-authored interaction-map policy asset (23 signal_id-keyed nodes) rather than live frame instances. Phase 1 must explicitly resolve whether this is intentional family-level design (in which case STOP Gate 1's carve-out may apply) before any re-keying is attempted. No blocking defect found. Recommend proceeding to kernel start."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 8 required input documents and all 3 required output paths confirmed. Branch state confirmed expected pre-kernel-start; PKG1's GO outcome confirmed merged to main. The prompt's central defect claim was independently reconfirmed on current HEAD via direct code read (zero enforcement of provenance status anywhere on the runtime load path). One material framing correction surfaced for Phase 1: the task is to add the FIRST runtime enforcement point for an existing, currently-unused offline classifier, not to consolidate pre-existing duplicate enforcement logic as the prompt's wording could imply — this raises the practical stakes of the mandated golden/representative-output review, since no prior partial control exists to have already absorbed any behavioural risk. Two further non-blocking recommendations passed forward: identify the exact new call site before implementation (to avoid STOP condition 5), and resolve kb47-in-golden-fixtures as a concrete first step rather than leaving it unverified a third time. No blocking defect found. Recommend proceeding to kernel start."
 }
