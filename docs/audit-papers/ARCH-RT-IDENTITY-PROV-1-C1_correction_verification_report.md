@@ -135,8 +135,10 @@ STOP condition 4 (“any disclosed failure is introduced by this correction”) 
 | Disclosed unrelated failures independently classified | PASS (§7) |
 | No production redesign | PASS |
 | Original kernel state unchanged | PASS (`e1732a2` COMPLETE record intact) |
-| Kernel `finish` under correction work ID | Recorded at closure |
-| Branch ready for independent audit | PASS pending finish |
+| Kernel `finish` under correction work ID | PASS (exit 0; token removed) |
+| Branch ready for independent audit | PASS |
+
+Kernel finish HEAD at completion: `1ec44844ba2da3087e5f679c41d1904639eb9545` (IN_PROGRESS status commit preceding finish). COMPLETE status auto-committed after finish.
 
 ---
 
