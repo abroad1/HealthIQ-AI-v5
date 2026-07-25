@@ -1,10 +1,10 @@
 {
-  "branch": "feature/p3-layerb-intel-1-frame-routing-why-depth",
+  "branch": "feature/arch-conv-gate0-cohort-viability",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-25T13:28:32Z",
-  "cursor_started_utc": "2026-07-25T13:09:00Z",
-  "head_sha": "d877d0d3b965d88a36b72b8f9e1c8ac5db0aac52",
+  "cursor_completed_utc": "2026-07-25T22:32:05Z",
+  "cursor_started_utc": "2026-07-25T22:24:09Z",
+  "head_sha": "4139a0566a40137a254fc0fa8c8e50e4bfd77305",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "P3-LAYERB-INTEL-1"
+  "work_id": "ARCH-CONV-GATE0"
 }

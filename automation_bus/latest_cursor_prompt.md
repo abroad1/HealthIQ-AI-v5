@@ -1,321 +1,366 @@
 ---
-work_id: P3-LAYERB-INTEL-1
-branch: feature/p3-layerb-intel-1-frame-routing-why-depth
-risk_level: HIGH
+work_id: ARCH-CONV-GATE0
+branch: feature/arch-conv-gate0-cohort-viability
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 stage_b_mode: MODE_2
-knowledge_bus_impact: YES
-medical_review_gate: REQUIRED
+runtime_change: NONE
 ---
 
-# P3-LAYERB-INTEL-1 — Layer B Intelligence Completion
+# ARCH-CONV-GATE0 — Controlled-Beta Cohort and Convergence Viability Definition
 
 ## Outcome
 
-Deliver a deterministic, frame-correct Layer B explanation system with governed modifier binding, frame-aware prose routing, expanded compiled WHY coverage, and sufficient validation evidence for controlled-beta reassessment.
+Define the exact launch-critical cohort for the final HealthIQ AI v5 convergence programme and decide whether the programme is viable before any runtime changes begin.
 
-Standard Automation Bus and Knowledge Bus governance apply.
+This is a read-only planning and verification package.
+
+Do not change runtime code, schemas, medical assets, tests, package manifests, loaders or production behaviour.
+
+Standard Automation Bus governance applies.
 
 ## Required inputs
 
 Read only:
 
 ```text
+docs/planning-papers/HEALTHIQ_AI_V5_FINAL_ARCHITECTURE_CONVERGENCE_AND_SALVAGE_OR_REBUILD_PLAN.md
+docs/architecture/HEALTHIQ_AI_ARCHITECTURE_PROGRAMME_RECONCILIATION.md
+docs/architecture/HEALTHIQ_AI_ARCHITECTURE_PROGRAMME_RECONCILIATION_CC.md
+docs/architecture/HEALTHIQ_AI_OPEN_ARCHITECTURE_OBLIGATIONS.md
+docs/architecture/HEALTHIQ_AI_OPEN_ARCHITECTURE_OBLIGATIONS_CC.md
+docs/architecture/HEALTHIQ_AI_ARCHITECTURE_RECONCILIATION_VARIANCE_CC_VS_CURSOR.md
 docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md
-docs/architecture/ADR-RT-IDENTITY-PROV-001_activation_frame_and_provenance_integrity.md
-docs/architecture/ARCH-RT-IDENTITY-PROV-1_launch_critical_provenance_inventory.md
-docs/audit-papers/ARCH-RT-IDENTITY-PROV-1_implementation_and_verification_report.md
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
-Also inspect the current production implementations and tests for:
+Also inspect current `main` code and governed assets only where needed to verify:
 
 ```text
-retail explainers
-pathway / functional / entity packs
-root-cause compilation
-compiled hypothesis loading
-clinician report compilation
-narrative report compilation
-modifier catalogue
-frame routing
-frontend Layer B DTO consumers
+the five residual identity surfaces
+signal registry loading
+provenance classification and reachability
+launch-critical package cohorts
+root-cause authority
+current representative and golden outputs
 ```
 
-Do not read unrelated historical strategy or sprint papers unless repository reality requires them.
+Do not reopen unrelated historical architecture questions already settled by the reconciliation.
 
-## Scope
+## Questions to answer
 
-### 1. Frame-aware prose routing
+### 1. Controlled-beta architecture cohort
 
-Implement deterministic prose selection using `activation_key` / `source_spec_id`.
+Enumerate the exact proposed controlled-beta cohort.
 
-Requirements:
+For each item record:
 
-- no prose selection by bare `signal_id` where multiple frames exist;
-- explicit fallback for legacy family-level content;
-- no wrong-frame prose attachment;
-- deterministic ordering;
-- no frontend medical inference.
+```text
+signal_id
+activation_key
+source_spec_id
+biomarker or domain
+package_id
+runtime reachability
+current firing status
+launch relevance
+provenance status
+explicit lineage availability
+WHY authority type
+medical-review requirement
+recommended cohort disposition
+```
 
-### 2. Modifier binding
+Allowed dispositions:
 
-Implement governed binding for supported modifiers only.
+```text
+INCLUDE
+EXCLUDE
+DEFER
+REQUIRES_LINEAGE
+REQUIRES_MEDICAL_REVIEW
+UNVERIFIABLE
+```
 
-Requirements:
+Do not estimate silently.
 
-- explicit eligibility rules;
-- deterministic precedence;
-- contradiction handling;
-- fail-safe behaviour for unsupported combinations;
-- provenance for selected modifiers;
-- no free-form LLM selection.
+### 2. Residual identity exposure
 
-### 3. Compiled WHY expansion
+Verify live exposure for:
 
-Expand compiled root-cause authority beyond the current pilot only for a bounded, medically reviewed cohort.
+```text
+interpretation_display_layer_publish_v1.py
+domain_score_assembler.py
+narrative_report_compiler_v1.py
+intervention_selector_v1.py
+signal_interaction_builder.py
+```
 
-Requirements:
+For each surface state:
 
-- preserve Package 2 frame identity and provenance contracts;
-- use versioned compiled artefacts;
-- retain legacy family-level labels where migration is incomplete;
-- do not silently convert legacy family-level WHY into frame-specific authority;
-- no broad estate migration.
+```text
+file and function
+current keying behaviour
+whether frame collapse is possible
+which active multi-frame families can reach it
+whether the behaviour is launch-critical
+whether a full behaviour fix or smaller hardening package is justified
+```
 
-### 4. Round 2 prose pipeline
+Do not assume every identified code smell has current live exposure.
 
-Create medically reviewed production-ready prose from current research authority.
+### 3. Provenance-blocked runtime cohort
 
-Requirements:
+Enumerate every launch-critical package that is:
 
-- MR-BATCH-001B remains benchmark/test-only;
-- no direct promotion of its candidate text;
-- Round 2 assets must be newly authored, reviewed, versioned and validated;
-- consumer and clinician variants remain distinct where required;
-- unsupported claims must not be introduced.
+- provenance `BLOCKED`;
+- `beta_eligible_explicit: false`;
+- inferred-only;
+- or otherwise unsuitable for an explicit beta claim.
 
-### 5. Coverage and validation
+For each determine:
 
-Expand only the launch-critical Layer B cohort needed for controlled-beta reassessment.
+```text
+can load
+can fire
+can rank
+can appear in user-facing output
+appears in representative or golden output
+canonical research source available
+explicit lineage recoverable
+product impact if suppressed
+medical impact if suppressed
+recommended action
+```
+
+Allowed actions:
+
+```text
+EXTRACT_AND_ATTACH
+KEEP_ACTIVE_WITH_EXPLICIT_LINEAGE
+MAKE_NON_REACHABLE
+EXCLUDE_FROM_BETA_COHORT
+DEFER_PENDING_RESEARCH
+UNVERIFIABLE
+```
+
+Do not remove anything in this package.
+
+### 4. WHY migration pilot cohort
+
+Define a bounded representative pilot for the WHY convergence proof.
+
+The pilot must be large enough to test:
+
+- single-frame and multi-frame signals;
+- current compiled and legacy authority paths;
+- consumer and clinician outputs;
+- provenance and replay;
+- medical-review workflow;
+- legacy retirement.
+
+For each proposed pilot item record:
+
+```text
+signal_id
+activation frames
+current WHY authority
+canonical research availability
+existing medical review
+new medical review required
+migration complexity
+reason for inclusion
+```
+
+Do not default to all 40 legacy hypotheses.
+
+### 5. Medical-review viability
+
+Confirm:
+
+- medical-review owner;
+- review inputs;
+- review output format;
+- expected decision route;
+- unresolved dependencies;
+- whether the pilot can be completed within the approved programme window.
+
+Do not invent availability or commitment.
+
+If capacity is not evidenced, mark it unresolved.
+
+### 6. Programme ceilings
+
+Propose explicit values for human approval:
+
+```text
+maximum planned architecture packages
+maximum unplanned follow-on packages
+maximum material scope growth per package
+maximum programme duration
+maximum engineering effort
+maximum medical-review effort
+lineage failure threshold
+```
+
+The existing plan already fixes:
+
+```text
+maximum unplanned mandatory packages: 1
+maximum unauthorised material scope growth: 25%
+```
+
+Do not change those without explicit justification.
+
+## Required outputs
+
+Create:
+
+```text
+docs/architecture/HEALTHIQ_AI_V5_CONTROLLED_BETA_ARCHITECTURE_COHORT.md
+docs/architecture/HEALTHIQ_AI_V5_CONVERGENCE_VIABILITY_ASSESSMENT.md
+docs/architecture/HEALTHIQ_AI_V5_WHY_MIGRATION_PILOT_COHORT.md
+```
+
+### Controlled-beta cohort
 
 Include:
 
-- representative normal, abnormal, conflicting and incomplete panels;
-- same-`signal_id` multi-frame cases;
-- modifier combinations;
-- legacy fallback cases;
-- provenance and replay checks;
-- frontend render-only verification.
+- exact cohort inventory;
+- inclusions and exclusions;
+- activation-frame inventory;
+- provenance and reachability status;
+- launch relevance;
+- unresolved evidence.
 
-## Phase 1 — Design and inventory
+### Viability assessment
 
-Before implementation:
+Include:
 
-1. Identify active Layer B content authorities and runtime selection paths.
-2. Produce a bounded migration cohort.
-3. Map each cohort item to:
-   - activation frame;
-   - current prose authority;
-   - current WHY authority;
-   - modifier needs;
-   - provenance state;
-   - medical-review requirement.
-4. Confirm which assets are production, legacy, candidate or test-only.
-5. Confirm MR-BATCH-001B has zero production imports.
+- identity exposure findings;
+- provenance-blocked runtime findings;
+- product impact of suppression;
+- canonical lineage recoverability;
+- medical-review viability;
+- proposed programme ceilings;
+- kill-criteria assessment;
+- decision.
 
-Create:
+### WHY pilot cohort
 
-```text
-docs/architecture/P3-LAYERB-INTEL-1_migration_and_coverage_inventory.md
-```
+Include:
 
-## STOP Gate 1
+- exact pilot;
+- selection rationale;
+- medical-review dependencies;
+- architecture coverage;
+- exclusions;
+- pilot success criteria.
 
-STOP before implementation if:
+## Decision
 
-- frame routing policy is ambiguous;
-- modifier precedence requires a product or medical decision;
-- a WHY mapping cannot be tied to a defensible frame;
-- provenance is unresolved for a proposed promoted asset;
-- migration would require broad legacy rewrite;
-- frontend changes would introduce medical inference.
-
-Record the decision before continuing.
-
-## Deliverables
-
-### A. Frame-routing contract
-
-Create or update one canonical runtime contract for:
+Issue exactly one decision:
 
 ```text
-activation frame
-prose asset eligibility
-modifier eligibility
-fallback authority
-selection provenance
+GO
+REDESIGN
+V6
 ```
 
-Avoid duplicated selectors.
+### GO
 
-### B. Modifier binder
+Use only if:
 
-Implement one deterministic binder used by all relevant Layer B compilers.
+- the launch-critical cohort is isolatable;
+- identity scope is bounded;
+- provenance lineage or safe exclusion is feasible;
+- the WHY pilot is bounded;
+- medical-review route is credible;
+- programme ceilings can be set.
 
-### C. Prose registry / compiled assets
+### REDESIGN
 
-Add only the bounded, reviewed Round 2 assets required by the migration inventory.
+Use if v5 still appears salvageable but the proposed package sequence or cohort must change before implementation.
 
-### D. Compiled WHY cohort
+State the exact revised sequence.
 
-Promote only the approved cohort through the existing compiled-hypothesis path.
+### V6
 
-### E. Runtime integration
+Use if any kill criterion is already met, including:
 
-Wire routing, modifiers and compiled WHY into:
+- cohort isolation failure;
+- unrecoverable canonical lineage at material scale;
+- unavoidable estate-wide disruption;
+- no executable WHY pilot;
+- architecture scope already exceeds the approved ceiling.
 
-```text
-root-cause output
-consumer narrative
-clinician report
-DTO / replay evidence
-```
+## Quantitative requirements
 
-### F. Validation gate
+Report verified counts where possible:
 
-Add one Layer B integrity gate to the existing architecture validation flow.
+- proposed beta signal families;
+- activation frames;
+- active multi-frame families in the cohort;
+- exposed identity surfaces;
+- blocked launch-critical packages;
+- blocked packages currently reachable;
+- packages requiring lineage extraction;
+- packages recommended for suppression;
+- proposed WHY pilot signals and frames;
+- medical reviews required.
 
-It must detect:
-
-- wrong-frame prose;
-- unsupported modifier combinations;
-- missing provenance;
-- false production status;
-- candidate/test-only asset imports;
-- frame-specific WHY bound to family-level authority;
-- non-deterministic output.
-
-### G. Continuity
-
-Update the BUILD register with:
-
-- cohort delivered;
-- content and WHY authority changes;
-- medical-review decisions;
-- unresolved legacy coverage;
-- validation results;
-- no controlled-beta authorisation.
-
-## Medical review
-
-Medical review is required before any new prose or compiled WHY asset becomes production authority.
-
-The review must approve:
-
-- frame fit;
-- claim accuracy;
-- consumer wording;
-- clinician wording;
-- modifier effect;
-- confirmatory-test wording;
-- fallback behaviour.
-
-Do not treat schema validation as medical approval.
-
-## Tests
-
-At minimum prove:
-
-1. same-family frames receive the correct distinct prose;
-2. unsupported frames do not borrow another frame’s prose;
-3. modifier precedence is deterministic;
-4. contradictory modifiers fail safely;
-5. legacy family-level fallback is labelled honestly;
-6. compiled WHY selects by activation frame;
-7. candidate/test-only content cannot load in production;
-8. MR-BATCH-001B remains isolated;
-9. consumer and clinician outputs preserve provenance;
-10. replay round-trip preserves selected asset IDs and modifiers;
-11. repeated runs produce identical output;
-12. frontend renders backend decisions without medical inference;
-13. old single-frame outputs remain compatible;
-14. the Layer B gate fails on deliberately invalid fixtures.
-
-Run relevant existing:
-
-- architecture and launch-estate gates;
-- identity/provenance gate;
-- root-cause and clinician-report suites;
-- narrative and retail-explainer suites;
-- replay/auditability tests;
-- golden panels;
-- NO-LLM tests;
-- PSI and MR-BATCH isolation tests;
-- frontend type and render tests.
-
-## Forbidden scope
-
-Do not:
-
-- activate PSI;
-- promote MR-BATCH-001B;
-- enable Gemini;
-- change thresholds or signal firing;
-- redesign the results page;
-- migrate the entire legacy WHY estate;
-- create unreviewed medical claims;
-- alter Package 2 identity/provenance contracts;
-- declare controlled-beta readiness.
-
-## Acceptance criteria
-
-- [ ] Migration cohort is bounded and documented.
-- [ ] STOP Gate 1 is passed or escalated.
-- [ ] Frame-aware prose routing is production-wired.
-- [ ] Modifier binding is deterministic and governed.
-- [ ] Approved compiled WHY cohort is production-wired.
-- [ ] Round 2 assets have explicit medical approval.
-- [ ] Candidate/test-only assets remain isolated.
-- [ ] Provenance is preserved through DTO and replay.
-- [ ] Layer B integrity gate is CI-wired.
-- [ ] Required tests pass.
-- [ ] No PSI, Gemini or MR-BATCH promotion occurred.
-- [ ] No controlled-beta claim was made.
+Where a count is not reliable, state why.
 
 ## STOP conditions
 
-STOP if:
+STOP and escalate if:
 
-1. medical review rejects any proposed production asset;
-2. source authority is ambiguous;
-3. a frame-specific mapping requires unsupported inference;
-4. modifier behaviour changes clinical meaning without approval;
-5. Package 2 identity/provenance contracts would need redesign;
-6. a candidate asset is required to make tests pass;
-7. implementation expands beyond the bounded cohort;
-8. required gates fail for an unexplained reason.
+1. latest `main` cannot be identified;
+2. the planning paper is missing or not merged;
+3. any of the five identity surfaces cannot be inspected;
+4. runtime reachability cannot be verified;
+5. canonical research sources cannot be located for the proposed cohort;
+6. cohort membership requires a new medical or product policy decision;
+7. medical-review ownership cannot be established;
+8. repository state is not clean at package start;
+9. verification would require runtime changes.
 
-## Output
+## Acceptance criteria
+
+- [ ] Exact controlled-beta architecture cohort is documented.
+- [ ] All five identity surfaces have verified exposure findings.
+- [ ] Provenance-blocked runtime cohort is fully enumerated.
+- [ ] Product and medical impact of suppression is recorded.
+- [ ] Canonical lineage recoverability is assessed.
+- [ ] WHY migration pilot is bounded and representative.
+- [ ] Medical-review viability is assessed honestly.
+- [ ] Programme ceilings are proposed.
+- [ ] Kill criteria are explicitly tested.
+- [ ] GO / REDESIGN / V6 decision is issued.
+- [ ] No runtime, schema, test or medical-content files are changed.
+- [ ] No Package 1 implementation prompt is authored.
+- [ ] No beta-readiness declaration is made.
+
+## Verification report
 
 Create:
 
 ```text
-docs/audit-papers/P3-LAYERB-INTEL-1_implementation_and_verification_report.md
+docs/audit-papers/ARCH-CONV-GATE0_implementation_and_verification_report.md
 ```
 
 Include:
 
 - baseline SHA;
-- migration cohort;
-- medical-review evidence;
-- files changed;
-- routing and modifier decisions;
-- compiled WHY changes;
-- test commands and exit codes;
+- branch;
+- evidence read;
+- files inspected;
+- commands used;
+- quantitative totals;
 - acceptance-criteria table;
 - STOP-condition assessment;
-- unresolved carry-forwards.
+- final decision and rationale;
+- unresolved limitations.
 
 Do not merge without explicit human authority.
