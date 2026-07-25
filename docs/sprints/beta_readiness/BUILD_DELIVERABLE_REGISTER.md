@@ -853,7 +853,33 @@ Entries should not list every file touched or every non-change.
 - Controlled beta must not claim explicit provenance for batch-JSON launch packages until investigation-spec extraction lands.
 
 ### Recommended next sprint
-- Stage 0 against current-state baseline; do not start Package 3 (prose routing) until identity/provenance settle operationally.
+- Stage 0 against current-state baseline; Package 3 Layer B intelligence may proceed after identity/provenance merge (see P3-LAYERB-INTEL-1 entry).
+
+---
+
+## P3-LAYERB-INTEL-1 — Layer B Intelligence Completion (infrastructure slice)
+
+**Status:** Complete (infrastructure; medical asset promotion deferred)  
+**Date closed:** 2026-07-25  
+**Programme block(s):** Package 3 — Layer B prose routing / WHY depth
+
+### Delivered / ticked off
+- Migration/coverage inventory bounded (9-frame cohort; BLOCKED kb47 deferred).
+- STOP Gate 1: routing policy accepted; modifier activation deferred to medical review; WHY/Round 2 promotion escalated.
+- Frame-routing contract + narrative compiler wiring; modifier binder fail-safe; Layer B asset authority registry; integrity gate CI-wired.
+- Package 2 identity/provenance contracts unchanged; MR-BATCH-001B remains test-only; PSI/Gemini not activated.
+- No controlled-beta authorisation.
+
+### Carry-forwards
+- Medical review required before Round 2 prose or compiled WHY expansion beyond vitamin_d.
+- Activating context-modifier catalogue rows.
+- inv_ extraction for remaining BLOCKED kb47 packs.
+
+### Blockers / risks
+- Controlled-beta reassessment of Layer B content depth remains blocked on medical-reviewed assets.
+
+### Recommended next sprint
+- Medical-reviewed Round 2 / compiled WHY expansion for the bounded cohort (do not invent unreviewed claims).
 
 ---
 

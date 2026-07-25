@@ -1,0 +1,71 @@
+schema_version: "1.0.0"
+registry_id: layer_b_asset_authority_v1
+status: LOCKED_GOVERNANCE
+description: >
+  Checkable production-authority and medical-review state for Layer B assets.
+  Complements retail_explainer_v1 (which has no review_status field).
+  Candidate / test-only / pending_medical_review assets must not load as production.
+
+production_authority_enum:
+  - production
+  - approved
+  - legacy_unreviewed
+  - pending_medical_review
+  - candidate
+  - test_only
+
+assets:
+  - asset_id: compiled_hypothesis:signal_vitamin_d_low
+    asset_type: compiled_why
+    signal_id: signal_vitamin_d_low
+    activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
+    production_authority: production
+    medical_review_status: approved_prior_pilot
+    notes: Sole runtime-promoted compiled WHY pilot (ARCH-RT-4 / Package 2 intact).
+
+  - asset_id: narrative_entity_pack:benchmark_interpretation_entities_v1
+    asset_type: interpretation_entity_pack
+    production_authority: legacy_unreviewed
+    medical_review_status: inherited_benchmark
+    notes: Existing benchmark pack; family-level selection until frame-keyed assets land.
+
+  - asset_id: pathway_pack:pathway_explainers_v1
+    asset_type: pathway_explainer_pack
+    production_authority: legacy_unreviewed
+    medical_review_status: inherited_benchmark
+
+  - asset_id: functional_pack:functional_interpretation_v1
+    asset_type: functional_interpretation_pack
+    production_authority: legacy_unreviewed
+    medical_review_status: inherited_benchmark
+
+  - asset_id: retail_explainer_registry_v1
+    asset_type: retail_explainer_registry
+    production_authority: legacy_unreviewed
+    medical_review_status: inherited_ssot
+    notes: 40/104 biomarker coverage; no per-entry review_status in schema.
+
+  - asset_id: MR-BATCH-001B_candidate_prose_assets
+    asset_type: candidate_prose_batch
+    production_authority: test_only
+    production_import_allowed: false
+    medical_review_status: not_for_production
+    notes: Benchmark/test-only. Must never be imported by production runtime.
+
+  - asset_id: round2_prose_cohort_p3_layerb_intel_1
+    asset_type: round2_prose_cohort
+    production_authority: pending_medical_review
+    production_import_allowed: false
+    medical_review_status: required_not_obtained
+    notes: >
+      Bounded cohort frames identified in P3-LAYERB-INTEL-1 inventory.
+      No Round 2 medical prose authored in this package pending explicit medical approval.
+
+  - asset_id: compiled_why_expansion_cohort_p3_layerb_intel_1
+    asset_type: compiled_why_cohort
+    production_authority: pending_medical_review
+    production_import_allowed: false
+    medical_review_status: required_not_obtained
+    notes: >
+      Expansion beyond vitamin_d_low deferred. Package 2 identity contracts unchanged.
+      BLOCKED kb47 lineage cannot be promoted without inv_ authority + medical review.

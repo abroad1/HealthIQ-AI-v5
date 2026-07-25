@@ -180,6 +180,25 @@ export interface ClinicianRootCauseFindingV1 {
   hypotheses: ClinicianHypothesisV1[];
 }
 
+/** P3-LAYERB-INTEL-1 — backend-authored selection provenance (render-only on FE). */
+export interface LayerBFrameRoutingDecisionV1 {
+  selected_asset_id?: string | null;
+  match_authority?: string;
+  fallback_authority?: string;
+  rejected_asset_ids?: string[];
+  routing_policy_version?: string;
+  activation_key?: string;
+  source_spec_id?: string;
+  signal_id?: string;
+}
+
+export interface LayerBModifierBindingDecisionV1 {
+  selected_modifier_ids?: string[];
+  rejected?: Array<{ modifier_id: string; reason: string }>;
+  binder_version?: string;
+  fail_safe?: boolean;
+}
+
 /** KB-S54B-FE — mirrors backend Page1SummaryBlockV1.primary_concern_mode */
 export type PrimaryConcernModeV1 =
   | 'distinct_lead'
