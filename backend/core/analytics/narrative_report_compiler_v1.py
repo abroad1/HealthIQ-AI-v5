@@ -29,6 +29,12 @@ from core.analytics.lifestyle_consumer_surface_v1 import (
     build_lifestyle_consumer_overview_paragraphs_v1,
     join_lifestyle_consumer_overview_supplement,
 )
+from core.knowledge.layer_b_frame_routing_v1 import (
+    candidate_from_mapping,
+    resolve_lead_frame_from_top_finding,
+    select_frame_prose_asset,
+)
+from core.knowledge.layer_b_modifier_binder_v1 import bind_modifiers_v1
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _ENTITIES_PATH = _REPO_ROOT / "knowledge_bus" / "interpretation_entities_v1" / "benchmark_interpretation_entities_v1.yaml"
@@ -123,9 +129,57 @@ def _entity_declared_signal_ids(row: Mapping[str, Any]) -> Optional[Set[str]]:
 def _select_lead_entity_row(
     rows: Sequence[Mapping[str, Any]],
     lead_signal_id: str,
+    *,
+    activation_key: str = "",
+    source_spec_id: str = "",
+    routing_meta: Optional[Dict[str, Any]] = None,
 ) -> Optional[Dict[str, Any]]:
     if not lead_signal_id:
         return None
+    # P3-LAYERB-INTEL-1: frame-aware selection among lead-domain candidates.
+    lead_rows = [
+        row
+        for row in rows
+        if isinstance(row, dict)
+        and str(row.get("compiler_role", "")).strip() == "benchmark_lead_domain"
+    ]
+    if lead_rows:
+        candidates = [
+            candidate_from_mapping(row, default_signal_id=lead_signal_id) for row in lead_rows
+        ]
+        # Ensure signal_ids-scoped rows carry signal_id for family match.
+        enriched = []
+        for cand, row in zip(candidates, lead_rows):
+            scope = _entity_declared_signal_ids(row)
+            sid = cand.signal_id
+            if not sid and scope and lead_signal_id in scope:
+                sid = lead_signal_id
+            if scope and lead_signal_id not in scope:
+                continue
+            enriched.append(
+                candidate_from_mapping(
+                    {
+                        **dict(row),
+                        "asset_id": str(
+                            row.get("interpretation_entity_id") or cand.asset_id
+                        ).strip(),
+                        "signal_id": sid or lead_signal_id,
+                    },
+                    default_signal_id=lead_signal_id,
+                )
+            )
+        decision = select_frame_prose_asset(
+            candidates=enriched,
+            signal_id=lead_signal_id,
+            activation_key=activation_key,
+            source_spec_id=source_spec_id,
+        )
+        if routing_meta is not None:
+            routing_meta["layer_b_frame_routing"] = decision.as_dict()
+        if decision.selected_asset_id:
+            for row in lead_rows:
+                if str(row.get("interpretation_entity_id", "")).strip() == decision.selected_asset_id:
+                    return dict(row)
     fallback_unscoped: Optional[Dict[str, Any]] = None
     for row in rows:
         if not isinstance(row, dict):
@@ -700,6 +754,25 @@ def compile_narrative_report_v1(
         narrative_payload_v1=narrative_payload_v1,
         insight_graph=insight_graph,
     )
+    lead_frame = {"signal_id": lead_signal_id, "activation_key": "", "source_spec_id": ""}
+    if narrative_payload_v1 is not None and narrative_payload_v1.top_findings:
+        tf0 = narrative_payload_v1.top_findings[0]
+        lead_frame = resolve_lead_frame_from_top_finding(
+            {
+                "signal_id": getattr(tf0, "signal_id", ""),
+                "activation_key": getattr(tf0, "activation_key", ""),
+                "source_spec_id": getattr(tf0, "source_spec_id", ""),
+            }
+        )
+        if not lead_signal_id:
+            lead_signal_id = lead_frame["signal_id"]
+    compiler_meta["lead_activation_key"] = lead_frame.get("activation_key", "")
+    compiler_meta["lead_source_spec_id"] = lead_frame.get("source_spec_id", "")
+    modifier_decision = bind_modifiers_v1(
+        signal_id=lead_signal_id,
+        activation_key=str(lead_frame.get("activation_key") or ""),
+    )
+    compiler_meta["layer_b_modifier_binding"] = modifier_decision.as_dict()
 
     lead_text = ""
     secondary_text = ""
@@ -707,7 +780,13 @@ def compile_narrative_report_v1(
     rows = (entities_doc or {}).get("interpretation_entities")
     if isinstance(rows, list):
         if include_lead_yaml and lead_signal_id:
-            lead_row = _select_lead_entity_row(rows, lead_signal_id)
+            lead_row = _select_lead_entity_row(
+                rows,
+                lead_signal_id,
+                activation_key=str(lead_frame.get("activation_key") or ""),
+                source_spec_id=str(lead_frame.get("source_spec_id") or ""),
+                routing_meta=compiler_meta,
+            )
             if lead_row is not None:
                 lead_text = _compose_domain_block(lead_row, pathways_by_id, domains_by_id)
                 if lead_text:

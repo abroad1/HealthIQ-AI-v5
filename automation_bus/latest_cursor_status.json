@@ -1,10 +1,9 @@
 {
-  "branch": "feature/arch-rt-identity-prov-1-c1-evidence-completion",
+  "branch": "feature/p3-layerb-intel-1-frame-routing-why-depth",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-25T12:21:37Z",
-  "cursor_started_utc": "2026-07-25T12:07:50Z",
-  "head_sha": "1ec44844ba2da3087e5f679c41d1904639eb9545",
+  "cursor_started_utc": "2026-07-25T13:09:00Z",
+  "head_sha": "eacceaf04f85e2c12e2fc0f6f148b50f532b3af9",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-RT-IDENTITY-PROV-1-C1"
+  "status": "IN_PROGRESS",
+  "work_id": "P3-LAYERB-INTEL-1"
 }
