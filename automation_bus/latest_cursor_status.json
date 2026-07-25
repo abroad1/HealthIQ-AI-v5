@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-gate0-cohort-viability",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-07-25T22:32:05Z",
   "cursor_started_utc": "2026-07-25T22:24:09Z",
-  "head_sha": "d798beab9b2bb7dcad9b48ed0f0a4f0153be8948",
+  "head_sha": "4139a0566a40137a254fc0fa8c8e50e4bfd77305",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-GATE0"
 }
