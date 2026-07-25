@@ -69,6 +69,11 @@ def main() -> int:
             None,
         ),
         (
+            "validate_identity_provenance_gate",
+            [py, str(scripts / "validate_identity_provenance_gate.py")],
+            None,
+        ),
+        (
             "validate_active_signal_context_gate_reachability",
             [py, str(scripts / "validate_active_signal_context_gate_reachability.py")],
             None,

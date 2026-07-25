@@ -144,25 +144,17 @@ def build_signal_interactions_v1(
 
     node_ids = {n["signal_id"] for n in nodes if isinstance(n, dict) and isinstance(n.get("signal_id"), str)}
     signal_results = signal_results or []
-    fired = {
-        r.get("signal_id"): r.get("signal_state")
-        for r in signal_results
-        if isinstance(r, dict)
-        and isinstance(r.get("signal_id"), str)
-        and r.get("signal_state") in _VALID_SIGNAL_STATES
-    }
-    confidence_by_signal: Dict[str, Optional[float]] = {}
-    for row in signal_results:
-        if not isinstance(row, dict):
-            continue
-        sid = row.get("signal_id")
-        if not isinstance(sid, str):
-            continue
-        confidence_value = row.get("confidence")
-        if isinstance(confidence_value, (int, float)):
-            confidence_by_signal[sid] = float(confidence_value)
-        else:
-            confidence_by_signal[sid] = None
+    from core.knowledge.signal_result_index_v1 import (
+        confidence_by_signal_family,
+        family_fired_states,
+        participating_activation_keys,
+    )
+
+    fired = family_fired_states(signal_results, valid_states=_VALID_SIGNAL_STATES)
+    confidence_by_signal = confidence_by_signal_family(signal_results)
+    activation_keys = participating_activation_keys(
+        signal_results, valid_states=_VALID_SIGNAL_STATES
+    )
     present_ids = sorted(sid for sid in fired.keys() if sid in node_ids)
 
     present_set = set(present_ids)
@@ -250,7 +242,10 @@ def build_signal_interactions_v1(
             "map_version": payload.get("map_version", "v1"),
             "nodes": present_ids,
             "edges": active_edges,
+            "participating_activation_keys": activation_keys,
+            "aggregation_scope": "signal_family",
         },
         "interaction_chains": interaction_chains,
         "interaction_summary": interaction_summary,
+        "participating_activation_keys": activation_keys,
     }

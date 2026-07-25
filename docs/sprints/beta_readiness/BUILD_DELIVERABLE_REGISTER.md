@@ -828,6 +828,35 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## ARCH-RT-IDENTITY-PROV-1 — Runtime Identity and Provenance Integrity
+
+**Status:** Complete  
+**Date closed:** 2026-07-25  
+**Programme block(s):** Phase 0 / day-one architecture integrity (identity + provenance)
+
+### Delivered / ticked off
+- Subordinate ADR-RT-IDENTITY-PROV-001 published; STOP_GATE_1 PASS.
+- Shared activation-frame index helper; interaction / root-cause / report / output-authority / clinician-report paths preserve frames.
+- Additive clinician `root_causes` list; legacy `root_cause` only when singleton.
+- Package-manifest schema 1.1.0 optional provenance fields; honest provenance status model; identity/provenance gate + inventory.
+- compile_manifest_ref vs path reconciled as logical vs estate-index internal (no blind rename).
+- Historical continuity note: ARCH-RT-1/2/3 BUILD entries were absent; ADRs remain authoritative (no fabricated retrospective closure).
+
+### Carry-forwards
+- Launch-critical kb47 packages remain batch-JSON sourced → provenance BLOCKED / not beta-eligible for explicit-lineage claims until inv_ extraction.
+- Family-level legacy WHY still labelled family_level when multi-frame; full frame-specific compiled WHY migration is later work.
+- Stale PSI activation-readiness inventory tests remain a disclosed carry-forward unless counts drift from this package.
+- Four additional launch-path collapse surfaces (interpretation display publish, domain score assembler, narrative lead resolution, intervention selector) remain for follow-on identity hardening.
+- Audit correction refreshed clinician AB/VR fixtures for additive `root_causes` / null multi-finding `root_cause`; expanded unit matrix in `test_arch_rt_identity_prov_1.py`.
+
+### Blockers / risks
+- Controlled beta must not claim explicit provenance for batch-JSON launch packages until investigation-spec extraction lands.
+
+### Recommended next sprint
+- Stage 0 against current-state baseline; do not start Package 3 (prose routing) until identity/provenance settle operationally.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

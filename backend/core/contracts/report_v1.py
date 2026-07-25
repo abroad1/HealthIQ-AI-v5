@@ -18,6 +18,10 @@ class ReportTopFindingV1(BaseModel):
 
     priority_rank: int
     signal_id: str
+    activation_key: str = ""
+    source_spec_id: str = ""
+    package_id: str = ""
+    provenance_status: str = ""
     system: str
     signal_state: str
     confidence: float

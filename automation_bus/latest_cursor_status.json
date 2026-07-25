@@ -1,10 +1,10 @@
 {
-  "branch": "feature/arch-gov-baseline-1-programme-baseline-governance-reset",
+  "branch": "feature/arch-rt-identity-prov-1-c1-evidence-completion",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-25T10:18:28Z",
-  "cursor_started_utc": "2026-07-25T10:06:07Z",
-  "head_sha": "bba36c5cbaa2c4d9ea31463521332d7dd7588899",
+  "cursor_completed_utc": "2026-07-25T12:21:37Z",
+  "cursor_started_utc": "2026-07-25T12:07:50Z",
+  "head_sha": "1ec44844ba2da3087e5f679c41d1904639eb9545",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "ARCH-GOV-BASELINE-1"
+  "work_id": "ARCH-RT-IDENTITY-PROV-1-C1"
 }

@@ -171,6 +171,9 @@ export interface ClinicianHypothesisV1 {
 
 export interface ClinicianRootCauseFindingV1 {
   signal_id: string;
+  activation_key?: string;
+  source_spec_id?: string;
+  authority_scope?: string;
   signal_state: string;
   signal_confidence: number;
   primary_metric: string;
@@ -212,6 +215,8 @@ export interface ClinicianReportV1 {
       runner_up_topic_line?: string;
       runner_up_why_not_lead_line?: string;
     };
+    root_causes?: ClinicianRootCauseFindingV1[];
+    /** Legacy singleton — present only when exactly one authorised finding. */
     root_cause: ClinicianRootCauseFindingV1 | null;
     confirmatory_tests: ClinicianConfirmatoryTestItem[];
   };

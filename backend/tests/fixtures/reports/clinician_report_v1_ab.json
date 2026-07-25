@@ -5,10 +5,9 @@
     "footer_line": "HealthIQ Clinician Summary Report — discussion aid; not diagnostic or prescriptive."
   },
   "data_quality": {
-    "panel_completeness_present": 10,
-    "panel_completeness_expected": 10,
+    "panel_completeness_present": 9,
+    "panel_completeness_expected": 9,
     "lab_range_quality_by_primary_metric": [
-      "apoa1: complete",
       "crp: complete",
       "hemoglobin: complete",
       "homocysteine: complete",
@@ -26,150 +25,1456 @@
     "page1": {
       "primary_concern": "Homocysteine Elevation Context: warrants attention on this panel",
       "key_findings": [
-        "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+        "Homocysteine Elevation Context warrants attention on this panel, with homocysteine as the main marker on this panel.",
         "Primary metric: homocysteine.",
-        "Top chain confidence: 0.93.",
-        "Several findings scored similarly; the first item follows a stable ordering rule so your summary has a single lead topic."
+        "Top chain confidence: 0.93."
       ],
       "chains": [
         "Linked pattern (chain_001): Homocysteine High → Homocysteine Elevation Context.",
         "Linked pattern (chain_002): Systemic Inflammation → Homocysteine Elevation Context."
       ],
-      "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
-      "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.95. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
-      "primary_concern_mode": "technical_tiebreak_lead",
+      "top_hypothesis_line": "Top hypothesis: Homocysteine-related pattern (confidence 0.60).",
+      "confidence_and_missing_data": "The panel has enough information to identify a lead pattern. Some confirmatory markers were not included, which limits how specific the story can be.",
+      "primary_concern_mode": "distinct_lead",
       "co_primary_signal_ids": [],
       "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
-      "runner_up_signal_id": "signal_apoa1_low",
-      "runner_up_topic_line": "Apoa1 Low: is outside the optimal range on this panel",
-      "runner_up_why_not_lead_line": "Apoa1 Low sits in the same scored tier as Homocysteine Elevation Context. A fixed ordering rule lists the headline topic first so the summary has one clear entry point (scores 0.95 vs 0.90)."
+      "runner_up_signal_id": "",
+      "runner_up_topic_line": "",
+      "runner_up_why_not_lead_line": "",
+      "intervention_annotation_context": ""
     },
-    "root_cause": {
-      "signal_id": "signal_homocysteine_elevation_context",
-      "signal_state": "at_risk",
-      "signal_confidence": 0.95,
-      "primary_metric": "homocysteine",
-      "hypotheses": [
-        {
-          "hypothesis_id": "hcy_b12_pattern_v1",
-          "title": "B12-associated pattern",
-          "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced B12-related methylation capacity.",
-          "hypothesis_confidence": 0.6,
-          "ranking_rationale": "Ranked #1 because mcv evidence; vitamin_b12 counter-evidence.",
-          "evidence_for": [
-            {
-              "item": "MCV is elevated, which can be consistent with a megaloblastic nutrient pattern in context.",
-              "marker_refs": [
-                "mcv"
-              ]
-            }
-          ],
-          "evidence_against": [
-            {
-              "item": "B12 appears clearly within range, which makes a B12-driven pattern less likely on this panel alone.",
-              "marker_refs": [
-                "vitamin_b12"
-              ]
-            }
-          ],
-          "missing_data": [
-            {
-              "marker_id": "methylmalonic_acid",
-              "reason": "MMA can help evaluate functional B12 deficiency when homocysteine is elevated."
-            }
-          ],
-          "confirmatory_tests": [
-            {
-              "test_id": "test_methylmalonic_acid_v1",
-              "display_name": "Methylmalonic acid (MMA)",
-              "rationale": "Consider discussing methylmalonic acid (MMA) testing with your clinician to evaluate functional B12 deficiency."
-            }
-          ],
-          "safety_class": "monitoring"
-        },
-        {
-          "hypothesis_id": "hcy_folate_pattern_v1",
-          "title": "Folate-associated pattern",
-          "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced folate availability for one-carbon metabolism.",
-          "hypothesis_confidence": 0.6,
-          "ranking_rationale": "Ranked #2 because mcv evidence; limited contradictory evidence.",
-          "evidence_for": [
-            {
-              "item": "MCV is elevated, which can align with folate-related red cell maturation patterns in context.",
-              "marker_refs": [
-                "mcv"
-              ]
-            }
-          ],
-          "evidence_against": [],
-          "missing_data": [],
-          "confirmatory_tests": [
-            {
-              "test_id": "test_homocysteine_repeat_v1",
-              "display_name": "Repeat homocysteine",
-              "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
-            }
-          ],
-          "safety_class": "monitoring"
-        },
-        {
-          "hypothesis_id": "hcy_inflammation_context_v1",
-          "title": "Inflammatory context pattern",
-          "summary": "Homocysteine is elevated with inflammatory context signals that may be relevant to vascular stress interpretation.",
-          "hypothesis_confidence": 0.4,
-          "ranking_rationale": "Ranked #3 because crp evidence; limited contradictory evidence.",
-          "evidence_for": [
-            {
-              "item": "A systemic inflammation signal fired, indicating inflammatory context on this panel.",
-              "marker_refs": [
-                "crp"
-              ]
-            }
-          ],
-          "evidence_against": [],
-          "missing_data": [],
-          "confirmatory_tests": [
-            {
-              "test_id": "test_crp_repeat_v1",
-              "display_name": "Repeat CRP",
-              "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
-            },
-            {
-              "test_id": "test_homocysteine_repeat_v1",
-              "display_name": "Repeat homocysteine",
-              "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
-            }
-          ],
-          "safety_class": "monitoring"
-        },
-        {
-          "hypothesis_id": "hcy_renal_clearance_context_v1",
-          "title": "Renal clearance context pattern",
-          "summary": "Homocysteine is elevated and renal clearance context may be relevant when interpreting metabolite accumulation patterns.",
-          "hypothesis_confidence": 0.6,
-          "ranking_rationale": "Ranked #4 because available evidence; creatinine counter-evidence.",
-          "evidence_for": [],
-          "evidence_against": [
-            {
-              "item": "Creatinine appears within range, which reduces evidence for a renal clearance contribution on this panel alone.",
-              "marker_refs": [
-                "creatinine"
-              ]
-            }
-          ],
-          "missing_data": [],
-          "confirmatory_tests": [
-            {
-              "test_id": "test_homocysteine_repeat_v1",
-              "display_name": "Repeat homocysteine",
-              "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
-            }
-          ],
-          "safety_class": "monitoring"
-        }
-      ]
-    },
+    "root_causes": [
+      {
+        "signal_id": "signal_homocysteine_elevation_context",
+        "activation_key": "signal_homocysteine_elevation_context::inv_elevation_context",
+        "source_spec_id": "inv_elevation_context",
+        "authority_scope": "family_level",
+        "signal_state": "at_risk",
+        "signal_confidence": 0.95,
+        "primary_metric": "homocysteine",
+        "hypotheses": [
+          {
+            "hypothesis_id": "hcy_b12_pattern_v1",
+            "title": "Homocysteine-related pattern",
+            "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced B12-related methylation capacity.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because mcv evidence; vitamin_b12 counter-evidence.",
+            "evidence_for": [
+              {
+                "item": "MCV is elevated, which can be consistent with a megaloblastic nutrient pattern in context.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              }
+            ],
+            "evidence_against": [
+              {
+                "item": "B12 appears clearly within range, which makes a B12-driven pattern less likely on this panel alone.",
+                "marker_refs": [
+                  "vitamin_b12"
+                ]
+              }
+            ],
+            "missing_data": [
+              {
+                "marker_id": "methylmalonic_acid",
+                "reason": "MMA can help evaluate functional B12 deficiency when homocysteine is elevated."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_methylmalonic_acid_v1",
+                "display_name": "Methylmalonic acid (MMA)",
+                "rationale": "Consider discussing methylmalonic acid (MMA) testing with your clinician to evaluate functional B12 deficiency."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "hcy_folate_pattern_v1",
+            "title": "Folate-associated pattern",
+            "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced folate availability for one-carbon metabolism.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because mcv evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "MCV is elevated, which can align with folate-related red cell maturation patterns in context.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_homocysteine_repeat_v1",
+                "display_name": "Repeat homocysteine",
+                "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "hcy_inflammation_context_v1",
+            "title": "Inflammatory context pattern",
+            "summary": "Homocysteine is elevated with inflammatory context signals that may be relevant to vascular stress interpretation.",
+            "hypothesis_confidence": 0.4,
+            "ranking_rationale": "Ranked #3 because crp evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "A systemic inflammation signal fired, indicating inflammatory context on this panel.",
+                "marker_refs": [
+                  "crp"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              },
+              {
+                "test_id": "test_homocysteine_repeat_v1",
+                "display_name": "Repeat homocysteine",
+                "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "hcy_renal_clearance_context_v1",
+            "title": "Renal clearance context pattern",
+            "summary": "Homocysteine is elevated and renal clearance context may be relevant when interpreting metabolite accumulation patterns.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #4 because available evidence; creatinine counter-evidence.",
+            "evidence_for": [],
+            "evidence_against": [
+              {
+                "item": "Creatinine appears within range, which reduces evidence for a renal clearance contribution on this panel alone.",
+                "marker_refs": [
+                  "creatinine"
+                ]
+              }
+            ],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_homocysteine_repeat_v1",
+                "display_name": "Repeat homocysteine",
+                "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_homocysteine_high",
+        "activation_key": "signal_homocysteine_high::inv_homocysteine_high_b_vitamin_related_methylation_impairment",
+        "source_spec_id": "inv_homocysteine_high_b_vitamin_related_methylation_impairment",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.9,
+        "primary_metric": "homocysteine",
+        "hypotheses": [
+          {
+            "hypothesis_id": "hcy_b12_pattern_v1",
+            "title": "Homocysteine-related pattern",
+            "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced B12-related methylation capacity.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because mcv evidence; vitamin_b12 counter-evidence.",
+            "evidence_for": [
+              {
+                "item": "MCV is elevated, which can be consistent with a megaloblastic nutrient pattern in context.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              }
+            ],
+            "evidence_against": [
+              {
+                "item": "B12 appears clearly within range, which makes a B12-driven pattern less likely on this panel alone.",
+                "marker_refs": [
+                  "vitamin_b12"
+                ]
+              }
+            ],
+            "missing_data": [
+              {
+                "marker_id": "methylmalonic_acid",
+                "reason": "MMA can help evaluate functional B12 deficiency when homocysteine is elevated."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_methylmalonic_acid_v1",
+                "display_name": "Methylmalonic acid (MMA)",
+                "rationale": "Consider discussing methylmalonic acid (MMA) testing with your clinician to evaluate functional B12 deficiency."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "hcy_folate_pattern_v1",
+            "title": "Folate-associated pattern",
+            "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced folate availability for one-carbon metabolism.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because mcv evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "MCV is elevated, which can align with folate-related red cell maturation patterns in context.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_homocysteine_repeat_v1",
+                "display_name": "Repeat homocysteine",
+                "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "hcy_inflammation_context_v1",
+            "title": "Inflammatory context pattern",
+            "summary": "Homocysteine is elevated with inflammatory context signals that may be relevant to vascular stress interpretation.",
+            "hypothesis_confidence": 0.4,
+            "ranking_rationale": "Ranked #3 because crp evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "A systemic inflammation signal fired, indicating inflammatory context on this panel.",
+                "marker_refs": [
+                  "crp"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              },
+              {
+                "test_id": "test_homocysteine_repeat_v1",
+                "display_name": "Repeat homocysteine",
+                "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "hcy_renal_clearance_context_v1",
+            "title": "Renal clearance context pattern",
+            "summary": "Homocysteine is elevated and renal clearance context may be relevant when interpreting metabolite accumulation patterns.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #4 because available evidence; creatinine counter-evidence.",
+            "evidence_for": [],
+            "evidence_against": [
+              {
+                "item": "Creatinine appears within range, which reduces evidence for a renal clearance contribution on this panel alone.",
+                "marker_refs": [
+                  "creatinine"
+                ]
+              }
+            ],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_homocysteine_repeat_v1",
+                "display_name": "Repeat homocysteine",
+                "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_homocysteine_high",
+        "activation_key": "signal_homocysteine_high::inv_homocysteine_high_metabolic",
+        "source_spec_id": "inv_homocysteine_high_metabolic",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.9,
+        "primary_metric": "homocysteine",
+        "hypotheses": [
+          {
+            "hypothesis_id": "hcy_b12_pattern_v1",
+            "title": "Homocysteine-related pattern",
+            "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced B12-related methylation capacity.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because mcv evidence; vitamin_b12 counter-evidence.",
+            "evidence_for": [
+              {
+                "item": "MCV is elevated, which can be consistent with a megaloblastic nutrient pattern in context.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              }
+            ],
+            "evidence_against": [
+              {
+                "item": "B12 appears clearly within range, which makes a B12-driven pattern less likely on this panel alone.",
+                "marker_refs": [
+                  "vitamin_b12"
+                ]
+              }
+            ],
+            "missing_data": [
+              {
+                "marker_id": "methylmalonic_acid",
+                "reason": "MMA can help evaluate functional B12 deficiency when homocysteine is elevated."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_methylmalonic_acid_v1",
+                "display_name": "Methylmalonic acid (MMA)",
+                "rationale": "Consider discussing methylmalonic acid (MMA) testing with your clinician to evaluate functional B12 deficiency."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "hcy_folate_pattern_v1",
+            "title": "Folate-associated pattern",
+            "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced folate availability for one-carbon metabolism.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because mcv evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "MCV is elevated, which can align with folate-related red cell maturation patterns in context.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_homocysteine_repeat_v1",
+                "display_name": "Repeat homocysteine",
+                "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "hcy_inflammation_context_v1",
+            "title": "Inflammatory context pattern",
+            "summary": "Homocysteine is elevated with inflammatory context signals that may be relevant to vascular stress interpretation.",
+            "hypothesis_confidence": 0.4,
+            "ranking_rationale": "Ranked #3 because crp evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "A systemic inflammation signal fired, indicating inflammatory context on this panel.",
+                "marker_refs": [
+                  "crp"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              },
+              {
+                "test_id": "test_homocysteine_repeat_v1",
+                "display_name": "Repeat homocysteine",
+                "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "hcy_renal_clearance_context_v1",
+            "title": "Renal clearance context pattern",
+            "summary": "Homocysteine is elevated and renal clearance context may be relevant when interpreting metabolite accumulation patterns.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #4 because available evidence; creatinine counter-evidence.",
+            "evidence_for": [],
+            "evidence_against": [
+              {
+                "item": "Creatinine appears within range, which reduces evidence for a renal clearance contribution on this panel alone.",
+                "marker_refs": [
+                  "creatinine"
+                ]
+              }
+            ],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_homocysteine_repeat_v1",
+                "display_name": "Repeat homocysteine",
+                "rationale": "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_ldl_cholesterol_high",
+        "activation_key": "signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia",
+        "source_spec_id": "inv_ldl_high_dyslipidaemia",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.85,
+        "primary_metric": "ldl_cholesterol",
+        "hypotheses": [
+          {
+            "hypothesis_id": "ldl_classic_atherogenic_elevation_v1",
+            "title": "Classic LDL-cholesterol elevation pattern",
+            "summary": "LDL cholesterol is elevated with a pattern consistent with atherogenic LDL-C burden on this panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because ldl_cholesterol evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "An LDL-cholesterol-high signal fired, anchoring atherogenic LDL-C interpretation.",
+                "marker_refs": [
+                  "ldl_cholesterol"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_hba1c_repeat_v1",
+                "display_name": "Repeat HbA1c",
+                "rationale": "Consider repeating HbA1c in 8–12 weeks to confirm persistence and monitor trend."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "ldl_thyroid_linked_context_v1",
+            "title": "Thyroid-linked LDL elevation context",
+            "summary": "LDL elevation co-occurs with thyroid-axis markers that can influence lipid clearance interpretation.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "ldl_inflammatory_companion_v1",
+            "title": "Inflammatory companion context with LDL elevation",
+            "summary": "LDL elevation appears alongside inflammatory markers that can co-occur in meta-inflammatory cardiometabolic stress.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #3 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              },
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_lipid_transport_dysfunction",
+        "activation_key": "signal_lipid_transport_dysfunction::KBP-0001",
+        "source_spec_id": "KBP-0001",
+        "authority_scope": "family_level",
+        "signal_state": "optimal",
+        "signal_confidence": 0.7,
+        "primary_metric": "non_hdl_cholesterol",
+        "hypotheses": [
+          {
+            "hypothesis_id": "lipid_non_hdl_atherogenic_burden_v1",
+            "title": "Atherogenic non-HDL particle burden pattern",
+            "summary": "Non-HDL cholesterol context aligns with atherogenic particle burden framing on this structured panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because available evidence; non_hdl_cholesterol counter-evidence.",
+            "evidence_for": [],
+            "evidence_against": [
+              {
+                "item": "Non-HDL cholesterol appears clearly within range, weakening isolated atherogenic burden framing.",
+                "marker_refs": [
+                  "non_hdl_cholesterol"
+                ]
+              }
+            ],
+            "missing_data": [
+              {
+                "marker_id": "apolipoprotein_b",
+                "reason": "ApoB refines particle number when non-HDL context is borderline."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_hba1c_repeat_v1",
+                "display_name": "Repeat HbA1c",
+                "rationale": "Consider repeating HbA1c in 8–12 weeks to confirm persistence and monitor trend."
+              },
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "lipid_tg_rich_lipoprotein_stress_v1",
+            "title": "Triglyceride-rich lipoprotein stress context",
+            "summary": "Triglyceride elevation accompanies lipid transport signalling consistent with triglyceride-rich lipoprotein stress patterns.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because available evidence; missing glucose context.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [
+              {
+                "marker_id": "glucose",
+                "reason": "Fasting glucose clarifies glycaemic coupling with triglyceride-rich patterns."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_ty_g_component_markers_panel_v1",
+                "display_name": "Triglyceride and glucose (TyG-related markers)",
+                "rationale": "Consider repeating triglycerides and glucose with consistent methodology to track TyG-related metabolic trend over time."
+              },
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "lipid_metabolic_coupling_context_v1",
+            "title": "Metabolic coupling with lipid transport context",
+            "summary": "Lipid transport dysfunction context appears alongside glycaemic markers that often cluster in cardiometabolic overlap.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #3 because available evidence; missing insulin context.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [
+              {
+                "marker_id": "insulin",
+                "reason": "Fasting insulin refines resistance context when glucose or TG are discordant."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_hba1c_repeat_v1",
+                "display_name": "Repeat HbA1c",
+                "rationale": "Consider repeating HbA1c in 8–12 weeks to confirm persistence and monitor trend."
+              },
+              {
+                "test_id": "test_fasting_glucose_insulin_context_v1",
+                "display_name": "Fasting glucose with insulin",
+                "rationale": "Consider including fasting glucose with insulin on a consistent panel to clarify pancreatic compensation and peripheral"
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_lipid_transport_dysfunction",
+        "activation_key": "signal_lipid_transport_dysfunction::inv_transport",
+        "source_spec_id": "inv_transport",
+        "authority_scope": "family_level",
+        "signal_state": "optimal",
+        "signal_confidence": 0.9,
+        "primary_metric": "non_hdl_cholesterol",
+        "hypotheses": [
+          {
+            "hypothesis_id": "lipid_non_hdl_atherogenic_burden_v1",
+            "title": "Atherogenic non-HDL particle burden pattern",
+            "summary": "Non-HDL cholesterol context aligns with atherogenic particle burden framing on this structured panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because available evidence; non_hdl_cholesterol counter-evidence.",
+            "evidence_for": [],
+            "evidence_against": [
+              {
+                "item": "Non-HDL cholesterol appears clearly within range, weakening isolated atherogenic burden framing.",
+                "marker_refs": [
+                  "non_hdl_cholesterol"
+                ]
+              }
+            ],
+            "missing_data": [
+              {
+                "marker_id": "apolipoprotein_b",
+                "reason": "ApoB refines particle number when non-HDL context is borderline."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_hba1c_repeat_v1",
+                "display_name": "Repeat HbA1c",
+                "rationale": "Consider repeating HbA1c in 8–12 weeks to confirm persistence and monitor trend."
+              },
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "lipid_tg_rich_lipoprotein_stress_v1",
+            "title": "Triglyceride-rich lipoprotein stress context",
+            "summary": "Triglyceride elevation accompanies lipid transport signalling consistent with triglyceride-rich lipoprotein stress patterns.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because available evidence; missing glucose context.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [
+              {
+                "marker_id": "glucose",
+                "reason": "Fasting glucose clarifies glycaemic coupling with triglyceride-rich patterns."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_ty_g_component_markers_panel_v1",
+                "display_name": "Triglyceride and glucose (TyG-related markers)",
+                "rationale": "Consider repeating triglycerides and glucose with consistent methodology to track TyG-related metabolic trend over time."
+              },
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "lipid_metabolic_coupling_context_v1",
+            "title": "Metabolic coupling with lipid transport context",
+            "summary": "Lipid transport dysfunction context appears alongside glycaemic markers that often cluster in cardiometabolic overlap.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #3 because available evidence; missing insulin context.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [
+              {
+                "marker_id": "insulin",
+                "reason": "Fasting insulin refines resistance context when glucose or TG are discordant."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_hba1c_repeat_v1",
+                "display_name": "Repeat HbA1c",
+                "rationale": "Consider repeating HbA1c in 8–12 weeks to confirm persistence and monitor trend."
+              },
+              {
+                "test_id": "test_fasting_glucose_insulin_context_v1",
+                "display_name": "Fasting glucose with insulin",
+                "rationale": "Consider including fasting glucose with insulin on a consistent panel to clarify pancreatic compensation and peripheral"
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_mcv_high",
+        "activation_key": "signal_mcv_high::inv_mcv_high_macrocytosis",
+        "source_spec_id": "inv_mcv_high_macrocytosis",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.9,
+        "primary_metric": "mcv",
+        "hypotheses": [
+          {
+            "hypothesis_id": "mcv_high_anchor_pattern_v1",
+            "title": "Elevated MCV — structured macrocytosis signal pattern",
+            "summary": "MCV is elevated with an activated macrocytosis-related signal on this structured panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because mcv evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "An MCV-high signal fired, anchoring macrocytic red-cell interpretation.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              },
+              {
+                "item": "MCV is above reference range, supporting macrocytosis as measured.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "mcv_high_nutrient_association_v1",
+            "title": "Elevated MCV with low or marginal B12 or folate",
+            "summary": "Elevated MCV appears alongside marginal or low B12/folate markers consistent with nutritional contributors.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because homocysteine evidence; missing methylmalonic_acid context.",
+            "evidence_for": [
+              {
+                "item": "Homocysteine is elevated, adding metabolic strain context when MCV is high.",
+                "marker_refs": [
+                  "homocysteine"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [
+              {
+                "marker_id": "methylmalonic_acid",
+                "reason": "MMA can refine functional B12 status when serum markers are borderline."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_methylmalonic_acid_v1",
+                "display_name": "Methylmalonic acid (MMA)",
+                "rationale": "Consider discussing methylmalonic acid (MMA) testing with your clinician to evaluate functional B12 deficiency."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "mcv_high_hepatic_marker_association_v1",
+            "title": "Elevated MCV with hepatic enzyme elevation context",
+            "summary": "Elevated MCV appears alongside hepatic enzyme signals that add liver-related interpretation context.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #3 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_mcv_high",
+        "activation_key": "signal_mcv_high::inv_mcv_high_megaloblastic_macrocytosis",
+        "source_spec_id": "inv_mcv_high_megaloblastic_macrocytosis",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.9,
+        "primary_metric": "mcv",
+        "hypotheses": [
+          {
+            "hypothesis_id": "mcv_high_anchor_pattern_v1",
+            "title": "Elevated MCV — structured macrocytosis signal pattern",
+            "summary": "MCV is elevated with an activated macrocytosis-related signal on this structured panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because mcv evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "An MCV-high signal fired, anchoring macrocytic red-cell interpretation.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              },
+              {
+                "item": "MCV is above reference range, supporting macrocytosis as measured.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "mcv_high_nutrient_association_v1",
+            "title": "Elevated MCV with low or marginal B12 or folate",
+            "summary": "Elevated MCV appears alongside marginal or low B12/folate markers consistent with nutritional contributors.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because homocysteine evidence; missing methylmalonic_acid context.",
+            "evidence_for": [
+              {
+                "item": "Homocysteine is elevated, adding metabolic strain context when MCV is high.",
+                "marker_refs": [
+                  "homocysteine"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [
+              {
+                "marker_id": "methylmalonic_acid",
+                "reason": "MMA can refine functional B12 status when serum markers are borderline."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_methylmalonic_acid_v1",
+                "display_name": "Methylmalonic acid (MMA)",
+                "rationale": "Consider discussing methylmalonic acid (MMA) testing with your clinician to evaluate functional B12 deficiency."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "mcv_high_hepatic_marker_association_v1",
+            "title": "Elevated MCV with hepatic enzyme elevation context",
+            "summary": "Elevated MCV appears alongside hepatic enzyme signals that add liver-related interpretation context.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #3 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_mcv_high",
+        "activation_key": "signal_mcv_high::inv_mcv_high_nonmegaloblastic_macrocytosis",
+        "source_spec_id": "inv_mcv_high_nonmegaloblastic_macrocytosis",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.9,
+        "primary_metric": "mcv",
+        "hypotheses": [
+          {
+            "hypothesis_id": "mcv_high_anchor_pattern_v1",
+            "title": "Elevated MCV — structured macrocytosis signal pattern",
+            "summary": "MCV is elevated with an activated macrocytosis-related signal on this structured panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because mcv evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "An MCV-high signal fired, anchoring macrocytic red-cell interpretation.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              },
+              {
+                "item": "MCV is above reference range, supporting macrocytosis as measured.",
+                "marker_refs": [
+                  "mcv"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "mcv_high_nutrient_association_v1",
+            "title": "Elevated MCV with low or marginal B12 or folate",
+            "summary": "Elevated MCV appears alongside marginal or low B12/folate markers consistent with nutritional contributors.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because homocysteine evidence; missing methylmalonic_acid context.",
+            "evidence_for": [
+              {
+                "item": "Homocysteine is elevated, adding metabolic strain context when MCV is high.",
+                "marker_refs": [
+                  "homocysteine"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [
+              {
+                "marker_id": "methylmalonic_acid",
+                "reason": "MMA can refine functional B12 status when serum markers are borderline."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_methylmalonic_acid_v1",
+                "display_name": "Methylmalonic acid (MMA)",
+                "rationale": "Consider discussing methylmalonic acid (MMA) testing with your clinician to evaluate functional B12 deficiency."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "mcv_high_hepatic_marker_association_v1",
+            "title": "Elevated MCV with hepatic enzyme elevation context",
+            "summary": "Elevated MCV appears alongside hepatic enzyme signals that add liver-related interpretation context.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #3 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_oxygen_transport_capacity",
+        "activation_key": "signal_oxygen_transport_capacity::KBP-0001",
+        "source_spec_id": "KBP-0001",
+        "authority_scope": "family_level",
+        "signal_state": "optimal",
+        "signal_confidence": 0.9,
+        "primary_metric": "hemoglobin",
+        "hypotheses": [
+          {
+            "hypothesis_id": "otc_hemoglobin_anchor_v1",
+            "title": "Oxygen transport capacity pattern",
+            "summary": "Oxygen transport capacity signalling reflects haemoglobin-centred red-cell oxygen-carrying context on this structured panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because available evidence; hemoglobin counter-evidence.",
+            "evidence_for": [],
+            "evidence_against": [
+              {
+                "item": "Haemoglobin appears within range, weakening an isolated low-capacity pattern.",
+                "marker_refs": [
+                  "hemoglobin"
+                ]
+              }
+            ],
+            "missing_data": [],
+            "confirmatory_tests": [],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "otc_iron_context_coupling_v1",
+            "title": "Iron marker coupling with oxygen transport context",
+            "summary": "Oxygen transport signals co-occur with iron markers that help interpret capacity change on the same panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_systemic_inflammation",
+        "activation_key": "signal_systemic_inflammation::KBP-0001",
+        "source_spec_id": "KBP-0001",
+        "authority_scope": "family_level",
+        "signal_state": "optimal",
+        "signal_confidence": 0.3,
+        "primary_metric": "crp",
+        "hypotheses": [
+          {
+            "hypothesis_id": "infl_persistent_low_grade_burden_v1",
+            "title": "Persistent low-grade inflammatory burden",
+            "summary": "hs-CRP is elevated with a pattern consistent with chronic low-grade systemic inflammation on this structured panel.",
+            "hypothesis_confidence": 0.4,
+            "ranking_rationale": "Ranked #1 because crp evidence; crp counter-evidence.",
+            "evidence_for": [
+              {
+                "item": "A systemic inflammation signal fired, anchoring hs-CRP elevation in governed chronic-risk framing.",
+                "marker_refs": [
+                  "crp"
+                ]
+              }
+            ],
+            "evidence_against": [
+              {
+                "item": "CRP appears clearly within range, which argues against a persistent inflammatory burden pattern.",
+                "marker_refs": [
+                  "crp"
+                ]
+              }
+            ],
+            "missing_data": [
+              {
+                "marker_id": "neutrophils",
+                "reason": "Neutrophils help interpret cellular inflammatory patterns alongside CRP."
+              },
+              {
+                "marker_id": "lymphocytes",
+                "reason": "Lymphocytes help contextualize differential white-cell patterns with CRP."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "infl_metabolic_companion_context_v1",
+            "title": "Metabolic companion inflammation context",
+            "summary": "Systemic inflammation marker elevation co-occurs with metabolic markers that often accompany meta-inflammatory stress patterns.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_hba1c_repeat_v1",
+                "display_name": "Repeat HbA1c",
+                "rationale": "Consider repeating HbA1c in 8–12 weeks to confirm persistence and monitor trend."
+              },
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "infl_hepatic_coupling_context_v1",
+            "title": "Hepatic coupling inflammation context",
+            "summary": "CRP elevation appears alongside hepatic enzyme context that may reflect hepatic–inflammatory overlap rather than isolated acute-phase noise.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #3 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              },
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_systemic_inflammation",
+        "activation_key": "signal_systemic_inflammation::inv_inflammation",
+        "source_spec_id": "inv_inflammation",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.3,
+        "primary_metric": "crp",
+        "hypotheses": [
+          {
+            "hypothesis_id": "infl_persistent_low_grade_burden_v1",
+            "title": "Persistent low-grade inflammatory burden",
+            "summary": "hs-CRP is elevated with a pattern consistent with chronic low-grade systemic inflammation on this structured panel.",
+            "hypothesis_confidence": 0.4,
+            "ranking_rationale": "Ranked #1 because crp evidence; crp counter-evidence.",
+            "evidence_for": [
+              {
+                "item": "A systemic inflammation signal fired, anchoring hs-CRP elevation in governed chronic-risk framing.",
+                "marker_refs": [
+                  "crp"
+                ]
+              }
+            ],
+            "evidence_against": [
+              {
+                "item": "CRP appears clearly within range, which argues against a persistent inflammatory burden pattern.",
+                "marker_refs": [
+                  "crp"
+                ]
+              }
+            ],
+            "missing_data": [
+              {
+                "marker_id": "neutrophils",
+                "reason": "Neutrophils help interpret cellular inflammatory patterns alongside CRP."
+              },
+              {
+                "marker_id": "lymphocytes",
+                "reason": "Lymphocytes help contextualize differential white-cell patterns with CRP."
+              }
+            ],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "infl_metabolic_companion_context_v1",
+            "title": "Metabolic companion inflammation context",
+            "summary": "Systemic inflammation marker elevation co-occurs with metabolic markers that often accompany meta-inflammatory stress patterns.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_hba1c_repeat_v1",
+                "display_name": "Repeat HbA1c",
+                "rationale": "Consider repeating HbA1c in 8–12 weeks to confirm persistence and monitor trend."
+              },
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "infl_hepatic_coupling_context_v1",
+            "title": "Hepatic coupling inflammation context",
+            "summary": "CRP elevation appears alongside hepatic enzyme context that may reflect hepatic–inflammatory overlap rather than isolated acute-phase noise.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #3 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              },
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_total_cholesterol_high",
+        "activation_key": "signal_total_cholesterol_high::inv_total_cholesterol_high_atherogenic_hypercholesterolemia",
+        "source_spec_id": "inv_total_cholesterol_high_atherogenic_hypercholesterolemia",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.9,
+        "primary_metric": "total_cholesterol",
+        "hypotheses": [
+          {
+            "hypothesis_id": "tc_atherogenic_panel_context_v1",
+            "title": "Total cholesterol elevation in atherogenic lipid panel context",
+            "summary": "Total cholesterol is elevated with patterns that can reflect atherogenic lipoprotein burden on this panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because total_cholesterol evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "A total-cholesterol-high signal fired, anchoring governed total-cholesterol WHY on this run.",
+                "marker_refs": [
+                  "total_cholesterol"
+                ]
+              },
+              {
+                "item": "Total cholesterol is above the lab reference range, supporting an elevation pattern.",
+                "marker_refs": [
+                  "total_cholesterol"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_hba1c_repeat_v1",
+                "display_name": "Repeat HbA1c",
+                "rationale": "Consider repeating HbA1c in 8–12 weeks to confirm persistence and monitor trend."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "tc_metabolic_coupling_context_v1",
+            "title": "Metabolic coupling context with total cholesterol elevation",
+            "summary": "Total cholesterol elevation co-occurs with glycaemic markers that can track with metabolic stress on the same panel.",
+            "hypothesis_confidence": 0.4,
+            "ranking_rationale": "Ranked #2 because total_cholesterol evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "Total-cholesterol-high context is active while glucose is available for metabolic coupling review.",
+                "marker_refs": [
+                  "total_cholesterol"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_fasting_glucose_insulin_context_v1",
+                "display_name": "Fasting glucose with insulin",
+                "rationale": "Consider including fasting glucose with insulin on a consistent panel to clarify pancreatic compensation and peripheral"
+              },
+              {
+                "test_id": "test_ty_g_component_markers_panel_v1",
+                "display_name": "Triglyceride and glucose (TyG-related markers)",
+                "rationale": "Consider repeating triglycerides and glucose with consistent methodology to track TyG-related metabolic trend over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_total_cholesterol_high",
+        "activation_key": "signal_total_cholesterol_high::inv_total_cholesterol_high_hdl_dominant_elevation_pattern",
+        "source_spec_id": "inv_total_cholesterol_high_hdl_dominant_elevation_pattern",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.9,
+        "primary_metric": "total_cholesterol",
+        "hypotheses": [
+          {
+            "hypothesis_id": "tc_atherogenic_panel_context_v1",
+            "title": "Total cholesterol elevation in atherogenic lipid panel context",
+            "summary": "Total cholesterol is elevated with patterns that can reflect atherogenic lipoprotein burden on this panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because total_cholesterol evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "A total-cholesterol-high signal fired, anchoring governed total-cholesterol WHY on this run.",
+                "marker_refs": [
+                  "total_cholesterol"
+                ]
+              },
+              {
+                "item": "Total cholesterol is above the lab reference range, supporting an elevation pattern.",
+                "marker_refs": [
+                  "total_cholesterol"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_hba1c_repeat_v1",
+                "display_name": "Repeat HbA1c",
+                "rationale": "Consider repeating HbA1c in 8–12 weeks to confirm persistence and monitor trend."
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "tc_metabolic_coupling_context_v1",
+            "title": "Metabolic coupling context with total cholesterol elevation",
+            "summary": "Total cholesterol elevation co-occurs with glycaemic markers that can track with metabolic stress on the same panel.",
+            "hypothesis_confidence": 0.4,
+            "ranking_rationale": "Ranked #2 because total_cholesterol evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "Total-cholesterol-high context is active while glucose is available for metabolic coupling review.",
+                "marker_refs": [
+                  "total_cholesterol"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_fasting_glucose_insulin_context_v1",
+                "display_name": "Fasting glucose with insulin",
+                "rationale": "Consider including fasting glucose with insulin on a consistent panel to clarify pancreatic compensation and peripheral"
+              },
+              {
+                "test_id": "test_ty_g_component_markers_panel_v1",
+                "display_name": "Triglyceride and glucose (TyG-related markers)",
+                "rationale": "Consider repeating triglycerides and glucose with consistent methodology to track TyG-related metabolic trend over time."
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_transferrin_low",
+        "activation_key": "signal_transferrin_low::inv_transferrin_low_inflammatory_negative_acute_phase_suppression",
+        "source_spec_id": "inv_transferrin_low_inflammatory_negative_acute_phase_suppression",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.9,
+        "primary_metric": "transferrin",
+        "hypotheses": [
+          {
+            "hypothesis_id": "tl_reduced_transport_capacity_v1",
+            "title": "Low transferrin pattern",
+            "summary": "Transferrin is reduced with a pattern consistent with lower circulating iron-binding transport capacity on this panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because transferrin evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "A transferrin-low signal fired, anchoring reduced transport protein context.",
+                "marker_refs": [
+                  "transferrin"
+                ]
+              },
+              {
+                "item": "Transferrin is below range, supporting reduced transport capacity framing.",
+                "marker_refs": [
+                  "transferrin"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              },
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "tl_inflammatory_suppression_v1",
+            "title": "Inflammatory context with low transferrin",
+            "summary": "Low transferrin co-occurs with CRP elevation consistent with negative acute-phase suppression patterns.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      },
+      {
+        "signal_id": "signal_transferrin_low",
+        "activation_key": "signal_transferrin_low::inv_transferrin_low_visceral_protein_depletion_or_synthetic_failure",
+        "source_spec_id": "inv_transferrin_low_visceral_protein_depletion_or_synthetic_failure",
+        "authority_scope": "family_level",
+        "signal_state": "suboptimal",
+        "signal_confidence": 0.75,
+        "primary_metric": "transferrin",
+        "hypotheses": [
+          {
+            "hypothesis_id": "tl_reduced_transport_capacity_v1",
+            "title": "Low transferrin pattern",
+            "summary": "Transferrin is reduced with a pattern consistent with lower circulating iron-binding transport capacity on this panel.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #1 because transferrin evidence; limited contradictory evidence.",
+            "evidence_for": [
+              {
+                "item": "A transferrin-low signal fired, anchoring reduced transport protein context.",
+                "marker_refs": [
+                  "transferrin"
+                ]
+              },
+              {
+                "item": "Transferrin is below range, supporting reduced transport capacity framing.",
+                "marker_refs": [
+                  "transferrin"
+                ]
+              }
+            ],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              },
+              {
+                "test_id": "test_liver_ggt_alt_ast_v1",
+                "display_name": "Liver enzymes (GGT/ALT/AST)",
+                "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns"
+              }
+            ],
+            "safety_class": "monitoring"
+          },
+          {
+            "hypothesis_id": "tl_inflammatory_suppression_v1",
+            "title": "Inflammatory context with low transferrin",
+            "summary": "Low transferrin co-occurs with CRP elevation consistent with negative acute-phase suppression patterns.",
+            "hypothesis_confidence": 0.6,
+            "ranking_rationale": "Ranked #2 because available evidence; limited contradictory evidence.",
+            "evidence_for": [],
+            "evidence_against": [],
+            "missing_data": [],
+            "confirmatory_tests": [
+              {
+                "test_id": "test_crp_repeat_v1",
+                "display_name": "Repeat CRP",
+                "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+              }
+            ],
+            "safety_class": "monitoring"
+          }
+        ]
+      }
+    ],
+    "root_cause": null,
     "confirmatory_tests": [
+      {
+        "test_id": "test_fasting_glucose_insulin_context_v1",
+        "display_name": "Fasting glucose with insulin",
+        "rationale": "Consider including fasting glucose with insulin on a consistent panel to clarify pancreatic compensation and peripheral"
+      },
       {
         "test_id": "test_methylmalonic_acid_v1",
         "display_name": "Methylmalonic acid (MMA)",
@@ -179,7 +1484,10 @@
   },
   "suppressed_confirmatory_tests": [
     "test_crp_repeat_v1",
-    "test_homocysteine_repeat_v1"
+    "test_hba1c_repeat_v1",
+    "test_homocysteine_repeat_v1",
+    "test_liver_ggt_alt_ast_v1",
+    "test_ty_g_component_markers_panel_v1"
   ],
   "medication_supplement_interpretation_caveat": null
 }

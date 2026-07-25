@@ -29,23 +29,36 @@ from core.knowledge.compiled_output_authority_v1 import (
 
 
 def _signal_index(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    """Index by activation_key when present; fall back to signal_id only for legacy single-frame rows."""
+    from core.knowledge.signal_result_index_v1 import activation_key_or_empty, signal_family_id
+
     out: Dict[str, Dict[str, Any]] = {}
     for row in rows:
         if not isinstance(row, dict):
             continue
-        sid = str(row.get("signal_id", "")).strip()
-        if sid:
-            out[sid] = row
+        key = activation_key_or_empty(row)
+        if not key:
+            key = signal_family_id(row)
+        if key:
+            # Prefer first insertion order for stable legacy; do not overwrite distinct activation keys.
+            if key not in out:
+                out[key] = row
     return out
 
 
 def _governed_signal_card_element(row: Dict[str, Any], *, rank: int) -> OutputElementAuthorityV1:
     signal_id = str(row.get("signal_id", "")).strip()
+    activation_key = str(row.get("activation_key", "")).strip()
     package_id = str(row.get("package_id", "")).strip()
     primary_metric = str(row.get("primary_metric", "")).strip()
     policy = element_type_policy("signal_card") or {}
+    element_id = (
+        f"signal_card::{activation_key}::rank_{rank}"
+        if activation_key
+        else f"signal_card::{signal_id}::rank_{rank}"
+    )
     return OutputElementAuthorityV1(
-        output_element_id=f"signal_card::{signal_id}::rank_{rank}",
+        output_element_id=element_id,
         output_element_type="signal_card",
         source_signal_ids=[signal_id] if signal_id else [],
         source_package_ids=[package_id] if package_id else [],
@@ -66,8 +79,14 @@ def _root_cause_element(finding: Any, *, uses_compiled: bool) -> OutputElementAu
         hypothesis_ids=hypothesis_ids,
         uses_compiled_artefact=uses_compiled,
     )
+    activation_key = str(getattr(finding, "activation_key", "") or "").strip()
+    element_id = (
+        f"root_cause_card::{activation_key}"
+        if activation_key
+        else f"root_cause_card::{finding.signal_id}"
+    )
     return OutputElementAuthorityV1(
-        output_element_id=f"root_cause_card::{finding.signal_id}",
+        output_element_id=element_id,
         output_element_type="root_cause_card",
         source_signal_ids=[finding.signal_id],
         source_biomarker_ids=[finding.primary_metric] if finding.primary_metric else [],
@@ -90,8 +109,9 @@ def build_report_output_authority_provenance_v1(
 
     signal_by_id = _signal_index(signal_results)
     for finding in report.top_findings:
-        row = signal_by_id.get(finding.signal_id, {})
-        element = _governed_signal_card_element(row or {"signal_id": finding.signal_id}, rank=finding.priority_rank)
+        key = str(getattr(finding, "activation_key", "") or "").strip() or finding.signal_id
+        row = signal_by_id.get(key) or signal_by_id.get(finding.signal_id, {})
+        element = _governed_signal_card_element(row or {"signal_id": finding.signal_id, "activation_key": key}, rank=finding.priority_rank)
         if finding.signal_state in {"suboptimal", "at_risk"}:
             governed.append(element)
         else:

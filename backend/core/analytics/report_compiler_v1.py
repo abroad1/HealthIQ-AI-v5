@@ -499,6 +499,9 @@ def _normalise_root_cause_finding(
         )
     return RootCauseFindingV1(
         signal_id=str(finding_row.get("signal_id", "")).strip(),
+        activation_key=str(finding_row.get("activation_key", "")).strip(),
+        source_spec_id=str(finding_row.get("source_spec_id", "")).strip(),
+        authority_scope=str(finding_row.get("authority_scope", "family_level")).strip() or "family_level",
         signal_state=str(finding_row.get("signal_state", "")).strip() or "unknown",
         signal_confidence=_safe_float(finding_row.get("signal_confidence")),
         primary_metric=str(finding_row.get("primary_metric", "")).strip(),
@@ -575,17 +578,47 @@ def compile_clinician_report_v1(
     primary_metric = str(primary.get("primary_metric", "")).strip()
     primary_confidence = _safe_float(primary.get("confidence"))
 
-    primary_root_row = next(
-        (row for row in root_findings if str(row.get("signal_id", "")).strip() == primary_signal_id),
-        None,
+    # Preserve all authorised root-cause findings (ADR-RT-IDENTITY-PROV-001 §C).
+    # Prefer activation_key match to the primary top finding when selecting page1
+    # hypothesis text; never silently drop other findings from the contract.
+    all_root_findings: List[RootCauseFindingV1] = []
+    for row in root_findings:
+        if isinstance(row, dict):
+            normalised = _normalise_root_cause_finding(row)
+            if normalised is not None:
+                all_root_findings.append(normalised)
+    all_root_findings = sorted(
+        all_root_findings,
+        key=lambda f: (f.signal_id, f.activation_key or "", f.primary_metric),
     )
-    primary_root = _normalise_root_cause_finding(primary_root_row) if isinstance(primary_root_row, dict) else None
+
+    primary_activation = str(primary.get("activation_key", "")).strip()
+    primary_root = None
+    if primary_activation:
+        primary_root = next(
+            (f for f in all_root_findings if f.activation_key == primary_activation),
+            None,
+        )
+    if primary_root is None and primary_signal_id:
+        # Family-level fallback for page1 narrative only when a single family match exists.
+        family_matches = [f for f in all_root_findings if f.signal_id == primary_signal_id]
+        if len(family_matches) == 1:
+            primary_root = family_matches[0]
+        elif len(family_matches) > 1:
+            primary_root = None  # multi-frame: do not invent a singleton for page1 root
 
     biomarker_snapshot = _build_biomarker_snapshot(biomarker_rows)
-    consolidated_tests, suppressed_ids = _collect_confirmatory_with_suppression(
-        primary_root,
-        biomarker_snapshot,
-    )
+    consolidated_tests: List[ConfirmatoryTestItem] = []
+    suppressed_ids: List[str] = []
+    seen_tests: Dict[str, ConfirmatoryTestItem] = {}
+    suppressed_set: set[str] = set()
+    for finding in all_root_findings:
+        tests, suppressed = _collect_confirmatory_with_suppression(finding, biomarker_snapshot)
+        for t in tests:
+            seen_tests[t.test_id] = t
+        suppressed_set.update(suppressed)
+    consolidated_tests = [seen_tests[k] for k in sorted(seen_tests.keys())]
+    suppressed_ids = sorted(suppressed_set)
 
     top_hypothesis_line = "No hypothesis set available for this concern in v1."
     missing_count = 0
@@ -681,6 +714,13 @@ def compile_clinician_report_v1(
         )
 
     primary_root_snapped = _snap_root_cause_floats(primary_root)
+    root_causes_snapped = [
+        snapped
+        for snapped in (_snap_root_cause_floats(f) for f in all_root_findings)
+        if snapped is not None
+    ]
+    # Legacy singleton only when exactly one authorised finding (no silent first pick).
+    legacy_root = root_causes_snapped[0] if len(root_causes_snapped) == 1 else None
 
     ia_ctx = format_intervention_annotation_clinician_page1_v1(intervention_annotations_v1)[:420]
 
@@ -718,7 +758,8 @@ def compile_clinician_report_v1(
                 runner_up_why_not_lead_line=runner_up_why_not_lead_line,
                 intervention_annotation_context=ia_ctx,
             ),
-            root_cause=primary_root_snapped,
+            root_causes=root_causes_snapped,
+            root_cause=legacy_root,
             confirmatory_tests=consolidated_tests,
         ),
         suppressed_confirmatory_tests=suppressed_ids,
@@ -770,6 +811,10 @@ def compile_report_v1(
             ReportTopFindingV1(
                 priority_rank=idx,
                 signal_id=signal_id,
+                activation_key=str(row.get("activation_key", "")).strip(),
+                source_spec_id=str(row.get("source_spec_id", "")).strip(),
+                package_id=str(row.get("package_id", "")).strip(),
+                provenance_status=str(row.get("provenance_status", "")).strip(),
                 system=str(row.get("system", "")).strip(),
                 signal_state=signal_state,
                 confidence=confidence,

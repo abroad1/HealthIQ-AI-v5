@@ -337,6 +337,9 @@ def _compile_finding(
 
     return RootCauseFindingV1(
         signal_id=str(target.get("signal_id", "")).strip(),
+        activation_key=str(target.get("activation_key", "")).strip(),
+        source_spec_id=str(target.get("source_spec_id", "")).strip(),
+        authority_scope=str(target.get("authority_scope", "frame_specific")).strip() or "frame_specific",
         primary_metric=str(target.get("primary_metric", "")).strip(),
         signal_state=str(target.get("signal_state", "unknown")).strip() or "unknown",
         signal_confidence=float(target.get("confidence", 0.0) if isinstance(target.get("confidence"), (int, float)) else 0.0),
@@ -419,6 +422,9 @@ def _compile_compiled_hypothesis_finding(
         )
     return RootCauseFindingV1(
         signal_id=str(target.get("signal_id", "")).strip(),
+        activation_key=str(target.get("activation_key", "")).strip(),
+        source_spec_id=str(target.get("source_spec_id", "")).strip(),
+        authority_scope=str(target.get("authority_scope", "frame_specific")).strip() or "frame_specific",
         primary_metric=str(target.get("primary_metric", "")).strip(),
         signal_state=str(target.get("signal_state", "unknown")).strip() or "unknown",
         signal_confidence=signal_confidence,
@@ -491,6 +497,9 @@ def _compile_why_engine_fallback_finding(
     )
     return RootCauseFindingV1(
         signal_id=str(lead.get("signal_id", "")).strip(),
+        activation_key=str(lead.get("activation_key", "")).strip(),
+        source_spec_id=str(lead.get("source_spec_id", "")).strip(),
+        authority_scope="unresolved",
         primary_metric=primary_metric,
         signal_state=act,
         signal_confidence=float(lead.get("confidence", 0.0) if isinstance(lead.get("confidence"), (int, float)) else 0.0),
@@ -504,6 +513,8 @@ def compile_root_cause_v1(
     biomarker_context: Optional[Dict[str, Any]] = None,
     input_reference_ranges: Optional[Dict[str, Any]] = None,
 ) -> Optional[RootCauseV1]:
+    from core.knowledge.signal_result_index_v1 import rows_for_signal_id
+
     rows = [r for r in (signal_results or []) if isinstance(r, dict)]
 
     biomarker_context = biomarker_context or {}
@@ -519,32 +530,44 @@ def compile_root_cause_v1(
     tests_by_id: Dict[str, Dict[str, Any]] = tests_registry["tests_by_id"]
     findings: List[RootCauseFindingV1] = []
     for target_signal_id, hypotheses_loader in _ROOT_CAUSE_TARGETS:
-        target = next((r for r in rows if str(r.get("signal_id", "")).strip() == target_signal_id), None)
-        if target is None:
+        frame_rows = rows_for_signal_id(rows, target_signal_id)
+        if not frame_rows:
             continue
+        # Compiled frame-specific artefact is currently keyed by signal_id family
+        # (ADR-RT-003 transition). When multiple frames fire, attach the compiled
+        # artefact to each frame row and label authority_scope honestly.
         if is_runtime_promoted_compiled_signal(target_signal_id):
             artefact = get_compiled_hypothesis_artefact(target_signal_id)
-            findings.append(
-                _compile_compiled_hypothesis_finding(
-                    target=target,
-                    artefact=artefact,
-                    tests_by_id=tests_by_id,
-                    marker_present=marker_present,
+            for target in frame_rows:
+                scoped = dict(target)
+                scoped["authority_scope"] = (
+                    "frame_specific" if str(target.get("activation_key") or "").strip() else "family_level"
                 )
-            )
+                findings.append(
+                    _compile_compiled_hypothesis_finding(
+                        target=scoped,
+                        artefact=artefact,
+                        tests_by_id=tests_by_id,
+                        marker_present=marker_present,
+                    )
+                )
             continue
         hypotheses_payload = hypotheses_loader()["hypotheses"]
-        findings.append(
-            _compile_finding(
-                target=target,
-                hypotheses_payload=hypotheses_payload,
-                tests_by_id=tests_by_id,
-                marker_present=marker_present,
-                biomarker_context=biomarker_context,
-                input_reference_ranges=input_reference_ranges,
-                fired_signals=fired_signals,
+        for target in frame_rows:
+            scoped = dict(target)
+            # Legacy YAML hypotheses are family-level authority (ADR-RT-003 / IDENTITY-PROV §D).
+            scoped["authority_scope"] = "family_level"
+            findings.append(
+                _compile_finding(
+                    target=scoped,
+                    hypotheses_payload=hypotheses_payload,
+                    tests_by_id=tests_by_id,
+                    marker_present=marker_present,
+                    biomarker_context=biomarker_context,
+                    input_reference_ranges=input_reference_ranges,
+                    fired_signals=fired_signals,
+                )
             )
-        )
 
     lead = _lead_row_for_why_fallback(rows)
     lead_id = str(lead.get("signal_id", "")).strip() if lead else ""

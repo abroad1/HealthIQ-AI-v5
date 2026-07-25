@@ -525,6 +525,8 @@ class SignalEvaluator:
                 activation_key=str(signal.get("activation_key", "")).strip(),
                 source_spec_id=str(signal.get("source_spec_id", "")).strip(),
                 package_id=str(signal.get("package_id", "")).strip(),
+                provenance_status=str(signal.get("provenance_status") or "LEGACY_INFERRED").strip()
+                or "LEGACY_INFERRED",
                 system=str(signal.get("system", "")).strip(),
                 signal_state=signal_state,
                 signal_value=primary_value,
