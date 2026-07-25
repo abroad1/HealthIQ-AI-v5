@@ -1,96 +1,95 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-GATE0",
+  "work_id": "ARCH-CONV-PKG1",
   "status": "HARDENED",
   "hardening_date": "2026-07-25",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "risk_level": "STANDARD",
-  "change_type": "CONTENT",
+  "risk_level": "HIGH",
+  "change_type": "BEHAVIOUR",
   "execution_model": "TWO_PHASE_START_FINISH",
   "stage_b_mode": "MODE_2",
-  "runtime_change": "NONE",
+  "runtime_change": "YES",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "STANDARD/CONTENT, read-only planning package with a bounded, named scope. I already held deep, fresh working context on this exact territory (the 5 identity surfaces, provenance-BLOCKED reachability finding, WHY authority counts) from authoring ARCH-PROG-RECON-1-CC in this same session, so re-verifying against current HEAD via direct grep/glob/git calls was faster and more reliable than forking, and avoided re-deriving context a fork would have had to reconstruct from scratch."
+    "rationale": "HIGH/BEHAVIOUR, but scope is exactly the 5 named surfaces I already hold deep, independently-verified context on from the Gate 0 audit completed earlier this session, plus 2 shared identity-helper files newly inspected here. No genuinely disjoint large-volume research cluster exists that would benefit from forking; direct reads were faster and avoided re-deriving context a fork would reconstruct from scratch."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type", "stage_b_mode", "runtime_change"],
-    "declared_risk_level": "STANDARD",
-    "declared_change_type": "CONTENT",
-    "behaviour_changes_touch_intelligence_core": "NO — inspection/read-only of Intelligence Core files (signal_evaluator.py, root_cause_compiler_v1.py, the 5 identity surfaces) for verification only; runtime_change explicitly NONE; consistent with the precedent already accepted for ARCH-PROG-RECON-1-CC (same risk class, same pattern)",
-    "tests_required": "NOT APPLICABLE — CONTENT, no runtime change",
-    "scope_proportionality": "PASS — bounded file list (8 named docs + 5 named code surfaces), explicit STOP gates, explicit anti-creep language ('do not reopen unrelated historical architecture questions already settled', 'do not estimate silently', 'do not default to all 40 legacy hypotheses')",
+    "declared_risk_level": "HIGH",
+    "declared_change_type": "BEHAVIOUR",
+    "behaviour_changes_touch_intelligence_core": "YES — backend/core/analytics/*.py, correctly classified HIGH",
+    "tests_required": "YES — 12 minimum test items plus 10 existing-suite categories to run",
+    "scope_proportionality": "PASS — bounded to 5 named surfaces, 8 STOP conditions, 13-item forbidden-scope list, single Gate-1-output decision",
     "advisory_duplication_detected": "NO",
-    "scope_creep_signals": "NONE",
+    "scope_creep_signals": "One soft-bounded discovery clause ('inspect existing shared activation-identity helpers... before creating new abstractions') — legitimate anti-duplication check, not open-ended verify-everything language",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
     "required_input_docs": {
-      "status": "CONFIRMED_EXISTS — all 8",
-      "evidence": "docs/planning-papers/HEALTHIQ_AI_V5_FINAL_ARCHITECTURE_CONVERGENCE_AND_SALVAGE_OR_REBUILD_PLAN.md; docs/architecture/HEALTHIQ_AI_ARCHITECTURE_PROGRAMME_RECONCILIATION.md; _CC.md; HEALTHIQ_AI_OPEN_ARCHITECTURE_OBLIGATIONS.md; _CC.md; HEALTHIQ_AI_ARCHITECTURE_RECONCILIATION_VARIANCE_CC_VS_CURSOR.md; HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md; docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — all confirmed present via direct Glob."
+      "status": "CONFIRMED_EXISTS — all 7",
+      "evidence": "Planning paper; CONTROLLED_BETA_ARCHITECTURE_COHORT.md; CONVERGENCE_VIABILITY_ASSESSMENT.md; WHY_MIGRATION_PILOT_COHORT.md; OPEN_ARCHITECTURE_OBLIGATIONS_CC.md; RECONCILIATION_VARIANCE_CC_VS_CURSOR.md; ADR-RT-IDENTITY-PROV-001 — all confirmed present in this session (Gate 0 hardening/audit) or freshly re-checked."
     },
     "output_paths_correctly_new": {
       "status": "CONFIRMED",
-      "evidence": "None of HEALTHIQ_AI_V5_CONTROLLED_BETA_ARCHITECTURE_COHORT.md, HEALTHIQ_AI_V5_CONVERGENCE_VIABILITY_ASSESSMENT.md, HEALTHIQ_AI_V5_WHY_MIGRATION_PILOT_COHORT.md, or docs/audit-papers/ARCH-CONV-GATE0_implementation_and_verification_report.md exist yet — correctly new deliverables."
+      "evidence": "Neither docs/architecture/ARCH-CONV-PKG1_frame_identity_surface_design.md nor docs/audit-papers/ARCH-CONV-PKG1_implementation_and_verification_report.md exist yet."
     },
     "branch_state": {
       "status": "CONFIRMED, expected pre-kernel-start state",
-      "evidence": "Current branch is main (HEAD 83e5eec, merge of 'architecture reconciliation and final convergence plan'). Target branch feature/arch-conv-gate0-cohort-viability does not yet exist (git branch --list returned empty) — correct, Cursor must create it at Stage 3 per branch discipline, not before. Working tree shows exactly one modification: automation_bus/latest_cursor_prompt.md itself (the Stage 1 handoff artifact) — no other uncommitted changes, consistent with a clean Stage 1->2 state, not a STOP-condition-8 violation."
+      "evidence": "Current branch is main (HEAD e725a75, merge of 'ARCH-CONV-GATE0 controlled-beta cohort and convergence viability (REDESIGN)' — confirms Gate 0 was human-ratified and merged). Target branch feature/arch-conv-pkg1-frame-identity-closure does not yet exist. Working tree shows only the expected automation_bus/latest_cursor_prompt.md Stage-1 handoff modification."
     }
   },
 
   "independent_premise_verification": {
-    "five_identity_surfaces_claim_still_accurate": {
+    "five_surfaces_current_state_unchanged_since_gate0": {
       "status": "CONFIRMED",
-      "evidence": "Direct grep of backend/core/analytics/signal_interaction_builder.py at current HEAD: node_ids (lines 59,66,78,145) and confidence_by_signal (lines 154,221) remain bare-signal_id-keyed; participating_activation_keys (lines 150,155,245,250) is output-metadata only. Exactly matches the prompt's own characterization in Package 1 scope ('output metadata that appears frame-aware while internal logic remains signal_id-keyed'). The other 4 named surfaces (interpretation_display_layer_publish_v1.py, domain_score_assembler.py, narrative_report_compiler_v1.py, intervention_selector_v1.py) were independently verified in this same session during ARCH-PROG-RECON-1-CC and no commits have touched them since (HEAD moved only via the reconciliation-doc merge and the convergence-plan merge, both docs-only)."
+      "evidence": "git log -1 for each of the 5 named files plus the 2 shared identity helpers shows the most recent touching commit is d877d0d (P3-LAYERB-INTEL-1, pre-dates Gate 0) — none were modified by the Gate 0 (docs-only) package. All findings from this session's Gate 0 work remain current: interpretation_display_layer_publish_v1.py, domain_score_assembler.py, narrative_report_compiler_v1.py, intervention_selector_v1.py bare-signal_id-keyed; signal_interaction_builder.py activation_key is output-decoration only."
     },
-    "programme_ceilings_already_fixed_values_match_planning_paper": {
-      "status": "CONFIRMED",
-      "evidence": "Prompt states 'maximum unplanned mandatory packages: 1' and 'maximum unauthorised material scope growth: 25%' as already fixed by the existing plan. docs/planning-papers/HEALTHIQ_AI_V5_FINAL_ARCHITECTURE_CONVERGENCE_AND_SALVAGE_OR_REBUILD_PLAN.md Section 11.5 states identically: 'more than one unplanned mandatory architecture package' and 'any package expands by more than 25% beyond its approved material scope without explicit human reauthorisation.' No drift between the prompt and its cited authority."
+    "shared_identity_helpers_are_real_and_reusable_not_a_vague_ask": {
+      "status": "CONFIRMED, with an important nuance surfaced (see below)",
+      "evidence": "backend/core/knowledge/signal_activation_identity_v1.py provides build_activation_key/resolve_activation_identity (Package 2 canonical). backend/core/knowledge/signal_result_index_v1.py provides index_by_activation_key (fail-closed on duplicates), group_by_signal_id, rows_for_signal_id, participating_activation_keys (frame-safe), and confidence_by_signal_family. The prompt's instruction 'Prefer one canonical shared identity/index helper over five bespoke mappings' and 'Reuse Package 2 identity contracts' point at genuinely existing, adequate infrastructure — not aspirational."
     },
-    "read_only_scope_matches_planning_paper_gate_0_definition": {
-      "status": "CONFIRMED",
-      "evidence": "Planning paper Section 5 (Gate 0) defines the same 8 required decisions and the same acceptance criteria (cohort enumerated, 5 surfaces have live-exposure evidence, provenance-blocked cohort enumerated, product impact known, WHY pilot bounded, medical-review capacity confirmed, ceilings approved, no implementation authorised without this gate) that the prompt's own Required outputs/Acceptance criteria sections restate. No invented procedure beyond the planning paper."
+    "signal_interaction_builder_root_cause_is_more_nuanced_than_gate0_characterised": {
+      "status": "NEW FINDING — material to Phase 1 / STOP Gate 1",
+      "evidence": "signal_interaction_builder.py's confidence_by_signal is confidence_by_signal_family() from the shared helper file itself — whose own docstring explicitly documents it as 'Family-level confidence for interaction-chain medians' and instructs 'Participating activation_keys are not collapsed — callers must also retain participating_activation_keys separately' (signal_result_index_v1.py:92-103). Separately, node_ids/edges (lines 59-66 of signal_interaction_builder.py) are loaded from knowledge_bus/interaction_maps/interaction_map_v1.yaml via load_interaction_map_v1() — a static, human-authored clinical policy graph (confirmed 23 signal_id-keyed nodes on disk) whose edges encode family-level clinical relationships (e.g. 'ALT high co-occurs with AST high'), not per-research-frame relationships. This means the collapse at this surface is NOT obviously an accidental bug parallel to the other 4 surfaces — it may be, in whole or part, the shared helper's own documented intentional family-level design plus a family-level clinical policy asset that was never meant to be frame-keyed. Phase 1's per-surface design document MUST explicitly resolve this before implementation, and STOP Gate 1's carve-out ('intentional, safe family-level aggregation... would alter approved product meaning') may directly apply here in a way it does not for the other 4 surfaces."
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "The prompt's Required inputs list omits docs/architecture/HEALTHIQ_AI_ARCHITECTURE_CLOSURE_SEQUENCE.md and its _CC.md counterpart. Those documents contain the original PKG-1/2/3(-CC) package-boundary reasoning and STOP-gate language that the newer planning paper's Package 1/2/3A/3B sections (already a required input) substantially restate and supersede. Low materiality — the planning paper is the authoritative, current restatement and is already required reading — but Cursor should be aware the closure-sequence docs exist as historical grounding if a package-boundary question arises that the planning paper doesn't fully resolve.",
-    "Q1's cohort table asks for 'WHY authority type' per signal but does not explicitly ask whether that signal is one of the 5 residual identity-collapse surfaces' exposure targets — Cursor should cross-reference Q1 and Q2 outputs so the same signal_id doesn't get evaluated for identity exposure and cohort inclusion in isolation from each other.",
-    "Q3's 'appears in representative or golden output' check for the pkg_kb47_* cohort (16 launch-critical BLOCKED rows, 20 pkg_kb47_* directories total, all confirmed carrying a live signal_library.yaml per this session's ARCH-PROG-RECON-1-CC verification) should reuse that prior finding directly rather than re-deriving reachability from scratch — reachability is already confirmed positive; the open question for Gate 0 is specifically golden/representative-output appearance and product/medical impact if suppressed, not reachability itself."
+    "Phase 1 exposure document for signal_interaction_builder.py should explicitly separate two questions the prompt currently bundles as one 'partial migration' problem: (a) should the STATIC interaction-map policy graph (nodes/edges, clinically authored at signal_id/family level) be re-keyed to activation_key at all, given interaction rules are authored per biomarker relationship not per research frame; and (b) should the RUNTIME matching/aggregation step (confidence_by_signal_family, participating_activation_keys) change. It is plausible the correct fix is confined to (b) plus making the existing family-level design explicit/documented/tested per the prompt's own Required Behaviour #5 wording ('family-level interaction logic must be explicit rather than accidental'), rather than a full re-keying of the interaction map itself. Recommend this be the first thing resolved in the design document, since it changes the size and risk of the whole surface-5 fix.",
+    "Required Behaviour #5 already anticipates exactly this ambiguity ('output metadata must reflect actual internal identity behaviour... Do not treat participating_activation_keys output decoration as sufficient') — but the shared helper's own docstring frames the current behaviour as intentional design, not oversight. Cursor should treat this as a case where the prompt's default expectation (make it frame-safe) and the existing shared-helper's documented intent (family-level is correct for interaction chains) may conflict, and should either reconcile them explicitly in the design doc or invoke STOP Gate 1 rather than silently picking one interpretation.",
+    "The other 4 surfaces (interpretation_display_layer_publish_v1.py, domain_score_assembler.py, narrative_report_compiler_v1.py, intervention_selector_v1.py) operate on live fired-signal rows/consumer output, not a static clinical policy graph — the 'is this intentional family-level policy' question is much less likely to apply to them, and Gate 0's characterisation of those 4 as straightforward bare-signal_id collapse still stands unchanged."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 8,
+    "checklist_count": 7,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "All 8 required input docs exist", "source": "Glob on each path", "evidence": "All 8 confirmed present", "status": "CONFIRMED"},
-      {"id": 2, "claim": "All 4 required output paths are correctly new (not accidental overwrites)", "source": "Glob on each output path", "evidence": "None of the 3 architecture docs or the verification report exist yet", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Target branch does not yet exist / current branch is main with only the expected Stage 1 artifact modified", "source": "git branch --list; git status --short", "evidence": "Branch list empty for feature/arch-conv-gate0-cohort-viability; only automation_bus/latest_cursor_prompt.md modified", "status": "CONFIRMED"},
-      {"id": 4, "claim": "signal_interaction_builder.py still exhibits the exact behaviour the prompt describes (activation_key as output-only metadata, signal_id as the real lookup key)", "source": "Direct grep, backend/core/analytics/signal_interaction_builder.py, current HEAD", "evidence": "node_ids/confidence_by_signal keyed by signal_id (lines 59,66,78,145,154,221); participating_activation_keys is output-only (150,155,245,250)", "status": "CONFIRMED"},
-      {"id": 5, "claim": "The other 4 named identity surfaces are unchanged since last independently verified in this session", "source": "git log HEAD since prior verification commit", "evidence": "Only docs-only commits (5ea6632, 83e5eec) landed since; no commits touch the 4 named analytics files", "status": "CONFIRMED"},
-      {"id": 6, "claim": "Programme ceiling values cited in the prompt (1 unplanned package, 25% scope growth) match the planning paper", "source": "docs/planning-papers/HEALTHIQ_AI_V5_FINAL_ARCHITECTURE_CONVERGENCE_AND_SALVAGE_OR_REBUILD_PLAN.md Section 11.5", "evidence": "Identical values, no drift", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Gate 0 scope/acceptance criteria in the prompt match the planning paper's Section 5 definition of Gate 0", "source": "Planning paper Section 5", "evidence": "Same 8 decisions, same acceptance-criteria checklist", "status": "CONFIRMED"},
-      {"id": 8, "claim": "No PSI, prose-generation, estate-wide migration, or beta-authorisation language leaked into this prompt's scope", "source": "Full read of automation_bus/latest_cursor_prompt.md", "evidence": "Explicit prohibitions present: no runtime/schema/medical/test changes, no Package 1 implementation prompt authored, no beta-readiness declaration", "status": "CONFIRMED"}
+      {"id": 1, "claim": "All 7 required input docs exist", "source": "Glob / prior session confirmation", "evidence": "All 7 confirmed present", "status": "CONFIRMED"},
+      {"id": 2, "claim": "Both required output paths are correctly new", "source": "Glob", "evidence": "Neither the design doc nor the verification report exists yet", "status": "CONFIRMED"},
+      {"id": 3, "claim": "Branch state is expected pre-kernel-start; Gate 0 was merged", "source": "git log; git branch --list; git status --short", "evidence": "HEAD e725a75 (Gate 0 merge commit present); target branch not yet created; only latest_cursor_prompt.md modified", "status": "CONFIRMED"},
+      {"id": 4, "claim": "The 5 named surfaces are unchanged since Gate 0's independent verification", "source": "git log -1 per file", "evidence": "Most recent touching commit for all 5 is d877d0d, pre-dating Gate 0", "status": "CONFIRMED"},
+      {"id": 5, "claim": "Shared Package 2 identity helpers exist and provide the primitives the prompt assumes", "source": "Direct read, signal_activation_identity_v1.py and signal_result_index_v1.py", "evidence": "build_activation_key, index_by_activation_key, group_by_signal_id, participating_activation_keys, confidence_by_signal_family all present and functional", "status": "CONFIRMED"},
+      {"id": 6, "claim": "signal_interaction_builder.py's confidence lookup uses the shared helper's own documented family-level function, not an ad-hoc bare-signal_id dict", "source": "Direct read, signal_result_index_v1.py:140-156 docstring and signal_interaction_builder.py:154", "evidence": "confidence_by_signal_family is called directly; its docstring self-documents family-level intent", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Interaction-map node/edge identity derives from a static, clinically-authored policy YAML, not live per-frame signal instances", "source": "Direct read, signal_interaction_builder.py:41-87; file existence + node count check on knowledge_bus/interaction_maps/interaction_map_v1.yaml", "evidence": "load_interaction_map_v1() loads and validates the YAML; 23 signal_id-keyed nodes confirmed on disk", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Any runtime, schema, medical-asset, test, or package-manifest change — REJECT_AND_RETURN",
-    "Any Package 1/2/3A/3B implementation prompt authored as part of this package — REJECT_AND_RETURN",
-    "Any controlled-beta readiness declaration — REJECT_AND_RETURN",
-    "Any estimate presented without a stated confidence/evidence basis (violates 'do not estimate silently') — REJECT_AND_RETURN",
-    "Any WHY pilot cohort that defaults to all 40 legacy hypotheses without justification — REJECT_AND_RETURN",
-    "Any invented source_spec_id or canonical lineage not backed by a real artefact — REJECT_AND_RETURN",
-    "Any reopening of historical architecture questions already settled by the reconciliation documents — REJECT_AND_RETURN",
-    "Any GO decision issued without evidencing all six GO preconditions (cohort isolatable, identity scope bounded, lineage/exclusion feasible, WHY pilot bounded, medical-review route credible, ceilings settable) — REJECT_AND_RETURN"
+    "Any change to provenance eligibility, runtime reachability, or source_spec_id attachment — REJECT_AND_RETURN",
+    "Any WHY/hypothesis/prose/PSI/Gemini/threshold/signal-firing change — REJECT_AND_RETURN",
+    "Any frontend redesign beyond additive identity metadata — REJECT_AND_RETURN",
+    "Any architecture-completion or beta-readiness declaration — REJECT_AND_RETURN",
+    "Any invented clinical frame-priority policy without an approved ADR — REJECT_AND_RETURN",
+    "Re-keying the interaction-map policy YAML to activation_key without first resolving whether that changes approved clinical meaning (see nuance above) — REJECT_AND_RETURN or escalate via STOP Gate 1",
+    "Any package-scope growth beyond 25% without human reauthorisation, or more than one unplanned follow-on package — REJECT_AND_RETURN",
+    "A GO/CORRECT/STOP/V6 recommendation issued without evidencing all Gate 1 acceptance criteria against live code — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 8 required input documents confirmed present. All 4 required output paths confirmed correctly new. Branch state confirmed expected pre-kernel-start (main, only the Stage-1 prompt-handoff file modified, target branch not yet created). The prompt's central factual claim — that signal_interaction_builder.py exhibits cosmetic-only activation_key migration while its core node/confidence logic remains signal_id-keyed — was independently re-verified against current HEAD by direct code read and confirmed accurate. Programme-ceiling values and Gate 0 scope/acceptance criteria were cross-checked against the newly-adopted planning paper and found consistent with no drift. One low-materiality completeness gap noted (omission of the two Closure Sequence documents from Required inputs) — not blocking, since the planning paper already required as input supersedes their content. Two cross-referencing observations passed forward to reduce duplicate work in Cursor's Q1-3 analysis. No blocking defect found. Recommend proceeding to kernel start."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 7 required input documents and both target output paths confirmed. Branch state confirmed expected pre-kernel-start; Gate 0's REDESIGN outcome is confirmed merged to main, so this package correctly builds on a human-ratified baseline. All 5 named surfaces confirmed unchanged since Gate 0's independent verification earlier this session. The prompt's assumption that reusable Package 2 identity infrastructure exists (signal_activation_identity_v1.py, signal_result_index_v1.py) is confirmed genuine, not aspirational. One material, non-blocking finding surfaced for Cursor's mandatory Phase 1 design document: signal_interaction_builder.py's 'partial migration' is not a simple parallel to the other 4 surfaces — its confidence lookup calls the shared helper's own documented family-level function, and its node/edge identity derives from a static, clinically-authored interaction-map policy asset (23 signal_id-keyed nodes) rather than live frame instances. Phase 1 must explicitly resolve whether this is intentional family-level design (in which case STOP Gate 1's carve-out may apply) before any re-keying is attempted. No blocking defect found. Recommend proceeding to kernel start."
 }
