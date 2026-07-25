@@ -1,10 +1,9 @@
 {
-  "branch": "feature/arch-conv-pkg1-frame-identity-closure",
+  "branch": "feature/arch-conv-pkg2-provenance-reachability",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-25T23:06:18Z",
-  "cursor_started_utc": "2026-07-25T23:03:58Z",
-  "head_sha": "dccc94805c0048a25c90791f1c73df3af1cb9797",
+  "cursor_started_utc": "2026-07-25T23:31:41Z",
+  "head_sha": "d696fca3ba5483ae59d547a55a817c9284b2e981",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-CONV-PKG1"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-CONV-PKG2"
 }
