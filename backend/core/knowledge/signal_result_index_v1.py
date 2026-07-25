@@ -154,3 +154,47 @@ def confidence_by_signal_family(
                 values.append(float(conf))
         out[sid] = max(values) if values else None
     return out
+
+
+def participating_activation_keys_by_signal_id(
+    rows: Optional[Sequence[Dict[str, Any]]],
+    *,
+    valid_states: Iterable[str],
+    signal_ids: Optional[Iterable[str]] = None,
+) -> Dict[str, List[str]]:
+    """
+    Named per-family frame audit map.
+
+    Returns sorted activation_keys for fired frames in each signal_id family.
+    When ``signal_ids`` is provided, only those families are included (missing → []).
+    """
+    valid = set(valid_states)
+    want = {str(s).strip() for s in (signal_ids or []) if str(s).strip()} if signal_ids is not None else None
+    grouped = group_by_signal_id(rows)
+    families = sorted(want) if want is not None else list(grouped.keys())
+    out: Dict[str, List[str]] = {}
+    for sid in families:
+        keys: List[str] = []
+        for row in grouped.get(sid, []):
+            state = str(row.get("signal_state") or "").strip()
+            if state not in valid:
+                continue
+            key = activation_key_or_empty(row)
+            if key:
+                keys.append(key)
+        out[sid] = sorted(set(keys))
+    return out
+
+
+def collect_activation_keys_for_rows(
+    rows: Optional[Sequence[Dict[str, Any]]],
+) -> List[str]:
+    """Deterministic unique activation_keys for the given rows (no state filter)."""
+    keys: List[str] = []
+    for row in rows or []:
+        if not isinstance(row, dict):
+            continue
+        key = activation_key_or_empty(row)
+        if key:
+            keys.append(key)
+    return sorted(set(keys))

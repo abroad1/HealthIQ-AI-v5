@@ -98,22 +98,75 @@ def _resolve_lead_signal_id(
     insight_graph: Optional[Mapping[str, Any]],
 ) -> str:
     """Lead signal for YAML entity selection: payload rank-1 else first fired lead hint in graph order."""
+    return _resolve_lead_frame(
+        narrative_payload_v1=narrative_payload_v1,
+        insight_graph=insight_graph,
+    )["signal_id"]
+
+
+def _resolve_lead_frame(
+    *,
+    narrative_payload_v1: Optional[NarrativePayloadV1],
+    insight_graph: Optional[Mapping[str, Any]],
+) -> Dict[str, str]:
+    """
+    Resolve lead frame identity without blanking a present activation_key.
+
+    Payload path uses top_findings[0] via resolve_lead_frame_from_top_finding.
+    Graph path uses the first fired lead-hint row in deterministic graph order and
+    preserves that row's activation_key/source_spec_id.
+    """
+    empty = {"signal_id": "", "activation_key": "", "source_spec_id": ""}
     if narrative_payload_v1 is not None and narrative_payload_v1.top_findings:
-        sid = str(narrative_payload_v1.top_findings[0].signal_id).strip()
-        if sid in _LEAD_SIGNAL_HINTS:
-            return sid
-        return ""
+        tf0 = narrative_payload_v1.top_findings[0]
+        frame = resolve_lead_frame_from_top_finding(
+            {
+                "signal_id": getattr(tf0, "signal_id", ""),
+                "activation_key": getattr(tf0, "activation_key", ""),
+                "source_spec_id": getattr(tf0, "source_spec_id", ""),
+            }
+        )
+        sid = str(frame.get("signal_id") or "").strip()
+        if sid and sid not in _LEAD_SIGNAL_HINTS:
+            return empty
+        return {
+            "signal_id": sid,
+            "activation_key": str(frame.get("activation_key") or "").strip(),
+            "source_spec_id": str(frame.get("source_spec_id") or "").strip(),
+        }
+
     if insight_graph and isinstance(insight_graph, dict):
-        for row in insight_graph.get("signal_results") or []:
-            if not isinstance(row, dict):
-                continue
+        from core.knowledge.signal_result_index_v1 import (
+            activation_key_or_empty,
+            participating_activation_keys,
+            rows_for_signal_id,
+        )
+
+        rows = [r for r in (insight_graph.get("signal_results") or []) if isinstance(r, dict)]
+        for row in rows:
             sid = str(row.get("signal_id", "")).strip()
             state = str(row.get("signal_state", "")).strip().lower()
             if not sid or state not in {"suboptimal", "at_risk"}:
                 continue
-            if sid in _LEAD_SIGNAL_HINTS:
-                return sid
-    return ""
+            if sid not in _LEAD_SIGNAL_HINTS:
+                continue
+            key = activation_key_or_empty(row)
+            spec = str(row.get("source_spec_id") or "").strip()
+            if not key and not spec:
+                # Ambiguous multi-frame family without reconstructable identity: fail soft to family.
+                family_keys = participating_activation_keys(
+                    rows_for_signal_id(rows, sid),
+                    valid_states={"suboptimal", "at_risk"},
+                )
+                if len(family_keys) > 1:
+                    # Multiple frames, no key on chosen row — do not invent frame binding.
+                    return {"signal_id": sid, "activation_key": "", "source_spec_id": ""}
+            return {
+                "signal_id": sid,
+                "activation_key": key,
+                "source_spec_id": spec,
+            }
+    return empty
 
 
 def _entity_declared_signal_ids(row: Mapping[str, Any]) -> Optional[Set[str]]:
@@ -750,24 +803,28 @@ def compile_narrative_report_v1(
         include_lead_yaml = bool(fired & _LEAD_SIGNAL_HINTS)
         include_secondary_yaml = bool(fired & _SECONDARY_SIGNAL_HINTS)
 
-    lead_signal_id = _resolve_lead_signal_id(
+    lead_frame = _resolve_lead_frame(
         narrative_payload_v1=narrative_payload_v1,
         insight_graph=insight_graph,
     )
-    lead_frame = {"signal_id": lead_signal_id, "activation_key": "", "source_spec_id": ""}
-    if narrative_payload_v1 is not None and narrative_payload_v1.top_findings:
-        tf0 = narrative_payload_v1.top_findings[0]
-        lead_frame = resolve_lead_frame_from_top_finding(
-            {
-                "signal_id": getattr(tf0, "signal_id", ""),
-                "activation_key": getattr(tf0, "activation_key", ""),
-                "source_spec_id": getattr(tf0, "source_spec_id", ""),
-            }
-        )
-        if not lead_signal_id:
-            lead_signal_id = lead_frame["signal_id"]
+    lead_signal_id = str(lead_frame.get("signal_id") or "").strip()
     compiler_meta["lead_activation_key"] = lead_frame.get("activation_key", "")
     compiler_meta["lead_source_spec_id"] = lead_frame.get("source_spec_id", "")
+    if insight_graph and isinstance(insight_graph, dict) and lead_signal_id:
+        from core.knowledge.signal_result_index_v1 import (
+            participating_activation_keys,
+            rows_for_signal_id,
+        )
+
+        graph_rows = [r for r in (insight_graph.get("signal_results") or []) if isinstance(r, dict)]
+        compiler_meta["lead_participating_activation_keys"] = participating_activation_keys(
+            rows_for_signal_id(graph_rows, lead_signal_id),
+            valid_states={"suboptimal", "at_risk"},
+        )
+        if lead_frame.get("activation_key"):
+            compiler_meta["lead_authority_scope"] = "activation_frame"
+        else:
+            compiler_meta["lead_authority_scope"] = "signal_family"
     modifier_decision = bind_modifiers_v1(
         signal_id=lead_signal_id,
         activation_key=str(lead_frame.get("activation_key") or ""),

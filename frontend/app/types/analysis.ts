@@ -282,6 +282,9 @@ export interface InterpretationDisplayRecordV1 {
 export interface InterpretationDisplayLayerBundleV1 {
   schema_version: string;
   records: InterpretationDisplayRecordV1[];
+  /** ARCH-CONV-PKG1 — fired activation frames contributing to IDL severity */
+  participating_activation_keys?: string[];
+  aggregation_scope?: string | null;
 }
 
 /** N-8 / F-1 — mirrors backend `core/contracts/narrative_report_v1.py` (deterministic compiler output). */
@@ -430,6 +433,8 @@ export interface ConsumerDomainScoreV1 {
   band_label: string;
   confidence_tier: 'high' | 'medium' | 'low';
   active_signal_ids: string[];
+  /** ARCH-CONV-PKG1 — activation frames for active signals (frame-preserving audit companion) */
+  active_activation_keys?: string[];
   primary_idl_record_id: string | null;
   missing_marker_ids: string[];
   source_track: string;

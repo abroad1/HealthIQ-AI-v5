@@ -883,6 +883,32 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## ARCH-CONV-PKG1 — Launch-Path Activation-Frame Identity Closure
+
+**Status:** Complete  
+**Date closed:** 2026-07-25  
+**Programme block(s):** Architecture convergence Package 1 — frame identity
+
+### Delivered / ticked off
+- STOP Gate 1 PASS: no clinical frame-priority policy; interaction-map YAML remains family-level clinical policy.
+- Five launch-path surfaces closed for silent bare-`signal_id` collapse (IDL, domain scores, narrative lead, interventions, interaction builder runtime audit).
+- Gate 0 pressure set exercised: 8 families / 21 frames.
+- Behavioural gate `validate_launch_path_frame_identity_gate.py` wired into architecture validation.
+- Additive identity metadata only; no provenance/WHY/prose/PSI/Gemini/threshold changes.
+- No architecture-completion or controlled-beta claim.
+
+### Carry-forwards
+- Package 2 provenance / lineage attach for launch-critical kb47 INCLUDE rows.
+- Gate 2.5 medical-review owner confirmation before Package 3B (from Gate 0 REDESIGN).
+
+### Blockers / risks
+- None for Package 1 obligation; medical-review capacity for WHY pilot remains unresolved (Gate 0).
+
+### Recommended next sprint
+- ARCH-CONV-PKG2 — provenance and runtime-reachability honesty for launch-critical INCLUDE cohort.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
