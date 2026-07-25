@@ -50,6 +50,10 @@ class ReportInterventionV1(BaseModel):
     body: str
     why_this_matters: str = Field(max_length=200)
     signal_refs: List[str] = Field(default_factory=list)
+    activation_key_refs: List[str] = Field(
+        default_factory=list,
+        description="ARCH-CONV-PKG1 — activation frames contributing to this intervention attribution",
+    )
     chain_refs: List[str] = Field(default_factory=list)
     evidence_strength: str
     evidence_summary: str

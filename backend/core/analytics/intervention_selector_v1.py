@@ -130,7 +130,10 @@ def _build_candidate(
     chain_refs: List[str],
     low_confidence_clause: str,
 ) -> Dict[str, Any]:
+    from core.knowledge.signal_result_index_v1 import activation_key_or_empty
+
     signal_id = str(signal_row.get("signal_id", "")).strip()
+    activation_key = activation_key_or_empty(signal_row)
     signal_state = str(signal_row.get("signal_state", "")).strip()
     system = str(signal_row.get("system", "")).strip()
     signal_conf = signal_row.get("confidence")
@@ -146,7 +149,8 @@ def _build_candidate(
         "title": template["title"],
         "body": body,
         "why_this_matters": f"{template['why_this_matters']} (signal: {signal_id}).",
-        "signal_refs": [signal_id],
+        "signal_refs": [signal_id] if signal_id else [],
+        "activation_key_refs": [activation_key] if activation_key else [],
         "chain_refs": chain_refs,
         "evidence_strength": template["evidence_strength"],
         "evidence_summary": template["evidence_summary"],
@@ -220,17 +224,30 @@ def select_interventions_v1(
             )
             candidates.append(candidate)
 
-    # Deduplicate intervention IDs (attribution to highest-confidence chain context).
+    # Deduplicate intervention IDs while unioning frame attribution (never borrow-drop).
     dedup: Dict[str, Dict[str, Any]] = {}
     for c in candidates:
         existing = dedup.get(c["intervention_id"])
         if existing is None:
             dedup[c["intervention_id"]] = c
             continue
+        merged_signal_refs = sorted(
+            set(str(x) for x in (existing.get("signal_refs") or []) + (c.get("signal_refs") or []) if str(x).strip())
+        )
+        merged_akey_refs = sorted(
+            set(
+                str(x)
+                for x in (existing.get("activation_key_refs") or []) + (c.get("activation_key_refs") or [])
+                if str(x).strip()
+            )
+        )
         c_key = (-c["_chain_confidence"], -c["_signal_confidence"], -EVIDENCE_ORDER[c["evidence_strength"]], c["intervention_id"])
         e_key = (-existing["_chain_confidence"], -existing["_signal_confidence"], -EVIDENCE_ORDER[existing["evidence_strength"]], existing["intervention_id"])
-        if c_key < e_key:
-            dedup[c["intervention_id"]] = c
+        winner = c if c_key < e_key else existing
+        winner = dict(winner)
+        winner["signal_refs"] = merged_signal_refs
+        winner["activation_key_refs"] = merged_akey_refs
+        dedup[c["intervention_id"]] = winner
     ordered = sorted(
         dedup.values(),
         key=lambda c: (
@@ -273,6 +290,7 @@ def select_interventions_v1(
                 "body": fallback_text,
                 "why_this_matters": "Low-confidence signal context needs repeat data before reliable intervention prioritization.",
                 "signal_refs": [],
+                "activation_key_refs": [],
                 "chain_refs": [],
                 "evidence_strength": "moderate",
                 "evidence_summary": "- Laboratory monitoring framework, n=980, Clinical Chemistry, 2019.\n- Repeat-testing reliability study, n=410, Annals of Laboratory Medicine, 2022.",
@@ -291,6 +309,7 @@ def select_interventions_v1(
             "body": c["body"],
             "why_this_matters": c["why_this_matters"][:200],
             "signal_refs": c.get("signal_refs", []),
+            "activation_key_refs": c.get("activation_key_refs", []),
             "chain_refs": c.get("chain_refs", []),
             "evidence_strength": c["evidence_strength"],
             "evidence_summary": c["evidence_summary"],

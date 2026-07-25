@@ -73,20 +73,18 @@ def load_phenotype_required_signals_by_id() -> Dict[str, List[str]]:
 
 
 def _signal_fire_states(insight_graph: Dict[str, Any]) -> Tuple[Set[str], Dict[str, str]]:
-    """Returns (fired_signal_ids, signal_id -> signal_state) for suboptimal/at_risk only."""
-    fired: Set[str] = set()
-    states: Dict[str, str] = {}
-    for row in insight_graph.get("signal_results") or []:
-        if not isinstance(row, dict):
-            continue
-        sid = str(row.get("signal_id", "")).strip()
-        st = str(row.get("signal_state", "")).strip()
-        if not sid:
-            continue
-        states[sid] = st
-        if st in {"suboptimal", "at_risk"}:
-            fired.add(sid)
-    return fired, states
+    """
+    Family-level fired presence for IDL severity.
+
+    Uses explicit ``family_fired_states`` (at_risk over suboptimal) rather than
+    last-wins bare ``signal_id`` dict overwrite. Callers must also retain
+    ``participating_activation_keys`` for frame auditability.
+    """
+    from core.knowledge.signal_result_index_v1 import family_fired_states
+
+    rows = [r for r in (insight_graph.get("signal_results") or []) if isinstance(r, dict)]
+    states = family_fired_states(rows, valid_states={"suboptimal", "at_risk"})
+    return set(states.keys()), states
 
 
 def _derive_severity_state(
@@ -114,26 +112,27 @@ def _supporting_summary_for_phenotype(
     signal_rows: List[Dict[str, Any]],
 ) -> str:
     """2–4 marker names from fired required signals' primary_metric, deterministic order."""
+    from core.knowledge.signal_result_index_v1 import group_by_signal_id
+
     metrics: List[str] = []
-    by_id = {
-        str(r.get("signal_id", "")).strip(): r
-        for r in signal_rows
-        if isinstance(r, dict) and str(r.get("signal_id", "")).strip()
-    }
+    by_family = group_by_signal_id(signal_rows)
     for sid in sorted(s for s in required if s in fired):
-        row = by_id.get(sid)
-        if not isinstance(row, dict):
-            continue
-        pm = str(row.get("primary_metric", "")).strip()
-        if pm:
-            h = _humanize_metric(pm)
-            if h not in metrics:
-                metrics.append(h)
-        for sup in row.get("supporting_markers") or []:
-            if isinstance(sup, str) and sup.strip():
-                h2 = _humanize_metric(sup.strip())
-                if h2 not in metrics:
-                    metrics.append(h2)
+        # Union metrics across all frames in the family (non-destructive).
+        for row in by_family.get(sid, []):
+            if not isinstance(row, dict):
+                continue
+            pm = str(row.get("primary_metric", "")).strip()
+            if pm:
+                h = _humanize_metric(pm)
+                if h not in metrics:
+                    metrics.append(h)
+            for sup in row.get("supporting_markers") or []:
+                if isinstance(sup, str) and sup.strip():
+                    h2 = _humanize_metric(sup.strip())
+                    if h2 not in metrics:
+                        metrics.append(h2)
+            if len(metrics) >= 4:
+                break
         if len(metrics) >= 4:
             break
     if not metrics:
@@ -149,11 +148,16 @@ def publish_interpretation_display_layer_v1(
 
     When insight_graph is empty/None, severity defaults to not_observed and summaries are generic.
     """
+    from core.knowledge.signal_result_index_v1 import participating_activation_keys
+
     ig: Dict[str, Any] = insight_graph if isinstance(insight_graph, dict) else {}
     schema_ver, static_rows = load_idl_registry_document()
     required_by_id = load_phenotype_required_signals_by_id()
     fired, states = _signal_fire_states(ig)
     signal_rows = [r for r in (ig.get("signal_results") or []) if isinstance(r, dict)]
+    frame_keys = participating_activation_keys(
+        signal_rows, valid_states={"suboptimal", "at_risk"}
+    )
 
     out_records: List[InterpretationDisplayRecordV1] = []
     for row in sorted(static_rows, key=lambda r: int(r.get("display_order_priority", 999))):
@@ -201,4 +205,9 @@ def publish_interpretation_display_layer_v1(
         )
         out_records.append(rec)
 
-    return InterpretationDisplayLayerBundleV1(schema_version=schema_ver, records=out_records)
+    return InterpretationDisplayLayerBundleV1(
+        schema_version=schema_ver,
+        records=out_records,
+        participating_activation_keys=frame_keys,
+        aggregation_scope="signal_family",
+    )

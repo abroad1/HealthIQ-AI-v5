@@ -1,22 +1,22 @@
 ---
-work_id: ARCH-CONV-GATE0
-branch: feature/arch-conv-gate0-cohort-viability
-risk_level: STANDARD
+work_id: ARCH-CONV-PKG1
+branch: feature/arch-conv-pkg1-frame-identity-closure
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: BEHAVIOUR
 stage_b_mode: MODE_2
-runtime_change: NONE
+runtime_change: YES
 ---
 
-# ARCH-CONV-GATE0 — Controlled-Beta Cohort and Convergence Viability Definition
+# ARCH-CONV-PKG1 — Launch-Path Activation-Frame Identity Closure
 
 ## Outcome
 
-Define the exact launch-critical cohort for the final HealthIQ AI v5 convergence programme and decide whether the programme is viable before any runtime changes begin.
+Close the five verified launch-path activation-frame collapse surfaces so distinct medical frames cannot silently merge after registry load.
 
-This is a read-only planning and verification package.
+This package is limited to frame-identity preservation and related tests.
 
-Do not change runtime code, schemas, medical assets, tests, package manifests, loaders or production behaviour.
+Do not change provenance policy, package eligibility, WHY content, prose assets, PSI, Gemini, thresholds, signal firing, or frontend medical logic.
 
 Standard Automation Bus governance applies.
 
@@ -26,341 +26,284 @@ Read only:
 
 ```text
 docs/planning-papers/HEALTHIQ_AI_V5_FINAL_ARCHITECTURE_CONVERGENCE_AND_SALVAGE_OR_REBUILD_PLAN.md
-docs/architecture/HEALTHIQ_AI_ARCHITECTURE_PROGRAMME_RECONCILIATION.md
-docs/architecture/HEALTHIQ_AI_ARCHITECTURE_PROGRAMME_RECONCILIATION_CC.md
-docs/architecture/HEALTHIQ_AI_OPEN_ARCHITECTURE_OBLIGATIONS.md
-docs/architecture/HEALTHIQ_AI_OPEN_ARCHITECTURE_OBLIGATIONS_CC.md
-docs/architecture/HEALTHIQ_AI_ARCHITECTURE_RECONCILIATION_VARIANCE_CC_VS_CURSOR.md
-docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-```
-
-Also inspect current `main` code and governed assets only where needed to verify:
-
-```text
-the five residual identity surfaces
-signal registry loading
-provenance classification and reachability
-launch-critical package cohorts
-root-cause authority
-current representative and golden outputs
-```
-
-Do not reopen unrelated historical architecture questions already settled by the reconciliation.
-
-## Questions to answer
-
-### 1. Controlled-beta architecture cohort
-
-Enumerate the exact proposed controlled-beta cohort.
-
-For each item record:
-
-```text
-signal_id
-activation_key
-source_spec_id
-biomarker or domain
-package_id
-runtime reachability
-current firing status
-launch relevance
-provenance status
-explicit lineage availability
-WHY authority type
-medical-review requirement
-recommended cohort disposition
-```
-
-Allowed dispositions:
-
-```text
-INCLUDE
-EXCLUDE
-DEFER
-REQUIRES_LINEAGE
-REQUIRES_MEDICAL_REVIEW
-UNVERIFIABLE
-```
-
-Do not estimate silently.
-
-### 2. Residual identity exposure
-
-Verify live exposure for:
-
-```text
-interpretation_display_layer_publish_v1.py
-domain_score_assembler.py
-narrative_report_compiler_v1.py
-intervention_selector_v1.py
-signal_interaction_builder.py
-```
-
-For each surface state:
-
-```text
-file and function
-current keying behaviour
-whether frame collapse is possible
-which active multi-frame families can reach it
-whether the behaviour is launch-critical
-whether a full behaviour fix or smaller hardening package is justified
-```
-
-Do not assume every identified code smell has current live exposure.
-
-### 3. Provenance-blocked runtime cohort
-
-Enumerate every launch-critical package that is:
-
-- provenance `BLOCKED`;
-- `beta_eligible_explicit: false`;
-- inferred-only;
-- or otherwise unsuitable for an explicit beta claim.
-
-For each determine:
-
-```text
-can load
-can fire
-can rank
-can appear in user-facing output
-appears in representative or golden output
-canonical research source available
-explicit lineage recoverable
-product impact if suppressed
-medical impact if suppressed
-recommended action
-```
-
-Allowed actions:
-
-```text
-EXTRACT_AND_ATTACH
-KEEP_ACTIVE_WITH_EXPLICIT_LINEAGE
-MAKE_NON_REACHABLE
-EXCLUDE_FROM_BETA_COHORT
-DEFER_PENDING_RESEARCH
-UNVERIFIABLE
-```
-
-Do not remove anything in this package.
-
-### 4. WHY migration pilot cohort
-
-Define a bounded representative pilot for the WHY convergence proof.
-
-The pilot must be large enough to test:
-
-- single-frame and multi-frame signals;
-- current compiled and legacy authority paths;
-- consumer and clinician outputs;
-- provenance and replay;
-- medical-review workflow;
-- legacy retirement.
-
-For each proposed pilot item record:
-
-```text
-signal_id
-activation frames
-current WHY authority
-canonical research availability
-existing medical review
-new medical review required
-migration complexity
-reason for inclusion
-```
-
-Do not default to all 40 legacy hypotheses.
-
-### 5. Medical-review viability
-
-Confirm:
-
-- medical-review owner;
-- review inputs;
-- review output format;
-- expected decision route;
-- unresolved dependencies;
-- whether the pilot can be completed within the approved programme window.
-
-Do not invent availability or commitment.
-
-If capacity is not evidenced, mark it unresolved.
-
-### 6. Programme ceilings
-
-Propose explicit values for human approval:
-
-```text
-maximum planned architecture packages
-maximum unplanned follow-on packages
-maximum material scope growth per package
-maximum programme duration
-maximum engineering effort
-maximum medical-review effort
-lineage failure threshold
-```
-
-The existing plan already fixes:
-
-```text
-maximum unplanned mandatory packages: 1
-maximum unauthorised material scope growth: 25%
-```
-
-Do not change those without explicit justification.
-
-## Required outputs
-
-Create:
-
-```text
 docs/architecture/HEALTHIQ_AI_V5_CONTROLLED_BETA_ARCHITECTURE_COHORT.md
 docs/architecture/HEALTHIQ_AI_V5_CONVERGENCE_VIABILITY_ASSESSMENT.md
 docs/architecture/HEALTHIQ_AI_V5_WHY_MIGRATION_PILOT_COHORT.md
+docs/architecture/HEALTHIQ_AI_OPEN_ARCHITECTURE_OBLIGATIONS_CC.md
+docs/architecture/HEALTHIQ_AI_ARCHITECTURE_RECONCILIATION_VARIANCE_CC_VS_CURSOR.md
+docs/architecture/ADR-RT-IDENTITY-PROV-001_activation_frame_and_provenance_integrity.md
 ```
 
-### Controlled-beta cohort
-
-Include:
-
-- exact cohort inventory;
-- inclusions and exclusions;
-- activation-frame inventory;
-- provenance and reachability status;
-- launch relevance;
-- unresolved evidence.
-
-### Viability assessment
-
-Include:
-
-- identity exposure findings;
-- provenance-blocked runtime findings;
-- product impact of suppression;
-- canonical lineage recoverability;
-- medical-review viability;
-- proposed programme ceilings;
-- kill-criteria assessment;
-- decision.
-
-### WHY pilot cohort
-
-Include:
-
-- exact pilot;
-- selection rationale;
-- medical-review dependencies;
-- architecture coverage;
-- exclusions;
-- pilot success criteria.
-
-## Decision
-
-Issue exactly one decision:
+Inspect current production code and tests for:
 
 ```text
-GO
-REDESIGN
-V6
+backend/core/analytics/interpretation_display_layer_publish_v1.py
+backend/core/analytics/domain_score_assembler.py
+backend/core/analytics/narrative_report_compiler_v1.py
+backend/core/analytics/intervention_selector_v1.py
+backend/core/analytics/signal_interaction_builder.py
 ```
 
-### GO
+Resolve actual paths where names differ.
 
-Use only if:
+Also inspect the existing shared activation-identity helpers and tests before creating new abstractions.
 
-- the launch-critical cohort is isolatable;
-- identity scope is bounded;
-- provenance lineage or safe exclusion is feasible;
-- the WHY pilot is bounded;
-- medical-review route is credible;
-- programme ceilings can be set.
+## Gate 0 pressure set
 
-### REDESIGN
+Use the exact multi-frame pressure-set cohort identified by Gate 0.
 
-Use if v5 still appears salvageable but the proposed package sequence or cohort must change before implementation.
+At minimum verify the families and frames recorded in:
 
-State the exact revised sequence.
+```text
+docs/architecture/HEALTHIQ_AI_V5_CONTROLLED_BETA_ARCHITECTURE_COHORT.md
+```
 
-### V6
+Do not substitute a smaller synthetic-only set.
 
-Use if any kill criterion is already met, including:
+## Phase 1 — Exposure and design confirmation
 
-- cohort isolation failure;
-- unrecoverable canonical lineage at material scale;
-- unavoidable estate-wide disruption;
-- no executable WHY pilot;
-- architecture scope already exceeds the approved ceiling.
+Before implementation, document for each of the five surfaces:
 
-## Quantitative requirements
-
-Report verified counts where possible:
-
-- proposed beta signal families;
-- activation frames;
-- active multi-frame families in the cohort;
-- exposed identity surfaces;
-- blocked launch-critical packages;
-- blocked packages currently reachable;
-- packages requiring lineage extraction;
-- packages recommended for suppression;
-- proposed WHY pilot signals and frames;
-- medical reviews required.
-
-Where a count is not reliable, state why.
-
-## STOP conditions
-
-STOP and escalate if:
-
-1. latest `main` cannot be identified;
-2. the planning paper is missing or not merged;
-3. any of the five identity surfaces cannot be inspected;
-4. runtime reachability cannot be verified;
-5. canonical research sources cannot be located for the proposed cohort;
-6. cohort membership requires a new medical or product policy decision;
-7. medical-review ownership cannot be established;
-8. repository state is not clean at package start;
-9. verification would require runtime changes.
-
-## Acceptance criteria
-
-- [ ] Exact controlled-beta architecture cohort is documented.
-- [ ] All five identity surfaces have verified exposure findings.
-- [ ] Provenance-blocked runtime cohort is fully enumerated.
-- [ ] Product and medical impact of suppression is recorded.
-- [ ] Canonical lineage recoverability is assessed.
-- [ ] WHY migration pilot is bounded and representative.
-- [ ] Medical-review viability is assessed honestly.
-- [ ] Programme ceilings are proposed.
-- [ ] Kill criteria are explicitly tested.
-- [ ] GO / REDESIGN / V6 decision is issued.
-- [ ] No runtime, schema, test or medical-content files are changed.
-- [ ] No Package 1 implementation prompt is authored.
-- [ ] No beta-readiness declaration is made.
-
-## Verification report
+```text
+file
+function or class
+current keying
+frame-destructive behaviour
+intentional family-level behaviour, if any
+active pressure-set families that reach it
+required change
+compatibility risk
+test strategy
+```
 
 Create:
 
 ```text
-docs/audit-papers/ARCH-CONV-GATE0_implementation_and_verification_report.md
+docs/architecture/ARCH-CONV-PKG1_frame_identity_surface_design.md
 ```
 
-Include:
+## STOP Gate 1
+
+STOP before implementation if:
+
+- any surface requires choosing one medical frame over another;
+- a new clinical priority policy is required;
+- the apparent collapse is an intentional, safe family-level aggregation and changing it would alter approved product meaning;
+- the required fix expands into provenance, WHY, prose, PSI, signal thresholds or frontend inference;
+- Gate 0 pressure-set evidence cannot be reproduced;
+- Package 2 eligibility decisions would be required to make Package 1 tests pass.
+
+Record the issue and do not invent policy.
+
+## Required behaviour
+
+### 1. Interpretation display publication
+
+Ensure distinct activation frames are not deduplicated, joined or selected by bare `signal_id`.
+
+Where display-level family grouping is intentional:
+
+- preserve every contributing `activation_key`;
+- retain deterministic ordering;
+- expose explicit family aggregation metadata;
+- do not discard frame-level evidence.
+
+### 2. Domain score assembly
+
+Ensure domain scoring does not silently collapse distinct activation frames.
+
+If domain scoring is intentionally family-based:
+
+- use an explicit governed aggregation step;
+- retain frame membership and provenance;
+- prove that duplicate frame counting cannot inflate scores unintentionally;
+- distinguish frame-preservation from score aggregation.
+
+### 3. Narrative report compilation
+
+Remove any blanking, dropping or replacement of a resolved `activation_key`.
+
+Narrative lead selection must:
+
+- preserve the selected frame;
+- remain deterministic;
+- avoid falling back to bare `signal_id` when a frame is available;
+- fail safely when frame identity is ambiguous;
+- not introduce new medical prose selection.
+
+### 4. Intervention selection
+
+Ensure intervention matching and deduplication are frame-safe.
+
+Do not:
+
+- select interventions using only `signal_id` where frames differ;
+- invent frame-specific intervention policy;
+- expose intervention content for unsupported frames.
+
+Where intervention authority is family-level, label and test that scope explicitly.
+
+### 5. Signal interaction builder
+
+Correct the partial migration.
+
+At minimum:
+
+- graph-node identity must not use bare `signal_id` where distinct frames coexist;
+- confidence lookup must be frame-safe;
+- interaction edges must preserve participating `activation_key` values;
+- family-level interaction logic must be explicit rather than accidental;
+- output metadata must reflect actual internal identity behaviour.
+
+Do not treat `participating_activation_keys` output decoration as sufficient.
+
+## Shared implementation rules
+
+- Prefer one canonical shared identity/index helper over five bespoke mappings.
+- Reuse Package 2 identity contracts.
+- Preserve backward compatibility for genuine single-frame families.
+- Do not alter signal activation or thresholds.
+- Do not create frontend medical-selection behaviour.
+- Deterministic ordering is mandatory.
+- Ambiguous or duplicate frame identity must fail closed.
+- Family-level aggregation must never destroy frame-level auditability.
+
+## Tests
+
+At minimum prove:
+
+1. two frames sharing one `signal_id` remain distinct across all five surfaces;
+2. interaction nodes and confidence maps are keyed frame-safely;
+3. narrative lead selection retains the correct `activation_key`;
+4. display publication preserves all contributing frames;
+5. domain scoring does not double-count or collapse frames silently;
+6. intervention selection does not borrow another frame’s intervention;
+7. intentional family-level aggregation preserves member activation keys;
+8. ambiguous frame identity fails safely;
+9. repeated runs produce identical ordering and outputs;
+10. single-frame behaviour remains compatible;
+11. all Gate 0 pressure-set families are exercised;
+12. deliberately invalid fixtures fail the relevant validation gate.
+
+Run relevant existing:
+
+- identity/provenance tests;
+- signal interaction tests;
+- domain scoring tests;
+- narrative compiler tests;
+- intervention selector tests;
+- report and DTO tests;
+- golden panel tests;
+- replay/auditability tests;
+- architecture validation gate;
+- NO-LLM tests;
+- frontend type/render tests where DTOs change.
+
+## Validation gate
+
+Extend the existing architecture validation flow only if needed to detect residual bare-`signal_id` collapse on these five surfaces.
+
+The gate must be specific and executable, not source-text-only where behavioural verification is possible.
+
+It must fail on a deliberately invalid multi-frame fixture.
+
+## Forbidden scope
+
+Do not:
+
+- change provenance eligibility or runtime reachability;
+- add or attach `source_spec_id`;
+- suppress packages;
+- migrate WHY assets;
+- edit medical hypotheses;
+- create prose;
+- activate modifiers;
+- wire PSI;
+- enable Gemini;
+- change signal thresholds or activation logic;
+- redesign DTOs beyond additive identity metadata required for correctness;
+- redesign the frontend;
+- declare architecture convergence or beta readiness.
+
+## Deliverables
+
+Create:
+
+```text
+docs/architecture/ARCH-CONV-PKG1_frame_identity_surface_design.md
+docs/audit-papers/ARCH-CONV-PKG1_implementation_and_verification_report.md
+```
+
+Update the BUILD register with:
+
+- package outcome;
+- exact surfaces closed;
+- pressure-set coverage;
+- tests and gates;
+- unresolved items;
+- no beta-readiness claim.
+
+## Acceptance criteria
+
+- [ ] All five surfaces were assessed against live code.
+- [ ] STOP Gate 1 passed or escalated.
+- [ ] No frame-destructive bare-`signal_id` logic remains on the five launch-path surfaces.
+- [ ] Interaction node and confidence identity are genuinely frame-safe.
+- [ ] Intentional family-level aggregation is explicit and auditable.
+- [ ] Narrative lead frame identity is preserved.
+- [ ] Domain scoring cannot silently collapse or double-count frames.
+- [ ] Intervention selection cannot borrow across frames.
+- [ ] Gate 0 pressure-set families are covered.
+- [ ] Determinism and backward compatibility are proven.
+- [ ] Relevant architecture gates and tests pass.
+- [ ] No provenance, WHY, prose, PSI, Gemini or threshold scope entered.
+- [ ] No architecture-completion or beta-readiness claim was made.
+
+## STOP conditions
+
+STOP if:
+
+1. a medical frame-priority rule is required;
+2. any fix requires changing signal firing or thresholds;
+3. package scope grows by more than 25% without human reauthorisation;
+4. more than one unplanned mandatory follow-on package is identified;
+5. Package 2 provenance decisions become a prerequisite;
+6. a launch-critical behaviour regression cannot be explained and approved;
+7. the five-surface obligation cannot be closed without estate-wide redesign;
+8. required gates fail for an unexplained reason.
+
+## Gate 1 output
+
+At completion, recommend exactly one:
+
+```text
+GO
+CORRECT
+STOP
+V6
+```
+
+Definitions:
+
+- `GO`: Package 1 obligation is closed; proceed to Package 2.
+- `CORRECT`: one bounded correction is required.
+- `STOP`: convergence approach is no longer credible without redesign.
+- `V6`: kill criteria are met; freeze v5 architecture changes.
+
+## Verification report
+
+The report must include:
 
 - baseline SHA;
 - branch;
-- evidence read;
-- files inspected;
-- commands used;
-- quantitative totals;
+- files changed;
+- per-surface before/after behaviour;
+- pressure-set coverage;
+- test commands and exit codes;
+- validation-gate evidence;
 - acceptance-criteria table;
 - STOP-condition assessment;
-- final decision and rationale;
+- Gate 1 recommendation;
 - unresolved limitations.
 
 Do not merge without explicit human authority.

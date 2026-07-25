@@ -324,6 +324,10 @@ class ConsumerDomainScoreV1(BaseModel):
         description="Domain confidence; emitted together with score (no score-without-confidence)",
     )
     active_signal_ids: List[str] = Field(default_factory=list, description="Active governed signals in this domain")
+    active_activation_keys: List[str] = Field(
+        default_factory=list,
+        description="ARCH-CONV-PKG1 — activation frames for active_signal_ids (frame-preserving audit companion)",
+    )
     primary_idl_record_id: Optional[str] = Field(
         default=None,
         description="Primary Wave-1 IDL ph_* id for narrative assembly, if any",

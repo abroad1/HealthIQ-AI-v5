@@ -47,3 +47,11 @@ class InterpretationDisplayLayerBundleV1(BaseModel):
 
     schema_version: str = Field(default="1.0.0", description="IDL bundle schema version")
     records: List[InterpretationDisplayRecordV1] = Field(default_factory=list)
+    participating_activation_keys: List[str] = Field(
+        default_factory=list,
+        description="ARCH-CONV-PKG1 — fired activation frames contributing to IDL severity (frame audit)",
+    )
+    aggregation_scope: Optional[str] = Field(
+        default=None,
+        description="When set to signal_family, severity uses explicit family aggregation with retained frames",
+    )

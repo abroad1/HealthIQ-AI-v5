@@ -148,6 +148,7 @@ def build_signal_interactions_v1(
         confidence_by_signal_family,
         family_fired_states,
         participating_activation_keys,
+        participating_activation_keys_by_signal_id,
     )
 
     fired = family_fired_states(signal_results, valid_states=_VALID_SIGNAL_STATES)
@@ -156,6 +157,11 @@ def build_signal_interactions_v1(
         signal_results, valid_states=_VALID_SIGNAL_STATES
     )
     present_ids = sorted(sid for sid in fired.keys() if sid in node_ids)
+    node_frame_participation = participating_activation_keys_by_signal_id(
+        signal_results,
+        valid_states=_VALID_SIGNAL_STATES,
+        signal_ids=present_ids,
+    )
 
     present_set = set(present_ids)
     active_edges: List[Dict[str, Any]] = []
@@ -226,11 +232,16 @@ def build_signal_interactions_v1(
                 )
             chain_confidence_values.append(float(confidence))
         chain_confidence = _median(chain_confidence_values)
+        chain_frame_keys: List[str] = []
+        for signal_id in path:
+            chain_frame_keys.extend(node_frame_participation.get(signal_id, []))
         interaction_summary.append(
             {
                 "chain_id": f"chain_{idx:03d}",
                 "priority_rank": idx,
                 "signals_involved": list(path),
+                "participating_activation_keys": sorted(set(chain_frame_keys)),
+                "aggregation_scope": "signal_family",
                 "chain_summary_text": f"{chain_text} (edge evidence: {evidence_text})",
                 "confidence": round(chain_confidence, 4),
                 "chain_confidence": round(chain_confidence, 4),
@@ -243,6 +254,7 @@ def build_signal_interactions_v1(
             "nodes": present_ids,
             "edges": active_edges,
             "participating_activation_keys": activation_keys,
+            "node_frame_participation": node_frame_participation,
             "aggregation_scope": "signal_family",
         },
         "interaction_chains": interaction_chains,

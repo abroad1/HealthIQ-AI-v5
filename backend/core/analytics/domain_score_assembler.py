@@ -288,6 +288,7 @@ def _bio_confidence_tier(panel: Set[str]) -> str:
 
 
 def _collect_signal_ids(rows: List[Dict[str, Any]], pred) -> List[str]:
+    """Family-level active signal ids (named aggregation). Prefer with _collect_activation_keys."""
     out: List[str] = []
     for row in rows:
         if not pred(row):
@@ -296,6 +297,20 @@ def _collect_signal_ids(rows: List[Dict[str, Any]], pred) -> List[str]:
         if sid and sid not in out:
             out.append(sid)
     return out
+
+
+def _collect_activation_keys(rows: List[Dict[str, Any]], pred) -> List[str]:
+    """Frame-preserving companion to _collect_signal_ids under the same domain predicate."""
+    from core.knowledge.signal_result_index_v1 import activation_key_or_empty
+
+    keys: List[str] = []
+    for row in rows:
+        if not pred(row):
+            continue
+        key = activation_key_or_empty(row)
+        if key:
+            keys.append(key)
+    return sorted(set(keys))
 
 
 def _cluster_confidence_map(insight_graph: Any) -> Dict[str, float]:
@@ -634,6 +649,7 @@ def assemble_consumer_domain_scores_v1(
         tier = _merge_tier_rail_and_domain(tier_rail, tier_doc)
         missing = _missing_for_rail(hss, _RAIL_CARDIOVASCULAR)
         sids = _collect_signal_ids(sig_rows, _is_wave1_cardiovascular)
+        akeys = _collect_activation_keys(sig_rows, _is_wave1_cardiovascular)
         ev: Dict[str, Any] = {
             "layer3_system_pressure_id": "cardiovascular__system_pressure",
             "burden_capacity_cardiovascular": cardio_cap,
@@ -669,6 +685,7 @@ def assemble_consumer_domain_scores_v1(
             band_label=band,
             confidence_tier=cast(ConfidenceTierV1, tier),
             active_signal_ids=sids,
+            active_activation_keys=akeys,
             primary_idl_record_id=idl,
             missing_marker_ids=missing,
             source_track="base:scoring_rail:cardiovascular;context:optional_burden_capacity:cardiovascular;narrative:primary_idl_single_authority_d6",
@@ -708,6 +725,7 @@ def assemble_consumer_domain_scores_v1(
         tier = _merge_tier_rail_and_domain(tier_rail, tier_doc)
         missing = _missing_for_rail(hss, _RAIL_METABOLIC)
         sids = _collect_signal_ids(sig_rows, _is_wave1_blood_sugar)
+        akeys = _collect_activation_keys(sig_rows, _is_wave1_blood_sugar)
         idl = _select_primary_idl(idl_bundle, _IDL_ORDER_MET)
         caveats: List[str] = []
         ev: Dict[str, Any] = {
@@ -744,6 +762,7 @@ def assemble_consumer_domain_scores_v1(
             band_label=band,
             confidence_tier=cast(ConfidenceTierV1, tier),
             active_signal_ids=sids,
+            active_activation_keys=akeys,
             primary_idl_record_id=idl,
             missing_marker_ids=missing,
             source_track="base:scoring_rail:metabolic(blood_sugar);narrative:primary_idl_single_authority_d6",
@@ -791,6 +810,7 @@ def assemble_consumer_domain_scores_v1(
                 missing.append("bilirubin")
         missing = sorted(set(missing))
         sids = _collect_signal_ids(sig_rows, _is_wave1_liver)
+        akeys = _collect_activation_keys(sig_rows, _is_wave1_liver)
         idl = _select_primary_idl(idl_bundle, _IDL_ORDER_LIV)
         caveats: List[str] = list(_LIVER_CAVEAT_USER_LINES)
         _l_head = headline_liv(band)
@@ -842,6 +862,7 @@ def assemble_consumer_domain_scores_v1(
             band_label=band,
             confidence_tier=cast(ConfidenceTierV1, tier),
             active_signal_ids=sids,
+            active_activation_keys=akeys,
             primary_idl_record_id=idl,
             missing_marker_ids=missing,
             source_track=(
@@ -874,6 +895,7 @@ def assemble_consumer_domain_scores_v1(
         tier = cast(ConfidenceTierV1, _kidney_confidence_tier(panel_biomarker_ids))
         missing = _missing_for_rail(hss, _RAIL_KIDNEY)
         sids = _collect_signal_ids(sig_rows, _is_wave1_kidney)
+        akeys = _collect_activation_keys(sig_rows, _is_wave1_kidney)
         idl = _select_primary_idl(idl_bundle, _IDL_ORDER_REN)
         ev: Dict[str, Any] = {
             "layer3_system_pressure_id": "renal__system_pressure",
@@ -901,6 +923,7 @@ def assemble_consumer_domain_scores_v1(
             band_label=band,
             confidence_tier=tier,
             active_signal_ids=sids,
+            active_activation_keys=akeys,
             primary_idl_record_id=idl,
             missing_marker_ids=missing,
             source_track="base:scoring_rail:kidney;narrative:primary_idl_single_authority_p1_2",
@@ -932,6 +955,7 @@ def assemble_consumer_domain_scores_v1(
         tier = cast(ConfidenceTierV1, _bio_confidence_tier(panel_biomarker_ids))
         missing = _missing_for_rail(hss, _RAIL_CBC)
         sids = _collect_signal_ids(sig_rows, _is_wave1_blood_iron_oxygen)
+        akeys = _collect_activation_keys(sig_rows, _is_wave1_blood_iron_oxygen)
         idl = None
         ev: Dict[str, Any] = {
             "layer3_system_pressure_id": "hematological__system_pressure",
@@ -959,6 +983,7 @@ def assemble_consumer_domain_scores_v1(
             band_label=band,
             confidence_tier=tier,
             active_signal_ids=sids,
+            active_activation_keys=akeys,
             primary_idl_record_id=idl,
             missing_marker_ids=missing,
             source_track="base:scoring_rail:cbc;narrative:primary_idl_single_authority_p1_3",
@@ -990,6 +1015,7 @@ def assemble_consumer_domain_scores_v1(
         tier = cast(ConfidenceTierV1, _thyroid_confidence_tier(panel_biomarker_ids))
         missing = _missing_for_rail(hss, _RAIL_HORMONAL)
         sids = _collect_signal_ids(sig_rows, _is_wave1_thyroid)
+        akeys = _collect_activation_keys(sig_rows, _is_wave1_thyroid)
         idl = None
         ev: Dict[str, Any] = {
             "layer3_system_pressure_id": "thyroid__system_pressure",
@@ -1017,6 +1043,7 @@ def assemble_consumer_domain_scores_v1(
             band_label=band,
             confidence_tier=tier,
             active_signal_ids=sids,
+            active_activation_keys=akeys,
             primary_idl_record_id=idl,
             missing_marker_ids=missing,
             source_track="base:scoring_rail:hormonal;narrative:lab_range_only_p1_22",

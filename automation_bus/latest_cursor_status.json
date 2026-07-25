@@ -1,10 +1,10 @@
 {
-  "branch": "feature/arch-conv-gate0-cohort-viability",
+  "branch": "feature/arch-conv-pkg1-frame-identity-closure",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-25T22:32:05Z",
-  "cursor_started_utc": "2026-07-25T22:24:09Z",
-  "head_sha": "4139a0566a40137a254fc0fa8c8e50e4bfd77305",
+  "cursor_completed_utc": "2026-07-25T23:06:18Z",
+  "cursor_started_utc": "2026-07-25T23:03:58Z",
+  "head_sha": "dccc94805c0048a25c90791f1c73df3af1cb9797",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "ARCH-CONV-GATE0"
+  "work_id": "ARCH-CONV-PKG1"
 }
