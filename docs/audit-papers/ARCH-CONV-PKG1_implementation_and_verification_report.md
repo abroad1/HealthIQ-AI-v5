@@ -28,6 +28,7 @@ Closed the five verified launch-path activation-frame collapse surfaces so disti
 | `backend/core/models/results.py` | ConsumerDomainScoreV1 additive field |
 | `backend/core/analytics/narrative_report_compiler_v1.py` | Lead frame preservation on graph path |
 | `backend/core/analytics/intervention_selector_v1.py` | activation_key_refs + dedup union |
+| `backend/core/contracts/report_v1.py` | ReportInterventionV1.activation_key_refs (additive; required for report compile) |
 | `backend/core/analytics/signal_interaction_builder.py` | Per-node/per-chain frame participation |
 | `backend/scripts/validate_launch_path_frame_identity_gate.py` | Behavioural gate |
 | `backend/scripts/run_architecture_validation_gate.py` | Wire new gate |
