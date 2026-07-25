@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-gov-baseline-1-programme-baseline-governance-reset",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-07-25T10:18:28Z",
   "cursor_started_utc": "2026-07-25T10:06:07Z",
-  "head_sha": "7aac586a086366e845b37d0f28f15d9bd3330cef",
+  "head_sha": "bba36c5cbaa2c4d9ea31463521332d7dd7588899",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-GOV-BASELINE-1"
 }
