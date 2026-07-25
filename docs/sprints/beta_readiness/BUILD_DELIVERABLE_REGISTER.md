@@ -846,6 +846,8 @@ Entries should not list every file touched or every non-change.
 - Launch-critical kb47 packages remain batch-JSON sourced → provenance BLOCKED / not beta-eligible for explicit-lineage claims until inv_ extraction.
 - Family-level legacy WHY still labelled family_level when multi-frame; full frame-specific compiled WHY migration is later work.
 - Stale PSI activation-readiness inventory tests remain a disclosed carry-forward unless counts drift from this package.
+- Four additional launch-path collapse surfaces (interpretation display publish, domain score assembler, narrative lead resolution, intervention selector) remain for follow-on identity hardening.
+- Audit correction refreshed clinician AB/VR fixtures for additive `root_causes` / null multi-finding `root_cause`; expanded unit matrix in `test_arch_rt_identity_prov_1.py`.
 
 ### Blockers / risks
 - Controlled beta must not claim explicit provenance for batch-JSON launch packages until investigation-spec extraction lands.
