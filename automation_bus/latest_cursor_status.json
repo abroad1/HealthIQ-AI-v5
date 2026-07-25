@@ -1,8 +1,8 @@
 {
   "branch": "feature/arch-conv-pkg1-frame-identity-closure",
   "bus_version": "1.2",
-  "cursor_started_utc": "2026-07-25T22:53:05Z",
-  "head_sha": "aacd52b10ffdd8d355cf778fdb45ad52d2188f99",
+  "cursor_started_utc": "2026-07-25T23:03:58Z",
+  "head_sha": "2f025aab31d25c7aa51bdab0bacee06ac916dbea",
   "raw_stop_condition": null,
   "status": "IN_PROGRESS",
   "work_id": "ARCH-CONV-PKG1"
