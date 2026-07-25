@@ -1,10 +1,12 @@
 schema_name: "HealthIQ Knowledge Package Manifest"
-schema_version: "1.0.0"
+schema_version: "1.1.0"
 status: "LOCKED"
 
 description: >
   Deterministic schema defining the structure of Knowledge Bus
-  promotion packages.
+  promotion packages. Version 1.1.0 adds optional provenance fields
+  required by ADR-RT-004 / ADR-RT-IDENTITY-PROV-001 without invalidating
+  historical packages that omit them.
 
 required_fields:
   - package_id
@@ -64,9 +66,44 @@ optional_fields:
     type: string
     pattern: "^v[0-9]+\\.x$"
 
+  source_spec_id:
+    type: string
+    description: >
+      Investigation-spec frame identity when explicitly evidenced.
+      Presence alone does not imply EXPLICIT_SPEC provenance status —
+      status classification requires a resolvable investigation-spec YAML
+      (ADR-RT-IDENTITY-PROV-001 §E).
+
+  activation_key:
+    type: string
+    description: >
+      Optional recorded activation_key = signal_id::source_spec_id for the
+      package's primary frame (ADR-RT-002).
+
+  legacy_retained:
+    type: boolean
+    description: >
+      ADR-RT-004 migration class. true = retained for parity; false = fully
+      traceable governed compile.
+
+  compile_run_id:
+    type: string
+    description: Optional link to a compile-manifest run id.
+
+  source_document:
+    type: string
+    description: Research path or batch JSON path (existing field; now schema-declared).
+
+  source_document_hash:
+    type: string
+    description: Content hash of source_document when regenerated.
+
 forward_requirements:
   behavioural_impact:
     required_for_new_packages: true
   engine_compatibility:
     required_for_new_packages: false
     authoritative_value: "v5.x"
+  source_spec_id:
+    required_for_new_packages: false
+    required_when: "package claims investigation-spec provenance (ADR-RT-004)"

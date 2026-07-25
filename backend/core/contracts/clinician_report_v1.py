@@ -49,6 +49,9 @@ class HypothesisV1(BaseModel):
 class RootCauseFindingV1(BaseModel):
     model_config = ConfigDict(extra="forbid")
     signal_id: str
+    activation_key: str = ""
+    source_spec_id: str = ""
+    authority_scope: str = "family_level"
     signal_state: str
     signal_confidence: float = Field(..., ge=0.0, le=1.0)
     primary_metric: str
@@ -106,6 +109,9 @@ class Page1SummaryBlockV1(BaseModel):
 class ClinicianSectionsV1(BaseModel):
     model_config = ConfigDict(extra="forbid")
     page1: Page1SummaryBlockV1
+    # Additive multi-finding contract (ADR-RT-IDENTITY-PROV-001 §C).
+    root_causes: List[RootCauseFindingV1] = Field(default_factory=list)
+    # Legacy singleton: set only when len(root_causes)==1; otherwise null (no silent first pick).
     root_cause: Optional[RootCauseFindingV1] = None
 
     # In clinician report, confirmatory tests are consolidated list (post-suppression)

@@ -12,6 +12,7 @@ class SignalResult(BaseModel):
     activation_key: str
     source_spec_id: str
     package_id: str
+    provenance_status: str = "LEGACY_INFERRED"
     system: str
     signal_state: str
     signal_value: float

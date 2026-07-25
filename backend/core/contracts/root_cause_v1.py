@@ -49,6 +49,9 @@ class RootCauseFindingV1(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     signal_id: str
+    activation_key: str = ""
+    source_spec_id: str = ""
+    authority_scope: str = "family_level"  # frame_specific | family_level | unresolved
     primary_metric: str
     signal_state: str
     signal_confidence: float
