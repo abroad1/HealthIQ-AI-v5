@@ -45,7 +45,9 @@ validate_compile_manifest = _validate_mod.validate_compile_manifest
 
 def test_all_packages_classified():
     rows = scan_all_package_provenance()
-    assert len(rows) == 186
+    # Estate count from package_provenance_scan_v1 over knowledge_bus/packages/
+    # (authoritative live scan — refresh when packages are added/removed).
+    assert len(rows) == 191
     for row in rows:
         assert row.classification in ARCH_RT5D_CLASSIFICATIONS
 
@@ -54,11 +56,11 @@ def test_classification_counts_match_inventory():
     rows = scan_all_package_provenance()
     counts = classification_counts(rows)
     assert counts["source_document_derived"] == 31
-    assert counts["batch_json_blocked_pending_spec_extraction"] == 142
+    assert counts["batch_json_blocked_pending_spec_extraction"] == 147
     assert counts["architecture_doc_source_blocked"] == 11
     assert counts["provenance_gap"] == 1
     assert counts["retire_candidate"] == 1
-    assert sum(counts.values()) == 186
+    assert sum(counts.values()) == 191
 
 
 def test_inferred_not_treated_as_explicit_on_manifests():
@@ -69,7 +71,7 @@ def test_inferred_not_treated_as_explicit_on_manifests():
 def test_kb52c_packages_classified_batch_blocked():
     rows = scan_all_package_provenance()
     kb52c = [r for r in rows if r.package_id.startswith("pkg_kb52c_")]
-    assert len(kb52c) == 67
+    assert len(kb52c) == 72
     assert all(r.classification == "batch_json_blocked_pending_spec_extraction" for r in kb52c)
 
 
@@ -148,7 +150,8 @@ def test_manifest_refs_resolve_from_compiled_artefacts():
 
 def test_estate_index_covers_launch_artefacts():
     payload = yaml.safe_load(estate_index_path().read_text(encoding="utf-8"))
-    assert len(payload["card_evidence_artefacts"]) == 7
+    # Authoritative count from knowledge_bus/compiled/estate_index_v1.yaml
+    assert len(payload["card_evidence_artefacts"]) == 10
     assert payload["compiled_hypothesis_artefacts"][0]["runtime_authority"] == "runtime_promoted_compiled"
 
 

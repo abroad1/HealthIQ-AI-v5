@@ -798,6 +798,36 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## ARCH-GOV-BASELINE-1 — Programme Baseline and Governance Reset
+
+**Status:** Complete  
+**Date closed:** 2026-07-25  
+**Programme block(s):** Phase 0 — Governance and evidence consolidation  
+
+### Delivered / ticked off
+- Published authoritative maturity baseline: `docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md`.
+- Reconciled `docs/AUTHORITY_MAP.md` to Automation Bus / Knowledge Bus SOP v1.3.1, pre-SOP v0.6.2, Pass 3 protocol DRAFT status, current-state baseline, and audit papers as EVIDENCE.
+- Marked `docs/SPRINT_STATUS.md` superseded/stale; continuity remains BUILD register + baseline.
+- Corrected MR-BATCH-001B completion/output docs: Round 1 benchmark/test-only; not for medical review as promotion route; candidate assets unchanged.
+- Recorded historical governance exceptions for P3-PROSE-DEPTH-1A and MR-BATCH-001B (non-precedential).
+- Refreshed RT-5D provenance and golden-panel stale test expectations to current estate/signatures.
+- Extended `golden_gate.yml` push/PR triggers to include `main` and `develop` while preserving NO-LLM enforcement.
+- No product capability or medical content added.
+
+### Carry-forwards
+- Future Stage 0 planning must start from `HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md`.
+- Pass 3 protocol remains DRAFT pending human governance ratification.
+- Package estate still has zero explicit `source_spec_id` on scanned manifests; multi-frame consumer completeness incomplete; PSI intentionally unwired; controlled beta not authorised.
+- Next implementation sprint must not be selected from this entry alone — use pre-SOP / Stage 0 workflow against the new baseline.
+
+### Blockers / risks
+- None introduced by this governance reset; prior programme blockers remain as documented in the current-state baseline.
+
+### Recommended next sprint
+- Do not select here. Use Stage 0 / pre-SOP workflow against the current-state baseline (planning gate such as `SPRINT-BUILD-PLAN-AUDIT-1` remains a valid planning candidate, not an implementation authorisation).
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

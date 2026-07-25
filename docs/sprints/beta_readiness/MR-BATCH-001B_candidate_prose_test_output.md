@@ -1,6 +1,16 @@
 # MR-BATCH-001B — Candidate Prose Test Output
 
 **Status:** CANDIDATE / TEST-ONLY — not medically approved
+
+> **SUPERSESSION / CONTINUITY NOTE (ARCH-GOV-BASELINE-1, 2026-07-25)**  
+> This output is a **Round 1 benchmark / test fixture only**.  
+> - **Not** medically approved  
+> - **Not** for promotion  
+> - **Not** for production runtime  
+> - **Must not** proceed to medical review as a promotion route  
+> - Useful only as evidence for future Round 2 prose pipeline design  
+> Candidate assets themselves are unchanged.
+
 **Source pack:** `docs/sprints/beta_readiness/MR-BATCH-001B_candidate_prose_assets.yaml`
 **Isolation:** Loaded only via `candidate_test_mode=True` test loader
 
@@ -286,5 +296,8 @@ Kidney filtration is something the body does quietly, continuously, and at a rat
 
 ## Recommended next engineering step
 
-Run medical review on MR-BATCH-001B, then design a promotion/import sprint that maps approved assets into governed packs with runtime selection behind an explicit candidate flag.
+> **SUPERSEDED (ARCH-GOV-BASELINE-1):** Do **not** run medical review of MR-BATCH-001B as a promotion route.  
+> Historical recommendation text is intentionally not regenerated.
+
+**Current disposition:** Round 1 benchmark / test fixture only — not medically approved; not for promotion; not for production runtime; useful only as evidence for future Round 2 prose pipeline design.
 

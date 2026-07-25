@@ -1,5 +1,14 @@
 # MR-BATCH-001B — Candidate Prose Test Import Completion
 
+> **SUPERSESSION / CONTINUITY NOTE (ARCH-GOV-BASELINE-1, 2026-07-25)**  
+> This pack is a **Round 1 benchmark / test fixture only**.  
+> - **Not** medically approved  
+> - **Not** for promotion  
+> - **Not** for production runtime  
+> - **Must not** proceed to medical review as a promotion route  
+> - Useful only as evidence for future Round 2 prose pipeline design  
+> Candidate assets themselves are unchanged. See BUILD_DELIVERABLE_REGISTER MR-BATCH-001B entry and the current-state baseline.
+
 **Work ID:** MR-BATCH-001B-TEST-IMPORT  
 **Date:** 2026-06-29  
 **Branch:** `feature/mr-batch-001b-candidate-prose-test-import`
@@ -67,7 +76,12 @@ python -m pytest backend/tests/unit/test_mr_batch_001b_candidate_prose_test_impo
 
 ## 11. Recommended next step
 
-Medical review of MR-BATCH-001B, then a promotion sprint mapping approved assets into governed packs with explicit runtime candidate flag (still non-public until approved).
+> **SUPERSEDED (ARCH-GOV-BASELINE-1):** Do **not** proceed to medical review or promotion of MR-BATCH-001B.  
+> Historical text retained below for audit trail only.
+
+~~Medical review of MR-BATCH-001B, then a promotion sprint mapping approved assets into governed packs with explicit runtime candidate flag (still non-public until approved).~~
+
+**Current disposition:** Round 1 benchmark / test fixture only — not medically approved; not for promotion; not for production runtime; useful only as evidence for future Round 2 prose pipeline design.
 
 ## 12. Confirmations
 
