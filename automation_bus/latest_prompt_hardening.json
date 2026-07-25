@@ -1,112 +1,96 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "P3-LAYERB-INTEL-1",
+  "work_id": "ARCH-CONV-GATE0",
   "status": "HARDENED",
   "hardening_date": "2026-07-25",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "risk_level": "HIGH",
-  "change_type": "MIXED",
+  "risk_level": "STANDARD",
+  "change_type": "CONTENT",
   "execution_model": "TWO_PHASE_START_FINISH",
   "stage_b_mode": "MODE_2",
-  "medical_review_gate": "REQUIRED",
+  "runtime_change": "NONE",
 
   "verification_mode_used": {
-    "mode": "read shared docs myself (5 required baseline docs, already in context and confirmed undrifted via git log), then forked 2 disjoint discovery clusters",
-    "rationale": "This prompt is discovery-oriented (Phase 1 inventory) rather than citing exact files, so the highest-value hardening work was independently surveying current repository reality across two genuinely disjoint content domains: (1) prose/content registries + modifier catalogue + WHY authority + MR-BATCH isolation, and (2) frontend Layer B DTO consumers. I verified the root-cause/WHY compilation mechanism and Package 2 identity-contract integrity myself since I already had deep working context on those files from the ARCH-RT-IDENTITY-PROV-1 saga. No file was read by more than one party."
+    "mode": "batched parallel calls, no fork",
+    "rationale": "STANDARD/CONTENT, read-only planning package with a bounded, named scope. I already held deep, fresh working context on this exact territory (the 5 identity surfaces, provenance-BLOCKED reachability finding, WHY authority counts) from authoring ARCH-PROG-RECON-1-CC in this same session, so re-verifying against current HEAD via direct grep/glob/git calls was faster and more reliable than forking, and avoided re-deriving context a fork would have had to reconstruct from scratch."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
-    "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type", "stage_b_mode", "knowledge_bus_impact", "medical_review_gate"],
-    "declared_risk_level": "HIGH",
-    "declared_change_type": "MIXED",
-    "behaviour_changes_touch_intelligence_core": "YES — root-cause compilation, compiled hypothesis loading, clinician/narrative report compilation, frame routing are named targets; correctly justifies HIGH",
-    "tests_required": "YES — 14 minimum test items plus a broad regression list",
-    "scope_proportionality": "PASS — HIGH/MIXED with mandatory Stage B Mode 2 design, STOP Gate 1, and a REQUIRED medical-review gate is proportionate to genuine Layer B medical-content and Intelligence Core work",
-    "advisory_duplication_detected": "NO — latest_scope_advisory.md is scoped to P2-1 (Prose Substrate Cohort), unrelated to this work_id",
-    "scope_creep_signals": "One broad discovery clause (\"inspect current production implementations... for: [8 topic areas]\") — legitimate Phase 1 inventory input given the prompt itself requires a migration-cohort inventory as its first deliverable, not open-ended verify-everything language",
+    "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type", "stage_b_mode", "runtime_change"],
+    "declared_risk_level": "STANDARD",
+    "declared_change_type": "CONTENT",
+    "behaviour_changes_touch_intelligence_core": "NO — inspection/read-only of Intelligence Core files (signal_evaluator.py, root_cause_compiler_v1.py, the 5 identity surfaces) for verification only; runtime_change explicitly NONE; consistent with the precedent already accepted for ARCH-PROG-RECON-1-CC (same risk class, same pattern)",
+    "tests_required": "NOT APPLICABLE — CONTENT, no runtime change",
+    "scope_proportionality": "PASS — bounded file list (8 named docs + 5 named code surfaces), explicit STOP gates, explicit anti-creep language ('do not reopen unrelated historical architecture questions already settled', 'do not estimate silently', 'do not default to all 40 legacy hypotheses')",
+    "advisory_duplication_detected": "NO",
+    "scope_creep_signals": "NONE",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
     "required_input_docs": {
-      "status": "CONFIRMED_EXISTS — all 5, and confirmed undrifted since I last read them",
-      "evidence": "HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md, ADR-RT-IDENTITY-PROV-001_activation_frame_and_provenance_integrity.md, ARCH-RT-IDENTITY-PROV-1_launch_critical_provenance_inventory.md, ARCH-RT-IDENTITY-PROV-1_implementation_and_verification_report.md, BUILD_DELIVERABLE_REGISTER.md all confirmed present; git log on each shows no commits since the commits where I originally read their full content (ebb1d43/43c8d6c), so no re-read was needed — only the intervening C1 correction and merge commits occurred, none of which touched these files."
+      "status": "CONFIRMED_EXISTS — all 8",
+      "evidence": "docs/planning-papers/HEALTHIQ_AI_V5_FINAL_ARCHITECTURE_CONVERGENCE_AND_SALVAGE_OR_REBUILD_PLAN.md; docs/architecture/HEALTHIQ_AI_ARCHITECTURE_PROGRAMME_RECONCILIATION.md; _CC.md; HEALTHIQ_AI_OPEN_ARCHITECTURE_OBLIGATIONS.md; _CC.md; HEALTHIQ_AI_ARCHITECTURE_RECONCILIATION_VARIANCE_CC_VS_CURSOR.md; HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md; docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md — all confirmed present via direct Glob."
     },
     "output_paths_correctly_new": {
       "status": "CONFIRMED",
-      "evidence": "Neither docs/architecture/P3-LAYERB-INTEL-1_migration_and_coverage_inventory.md nor docs/audit-papers/P3-LAYERB-INTEL-1_implementation_and_verification_report.md exist yet — correctly new deliverables, not accidental overwrites."
+      "evidence": "None of HEALTHIQ_AI_V5_CONTROLLED_BETA_ARCHITECTURE_COHORT.md, HEALTHIQ_AI_V5_CONVERGENCE_VIABILITY_ASSESSMENT.md, HEALTHIQ_AI_V5_WHY_MIGRATION_PILOT_COHORT.md, or docs/audit-papers/ARCH-CONV-GATE0_implementation_and_verification_report.md exist yet — correctly new deliverables."
     },
     "branch_state": {
-      "status": "CONFIRMED",
-      "evidence": "Both ARCH-RT-IDENTITY-PROV-1 and its C1 correction are merged to main (merge commit 0c90f95). Current branch is main, consistent with a fresh Package 3 start."
+      "status": "CONFIRMED, expected pre-kernel-start state",
+      "evidence": "Current branch is main (HEAD 83e5eec, merge of 'architecture reconciliation and final convergence plan'). Target branch feature/arch-conv-gate0-cohort-viability does not yet exist (git branch --list returned empty) — correct, Cursor must create it at Stage 3 per branch discipline, not before. Working tree shows exactly one modification: automation_bus/latest_cursor_prompt.md itself (the Stage 1 handoff artifact) — no other uncommitted changes, consistent with a clean Stage 1->2 state, not a STOP-condition-8 violation."
     }
   },
 
   "independent_premise_verification": {
-    "compiled_why_pilot_still_exactly_one_signal": {
+    "five_identity_surfaces_claim_still_accurate": {
       "status": "CONFIRMED",
-      "evidence": "backend/core/knowledge/compiled_hypothesis_registry_v1.py: COMPILED_HYPOTHESIS_PILOT_SPECS contains exactly 1 entry (signal_vitamin_d_low, activation_key='signal_vitamin_d_low::inv_vitamin_d_low_deficiency' — already correctly formatted per ADR-RT-002/ADR-RT-IDENTITY-PROV-001). File header explicitly warns 'Pilot-only entries — never append to ROOT_CAUSE_TARGET_SPECS' and 'Must NOT be merged into root_cause_registry_v1.get_root_cause_targets() — import-time [isolation]'. knowledge_bus/compiled/hypotheses/ contains exactly one file: signal_vitamin_d_low.yaml. The legacy YAML root_cause_registry_v1.py has ~35+ separate targets, confirming Scope item 3's 'expand beyond the current pilot' framing is accurate and current — unchanged by ARCH-RT-IDENTITY-PROV-1, which only wrapped identity/provenance around existing selection, not WHY coverage."
+      "evidence": "Direct grep of backend/core/analytics/signal_interaction_builder.py at current HEAD: node_ids (lines 59,66,78,145) and confidence_by_signal (lines 154,221) remain bare-signal_id-keyed; participating_activation_keys (lines 150,155,245,250) is output-metadata only. Exactly matches the prompt's own characterization in Package 1 scope ('output metadata that appears frame-aware while internal logic remains signal_id-keyed'). The other 4 named surfaces (interpretation_display_layer_publish_v1.py, domain_score_assembler.py, narrative_report_compiler_v1.py, intervention_selector_v1.py) were independently verified in this same session during ARCH-PROG-RECON-1-CC and no commits have touched them since (HEAD moved only via the reconciliation-doc merge and the convergence-plan merge, both docs-only)."
     },
-    "no_frame_aware_prose_routing_exists_greenfield_confirmed": {
+    "programme_ceilings_already_fixed_values_match_planning_paper": {
       "status": "CONFIRMED",
-      "evidence": "No 'frame_routing'/'prose_routing' code found under backend/core/ (only doc mentions). Actual selection paths inspected: retail explainer attach is keyed by bare biomarker_id (retail_explainer_assembly_v1.py); compiled hypothesis promotion gate is keyed by bare signal_id against a hardcoded frozenset (compiled_hypothesis.py:18,281). activation_key/source_spec_id currently exist only as static identity fields on CompiledHypothesisArtefact, not as a runtime prose-selection key anywhere. Deliverable A (frame-routing contract) is genuinely greenfield, as the prompt implies."
+      "evidence": "Prompt states 'maximum unplanned mandatory packages: 1' and 'maximum unauthorised material scope growth: 25%' as already fixed by the existing plan. docs/planning-papers/HEALTHIQ_AI_V5_FINAL_ARCHITECTURE_CONVERGENCE_AND_SALVAGE_OR_REBUILD_PLAN.md Section 11.5 states identically: 'more than one unplanned mandatory architecture package' and 'any package expands by more than 25% beyond its approved material scope without explicit human reauthorisation.' No drift between the prompt and its cited authority."
     },
-    "modifier_catalogue_draft_only_no_binder_exists": {
-      "status": "CONFIRMED, with an updated count",
-      "evidence": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml now has 42 modifier_id entries (grown from 35 at the time of the earlier independent audit), all runtime_active: false, top-level status: draft_governance_non_runtime. A companion file (batch2_androgen_context_modifier_binding_v1.yaml) is similarly non-runtime. Repo-wide search for 'modifier_binder'/'modifier_binding'/'ModifierBind' under backend/core/ returned zero hits — Deliverable B (modifier binder) is genuinely greenfield, not a partial extension of existing code."
-    },
-    "mr_batch_001b_production_isolation_reconfirmed": {
+    "read_only_scope_matches_planning_paper_gate_0_definition": {
       "status": "CONFIRMED",
-      "evidence": "Exact grep for 'MR-BATCH-001B|MR_BATCH_001B|candidate_test_mode' across backend/core/, backend/app/, frontend/app/ returned zero hits. All references confined to backend/tests/support/, backend/tests/unit/, and docs/. Consistent with Phase 1 item 5's required confirmation."
-    },
-    "frontend_layer_b_consumption_mostly_render_only_one_flagged_exception": {
-      "status": "CONFIRMED with an observation",
-      "evidence": "Nearly all frontend Layer B consumers (DeterministicNarrativeSurface.tsx, ResultsBodyOverview.tsx, ConfirmatoryTestsNextSteps.tsx, WhyThisLeadWonSection.tsx, and the previously-reviewed clinician components) are pure field/string renders of backend DTOs. One exception: LayerCInsightSection.tsx performs a client-side sort/filter/top-3 selection across 5 pre-scored feature bundles by backend-supplied confidence value (lines ~39-54) — a genuine client-side content-selection decision, though it operates only on backend-computed confidence scalars, not raw medical inference. 'frame' as a concept has zero frontend footprint today (grep returned zero hits); activation_key/source_spec_id already exist as optional passthrough fields on ClinicianRootCauseFindingV1 in frontend/app/types/analysis.ts (from the Package 2 work) — a reusable pattern for Deliverable E's DTO/replay integration."
+      "evidence": "Planning paper Section 5 (Gate 0) defines the same 8 required decisions and the same acceptance criteria (cohort enumerated, 5 surfaces have live-exposure evidence, provenance-blocked cohort enumerated, product impact known, WHY pilot bounded, medical-review capacity confirmed, ceilings approved, no implementation authorised without this gate) that the prompt's own Required outputs/Acceptance criteria sections restate. No invented procedure beyond the planning paper."
     }
   },
 
-  "non_blocking_observations_for_cursor_phase_1": [
-    "Retail explainer coverage is actually 40/104 canonical biomarkers (backend/ssot/biomarkers.yaml has 104 entries), not 40/79 as an earlier independent audit stated — use the current, correct denominator in the Phase 1 migration-cohort inventory rather than inheriting the stale figure.",
-    "The retail explainer schema/registry (backend/core/contracts/retail_explainer_v1.py, backend/ssot/retail_explainer_v1/registry.yaml) has NO review_status/approved/candidate field anywhere. Deliverable A requires a 'selection provenance' field and the Medical Review section requires that Round 2 assets have explicit, checkable medical approval before production authority — Phase 1 design must include how this approval state will actually be recorded and checked (a new field, a parallel governance manifest, or equivalent), since the current schema has no honest way to distinguish approved-production from draft/candidate content. This is a real, load-bearing gap the prompt's deliverables already anticipate needing to solve, not a new requirement I'm adding — flagging it explicitly so it isn't discovered late.",
-    "The prompt's informal topic list says 'functional explainers'; the actual file is knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml (not '...functional_explainers_v1'). Trivial naming note, not a blocking path citation error since the prompt only names topic areas, not exact paths.",
-    "LayerCInsightSection.tsx already performs a client-side confidence-based selection/ranking decision. This currently sits inside the 'no frontend medical inference' boundary (it ranks pre-scored backend output, doesn't infer), but the new frame-routing/modifier work should be designed consistently with it — either extend the same pattern or explicitly document why it's different — rather than introduce a second, inconsistent client-side selection mechanism.",
-    "Pathway (5 entries), functional (4 entries), and entity (4 entries) packs all explicitly self-describe as 'Intended consumer: deterministic narrative compiler (later sprints)' — confirming they are correctly understood as not-yet-runtime-wired inputs for this package to consume, not something already broken that needs investigation."
+  "non_blocking_observations_for_cursor": [
+    "The prompt's Required inputs list omits docs/architecture/HEALTHIQ_AI_ARCHITECTURE_CLOSURE_SEQUENCE.md and its _CC.md counterpart. Those documents contain the original PKG-1/2/3(-CC) package-boundary reasoning and STOP-gate language that the newer planning paper's Package 1/2/3A/3B sections (already a required input) substantially restate and supersede. Low materiality — the planning paper is the authoritative, current restatement and is already required reading — but Cursor should be aware the closure-sequence docs exist as historical grounding if a package-boundary question arises that the planning paper doesn't fully resolve.",
+    "Q1's cohort table asks for 'WHY authority type' per signal but does not explicitly ask whether that signal is one of the 5 residual identity-collapse surfaces' exposure targets — Cursor should cross-reference Q1 and Q2 outputs so the same signal_id doesn't get evaluated for identity exposure and cohort inclusion in isolation from each other.",
+    "Q3's 'appears in representative or golden output' check for the pkg_kb47_* cohort (16 launch-critical BLOCKED rows, 20 pkg_kb47_* directories total, all confirmed carrying a live signal_library.yaml per this session's ARCH-PROG-RECON-1-CC verification) should reuse that prior finding directly rather than re-deriving reachability from scratch — reachability is already confirmed positive; the open question for Gate 0 is specifically golden/representative-output appearance and product/medical impact if suppressed, not reachability itself."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 10,
+    "checklist_count": 8,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "5 required baseline docs exist and are undrifted since last read", "source": "git log on each path", "evidence": "No commits touched them since ebb1d43/43c8d6c", "status": "CONFIRMED"},
-      {"id": 2, "claim": "Output deliverable paths are correctly new", "source": "filesystem check", "evidence": "Neither migration-inventory nor implementation-report file exists yet", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Compiled WHY authority remains exactly 1 signal (signal_vitamin_d_low)", "source": "compiled_hypothesis_registry_v1.py; knowledge_bus/compiled/hypotheses/ directory listing", "evidence": "Exactly 1 pilot spec, exactly 1 compiled artefact file", "status": "CONFIRMED"},
-      {"id": 4, "claim": "No frame-aware prose routing exists anywhere (greenfield)", "source": "repo-wide search under backend/core/", "evidence": "Zero code hits; selection today is by bare biomarker_id/signal_id", "status": "CONFIRMED"},
-      {"id": 5, "claim": "Modifier catalogue is draft-only, no binder code exists (greenfield)", "source": "context_modifier_catalogue_draft_v1.yaml; repo-wide search for modifier_binder/ModifierBind", "evidence": "42 entries, all runtime_active: false; zero binder code hits", "status": "CONFIRMED"},
-      {"id": 6, "claim": "MR-BATCH-001B has zero production imports", "source": "exact grep across backend/core/, backend/app/, frontend/app/", "evidence": "Zero hits; all references confined to tests/docs", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Frontend is render-only for Layer B content with one flagged exception", "source": "frontend/app/ component survey", "evidence": "LayerCInsightSection.tsx performs backend-confidence-based client-side top-3 selection", "status": "CONFIRMED"},
-      {"id": 8, "claim": "activation_key/source_spec_id already exist as frontend passthrough types", "source": "frontend/app/types/analysis.ts", "evidence": "Present as optional fields on ClinicianRootCauseFindingV1 from prior Package 2 work", "status": "CONFIRMED"},
-      {"id": 9, "claim": "Retail explainer coverage figure needs correction (40/104, not 40/79)", "source": "backend/ssot/biomarkers.yaml entry count vs retail_explainer_v1/registry.yaml entry count", "evidence": "104 canonical biomarkers, 40 explainer entries", "status": "CONFIRMED"},
-      {"id": 10, "claim": "No review_status/approved/candidate field exists in retail explainer schema", "source": "backend/core/contracts/retail_explainer_v1.py; registry.yaml; enforcement test", "evidence": "Field list confirmed to contain only schema_version, content_class, biomarker_id/system_key, title, body", "status": "CONFIRMED"}
+      {"id": 1, "claim": "All 8 required input docs exist", "source": "Glob on each path", "evidence": "All 8 confirmed present", "status": "CONFIRMED"},
+      {"id": 2, "claim": "All 4 required output paths are correctly new (not accidental overwrites)", "source": "Glob on each output path", "evidence": "None of the 3 architecture docs or the verification report exist yet", "status": "CONFIRMED"},
+      {"id": 3, "claim": "Target branch does not yet exist / current branch is main with only the expected Stage 1 artifact modified", "source": "git branch --list; git status --short", "evidence": "Branch list empty for feature/arch-conv-gate0-cohort-viability; only automation_bus/latest_cursor_prompt.md modified", "status": "CONFIRMED"},
+      {"id": 4, "claim": "signal_interaction_builder.py still exhibits the exact behaviour the prompt describes (activation_key as output-only metadata, signal_id as the real lookup key)", "source": "Direct grep, backend/core/analytics/signal_interaction_builder.py, current HEAD", "evidence": "node_ids/confidence_by_signal keyed by signal_id (lines 59,66,78,145,154,221); participating_activation_keys is output-only (150,155,245,250)", "status": "CONFIRMED"},
+      {"id": 5, "claim": "The other 4 named identity surfaces are unchanged since last independently verified in this session", "source": "git log HEAD since prior verification commit", "evidence": "Only docs-only commits (5ea6632, 83e5eec) landed since; no commits touch the 4 named analytics files", "status": "CONFIRMED"},
+      {"id": 6, "claim": "Programme ceiling values cited in the prompt (1 unplanned package, 25% scope growth) match the planning paper", "source": "docs/planning-papers/HEALTHIQ_AI_V5_FINAL_ARCHITECTURE_CONVERGENCE_AND_SALVAGE_OR_REBUILD_PLAN.md Section 11.5", "evidence": "Identical values, no drift", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Gate 0 scope/acceptance criteria in the prompt match the planning paper's Section 5 definition of Gate 0", "source": "Planning paper Section 5", "evidence": "Same 8 decisions, same acceptance-criteria checklist", "status": "CONFIRMED"},
+      {"id": 8, "claim": "No PSI, prose-generation, estate-wide migration, or beta-authorisation language leaked into this prompt's scope", "source": "Full read of automation_bus/latest_cursor_prompt.md", "evidence": "Explicit prohibitions present: no runtime/schema/medical/test changes, no Package 1 implementation prompt authored, no beta-readiness declaration", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Any PSI activation — REJECT_AND_RETURN",
-    "Any MR-BATCH-001B promotion — REJECT_AND_RETURN",
-    "Any Gemini enablement — REJECT_AND_RETURN",
-    "Any threshold or signal-firing change — REJECT_AND_RETURN",
-    "Any results-page redesign — REJECT_AND_RETURN",
-    "Any broad legacy WHY estate migration beyond the bounded, medically reviewed cohort — REJECT_AND_RETURN",
-    "Any unreviewed medical claim reaching production authority — REJECT_AND_RETURN",
-    "Any alteration of Package 2 (ARCH-RT-IDENTITY-PROV-1) identity/provenance contracts — REJECT_AND_RETURN",
+    "Any runtime, schema, medical-asset, test, or package-manifest change — REJECT_AND_RETURN",
+    "Any Package 1/2/3A/3B implementation prompt authored as part of this package — REJECT_AND_RETURN",
     "Any controlled-beta readiness declaration — REJECT_AND_RETURN",
-    "Any candidate/test-only asset (including MR-BATCH-001B content) used to make a required test pass — REJECT_AND_RETURN",
-    "Any Round 2 prose or compiled WHY asset reaching production authority without explicit, checkable medical-review evidence — REJECT_AND_RETURN",
-    "Selection or authoring of the next implementation sprint — REJECT_AND_RETURN"
+    "Any estimate presented without a stated confidence/evidence basis (violates 'do not estimate silently') — REJECT_AND_RETURN",
+    "Any WHY pilot cohort that defaults to all 40 legacy hypotheses without justification — REJECT_AND_RETURN",
+    "Any invented source_spec_id or canonical lineage not backed by a real artefact — REJECT_AND_RETURN",
+    "Any reopening of historical architecture questions already settled by the reconciliation documents — REJECT_AND_RETURN",
+    "Any GO decision issued without evidencing all six GO preconditions (cohort isolatable, identity scope bounded, lineage/exclusion feasible, WHY pilot bounded, medical-review route credible, ceilings settable) — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 5 required baseline documents confirmed present and undrifted. No blocking path-citation defect found (this prompt is discovery-oriented rather than citing exact files, unlike the ARCH-RT-IDENTITY-PROV-1 lineage). Every load-bearing premise independently re-verified against current repository state: compiled WHY authority is still exactly 1 signal, frame-aware prose routing and modifier binding are both genuinely greenfield (no partial/dead implementation to account for), MR-BATCH-001B remains production-isolated, and the frontend remains substantially render-only with one flagged, non-blocking existing client-side selection pattern. Two real, load-bearing gaps surfaced for Cursor's Phase 1 inventory (retail explainer coverage denominator was stale at 79 vs actual 104; no review_status/approved field exists anywhere to honestly gate Round 2 medical-review authority) — both are things the prompt's own deliverables already require solving, not new scope, but worth surfacing explicitly so Phase 1 addresses them by design rather than discovering them mid-implementation. Recommend proceeding to kernel start."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 8 required input documents confirmed present. All 4 required output paths confirmed correctly new. Branch state confirmed expected pre-kernel-start (main, only the Stage-1 prompt-handoff file modified, target branch not yet created). The prompt's central factual claim — that signal_interaction_builder.py exhibits cosmetic-only activation_key migration while its core node/confidence logic remains signal_id-keyed — was independently re-verified against current HEAD by direct code read and confirmed accurate. Programme-ceiling values and Gate 0 scope/acceptance criteria were cross-checked against the newly-adopted planning paper and found consistent with no drift. One low-materiality completeness gap noted (omission of the two Closure Sequence documents from Required inputs) — not blocking, since the planning paper already required as input supersedes their content. Two cross-referencing observations passed forward to reduce duplicate work in Cursor's Q1-3 analysis. No blocking defect found. Recommend proceeding to kernel start."
 }
