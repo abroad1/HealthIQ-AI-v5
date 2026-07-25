@@ -1,7 +1,7 @@
 package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
 package_version: 1.0.0
-description: KB-S47 Batch 2 package for inv_egfr_low_chronic_kidney_function_reduction
-  (signal_egfr_low). Biomarker IDs aligned to SSOT where governed.
+description: KB-S47 Batch 2 package for inv_egfr_low_chronic_kidney_function_reduction (signal_egfr_low).
+  Biomarker IDs aligned to SSOT where governed.
 research_brief: research_brief.yaml
 signal_library: signal_library.yaml
 promoted_signal_intelligence: promoted_signal_intelligence.yaml
@@ -14,3 +14,6 @@ governance_runtime_activation_status: runtime_active_canonical
 governance_runtime_activation_work_id: CF-AUTHORITY-RUNTIME-1B_egfr_phase3_runtime_activation_follow_forward
 governance_runtime_activation_register: knowledge_bus/governance/authority_runtime_execution_register_v1.yaml
 governance_runtime_activation_recorded_at: '2026-06-07'
+source_spec_id: inv_egfr_low_chronic_kidney_function_reduction
+activation_key: signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction
+lineage_attach_work_id: ARCH-CONV-PKG2

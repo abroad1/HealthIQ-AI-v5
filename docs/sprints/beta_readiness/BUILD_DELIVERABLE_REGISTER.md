@@ -909,6 +909,32 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## ARCH-CONV-PKG2 — Launch-Critical Provenance and Runtime-Reachability Closure
+
+**Status:** Complete  
+**Date closed:** 2026-07-26  
+**Programme block(s):** Architecture convergence Package 2 — provenance / reachability
+
+### Delivered / ticked off
+- STOP Gate 1 PASS: Wave 1 INCLUDE kept reachable; lineage recovered from Pass 3 (no invented `source_spec_id`).
+- Explicit lineage attached for 6 Wave 1 `pkg_kb47_*` packages (free_t3×2, free_t4×2, egfr×2).
+- 14 androgen/CK/eos kb47 packages made production non-reachable; assets retained; test opt-in preserved.
+- Canonical loader eligibility (`package_runtime_eligibility_v1`) enforced in `SignalRegistry._load`.
+- Reachability gate wired into architecture validation; impact + verification reports filed.
+- No WHY/prose/PSI/Gemini/threshold changes; no architecture-completion or controlled-beta claim.
+
+### Carry-forwards
+- Gate 2.5 medical-review owner confirmation before Package 3B (from Gate 0 REDESIGN).
+- Non–Wave-1 kb47 assets remain BLOCKED on disk pending later disposition/extraction if re-included.
+
+### Blockers / risks
+- None for Package 2 obligation; medical-review capacity for WHY pilot remains unresolved (Gate 0).
+
+### Recommended next sprint
+- Gate 2.5 / Package 3 sequencing per convergence plan (human-gated).
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

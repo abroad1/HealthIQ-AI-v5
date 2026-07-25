@@ -21,10 +21,12 @@ from core.models.signal import SignalResult
 class SignalRegistry:
     """Load authoritative package signal libraries deterministically."""
 
-    def __init__(self) -> None:
+    def __init__(self, *, allow_launch_critical_blocked: bool = False) -> None:
         self._signals_by_activation_key: Dict[str, Dict[str, Any]] = {}
         self.version: str = ""
         self.package_hash: str = ""
+        self.allow_launch_critical_blocked: bool = bool(allow_launch_critical_blocked)
+        self.excluded_launch_critical_packages: List[Dict[str, str]] = []
         self._load()
 
     def _packages_dir(self) -> Path:
@@ -42,19 +44,54 @@ class SignalRegistry:
         return payload
 
     def _load(self) -> None:
+        from core.knowledge.package_runtime_eligibility_v1 import (
+            classify_package_runtime_eligibility,
+            is_production_reachable,
+            load_package_manifest,
+        )
+        from core.knowledge.provenance_status_v1 import classify_package_provenance_status
+
         signals_by_activation_key: Dict[str, Dict[str, Any]] = {}
+        exclusions: List[Dict[str, str]] = []
+        seen_excluded: set[str] = set()
         for path in self._iter_signal_library_paths():
+            package_dir = path.parent
+            package_id = package_dir.name
+            manifest = load_package_manifest(package_dir)
+            eligibility, provenance_status = classify_package_runtime_eligibility(
+                package_id=package_id,
+                manifest=manifest,
+                allow_launch_critical_blocked=self.allow_launch_critical_blocked,
+            )
+            if not is_production_reachable(
+                package_id=package_id,
+                manifest=manifest,
+                allow_launch_critical_blocked=self.allow_launch_critical_blocked,
+            ):
+                if package_id not in seen_excluded:
+                    seen_excluded.add(package_id)
+                    exclusions.append(
+                        {
+                            "package_id": package_id,
+                            "eligibility": eligibility,
+                            "provenance_status": provenance_status,
+                        }
+                    )
+                continue
+
             payload = self._load_yaml(path)
             signal_items = payload.get("signals")
             if not isinstance(signal_items, list):
                 raise ValueError(f"Signal library missing 'signals' list: {path}")
+            # Recompute provenance for honesty on loaded packages (may be EXPLICIT_SPEC).
+            loaded_status = classify_package_provenance_status(manifest=manifest)
             for item in signal_items:
                 if not isinstance(item, dict):
                     continue
                 signal_id = str(item.get("signal_id", "")).strip()
                 if not signal_id:
                     continue
-                activation_key, source_spec_id, package_id = resolve_activation_identity(
+                activation_key, source_spec_id, resolved_package_id = resolve_activation_identity(
                     signal_id=signal_id,
                     signal_library_path=path,
                 )
@@ -68,7 +105,9 @@ class SignalRegistry:
                 compiled["_source_path"] = str(path)
                 compiled["activation_key"] = activation_key
                 compiled["source_spec_id"] = source_spec_id
-                compiled["package_id"] = package_id
+                compiled["package_id"] = resolved_package_id or package_id
+                compiled["provenance_status"] = loaded_status
+                compiled["runtime_eligibility"] = eligibility
                 signals_by_activation_key[activation_key] = compiled
 
         ordered_keys = sorted(signals_by_activation_key.keys())
@@ -79,6 +118,9 @@ class SignalRegistry:
         self._signals_by_activation_key = {
             key: signals_by_activation_key[key] for key in ordered_keys
         }
+        self.excluded_launch_critical_packages = sorted(
+            exclusions, key=lambda row: row["package_id"]
+        )
 
     def get_all_signals(self) -> List[Dict[str, Any]]:
         return [

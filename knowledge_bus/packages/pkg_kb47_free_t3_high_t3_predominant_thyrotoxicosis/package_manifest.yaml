@@ -1,7 +1,7 @@
 package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
 package_version: 1.0.0
-description: KB-S47 Batch 2 package for inv_free_t3_high_t3_predominant_thyrotoxicosis
-  (signal_free_t3_high). Biomarker IDs aligned to SSOT where governed.
+description: KB-S47 Batch 2 package for inv_free_t3_high_t3_predominant_thyrotoxicosis (signal_free_t3_high).
+  Biomarker IDs aligned to SSOT where governed.
 research_brief: research_brief.yaml
 signal_library: signal_library.yaml
 promoted_signal_intelligence: promoted_signal_intelligence.yaml
@@ -17,3 +17,6 @@ governance_runtime_activation_status: runtime_active_canonical
 governance_runtime_activation_work_id: BATCH2-THYROID-GATE-1_mandatory_tsh_gating_and_runtime_activation
 governance_runtime_activation_register: knowledge_bus/governance/batch2_thyroid_gate_execution_register_v1.yaml
 governance_runtime_activation_recorded_at: '2026-06-07'
+source_spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
+activation_key: signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis
+lineage_attach_work_id: ARCH-CONV-PKG2
