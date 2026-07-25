@@ -735,13 +735,57 @@ Entries should not list every file touched or every non-change.
 - No runtime, production asset, Intelligence Core, or Gemini changes.
 
 ### Carry-forwards
-- MR Batch 001 execution; medical review; promotion/import route; modifier binding; frame routing; P4-1 CEO gate; 79/79 vs subset decision.
+- Medical review of MR-BATCH-001B; promotion/import route; modifier binding; frame routing; P4-1 CEO gate; 79/79 vs subset decision.
 
 ### Blockers / risks
 - None for CONTENT scope; runtime activation intentionally deferred.
 
 ### Recommended next sprint
-- MR Batch 001 candidate prose generation (Medical Research LLM).
+- Medical review of MR-BATCH-001B, then promotion/import design (still candidate-gated).
+
+---
+
+## P3-PROSE-DEPTH-1A — Directional Marker-State Schema Correction
+
+**Status:** Complete  
+**Date closed:** 2026-06-29  
+**Programme block(s):** Block 3 Layer B prose content factory  
+
+### Delivered / ticked off
+- MR candidate schema extended with marker-state asset types (`in_range` / `high` / `low` / `borderline`).
+- Required `range_state` and `context_dependencies`; generic clinician-disclaimer wording prohibited for asset caveats.
+- MR Batch 001 brief and modifier templates updated to require directional marker-state explainers.
+
+### Carry-forwards
+- MR-BATCH-001B medical review; no production promotion until approved.
+
+### Blockers / risks
+- None for document/schema scope.
+
+### Recommended next sprint
+- MR-BATCH-001B candidate generation / product edit (completed in session; see next entry).
+
+---
+
+## MR-BATCH-001B — Candidate Prose Test Import
+
+**Status:** Complete  
+**Date closed:** 2026-06-30  
+**Programme block(s):** Block 3 Layer B prose content factory  
+
+### Delivered / ticked off
+- 69 MR-BATCH-001B candidate assets retained as `CANDIDATE` in sprint docs pack.
+- Test-only loader (`backend/tests/support/mr_candidate_prose_test_v1.py`) with `candidate_test_mode=True` isolation.
+- Inspection report and unit tests for representative marker-state / modifier / missing-marker / resilience composition; report untruncated for full prose review.
+
+### Carry-forwards
+- Medical review before any promotion; runtime promotion/import route still future work; modifier binding and frame routing deferred; P4-1 Gemini remains CEO-gated; 79/79 vs prioritised retail subset decision still open.
+
+### Blockers / risks
+- Narrative compiler / production registries still do not consume candidate assets (intentional).
+
+### Recommended next sprint
+- Medical review of MR-BATCH-001B, then a promotion/import sprint with an explicit non-public candidate flag until approval.
 
 ---
 
