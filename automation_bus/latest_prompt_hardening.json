@@ -1,110 +1,66 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-RT-IDENTITY-PROV-1",
+  "work_id": "ARCH-RT-IDENTITY-PROV-1-C1",
   "status": "HARDENED",
   "hardening_date": "2026-07-25",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "hardening_pass": "RE_HARDENING — second pass, targeted verification of C1/C2/C3 disposition plus GPT's additional commitments, not a from-scratch Stage 1A/1B repeat",
+  "hardening_pass": "RE_HARDENING — second pass, targeted verification that the sole blocker (B1) was corrected and nothing else in the prompt changed",
   "risk_level": "HIGH",
   "change_type": "BEHAVIOUR",
   "execution_model": "TWO_PHASE_START_FINISH",
-  "stage_b_mode": "MODE_2",
 
   "verification_mode_used": {
     "mode": "batched parallel calls only, no forking",
-    "rationale": "Narrow, targeted re-verification against a known correction list (C1-C3) plus GPT's documented commitments — small enough that forking would add overhead without reducing wall-clock meaningfully."
+    "rationale": "Single-line front-matter fix to re-verify against an already-hardened body — trivially small."
   },
 
   "prompt_receipt_gate": {
-    "front_matter_complete": "YES — unchanged",
+    "front_matter_complete": "YES — change_type now BEHAVIOUR, a valid SOP v1.3.1 value",
+    "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type"],
     "declared_risk_level": "HIGH",
     "declared_change_type": "BEHAVIOUR",
-    "behaviour_changes_touch_intelligence_core": "YES — unchanged, correctly justifies HIGH",
-    "tests_required": "YES — expanded from 12+10 to 15+14 required tests",
-    "scope_proportionality": "PASS",
-    "advisory_duplication_detected": "NO — unchanged",
-    "scope_creep_signals": "NONE beyond the same bounded §16 indicative-scope clause",
     "decision": "ACCEPT"
   },
 
-  "prior_corrections_disposition": [
-    {
-      "id": "C1",
-      "original_issue": "ADR-RT-001 cited at architecture/ADR-RT-001_...md instead of docs/architecture/ADR-RT-001_...md",
-      "disposition": "FIXED — verified: prompt §4 now cites docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md, confirmed to exist at that exact path"
-    },
-    {
-      "id": "C2",
-      "original_issue": "ADR-RT-002/003/004 omitted from required reading; new ADR risked re-deciding already-ratified policy",
-      "disposition": "SUBSTANTIVELY FIXED, WITH A NEW MINOR FILENAME ISSUE (see C4 below). All three ADRs now cited in §4 required reading. New §5 'Architectural subordination rule' explicitly states the new ADR is an implementation-extension ADR subordinate to ADR-RT-001 through ADR-RT-004, must not reopen settled decisions, and must STOP+escalate if an accepted ADR is impossible to implement. Reinforced in Stage 1A items 2-4 (require reporting exact accepted decisions inherited from each), ADR §A/F/G (explicitly bound by ADR-RT-002/004), STOP Gate 1 items 1-3 and 15, STOP conditions item 3 and 20, and acceptance criteria (§18 'Architecture decision' section). This is a thorough, structural fix, not a superficial citation add."
-    },
-    {
-      "id": "C3",
-      "original_issue": "Fifth collapse point (clinician_report_v1.py / frontend analysis.ts) not named anywhere in the prompt",
-      "disposition": "FIXED — verified both files exist and are threaded through every relevant section: §2 item 4 (named as 5th surface) and item 5 ('five known surfaces... not assumed exhaustive; a full consumer search is required'), §4 required reading, Stage 1B (explicit reality-check bullet), new ADR §C 'Clinician-report cardinality rule', new Deliverable A6 'Clinician-report contract migration', STOP Gate 1 item 10, STOP Gate 2 (clinician-report aggregation bullet), test requirements items 7-8 and 15 (open-ended: 'any additional collapse surface found in Stage 1B is covered'), and acceptance criteria (§18, explicit bullet plus repository-wide-search closing bullet)."
-    }
-  ],
+  "b1_disposition": {
+    "id": "B1",
+    "original_issue": "change_type declared as invalid value 'TESTS_AND_EVIDENCE'",
+    "disposition": "FIXED — independently confirmed the current prompt file is byte-for-byte identical to the version I last reviewed except line 6, which now reads 'change_type: BEHAVIOUR', a valid SOP v1.3.1 value (CONTENT | BEHAVIOUR | MIXED). No other line changed."
+  },
 
-  "additional_gpt_commitments_verified": [
-    {
-      "item": "Package-manifest schema migration ownership",
-      "disposition": "CONFIRMED present and matches the requested shape: §2 item 8, Stage 1A items 8-9 (must report why ADR-RT-004's mandated extension is absent despite prior ARCH-RT work), new ADR §F 'Manifest schema migration', new Deliverable B2 with explicit requirements (preserve historical validity, additive/versioned evolution, bounded-cohort validation, no silent rewrite, document the ARCH-RT-1 gap, regression tests)."
-    },
-    {
-      "item": "compile_manifest_ref / compile_manifest_path reconciliation as mandatory Stage 1 discovery, no blind rename",
-      "disposition": "CONFIRMED present: Stage 1A items 15-17, new ADR §G 'Compile-manifest naming authority' (explicit 'Do not perform a blind global rename'), new Deliverable B4 (explicit 'avoid blind global renaming', temporary aliases permitted, filesystem-path leakage prevention), STOP condition 13, acceptance criteria bullets."
-    },
-    {
-      "item": "Non-fabricated BUILD-register historical reconciliation, subordinate to Package 2",
-      "disposition": "CONFIRMED present: new §12 'Historical continuity reconciliation' explicitly states 'Do not fabricate retrospective contemporaneous entries' and 'This is a continuity repair subordinate to Package 2, not a separate sprint' — near-verbatim match to the requested language. Reinforced in Stage 1A item 18, Stage 1B adjacent-controls bullet, acceptance criteria 'Continuity' section, implementation report item 24, build-register continuity section."
-    }
-  ],
-
-  "new_finding_this_pass": {
-    "id": "C4",
-    "severity": "NON_BLOCKING_SELF_MITIGATED",
-    "location": "automation_bus/latest_cursor_prompt.md §4, lines citing ADR-RT-002/003/004",
-    "observation": "The three newly-added ADR filenames do not match what exists on disk. Prompt cites: ADR-RT-002_signal_identity_and_registry_architecture.md, ADR-RT-003_hypothesis_and_root_cause_transition_architecture.md, ADR-RT-004_compile_manifest_and_provenance_policy.md — none of these exist. Actual files (independently confirmed present): ADR-RT-002_signal_spec_identity_and_registry_policy.md, ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md, ADR-RT-004_compile_manifest_and_package_provenance_policy.md. Not blocking because the prompt already contains a self-healing instruction at line 155: 'If an ADR filename differs slightly from the names above, resolve the actual accepted file path and record the correction before proceeding' — Cursor is explicitly directed to resolve and record the correct path. Flagged for accuracy and so Cursor's Stage 1A report explicitly documents this correction rather than silently working around it.",
-    "required_action": "No prompt edit required before kernel start given the existing fallback clause. Recommend GPT correct the three filenames on the next natural prompt revision, but this does not block this execution."
+  "prior_supporting_checks_still_valid": {
+    "note": "These were independently verified during the prior hardening pass and remain valid since nothing but the change_type line changed.",
+    "checks": [
+      {"item": "Branch bases on commit 2c8819c as required", "status": "CONFIRMED (unchanged)"},
+      {"item": "All 3 required input files exist", "status": "CONFIRMED (unchanged)"},
+      {"item": "Clinician fixtures genuinely changed at 2c8819c (AB +1584/VR +1174 lines)", "status": "CONFIRMED (unchanged)"},
+      {"item": "Original hardened prompt for ARCH-RT-IDENTITY-PROV-1 retrievable via git history (ab94861)", "status": "CONFIRMED (unchanged)"},
+      {"item": "Original work_id's kernel status file untouched by the correction commit", "status": "CONFIRMED (unchanged)"},
+      {"item": "No stale active work-package token", "status": "CONFIRMED (unchanged)"}
+    ]
   },
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 8,
+    "checklist_count": 2,
     "all_confirmed": true,
     "correction_required": false,
-    "blocking_corrections_remaining": 0,
-    "non_blocking_findings": 1,
     "items": [
-      {"id": 1, "claim": "C1 fix landed correctly", "source": "automation_bus/latest_cursor_prompt.md §4 + filesystem check", "evidence": "docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md exists at the now-cited path", "status": "CONFIRMED"},
-      {"id": 2, "claim": "C2 fix landed structurally (subordination rule, not just a citation add)", "source": "§5, Stage 1A items 2-4, ADR §A/F/G, STOP Gate 1 items 1-3/15, STOP conditions item 3/20, acceptance criteria", "evidence": "New ADR explicitly required to be subordinate; STOP+escalate path defined for conflicts with accepted ADRs", "status": "CONFIRMED"},
-      {"id": 3, "claim": "C3 fix landed comprehensively across problem statement, discovery, design, tests, acceptance criteria", "source": "§2 items 4-5, §4, Stage 1B, ADR §C, Deliverable A6, STOP Gate 1 item 10 / Gate 2, test items 7-8/15, §18", "evidence": "clinician_report_v1.py and frontend/app/types/analysis.ts both confirmed to exist and are named throughout, plus an open-ended 'full consumer search, not assumed exhaustive' requirement", "status": "CONFIRMED"},
-      {"id": 4, "claim": "ADR-RT-002/003/004 filenames as newly cited do not exist on disk", "source": "filesystem check", "evidence": "All three cited filenames MISSING; actual filenames differ (see C4)", "status": "CONFIRMED — C4, non-blocking due to existing self-healing clause at prompt line 155"},
-      {"id": 5, "claim": "Package-manifest schema migration ownership explicitly assigned with safe-migration constraints", "source": "§2 item 8, Stage 1A items 8-9, ADR §F, Deliverable B2", "evidence": "Explicit requirement to document why ARCH-RT-1 didn't deliver the field, additive/versioned migration required, no silent history rewrite", "status": "CONFIRMED"},
-      {"id": 6, "claim": "compile_manifest_ref/path reconciliation required with no blind rename", "source": "Stage 1A items 15-17, ADR §G, Deliverable B4, STOP condition 13", "evidence": "Explicit 'do not perform a blind global rename' / 'avoid blind global renaming' language present twice", "status": "CONFIRMED"},
-      {"id": 7, "claim": "BUILD-register historical reconciliation is non-fabricated and subordinate to this package", "source": "§12, Stage 1A item 18, acceptance criteria Continuity section", "evidence": "'Do not fabricate retrospective contemporaneous entries'; 'subordinate to Package 2, not a separate sprint' — both present verbatim in intent", "status": "CONFIRMED"},
-      {"id": 8, "claim": "No forbidden-scope leakage introduced by the revision", "source": "§17 forbidden scope (unchanged in substance), §16 expected scope (same indicative framing, same bounded clause)", "evidence": "No new forbidden-scope item added or removed; PSI/Pass3/MR-BATCH/Gemini/results-page/v0_4-SOP-fix/Package-3 exclusions all still present", "status": "CONFIRMED"}
+      {"id": 1, "claim": "change_type is now a valid SOP value", "source": "automation_bus/latest_cursor_prompt.md line 6", "evidence": "change_type: BEHAVIOUR, matches SOP-allowed CONTENT | BEHAVIOUR | MIXED", "status": "CONFIRMED"},
+      {"id": 2, "claim": "No other prompt content changed alongside the fix", "source": "direct re-read of the full 130-line prompt, compared against the version reviewed in the prior pass", "evidence": "Identical except line 6", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Any PSI activation or wiring — REJECT_AND_RETURN",
-    "Any Pass 3 promotion or treating the DRAFT protocol as approved promotion authority — REJECT_AND_RETURN",
-    "Any MR-BATCH-001B promotion — REJECT_AND_RETURN",
-    "Any new medical prose, threshold change, or signal-activation-criteria change — REJECT_AND_RETURN",
-    "Any expansion into clinical hypothesis content or broad legacy WHY migration beyond frame-identity correctness — REJECT_AND_RETURN",
-    "Any results-page redesign — REJECT_AND_RETURN",
-    "Any Gemini enablement or narrative LLM authority change — REJECT_AND_RETURN",
-    "Any attempt to fix the dangling v0_4 SOP reference as part of this package — REJECT_AND_RETURN",
-    "Any Package 3 (prose routing/modifier binding) implementation started under this work_id — REJECT_AND_RETURN",
-    "Any controlled-beta readiness claim made by this package — REJECT_AND_RETURN",
-    "Any invented source_spec_id mapping not evidenced by repository content — REJECT_AND_RETURN",
-    "Any package immutability violation (silent rewrite of promoted package history instead of versioned migration) — REJECT_AND_RETURN",
-    "Any blind global rename of compile_manifest_ref/compile_manifest_path — REJECT_AND_RETURN",
-    "Any fabricated retrospective BUILD-register closure evidence for ARCH-RT-1/2/3 — REJECT_AND_RETURN",
-    "Any reopening of ADR-RT-002/003/004 policy without a recorded STOP Gate 1 escalation — REJECT_AND_RETURN",
-    "Selection or authoring of the next implementation sprint — REJECT_AND_RETURN"
+    "Any modification to the original ARCH-RT-IDENTITY-PROV-1 kernel state (latest_cursor_status.json entry, branch) — REJECT_AND_RETURN",
+    "Any production code redesign — REJECT_AND_RETURN",
+    "Any production code change not gated behind a STOP-and-report for a genuine new-test-exposed defect — REJECT_AND_RETURN",
+    "Any Package 3 work — REJECT_AND_RETURN",
+    "Any PSI, MR-BATCH-001B, or Gemini activation — REJECT_AND_RETURN",
+    "Any weakened test or suppressed failure — REJECT_AND_RETURN",
+    "Any relabelling of a disclosed failure without evidence — REJECT_AND_RETURN",
+    "Any scope expansion beyond tests, evidence, fixtures, or bus-managed files — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All three prior blocking corrections (C1, C2, C3) independently re-verified as substantively and structurally fixed, not just superficially patched — the subordination rule, clinician-report cardinality rule, and full-consumer-search requirement are woven through discovery, design, tests, and acceptance criteria, not just added as isolated mentions. All three of GPT's additional commitments (schema migration ownership, compile-manifest naming reconciliation, non-fabricated BUILD-register reconciliation) verified present with the specific constraints requested. One new, non-blocking finding (C4): the three ADR-RT-002/003/004 filenames as newly cited do not match the actual files on disk, but the prompt's own existing fallback clause (line 155) already directs Cursor to resolve and record the correct path, so this does not block kernel start. No new corrections required. Recommend proceeding to kernel start."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. The sole blocker (B1: invalid change_type) is fixed and independently confirmed as the only change made. All supporting checks from the prior pass remain valid since nothing else in the prompt moved. Recommend proceeding to kernel start under work_id ARCH-RT-IDENTITY-PROV-1-C1."
 }
