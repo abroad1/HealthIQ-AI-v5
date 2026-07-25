@@ -1,8 +1,9 @@
 # HealthIQ AI — Document Authority Map
 
-**Last updated:** 2026-06-20  
+**Last updated:** 2026-07-25  
 **Status:** LIVE — update when document status changes  
-**Purpose:** Stop people reading the wrong documents. One page, fast answer.
+**Purpose:** Stop people reading the wrong documents. One page, fast answer.  
+**Reconciled by:** ARCH-GOV-BASELINE-1 (programme baseline and governance reset).
 
 ---
 
@@ -53,6 +54,9 @@ Find the domain you care about. Look at the Status column.
 | `architecture/ADR-009-KB-S46-root-cause-why-insulin-inflammation.md` | AUTHORITATIVE | Root-cause WHY architecture. |
 | `architecture/ADR-007-clinician-summary-report.md` | AUTHORITATIVE | Clinician summary report contract. |
 | `docs/architecture/ADR-LAYER-BOUNDARY-RECONCILIATION-1.md` | AUTHORITATIVE | Canonical Layer A/B/C vocabulary for roadmap and sprint planning. |
+| `docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md` | AUTHORITATIVE | Programme maturity baseline for Stage 0 planning until a later approved baseline supersedes it. |
+| `docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md` | AUTHORITATIVE | Current day-one architecture carry-forward plan. |
+| `docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL.md` | SUPERSEDED | Earlier FINAL variant; use `_FINAL_updated` for current carry-forward. |
 | `architecture/ADR-004-disease-specific-signal-evaluation.md` | SUPERSEDED | Superseded by ADR-005. |
 | `architecture/ARCHITECTURE_GUARDRAILS.md` | AUTHORITATIVE | Enforceable rules. |
 | `architecture/HEALTHIQ_REASONING_PIPELINE.md` | AUTHORITATIVE | Canonical pipeline model. |
@@ -138,15 +142,25 @@ Find the domain you care about. Look at the Status column.
 | Document | Status | Notes |
 |---|---|---|
 | `.claude/CLAUDE.md` | AUTHORITATIVE | Permanent context. Always current. |
-| `docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md` | AUTHORITATIVE | Active SOP. |
-| `docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md` | AUTHORITATIVE | Active Knowledge Bus SOP. |
+| `docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md` | AUTHORITATIVE | Active Automation Bus SOP (LOCKED). |
+| `docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md` | AUTHORITATIVE | Active Knowledge Bus SOP (LOCKED). |
+| `docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md` | SUPERSEDED | Prior Knowledge Bus SOP; retained on disk — do not treat as current authority. |
+| `docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md` | SUPPORTING (DRAFT) | Pass 3 promotion companion. Header status remains **DRAFT FOR GOVERNANCE REVIEW**. Operative companion pending formal ratification — do not silently treat as APPROVED. |
+| `docs/governance/healthiq_pre_sop_prompt_scoping_workflow_v0_6.2.md` | AUTHORITATIVE | Pre-SOP prompt scoping workflow (Stages 0, A–E). Separate from Automation Bus SOP. |
+| `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_4.md` | SUPERSEDED / ABSENT | Previously listed as AUTHORITATIVE; file does not exist in the repository. Use v0.6.2. |
+| `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md` | SUPPORTING | Lightweight programme continuity log only — not a substitute for audits, ADRs, or merge records. |
+| `docs/SPRINT_STATUS.md` | STALE / SUPERSEDED | Historical sprint register (last self-declared update 2026-05-04). Continuity is via BUILD_DELIVERABLE_REGISTER + current-state baseline. |
 | `docs/governance/CURSOR_OPERATING_POLICY.md` | AUTHORITATIVE | Cursor operating policy. |
 | `AGENTS.md` | AUTHORITATIVE | Agent operating map. |
 | `docs/governance/healthiq-core-engine.md` | SUPPORTING | Core engine agent definition. |
 | `docs/governance/healthiq-frontend-shell.md` | SUPPORTING | Frontend shell agent definition. |
 | `docs/governance/healthiq-qa-uat.md` | SUPPORTING | QA/UAT agent definition. |
 | `docs/governance/healthiq-docs-hygiene.md` | SUPPORTING | Docs hygiene agent definition. |
-| `docs/discussion documents/healthiq_pre_sop_prompt_scoping_workflow_v0_4.md` | AUTHORITATIVE | Pre-SOP prompt scoping working convention (Stages 0, A–E). Separate from Automation Bus SOP. |
+| `docs/audit-papers/CURSOR_sprint_governance_and_codebase_maturity_audit.md` | EVIDENCE | Independent audit input (2026-07-25). Not ongoing authority. |
+| `docs/audit-papers/CLAUDE_CODE_sprint_governance_and_codebase_maturity_audit.md` | EVIDENCE | Independent audit input (2026-07-25). Not ongoing authority. |
+| `docs/audit-papers/CURSOR_executable_codebase_and_runtime_reality_audit.md` | EVIDENCE | Independent audit input (2026-07-25). Not ongoing authority. |
+| `docs/audit-papers/CLAUDE_CODE_independent_executable_architecture_assurance_audit.md` | EVIDENCE | Independent audit input (2026-07-25). Not ongoing authority. |
+| `docs/audit-papers/ARCH-GOV-BASELINE-1_historical_governance_exception_record.md` | EVIDENCE | Historical governance-exception record for P3-PROSE-DEPTH-1A / MR-BATCH-001B. Non-precedential. |
 | `automation_bus/latest_scope_advisory.md` | SUPPORTING | Per-sprint Stage B advisory cache. Advisory only — does not authorise execution. |
 | `automation_bus/latest_pipeline_advisory.md` | SUPPORTING | Stage 0 batch pipeline advisory cache. Advisory only — does not authorise execution. |
 | `docs/archive/superseded/AUTOMATION_BUS_SOP_v1.3.md` | SUPERSEDED | Moved to archive. |

@@ -1,10 +1,16 @@
 # HealthIQ AI — Sprint Status Register
 
-**Last updated:** 2026-05-04  
-**Status:** LIVE — update this document when sprint status changes  
-**Maintainer:** Whoever completes or starts a sprint
+> **SUPERSEDED / STALE — do not use for current programme planning.**  
+> **Last self-declared update:** 2026-05-04. Content below is retained as historical record only.  
+> **Current continuity:** `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md` (lightweight continuity log).  
+> **Current maturity baseline:** `docs/architecture/HEALTHIQ_AI_CURRENT_STATE_BASELINE_2026-07-25.md` (ARCH-GOV-BASELINE-1).  
+> Future Stage 0 planning must start from the current-state baseline, not this register.
 
-This is the source of truth for what has been done, what is in progress, and what is next. Do not rely on git log archaeology for this information — update this file instead.
+**Status (historical header):** LIVE — update this document when sprint status changes *(obsolete instruction — superseded 2026-07-25)*  
+**Maintainer (historical):** Whoever completes or starts a sprint
+
+~~This is the source of truth for what has been done, what is in progress, and what is next. Do not rely on git log archaeology for this information — update this file instead.~~  
+**Superseded:** Use BUILD_DELIVERABLE_REGISTER + current-state baseline instead.
 
 ---
 
