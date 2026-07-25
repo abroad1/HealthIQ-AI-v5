@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-pkg2-provenance-reachability",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-07-25T23:46:49Z",
   "cursor_started_utc": "2026-07-25T23:31:41Z",
-  "head_sha": "d696fca3ba5483ae59d547a55a817c9284b2e981",
+  "head_sha": "b151fa6b2ef65d49874a2d6eadf83dd679a953df",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-PKG2"
 }
