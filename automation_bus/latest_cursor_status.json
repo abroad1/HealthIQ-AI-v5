@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-rt-identity-prov-1-runtime-identity-provenance-integrity",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-07-25T11:08:55Z",
   "cursor_started_utc": "2026-07-25T10:58:56Z",
-  "head_sha": "ab94861994ae54da2379473ef12ceb0916d08641",
+  "head_sha": "ebb1d434f6720f8096ded68ad8780b5f7d900f24",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-RT-IDENTITY-PROV-1"
 }
