@@ -1,9 +1,10 @@
 {
   "branch": "feature/p3-layerb-intel-1-frame-routing-why-depth",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-07-25T13:28:32Z",
   "cursor_started_utc": "2026-07-25T13:09:00Z",
-  "head_sha": "eacceaf04f85e2c12e2fc0f6f148b50f532b3af9",
+  "head_sha": "d877d0d3b965d88a36b72b8f9e1c8ac5db0aac52",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "P3-LAYERB-INTEL-1"
 }
