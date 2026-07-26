@@ -1,103 +1,99 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-PKG3",
+  "work_id": "ARCH-CONV-FINAL-AUDIT",
   "status": "HARDENED",
   "hardening_date": "2026-07-26",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
   "risk_level": "HIGH",
-  "change_type": "MIXED",
+  "change_type": "CONTENT",
   "execution_model": "TWO_PHASE_START_FINISH",
   "stage_b_mode": "MODE_2",
-  "runtime_change": "YES",
+  "runtime_change": "NONE",
 
   "verification_mode_used": {
-    "mode": "batched parallel calls, no fork",
-    "rationale": "HIGH/MIXED, but the subsystems (compiled_hypothesis.py, root_cause_registry_v1.py, legacy YAML estate, medical_frame_identity_index_v1.yaml, the Gate 2.5 governance chain) were already deeply verified across the Gate 0/PKG1/PKG2/GATE2_5 audits this session. The one new thing requiring fresh verification (whether Gate 2.5's conditions were actually closed by a real human, not merely asserted) was resolved by direct git history inspection, not requiring a fork."
+    "mode": "batched parallel calls, no fork for hardening itself",
+    "rationale": "Hardening a prompt (verifying its premises and authority paths) is a different task from executing it. This prompt explicitly authorizes/expects the EXECUTING agent to use disjoint parallel review agents across its 5 workstreams — that is correctly Cursor's/the auditor's decision at execution time, not something to pre-empt during hardening. For hardening itself, I already hold exhaustive, independently-verified context on PKG1/PKG2/PKG3 from this same session (including live code execution and byte-identical hash checks), so batched direct checks were sufficient to verify this prompt's premises."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type", "stage_b_mode", "runtime_change"],
     "declared_risk_level": "HIGH",
-    "declared_change_type": "MIXED",
-    "behaviour_changes_touch_intelligence_core": "YES — compiled hypothesis authority, root-cause registry, report compilation; correctly classified HIGH",
-    "tests_required": "YES — 16 minimum proof items plus 12 existing-suite categories",
-    "scope_proportionality": "PASS with one structural caveat (see below) — bounded to the ratified 5-signal/10-frame pilot, 10 STOP conditions, 12-item forbidden-scope list, explicit anti-split discipline",
+    "declared_change_type": "CONTENT",
+    "behaviour_changes_touch_intelligence_core": "NO — runtime_change: NONE; this is a read-only + test-execution + human-UAT audit, not a code change. HIGH risk_level is appropriate given the safety-critical stakes of confirming no leaked medical logic, not because code is being modified.",
+    "tests_required": "NOT run-time-BEHAVIOUR tests in the schema sense (CONTENT/NONE), but extensive re-execution of existing test suites and new end-to-end scenarios is mandated as audit evidence — treat as required verification method, not a runtime change.",
+    "scope_proportionality": "PASS — this is explicitly the final, closing audit for a 3-package programme plus mandatory human UAT; its unusually large scope (5 workstreams, full pipeline inspection, human UAT gate, kill-criteria review) is proportionate to being the terminal programme decision, not scope creep.",
     "advisory_duplication_detected": "NO",
-    "scope_creep_signals": "NONE beyond the pilot's own already-approved boundary",
+    "scope_creep_signals": "NONE beyond what a final closing audit legitimately requires; the prompt itself explicitly authorizes disjoint parallel review agents (workstreams 1-5), which is expected and appropriate at this scale.",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
     "required_input_docs": {
-      "status": "CONFIRMED_EXISTS — all 11 (globs resolved)",
-      "evidence": "Planning paper; WHY_MIGRATION_PILOT_COHORT.md; WHY_PILOT_MEDICAL_REVIEW_READINESS.md; WHY_PILOT_MEDICAL_REVIEW_DECISION_TEMPLATE.md; CONTROLLED_BETA_ARCHITECTURE_COHORT.md; CONVERGENCE_VIABILITY_ASSESSMENT.md; ARCH-CONV-PKG2_launch_critical_provenance_decision_inventory.md; ARCH-CONV-PKG2_implementation_and_verification_report.md; ARCH-CONV-GATE2_5_implementation_and_verification_report.md; ADR-RT-003; ADR-RT-IDENTITY-PROV-001 — all confirmed present."
+      "status": "CONFIRMED_EXISTS — all ~15 named/globbed docs",
+      "evidence": "Planning paper; CONTROLLED_BETA_ARCHITECTURE_COHORT.md; CONVERGENCE_VIABILITY_ASSESSMENT.md; WHY_MIGRATION_PILOT_COHORT.md; WHY_PILOT_MEDICAL_REVIEW_READINESS.md; both PKG1 docs; both PKG2 docs + verification report; all four PKG3 docs + the GPT-reviewed/Anthony-ratified pack + verification report; ADR-RT-IDENTITY-PROV-001; BUILD_DELIVERABLE_REGISTER.md — all confirmed present via direct Glob/prior-session confirmation."
     },
     "output_paths_correctly_new": {
       "status": "CONFIRMED",
-      "evidence": "None of the 6 required PKG3 deliverable paths exist yet."
+      "evidence": "None of the 5 required ARCH-CONV-FINAL-AUDIT deliverable paths exist yet."
+    },
+    "uat_folder_convention_mismatch": {
+      "status": "FLAGGED — not blocking, low-confidence correction (thin precedent)",
+      "evidence": "The prompt targets docs/uat/ARCH-CONV-FINAL_frontend_end_to_end_uat.md; no docs/uat/ directory currently exists. The one existing historical precedent is docs/testing/UAT1/UAT1_findings.md (referenced in AUTHORITY_MAP.md as ARCHIVE, 'date uncertain'). Unlike the Medical Research Documents convention (6 real files, high confidence), this precedent is thin (one old file) — recommend the executing auditor check with the actual repository convention before creating a new top-level docs/uat/ directory, but this is a much softer correction than the medical-research folder finding at GATE2_5."
     },
     "branch_state": {
       "status": "CONFIRMED, expected pre-kernel-start state",
-      "evidence": "Current branch is main (HEAD includes 1da6cd5, merge of 'ARCH-CONV-GATE2_5 WHY pilot medical-review readiness (CONDITIONAL_GO, conditions 1-4 closed)'). Target branch feature/arch-conv-pkg3-why-authority-migration does not yet exist. Working tree shows only the expected latest_cursor_prompt.md Stage-1 handoff modification."
+      "evidence": "Current branch is main (HEAD includes 2ecb02a, merge of 'ARCH-CONV-PKG3 WHY authority migration (GO)' — confirms PKG3 was human-merged). Target branch audit/arch-conv-final-programme does not yet exist. Working tree shows only the expected latest_cursor_prompt.md Stage-1 handoff modification."
     }
   },
 
   "independent_premise_verification": {
-    "ratified_governance_model_is_genuinely_recorded_not_asserted": {
-      "status": "CONFIRMED — the concern flagged at GATE2_5 hardening was properly resolved before this prompt was written",
-      "evidence": "Commit 4e6c70b ('docs(ARCH-CONV-GATE2_5): record human ratification of dual-gate ownership'), authored directly by Anthony Broad (matching the repository's actual git user, not Cursor or GPT self-attribution), updates HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_READINESS.md §2.0/§7.2 to close conditions 1-4: dual-gate model approved, GPT named as Gate 1 (medical review) owner, Anthony named as Gate 2 (production ratification) owner, capacity confirmed for the bounded 5-signal/10-frame pilot. This is exactly the 'recorded in a governed artefact' outcome the GATE2_5 hardening pass required — PKG3's 'Ratified governance model' section accurately reflects this, not an invented or premature claim."
-    },
-    "condition_5_evidence_hygiene_correctly_deferred_to_this_package": {
-      "status": "CONFIRMED consistent",
-      "evidence": "The same ratification commit explicitly marks condition 5 (standalone inv YAML extraction) as 'DECISION CLOSED / WORK OUTSTANDING' and the TPO index entry as a 'pre-review prerequisite... WORK OUTSTANDING' — both correctly folded into this package's Internal Phase 1, matching GATE2_5's own framing that this was 'recommended before Package 3B, not a Package 3 redesign.'"
-    },
-    "material_structural_finding_STOP_Gate_C_vs_single_kernel_execution": {
-      "status": "MATERIAL FINDING — requires explicit interpretation before implementation begins",
-      "evidence": "This package mandates a genuine external pause: 'Mandatory Human STOP Gate C... STOP implementation and provide the pack for: 1. GPT medical review; 2. Anthony's explicit frame-level ratification. Do not continue automatically.' But every package hardened/audited this session (Gate 0, PKG1, PKG2, GATE2_5) completed autonomously within one continuous kernel start/finish cycle, with human review happening only AFTER kernel finish at the merge-decision stage — and the actual precedent for how a human/GPT decision gets incorporated (the 4e6c70b commit above) shows it happening as a SEPARATE, later commit authored directly by Anthony, after the prior package's kernel had already finished. There is no evidence in this repository's tooling of a kernel run pausing mid-execution for out-of-band human/GPT input and then resuming within the same run. The only safe, precedent-consistent interpretation is: Phases 1-3 (evidence/identity inventory, architecture design, consolidated review pack) complete and the kernel finishes at Gate C — Phase 4 onward (implementation, retirement, verification) must be a later, separate execution of the same work_id, triggered only once GPT review + Anthony ratification are actually recorded in a governed artefact (mirroring exactly how the Gate 2.5 conditions were closed). This is NOT the kind of 'split into separate sprints' the prompt forbids (new architecture/evidence/medical-content/retirement work) — it is the literal mechanical requirement of a genuine human-in-the-loop halt that this session's tooling has never needed before now."
-    },
-    "core_technical_premises_reconfirmed_unchanged": {
+    "rejected_frame_identity_matches_prior_independent_verification": {
       "status": "CONFIRMED",
-      "evidence": "Legacy hypothesis YAML count still 40 (direct recount); root_cause_registry_v1.ROOT_CAUSE_TARGET_SPECS still 41 (direct Python import); compiled_hypothesis.RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS still the 1-element frozenset({'signal_vitamin_d_low'}) (direct Python import) — all unchanged since PKG2/GATE2_5, confirming the 'required authority states' model (LEGACY_ACTIVE...LEGACY_RETIRED etc.) is being designed against the actual current state, not a stale assumption."
+      "evidence": "This prompt's Workstream 3 and scenario 1 both name signal_homocysteine_high::inv_homocysteine_high_metabolic as the rejected frame requiring live-execution proof of inertness. This exactly matches what this session's own PKG3 audit already live-executed and confirmed (resolve_frame_why_authority -> mode='skip'; compile_root_cause_v1() -> root=None). The final audit should re-run this itself at its own baseline SHA rather than citing the prior session's result, per the independence requirement below, but the premise itself (which frame, which activation_key) is accurate."
     },
-    "tpo_index_gap_reconfirmed": {
+    "nine_compiled_active_plus_one_rejected_matches_register": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:1397-1421 shows exactly one frame entry under signal_tpo_ab_high (autoimmune_hypothyroid_pattern, kb59); euthyroid_autoimmune_risk is absent — exactly matching the prompt's Phase 1 item 3 requirement to add it."
+      "evidence": "Matches the compiled_why_authority_register_v1.yaml content independently verified during the PKG3 audit (10 entries: 9 COMPILED_ACTIVE, 1 REJECTED with artefact_path: null)."
+    },
+    "mandatory_human_UAT_stop_is_correctly_designed_as_a_kernel_boundary": {
+      "status": "CONFIRMED as correctly structured, not a gap to fix",
+      "evidence": "This prompt explicitly states: 'Complete the automated and code-based audit first, then STOP and hand the UAT plan to Anthony... After Anthony's evidence is added, resume the same audit work ID and complete the programme decision.' This is exactly the two-kernel-run structure that PKG3's mandatory Gate C required (and which this session's hardening pass for PKG3 had to infer/recommend, since that prompt did not spell it out as explicitly). This prompt gets it right by design — a positive observation, not a finding requiring correction."
+    },
+    "independence_requirement_interpretation": {
+      "status": "MATERIAL CLARIFICATION for the executing auditor",
+      "evidence": "This prompt states 'Do not rely on implementation reports or prior PASS decisions as proof... Re-execute material tests, inspect live code.' This session's Claude Code audits of PKG1/PKG2/PKG3 already did exactly this (live code execution, byte-identical hash verification, direct test re-runs) — those are genuine independent audit artefacts, not mere 'implementation reports.' However, the safest and most defensible reading of this prompt's independence requirement is that the FINAL audit should still perform its OWN fresh re-execution at its own baseline SHA (cheap, removes any doubt about drift between then and now) rather than citing prior Claude Code audit summaries as a substitute for re-verification. Recommend treating prior audit summaries as corroborating context to compare against, not as evidence itself."
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "Treat STOP Gate C as ending this kernel execution, not as an in-run pause. Deliver Phases 1-3's outputs (evidence/identity inventory, compiled-authority design, consolidated review pack) and stop there for this work-package run. Do not attempt Phase 4-6 (implementation, retirement, verification, validation gate) in the same execution — there is no mechanism in this project's tooling for a running kernel session to wait on out-of-band GPT+Anthony input and then resume, and the only observed precedent (the Gate 2.5 ratification) happened via a separate later commit after the prior kernel had already finished.",
-    "When Phase 4 onward eventually resumes (as a later, separate execution of this same work_id, after GPT review + Anthony ratification appear as a governed artefact update), that resumption should independently re-verify frame-by-frame that no batch-level or inherited ratification occurred — the prompt is explicit that 'no frame may be promoted because another frame in the same signal family was approved' and 'no blank, implied, batch-level or inherited ratification is permitted,' so the eventual continuation's own verification should check the ratification record's granularity before treating any frame as cleared.",
-    "The consolidated review pack (Phase 3 deliverable) should be built to make it maximally easy for GPT and Anthony to distinguish per-frame decisions even though it's one consolidated document per the ratified artefact-form decision — recommend one clearly delimited section per activation_key (10 sections) rather than a table that could make it easy to accidentally batch-approve a family."
+    "Workstreams 1-5's disjoint-agent structure is explicitly requested by the prompt itself — at execution time, size each workstream's agent scope to avoid overlap (e.g., Workstream 3's medical-fidelity check and Workstream 4's end-to-end scenarios both touch the same 10 pilot frames from different angles; make sure the two agents compare notes rather than silently duplicating or silently disagreeing).",
+    "For Workstream 5's legacy-fingerprint scan, recommend building the fingerprint set FROM the actual retired-legacy YAML content and the actual rejected frame's hypothesis text (both directly readable from this session's PKG3 evidence) rather than re-deriving it from scratch, to ensure the fingerprint strings are exact, not paraphrased approximations that could miss a real leak.",
+    "The UAT folder path convention (see authority verification above) should be confirmed against actual repository practice before creating a new top-level directory."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 7,
+    "checklist_count": 6,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "All 11 required input docs (including globs) exist", "source": "Glob per path, prior-session confirmation", "evidence": "All confirmed present", "status": "CONFIRMED"},
-      {"id": 2, "claim": "All 6 required output paths are correctly new", "source": "Glob per path", "evidence": "None of the 6 deliverables exist yet", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Branch state expected; GATE2_5 (with ratification) merged", "source": "git log; git branch --list; git status --short", "evidence": "HEAD includes 1da6cd5, the GATE2_5 merge explicitly noting 'conditions 1-4 closed'; target branch not yet created; only latest_cursor_prompt.md modified", "status": "CONFIRMED"},
-      {"id": 4, "claim": "The Gate 2.5 ratification this prompt relies on was recorded by the actual human (Anthony), not asserted by an agent", "source": "git show 4e6c70b", "evidence": "Commit authored by Anthony Broad directly, closing conditions 1-4 with dual-gate model, GPT/Anthony role assignment, and confirmed capacity", "status": "CONFIRMED"},
-      {"id": 5, "claim": "Legacy YAML (40), registry targets (41), compiled pilot (1, signal_vitamin_d_low only) unchanged since PKG2/GATE2_5", "source": "Direct recount and Python import", "evidence": "Exact match to prior session's figures", "status": "CONFIRMED"},
-      {"id": 6, "claim": "inv_tpo_ab_high_euthyroid_autoimmune_risk is genuinely missing from medical_frame_identity_index_v1.yaml", "source": "Direct grep/read of the index file", "evidence": "Only autoimmune_hypothyroid_pattern frame present under signal_tpo_ab_high", "status": "CONFIRMED"},
-      {"id": 7, "claim": "No existing tooling in this session's precedent supports an in-run pause for external human/GPT review; the observed pattern is kernel-finish-then-separate-later-commit", "source": "Review of Gate 0/PKG1/PKG2/GATE2_5 kernel execution patterns and the 4e6c70b commit timing", "evidence": "Every prior package's human/GPT input arrived after kernel finish, in a separate commit", "status": "CONFIRMED — informs the material finding above, not a pass/fail check on this prompt itself"}
+      {"id": 1, "claim": "All ~15 required input docs (named + globbed) exist", "source": "Glob per path, prior-session confirmation", "evidence": "All confirmed present", "status": "CONFIRMED"},
+      {"id": 2, "claim": "All 5 required output paths are correctly new", "source": "Glob per path", "evidence": "None of the 5 deliverables exist yet", "status": "CONFIRMED"},
+      {"id": 3, "claim": "Branch state expected; PKG3 merged", "source": "git log; git branch --list; git status --short", "evidence": "HEAD includes 2ecb02a, the PKG3 merge commit; target branch not yet created; only latest_cursor_prompt.md modified", "status": "CONFIRMED"},
+      {"id": 4, "claim": "No docs/uat/ directory exists; actual (thin) precedent is docs/testing/UAT1/", "source": "Glob", "evidence": "docs/uat/* empty; docs/testing/UAT1/UAT1_findings.md exists (AUTHORITY_MAP: ARCHIVE, date uncertain)", "status": "CONFIRMED"},
+      {"id": 5, "claim": "Rejected frame identity (signal_homocysteine_high::inv_homocysteine_high_metabolic) and 9/1 COMPILED_ACTIVE/REJECTED split match the actual register", "source": "This session's own PKG3 audit, independently live-executed", "evidence": "Exact match", "status": "CONFIRMED"},
+      {"id": 6, "claim": "The mandatory human-UAT STOP is correctly designed as a two-kernel-run boundary, not an in-run pause", "source": "Direct read of the prompt's own 'resume the same audit work ID' language", "evidence": "Matches the mechanically-necessary pattern already observed working correctly in PKG3 (Gate C)", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Any implementation of Phase 4 onward within the same execution as Phases 1-3, without a real, recorded GPT review + Anthony ratification artefact existing first — REJECT_AND_RETURN",
-    "Any frame promoted via batch-level, implied, or inherited ratification rather than an explicit per-frame decision — REJECT_AND_RETURN",
-    "Any invented medical content, source_spec_id, or reviewer decision — REJECT_AND_RETURN",
-    "Any expansion beyond the 10 ratified pilot frames — REJECT_AND_RETURN",
-    "Any simultaneous compiled+legacy authority for the same activation_key at any point, even transiently without a fail-closed guard — REJECT_AND_RETURN",
-    "Any WHY estate migration beyond the 10-frame pilot, PSI wiring, Gemini enablement, signal-threshold change, or general prose expansion — REJECT_AND_RETURN",
-    "Any weakening of human-ratification requirements or replacement of frame-level with family-level approval — REJECT_AND_RETURN",
-    "A GO/CORRECT/STOP/V6 recommendation issued without full Gate A/B/C evidence — REJECT_AND_RETURN"
+    "Any substantive correction implemented inside this audit package (forbidden — corrections must be recommended as CORRECT/STOP/V6, not applied here) — REJECT_AND_RETURN",
+    "A final PASS issued before Anthony's UAT evidence is actually present — REJECT_AND_RETURN",
+    "Any reliance on Cursor's own prior implementation reports, or on this session's prior Claude Code audit summaries, as a substitute for fresh re-execution at this audit's own baseline SHA — REJECT_AND_RETURN or treat as an audit-quality defect",
+    "Any PASS issued while a safety-material item remains UNRESOLVED, or while any ACTIVE_LEAK or BOUNDARY_LEAK classification exists — REJECT_AND_RETURN",
+    "Any beta-readiness declaration not separately and explicitly assessed — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 11 required input documents (including globs) and all 6 required output paths confirmed. Branch state confirmed expected pre-kernel-start, with the Gate 2.5 merge explicitly closing conditions 1-4. Critically, independently verified that the governance-model ratification this package's front matter relies on ('GPT = Head of Medical Research, Anthony = ratifier') was genuinely recorded by the real human (commit 4e6c70b, authored by Anthony Broad directly) — not invented or asserted by an agent — fully resolving the concern raised during GATE2_5 hardening. One material structural finding requires explicit handling: the mandatory human STOP Gate C cannot mechanically occur mid-execution within a single autonomous kernel run given this project's observed tooling pattern (every prior human/GPT decision in this programme arrived as a separate commit after kernel finish, not an in-run pause). Cursor's execution should treat Gate C as ending this kernel run after Phases 1-3 deliver their outputs, with Phase 4 onward requiring a distinct, later execution once the review/ratification artefact actually exists — this is a mechanical necessity, not the kind of scope-splitting the prompt otherwise forbids. All core technical premises (legacy YAML count, registry target count, compiled-pilot cardinality, the missing TPO index entry) were independently reconfirmed unchanged and accurate. No blocking defect found. Recommend proceeding to kernel start, with the Gate-C-as-kernel-boundary interpretation flagged for Cursor's attention."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All required input documents and all 5 required output paths confirmed; branch state confirmed expected pre-kernel-start with PKG3's GO outcome confirmed merged. The rejected-frame identity and 9/1 compiled/rejected split this prompt relies on were independently reconfirmed against this session's own live-executed PKG3 audit. The mandatory human-UAT STOP gate is correctly designed by this prompt as a genuine two-kernel-run boundary (matching the mechanically-necessary pattern already proven to work in PKG3's Gate C) rather than an impossible in-run pause -- a positive design observation, not a gap. One low-confidence, non-blocking path-convention note: the prompt's assumed docs/uat/ directory has no real precedent (only a thin, archived docs/testing/UAT1/ file) and the executing auditor should confirm the actual convention before creating a new top-level directory. One material clarification recorded for the executing auditor: this session's own prior Claude Code audits of PKG1/PKG2/PKG3, while genuinely independent, should still be treated as corroborating context rather than a substitute for this audit's own fresh re-execution at its own baseline SHA, consistent with the prompt's explicit independence requirement. No blocking defect found. Recommend proceeding to kernel start."
 }
