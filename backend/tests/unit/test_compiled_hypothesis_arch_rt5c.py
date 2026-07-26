@@ -104,11 +104,16 @@ def test_compile_root_cause_vitamin_d_uses_summary_template_not_physiological_cl
     assert all(item.item for item in hyp.evidence_for)
 
 
-def test_non_pilot_homocysteine_path_unchanged():
+def test_homocysteine_compiled_frame_uses_activation_key():
     root = compile_root_cause_v1(
         signal_results=[
             {
                 "signal_id": "signal_homocysteine_high",
+                "activation_key": (
+                    "signal_homocysteine_high::"
+                    "inv_homocysteine_high_b_vitamin_related_methylation_impairment"
+                ),
+                "source_spec_id": "inv_homocysteine_high_b_vitamin_related_methylation_impairment",
                 "signal_state": "at_risk",
                 "confidence": 0.7,
                 "primary_metric": "homocysteine",
@@ -119,7 +124,11 @@ def test_non_pilot_homocysteine_path_unchanged():
     )
     assert root is not None
     finding = next(f for f in root.findings if f.signal_id == "signal_homocysteine_high")
+    assert finding.authority_scope == "frame_specific"
     assert finding.hypotheses
+    assert all(
+        h.hypothesis_id.startswith("hyp_") for h in finding.hypotheses
+    )
 
 
 def test_legacy_yaml_still_loads_for_pilot():

@@ -1,0 +1,38 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_mcv_high_macrocytosis_v1
+hypothesis_set_id: signal_mcv_high_anchor_set_v1
+signal_id: signal_mcv_high
+activation_key: signal_mcv_high::inv_mcv_high_macrocytosis
+source_spec_ids:
+- inv_mcv_high_macrocytosis
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_mcv_high_macrocytosis.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_pkg3_mcv_anchor.yaml
+hypotheses:
+- evidence_strength: strong
+  evidence_for:
+  - MCV is elevated relative to the laboratory reference.
+  evidence_against:
+  - MCV is within range.
+  contradiction_markers: []
+  caveats:
+  - No cause may be ranked from MCV alone.
+  - If a specific megaloblastic or non-megaloblastic frame is supported, this anchor
+    must not generate duplicate causal WHY.
+  - Avoid marrow-stress wording without specific markers.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: mcv_high_anchor_pattern_v1
+  legacy_hypothesis_id: mcv_high_anchor_pattern_v1
+  rank: 1
+  title: Macrocytosis morphology anchor
+  physiological_claim: Raised MCV indicates macrocytosis and is a morphology-led finding,
+    not a causal diagnosis.
+  summary_template: Larger red cells (macrocytosis) are present. This morphology finding
+    alone does not identify the cause.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: pilot_manual
+  notes: ARCH-CONV-PKG3 Gate C Anthony-ratified compiled WHY. Revisions applied per
+    medical-review pack.

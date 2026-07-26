@@ -1,0 +1,7 @@
+manifest_id: arch_conv_pkg3_hcy_b_vitamin
+work_id: ARCH-CONV-PKG3
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_homocysteine_high_b_vitamin_related_methylation_impairment.yaml
+  activation_key: signal_homocysteine_high::inv_homocysteine_high_b_vitamin_related_methylation_impairment
+notes: Gate C Anthony-ratified compiled WHY artefact.

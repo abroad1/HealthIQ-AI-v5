@@ -1,0 +1,60 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_homocysteine_high_renal_clearance_reduction_v1
+hypothesis_set_id: signal_homocysteine_high_renal_set_v1
+signal_id: signal_homocysteine_high
+activation_key: signal_homocysteine_high::inv_homocysteine_high_renal_clearance_reduction
+source_spec_ids:
+- inv_homocysteine_high_renal_clearance_reduction
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_homocysteine_high_renal_clearance_reduction.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_pkg3_hcy_renal.yaml
+hypotheses:
+- evidence_strength: moderate
+  evidence_for:
+  - Homocysteine is elevated.
+  - Reduced eGFR and/or raised creatinine support a renal contribution when present.
+  evidence_against:
+  - Kidney markers do not support reduced filtration.
+  contradiction_markers: []
+  caveats:
+  - Homocysteine is not a diagnostic or staging marker for kidney disease.
+  - Do not label reduced eGFR as chronic unless persistence criteria are available.
+  - Do not imply that lowering homocysteine improves cardiovascular or renal outcomes.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_renal_hyperhomocysteinemia
+  rank: 1
+  title: Renal-associated hyperhomocysteinaemia pattern
+  physiological_claim: Reduced kidney filtration can contribute to elevated homocysteine
+    when renal impairment is concurrently supported, without diagnosing CKD from a
+    single result.
+  summary_template: Reduced kidney filtration can contribute to a raised homocysteine
+    result. This does not show the cause on its own and should be considered alongside
+    kidney and vitamin markers.
+- evidence_strength: moderate
+  evidence_for:
+  - Homocysteine is elevated with concurrent renal-function support.
+  - B-vitamin markers additionally support a combined pattern.
+  evidence_against:
+  - Either renal or B-vitamin support is absent.
+  contradiction_markers: []
+  caveats:
+  - Combined pattern requires both renal and B-vitamin support; do not inherit Frame
+    2 hypotheses without evidence.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_combined_renal_and_hematinic_context
+  rank: 2
+  title: Combined renal and B-vitamin hyperhomocysteinaemia context
+  physiological_claim: Renal impairment plus B-vitamin insufficiency can jointly contribute
+    to raised homocysteine when both patterns are evidenced.
+  summary_template: Reduced kidney filtration can contribute to a raised homocysteine
+    result. This does not show the cause on its own and should be considered alongside
+    kidney and vitamin markers.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: pilot_manual
+  notes: ARCH-CONV-PKG3 Gate C Anthony-ratified compiled WHY. Revisions applied per
+    medical-review pack.

@@ -955,27 +955,28 @@ Entries should not list every file touched or every non-change.
 
 ---
 
-## ARCH-CONV-PKG3 — WHY Authority Migration (Phases 1–3 / Gate C boundary)
+## ARCH-CONV-PKG3 — WHY Authority Migration (Phases 1–6 / Gate C closed)
 
-**Status:** Partial — STOP Gate C  
+**Status:** Complete on branch (GO recommendation; merge blocked pending human authority)  
 **Date:** 2026-07-26  
 **Programme block(s):** Architecture convergence Package 3
 
 ### Delivered / ticked off
 - Six standalone inv YAML extractions (PKG2 method) + lineage attach.
-- TPO euthyroid frame indexed (deferred/inactive).
-- Gate A inventory PASS; Gate B design PASS.
-- Consolidated medical-review pack assembled; no Cursor medical decisions.
+- TPO euthyroid frame indexed; Gate A/B passed; Gate C pack ratified (GPT + Anthony).
+- Per-activation_key WHY authority register; 9 COMPILED_ACTIVE artefacts; metabolic REJECTED.
+- Vitamin D legacy retirement confirmation; dual-authority prevention; parity + verification reports.
+- `validate_compiled_why_authority_gate.py` wired into architecture validation gate.
 
 ### Carry-forwards
-- GPT frame-level review + Anthony ratification (Gate C).
-- Phase 4–6: implement only ratified frames; retirement register; parity; validation gate; final GO/CORRECT/STOP/V6.
+- Human merge authority for this branch.
+- Estate-wide WHY migration beyond the 5/10 pilot (separate work).
 
 ### Blockers / risks
-- Gate C open — no promotion until per-frame ratification.
+- None for pilot Package 3 obligations; merge requires human approval.
 
 ### Recommended next sprint
-- Resume ARCH-CONV-PKG3 after Gate C artefact update (same work_id continuation).
+- Publish/merge ARCH-CONV-PKG3 only after explicit human authority; then programme advisory for next architecture block.
 
 ---
 

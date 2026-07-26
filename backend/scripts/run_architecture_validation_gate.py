@@ -79,6 +79,11 @@ def main() -> int:
             None,
         ),
         (
+            "validate_compiled_why_authority_gate",
+            [py, str(scripts / "validate_compiled_why_authority_gate.py")],
+            None,
+        ),
+        (
             "validate_launch_path_frame_identity_gate",
             [py, str(scripts / "validate_launch_path_frame_identity_gate.py")],
             None,

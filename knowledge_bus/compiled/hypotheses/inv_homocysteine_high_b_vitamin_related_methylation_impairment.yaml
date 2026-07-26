@@ -1,0 +1,63 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_homocysteine_high_b_vitamin_related_methylation_impairment_v1
+hypothesis_set_id: signal_homocysteine_high_b_vitamin_set_v1
+signal_id: signal_homocysteine_high
+activation_key: signal_homocysteine_high::inv_homocysteine_high_b_vitamin_related_methylation_impairment
+source_spec_ids:
+- inv_homocysteine_high_b_vitamin_related_methylation_impairment
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_homocysteine_high_b_vitamin_related_methylation_impairment.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_pkg3_hcy_b_vitamin.yaml
+hypotheses:
+- evidence_strength: moderate
+  evidence_for:
+  - Homocysteine is elevated on this panel.
+  - Folate or related B-vitamin markers support a methylation-pathway insufficiency
+    pattern when present.
+  evidence_against:
+  - Folate and B12 markers are clearly replete, reducing support for a vitamin-associated
+    pattern.
+  contradiction_markers: []
+  caveats:
+  - Raised homocysteine is non-specific and is not proof of folate, B12 or B6 deficiency.
+  - Homocysteine must not be described as a validated stand-alone measure of methylation
+    capacity.
+  confirmatory_tests: []
+  missing_data_policy: Review folate, B12/active B12 and renal/thyroid context before
+    attributing cause.
+  hypothesis_id: hyp_folate_related_hyperhomocysteinemia
+  rank: 1
+  title: Folate-associated hyperhomocysteinaemia pattern
+  physiological_claim: Raised homocysteine may reflect folate-related impairment of
+    remethylation when folate support is low, without proving folate deficiency as
+    a diagnosis.
+  summary_template: Your raised homocysteine may be associated with reduced availability
+    of folate or vitamin B12, particularly if those markers are also low or borderline.
+    Other factors can also raise homocysteine.
+- evidence_strength: moderate
+  evidence_for:
+  - Homocysteine is elevated on this panel.
+  - Low or borderline B12/active B12 can support a B12-associated pattern.
+  evidence_against:
+  - B12 status appears replete and no combined vitamin pattern is supported.
+  contradiction_markers: []
+  caveats:
+  - Do not present raised homocysteine as proof of B12 deficiency.
+  - Renal impairment, medicines, thyroid physiology, smoking, age and genetics may
+    also contribute.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_b12_related_or_combined_methylation_impairment
+  rank: 2
+  title: B12-associated or combined B-vitamin hyperhomocysteinaemia pattern
+  physiological_claim: Raised homocysteine may reflect cobalamin insufficiency or
+    combined B-vitamin limitation when supporting markers are present.
+  summary_template: Your raised homocysteine may be associated with reduced availability
+    of folate or vitamin B12, particularly if those markers are also low or borderline.
+    Other factors can also raise homocysteine.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: pilot_manual
+  notes: ARCH-CONV-PKG3 Gate C Anthony-ratified compiled WHY. Revisions applied per
+    medical-review pack.

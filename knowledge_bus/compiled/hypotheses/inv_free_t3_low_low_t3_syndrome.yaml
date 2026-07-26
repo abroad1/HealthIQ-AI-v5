@@ -1,0 +1,59 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_free_t3_low_low_t3_syndrome_v1
+hypothesis_set_id: signal_free_t3_low_nti_set_v1
+signal_id: signal_free_t3_low
+activation_key: signal_free_t3_low::inv_free_t3_low_low_t3_syndrome
+source_spec_ids:
+- inv_free_t3_low_low_t3_syndrome
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_free_t3_low_low_t3_syndrome.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_pkg3_free_t3_low.yaml
+hypotheses:
+- evidence_strength: moderate
+  evidence_for:
+  - Free T3 is low.
+  - Compatible TSH/FT4 and illness or stress context strengthen this pattern when
+    present.
+  evidence_against:
+  - Thyroid panel indicates primary hypothyroid physiology.
+  contradiction_markers: []
+  caveats:
+  - Low FT3 does not diagnose non-thyroidal illness syndrome.
+  - Do not recommend thyroid hormone treatment.
+  - Isolated outpatient low FT3 without context is insufficient.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_nonthyroidal_illness_pattern
+  rank: 1
+  title: Non-thyroidal illness-compatible low FT3 pattern
+  physiological_claim: Low free T3 may be compatible with non-thyroidal illness when
+    TSH/FT4 and illness context support it, without diagnosing NTI syndrome or excluding
+    primary thyroid disease.
+  summary_template: A low free T3 result can occur during illness or physiological
+    stress and does not necessarily mean that the thyroid gland itself is underactive.
+    The rest of the thyroid panel and clinical context are important.
+- evidence_strength: moderate
+  evidence_for:
+  - Low FT3 with compatible non-primary thyroid pattern.
+  evidence_against:
+  - Elevated TSH with low FT4 redirects toward primary thyroid hormone deficiency.
+  contradiction_markers: []
+  caveats:
+  - '''Reduced conversion'' is mechanistic language, not a measured diagnosis.'
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_reduced_t4_to_t3_conversion
+  rank: 2
+  title: Reduced peripheral T4-to-T3 conversion context
+  physiological_claim: Reduced peripheral conversion is a plausible mechanism in systemic
+    stress, not a directly measured process.
+  summary_template: A low free T3 result can occur during illness or physiological
+    stress and does not necessarily mean that the thyroid gland itself is underactive.
+    The rest of the thyroid panel and clinical context are important.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: pilot_manual
+  notes: ARCH-CONV-PKG3 Gate C Anthony-ratified compiled WHY. Revisions applied per
+    medical-review pack.

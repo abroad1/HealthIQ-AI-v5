@@ -47,7 +47,14 @@ def is_compiled_hypothesis_pilot_signal(signal_id: str) -> bool:
 
 
 def is_runtime_promoted_compiled_signal(signal_id: str) -> bool:
+    """ARCH-RT-5C signal-level set (vitamin D only). PKG3 frame promotion uses activation_key register."""
     return signal_id.strip() in RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS
+
+
+def is_compiled_active_activation_key(activation_key: str) -> bool:
+    from core.knowledge.why_authority_v1 import STATE_COMPILED_ACTIVE, authority_state_for
+
+    return authority_state_for(activation_key) == STATE_COMPILED_ACTIVE
 
 
 def load_shadow_compiled_hypothesis(signal_id: str) -> Optional[Dict[str, Any]]:

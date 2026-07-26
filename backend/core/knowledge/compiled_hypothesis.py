@@ -231,13 +231,49 @@ def load_compiled_hypothesis_artefact(signal_id: str) -> CompiledHypothesisArtef
     return artefact
 
 
+def load_compiled_hypothesis_artefact_from_path(path: Path) -> CompiledHypothesisArtefact:
+    if not path.is_file():
+        raise CompiledHypothesisValidationError(f"missing compiled hypothesis artefact: {path}")
+    payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    validate_compiled_hypothesis_payload(payload, path=str(path))
+    return parse_compiled_hypothesis_payload(payload)
+
+
 @lru_cache(maxsize=4)
 def _cached_artefact(signal_id: str) -> CompiledHypothesisArtefact:
     return load_compiled_hypothesis_artefact(signal_id)
 
 
+@lru_cache(maxsize=32)
+def _cached_artefact_by_path(path_str: str) -> CompiledHypothesisArtefact:
+    return load_compiled_hypothesis_artefact_from_path(Path(path_str))
+
+
 def get_compiled_hypothesis_artefact(signal_id: str) -> CompiledHypothesisArtefact:
     return _cached_artefact(signal_id)
+
+
+def get_compiled_hypothesis_artefact_for_activation_key(activation_key: str) -> CompiledHypothesisArtefact:
+    """ARCH-CONV-PKG3 — load compiled artefact by activation_key via authority register."""
+    from core.knowledge.why_authority_v1 import artefact_path_for_activation_key, authority_row_for
+
+    key = str(activation_key or "").strip()
+    row = authority_row_for(key)
+    if row is None:
+        raise CompiledHypothesisValidationError(f"no authority registration for {key!r}")
+    path = artefact_path_for_activation_key(key)
+    artefact = _cached_artefact_by_path(str(path.resolve()))
+    if artefact.activation_key != key:
+        raise CompiledHypothesisValidationError(
+            f"{path}: activation_key {artefact.activation_key!r} != register key {key!r}"
+        )
+    return artefact
+
+
+def clear_compiled_hypothesis_caches() -> None:
+    _cached_artefact.cache_clear()
+    _cached_artefact_by_path.cache_clear()
+
 
 
 def validate_confirmatory_test_refs(artefact: CompiledHypothesisArtefact) -> None:
@@ -278,9 +314,14 @@ def runtime_summary_for_hypothesis(
 
 def validate_runtime_promoted_artefact(artefact: CompiledHypothesisArtefact) -> None:
     """Fail-closed gate before wiring compiled hypotheses into compile_root_cause_v1."""
-    if artefact.signal_id not in RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS:
+    from core.knowledge.why_authority_v1 import STATE_COMPILED_ACTIVE, authority_state_for
+
+    state = authority_state_for(artefact.activation_key)
+    is_promoted = artefact.signal_id in RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS or state == STATE_COMPILED_ACTIVE
+    if not is_promoted:
         return
-    if len(artefact.hypotheses) != 1:
+    # Legacy vitamin_d single-hypothesis pilot constraint (ARCH-RT-5C).
+    if artefact.signal_id == PILOT_SIGNAL_ID and len(artefact.hypotheses) != 1:
         raise CompiledHypothesisValidationError(
             f"runtime promotion requires single-frame artefact; got {len(artefact.hypotheses)} "
             f"hypotheses for {artefact.signal_id!r}"
