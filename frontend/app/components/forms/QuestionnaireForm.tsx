@@ -33,6 +33,27 @@ function asString(v: unknown): string {
   return '';
 }
 
+/** Stable contract stamp — backend rejects bare waist when this is present. */
+export const WAIST_EXPLICIT_UNIT_CONTRACT = 'waist_explicit_unit_v1';
+export const WAIST_CM_DICT_KEY = 'Waist circumference (cm)';
+export const WAIST_INCHES_DICT_KEY = 'Waist circumference (inches)';
+
+function isWaistQuestion(question: QuestionnaireQuestion): boolean {
+  return question.id === 'waist_circumference';
+}
+
+function waistUnitMode(
+  question: QuestionnaireQuestion,
+  value: unknown
+): 'cm' | 'inches' {
+  const alt = question.alternativeUnit?.label ?? WAIST_CM_DICT_KEY;
+  const inchesLabel = question.label || WAIST_INCHES_DICT_KEY;
+  if (isRecord(value) && Object.prototype.hasOwnProperty.call(value, alt)) return 'cm';
+  if (isRecord(value) && Object.prototype.hasOwnProperty.call(value, inchesLabel)) return 'inches';
+  // UK product default: centimetres (never bare / unitless).
+  return 'cm';
+}
+
 function isQuestionVisible(question: QuestionnaireQuestion, responses: Record<string, unknown>): boolean {
   const cd = question.conditionalDisplay;
   if (!cd) return true;
@@ -256,6 +277,27 @@ export default function QuestionnaireForm({
             return `${field.label} is required`;
           }
         }
+      } else if (question.type === 'number' && isWaistQuestion(question)) {
+        if (!isRecord(value)) {
+          return 'Select centimetres or inches, then enter your waist measurement';
+        }
+        const cmKey = question.alternativeUnit?.label ?? WAIST_CM_DICT_KEY;
+        const inchesKey = question.label || WAIST_INCHES_DICT_KEY;
+        const cmVal = value[cmKey];
+        const inVal = value[inchesKey];
+        const hasCm =
+          cmVal !== undefined &&
+          cmVal !== null &&
+          cmVal !== '' &&
+          !(typeof cmVal === 'number' && Number.isNaN(cmVal));
+        const hasIn =
+          inVal !== undefined &&
+          inVal !== null &&
+          inVal !== '' &&
+          !(typeof inVal === 'number' && Number.isNaN(inVal));
+        if (!hasCm && !hasIn) {
+          return reqHint;
+        }
       } else if (question.type === 'number' && question.alternativeUnit && isRecord(value)) {
         const altVal = value[question.alternativeUnit.label];
         if (
@@ -291,7 +333,14 @@ export default function QuestionnaireForm({
     }
 
     if (question.type === 'number' && value !== undefined && value !== null && value !== '') {
-      if (question.alternativeUnit && isRecord(value)) {
+      if (isWaistQuestion(question) && isRecord(value)) {
+        const cmKey = question.alternativeUnit?.label ?? WAIST_CM_DICT_KEY;
+        const inchesKey = question.label || WAIST_INCHES_DICT_KEY;
+        const active = value[cmKey] ?? value[inchesKey];
+        if (active !== undefined && active !== null && active !== '' && Number.isNaN(parseFloat(asString(active)))) {
+          return 'Please enter a valid number';
+        }
+      } else if (question.alternativeUnit && isRecord(value)) {
         const altVal = value[question.alternativeUnit.label];
         if (altVal !== undefined && altVal !== null && altVal !== '' && Number.isNaN(parseFloat(asString(altVal)))) {
           return 'Please enter a valid number';
@@ -361,7 +410,13 @@ export default function QuestionnaireForm({
   const handleSubmitConfirmed = async () => {
     setIsSubmitting(true);
     try {
-      await onSubmit(responses);
+      await onSubmit({
+        ...responses,
+        _questionnaire_contract: {
+          version: WAIST_EXPLICIT_UNIT_CONTRACT,
+          waist_unit: 'explicit_v1',
+        },
+      });
     } catch (error) {
       console.error('Failed to submit questionnaire:', error);
     } finally {
@@ -528,6 +583,104 @@ export default function QuestionnaireForm({
       case 'number': {
         const primaryLabel = question.label || question.question;
         const alt = question.alternativeUnit;
+        const waistMode = isWaistQuestion(question) ? waistUnitMode(question, value) : null;
+        const inchesKey = question.label || WAIST_INCHES_DICT_KEY;
+        const cmKey = alt?.label ?? WAIST_CM_DICT_KEY;
+
+        if (waistMode && alt) {
+          const displayValue =
+            waistMode === 'cm'
+              ? asString(isRecord(value) ? value[cmKey] : '')
+              : asString(isRecord(value) ? value[inchesKey] : '');
+          const activeMin = waistMode === 'cm' ? alt.min : question.min;
+          const activeMax = waistMode === 'cm' ? alt.max : question.max;
+
+          return (
+            <Card key={question.id} className={questionCardClass}>
+              <CardContent className="space-y-2 pt-6">
+                {qMarker}
+                <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
+                  {question.question}
+                  {renderTierHint(question)}
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Choose a unit, then enter your measurement. Values are stored with that unit.
+                </p>
+                <div className="flex flex-wrap gap-2 text-xs" role="group" aria-label="Waist unit">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    className={cn(
+                      'rounded-md border px-2 py-1 transition-colors',
+                      waistMode === 'cm'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:bg-muted/40'
+                    )}
+                    onClick={() => {
+                      if (waistMode === 'cm') return;
+                      const n = parseFloat(displayValue);
+                      handleResponseChange(
+                        question.id,
+                        displayValue === '' || Number.isNaN(n) ? { [cmKey]: '' } : { [cmKey]: n }
+                      );
+                    }}
+                  >
+                    Centimetres (cm)
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    className={cn(
+                      'rounded-md border px-2 py-1 transition-colors',
+                      waistMode === 'inches'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:bg-muted/40'
+                    )}
+                    onClick={() => {
+                      if (waistMode === 'inches') return;
+                      const n = parseFloat(displayValue);
+                      handleResponseChange(
+                        question.id,
+                        displayValue === '' || Number.isNaN(n)
+                          ? { [inchesKey]: '' }
+                          : { [inchesKey]: n }
+                      );
+                    }}
+                  >
+                    Inches
+                  </button>
+                </div>
+                <Input
+                  id={question.id}
+                  type="number"
+                  min={activeMin}
+                  max={activeMax}
+                  disabled={busy}
+                  value={displayValue}
+                  aria-label={waistMode === 'cm' ? cmKey : inchesKey}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    if (waistMode === 'cm') {
+                      handleResponseChange(question.id, {
+                        [cmKey]: raw === '' ? '' : parseFloat(raw),
+                      });
+                    } else {
+                      handleResponseChange(question.id, {
+                        [inchesKey]: raw === '' ? '' : parseFloat(raw),
+                      });
+                    }
+                  }}
+                  className={cn(inputSurface, error && 'border-destructive')}
+                />
+                {question.helpText && (
+                  <p className="mt-1.5 text-sm text-muted-foreground">{question.helpText}</p>
+                )}
+                {error && <p className="text-xs text-destructive">{error}</p>}
+              </CardContent>
+            </Card>
+          );
+        }
+
         const valueIsCmDict =
           !!alt && isRecord(value) && Object.prototype.hasOwnProperty.call(value, alt.label);
         const unitMode: 'primary' | 'alt' = valueIsCmDict ? 'alt' : 'primary';
@@ -545,9 +698,11 @@ export default function QuestionnaireForm({
                 {question.question}
                 {renderTierHint(question)}
               </Label>
-              <p className="text-xs text-muted-foreground">
-                {unitMode === 'alt' && alt ? alt.label : primaryLabel}
-              </p>
+              {alt ? (
+                <p className="text-xs text-muted-foreground">
+                  {unitMode === 'alt' ? alt.label : primaryLabel}
+                </p>
+              ) : null}
               {alt ? (
                 <div className="flex flex-wrap gap-2 text-xs">
                   <button

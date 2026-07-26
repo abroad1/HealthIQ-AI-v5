@@ -8,7 +8,10 @@ export const mockQuestionnaire = {
     Inches: 10,
   },
   weight: 165,
-  waist_circumference: 36,
+  // Explicit cm dict — matches current waist unit contract (never bare).
+  waist_circumference: {
+    'Waist circumference (cm)': 91,
+  },
   ethnicity: 'White/Caucasian',
   long_term_medications: ['None'],
   alcohol_drinks_weekly: '1-3 drinks',

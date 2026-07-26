@@ -23,6 +23,14 @@ type AuthState = {
   logout: () => Promise<void>
 }
 
+function redirectToLoginPreservingReturn(): void {
+  if (typeof window === 'undefined') return
+  const path = window.location.pathname + window.location.search
+  if (path.startsWith('/login') || path.startsWith('/register')) return
+  const next = path && path !== '/' ? `?next=${encodeURIComponent(path)}` : ''
+  window.location.assign(`/login${next}`)
+}
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   initialized: false,
@@ -39,7 +47,16 @@ export const useAuthStore = create<AuthState>((set) => ({
       setAccessTokenCookie(token, 60 * 60 * 24 * 7)
       set({ user, initialized: true })
       void AuthService.getCurrentUserFromServer().then((r) => {
-        if (r.success && r.data) set({ user: r.data })
+        if (r.success && r.data) {
+          set({ user: r.data })
+          return
+        }
+        if (r.error === 'Authentication expired' || AuthService.wasSessionClearedForAuthFailure()) {
+          set({ user: null })
+          redirectToLoginPreservingReturn()
+          return
+        }
+        // Server/transient faults: keep local session; surface via later UI if needed.
       })
       return
     }
@@ -48,8 +65,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       void AuthService.getCurrentUserFromServer().then((r) => {
         if (r.success && r.data) set({ user: r.data })
         else {
-          AuthService.clearAuthData()
+          AuthService.clearAuthData({ reason: 'auth_expired' })
           set({ user: null })
+          redirectToLoginPreservingReturn()
         }
       })
       return

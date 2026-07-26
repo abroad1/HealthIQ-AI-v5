@@ -422,18 +422,36 @@ class TestObjectiveLifestyleExtraction:
     def setup_method(self):
         self.mapper = QuestionnaireMapper()
 
-    def test_waist_numeric_is_inches_converted_to_cm(self):
-        out = self.mapper.extract_objective_lifestyle_inputs({"waist_circumference": 35.0})
+    def test_waist_inches_dict_converted_to_cm(self):
+        out = self.mapper.extract_objective_lifestyle_inputs(
+            {"waist_circumference": {"Waist circumference (inches)": 35.0}}
+        )
         assert abs(out["waist_circumference_cm"] - 35.0 * 2.54) < 1e-6
 
     def test_waist_representative_inches_36_converts_once(self):
-        out = self.mapper.extract_objective_lifestyle_inputs({"waist_circumference": 36.0})
+        out = self.mapper.extract_objective_lifestyle_inputs(
+            {"waist_circumference": {"Waist circumference (inches)": 36.0}}
+        )
         assert abs(out["waist_circumference_cm"] - 91.44) < 1e-6
 
-    def test_waist_bare_166_cm_not_double_converted(self):
-        """166 cm entered as a bare number must stay 166, not 166×2.54=421.64."""
+    def test_waist_legacy_bare_166_as_cm(self):
+        """Historic unitless bare number → centimetres (not ×2.54)."""
         out = self.mapper.extract_objective_lifestyle_inputs({"waist_circumference": 166.0})
         assert out["waist_circumference_cm"] == 166.0
+
+    def test_waist_current_bare_requires_unit(self):
+        from core.pipeline.waist_circumference_v1 import (
+            WAIST_EXPLICIT_UNIT_CONTRACT,
+            WaistUnitRequiredError,
+        )
+
+        with pytest.raises(WaistUnitRequiredError):
+            self.mapper.extract_objective_lifestyle_inputs(
+                {
+                    "waist_circumference": 166.0,
+                    "_questionnaire_contract": {"version": WAIST_EXPLICIT_UNIT_CONTRACT},
+                }
+            )
 
     def test_waist_dict_cm_key_direct(self):
         out = self.mapper.extract_objective_lifestyle_inputs(

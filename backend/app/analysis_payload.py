@@ -62,8 +62,12 @@ def apply_questionnaire_objective_waist_to_user(
     """Promote questionnaire-derived waist into canonical user keys (then mirror legacy)."""
     if questionnaire:
         from core.pipeline.questionnaire_mapper import QuestionnaireMapper
+        from core.pipeline.waist_circumference_v1 import WaistUnitError
 
-        qobj = QuestionnaireMapper().extract_objective_lifestyle_inputs(dict(questionnaire))
+        try:
+            qobj = QuestionnaireMapper().extract_objective_lifestyle_inputs(dict(questionnaire))
+        except WaistUnitError:
+            raise
         w_raw = qobj.get(CANONICAL_WAIST_CM_KEY)
         if w_raw is not None:
             try:
@@ -76,8 +80,6 @@ def apply_questionnaire_objective_waist_to_user(
                     if w > 300:
                         raise ValueError(
                             "Waist circumference must be at most 300 cm. "
-                            "If you entered centimetres into the inches field, switch to centimetres "
-                            "or enter inches (for example 36). "
                             f"Resolved value was {w:g} cm."
                         )
                     user[CANONICAL_WAIST_CM_KEY] = w

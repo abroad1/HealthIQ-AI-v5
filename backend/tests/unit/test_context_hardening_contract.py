@@ -123,18 +123,19 @@ def test_apply_questionnaire_waist_updates_user_canonical_and_mirror():
     assert user["waist_cm"] == 87.0
 
 
-def test_apply_questionnaire_bare_166_cm_reaches_usercontext_without_421():
-    """UAT failure: 166 cm must not become 421.64 via inches conversion."""
+def test_apply_questionnaire_explicit_166_cm_reaches_usercontext():
+    """Explicit cm dict must pass through unchanged (no inches conversion)."""
     user = normalize_analysis_user_dict(
         {"user_id": "u-waist", "age": 40, "sex": "male", "height_cm": 180, "weight_kg": 80}
     )
-    apply_questionnaire_objective_waist_to_user(user, {"waist_circumference": 166.0})
+    q = {"waist_circumference": {"Waist circumference (cm)": 166.0}}
+    apply_questionnaire_objective_waist_to_user(user, q)
     assert user["waist_circumference_cm"] == 166.0
     assert user["waist_cm"] == 166.0
     payload = {
         "biomarkers": {"glucose": {"value": 5.0, "unit": "mmol/L"}},
         "user": user,
-        "questionnaire": {"waist_circumference": 166.0},
+        "questionnaire": q,
     }
     ctx = ContextFactory(enable_logging=False).create_context(payload)
     assert ctx.user.waist_cm == 166.0
@@ -144,7 +145,9 @@ def test_apply_questionnaire_inches_36_converts_once_to_usercontext():
     user = normalize_analysis_user_dict(
         {"user_id": "u-in", "age": 40, "sex": "male", "height_cm": 180, "weight_kg": 80}
     )
-    apply_questionnaire_objective_waist_to_user(user, {"waist_circumference": 36.0})
+    apply_questionnaire_objective_waist_to_user(
+        user, {"waist_circumference": {"Waist circumference (inches)": 36.0}}
+    )
     assert abs(user["waist_cm"] - 91.44) < 1e-6
     payload = {
         "biomarkers": {"glucose": {"value": 5.0, "unit": "mmol/L"}},

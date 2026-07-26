@@ -9,7 +9,7 @@ def test_assemble_merges_demographics_and_questionnaire_objective():
     orch = AnalysisOrchestrator()
     ud = {"height_cm": 180.0, "weight_kg": 80.0}
     q = {
-        "waist_circumference": 34.0,
+        "waist_circumference": {"Waist circumference (inches)": 34.0},
         "blood_pressure_reading": {"Systolic (mmHg)": 135, "Diastolic (mmHg)": 88},
     }
     out = orch._assemble_objective_lifestyle_inputs(ud, q)

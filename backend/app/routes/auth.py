@@ -7,6 +7,7 @@ Bearer <access_token> for /me. Logout is client-side token discard for JWT flows
 
 from __future__ import annotations
 
+import logging
 from typing import Annotated, Any, Optional
 from uuid import UUID
 
@@ -26,6 +27,7 @@ from core.supabase_anon import get_supabase_anon_client
 from repositories import ProfileRepository
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+logger = logging.getLogger(__name__)
 
 
 class RegisterRequest(BaseModel):
@@ -168,7 +170,19 @@ def me(
         except ValueError:
             uid = None
         if uid is not None:
-            profile = ProfileRepository(db).get_by_user_id(uid)
+            try:
+                profile = ProfileRepository(db).get_by_user_id(uid)
+            except Exception as exc:
+                # Valid token + profile/DB failure must remain 500 (not 401).
+                logger.exception(
+                    "auth_me_profile_repository_failed user_id=%s err_type=%s",
+                    user.id,
+                    type(exc).__name__,
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to load profile",
+                ) from exc
             if profile is not None:
                 subscription_status = profile.subscription_status
 

@@ -117,10 +117,24 @@ async def start_analysis(
         questionnaire_for_run = request.questionnaire_data
         try:
             apply_questionnaire_objective_waist_to_user(normalized_user, questionnaire_for_run)
-        except ValueError as exc:
+        except Exception as exc:
+            from core.pipeline.waist_circumference_v1 import (
+                WaistUnitError,
+                WaistUnitInvalidError,
+                WaistUnitRequiredError,
+            )
+
+            if not isinstance(exc, (WaistUnitError, ValueError)):
+                raise
+            if isinstance(exc, WaistUnitRequiredError):
+                err = "waist_unit_required"
+            elif isinstance(exc, WaistUnitInvalidError):
+                err = "invalid_waist_unit"
+            else:
+                err = "invalid_waist_circumference"
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail={"error": "invalid_waist_circumference", "message": str(exc)},
+                detail={"error": err, "message": str(exc)},
             ) from exc
         apply_questionnaire_medication_representation_to_user(normalized_user, questionnaire_for_run)
 
@@ -542,10 +556,24 @@ async def regenerate_analysis(
     normalized_user = normalize_analysis_user_dict({"user_id": str(auth_user.id)})
     try:
         apply_questionnaire_objective_waist_to_user(normalized_user, questionnaire_data)
-    except ValueError as exc:
+    except Exception as exc:
+        from core.pipeline.waist_circumference_v1 import (
+            WaistUnitError,
+            WaistUnitInvalidError,
+            WaistUnitRequiredError,
+        )
+
+        if not isinstance(exc, (WaistUnitError, ValueError)):
+            raise
+        if isinstance(exc, WaistUnitRequiredError):
+            err = "waist_unit_required"
+        elif isinstance(exc, WaistUnitInvalidError):
+            err = "invalid_waist_unit"
+        else:
+            err = "invalid_waist_circumference"
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"error": "invalid_waist_circumference", "message": str(exc)},
+            detail={"error": err, "message": str(exc)},
         ) from exc
     apply_questionnaire_medication_representation_to_user(normalized_user, questionnaire_data)
 

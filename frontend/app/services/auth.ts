@@ -50,6 +50,19 @@ function persistSession(session: AuthSessionResponse['session'], user: BackendUs
 }
 
 export class AuthService {
+  /** True after a 401 cleared the local session — stops further /auth/me probes. */
+  private static sessionClearedForAuthFailure = false
+
+  static consumeAuthFailureRedirect(): boolean {
+    const flagged = this.sessionClearedForAuthFailure
+    this.sessionClearedForAuthFailure = false
+    return flagged
+  }
+
+  static wasSessionClearedForAuthFailure(): boolean {
+    return this.sessionClearedForAuthFailure
+  }
+
   static async login(credentials: { email: string; password: string }): Promise<ApiResponse<AuthSessionResponse>> {
     try {
       const response = await fetch(`${AUTH_API_ROOT}/login`, {
@@ -64,6 +77,7 @@ export class AuthService {
       }
 
       const result = (await response.json()) as AuthSessionResponse
+      this.sessionClearedForAuthFailure = false
       persistSession(result.session, result.user)
 
       return {
@@ -96,9 +110,7 @@ export class AuthService {
           /* local logout even if server call fails */
         }
       }
-      localStorage.removeItem(TOKEN_KEY)
-      localStorage.removeItem(USER_KEY)
-      clearAccessTokenCookie()
+      this.clearAuthData({ reason: 'logout' })
       return { data: { logged_out: true }, success: true, message: 'Logout successful' }
     } catch (error) {
       return {
@@ -125,6 +137,9 @@ export class AuthService {
    */
   static async fetchMe(): Promise<ApiResponse<MeResponse>> {
     try {
+      if (this.sessionClearedForAuthFailure) {
+        return { data: null as unknown as MeResponse, success: false, error: 'Authentication expired' }
+      }
       const token = this.getToken()
       if (!token) {
         return { data: null as unknown as MeResponse, success: false, error: 'No authentication token found' }
@@ -140,9 +155,10 @@ export class AuthService {
 
       if (!response.ok) {
         if (response.status === 401) {
-          this.clearAuthData()
+          this.clearAuthData({ reason: 'auth_expired' })
           return { data: null as unknown as MeResponse, success: false, error: 'Authentication expired' }
         }
+        // Do not destroy the session on 500 / other server faults.
         const errorData = await response.json().catch(() => ({}))
         throw new Error(parseFastApiDetail(errorData))
       }
@@ -160,6 +176,9 @@ export class AuthService {
 
   static async getCurrentUserFromServer(): Promise<ApiResponse<User>> {
     try {
+      if (this.sessionClearedForAuthFailure) {
+        return { data: null as unknown as User, success: false, error: 'Authentication expired' }
+      }
       const token = this.getToken()
       if (!token) {
         return { data: null as unknown as User, success: false, error: 'No authentication token found' }
@@ -175,7 +194,7 @@ export class AuthService {
 
       if (!response.ok) {
         if (response.status === 401) {
-          this.clearAuthData()
+          this.clearAuthData({ reason: 'auth_expired' })
           return { data: null as unknown as User, success: false, error: 'Authentication expired' }
         }
         const errorData = await response.json().catch(() => ({}))
@@ -212,10 +231,15 @@ export class AuthService {
     return null
   }
 
-  static clearAuthData(): void {
+  static clearAuthData(opts?: { reason?: 'auth_expired' | 'logout' }): void {
     localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem(USER_KEY)
     clearAccessTokenCookie()
+    if (opts?.reason === 'auth_expired') {
+      this.sessionClearedForAuthFailure = true
+    } else if (opts?.reason === 'logout') {
+      this.sessionClearedForAuthFailure = false
+    }
   }
 
   static async register(userData: {
@@ -246,6 +270,7 @@ export class AuthService {
       }
 
       const result = (await response.json()) as AuthSessionResponse
+      this.sessionClearedForAuthFailure = false
       persistSession(result.session, result.user)
 
       return {

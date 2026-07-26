@@ -445,41 +445,23 @@ class QuestionnaireMapper:
         """
         Map objective questionnaire fields to LifestyleModifierEngine canonical keys.
 
-        CONTEXT-HARDENING-B — SSOT: ``waist_circumference`` primary unit is inches (numeric);
-        alternative captures cm under dict key ``Waist circumference (cm)``.
-        Bare numerics that cannot be inches under ``UserContext.waist_cm`` (le=300) are treated
-        as already-cm once (no second conversion). ``blood_pressure_reading`` uses group labels
-        ``Systolic (mmHg)`` / ``Diastolic (mmHg)``.
+        Waist (closure stabilisation):
+        - Explicit unit-labelled dict: cm pass-through; inches convert exactly once.
+        - Known legacy unitless bare number: interpret as centimetres.
+        - Current-contract bare number: raise WaistUnitRequiredError.
+        No magnitude-based unit inference.
 
+        ``blood_pressure_reading`` uses group labels ``Systolic (mmHg)`` / ``Diastolic (mmHg)``.
         Omits BP keys when absent or non-positive (do not inject sentinel zeros).
         """
+        from core.pipeline.waist_circumference_v1 import resolve_questionnaire_waist_cm
+
         out: Dict[str, float] = {}
-        cm_key = "Waist circumference (cm)"
-        # UserContext.waist_cm le=300. A bare number whose inch→cm conversion exceeds that
-        # bound cannot be a primary-unit (inches) entry; treat it as already-cm once.
-        # Prevents UK-style cm values (e.g. 166) becoming 421.64 via a second conversion.
-        _WAIST_CM_HARD_MAX = 300.0
 
         if "waist_circumference" in responses:
-            raw = responses["waist_circumference"]
-            if isinstance(raw, (int, float)):
-                n = float(raw)
-                if n > 0:
-                    as_inches_cm = round(n * 2.54, 4)
-                    if as_inches_cm > _WAIST_CM_HARD_MAX:
-                        # Impossible as inches under the governed cm bound → already centimetres.
-                        out["waist_circumference_cm"] = n
-                    else:
-                        # SSOT primary label: inches → centimetres (exactly once).
-                        out["waist_circumference_cm"] = as_inches_cm
-            elif isinstance(raw, dict):
-                if cm_key in raw and raw[cm_key] is not None:
-                    try:
-                        cm = float(raw[cm_key])
-                        if cm > 0:
-                            out["waist_circumference_cm"] = cm
-                    except (TypeError, ValueError):
-                        pass
+            waist_cm = resolve_questionnaire_waist_cm(responses)
+            if waist_cm is not None:
+                out["waist_circumference_cm"] = waist_cm
 
         if "blood_pressure_reading" in responses:
             bp = responses["blood_pressure_reading"]
