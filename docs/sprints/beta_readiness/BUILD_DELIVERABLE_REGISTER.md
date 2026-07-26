@@ -957,7 +957,7 @@ Entries should not list every file touched or every non-change.
 
 ## ARCH-CONV-PKG3 — WHY Authority Migration (Phases 1–6 / Gate C closed)
 
-**Status:** Complete on branch (GO recommendation; merge blocked pending human authority)  
+**Status:** Complete — merged to `main` (`2ecb02a`)  
 **Date:** 2026-07-26  
 **Programme block(s):** Architecture convergence Package 3
 
@@ -967,16 +967,42 @@ Entries should not list every file touched or every non-change.
 - Per-activation_key WHY authority register; 9 COMPILED_ACTIVE artefacts; metabolic REJECTED.
 - Vitamin D legacy retirement confirmation; dual-authority prevention; parity + verification reports.
 - `validate_compiled_why_authority_gate.py` wired into architecture validation gate.
+- Merged and published to `origin/main`.
 
 ### Carry-forwards
-- Human merge authority for this branch.
 - Estate-wide WHY migration beyond the 5/10 pilot (separate work).
+- Final programme audit + human UAT (`ARCH-CONV-FINAL-AUDIT`).
 
 ### Blockers / risks
-- None for pilot Package 3 obligations; merge requires human approval.
+- None for pilot Package 3 obligations (merged).
 
 ### Recommended next sprint
-- Publish/merge ARCH-CONV-PKG3 only after explicit human authority; then programme advisory for next architecture block.
+- `ARCH-CONV-FINAL-AUDIT` (in progress) — independent closure audit + Anthony UAT.
+
+---
+
+## ARCH-CONV-FINAL-AUDIT — Final Independent Convergence Audit (automated kernel)
+
+**Status:** Partial — Mandatory STOP awaiting Anthony UAT  
+**Date:** 2026-07-26  
+**Programme block(s):** Architecture convergence programme closure
+
+### Delivered / ticked off
+- Independent re-verification of PKG1/PKG2/PKG3 gates and material tests (PASS).
+- Rejected metabolic frame live-proven inert; 13/13 automated E2E scenarios PASS.
+- Layer C boundary inventory produced (BOUNDARY_LEAKs found — blocks PASS).
+- Obligation matrix, leakage report, verification report, UAT plan authored.
+
+### Carry-forwards
+- Anthony completes `docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md`.
+- Resume same work ID to issue final PASS/CORRECT/STOP/V6.
+- Provisional automated lean: CORRECT (FE Layer C boundary package).
+
+### Blockers / risks
+- Programme PASS forbidden until UAT complete and Layer C leaks addressed/accepted with authority.
+
+### Recommended next sprint
+- Complete Anthony UAT; then bounded FE Layer C correction if CORRECT confirmed.
 
 ---
 
