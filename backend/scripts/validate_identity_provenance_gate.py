@@ -177,7 +177,8 @@ def main() -> int:
             "",
         ]
     )
-    out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    # newline='\n' avoids Windows text-mode CRLF rewrites that dirty porcelain at kernel finish.
+    out_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
     print(json.dumps({"errors": errors, "warnings": warnings, "inventory_rows": len(inventory)}, indent=2))
     if errors:
