@@ -1,0 +1,7 @@
+manifest_id: arch_conv_pkg3_mcv_megaloblastic
+work_id: ARCH-CONV-PKG3
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_mcv_high_megaloblastic_macrocytosis.yaml
+  activation_key: signal_mcv_high::inv_mcv_high_megaloblastic_macrocytosis
+notes: Gate C Anthony-ratified compiled WHY artefact.

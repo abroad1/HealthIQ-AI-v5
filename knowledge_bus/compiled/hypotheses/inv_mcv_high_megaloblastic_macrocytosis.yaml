@@ -1,0 +1,55 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_mcv_high_megaloblastic_macrocytosis_v1
+hypothesis_set_id: signal_mcv_high_megaloblastic_set_v1
+signal_id: signal_mcv_high
+activation_key: signal_mcv_high::inv_mcv_high_megaloblastic_macrocytosis
+source_spec_ids:
+- inv_mcv_high_megaloblastic_macrocytosis
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_mcv_high_megaloblastic_macrocytosis.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_pkg3_mcv_megaloblastic.yaml
+hypotheses:
+- evidence_strength: moderate
+  evidence_for:
+  - MCV is elevated.
+  - Folate or B12 markers support a nutrient-associated pattern when present.
+  evidence_against:
+  - B12 and folate markers are replete.
+  contradiction_markers: []
+  caveats:
+  - Do not diagnose megaloblastic anaemia without appropriate haematological evidence.
+  - Do not assume isolated folate deficiency when B12 status is unknown.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_megaloblastic_macrocytosis
+  rank: 1
+  title: Megaloblastic-pattern macrocytosis differential
+  physiological_claim: Raised MCV with corroborating folate or B12 insufficiency may
+    fit a megaloblastic-pattern differential without diagnosing megaloblastic anaemia
+    from biochemistry alone.
+  summary_template: The combination of larger red cells and low or borderline folate/B12
+    markers may fit a vitamin-related macrocytosis pattern. Other causes remain possible.
+- evidence_strength: moderate
+  evidence_for:
+  - MCV elevated with B12-related marker support.
+  evidence_against:
+  - No B12/folate support.
+  contradiction_markers: []
+  caveats:
+  - Do not infer the underlying cause of B12 or folate deficiency from this frame.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_combined_or_b12_predominant_macrocytosis
+  rank: 2
+  title: B12-predominant or combined nutrient macrocytosis pattern
+  physiological_claim: B12 insufficiency or combined B12/folate limitation may contribute
+    to macrocytosis when supporting markers are present.
+  summary_template: The combination of larger red cells and low or borderline folate/B12
+    markers may fit a vitamin-related macrocytosis pattern. Other causes remain possible.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: pilot_manual
+  notes: ARCH-CONV-PKG3 Gate C Anthony-ratified compiled WHY. Revisions applied per
+    medical-review pack.

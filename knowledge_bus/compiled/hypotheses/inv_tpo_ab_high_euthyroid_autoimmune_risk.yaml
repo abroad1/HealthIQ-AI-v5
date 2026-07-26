@@ -1,0 +1,56 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_tpo_ab_high_euthyroid_autoimmune_risk_v1
+hypothesis_set_id: signal_tpo_ab_high_euthyroid_set_v1
+signal_id: signal_tpo_ab_high
+activation_key: signal_tpo_ab_high::inv_tpo_ab_high_euthyroid_autoimmune_risk
+source_spec_ids:
+- inv_tpo_ab_high_euthyroid_autoimmune_risk
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_tpo_ab_high_euthyroid_autoimmune_risk.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_pkg3_tpo_euthyroid.yaml
+hypotheses:
+- evidence_strength: moderate
+  evidence_for:
+  - TPO antibodies raised with TSH and FT4 within governed ranges.
+  evidence_against:
+  - Elevated TSH indicating hypothyroid physiology (belongs in the hypothyroid frame).
+  contradiction_markers: []
+  caveats:
+  - Progression is possible but not inevitable.
+  - Do not provide a personalised probability without a validated model.
+  - Do not recommend repeated antibody measurement as a personalised instruction.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_euthyroid_autoimmune_thyroid_risk
+  rank: 1
+  title: Euthyroid autoimmune thyroid risk context
+  physiological_claim: Raised TPO antibodies with TSH and FT4 currently within range
+    indicate an autoimmune-risk context, not current hypothyroidism.
+  summary_template: Raised TPO antibodies can indicate an autoimmune thyroid context
+    even when thyroid hormone levels are currently preserved. This can be associated
+    with a higher future risk of thyroid underactivity, but progression is not certain.
+- evidence_strength: moderate
+  evidence_for:
+  - Euthyroid TPO-antibody positivity documented.
+  evidence_against:
+  - Current subclinical or overt hypothyroid pattern present.
+  contradiction_markers: []
+  caveats:
+  - Do not imply antibody titre alone predicts timing of progression.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_future_primary_hypothyroid_progression_risk
+  rank: 2
+  title: Future primary hypothyroid progression risk context
+  physiological_claim: Euthyroid TPO-antibody positivity is a risk marker for future
+    thyroid dysfunction; timing cannot be inferred from titre alone.
+  summary_template: Raised TPO antibodies can indicate an autoimmune thyroid context
+    even when thyroid hormone levels are currently preserved. This can be associated
+    with a higher future risk of thyroid underactivity, but progression is not certain.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: pilot_manual
+  notes: ARCH-CONV-PKG3 Gate C Anthony-ratified compiled WHY. Revisions applied per
+    medical-review pack.

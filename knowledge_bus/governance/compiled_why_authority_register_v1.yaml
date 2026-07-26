@@ -1,0 +1,120 @@
+work_id: ARCH-CONV-PKG3
+schema_version: "1.0.0"
+description: >
+  Per-activation_key WHY authority register for the Gate 0 / Gate 2.5 WHY pilot.
+  Engineering implements only Anthony-ratified dispositions from the Gate C pack.
+ratification_artefact: docs/Medical Research Documents/HEALTHIQ_AI_V5_WHY_PILOT_CONSOLIDATED_MEDICAL_REVIEW.md
+anthony_ratification_date_utc: "2026-07-26"
+frames:
+  - activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
+    signal_id: signal_vitamin_d_low
+    source_spec_id: inv_vitamin_d_low_deficiency
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: RETIREMENT_CONFIRMATION_ONLY
+    anthony_decision: APPROVED
+    final_disposition: RETIREMENT_CONFIRMATION_ONLY
+    artefact_path: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/vitamin_d_low_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED
+    notes: Retain compiled vitamin D authority; legacy YAML non-runtime-reachable.
+
+  - activation_key: signal_homocysteine_high::inv_homocysteine_high_b_vitamin_related_methylation_impairment
+    signal_id: signal_homocysteine_high
+    source_spec_id: inv_homocysteine_high_b_vitamin_related_methylation_impairment
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: APPROVE_WITH_REVISIONS
+    anthony_decision: APPROVED
+    final_disposition: APPROVE_WITH_REVISIONS
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_homocysteine_high_b_vitamin_related_methylation_impairment.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+
+  - activation_key: signal_homocysteine_high::inv_homocysteine_high_metabolic
+    signal_id: signal_homocysteine_high
+    source_spec_id: inv_homocysteine_high_metabolic
+    authority_state: REJECTED
+    gpt_decision: REJECT
+    anthony_decision: APPROVED
+    final_disposition: REJECT
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml
+    legacy_runtime_state: NON_REACHABLE_FOR_FRAME
+    notes: Do not compile, promote, or use as fallback.
+
+  - activation_key: signal_homocysteine_high::inv_homocysteine_high_renal_clearance_reduction
+    signal_id: signal_homocysteine_high
+    source_spec_id: inv_homocysteine_high_renal_clearance_reduction
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: APPROVE_WITH_REVISIONS
+    anthony_decision: APPROVED
+    final_disposition: APPROVE_WITH_REVISIONS
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_homocysteine_high_renal_clearance_reduction.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+
+  - activation_key: signal_mcv_high::inv_mcv_high_macrocytosis
+    signal_id: signal_mcv_high
+    source_spec_id: inv_mcv_high_macrocytosis
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: APPROVE_WITH_REVISIONS
+    anthony_decision: APPROVED
+    final_disposition: APPROVE_WITH_REVISIONS
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_mcv_high_macrocytosis.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/mcv_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Non-specific morphology anchor only; must not duplicate Frames 6/7 causal WHY.
+
+  - activation_key: signal_mcv_high::inv_mcv_high_megaloblastic_macrocytosis
+    signal_id: signal_mcv_high
+    source_spec_id: inv_mcv_high_megaloblastic_macrocytosis
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: APPROVE_WITH_REVISIONS
+    anthony_decision: APPROVED
+    final_disposition: APPROVE_WITH_REVISIONS
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_mcv_high_megaloblastic_macrocytosis.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/mcv_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+
+  - activation_key: signal_mcv_high::inv_mcv_high_nonmegaloblastic_macrocytosis
+    signal_id: signal_mcv_high
+    source_spec_id: inv_mcv_high_nonmegaloblastic_macrocytosis
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: APPROVE_WITH_REVISIONS
+    anthony_decision: APPROVED
+    final_disposition: APPROVE_WITH_REVISIONS
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_mcv_high_nonmegaloblastic_macrocytosis.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/mcv_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+
+  - activation_key: signal_free_t3_low::inv_free_t3_low_low_t3_syndrome
+    signal_id: signal_free_t3_low
+    source_spec_id: inv_free_t3_low_low_t3_syndrome
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: APPROVE_WITH_REVISIONS
+    anthony_decision: APPROVED
+    final_disposition: APPROVE_WITH_REVISIONS
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_free_t3_low_low_t3_syndrome.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/free_t3_low_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED
+
+  - activation_key: signal_tpo_ab_high::inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+    signal_id: signal_tpo_ab_high
+    source_spec_id: inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: APPROVE_WITH_REVISIONS
+    anthony_decision: APPROVED
+    final_disposition: APPROVE_WITH_REVISIONS
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/tpo_ab_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+
+  - activation_key: signal_tpo_ab_high::inv_tpo_ab_high_euthyroid_autoimmune_risk
+    signal_id: signal_tpo_ab_high
+    source_spec_id: inv_tpo_ab_high_euthyroid_autoimmune_risk
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: APPROVE_WITH_REVISIONS
+    anthony_decision: APPROVED
+    final_disposition: APPROVE_WITH_REVISIONS
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_tpo_ab_high_euthyroid_autoimmune_risk.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/tpo_ab_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME

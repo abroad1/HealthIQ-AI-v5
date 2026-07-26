@@ -22,6 +22,11 @@ def test_lc_s1_homocysteine_high_reuses_governed_hcy_asset_without_fallback_inse
         signal_results=[
             {
                 "signal_id": "signal_homocysteine_high",
+                "activation_key": (
+                    "signal_homocysteine_high::"
+                    "inv_homocysteine_high_b_vitamin_related_methylation_impairment"
+                ),
+                "source_spec_id": "inv_homocysteine_high_b_vitamin_related_methylation_impairment",
                 "primary_metric": "homocysteine",
                 "signal_state": "at_risk",
                 "confidence": 0.82,
@@ -50,6 +55,8 @@ def test_lc_s1_mcv_high_gets_governed_hypotheses():
         signal_results=[
             {
                 "signal_id": "signal_mcv_high",
+                "activation_key": "signal_mcv_high::inv_mcv_high_macrocytosis",
+                "source_spec_id": "inv_mcv_high_macrocytosis",
                 "primary_metric": "mcv",
                 "signal_state": "at_risk",
                 "confidence": 0.71,
@@ -149,12 +156,19 @@ def test_lc_s1_slice_combo_avoids_engine_fallback_for_lead_when_governed():
         signal_results=[
             {
                 "signal_id": "signal_homocysteine_high",
+                "activation_key": (
+                    "signal_homocysteine_high::"
+                    "inv_homocysteine_high_b_vitamin_related_methylation_impairment"
+                ),
+                "source_spec_id": "inv_homocysteine_high_b_vitamin_related_methylation_impairment",
                 "primary_metric": "homocysteine",
                 "signal_state": "at_risk",
                 "confidence": 0.9,
             },
             {
                 "signal_id": "signal_mcv_high",
+                "activation_key": "signal_mcv_high::inv_mcv_high_macrocytosis",
+                "source_spec_id": "inv_mcv_high_macrocytosis",
                 "primary_metric": "mcv",
                 "signal_state": "at_risk",
                 "confidence": 0.6,

@@ -10,3 +10,6 @@ source_document: knowledge_bus/research/investigation_specs/multi_llm_research/t
 translation_mode: creation
 behavioural_impact: NONE
 engine_compatibility: v5.x
+source_spec_id: inv_tpo_ab_high_euthyroid_autoimmune_risk
+activation_key: signal_tpo_ab_high::inv_tpo_ab_high_euthyroid_autoimmune_risk
+lineage_attach_work_id: ARCH-CONV-PKG3

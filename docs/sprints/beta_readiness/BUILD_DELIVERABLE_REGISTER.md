@@ -935,6 +935,51 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## ARCH-CONV-GATE2_5 — WHY Pilot Medical Review Ownership and Capacity
+
+**Status:** Complete (conditions 1–4 closed 2026-07-26)  
+**Date closed:** 2026-07-26  
+**Programme block(s):** Architecture convergence Gate 2.5
+
+### Delivered / ticked off
+- Dual-gate operating model ratified; GPT named Head of Medical Research; Anthony named production ratifier; capacity confirmed for bounded 5/10 pilot.
+
+### Carry-forwards
+- ARCH-CONV-PKG3 Phases 1–3 evidence/design/review pack; Gate C medical review + ratification; then Phase 4–6.
+
+### Blockers / risks
+- Package 3B promotion blocked until Gate C.
+
+### Recommended next sprint
+- ARCH-CONV-PKG3 WHY authority migration (stop at Gate C for GPT + Anthony).
+
+---
+
+## ARCH-CONV-PKG3 — WHY Authority Migration (Phases 1–6 / Gate C closed)
+
+**Status:** Complete on branch (GO recommendation; merge blocked pending human authority)  
+**Date:** 2026-07-26  
+**Programme block(s):** Architecture convergence Package 3
+
+### Delivered / ticked off
+- Six standalone inv YAML extractions (PKG2 method) + lineage attach.
+- TPO euthyroid frame indexed; Gate A/B passed; Gate C pack ratified (GPT + Anthony).
+- Per-activation_key WHY authority register; 9 COMPILED_ACTIVE artefacts; metabolic REJECTED.
+- Vitamin D legacy retirement confirmation; dual-authority prevention; parity + verification reports.
+- `validate_compiled_why_authority_gate.py` wired into architecture validation gate.
+
+### Carry-forwards
+- Human merge authority for this branch.
+- Estate-wide WHY migration beyond the 5/10 pilot (separate work).
+
+### Blockers / risks
+- None for pilot Package 3 obligations; merge requires human approval.
+
+### Recommended next sprint
+- Publish/merge ARCH-CONV-PKG3 only after explicit human authority; then programme advisory for next architecture block.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

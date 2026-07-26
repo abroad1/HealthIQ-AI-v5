@@ -1,0 +1,109 @@
+investigation_spec_contract_version: 3.0.0
+spec_id: inv_homocysteine_high_renal_clearance_reduction
+signal_id: signal_homocysteine_high
+research_domain: renal
+primary_marker:
+  biomarker_id: homocysteine
+  rationale: Homocysteine is partly cleared by the kidney, so elevation can reflect renal impairment even without a primary hematinic defect.
+  signal_system: renal
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: creatinine
+  expected_direction: high
+  role: mechanism_marker
+  relationship_kind: mechanism
+  availability: common
+  rationale: Impaired renal function supports reduced homocysteine clearance as a contributor to elevation.
+- biomarker_id: folate
+  expected_direction: low
+  role: differential_marker
+  relationship_kind: differential
+  availability: common
+  rationale: Low folate supports a competing or combined nutritional explanation rather than pure renal accumulation.
+- biomarker_id: active_b12
+  expected_direction: low
+  role: corroborator
+  relationship_kind: corroboration
+  availability: common
+  rationale: Low active B12 suggests overlapping methylation impairment that may coexist with renal causes.
+hypotheses:
+- hypothesis_id: hyp_renal_hyperhomocysteinemia
+  rank: 1
+  physiological_claim: High homocysteine with impaired renal function may reflect reduced renal clearance or metabolism rather than isolated vitamin deficiency.
+  evidence_strength: strong
+  caveats:
+  - Renal and nutritional mechanisms commonly overlap, so a single-cause interpretation can be misleading.
+  missing_data:
+    policy: Review creatinine, folate, and B12 markers together before attributing homocysteine elevation solely to diet-related deficiency.
+  supporting_marker_refs:
+  - creatinine
+  - folate
+  - active_b12
+  contradiction_markers:
+  - contradiction_id: ctr_normal_creatinine_hcy
+    marker_reference: creatinine
+    contradiction_rationale: Normal renal function weakens reduced renal clearance as the main explanation for elevated homocysteine.
+    contradiction_strength: strong
+- hypothesis_id: hyp_combined_renal_and_hematinic_context
+  rank: 2
+  physiological_claim: High homocysteine may arise from combined renal impairment and hematinic insufficiency, especially when creatinine and B-vitamin markers are both abnormal.
+  evidence_strength: strong
+  caveats:
+  - This frame should not be used to imply that either component alone has been fully established.
+  missing_data:
+    policy: Where creatinine and B-vitamin markers are both abnormal, avoid forcing a single-cause interpretation.
+  supporting_marker_refs:
+  - creatinine
+  - folate
+  - active_b12
+  contradiction_markers:
+  - contradiction_id: ctr_normal_folate_normal_b12_hcy
+    marker_reference: folate
+    contradiction_rationale: Normal folate weakens a combined folate-related component, although it does not exclude renal contribution.
+    contradiction_strength: weak
+hypothesis_ranking:
+  ordered_hypothesis_ids:
+  - hyp_renal_hyperhomocysteinemia
+  - hyp_combined_renal_and_hematinic_context
+confirmatory_tests:
+- test_id: ct_renal_function_panel
+  rationale: Renal function testing helps establish whether impaired clearance is a plausible explanation for high homocysteine.
+- test_id: ct_b12_and_folate_panel
+  rationale: B-vitamin assessment helps identify overlapping methylation defects in renal hyperhomocysteinemia.
+override_rules:
+- rule_id: or_homocysteine_high_with_high_creatinine
+  resulting_state: at_risk
+  description: Escalate when homocysteine is high and creatinine is high because the combination supports a clinically relevant renal contribution to the elevation.
+  conditions:
+  - metric_id: creatinine
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    boundary: above_max
+  source_refs:
+  - source_homocysteine_renal_review
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_homocysteine_renal_review
+    paper_title: Homocysteine elevation in renal impairment
+    journal: Nephrology and nutrition review literature
+    year: 2024
+  physiological_claim: High homocysteine may reflect reduced renal clearance or altered renal metabolism, particularly when renal function is impaired.
+  threshold_notes: The trigger remains laboratory abnormality rather than a universal numeric threshold for vascular risk.
+narrative:
+  mechanism: Homocysteine accumulates when renal filtration and metabolic handling are reduced.
+  biological_pathway: Creatinine helps distinguish renal accumulation from a primarily folate- or B12-driven methylation defect.
+  interpretation: High homocysteine in renal impairment is a contextual biochemical consequence and should not be over-interpreted as a vitamin deficiency by default.
+  implications: This pattern may justify renal interpretation before assuming primary nutritional deficiency.
+  supporting_marker_roles: Creatinine is the key mechanism marker, folate helps as a differential, and active B12 helps separate overlapping methylation deficiency.

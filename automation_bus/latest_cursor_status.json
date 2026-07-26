@@ -1,10 +1,10 @@
 {
-  "branch": "feature/arch-conv-gate2-5-medical-review-readiness",
+  "branch": "feature/arch-conv-pkg3-why-authority-migration",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-26T00:18:52Z",
-  "cursor_started_utc": "2026-07-26T00:06:35Z",
-  "head_sha": "e2b13ffa1f704ff10f9441d4e995bd3bf5900be4",
+  "cursor_completed_utc": "2026-07-26T10:56:57Z",
+  "cursor_started_utc": "2026-07-26T10:17:23Z",
+  "head_sha": "bacdd7f2685dd00a068f0982704a03cd0f5c2ef1",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "ARCH-CONV-GATE2_5"
+  "work_id": "ARCH-CONV-PKG3"
 }

@@ -1,0 +1,58 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_tpo_ab_high_autoimmune_hypothyroid_pattern_v1
+hypothesis_set_id: signal_tpo_ab_high_hypothyroid_set_v1
+signal_id: signal_tpo_ab_high
+activation_key: signal_tpo_ab_high::inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+source_spec_ids:
+- inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_pkg3_tpo_hypothyroid.yaml
+hypotheses:
+- evidence_strength: moderate
+  evidence_for:
+  - TPO antibodies raised with elevated TSH and reduced FT4.
+  evidence_against:
+  - FT4 preserved or TSH not elevated.
+  contradiction_markers: []
+  caveats:
+  - Positive TPO antibodies are not alone proof of current hypothyroidism.
+  - Do not imply antibody titre measures severity.
+  - Do not prescribe treatment from this frame.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_autoimmune_primary_hypothyroid_pattern
+  rank: 1
+  title: Autoimmune primary hypothyroid physiology pattern
+  physiological_claim: Elevated TSH with reduced FT4 plus raised TPO antibodies may
+    support an autoimmune contribution to primary hypothyroid physiology without diagnosing
+    Hashimoto thyroiditis from blood alone.
+  summary_template: Raised thyroid peroxidase antibodies, together with this thyroid-function
+    pattern, may support an autoimmune contribution. The antibodies alone do not show
+    how well the thyroid is currently functioning.
+- evidence_strength: moderate
+  evidence_for:
+  - TPO antibodies raised with elevated TSH and FT4 within range.
+  evidence_against:
+  - TSH not elevated or overt low FT4 pattern present.
+  contradiction_markers: []
+  caveats:
+  - Preserve overt versus subclinical distinctions; do not diagnose from antibodies
+    alone.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_subclinical_autoimmune_thyroid_failure
+  rank: 2
+  title: Subclinical autoimmune thyroid failure pattern
+  physiological_claim: Elevated TSH with FT4 within range plus raised TPO antibodies
+    may support a subclinical autoimmune thyroid pattern.
+  summary_template: Raised thyroid peroxidase antibodies, together with this thyroid-function
+    pattern, may support an autoimmune contribution. The antibodies alone do not show
+    how well the thyroid is currently functioning.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: pilot_manual
+  notes: ARCH-CONV-PKG3 Gate C Anthony-ratified compiled WHY. Revisions applied per
+    medical-review pack.

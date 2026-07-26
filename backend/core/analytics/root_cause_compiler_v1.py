@@ -32,12 +32,10 @@ from core.contracts.root_cause_v1 import (
 from core.knowledge.compiled_hypothesis import (
     CompiledHypothesisArtefact,
     CompiledHypothesisRow,
-    get_compiled_hypothesis_artefact,
     runtime_summary_for_hypothesis,
     validate_confirmatory_test_refs,
     validate_runtime_promoted_artefact,
 )
-from core.knowledge.compiled_hypothesis_registry_v1 import is_runtime_promoted_compiled_signal
 from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_tests_registry_v1
 from core.knowledge.root_cause_registry_v1 import get_root_cause_targets
 
@@ -529,20 +527,37 @@ def compile_root_cause_v1(
     tests_registry = load_confirmatory_tests_registry_v1()
     tests_by_id: Dict[str, Dict[str, Any]] = tests_registry["tests_by_id"]
     findings: List[RootCauseFindingV1] = []
+    from core.knowledge.compiled_hypothesis import get_compiled_hypothesis_artefact_for_activation_key
+    from core.knowledge.why_authority_v1 import resolve_frame_why_authority
+
     for target_signal_id, hypotheses_loader in _ROOT_CAUSE_TARGETS:
         frame_rows = rows_for_signal_id(rows, target_signal_id)
         if not frame_rows:
             continue
-        # Compiled frame-specific artefact is currently keyed by signal_id family
-        # (ADR-RT-003 transition). When multiple frames fire, attach the compiled
-        # artefact to each frame row and label authority_scope honestly.
-        if is_runtime_promoted_compiled_signal(target_signal_id):
-            artefact = get_compiled_hypothesis_artefact(target_signal_id)
-            for target in frame_rows:
-                scoped = dict(target)
-                scoped["authority_scope"] = (
-                    "frame_specific" if str(target.get("activation_key") or "").strip() else "family_level"
+        legacy_payload = None
+        for target in frame_rows:
+            key = str(target.get("activation_key") or "").strip()
+            mode, auth_row = resolve_frame_why_authority(
+                signal_id=target_signal_id,
+                activation_key=key,
+            )
+            if mode == "fail_closed":
+                raise ValueError(
+                    f"WHY authority fail-closed for signal_id={target_signal_id!r} "
+                    f"activation_key={key!r}"
                 )
+            if mode == "skip":
+                continue
+            if mode == "compiled":
+                resolved_key = key
+                if not resolved_key and isinstance(auth_row, dict):
+                    resolved_key = str(auth_row.get("activation_key") or "").strip()
+                artefact = get_compiled_hypothesis_artefact_for_activation_key(resolved_key)
+                scoped = dict(target)
+                scoped["activation_key"] = resolved_key
+                if not str(scoped.get("source_spec_id") or "").strip() and "::" in resolved_key:
+                    scoped["source_spec_id"] = resolved_key.split("::", 1)[1]
+                scoped["authority_scope"] = "frame_specific"
                 findings.append(
                     _compile_compiled_hypothesis_finding(
                         target=scoped,
@@ -551,16 +566,16 @@ def compile_root_cause_v1(
                         marker_present=marker_present,
                     )
                 )
-            continue
-        hypotheses_payload = hypotheses_loader()["hypotheses"]
-        for target in frame_rows:
+                continue
+            # legacy
+            if legacy_payload is None:
+                legacy_payload = hypotheses_loader()["hypotheses"]
             scoped = dict(target)
-            # Legacy YAML hypotheses are family-level authority (ADR-RT-003 / IDENTITY-PROV §D).
             scoped["authority_scope"] = "family_level"
             findings.append(
                 _compile_finding(
                     target=scoped,
-                    hypotheses_payload=hypotheses_payload,
+                    hypotheses_payload=legacy_payload,
                     tests_by_id=tests_by_id,
                     marker_present=marker_present,
                     biomarker_context=biomarker_context,
@@ -573,14 +588,21 @@ def compile_root_cause_v1(
     lead_id = str(lead.get("signal_id", "")).strip() if lead else ""
     with_finding = {f.signal_id for f in findings}
     if lead_id and lead_id not in with_finding and lead is not None:
-        findings.insert(
-            0,
-            _compile_why_engine_fallback_finding(
-                lead,
-                biomarker_context=biomarker_context,
-                input_reference_ranges=input_reference_ranges,
-            ),
+        lead_key = str(lead.get("activation_key") or "").strip()
+        lead_mode, _lead_row = resolve_frame_why_authority(
+            signal_id=lead_id,
+            activation_key=lead_key,
         )
+        # REJECTED / deferred pilot frames must not acquire WHY-engine fallback content.
+        if lead_mode != "skip":
+            findings.insert(
+                0,
+                _compile_why_engine_fallback_finding(
+                    lead,
+                    biomarker_context=biomarker_context,
+                    input_reference_ranges=input_reference_ranges,
+                ),
+            )
 
     if not findings:
         return None

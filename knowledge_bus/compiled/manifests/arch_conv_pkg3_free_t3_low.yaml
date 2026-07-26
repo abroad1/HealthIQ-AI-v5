@@ -1,0 +1,7 @@
+manifest_id: arch_conv_pkg3_free_t3_low
+work_id: ARCH-CONV-PKG3
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_free_t3_low_low_t3_syndrome.yaml
+  activation_key: signal_free_t3_low::inv_free_t3_low_low_t3_syndrome
+notes: Gate C Anthony-ratified compiled WHY artefact.

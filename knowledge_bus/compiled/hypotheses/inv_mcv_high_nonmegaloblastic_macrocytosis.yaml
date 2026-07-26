@@ -1,0 +1,58 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_mcv_high_nonmegaloblastic_macrocytosis_v1
+hypothesis_set_id: signal_mcv_high_nonmegaloblastic_set_v1
+signal_id: signal_mcv_high
+activation_key: signal_mcv_high::inv_mcv_high_nonmegaloblastic_macrocytosis
+source_spec_ids:
+- inv_mcv_high_nonmegaloblastic_macrocytosis
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_mcv_high_nonmegaloblastic_macrocytosis.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_pkg3_mcv_nonmegaloblastic.yaml
+hypotheses:
+- evidence_strength: moderate
+  evidence_for:
+  - MCV elevated with supportive hepatic marker or alcohol-context evidence when available.
+  evidence_against:
+  - No hepatic or alcohol-context support.
+  contradiction_markers: []
+  caveats:
+  - Do not infer alcohol exposure from MCV or GGT alone.
+  - Do not diagnose liver disease from this frame.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_alcohol_or_hepatic_macrocytosis
+  rank: 1
+  title: Hepatic or alcohol-context macrocytosis differential
+  physiological_claim: Raised MCV may occur with supportive liver markers and/or alcohol
+    context, without inferring alcohol exposure or diagnosing liver disease from MCV
+    or GGT alone.
+  summary_template: Larger red cells can also occur in non-vitamin contexts, including
+    liver, thyroid, alcohol or increased red-cell turnover patterns. The cause cannot
+    be determined from MCV alone.
+- evidence_strength: moderate
+  evidence_for:
+  - MCV elevated with cause-specific supporting evidence when present.
+  evidence_against:
+  - No cause-specific support beyond MCV.
+  contradiction_markers: []
+  caveats:
+  - Do not diagnose hypothyroidism, haemolysis or marrow disease from MCV alone.
+  - Marrow-dysplasia wording must remain cautious and clinician-facing.
+  confirmatory_tests: []
+  missing_data_policy: Interpret only with the governed supporting markers and clinical
+    context available on this panel.
+  hypothesis_id: hyp_other_nonmegaloblastic_macrocytosis
+  rank: 2
+  title: Other constrained non-megaloblastic macrocytosis differential
+  physiological_claim: Non-megaloblastic macrocytosis may relate to reticulocytosis,
+    hypothyroid physiology or other evidenced contexts; marrow-disorder language remains
+    clinician-only and must not become an unrestricted catch-all.
+  summary_template: Larger red cells can also occur in non-vitamin contexts, including
+    liver, thyroid, alcohol or increased red-cell turnover patterns. The cause cannot
+    be determined from MCV alone.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: pilot_manual
+  notes: ARCH-CONV-PKG3 Gate C Anthony-ratified compiled WHY. Revisions applied per
+    medical-review pack.
