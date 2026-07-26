@@ -1,21 +1,24 @@
 # HealthIQ AI v5 — WHY Pilot Medical Review Decision Template
 
 **Work ID:** `ARCH-CONV-GATE2_5`  
-**Purpose:** Reusable per-frame medical-review decision record for the bounded WHY migration pilot (5 signals / 10 frames).  
-**Authority note:** Completing this template is **not** production authorisation. Human ratification is required before engineering promotion. GPT/agent review alone is never production authority.
+**Purpose:** Frame-level field set for the bounded WHY migration pilot (5 signals / 10 frames).  
+**Authority note:** Completing medical-review fields is **not** production authorisation. **Anthony** must explicitly ratify before engineering implementation or promotion. GPT review alone is never production authority.
 
 **Folder convention:** `docs/Medical Research Documents/` (repository standard).
+
+**Ratified recording form (2026-07-26):** use **one consolidated five-signal review pack** containing **ten frame-level decisions**. Create separate detailed records only where risk, disagreement, or audit requirements justify them. This template defines the required fields for each frame-level decision inside that pack.
 
 ---
 
 ## How to use
 
-1. Copy this template once per `activation_key`.
-2. Fill every section. Use `NOT_APPLICABLE` where justified.
-3. Select exactly one **Production disposition**.
-4. Record reviewer and date.
-5. Leave **Human ratification** blank until the named human ratifier signs.
-6. Do not promote compiled assets until disposition is APPROVE_* **and** human ratification is complete under the Gate 2.5-ratified operating model.
+1. Prefer a single consolidated pilot review pack covering all five signals / ten frames.
+2. For each `activation_key`, complete every section below (inline in the pack). Use `NOT_APPLICABLE` where justified.
+3. Select exactly one **Production disposition** per frame.
+4. Record reviewer as **GPT — HealthIQ AI Head of Medical Research** and the review date.
+5. Leave **Human ratification** blank until **Anthony** signs.
+6. Do not implement or promote compiled assets until disposition is APPROVE_* (or RETIREMENT_CONFIRMATION_ONLY where applicable) **and** Anthony has explicitly ratified.
+7. Create a separate detailed record only if risk, disagreement, or audit requirements require it; otherwise keep the frame decision in the consolidated pack.
 
 Allowed production dispositions:
 
@@ -140,25 +143,27 @@ RETIREMENT_CONFIRMATION_ONLY
 
 | Field | Value |
 |---|---|
-| Reviewer identity | |
-| Review role (governance coherence vs clinical sign-off) | |
+| Reviewer identity | GPT — HealthIQ AI Head of Medical Research |
+| Review role | Structured medical review (dual-gate, gate 1) |
 | Review date (UTC) | |
-| Artefact path for this completed record | |
+| Artefact path for this completed record | Consolidated five-signal pack (or separate detailed record if justified) |
 
 ### Human ratification
 
 | Field | Value |
 |---|---|
-| Human ratifier identity | |
+| Human ratifier identity | Anthony |
 | Ratification decision | APPROVED / REJECTED / DEFERRED |
 | Ratification date (UTC) | |
-| Notes | |
+| Notes | Required before any engineering implement/promote |
 
 ---
 
-## Operating-model reminder
+## Operating-model reminder (ratified 2026-07-26)
 
-Until Gate 2.5 condition §2.1 is closed:
+**Dual-gate:**
 
-- **Model A:** this template may be used for governance coherence review; a separate clinical sign-off step remains mandatory before promotion.
-- **Model B:** only if explicitly ratified — GPT/agent may fill the medical sections; human ratification still required for production; GPT review alone is never enough.
+1. **Medical review:** GPT as HealthIQ AI Head of Medical Research records structured frame dispositions.
+2. **Production ratification:** Anthony must explicitly ratify before engineering may implement or promote.
+
+GPT review alone is never production authorisation.

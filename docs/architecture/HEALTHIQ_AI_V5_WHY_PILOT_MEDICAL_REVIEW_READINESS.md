@@ -5,9 +5,10 @@
 **Baseline HEAD (kernel start):** `9ce7853beaea2ba40eb3ed076483ab9ecedaea86`  
 **change_type:** CONTENT  
 **runtime_change:** NONE  
-**Gate 2.5 decision:** **CONDITIONAL_GO**
+**Initial Gate 2.5 decision:** **CONDITIONAL_GO**  
+**Post-ratification status (2026-07-26):** **CONDITIONS 1–4 CLOSED** — ownership, dual-gate model, named ratifier, and pilot capacity confirmed by human project authority. Pre-review engineering prerequisites remain (§7.2).
 
-This document does **not** approve or promote any medical asset, does **not** authorise Package 3B, and does **not** declare beta readiness.
+This document does **not** approve or promote any medical asset, does **not** authorise Package 3B content promotion, and does **not** declare beta readiness.
 
 ---
 
@@ -38,27 +39,37 @@ Reconciled to Gate 0 `HEALTHIQ_AI_V5_WHY_MIGRATION_PILOT_COHORT.md` without addi
 
 ## 2. Medical-review ownership
 
+### 2.0 Human ratification record (2026-07-26) — CLOSED
+
+| Decision | Recorded value |
+|---|---|
+| Operating model | **Dual-gate APPROVED** |
+| Gate 1 — medical review | **GPT** acting as **HealthIQ AI Head of Medical Research** performs the structured medical review (APPROVE / REVISE / REJECT frame dispositions) |
+| Gate 2 — production ratification | **Anthony** is the named human project authority and production ratifier |
+| Capacity | **Confirmed** for the bounded five-signal / ten-frame WHY pilot |
+| Review artefact form | One **consolidated five-signal review pack** containing **ten frame-level decisions**; separate detailed records only where risk, disagreement, or audit requirements justify them |
+| Engineering rule | Engineering may implement or promote **only** decisions that have completed medical review **and** been **explicitly ratified by Anthony** |
+| GPT alone | **Never** production authorisation |
+
+### 2.1 Role table (post-ratification)
+
 | Role | Recorded value | Evidence status |
 |---|---|---|
-| Primary medical-review owner | **UNCONFIRMED** — prompt proposes `GPT Head of Medical Research` | String **does not exist** anywhere in current governance (`CLAUDE.md`, `AGENTS.md`, prior ADRs). Novel role expansion. |
-| Review role (proposed by prompt) | Structured medical evidence review with APPROVE / REVISE / REJECT | Proposed in Gate 2.5 prompt only — **not previously ratified** |
-| Decision authority | **UNCLEAR** until operating-model choice is ratified (see §2.1) | STOP condition 5 relevant |
-| Human ratification authority | **Role exists** as Human final authority in Automation Bus / `CLAUDE.md`; **named person ABSENT** in repository | Do not invent a name |
-| Engineering implementation owner | Cursor (`healthiq-core-engine`) — implements only **ratified** assets | Established sprint role |
+| Primary medical-review owner | **GPT** — HealthIQ AI Head of Medical Research | **CLOSED** — human decision 2026-07-26 |
+| Review role | Structured medical evidence review with APPROVE / REVISE / REJECT | **CLOSED** under dual-gate |
+| Decision authority (medical review gate) | GPT as Head of Medical Research | **CLOSED** |
+| Human ratification authority | **Anthony** — project authority and production ratifier | **CLOSED** — named 2026-07-26 |
+| Engineering implementation owner | Cursor (`healthiq-core-engine`) — implements only **Anthony-ratified** assets | Established sprint role |
 | Independent audit owner | Claude Code / Kernel–Gate evidence path | Established governance roles |
 
-### 2.1 Operating-model policy question (must be ratified separately)
+### 2.2 Operating model (ratified)
 
-Two distinct models are available. Gate 2.5 **does not** silently adopt either.
-
-| Model | Description | Precedent |
+| Gate | Owner | Function |
 |---|---|---|
-| **(A) Dual-gate (existing pattern)** | Governance/agent performs coherence/completeness review; a **separately named clinical reviewer** performs genuine medical sign-off before compiled-hypothesis promotion | `BATCH2-MEDREVIEW-1` — “PASS (governance medical review only)”; zero frames cleared; defers to separate clinical sign-off |
-| **(B) Prompt-proposed compressed model** | GPT conducts substantive medical evidence review and records APPROVE/REVISE/REJECT; human only ratifies that process was followed | **No prior ratification** in governance stack |
+| **1 — Medical review** | GPT (HealthIQ AI Head of Medical Research) | Structured evidence review; records frame dispositions in the consolidated pilot pack |
+| **2 — Production ratification** | Anthony | Explicit human ratification required before any engineering implementation or promotion |
 
-**Human project authority must explicitly choose (A) or (B) before Package 3B.** Choosing (B) is a new policy decision, not a background fact.
-
-**Do not treat GPT review alone as production authorisation** under either model.
+Precedent alignment: dual-gate keeps medical review and production authorisation as **separately gated** steps (same separation principle as `BATCH2-MEDREVIEW-1`, with GPT now named in the medical-review seat and Anthony named as ratifier).
 
 ---
 
@@ -79,7 +90,7 @@ Legend: AVAILABLE / MISSING / STALE / CONFLICTING / NOT_APPLICABLE
 | tpo autoimmune_hypothyroid | MISSING standalone | AVAILABLE (`thyroid_antibodies_pass_3.json` + brief) | AVAILABLE | PARTIAL | AVAILABLE | PARTIAL thyroid activation MR history | AVAILABLE | AVAILABLE | SOURCE_DOCUMENT_DERIVED |
 | tpo euthyroid_autoimmune_risk | MISSING standalone | AVAILABLE (pass_3 + brief; PSI absent) | AVAILABLE | PARTIAL | AVAILABLE | MISSING frame in `medical_frame_identity_index_v1.yaml` | AVAILABLE | AVAILABLE | SOURCE_DOCUMENT_DERIVED |
 
-**Evidence-pack conclusion:** complete enough to **start** structured review for all 10 frames **if** ownership/capacity are confirmed, with enumerated gaps (6 missing standalone inv YAMLs recoverable from Batch JSON; shared legacy YAML; no compiled-WHY sign-off artefacts yet). Not complete enough to claim review already done.
+**Evidence-pack conclusion:** ownership/capacity are now confirmed. Structured medical review may proceed for frames whose pre-review prerequisites in §7.2 are met. Enumerated gaps remain engineering prerequisites (6 missing standalone inv YAMLs; missing `inv_tpo_ab_high_euthyroid_autoimmune_risk` index entry). Not complete enough to claim review already done.
 
 ---
 
@@ -95,17 +106,19 @@ Legend: AVAILABLE / MISSING / STALE / CONFLICTING / NOT_APPLICABLE
 
 **Signal-level totals (Gate 0 language):** 4 signals requiring new compiled-WHY medical review + 1 retirement confirmation.
 
-**Estimated review units (descriptive only — not a capacity commitment):** 9 full frame reviews + 1 retirement confirmation. No FTE, calendar, or availability invented.
+**Review units:** 9 full frame reviews + 1 retirement confirmation within the bounded pilot. **Capacity for this bound is confirmed** (human decision 2026-07-26).
 
 ---
 
 ## 5. Review decision standard
 
-Reusable template created at:
+Reusable per-frame fields live in:
 
 `docs/Medical Research Documents/HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_DECISION_TEMPLATE.md`
 
-Allowed frame decisions (template): APPROVE_FOR_COMPILED_PROMOTION / APPROVE_WITH_REVISIONS / REJECT / DEFER_PENDING_RESEARCH / RETIREMENT_CONFIRMATION_ONLY.
+**Ratified artefact form (2026-07-26):** medical review for this pilot is recorded as **one consolidated five-signal review pack** containing **ten frame-level decisions**. Separate detailed records are created only where risk, disagreement, or audit requirements justify them. The template supplies the required frame-level field set inside that pack.
+
+Allowed frame decisions: APPROVE_FOR_COMPILED_PROMOTION / APPROVE_WITH_REVISIONS / REJECT / DEFER_PENDING_RESEARCH / RETIREMENT_CONFIRMATION_ONLY.
 
 ---
 
@@ -113,45 +126,67 @@ Allowed frame decisions (template): APPROVE_FOR_COMPILED_PROMOTION / APPROVE_WIT
 
 | Item | Status |
 |---|---|
-| Review owner confirmed | **NO** — role unconfirmed; GPT Head of Medical Research not ratified |
-| Human ratifier confirmed | **NO** — named human medical ratifier absent (do not invent) |
-| Review inputs complete | **PARTIAL** — usable with enumerated gaps (§3) |
-| Estimated review units | 9 full + 1 retirement (descriptive) |
-| Blocking research gaps | **None** that require inventing medical interpretation; extraction of missing inv YAMLs is optional engineering hygiene before Package 3B |
-| Programme-window fit | **UNVERIFIABLE** without human capacity confirmation (Gate 0 unchanged) |
-| Capacity conclusion | **NOT_READY** |
+| Review owner confirmed | **YES** — GPT as HealthIQ AI Head of Medical Research |
+| Human ratifier confirmed | **YES** — Anthony |
+| Review inputs complete | **PARTIAL** — usable with enumerated pre-review prerequisites (§7.2) |
+| Estimated review units | 9 full + 1 retirement (bounded pilot) |
+| Blocking research gaps | **None** that require inventing medical interpretation |
+| Programme-window fit | **CONFIRMED** for the bounded five-signal / ten-frame WHY pilot (human decision 2026-07-26) |
+| Capacity conclusion | **READY** (ownership + capacity conditions closed) |
 
-Safe reduction if Gate 2.5 conditions remain unmet (from Gate 0): reduce Package 3B to **vitamin_d_low legacy-retirement proof only**.
+Safe reduction if later review/promotion blockers appear: reduce Package 3B to **vitamin_d_low legacy-retirement proof only** (Gate 0 fallback unchanged).
 
 ---
 
-## 7. Gate 2.5 decision
+## 7. Gate 2.5 decision status
 
-### **CONDITIONAL_GO**
+### 7.1 Initial decision (package completion): **CONDITIONAL_GO**
 
-Architecture remains viable; pilot remains bounded at 5/10; Packages 1–2 gains stand. Package 3A machinery may proceed only for **non-medical** architecture work once human-authorised. **Package 3B content promotion must not begin** until every condition below is closed.
+Architecture remained viable; pilot bounded at 5/10; Packages 1–2 gains stood.
 
-### Explicit conditions
+### 7.2 Condition closure (human decisions 2026-07-26)
 
-1. **Operating-model ratification:** Human project authority chooses Model **(A)** or **(B)** in §2.1 and records that choice in a governed artefact.
-2. **Named medical-review owner:** Confirm the primary reviewer identity (role and accountable agent/person) consistent with the chosen model.
-3. **Named human production-ratification authority:** Confirm the human who must ratify production promotion of compiled WHY assets (distinct from GPT/agent review).
-4. **Capacity confirmation:** Confirm that 9 full frame reviews + 1 retirement confirmation fit the ratified programme ceiling — without inventing dates; a written commitment is required.
-5. **Evidence hygiene (recommended before Package 3B, not a Package 3 redesign):** Extract or attach standalone inv YAMLs for the 6 Batch-JSON-only pilot frames **or** explicitly accept Batch JSON as the canonical investigation source for those frames in the review pack.
+| # | Original condition | Status |
+|---|---|---|
+| 1 | Operating-model ratification | **CLOSED** — dual-gate approved |
+| 2 | Named medical-review owner | **CLOSED** — GPT as HealthIQ AI Head of Medical Research |
+| 3 | Named human production ratifier | **CLOSED** — Anthony |
+| 4 | Capacity confirmation | **CLOSED** — confirmed for bounded 5-signal / 10-frame pilot |
+| 5 | Evidence hygiene for Batch-JSON-only frames | **DECISION CLOSED / WORK OUTSTANDING** — must extract standalone inv YAMLs using the **byte-identical method established in ARCH-CONV-PKG2** (not optional acceptance of Batch JSON alone) |
 
-### Why not GO / STOP / V6
+**Additional pre-review / pre-promotion prerequisite (ratified 2026-07-26):**
 
-| Alternative | Why not |
+| Prerequisite | Status |
 |---|---|
-| GO | Owner, ratifier, and capacity are not evidenced; operating-model authority unclear |
-| STOP | Architecture salvage remains credible; conditions are enumerable and do not require Package 3 redesign |
-| V6 | No ratified kill criterion is met by these findings |
+| Add missing `inv_tpo_ab_high_euthyroid_autoimmune_risk` entry to `knowledge_bus/governance/medical_frame_identity_index_v1.yaml` before that frame is reviewed or promoted | **WORK OUTSTANDING** (not executed in this documentation update) |
+
+### 7.3 What is now authorised vs not
+
+| Item | Status |
+|---|---|
+| Gate 2.5 ownership / ratification / capacity conditions | **CLOSED** |
+| Package **3A** (non-medical WHY architecture machinery) | **MAY BEGIN** when separately started under Automation Bus — not started by this update |
+| Package **3B** content promotion / compiled WHY activation | **NOT authorised** until medical review completes and Anthony explicitly ratifies |
+| Any medical asset APPROVE / promote in this update | **No** |
+
+### 7.4 Six frames requiring PKG2-style inv extraction (work outstanding)
+
+| source_spec_id | Expected standalone path |
+|---|---|
+| inv_homocysteine_high_b_vitamin_related_methylation_impairment | `knowledge_bus/research/investigation_specs/inv_homocysteine_high_b_vitamin_related_methylation_impairment.yaml` |
+| inv_homocysteine_high_renal_clearance_reduction | `knowledge_bus/research/investigation_specs/inv_homocysteine_high_renal_clearance_reduction.yaml` |
+| inv_mcv_high_megaloblastic_macrocytosis | `knowledge_bus/research/investigation_specs/inv_mcv_high_megaloblastic_macrocytosis.yaml` |
+| inv_mcv_high_nonmegaloblastic_macrocytosis | `knowledge_bus/research/investigation_specs/inv_mcv_high_nonmegaloblastic_macrocytosis.yaml` |
+| inv_tpo_ab_high_autoimmune_hypothyroid_pattern | `knowledge_bus/research/investigation_specs/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml` |
+| inv_tpo_ab_high_euthyroid_autoimmune_risk | `knowledge_bus/research/investigation_specs/inv_tpo_ab_high_euthyroid_autoimmune_risk.yaml` |
+
+Method: byte-identical Pass-3 frame extraction as established in `ARCH-CONV-PKG2` (no invented `source_spec_id`; no medical reinterpretation).
 
 ---
 
-## 8. Forbidden claims (this gate)
+## 8. Forbidden claims (this gate / this update)
 
 - No medical asset APPROVE / promote
-- No runtime / schema / package / hypothesis / prose / test changes
+- No runtime / schema / package / hypothesis / prose / test / production-behaviour changes in this documentation update
 - No beta-readiness or architecture-completion declaration
-- No invented reviewer availability, commitment, or dates
+- No start of Package 3A inside this update
