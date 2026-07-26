@@ -72,6 +72,14 @@ def apply_questionnaire_objective_waist_to_user(
                 w = None
             else:
                 if w > 0:
+                    # Keep UserContext le=300; do not clamp — fail with a readable boundary message.
+                    if w > 300:
+                        raise ValueError(
+                            "Waist circumference must be at most 300 cm. "
+                            "If you entered centimetres into the inches field, switch to centimetres "
+                            "or enter inches (for example 36). "
+                            f"Resolved value was {w:g} cm."
+                        )
                     user[CANONICAL_WAIST_CM_KEY] = w
     sync_waist_mirror_to_user_dict(user)
 

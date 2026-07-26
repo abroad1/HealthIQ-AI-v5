@@ -115,7 +115,13 @@ async def start_analysis(
         
         normalized_user = normalize_analysis_user_dict(request.user)
         questionnaire_for_run = request.questionnaire_data
-        apply_questionnaire_objective_waist_to_user(normalized_user, questionnaire_for_run)
+        try:
+            apply_questionnaire_objective_waist_to_user(normalized_user, questionnaire_for_run)
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"error": "invalid_waist_circumference", "message": str(exc)},
+            ) from exc
         apply_questionnaire_medication_representation_to_user(normalized_user, questionnaire_for_run)
 
         # Trace incoming payload (exclude large questionnaire bodies from key-only trace)
@@ -534,7 +540,13 @@ async def regenerate_analysis(
         source_row.questionnaire_data if isinstance(source_row.questionnaire_data, dict) else None
     )
     normalized_user = normalize_analysis_user_dict({"user_id": str(auth_user.id)})
-    apply_questionnaire_objective_waist_to_user(normalized_user, questionnaire_data)
+    try:
+        apply_questionnaire_objective_waist_to_user(normalized_user, questionnaire_data)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": "invalid_waist_circumference", "message": str(exc)},
+        ) from exc
     apply_questionnaire_medication_representation_to_user(normalized_user, questionnaire_data)
 
     try:

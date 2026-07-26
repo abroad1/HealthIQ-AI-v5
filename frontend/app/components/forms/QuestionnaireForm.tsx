@@ -256,6 +256,16 @@ export default function QuestionnaireForm({
             return `${field.label} is required`;
           }
         }
+      } else if (question.type === 'number' && question.alternativeUnit && isRecord(value)) {
+        const altVal = value[question.alternativeUnit.label];
+        if (
+          altVal === undefined ||
+          altVal === null ||
+          altVal === '' ||
+          (typeof altVal === 'number' && Number.isNaN(altVal))
+        ) {
+          return reqHint;
+        }
       } else if (
         value === undefined ||
         value === null ||
@@ -281,7 +291,12 @@ export default function QuestionnaireForm({
     }
 
     if (question.type === 'number' && value !== undefined && value !== null && value !== '') {
-      if (Number.isNaN(parseFloat(asString(value)))) {
+      if (question.alternativeUnit && isRecord(value)) {
+        const altVal = value[question.alternativeUnit.label];
+        if (altVal !== undefined && altVal !== null && altVal !== '' && Number.isNaN(parseFloat(asString(altVal)))) {
+          return 'Please enter a valid number';
+        }
+      } else if (Number.isNaN(parseFloat(asString(value)))) {
         return 'Please enter a valid number';
       }
     }
@@ -510,7 +525,18 @@ export default function QuestionnaireForm({
           </Card>
         );
 
-      case 'number':
+      case 'number': {
+        const primaryLabel = question.label || question.question;
+        const alt = question.alternativeUnit;
+        const valueIsCmDict =
+          !!alt && isRecord(value) && Object.prototype.hasOwnProperty.call(value, alt.label);
+        const unitMode: 'primary' | 'alt' = valueIsCmDict ? 'alt' : 'primary';
+        const displayValue = valueIsCmDict
+          ? asString((value as Record<string, unknown>)[alt!.label])
+          : asString(value);
+        const activeMin = unitMode === 'alt' ? alt?.min : question.min;
+        const activeMax = unitMode === 'alt' ? alt?.max : question.max;
+
         return (
           <Card key={question.id} className={questionCardClass}>
             <CardContent className="space-y-2 pt-6">
@@ -519,16 +545,71 @@ export default function QuestionnaireForm({
                 {question.question}
                 {renderTierHint(question)}
               </Label>
+              <p className="text-xs text-muted-foreground">
+                {unitMode === 'alt' && alt ? alt.label : primaryLabel}
+              </p>
+              {alt ? (
+                <div className="flex flex-wrap gap-2 text-xs">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    className={cn(
+                      'rounded-md border px-2 py-1 transition-colors',
+                      unitMode === 'primary'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:bg-muted/40'
+                    )}
+                    onClick={() => {
+                      if (unitMode === 'primary') return;
+                      const n = parseFloat(displayValue);
+                      handleResponseChange(
+                        question.id,
+                        displayValue === '' || Number.isNaN(n) ? '' : n
+                      );
+                    }}
+                  >
+                    {primaryLabel}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    className={cn(
+                      'rounded-md border px-2 py-1 transition-colors',
+                      unitMode === 'alt'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:bg-muted/40'
+                    )}
+                    onClick={() => {
+                      if (unitMode === 'alt') return;
+                      const n = parseFloat(displayValue);
+                      handleResponseChange(
+                        question.id,
+                        displayValue === '' || Number.isNaN(n)
+                          ? { [alt.label]: '' }
+                          : { [alt.label]: n }
+                      );
+                    }}
+                  >
+                    {alt.label}
+                  </button>
+                </div>
+              ) : null}
               <Input
                 id={question.id}
                 type="number"
-                min={question.min}
-                max={question.max}
+                min={activeMin}
+                max={activeMax}
                 disabled={busy}
-                value={asString(value)}
+                value={displayValue}
                 onChange={(e) => {
                   const raw = e.target.value;
-                  handleResponseChange(question.id, raw === '' ? '' : parseFloat(raw));
+                  if (unitMode === 'alt' && alt) {
+                    handleResponseChange(question.id, {
+                      [alt.label]: raw === '' ? '' : parseFloat(raw),
+                    });
+                  } else {
+                    handleResponseChange(question.id, raw === '' ? '' : parseFloat(raw));
+                  }
                 }}
                 className={cn(inputSurface, error && 'border-destructive')}
               />
@@ -539,6 +620,7 @@ export default function QuestionnaireForm({
             </CardContent>
           </Card>
         );
+      }
 
       case 'dropdown':
         return (

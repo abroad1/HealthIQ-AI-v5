@@ -426,11 +426,26 @@ class TestObjectiveLifestyleExtraction:
         out = self.mapper.extract_objective_lifestyle_inputs({"waist_circumference": 35.0})
         assert abs(out["waist_circumference_cm"] - 35.0 * 2.54) < 1e-6
 
+    def test_waist_representative_inches_36_converts_once(self):
+        out = self.mapper.extract_objective_lifestyle_inputs({"waist_circumference": 36.0})
+        assert abs(out["waist_circumference_cm"] - 91.44) < 1e-6
+
+    def test_waist_bare_166_cm_not_double_converted(self):
+        """166 cm entered as a bare number must stay 166, not 166×2.54=421.64."""
+        out = self.mapper.extract_objective_lifestyle_inputs({"waist_circumference": 166.0})
+        assert out["waist_circumference_cm"] == 166.0
+
     def test_waist_dict_cm_key_direct(self):
         out = self.mapper.extract_objective_lifestyle_inputs(
             {"waist_circumference": {"Waist circumference (cm)": 92.0}}
         )
         assert out["waist_circumference_cm"] == 92.0
+
+    def test_waist_dict_cm_166_unchanged(self):
+        out = self.mapper.extract_objective_lifestyle_inputs(
+            {"waist_circumference": {"Waist circumference (cm)": 166.0}}
+        )
+        assert out["waist_circumference_cm"] == 166.0
 
     def test_bp_group_extracted(self):
         out = self.mapper.extract_objective_lifestyle_inputs({
