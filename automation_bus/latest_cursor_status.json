@@ -1,10 +1,9 @@
 {
-  "branch": "feature/arch-conv-pkg2-provenance-reachability",
+  "branch": "feature/arch-conv-gate2-5-medical-review-readiness",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-25T23:46:49Z",
-  "cursor_started_utc": "2026-07-25T23:31:41Z",
-  "head_sha": "b151fa6b2ef65d49874a2d6eadf83dd679a953df",
+  "cursor_started_utc": "2026-07-26T00:06:35Z",
+  "head_sha": "9ce7853beaea2ba40eb3ed076483ab9ecedaea86",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-CONV-PKG2"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-CONV-GATE2_5"
 }
