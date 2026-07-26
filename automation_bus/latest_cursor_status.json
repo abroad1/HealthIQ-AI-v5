@@ -1,10 +1,9 @@
 {
-  "branch": "audit/arch-conv-final-programme",
+  "branch": "feature/arch-conv-correct-1-e2e-authority-layerc",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-26T13:07:45Z",
-  "cursor_started_utc": "2026-07-26T11:41:24Z",
-  "head_sha": "a27a65122aea2e457f1b12c15edffb6809aed539",
+  "cursor_started_utc": "2026-07-26T13:20:33Z",
+  "head_sha": "b0b2e9843fee27c3055cd32be6b566eab626c41f",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-CONV-FINAL-AUDIT"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-CONV-CORRECT-1"
 }
