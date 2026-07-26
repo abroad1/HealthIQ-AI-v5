@@ -1,107 +1,93 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-PKG2",
+  "work_id": "ARCH-CONV-GATE2_5",
   "status": "HARDENED",
   "hardening_date": "2026-07-26",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "risk_level": "HIGH",
-  "change_type": "MIXED",
+  "risk_level": "STANDARD",
+  "change_type": "CONTENT",
   "execution_model": "TWO_PHASE_START_FINISH",
   "stage_b_mode": "MODE_2",
-  "runtime_change": "YES",
+  "runtime_change": "NONE",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "HIGH/MIXED, but the subsystems in scope (signal_evaluator.py load path, provenance_status_v1.py, report_compiler_v1.py consume side, the 20 pkg_kb47_* cohort) were already deeply and independently verified across the Gate 0 and PKG1 audits earlier in this session. Re-deriving via direct grep/read was faster and more reliable than forking, which would have reconstructed context I already hold verified."
+    "rationale": "STANDARD/CONTENT governance gate, no runtime scope, bounded to a 5-signal/10-frame cohort already deeply characterised across Gate 0/PKG1/PKG2 audits this session. No genuinely large disjoint research volume warranting a fork."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type", "stage_b_mode", "runtime_change"],
-    "declared_risk_level": "HIGH",
-    "declared_change_type": "MIXED",
-    "behaviour_changes_touch_intelligence_core": "YES — signal registry/evaluator, report compiler, package-manifest parsing; correctly classified HIGH",
-    "tests_required": "YES — 14 minimum test items plus 12 existing-suite categories",
-    "scope_proportionality": "PASS — bounded to Gate 0 cohort (pkg_kb47_*) plus shared loader/gate infrastructure; explicit 'do not expand to all 191 manifests'; 9 STOP conditions; 11-item forbidden-scope list",
+    "declared_risk_level": "STANDARD",
+    "declared_change_type": "CONTENT",
+    "behaviour_changes_touch_intelligence_core": "NO — runtime_change: NONE, pure governance/readiness gate",
+    "tests_required": "NOT APPLICABLE",
+    "scope_proportionality": "PASS — bounded to Gate 0's 5-signal/10-frame pilot cohort, explicit 'do not invent availability, commitment, or dates'",
     "advisory_duplication_detected": "NO",
-    "scope_creep_signals": "The 9-topic 'inspect current production code for' clause is broader than a fixed file list, but every topic maps to a known existing subsystem already characterised in this session (not open-ended verify-everything language) and is necessary groundwork for the required 'one canonical loader-eligibility function.' Not a reject trigger.",
+    "scope_creep_signals": "NONE",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
     "required_input_docs": {
-      "status": "CONFIRMED_EXISTS — all 8",
-      "evidence": "Planning paper; CONTROLLED_BETA_ARCHITECTURE_COHORT.md; CONVERGENCE_VIABILITY_ASSESSMENT.md; OPEN_ARCHITECTURE_OBLIGATIONS_CC.md; RECONCILIATION_VARIANCE_CC_VS_CURSOR.md; ADR-RT-004_compile_manifest_and_package_provenance_policy.md (glob resolved); ADR-RT-IDENTITY-PROV-001; ARCH-RT-IDENTITY-PROV-1_launch_critical_provenance_inventory.md; ARCH-CONV-PKG1_implementation_and_verification_report.md — all confirmed present."
+      "status": "CONFIRMED_EXISTS — all 8 (ADR-RT-003 glob resolved to ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md)",
+      "evidence": "Planning paper; WHY_MIGRATION_PILOT_COHORT.md; CONTROLLED_BETA_ARCHITECTURE_COHORT.md; CONVERGENCE_VIABILITY_ASSESSMENT.md; ARCH-CONV-PKG2_launch_critical_provenance_decision_inventory.md; ARCH-CONV-PKG2_implementation_and_verification_report.md; ADR-RT-003; ADR-RT-IDENTITY-PROV-001 — all confirmed present."
     },
     "output_paths_correctly_new": {
       "status": "CONFIRMED",
-      "evidence": "None of the 3 required PKG2 deliverable paths exist yet."
+      "evidence": "None of the 3 required GATE2_5 deliverable paths exist yet."
+    },
+    "medical_research_folder_convention_mismatch": {
+      "status": "FLAGGED — not blocking, but the prompt's assumed path is wrong",
+      "evidence": "The prompt targets docs/medical-research/HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_DECISION_TEMPLATE.md and itself says 'resolve the medical-research folder path according to repository convention' — good, it anticipated the ambiguity. The actual repository convention is docs/Medical Research Documents/ (title case, spaces), confirmed to contain 6 existing files including the precedent BATCH2-MEDREVIEW-1-adjacent context pack. Cursor should place the new decision-template file there, not create a new docs/medical-research/ directory."
     },
     "branch_state": {
       "status": "CONFIRMED, expected pre-kernel-start state",
-      "evidence": "Current branch is main (HEAD 4d3fdfc, merge of 'ARCH-CONV-PKG1 launch-path frame identity closure' — confirms PKG1 was human-ratified and merged). Target branch feature/arch-conv-pkg2-provenance-reachability does not yet exist. Working tree shows only the expected latest_cursor_prompt.md Stage-1 handoff modification."
+      "evidence": "Current branch is main (HEAD efd82d6, merge of 'ARCH-CONV-PKG2 launch-critical provenance reachability closure' — confirms PKG2 was human-ratified and merged). Target branch feature/arch-conv-gate2-5-medical-review-readiness does not yet exist. Working tree shows only the expected latest_cursor_prompt.md Stage-1 handoff modification."
     }
   },
 
   "independent_premise_verification": {
-    "central_defect_claim_reconfirmed_on_current_head": {
-      "status": "CONFIRMED, unchanged since Gate 0",
-      "evidence": "signal_evaluator.py:33-36 (_iter_signal_library_paths) still globs every */signal_library.yaml under knowledge_bus/packages/ with zero provenance/eligibility filter. Line 528 attaches provenance_status to SignalResult purely as a carried metadata field (defaulting to LEGACY_INFERRED if absent), never consulted to gate loading. The prompt's premise — 'provenance-blocked packages can still load, fire, rank and appear in user-facing output' — is accurate and unresolved as of this HEAD (post-PKG1, which correctly did not touch this in-scope)."
+    "operating_model_role_is_novel_not_precedented": {
+      "status": "MATERIAL FINDING — requires explicit human ratification as its own decision, not just the WHY cohort",
+      "evidence": "Repo-wide search for 'Head of Medical Research' returns zero hits anywhere in the codebase, governance docs, AGENTS.md, or CLAUDE.md. The multi-agent governance model in CLAUDE.md §5 names GPT's role as 'architecture and intelligence governance' only — it does not currently include medical-evidence review or APPROVE/REVISE/REJECT authority over clinical hypothesis content. This prompt's 'Operating model' section proposes this role for the first time."
     },
-    "existing_provenance_status_model_is_real_and_reusable": {
-      "status": "CONFIRMED",
-      "evidence": "backend/core/knowledge/provenance_status_v1.py defines classify_package_provenance_status() (6-state honest classification: EXPLICIT_SPEC, COMPILED_MANIFEST, SOURCE_DOCUMENT_DERIVED, LEGACY_INFERRED, UNRESOLVED, BLOCKED) and is_beta_eligible_explicit_lineage(). Both are real, tested functions — 'reuse the existing provenance status model' is grounded, not aspirational."
-    },
-    "important_nuance_not_stated_by_the_prompt": {
-      "status": "NEW FINDING — material to Phase 1 framing",
-      "evidence": "grep confirms classify_package_provenance_status/is_beta_eligible_explicit_lineage are currently called ONLY by backend/scripts/validate_identity_provenance_gate.py (an offline audit/reporting script) and its test — never by signal_evaluator.py, report_compiler_v1.py, or any runtime consumption path. The prompt's shared-rules section says 'Do not create separate eligibility logic in registry, evaluator and report compiler' as if consolidating scattered duplicate logic were the task. In reality there is currently ZERO runtime-enforced eligibility logic anywhere — the existing function is a pure reporting classifier with no enforcement caller. The actual task is to wire this existing classifier into a new enforcement point (most naturally at package discovery/load time in signal_evaluator.py), not to de-duplicate pre-existing redundant checks. This is a framing correction Cursor's Phase 1 decision document should make explicit, since 'consolidate duplicate logic' and 'add the first enforcement point' imply different risk profiles and different STOP-gate triggers (the latter is more likely to surface unexpected behavioural regressions, since nothing has ever gated this path before)."
-    },
-    "kb47_cohort_size_reconfirmed": {
-      "status": "CONFIRMED",
-      "evidence": "20 pkg_kb47_* directories confirmed again on current HEAD (unchanged since Gate 0 and PKG1)."
-    },
-    "manifest_schema_unchanged": {
-      "status": "CONFIRMED",
-      "evidence": "knowledge_bus/schema/package_manifest_schema.yaml still schema_version 1.1.0, consistent with 'update package manifests through the governed schema' being a real, addressable target, not requiring a new schema version to be invented first."
-    },
-    "golden_panel_infrastructure_exists": {
-      "status": "CONFIRMED",
-      "evidence": "backend/tests/enforcement/test_golden_panel_snapshot_not_raw.py and backend/tests/fixtures/golden_panel_160*.json confirmed present — 'run the relevant golden and representative panels' is actionable against real fixtures, not aspirational tooling."
+    "existing_precedent_is_narrower_than_the_proposed_model": {
+      "status": "MATERIAL FINDING",
+      "evidence": "The closest existing precedent, BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md, explicitly self-labels as 'PASS (governance medical review only)' — a coherence/context-completeness check performed under standard Automation Bus work-package execution, explicitly NOT a clinical sign-off, and its own result was 'zero frames cleared for immediate promotion,' deferring to a separately-named, higher-authority 'clinical sign-off' step (CF-BATCH2-010) before any promotion. That precedent keeps governance-agent review and genuine clinical sign-off as two distinct, separately-gated steps. This prompt's 'operating model' compresses that into: GPT conducts the substantive medical evidence review and records APPROVE/REVISE/REJECT decisions on hypothesis content itself, then a human only 'ratifies' — i.e. the human's role is reduced from an independent clinical reviewer to a ratifier of GPT's prior decision. This is a materially different, higher-stakes claim than the existing precedent supports, and it has not been ratified anywhere in the governance stack prior to this prompt."
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "Phase 1's cohort decision table should explicitly note, for every pkg_kb47_* row, that today's status quo is 'loadable and fires with zero enforcement' (not merely 'inconsistently enforced') — this is a stronger and more specific baseline than the prompt's own wording implies, and it raises the stakes of the golden/representative-output review in §5: since nothing has ever excluded these packages before, ANY change to the loader-eligibility policy is a first-time behavioural change for whichever of the 20 currently fire in practice, not a tightening of an existing partial control.",
-    "Because there is no existing runtime enforcement point to extend, 'one canonical loader eligibility function' will need a new call site inside signal_evaluator.py's load loop (or an equivalent single choke point before SignalResult construction) — Cursor's Phase 1 document should identify the exact proposed call site before implementation, since STOP condition 5 ('controlled-beta cohort cannot be isolated from wider estate') is easiest to accidentally trip if the new gate is placed somewhere that also affects non-cohort packages sharing the same load loop.",
-    "Recommend Cursor's Phase 1 explicitly confirm whether any of the 20 pkg_kb47_* packages currently appear in golden_panel_160.json / golden_panel_160_collision_free.json fixtures before deciding dispositions — this directly informs 'appears in golden or representative outputs' column and was left UNVERIFIABLE-without-a-rerun by both Gate 0 and PKG1; this package is the natural place to finally resolve it, and STOP condition 1 depends on knowing the answer, not assuming it."
+    "This gate's own execution should not silently adopt the 'GPT Head of Medical Research' operating model as already-authorised background fact. Recommend the readiness document explicitly ask the human ratifier to confirm which of two distinct models is intended: (a) GPT/governance-agent performs a BATCH2-MEDREVIEW-1-style coherence/completeness review, with a separately-named clinical reviewer performing genuine medical sign-off before any compiled-hypothesis promotion (matches existing precedent); or (b) GPT's structured review IS the substantive medical evidence review, with the human only ratifying that a governed process was followed (a new, unprecedented role expansion). The Gate 2.5 decision (GO/CONDITIONAL_GO/STOP/V6) should not be issued as if this question is already settled — if it can't be resolved from existing authority, it is itself grounds for CONDITIONAL_GO ('human must first ratify the review-operating-model, separately from ratifying the WHY pilot cohort') rather than a silent assumption baked into the GO decision.",
+    "Target the actual folder convention docs/Medical Research Documents/ (title case, spaces) for the decision-template deliverable, not a new docs/medical-research/ directory — the prompt already anticipated needing to resolve this; this confirms the correct resolution.",
+    "STOP conditions 5 ('decision authority is unclear') and 6 ('human ratification ownership is absent') are the natural homes for the operating-model ambiguity above if Cursor's own investigation cannot locate a prior authorisation for the GPT-Head-of-Medical-Research role — recommend treating that ambiguity as satisfying STOP condition 5 rather than resolving it by assumption."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 7,
+    "checklist_count": 6,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "All 8 required input docs exist", "source": "Glob per path", "evidence": "All 8 confirmed present", "status": "CONFIRMED"},
+      {"id": 1, "claim": "All 8 required input docs exist", "source": "Glob per path", "evidence": "All 8 confirmed present, including glob-resolved ADR-RT-003", "status": "CONFIRMED"},
       {"id": 2, "claim": "All 3 required output paths are correctly new", "source": "Glob per path", "evidence": "None of the 3 deliverables exist yet", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Branch state expected; PKG1 merged", "source": "git log; git branch --list; git status --short", "evidence": "HEAD 4d3fdfc is the PKG1 merge commit; target branch not yet created; only latest_cursor_prompt.md modified", "status": "CONFIRMED"},
-      {"id": 4, "claim": "Zero runtime enforcement of provenance status exists today", "source": "Direct grep of signal_evaluator.py and report_compiler_v1.py for provenance_status/BLOCKED filters", "evidence": "provenance_status is carried as metadata only (signal_evaluator.py:528); no suppression logic at any call site", "status": "CONFIRMED — reconfirms and sharpens the prior Gate 0 finding" },
-      {"id": 5, "claim": "The existing provenance classification functions have zero runtime callers today (reporting-only)", "source": "Repo-wide grep for classify_package_provenance_status / is_beta_eligible_explicit_lineage", "evidence": "Only callers are validate_identity_provenance_gate.py (offline script) and its test", "status": "CONFIRMED" },
-      {"id": 6, "claim": "kb47 launch-critical cohort is still exactly 20 packages", "source": "Direct directory count", "evidence": "20 pkg_kb47_* directories", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Golden panel fixtures/tests referenced by the prompt exist and are real", "source": "Glob/find", "evidence": "golden_panel_160.json, golden_panel_160_collision_free.json, test_golden_panel_snapshot_not_raw.py all present", "status": "CONFIRMED"}
+      {"id": 3, "claim": "Branch state expected; PKG2 merged", "source": "git log; git branch --list; git status --short", "evidence": "HEAD efd82d6 is the PKG2 merge commit; target branch not yet created; only latest_cursor_prompt.md modified", "status": "CONFIRMED"},
+      {"id": 4, "claim": "'GPT Head of Medical Research' role does not exist anywhere in current governance authority", "source": "Repo-wide grep, case-insensitive", "evidence": "Zero hits in docs/, AGENTS.md, CLAUDE.md; CLAUDE.md §5 names GPT's role as architecture/intelligence governance only", "status": "CONFIRMED"},
+      {"id": 5, "claim": "The nearest precedent (BATCH2-MEDREVIEW-1) treats governance review and clinical sign-off as two distinct, separately-gated steps, not one compressed model", "source": "Direct read of BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md", "evidence": "Self-labelled 'governance medical review only'; zero frames cleared for promotion; defers to separate CF-BATCH2-010 clinical sign-off", "status": "CONFIRMED"},
+      {"id": 6, "claim": "Actual medical-research documentation folder convention is 'docs/Medical Research Documents/', not 'docs/medical-research/'", "source": "Glob", "evidence": "6 existing files found under the title-case/spaced path; zero under the prompt's assumed lowercase-hyphenated path", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Any WHY/hypothesis/prose/PSI/Gemini/threshold/signal-firing change — REJECT_AND_RETURN",
-    "Any invented source_spec_id not backed by a real research artefact — REJECT_AND_RETURN",
-    "Any package directory removal used as a substitute for governed non-reachability — REJECT_AND_RETURN",
-    "Any expansion beyond the Gate 0 pkg_kb47_* cohort to the full 191/192-package estate — REJECT_AND_RETURN",
-    "Any user-visible finding suppressed without a documented golden/representative-output impact review and explicit human approval — REJECT_AND_RETURN",
-    "Any new eligibility logic duplicated separately across registry/evaluator/report compiler instead of one canonical function — REJECT_AND_RETURN",
-    "Any architecture-completion or beta-readiness declaration — REJECT_AND_RETURN",
-    "A GO/CORRECT/STOP/V6 recommendation issued without evidencing all Gate 2 acceptance criteria against live code and real golden-output diffs — REJECT_AND_RETURN"
+    "Any runtime, schema, signal-package, hypothesis, prose, or test file change — REJECT_AND_RETURN",
+    "Any medical asset approved or promoted within this gate — REJECT_AND_RETURN",
+    "Silent adoption of the 'GPT Head of Medical Research' operating model as already-ratified without flagging it as a novel, separately-decidable policy question — REJECT_AND_RETURN or treat as STOP condition 5",
+    "Any invented reviewer availability, capacity, or date not evidenced in required inputs — REJECT_AND_RETURN",
+    "Any silent addition or removal of a pilot frame from the Gate 0 5-signal/10-frame cohort — REJECT_AND_RETURN",
+    "Any beta-readiness or architecture-completion declaration — REJECT_AND_RETURN",
+    "A GO issued without evidencing all six GO preconditions, including a credible, named, non-self-referential human ratifier distinct from the reviewing agent — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 8 required input documents and all 3 required output paths confirmed. Branch state confirmed expected pre-kernel-start; PKG1's GO outcome confirmed merged to main. The prompt's central defect claim was independently reconfirmed on current HEAD via direct code read (zero enforcement of provenance status anywhere on the runtime load path). One material framing correction surfaced for Phase 1: the task is to add the FIRST runtime enforcement point for an existing, currently-unused offline classifier, not to consolidate pre-existing duplicate enforcement logic as the prompt's wording could imply — this raises the practical stakes of the mandated golden/representative-output review, since no prior partial control exists to have already absorbed any behavioural risk. Two further non-blocking recommendations passed forward: identify the exact new call site before implementation (to avoid STOP condition 5), and resolve kb47-in-golden-fixtures as a concrete first step rather than leaving it unverified a third time. No blocking defect found. Recommend proceeding to kernel start."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 8 required input documents and all 3 required output paths confirmed; branch state confirmed expected pre-kernel-start with PKG2's GO outcome confirmed merged. One material, non-blocking finding surfaced: the prompt's 'GPT Head of Medical Research' operating model is proposed here for the first time — it exists nowhere in current governance authority (CLAUDE.md names GPT's role as architecture/intelligence governance only), and the nearest precedent (BATCH2-MEDREVIEW-1) keeps governance-agent review and genuine clinical sign-off as two distinct, separately-gated steps rather than the compressed 'GPT reviews, human ratifies' model this prompt proposes. Cursor's execution should surface this explicitly as a separately-decidable policy question for the human ratifier rather than silently treating it as already-authorised background fact — recommend routing it through STOP condition 5 ('decision authority is unclear') if it cannot independently locate prior authorisation. A minor path-convention correction was also identified (docs/Medical Research Documents/, not docs/medical-research/). No blocking defect found. Recommend proceeding to kernel start."
 }
