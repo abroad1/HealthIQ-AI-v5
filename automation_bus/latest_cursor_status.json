@@ -1,10 +1,9 @@
 {
-  "branch": "feature/arch-conv-pkg3-why-authority-migration",
+  "branch": "audit/arch-conv-final-programme",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-26T10:56:57Z",
-  "cursor_started_utc": "2026-07-26T10:17:23Z",
-  "head_sha": "bacdd7f2685dd00a068f0982704a03cd0f5c2ef1",
+  "cursor_started_utc": "2026-07-26T11:41:24Z",
+  "head_sha": "522873428882d9f47093e283a3ab31dc16fcd684",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-CONV-PKG3"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-CONV-FINAL-AUDIT"
 }
