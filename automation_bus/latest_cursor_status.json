@@ -1,9 +1,10 @@
 {
   "branch": "audit/arch-conv-final-programme",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-07-26T11:48:03Z",
   "cursor_started_utc": "2026-07-26T11:41:24Z",
-  "head_sha": "522873428882d9f47093e283a3ab31dc16fcd684",
+  "head_sha": "59cfe3071784bec0a24ad2d8262802d0e45fffde",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-FINAL-AUDIT"
 }
