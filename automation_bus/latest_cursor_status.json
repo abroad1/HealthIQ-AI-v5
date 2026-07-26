@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-pkg3-why-authority-migration",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-07-26T10:23:03Z",
   "cursor_started_utc": "2026-07-26T10:17:23Z",
-  "head_sha": "d090747dac279f9983cb6a934f1a6e2128cd99c5",
+  "head_sha": "d73e70a71a354b3a5d293bf0123447d45db80095",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-PKG3"
 }
