@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-correct-1-e2e-authority-layerc",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-07-26T15:08:05Z",
   "cursor_started_utc": "2026-07-26T13:20:33Z",
-  "head_sha": "b0b2e9843fee27c3055cd32be6b566eab626c41f",
+  "head_sha": "2761df28f20c7f1c65570db7720b5cfc52c8b224",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-CORRECT-1"
 }
