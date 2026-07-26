@@ -15,8 +15,8 @@
 | ARCH-CONV-PKG1 | Launch-path activation-frame identity closure (5 surfaces) | **PASS** | `validate_launch_path_frame_identity_gate.py` exit 0; `test_arch_conv_pkg1_frame_identity.py` 10/10; code review of five surfaces |
 | ARCH-CONV-PKG2 | Launch-critical provenance + runtime reachability | **PASS** | `validate_launch_critical_provenance_reachability_gate.py` exit 0; production kb47=6 excluded=14 |
 | ARCH-CONV-PKG3 | WHY authority migration for 5/10 pilot | **PASS** (Layer B) | `validate_compiled_why_authority_gate.py` exit 0; `test_why_authority_pkg3.py` 8/8; 9 COMPILED_ACTIVE + 1 REJECTED live-proven |
-| End-to-end Layer C integrity | No incorrect/legacy logic + no Layer C medical decision logic | **FAIL to close** | Frontend BOUNDARY_LEAKs (see Layer C inventory); human UAT not yet run |
-| Human UAT gate | Anthony fresh frontend UAT | **OPEN** | Mandatory STOP — plan in `docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md` |
+| End-to-end Layer C integrity | No incorrect/legacy logic + no Layer C medical decision logic | **FAIL** | Live UAT `e34aaedf-…`: rejected metabolic still in signals/top_findings/interventions; “methylation capacity” in clinician synthesis; FE BOUNDARY_LEAKs remain |
+| Human UAT gate | Anthony fresh frontend UAT | **COMPLETE (evidence captured)** | `docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md` |
 
 ---
 
@@ -26,31 +26,28 @@
 
 | Layer | Result |
 |---|---|
-| Layer B identity / provenance / WHY pilot | Independently re-verified **PASS** |
+| Layer B identity / provenance / WHY pilot compile path | Independently re-verified **PASS** |
+| Live end-to-end rejected-frame / wording silence | **FAIL — ACTIVE_LEAKs** |
 | Layer C medical-decision boundary | **BOUNDARY_LEAKs present** — PASS forbidden |
-| Human UAT | **Not completed** — PASS forbidden |
+| Human UAT | Completed inspection on real analysis |
 
 ---
 
-## Kill-criteria assessment (automated kernel)
+## Final programme decision
+
+**CORRECT**
+
+PASS forbidden. STOP/V6 not selected (bounded corrections sufficient). Controlled-beta readiness not assessed.
+
+## Kill-criteria assessment
 
 | Criterion | Assessment |
 |---|---|
-| >1 unplanned mandatory architecture package now required? | **No** for PKG1–3 Layer B. One bounded Layer C FE correction package is indicated (CORRECT path), not multiple architecture rebuilds. |
-| Any package exceeded 25% scope-growth without authorisation? | **No evidence** in this audit of unauthorised PKG1–3 scope growth beyond ratified work. |
+| >1 unplanned mandatory architecture package now required? | **No** — one bounded CORRECT package (rejected-frame inactivation + wording + MCV co-service + FE boundary) is indicated, not multiple architecture rebuilds. |
+| Any package exceeded 25% scope-growth without authorisation? | **No evidence** of unauthorised PKG1–3 scope growth beyond ratified work. |
 | Unresolved medical-review throughput undermine convergence? | **No** for the 10-frame pilot — Gate C complete. Estate-wide WHY beyond pilot remains open by design. |
-| Overlapping authority remains? | **No** for pilot WHY keys (register-driven). Residual: intentional family-level aggregation on some launch surfaces (auditable). |
-| Provenance vs reachability disagree? | **No** on production path (6 reachable / 14 blocked). Residual: env override `HEALTHIQ_ALLOW_LAUNCH_CRITICAL_BLOCKED`. |
+| Overlapping authority remains? | **Yes (residual)** — rejected metabolic still coexists with compiled B-vitamin frame in signals/rankings/interventions; legacy elevation-context WHY coexists with compiled pilot WHY. |
+| Provenance vs reachability disagree? | **No** on production path for blocked kb47. |
 | Layer C boundary leakage remains? | **Yes** — blocks programme PASS. |
-| End-to-end clinically unexplained output? | Automated Layer B scenarios clean; FE can re-rank/invent confidence/prose — unexplained UX risk until corrected + UAT. |
-| Correction would reopen closed architecture domain? | Layer C FE correction should **not** reopen PKG1–3 if bounded to presentation/ranking leaks. |
-
----
-
-## Provisional programme decision (automated only)
-
-**Not final.** Final `PASS` / `CORRECT` / `STOP` / `V6` awaits Anthony UAT.
-
-Automated lean: **CORRECT** — Layer B convergence obligations for PKG1–3 hold; Layer C FE boundary leaks require a bounded correction package before programme closure.
-
-Controlled-beta readiness: **not assessed** in this package.
+| End-to-end clinically unexplained / unsafe wording? | **Yes** — live UAT “methylation capacity” + rejected-frame ranking. |
+| Correction would reopen closed architecture domain? | CORRECT themes should extend PKG3 inactivation to non-WHY surfaces without reopening PKG1 identity design. |

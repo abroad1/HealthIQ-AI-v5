@@ -3,7 +3,7 @@
 **Work ID:** `ARCH-CONV-FINAL-AUDIT`  
 **Branch:** `audit/arch-conv-final-programme`  
 **Baseline HEAD:** `522873428882d9f47093e283a3ab31dc16fcd684`  
-**Scope:** Automated Layer A→B→WHY→DTO path plus fingerprint scan. Frontend rendering UAT deferred to Anthony.
+**Scope:** Automated Layer A→B→WHY→DTO path, fingerprint scan, **and live frontend UAT** of analysis `e34aaedf-b09f-42f0-8cc8-4653a00b4c10`.
 
 ---
 
@@ -14,7 +14,26 @@ Layer A facts → Layer B signals → activation_key → provenance/eligibility
 → WHY authority → root_cause compile → report DTO fields
 ```
 
-Layer C rendered UX is covered in the boundary inventory + human UAT plan (not claimed complete here).
+Layer C rendered UX inspected via live local results page + authenticated API payload (see UAT doc).
+
+---
+
+## Live UAT analysis (`e34aaedf-b09f-42f0-8cc8-4653a00b4c10`)
+
+| Check | Result | Evidence |
+|---|---|---|
+| Rejected metabolic emits compiled WHY? | **PASS (WHY path)** | No `root_cause` finding for `…::inv_homocysteine_high_metabolic` |
+| Rejected metabolic absent from end-to-end UX/API? | **FAIL — ACTIVE_LEAK** | Signal fires; `top_findings` includes metabolic key; interventions cite metabolic `activation_key_refs`; signal interpretation = “Reflects methylation capacity and B-vitamin status.” |
+| “methylation capacity” absent from rendered medical text? | **FAIL — ACTIVE_LEAK** | Clinician summary: “reduced B12-related methylation capacity” (legacy elevation-context hyp `hcy_b12_pattern_v1`) |
+| Consumer pattern wording | **FAIL (risk)** | “Methylation pathway pattern” on Patterns section |
+| Pilot compiled B-vitamin WHY | **PASS** | Ratified hyp IDs present, `authority_scope=frame_specific` |
+| MCV Frame 5/6/7 co-emission | **FAIL vs Frame 5 intent** | Anchor + megaloblastic + nonmegaloblastic WHY all present simultaneously |
+| Provenance-blocked packages | **PASS** | No blocked kb47 packages in fired set |
+| Layer C FE BOUNDARY_LEAKs | **Still present** | Prior inventory unchanged (no FE correction in this audit) |
+
+**ACTIVE_LEAK count (live UAT): ≥3 material leaks** (rejected-frame ranking/intervention citation; methylation-capacity clinician wording; metabolic signal interpretation phrase).
+
+Detail tables: `docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md`.
 
 ---
 

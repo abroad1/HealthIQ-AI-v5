@@ -981,28 +981,28 @@ Entries should not list every file touched or every non-change.
 
 ---
 
-## ARCH-CONV-FINAL-AUDIT — Final Independent Convergence Audit (automated kernel)
+## ARCH-CONV-FINAL-AUDIT — Final Independent Convergence Audit
 
-**Status:** Partial — Mandatory STOP awaiting Anthony UAT  
+**Status:** Complete on branch — decision **CORRECT** (merge blocked pending human authority)  
 **Date:** 2026-07-26  
 **Programme block(s):** Architecture convergence programme closure
 
 ### Delivered / ticked off
 - Independent re-verification of PKG1/PKG2/PKG3 gates and material tests (PASS).
-- Rejected metabolic frame live-proven inert; 13/13 automated E2E scenarios PASS.
-- Layer C boundary inventory produced (BOUNDARY_LEAKs found — blocks PASS).
-- Obligation matrix, leakage report, verification report, UAT plan authored.
+- Rejected metabolic WHY path live-proven inert; 13/13 automated E2E scenarios PASS.
+- Layer C boundary inventory (BOUNDARY_LEAKs).
+- Live UAT of analysis `e34aaedf-b09f-42f0-8cc8-4653a00b4c10` with API payload inspection.
+- Final programme decision: **CORRECT**.
 
 ### Carry-forwards
-- Anthony completes `docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md`.
-- Resume same work ID to issue final PASS/CORRECT/STOP/V6.
-- Provisional automated lean: CORRECT (FE Layer C boundary package).
+- Bounded CORRECT package: rejected-frame end-to-end inactivation; retire “methylation capacity” legacy wording; MCV co-service rule; FE Layer C boundary leaks.
+- Estate-wide WHY beyond pilot; controlled-beta readiness (separate).
 
 ### Blockers / risks
-- Programme PASS forbidden until UAT complete and Layer C leaks addressed/accepted with authority.
+- PASS forbidden while ACTIVE_LEAKs / BOUNDARY_LEAKs remain.
 
 ### Recommended next sprint
-- Complete Anthony UAT; then bounded FE Layer C correction if CORRECT confirmed.
+- Author CORRECT work package(s) from the four correction themes in the verification report.
 
 ---
 

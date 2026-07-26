@@ -1,83 +1,91 @@
-# ARCH-CONV-FINAL — Frontend End-to-End UAT Plan (Awaiting Anthony)
+# ARCH-CONV-FINAL — Frontend End-to-End UAT (Completed)
 
 **Work ID:** `ARCH-CONV-FINAL-AUDIT`  
-**Status:** **MANDATORY STOP — awaiting Anthony**  
-**Path convention:** `docs/testing/` (repo precedent; prompt’s `docs/uat/` does not exist)  
-**Commit SHA to test against:** `522873428882d9f47093e283a3ab31dc16fcd684` (or later published main SHA after merge)  
-**Environment:** local / staging as Anthony selects — record exact URL and build
+**Status:** **UAT EVIDENCE CAPTURED — programme decision issued**  
+**Path convention:** `docs/testing/`  
+**Analysis ID:** `e34aaedf-b09f-42f0-8cc8-4653a00b4c10`  
+**URL:** `http://localhost:3000/results?analysis_id=e34aaedf-b09f-42f0-8cc8-4653a00b4c10`  
+**Environment:** local frontend `:3000` + backend `:8000`  
+**Commit SHA (audit branch HEAD at inspection):** `4cbb7f5` (resume) / baseline audit start `5228734`  
+**Inspector:** Cursor (browser automation + authenticated API fetch)  
+**Account:** local test account supplied by Anthony (identity not recorded here)
 
-This document is the human UAT handoff. Automated Layer B audit is complete. **Do not issue programme PASS until this UAT pack is completed and attached.**
+Credentials were used only for live login and were **not** written into this artefact, commits, or evidence extracts.
 
 ---
 
-## Minimum cases (required)
+## Case summary
 
-| Case ID | Intent | Suggested panel pattern | PASS criteria (Anthony) |
+| Case ID | Intent | Mapping to this analysis | Result |
 |---|---|---|---|
-| UAT-1 | Normal / mostly normal panel | Values mostly in range; minimal lifestyle flags | Usable flow; **no false WHY / no invented causes** |
-| UAT-2 | Pilot multi-frame panel | Exercise ≥1 of: hcy B-vitamin, hcy renal, MCV mega/nonmega, TPO hypo/euthyroid, low FT3 | Displayed WHY matches input pattern; frame traceable; consumer/clinician coherent |
-| UAT-3 | Negative leakage panel | e.g. raised hcy **without** renal impairment **or** high MCV **without** B12/folate support | Unsupported cause **does not** appear; no rejected metabolic catch-all |
-| UAT-4 (optional but recommended) | Rejected metabolic inertness | If product can activate only metabolic-like broad hcy without B-vit/renal support | No methylation-capacity / broad metabolic WHY |
+| UAT-2 | Pilot multi-frame panel | Homocysteine B-vitamin + MCV mega/nonmega/anchor + eGFR frames fired | **PARTIAL PASS** (pilot compiled WHY present) with **FAIL** leak findings |
+| UAT-3 | Negative leakage | Rejected metabolic must not surface | **FAIL** — rejected metabolic activation still present in API/top_findings/interventions |
+| UAT-4 | Rejected metabolic inertness | No methylation-capacity / broad metabolic WHY | **FAIL** — “methylation capacity” visible in clinician synthesis; metabolic signal interpretation uses that phrase |
+| UAT-1 | Normal panel | Not this analysis | N/A |
+
+**Anthony overall UAT decision (human):** successful real frontend exercise completed (analysis reachable and reviewable).  
+**Audit overall UAT decision (independent inspection):** **FAIL to close programme PASS** — active medical-content / rejected-frame leakage found.
 
 ---
 
-## Evidence checklist (per case)
+## Panel facts observed (rendered)
 
-Preserve:
+| Marker | Rendered value | Notes |
+|---|---|---|
+| Homocysteine | 16.2 µmol/L · Above range | Lead pattern |
+| MCV | 99.5 fL · Above range (ref 80–96) | Macrocytosis context |
+| Folate | 7.7 ug/L | Supporting B-vitamin context |
+| Vitamin B12 | 336 pg/ml | Supporting |
+| Active B12 | 139.2 pmol/L | Supporting |
+| eGFR | 84 mL/min/1.73m² · Below range | Renal signals also fired |
+| Free T3 / Free T4 / TSH | Within displayed ranges | No low-T3/TPO lead |
 
-- [ ] case ID, date/time, environment, commit SHA
-- [ ] exact blood inputs (values, units, reference ranges)
-- [ ] lifestyle / questionnaire answers
-- [ ] screenshots: input completion
-- [ ] screenshots: consumer results
-- [ ] screenshots: clinician results (if available)
-- [ ] consumer report/export
-- [ ] clinician report/export
-- [ ] API payload or replay artefact (if available)
-- [ ] Anthony observations
-- [ ] PASS / FAIL
+Lifestyle: moderate alcohol context mentioned in body overview.
 
 ---
 
-## Anthony’s questions (answer per case)
+## Traceability table (visible / API medical statements)
 
-1. Does the displayed interpretation make medical and business sense?
-2. Does the displayed WHY match the actual input pattern?
-3. Is any cause asserted without supporting evidence?
-4. Is any wording visibly old, duplicated, contradictory or out of context?
-5. Is rejected, blocked or retired content visible?
-6. Do consumer and clinician views tell the same underlying medical story?
-7. Is the correct activation frame traceable?
-8. Does the result appear to have been inferred or altered in Layer C?
-9. Is anything surprising enough to require medical or architecture review?
-
----
-
-## Known automated Layer C risks to watch during UAT
-
-Confirm whether these FE behaviours are visible in real UX:
-
-- Primary driver / hero emphasis that disagrees with clinician lead
-- Confidence values that look “always high” when backend confidence is missing
-- Dial colours that look clinical without matching backend status
-- Layer C insight cards inventing explanations beyond DTO prose
+| page section | rendered text (abbrev.) | supporting API field | signal_id | activation_key | source_spec_id | WHY authority | hypothesis ID | expected | actual | PASS/FAIL |
+|---|---|---|---|---|---|---|---|---|---|---|
+| PRIMARY FINDING | Raised homocysteine pattern… | narrative / IDL retail | `signal_homocysteine_elevation_context` | `…::inv_elevation_context` | `inv_elevation_context` | legacy family lead | n/a (lead card) | Lead from elevation context allowed | Matches lead routing | PASS |
+| Patterns across body | Methylation pathway pattern | IDL pattern record | family hcy/mcv | participating keys include pilot frames | mixed | IDL aggregate | n/a | Must not imply rejected metabolic catch-all | Consumer pattern title “Methylation pathway” | FAIL (wording risk) |
+| Clinician summary | Top ranked hypothesis… reduced B12-related **methylation capacity** | `clinician_report_v1` / synthesis from elevation-context hyps | `signal_homocysteine_elevation_context` | `…::inv_elevation_context` | `inv_elevation_context` | LEGACY family WHY | `hcy_b12_pattern_v1` | No “methylation capacity” claim per PKG3 reject rule spirit | Phrase present in clinician UX | **FAIL** |
+| API signal row (not shown as raw key on page) | interpretation: “Reflects **methylation capacity** and B-vitamin status.” | `meta.insight_graph.signal_results[]` | `signal_homocysteine_high` | `…::inv_homocysteine_high_metabolic` | `inv_homocysteine_high_metabolic` | REJECTED (WHY) but signal still active | n/a | Rejected frame inactive end-to-end | Signal fires; interpretation uses forbidden phrase | **FAIL** |
+| API top_findings | metabolic frame ranked | `report_v1.top_findings` | `signal_homocysteine_high` | `…::inv_homocysteine_high_metabolic` | `inv_homocysteine_high_metabolic` | should not be user-facing authority | n/a | Rejected frame not in rankings | Present in top_findings | **FAIL** |
+| Interventions | vascular clinician referral / lifestyle | `activation_key_refs` | `signal_homocysteine_high` | includes `…metabolic` | `inv_homocysteine_high_metabolic` | rejected | n/a | Rejected key not cited | Cited on 2 interventions | **FAIL** |
+| Compiled WHY (B-vitamin) | Folate/B12 associated wording | `root_cause_v1.findings` | `signal_homocysteine_high` | `…b_vitamin…` | `inv_homocysteine_high_b_vitamin…` | COMPILED_ACTIVE | `hyp_folate…`, `hyp_b12…` | Ratified hyps only | Matches pack | **PASS** |
+| Compiled WHY (MCV anchor) | Morphology only | root_cause | `signal_mcv_high` | `…macrocytosis` | `inv_mcv_high_macrocytosis` | COMPILED_ACTIVE | `mcv_high_anchor_pattern_v1` | Anchor only | Present | PASS |
+| Compiled WHY (MCV mega) | vitamin-related macrocytosis | root_cause | `signal_mcv_high` | `…megaloblastic…` | `inv_mcv_high_megaloblastic…` | COMPILED_ACTIVE | `hyp_megaloblastic…` | Ratified | Present | PASS |
+| Compiled WHY (MCV nonmega) | non-vitamin differential | root_cause | `signal_mcv_high` | `…nonmegaloblastic…` | `inv_mcv_high_nonmegaloblastic…` | COMPILED_ACTIVE | `hyp_alcohol_or_hepatic…` | Ratified; no alcohol DX asserted on consumer card alone | Present alongside mega+anchor | FAIL vs Frame 5 “no duplicate causal” intent |
+| Provenance-blocked kb47 | — | production registry | — | — | — | — | — | No blocked pkg in fired set | No DHEA/etc. in fired | PASS |
+| Rejected metabolic WHY finding | — | root_cause findings | metabolic | — | — | REJECTED skip | — | No WHY finding for metabolic | No metabolic root finding | PASS (WHY path only) |
 
 ---
 
-## Results section (Anthony completes)
+## Anthony questions (answered from this inspection)
 
-| Case ID | Date | SHA | PASS/FAIL | Key observations | Attachments |
-|---|---|---|---|---|---|
-| UAT-1 | | | | | |
-| UAT-2 | | | | | |
-| UAT-3 | | | | | |
-| UAT-4 | | | | | |
-
-**Anthony overall UAT decision:** `OPEN`  
-**Date:** _(pending)_
+1. Medical/business sense? Partially — lead hcy story is coherent, but rejected/legacy wording leaks undermine trust.  
+2. WHY match inputs? B-vitamin compiled WHY fits; legacy elevation-context “methylation capacity” overclaims.  
+3. Cause without support? MCV nonmega alcohol/hepatic differential appears without strong hepatic/alcohol lab proof (GGT in range).  
+4. Old/duplicated/contradictory? Yes — legacy elevation-context hyps + compiled B-vitamin hyps + metabolic signal interpretation coexist.  
+5. Rejected/blocked/retired visible? Rejected metabolic **not** shown as raw activation key on consumer page, but **is** in API, rankings, interventions, and related wording reaches clinician summary.  
+6. Consumer/clinician same story? Same lead family; clinician exposes “methylation capacity” more explicitly.  
+7. Activation frame traceable? Yes in API; consumer lead is elevation-context, not B-vitamin compiled key.  
+8. Layer C alteration? Prior BOUNDARY_LEAKs remain in FE code; this page also shows FE-assembled pattern titles.  
+9. Surprising? **Yes** — PKG3 rejection did not remove metabolic frame from runtime signal/ranking/intervention surfaces.
 
 ---
 
-## Resume instruction
+## Evidence preserved
 
-After evidence is filled, resume `ARCH-CONV-FINAL-AUDIT` on the same work ID / branch (or successor continuation) to issue the final programme decision (`PASS` / `CORRECT` / `STOP` / `V6`).
+- Authenticated `GET /api/analysis/result?analysis_id=e34aaedf-…` inspected in-browser (token not stored).  
+- Browser screenshots captured locally during session (not committed; contain account chrome).  
+- Structured findings recorded in this file and `docs/architecture/ARCH-CONV-FINAL_end_to_end_pipeline_and_leakage_report.md`.
+
+---
+
+## Resume / decision
+
+Final programme decision: **CORRECT** (see verification report).  
+Do not claim PASS.

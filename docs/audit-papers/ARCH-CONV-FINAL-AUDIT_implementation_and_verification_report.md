@@ -3,128 +3,113 @@
 **Work ID:** `ARCH-CONV-FINAL-AUDIT`  
 **Branch:** `audit/arch-conv-final-programme`  
 **Baseline HEAD (kernel start):** `522873428882d9f47093e283a3ab31dc16fcd684`  
+**UAT analysis ID:** `e34aaedf-b09f-42f0-8cc8-4653a00b4c10`  
 **change_type:** CONTENT  
 **runtime_change:** NONE  
-**Kernel boundary:** Automated + code audit complete → **Mandatory STOP for Anthony UAT**
 
 ---
 
-## 1. Outcome (this kernel)
+## 1. Outcome
 
-Independent final convergence audit executed for PKG1–PKG3 plus end-to-end Layer B scenarios and Layer C boundary scan.
+Independent final convergence audit completed, including Anthony’s real frontend UAT case inspected end-to-end.
 
-**Did not:** implement substantive corrections (forbidden).  
-**Did:** re-execute gates/tests, live-prove rejected metabolic inertness, run 13 automated scenarios, fingerprint scan, produce required docs, hand UAT plan to Anthony.
-
-### Provisional automated lean
-
-**CORRECT** (Layer C FE boundary leaks block PASS; PKG1–3 Layer B obligations independently re-verified PASS).
+**Did not:** alter medical logic or frontend behaviour.  
+**Did:** automated PKG1–3 re-verification; 13 Layer B scenarios; Layer C inventory; live login + results inspection; authenticated API payload inspection; UAT evidence update.
 
 ### Final programme decision
 
-**DEFERRED — Mandatory UAT STOP.**  
-`PASS` is forbidden until Anthony completes UAT. Resume same work ID after UAT evidence.
+# CORRECT
+
+**PASS is forbidden** while Layer C BOUNDARY_LEAKs and active medical-content leaks remain.
 
 Controlled-beta readiness: **not assessed**.
 
 ---
 
-## 2. Independence model
+## 2. Why CORRECT (not PASS / STOP / V6)
+
+| Option | Why selected / rejected |
+|---|---|
+| **PASS** | Forbidden — ACTIVE_LEAKs + Layer C BOUNDARY_LEAKs |
+| **CORRECT** | **Selected** — PKG1–3 Layer B cores largely hold; bounded correction package can close remaining leaks without redesigning the whole programme |
+| **STOP** | Not selected — convergence is not unstable/incomplete enough to require redesign of PKG1–3; leaks are localised and correctable |
+| **V6** | Not selected — kill criteria for freezing v5 architecture not met |
+
+### Required correction themes (bounded; not implemented here)
+
+1. **Rejected-frame end-to-end inactivation** — `inv_homocysteine_high_metabolic` must not remain in fired signals, `top_findings`, intervention `activation_key_refs`, or signal-card provenance after PKG3 REJECT.  
+2. **Retire/replace “methylation capacity” legacy wording** on elevation-context WHY and any clinician synthesis that surfaces it.  
+3. **MCV Frame 5 vs 6/7 co-service rule** — prevent duplicate causal WHY when specific frames fire.  
+4. **Layer C FE BOUNDARY_LEAKs** — remove FE primary-driver arbitration, invented confidence, dial colour invention, and invented Layer C insight prose (inventory already lists files).
+
+---
+
+## 3. Independence model
 
 | Stream | Method |
 |---|---|
-| WS1 PKG1 identity | Gate + tests + independent code agent on 5 surfaces |
-| WS2 PKG2 provenance | Gate + independent registry/eligibility code review |
-| WS3 PKG3 WHY | Gate + tests + register/artefact spot-checks vs ratified pack |
-| WS4 E2E | Fresh Python scenario runner at baseline SHA (13/13) |
-| WS5 fingerprints | Bounded string scan + live rejected-frame compile |
-| WS6 Layer C | Independent frontend medical-boundary agent |
-
-Prior implementation reports were **not** treated as proof.
+| WS1–3 | Gates/tests + independent code agents |
+| WS4 automated | 13/13 Layer B scenarios PASS |
+| WS5 | Fingerprint scan (0 ACTIVE_LEAK on static scan; live UAT found ACTIVE_LEAKs) |
+| WS6 | FE boundary inventory |
+| Human UAT | Live page + API for `e34aaedf-…` |
 
 ---
 
-## 3. Independently re-run commands
-
-| Command | Exit |
-|---|---:|
-| `python backend/scripts/validate_launch_path_frame_identity_gate.py` | 0 |
-| `python backend/scripts/validate_launch_critical_provenance_reachability_gate.py` | 0 |
-| `python backend/scripts/validate_compiled_why_authority_gate.py` | 0 |
-| `pytest backend/tests/unit/test_arch_conv_pkg1_frame_identity.py -q` | 0 |
-| `pytest backend/tests/unit/test_why_authority_pkg3.py -q` | 0 |
-| Automated E2E scenarios 1–13 | 13/13 PASS |
-
----
-
-## 4. Deliverables
-
-| Path | Role |
-|---|---|
-| `docs/architecture/ARCH-CONV-FINAL_programme_obligation_closure_matrix.md` | Obligation matrix + kill criteria |
-| `docs/architecture/ARCH-CONV-FINAL_end_to_end_pipeline_and_leakage_report.md` | E2E + fingerprints |
-| `docs/architecture/ARCH-CONV-FINAL_layer_c_boundary_and_leakage_inventory.md` | Layer C classifications |
-| `docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md` | Anthony UAT plan (repo convention; not `docs/uat/`) |
-| This report | Verification |
-
----
-
-## 5. Package results (summary)
+## 4. Package obligation results
 
 | Area | Result |
 |---|---|
-| PKG1 identity | PASS |
-| PKG2 provenance/reachability | PASS |
-| PKG3 WHY + rejected metabolic inert | PASS |
+| PKG1 identity | PASS (gates/tests) |
+| PKG2 provenance/reachability | PASS (gates; blocked pkgs absent from this panel) |
+| PKG3 compiled WHY for approved frames | PASS |
+| PKG3 rejected metabolic WHY skip | PASS (compiler) |
+| PKG3 rejected metabolic end-to-end silence | **FAIL** |
 | Automated E2E 1–13 | PASS |
-| Fingerprint ACTIVE_LEAK | 0 |
-| Layer C BOUNDARY_LEAK | Present — blocks PASS |
-| Anthony UAT | OPEN |
+| Live UAT | **FAIL to clear PASS gate** |
+| Layer C boundary | **BOUNDARY_LEAKs remain** |
 
 ---
 
-## 6. Acceptance criteria status
+## 5. Acceptance criteria (final)
 
 | Criterion | Status |
 |---|---|
-| PKG1 independently reverified | PASS |
-| PKG2 independently reverified | PASS |
-| PKG3 independently reverified | PASS |
-| Rejected hcy frame live-executed inert | PASS |
-| Required automated E2E scenarios | PASS |
-| Final consumer/clinician payloads inspected (Layer B DTO path) | PASS |
-| Final rendered frontend outputs inspected | **OPEN — UAT** |
-| Legacy fingerprint scan | PASS (0 ACTIVE_LEAK) |
-| No blocked/rejected/retired logic reaches Layer C via Layer B | PASS (compiler path) |
-| Frontend boundary scan | PASS as scan; **FAIL as closed boundary** |
-| No medical decision logic in Layer C | **FAIL** (BOUNDARY_LEAKs) |
-| Invalid/ambiguous payloads fail safely | PASS (bare multi-frame) |
-| Replay/rendering deterministic | PARTIAL (compiler yes; FE re-rank residual) |
-| Anthony UAT completed | **OPEN** |
-| UAT evidence preserved | **OPEN** |
-| Programme kill criteria assessed | PASS (documented) |
-| Final decision issued | **DEFERRED (UAT STOP)** |
+| PKG1–3 independently reverified | PASS |
+| Rejected metabolic live-executed inert (compiler WHY) | PASS |
+| Rejected metabolic absent from UX/API rankings/interventions | **FAIL** |
+| Required automated E2E | PASS |
+| Final rendered FE inspected | PASS (inspected) |
+| No ACTIVE medical-content leak | **FAIL** |
+| No Layer C medical-decision BOUNDARY_LEAK | **FAIL** |
+| Anthony UAT completed | PASS (analysis exercised; evidence recorded) |
+| Final decision issued | **CORRECT** |
 | No beta-readiness claim | PASS |
 
 ---
 
-## 7. Kill-criteria result
+## 6. Kill-criteria assessment
 
-No V6 kill triggered by PKG1–3 Layer B evidence. Layer C leakage remains → programme cannot PASS; provisional **CORRECT** package indicated after UAT.
+No V6 trigger. Overlapping/rejected-frame leakage and Layer C leaks require **CORRECT**, not programme kill.
 
 ---
 
-## 8. Remaining obligations outside this programme
+## 7. Deliverables
 
-- Estate-wide WHY migration beyond 5/10 pilot
-- Env-guard for `HEALTHIQ_ALLOW_LAUNCH_CRITICAL_BLOCKED` in production ops
-- Bounded FE Layer C correction package (recommended next after UAT)
+| Path | Role |
+|---|---|
+| `docs/architecture/ARCH-CONV-FINAL_programme_obligation_closure_matrix.md` | Obligations |
+| `docs/architecture/ARCH-CONV-FINAL_end_to_end_pipeline_and_leakage_report.md` | E2E + live UAT leaks |
+| `docs/architecture/ARCH-CONV-FINAL_layer_c_boundary_and_leakage_inventory.md` | FE boundary classes |
+| `docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md` | Live UAT evidence |
+| This report | Verification + decision |
+
+---
+
+## 8. Remaining obligations
+
+- Implement CORRECT package(s) above under new work IDs  
+- Estate-wide WHY beyond 5/10 pilot  
 - Controlled-beta readiness assessment (separate)
 
----
-
-## 9. Mandatory STOP
-
-Hand to Anthony: `docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md`.
-
-Do not merge without human authority. Do not claim programme PASS.
+Do not merge without explicit human authority.
