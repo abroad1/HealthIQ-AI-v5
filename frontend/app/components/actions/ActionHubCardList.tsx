@@ -18,7 +18,7 @@ export function ActionHubCardList({ actions }: { actions: ResultActionCardModel[
                   {a.categoryLabel}
                 </Badge>
               </div>
-              <CardDescription className="text-xs font-medium text-slate-600">Evidence: {a.evidenceLevelLabel}</CardDescription>
+              <CardDescription className="text-xs font-medium text-slate-600">Source: {a.evidenceLevelLabel}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 pt-0">
               <p className="text-sm text-slate-700 leading-relaxed">{twoSentenceExcerpt(a.paragraph)}</p>

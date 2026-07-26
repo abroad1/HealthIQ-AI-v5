@@ -278,3 +278,7 @@ class InsightGraphV1(BaseModel):
     # Edges (optional; empty if not implemented)
     edges: List[Dict[str, Any]] = Field(default_factory=list)
     layer_c_features: Optional[LayerCFeatureBundleV1] = Field(default=None)
+
+    # ARCH-CONV-CORRECT-1 — governed lead projected onto cluster identity so Layer C
+    # renders the Layer B ranked lead instead of arbitrating its own primary driver.
+    primary_driver_v1: Optional[Dict[str, Any]] = Field(default=None)

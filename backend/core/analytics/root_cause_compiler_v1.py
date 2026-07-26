@@ -36,6 +36,17 @@ from core.knowledge.compiled_hypothesis import (
     validate_confirmatory_test_refs,
     validate_runtime_promoted_artefact,
 )
+from core.knowledge.frame_co_service_v1 import (
+    SERVE_CAUSAL,
+    SERVE_CONTEXT,
+    SUPPRESS,
+    WHY_ROLE_CAUSAL,
+    anchor_allowed_hypothesis_ids,
+    anchor_forbidden_causal_terms,
+    evidence_gate_markers,
+    resolve_family_co_service,
+    why_role_for_decision,
+)
 from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_tests_registry_v1
 from core.knowledge.root_cause_registry_v1 import get_root_cause_targets
 
@@ -423,11 +434,73 @@ def _compile_compiled_hypothesis_finding(
         activation_key=str(target.get("activation_key", "")).strip(),
         source_spec_id=str(target.get("source_spec_id", "")).strip(),
         authority_scope=str(target.get("authority_scope", "frame_specific")).strip() or "frame_specific",
+        why_role=str(target.get("why_role", WHY_ROLE_CAUSAL)).strip() or WHY_ROLE_CAUSAL,
         primary_metric=str(target.get("primary_metric", "")).strip(),
         signal_state=str(target.get("signal_state", "unknown")).strip() or "unknown",
         signal_confidence=signal_confidence,
         hypotheses=compiled_hypotheses,
     )
+
+
+def _resolve_co_service_decisions(
+    *,
+    signal_id: str,
+    frame_rows: List[Dict[str, Any]],
+    biomarker_context: Dict[str, Any],
+    reference_ranges: Dict[str, Any],
+) -> Dict[str, str]:
+    """ARCH-CONV-CORRECT-1 — governed anchor/specific-frame co-service for one family."""
+
+    def _gate_satisfied(gate: Dict[str, Any]) -> bool:
+        markers, direction = evidence_gate_markers(gate)
+        if not markers or not direction:
+            return False
+        return (
+            _evaluate_marker_block(
+                marker_ids=markers,
+                any_mode=True,
+                direction=direction,
+                biomarker_context=biomarker_context,
+                reference_ranges=reference_ranges,
+            )
+            is True
+        )
+
+    return resolve_family_co_service(
+        signal_id=signal_id,
+        fired_activation_keys=[
+            str(row.get("activation_key") or "").strip() for row in frame_rows
+        ],
+        evidence_gate_evaluator=_gate_satisfied,
+    )
+
+
+def _assert_anchor_is_non_causal(
+    *,
+    signal_id: str,
+    activation_key: str,
+    artefact: CompiledHypothesisArtefact,
+) -> None:
+    """A context-role anchor must not carry cause-oriented hypotheses (Frame 5 safeguard)."""
+    allowed = set(anchor_allowed_hypothesis_ids(signal_id))
+    if allowed:
+        for row in artefact.hypotheses:
+            if row.hypothesis_id not in allowed:
+                raise ValueError(
+                    f"Anchor frame {activation_key!r} carries non-anchor hypothesis "
+                    f"{row.hypothesis_id!r}; governed co-service forbids anchor causal WHY"
+                )
+    forbidden = anchor_forbidden_causal_terms(signal_id)
+    if not forbidden:
+        return
+    for row in artefact.hypotheses:
+        claim = f"{row.title} {row.physiological_claim} {row.summary_template}".lower()
+        for term in forbidden:
+            if term in claim:
+                raise ValueError(
+                    f"Anchor frame {activation_key!r} hypothesis {row.hypothesis_id!r} asserts "
+                    f"forbidden causal term {term!r} in context role"
+                )
 
 
 _WHY_FALLBACK_HYPOTHESIS_ID = "why_engine_fallback_v1"
@@ -534,9 +607,18 @@ def compile_root_cause_v1(
         frame_rows = rows_for_signal_id(rows, target_signal_id)
         if not frame_rows:
             continue
+        co_service = _resolve_co_service_decisions(
+            signal_id=target_signal_id,
+            frame_rows=frame_rows,
+            biomarker_context=biomarker_context,
+            reference_ranges=input_reference_ranges,
+        )
         legacy_payload = None
         for target in frame_rows:
             key = str(target.get("activation_key") or "").strip()
+            decision = co_service.get(key)
+            if decision == SUPPRESS:
+                continue
             mode, auth_row = resolve_frame_why_authority(
                 signal_id=target_signal_id,
                 activation_key=key,
@@ -558,6 +640,14 @@ def compile_root_cause_v1(
                 if not str(scoped.get("source_spec_id") or "").strip() and "::" in resolved_key:
                     scoped["source_spec_id"] = resolved_key.split("::", 1)[1]
                 scoped["authority_scope"] = "frame_specific"
+                if decision is not None:
+                    scoped["why_role"] = why_role_for_decision(decision)
+                    if decision == SERVE_CONTEXT:
+                        _assert_anchor_is_non_causal(
+                            signal_id=target_signal_id,
+                            activation_key=resolved_key,
+                            artefact=artefact,
+                        )
                 findings.append(
                     _compile_compiled_hypothesis_finding(
                         target=scoped,

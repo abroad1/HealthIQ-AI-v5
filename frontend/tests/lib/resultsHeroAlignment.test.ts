@@ -3,11 +3,34 @@ import {
   buildPrimaryHeroSummary,
   deriveSecondaryRankedSignalLine,
   normalizeHeroComparisonKey,
-  pickHeroAlignedPrimaryDriver,
-  pickSeverityPrimaryDriverCluster,
   resolveHeroPrimaryStory,
+  selectGovernedPrimaryDriver,
 } from '@/lib/resultsPageLayout';
-import type { Cluster, ClinicianReportV1, InterpretationDisplayRecordV1 } from '@/types/analysis';
+import type {
+  Cluster,
+  ClinicianReportV1,
+  InterpretationDisplayRecordV1,
+  PrimaryDriverAuthorityV1,
+} from '@/types/analysis';
+
+function driverAuthority(partial: Partial<PrimaryDriverAuthorityV1>): PrimaryDriverAuthorityV1 {
+  return {
+    schema: 'primary_driver_authority_v1',
+    authority_source: 'report_v1.top_findings',
+    ranking_policy_version: 'v1',
+    priority_rank: 1,
+    signal_id: 'signal_mcv_high',
+    activation_key: '',
+    source_spec_id: '',
+    primary_metric: 'mcv',
+    system: 'haematological',
+    cluster_id: '',
+    cluster_name: '',
+    cluster_resolved: false,
+    biomarker_keys: [],
+    ...partial,
+  };
+}
 
 function idlRecord(partial: Partial<InterpretationDisplayRecordV1>): InterpretationDisplayRecordV1 {
   return {
@@ -127,45 +150,37 @@ describe('results hero alignment', () => {
     expect(pack.bridgeExplanation).toBeNull();
   });
 
-  it('pickHeroAlignedPrimaryDriver falls back to severity when no IDL alignment', () => {
-    const clusters: Cluster[] = [
-      {
-        cluster_id: 'a',
-        name: 'Unrelated name xyz',
-        severity: 'high',
-        biomarkers: ['m1'],
-      },
-      {
-        cluster_id: 'b',
-        name: 'Other',
-        severity: 'moderate',
-        biomarkers: ['m2', 'm3'],
-      },
-    ];
-    const idl = idlRecord({ retail_display_label: 'Metabolic pattern alpha' });
-    const d = pickHeroAlignedPrimaryDriver(clusters, idl);
-    const sev = pickSeverityPrimaryDriverCluster(clusters);
-    expect(d?.id).toBe(sev?.id);
+  // ARCH-CONV-CORRECT-1 — the primary driver is a Layer B ranking decision. Layer C resolves
+  // the governed record to a cluster and otherwise renders nothing.
+  const driverClusters: Cluster[] = [
+    {
+      cluster_id: 'weak',
+      name: 'Zebra unrelated',
+      severity: 'critical',
+      biomarkers: ['z1'],
+    },
+    {
+      cluster_id: 'governed',
+      name: 'Macrocytic pattern',
+      severity: 'moderate',
+      biomarkers: ['mcv', 'homocysteine'],
+    },
+  ];
+
+  it('selectGovernedPrimaryDriver renders the cluster named by Layer B', () => {
+    const d = selectGovernedPrimaryDriver(
+      driverClusters,
+      driverAuthority({ cluster_id: 'governed', cluster_resolved: true, biomarker_keys: ['mcv'] })
+    );
+    expect(d?.id).toBe('governed');
+    expect(d?.biomarkers).toEqual(['mcv']);
   });
 
-  it('pickHeroAlignedPrimaryDriver picks name-aligned cluster when score high enough', () => {
-    const clusters: Cluster[] = [
-      {
-        cluster_id: 'weak',
-        name: 'Zebra unrelated',
-        severity: 'critical',
-        biomarkers: ['z1'],
-      },
-      {
-        cluster_id: 'aligned',
-        name: 'Metabolic stress pattern detail',
-        severity: 'moderate',
-        biomarkers: ['glucose', 'insulin'],
-      },
-    ];
-    const idl = idlRecord({ retail_display_label: 'Metabolic stress pattern' });
-    const d = pickHeroAlignedPrimaryDriver(clusters, idl);
-    expect(d?.id).toBe('aligned');
-    expect(d?.biomarkers).toContain('glucose');
+  it('selectGovernedPrimaryDriver ignores severity and never substitutes a fallback', () => {
+    expect(selectGovernedPrimaryDriver(driverClusters, driverAuthority({}))).toBeNull();
+    expect(selectGovernedPrimaryDriver(driverClusters, null)).toBeNull();
+    expect(
+      selectGovernedPrimaryDriver(driverClusters, driverAuthority({ cluster_id: 'not-on-this-page' }))
+    ).toBeNull();
   });
 });

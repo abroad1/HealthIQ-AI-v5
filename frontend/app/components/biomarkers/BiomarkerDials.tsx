@@ -31,8 +31,6 @@ export interface BiomarkerDialEntry {
   educationalExplainer?: { title: string; body: string } | null;
   contributionContext?: { factual_statement: string } | null;
   relatedSystemGroupNames?: string[];
-  /** Frontend-derived line connecting this marker to the lead pattern / groups — not a DTO field. */
-  patternRelevanceLine?: string | null;
 }
 
 interface BiomarkerDialsProps {
@@ -192,14 +190,17 @@ const calculateDialValue = (
   return 50;
 };
 
-const getDialColor = (value: number, status?: string) => {
+/**
+ * ARCH-CONV-CORRECT-1 — dial colour follows the backend biomarker status only.
+ * Layer C must not derive a clinical colour from the dial's numeric position, so an
+ * unknown status renders neutral rather than inferring red/amber.
+ */
+const getDialColor = (status?: string) => {
   if (status === 'critical') return 'stroke-red-500';
   if (status === 'elevated' || status === 'low' || status === 'suboptimal' || status === 'at_risk')
     return 'stroke-yellow-500';
   if (status === 'optimal' || status === 'normal') return 'stroke-green-500';
-  if (value < 20 || value > 80) return 'stroke-red-500';
-  if (value < 30 || value > 70) return 'stroke-yellow-500';
-  return 'stroke-green-500';
+  return 'stroke-gray-400';
 };
 
 const renderDial = (value: number, status?: string, size: 'sm' | 'md' | 'lg' = 'md') => {
@@ -223,7 +224,7 @@ const renderDial = (value: number, status?: string, size: 'sm' | 'md' | 'lg' = '
           fill="none"
           strokeDasharray={strokeDasharray}
           strokeDashoffset={strokeDashoffset}
-          className={`transition-all duration-1000 ${getDialColor(value, status)}`}
+          className={`transition-all duration-1000 ${getDialColor(status)}`}
           strokeLinecap="round"
         />
       </svg>
@@ -247,9 +248,8 @@ function BiomarkerDetailZones({
   const eduTitle = data.educationalExplainer?.title?.trim();
   const eduBody = data.educationalExplainer?.body?.trim();
   const factual = data.contributionContext?.factual_statement?.trim();
-  const patternLine = data.patternRelevanceLine?.trim();
   const hasPatternContext =
-    !!(patternLine || factual || (data.relatedSystemGroupNames && data.relatedSystemGroupNames.length > 0));
+    !!(factual || (data.relatedSystemGroupNames && data.relatedSystemGroupNames.length > 0));
   const hasDeeperLayers = !!(eduBody || hasPatternContext);
   const expansionInterp = retailInterpretationForExpansion(data.interpretation, hasDeeperLayers);
 
@@ -281,9 +281,6 @@ function BiomarkerDetailZones({
           <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
             How it connects to your wider pattern
           </h5>
-          {patternLine ? (
-            <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{patternLine}</p>
-          ) : null}
           {factual ? (
             <div data-testid="biomarker-detail-contribution-context">
               <p className="text-xs font-medium text-gray-600 mb-1">How this fits the wider pattern</p>
@@ -331,7 +328,6 @@ function hasExpandableLayers(d: BiomarkerDialEntry): boolean {
   const hasDeeper = !!(
     (d.educationalExplainer?.body && String(d.educationalExplainer.body).trim()) ||
     (d.contributionContext?.factual_statement && String(d.contributionContext.factual_statement).trim()) ||
-    (d.patternRelevanceLine && String(d.patternRelevanceLine).trim()) ||
     (d.relatedSystemGroupNames && d.relatedSystemGroupNames.length > 0)
   );
   if (hasDeeper) return true;

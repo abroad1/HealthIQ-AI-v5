@@ -205,7 +205,10 @@ def test_n9b_retail_summary_and_body_overview_with_published_idl():
     bundle = publish_interpretation_display_layer_v1(ig)
     rep = compile_narrative_report_v1(analysis_id="n9b1", meta={}, insight_graph=ig, idl_bundle=bundle)
     assert rep.retail_summary
-    assert "Methylation pathway pattern" in rep.retail_summary or "methylation" in rep.retail_summary.lower()
+    # ARCH-CONV-CORRECT-1 retired the "methylation pathway/capacity" framing in favour of
+    # the ratified one-carbon wording, so the retail label must not reintroduce it.
+    assert "One-carbon pathway pattern" in rep.retail_summary
+    assert "methylation" not in rep.retail_summary.lower()
     assert "LDL in context" in rep.retail_summary or "ldl" in rep.retail_summary.lower()
     assert "High capacity" in rep.body_overview or "steady" in rep.body_overview.lower()
     assert "Related systems also noted" in rep.body_overview or "related systems" in rep.body_overview.lower()

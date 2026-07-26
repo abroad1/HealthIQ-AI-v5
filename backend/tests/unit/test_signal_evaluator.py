@@ -1553,12 +1553,9 @@ _KB_S24_SIGNAL_CASES = {
         "escalation_biomarkers": {"hemoglobin": 70.0, "mcv": 90.0, "rdw_cv": 13.0},
         "lab_ranges": {"hemoglobin": {"min": 120.0, "max": 170.0}},
     },
-    "signal_homocysteine_high": {
-        "no_trigger_biomarkers": {"homocysteine": 10.0, "vitamin_b12": 280.0, "folate": 9.0, "creatinine": 90.0},
-        "baseline_biomarkers": {"homocysteine": 16.0, "vitamin_b12": 280.0, "folate": 9.0, "creatinine": 90.0},
-        "escalation_biomarkers": {"homocysteine": 16.0, "vitamin_b12": 150.0, "folate": 5.0, "creatinine": 90.0},
-        "lab_ranges": {"homocysteine": {"min": 5.0, "max": 15.0}},
-    },
+    # signal_homocysteine_high is intentionally absent: its only KB-S24 frame
+    # (inv_homocysteine_high_metabolic) is ratified REJECTED and is therefore not
+    # runtime-eligible. See test_kbs24_rejected_homocysteine_metabolic_frame_is_not_runtime_eligible.
     "signal_ldl_cholesterol_high": {
         "no_trigger_biomarkers": {"ldl_cholesterol": 2.5, "non_hdl_cholesterol": 4.0},
         "baseline_biomarkers": {"ldl_cholesterol": 4.5, "non_hdl_cholesterol": 4.0},
@@ -1955,3 +1952,25 @@ def test_kbs24_signals_trigger_suboptimal_then_escalate(signal_id: str):
     assert len(escalated) == 1
     assert escalated[0].signal_state == "at_risk"
     assert STATE_RANK[escalated[0].signal_state] >= STATE_RANK[baseline[0].signal_state]
+
+
+def test_kbs24_rejected_homocysteine_metabolic_frame_is_not_runtime_eligible():
+    """The KB-S24 homocysteine metabolic frame is ratified REJECTED (ARCH-CONV-CORRECT-1).
+
+    The package still exists on disk and still validates, but the frame must never be
+    loadable or evaluable as an active medical result.
+    """
+    rejected_key = "signal_homocysteine_high::inv_homocysteine_high_metabolic"
+    registry = SignalRegistry()
+
+    assert all(
+        signal.get("activation_key") != rejected_key for signal in registry.get_all_signals()
+    )
+    assert rejected_key in {row["activation_key"] for row in registry.excluded_rejected_frames}
+
+    out = SignalEvaluator(registry).evaluate_all(
+        signal_biomarkers={"homocysteine": 16.0, "vitamin_b12": 280.0, "folate": 9.0, "creatinine": 90.0},
+        signal_derived={},
+        lab_ranges={"homocysteine": {"min": 5.0, "max": 15.0}},
+    )
+    assert all(row.activation_key != rejected_key for row in out)

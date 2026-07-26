@@ -191,8 +191,9 @@ phenotypes:
     clinical_intent: "N-7 benchmark lead: homocysteine + MCV high without relying on systemic inflammation as a required gate."
     fixture_filename: "ph_one_carbon_homocysteine_macrocytosis_v1.json"
     expected_signals:
+      # ARCH-CONV-CORRECT-1: signal_homocysteine_high's only frame here
+      # (inv_homocysteine_high_metabolic) is ratified REJECTED, so it must stay inactive.
       must_fire:
-        - "signal_homocysteine_high"
         - "signal_homocysteine_elevation_context"
         - "signal_mcv_high"
       must_not_fire: []

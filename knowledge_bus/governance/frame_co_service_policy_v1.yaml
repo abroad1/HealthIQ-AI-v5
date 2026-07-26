@@ -1,0 +1,69 @@
+work_id: ARCH-CONV-CORRECT-1
+schema_version: "1.0.0"
+runtime_consumed: true
+description: >
+  Governed co-service rules for activation-frame families where a non-specific anchor
+  frame and one or more cause-specific frames can fire on the same primary metric.
+  Engineering implements only the Anthony-ratified Gate C dispositions; this file adds
+  no new medical policy and defines no new hypotheses.
+ratification_artefact: docs/Medical Research Documents/HEALTHIQ_AI_V5_WHY_PILOT_CONSOLIDATED_MEDICAL_REVIEW.md
+why_role_vocabulary:
+  causal: Frame may serve cause-oriented WHY hypotheses.
+  morphology_context: Frame may serve non-causal morphology/finding context only.
+
+families:
+  - signal_id: signal_mcv_high
+    anchor:
+      activation_key: signal_mcv_high::inv_mcv_high_macrocytosis
+      why_role: morphology_context
+      allowed_hypothesis_ids:
+        - mcv_high_anchor_pattern_v1
+      forbidden_causal_terms:
+        - nutrient
+        - hepatic
+        - alcohol
+        - thyroid
+        - reticulocyte
+        - marrow
+      ratified_basis: >
+        Frame 5 decision — non-specific morphology anchor or fallback only. No cause may be
+        ranked from MCV alone. Must not co-serve with Frame 6 or Frame 7 as a second causal
+        explanation, and must not generate duplicate WHY hypotheses when a specific frame is
+        supported. Only mcv_high_anchor_pattern_v1 belongs here.
+    combined_pattern_authorised: false
+    combined_pattern_note: >
+      No explicitly governed combined megaloblastic / non-megaloblastic pattern exists in the
+      Gate C pack, so simultaneous causal service by both specific frames is not authorised.
+    specific_frames:
+      - activation_key: signal_mcv_high::inv_mcv_high_megaloblastic_macrocytosis
+        why_role: causal
+        evidence_gate:
+          markers_any:
+            - folate
+            - vitamin_b12
+            - active_b12
+          direction: low_or_borderline
+        ratified_basis: >
+          Frame 6 disposition — APPROVE_WITH_REVISIONS, "Require corroborating B12/folate
+          evidence." Gate markers are the frame's own governed hematinic markers.
+      - activation_key: signal_mcv_high::inv_mcv_high_nonmegaloblastic_macrocytosis
+        why_role: causal
+        evidence_gate:
+          markers_any:
+            - ggt
+            - alt
+          direction: high
+        ratified_basis: >
+          Frame 7 disposition — APPROVE_WITH_REVISIONS, "Require cause-specific evidence gates;
+          no inferred alcohol or marrow diagnosis." Gate markers are the frame's own governed
+          differential/corroborator markers declared with expected_direction high in
+          knowledge_bus/packages/pkg_kb52c_mcv_high_nonmegaloblastic_macrocytosis/signal_library.yaml.
+    resolution:
+      no_specific_frame_supported: ANCHOR_CONTEXT_ONLY
+      one_specific_frame_supported: SPECIFIC_CAUSAL_WITH_ANCHOR_CONTEXT
+      multiple_specific_frames_supported: ANCHOR_CONTEXT_ONLY
+      resolution_basis: >
+        Frame 5 decision — the anchor "may exist only as a non-specific anchor or fallback when
+        the evidence does not support the more specific megaloblastic or non-megaloblastic
+        frames". Unsupported or mutually ambiguous specific frames therefore fall back to
+        morphology context rather than a speculative cause.

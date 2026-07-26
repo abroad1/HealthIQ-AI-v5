@@ -47,24 +47,28 @@ import { AnalysisService } from '@/services/analysis';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
-import type { Cluster, ClinicianReportV1, Wave1AlignedDriversV1 } from '@/types/analysis';
+import type {
+  Cluster,
+  ClinicianReportV1,
+  PrimaryDriverAuthorityV1,
+  Wave1AlignedDriversV1,
+} from '@/types/analysis';
 import type { LayerCFeatureBundleV1 } from '@/types/layerCFeatures';
 import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
-import { derivePatternRelevanceLine } from '@/lib/biomarkerPatternRelevance';
 import { filterConsumerInsights, legacyInsightsDebugEnabled } from '@/lib/legacyInsightsVisibility';
 import { LC_S4_MOCK_MODE_HONESTY_DISCLOSURE } from '@/lib/lcS4ResultsCopy';
 import {
   buildActionCardModels,
   buildPrimaryHeroSummary,
   getFirstIdlRecord,
-  pickHeroAlignedPrimaryDriver,
   pickPhenotypeLabel,
   pickBiomarkersByWave1Keys,
   pickTopDriverBiomarkers,
   resolvePrimaryFindingSeverity,
   resolveHeroPrimaryStory,
+  selectGovernedPrimaryDriver,
 } from '@/lib/resultsPageLayout';
 import { FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS } from '@/lib/feR2ResultsJourneyOrder';
 
@@ -172,7 +176,14 @@ export default function ResultsPage() {
     [currentAnalysis?.interpretation_display_layer_v1]
   );
 
-  const primaryDriver = useMemo(() => pickHeroAlignedPrimaryDriver(clusters, firstIdl), [clusters, firstIdl]);
+  const primaryDriverAuthority = (
+    currentAnalysis?.meta as { insight_graph?: { primary_driver_v1?: PrimaryDriverAuthorityV1 | null } } | undefined
+  )?.insight_graph?.primary_driver_v1;
+
+  const primaryDriver = useMemo(
+    () => selectGovernedPrimaryDriver(clusters, primaryDriverAuthority),
+    [clusters, primaryDriverAuthority]
+  );
   const primaryCluster = useMemo(
     () => (primaryDriver ? clusterById(clusters, primaryDriver.id) : undefined),
     [clusters, primaryDriver]
@@ -518,13 +529,6 @@ export default function ResultsPage() {
     .forEach((biomarker) => {
       const expl = biomarker.biomarker_educational_explainer;
       const relatedSystemGroupNames = relatedGroupNamesFor(biomarker.biomarker_name);
-      const hasContributionFactual = !!biomarker.contribution_context?.factual_statement?.trim();
-      const patternRelevanceLine = derivePatternRelevanceLine({
-        biomarkerKey: biomarker.biomarker_name,
-        primaryDriver,
-        hasContributionFactual,
-        relatedSystemGroupNames,
-      });
       const shownValue =
         typeof biomarker.display_value === 'number' ? biomarker.display_value : (biomarker.value as number);
       const shownUnit = (biomarker.display_unit || biomarker.unit || '').trim();
@@ -553,7 +557,6 @@ export default function ResultsPage() {
           ? { factual_statement: biomarker.contribution_context.factual_statement }
           : null,
         relatedSystemGroupNames,
-        patternRelevanceLine,
       };
     });
 
@@ -571,7 +574,8 @@ export default function ResultsPage() {
       name: cluster.name?.trim() ? cluster.name : 'Health pattern',
       category: cluster.category || 'other',
       score: typeof cluster.score === 'number' ? cluster.score : cluster.confidence ? cluster.confidence * 100 : 0,
-      confidence: typeof cluster.confidence === 'number' ? cluster.confidence : 0.85,
+      // ARCH-CONV-CORRECT-1 — unknown confidence stays unknown; no frontend substitute.
+      confidence: typeof cluster.confidence === 'number' ? cluster.confidence : null,
       biomarkers: cluster.biomarkers || cluster.biomarkers_involved || [],
       description: cluster.description || cluster.summary || '',
       recommendations: cluster.recommendations || [],

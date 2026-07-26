@@ -6,6 +6,7 @@ import type {
   Insight,
   InterpretationDisplayLayerBundleV1,
   InterpretationDisplayRecordV1,
+  PrimaryDriverAuthorityV1,
 } from '@/types/analysis';
 import { buildBodyOverviewPrimarySentence, extractFirstSentence } from '@/lib/bodyOverviewPrimarySentence';
 import { buildSection3LeadStatement, buildWhatThisMeansBlock, firstSentence } from '@/lib/primaryFindingShaping';
@@ -218,8 +219,6 @@ export function deriveSecondaryRankedSignalLine(
   return `Leading pattern described in this report: ${concernLead}`;
 }
 
-const _sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
-
 function _clusterToDriver(
   cluster: Cluster,
   idx: number
@@ -230,73 +229,29 @@ function _clusterToDriver(
   return { id, name, biomarkers };
 }
 
-/** Severity/score winner — same rule as legacy results page `pickPrimaryDriverCluster`. */
-export function pickSeverityPrimaryDriverCluster(clusters: Cluster[]): {
-  id: string;
-  name: string;
-  biomarkers: string[];
-} | null {
-  let best: { id: string; name: string; biomarkers: string[]; rank: number; score: number } | null = null;
-  clusters.forEach((cluster, idx) => {
-    const id = String(cluster.cluster_id || cluster.id || `cluster-${idx}`);
-    const sev = String(cluster.severity || 'moderate').toLowerCase();
-    const rank = _sevRank[sev] ?? 2;
-    const score = typeof cluster.score === 'number' ? cluster.score : (cluster.confidence ?? 0) * 100;
-    const name = cluster.name?.trim() ? cluster.name : 'Health pattern';
-    const biomarkers = cluster.biomarkers || cluster.biomarkers_involved || [];
-    if (!best || rank > best.rank || (rank === best.rank && score > best.score)) {
-      best = { id, name, biomarkers, rank, score };
-    }
-  });
-  if (!best) return null;
-  return { id: best.id, name: best.name, biomarkers: best.biomarkers };
-}
-
-function _scoreClusterAlignmentToIdl(c: Cluster, idl: InterpretationDisplayRecordV1): number {
-  const name = (c.name || '').toLowerCase().trim();
-  if (!name) return 0;
-  const retail = (idl.retail_display_label || '').toLowerCase();
-  const subtitle = (idl.subtitle || '').toLowerCase();
-  const sys = (idl.supporting_systems_summary || '').toLowerCase();
-  const blob = `${retail} ${subtitle} ${sys}`.trim();
-  let score = 0;
-  const nameWords = name.split(/\s+/).filter((w) => w.length > 3);
-  for (const w of nameWords) {
-    if (blob.includes(w)) score += 1;
-  }
-  if (retail && (name.includes(retail.slice(0, Math.min(18, retail.length))) || retail.includes(name.slice(0, Math.min(14, name.length)))))
-    score += 3;
-  if (subtitle && (name.includes(subtitle.slice(0, 14)) || subtitle.includes(name.slice(0, 12)))) score += 2;
-  return score;
-}
-
 /**
- * Prefer a cluster aligned with the displayed IDL lead; otherwise fall back to severity primary driver.
+ * ARCH-CONV-CORRECT-1 — the primary driver is the Layer B ranked lead.
+ *
+ * Layer C resolves the governed `primary_driver_v1` record to the cluster it names and
+ * renders it. It does not rank severity, score alignment or substitute a fallback: when
+ * Layer B supplies no resolved lead the caller must suppress the driver surface.
  */
-export function pickHeroAlignedPrimaryDriver(
+export function selectGovernedPrimaryDriver(
   clusters: Cluster[],
-  firstIdl: InterpretationDisplayRecordV1 | null | undefined
+  authority: PrimaryDriverAuthorityV1 | null | undefined
 ): { id: string; name: string; biomarkers: string[] } | null {
-  if (!clusters.length) return null;
-  const fallback = pickSeverityPrimaryDriverCluster(clusters);
-  if (!firstIdl) return fallback;
-
-  const ALIGN_THRESHOLD = 2;
-  let best: { cluster: Cluster; idx: number; align: number; rank: number; score: number } | null = null;
-
-  clusters.forEach((cluster, idx) => {
-    const align = _scoreClusterAlignmentToIdl(cluster, firstIdl);
-    if (align < ALIGN_THRESHOLD) return;
-    const sev = String(cluster.severity || 'moderate').toLowerCase();
-    const rank = _sevRank[sev] ?? 2;
-    const score = typeof cluster.score === 'number' ? cluster.score : (cluster.confidence ?? 0) * 100;
-    if (!best || align > best.align || (align === best.align && rank > best.rank) || (align === best.align && rank === best.rank && score > best.score)) {
-      best = { cluster, idx, align, rank, score };
-    }
-  });
-
-  if (best) return _clusterToDriver(best.cluster, best.idx);
-  return fallback;
+  const clusterId = authority?.cluster_id?.trim();
+  if (!clusterId) return null;
+  const idx = clusters.findIndex(
+    (cluster, i) => String(cluster.cluster_id || cluster.id || `cluster-${i}`) === clusterId
+  );
+  if (idx < 0) return null;
+  const driver = _clusterToDriver(clusters[idx], idx);
+  const governedMarkers = (authority?.biomarker_keys ?? []).map((k) => String(k).trim()).filter(Boolean);
+  if (governedMarkers.length > 0) {
+    return { ...driver, biomarkers: governedMarkers };
+  }
+  return driver;
 }
 
 /**
@@ -355,6 +310,12 @@ export function pickBiomarkersByWave1Keys(
   return out;
 }
 
+/**
+ * ARCH-CONV-CORRECT-1 — driver markers follow the governed order supplied by Layer B.
+ *
+ * Layer C no longer ranks markers by lab abnormality when the governed list is short;
+ * an incomplete governed list yields a shorter strip rather than a frontend-chosen one.
+ */
 export function pickTopDriverBiomarkers(
   biomarkers: BiomarkerResult[],
   primaryDriver: { biomarkers: string[] } | null
@@ -364,21 +325,7 @@ export function pickTopDriverBiomarkers(
   const out: BiomarkerResult[] = [];
   for (const name of primaryDriver?.biomarkers ?? []) {
     const b = byName.get(name);
-    if (b) out.push(b);
-    if (out.length >= 3) return out;
-  }
-  const rank = (b: BiomarkerResult) => {
-    const s = (b.status || '').toLowerCase();
-    if (s.includes('high') || s.includes('low') || s.includes('critical') || s.includes('abnormal')) return 4;
-    if (s.includes('border') || s.includes('watch')) return 3;
-    if (s.includes('optimal') || s.includes('normal')) return 0;
-    return 1;
-  };
-  const rest = withValues
-    .filter((b) => !out.find((o) => o.biomarker_name === b.biomarker_name))
-    .sort((a, b) => rank(b) - rank(a));
-  for (const b of rest) {
-    out.push(b);
+    if (b && !out.find((o) => o.biomarker_name === b.biomarker_name)) out.push(b);
     if (out.length >= 3) break;
   }
   return out.slice(0, 3);
@@ -427,7 +374,10 @@ export interface ResultActionCardModel {
   paragraph: string;
   sourceLabel: string;
   categoryLabel: string;
-  /** Plain label derived from cluster severity — not a new clinical claim. */
+  /**
+   * ARCH-CONV-CORRECT-1 — provenance of the line only. Layer C no longer bins backend
+   * severity or confidence into an evidence-strength claim.
+   */
   evidenceLevelLabel: string;
 }
 
@@ -442,12 +392,10 @@ function categoryFromCluster(c: Cluster | undefined): string {
   return 'Follow-up';
 }
 
-function evidenceLevelFromCluster(c: Cluster | undefined): string {
-  const x = (c?.severity || 'moderate').toLowerCase();
-  if (x === 'critical' || x === 'high') return 'Stronger pattern on this panel';
-  if (x === 'mild' || x === 'low' || x === 'normal') return 'Supporting / lower-priority note';
-  return 'Moderate attention on this panel';
-}
+const ACTION_SOURCE_CLUSTER_LABEL = 'From your system pattern group';
+const ACTION_SOURCE_INSIGHT_LABEL = 'From a narrative insight block';
+const ACTION_SOURCE_PANEL_LABEL = 'Panel-level note';
+const ACTION_SOURCE_REPORT_LABEL = 'From your structured report';
 
 function categoryFromInsight(ins: Insight): string {
   const raw = (ins.category || '').toLowerCase();
@@ -458,15 +406,6 @@ function categoryFromInsight(ins: Insight): string {
   return 'Lifestyle';
 }
 
-function evidenceFromInsight(ins: Insight): string {
-  if (typeof ins.confidence === 'number' && ins.confidence > 0) {
-    if (ins.confidence >= 0.8) return 'Higher model confidence (contextual)';
-    if (ins.confidence >= 0.5) return 'Moderate model confidence (contextual)';
-  }
-  const s = (ins.severity || '').toLowerCase();
-  if (s === 'high' || s === 'critical') return 'Stronger emphasis in narrative block';
-  return 'Supporting note (narrative insight)';
-}
 
 export interface BuildActionCardOptions {
   maxItems?: number;
@@ -533,7 +472,7 @@ export function buildActionCardModels(
         paragraph,
         sourceLabel: name,
         categoryLabel: categoryFromCluster(c),
-        evidenceLevelLabel: evidenceLevelFromCluster(c),
+        evidenceLevelLabel: ACTION_SOURCE_CLUSTER_LABEL,
       });
       if (out.length >= maxItems) return out;
     }
@@ -547,7 +486,7 @@ export function buildActionCardModels(
       paragraph,
       sourceLabel: 'Panel summary',
       categoryLabel: 'Follow-up',
-      evidenceLevelLabel: 'Panel-level note',
+      evidenceLevelLabel: ACTION_SOURCE_PANEL_LABEL,
     });
     if (out.length >= maxItems) return out;
   }
@@ -561,7 +500,7 @@ export function buildActionCardModels(
         paragraph,
         sourceLabel: (ins.summary || ins.category || ins.id || 'Narrative insight').slice(0, 120),
         categoryLabel: categoryFromInsight(ins),
-        evidenceLevelLabel: evidenceFromInsight(ins),
+        evidenceLevelLabel: ACTION_SOURCE_INSIGHT_LABEL,
       });
       if (out.length >= maxItems) return out;
     }
@@ -577,7 +516,7 @@ export function buildActionCardModels(
         paragraph: cleaned,
         sourceLabel: 'Report next steps',
         categoryLabel: 'Follow-up',
-        evidenceLevelLabel: 'From your structured report',
+        evidenceLevelLabel: ACTION_SOURCE_REPORT_LABEL,
       });
       if (out.length >= maxItems) return out;
     }

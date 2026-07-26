@@ -7,13 +7,14 @@ notes:
   - "This asset is KB-native v1 for deterministic root-cause hypothesis compilation."
   - "No diagnosis or prescribing. No supplements. No brand/program names."
   - "All confirmatory_tests must reference knowledge_bus/registries/confirmatory_tests_v1.yaml."
+  - "ARCH-CONV-CORRECT-1: homocysteine must not be presented as a stand-alone measure of one-carbon function (Gate C Frame 2 causal limits). B-vitamin wording is sourced from the ratified Frame 2 consumer boundary."
 
 hypotheses:
   - hypothesis_id: "hcy_b12_pattern_v1"
     title: "B12-associated pattern"
     safety_class: "monitoring"
     evidence_strength: "moderate"
-    summary_template: "Homocysteine is elevated with a pattern that can be consistent with reduced B12-related methylation capacity."
+    summary_template: "Homocysteine is elevated and may be associated with reduced availability of vitamin B12, particularly if that marker is also low or borderline. Other factors can also raise homocysteine."
     required_markers:
       - "vitamin_b12"
     confirmatory_markers:

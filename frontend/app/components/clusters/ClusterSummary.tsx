@@ -11,7 +11,8 @@ interface Cluster {
   name: string;
   category: string;
   score: number;
-  confidence: number;
+  /** Backend-supplied only. Absent means unknown — Layer C must not substitute a value. */
+  confidence?: number | null;
   biomarkers: string[];
   description: string;
   recommendations: string[];
@@ -52,18 +53,22 @@ const SEVERITY_ICONS = {
   critical: <AlertTriangle className="h-4 w-4" />
 };
 
-const getScoreColor = (score: number) => {
-  if (score >= 80) return 'text-green-600';
-  if (score >= 60) return 'text-yellow-600';
-  if (score >= 40) return 'text-orange-600';
-  return 'text-red-600';
+/**
+ * ARCH-CONV-CORRECT-1 — score colour follows the backend severity band, not frontend
+ * numeric thresholds, so Layer C stops applying its own clinical risk coding.
+ */
+const SEVERITY_TEXT_COLORS: Record<Cluster['severity'], string> = {
+  low: 'text-green-600',
+  moderate: 'text-yellow-600',
+  high: 'text-orange-600',
+  critical: 'text-red-600',
 };
 
-const getScoreBarColor = (score: number) => {
-  if (score >= 80) return 'bg-green-500';
-  if (score >= 60) return 'bg-yellow-500';
-  if (score >= 40) return 'bg-orange-500';
-  return 'bg-red-500';
+const SEVERITY_BAR_COLORS: Record<Cluster['severity'], string> = {
+  low: 'bg-green-500',
+  moderate: 'bg-yellow-500',
+  high: 'bg-orange-500',
+  critical: 'bg-red-500',
 };
 
 function formatMarkerLabel(raw: string): string {
@@ -148,9 +153,8 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
         <Card>
           <CardContent className="pt-4">
             <div className="text-center">
-              <div className={`text-2xl font-bold ${getScoreColor(averageScore)}`}>
-                {Math.round(averageScore)}
-              </div>
+              {/* ARCH-CONV-CORRECT-1 — no backend band exists for an average, so it renders neutral. */}
+              <div className="text-2xl font-bold text-gray-900">{Math.round(averageScore)}</div>
               <div className="text-sm text-gray-500">Average Score</div>
             </div>
           </CardContent>
@@ -257,16 +261,18 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500">Score:</span>
-                      <span className={`font-semibold ${getScoreColor(cluster.score)}`}>
+                      <span className={`font-semibold ${SEVERITY_TEXT_COLORS[cluster.severity]}`}>
                         {Math.round(cluster.score)}/100
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-500">Confidence:</span>
-                      <span className="font-semibold text-blue-600">
-                        {Math.round(cluster.confidence * 100)}%
-                      </span>
-                    </div>
+                    {typeof cluster.confidence === 'number' ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500">Confidence:</span>
+                        <span className="font-semibold text-blue-600">
+                          {Math.round(cluster.confidence * 100)}%
+                        </span>
+                      </div>
+                    ) : null}
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500">Biomarkers:</span>
                       <span className="font-semibold text-gray-700">
@@ -301,7 +307,7 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
                   aria-label={`Cluster score: ${Math.round(cluster.score)}%`}
                 >
                   <div 
-                    className={`h-2 rounded-full transition-all duration-1000 ${getScoreBarColor(cluster.score)}`}
+                    className={`h-2 rounded-full transition-all duration-1000 ${SEVERITY_BAR_COLORS[cluster.severity]}`}
                     style={{ width: `${cluster.score}%` }}
                   ></div>
                 </div>

@@ -52,6 +52,9 @@ class RootCauseFindingV1(BaseModel):
     activation_key: str = ""
     source_spec_id: str = ""
     authority_scope: str = "family_level"  # frame_specific | family_level | unresolved
+    # ARCH-CONV-CORRECT-1 — governed co-service role. Layer C must render
+    # morphology_context findings as non-causal context, never as a parallel cause.
+    why_role: str = "causal"  # causal | morphology_context
     primary_metric: str
     signal_state: str
     signal_confidence: float

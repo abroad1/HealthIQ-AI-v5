@@ -56,9 +56,48 @@ Any **BOUNDARY_LEAK** or safety-material **UNRESOLVED** blocks programme PASS.
 
 ---
 
-## Verdict for programme PASS gate
+## Verdict for programme PASS gate (audit, at baseline SHA)
 
 **Layer C medical-decision boundary is not closed.**  
 Hardest live-path leaks: primary-driver arbitration, invented confidence, dial colour invention, LayerCInsightSection prose/ranking.
 
 No substantive corrections implemented in this audit package (forbidden). Recommend bounded FE correction package after UAT confirmation.
+
+---
+
+## ARCH-CONV-CORRECT-1 closure status (added by the correction package)
+
+**Work ID:** `ARCH-CONV-CORRECT-1` · **Branch:** `feature/arch-conv-correct-1-e2e-authority-layerc`
+
+All 12 `BOUNDARY_LEAK` rows above (including the mild/soft ones) are **CLOSED**. Row-by-row
+evidence, the Layer B authority now supplying each decision, and the failure behaviour when a
+governed field is missing are recorded in:
+
+```text
+docs/architecture/ARCH-CONV-CORRECT-1_layer_c_boundary_closure_report.md
+```
+
+| Row | Closure |
+|---|---|
+| `pickSeverityPrimaryDriverCluster` | Removed |
+| `pickHeroAlignedPrimaryDriver` | Replaced by `selectGovernedPrimaryDriver` consuming `meta.insight_graph.primary_driver_v1` |
+| `pickTopDriverBiomarkers` | Backend marker order only |
+| `evidenceLevelFromCluster` / `evidenceFromInsight` | Removed; card now shows action provenance (`Source:`) |
+| `results/page.tsx` invented `0.85` | Passes `null`; confidence row omitted when absent |
+| `getDialColor` | Backend status only; unknown → neutral |
+| `LayerCInsightSection` | Fixed display order + governed copy module |
+| `ClusterInsightPanel.getClinicalRecommendations` | Component deleted and unexported |
+| `derivePatternRelevanceLine` | File deleted; backend contribution text only |
+| `SystemUnderstandingSection` blocks A–C | Governed copy module |
+| `ClusterSummary` score colour helpers | Backend severity band |
+| `InsightsPanel` category sort | Backend order preserved |
+
+`uploadReferenceRange.ts` re-verified as `LEGITIMATE_TRANSLATION`: imported only by the upload
+and preview surfaces, absent from the results/analysis path.
+
+No safety-material `UNRESOLVED` item remains. Enforcement is executable via
+`backend/scripts/validate_arch_conv_correct1_gate.py` (WS4 block) plus
+`frontend/tests/components/LayerCMedicalBoundary.test.tsx`.
+
+This closure does **not** by itself grant programme PASS: a human UAT re-check of the live page
+remains outstanding, and the residual limitations in the correction reports still apply.

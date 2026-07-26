@@ -98,7 +98,10 @@ records:
   - internal_id: ph_one_carbon_homocysteine_macrocytosis_v1
     scientific_class: syndrome_state
     clinical_display_label: One-carbon pathway stress (homocysteine with macrocytic pattern)
-    retail_display_label: Methylation pathway pattern
+    # ARCH-CONV-CORRECT-1: retired the legacy methylation-pattern label. Homocysteine must not
+    # be presented as a stand-alone measure of one-carbon function (Gate C Frame 2 causal limits).
+    # Retail label now reuses this record's own governed one-carbon vocabulary.
+    retail_display_label: One-carbon pathway pattern
     subtitle: Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
     why_it_matters: This pattern links nutrient–cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.
     frontend_allowed_term: phenotype_allowed

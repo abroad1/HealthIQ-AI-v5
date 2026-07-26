@@ -323,6 +323,26 @@ export interface Wave1AlignedDriversV1 {
   by_domain?: Record<string, string[]>;
 }
 
+/**
+ * ARCH-CONV-CORRECT-1 — governed primary driver from `meta.insight_graph.primary_driver_v1`.
+ * Layer B projects its ranked lead onto cluster identity; Layer C must not re-arbitrate.
+ */
+export interface PrimaryDriverAuthorityV1 {
+  schema?: 'primary_driver_authority_v1';
+  authority_source?: string;
+  ranking_policy_version?: string;
+  priority_rank?: number;
+  signal_id?: string;
+  activation_key?: string;
+  source_spec_id?: string;
+  primary_metric?: string;
+  system?: string;
+  cluster_id?: string;
+  cluster_name?: string;
+  cluster_resolved?: boolean;
+  biomarker_keys?: string[];
+}
+
 /** DOMAIN-UX1C — governed subsystem evidence (mirrors Pydantic SubsystemEvidenceV1) */
 export interface MarkerDisplayLabelV1 {
   id: string;

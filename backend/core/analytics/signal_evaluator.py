@@ -14,6 +14,7 @@ from core.analytics.runtime_context_evaluator import passes_runtime_context_requ
 from core.analytics.signal_authority_collision_resolver import apply_signal_authority_collision_policy
 from core.analytics.signal_confidence_builder import calculate_signal_confidence
 from core.contracts.signal_contract import STATE_RANK as _STATE_RANK_IMPORT
+from core.knowledge.frame_runtime_authority_v1 import filter_runtime_eligible_rows
 from core.knowledge.signal_activation_identity_v1 import resolve_activation_identity
 from core.models.signal import SignalResult
 
@@ -27,6 +28,7 @@ class SignalRegistry:
         self.package_hash: str = ""
         self.allow_launch_critical_blocked: bool = bool(allow_launch_critical_blocked)
         self.excluded_launch_critical_packages: List[Dict[str, str]] = []
+        self.excluded_rejected_frames: List[Dict[str, str]] = []
         self._load()
 
     def _packages_dir(self) -> Path:
@@ -49,11 +51,15 @@ class SignalRegistry:
             is_production_reachable,
             load_package_manifest,
         )
+        from core.knowledge.frame_runtime_authority_v1 import (
+            frame_runtime_exclusion_reason,
+        )
         from core.knowledge.provenance_status_v1 import classify_package_provenance_status
 
         signals_by_activation_key: Dict[str, Dict[str, Any]] = {}
         exclusions: List[Dict[str, str]] = []
         seen_excluded: set[str] = set()
+        rejected_frames: List[Dict[str, str]] = []
         for path in self._iter_signal_library_paths():
             package_dir = path.parent
             package_id = package_dir.name
@@ -95,6 +101,16 @@ class SignalRegistry:
                     signal_id=signal_id,
                     signal_library_path=path,
                 )
+                rejection = frame_runtime_exclusion_reason(activation_key)
+                if rejection is not None:
+                    rejected_frames.append(
+                        {
+                            "activation_key": activation_key,
+                            "package_id": resolved_package_id or package_id,
+                            "runtime_state": rejection,
+                        }
+                    )
+                    continue
                 if activation_key in signals_by_activation_key:
                     existing = signals_by_activation_key[activation_key].get("_source_path", "")
                     raise ValueError(
@@ -120,6 +136,9 @@ class SignalRegistry:
         }
         self.excluded_launch_critical_packages = sorted(
             exclusions, key=lambda row: row["package_id"]
+        )
+        self.excluded_rejected_frames = sorted(
+            rejected_frames, key=lambda row: row["activation_key"]
         )
 
     def get_all_signals(self) -> List[Dict[str, Any]]:
@@ -587,8 +606,11 @@ class SignalEvaluator:
             results.append(result)
 
         results.sort(key=lambda r: (r.signal_id, r.activation_key))
+        # Canonical frame runtime authority is re-asserted here so stub/injected
+        # registries cannot admit a governed-REJECTED frame into the active set.
+        eligible = filter_runtime_eligible_rows(results)
         return apply_signal_authority_collision_policy(
-            results,
+            eligible,
             signal_biomarkers=signal_biomarkers,
             signal_derived=signal_derived,
             lab_ranges=lab_ranges or {},

@@ -27,12 +27,6 @@ const categoryLabels = {
   hormonal: 'Hormonal Health'
 };
 
-const severityOrder = {
-  critical: 3,
-  warning: 2,
-  info: 1
-};
-
 export function InsightsPanel({ insights, narrativeRuntime, className = '' }: InsightsPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
@@ -81,14 +75,8 @@ export function InsightsPanel({ insights, narrativeRuntime, className = '' }: In
     return acc;
   }, {} as Record<string, Insight[]>);
 
-  // Sort insights within each category by severity and confidence
-  Object.keys(insightsByCategory).forEach(category => {
-    insightsByCategory[category].sort((a, b) => {
-      const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
-      if (severityDiff !== 0) return severityDiff;
-      return (b.confidence ?? 0) - (a.confidence ?? 0);
-    });
-  });
+  // ARCH-CONV-CORRECT-1 — backend emission order is the governed order. Layer C must not
+  // re-rank insights by severity or confidence.
 
   // Filter insights based on selected filters
   const filteredInsights = safeInsights.filter(insight => {

@@ -28,7 +28,9 @@ from core.analytics.relationship_registry import (
 from core.analytics.biomarker_context_builder import build_biomarker_context_v1
 from core.analytics.intervention_selector_v1 import select_interventions_v1
 from core.analytics.report_compiler_v1 import compile_report_v1
+from core.analytics.primary_driver_authority_v1 import build_primary_driver_authority_v1
 from core.analytics.signal_interaction_builder import build_signal_interactions_v1
+from core.knowledge.frame_runtime_authority_v1 import filter_runtime_eligible_rows
 
 
 def _as_float(value: Any) -> Optional[float]:
@@ -231,6 +233,10 @@ def build_insight_graph_v1(
     """
     input_reference_ranges = input_reference_ranges or {}
     filtered_biomarkers = filtered_biomarkers or {}
+    # Assembly boundary re-assertion of canonical frame runtime authority: replayed or
+    # fixture-supplied rows never passed through SignalEvaluator, so a governed-REJECTED
+    # frame must be excluded here before ranking, scoring, narrative or interventions.
+    signal_results = filter_runtime_eligible_rows(signal_results) if signal_results else signal_results
 
     def _to_relationship_status(status: Any) -> str:
         """Normalize frontend/legacy statuses into RelationshipRegistry vocabulary."""
@@ -438,6 +444,11 @@ def build_insight_graph_v1(
         input_reference_ranges=input_reference_ranges,
         generated_at=report_generated_at,
     )
+    primary_driver_v1 = build_primary_driver_authority_v1(
+        report_v1=report_v1,
+        clustering_result=clustering_result,
+        signal_results=signal_results if signal_results is not None else [],
+    )
 
     return InsightGraphV1(
         graph_version=INSIGHTGRAPH_V1_VERSION,
@@ -467,6 +478,7 @@ def build_insight_graph_v1(
         biomarker_context_hash=context_stamp.biomarker_context_hash,
         biomarker_context=context_nodes,
         layer_c_features=layer_c_features,
+        primary_driver_v1=primary_driver_v1,
         biomarker_nodes=nodes,
         edges=[],
     )

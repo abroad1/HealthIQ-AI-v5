@@ -10,12 +10,18 @@ import type {
   LayerCFeatureBundleV1,
   MetabolicAgeFeatureV1,
 } from '@/types/layerCFeatures';
+import {
+  FATIGUE_NO_DRIVERS_EXPLANATION,
+  FATIGUE_NO_DRIVERS_VALUE_LINE,
+  LAYER_C_INSIGHT_COPY,
+  LAYER_C_INSIGHT_DISPLAY_ORDER,
+  type LayerCInsightKind,
+} from '@/lib/layerCInsightCopy';
 
-type LayerCKind = 'metabolic_age' | 'heart_insight' | 'inflammation' | 'fatigue_root_cause' | 'detox_filtration';
+type LayerCKind = LayerCInsightKind;
 
 interface QualifiedRow {
   kind: LayerCKind;
-  confidence: number;
   tieIdx: number;
 }
 
@@ -36,22 +42,32 @@ function severityHint(sev: string): string {
   return 'Review in context below';
 }
 
+/**
+ * Presence gate only: a feature qualifies when Layer B gave it confidence above zero.
+ * ARCH-CONV-CORRECT-1 — the surviving rows keep the fixed display order; Layer C does not
+ * re-rank them by confidence.
+ */
 function collectQualified(bundle: LayerCFeatureBundleV1): QualifiedRow[] {
-  const rows: QualifiedRow[] = [];
-  const push = (kind: LayerCKind, tieIdx: number, confidence: number) => {
-    if (confidence > 0) rows.push({ kind, confidence, tieIdx });
+  const confidenceFor = (kind: LayerCKind): number => {
+    switch (kind) {
+      case 'metabolic_age':
+        return bundle.metabolic_age?.confidence ?? 0;
+      case 'heart_insight':
+        return bundle.heart_insight?.confidence ?? 0;
+      case 'inflammation':
+        return bundle.inflammation?.confidence ?? 0;
+      case 'fatigue_root_cause':
+        return bundle.fatigue_root_cause?.confidence ?? 0;
+      case 'detox_filtration':
+        return bundle.detox_filtration?.confidence ?? 0;
+      default:
+        return 0;
+    }
   };
-  push('metabolic_age', 0, bundle.metabolic_age?.confidence ?? 0);
-  push('heart_insight', 1, bundle.heart_insight?.confidence ?? 0);
-  push('inflammation', 2, bundle.inflammation?.confidence ?? 0);
-  push('fatigue_root_cause', 3, bundle.fatigue_root_cause?.confidence ?? 0);
-  push('detox_filtration', 4, bundle.detox_filtration?.confidence ?? 0);
 
-  rows.sort((a, b) => {
-    if (b.confidence !== a.confidence) return b.confidence - a.confidence;
-    return a.tieIdx - b.tieIdx;
-  });
-  return rows.slice(0, 3);
+  return LAYER_C_INSIGHT_DISPLAY_ORDER.map((kind, tieIdx) => ({ kind, tieIdx }))
+    .filter((row) => confidenceFor(row.kind) > 0)
+    .slice(0, 3);
 }
 
 function MetabolicCard({ m }: { m: MetabolicAgeFeatureV1 }) {
@@ -62,13 +78,14 @@ function MetabolicCard({ m }: { m: MetabolicAgeFeatureV1 }) {
       ? ` (${delta > 0 ? '+' : ''}${delta.toFixed(1)} yrs vs expectation)`
       : '';
   const valueLine = `~${age} years${deltaStr}`;
+  const copy = LAYER_C_INSIGHT_COPY.metabolic_age;
   const homa = m.homa_ir > 0 ? ` HOMA-IR ${m.homa_ir.toFixed(2)} is included in this read.` : '';
   return (
     <InsightCardShell
-      title="Metabolic age pattern"
+      title={copy.title}
       valueLine={valueLine}
-      explanation={`This lines up insulin–glucose signals from your panel into an age-style summary.${homa}`}
-      whyItMatters="It shows whether metabolic markers sit where they would broadly be expected for the story above—not a diagnosis on their own."
+      explanation={`${copy.explanation}${homa}`}
+      whyItMatters={copy.whyItMatters}
       severity={m.severity}
     />
   );
@@ -84,12 +101,13 @@ function HeartCard({ h }: { h: HeartFeatureV1 }) {
         : h.tg_hdl_ratio != null
           ? ` TG/HDL ${h.tg_hdl_ratio.toFixed(2)}`
           : '';
+  const copy = LAYER_C_INSIGHT_COPY.heart_insight;
   return (
     <InsightCardShell
-      title="Heart resilience"
+      title={copy.title}
       valueLine={`Score ${score}${ratio ? ` ·${ratio}` : ''}`}
-      explanation="One combined read of lipid balance signals we use for cardiovascular resilience on this snapshot."
-      whyItMatters="It tells you whether heart-related markers are broadly aligned or pulling in the same direction—useful context next to your main finding."
+      explanation={copy.explanation}
+      whyItMatters={copy.whyItMatters}
       severity={h.severity}
     />
   );
@@ -98,12 +116,13 @@ function HeartCard({ h }: { h: HeartFeatureV1 }) {
 function InflammationCard({ f }: { f: InflammationFeatureV1 }) {
   const score = f.inflammation_burden_score.toFixed(1);
   const nlr = f.nlr != null ? ` · NLR ${f.nlr.toFixed(2)}` : '';
+  const copy = LAYER_C_INSIGHT_COPY.inflammation;
   return (
     <InsightCardShell
-      title="Inflammation burden"
+      title={copy.title}
       valueLine={`Score ${score}${nlr}`}
-      explanation="Summarises inflammatory markers on the panel into a single burden read."
-      whyItMatters="Inflammation can amplify other patterns; this keeps that signal explicit without drifting into lifestyle advice."
+      explanation={copy.explanation}
+      whyItMatters={copy.whyItMatters}
       severity={f.severity}
     />
   );
@@ -111,18 +130,14 @@ function InflammationCard({ f }: { f: InflammationFeatureV1 }) {
 
 function FatigueCard({ f }: { f: FatigueFeatureV1 }) {
   const causes = (f.root_causes || []).slice(0, 4).map(humanizeToken).filter(Boolean);
-  const valueLine =
-    causes.length > 0 ? causes.slice(0, 2).join(' · ') : 'Cross-check across iron, thyroid, vitamins, inflammation, and cortisol signals';
+  const valueLine = causes.length > 0 ? causes.slice(0, 2).join(' · ') : FATIGUE_NO_DRIVERS_VALUE_LINE;
+  const copy = LAYER_C_INSIGHT_COPY.fatigue_root_cause;
   return (
     <InsightCardShell
-      title="Fatigue drivers"
+      title={copy.title}
       valueLine={valueLine}
-      explanation={
-        causes.length > 0
-          ? 'These are the main driver lines we could separate deterministically from your markers.'
-          : 'We reviewed the fatigue-related status lines below against your results.'
-      }
-      whyItMatters="Fatigue is often multi-factor; this keeps the deterministic drivers visible without claiming a single cause."
+      explanation={causes.length > 0 ? copy.explanation : FATIGUE_NO_DRIVERS_EXPLANATION}
+      whyItMatters={copy.whyItMatters}
       severity={f.severity}
     />
   );
@@ -133,12 +148,13 @@ function DetoxCard({ d }: { d: DetoxFeatureV1 }) {
   const liver = d.liver_score.toFixed(0);
   const kidney = d.kidney_score.toFixed(0);
   const egfr = d.egfr != null ? ` · eGFR ${d.egfr.toFixed(0)}` : '';
+  const copy = LAYER_C_INSIGHT_COPY.detox_filtration;
   return (
     <InsightCardShell
-      title="Detox and filtration"
+      title={copy.title}
       valueLine={`Overall ${main} · liver ${liver} · kidney ${kidney}${egfr}`}
-      explanation="Combines liver and kidney-facing signals we can read from this panel into one filtration view."
-      whyItMatters="It helps you see whether clearance-related markers look broadly supported or under strain alongside everything else."
+      explanation={copy.explanation}
+      whyItMatters={copy.whyItMatters}
       severity={d.severity}
     />
   );

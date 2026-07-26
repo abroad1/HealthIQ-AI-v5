@@ -103,3 +103,35 @@ No rejected metabolic findings emitted. Full rendered FE output requires Anthony
 ## Replay / determinism
 
 Compiler selection is deterministic for fixed activation keys. Ambiguous multi-frame bare `signal_id` fails closed. FE re-ranking can still change presentation order independently of Layer B — residual non-determinism relative to medical emphasis.
+
+---
+
+## ARCH-CONV-CORRECT-1 correction status (added by the correction package)
+
+**Work ID:** `ARCH-CONV-CORRECT-1` · **Branch:** `feature/arch-conv-correct-1-e2e-authority-layerc`
+**Baseline HEAD:** `c933d794c9e57c1ee6180d8b943fed009727fd70`
+
+The live-UAT leak table above was re-tested by deterministic replay of the same panel
+(`backend/scripts/replay_arch_conv_correct1_uat_case.py`, with `--baseline` reproducing the
+pre-correction state).
+
+| Original finding | Corrected result |
+|---|---|
+| Rejected metabolic frame fires, ranks `#3` in `top_findings`, cited by 2 interventions | **PASS** — absent from fired keys (7, was 8), absent from `top_findings` (7 rows), cited by 0 interventions |
+| Signal interpretation "Reflects methylation capacity and B-vitamin status." | **PASS** — the rejected row never reaches the payload |
+| Clinician summary "reduced B12-related methylation capacity" | **PASS** — replaced with the ratified Frame 2 B-vitamin consumer wording |
+| Consumer "Methylation pathway pattern" | **PASS** — IDL retail label is now "One-carbon pathway pattern" |
+| MCV Frame 5/6/7 co-emission | **PASS** — anchor serves `morphology_context` only; specific frames serve causally only behind their ratified evidence gates |
+| Layer C FE `BOUNDARY_LEAK`s | **PASS** — 12/12 inventory rows closed |
+
+Fingerprint scan after correction: **ACTIVE_LEAK count 0**, with the historical/audit-only
+references enumerated in the correction report.
+
+The 13 scenarios above were re-executed as a reproducible harness
+(`backend/scripts/rerun_arch_conv_final_13_scenarios.py`) and remain **13/13 PASS**.
+
+FE presentation order is now backend-ordered for insights, Layer C features and driver markers,
+removing the residual medical-emphasis non-determinism noted above.
+
+Detail: `docs/architecture/ARCH-CONV-CORRECT-1_end_to_end_leakage_correction_report.md`.
+Programme PASS still requires a human UAT re-check of the live page.

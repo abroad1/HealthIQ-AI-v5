@@ -89,3 +89,41 @@ Lifestyle: moderate alcohol context mentioned in body overview.
 
 Final programme decision: **CORRECT** (see verification report).  
 Do not claim PASS.
+
+---
+
+## ARCH-CONV-CORRECT-1 post-correction re-test (added by the correction package)
+
+**Work ID:** `ARCH-CONV-CORRECT-1` · **Branch:** `feature/arch-conv-correct-1-e2e-authority-layerc`
+**Method:** deterministic replay of this analysis's recorded panel through Layer B and report
+assembly (`backend/scripts/replay_arch_conv_correct1_uat_case.py`), plus frontend component
+render tests. No credentials, no account data and no network access were used.
+
+### Traceability re-test (rows that previously failed)
+
+| page section | rendered text after correction | supporting API field | activation_key | WHY authority | hypothesis ID | expected | actual | PASS/FAIL |
+|---|---|---|---|---|---|---|---|---|
+| Patterns across body | "One-carbon pathway pattern" | IDL `retail_display_label` | family hcy/mcv | IDL aggregate | n/a | No methylation-capacity framing | Governed one-carbon label | **PASS** |
+| Clinician summary | "Homocysteine is elevated and may be associated with reduced availability of vitamin B12, particularly if that marker is also low or borderline. Other factors can also raise homocysteine." | `root_cause_v1.findings[].hypotheses[].summary` | `signal_homocysteine_elevation_context::inv_elevation_context` | LEGACY family WHY | `hcy_b12_pattern_v1` | No "methylation capacity" claim | Ratified B-vitamin wording only | **PASS** |
+| API signal row | — (row absent) | `meta.insight_graph.signal_results[]` | `…::inv_homocysteine_high_metabolic` | REJECTED → not runtime-eligible | n/a | Rejected frame inactive end-to-end | Absent from fired set | **PASS** |
+| API top_findings | — (row absent) | `report_v1.top_findings` | `…::inv_homocysteine_high_metabolic` | REJECTED | n/a | Not in rankings | 7 rows, none rejected | **PASS** |
+| Interventions | vascular referral / lifestyle now cite the elevation-context key only | `activation_key_refs` | `…::inv_homocysteine_high_metabolic` | REJECTED | n/a | Rejected key not cited | 0 citations (was 2) | **PASS** |
+| Compiled WHY (MCV family) | Morphology context only on this panel | `root_cause_v1.findings[].why_role` | `…::inv_mcv_high_macrocytosis` | COMPILED_ACTIVE | `mcv_high_anchor_pattern_v1` | No duplicate causal WHY | Anchor `morphology_context`; both specific frames suppressed (GGT/ALT and hematinics in range) | **PASS** |
+| Layer C boundary | Driver, colour, confidence, order all backend-supplied | `meta.insight_graph.primary_driver_v1` etc. | n/a | Layer B ranking policy | n/a | No FE medical decision | 12/12 inventory leaks closed | **PASS** |
+
+Rows that already passed (compiled B-vitamin WHY, provenance-blocked packages, rejected-frame
+WHY silence) were re-verified unchanged.
+
+### Anthony's original questions — re-answered after correction
+
+1. Rejected/legacy wording no longer leaks into API, rankings, interventions or clinician text.
+2. Cause without support: the MCV alcohol/hepatic differential no longer serves as causal WHY
+   while GGT and ALT are in range.
+3. Duplicate/contradictory explanations: MCV siblings can no longer co-emit causal WHY.
+4. Layer C no longer alters a Layer B medical decision.
+
+### Outstanding UAT obligation
+
+This re-test is deterministic-replay plus component-render evidence. A **fresh human UAT of the
+live page** for this analysis is still required before any programme PASS, and no controlled-beta
+readiness claim is made here.
