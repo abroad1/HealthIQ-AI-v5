@@ -1,93 +1,103 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-GATE2_5",
+  "work_id": "ARCH-CONV-PKG3",
   "status": "HARDENED",
   "hardening_date": "2026-07-26",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "risk_level": "STANDARD",
-  "change_type": "CONTENT",
+  "risk_level": "HIGH",
+  "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
   "stage_b_mode": "MODE_2",
-  "runtime_change": "NONE",
+  "runtime_change": "YES",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "STANDARD/CONTENT governance gate, no runtime scope, bounded to a 5-signal/10-frame cohort already deeply characterised across Gate 0/PKG1/PKG2 audits this session. No genuinely large disjoint research volume warranting a fork."
+    "rationale": "HIGH/MIXED, but the subsystems (compiled_hypothesis.py, root_cause_registry_v1.py, legacy YAML estate, medical_frame_identity_index_v1.yaml, the Gate 2.5 governance chain) were already deeply verified across the Gate 0/PKG1/PKG2/GATE2_5 audits this session. The one new thing requiring fresh verification (whether Gate 2.5's conditions were actually closed by a real human, not merely asserted) was resolved by direct git history inspection, not requiring a fork."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type", "stage_b_mode", "runtime_change"],
-    "declared_risk_level": "STANDARD",
-    "declared_change_type": "CONTENT",
-    "behaviour_changes_touch_intelligence_core": "NO — runtime_change: NONE, pure governance/readiness gate",
-    "tests_required": "NOT APPLICABLE",
-    "scope_proportionality": "PASS — bounded to Gate 0's 5-signal/10-frame pilot cohort, explicit 'do not invent availability, commitment, or dates'",
+    "declared_risk_level": "HIGH",
+    "declared_change_type": "MIXED",
+    "behaviour_changes_touch_intelligence_core": "YES — compiled hypothesis authority, root-cause registry, report compilation; correctly classified HIGH",
+    "tests_required": "YES — 16 minimum proof items plus 12 existing-suite categories",
+    "scope_proportionality": "PASS with one structural caveat (see below) — bounded to the ratified 5-signal/10-frame pilot, 10 STOP conditions, 12-item forbidden-scope list, explicit anti-split discipline",
     "advisory_duplication_detected": "NO",
-    "scope_creep_signals": "NONE",
+    "scope_creep_signals": "NONE beyond the pilot's own already-approved boundary",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
     "required_input_docs": {
-      "status": "CONFIRMED_EXISTS — all 8 (ADR-RT-003 glob resolved to ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md)",
-      "evidence": "Planning paper; WHY_MIGRATION_PILOT_COHORT.md; CONTROLLED_BETA_ARCHITECTURE_COHORT.md; CONVERGENCE_VIABILITY_ASSESSMENT.md; ARCH-CONV-PKG2_launch_critical_provenance_decision_inventory.md; ARCH-CONV-PKG2_implementation_and_verification_report.md; ADR-RT-003; ADR-RT-IDENTITY-PROV-001 — all confirmed present."
+      "status": "CONFIRMED_EXISTS — all 11 (globs resolved)",
+      "evidence": "Planning paper; WHY_MIGRATION_PILOT_COHORT.md; WHY_PILOT_MEDICAL_REVIEW_READINESS.md; WHY_PILOT_MEDICAL_REVIEW_DECISION_TEMPLATE.md; CONTROLLED_BETA_ARCHITECTURE_COHORT.md; CONVERGENCE_VIABILITY_ASSESSMENT.md; ARCH-CONV-PKG2_launch_critical_provenance_decision_inventory.md; ARCH-CONV-PKG2_implementation_and_verification_report.md; ARCH-CONV-GATE2_5_implementation_and_verification_report.md; ADR-RT-003; ADR-RT-IDENTITY-PROV-001 — all confirmed present."
     },
     "output_paths_correctly_new": {
       "status": "CONFIRMED",
-      "evidence": "None of the 3 required GATE2_5 deliverable paths exist yet."
-    },
-    "medical_research_folder_convention_mismatch": {
-      "status": "FLAGGED — not blocking, but the prompt's assumed path is wrong",
-      "evidence": "The prompt targets docs/medical-research/HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_DECISION_TEMPLATE.md and itself says 'resolve the medical-research folder path according to repository convention' — good, it anticipated the ambiguity. The actual repository convention is docs/Medical Research Documents/ (title case, spaces), confirmed to contain 6 existing files including the precedent BATCH2-MEDREVIEW-1-adjacent context pack. Cursor should place the new decision-template file there, not create a new docs/medical-research/ directory."
+      "evidence": "None of the 6 required PKG3 deliverable paths exist yet."
     },
     "branch_state": {
       "status": "CONFIRMED, expected pre-kernel-start state",
-      "evidence": "Current branch is main (HEAD efd82d6, merge of 'ARCH-CONV-PKG2 launch-critical provenance reachability closure' — confirms PKG2 was human-ratified and merged). Target branch feature/arch-conv-gate2-5-medical-review-readiness does not yet exist. Working tree shows only the expected latest_cursor_prompt.md Stage-1 handoff modification."
+      "evidence": "Current branch is main (HEAD includes 1da6cd5, merge of 'ARCH-CONV-GATE2_5 WHY pilot medical-review readiness (CONDITIONAL_GO, conditions 1-4 closed)'). Target branch feature/arch-conv-pkg3-why-authority-migration does not yet exist. Working tree shows only the expected latest_cursor_prompt.md Stage-1 handoff modification."
     }
   },
 
   "independent_premise_verification": {
-    "operating_model_role_is_novel_not_precedented": {
-      "status": "MATERIAL FINDING — requires explicit human ratification as its own decision, not just the WHY cohort",
-      "evidence": "Repo-wide search for 'Head of Medical Research' returns zero hits anywhere in the codebase, governance docs, AGENTS.md, or CLAUDE.md. The multi-agent governance model in CLAUDE.md §5 names GPT's role as 'architecture and intelligence governance' only — it does not currently include medical-evidence review or APPROVE/REVISE/REJECT authority over clinical hypothesis content. This prompt's 'Operating model' section proposes this role for the first time."
+    "ratified_governance_model_is_genuinely_recorded_not_asserted": {
+      "status": "CONFIRMED — the concern flagged at GATE2_5 hardening was properly resolved before this prompt was written",
+      "evidence": "Commit 4e6c70b ('docs(ARCH-CONV-GATE2_5): record human ratification of dual-gate ownership'), authored directly by Anthony Broad (matching the repository's actual git user, not Cursor or GPT self-attribution), updates HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_READINESS.md §2.0/§7.2 to close conditions 1-4: dual-gate model approved, GPT named as Gate 1 (medical review) owner, Anthony named as Gate 2 (production ratification) owner, capacity confirmed for the bounded 5-signal/10-frame pilot. This is exactly the 'recorded in a governed artefact' outcome the GATE2_5 hardening pass required — PKG3's 'Ratified governance model' section accurately reflects this, not an invented or premature claim."
     },
-    "existing_precedent_is_narrower_than_the_proposed_model": {
-      "status": "MATERIAL FINDING",
-      "evidence": "The closest existing precedent, BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md, explicitly self-labels as 'PASS (governance medical review only)' — a coherence/context-completeness check performed under standard Automation Bus work-package execution, explicitly NOT a clinical sign-off, and its own result was 'zero frames cleared for immediate promotion,' deferring to a separately-named, higher-authority 'clinical sign-off' step (CF-BATCH2-010) before any promotion. That precedent keeps governance-agent review and genuine clinical sign-off as two distinct, separately-gated steps. This prompt's 'operating model' compresses that into: GPT conducts the substantive medical evidence review and records APPROVE/REVISE/REJECT decisions on hypothesis content itself, then a human only 'ratifies' — i.e. the human's role is reduced from an independent clinical reviewer to a ratifier of GPT's prior decision. This is a materially different, higher-stakes claim than the existing precedent supports, and it has not been ratified anywhere in the governance stack prior to this prompt."
+    "condition_5_evidence_hygiene_correctly_deferred_to_this_package": {
+      "status": "CONFIRMED consistent",
+      "evidence": "The same ratification commit explicitly marks condition 5 (standalone inv YAML extraction) as 'DECISION CLOSED / WORK OUTSTANDING' and the TPO index entry as a 'pre-review prerequisite... WORK OUTSTANDING' — both correctly folded into this package's Internal Phase 1, matching GATE2_5's own framing that this was 'recommended before Package 3B, not a Package 3 redesign.'"
+    },
+    "material_structural_finding_STOP_Gate_C_vs_single_kernel_execution": {
+      "status": "MATERIAL FINDING — requires explicit interpretation before implementation begins",
+      "evidence": "This package mandates a genuine external pause: 'Mandatory Human STOP Gate C... STOP implementation and provide the pack for: 1. GPT medical review; 2. Anthony's explicit frame-level ratification. Do not continue automatically.' But every package hardened/audited this session (Gate 0, PKG1, PKG2, GATE2_5) completed autonomously within one continuous kernel start/finish cycle, with human review happening only AFTER kernel finish at the merge-decision stage — and the actual precedent for how a human/GPT decision gets incorporated (the 4e6c70b commit above) shows it happening as a SEPARATE, later commit authored directly by Anthony, after the prior package's kernel had already finished. There is no evidence in this repository's tooling of a kernel run pausing mid-execution for out-of-band human/GPT input and then resuming within the same run. The only safe, precedent-consistent interpretation is: Phases 1-3 (evidence/identity inventory, architecture design, consolidated review pack) complete and the kernel finishes at Gate C — Phase 4 onward (implementation, retirement, verification) must be a later, separate execution of the same work_id, triggered only once GPT review + Anthony ratification are actually recorded in a governed artefact (mirroring exactly how the Gate 2.5 conditions were closed). This is NOT the kind of 'split into separate sprints' the prompt forbids (new architecture/evidence/medical-content/retirement work) — it is the literal mechanical requirement of a genuine human-in-the-loop halt that this session's tooling has never needed before now."
+    },
+    "core_technical_premises_reconfirmed_unchanged": {
+      "status": "CONFIRMED",
+      "evidence": "Legacy hypothesis YAML count still 40 (direct recount); root_cause_registry_v1.ROOT_CAUSE_TARGET_SPECS still 41 (direct Python import); compiled_hypothesis.RUNTIME_PROMOTED_COMPILED_SIGNAL_IDS still the 1-element frozenset({'signal_vitamin_d_low'}) (direct Python import) — all unchanged since PKG2/GATE2_5, confirming the 'required authority states' model (LEGACY_ACTIVE...LEGACY_RETIRED etc.) is being designed against the actual current state, not a stale assumption."
+    },
+    "tpo_index_gap_reconfirmed": {
+      "status": "CONFIRMED",
+      "evidence": "knowledge_bus/governance/medical_frame_identity_index_v1.yaml:1397-1421 shows exactly one frame entry under signal_tpo_ab_high (autoimmune_hypothyroid_pattern, kb59); euthyroid_autoimmune_risk is absent — exactly matching the prompt's Phase 1 item 3 requirement to add it."
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "This gate's own execution should not silently adopt the 'GPT Head of Medical Research' operating model as already-authorised background fact. Recommend the readiness document explicitly ask the human ratifier to confirm which of two distinct models is intended: (a) GPT/governance-agent performs a BATCH2-MEDREVIEW-1-style coherence/completeness review, with a separately-named clinical reviewer performing genuine medical sign-off before any compiled-hypothesis promotion (matches existing precedent); or (b) GPT's structured review IS the substantive medical evidence review, with the human only ratifying that a governed process was followed (a new, unprecedented role expansion). The Gate 2.5 decision (GO/CONDITIONAL_GO/STOP/V6) should not be issued as if this question is already settled — if it can't be resolved from existing authority, it is itself grounds for CONDITIONAL_GO ('human must first ratify the review-operating-model, separately from ratifying the WHY pilot cohort') rather than a silent assumption baked into the GO decision.",
-    "Target the actual folder convention docs/Medical Research Documents/ (title case, spaces) for the decision-template deliverable, not a new docs/medical-research/ directory — the prompt already anticipated needing to resolve this; this confirms the correct resolution.",
-    "STOP conditions 5 ('decision authority is unclear') and 6 ('human ratification ownership is absent') are the natural homes for the operating-model ambiguity above if Cursor's own investigation cannot locate a prior authorisation for the GPT-Head-of-Medical-Research role — recommend treating that ambiguity as satisfying STOP condition 5 rather than resolving it by assumption."
+    "Treat STOP Gate C as ending this kernel execution, not as an in-run pause. Deliver Phases 1-3's outputs (evidence/identity inventory, compiled-authority design, consolidated review pack) and stop there for this work-package run. Do not attempt Phase 4-6 (implementation, retirement, verification, validation gate) in the same execution — there is no mechanism in this project's tooling for a running kernel session to wait on out-of-band GPT+Anthony input and then resume, and the only observed precedent (the Gate 2.5 ratification) happened via a separate later commit after the prior kernel had already finished.",
+    "When Phase 4 onward eventually resumes (as a later, separate execution of this same work_id, after GPT review + Anthony ratification appear as a governed artefact update), that resumption should independently re-verify frame-by-frame that no batch-level or inherited ratification occurred — the prompt is explicit that 'no frame may be promoted because another frame in the same signal family was approved' and 'no blank, implied, batch-level or inherited ratification is permitted,' so the eventual continuation's own verification should check the ratification record's granularity before treating any frame as cleared.",
+    "The consolidated review pack (Phase 3 deliverable) should be built to make it maximally easy for GPT and Anthony to distinguish per-frame decisions even though it's one consolidated document per the ratified artefact-form decision — recommend one clearly delimited section per activation_key (10 sections) rather than a table that could make it easy to accidentally batch-approve a family."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 6,
+    "checklist_count": 7,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "All 8 required input docs exist", "source": "Glob per path", "evidence": "All 8 confirmed present, including glob-resolved ADR-RT-003", "status": "CONFIRMED"},
-      {"id": 2, "claim": "All 3 required output paths are correctly new", "source": "Glob per path", "evidence": "None of the 3 deliverables exist yet", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Branch state expected; PKG2 merged", "source": "git log; git branch --list; git status --short", "evidence": "HEAD efd82d6 is the PKG2 merge commit; target branch not yet created; only latest_cursor_prompt.md modified", "status": "CONFIRMED"},
-      {"id": 4, "claim": "'GPT Head of Medical Research' role does not exist anywhere in current governance authority", "source": "Repo-wide grep, case-insensitive", "evidence": "Zero hits in docs/, AGENTS.md, CLAUDE.md; CLAUDE.md §5 names GPT's role as architecture/intelligence governance only", "status": "CONFIRMED"},
-      {"id": 5, "claim": "The nearest precedent (BATCH2-MEDREVIEW-1) treats governance review and clinical sign-off as two distinct, separately-gated steps, not one compressed model", "source": "Direct read of BATCH2-MEDREVIEW-1_androgen_panel_medical_review.md", "evidence": "Self-labelled 'governance medical review only'; zero frames cleared for promotion; defers to separate CF-BATCH2-010 clinical sign-off", "status": "CONFIRMED"},
-      {"id": 6, "claim": "Actual medical-research documentation folder convention is 'docs/Medical Research Documents/', not 'docs/medical-research/'", "source": "Glob", "evidence": "6 existing files found under the title-case/spaced path; zero under the prompt's assumed lowercase-hyphenated path", "status": "CONFIRMED"}
+      {"id": 1, "claim": "All 11 required input docs (including globs) exist", "source": "Glob per path, prior-session confirmation", "evidence": "All confirmed present", "status": "CONFIRMED"},
+      {"id": 2, "claim": "All 6 required output paths are correctly new", "source": "Glob per path", "evidence": "None of the 6 deliverables exist yet", "status": "CONFIRMED"},
+      {"id": 3, "claim": "Branch state expected; GATE2_5 (with ratification) merged", "source": "git log; git branch --list; git status --short", "evidence": "HEAD includes 1da6cd5, the GATE2_5 merge explicitly noting 'conditions 1-4 closed'; target branch not yet created; only latest_cursor_prompt.md modified", "status": "CONFIRMED"},
+      {"id": 4, "claim": "The Gate 2.5 ratification this prompt relies on was recorded by the actual human (Anthony), not asserted by an agent", "source": "git show 4e6c70b", "evidence": "Commit authored by Anthony Broad directly, closing conditions 1-4 with dual-gate model, GPT/Anthony role assignment, and confirmed capacity", "status": "CONFIRMED"},
+      {"id": 5, "claim": "Legacy YAML (40), registry targets (41), compiled pilot (1, signal_vitamin_d_low only) unchanged since PKG2/GATE2_5", "source": "Direct recount and Python import", "evidence": "Exact match to prior session's figures", "status": "CONFIRMED"},
+      {"id": 6, "claim": "inv_tpo_ab_high_euthyroid_autoimmune_risk is genuinely missing from medical_frame_identity_index_v1.yaml", "source": "Direct grep/read of the index file", "evidence": "Only autoimmune_hypothyroid_pattern frame present under signal_tpo_ab_high", "status": "CONFIRMED"},
+      {"id": 7, "claim": "No existing tooling in this session's precedent supports an in-run pause for external human/GPT review; the observed pattern is kernel-finish-then-separate-later-commit", "source": "Review of Gate 0/PKG1/PKG2/GATE2_5 kernel execution patterns and the 4e6c70b commit timing", "evidence": "Every prior package's human/GPT input arrived after kernel finish, in a separate commit", "status": "CONFIRMED — informs the material finding above, not a pass/fail check on this prompt itself"}
     ]
   },
 
   "rejection_conditions": [
-    "Any runtime, schema, signal-package, hypothesis, prose, or test file change — REJECT_AND_RETURN",
-    "Any medical asset approved or promoted within this gate — REJECT_AND_RETURN",
-    "Silent adoption of the 'GPT Head of Medical Research' operating model as already-ratified without flagging it as a novel, separately-decidable policy question — REJECT_AND_RETURN or treat as STOP condition 5",
-    "Any invented reviewer availability, capacity, or date not evidenced in required inputs — REJECT_AND_RETURN",
-    "Any silent addition or removal of a pilot frame from the Gate 0 5-signal/10-frame cohort — REJECT_AND_RETURN",
-    "Any beta-readiness or architecture-completion declaration — REJECT_AND_RETURN",
-    "A GO issued without evidencing all six GO preconditions, including a credible, named, non-self-referential human ratifier distinct from the reviewing agent — REJECT_AND_RETURN"
+    "Any implementation of Phase 4 onward within the same execution as Phases 1-3, without a real, recorded GPT review + Anthony ratification artefact existing first — REJECT_AND_RETURN",
+    "Any frame promoted via batch-level, implied, or inherited ratification rather than an explicit per-frame decision — REJECT_AND_RETURN",
+    "Any invented medical content, source_spec_id, or reviewer decision — REJECT_AND_RETURN",
+    "Any expansion beyond the 10 ratified pilot frames — REJECT_AND_RETURN",
+    "Any simultaneous compiled+legacy authority for the same activation_key at any point, even transiently without a fail-closed guard — REJECT_AND_RETURN",
+    "Any WHY estate migration beyond the 10-frame pilot, PSI wiring, Gemini enablement, signal-threshold change, or general prose expansion — REJECT_AND_RETURN",
+    "Any weakening of human-ratification requirements or replacement of frame-level with family-level approval — REJECT_AND_RETURN",
+    "A GO/CORRECT/STOP/V6 recommendation issued without full Gate A/B/C evidence — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 8 required input documents and all 3 required output paths confirmed; branch state confirmed expected pre-kernel-start with PKG2's GO outcome confirmed merged. One material, non-blocking finding surfaced: the prompt's 'GPT Head of Medical Research' operating model is proposed here for the first time — it exists nowhere in current governance authority (CLAUDE.md names GPT's role as architecture/intelligence governance only), and the nearest precedent (BATCH2-MEDREVIEW-1) keeps governance-agent review and genuine clinical sign-off as two distinct, separately-gated steps rather than the compressed 'GPT reviews, human ratifies' model this prompt proposes. Cursor's execution should surface this explicitly as a separately-decidable policy question for the human ratifier rather than silently treating it as already-authorised background fact — recommend routing it through STOP condition 5 ('decision authority is unclear') if it cannot independently locate prior authorisation. A minor path-convention correction was also identified (docs/Medical Research Documents/, not docs/medical-research/). No blocking defect found. Recommend proceeding to kernel start."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 11 required input documents (including globs) and all 6 required output paths confirmed. Branch state confirmed expected pre-kernel-start, with the Gate 2.5 merge explicitly closing conditions 1-4. Critically, independently verified that the governance-model ratification this package's front matter relies on ('GPT = Head of Medical Research, Anthony = ratifier') was genuinely recorded by the real human (commit 4e6c70b, authored by Anthony Broad directly) — not invented or asserted by an agent — fully resolving the concern raised during GATE2_5 hardening. One material structural finding requires explicit handling: the mandatory human STOP Gate C cannot mechanically occur mid-execution within a single autonomous kernel run given this project's observed tooling pattern (every prior human/GPT decision in this programme arrived as a separate commit after kernel finish, not an in-run pause). Cursor's execution should treat Gate C as ending this kernel run after Phases 1-3 deliver their outputs, with Phase 4 onward requiring a distinct, later execution once the review/ratification artefact actually exists — this is a mechanical necessity, not the kind of scope-splitting the prompt otherwise forbids. All core technical premises (legacy YAML count, registry target count, compiled-pilot cardinality, the missing TPO index entry) were independently reconfirmed unchanged and accurate. No blocking defect found. Recommend proceeding to kernel start, with the Gate-C-as-kernel-boundary interpretation flagged for Cursor's attention."
 }
