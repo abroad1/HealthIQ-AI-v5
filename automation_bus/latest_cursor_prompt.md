@@ -1,27 +1,22 @@
 ---
-work_id: ARCH-CONV-PKG2
-branch: feature/arch-conv-pkg2-provenance-reachability
-risk_level: HIGH
+work_id: ARCH-CONV-GATE2_5
+branch: feature/arch-conv-gate2-5-medical-review-readiness
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 stage_b_mode: MODE_2
-runtime_change: YES
+runtime_change: NONE
 ---
 
-# ARCH-CONV-PKG2 — Launch-Critical Provenance and Runtime-Reachability Closure
+# ARCH-CONV-GATE2.5 — WHY Pilot Medical Review Ownership and Capacity Confirmation
 
 ## Outcome
 
-Align launch-critical provenance status with actual runtime behaviour.
+Confirm that the bounded WHY migration pilot has a named medical-review owner, a complete evidence pack, a governed decision format, and sufficient review capacity before Package 3A/3B begins.
 
-Every package in the controlled-beta architecture cohort must either:
+This is a governance and readiness gate.
 
-1. have explicit, defensible research lineage and remain runtime-reachable; or
-2. be non-claimable and non-reachable by explicit governed decision.
-
-This package closes the current mismatch where provenance-blocked packages can still load, fire, rank and appear in user-facing output.
-
-Do not change WHY authority, prose assets, PSI, Gemini, signal thresholds, signal firing logic, medical hypotheses or frontend medical-selection behaviour.
+Do not change runtime code, schemas, signal packages, hypotheses, prose, tests, loaders or production behaviour.
 
 Standard Automation Bus and Knowledge Bus governance apply.
 
@@ -31,336 +26,255 @@ Read only:
 
 ```text
 docs/planning-papers/HEALTHIQ_AI_V5_FINAL_ARCHITECTURE_CONVERGENCE_AND_SALVAGE_OR_REBUILD_PLAN.md
+docs/architecture/HEALTHIQ_AI_V5_WHY_MIGRATION_PILOT_COHORT.md
 docs/architecture/HEALTHIQ_AI_V5_CONTROLLED_BETA_ARCHITECTURE_COHORT.md
 docs/architecture/HEALTHIQ_AI_V5_CONVERGENCE_VIABILITY_ASSESSMENT.md
-docs/architecture/HEALTHIQ_AI_OPEN_ARCHITECTURE_OBLIGATIONS_CC.md
-docs/architecture/HEALTHIQ_AI_ARCHITECTURE_RECONCILIATION_VARIANCE_CC_VS_CURSOR.md
-docs/architecture/ADR-RT-004*
+docs/architecture/ARCH-CONV-PKG2_launch_critical_provenance_decision_inventory.md
+docs/audit-papers/ARCH-CONV-PKG2_implementation_and_verification_report.md
+docs/architecture/ADR-RT-003*
 docs/architecture/ADR-RT-IDENTITY-PROV-001_activation_frame_and_provenance_integrity.md
-docs/architecture/ARCH-RT-IDENTITY-PROV-1_launch_critical_provenance_inventory.md
-docs/audit-papers/ARCH-CONV-PKG1_implementation_and_verification_report.md
 ```
 
 Resolve actual repository paths where names differ.
 
-Inspect current production code and tests for:
+Also inspect the current source research, investigation specifications, legacy WHY YAML, compiled hypothesis pilot, report outputs and tests for the exact pilot cohort.
+
+## Gate questions
+
+### 1. Exact pilot cohort
+
+Confirm the exact five-signal / ten-frame pilot cohort from Gate 0.
+
+For each frame record:
 
 ```text
-signal registry package discovery and loading
-package-manifest parsing
-provenance classification
-signal evaluation
-top-finding ranking
-report compilation
-replay / audit manifests
-launch-critical provenance gates
-golden and representative outputs
-```
-
-## Controlled-beta cohort
-
-Use the exact cohort and dispositions from Gate 0.
-
-Do not expand this package to all package generations or all 191 manifests.
-
-At minimum assess all launch-critical `pkg_kb47_*` packages identified by Gate 0 and the provenance inventory.
-
-## Phase 1 — Cohort decision and impact analysis
-
-Before changing runtime behaviour, produce a package-level decision table.
-
-For every launch-critical provenance-blocked or inferred-only package, record:
-
-```text
-package_id
 signal_id
 activation_key
-current provenance status
-current beta eligibility
-source research location
-explicit source_spec_id available
-lineage recoverable
-currently loadable
-currently capable of firing
-currently capable of ranking
-appears in golden or representative outputs
-product impact if made non-reachable
-medical impact if made non-reachable
-recommended disposition
-human approval required
+source_spec_id
+current WHY authority
+legacy YAML asset
+compiled hypothesis status
+consumer output surface
+clinician output surface
+medical review type required
 ```
 
-Allowed dispositions:
+Do not silently add or remove frames.
 
-```text
-ATTACH_EXPLICIT_LINEAGE
-KEEP_REACHABLE_AFTER_LINEAGE
-MAKE_NON_REACHABLE
-EXCLUDE_FROM_BETA_COHORT
-DEFER_PENDING_RESEARCH
-STOP_FOR_HUMAN_DECISION
-```
-
-Create:
-
-```text
-docs/architecture/ARCH-CONV-PKG2_launch_critical_provenance_decision_inventory.md
-```
-
-## STOP Gate 1 — Before implementation
-
-STOP and escalate if:
-
-- a package is currently relied upon in Wave 1 or representative outputs and suppression lacks product/medical approval;
-- `source_spec_id` would need to be invented;
-- batch research cannot be mapped to a defensible activation frame;
-- a package contains multiple possible source frames and no approved selection exists;
-- package eligibility and runtime reachability cannot be separated safely;
-- scope expands into estate-wide regeneration;
-- Package 3 WHY decisions become a prerequisite;
-- the approved controlled-beta cohort must materially change.
-
-Do not silently choose suppression over lineage recovery.
-
-## Required implementation
-
-### 1. Explicit lineage attachment
-
-For packages approved to remain in the controlled-beta cohort:
-
-- attach a genuine `source_spec_id`;
-- preserve `activation_key`;
-- record source hashes and compile identity where the existing contract supports them;
-- update package manifests through the governed schema;
-- do not infer explicit lineage from directory names or descriptive text;
-- do not alter the medical meaning of the signal.
-
-Where extraction from approved batch research is required:
-
-- preserve exact frame identity;
-- create or attach a governed investigation specification;
-- STOP if extraction introduces new medical interpretation.
-
-### 2. Runtime reachability policy
-
-Implement one canonical runtime-eligibility decision used by package discovery/loading.
-
-The policy must distinguish:
-
-```text
-production reachable
-test-only
-candidate
-blocked for explicit claim
-excluded from controlled beta
-non-reachable
-```
-
-Requirements:
-
-- launch-critical packages without acceptable explicit lineage must not load into the controlled-beta runtime path;
-- test and validation modes may load excluded fixtures only through explicit opt-in;
-- policy must fail closed for unknown or contradictory status;
-- package discovery must not rely on directory globbing alone;
-- runtime behaviour must agree with provenance inventory and validation gates;
-- no silent fallback to legacy/inferred eligibility.
-
-Do not delete package assets merely to achieve non-reachability.
-
-### 3. Signal evaluation and ranking
-
-Prove that a non-reachable package:
-
-- does not enter `SignalRegistry`;
-- cannot fire;
-- cannot be scored;
-- cannot rank as a top finding;
-- cannot appear in narrative, clinician or consumer reports;
-- cannot appear in replay as an active result.
-
-Its exclusion decision must remain auditable.
-
-### 4. Report and replay honesty
-
-For reachable launch-critical results:
-
-- carry explicit provenance;
-- preserve activation identity;
-- expose the governed authority status;
-- preserve deterministic replay.
-
-For excluded packages:
-
-- record exclusion in the appropriate architecture or launch-estate inventory;
-- do not create phantom result rows.
-
-### 5. Golden and representative-output review
-
-Before making any package non-reachable:
-
-- run the relevant golden and representative panels;
-- identify changed outputs;
-- classify each change as intended, unintended or unresolved;
-- obtain explicit human approval for intended removal of user-visible findings;
-- STOP on unexplained clinical or product regression.
-
-Create:
-
-```text
-docs/architecture/ARCH-CONV-PKG2_runtime_suppression_impact_report.md
-```
-
-## Shared implementation rules
-
-- Reuse the existing provenance status model.
-- Prefer one canonical loader eligibility function.
-- Do not create separate eligibility logic in registry, evaluator and report compiler.
-- Unknown status must fail closed.
-- Preserve test-only access through explicit test flags only.
-- Do not change signal thresholds or medical firing conditions.
-- Do not suppress a package because it is inconvenient to migrate.
-- Do not attach lineage without a source artefact.
-- Keep all changes bounded to the Gate 0 controlled-beta cohort plus shared loader/gate infrastructure.
-
-## Tests
-
-At minimum prove:
-
-1. every included launch-critical package has explicit lineage;
-2. a blocked launch-critical package cannot enter the production registry;
-3. a blocked package cannot fire or rank;
-4. a blocked package cannot appear in consumer or clinician output;
-5. test-only opt-in can still load designated fixtures;
-6. unknown or contradictory status fails closed;
-7. valid explicitly sourced packages remain reachable;
-8. activation keys survive lineage attachment;
-9. replay preserves explicit provenance for reachable results;
-10. exclusion decisions are auditable;
-11. golden-output changes match the approved impact report;
-12. no unrelated package generation is affected;
-13. repeated runs are deterministic;
-14. architecture and provenance gates fail on deliberately invalid fixtures.
-
-Run relevant existing:
-
-- signal-registry tests;
-- provenance status tests;
-- package-manifest schema tests;
-- signal-evaluator tests;
-- report compiler tests;
-- narrative and clinician-report tests;
-- replay/auditability tests;
-- golden panels;
-- launch-estate validation;
-- architecture validation gate;
-- NO-LLM tests;
-- Package 1 identity tests.
-
-## Validation gate
-
-Extend or add one executable launch-critical provenance/reachability gate.
-
-It must detect:
-
-- reachable launch-critical package without explicit lineage;
-- beta-ineligible package loaded into the production registry;
-- contradictory manifest and inventory status;
-- unknown eligibility status;
-- inferred lineage represented as explicit;
-- excluded package appearing in user-facing output;
-- activation-key/source-spec mismatch.
-
-The gate must exercise real loading behaviour, not only source-text inspection.
-
-## Forbidden scope
-
-Do not:
-
-- migrate or edit WHY assets;
-- change root-cause hypotheses;
-- create or promote prose;
-- wire PSI;
-- enable Gemini;
-- change medical thresholds;
-- change signal firing conditions;
-- redesign the frontend;
-- perform estate-wide package regeneration;
-- remove package directories as a substitute for governed exclusion;
-- declare architecture convergence or beta readiness.
-
-## Deliverables
-
-Create:
-
-```text
-docs/architecture/ARCH-CONV-PKG2_launch_critical_provenance_decision_inventory.md
-docs/architecture/ARCH-CONV-PKG2_runtime_suppression_impact_report.md
-docs/audit-papers/ARCH-CONV-PKG2_implementation_and_verification_report.md
-```
-
-Update:
-
-```text
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
-```
+### 2. Medical-review ownership
 
 Record:
 
-- exact packages given explicit lineage;
-- exact packages made non-reachable;
-- human approvals obtained;
-- golden-output changes;
-- unresolved packages;
-- no beta-readiness claim.
+```text
+primary medical-review owner
+review role
+decision authority
+human ratification authority
+engineering implementation owner
+independent audit owner
+```
 
-## Acceptance criteria
+Operating model:
 
-- [ ] Gate 0 launch-critical cohort was used without silent expansion.
-- [ ] Every affected package has a documented disposition.
-- [ ] STOP Gate 1 passed or escalated.
-- [ ] Every reachable launch-critical package has explicit lineage.
-- [ ] Every launch-critical package without acceptable lineage is non-reachable.
-- [ ] No blocked or beta-ineligible package can fire or rank.
-- [ ] Runtime loading and provenance classification use one canonical policy.
-- [ ] No user-visible finding was removed without impact review and approval.
-- [ ] Golden and representative-output changes are documented.
-- [ ] Replay and report provenance remain deterministic and explicit.
-- [ ] Package 1 frame-identity behaviour remains intact.
-- [ ] Relevant tests and validation gates pass.
-- [ ] No WHY, prose, PSI, Gemini or threshold scope entered.
-- [ ] No architecture-completion or beta-readiness claim was made.
+```text
+GPT Head of Medical Research
+→ conducts structured medical evidence review
+→ records APPROVE / REVISE / REJECT decisions
+→ human project authority explicitly ratifies production promotion
+→ engineering implements only ratified assets
+→ independent audit verifies runtime authority and evidence fidelity
+```
 
-## STOP conditions
+Do not treat GPT review alone as production authorisation.
 
-STOP if:
+### 3. Evidence-pack completeness
 
-1. a relied-upon Wave 1 finding would be removed without explicit approval;
-2. canonical lineage cannot be recovered without invention;
-3. package scope grows by more than 25% without human reauthorisation;
-4. more than one unplanned mandatory follow-on package is identified;
-5. the controlled-beta cohort cannot be isolated from the wider estate;
-6. provenance policy requires changing medical signal logic;
-7. unresolved output regressions remain;
-8. required gates fail for an unexplained reason;
-9. completion requires Package 3 medical-content decisions.
+For each pilot frame confirm availability of:
 
-## Gate 2 output
+- canonical investigation specification;
+- original source research;
+- current legacy WHY YAML;
+- current runtime output examples;
+- activation-frame definition;
+- existing medical-review decisions;
+- known limitations and safety constraints;
+- relevant tests and fixtures;
+- provenance identity.
 
-At completion, recommend exactly one:
+Mark each item:
+
+```text
+AVAILABLE
+MISSING
+STALE
+CONFLICTING
+NOT_APPLICABLE
+```
+
+### 4. Review workload
+
+For each pilot frame classify the required work:
+
+```text
+RETIREMENT_CONFIRMATION_ONLY
+LIGHT_REVIEW
+FULL_NEW_MEDICAL_REVIEW
+RESEARCH_GAP
+BLOCKED
+```
+
+Report totals for:
+
+- frames requiring full review;
+- frames requiring only retirement confirmation;
+- frames requiring new research;
+- unresolved frames.
+
+### 5. Review decision standard
+
+Create one reusable decision template containing:
+
+```text
+frame identity
+medical interpretation
+evidence summary
+causal limits
+consumer wording boundary
+clinician wording boundary
+approved hypotheses
+rejected hypotheses
+uncertainty
+confirmatory-test context
+modifier compatibility
+legacy-parity assessment
+production disposition
+reviewer
+review date
+human ratification
+```
+
+Allowed frame decisions:
+
+```text
+APPROVE_FOR_COMPILED_PROMOTION
+APPROVE_WITH_REVISIONS
+REJECT
+DEFER_PENDING_RESEARCH
+RETIREMENT_CONFIRMATION_ONLY
+```
+
+### 6. Capacity and programme viability
+
+Confirm whether the pilot can be reviewed within the ratified convergence programme ceilings.
+
+Record:
+
+```text
+review owner confirmed
+human ratifier confirmed
+review inputs complete
+estimated review units
+blocking research gaps
+programme-window fit
+capacity conclusion
+```
+
+Allowed capacity conclusions:
+
+```text
+READY
+READY_WITH_CONDITIONS
+NOT_READY
+```
+
+Do not invent availability, commitment or dates.
+
+## Required outputs
+
+Create:
+
+```text
+docs/architecture/HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_READINESS.md
+docs/medical-research/HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_DECISION_TEMPLATE.md
+docs/audit-papers/ARCH-CONV-GATE2_5_implementation_and_verification_report.md
+```
+
+Resolve the medical-research folder path according to repository convention.
+
+## Decision
+
+Issue exactly one Gate 2.5 decision:
 
 ```text
 GO
-CORRECT
+CONDITIONAL_GO
 STOP
 V6
 ```
 
-Definitions:
+### GO
 
-- `GO`: Package 2 obligation is closed; proceed to Gate 2.5.
-- `CORRECT`: one bounded correction is required.
-- `STOP`: convergence approach requires redesign.
-- `V6`: kill criteria are met; freeze v5 architecture changes.
+Use only if:
+
+- exact cohort is confirmed;
+- medical-review owner is named;
+- human ratifier is named;
+- evidence pack is complete enough;
+- workload is bounded;
+- review capacity is credible;
+- no material research gap blocks the pilot.
+
+### CONDITIONAL_GO
+
+Use if:
+
+- architecture remains viable;
+- the pilot is bounded;
+- only specific, enumerated evidence or ownership conditions remain;
+- those conditions can be completed without changing Package 3 scope.
+
+List every condition explicitly.
+
+### STOP
+
+Use if:
+
+- ownership or capacity is unavailable;
+- evidence is materially incomplete;
+- the pilot requires redesign;
+- medical review cannot fit within programme ceilings.
+
+### V6
+
+Use only if the Gate 2.5 findings meet a ratified programme kill criterion and show that v5 convergence is no longer credible.
+
+## STOP conditions
+
+STOP and escalate if:
+
+1. the pilot cohort cannot be reconciled to Gate 0;
+2. canonical research is missing for a pilot frame;
+3. current legacy WHY cannot be identified;
+4. a frame requires new medical interpretation outside approved research;
+5. decision authority is unclear;
+6. human ratification ownership is absent;
+7. review effort exceeds programme ceilings;
+8. Package 3 architecture design must change before review can proceed;
+9. repository state is not clean at package start.
+
+## Acceptance criteria
+
+- [ ] Exact five-signal / ten-frame cohort is confirmed or discrepancy escalated.
+- [ ] Medical-review owner is named.
+- [ ] Human production-ratification authority is named.
+- [ ] Evidence-pack status is recorded for every frame.
+- [ ] Review workload is classified per frame.
+- [ ] Reusable medical-review decision template is created.
+- [ ] Capacity is assessed honestly.
+- [ ] GO / CONDITIONAL_GO / STOP / V6 decision is issued.
+- [ ] No runtime, schema, signal, hypothesis, prose or test files are changed.
+- [ ] No medical asset is approved or promoted in this gate.
+- [ ] No beta-readiness declaration is made.
 
 ## Verification report
 
@@ -368,17 +282,16 @@ Include:
 
 - baseline SHA;
 - branch;
-- files changed;
-- package-by-package decisions;
-- lineage sources attached;
-- runtime-policy before/after;
-- golden-output impact;
-- human approvals;
-- test commands and exit codes;
-- validation-gate evidence;
+- evidence read;
+- cohort table;
+- ownership decision;
+- evidence-pack completeness;
+- workload totals;
+- capacity assessment;
+- decision-template path;
 - acceptance-criteria table;
 - STOP-condition assessment;
-- Gate 2 recommendation;
+- Gate 2.5 decision;
 - unresolved limitations.
 
 Do not merge without explicit human authority.
