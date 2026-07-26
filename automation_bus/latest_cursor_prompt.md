@@ -1,511 +1,464 @@
 ---
-work_id: ARCH-CONV-FINAL-AUDIT
-branch: audit/arch-conv-final-programme
+work_id: ARCH-CONV-CORRECT-1
+branch: feature/arch-conv-correct-1-e2e-authority-layerc
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: MIXED
 stage_b_mode: MODE_2
-runtime_change: NONE
+runtime_change: YES
 ---
 
-# ARCH-CONV-FINAL-AUDIT — Final Independent v5 Convergence and End-to-End Leakage Audit
+# ARCH-CONV-CORRECT-1 — End-to-End Medical Authority and Layer C Boundary Closure
 
-## Purpose
+## Outcome
 
-Issue the final programme-level decision on the completed v5 architecture convergence series:
+Close the final programme-level defects identified by `ARCH-CONV-FINAL-AUDIT`.
+
+The correction must prove that rejected, retired, legacy, sibling-frame or frontend-derived medical logic cannot survive anywhere from Layer B activation through final Layer C presentation.
+
+This package is one outcome-based correction sprint with four internal workstreams:
+
+1. rejected-frame total inactivation;
+2. legacy “methylation capacity” wording retirement;
+3. MCV frame co-service control;
+4. Layer C medical-boundary closure.
+
+Do not split these into separate sprints unless a STOP condition proves that separation is required for safety.
+
+Standard Automation Bus and Knowledge Bus governance apply.
+
+## Authoritative audit inputs
+
+Read the current audit-branch versions of:
 
 ```text
-ARCH-CONV-PKG1 — activation-frame identity closure
-ARCH-CONV-PKG2 — provenance and runtime-reachability closure
-ARCH-CONV-PKG3 — WHY authority migration and pilot promotion
+docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md
+docs/audit-papers/ARCH-CONV-FINAL-AUDIT_implementation_and_verification_report.md
+docs/architecture/ARCH-CONV-FINAL_programme_obligation_closure_matrix.md
+docs/architecture/ARCH-CONV-FINAL_end_to_end_pipeline_and_leakage_report.md
+docs/architecture/ARCH-CONV-FINAL_layer_c_boundary_and_leakage_inventory.md
 ```
 
-The audit must determine whether the full convergence attempt has genuinely closed the Gate 0 obligations without leaving incorrect, blocked, rejected, retired, deprecated or legacy medical logic capable of reaching Layer C or the final user experience.
-
-This is an independent audit package.
-
-Do not implement substantive corrections inside this audit. Any correction must be recommended as `CORRECT`, `STOP` or `V6`.
-
-Standard Automation Bus governance applies.
-
-## Independence requirement
-
-Do not rely on implementation reports or prior PASS decisions as proof.
-
-Re-execute material tests, inspect live code and runtime behaviour, and independently verify final end-to-end outputs.
-
-Use independent review agents where useful, with disjoint scopes covering:
-
-1. Package 1 identity closure;
-2. Package 2 provenance/reachability closure;
-3. Package 3 WHY authority and medical-content fidelity;
-4. Layer B-to-Layer C end-to-end leakage;
-5. frontend boundary ownership and human UAT evidence.
-
-## Required programme inputs
-
-Read the current merged versions of:
+Also read the current merged versions of:
 
 ```text
-docs/planning-papers/HEALTHIQ_AI_V5_FINAL_ARCHITECTURE_CONVERGENCE_AND_SALVAGE_OR_REBUILD_PLAN.md
-docs/architecture/HEALTHIQ_AI_V5_CONTROLLED_BETA_ARCHITECTURE_COHORT.md
-docs/architecture/HEALTHIQ_AI_V5_CONVERGENCE_VIABILITY_ASSESSMENT.md
-docs/architecture/HEALTHIQ_AI_V5_WHY_MIGRATION_PILOT_COHORT.md
-docs/architecture/HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_READINESS.md
-
-docs/architecture/ARCH-CONV-PKG1_frame_identity_surface_design.md
-docs/audit-papers/ARCH-CONV-PKG1_implementation_and_verification_report.md
-
-docs/architecture/ARCH-CONV-PKG2_launch_critical_provenance_decision_inventory.md
-docs/architecture/ARCH-CONV-PKG2_runtime_suppression_impact_report.md
-docs/audit-papers/ARCH-CONV-PKG2_implementation_and_verification_report.md
-
-docs/architecture/ARCH-CONV-PKG3_pilot_evidence_and_identity_inventory.md
+docs/Medical Research Documents/HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_GPT_REVIEWED_ANTHONY_RATIFIED.md
 docs/architecture/ARCH-CONV-PKG3_compiled_why_authority_design.md
 docs/architecture/ARCH-CONV-PKG3_legacy_retirement_and_authority_register.md
 docs/architecture/ARCH-CONV-PKG3_output_parity_and_change_report.md
-docs/Medical Research Documents/HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_GPT_REVIEWED_ANTHONY_RATIFIED.md
 docs/audit-papers/ARCH-CONV-PKG3_implementation_and_verification_report.md
-
-docs/architecture/ADR-RT-IDENTITY-PROV-001_activation_frame_and_provenance_integrity.md
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+docs/audit-papers/ARCH-CONV-PKG2_implementation_and_verification_report.md
+docs/audit-papers/ARCH-CONV-PKG1_implementation_and_verification_report.md
+knowledge_bus/governance/compiled_why_authority_register_v1.yaml
 ```
 
 Resolve actual repository paths where names differ.
 
-Inspect current merged production code, tests, manifests, authority registers, DTOs, API responses and frontend rendering paths.
+## Authoritative live UAT case
 
-## Audit question
-
-Answer:
-
-> Does the complete HealthIQ AI pipeline prove that Layer C receives only current, provenance-valid, activation-frame-correct and medically ratified Layer B output, and that no incorrect, blocked, rejected, retired, deprecated or legacy medical logic survives into the final user experience?
-
-A final PASS is forbidden unless this is proven through code inspection, automated execution and human frontend UAT.
-
-# Workstream 1 — Package 1 identity closure
-
-Independently verify the five launch-path surfaces:
+Use the exact previously audited analysis:
 
 ```text
-interpretation_display_layer_publish_v1.py
-domain_score_assembler.py
-narrative_report_compiler_v1.py
-intervention_selector_v1.py
-signal_interaction_builder.py
+analysis_id=e34aaedf-b09f-42f0-8cc8-4653a00b4c10
 ```
 
-Confirm:
+This analysis must be rerun or replayed after correction and compared against the final-audit baseline.
 
-- distinct activation frames do not collapse accidentally;
-- intentional family-level aggregation remains explicit and auditable;
-- activation keys survive ranking, grouping, narrative selection and reporting;
-- interventions cannot be borrowed from sibling frames;
-- interaction participation is frame-auditable;
-- ambiguous identity fails safely;
-- single-frame compatibility remains intact.
+Do not write credentials into source files, commits, reports, screenshots or logs.
 
-Re-run the Package 1 pressure-set tests and validation gate.
+## Confirmed defects to close
 
-# Workstream 2 — Package 2 provenance and reachability
+The final audit found the following `ACTIVE_LEAK` defects:
 
-Independently verify:
+1. Rejected frame  
+   `signal_homocysteine_high::inv_homocysteine_high_metabolic`  
+   still fires, appears in `top_findings`, and is referenced by intervention `activation_key_refs`.
 
-- every production-reachable launch-critical package has explicit lineage;
-- blocked or beta-ineligible packages do not enter the production registry;
-- excluded packages cannot fire, rank, reach reports or appear as active replay results;
-- test-only opt-in remains explicit and closed by default;
-- unknown or contradictory eligibility fails closed;
-- non-cohort package generations are not unintentionally affected.
+2. Signal interpretation still renders:  
+   `Reflects methylation capacity and B-vitamin status.`
 
-Re-run the Package 2 tests and reachability gate.
+3. Clinician summary still surfaces legacy wording equivalent to:  
+   `reduced B12-related methylation capacity`.
 
-# Workstream 3 — Package 3 WHY authority and medical fidelity
+4. Consumer output still surfaces a `Methylation pathway pattern`.
 
-Independently verify all ten pilot frames against the ratified medical-review pack.
+5. MCV anchor, megaloblastic and non-megaloblastic WHY can co-emit despite the ratified frame-specific intent.
 
-Confirm:
+6. Previously identified Layer C frontend medical-boundary leaks remain active.
 
-- exactly nine frames are `COMPILED_ACTIVE`;
-- the rejected broad homocysteine metabolic frame remains inactive;
-- no compiled artefact exists for the rejected frame;
-- no rejected, deferred or unratified frame can generate WHY;
-- each compiled artefact faithfully implements its ratified hypotheses, caveats and audience boundaries;
-- no frame has simultaneous legacy and compiled runtime authority;
-- retired legacy content remains historically preserved but non-reachable for the migrated frame;
-- missing compiled authority cannot silently fall back to retired legacy YAML;
-- activation key and source specification survive runtime and replay.
+The package must close all six findings together.
 
-Live-execute the rejected frame and prove it produces no WHY output.
+# Internal Workstream 1 — Rejected-frame total inactivation
 
-Re-run Package 3 tests and the compiled WHY authority gate.
+## Required behaviour
 
-# Workstream 4 — End-to-end pipeline and Layer C leakage
+A frame with governed WHY authority state `REJECTED` must be non-active across the entire medical pipeline, not merely skipped by the root-cause compiler.
 
-## Pipeline boundary under test
-
-Run controlled cases through:
+For:
 
 ```text
-Layer A ingestion and canonical facts
-→ Layer B signal activation
-→ activation-frame selection
-→ provenance and runtime eligibility
-→ WHY authority selection
-→ ranking and report compilation
-→ API / DTO payload
-→ Layer C presentation
-→ final rendered consumer and clinician output
+signal_homocysteine_high::inv_homocysteine_high_metabolic
 ```
 
-The audit must test both:
+prove that it cannot:
 
-### A. Medical logic implemented in Layer C
+- enter the active signal result set;
+- be marked fired;
+- participate in ranking;
+- appear in `top_findings`;
+- contribute to domain scoring;
+- contribute to narrative lead selection;
+- appear in intervention `signal_refs` or `activation_key_refs`;
+- appear in consumer or clinician summaries;
+- appear in replay as an active medical result;
+- act as a fallback for another frame;
+- provide interpretation text.
 
-Layer C must not independently:
+Its rejection may remain visible only in governed audit or authority-state records.
 
-- compare raw biomarkers against medical thresholds;
-- activate or select signals;
-- choose between activation frames;
-- rank medical findings;
-- calculate clinical confidence;
-- select WHY hypotheses;
-- determine intervention eligibility;
-- reconstruct root-cause logic;
-- substitute fallback medical prose based on raw values;
-- alter consumer or clinician medical meaning.
+## Canonical policy
 
-### B. Incorrect or legacy medical logic leaking through to Layer C
+Create or reuse one canonical frame-runtime-authority decision consumed early enough in the pipeline to prevent downstream contamination.
 
-Final API payloads and rendered outputs must not contain:
+Do not add separate ad hoc rejection checks to every consumer if a shared upstream eligibility decision can safely close the defect.
 
-- rejected frames;
-- provenance-blocked signals;
-- retired legacy WHY hypotheses;
-- deprecated package-generation logic;
-- obsolete boilerplate;
-- sibling-frame hypotheses;
-- unsupported causal explanations;
-- stale ranking or confidence decisions;
-- simultaneous legacy and compiled explanations;
-- fallback content bypassing current authority registers;
-- stale medical content retained in caches, DTOs or report assembly.
+The frame must fail closed.
 
-## Required automated end-to-end scenarios
+## STOP Gate A
 
-Run at least:
+STOP if:
 
-1. **Rejected broad homocysteine frame**
-   - no WHY from `signal_homocysteine_high::inv_homocysteine_high_metabolic`;
-   - no shared-legacy fallback;
-   - no generic “methylation capacity” explanation.
+- the rejected frame cannot be excluded without changing medical activation rules for approved frames;
+- the authority register is not available at the required pipeline stage;
+- removal creates unexplained ranking or report regressions;
+- a new clinical prioritisation rule would be required.
 
-2. **B-vitamin homocysteine frame**
-   - only ratified B-vitamin hypotheses;
-   - no renal hypothesis without renal evidence;
-   - no broad metabolic frame;
-   - no assertion of proven vitamin deficiency.
+# Internal Workstream 2 — Legacy “methylation capacity” retirement
 
-3. **Renal homocysteine frame**
-   - renal WHY only with renal evidence;
-   - no CKD diagnosis from one result;
-   - no B-vitamin cause without supporting vitamin evidence.
+## Required behaviour
 
-4. **General MCV anchor**
-   - morphology context only;
-   - no unearned nutrient, hepatic, alcohol, thyroid or marrow cause;
-   - no duplicate WHY if a specific MCV frame is selected.
-
-5. **Megaloblastic MCV frame**
-   - B12/folate interpretation only with supporting evidence;
-   - no unsupported hepatic or alcohol explanation.
-
-6. **Non-megaloblastic MCV frame**
-   - only evidence-supported differential contexts;
-   - no inferred alcohol use from MCV or GGT alone;
-   - no consumer-facing marrow diagnosis.
-
-7. **Low free T3 illness context**
-   - contextual low-T3 wording only with supporting thyroid-panel and illness context;
-   - no automatic hypothyroidism diagnosis;
-   - no treatment recommendation.
-
-8. **TPO antibodies with hypothyroid physiology**
-   - autoimmune contribution tied to the actual TSH/FT4 pattern;
-   - overt and subclinical patterns remain distinct;
-   - no claim that antibodies alone prove current hypothyroidism.
-
-9. **Euthyroid TPO antibody context**
-   - current thyroid function described as preserved;
-   - future-risk context only;
-   - no present hypothyroidism claim;
-   - no personalised progression probability.
-
-10. **Provenance-blocked package**
-    - no signal, ranking, WHY, intervention or prose reaches Layer C.
-
-11. **Retired legacy WHY asset**
-    - no retired hypothesis ID or distinctive phrase appears in API payloads or rendered reports;
-    - no fallback reactivates it.
-
-12. **Invalid or ambiguous activation frame**
-    - fail-safe or suppressed output;
-    - no sibling-frame substitution;
-    - no legacy fallback;
-    - no interpretation invented in Layer C.
-
-13. **Normal/single-frame compatibility**
-    - legitimate single-frame output remains stable.
-
-## Required assertions
-
-For every automated case capture:
+Remove all active production use of the rejected or unsupported concepts:
 
 ```text
-input facts
-questionnaire context
-activated signal_id
-selected activation_key
-source_spec_id
-runtime eligibility decision
-WHY authority state
-hypothesis IDs selected
-ranking result
-consumer DTO
-clinician DTO
-rendered consumer text
-rendered clinician text
-replay/audit record
-expected result
-actual result
-PASS / FAIL
+methylation capacity
+reduced B12-related methylation capacity
+Methylation pathway pattern
 ```
 
-# Workstream 5 — Legacy fingerprint and stale-content scan
+where these originate from:
 
-Build a bounded fingerprint set from:
+- `inv_homocysteine_high_metabolic`;
+- legacy homocysteine elevation-context hypotheses;
+- deprecated signal interpretation text;
+- legacy narrative or clinician-summary fallback;
+- Layer C fallback or display labels.
 
-- retired pilot legacy YAML;
-- rejected homocysteine metabolic wording;
-- blocked package hypothesis IDs;
-- deprecated package-generation identifiers;
-- old root-cause fallback strings;
-- known obsolete boilerplate;
-- legacy hypothesis IDs belonging to sibling frames.
+## Medical boundary
+
+The ratified medical review permits:
+
+- B-vitamin-associated hyperhomocysteinaemia when supported by relevant markers;
+- renal-associated hyperhomocysteinaemia when supported by renal evidence.
+
+It does not permit homocysteine to be described as a stand-alone measure of “methylation capacity”.
+
+Replace or suppress legacy text only where necessary to implement the ratified medical decision.
+
+Do not invent new medical prose.
+
+Where wording is needed, source it from the Anthony-ratified medical review pack.
+
+## Fingerprint closure
+
+Build an executable fingerprint check covering:
+
+```text
+methylation capacity
+reduced B12-related methylation capacity
+Methylation pathway pattern
+```
 
 Search:
 
-```text
-production API payloads
-consumer report output
-clinician report output
-frontend-rendered text
-replay artefacts
-cached fixtures used by the tested route
-```
+- active signal interpretations;
+- top findings;
+- consumer report;
+- clinician report;
+- intervention output;
+- API DTOs;
+- rendered frontend output;
+- replay artefacts.
 
-Classify every match:
+Any active match blocks PASS unless it is an explicitly historical/audit-only reference.
 
-```text
-EXPECTED_HISTORICAL_REFERENCE
-TEST_FIXTURE_ONLY
-ACTIVE_LEAK
-FALSE_POSITIVE
-UNRESOLVED
-```
+# Internal Workstream 3 — MCV frame co-service control
 
-Any `ACTIVE_LEAK` blocks PASS.
+## Ratified rule
 
-# Workstream 6 — Frontend boundary scan
-
-Inspect frontend and Layer C translation paths for medical logic.
-
-For each potentially medical branch record:
+The general MCV anchor frame:
 
 ```text
-file
-function/component
-input
-logic performed
-output
-classification
-required action
+signal_mcv_high::inv_mcv_high_macrocytosis
 ```
 
-Allowed classifications:
+may provide morphology context, but must not generate duplicate causal WHY when either specific frame is selected:
 
 ```text
-PRESENTATION_ONLY
-LEGITIMATE_TRANSLATION
-BOUNDARY_LEAK
-UNRESOLVED
+signal_mcv_high::inv_mcv_high_megaloblastic_macrocytosis
+signal_mcv_high::inv_mcv_high_nonmegaloblastic_macrocytosis
 ```
 
-Legitimate Layer C activity may include:
+## Required behaviour
 
-- formatting;
-- rendering order already decided by Layer B;
-- plain-language translation within supplied boundaries;
-- visibility/layout decisions that do not alter medical meaning;
-- rendering provenance and evidence metadata.
+Implement explicit governed co-service rules:
 
-Any `BOUNDARY_LEAK` or safety-material `UNRESOLVED` item blocks PASS.
+- the anchor may coexist as non-causal morphology context only;
+- the anchor must not emit nutrient, hepatic, alcohol, thyroid, reticulocyte or marrow causal WHY;
+- a specific MCV frame must suppress duplicate causal WHY from the anchor;
+- megaloblastic and non-megaloblastic causal frames must not both serve unless an explicitly governed combined pattern exists;
+- unsupported specific frames must remain inactive;
+- the frontend must not reconstruct all three as parallel medical explanations.
 
-Create:
+## Required tests
+
+At minimum prove:
+
+1. anchor only → morphology context only;
+2. megaloblastic supported → megaloblastic WHY, no anchor causal WHY, no non-megaloblastic WHY;
+3. non-megaloblastic supported → non-megaloblastic WHY, no anchor causal WHY, no megaloblastic WHY;
+4. ambiguous/insufficient support → safe anchor context or suppression, no speculative cause;
+5. no duplicate consumer or clinician wording;
+6. no duplicate intervention attribution.
+
+## STOP Gate B
+
+STOP if:
+
+- the co-service rule requires a new medical policy beyond the ratified review;
+- the specific-frame evidence gates are not available in Layer B;
+- Layer C currently owns the only mechanism capable of suppressing duplicate explanations.
+
+# Internal Workstream 4 — Layer C medical-boundary closure
+
+## Boundary principle
+
+Layer C may present, format and translate governed Layer B output.
+
+Layer C must not:
+
+- compare biomarkers against medical thresholds;
+- activate or select signals;
+- choose between activation frames;
+- calculate medical confidence;
+- rank findings;
+- choose WHY hypotheses;
+- determine intervention eligibility;
+- substitute medical fallback text from raw biomarkers;
+- reinterpret missing or ambiguous Layer B fields;
+- combine sibling frames into a new medical story;
+- alter consumer and clinician medical meaning.
+
+## Required process
+
+Use:
 
 ```text
 docs/architecture/ARCH-CONV-FINAL_layer_c_boundary_and_leakage_inventory.md
 ```
 
-# Mandatory Human UAT Gate
+as the authoritative defect list.
 
-Automated evidence is necessary but insufficient.
+For every item classified `BOUNDARY_LEAK`:
 
-Anthony must run fresh cases through the real application from blood-panel and lifestyle-questionnaire entry to final results.
+- identify the Layer B authority that should supply the decision;
+- remove or relocate the medical logic;
+- make Layer C consume explicit DTO fields;
+- preserve presentation-only behaviour;
+- fail visibly and safely on missing governed medical fields;
+- do not create a new frontend-side fallback.
 
-## Minimum human UAT cases
+For every item classified `UNRESOLVED`:
 
-Run at least:
+- resolve it as `PRESENTATION_ONLY`, `LEGITIMATE_TRANSLATION` or `BOUNDARY_LEAK`;
+- no safety-material `UNRESOLVED` item may remain.
 
-1. **Normal or mostly normal panel**
-   - verifies baseline usability and absence of false WHY content.
+## DTO rule
 
-2. **Pilot multi-frame panel**
-   - deliberately exercises at least one of:
-     - B-vitamin homocysteine;
-     - renal homocysteine;
-     - megaloblastic MCV;
-     - non-megaloblastic MCV;
-     - euthyroid TPO;
-     - TPO with hypothyroid physiology;
-     - contextual low FT3.
+DTO changes may be additive where needed to carry an already-governed Layer B decision.
 
-3. **Negative leakage panel**
-   - proves a cause does not appear when supporting evidence is absent;
-   - for example renal homocysteine without renal impairment, or megaloblastic MCV without B12/folate support.
+Do not move new medical reasoning into DTO assembly merely to remove it from the frontend.
 
-Where technically possible, include a case confirming that the rejected homocysteine metabolic frame does not surface.
+## Layer C failure behaviour
 
-## UAT evidence to preserve
+When required governed medical content is missing or contradictory:
 
-For each case preserve:
+- suppress the affected medical section or show a neutral technical fallback;
+- do not infer an alternative interpretation;
+- record the issue in diagnostics/audit evidence;
+- do not display stale or sibling-frame content.
+
+# End-to-end validation
+
+## Mandatory replay of audited live case
+
+Re-run or replay:
 
 ```text
-case ID
-date/time
-environment and commit SHA
-exact blood inputs
-units and reference ranges
-lifestyle answers
-screenshots of input completion
-screenshots of results pages
-consumer report/export
-clinician report/export
-API payload or replay artefact
-Anthony observations
+analysis_id=e34aaedf-b09f-42f0-8cc8-4653a00b4c10
+```
+
+For every previously reported active leak, record:
+
+```text
+baseline finding
+corrected API field
+corrected rendered text
+authority source
 PASS / FAIL
 ```
 
-## Anthony’s UAT questions
+Required result:
 
-For each case answer:
+- rejected homocysteine metabolic frame absent from active results;
+- absent from `top_findings`;
+- absent from intervention references;
+- no active “methylation capacity” wording;
+- clinician summary contains only ratified B-vitamin wording;
+- no consumer “Methylation pathway pattern”;
+- MCV output follows the ratified co-service rule;
+- no frontend medical-boundary logic changes the Layer B decision.
 
-- Does the displayed interpretation make medical and business sense?
-- Does the displayed WHY match the actual input pattern?
-- Is any cause asserted without supporting evidence?
-- Is any wording visibly old, duplicated, contradictory or out of context?
-- Is rejected, blocked or retired content visible?
-- Do consumer and clinician views tell the same underlying medical story?
-- Is the correct activation frame traceable?
-- Does the result appear to have been inferred or altered in Layer C?
-- Is anything surprising enough to require medical or architecture review?
+## Mandatory automated scenarios
+
+Re-run all 13 scenarios from `ARCH-CONV-FINAL-AUDIT`.
+
+Add focused regression scenarios for:
+
+1. rejected frame attempts to fire;
+2. rejected frame present in an upstream fixture but excluded before ranking;
+3. intervention aggregation with rejected and approved sibling frames;
+4. legacy homocysteine elevation-context hypothesis fingerprint;
+5. MCV anchor + megaloblastic;
+6. MCV anchor + non-megaloblastic;
+7. ambiguous MCV evidence;
+8. missing Layer B medical fields reaching Layer C;
+9. stale cached DTO containing retired wording;
+10. direct frontend component test proving no medical inference from raw biomarkers.
+
+## Mandatory gates
+
+Re-run:
+
+- Package 1 identity gate and tests;
+- Package 2 provenance/reachability gate and tests;
+- Package 3 WHY authority gate and tests;
+- final end-to-end leakage suite;
+- architecture validation gate;
+- NO-LLM suite;
+- relevant frontend type, unit, integration and render tests.
+
+Add one executable correction gate that fails if:
+
+- any rejected activation key appears active downstream;
+- any active fingerprint contains retired “methylation capacity” wording;
+- MCV anchor causal WHY co-serves with a specific MCV frame;
+- any identified Layer C boundary leak remains;
+- any safety-material Layer C item remains unresolved.
+
+# Scope discipline
+
+This package is bounded to the defects identified by the final audit.
+
+Do not:
+
+- reopen the medical decisions from Package 3;
+- expand the ten-frame WHY pilot;
+- migrate the wider legacy WHY estate;
+- change signal thresholds;
+- invent new medical hypotheses;
+- wire PSI;
+- enable Gemini;
+- redesign unrelated frontend areas;
+- perform general prose-library work;
+- declare controlled-beta readiness.
+
+A new work package is permitted only if a STOP condition proves that an unrelated architecture domain or new medical policy is required.
+
+# Required deliverables
 
 Create:
 
 ```text
-docs/uat/ARCH-CONV-FINAL_frontend_end_to_end_uat.md
-```
-
-Use the actual repository UAT folder convention if different.
-
-## Mandatory STOP — Await human UAT
-
-Complete the automated and code-based audit first, then STOP and hand the UAT plan to Anthony.
-
-Do not issue final PASS before Anthony supplies completed UAT evidence.
-
-After Anthony’s evidence is added, resume the same audit work ID and complete the programme decision.
-
-# Programme kill-criteria review
-
-Explicitly assess:
-
-- whether more than one unplanned mandatory architecture package is now required;
-- whether any package exceeded the ratified 25% scope-growth ceiling without authorisation;
-- whether unresolved medical-review throughput undermines convergence;
-- whether overlapping authority remains;
-- whether provenance and runtime reachability disagree;
-- whether Layer C boundary leakage remains;
-- whether the end-to-end pipeline produces clinically unexplained output;
-- whether any correction would reopen a supposedly closed architecture domain.
-
-# Required outputs
-
-Create:
-
-```text
-docs/architecture/ARCH-CONV-FINAL_programme_obligation_closure_matrix.md
-docs/architecture/ARCH-CONV-FINAL_end_to_end_pipeline_and_leakage_report.md
-docs/architecture/ARCH-CONV-FINAL_layer_c_boundary_and_leakage_inventory.md
-docs/uat/ARCH-CONV-FINAL_frontend_end_to_end_uat.md
-docs/audit-papers/ARCH-CONV-FINAL-AUDIT_implementation_and_verification_report.md
+docs/architecture/ARCH-CONV-CORRECT-1_rejected_frame_inactivation_design.md
+docs/architecture/ARCH-CONV-CORRECT-1_mcv_co_service_design.md
+docs/architecture/ARCH-CONV-CORRECT-1_layer_c_boundary_closure_report.md
+docs/architecture/ARCH-CONV-CORRECT-1_end_to_end_leakage_correction_report.md
+docs/audit-papers/ARCH-CONV-CORRECT-1_implementation_and_verification_report.md
 ```
 
 Update:
 
 ```text
+docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md
+docs/architecture/ARCH-CONV-FINAL_end_to_end_pipeline_and_leakage_report.md
+docs/architecture/ARCH-CONV-FINAL_layer_c_boundary_and_leakage_inventory.md
 docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
 ```
 
 Record:
 
-- package-level obligation result;
-- automated end-to-end scenarios;
-- leakage findings;
-- frontend-boundary findings;
-- human UAT results;
-- kill-criteria result;
-- final programme decision;
-- explicit statement that controlled-beta readiness was or was not assessed.
+- each active leak before and after;
+- exact runtime surfaces changed;
+- Layer C boundary items closed;
+- MCV co-service results;
+- fingerprint results;
+- live analysis replay result;
+- test and gate evidence;
+- unresolved limitations;
+- no beta-readiness claim.
 
 # Acceptance criteria
 
-- [ ] Package 1 identity closure independently reverified.
-- [ ] Package 2 provenance/reachability closure independently reverified.
-- [ ] Package 3 WHY authority and ratified content independently reverified.
-- [ ] Rejected homocysteine frame live-executed and proven inert.
-- [ ] All required automated end-to-end scenarios executed.
-- [ ] Final consumer and clinician payloads inspected.
-- [ ] Final rendered frontend outputs inspected.
-- [ ] Legacy fingerprint scan completed.
-- [ ] No blocked, rejected, retired or sibling-frame logic reaches Layer C.
-- [ ] Frontend boundary scan completed.
-- [ ] No medical decision logic remains in Layer C.
-- [ ] Invalid or ambiguous payloads fail safely.
-- [ ] Replay and rendering are deterministic.
-- [ ] Anthony completed required fresh frontend UAT.
-- [ ] UAT evidence is preserved.
-- [ ] No unexplained medical or presentation drift remains.
-- [ ] Programme kill criteria assessed.
-- [ ] Final decision issued.
-- [ ] No beta-readiness claim is made unless separately and explicitly assessed.
+- [ ] Rejected homocysteine metabolic frame is inactive end to end.
+- [ ] Rejected frame cannot appear in top findings.
+- [ ] Rejected frame cannot contribute to interventions.
+- [ ] Rejected frame cannot contribute interpretation or summary text.
+- [ ] No active “methylation capacity” legacy wording remains.
+- [ ] B-vitamin and renal homocysteine frames remain correctly differentiated.
+- [ ] MCV anchor cannot co-emit duplicate causal WHY with a specific MCV frame.
+- [ ] Megaloblastic and non-megaloblastic WHY do not co-serve without explicit authority.
+- [ ] Every final-audit Layer C `BOUNDARY_LEAK` is closed.
+- [ ] No safety-material `UNRESOLVED` Layer C item remains.
+- [ ] Layer C performs presentation/translation only.
+- [ ] Missing governed medical fields fail safely without medical fallback.
+- [ ] Live analysis `e34aaedf-b09f-42f0-8cc8-4653a00b4c10` passes all corrected leakage checks.
+- [ ] All 13 original end-to-end scenarios pass.
+- [ ] New focused correction scenarios pass.
+- [ ] Package 1–3 protections remain intact.
+- [ ] No unrelated medical or architecture scope entered.
+- [ ] No controlled-beta readiness claim made.
 
-# Final programme decision
+# STOP conditions
 
-Issue exactly one:
+STOP if:
+
+1. rejected-frame inactivation requires changing approved medical activation rules;
+2. legacy wording cannot be removed without reopening ratified medical content;
+3. MCV co-service requires a new medical policy;
+4. Layer C boundary closure requires redesign of an unrelated domain;
+5. package scope grows by more than 25% without human reauthorisation;
+6. more than one unplanned mandatory follow-on package is identified;
+7. corrected live output shows unexplained clinical drift;
+8. any Package 1–3 safety gate regresses;
+9. a required correction would weaken provenance, identity, authority or ratification controls;
+10. substantive correction cannot be completed in this outcome-based package.
+
+# Final package recommendation
+
+Recommend exactly one:
 
 ```text
-PASS
+GO
 CORRECT
 STOP
 V6
@@ -513,20 +466,10 @@ V6
 
 Definitions:
 
-- `PASS`: retain v5 and formally close the architecture convergence programme.
-- `CORRECT`: one bounded correction is required before closure.
-- `STOP`: convergence remains incomplete or unstable and requires redesign.
-- `V6`: ratified kill criteria are met; freeze v5 architecture work and begin controlled v6 migration.
-
-A `PASS` is forbidden if:
-
-- Anthony has not completed UAT;
-- any required test is missing;
-- any active legacy or incorrect logic reaches Layer C;
-- any Layer C medical-decision boundary leak remains;
-- any rejected or blocked frame reaches user-facing output;
-- any unexplained consumer/clinician inconsistency remains;
-- any safety-material item is `UNRESOLVED`.
+- `GO`: all identified final-audit corrections are closed; resume `ARCH-CONV-FINAL-AUDIT`.
+- `CORRECT`: one bounded defect remains within this package.
+- `STOP`: correction requires programme redesign.
+- `V6`: ratified kill criteria are met; freeze v5 architecture work.
 
 # Verification report
 
@@ -534,18 +477,19 @@ Include:
 
 - baseline and final SHA;
 - branch;
-- auditors and independence model;
-- evidence read;
-- code and boundary surfaces inspected;
-- independently re-run commands and exit codes;
-- end-to-end scenario table;
-- API and rendered-output findings;
+- files changed;
+- per-defect before/after evidence;
+- rejected-frame lifecycle trace;
 - legacy fingerprint results;
-- Layer C boundary classification;
-- Anthony UAT evidence and decision;
-- package obligation closure matrix;
-- kill-criteria assessment;
-- final PASS / CORRECT / STOP / V6 decision;
-- remaining obligations outside this programme.
+- MCV co-service matrix;
+- Layer C boundary closure matrix;
+- live analysis replay evidence;
+- automated scenario results;
+- test commands and exit codes;
+- validation-gate evidence;
+- acceptance-criteria table;
+- STOP-condition assessment;
+- final `GO / CORRECT / STOP / V6` recommendation;
+- remaining obligations outside this package.
 
 Do not merge without explicit human authority.
