@@ -1,10 +1,11 @@
 {
-  "branch": "feature/arch-conv-pkg3-why-authority-migration",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-26T10:23:03Z",
+  "work_id": "ARCH-CONV-PKG3",
+  "status": "IN_PROGRESS",
   "cursor_started_utc": "2026-07-26T10:17:23Z",
-  "head_sha": "d73e70a71a354b3a5d293bf0123447d45db80095",
-  "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-CONV-PKG3"
+  "cursor_resumed_utc": "2026-07-26T10:44:29Z",
+  "resume_reason": "Gate C continuation after Anthony ratification",
+  "branch": "feature/arch-conv-pkg3-why-authority-migration",
+  "head_sha": "f83705ba105a0d900179b00e12ff24992e726960",
+  "raw_stop_condition": null
 }
