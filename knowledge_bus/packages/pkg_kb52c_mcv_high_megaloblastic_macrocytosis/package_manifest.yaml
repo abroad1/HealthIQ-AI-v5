@@ -11,3 +11,6 @@ translation_mode: creation
 behavioural_impact: NONE
 engine_compatibility: v5.x
 promoted_signal_intelligence: promoted_signal_intelligence.yaml
+source_spec_id: inv_mcv_high_megaloblastic_macrocytosis
+activation_key: signal_mcv_high::inv_mcv_high_megaloblastic_macrocytosis
+lineage_attach_work_id: ARCH-CONV-PKG3

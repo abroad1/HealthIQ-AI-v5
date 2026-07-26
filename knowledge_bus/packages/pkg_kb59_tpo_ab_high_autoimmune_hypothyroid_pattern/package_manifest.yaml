@@ -11,3 +11,6 @@ translation_mode: creation
 behavioural_impact: SIGNAL_RUNTIME_ACTIVATION
 promoted_signal_intelligence: promoted_signal_intelligence.yaml
 engine_compatibility: v5.x
+source_spec_id: inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+activation_key: signal_tpo_ab_high::inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+lineage_attach_work_id: ARCH-CONV-PKG3

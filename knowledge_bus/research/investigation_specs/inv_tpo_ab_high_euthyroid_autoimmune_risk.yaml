@@ -1,0 +1,127 @@
+investigation_spec_contract_version: 3.0.0
+spec_id: inv_tpo_ab_high_euthyroid_autoimmune_risk
+signal_id: signal_tpo_ab_high
+research_domain: endocrine
+primary_marker:
+  biomarker_id: tpo_ab
+  rationale: TPO antibodies are a marker of thyroid autoimmunity and can identify autoimmune context even before overt thyroid dysfunction is established.
+  signal_system: endocrine
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: tgab
+  expected_direction: high
+  role: corroborator
+  relationship_kind: corroboration
+  availability: common
+  rationale: Dual antibody positivity supports a broader autoimmune thyroid context rather than an isolated assay finding.
+- biomarker_id: tsh
+  expected_direction: any
+  role: differential_marker
+  relationship_kind: differential
+  availability: common
+  rationale: Current TSH status helps distinguish preserved thyroid function with future risk from already active biochemical thyroid dysfunction.
+- biomarker_id: free_t4
+  expected_direction: any
+  role: differential_marker
+  relationship_kind: differential
+  availability: common
+  rationale: Free T4 helps separate antibody-positive euthyroid risk from overt hormone deficiency or thyrotoxicosis.
+hypotheses:
+- hypothesis_id: hyp_euthyroid_autoimmune_thyroid_risk
+  rank: 1
+  physiological_claim: High TPO antibodies with preserved thyroid hormone levels may indicate thyroid autoimmunity before overt biochemical hypothyroidism develops.
+  evidence_strength: strong
+  caveats:
+  - Many antibody-positive individuals remain euthyroid for prolonged periods, so current disease severity should not be overstated.
+  missing_data:
+    policy: If TSH and free T4 are not available, interpret antibody positivity as autoimmune context only and avoid assuming preserved or failed thyroid function.
+  supporting_marker_refs:
+  - tgab
+  - tsh
+  - free_t4
+  contradiction_markers:
+  - contradiction_id: ctr_tsh_above_range
+    marker_reference: tsh
+    contradiction_rationale: Raised TSH redirects interpretation from euthyroid risk to active or evolving hypothyroid physiology.
+    contradiction_strength: strong
+  - contradiction_id: ctr_free_t4_below_range
+    marker_reference: free_t4
+    contradiction_rationale: Low free T4 contradicts a preserved-function frame and indicates overt biochemical dysfunction.
+    contradiction_strength: strong
+- hypothesis_id: hyp_future_primary_hypothyroid_progression_risk
+  rank: 2
+  physiological_claim: High TPO antibodies may identify people at increased risk of progressing from euthyroid or subclinical states to overt primary hypothyroidism.
+  evidence_strength: strong
+  caveats:
+  - Risk is population- and context-dependent and should not be translated into a fixed short-term prognosis for an individual.
+  missing_data:
+    policy: Use serial thyroid function testing rather than a one-time antibody result if the goal is to assess progression risk.
+  supporting_marker_refs:
+  - tsh
+  - tgab
+  contradiction_markers:
+  - contradiction_id: ctr_absent_tgab_weakens_progression_risk
+    marker_reference: tgab
+    contradiction_rationale: Absent corroborating TgAb alongside isolated TPO antibody positivity reduces confidence in a robust future progression risk frame, as dual antibody positivity is associated with higher transition rates to overt hypothyroid dysfunction than isolated TPO antibody elevation alone.
+    contradiction_strength: moderate
+hypothesis_ranking:
+  ordered_hypothesis_ids:
+  - hyp_euthyroid_autoimmune_thyroid_risk
+  - hyp_future_primary_hypothyroid_progression_risk
+confirmatory_tests:
+- test_id: ct_interval_tsh_free_t4_monitoring
+  rationale: Repeat thyroid function testing is the most direct way to determine whether antibody-positive euthyroid status remains stable or progresses.
+- test_id: ct_thyroid_ultrasound_if_uncertain
+  rationale: Ultrasound may support autoimmune thyroiditis when antibodies are present but biochemical status remains preserved or equivocal.
+override_rules:
+- rule_id: or_tpo_ab_high_dual_antibody_euthyroid_pattern
+  resulting_state: at_risk
+  description: Escalate when high TPO antibodies coexist with high TgAb while TSH is not above the reference range and free T4 is not below the reference range, because this supports a stronger autoimmune thyroid context despite preserved current thyroid output.
+  conditions:
+  - metric_id: tgab
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    boundary: above_max
+  - metric_id: tsh
+    operator: <=
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    boundary: not_above_max
+  - metric_id: free_t4
+    operator: '>='
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    boundary: not_below_min
+  source_refs:
+  - source_tpo_nice_subclinical_context
+  - source_tpo_review_progression
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_tpo_nice_subclinical_context
+    paper_title: NICE CKS and NG145 statements on TPO antibodies in subclinical hypothyroidism
+    journal: NICE guidance and CKS
+    year: 2025
+  - source_id: source_tpo_review_progression
+    paper_title: Review of the usefulness of thyroid antibodies in autoimmune thyroid disease
+    journal: Diagnostics
+    year: 2023
+  physiological_claim: TPO antibody positivity can identify autoimmune thyroid context and a higher likelihood of progression to hypothyroid dysfunction, particularly when thyroid function is followed over time.
+  threshold_notes: No independent antibody threshold should be used to infer imminent thyroid failure; interpretation should remain lab-range anchored and longitudinal.
+narrative:
+  mechanism: TPO antibody positivity indicates immune recognition of thyroid peroxidase and can precede measurable loss of thyroid hormone production.
+  biological_pathway: Early thyroid autoimmunity with preserved glandular reserve, possible lymphocytic inflammation, and future transition toward raised TSH or reduced thyroid hormone production in a subset of individuals.
+  interpretation: High TPO antibodies with currently preserved thyroid function are best interpreted as autoimmune thyroid context with future risk, not as proof of current overt hypothyroidism.
+  implications: This pattern may justify monitoring of thyroid function and attention to evolving symptoms or biochemical change, while avoiding overstatement of current disease burden.
+  supporting_marker_roles: TgAb adds corroborating autoimmune evidence, while TSH and free T4 act as differential markers that separate preserved-function risk from already active biochemical thyroid dysfunction.

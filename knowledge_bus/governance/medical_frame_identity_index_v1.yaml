@@ -1422,6 +1422,30 @@ signal_families:
     notes: "KB-S59 thyroid antibody tranche; P1-25 MR-v2 clearance for hypothyroid\
       \ biochemistry context only. Mandatory TSH above-range pre-emission gate. TPOAb\
       \ euthyroid and TgAb frames remain deferred. Not diagnostic."
+  - signal_family_id: signal_tpo_ab_high
+    primary_biomarker_id: tpo_ab
+    medical_frame_id: frame_kb59_tpo_ab_high_euthyroid_autoimmune_risk
+    frame_label: Euthyroid autoimmune risk context (Pass 3 kb59)
+    frame_role: pass3_frame_indexed_pending_why_review
+    research_spec_id: inv_tpo_ab_high_euthyroid_autoimmune_risk
+    source_package_id: pkg_kb59_tpo_ab_high_euthyroid_autoimmune_risk
+    source_package_path: knowledge_bus/packages/pkg_kb59_tpo_ab_high_euthyroid_autoimmune_risk
+    activation_key: signal_tpo_ab_high::inv_tpo_ab_high_euthyroid_autoimmune_risk
+    signal_id: signal_tpo_ab_high
+    promotion_state: deferred
+    runtime_authority_status: inactive
+    clinical_adjudication_status: blocked_pending_medical_review
+    context_inputs_supported:
+      biomarker_evidence: true
+      questionnaire_modifiers: true
+      medication_modifiers: true
+    collision_group_id: kb59_tpo_ab_high_euthyroid_autoimmune_risk_frame
+    collision_status: none
+    supersedes: null
+    superseded_by: null
+    notes: "ARCH-CONV-PKG3 Gate A identity prerequisite. Indexed for WHY pilot review\
+      \ without promoting compiled WHY authority. Prior KB-S59 notes deferred euthyroid\
+      \ TPOAb frames; package remains on disk. Not diagnostic. Not Anthony-ratified."
 - signal_family_id: signal_free_t4_high
   primary_biomarker_id: free_t4
   system: hormonal

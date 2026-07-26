@@ -935,6 +935,50 @@ Entries should not list every file touched or every non-change.
 
 ---
 
+## ARCH-CONV-GATE2_5 — WHY Pilot Medical Review Ownership and Capacity
+
+**Status:** Complete (conditions 1–4 closed 2026-07-26)  
+**Date closed:** 2026-07-26  
+**Programme block(s):** Architecture convergence Gate 2.5
+
+### Delivered / ticked off
+- Dual-gate operating model ratified; GPT named Head of Medical Research; Anthony named production ratifier; capacity confirmed for bounded 5/10 pilot.
+
+### Carry-forwards
+- ARCH-CONV-PKG3 Phases 1–3 evidence/design/review pack; Gate C medical review + ratification; then Phase 4–6.
+
+### Blockers / risks
+- Package 3B promotion blocked until Gate C.
+
+### Recommended next sprint
+- ARCH-CONV-PKG3 WHY authority migration (stop at Gate C for GPT + Anthony).
+
+---
+
+## ARCH-CONV-PKG3 — WHY Authority Migration (Phases 1–3 / Gate C boundary)
+
+**Status:** Partial — STOP Gate C  
+**Date:** 2026-07-26  
+**Programme block(s):** Architecture convergence Package 3
+
+### Delivered / ticked off
+- Six standalone inv YAML extractions (PKG2 method) + lineage attach.
+- TPO euthyroid frame indexed (deferred/inactive).
+- Gate A inventory PASS; Gate B design PASS.
+- Consolidated medical-review pack assembled; no Cursor medical decisions.
+
+### Carry-forwards
+- GPT frame-level review + Anthony ratification (Gate C).
+- Phase 4–6: implement only ratified frames; retirement register; parity; validation gate; final GO/CORRECT/STOP/V6.
+
+### Blockers / risks
+- Gate C open — no promotion until per-frame ratification.
+
+### Recommended next sprint
+- Resume ARCH-CONV-PKG3 after Gate C artefact update (same work_id continuation).
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
