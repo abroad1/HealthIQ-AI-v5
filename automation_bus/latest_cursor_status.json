@@ -1,11 +1,10 @@
 {
-  "bus_version": "1.2",
-  "work_id": "ARCH-CONV-FINAL-AUDIT",
-  "status": "IN_PROGRESS",
-  "cursor_started_utc": "2026-07-26T11:41:24Z",
-  "cursor_resumed_utc": "2026-07-26T13:01:54Z",
-  "resume_reason": "Anthony UAT evidence continuation - inspect analysis e34aaedf",
   "branch": "audit/arch-conv-final-programme",
-  "head_sha": "7e5613f420b1a4ba83b65d89bf670e0ee42de97f",
-  "raw_stop_condition": null
+  "bus_version": "1.2",
+  "cursor_completed_utc": "2026-07-26T13:07:45Z",
+  "cursor_started_utc": "2026-07-26T11:41:24Z",
+  "head_sha": "a27a65122aea2e457f1b12c15edffb6809aed539",
+  "raw_stop_condition": null,
+  "status": "COMPLETE",
+  "work_id": "ARCH-CONV-FINAL-AUDIT"
 }
