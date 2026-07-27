@@ -18,8 +18,10 @@ This report does **not** self-certify correctness. It requests GPT architectural
 | branch | feature/arch-conv-a-estate-why-authority-migration |
 | baseline main commit | `942de1ffda260bdcab8ab00ded17f4602dba478a` |
 | start commit (post bus handoff) | `c5ab903f6c05bb0bc61b0e9472e2587c1ca11e4d` |
+| current commit | `6ff17724fc4a7de8c1cca2d7ff2be249a5a218b8` |
 | Automation Bus status | IN_PROGRESS (kernel); STOP A internal gate — **finish not called** |
 | authority token | `automation_bus/state/work_package_active.json` → `ARCH-CONV-A` / STARTED |
+| working-tree note | Only kernel-owned `automation_bus/latest_cursor_status.json` remains dirty (IN_PROGRESS) — expected at internal STOP; finish not authorised |
 
 ---
 
