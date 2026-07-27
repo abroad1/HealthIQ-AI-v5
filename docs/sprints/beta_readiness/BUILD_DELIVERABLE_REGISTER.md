@@ -983,8 +983,8 @@ Entries should not list every file touched or every non-change.
 
 ## ARCH-CONV-FINAL-AUDIT — Final Independent Convergence Audit
 
-**Status:** Complete on branch — decision **CORRECT** (merge blocked pending human authority)  
-**Date:** 2026-07-26  
+**Status:** Complete — decision **CORRECT**; correction package closed; residual estate gate supersedes programme PASS claim  
+**Date:** 2026-07-26 (CORRECT-1 closed 2026-07-27; residual audit 2026-07-27)  
 **Programme block(s):** Architecture convergence programme closure
 
 ### Delivered / ticked off
@@ -992,26 +992,27 @@ Entries should not list every file touched or every non-change.
 - Rejected metabolic WHY path live-proven inert; 13/13 automated E2E scenarios PASS.
 - Layer C boundary inventory (BOUNDARY_LEAKs).
 - Live UAT of analysis `e34aaedf-b09f-42f0-8cc8-4653a00b4c10` with API payload inspection.
-- Final programme decision: **CORRECT**.
+- Final programme decision: **CORRECT** (then executed as `ARCH-CONV-CORRECT-1`).
 
 ### Carry-forwards
-- Bounded CORRECT package: rejected-frame end-to-end inactivation; retire “methylation capacity” legacy wording; MCV co-service rule; FE Layer C boundary leaks.
-- Estate-wide WHY beyond pilot; controlled-beta readiness (separate).
+- Estate-wide Day-One convergence not claimed; see `ARCH-CONV-RESIDUAL-AUDIT-1`.
+- Controlled-beta readiness (separate).
 
 ### Blockers / risks
-- PASS forbidden while ACTIVE_LEAKs / BOUNDARY_LEAKs remain.
+- None remaining from the four CORRECT themes after CORRECT-1 merge.
 
 ### Recommended next sprint
-- Author CORRECT work package(s) from the four correction themes in the verification report.
+- Human ratification of residual-audit GO/NO-GO (`ARCH-CONV_v5_completion_vs_v6_decision.md`).
 
 ---
 
 ## ARCH-CONV-CORRECT-1 — End-to-End Medical Authority and Layer C Boundary Closure
 
-**Status:** Merged and published to `origin/main`  
+**Status:** CLOSED — merged and published to `origin/main`  
 **Date:** 2026-07-26 (merged/published 2026-07-27)  
 **Programme block(s):** Architecture convergence programme closure (correction)  
-**Merge SHA (feature tip):** `bfcb5fd` — fast-forward into `main`
+**Merge SHA (feature tip):** `bfcb5fd` — fast-forward into `main`  
+**Live UAT analysis:** `20a99882-085c-475d-bb26-2ff28a13183a`
 
 ### Delivered / ticked off
 - WS1 canonical frame runtime authority (`frame_runtime_authority_v1`): the `REJECTED` metabolic homocysteine frame is inactive at registry load, evaluation output and report assembly — absent from fired signals, `top_findings`, interventions, summaries and replay.
@@ -1023,16 +1024,51 @@ Entries should not list every file touched or every non-change.
 - Closure stabilisation: explicit waist cm/inches contract; auth stale-session → 401 recovery (no `/auth/me` loop).
 - Live human UAT PASS on analysis `20a99882-085c-475d-bb26-2ff28a13183a`; MCV inventory coexistence documented as intentional WHY-scoped co-service (regression locked).
 
+### Programme status stamped
+```text
+ARCH-CONV-CORRECT-1 CLOSED
+MIGRATED COHORT SAFE
+TARGET AUTHORITY MODEL PROVEN
+ESTATE-WIDE DAY-ONE CONVERGENCE NOT YET PROVEN
+FINAL V5 / V6 DECISION REMAINS OPEN
+```
+
 ### Carry-forwards
-- Resume `ARCH-CONV-FINAL-AUDIT` for the programme decision.
-- Optional, separately authorised: activation-level evidence gating for the specific MCV frames; migration of the legacy hcy elevation-context family out of the legacy WHY estate; estate-wide WHY beyond the pilot.
-- Pre-existing backend test failures and the `BiomarkerDials` expand-affordance test defect remain open and are unrelated to this package.
+- Pre-existing output-authority provenance regression involving `signal_homocysteine_high::inv_homocysteine_high`.
+- Historic analysis impact from the former waist-unit defect.
+- Result-versioning policy advancement for regeneration after medical-authority changes.
+- Estate-wide residual runtime completion programme (pending ratification of residual audit).
 
 ### Blockers / risks
 - No controlled-beta readiness claim is made or implied by this package.
+- Whole-estate Day-One compliance is explicitly not claimed.
 
 ### Recommended next sprint
-- Resume `ARCH-CONV-FINAL-AUDIT` for programme PASS/FAIL under human authority.
+- Ratify `ARCH-CONV-RESIDUAL-AUDIT-1` decision; only then author Package A/B/C implementation prompts.
+
+---
+
+## ARCH-CONV-RESIDUAL-AUDIT-1 — Estate Residual Runtime Audit and v5/v6 Gate
+
+**Status:** Complete (decision-support; awaiting GPT review + Anthony ratification)  
+**Date:** 2026-07-27  
+**Programme block(s):** Final architecture decision gate (pre-SOP investigation)
+
+### Delivered / ticked off
+- Programme closure record for ARCH-CONV-CORRECT-1.
+- Estate residual runtime inventory, active authority map, legacy dependency register, dual-authority findings, day-one layer assessment, v5 vs v6 decision pack.
+- Principal recommendation: **GO — RETAIN V5 AND COMPLETE BOUNDED CONVERGENCE** (3 minimum packages; no implementation authored).
+
+### Carry-forwards
+- Human ratification of GO/NO-GO.
+- If ratified: author Automation Bus prompts for Packages A (estate WHY), B (dual/fallback harden), C (replay/provenance/versioning).
+- Controlled-beta readiness remains separate.
+
+### Blockers / risks
+- Estate WHY still legacy-dominant outside the 5/10 pilot; dual elevation-context authority remains material until Package B.
+
+### Recommended next sprint
+- Do not implement until ratification.
 
 ---
 
