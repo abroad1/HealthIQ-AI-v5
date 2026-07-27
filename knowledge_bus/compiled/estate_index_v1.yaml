@@ -1,63 +1,122 @@
-schema_version: "1.0.0"
+schema_version: 1.0.0
 estate_id: healthiq_launch_estate_v1
-updated_at_utc: "2026-05-30T09:30:00Z"
-authority: "ARCH-RT-5D"
+updated_at_utc: '2026-07-27T16:51:04Z'
+authority: ARCH-CONV-A Phase 0 estate reconciliation
 provenance_audit_ref: docs/audit-papers/ARCH-RT-5D_package_provenance_backfill_audit.md
 compile_manifest_hash_status: refreshed_arch_rt5d
-
 card_evidence_artefacts:
-  - subsystem_id: wave1_met_glycaemic_control
-    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt3_glycaemic_card_evidence.yaml
-    launch_classification: launch_included_compiled
-  - subsystem_id: wave1_cv_lipid_transport
-    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_cv_lipid_transport.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_lipid_transport_card_evidence.yaml
-    launch_classification: launch_included_compiled
-  - subsystem_id: wave1_cv_homocysteine_pathway
-    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml
-    launch_classification: launch_included_compiled
-  - subsystem_id: wave1_cv_vascular_strain
-    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_cv_vascular_strain.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_vascular_strain_card_evidence.yaml
-    launch_classification: launch_included_compiled
-  - subsystem_id: wave1_met_insulin_metabolic
-    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_met_insulin_metabolic.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_insulin_metabolic_card_evidence.yaml
-    launch_classification: launch_included_compiled
-  - subsystem_id: wave1_liv_enzyme_pattern
-    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_liv_enzyme_pattern.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_enzyme_pattern_card_evidence.yaml
-    launch_classification: launch_included_compiled
-  - subsystem_id: wave1_liv_processing_context
-    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_liv_processing_context.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_processing_context_card_evidence.yaml
-    launch_classification: launch_included_compiled
-  - subsystem_id: wave1_ren_glomerular_filtration
-    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_ren_glomerular_filtration.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/p1_2_kidney_filtration_card_evidence.yaml
-    launch_classification: launch_included_compiled
-  - subsystem_id: wave1_bio_oxygen_carrying_capacity
-    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_bio_oxygen_carrying_capacity.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml
-    launch_classification: launch_included_compiled
-  - subsystem_id: wave1_thy_hormonal_axis
-    artefact_path: knowledge_bus/compiled/health_system_cards/wave1_thy_hormonal_axis.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/p1_25_thyroid_completion_card_evidence.yaml
-    launch_classification: launch_included_compiled
-
+- subsystem_id: wave1_met_glycaemic_control
+  artefact_path: knowledge_bus/compiled/health_system_cards/wave1_met_glycaemic_control.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt3_glycaemic_card_evidence.yaml
+  launch_classification: launch_included_compiled
+- subsystem_id: wave1_cv_lipid_transport
+  artefact_path: knowledge_bus/compiled/health_system_cards/wave1_cv_lipid_transport.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_lipid_transport_card_evidence.yaml
+  launch_classification: launch_included_compiled
+- subsystem_id: wave1_cv_homocysteine_pathway
+  artefact_path: knowledge_bus/compiled/health_system_cards/wave1_cv_homocysteine_pathway.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml
+  launch_classification: launch_included_compiled
+- subsystem_id: wave1_cv_vascular_strain
+  artefact_path: knowledge_bus/compiled/health_system_cards/wave1_cv_vascular_strain.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_vascular_strain_card_evidence.yaml
+  launch_classification: launch_included_compiled
+- subsystem_id: wave1_met_insulin_metabolic
+  artefact_path: knowledge_bus/compiled/health_system_cards/wave1_met_insulin_metabolic.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_insulin_metabolic_card_evidence.yaml
+  launch_classification: launch_included_compiled
+- subsystem_id: wave1_liv_enzyme_pattern
+  artefact_path: knowledge_bus/compiled/health_system_cards/wave1_liv_enzyme_pattern.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_enzyme_pattern_card_evidence.yaml
+  launch_classification: launch_included_compiled
+- subsystem_id: wave1_liv_processing_context
+  artefact_path: knowledge_bus/compiled/health_system_cards/wave1_liv_processing_context.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt5b_processing_context_card_evidence.yaml
+  launch_classification: launch_included_compiled
+- subsystem_id: wave1_ren_glomerular_filtration
+  artefact_path: knowledge_bus/compiled/health_system_cards/wave1_ren_glomerular_filtration.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/p1_2_kidney_filtration_card_evidence.yaml
+  launch_classification: launch_included_compiled
+- subsystem_id: wave1_bio_oxygen_carrying_capacity
+  artefact_path: knowledge_bus/compiled/health_system_cards/wave1_bio_oxygen_carrying_capacity.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/p1_26_iron_homocysteine_card_evidence.yaml
+  launch_classification: launch_included_compiled
+- subsystem_id: wave1_thy_hormonal_axis
+  artefact_path: knowledge_bus/compiled/health_system_cards/wave1_thy_hormonal_axis.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/p1_25_thyroid_completion_card_evidence.yaml
+  launch_classification: launch_included_compiled
 compiled_hypothesis_artefacts:
-  - signal_id: signal_vitamin_d_low
-    activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
-    artefact_path: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml
-    compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml
-    runtime_authority: runtime_promoted_compiled
-    launch_classification: launch_included_compiled
-
+- signal_id: signal_vitamin_d_low
+  activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
+  artefact_path: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_rt4_vitamin_d_hypothesis.yaml
+  runtime_authority: runtime_promoted_compiled
+  launch_classification: launch_included_compiled
+  source_spec_id: inv_vitamin_d_low_deficiency
+- signal_id: signal_homocysteine_high
+  activation_key: signal_homocysteine_high::inv_homocysteine_high_b_vitamin_related_methylation_impairment
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_homocysteine_high_b_vitamin_related_methylation_impairment.yaml
+  compile_manifest_path: null
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: pkg3_compiled_active
+  source_spec_id: inv_homocysteine_high_b_vitamin_related_methylation_impairment
+- signal_id: signal_homocysteine_high
+  activation_key: signal_homocysteine_high::inv_homocysteine_high_renal_clearance_reduction
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_homocysteine_high_renal_clearance_reduction.yaml
+  compile_manifest_path: null
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: pkg3_compiled_active
+  source_spec_id: inv_homocysteine_high_renal_clearance_reduction
+- signal_id: signal_mcv_high
+  activation_key: signal_mcv_high::inv_mcv_high_macrocytosis
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_mcv_high_macrocytosis.yaml
+  compile_manifest_path: null
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: pkg3_compiled_active
+  source_spec_id: inv_mcv_high_macrocytosis
+- signal_id: signal_mcv_high
+  activation_key: signal_mcv_high::inv_mcv_high_megaloblastic_macrocytosis
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_mcv_high_megaloblastic_macrocytosis.yaml
+  compile_manifest_path: null
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: pkg3_compiled_active
+  source_spec_id: inv_mcv_high_megaloblastic_macrocytosis
+- signal_id: signal_mcv_high
+  activation_key: signal_mcv_high::inv_mcv_high_nonmegaloblastic_macrocytosis
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_mcv_high_nonmegaloblastic_macrocytosis.yaml
+  compile_manifest_path: null
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: pkg3_compiled_active
+  source_spec_id: inv_mcv_high_nonmegaloblastic_macrocytosis
+- signal_id: signal_free_t3_low
+  activation_key: signal_free_t3_low::inv_free_t3_low_low_t3_syndrome
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_free_t3_low_low_t3_syndrome.yaml
+  compile_manifest_path: null
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: pkg3_compiled_active
+  source_spec_id: inv_free_t3_low_low_t3_syndrome
+- signal_id: signal_tpo_ab_high
+  activation_key: signal_tpo_ab_high::inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml
+  compile_manifest_path: null
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: pkg3_compiled_active
+  source_spec_id: inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+- signal_id: signal_tpo_ab_high
+  activation_key: signal_tpo_ab_high::inv_tpo_ab_high_euthyroid_autoimmune_risk
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_tpo_ab_high_euthyroid_autoimmune_risk.yaml
+  compile_manifest_path: null
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: pkg3_compiled_active
+  source_spec_id: inv_tpo_ab_high_euthyroid_autoimmune_risk
 wave1_subsystems_legacy_hard_coded:
   subsystem_ids: []
   launch_classification: none_remaining
-
 package_provenance_policy_ref: docs/architecture/package_provenance_policy.md
 compile_manifest_schema_ref: knowledge_bus/schema/compile_manifest_schema_v1.yaml
+why_authority_source_of_truth: knowledge_bus/governance/compiled_why_authority_register_v1.yaml
+phase0_notes:
+- 'ARCH-CONV-A Phase 0: refreshed compiled_hypothesis_artefacts from compiled_why_authority_register_v1 (9 COMPILED_ACTIVE).'
+- REJECTED frames are intentionally omitted from this index.
+- Card evidence artefacts unchanged (10).
+- Emit path does not read this index; refresh is inventory/governance hygiene.
