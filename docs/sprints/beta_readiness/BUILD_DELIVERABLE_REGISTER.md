@@ -1008,9 +1008,10 @@ Entries should not list every file touched or every non-change.
 
 ## ARCH-CONV-CORRECT-1 — End-to-End Medical Authority and Layer C Boundary Closure
 
-**Status:** Complete on branch — recommendation **GO** (merge blocked pending human authority)  
-**Date:** 2026-07-26  
-**Programme block(s):** Architecture convergence programme closure (correction)
+**Status:** Merged and published to `origin/main`  
+**Date:** 2026-07-26 (merged/published 2026-07-27)  
+**Programme block(s):** Architecture convergence programme closure (correction)  
+**Merge SHA (feature tip):** `bfcb5fd` — fast-forward into `main`
 
 ### Delivered / ticked off
 - WS1 canonical frame runtime authority (`frame_runtime_authority_v1`): the `REJECTED` metabolic homocysteine frame is inactive at registry load, evaluation output and report assembly — absent from fired signals, `top_findings`, interventions, summaries and replay.
@@ -1019,9 +1020,10 @@ Entries should not list every file touched or every non-change.
 - WS4 all 12 Layer C `BOUNDARY_LEAK` inventory rows closed; new backend `primary_driver_v1` authority projection; `ClusterInsightPanel` and `biomarkerPatternRelevance` deleted; governed frontend copy modules added.
 - New correction gate, 16 backend regression scenarios, 4 frontend boundary render tests, 13/13 final-audit scenario harness, and a before/after replay harness for `e34aaedf-b09f-42f0-8cc8-4653a00b4c10`.
 - PKG1/PKG2/PKG3, identity-provenance, Layer B integrity and architecture validation gates all re-run at exit 0.
+- Closure stabilisation: explicit waist cm/inches contract; auth stale-session → 401 recovery (no `/auth/me` loop).
+- Live human UAT PASS on analysis `20a99882-085c-475d-bb26-2ff28a13183a`; MCV inventory coexistence documented as intentional WHY-scoped co-service (regression locked).
 
 ### Carry-forwards
-- Human UAT re-check of the live results page for the audited analysis (required before programme PASS).
 - Resume `ARCH-CONV-FINAL-AUDIT` for the programme decision.
 - Optional, separately authorised: activation-level evidence gating for the specific MCV frames; migration of the legacy hcy elevation-context family out of the legacy WHY estate; estate-wide WHY beyond the pilot.
 - Pre-existing backend test failures and the `BiomarkerDials` expand-affordance test defect remain open and are unrelated to this package.
@@ -1030,7 +1032,7 @@ Entries should not list every file touched or every non-change.
 - No controlled-beta readiness claim is made or implied by this package.
 
 ### Recommended next sprint
-- Resume `ARCH-CONV-FINAL-AUDIT` after human UAT confirmation.
+- Resume `ARCH-CONV-FINAL-AUDIT` for programme PASS/FAIL under human authority.
 
 ---
 

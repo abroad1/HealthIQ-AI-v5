@@ -3,8 +3,9 @@
 **Work ID:** `ARCH-CONV-CORRECT-1`
 **Branch:** `feature/arch-conv-correct-1-e2e-authority-layerc`
 **Baseline HEAD (kernel start):** `c933d794c9e57c1ee6180d8b943fed009727fd70`
-**Final SHA:** recorded in the Automation Bus status at kernel finish (implementation commit on this branch)
-**UAT analysis ID:** `e34aaedf-b09f-42f0-8cc8-4653a00b4c10`
+**Final SHA (merge tip):** `bfcb5fd` (fast-forward into `main`; see Post-Implementation Closure)
+**UAT analysis ID (original replay):** `e34aaedf-b09f-42f0-8cc8-4653a00b4c10`
+**Live UAT analysis ID:** `20a99882-085c-475d-bb26-2ff28a13183a` (PASS)
 **change_type:** RUNTIME
 **runtime_change:** BACKEND + FRONTEND
 
@@ -25,9 +26,9 @@ The four confirmed `ARCH-CONV-FINAL-AUDIT` defect themes are closed with executa
 
 All identified final-audit corrections are closed; `ARCH-CONV-FINAL-AUDIT` can resume.
 
-`GO` here means *the correction package's obligations are met*. It is **not** a programme PASS: a
-human UAT re-check of the live results page for the audited analysis is still required, and the
-programme decision remains with `ARCH-CONV-FINAL-AUDIT` under human authority.
+`GO` here means *the correction package's obligations are met*. It is **not** a programme PASS: the
+programme decision remains with `ARCH-CONV-FINAL-AUDIT` under human authority. Live human UAT for
+this correction package passed on analysis `20a99882-085c-475d-bb26-2ff28a13183a`.
 
 Controlled-beta readiness: **not assessed, not claimed**.
 
@@ -314,26 +315,45 @@ No STOP condition triggered.
 
 ## 14. Unresolved limitations
 
-1. **Human UAT outstanding.** Post-correction evidence is deterministic replay plus component
-   render tests. A human re-check of the live page for `e34aaedf-…` is required before programme PASS.
-2. **MCV evidence gates are enforced at WHY co-service, not at activation.** All three MCV frames
+1. **MCV evidence gates are enforced at WHY co-service, not at activation.** All three MCV frames
    still activate on lab range; only their WHY service is governed. Activation-level gating would
-   change approved activation rules and is therefore out of scope here.
-3. **The homocysteine elevation-context family remains on the legacy WHY estate.** WS2 corrected its
+   change approved activation rules and is therefore out of scope here. Live coexistence of MCV
+   inventory keys with morphology-only WHY is intentional (compatible inventory); regression-locked.
+2. **The homocysteine elevation-context family remains on the legacy WHY estate.** WS2 corrected its
    wording; migrating it to compiled authority is separate, unauthorised work.
-4. **Pre-existing backend suite failures remain** (61, every one reproduced at the baseline SHA) and
+3. **Pre-existing backend suite failures remain** (61, every one reproduced at the baseline SHA) and
    are unrelated to this package.
-5. **`frontend/tests/components/BiomarkerDials.test.tsx` has a pre-existing fixture defect** in its
+4. **`frontend/tests/components/BiomarkerDials.test.tsx` has a pre-existing fixture defect** in its
    expand-affordance assertion — it fails identically at the baseline SHA (1 failed, 9 passed);
    not caused by and not fixed in this package.
-6. **No controlled-beta readiness claim** is made or implied.
+5. **No controlled-beta readiness claim** is made or implied.
 
 ---
 
 ## 15. Remaining obligations outside this package
 
-- Resume `ARCH-CONV-FINAL-AUDIT` for the programme decision, after human UAT.
+- Resume `ARCH-CONV-FINAL-AUDIT` for the programme decision.
 - Optional, separately authorised: MCV activation-level evidence gating; legacy hcy family migration;
   estate-wide WHY migration beyond the 5/10 pilot; controlled-beta readiness assessment.
 
-Do not merge without explicit human authority.
+**Merged and published** under explicit human authority (2026-07-27). See Post-Implementation Closure.
+
+---
+
+**Closure complete.** Merged to `main` and published to `origin/main`. Resume `ARCH-CONV-FINAL-AUDIT` for the programme decision.
+
+---
+
+## Post-Implementation Closure (published)
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Merge authorised | Yes | Human approval 2026-07-27 |
+| Sprint branch | `feature/arch-conv-correct-1-e2e-authority-layerc` | Fast-forward merge |
+| Feature tip SHA | `bfcb5fd` | Fast-forward merge tip |
+| `main` HEAD | *(set after publish commit)* | `git rev-parse main` |
+| `origin/main` HEAD | *(set after publish)* | `git rev-parse origin/main` — must align |
+| Working tree | Clean | `git status --short` |
+| Stash | Empty | `git stash list` |
+| Kernel status | COMPLETE | `automation_bus/latest_cursor_status.json` |
+| Live UAT | PASS | analysis `20a99882-085c-475d-bb26-2ff28a13183a` |
