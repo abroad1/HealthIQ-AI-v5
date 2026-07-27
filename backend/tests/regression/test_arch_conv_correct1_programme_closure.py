@@ -245,6 +245,34 @@ def test_ambiguous_mcv_evidence_falls_back_to_anchor_context():
     assert WHY_ROLE_CAUSAL not in roles.values()
 
 
+def test_mcv_signal_inventory_may_coexist_while_only_morphology_why_surfaces():
+    """
+    Live-UAT residual question: three MCV activation keys can appear in signal /
+    top_findings inventory while only the anchor morphology interpretation may
+    serve WHY when specific-frame evidence gates are unmet.
+
+    This is intentional Layer B co-service policy (WHY-scoped), not Layer C hiding
+    competing causal medical interpretations. See
+    docs/architecture/ARCH-CONV-CORRECT-1_mcv_co_service_design.md §6.
+    """
+    rows = _evaluate(UAT_PANEL)
+    fired = {str(r.get("activation_key") or "") for r in rows}
+    assert MCV_ANCHOR in fired
+    assert MCV_MEGALOBLASTIC in fired
+    assert MCV_NONMEGALOBLASTIC in fired
+
+    root = _root_cause(UAT_PANEL, rows)
+    assert root is not None
+    mcv_findings = [f for f in root.findings if f.activation_key.startswith("signal_mcv_high::")]
+    assert len(mcv_findings) == 1
+    only = mcv_findings[0]
+    assert only.activation_key == MCV_ANCHOR
+    assert only.why_role == WHY_ROLE_MORPHOLOGY_CONTEXT
+    assert [h.hypothesis_id for h in only.hypotheses] == ["mcv_high_anchor_pattern_v1"]
+    assert MCV_MEGALOBLASTIC not in {f.activation_key for f in root.findings}
+    assert MCV_NONMEGALOBLASTIC not in {f.activation_key for f in root.findings}
+
+
 # --- WS4 -----------------------------------------------------------------------------
 
 

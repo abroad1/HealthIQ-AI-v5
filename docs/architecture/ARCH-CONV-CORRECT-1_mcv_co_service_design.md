@@ -107,6 +107,14 @@ Moving the gate from WHY service to signal activation would change activation ru
 approved frames, which STOP Gate A/B explicitly reserves for a separate authorisation. It is
 therefore recorded as a limitation in the verification report, not implemented here.
 
+**Live-UAT clarification (analysis `20a99882-…`, 2026-07-27):** three
+`CARD_GOVERNED_ACTIVE` MCV signal cards / top_findings rows with near-identical “Mcv High…”
+wording are **intentional compatible signal inventory**, not residual competing WHY authority.
+On that panel hematinic and hepatic gates were unmet, so Layer B emitted only
+`signal_mcv_high::inv_mcv_high_macrocytosis` as `why_role=morphology_context`. Layer C did not
+need to suppress a backend causal conflict. Regression:
+`test_mcv_signal_inventory_may_coexist_while_only_morphology_why_surfaces`.
+
 ## 7. STOP Gate B assessment
 
 | Condition | Assessment |
