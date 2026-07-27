@@ -1,0 +1,51 @@
+work_id: ARCH-CONV-A
+wave: 1
+pack_ref: docs/architecture/ARCH-CONV-A_wave1_thyroid_medical_review_pack.md
+submission_ref: docs/architecture/ARCH-CONV-A_STOP_B_wave1_submission.md
+note: Cursor-assembled register only. medical_decision remains PENDING until GPT Gate 1 and Anthony Gate 2.
+frames:
+  - signal_id: signal_tsh_high
+    activation_key: signal_tsh_high::inv_tsh_high_hypothyroidism
+    source_spec_id: inv_tsh_high_hypothyroidism
+    canonical_source: knowledge_bus/research/investigation_specs/inv_tsh_high_hypothyroidism_v1.yaml
+    legacy_source: knowledge_bus/root_cause/hypotheses/tsh_high_hypotheses_v1.yaml
+    proposed_interpretation: Elevated TSH / HPT-axis response pattern per inv narrative
+    medical_decision: PENDING
+    gpt_review_reference: null
+    anthony_ratification_reference: null
+  - signal_id: signal_tsh_low
+    activation_key: signal_tsh_low::inv_tsh_low_hyperthyroidism
+    source_spec_id: inv_tsh_low_hyperthyroidism
+    canonical_source: knowledge_bus/research/investigation_specs/inv_tsh_low_hyperthyroidism_v1.yaml
+    legacy_source: knowledge_bus/root_cause/hypotheses/tsh_low_hypotheses_v1.yaml
+    proposed_interpretation: Suppressed TSH pattern per inv narrative
+    medical_decision: PENDING
+    gpt_review_reference: null
+    anthony_ratification_reference: null
+  - signal_id: signal_free_t3_high
+    activation_key: signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis
+    source_spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
+    canonical_source: knowledge_bus/research/investigation_specs/inv_free_t3_high_t3_predominant_thyrotoxicosis.yaml
+    legacy_source: knowledge_bus/root_cause/hypotheses/free_t3_high_hypotheses_v1.yaml
+    proposed_interpretation: T3-predominant thyrotoxicosis pattern per inv title/narrative
+    medical_decision: PENDING
+    gpt_review_reference: null
+    anthony_ratification_reference: null
+  - signal_id: signal_free_t4_high
+    activation_key: signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context
+    source_spec_id: inv_free_t4_high_thyrotoxicosis_context
+    canonical_source: knowledge_bus/research/investigation_specs/inv_free_t4_high_thyrotoxicosis_context.yaml
+    legacy_source: knowledge_bus/root_cause/hypotheses/free_t4_high_hypotheses_v1.yaml
+    proposed_interpretation: Elevated free T4 thyrotoxicosis-context pattern per inv
+    medical_decision: PENDING
+    gpt_review_reference: null
+    anthony_ratification_reference: null
+  - signal_id: signal_free_t4_low
+    activation_key: signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency
+    source_spec_id: inv_free_t4_low_thyroid_hormone_deficiency
+    canonical_source: knowledge_bus/research/investigation_specs/inv_free_t4_low_thyroid_hormone_deficiency.yaml
+    legacy_source: knowledge_bus/root_cause/hypotheses/free_t4_low_hypotheses_v1.yaml
+    proposed_interpretation: Low free T4 thyroid hormone deficiency pattern per inv
+    medical_decision: PENDING
+    gpt_review_reference: null
+    anthony_ratification_reference: null
