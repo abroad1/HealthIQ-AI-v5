@@ -351,8 +351,8 @@ No STOP condition triggered.
 | Merge authorised | Yes | Human approval 2026-07-27 |
 | Sprint branch | `feature/arch-conv-correct-1-e2e-authority-layerc` | Fast-forward merge |
 | Feature tip SHA | `bfcb5fd` | Fast-forward merge tip |
-| `main` HEAD | *(set after publish commit)* | `git rev-parse main` |
-| `origin/main` HEAD | *(set after publish)* | `git rev-parse origin/main` — must align |
+| `main` HEAD | `e2f19f8` | `git rev-parse main` |
+| `origin/main` HEAD | `e2f19f8` | `git rev-parse origin/main` — **aligned** |
 | Working tree | Clean | `git status --short` |
 | Stash | Empty | `git stash list` |
 | Kernel status | COMPLETE | `automation_bus/latest_cursor_status.json` |
