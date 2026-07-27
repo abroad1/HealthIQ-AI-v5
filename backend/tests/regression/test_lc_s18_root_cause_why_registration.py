@@ -74,14 +74,14 @@ def _minimal_fired_signal(signal_id: str) -> Dict[str, Any]:
 
 @pytest.mark.regression
 def test_lc_s18_registry_target_count_discovered() -> None:
-    assert len(ROOT_CAUSE_TARGET_SPECS) == 41
-    assert len(get_root_cause_targets()) == 41
+    assert len(ROOT_CAUSE_TARGET_SPECS) == 40
+    assert len(get_root_cause_targets()) == 40
 
 
 @pytest.mark.regression
 def test_lc_s18_all_targets_load_governed_assets() -> None:
     report = fingerprint_root_cause_targets()
-    assert report["target_count"] == 41
+    assert report["target_count"] == 40
     for row in report["targets"]:
         assert row["asset_loads"] is True, row
         assert row["governed"] is True, row
@@ -94,7 +94,7 @@ def test_lc_s18_before_after_fingerprints_equivalent() -> None:
     assert _BEFORE_FP.is_file() and _AFTER_FP.is_file()
     before = json.loads(_BEFORE_FP.read_text(encoding="utf-8"))
     after = json.loads(_AFTER_FP.read_text(encoding="utf-8"))
-    assert before["target_count"] == after["target_count"] == 41
+    assert before["target_count"] == after["target_count"] == 40
     for b, a in zip(before["targets"], after["targets"]):
         assert b["signal_id"] == a["signal_id"]
         assert b["hypothesis_asset_fingerprint"] == a["hypothesis_asset_fingerprint"]

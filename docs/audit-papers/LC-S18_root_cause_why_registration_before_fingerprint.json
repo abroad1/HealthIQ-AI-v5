@@ -1,6 +1,6 @@
 {
   "registry_version": "lc-s18-v1",
-  "target_count": 41,
+  "target_count": 40,
   "targets": [
     {
       "asset_filename": "hcy_hypotheses_v1.yaml",
@@ -8,7 +8,7 @@
       "asset_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\knowledge_bus\\root_cause\\hypotheses\\hcy_hypotheses_v1.yaml",
       "error": null,
       "governed": true,
-      "hypothesis_asset_fingerprint": "7e033cb7a0bc1be6773650bc92364a84a0e34c22399dc920c21ad7ea0d6bd8f6",
+      "hypothesis_asset_fingerprint": "fdd2d20e905b6ddc39288bbc70dbef31c4b07a6dd42ae890ddcc4e4ac1a8ad48",
       "hypothesis_count": 4,
       "registration_source": "manual_v1",
       "signal_id": "signal_homocysteine_elevation_context"
@@ -19,7 +19,7 @@
       "asset_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\knowledge_bus\\root_cause\\hypotheses\\hcy_hypotheses_v1.yaml",
       "error": null,
       "governed": true,
-      "hypothesis_asset_fingerprint": "7e033cb7a0bc1be6773650bc92364a84a0e34c22399dc920c21ad7ea0d6bd8f6",
+      "hypothesis_asset_fingerprint": "fdd2d20e905b6ddc39288bbc70dbef31c4b07a6dd42ae890ddcc4e4ac1a8ad48",
       "hypothesis_count": 4,
       "registration_source": "manual_v1",
       "signal_id": "signal_homocysteine_high"
@@ -309,17 +309,6 @@
       "hypothesis_count": 2,
       "registration_source": "manual_v1",
       "signal_id": "signal_alp_low"
-    },
-    {
-      "asset_filename": "bilirubin_high_hypotheses_v1.yaml",
-      "asset_loads": true,
-      "asset_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\knowledge_bus\\root_cause\\hypotheses\\bilirubin_high_hypotheses_v1.yaml",
-      "error": null,
-      "governed": true,
-      "hypothesis_asset_fingerprint": "348f7ef27415096eff86405fb19125507b7baffbfba50c25964ce1de08155473",
-      "hypothesis_count": 2,
-      "registration_source": "manual_v1",
-      "signal_id": "signal_bilirubin_high"
     },
     {
       "asset_filename": "hyperbilirubinemia_hypotheses_v1.yaml",

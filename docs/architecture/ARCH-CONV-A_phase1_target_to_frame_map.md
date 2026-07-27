@@ -31,18 +31,20 @@ UNKNOWN
 
 | Metric | Value |
 |---|---:|
-| Active registry targets | 41 |
+| Active WHY targets (pre–D-3 inventory baseline) | 41 |
+| Live `ROOT_CAUSE_TARGET_SPECS` after D-3 | 40 |
 | Migrated pilot targets | 5 |
-| Package A remaining targets | 36 |
+| Package A targets before duplicate retirement | 36 |
+| Surviving Package A signal identities after D-3 | 35 |
 | Pilot frames (register) | 10 (9 COMPILED_ACTIVE + 1 REJECTED) |
-| Package A declared frames (non-contingent) | **20** |
-| Package A contingent frames (D-2) | CONTINGENT (0 if suppress; ≥1 if distinct) |
+| Package A declared frames (non-contingent, post D-2) | **20** |
+| Package A contingent frames (D-2) | **0** (FOLD_SUPPRESS ratified) |
+| Waves retained | 7 |
+| Wave 4 effective identities | 6 |
 | Package A targets blocked from Phase 2 medical review | 18 (see §5) |
 
-**Final Package A frame count (non-contingent):** 20  
-**Final Package A frame count if D-2 distinct (provisional +1):** 21  
-**Final Package A frame count if D-2 suppress:** 20  
-**After D-3 registry merge execution (post-ratification):** 35 surviving Package A registry identities (36 − 1 duplicate retire), frames unchanged.
+**Final Package A frame count after D-2 FOLD_SUPPRESS:** 20  
+**Surviving Package A identities after D-3:** 35  
 
 ---
 
@@ -64,7 +66,7 @@ UNKNOWN
 
 | signal_id | direction | declared_frame_count | frame identities | canonical source | readiness | wave | notes |
 |---|---|---:|---|---|---|---|---|
-| signal_homocysteine_elevation_context | context | **CONTINGENT** | Option A distinct: provisional `inv_homocysteine_elevation_context` (research absent). Option B/C suppress/fold: **0** independent frames | NONE in `inv_*.yaml` | DUAL_SERVED | 0 | Shares `hcy_hypotheses_v1.yaml` with pilot (D-2). Medical disposition required at STOP A. |
+| signal_homocysteine_elevation_context | context | **0** | none (FOLD_SUPPRESS) | NONE in `inv_*.yaml` | DUAL_SERVED (legacy shared file retained) | 0 | **STOP A ratified:** FOLD_SUPPRESS. No independent WHY frame. Context only via non-causal surfaces. Shared `hcy_hypotheses_v1.yaml` not disconnected — Package B hand-off. |
 
 ### Wave 1 — Thyroid (7)
 
@@ -105,11 +107,11 @@ UNKNOWN
 | signal_ggt_high | high | 1 | `inv_ggt_high_hepatic` | matching inv | CANONICAL_RESEARCH_AVAILABLE_COMPILE_INCOMPLETE | A3 |
 | signal_alp_high | high | 1 | `inv_alp_high_bone_biliary` | matching inv | CANONICAL_RESEARCH_AVAILABLE_COMPILE_INCOMPLETE | A3 |
 | signal_alp_low | low | 0 | none | NONE | LEGACY_ACTIVE_NO_ACCEPTED_REPLACEMENT | D-5 |
-| signal_bilirubin_high | high | **0 (proposed retire)** | n/a after merge | Pass3 research indexed under hyperbilirubinemia family | MERGE_DUPLICATE_PENDING_RATIFICATION | D-3 |
-| signal_hyperbilirubinemia | high | **3 (provisional)** | Gilbert; hemolytic; hepatobiliary (Pass3 / medical_frame_identity_index) | Pass3 Batch_5 + kb45/kb52c packages; no `inv_*.yaml` yet | CANONICAL_RESEARCH_AVAILABLE_COMPILE_INCOMPLETE | D-3 survivor proposal |
+| signal_bilirubin_high | high | **0 (WHY target retired)** | n/a | Alias → `signal_hyperbilirubinemia` | MERGE_DUPLICATE_RETIRED | **STOP A ratified D-3:** removed from `ROOT_CAUSE_TARGET_SPECS`; legacy YAML retained |
+| signal_hyperbilirubinemia | high | **3 (provisional, unapproved)** | Gilbert; haemolytic; hepatobiliary | Pass3 / medical_frame_identity_index | CANONICAL_RESEARCH_AVAILABLE_COMPILE_INCOMPLETE | Survivor identity; frames **not** medically approved |
 | signal_hepatic_metabolic_stress | context | 0 | none | NONE | LEGACY_ACTIVE_NO_ACCEPTED_REPLACEMENT | D-4 |
 
-**D-3 proposed disposition:** `MERGE_TO_ONE` — survivor `signal_hyperbilirubinemia` (already used by `medical_frame_identity_index_v1.yaml`); retire/alias `signal_bilirubin_high` before any compile. Registry edit deferred until STOP A ratification.
+**D-3 ratified disposition:** `MERGE_TO_ONE` — survivor `signal_hyperbilirubinemia`; WHY-target `signal_bilirubin_high` retired/aliased. Alias register: `knowledge_bus/governance/arch_conv_a_why_identity_alias_register_v1.yaml`.
 
 ### Wave 5 — Iron / haematology (8)
 
@@ -139,13 +141,14 @@ UNKNOWN
 
 | Readiness | Count |
 |---|---:|
-| DUAL_SERVED | 1 (elevation_context) |
+| DUAL_SERVED (elevation_context; shared file retained) | 1 |
 | CANONICAL_RESEARCH_AVAILABLE_COMPILE_INCOMPLETE | 18 (17 single-inv A3 + bilirubin survivor Pass3) |
-| MERGE_DUPLICATE_PENDING_RATIFICATION | 1 (signal_bilirubin_high) |
-| LEGACY_ACTIVE_NO_ACCEPTED_REPLACEMENT | 16 (blocked A4 rejects + remaining A5) |
+| MERGE_DUPLICATE_RETIRED (bilirubin_high WHY target) | 1 (removed from live registry; retained in inventory baseline) |
+| LEGACY_ACTIVE_NO_ACCEPTED_REPLACEMENT | 16 |
 | COMPILED_* within Package A remaining | 0 |
 
-Check: 1+18+1+16 = 36.
+Surviving Package A identities after D-3: **35** (36 − bilirubin_high WHY retirement).  
+Live WHY registry: **40** = 5 migrated + 35 Package A.
 
 ---
 
@@ -153,7 +156,7 @@ Check: 1+18+1+16 = 36.
 
 Blocked until research commissioning and/or STOP A ratification of identity (**18**):
 
-1. signal_homocysteine_elevation_context (D-2 disposition pending)
+1. signal_homocysteine_elevation_context (D-2 FOLD_SUPPRESS — no WHY frame; not a compile candidate)
 2. signal_thyroid_tsh_context
 3. signal_tgab_high
 4. signal_total_cholesterol_high
@@ -161,7 +164,7 @@ Blocked until research commissioning and/or STOP A ratification of identity (**1
 6. signal_lipid_transport_dysfunction
 7. signal_hepatic_alt_context
 8. signal_alp_low
-9. signal_bilirubin_high (pending merge retire — not a compile target)
+9. signal_bilirubin_high (D-3 WHY target retired — not a compile target)
 10. signal_hepatic_metabolic_stress
 11. signal_iron_deficiency_context
 12. signal_iron_overload_context
@@ -185,8 +188,8 @@ Not counted in the 17 until D-3 is ratified and packs are prepared.
 | ID | Phase 1 disposition |
 |---|---|
 | D-1 | Closed for process: every Package A target has declared frame_count (incl. 0 blocked / CONTINGENT). Registry schema still lacks activation_key field — accepted structural fact; plurality handled via authority register at compile time. |
-| D-2 | **Options prepared; medical choice reserved for STOP A ratification.** Options: DISTINCT (≥1 new frame + research) / FOLD_SUPPRESS (0 frames + Package B handoff) / COEXIST_SELECTOR (Package B mechanics). |
-| D-3 | **Proposed MERGE_TO_ONE.** Survivor `signal_hyperbilirubinemia`; retire `signal_bilirubin_high`. Evidence: identical primary metric/direction/`lab_range_exceeded`; frame index already keyed to hyperbilirubinemia. |
+| D-2 | **RATIFIED FOLD_SUPPRESS** — independent frame count 0; shared legacy retained pending Package B |
+| D-3 | **RATIFIED MERGE_TO_ONE** — survivor `signal_hyperbilirubinemia`; WHY target `signal_bilirubin_high` removed from registry + alias register |
 | D-4 | All 8 Stage 0 A4 candidates assessed. **1 confirmed** (ferritin_low → A3). **7 rejected** → LEGACY_ACTIVE_NO_ACCEPTED_REPLACEMENT / blocked. |
 | D-5 | Remains research-intake dependency for listed A5 targets (bilirubin pair superseded by D-3 Pass3 path for survivor). |
 | D-6 | Deferred to compilation (legacy filename ceases as identity once register row exists). |
