@@ -18,9 +18,9 @@ FT4_HIGH = "signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context"
 FT4_LOW = "signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency"
 
 
-def _compiled_findings(biomarkers: dict[str, float]):
+def _evaluate_rows(biomarkers: dict[str, float]):
     clear_why_authority_cache()
-    rows = [
+    return [
         row.model_dump()
         for row in SignalEvaluator(SignalRegistry()).evaluate_all(
             signal_biomarkers=biomarkers,
@@ -28,6 +28,10 @@ def _compiled_findings(biomarkers: dict[str, float]):
             lab_ranges=LAB_RANGES,
         )
     ]
+
+
+def _compiled_findings(biomarkers: dict[str, float]):
+    rows = _evaluate_rows(biomarkers)
     root = compile_root_cause_v1(
         signal_results=rows,
         biomarker_context=biomarkers,
@@ -75,11 +79,32 @@ def test_low_tsh_with_normal_hormones_routes_to_context_only():
     assert findings[TSH_LOW].why_role == "morphology_context"
 
 
-def test_low_tsh_with_low_ft4_fails_closed_for_ordinary_hyperthyroid_why():
-    findings = _compiled_findings({"tsh": 0.2, "free_t4": 9.5, "free_t3": 4.0})
+def test_low_tsh_with_low_ft4_signal_present_but_no_primary_deficiency_why():
+    biomarkers = {"tsh": 0.2, "free_t4": 9.5, "free_t3": 4.0}
+    rows = _evaluate_rows(biomarkers)
+    assert any(r.get("activation_key") == FT4_LOW for r in rows)
+    findings = _compiled_findings(biomarkers)
     assert TSH_LOW not in findings
     assert FT4_HIGH not in findings
     assert FT3_HIGH not in findings
+    assert FT4_LOW not in findings
+
+
+def test_ft4_low_with_normal_tsh_signal_present_but_no_primary_deficiency_why():
+    biomarkers = {"tsh": 2.0, "free_t4": 9.0, "free_t3": 4.2}
+    rows = _evaluate_rows(biomarkers)
+    assert any(r.get("activation_key") == FT4_LOW for r in rows)
+    findings = _compiled_findings(biomarkers)
+    assert FT4_LOW not in findings
+
+
+def test_ft4_low_with_high_tsh_signal_and_primary_deficiency_why():
+    biomarkers = {"tsh": 8.1, "free_t4": 9.0, "free_t3": 4.2}
+    rows = _evaluate_rows(biomarkers)
+    assert any(r.get("activation_key") == FT4_LOW for r in rows)
+    findings = _compiled_findings(biomarkers)
+    assert FT4_LOW in findings
+    assert findings[FT4_LOW].why_role == "causal"
 
 
 def test_t3_predominant_lane_requires_low_tsh_and_non_elevated_ft4():

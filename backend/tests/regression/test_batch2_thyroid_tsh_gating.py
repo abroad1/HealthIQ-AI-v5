@@ -128,6 +128,15 @@ def test_ft4_low_does_not_emit_when_tsh_absent():
     assert _signal_ids(results) == set()
 
 
+def test_ft4_low_emits_when_ft4_low_and_tsh_present():
+    signal = _load_package_signal(
+        "pkg_kb47_free_t4_low_thyroid_hormone_deficiency",
+        "signal_free_t4_low",
+    )
+    results = _evaluate_signal(signal, {"free_t4": 0.5, "tsh": 2.0})
+    assert _signal_ids(results) == {"signal_free_t4_low"}
+
+
 def test_ft4_low_emits_when_ft4_low_and_tsh_high():
     signal = _load_package_signal(
         "pkg_kb47_free_t4_low_thyroid_hormone_deficiency",

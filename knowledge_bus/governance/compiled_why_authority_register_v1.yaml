@@ -191,3 +191,30 @@ frames:
     legacy_asset: knowledge_bus/root_cause/hypotheses/free_t4_low_hypotheses_v1.yaml
     legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
     notes: Ordinary primary thyroid-hormone-deficiency lane only when TSH is elevated.
+    causal_why_preconditions:
+    - metric_id: tsh
+      boundary: above_max
+
+  - activation_key: signal_tsh_high::inv_tsh_high_primary_hypothyroid_pattern
+    signal_id: signal_tsh_high
+    source_spec_id: inv_tsh_high_primary_hypothyroid_pattern
+    authority_state: LEGACY_RETIRED
+    gpt_decision: SUPERSEDED_BY_WAVE1
+    anthony_decision: SUPERSEDED_BY_WAVE1
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/tsh_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Pass-3 parallel frame identity retained on disk but WHY superseded by ratified signal_tsh_high::inv_tsh_high_hypothyroidism.
+
+  - activation_key: signal_tsh_low::inv_tsh_low_thyrotoxic_pattern
+    signal_id: signal_tsh_low
+    source_spec_id: inv_tsh_low_thyrotoxic_pattern
+    authority_state: LEGACY_RETIRED
+    gpt_decision: SUPERSEDED_BY_WAVE1
+    anthony_decision: SUPERSEDED_BY_WAVE1
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/tsh_low_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Pass-3 parallel frame identity retained on disk but WHY superseded by ratified signal_tsh_low::inv_tsh_low_hyperthyroidism.

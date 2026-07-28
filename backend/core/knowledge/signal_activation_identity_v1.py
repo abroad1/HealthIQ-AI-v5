@@ -16,10 +16,6 @@ import yaml
 _INV_YAML_SUFFIX_RE = re.compile(r"\.yaml$", re.IGNORECASE)
 _INV_VERSION_SUFFIX_RE = re.compile(r"_v\d+$")
 _PKG_BODY_RE = re.compile(r"^pkg_[^_]+_(.+)$")
-_SPECIAL_PACKAGE_SOURCE_SPEC_IDS = {
-    "pkg_kb52c_tsh_high_primary_hypothyroid_pattern": "inv_tsh_high_hypothyroidism",
-    "pkg_kb52c_tsh_low_thyrotoxic_pattern": "inv_tsh_low_hyperthyroidism",
-}
 
 ACTIVATION_KEY_SEP = "::"
 
@@ -42,8 +38,6 @@ def _load_manifest(package_dir: Path) -> Dict[str, Any]:
 
 def infer_source_spec_id(*, package_id: str, source_document: Optional[str]) -> str:
     """Infer investigation spec frame id from manifest fields (no package mutation)."""
-    if package_id in _SPECIAL_PACKAGE_SOURCE_SPEC_IDS:
-        return _SPECIAL_PACKAGE_SOURCE_SPEC_IDS[package_id]
     if source_document:
         normalised = source_document.replace("\\", "/").strip()
         if "/inv_" in normalised and _INV_YAML_SUFFIX_RE.search(normalised):

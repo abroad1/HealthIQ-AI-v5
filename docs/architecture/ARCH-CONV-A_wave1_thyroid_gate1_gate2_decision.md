@@ -148,8 +148,9 @@ FT4 low + TSH low or inappropriately normal
 
 Implementation boundary:
 
-- This is the ordinary primary thyroid-hormone-deficiency lane.
-- Do not emit ordinary primary-deficiency WHY when the TSH response is not high.
+- Signal presence is preserved when free T4 is low and TSH is present.
+- Causal WHY is narrowed: ordinary primary-deficiency WHY emits only when TSH is high.
+- When TSH is low or inappropriately normal, the signal may still fire; ordinary primary-deficiency WHY fails closed.
 - Preserve medication, pregnancy, illness, biotin, and assay-interference caveats where available.
 
 ## Explicit Non-Authorisations

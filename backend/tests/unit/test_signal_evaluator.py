@@ -146,7 +146,7 @@ def test_signal_registry_duplicate_activation_key_fails_closed(monkeypatch, tmp_
     )
     monkeypatch.setattr(SignalRegistry, "_iter_signal_library_paths", lambda self: sorted([p1, p2]))
 
-    with pytest.raises(ValueError, match="Duplicate activation_key"):
+    with pytest.raises(ValueError, match="Duplicate activation authority conflict|Duplicate activation_key"):
         SignalRegistry()
 
 
@@ -1608,13 +1608,20 @@ _KB_S24_SIGNAL_CASES = {
         "no_trigger_biomarkers": {"tsh": 2.0, "free_t4": 16.0},
         "baseline_biomarkers": {"tsh": 6.0, "free_t4": 16.0},
         "escalation_biomarkers": {"tsh": 11.0, "free_t4": 16.0},
-        "lab_ranges": {"tsh": {"min": 0.4, "max": 4.5}},
+        "lab_ranges": {
+            "tsh": {"min": 0.4, "max": 4.5},
+            "free_t4": {"min": 12.0, "max": 22.0},
+        },
     },
     "signal_tsh_low": {
         "no_trigger_biomarkers": {"tsh": 2.0, "free_t4": 16.0, "free_t3": 5.0},
         "baseline_biomarkers": {"tsh": 0.2, "free_t4": 16.0, "free_t3": 5.0},
-        "escalation_biomarkers": {"tsh": 0.2, "free_t4": 24.0, "free_t3": 5.0},
-        "lab_ranges": {"tsh": {"min": 0.4, "max": 4.5}},
+        "escalation_biomarkers": {"tsh": 0.05, "free_t4": 16.0, "free_t3": 5.0},
+        "lab_ranges": {
+            "tsh": {"min": 0.4, "max": 4.5},
+            "free_t4": {"min": 12.0, "max": 22.0},
+            "free_t3": {"min": 3.5, "max": 6.5},
+        },
     },
     "signal_urea_high": {
         "no_trigger_biomarkers": {"urea": 6.0, "creatinine": 160.0, "hemoglobin": 95.0},

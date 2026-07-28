@@ -78,20 +78,97 @@ Observed results:
 - regression compatibility sweep: `38 passed`
 - unit compatibility sweep: `54 passed`
 
-## Bounded Corrections Applied During STOP C
+## Bounded Corrections Applied During Initial STOP C
 
-Two bounded runtime corrections were required during the proof:
+Two bounded runtime corrections were required during the first proof:
 
-1. **TSH dual-source activation identity alignment**
-   - `pkg_kb52c_tsh_high_primary_hypothyroid_pattern`
-   - `pkg_kb52c_tsh_low_thyrotoxic_pattern`
-   - aligned to the ratified Wave 1 frame IDs in `signal_activation_identity_v1.py`.
+1. **TSH dual-source activation identity alignment** (later superseded by the STOP C CORRECT below).
+2. **Duplicate runtime row protection** (later replaced by the named authority-resolution rule below).
 
-2. **Duplicate runtime row protection**
-   - `SignalRegistry` now deterministically resolves duplicate activation-key collisions instead of crashing when parallel package sources address the same approved frame.
-   - `root_cause_compiler_v1.py` now deduplicates identical runtime rows before compiled WHY assembly.
+## STOP C CORRECT — Independent Audit Findings
 
-These changes are bounded to governed activation identity and deterministic emission control. No medical broadening was introduced.
+Independent STOP C audit verdict:
+
+```text
+CORRECT
+DO NOT PROCEED TO WAVE 2
+```
+
+### Finding 1 — FT4-low signal presence restored
+
+Audit finding: Wave 1 incorrectly suppressed the entire `signal_free_t4_low` signal when TSH was normal or low.
+
+Correction:
+
+- Restored signal-level gate to `require_tsh_present` in
+  `knowledge_bus/packages/pkg_kb47_free_t4_low_thyroid_hormone_deficiency/signal_library.yaml`.
+- Moved `TSH high` enforcement to causal-WHY preconditions on the authority row:
+  `causal_why_preconditions: tsh above_max`.
+- Preserved FT4 low biomarker-direction activation.
+
+Corrected boundary:
+
+```text
+FT4 low + TSH high
+  -> signal fires
+  -> primary thyroid-hormone-deficiency WHY may serve
+
+FT4 low + TSH normal or low
+  -> signal still fires
+  -> primary-deficiency WHY fails closed
+  -> no WHY-engine fallback for the suppressed causal lane
+
+FT4 not low
+  -> signal does not fire
+```
+
+Gate 1 / Gate 2 reference IDs were not changed. The decision artefact now states explicitly:
+
+```text
+signal presence is preserved
+causal WHY is narrowed
+```
+
+### Finding 2 — Named duplicate-authority resolution
+
+Audit finding: Wave 1 used lexicographic path/package-id tie-breaking and a hard-coded package map.
+
+Correction:
+
+- Removed `_SPECIAL_PACKAGE_SOURCE_SPEC_IDS`.
+- Removed source-path lexicographic selection from `SignalRegistry._load`.
+- Removed package-id lexicographic selection from `_dedupe_signal_rows`.
+- Added `backend/core/knowledge/duplicate_authority_resolution_v1.py` with one named rule.
+
+Named resolution order (higher wins):
+
+```text
+1. explicit activation_key / explicit source_spec_id
+2. validated canonical investigation_spec source
+3. ratified/promoted COMPILED_ACTIVE authority for the activation_key
+4. higher explicit governance/provenance authority rank
+5. otherwise fail closed with DuplicateAuthorityConflict
+```
+
+Pass-3 parallel TSH activation keys are registered as `LEGACY_RETIRED` so they skip WHY without inventing package-name identity aliases:
+
+- `signal_tsh_high::inv_tsh_high_primary_hypothyroid_pattern`
+- `signal_tsh_low::inv_tsh_low_thyrotoxic_pattern`
+
+### Direct selector-test evidence
+
+`backend/tests/unit/test_duplicate_authority_resolution_v1.py` proves:
+
+- canonical inv-spec package beats raw Pass-3-derived duplicate
+- higher provenance / explicit authority beats unratified duplicate
+- explicit `source_spec_id` beats inferred identity
+- equal-authority unresolved duplicates fail closed
+- package names and source paths do not affect the winner
+- load order does not affect the winner
+
+### Full regression comparison against main
+
+Branch and `main` each reported the same 13 failing regression tests. New branch regressions versus main: **0**.
 
 ## Explicit Non-Actions
 
@@ -100,10 +177,11 @@ These changes are bounded to governed activation identity and deterministic emis
 - No legacy thyroid WHY asset was deleted or disconnected.
 - No bilirubin WHY frame was compiled or activated.
 - No Package B hand-off work was performed.
-- No work beyond STOP C was started.
+- No Wave 2 work was started.
 
 ## Remaining Out-of-Scope Items
 
 - `signal_thyroid_tsh_context` remains outside this Wave 1 compiled promotion and was not newly compiled here.
 - Legacy retirement remains a future STOP D concern.
 - Estate-wide repetition beyond the first proven wave remains blocked pending later approval.
+- Ready for independent STOP C re-audit after this CORRECT commit.

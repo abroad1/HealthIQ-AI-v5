@@ -39,6 +39,8 @@ EXPECTED_KEYS = (
     "signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis",
     "signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context",
     "signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency",
+    "signal_tsh_high::inv_tsh_high_primary_hypothyroid_pattern",
+    "signal_tsh_low::inv_tsh_low_thyrotoxic_pattern",
 )
 METABOLIC_KEY = "signal_homocysteine_high::inv_homocysteine_high_metabolic"
 FORBIDDEN_COMPILED = REPO_ROOT / "knowledge_bus/compiled/hypotheses/inv_homocysteine_high_metabolic.yaml"
@@ -58,6 +60,7 @@ def main() -> int:
     )
     from core.knowledge.why_authority_v1 import (
         STATE_COMPILED_ACTIVE,
+        STATE_LEGACY_RETIRED,
         STATE_REJECTED,
         clear_why_authority_cache,
         load_why_authority_register,
@@ -106,6 +109,15 @@ def main() -> int:
             )
             if mode != "skip":
                 return _fail(f"REJECTED frame must resolve to skip: {key}")
+        elif state == STATE_LEGACY_RETIRED:
+            mode, _ = resolve_frame_why_authority(
+                signal_id=str(row.get("signal_id") or ""),
+                activation_key=key,
+            )
+            if mode != "skip":
+                return _fail(f"LEGACY_RETIRED frame must resolve to skip: {key}")
+            if row.get("artefact_path"):
+                return _fail(f"LEGACY_RETIRED must not declare artefact_path: {key}")
         else:
             return _fail(f"unexpected authority_state {state!r} for {key}")
 
@@ -197,7 +209,7 @@ def main() -> int:
         return _fail(f"unexpected hcy B-vitamin hypothesis ids: {sorted(ids)}")
 
     print("compiled_why_authority_gate: PASS")
-    print(f"frames={len(EXPECTED_KEYS)} compiled_active=14 rejected=1")
+    print(f"frames={len(EXPECTED_KEYS)} compiled_active=14 rejected=1 legacy_retired=2")
     return 0
 
 
