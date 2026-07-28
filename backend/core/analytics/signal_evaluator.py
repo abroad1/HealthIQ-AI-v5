@@ -111,12 +111,6 @@ class SignalRegistry:
                         }
                     )
                     continue
-                if activation_key in signals_by_activation_key:
-                    existing = signals_by_activation_key[activation_key].get("_source_path", "")
-                    raise ValueError(
-                        "Duplicate activation_key collision: "
-                        f"{activation_key!r} at {path} and {existing}"
-                    )
                 compiled = dict(item)
                 compiled["_source_path"] = str(path)
                 compiled["activation_key"] = activation_key
@@ -124,6 +118,25 @@ class SignalRegistry:
                 compiled["package_id"] = resolved_package_id or package_id
                 compiled["provenance_status"] = loaded_status
                 compiled["runtime_eligibility"] = eligibility
+                from core.knowledge.duplicate_authority_resolution_v1 import (
+                    candidate_from_signal_row,
+                    resolve_duplicate_authority,
+                )
+
+                compiled_candidate = candidate_from_signal_row(compiled, manifest=manifest)
+                compiled["has_explicit_source_spec_id"] = compiled_candidate.has_explicit_source_spec_id
+                compiled["has_validated_canonical_inv_spec"] = (
+                    compiled_candidate.has_validated_canonical_inv_spec
+                )
+                if activation_key in signals_by_activation_key:
+                    existing = signals_by_activation_key[activation_key]
+                    winner = resolve_duplicate_authority(
+                        candidate_from_signal_row(existing, manifest=None),
+                        compiled_candidate,
+                    )
+                    if winner is compiled_candidate:
+                        signals_by_activation_key[activation_key] = compiled
+                    continue
                 signals_by_activation_key[activation_key] = compiled
 
         ordered_keys = sorted(signals_by_activation_key.keys())

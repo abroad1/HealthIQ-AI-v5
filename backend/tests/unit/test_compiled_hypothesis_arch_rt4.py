@@ -80,7 +80,7 @@ def test_shadow_registry_loads_pilot_only():
 
 
 def test_shadow_registry_separate_from_production_registry():
-    assert len(ROOT_CAUSE_TARGET_SPECS) == 41
+    assert len(ROOT_CAUSE_TARGET_SPECS) == 40
     assert len(COMPILED_HYPOTHESIS_PILOT_SPECS) == 1
     prod_ids = {s.signal_id for s in ROOT_CAUSE_TARGET_SPECS}
     pilot_ids = {s.signal_id for s in COMPILED_HYPOTHESIS_PILOT_SPECS}

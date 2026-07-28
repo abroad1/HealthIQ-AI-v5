@@ -74,7 +74,10 @@ ROOT_CAUSE_TARGET_SPECS: Tuple[RootCauseTargetSpec, ...] = (
     ),
     RootCauseTargetSpec("signal_alp_high", lrc.load_alp_high_hypotheses_v1, "alp_high_hypotheses_v1.yaml"),
     RootCauseTargetSpec("signal_alp_low", lrc.load_alp_low_hypotheses_v1, "alp_low_hypotheses_v1.yaml"),
-    RootCauseTargetSpec("signal_bilirubin_high", lrc.load_bilirubin_high_hypotheses_v1, "bilirubin_high_hypotheses_v1.yaml"),
+    # ARCH-CONV-A D-3 (STOP A ratified): signal_bilirubin_high retired as WHY target;
+    # surviving family identity is signal_hyperbilirubinemia. Alias register:
+    # knowledge_bus/governance/arch_conv_a_why_identity_alias_register_v1.yaml
+    # Legacy YAML retained on disk; no compile/activation authorised here.
     RootCauseTargetSpec("signal_hyperbilirubinemia", lrc.load_hyperbilirubinemia_hypotheses_v1, "hyperbilirubinemia_hypotheses_v1.yaml"),
     RootCauseTargetSpec("signal_hypercortisolism", lrc.load_hypercortisolism_hypotheses_v1, "hypercortisolism_hypotheses_v1.yaml"),
     RootCauseTargetSpec("signal_free_t3_high", lrc.load_free_t3_high_hypotheses_v1, "free_t3_high_hypotheses_v1.yaml"),

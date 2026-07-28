@@ -14,7 +14,7 @@ Signals without a registered loader are skipped with no behavioural change.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from core.analytics.intervention_selector_v1 import load_safety_rules_v1
 from core.analytics.primitives import (
@@ -528,6 +528,68 @@ def _lead_row_for_why_fallback(rows: List[Dict[str, Any]]) -> Optional[Dict[str,
     )
 
 
+def _dedupe_signal_rows(signal_results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Collapse duplicate runtime rows that resolve to the same activation frame.
+
+    Uses the named duplicate-authority resolution rule. Equal-authority ties fail closed.
+    """
+    from core.knowledge.duplicate_authority_resolution_v1 import (
+        candidate_from_signal_row,
+        resolve_duplicate_authority,
+    )
+
+    by_identity: Dict[Tuple[str, str], Dict[str, Any]] = {}
+    for row in signal_results:
+        signal_id = str(row.get("signal_id", "")).strip()
+        activation_key = str(row.get("activation_key", "")).strip()
+        key = (signal_id, activation_key)
+        if key not in by_identity:
+            by_identity[key] = row
+            continue
+        existing = by_identity[key]
+        left = candidate_from_signal_row(existing)
+        right = candidate_from_signal_row(row)
+        winner = resolve_duplicate_authority(left, right)
+        by_identity[key] = existing if winner is left else row
+    return list(by_identity.values())
+
+
+def _causal_why_preconditions_met(
+    *,
+    auth_row: Optional[Dict[str, Any]],
+    biomarker_context: Dict[str, Any],
+    reference_ranges: Dict[str, Any],
+) -> bool:
+    """Fail closed for ordinary causal WHY when authority preconditions are unmet."""
+    if not isinstance(auth_row, dict):
+        return True
+    gates = auth_row.get("causal_why_preconditions")
+    if not isinstance(gates, list) or not gates:
+        return True
+    for gate in gates:
+        if not isinstance(gate, dict):
+            return False
+        metric_id = str(gate.get("metric_id") or "").strip()
+        boundary = str(gate.get("boundary") or "").strip()
+        if not metric_id or not boundary:
+            return False
+        status = _marker_status(
+            metric_id,
+            biomarker_context=biomarker_context,
+            reference_ranges=reference_ranges,
+        )
+        if boundary == "above_max" and status != "high":
+            return False
+        if boundary == "below_min" and status != "low":
+            return False
+        if boundary == "not_above_max" and status == "high":
+            return False
+        if boundary == "not_below_min" and status == "low":
+            return False
+    return True
+
+
 def _compile_why_engine_fallback_finding(
     lead: Dict[str, Any],
     *,
@@ -587,6 +649,7 @@ def compile_root_cause_v1(
     from core.knowledge.signal_result_index_v1 import rows_for_signal_id
 
     rows = [r for r in (signal_results or []) if isinstance(r, dict)]
+    rows = _dedupe_signal_rows(rows)
 
     biomarker_context = biomarker_context or {}
     input_reference_ranges = input_reference_ranges or {}
@@ -600,6 +663,7 @@ def compile_root_cause_v1(
     tests_registry = load_confirmatory_tests_registry_v1()
     tests_by_id: Dict[str, Dict[str, Any]] = tests_registry["tests_by_id"]
     findings: List[RootCauseFindingV1] = []
+    causal_why_suppressed_keys: Set[str] = set()
     from core.knowledge.compiled_hypothesis import get_compiled_hypothesis_artefact_for_activation_key
     from core.knowledge.why_authority_v1 import resolve_frame_why_authority
 
@@ -634,6 +698,15 @@ def compile_root_cause_v1(
                 resolved_key = key
                 if not resolved_key and isinstance(auth_row, dict):
                     resolved_key = str(auth_row.get("activation_key") or "").strip()
+                if not _causal_why_preconditions_met(
+                    auth_row=auth_row if isinstance(auth_row, dict) else None,
+                    biomarker_context=biomarker_context,
+                    reference_ranges=input_reference_ranges,
+                ):
+                    # Signal may remain present; ordinary causal WHY fails closed.
+                    if resolved_key:
+                        causal_why_suppressed_keys.add(resolved_key)
+                    continue
                 artefact = get_compiled_hypothesis_artefact_for_activation_key(resolved_key)
                 scoped = dict(target)
                 scoped["activation_key"] = resolved_key
@@ -648,6 +721,10 @@ def compile_root_cause_v1(
                             activation_key=resolved_key,
                             artefact=artefact,
                         )
+                elif isinstance(auth_row, dict):
+                    auth_why_role = str(auth_row.get("why_role") or "").strip()
+                    if auth_why_role:
+                        scoped["why_role"] = auth_why_role
                 findings.append(
                     _compile_compiled_hypothesis_finding(
                         target=scoped,
@@ -683,8 +760,9 @@ def compile_root_cause_v1(
             signal_id=lead_id,
             activation_key=lead_key,
         )
-        # REJECTED / deferred pilot frames must not acquire WHY-engine fallback content.
-        if lead_mode != "skip":
+        # REJECTED / deferred / causal-precondition-failed frames must not acquire
+        # WHY-engine fallback content.
+        if lead_mode != "skip" and lead_key not in causal_why_suppressed_keys:
             findings.insert(
                 0,
                 _compile_why_engine_fallback_finding(

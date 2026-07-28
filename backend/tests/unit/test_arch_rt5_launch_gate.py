@@ -26,8 +26,9 @@ _REPO = Path(__file__).resolve().parents[3]
 def test_estate_index_loads():
     payload = yaml.safe_load(estate_index_path().read_text(encoding="utf-8"))
     assert payload["estate_id"] == "healthiq_launch_estate_v1"
-    assert len(payload["card_evidence_artefacts"]) == 7
-    assert len(payload["compiled_hypothesis_artefacts"]) == 1
+    # ARCH-CONV-A Phase 0 reconciled: 10 card artefacts; 9 COMPILED_ACTIVE WHY artefacts
+    assert len(payload["card_evidence_artefacts"]) == 10
+    assert len(payload["compiled_hypothesis_artefacts"]) == 17
     assert len(payload["wave1_subsystems_legacy_hard_coded"]["subsystem_ids"]) == 0
 
 
@@ -55,10 +56,10 @@ def test_manifest_files_validate_via_script():
 
 def test_wave1_subsystems_classified():
     rows = wave1_subsystem_authority_rows()
-    assert len(rows) == 7
+    assert len(rows) == 10
     compiled = [r for r in rows if r["active_authority"] == "compiled_card_evidence"]
     legacy = [r for r in rows if r["active_authority"] == "hard_coded_python"]
-    assert len(compiled) == 7
+    assert len(compiled) == 10
     assert len(legacy) == 0
 
 

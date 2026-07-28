@@ -1,0 +1,39 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_hdl_low_cardiovascular_v1
+hypothesis_set_id: signal_hdl_cholesterol_low_context_set_v1
+signal_id: signal_hdl_cholesterol_low
+activation_key: signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular
+source_spec_ids:
+- inv_hdl_low_cardiovascular
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_hdl_low_cardiovascular.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_a_w2_hdl_low.yaml
+hypotheses:
+- hypothesis_id: hyp_low_hdl_cardiometabolic_risk_marker_context
+  rank: 1
+  title: Low-HDL cardiometabolic risk-marker context
+  physiological_claim: Low HDL cholesterol may form part of an adverse cardiometabolic
+    or cardiovascular risk-marker context when viewed with other governed lipid and
+    metabolic markers, without proving impaired reverse cholesterol transport or arterial
+    cholesterol clearance from the measured HDL value alone.
+  evidence_strength: strong
+  missing_data_policy: Interpret when HDL cholesterol is below the laboratory range.
+    Coexistence with elevated triglycerides, elevated LDL, or other governed risk markers
+    may strengthen integrated adverse lipid-pattern context.
+  evidence_for:
+  - HDL cholesterol is below the laboratory range.
+  - Coexisting triglyceride, LDL, or glycaemic abnormalities may strengthen adverse lipid-pattern context when present.
+  evidence_against:
+  - HDL cholesterol within the laboratory range removes this frame.
+  contradiction_markers: []
+  caveats:
+  - Do not emit a standalone causal WHY for low HDL.
+  - Do not claim that measured HDL proves impaired reverse cholesterol transport or arterial clearance.
+  - Do not label this frame as metabolic syndrome, insulin resistance, or cardiovascular disease.
+  - Do not recommend treatment specifically to raise HDL.
+  confirmatory_tests: []
+  summary_template: HDL cholesterol is below range and may form adverse cardiometabolic or CV risk-marker context. Measured HDL alone does not prove impaired clearance or confirm metabolic syndrome or heart disease.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-A Wave 2 Gate 1 / Gate 2 ratified compiled WHY artefact. CONTEXT_ONLY lane (morphology_context).

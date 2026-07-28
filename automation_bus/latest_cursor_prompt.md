@@ -1,495 +1,1031 @@
 ---
-work_id: ARCH-CONV-CORRECT-1
-branch: feature/arch-conv-correct-1-e2e-authority-layerc
+work_id: ARCH-CONV-A
+branch: feature/arch-conv-a-estate-why-authority-migration
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
-stage_b_mode: MODE_2
-runtime_change: YES
 ---
 
-# ARCH-CONV-CORRECT-1 — End-to-End Medical Authority and Layer C Boundary Closure
+# ARCH-CONV-A — Estate-Wide WHY Authority Migration
 
-## Outcome
+## 1. Role and execution authority
 
-Close the final programme-level defects identified by `ARCH-CONV-FINAL-AUDIT`.
+You are Cursor operating under Automation Bus SOP v1.3.1, Knowledge Bus SOP v1.3.1 and the Knowledge Bus Pass 3 Promotion Protocol v1.1.
 
-The correction must prove that rejected, retired, legacy, sibling-frame or frontend-derived medical logic cannot survive anywhere from Layer B activation through final Layer C presentation.
+Implement only the work authorised in this prompt.
 
-This package is one outcome-based correction sprint with four internal workstreams:
+This is a HIGH-risk MIXED work package touching the Intelligence Core and changing emitted medical reasoning. MIXED work is governed using BEHAVIOUR controls.
 
-1. rejected-frame total inactivation;
-2. legacy “methylation capacity” wording retirement;
-3. MCV frame co-service control;
-4. Layer C medical-boundary closure.
+You may:
 
-Do not split these into separate sprints unless a STOP condition proves that separation is required for safety.
+* investigate the repository;
+* update architecture and inventory artefacts;
+* prepare medical-review evidence packs;
+* implement deterministic compilation and runtime integration after the relevant STOP gates have been ratified;
+* add or update tests;
+* disconnect legacy WHY authority after explicit retirement authority;
+* execute the Automation Bus lifecycle and required verification.
 
-Standard Automation Bus and Knowledge Bus governance apply.
+You may not:
 
-## Authoritative audit inputs
+* make medical decisions;
+* infer approval from existing legacy content;
+* ratify investigation frames;
+* bypass GPT medical review or Anthony’s human ratification;
+* compile or activate an unratified frame;
+* continue past a STOP gate without explicit continuation authority;
+* merge;
+* self-certify correctness;
+* manually edit kernel-owned Automation Bus status.
 
-Read the current audit-branch versions of:
+## 2. Product outcome
 
-```text
-docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md
-docs/audit-papers/ARCH-CONV-FINAL-AUDIT_implementation_and_verification_report.md
-docs/architecture/ARCH-CONV-FINAL_programme_obligation_closure_matrix.md
-docs/architecture/ARCH-CONV-FINAL_end_to_end_pipeline_and_leakage_report.md
-docs/architecture/ARCH-CONV-FINAL_layer_c_boundary_and_leakage_inventory.md
-```
+Complete estate-wide WHY authority migration so that:
 
-Also read the current merged versions of:
+> Every active production WHY target has explicit frame identity, ratified canonical medical authority, a deterministic compiled artefact and a governed runtime selection path.
 
-```text
-docs/Medical Research Documents/HEALTHIQ_AI_V5_WHY_PILOT_MEDICAL_REVIEW_GPT_REVIEWED_ANTHONY_RATIFIED.md
-docs/architecture/ARCH-CONV-PKG3_compiled_why_authority_design.md
-docs/architecture/ARCH-CONV-PKG3_legacy_retirement_and_authority_register.md
-docs/architecture/ARCH-CONV-PKG3_output_parity_and_change_report.md
-docs/audit-papers/ARCH-CONV-PKG3_implementation_and_verification_report.md
-docs/audit-papers/ARCH-CONV-PKG2_implementation_and_verification_report.md
-docs/audit-papers/ARCH-CONV-PKG1_implementation_and_verification_report.md
-knowledge_bus/governance/compiled_why_authority_register_v1.yaml
-```
+The package is not complete merely because new artefacts exist.
 
-Resolve actual repository paths where names differ.
+Completion requires:
 
-## Authoritative live UAT case
+* canonical research authority;
+* explicit target-to-frame identity;
+* GPT medical review;
+* Anthony ratification;
+* deterministic compilation;
+* governed runtime selection;
+* structural inactivity of rejected and deferred frames;
+* removal of migrated targets’ dependence on legacy WHY authority;
+* aligned consumer and clinician outputs;
+* provenance-bearing Layer B output;
+* Layer C remaining render/translation only.
 
-Use the exact previously audited analysis:
+## 3. Authoritative sprint inputs
 
-```text
-analysis_id=e34aaedf-b09f-42f0-8cc8-4653a00b4c10
-```
-
-This analysis must be rerun or replayed after correction and compared against the final-audit baseline.
-
-Do not write credentials into source files, commits, reports, screenshots or logs.
-
-## Confirmed defects to close
-
-The final audit found the following `ACTIVE_LEAK` defects:
-
-1. Rejected frame  
-   `signal_homocysteine_high::inv_homocysteine_high_metabolic`  
-   still fires, appears in `top_findings`, and is referenced by intervention `activation_key_refs`.
-
-2. Signal interpretation still renders:  
-   `Reflects methylation capacity and B-vitamin status.`
-
-3. Clinician summary still surfaces legacy wording equivalent to:  
-   `reduced B12-related methylation capacity`.
-
-4. Consumer output still surfaces a `Methylation pathway pattern`.
-
-5. MCV anchor, megaloblastic and non-megaloblastic WHY can co-emit despite the ratified frame-specific intent.
-
-6. Previously identified Layer C frontend medical-boundary leaks remain active.
-
-The package must close all six findings together.
-
-# Internal Workstream 1 — Rejected-frame total inactivation
-
-## Required behaviour
-
-A frame with governed WHY authority state `REJECTED` must be non-active across the entire medical pipeline, not merely skipped by the root-cause compiler.
-
-For:
+Read these sprint-specific documents in full:
 
 ```text
-signal_homocysteine_high::inv_homocysteine_high_metabolic
+docs/architecture/ARCH-CONV-A_stage0_outcome_and_package_boundary.md
+docs/architecture/ARCH-CONV-A_active_why_target_inventory.md
+docs/architecture/ARCH-CONV-A_identity_and_source_readiness.md
+docs/architecture/ARCH-CONV-A_medical_review_wave_plan.md
+docs/architecture/ARCH-CONV-A_compile_and_runtime_integration_design.md
+docs/architecture/ARCH-CONV-A_stop_gates_and_acceptance.md
+docs/architecture/ARCH-CONV-A_test_and_replay_strategy.md
+docs/architecture/ARCH-CONV-A_legacy_retirement_policy.md
+docs/architecture/ARCH-CONV-A_stage0_advisory.md
+docs/architecture/ARCH-CONV_ABC_minimum_package_validation.md
+docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md
 ```
 
-prove that it cannot:
+Locate the exact ADR path if its repository location differs.
 
-- enter the active signal result set;
-- be marked fired;
-- participate in ranking;
-- appear in `top_findings`;
-- contribute to domain scoring;
-- contribute to narrative lead selection;
-- appear in intervention `signal_refs` or `activation_key_refs`;
-- appear in consumer or clinician summaries;
-- appear in replay as an active medical result;
-- act as a fallback for another frame;
-- provide interpretation text.
+Use the existing Package 1–3 and `ARCH-CONV-CORRECT-1` implementation and regression evidence as mandatory protection baselines.
 
-Its rejection may remain visible only in governed audit or authority-state records.
+The standard SOPs already govern this package and should not be copied into new project documents.
 
-## Canonical policy
+## 4. Fixed estate facts
 
-Create or reuse one canonical frame-runtime-authority decision consumed early enough in the pipeline to prevent downstream contamination.
-
-Do not add separate ad hoc rejection checks to every consumer if a shared upstream eligibility decision can safely close the defect.
-
-The frame must fail closed.
-
-## STOP Gate A
-
-STOP if:
-
-- the rejected frame cannot be excluded without changing medical activation rules for approved frames;
-- the authority register is not available at the required pipeline stage;
-- removal creates unexplained ranking or report regressions;
-- a new clinical prioritisation rule would be required.
-
-# Internal Workstream 2 — Legacy “methylation capacity” retirement
-
-## Required behaviour
-
-Remove all active production use of the rejected or unsupported concepts:
+The ratified estate baseline is:
 
 ```text
-methylation capacity
-reduced B12-related methylation capacity
-Methylation pathway pattern
+41 verified active WHY registry targets
+5 targets represented by the proven migrated cohort
+36 remaining targets in Package A scope
 ```
 
-where these originate from:
-
-- `inv_homocysteine_high_metabolic`;
-- legacy homocysteine elevation-context hypotheses;
-- deprecated signal interpretation text;
-- legacy narrative or clinician-summary fallback;
-- Layer C fallback or display labels.
-
-## Medical boundary
-
-The ratified medical review permits:
-
-- B-vitamin-associated hyperhomocysteinaemia when supported by relevant markers;
-- renal-associated hyperhomocysteinaemia when supported by renal evidence.
-
-It does not permit homocysteine to be described as a stand-alone measure of “methylation capacity”.
-
-Replace or suppress legacy text only where necessary to implement the ratified medical decision.
-
-Do not invent new medical prose.
-
-Where wording is needed, source it from the Anthony-ratified medical review pack.
-
-## Fingerprint closure
-
-Build an executable fingerprint check covering:
+The migrated cohort currently represents:
 
 ```text
-methylation capacity
-reduced B12-related methylation capacity
-Methylation pathway pattern
+10 medically reviewed frames
+9 COMPILED_ACTIVE
+1 REJECTED and structurally inactive
 ```
 
-Search:
-
-- active signal interpretations;
-- top findings;
-- consumer report;
-- clinician report;
-- intervention output;
-- API DTOs;
-- rendered frontend output;
-- replay artefacts.
-
-Any active match blocks PASS unless it is an explicitly historical/audit-only reference.
-
-# Internal Workstream 3 — MCV frame co-service control
-
-## Ratified rule
-
-The general MCV anchor frame:
+The final frame count for the remaining 36 targets is:
 
 ```text
-signal_mcv_high::inv_mcv_high_macrocytosis
+UNKNOWN UNTIL PHASE 1 IDENTITY AND SOURCE CLOSURE
 ```
 
-may provide morphology context, but must not generate duplicate causal WHY when either specific frame is selected:
+Do not assume one target equals one frame.
+
+No target may proceed to medical review or compilation until its complete target-to-frame disposition has passed STOP A.
+
+## 5. Authority and identity model
+
+Preserve these identities:
 
 ```text
-signal_mcv_high::inv_mcv_high_megaloblastic_macrocytosis
-signal_mcv_high::inv_mcv_high_nonmegaloblastic_macrocytosis
+signal_id
+  = signal-family identity
+
+activation_key
+  = runtime activation identity
+
+investigation_id / frame_id
+  = medical interpretation identity
 ```
 
-## Required behaviour
+Every active interpretation must be addressable through explicit activation key and explicit frame identity.
 
-Implement explicit governed co-service rules:
+Do not permit:
 
-- the anchor may coexist as non-causal morphology context only;
-- the anchor must not emit nutrient, hepatic, alcohol, thyroid, reticulocyte or marrow causal WHY;
-- a specific MCV frame must suppress duplicate causal WHY from the anchor;
-- megaloblastic and non-megaloblastic causal frames must not both serve unless an explicitly governed combined pattern exists;
-- unsupported specific frames must remain inactive;
-- the frontend must not reconstruct all three as parallel medical explanations.
+* ambiguous signal-only frame selection;
+* lexicographic or load-order selection;
+* file-name-based medical identity;
+* duplicate activation-key registration;
+* hidden fallback from a rejected or deferred frame;
+* collapsing context/anchor frames with causal frames;
+* treating one shared legacy file as one frame identity where it serves several interpretations;
+* unresolved identity plurality entering medical review or compilation.
 
-## Required tests
+## 6. Package boundaries
 
-At minimum prove:
+### Package A owns
 
-1. anchor only → morphology context only;
-2. megaloblastic supported → megaloblastic WHY, no anchor causal WHY, no non-megaloblastic WHY;
-3. non-megaloblastic supported → non-megaloblastic WHY, no anchor causal WHY, no megaloblastic WHY;
-4. ambiguous/insufficient support → safe anchor context or suppression, no speculative cause;
-5. no duplicate consumer or clinician wording;
-6. no duplicate intervention attribution.
+* exact active WHY target inventory;
+* complete target-to-frame mapping;
+* identity and canonical-source closure;
+* medical-review evidence packs;
+* medical-decision registers;
+* deterministic WHY compilation;
+* compile manifests and lineage primitives;
+* explicit runtime WHY resolution;
+* wave-level legacy authority replacement;
+* target-local reachability proof;
+* safe local legacy disconnection;
+* regression and replay evidence.
 
-## STOP Gate B
+### Package B retains
 
-STOP if:
+* estate-wide dual-authority elimination beyond target-local migration;
+* shared fallback quarantine and retirement;
+* cross-producer precedence;
+* layered `why_it_matters` consolidation;
+* configuration-driven fail-open closure;
+* final physical retirement of shared legacy assets;
+* selector mechanics spanning several authority producers.
 
-- the co-service rule requires a new medical policy beyond the ratified review;
-- the specific-frame evidence gates are not available in Layer B;
-- Layer C currently owns the only mechanism capable of suppressing duplicate explanations.
+### Package C retains
 
-# Internal Workstream 4 — Layer C medical-boundary closure
+* complete replay manifests;
+* full output-authority provenance;
+* result-version policy;
+* current/stale/incompatible classification;
+* regeneration lineage;
+* historic analysis disposition;
+* historic waist-analysis remediation;
+* authority-change-driven regeneration behaviour.
 
-## Boundary principle
+Do not absorb Package B or Package C outcomes into this package.
 
-Layer C may present, format and translate governed Layer B output.
+Package A must emit the source, compiler, authority and content lineage primitives Package C will later consume.
 
-Layer C must not:
+## 7. Internal wave structure
 
-- compare biomarkers against medical thresholds;
-- activate or select signals;
-- choose between activation frames;
-- calculate medical confidence;
-- rank findings;
-- choose WHY hypotheses;
-- determine intervention eligibility;
-- substitute medical fallback text from raw biomarkers;
-- reinterpret missing or ambiguous Layer B fields;
-- combine sibling frames into a new medical story;
-- alter consumer and clinician medical meaning.
-
-## Required process
-
-Use:
+Retain one Package A work package with seven internal medical-review waves:
 
 ```text
-docs/architecture/ARCH-CONV-FINAL_layer_c_boundary_and_leakage_inventory.md
+Wave 0 — Homocysteine elevation-context disposition: 1 target
+Wave 1 — Thyroid axis: 7 targets
+Wave 2 — Lipid/cardiometabolic: 6 targets
+Wave 3 — Renal: 3 targets
+Wave 4 — Hepatic/biliary: 7 targets
+Wave 5 — Iron/haematology: 8 targets
+Wave 6 — Metabolic/systemic residual: 4 targets
 ```
 
-as the authoritative defect list.
+Total: 36 remaining targets.
 
-For every item classified `BOUNDARY_LEAK`:
+Wave allocation may change only during Phase 1 where identity plurality or canonical-source evidence proves reassignment is required.
 
-- identify the Layer B authority that should supply the decision;
-- remove or relocate the medical logic;
-- make Layer C consume explicit DTO fields;
-- preserve presentation-only behaviour;
-- fail visibly and safely on missing governed medical fields;
-- do not create a new frontend-side fallback.
+Do not create separate work packages or sprints for:
 
-For every item classified `UNRESOLVED`:
+* individual waves;
+* individual targets;
+* individual frames;
+* compiler changes;
+* registries;
+* validators;
+* documentation;
+* policy;
+* configuration;
+* test-estate expansion.
 
-- resolve it as `PRESENTATION_ONLY`, `LEGITIMATE_TRANSLATION` or `BOUNDARY_LEAK`;
-- no safety-material `UNRESOLVED` item may remain.
+Use internal phases and STOP gates.
 
-## DTO rule
+## 8. Medical decision authority
 
-DTO changes may be additive where needed to carry an already-governed Layer B decision.
-
-Do not move new medical reasoning into DTO assembly merely to remove it from the frontend.
-
-## Layer C failure behaviour
-
-When required governed medical content is missing or contradictory:
-
-- suppress the affected medical section or show a neutral technical fallback;
-- do not infer an alternative interpretation;
-- record the issue in diagnostics/audit evidence;
-- do not display stale or sibling-frame content.
-
-# End-to-end validation
-
-## Mandatory replay of audited live case
-
-Re-run or replay:
+Every proposed frame must receive:
 
 ```text
-analysis_id=e34aaedf-b09f-42f0-8cc8-4653a00b4c10
+Gate 1 — structured GPT medical review
+Gate 2 — explicit Anthony ratification
 ```
 
-For every previously reported active leak, record:
+Medical decisions must use one of:
 
 ```text
-baseline finding
-corrected API field
-corrected rendered text
-authority source
-PASS / FAIL
+APPROVE
+APPROVE_WITH_NARROWING
+REJECT
+DEFER_EVIDENCE_INSUFFICIENT
+CONTEXT_ONLY
 ```
 
-Required result:
+Runtime consequences:
 
-- rejected homocysteine metabolic frame absent from active results;
-- absent from `top_findings`;
-- absent from intervention references;
-- no active “methylation capacity” wording;
-- clinician summary contains only ratified B-vitamin wording;
-- no consumer “Methylation pathway pattern”;
-- MCV output follows the ratified co-service rule;
-- no frontend medical-boundary logic changes the Layer B decision.
+### APPROVE
 
-## Mandatory automated scenarios
+Eligible for deterministic compilation after Anthony ratification.
 
-Re-run all 13 scenarios from `ARCH-CONV-FINAL-AUDIT`.
+### APPROVE_WITH_NARROWING
 
-Add focused regression scenarios for:
+Compile only the explicitly ratified bounded interpretation.
 
-1. rejected frame attempts to fire;
-2. rejected frame present in an upstream fixture but excluded before ranking;
-3. intervention aggregation with rejected and approved sibling frames;
-4. legacy homocysteine elevation-context hypothesis fingerprint;
-5. MCV anchor + megaloblastic;
-6. MCV anchor + non-megaloblastic;
-7. ambiguous MCV evidence;
-8. missing Layer B medical fields reaching Layer C;
-9. stale cached DTO containing retired wording;
-10. direct frontend component test proving no medical inference from raw biomarkers.
+### REJECT
 
-## Mandatory gates
+The frame must be structurally incapable of:
 
-Re-run:
+* firing;
+* ranking;
+* serving WHY;
+* appearing in consumer output;
+* appearing in clinician output;
+* driving interventions;
+* returning through legacy fallback.
 
-- Package 1 identity gate and tests;
-- Package 2 provenance/reachability gate and tests;
-- Package 3 WHY authority gate and tests;
-- final end-to-end leakage suite;
-- architecture validation gate;
-- NO-LLM suite;
-- relevant frontend type, unit, integration and render tests.
+### DEFER_EVIDENCE_INSUFFICIENT
 
-Add one executable correction gate that fails if:
+No active compiled frame may be produced.
 
-- any rejected activation key appears active downstream;
-- any active fingerprint contains retired “methylation capacity” wording;
-- MCV anchor causal WHY co-serves with a specific MCV frame;
-- any identified Layer C boundary leak remains;
-- any safety-material Layer C item remains unresolved.
+Existing legacy content must not receive inherited approval or silently remain the authoritative substitute without explicit architectural disposition.
 
-# Scope discipline
+### CONTEXT_ONLY
 
-This package is bounded to the defects identified by the final audit.
+A bounded non-causal context may be served.
+
+Causal WHY must fail closed.
+
+Cursor may prepare research inventories, evidence matrices, legacy comparisons and proposed frame mappings. Cursor must not decide the medical status.
+
+## 9. Execution lifecycle
+
+This package uses one Automation Bus lifecycle with human-controlled continuations.
+
+```text
+START
+→ Phase 0
+→ Phase 1
+→ STOP A
+
+authorised continuation
+→ Phase 2 by wave
+→ STOP B for each wave
+
+ratified continuation
+→ Phase 3
+→ Phase 4 first-wave integration
+→ STOP C
+
+authorised continuation
+→ later wave compilation and integration
+→ Phase 5 retirement decisions
+→ STOP D where required
+
+final authorised continuation
+→ Phase 6
+→ independent audit
+→ FINISH
+```
+
+Do not call Automation Bus `finish` at an internal STOP gate.
+
+Do not create a new work package for each continuation unless the Automation Bus kernel proves incapable of safely maintaining this work package across gated continuations. If that control-plane limitation is encountered, STOP and report it. Do not invent a workaround or fragment the package.
+
+## 10. Phase 0 — Estate and index reconciliation
+
+### Objective
+
+Create a verified operational baseline before identity closure.
+
+### Required actions
+
+* reconcile the Stage 0 target inventory against current runtime registries;
+* confirm exactly 41 active WHY targets and identify any baseline drift;
+* identify the 5 migrated targets and the 36 Package A targets;
+* map every active target to:
+
+  * runtime activation source;
+  * current WHY source;
+  * current loader;
+  * current registry;
+  * report/output consumers;
+  * intervention consumers;
+* refresh or correct the stale compiled-estate index where authorised by current architecture;
+* record operational LLM allow-flag state where it can affect output behaviour;
+* verify current production-capable entry points;
+* verify there are no scheduled or background analysis paths omitted from the estate;
+* reconcile all known Stage 0 findings D-1 through D-9;
+* confirm Wave 0–6 allocations against repository reality;
+* record all discrepancies.
+
+### Outputs
+
+Update or create the package-specific working artefacts required by the Stage 0 design, including:
+
+* authoritative active-target inventory;
+* runtime caller map;
+* current-authority map;
+* identity issue register;
+* source-readiness register;
+* wave allocation;
+* evidence-gap register.
+
+Use existing artefacts where Stage 0 specifies them rather than creating duplicate authorities.
+
+### STOP conditions
+
+STOP immediately if:
+
+* the active target count cannot be reconciled;
+* runtime contains an unmapped WHY authority;
+* current behaviour materially contradicts Stage 0;
+* the branch baseline already changed Package A scope;
+* an unknown loader or registry can emit WHY;
+* a parallel authority source exists outside the audited estate;
+* a required authoritative input is missing.
+
+Phase 0 may proceed directly into Phase 1 only where the operational estate is reconciled.
+
+## 11. Phase 1 — Identity and canonical-source closure
+
+### Objective
+
+Establish the complete target-to-frame and canonical-source map for all 36 remaining targets.
+
+### Required actions per target
+
+Confirm:
+
+```text
+signal family
+direction
+signal_id
+activation_key
+all investigation/frame identities
+current runtime WHY source
+legacy source
+canonical investigation specification
+canonical-source status
+medical-review readiness
+consumer outputs
+clinician outputs
+intervention dependencies
+risk classification
+wave allocation
+```
+
+Classify source readiness using the Stage 0 model:
+
+```text
+COMPILED_AND_RATIFIED
+COMPILED_BUT_RATIFICATION_INCOMPLETE
+CANONICAL_RESEARCH_AVAILABLE_COMPILE_INCOMPLETE
+CANONICAL_RESEARCH_INCOMPLETE_OR_AMBIGUOUS
+LEGACY_ACTIVE_NO_ACCEPTED_REPLACEMENT
+DUAL_SERVED
+RUNTIME_UNREACHABLE
+UNKNOWN
+```
+
+### Mandatory identity findings
+
+Provide explicit dispositions for D-1 through D-9.
+
+Resolve before relevant medical review:
+
+* D-2: homocysteine elevation-context disposition;
+* D-3: bilirubin identity duplication;
+* any registry limitation preventing frame plurality;
+* any shared legacy file serving multiple medical identities;
+* any probable duplicate signal identity;
+* each unconfirmed canonical-spec match;
+* any contradictory governance register.
+
+### Canonical-source rules
+
+* Locate the canonical investigation specification where it exists.
+* Do not use legacy runtime wording as canonical evidence.
+* Do not promote raw Pass 3 or investigation specifications directly into runtime.
+* Record absence or ambiguity rather than inventing a source.
+* Do not edit medical research during Phase 1 unless separately authorised through the medical-review process.
+
+### Required Phase 1 outputs
+
+Produce the STOP A evidence pack containing:
+
+```text
+exact active target count
+36-target Package A inventory
+complete target-to-frame map
+final frame count
+canonical-source disposition for every frame
+identity issues and resolutions
+unresolved identity blockers
+wave allocations
+source-readiness counts
+medical-review pack requirements
+runtime and legacy-source mappings
+Package B hand-offs
+Package C lineage requirements
+```
+
+## 12. STOP A — Identity and source closure
+
+At completion of Phase 1:
+
+1. Commit the bounded Phase 0/1 work on the sprint branch.
+2. Run relevant deterministic inventory, schema and non-runtime regression checks.
+3. Produce the STOP A report.
+4. Stop all Package A execution.
 
 Do not:
 
-- reopen the medical decisions from Package 3;
-- expand the ten-frame WHY pilot;
-- migrate the wider legacy WHY estate;
-- change signal thresholds;
-- invent new medical hypotheses;
-- wire PSI;
-- enable Gemini;
-- redesign unrelated frontend areas;
-- perform general prose-library work;
-- declare controlled-beta readiness.
+* conduct medical review;
+* edit canonical medical meaning;
+* compile new medical artefacts;
+* activate new runtime WHY;
+* disconnect legacy authority;
+* proceed to Phase 2.
 
-A new work package is permitted only if a STOP condition proves that an unrelated architecture domain or new medical policy is required.
-
-# Required deliverables
-
-Create:
+Required decision:
 
 ```text
-docs/architecture/ARCH-CONV-CORRECT-1_rejected_frame_inactivation_design.md
-docs/architecture/ARCH-CONV-CORRECT-1_mcv_co_service_design.md
-docs/architecture/ARCH-CONV-CORRECT-1_layer_c_boundary_closure_report.md
-docs/architecture/ARCH-CONV-CORRECT-1_end_to_end_leakage_correction_report.md
-docs/audit-papers/ARCH-CONV-CORRECT-1_implementation_and_verification_report.md
+GPT architectural review
+Anthony ratification
 ```
 
-Update:
+Package execution resumes only after an explicit continuation instruction.
+
+## 13. Phase 2 — Medical-review waves
+
+This phase begins only after STOP A ratification.
+
+### Required action by wave
+
+For each frame in the authorised wave:
+
+* assemble canonical research;
+* map current legacy interpretation;
+* identify evidence supporting the proposed interpretation;
+* identify contradictions and exclusions;
+* identify confirmatory evidence;
+* distinguish context from causal WHY;
+* identify intervention implications;
+* identify consumer/clinician wording implications;
+* identify unsafe overstatement;
+* prepare a structured medical-review pack.
+
+Cursor must stop and return the pack for:
 
 ```text
-docs/testing/ARCH-CONV-FINAL_frontend_end_to_end_uat.md
-docs/architecture/ARCH-CONV-FINAL_end_to_end_pipeline_and_leakage_report.md
-docs/architecture/ARCH-CONV-FINAL_layer_c_boundary_and_leakage_inventory.md
-docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md
+GPT structured medical review
+Anthony ratification
 ```
 
-Record:
+### Medical-review register
 
-- each active leak before and after;
-- exact runtime surfaces changed;
-- Layer C boundary items closed;
-- MCV co-service results;
-- fingerprint results;
-- live analysis replay result;
-- test and gate evidence;
-- unresolved limitations;
-- no beta-readiness claim.
-
-# Acceptance criteria
-
-- [ ] Rejected homocysteine metabolic frame is inactive end to end.
-- [ ] Rejected frame cannot appear in top findings.
-- [ ] Rejected frame cannot contribute to interventions.
-- [ ] Rejected frame cannot contribute interpretation or summary text.
-- [ ] No active “methylation capacity” legacy wording remains.
-- [ ] B-vitamin and renal homocysteine frames remain correctly differentiated.
-- [ ] MCV anchor cannot co-emit duplicate causal WHY with a specific MCV frame.
-- [ ] Megaloblastic and non-megaloblastic WHY do not co-serve without explicit authority.
-- [ ] Every final-audit Layer C `BOUNDARY_LEAK` is closed.
-- [ ] No safety-material `UNRESOLVED` Layer C item remains.
-- [ ] Layer C performs presentation/translation only.
-- [ ] Missing governed medical fields fail safely without medical fallback.
-- [ ] Live analysis `e34aaedf-b09f-42f0-8cc8-4653a00b4c10` passes all corrected leakage checks.
-- [ ] All 13 original end-to-end scenarios pass.
-- [ ] New focused correction scenarios pass.
-- [ ] Package 1–3 protections remain intact.
-- [ ] No unrelated medical or architecture scope entered.
-- [ ] No controlled-beta readiness claim made.
-
-# STOP conditions
-
-STOP if:
-
-1. rejected-frame inactivation requires changing approved medical activation rules;
-2. legacy wording cannot be removed without reopening ratified medical content;
-3. MCV co-service requires a new medical policy;
-4. Layer C boundary closure requires redesign of an unrelated domain;
-5. package scope grows by more than 25% without human reauthorisation;
-6. more than one unplanned mandatory follow-on package is identified;
-7. corrected live output shows unexplained clinical drift;
-8. any Package 1–3 safety gate regresses;
-9. a required correction would weaken provenance, identity, authority or ratification controls;
-10. substantive correction cannot be completed in this outcome-based package.
-
-# Final package recommendation
-
-Recommend exactly one:
+For each frame record:
 
 ```text
-GO
-CORRECT
-STOP
-V6
+signal family
+direction
+activation_key
+frame identity
+canonical source
+proposed interpretation
+evidence boundaries
+contradictions
+confirmatory markers/tests
+context versus causal status
+consumer implications
+clinician implications
+intervention implications
+medical decision
+GPT review reference
+Anthony ratification reference
 ```
 
-Definitions:
+Do not fabricate review references.
 
-- `GO`: all identified final-audit corrections are closed; resume `ARCH-CONV-FINAL-AUDIT`.
-- `CORRECT`: one bounded defect remains within this package.
-- `STOP`: correction requires programme redesign.
-- `V6`: ratified kill criteria are met; freeze v5 architecture work.
+### Missing research
 
-# Verification report
+Where canonical evidence is absent or insufficient:
 
-Include:
+* record the research gap;
+* classify the frame as blocked from compilation;
+* return it for medical-research commissioning;
+* do not translate existing legacy content into a compiled artefact;
+* do not allow legacy authority to be treated as approved.
 
-- baseline and final SHA;
-- branch;
-- files changed;
-- per-defect before/after evidence;
-- rejected-frame lifecycle trace;
-- legacy fingerprint results;
-- MCV co-service matrix;
-- Layer C boundary closure matrix;
-- live analysis replay evidence;
-- automated scenario results;
-- test commands and exit codes;
-- validation-gate evidence;
-- acceptance-criteria table;
-- STOP-condition assessment;
-- final `GO / CORRECT / STOP / V6` recommendation;
-- remaining obligations outside this package.
+## 14. STOP B — Medical ratification by wave
 
-Do not merge without explicit human authority.
+STOP B repeats for every wave.
+
+No frame may proceed to compilation until:
+
+* GPT has completed structured medical review;
+* Anthony has explicitly ratified the decision;
+* the decision and references are recorded;
+* the source specification reflects the ratified authority where required;
+* upstream validation passes.
+
+A wave may contain approved, narrowed, rejected, deferred and context-only frames.
+
+The existence of blocked frames does not automatically block other independent frames in the wave, provided runtime identity and fallback safety permit isolated progression.
+
+If the unresolved frame shares authority, loader or fallback behaviour with approved frames, STOP the affected group until safe separation is proven.
+
+## 15. Phase 3 — Deterministic compile and validation
+
+Phase 3 begins for ratified frames only.
+
+### Compile chain
+
+Use the existing architecture:
+
+```text
+validated canonical investigation specification
+→ deterministic compiler/promotion process
+→ compiled WHY artefact
+→ compile manifest
+→ authority registration candidate
+```
+
+Extend the proven compiler rather than creating a parallel compiler or hand-authored artefact path.
+
+### Requirements
+
+The compiler must:
+
+* consume validated canonical research;
+* fail on unresolved target/frame identity;
+* fail when medical ratification is absent;
+* support all ratified medical statuses safely;
+* produce deterministic outputs;
+* reject unsupported manual edits to compiled medical meaning;
+* preserve source and authority lineage;
+* produce governed artefacts suitable for thin runtime loading;
+* not require runtime access to raw research;
+* not create a second medical authority.
+
+### Required lineage
+
+Each compiled artefact or its manifest must preserve the existing canonical equivalents of:
+
+```text
+signal_id
+direction
+activation_key
+investigation_id / frame_id
+source_spec_id
+source path
+source version
+source hash
+medical decision status
+GPT review reference
+Anthony ratification reference
+compiler id
+compiler version
+authority version
+runtime compatibility version
+output artefact identity
+output hash / content hash
+validation result
+compile timestamp
+legacy predecessor
+promotion mode
+```
+
+Use existing canonical field names where they already represent these semantics.
+
+Do not introduce duplicate schema fields merely to match this wording.
+
+### Required validation
+
+* upstream investigation-spec validation;
+* compiler schema validation;
+* deterministic repeat compilation;
+* source-hash verification;
+* output-hash verification;
+* manifest completeness;
+* frame identity completeness;
+* activation-key uniqueness;
+* no direct raw-research runtime reads;
+* no package-layer invention of medical meaning.
+
+Knowledge Bus promotion must follow the current validated process. Do not rely on any lifecycle mechanism documented as non-authoritative.
+
+## 16. Phase 4 — Runtime integration by wave
+
+### Objective
+
+Make ratified compiled WHY the governed runtime authority for the integrated frame.
+
+### Required actions
+
+* register compiled authority against explicit activation key and frame identity;
+* ensure runtime selection cannot rely on signal-only ambiguity;
+* ensure loader remains thin and deterministic;
+* ensure raw research is not read at runtime;
+* ensure rejected/deferred frames remain structurally inactive;
+* ensure context-only frames cannot emit causal WHY;
+* ensure compiled authority wins deterministically over migrated legacy authority;
+* preserve structured Layer B output;
+* preserve Layer C render-only boundaries;
+* update output and intervention mappings only where ratified;
+* retain immutable rollback artefacts;
+* add targeted tracing or evidence needed to prove runtime selection.
+
+### First-wave selection
+
+Use the ratified Stage 0 sequence unless STOP A or medical review produces a safer first runtime wave.
+
+Wave 0 may be used as the first proof only if its homocysteine elevation-context disposition is medically and architecturally resolved.
+
+Do not use an unresolved dual-authority case as the unattended integration template.
+
+### First-wave evidence
+
+Test at minimum:
+
+* approved frame positive panel;
+* gate-unmet panel;
+* ambiguous panel;
+* missing-data panel;
+* contradictory-evidence panel where applicable;
+* rejected/deferred inactivity;
+* compiled-versus-legacy precedence;
+* consumer output;
+* clinician output;
+* intervention references;
+* provenance;
+* Layer C non-inference;
+* rollback.
+
+## 17. STOP C — First-wave runtime proof
+
+After the first authorised wave is integrated:
+
+1. run targeted unit, integration and replay tests;
+2. run the Package 1–3 and CORRECT-1 protection suites;
+3. perform before/after representative replay;
+4. prove rollback;
+5. obtain independent Claude audit;
+6. produce the STOP C evidence pack;
+7. stop.
+
+The STOP C pack must prove:
+
+```text
+compiled WHY is canonical
+legacy cannot win
+rejected and deferred frames are inactive
+missing or contradictory evidence fails closed
+identity selection is explicit
+consumer and clinician outputs align
+interventions do not reference suppressed frames
+source and authority lineage are emitted
+Layer C does not reconstruct medical meaning
+rollback is executable and safe
+```
+
+Do not integrate later waves until:
+
+```text
+GPT architectural and medical review
+Anthony continuation authorisation
+```
+
+Preparation of later medical-review packs may continue only where it cannot alter runtime authority or contaminate the first-wave proof.
+
+## 18. Later-wave compilation and integration
+
+After STOP C authorisation:
+
+* repeat the proven compiler and runtime pattern for each ratified wave;
+* stop at STOP B for each wave’s medical decisions;
+* maintain per-wave evidence and rollback boundaries;
+* do not generalise around a frame type the compiler does not represent safely;
+* do not conceal exceptional behaviour inside hard-coded per-frame logic;
+* return to STOP where a wave requires a materially different authority or runtime mechanism.
+
+Package A remains one work package.
+
+## 19. Phase 5 — Legacy authority retirement
+
+For each migrated frame or target, classify the predecessor using exactly one applicable state:
+
+```text
+AUTHORITY_RETIRED
+RUNTIME_DISCONNECTED
+SHARED_PENDING_PACKAGE_B
+HISTORIC_COMPATIBILITY_ONLY
+ARCHIVED
+PHYSICALLY_DELETED
+```
+
+### Rules
+
+* authority retirement may precede physical deletion;
+* compiled authority must not coexist indefinitely with a legacy authority for the same question;
+* rejected or deferred frames must not fall back to legacy;
+* migrated targets must not depend on legacy WHY;
+* shared legacy files must not be deleted while unmigrated or Package B callers remain;
+* compatibility readers must be isolated and non-authoritative;
+* archived assets must not remain runtime-loadable;
+* reachable fallback must not remain “just in case”;
+* physical deletion requires caller and reachability proof;
+* Git history is adequate preservation once deletion is authorised.
+
+### Package B boundary
+
+Use `SHARED_PENDING_PACKAGE_B` only where:
+
+* Package A authority for migrated targets is retired;
+* the legacy asset remains required by explicit Package B scope;
+* migrated Package A targets cannot select it;
+* all remaining callers are identified;
+* the hand-off is recorded.
+
+## 20. STOP D — Legacy retirement authority
+
+Before disabling, archiving or physically deleting a legacy source, produce:
+
+```text
+legacy source
+all known callers
+affected targets and frames
+replacement artefacts
+runtime authority proof
+replay comparison
+intentional behaviour changes
+rollback artefact
+shared dependencies
+static reachability evidence
+runtime reachability evidence
+recommended retirement state
+Package B hand-off where applicable
+```
+
+Stop for:
+
+```text
+GPT architecture review
+Anthony retirement authority
+```
+
+Do not physically delete a shared asset without explicit STOP D authority.
+
+Target-local registry disconnection that has already been explicitly authorised may proceed where rollback and caller evidence are complete.
+
+## 21. Phase 6 — Estate regression, replay and closure
+
+### Required verification
+
+Run all applicable:
+
+* compiler schema tests;
+* compiler determinism tests;
+* manifest completeness tests;
+* activation-key uniqueness tests;
+* target-to-frame plurality tests;
+* frame identity tests;
+* legacy-versus-compiled precedence tests;
+* rejected-frame structural inactivation tests;
+* deferred-frame fail-closed tests;
+* context-only versus causal-WHY tests;
+* missing-evidence tests;
+* contradictory-evidence tests;
+* intervention reference tests;
+* consumer/clinician alignment tests;
+* source and authority provenance tests;
+* thin-loader tests;
+* Layer C non-inference tests;
+* rollback tests;
+* representative panel replay;
+* historical replay where source inputs are valid;
+* existing Package 1–3 protections;
+* existing CORRECT-1 protections;
+* MCV co-service protections;
+* canonical broader regression and end-to-end suites.
+
+Each clinically relevant wave must contain:
+
+```text
+positive panel
+negative / gate-unmet panel
+ambiguous panel
+missing-data panel
+contradictory-evidence panel
+```
+
+Expand the phenotype and replay estate inside Package A where coverage is insufficient.
+
+### Final independent audit
+
+Before Automation Bus `finish`, obtain an independent Claude audit covering:
+
+* exact target and frame completion;
+* medical-decision traceability;
+* compiler determinism;
+* runtime authority;
+* dual-authority absence within Package A scope;
+* rejected/deferred inactivity;
+* legacy retirement states;
+* replay and output alignment;
+* Layer C boundary;
+* Package B/C boundary compliance;
+* regression results;
+* closure readiness.
+
+Cursor cannot substitute its own report for independent audit.
+
+## 22. Success criteria
+
+Package A can pass only when all are true:
+
+```text
+100% of active WHY targets are inventoried
+100% of Package A targets have complete target-to-frame disposition
+100% of frames have explicit identity
+100% of frames have canonical-source disposition
+100% of promoted frames have GPT review and Anthony ratification
+100% of promoted artefacts are deterministically compiled
+100% of promoted artefacts carry required lineage
+0 promoted targets depend on legacy WHY authority
+0 rejected frames remain runtime-reachable
+0 deferred frames fail open to legacy
+0 ambiguous signal-only selections remain within Package A scope
+all required wave tests and replay suites pass
+consumer and clinician outputs align
+intervention references remain governed
+Layer C non-inference protections pass
+Package 1–3 and CORRECT-1 protections pass
+all Package A legacy sources have explicit disposition
+```
+
+Package A may close while shared files remain physically present only where they are:
+
+```text
+SHARED_PENDING_PACKAGE_B
+```
+
+and cannot serve migrated Package A targets.
+
+## 23. PASS, CORRECT and STOP
+
+### PASS
+
+Return PASS only when:
+
+* all Package A success criteria are met;
+* STOP A–D have received their required approvals;
+* every promoted frame is ratified, compiled and governed;
+* migrated targets no longer depend on legacy WHY;
+* tests and replay pass;
+* independent audit passes;
+* only explicitly bounded Package B and Package C work remains.
+
+### CORRECT
+
+Return CORRECT only where:
+
+* defects are bounded;
+* the ratified architecture remains valid;
+* no unsafe promotion occurred;
+* correction does not require new medical authority;
+* correction does not reopen Package A/B/C boundaries.
+
+### STOP
+
+Return STOP where:
+
+* target/frame identity cannot be resolved;
+* canonical research is absent for a required interpretation;
+* medical review is incomplete;
+* Anthony ratification is absent;
+* compiler output is non-deterministic;
+* runtime authority is ambiguous;
+* a rejected or deferred frame can still surface;
+* legacy can still win or fail open;
+* rollback is unsafe;
+* a medically meaningful unexplained replay drift occurs;
+* Package A requires Package B or C to satisfy its own success criteria;
+* Automation Bus state or branch authority is invalid.
+
+## 24. Branch and repository discipline
+
+Before starting:
+
+* confirm local `main == origin/main`;
+* ensure the working tree is clean;
+* create and use exactly:
+
+```text
+feature/arch-conv-a-estate-why-authority-migration
+```
+
+* ensure the branch matches prompt front matter;
+* run the Automation Bus start command using the governed work ID;
+* confirm the active authority token matches `ARCH-CONV-A`.
+
+Do not carry unrelated files, tooling files or pre-existing changes into the branch.
+
+Follow the Post-Implementation Closure Protocol before `finish`.
+
+## 25. Immediate authorised execution boundary
+
+On first receipt of this prompt, Cursor is authorised only to:
+
+```text
+start the Automation Bus work package
+execute Phase 0
+execute Phase 1
+prepare STOP A evidence
+commit the bounded Phase 0/1 work
+stop
+```
+
+Cursor is not authorised on first receipt to:
+
+* begin medical review;
+* edit medical authority;
+* compile new WHY artefacts;
+* activate new runtime authority;
+* disconnect or delete legacy sources;
+* proceed to Phase 2 or later phases.
+
+Return the STOP A report for GPT architectural review and Anthony ratification.
+
+## 26. STOP A return format
+
+Return:
+
+```text
+WORK PACKAGE
+work_id
+branch
+baseline main commit
+current commit
+Automation Bus status
+authority token status
+
+PHASE 0
+active target count
+migrated target count
+Package A target count
+registry and loader reconciliation
+current WHY authorities
+runtime entry points
+estate-index corrections
+LLM allow-flag finding
+baseline discrepancies
+
+PHASE 1
+final target count
+complete target-to-frame count
+final frame count
+frame plurality findings
+canonical-source dispositions
+source-readiness counts
+identity findings D-1 through D-9
+D-2 disposition
+D-3 disposition
+wave allocation
+Package B hand-offs
+Package C lineage requirements
+
+STOP A
+identity closure complete: YES / NO
+canonical-source closure complete: YES / NO
+targets blocked from medical review
+unresolved evidence gaps
+architecture blockers
+medical-research requirements
+tests run
+files changed
+commits
+working-tree status
+
+VERDICT
+READY FOR STOP A REVIEW
+or
+STOP — IDENTITY/SOURCE CLOSURE INCOMPLETE
+
+next authorised action
+```
+
+Stop after this report.

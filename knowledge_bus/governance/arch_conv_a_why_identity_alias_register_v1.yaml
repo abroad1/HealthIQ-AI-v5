@@ -1,0 +1,26 @@
+schema_version: "1.0.0"
+work_id: ARCH-CONV-A
+artefact_path: knowledge_bus/governance/arch_conv_a_why_identity_alias_register_v1.yaml
+ratification_ref: docs/architecture/ARCH-CONV-A_STOP_A_ratification_record.md
+description: >
+  Bounded WHY-target identity aliases after STOP A D-3 ratification.
+  Aliased signal_ids must not appear in ROOT_CAUSE_TARGET_SPECS.
+  This register is documentation/governance for Package A identity closure;
+  it does not medically approve frames and does not activate compiled WHY.
+entries:
+  - retired_signal_id: signal_bilirubin_high
+    surviving_signal_id: signal_hyperbilirubinemia
+    disposition: MERGE_TO_ONE
+    why_registry_state: REMOVED_FROM_ROOT_CAUSE_TARGET_SPECS
+    legacy_asset_retained: knowledge_bus/root_cause/hypotheses/bilirubin_high_hypotheses_v1.yaml
+    survivor_legacy_asset: knowledge_bus/root_cause/hypotheses/hyperbilirubinemia_hypotheses_v1.yaml
+    medical_frame_approval: NONE
+    reversible: true
+    rollback: >
+      Re-add RootCauseTargetSpec for signal_bilirubin_high pointing at
+      load_bilirubin_high_hypotheses_v1 / bilirubin_high_hypotheses_v1.yaml
+      and restore test expectations to 41 targets.
+    notes: >
+      Signal-family identity merge only. Provisional Gilbert / haemolytic /
+      hepatobiliary frames remain unapproved. No compile or runtime WHY
+      activation authorised by this alias.

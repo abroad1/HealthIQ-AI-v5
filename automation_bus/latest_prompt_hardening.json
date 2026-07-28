@@ -1,103 +1,119 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-CORRECT-1",
+  "work_id": "ARCH-CONV-A",
   "status": "HARDENED",
-  "hardening_date": "2026-07-26",
+  "hardening_date": "2026-07-27",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
   "risk_level": "HIGH",
   "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
-  "stage_b_mode": "MODE_2",
-  "runtime_change": "YES",
+  "runtime_change": "NO (this prompt authorises only Phase 0/Phase 1 on first receipt — inventory, identity/source closure and STOP A evidence; no compile, no runtime activation, no legacy disconnection)",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "HIGH/MIXED, but bounded to 6 named, precisely-documented defects with an existing, already-verified evidence trail (the final audit's own leakage report). No fork needed — the critical thing to verify was branch lineage and cross-checking the prompt's defect claims against the actual audit report content, both of which were fast, targeted checks."
+    "rationale": "HIGH/MIXED, but the shared Stage 0 docs (all 10 ARCH-CONV-A artefacts plus the verified target inventory) were authored and fully read by this session already, and the estate-fact/wave-allocation numbers in the prompt are a direct, mechanically-checkable transcription of that pack. No disjoint large-scale investigation is required — verification here is file-existence, git-state, and figure cross-checks, done via a handful of batched Bash/Glob/Grep calls."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
-    "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type", "stage_b_mode", "runtime_change"],
+    "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type"],
     "declared_risk_level": "HIGH",
     "declared_change_type": "MIXED",
-    "behaviour_changes_touch_intelligence_core": "YES — signal ranking, root-cause compilation, intervention selection, Layer C rendering; correctly classified HIGH",
-    "tests_required": "YES — extensive re-run of Package 1-3 gates plus 10 new focused regression scenarios",
-    "scope_proportionality": "PASS — bounded to exactly 6 confirmed defects across 4 workstreams, explicit forbidden-scope list, 10 STOP conditions",
-    "advisory_duplication_detected": "NO",
-    "scope_creep_signals": "NONE — scope is precisely the final audit's own findings, not open-ended",
+    "behaviour_changes_touch_intelligence_core": "YES — root_cause_registry_v1.py, why_authority_v1.py, root_cause_compiler_v1.py, Knowledge Bus compiler/promotion path; correctly classified HIGH. Note: this specific prompt's immediate authorised execution boundary (§25) is Phase 0/1 only (inventory + identity closure), which is read-only/documentation-producing against those files — the HIGH/MIXED classification is correct for the whole Package A lifecycle this prompt opens, not evidence that first-receipt execution itself touches runtime behaviour.",
+    "tests_required": "YES for the package as a whole (§21 lists the full estate regression/replay suite); NOT APPLICABLE for the immediate first-receipt boundary (§25), which explicitly excludes compilation and runtime activation — §10 Phase 0 instead requires reconciliation checks and §12 STOP A requires 'relevant deterministic inventory, schema and non-runtime regression checks' only",
+    "scope_proportionality": "PASS — one work package, seven internal waves, explicit prohibition on splitting into per-wave/per-target/per-frame sprints (§7), matching the Stage 0 anti-micro-sprint gate in ARCH-CONV-A_stage0_outcome_and_package_boundary.md §2",
+    "advisory_duplication_detected": "NO — this is a Stage 1 GPT-authored Cursor implementation prompt building directly on the already-ratified Stage 0 design pack, not a re-run of Stage 0 advisory analysis",
+    "scope_creep_signals": "NONE — Package B/C boundaries (§6) verbatim-match the Stage 0 boundary doc; wave structure (§7) verbatim-matches the Stage 0 wave plan",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "CRITICAL_branch_lineage_finding": {
-      "status": "MATERIAL — must be handled correctly or this package cannot execute at all",
-      "evidence": "Current branch is audit/arch-conv-final-programme, NOT main. Confirmed via git show main:docs/architecture/ARCH-CONV-FINAL_layer_c_boundary_and_leakage_inventory.md that this file (and the other 4 ARCH-CONV-FINAL_* deliverables, plus the FINAL-AUDIT verification report) exist ONLY on the audit branch — main has not merged ARCH-CONV-FINAL-AUDIT yet. The prompt itself distinguishes this correctly in its own wording: 'Read the CURRENT AUDIT-BRANCH VERSIONS of' the 5 FINAL-AUDIT-produced docs, versus 'read the current MERGED versions of' the PKG1-3 docs (which genuinely are on main already, confirmed). This means: whoever executes this package MUST create feature/arch-conv-correct-1-e2e-authority-layerc FROM audit/arch-conv-final-programme (or a ref containing its commits), not from main. Branching from main per the usual default convention would silently omit every required input in the first list and make this package unexecutable as specified. This is the single most important thing to get right before any other work begins."
+    "eleven_authoritative_sprint_inputs": {
+      "status": "CONFIRMED_EXISTS — all 11, on main",
+      "evidence": "All 10 ARCH-CONV-A_*/ARCH-CONV_ABC_* Stage 0 artefacts confirmed present via `git cat-file -e main:<path>` (committed in e793037/942de1f, published to origin/main). ADR-RT-001_research_to_runtime_day_one_architecture.md confirmed present at the exact path the prompt cites (docs/architecture/) — the prompt's caveat 'locate the exact ADR path if its repository location differs' does not apply; the path is already correct."
     },
-    "required_input_docs": {
-      "status": "CONFIRMED_EXISTS — all 13 (on the audit branch)",
-      "evidence": "The 5 audit-branch-only docs (frontend_end_to_end_uat.md, FINAL-AUDIT verification report, programme_obligation_closure_matrix.md, end_to_end_pipeline_and_leakage_report.md, layer_c_boundary_and_leakage_inventory.md) confirmed present on audit/arch-conv-final-programme. The 8 already-merged docs (GPT-reviewed/Anthony-ratified pack, all PKG3 docs, PKG2/PKG1 verification reports, the compiled_why_authority_register_v1.yaml) confirmed present on main."
+    "protection_baseline_evidence": {
+      "status": "CONFIRMED_EXISTS",
+      "evidence": "Package 1-3 and CORRECT-1 design/verification docs confirmed present under docs/architecture/ and docs/audit-papers/ (ARCH-CONV-PKG1/2/3_*.md, ARCH-CONV-CORRECT-1_*.md, and their audit-papers implementation_and_verification_report.md counterparts)."
     },
-    "output_paths_correctly_new": {
-      "status": "CONFIRMED",
-      "evidence": "None of the 5 required new deliverable paths exist yet on either branch."
+    "runtime_files_underpinning_the_compile_chain": {
+      "status": "CONFIRMED_EXISTS, NO DRIFT SINCE STAGE 0 VERIFICATION",
+      "evidence": "backend/core/knowledge/root_cause_registry_v1.py, backend/core/knowledge/why_authority_v1.py, backend/core/analytics/root_cause_compiler_v1.py, knowledge_bus/governance/compiled_why_authority_register_v1.yaml all present on main. `git log --since=2026-07-25` against these four paths returns only the two commits (bacdd7f PKG3, 2761df2 CORRECT-1) that the Stage 0 inventory (ARCH-CONV-A_active_why_target_inventory.md) was already verified against — no commit has touched them since that inventory was produced, so its per-target citations remain current and do not require re-verification."
     },
-    "final_audit_decision_and_analysis_id_match": {
-      "status": "CONFIRMED",
-      "evidence": "ARCH-CONV-FINAL-AUDIT_implementation_and_verification_report.md line 86 records 'Final decision issued: CORRECT'; line 6 records UAT analysis ID e34aaedf-b09f-42f0-8cc8-4653a00b4c10 — exact match to this prompt's premise and the authoritative live UAT case cited."
+    "fixed_estate_facts_cross_check": {
+      "status": "CONFIRMED — exact match to Stage 0 pack, including the post-review correction",
+      "evidence": "Prompt §4 states 41 verified targets / 5 migrated / 36 remaining, matching ARCH-CONV-A_active_why_target_inventory.md §1 exactly. Prompt §4 also states the frame count for the 36 remaining targets is 'UNKNOWN UNTIL PHASE 1 IDENTITY AND SOURCE CLOSURE' and 'Do not assume one target equals one frame' — this is the exact qualification GPT/Anthony required and Claude applied to ARCH-CONV-A_medical_review_wave_plan.md §1.1 and ARCH-CONV-A_stop_gates_and_acceptance.md STOP A in the prior hardening round; the prompt correctly carries this forward rather than reverting to the earlier one-target-one-frame assumption."
     },
-    "branch_state": {
-      "status": "CONFIRMED, expected pre-kernel-start state (given the branch-lineage nuance above)",
-      "evidence": "Working tree shows only the expected latest_cursor_prompt.md Stage-1 handoff modification. FINAL-AUDIT's own kernel completed (git log shows kernel COMPLETE at ed971f5, with an explicit UAT resume cycle — 3f6adcf kernel COMPLETE -> 4cbb7f5 UAT resume IN_PROGRESS -> ed971f5 kernel COMPLETE -- confirming the mandatory human-UAT STOP gate worked exactly as designed, a second confirmation of the pattern flagged during FINAL-AUDIT hardening). No active work_package_active.json token."
+    "wave_allocation_cross_check": {
+      "status": "CONFIRMED — exact match",
+      "evidence": "Prompt §7 wave targets (1, 7, 6, 3, 7, 8, 4 = 36) are an exact match to ARCH-CONV-A_medical_review_wave_plan.md §2 wave-by-wave target lists (Wave 0 homocysteine elevation-context; Wave 1 thyroid axis; Wave 2 lipid/cardiometabolic; Wave 3 renal; Wave 4 hepatic/biliary; Wave 5 iron/haematology; Wave 6 metabolic/systemic residual). No renumbering, resequencing, or silent scope change was introduced."
+    },
+    "branch_and_repository_state": {
+      "status": "CONFIRMED clean baseline, ONE PRE-CONDITION FLAGGED (non-blocking, see below)",
+      "evidence": "local main == origin/main == 942de1ffda260bdcab8ab00ded17f4602dba478a (both the Package A Stage 0 pack commit and the estate-audit evidence commit are published). Target branch feature/arch-conv-a-estate-why-authority-migration does not yet exist (git branch --list returns empty) — correctly a new branch, not a reused/stale one."
+    },
+    "kernel_schema_cross_check": {
+      "status": "CONFIRMED — no naming mismatch",
+      "evidence": "backend/scripts/run_work_package.py:151-152 requires latest_prompt_hardening.json's work_id to exactly equal the prompt front matter's work_id before `start` will proceed. This hardening record sets work_id: \"ARCH-CONV-A\" to match the prompt front matter exactly."
     }
   },
 
-  "independent_premise_verification": {
-    "six_confirmed_defects_verbatim_match_final_audit_findings": {
-      "status": "CONFIRMED — exact wording match, not paraphrased or altered",
-      "evidence": "docs/architecture/ARCH-CONV-FINAL_end_to_end_pipeline_and_leakage_report.md:26-28,34 contains the identical wording this prompt cites: 'Reflects methylation capacity and B-vitamin status' (signal interpretation), 'reduced B12-related methylation capacity' (clinician summary, sourced from legacy elevation-context hypothesis hcy_b12_pattern_v1), 'Methylation pathway pattern' (consumer patterns section), and the ACTIVE_LEAK classification for the rejected frame appearing in top_findings and intervention activation_key_refs. This prompt has not overstated, understated, or invented any defect beyond what the final audit actually found."
+  "stage_2b_behavioural_hardening": {
+    "medical_decision_boundary": {
+      "status": "SOUND",
+      "evidence": "§8/§13 correctly restrict Cursor to preparing evidence packs and explicitly forbid Cursor from deciding APPROVE/REJECT/DEFER/CONTEXT_ONLY status — matches CLAUDE.md §6 (Claude/Cursor do not make medical or architectural governance decisions) and the Stage 0 dual-gate model in ARCH-CONV-A_medical_review_wave_plan.md §4."
     },
-    "isolated_vs_integration_level_distinction_explains_why_PKG3_audit_missed_this": {
-      "status": "MATERIAL CLARIFICATION, not a defect in prior audit work",
-      "evidence": "The final-audit report's own line 71 confirms: 'Rejected metabolic runtime | live compile | No ACTIVE_LEAK (root is None)' with 'ACTIVE_LEAK count: 0 on scanned Layer B/runtime path' for the isolated root_cause_compiler_v1 check -- exactly matching what this session's PKG3 audit fork independently verified via direct function call. The leaks the final audit found are at DIFFERENT pipeline stages: the underlying signal_id still fires/ranks (a Package 1/2 identity-and-ranking concern, not WHY-authority), and stale interpretation/summary text originates from separate code paths (signal interpretation text generation, clinician-summary legacy fallback) that were never in the WHY-authority register's scope. This is not evidence that PKG3's own audit was wrong -- 'REJECTED' in the WHY-authority register was correctly implemented to mean 'no compiled hypothesis', but this prompt correctly identifies that the medical review's actual intent required the signal's presence in ranking/interventions/interpretation to also be suppressed, which is upstream of WHY-authority selection. Cursor's Workstream 1 canonical-policy design should make this distinction explicit: this is a NEW, wider-scoped exclusion decision (all pipeline stages), not merely re-verifying the existing WHY-authority skip."
+    "stop_gate_sequencing": {
+      "status": "SOUND",
+      "evidence": "§9 execution lifecycle and §25 immediate authorised execution boundary correctly limit first-receipt execution to Phase 0 → Phase 1 → STOP A → stop, matching ARCH-CONV-A_compile_and_runtime_integration_design.md Phase 0/1 definitions and ARCH-CONV-A_stop_gates_and_acceptance.md STOP A (as updated with the target-to-frame-map requirement)."
     },
-    "workstream_1_canonical_policy_language_is_correctly_scoped": {
-      "status": "CONFIRMED sound design guidance",
-      "evidence": "The prompt's own instruction ('Create or reuse one canonical frame-runtime-authority decision consumed early enough in the pipeline... Do not add separate ad hoc rejection checks to every consumer') correctly anticipates the risk of a scattered, easy-to-miss-a-spot fix (exactly the kind of gap that caused this defect in the first place, where WHY-authority rejection was implemented but signal-level/ranking-level/interpretation-level exclusion was not). This is good, self-aware prompt design."
+    "identity_defect_carryover": {
+      "status": "SOUND",
+      "evidence": "§11 correctly requires D-1 through D-9 dispositions and explicitly names D-2 (elevation-context) and D-3 (bilirubin duplication) as pre-medical-review blockers, matching ARCH-CONV-A_identity_and_source_readiness.md §2/§3 without omission or restatement drift."
+    },
+    "legacy_retirement_state_model": {
+      "status": "SOUND",
+      "evidence": "§19 six-state model (AUTHORITY_RETIRED / RUNTIME_DISCONNECTED / SHARED_PENDING_PACKAGE_B / HISTORIC_COMPATIBILITY_ONLY / ARCHIVED / PHYSICALLY_DELETED) is a faithful, slightly more granular restatement of ARCH-CONV-A_legacy_retirement_policy.md §1's five-state model (it splits 'archival retention' into ARCHIVED and PHYSICALLY_DELETED as distinct terminal states) — this is a compatible refinement, not a contradiction, and correctly preserves the L-02 shared-file constraint (§19 'shared legacy files must not be deleted while unmigrated or Package B callers remain')."
+    },
+    "package_boundary_fidelity": {
+      "status": "SOUND",
+      "evidence": "§6 Package A/B/C ownership lists are a verbatim-equivalent restatement of ARCH-CONV-A_stage0_outcome_and_package_boundary.md §5, with no scope absorbed from B or C and no Package A outcome silently deferred."
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "Branch CORRECT-1's feature branch from audit/arch-conv-final-programme (or an equivalent ref containing its commits), not from main -- see the CRITICAL branch-lineage finding above. Verify with `git log <new-branch> | grep ARCH-CONV-FINAL-AUDIT` that the final-audit commits are actually ancestors before beginning work.",
-    "When implementing Workstream 1's 'one canonical frame-runtime-authority decision consumed early enough in the pipeline', identify precisely which existing choke point this should be -- likely the SignalRegistry load/evaluation stage (Package 1/2's existing activation_key/eligibility mechanism) extended to also consult the WHY-authority register's REJECTED state, rather than inventing a third parallel mechanism alongside the Package 2 eligibility gate and the Package 3 WHY-authority register.",
-    "For Workstream 2's fingerprint closure, the exact phrases to search for are already known verbatim from the final audit report (quoted above) -- use those exact strings, not paraphrased approximations, consistent with the same recommendation made during ARCH-CONV-FINAL-AUDIT hardening.",
-    "The live analysis replay (analysis_id=e34aaedf-b09f-42f0-8cc8-4653a00b4c10) is the single most important acceptance check -- recommend this be re-run and diffed against the final-audit's own recorded baseline output for that exact analysis_id, not a fresh/different case, so the correction is verified against the literal evidence that failed."
+    "Before running the Automation Bus start command, confirm the working tree is clean per §24 — as of hardening time, automation_bus/latest_cursor_prompt.md itself (this Stage 1 hand-off) is an uncommitted modification on main. This is expected hand-off residue, not a defect in the prompt, but §24's own precondition cannot be satisfied until this file (and this hardening record) are committed or otherwise reconciled ahead of `start`.",
+    "Phase 0's LLM allow-flag recording (§10) should be an ops-confirmed read of the live/deployed flag state, not a repository grep alone, consistent with the evidence-gap note already carried in ARCH-CONV_v5_completion_vs_v6_decision.md §7.",
+    "When Phase 1 declares the complete target-to-frame map (§11/§26), record it as a first-class STOP A artefact (not only in the chat-style return format) so ARCH-CONV-A_medical_review_wave_plan.md and ARCH-CONV-A_stop_gates_and_acceptance.md can be updated from it in a later Stage 5 audit without re-deriving the map from the STOP A report text."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 7,
+    "checklist_count": 8,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "The 5 FINAL-AUDIT-produced docs required as input exist only on audit/arch-conv-final-programme, not on main", "source": "git show main:<path> (fatal: not in main); current branch confirmed as audit/arch-conv-final-programme", "evidence": "Confirmed for all 5 paths", "status": "CONFIRMED"},
-      {"id": 2, "claim": "The 8 already-merged required input docs exist on main", "source": "Prior-session confirmation plus fresh Glob", "evidence": "All 8 confirmed present", "status": "CONFIRMED"},
-      {"id": 3, "claim": "All 5 required new output paths are correctly new", "source": "Glob per path", "evidence": "None exist yet on either branch", "status": "CONFIRMED"},
-      {"id": 4, "claim": "FINAL-AUDIT's actual decision was CORRECT and analysis_id matches", "source": "Direct grep of ARCH-CONV-FINAL-AUDIT_implementation_and_verification_report.md", "evidence": "Line 86: 'Final decision issued: CORRECT'; line 6: analysis_id e34aaedf-... exact match", "status": "CONFIRMED"},
-      {"id": 5, "claim": "The 6 confirmed defects quoted in this prompt match the final audit's actual findings verbatim", "source": "Direct grep of ARCH-CONV-FINAL_end_to_end_pipeline_and_leakage_report.md", "evidence": "Exact wording match for all 3 quoted phrases plus the ACTIVE_LEAK classifications", "status": "CONFIRMED"},
-      {"id": 6, "claim": "The final audit's own isolated root_cause_compiler check found no leak, consistent with this session's own PKG3 audit -- the newly-found leaks are at different pipeline stages", "source": "Direct read of the leakage report's line 71", "evidence": "'No ACTIVE_LEAK (root is None)' for the isolated compiler path, confirming PKG3's prior verification was accurate for its own narrow scope", "status": "CONFIRMED"},
-      {"id": 7, "claim": "FINAL-AUDIT's own mandatory human-UAT STOP gate worked correctly as a two-kernel-run boundary (second confirmation of this pattern)", "source": "git log showing kernel COMPLETE -> UAT resume IN_PROGRESS -> kernel COMPLETE", "evidence": "Commits 3f6adcf -> 4cbb7f5 -> ed971f5", "status": "CONFIRMED"}
+      {"id": 1, "claim": "Front matter is complete (work_id, branch, risk_level, execution_model, change_type)", "source": "automation_bus/latest_cursor_prompt.md:1-7", "evidence": "All 5 mandatory fields present", "status": "CONFIRMED"},
+      {"id": 2, "claim": "All 11 authoritative sprint input documents exist on main at the cited paths", "source": "git cat-file -e main:<path> for all 10 ARCH-CONV-A/ARCH-CONV_ABC docs; direct existence check for ADR-RT-001", "evidence": "All 11 confirmed present, no path correction needed", "status": "CONFIRMED"},
+      {"id": 3, "claim": "Package 1-3 and CORRECT-1 protection-baseline evidence exists", "source": "Glob of docs/architecture/ and docs/audit-papers/", "evidence": "ARCH-CONV-PKG1/2/3_*.md, ARCH-CONV-CORRECT-1_*.md and matching audit-papers verification reports all present", "status": "CONFIRMED"},
+      {"id": 4, "claim": "Fixed estate facts (41 targets / 5 migrated / 36 remaining) and the frame-count-unknown qualification match the ratified Stage 0 pack exactly", "source": "Direct comparison of prompt §4 against ARCH-CONV-A_active_why_target_inventory.md §1 and ARCH-CONV-A_medical_review_wave_plan.md §1.1", "evidence": "Exact match, including the post-review 'do not assume one target equals one frame' correction carried forward correctly", "status": "CONFIRMED"},
+      {"id": 5, "claim": "Wave allocation (1/7/6/3/7/8/4=36) matches the ratified wave plan exactly", "source": "Direct comparison of prompt §7 against ARCH-CONV-A_medical_review_wave_plan.md §2", "evidence": "Exact match, no resequencing or silent scope change", "status": "CONFIRMED"},
+      {"id": 6, "claim": "Runtime files underpinning the compile chain are unchanged since the Stage 0 inventory was verified, so its citations remain current", "source": "git log --since=2026-07-25 against root_cause_registry_v1.py, why_authority_v1.py, root_cause_compiler_v1.py, compiled_why_authority_register_v1.yaml", "evidence": "Only the two commits (bacdd7f, 2761df2) the inventory was already verified against; no later commit touches these files", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Target branch feature/arch-conv-a-estate-why-authority-migration does not already exist, and local main == origin/main", "source": "git branch --list; git rev-parse main / origin/main", "evidence": "Branch list empty for the target name; both SHAs equal 942de1ffda260bdcab8ab00ded17f4602dba478a", "status": "CONFIRMED"},
+      {"id": 8, "claim": "This hardening record's work_id exactly matches the prompt's front-matter work_id, satisfying the kernel's start-time equality check", "source": "backend/scripts/run_work_package.py:151-152", "evidence": "Both are \"ARCH-CONV-A\"", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Branching from main instead of audit/arch-conv-final-programme, resulting in missing required inputs — REJECT_AND_RETURN",
-    "Any reopening of the Package 3 medical review decisions themselves (the 9 APPROVE/1 REJECT dispositions) rather than closing the propagation gap — REJECT_AND_RETURN",
-    "Any invented medical wording not sourced from the Anthony-ratified pack — REJECT_AND_RETURN",
-    "Any expansion beyond the 10-frame pilot or the 6 named defects — REJECT_AND_RETURN",
-    "A final PASS/GO issued without the live analysis_id=e34aaedf-... replay actually passing all corrected checks — REJECT_AND_RETURN",
-    "Any Package 1/2/3 protection test regression — REJECT_AND_RETURN",
-    "Any beta-readiness declaration — REJECT_AND_RETURN"
+    "Beginning medical review, editing medical authority, compiling new WHY artefacts, activating new runtime authority, or disconnecting/deleting legacy sources on first receipt of this prompt (prohibited by §25) — REJECT_AND_RETURN",
+    "Branching from anywhere other than a clean origin/main tip, or reusing a stale/pre-existing branch — REJECT_AND_RETURN",
+    "Assuming one target equals one frame for any of the 36 remaining targets ahead of STOP A closure — REJECT_AND_RETURN",
+    "Compiling or promoting any frame without both GPT structured review and Anthony's explicit ratification reference recorded — REJECT_AND_RETURN",
+    "Creating a separate work package or sprint per wave, target, frame, compiler change, registry, validator, doc, policy, configuration item, or test-estate expansion (prohibited by §7) — REJECT_AND_RETURN",
+    "Absorbing any Package B or Package C outcome into this package (prohibited by §6) — REJECT_AND_RETURN",
+    "Physically deleting a shared legacy asset without explicit STOP D authority — REJECT_AND_RETURN",
+    "Calling Automation Bus `finish` at an internal STOP gate (prohibited by §9) — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START, WITH ONE CRITICAL PRE-CONDITION. All required input documents confirmed to exist, but split across two branches: the 5 final-audit-produced defect documents exist ONLY on audit/arch-conv-final-programme (main has not merged ARCH-CONV-FINAL-AUDIT), while 8 other required inputs are already on main. The executing agent MUST branch feature/arch-conv-correct-1-e2e-authority-layerc from audit/arch-conv-final-programme, not from main, or this package cannot execute as specified -- this is flagged as the single most important thing to verify before work begins. All 6 confirmed defects were independently cross-checked against the actual final-audit leakage report and match verbatim, not paraphrased. The final audit's own isolated root_cause_compiler check found no leak (consistent with this session's prior PKG3 audit), confirming the newly-found leaks are genuinely at different, previously-unchecked pipeline stages (signal ranking, intervention aggregation, interpretation-text generation, Layer C rendering) rather than evidence that prior audit work was wrong. No blocking defect found beyond the branch-lineage precondition, which is procedural rather than a flaw in the prompt's content. Recommend proceeding to kernel start once the correct branch base is confirmed."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START of Phase 0/Phase 1 only, per the prompt's own §25 immediate authorised execution boundary. All 11 cited authoritative documents exist at their stated paths; Package 1-3/CORRECT-1 protection baselines exist; the runtime files underpinning the compile chain are unchanged since the Stage 0 inventory verified them, so no citation requires re-verification. The prompt's fixed estate facts, frame-count-unknown qualification, and wave allocation are an exact, uncorrupted transcription of the ratified Stage 0 design pack -- no drift, no silent scope change, no reversion to the one-target-one-frame assumption that was explicitly corrected earlier in this programme. One non-blocking pre-condition is flagged: the working tree is not yet clean (this prompt hand-off file itself is an uncommitted modification on main) -- §24's own clean-tree check will correctly hold execution until this is resolved, which is expected hand-off behaviour, not a prompt defect. No blocking defect found."
 }

@@ -1,0 +1,34 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_tsh_high_hypothyroidism_v1
+hypothesis_set_id: signal_tsh_high_context_set_v1
+signal_id: signal_tsh_high
+activation_key: signal_tsh_high::inv_tsh_high_hypothyroidism
+source_spec_ids:
+- inv_tsh_high_hypothyroidism
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_tsh_high_hypothyroidism_v1.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_a_w1_tsh_high.yaml
+hypotheses:
+- hypothesis_id: hyp_raised_tsh_subclinical_thyroid_context
+  rank: 1
+  title: Raised-TSH thyroid-axis context
+  physiological_claim: Elevated TSH with free T4 still within range can represent a raised-TSH or subclinical thyroid-dysfunction context, without confirming hypothyroidism from this panel alone.
+  evidence_strength: moderate
+  missing_data_policy: Interpret only when TSH is high and free T4 is present but not low or high on the same panel.
+  evidence_for:
+  - TSH is above the laboratory range.
+  - Free T4 remains within the laboratory range.
+  evidence_against:
+  - Low free T4 redirects toward the primary thyroid-hormone-deficiency frame.
+  - High free T4 makes ordinary hypothyroid WHY inappropriate on this panel.
+  contradiction_markers: []
+  caveats:
+  - Do not label this frame as hypothyroidism, Hashimoto's disease, or pituitary disease.
+  - Do not recommend treatment or medication adjustment.
+  - Review medication, thyroid-hormone use, recent illness, pregnancy, biotin, and assay interference where available.
+  confirmatory_tests: []
+  summary_template: A raised TSH with free T4 still in range can reflect thyroid-axis strain or subclinical dysfunction context. This pattern does not by itself confirm thyroid disease.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-A Wave 1 Gate 1 / Gate 2 ratified compiled WHY artefact. Context-only lane.

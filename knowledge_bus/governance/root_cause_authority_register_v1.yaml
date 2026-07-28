@@ -1,10 +1,20 @@
 schema_version: 1.0.0
 runtime_consumed: true
 status: active
-work_id: ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion
+work_id: ARCH-CONV-A
 artefact_path: knowledge_bus/governance/root_cause_authority_register_v1.yaml
-analysis_utc: '2026-06-14'
+analysis_utc: '2026-07-27'
 registry_source: core.knowledge.root_cause_registry_v1.ROOT_CAUSE_TARGET_SPECS
+package_a_scoping_authority: false
+why_emit_authority_source_of_truth: knowledge_bus/governance/compiled_why_authority_register_v1.yaml
+deprecation_note: >
+  ARCH-CONV-A Phase 0 / D-9: This register remains loaded for output-authority
+  provenance classification only (compiled_output_authority_v1). It must NOT be
+  used as Package A wave-scoping or WHY-emit authority. WHY emit selection is
+  governed exclusively by compiled_why_authority_register_v1.yaml via
+  why_authority_v1.resolve_frame_why_authority. Stale free_t3 / vitamin-D
+  contradictions from the 2026-06-14 ARCH-COMPLETION-2 snapshot are corrected
+  below to match the PKG3/CORRECT-1 pilot register.
 pattern_entries:
 - signal_id_prefix: signal_
   authority_source: knowledge_bus/root_cause/hypotheses/{asset}_v1.yaml
@@ -15,11 +25,105 @@ pattern_entries:
 entries:
 - signal_id: signal_vitamin_d_low
   root_cause_id: rc_vitamin_d_low_compiled
-  authority_source: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low_compiled_hypothesis_v1.yaml
+  authority_source: knowledge_bus/compiled/hypotheses/signal_vitamin_d_low.yaml
   activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
   allowed_source_signals: [signal_vitamin_d_low]
   runtime_consumed: true
   generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Phase 0 D-9 correction — path aligned to live compiled artefact
+- signal_id: signal_free_t3_low
+  root_cause_id: rc_free_t3_low_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_free_t3_low_low_t3_syndrome.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_free_t3_low]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Phase 0 D-9 correction — removed from REQUIRES_FUTURE_MAPPING; matches COMPILED_ACTIVE pilot
+- signal_id: signal_tsh_high
+  root_cause_id: rc_tsh_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_tsh_high_hypothyroidism.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_tsh_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 1 compiled WHY; context-only raised-TSH lane per Gate 1 / Gate 2 decision.
+- signal_id: signal_tsh_low
+  root_cause_id: rc_tsh_low_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_tsh_low_hyperthyroidism.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_tsh_low]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 1 compiled WHY; context-only low-TSH lane per Gate 1 / Gate 2 decision.
+- signal_id: signal_free_t3_high
+  root_cause_id: rc_free_t3_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_free_t3_high_t3_predominant_thyrotoxicosis.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_free_t3_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 1 compiled WHY; T3-predominant thyrotoxicosis lane.
+- signal_id: signal_free_t4_high
+  root_cause_id: rc_free_t4_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_free_t4_high_thyrotoxicosis_context.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_free_t4_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 1 compiled WHY; broader thyrotoxicosis-compatible lane.
+- signal_id: signal_free_t4_low
+  root_cause_id: rc_free_t4_low_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_free_t4_low_thyroid_hormone_deficiency.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_free_t4_low]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 1 compiled WHY; primary thyroid-hormone-deficiency lane when TSH elevated.
+- signal_id: signal_ldl_cholesterol_high
+  root_cause_id: rc_ldl_cholesterol_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_ldl_high_dyslipidaemia.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_ldl_cholesterol_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 2 compiled WHY; narrowed atherogenic LDL-burden lane.
+- signal_id: signal_hdl_cholesterol_low
+  root_cause_id: rc_hdl_cholesterol_low_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_hdl_low_cardiovascular.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_hdl_cholesterol_low]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 2 compiled WHY; CONTEXT_ONLY morphology_context lane.
+- signal_id: signal_triglycerides_high
+  root_cause_id: rc_triglycerides_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_triglycerides_high_metabolic.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_triglycerides_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 2 compiled WHY; narrowed TG/metabolic-risk lane.
+- signal_id: signal_homocysteine_high
+  root_cause_id: rc_homocysteine_high_compiled_family
+  authority_source: knowledge_bus/governance/compiled_why_authority_register_v1.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_homocysteine_high]
+  runtime_consumed: true
+  notes: Frame-level emit authority is activation_key-scoped in compiled_why_authority_register_v1
+- signal_id: signal_mcv_high
+  root_cause_id: rc_mcv_high_compiled_family
+  authority_source: knowledge_bus/governance/compiled_why_authority_register_v1.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_mcv_high]
+  runtime_consumed: true
+  notes: Frame-level emit authority is activation_key-scoped in compiled_why_authority_register_v1
+- signal_id: signal_tpo_ab_high
+  root_cause_id: rc_tpo_ab_high_compiled_family
+  authority_source: knowledge_bus/governance/compiled_why_authority_register_v1.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_tpo_ab_high]
+  runtime_consumed: true
+  notes: Frame-level emit authority is activation_key-scoped in compiled_why_authority_register_v1
 - signal_id: __why_engine_fallback__
   root_cause_id: why_engine_fallback_v1
   authority_source: inline_untraceable
@@ -30,11 +134,6 @@ entries:
   prohibited_wording: diagnosis, treatment, supplement recommendation
   notes: Structured placeholder when lead signal lacks governed hypotheses
 batch2_active_signal_entries:
-- signal_id: signal_free_t3_low
-  authority_source: signal_output_only_pending_root_cause_mapping
-  activation_status: ROOT_CAUSE_REQUIRES_FUTURE_MAPPING
-  runtime_consumed: false
-  notes: Activated signal; root-cause YAML not registered in ROOT_CAUSE_TARGET_SPECS
 - signal_id: signal_fai_high
   authority_source: signal_output_only_pending_root_cause_mapping
   activation_status: ROOT_CAUSE_REQUIRES_FUTURE_MAPPING

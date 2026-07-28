@@ -1,0 +1,7 @@
+manifest_id: arch_conv_a_w1_free_t4_high
+work_id: ARCH-CONV-A
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_free_t4_high_thyrotoxicosis_context.yaml
+  activation_key: signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context
+notes: Wave 1 thyroid Gate 1 / Gate 2 ratified compiled WHY artefact for broader thyrotoxicosis-compatible lane.

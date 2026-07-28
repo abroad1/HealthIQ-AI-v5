@@ -45,6 +45,7 @@ signals:
     description: Validator placeholder; runtime activation uses lab_range_exceeded.
   activation_logic: lab_range_exceeded
   activation_config:
+    enable_upper_bound: false
     upper_bound_state: suboptimal
     enable_lower_bound: true
     lower_bound_state: suboptimal

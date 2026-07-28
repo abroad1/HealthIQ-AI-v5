@@ -70,7 +70,7 @@ phenotypes:
 
   - phenotype_id: "ph_thyroid_lipid_disturbance_v1"
     chain_coverage_status: "enforced"
-    clinical_intent: "Thyroid dysfunction with dyslipidaemia; asserts TSH context + LDL chain coupling per interaction_map (moderate/strong edges); min_chain_confidence 0.35 reflects observed runtime max ~0.375 on synthetic fixture."
+    clinical_intent: "Thyroid dysfunction with dyslipidaemia; asserts TSH context + LDL chain coupling per interaction_map (moderate/strong edges); min_chain_confidence 0.30 reflects post-ARCH-CONV-A Wave 2 observed runtime max 0.300 on synthetic fixture after parallel TC/LDL_high WHY retirement."
     fixture_filename: "ph_thyroid_lipid_disturbance_v1.json"
     expected_signals:
       must_fire:
@@ -79,7 +79,7 @@ phenotypes:
     expected_chains:
       must_exist: true
       min_count: 1
-      min_chain_confidence: 0.35
+      min_chain_confidence: 0.30
       must_include_any_signal:
         - "signal_thyroid_tsh_context"
         - "signal_ldl_cholesterol_high"

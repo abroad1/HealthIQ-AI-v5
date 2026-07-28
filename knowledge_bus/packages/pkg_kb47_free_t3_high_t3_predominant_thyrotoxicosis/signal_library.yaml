@@ -54,6 +54,11 @@ signals:
     comparator_type: lab_range_boundary
     boundary: below_min
     condition_type: all_of
+  - gate_id: require_free_t4_not_high
+    metric_id: free_t4
+    comparator_type: lab_range_boundary
+    boundary: not_above_max
+    condition_type: all_of
   override_rules:
   - rule_id: or_free_t3_high_with_tsh_low
     resulting_state: at_risk
