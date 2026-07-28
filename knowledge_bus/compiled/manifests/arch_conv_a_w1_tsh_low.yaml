@@ -1,0 +1,7 @@
+manifest_id: arch_conv_a_w1_tsh_low
+work_id: ARCH-CONV-A
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_tsh_low_hyperthyroidism.yaml
+  activation_key: signal_tsh_low::inv_tsh_low_hyperthyroidism
+notes: Wave 1 thyroid Gate 1 / Gate 2 ratified compiled WHY artefact with narrowed context-only low-TSH lane.

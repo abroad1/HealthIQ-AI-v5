@@ -528,6 +528,40 @@ def _lead_row_for_why_fallback(rows: List[Dict[str, Any]]) -> Optional[Dict[str,
     )
 
 
+def _dedupe_signal_rows(signal_results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Collapse duplicate runtime rows that resolve to the same activation frame.
+
+    ARCH-CONV-A Wave 1 thyroid integration temporarily has parallel package sources
+    for the same activation_key. Preserve one deterministic row so compiled WHY does
+    not double-emit for the same ratified frame.
+    """
+    by_identity: Dict[Tuple[str, str], Dict[str, Any]] = {}
+    for row in signal_results:
+        signal_id = str(row.get("signal_id", "")).strip()
+        activation_key = str(row.get("activation_key", "")).strip()
+        key = (signal_id, activation_key)
+        if key not in by_identity:
+            by_identity[key] = row
+            continue
+        existing = by_identity[key]
+        new_conf = float(row.get("confidence", 0.0) if isinstance(row.get("confidence"), (int, float)) else 0.0)
+        old_conf = float(
+            existing.get("confidence", 0.0)
+            if isinstance(existing.get("confidence"), (int, float))
+            else 0.0
+        )
+        if new_conf > old_conf:
+            by_identity[key] = row
+            continue
+        if new_conf == old_conf:
+            existing_pkg = str(existing.get("package_id", "")).strip()
+            row_pkg = str(row.get("package_id", "")).strip()
+            if row_pkg and (not existing_pkg or row_pkg < existing_pkg):
+                by_identity[key] = row
+    return list(by_identity.values())
+
+
 def _compile_why_engine_fallback_finding(
     lead: Dict[str, Any],
     *,
@@ -587,6 +621,7 @@ def compile_root_cause_v1(
     from core.knowledge.signal_result_index_v1 import rows_for_signal_id
 
     rows = [r for r in (signal_results or []) if isinstance(r, dict)]
+    rows = _dedupe_signal_rows(rows)
 
     biomarker_context = biomarker_context or {}
     input_reference_ranges = input_reference_ranges or {}
@@ -648,6 +683,10 @@ def compile_root_cause_v1(
                             activation_key=resolved_key,
                             artefact=artefact,
                         )
+                elif isinstance(auth_row, dict):
+                    auth_why_role = str(auth_row.get("why_role") or "").strip()
+                    if auth_why_role:
+                        scoped["why_role"] = auth_why_role
                 findings.append(
                     _compile_compiled_hypothesis_finding(
                         target=scoped,

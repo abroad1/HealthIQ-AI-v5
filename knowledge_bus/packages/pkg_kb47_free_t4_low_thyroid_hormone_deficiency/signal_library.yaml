@@ -45,13 +45,16 @@ signals:
     description: Validator placeholder; runtime activation uses lab_range_exceeded.
   activation_logic: lab_range_exceeded
   activation_config:
+    enable_upper_bound: false
     upper_bound_state: suboptimal
     enable_lower_bound: true
     lower_bound_state: suboptimal
   mandatory_pre_emission_gates:
-  - gate_id: require_tsh_present
+  - gate_id: require_tsh_high
     metric_id: tsh
-    comparator_type: biomarker_present
+    comparator_type: lab_range_boundary
+    boundary: above_max
+    condition_type: all_of
   override_rules:
   - rule_id: or_free_t4_low_with_tsh_high
     resulting_state: at_risk

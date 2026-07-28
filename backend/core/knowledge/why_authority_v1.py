@@ -26,6 +26,11 @@ _PILOT_SIGNAL_IDS = frozenset(
         "signal_mcv_high",
         "signal_free_t3_low",
         "signal_tpo_ab_high",
+        "signal_tsh_high",
+        "signal_tsh_low",
+        "signal_free_t3_high",
+        "signal_free_t4_high",
+        "signal_free_t4_low",
     }
 )
 

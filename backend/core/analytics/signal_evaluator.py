@@ -111,12 +111,6 @@ class SignalRegistry:
                         }
                     )
                     continue
-                if activation_key in signals_by_activation_key:
-                    existing = signals_by_activation_key[activation_key].get("_source_path", "")
-                    raise ValueError(
-                        "Duplicate activation_key collision: "
-                        f"{activation_key!r} at {path} and {existing}"
-                    )
                 compiled = dict(item)
                 compiled["_source_path"] = str(path)
                 compiled["activation_key"] = activation_key
@@ -124,6 +118,26 @@ class SignalRegistry:
                 compiled["package_id"] = resolved_package_id or package_id
                 compiled["provenance_status"] = loaded_status
                 compiled["runtime_eligibility"] = eligibility
+                if activation_key in signals_by_activation_key:
+                    existing = signals_by_activation_key[activation_key]
+                    status_rank = {
+                        "EXPLICIT_SPEC": 5,
+                        "COMPILED_MANIFEST": 4,
+                        "SOURCE_DOCUMENT_DERIVED": 3,
+                        "LEGACY_INFERRED": 2,
+                        "UNRESOLVED": 1,
+                        "BLOCKED": 0,
+                    }
+                    new_rank = status_rank.get(str(compiled.get("provenance_status") or "").strip(), -1)
+                    old_rank = status_rank.get(str(existing.get("provenance_status") or "").strip(), -1)
+                    if new_rank > old_rank:
+                        signals_by_activation_key[activation_key] = compiled
+                        continue
+                    if new_rank == old_rank:
+                        existing_path = str(existing.get("_source_path", "")).strip()
+                        if str(path) < existing_path:
+                            signals_by_activation_key[activation_key] = compiled
+                    continue
                 signals_by_activation_key[activation_key] = compiled
 
         ordered_keys = sorted(signals_by_activation_key.keys())

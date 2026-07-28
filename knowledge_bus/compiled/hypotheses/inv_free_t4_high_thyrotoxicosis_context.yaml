@@ -1,0 +1,33 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_free_t4_high_thyrotoxicosis_context_v1
+hypothesis_set_id: signal_free_t4_high_thyrotoxicosis_set_v1
+signal_id: signal_free_t4_high
+activation_key: signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context
+source_spec_ids:
+- inv_free_t4_high_thyrotoxicosis_context
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_free_t4_high_thyrotoxicosis_context.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_a_w1_free_t4_high.yaml
+hypotheses:
+- hypothesis_id: hyp_thyrotoxicosis_compatible_thyroid_hormone_excess_pattern
+  rank: 1
+  title: Thyrotoxicosis-compatible thyroid-hormone excess pattern
+  physiological_claim: High free T4 with suppressed TSH is compatible with a broader thyrotoxicosis pattern, without confirming hyperthyroidism or assigning a specific cause from this panel alone.
+  evidence_strength: moderate
+  missing_data_policy: Interpret only when free T4 is high and TSH is suppressed on the same panel.
+  evidence_for:
+  - Free T4 is above the laboratory range.
+  - TSH is below the laboratory range.
+  evidence_against:
+  - A normal or elevated TSH makes ordinary thyrotoxicosis WHY inappropriate on this panel.
+  contradiction_markers: []
+  caveats:
+  - Do not label this frame as hyperthyroidism, Graves' disease, or pituitary disease.
+  - Do not recommend treatment or medication adjustment.
+  - Review medication, thyroid-hormone use, antithyroid treatment, recent illness, pregnancy, biotin, and assay interference where available.
+  confirmatory_tests: []
+  summary_template: High free T4 with low TSH can fit a thyroid-hormone excess pattern. This panel alone does not identify the cause or confirm thyroid disease.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-A Wave 1 Gate 1 / Gate 2 ratified compiled WHY artefact. Broader thyrotoxicosis-compatible lane.

@@ -2,50 +2,100 @@ work_id: ARCH-CONV-A
 wave: 1
 pack_ref: docs/architecture/ARCH-CONV-A_wave1_thyroid_medical_review_pack.md
 submission_ref: docs/architecture/ARCH-CONV-A_STOP_B_wave1_submission.md
-note: Cursor-assembled register only. medical_decision remains PENDING until GPT Gate 1 and Anthony Gate 2.
+decision_artefact_ref: docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md
+gpt_gate1_reference: GPT-GATE1-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+anthony_gate2_reference: ANTHONY-GATE2-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+note: Ratified Wave 1 thyroid register. Preserve APPROVE_WITH_NARROWING boundaries exactly.
 frames:
   - signal_id: signal_tsh_high
     activation_key: signal_tsh_high::inv_tsh_high_hypothyroidism
     source_spec_id: inv_tsh_high_hypothyroidism
     canonical_source: knowledge_bus/research/investigation_specs/inv_tsh_high_hypothyroidism_v1.yaml
     legacy_source: knowledge_bus/root_cause/hypotheses/tsh_high_hypotheses_v1.yaml
-    proposed_interpretation: Elevated TSH / HPT-axis response pattern per inv narrative
-    medical_decision: PENDING
-    gpt_review_reference: null
-    anthony_ratification_reference: null
+    proposed_interpretation: Raised-TSH / thyroid-axis context with ordinary hypothyroid WHY narrowed to FT4-low panels only
+    medical_decision: APPROVE_WITH_NARROWING
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+    narrowing_rules:
+      - TSH high + FT4 low -> primary thyroid-hormone-deficiency pattern
+      - TSH high + FT4 normal -> raised-TSH / subclinical thyroid-dysfunction context only
+      - TSH high + FT4 high -> fail closed for ordinary hypothyroid WHY
+    preserved_boundaries:
+      - one coherent thyroid-axis interpretation per panel
+      - no duplicate causal prose from TSH and FT4/FT3 co-service
+      - no simultaneous overt and subclinical classification
+      - no diagnosis of hypothyroidism, Graves' disease, Hashimoto's disease, or pituitary disease
+      - no treatment or medication-adjustment recommendation
+      - preserve medication, recent illness, pregnancy, biotin, and assay-interference caveats where available
   - signal_id: signal_tsh_low
     activation_key: signal_tsh_low::inv_tsh_low_hyperthyroidism
     source_spec_id: inv_tsh_low_hyperthyroidism
     canonical_source: knowledge_bus/research/investigation_specs/inv_tsh_low_hyperthyroidism_v1.yaml
     legacy_source: knowledge_bus/root_cause/hypotheses/tsh_low_hypotheses_v1.yaml
-    proposed_interpretation: Suppressed TSH pattern per inv narrative
-    medical_decision: PENDING
-    gpt_review_reference: null
-    anthony_ratification_reference: null
+    proposed_interpretation: Low-TSH / thyroid-axis context with ordinary hyperthyroid WHY narrowed to hormone-elevated panels only
+    medical_decision: APPROVE_WITH_NARROWING
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+    narrowing_rules:
+      - TSH low + FT4 high and/or FT3 high -> thyrotoxicosis-compatible pattern
+      - TSH low + FT4 normal + FT3 normal -> low-TSH / subclinical thyroid-dysfunction context only
+      - TSH low + FT4 low -> fail closed for ordinary hyperthyroid WHY
+    preserved_boundaries:
+      - one coherent thyroid-axis interpretation per panel
+      - no duplicate causal prose from TSH and FT4/FT3 co-service
+      - no simultaneous hypothyroid and thyrotoxic causal WHY
+      - no simultaneous overt and subclinical classification
+      - no diagnosis of hyperthyroidism, Graves' disease, or pituitary disease
+      - no treatment or medication-adjustment recommendation
   - signal_id: signal_free_t3_high
     activation_key: signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis
     source_spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
     canonical_source: knowledge_bus/research/investigation_specs/inv_free_t3_high_t3_predominant_thyrotoxicosis.yaml
     legacy_source: knowledge_bus/root_cause/hypotheses/free_t3_high_hypotheses_v1.yaml
-    proposed_interpretation: T3-predominant thyrotoxicosis pattern per inv title/narrative
-    medical_decision: PENDING
-    gpt_review_reference: null
-    anthony_ratification_reference: null
+    proposed_interpretation: T3-predominant thyroid-hormone excess pattern
+    medical_decision: APPROVE_WITH_NARROWING
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+    narrowing_rules:
+      - FT3 high + TSH low/suppressed + FT4 not elevated -> T3-predominant thyroid-hormone excess pattern
+      - FT3 high + non-suppressed TSH -> fail closed for T3-predominant thyrotoxicosis WHY
+      - FT3 high + FT4 high -> broader thyrotoxicosis pattern, not a competing T3-specific causal explanation
+    preserved_boundaries:
+      - no duplicate causal prose with FT4-high broader thyrotoxicosis lane
+      - no diagnosis of hyperthyroidism or Graves' disease
+      - no treatment or medication-adjustment recommendation
+      - preserve medication, illness, pregnancy, biotin, and assay-interference caveats where available
   - signal_id: signal_free_t4_high
     activation_key: signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context
     source_spec_id: inv_free_t4_high_thyrotoxicosis_context
     canonical_source: knowledge_bus/research/investigation_specs/inv_free_t4_high_thyrotoxicosis_context.yaml
     legacy_source: knowledge_bus/root_cause/hypotheses/free_t4_high_hypotheses_v1.yaml
-    proposed_interpretation: Elevated free T4 thyrotoxicosis-context pattern per inv
-    medical_decision: PENDING
-    gpt_review_reference: null
-    anthony_ratification_reference: null
+    proposed_interpretation: Broader thyrotoxicosis-compatible thyroid-hormone excess pattern
+    medical_decision: APPROVE_WITH_NARROWING
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+    narrowing_rules:
+      - FT4 high + TSH low/suppressed -> thyrotoxicosis-compatible pattern
+      - FT4 high + TSH normal/high -> discordant-axis context; fail closed for ordinary thyrotoxicosis WHY
+    preserved_boundaries:
+      - broader thyrotoxicosis lane must outrank competing T3-specific causal explanation when FT4 is also high
+      - no diagnosis of hyperthyroidism, Graves' disease, or pituitary disease
+      - no treatment or medication-adjustment recommendation
+      - preserve medication, thyroid-hormone use, antithyroid treatment, illness, pregnancy, biotin, and assay-interference caveats where available
   - signal_id: signal_free_t4_low
     activation_key: signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency
     source_spec_id: inv_free_t4_low_thyroid_hormone_deficiency
     canonical_source: knowledge_bus/research/investigation_specs/inv_free_t4_low_thyroid_hormone_deficiency.yaml
     legacy_source: knowledge_bus/root_cause/hypotheses/free_t4_low_hypotheses_v1.yaml
-    proposed_interpretation: Low free T4 thyroid hormone deficiency pattern per inv
-    medical_decision: PENDING
-    gpt_review_reference: null
-    anthony_ratification_reference: null
+    proposed_interpretation: Primary thyroid-hormone-deficiency pattern only when the TSH response is high
+    medical_decision: APPROVE_WITH_NARROWING
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W1-THYROID-2026-07-28-v1
+    narrowing_rules:
+      - FT4 low + TSH high -> primary thyroid-hormone-deficiency pattern
+      - FT4 low + TSH low or inappropriately normal -> discordant-axis context; fail closed for ordinary primary-deficiency WHY
+    preserved_boundaries:
+      - no duplicate causal prose with TSH-high context lane
+      - no diagnosis of hypothyroidism or pituitary disease
+      - no treatment or medication-adjustment recommendation
+      - preserve medication, illness, pregnancy, biotin, and assay-interference caveats where available

@@ -38,8 +38,36 @@ signals:
   activation_logic: lab_range_exceeded
   activation_config:
     upper_bound_state: suboptimal
+    enable_upper_bound: false
     enable_lower_bound: true
     lower_bound_state: suboptimal
+  mandatory_pre_emission_gates:
+  - gate_id: require_free_t4_present
+    metric_id: free_t4
+    comparator_type: biomarker_present
+  - gate_id: require_free_t3_present
+    metric_id: free_t3
+    comparator_type: biomarker_present
+  - gate_id: require_free_t4_not_low
+    metric_id: free_t4
+    comparator_type: lab_range_boundary
+    boundary: not_below_min
+    condition_type: all_of
+  - gate_id: require_free_t4_not_high
+    metric_id: free_t4
+    comparator_type: lab_range_boundary
+    boundary: not_above_max
+    condition_type: all_of
+  - gate_id: require_free_t3_not_low
+    metric_id: free_t3
+    comparator_type: lab_range_boundary
+    boundary: not_below_min
+    condition_type: all_of
+  - gate_id: require_free_t3_not_high
+    metric_id: free_t3
+    comparator_type: lab_range_boundary
+    boundary: not_above_max
+    condition_type: all_of
   override_rules:
   - rule_id: or_tsh_overt_thyrotoxicosis
     description: Escalate if low TSH is accompanied by high Free T4 or Free T3 (Overt

@@ -39,6 +39,46 @@ entries:
   runtime_consumed: true
   generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
   notes: ARCH-CONV-A Phase 0 D-9 correction — removed from REQUIRES_FUTURE_MAPPING; matches COMPILED_ACTIVE pilot
+- signal_id: signal_tsh_high
+  root_cause_id: rc_tsh_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_tsh_high_hypothyroidism.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_tsh_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 1 compiled WHY; context-only raised-TSH lane per Gate 1 / Gate 2 decision.
+- signal_id: signal_tsh_low
+  root_cause_id: rc_tsh_low_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_tsh_low_hyperthyroidism.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_tsh_low]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 1 compiled WHY; context-only low-TSH lane per Gate 1 / Gate 2 decision.
+- signal_id: signal_free_t3_high
+  root_cause_id: rc_free_t3_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_free_t3_high_t3_predominant_thyrotoxicosis.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_free_t3_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 1 compiled WHY; T3-predominant thyrotoxicosis lane.
+- signal_id: signal_free_t4_high
+  root_cause_id: rc_free_t4_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_free_t4_high_thyrotoxicosis_context.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_free_t4_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 1 compiled WHY; broader thyrotoxicosis-compatible lane.
+- signal_id: signal_free_t4_low
+  root_cause_id: rc_free_t4_low_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_free_t4_low_thyroid_hormone_deficiency.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_free_t4_low]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 1 compiled WHY; primary thyroid-hormone-deficiency lane when TSH elevated.
 - signal_id: signal_homocysteine_high
   root_cause_id: rc_homocysteine_high_compiled_family
   authority_source: knowledge_bus/governance/compiled_why_authority_register_v1.yaml

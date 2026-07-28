@@ -1,0 +1,33 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_free_t4_low_thyroid_hormone_deficiency_v1
+hypothesis_set_id: signal_free_t4_low_primary_deficiency_set_v1
+signal_id: signal_free_t4_low
+activation_key: signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency
+source_spec_ids:
+- inv_free_t4_low_thyroid_hormone_deficiency
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_free_t4_low_thyroid_hormone_deficiency.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_a_w1_free_t4_low.yaml
+hypotheses:
+- hypothesis_id: hyp_primary_thyroid_hormone_deficiency_pattern
+  rank: 1
+  title: Primary thyroid-hormone-deficiency pattern
+  physiological_claim: Low free T4 with elevated TSH is compatible with a primary thyroid-hormone-deficiency pattern, without confirming hypothyroidism or assigning cause from this panel alone.
+  evidence_strength: moderate
+  missing_data_policy: Interpret only when free T4 is low and TSH is elevated on the same panel.
+  evidence_for:
+  - Free T4 is below the laboratory range.
+  - TSH is above the laboratory range.
+  evidence_against:
+  - Low or inappropriately normal TSH redirects away from ordinary primary-deficiency WHY.
+  contradiction_markers: []
+  caveats:
+  - Do not label this frame as hypothyroidism or pituitary disease.
+  - Do not recommend treatment or medication adjustment.
+  - Review medication, recent illness, pregnancy, biotin, and assay interference where available.
+  confirmatory_tests: []
+  summary_template: Low free T4 with high TSH can fit a primary thyroid-hormone-deficiency pattern. This panel alone does not confirm thyroid disease or identify the cause.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-A Wave 1 Gate 1 / Gate 2 ratified compiled WHY artefact. Primary deficiency lane only.
