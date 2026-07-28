@@ -127,6 +127,13 @@ def test_load_order_does_not_affect_winner():
 
 
 def test_no_special_package_map_in_activation_identity_module():
-    text = Path("backend/core/knowledge/signal_activation_identity_v1.py").read_text(encoding="utf-8")
+    # Resolve from this test file so the assertion is cwd-independent.
+    module_path = (
+        Path(__file__).resolve().parents[2]
+        / "core"
+        / "knowledge"
+        / "signal_activation_identity_v1.py"
+    )
+    text = module_path.read_text(encoding="utf-8")
     assert "_SPECIAL_PACKAGE_SOURCE_SPEC_IDS" not in text
     assert "pkg_kb52c_tsh_high_primary_hypothyroid_pattern" not in text
