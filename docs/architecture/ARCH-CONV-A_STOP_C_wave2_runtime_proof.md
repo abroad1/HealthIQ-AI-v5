@@ -83,8 +83,14 @@ Observed results:
 - No Wave 3 work was started.
 - No external medical content was introduced beyond the governed research chain and ratified narrowing.
 
-## Remaining Out-of-Scope Items
+## Independent Wave 2 STOP C Re-audit Closure
 
-- `signal_total_cholesterol_high`, `signal_apoa1_cardio_risk`, and `signal_lipid_transport_dysfunction` remain research-gap / not authorised.
-- Legacy retirement remains a future STOP D concern.
-- Wave 3 medical-review pack assembly remains blocked pending later approval.
+Independent Wave 2 STOP C audit result:
+
+```text
+Wave 2 STOP C: PASS
+audit recommendation: PROCEED_TO_WAVE_3_PLANNING
+new regressions versus main: 0
+```
+
+Wave 3 renal STOP B pack assembly is authorised under this recommendation. Wave 3 compile / runtime activation remains blocked until Gate 1 / Gate 2 ratification.
