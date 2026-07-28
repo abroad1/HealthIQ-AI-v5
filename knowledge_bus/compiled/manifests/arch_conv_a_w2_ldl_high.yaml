@@ -1,0 +1,7 @@
+manifest_id: arch_conv_a_w2_ldl_high
+work_id: ARCH-CONV-A
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_ldl_high_dyslipidaemia.yaml
+  activation_key: signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia
+notes: Wave 2 lipid Gate 1 / Gate 2 ratified compiled WHY artefact with narrowed atherogenic-risk lane.

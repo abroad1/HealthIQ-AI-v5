@@ -79,6 +79,30 @@ entries:
   runtime_consumed: true
   generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
   notes: ARCH-CONV-A Wave 1 compiled WHY; primary thyroid-hormone-deficiency lane when TSH elevated.
+- signal_id: signal_ldl_cholesterol_high
+  root_cause_id: rc_ldl_cholesterol_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_ldl_high_dyslipidaemia.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_ldl_cholesterol_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 2 compiled WHY; narrowed atherogenic LDL-burden lane.
+- signal_id: signal_hdl_cholesterol_low
+  root_cause_id: rc_hdl_cholesterol_low_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_hdl_low_cardiovascular.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_hdl_cholesterol_low]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 2 compiled WHY; CONTEXT_ONLY morphology_context lane.
+- signal_id: signal_triglycerides_high
+  root_cause_id: rc_triglycerides_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_triglycerides_high_metabolic.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_triglycerides_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-A Wave 2 compiled WHY; narrowed TG/metabolic-risk lane.
 - signal_id: signal_homocysteine_high
   root_cause_id: rc_homocysteine_high_compiled_family
   authority_source: knowledge_bus/governance/compiled_why_authority_register_v1.yaml

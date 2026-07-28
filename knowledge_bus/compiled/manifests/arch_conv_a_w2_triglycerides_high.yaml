@@ -1,0 +1,7 @@
+manifest_id: arch_conv_a_w2_triglycerides_high
+work_id: ARCH-CONV-A
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_triglycerides_high_metabolic.yaml
+  activation_key: signal_triglycerides_high::inv_triglycerides_high_metabolic
+notes: Wave 2 lipid Gate 1 / Gate 2 ratified compiled WHY artefact with narrowed TG/metabolic-risk lane.

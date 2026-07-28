@@ -1,0 +1,7 @@
+manifest_id: arch_conv_a_w2_hdl_low
+work_id: ARCH-CONV-A
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_hdl_low_cardiovascular.yaml
+  activation_key: signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular
+notes: Wave 2 lipid Gate 1 / Gate 2 ratified compiled WHY artefact. CONTEXT_ONLY / morphology_context lane.

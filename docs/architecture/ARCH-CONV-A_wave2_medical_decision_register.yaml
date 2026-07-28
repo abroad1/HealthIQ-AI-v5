@@ -1,0 +1,86 @@
+work_id: ARCH-CONV-A
+wave: 2
+pack_ref: docs/architecture/ARCH-CONV-A_wave2_lipid_medical_review_pack.md
+decision_artefact_ref: docs/architecture/ARCH-CONV-A_wave2_lipid_gate1_gate2_decision.md
+gpt_gate1_reference: GPT-GATE1-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+anthony_gate2_reference: ANTHONY-GATE2-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+note: >
+  Ratified Wave 2 lipid register. Use embedded canonical spec_id identities
+  (no filename _v1 activation keys). Preserve APPROVE_WITH_NARROWING and CONTEXT_ONLY
+  boundaries exactly. Blocked targets remain uncompiled.
+frames:
+  - signal_id: signal_ldl_cholesterol_high
+    activation_key: signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia
+    source_spec_id: inv_ldl_high_dyslipidaemia
+    canonical_source: knowledge_bus/research/investigation_specs/inv_ldl_high_dyslipidaemia_v1.yaml
+    legacy_source: knowledge_bus/root_cause/hypotheses/ldl_cholesterol_high_hypotheses_v1.yaml
+    proposed_interpretation: Atherogenic lipoprotein-burden / cardiovascular-risk frame with diagnosis and treatment claims prohibited
+    medical_decision: APPROVE_WITH_NARROWING
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    narrowing_rules:
+      - preserve high-LDL signal
+      - explain elevated LDL as contributing to long-term atherosclerotic cardiovascular risk
+      - do not diagnose CVD, atherosclerosis, or familial hypercholesterolaemia
+      - do not calculate absolute CV risk unless a separately governed calculator holds authority
+      - do not recommend lipid-lowering medication changes
+      - marked elevation may use cautious inherited/secondary assessment language only where canonical specification supports it
+      - supporting markers may modify context but must not become unratified causal authorities
+    preserved_boundaries:
+      - principal atherogenic cholesterol-burden lane in the Wave 2 hierarchy
+      - one coherent lipid interpretation with TG and HDL context
+      - no duplicate FH warnings
+      - no QRISK3 / absolute-risk substitution
+      - no Layer C reconstruction of lipid medical meaning
+  - signal_id: signal_hdl_cholesterol_low
+    activation_key: signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular
+    source_spec_id: inv_hdl_low_cardiovascular
+    canonical_source: knowledge_bus/research/investigation_specs/inv_hdl_low_cardiovascular.yaml
+    legacy_source: knowledge_bus/root_cause/hypotheses/hdl_cholesterol_low_hypotheses_v1.yaml
+    proposed_interpretation: Adverse cardiometabolic / cardiovascular risk-marker context only; causal WHY prohibited
+    medical_decision: CONTEXT_ONLY
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    narrowing_rules:
+      - preserve low-HDL signal
+      - no standalone causal WHY for low HDL
+      - no claim that measured HDL proves impaired reverse cholesterol transport or arterial clearance
+      - permit adverse cardiometabolic / CV risk-marker context only
+      - may strengthen integrated lipid pattern when TG, LDL, glycaemia, or other governed markers are present
+      - do not diagnose metabolic syndrome, insulin resistance, or CVD
+      - do not recommend treatment to raise HDL
+    preserved_boundaries:
+      - why_role morphology_context (canonical equivalent of context_only)
+      - causal_why prohibited
+      - no third repetitive causal narrative alongside LDL and TG
+  - signal_id: signal_triglycerides_high
+    activation_key: signal_triglycerides_high::inv_triglycerides_high_metabolic
+    source_spec_id: inv_triglycerides_high_metabolic
+    canonical_source: knowledge_bus/research/investigation_specs/inv_triglycerides_high_metabolic_v1.yaml
+    legacy_source: knowledge_bus/root_cause/hypotheses/triglycerides_high_hypotheses_v1.yaml
+    proposed_interpretation: Triglyceride-rich-lipoprotein / metabolic-risk frame without assumed single cause or treatment advice
+    medical_decision: APPROVE_WITH_NARROWING
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    narrowing_rules:
+      - preserve high-triglyceride signal
+      - do not assume one specific cause
+      - mild/moderate elevation may support cardiometabolic and atherogenic-risk context
+      - fasting/alcohol/medicines/secondary modifiers only where data and canonical authority exist
+      - non-fasting or unknown fasting status must not auto-suppress the signal
+      - marked elevation may use canonical pancreatitis-risk severity lane wording only; do not diagnose pancreatitis
+      - do not recommend fibrates, omega-3, medication changes, or a treatment plan
+    preserved_boundaries:
+      - triglyceride-rich-lipoprotein / metabolic-risk lane in the Wave 2 hierarchy
+      - one coherent lipid interpretation with LDL and HDL context
+      - no Layer C reconstruction of lipid medical meaning
+blocked_targets:
+  - signal_id: signal_total_cholesterol_high
+    status: NOT_AUTHORISED
+    reason: D-5 research gap; identity vs LDL/HDL subsumption unresolved
+  - signal_id: signal_apoa1_cardio_risk
+    status: NOT_AUTHORISED
+    reason: D-5; no accepted inv
+  - signal_id: signal_lipid_transport_dysfunction
+    status: NOT_AUTHORISED
+    reason: D-4; composite mismatch

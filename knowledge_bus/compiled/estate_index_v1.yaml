@@ -144,6 +144,27 @@ compiled_hypothesis_artefacts:
   runtime_authority: compiled_why_authority_register_v1
   launch_classification: arch_conv_a_wave1_compiled_active
   source_spec_id: inv_free_t4_low_thyroid_hormone_deficiency
+- signal_id: signal_ldl_cholesterol_high
+  activation_key: signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_ldl_high_dyslipidaemia.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_conv_a_w2_ldl_high.yaml
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: arch_conv_a_wave2_compiled_active
+  source_spec_id: inv_ldl_high_dyslipidaemia
+- signal_id: signal_hdl_cholesterol_low
+  activation_key: signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_hdl_low_cardiovascular.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_conv_a_w2_hdl_low.yaml
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: arch_conv_a_wave2_compiled_active
+  source_spec_id: inv_hdl_low_cardiovascular
+- signal_id: signal_triglycerides_high
+  activation_key: signal_triglycerides_high::inv_triglycerides_high_metabolic
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_triglycerides_high_metabolic.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_conv_a_w2_triglycerides_high.yaml
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: arch_conv_a_wave2_compiled_active
+  source_spec_id: inv_triglycerides_high_metabolic
 wave1_subsystems_legacy_hard_coded:
   subsystem_ids: []
   launch_classification: none_remaining
@@ -153,6 +174,7 @@ why_authority_source_of_truth: knowledge_bus/governance/compiled_why_authority_r
 phase0_notes:
 - 'ARCH-CONV-A Phase 0: refreshed compiled_hypothesis_artefacts from compiled_why_authority_register_v1 (9 COMPILED_ACTIVE).'
 - 'ARCH-CONV-A Wave 1: added 5 thyroid COMPILED_ACTIVE activation keys post Gate 1 / Gate 2 ratification.'
+- 'ARCH-CONV-A Wave 2: added 3 lipid COMPILED_ACTIVE activation keys post Gate 1 / Gate 2 ratification.'
 - REJECTED frames are intentionally omitted from this index.
 - Card evidence artefacts unchanged (10).
 - Emit path does not read this index; refresh is inventory/governance hygiene.

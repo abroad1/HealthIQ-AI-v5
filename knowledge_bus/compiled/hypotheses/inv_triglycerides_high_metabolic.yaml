@@ -1,0 +1,43 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_triglycerides_high_metabolic_v1
+hypothesis_set_id: signal_triglycerides_high_metabolic_risk_set_v1
+signal_id: signal_triglycerides_high
+activation_key: signal_triglycerides_high::inv_triglycerides_high_metabolic
+source_spec_ids:
+- inv_triglycerides_high_metabolic
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_triglycerides_high_metabolic_v1.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_a_w2_triglycerides_high.yaml
+hypotheses:
+- hypothesis_id: hyp_triglyceride_rich_lipoprotein_metabolic_risk
+  rank: 1
+  title: Triglyceride-rich lipoprotein metabolic-risk pattern
+  physiological_claim: Elevated triglycerides may reflect a triglyceride-rich lipoprotein
+    or metabolic-risk pattern associated with cardiometabolic and atherogenic-risk
+    context, without identifying a single specific cause from this panel alone.
+  evidence_strength: strong
+  missing_data_policy: Interpret when triglycerides are above the laboratory range.
+    Non-fasting or unknown fasting status must not automatically suppress this frame.
+    Fasting status, alcohol, medicines, and secondary conditions may modify interpretation
+    only where data and canonical authority exist.
+  evidence_for:
+  - Triglycerides are above the laboratory range.
+  - Mild or moderate elevation may support cardiometabolic and atherogenic-risk context.
+  - Marked elevation may enter pancreatitis-risk severity context where the canonical
+    specification threshold is met, without confirming pancreatitis.
+  evidence_against:
+  - Triglycerides within the laboratory range remove this frame.
+  contradiction_markers: []
+  caveats:
+  - Do not assume one specific cause such as hepatic VLDL overproduction, alcohol use,
+    insulin resistance, or genetic disease.
+  - Do not label this frame as pancreatitis.
+  - Do not recommend fibrates, omega-3 therapy, medication changes, or a specific treatment plan.
+  - Review fasting status, alcohol, medicines, and secondary contributors only where
+    data and canonical authority exist.
+  confirmatory_tests: []
+  summary_template: Triglycerides are above range and may reflect a triglyceride-rich or metabolic-risk pattern. This panel alone does not identify a single cause, confirm pancreatitis, or recommend medication changes.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-A Wave 2 Gate 1 / Gate 2 ratified compiled WHY artefact. Narrowed TG/metabolic-risk lane.

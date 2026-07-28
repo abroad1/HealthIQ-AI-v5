@@ -6,6 +6,7 @@ description: >
 ratification_artefact: docs/Medical Research Documents/HEALTHIQ_AI_V5_WHY_PILOT_CONSOLIDATED_MEDICAL_REVIEW.md
 anthony_ratification_date_utc: "2026-07-26"
 wave1_thyroid_ratification_artefact: docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md
+wave2_lipid_ratification_artefact: docs/architecture/ARCH-CONV-A_wave2_lipid_gate1_gate2_decision.md
 frames:
   - activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
     signal_id: signal_vitamin_d_low
@@ -218,3 +219,130 @@ frames:
     legacy_asset: knowledge_bus/root_cause/hypotheses/tsh_low_hypotheses_v1.yaml
     legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
     notes: Pass-3 parallel frame identity retained on disk but WHY superseded by ratified signal_tsh_low::inv_tsh_low_hyperthyroidism.
+
+  - activation_key: signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia
+    signal_id: signal_ldl_cholesterol_high
+    source_spec_id: inv_ldl_high_dyslipidaemia
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: APPROVE_WITH_NARROWING
+    anthony_decision: APPROVED
+    final_disposition: APPROVE_WITH_NARROWING
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_ldl_high_dyslipidaemia.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/ldl_cholesterol_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Principal atherogenic cholesterol-burden lane; no CVD/FH diagnosis; no medication recommendation.
+
+  - activation_key: signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular
+    signal_id: signal_hdl_cholesterol_low
+    source_spec_id: inv_hdl_low_cardiovascular
+    authority_state: COMPILED_ACTIVE
+    why_role: morphology_context
+    gpt_decision: CONTEXT_ONLY
+    anthony_decision: APPROVED
+    final_disposition: CONTEXT_ONLY
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_hdl_low_cardiovascular.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/hdl_cholesterol_low_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: CONTEXT_ONLY adverse cardiometabolic/CV risk-marker context; causal WHY prohibited.
+
+  - activation_key: signal_triglycerides_high::inv_triglycerides_high_metabolic
+    signal_id: signal_triglycerides_high
+    source_spec_id: inv_triglycerides_high_metabolic
+    authority_state: COMPILED_ACTIVE
+    gpt_decision: APPROVE_WITH_NARROWING
+    anthony_decision: APPROVED
+    final_disposition: APPROVE_WITH_NARROWING
+    gpt_review_reference: GPT-GATE1-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    anthony_ratification_reference: ANTHONY-GATE2-ARCH-CONV-A-W2-LIPID-2026-07-28-v1
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_triglycerides_high_metabolic.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/triglycerides_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Triglyceride-rich-lipoprotein / metabolic-risk lane; no assumed single cause; no treatment plan.
+
+  - activation_key: signal_triglycerides_high::inv_triglycerides_high_insulin_resistant_hypertriglyceridemia
+    signal_id: signal_triglycerides_high
+    source_spec_id: inv_triglycerides_high_insulin_resistant_hypertriglyceridemia
+    authority_state: LEGACY_RETIRED
+    gpt_decision: SUPERSEDED_BY_WAVE2
+    anthony_decision: SUPERSEDED_BY_WAVE2
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/triglycerides_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Pass-3 parallel frame identity retained on disk but WHY superseded by ratified signal_triglycerides_high::inv_triglycerides_high_metabolic.
+
+  - activation_key: signal_ldl_high::inv_ldl_high_atherogenic_ldl_burden
+    signal_id: signal_ldl_high
+    source_spec_id: inv_ldl_high_atherogenic_ldl_burden
+    authority_state: LEGACY_RETIRED
+    gpt_decision: SUPERSEDED_BY_WAVE2
+    anthony_decision: SUPERSEDED_BY_WAVE2
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Pass-3 parallel signal_ldl_high frame superseded by ratified signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia.
+
+  - activation_key: signal_ldl_high::inv_ldl_high_familial_hypercholesterolemia_context
+    signal_id: signal_ldl_high
+    source_spec_id: inv_ldl_high_familial_hypercholesterolemia_context
+    authority_state: LEGACY_RETIRED
+    gpt_decision: SUPERSEDED_BY_WAVE2
+    anthony_decision: SUPERSEDED_BY_WAVE2
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Pass-3 FH-context parallel for signal_ldl_high retired; Wave 2 prohibits unsupported FH diagnosis.
+
+  - activation_key: signal_hdl_low::inv_hdl_low_atherogenic_dyslipidemia
+    signal_id: signal_hdl_low
+    source_spec_id: inv_hdl_low_atherogenic_dyslipidemia
+    authority_state: LEGACY_RETIRED
+    gpt_decision: SUPERSEDED_BY_WAVE2
+    anthony_decision: SUPERSEDED_BY_WAVE2
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Pass-3 parallel signal_hdl_low frame superseded by ratified CONTEXT_ONLY signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular.
+
+  - activation_key: signal_hdl_low::inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern
+    signal_id: signal_hdl_low
+    source_spec_id: inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern
+    authority_state: LEGACY_RETIRED
+    gpt_decision: SUPERSEDED_BY_WAVE2
+    anthony_decision: SUPERSEDED_BY_WAVE2
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Pass-3 parallel signal_hdl_low insulin-resistance pattern retired; Wave 2 prohibits IR/metabolic-syndrome diagnosis.
+
+  - activation_key: signal_total_cholesterol_high::inv_total_cholesterol_high_atherogenic_hypercholesterolemia
+    signal_id: signal_total_cholesterol_high
+    source_spec_id: inv_total_cholesterol_high_atherogenic_hypercholesterolemia
+    authority_state: LEGACY_RETIRED
+    gpt_decision: NOT_AUTHORISED_WAVE2
+    anthony_decision: NOT_AUTHORISED_WAVE2
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Wave 2 Gate 1/2 explicitly does not authorise total-cholesterol causal WHY.
+
+  - activation_key: signal_total_cholesterol_high::inv_total_cholesterol_high_hdl_dominant_elevation_pattern
+    signal_id: signal_total_cholesterol_high
+    source_spec_id: inv_total_cholesterol_high_hdl_dominant_elevation_pattern
+    authority_state: LEGACY_RETIRED
+    gpt_decision: NOT_AUTHORISED_WAVE2
+    anthony_decision: NOT_AUTHORISED_WAVE2
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Wave 2 Gate 1/2 explicitly does not authorise total-cholesterol causal WHY.

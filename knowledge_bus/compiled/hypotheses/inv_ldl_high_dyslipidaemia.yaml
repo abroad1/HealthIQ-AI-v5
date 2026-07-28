@@ -1,0 +1,42 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_ldl_high_dyslipidaemia_v1
+hypothesis_set_id: signal_ldl_cholesterol_high_atherogenic_burden_set_v1
+signal_id: signal_ldl_cholesterol_high
+activation_key: signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia
+source_spec_ids:
+- inv_ldl_high_dyslipidaemia
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_ldl_high_dyslipidaemia_v1.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_a_w2_ldl_high.yaml
+hypotheses:
+- hypothesis_id: hyp_atherogenic_ldl_cholesterol_burden
+  rank: 1
+  title: Atherogenic LDL-cholesterol burden context
+  physiological_claim: Elevated LDL cholesterol contributes to long-term atherosclerotic
+    cardiovascular risk as an atherogenic lipoprotein burden on this panel, without
+    confirming cardiovascular disease or assigning a specific inherited or secondary cause.
+  evidence_strength: strong
+  missing_data_policy: Interpret when LDL cholesterol is above the laboratory range.
+    Supporting markers may refine context when present but are not required to emit
+    this frame.
+  evidence_for:
+  - LDL cholesterol is above the laboratory range.
+  - Supporting markers such as non-HDL cholesterol, ApoB, triglycerides, HDL, or Lp(a)
+    may strengthen atherogenic context when available.
+  evidence_against:
+  - LDL cholesterol within the laboratory range removes this frame.
+  contradiction_markers: []
+  caveats:
+  - Do not label this frame as cardiovascular disease, atherosclerosis, or familial hypercholesterolaemia.
+  - Do not calculate individual absolute cardiovascular risk unless a separately governed
+    risk calculator holds authority.
+  - Do not recommend starting, stopping, or changing lipid-lowering medication.
+  - Marked or persistent elevation may warrant cautious clinical assessment for inherited
+    or secondary causes only where already supported by the canonical specification.
+  - Supporting markers may modify context but must not become unratified causal authorities.
+  confirmatory_tests: []
+  summary_template: LDL cholesterol is above range and contributes to long-term atherosclerotic cardiovascular risk. This panel alone does not confirm heart disease or FH and does not recommend medication changes.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-A Wave 2 Gate 1 / Gate 2 ratified compiled WHY artefact. Narrowed atherogenic-risk lane.

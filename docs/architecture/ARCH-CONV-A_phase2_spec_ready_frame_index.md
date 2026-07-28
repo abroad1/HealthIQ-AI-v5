@@ -7,14 +7,14 @@
 
 | # | wave | signal_id | source_spec_id | activation_key (proposed) | inv path | STOP B status |
 |---:|---|---|---|---|---|---|
-| 1 | 1 | signal_tsh_high | inv_tsh_high_hypothyroidism | signal_tsh_high::inv_tsh_high_hypothyroidism | knowledge_bus/research/investigation_specs/inv_tsh_high_hypothyroidism_v1.yaml | **SUBMITTED (this STOP B)** |
-| 2 | 1 | signal_tsh_low | inv_tsh_low_hyperthyroidism | signal_tsh_low::inv_tsh_low_hyperthyroidism | knowledge_bus/research/investigation_specs/inv_tsh_low_hyperthyroidism_v1.yaml | **SUBMITTED (this STOP B)** |
-| 3 | 1 | signal_free_t3_high | inv_free_t3_high_t3_predominant_thyrotoxicosis | signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis | knowledge_bus/research/investigation_specs/inv_free_t3_high_t3_predominant_thyrotoxicosis.yaml | **SUBMITTED (this STOP B)** |
-| 4 | 1 | signal_free_t4_high | inv_free_t4_high_thyrotoxicosis_context | signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context | knowledge_bus/research/investigation_specs/inv_free_t4_high_thyrotoxicosis_context.yaml | **SUBMITTED (this STOP B)** |
-| 5 | 1 | signal_free_t4_low | inv_free_t4_low_thyroid_hormone_deficiency | signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency | knowledge_bus/research/investigation_specs/inv_free_t4_low_thyroid_hormone_deficiency.yaml | **SUBMITTED (this STOP B)** |
-| 6 | 2 | signal_ldl_cholesterol_high | inv_ldl_high_dyslipidaemia_v1 | signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia_v1 | knowledge_bus/research/investigation_specs/inv_ldl_high_dyslipidaemia_v1.yaml | prepared index only |
-| 7 | 2 | signal_hdl_cholesterol_low | inv_hdl_low_cardiovascular | signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular | knowledge_bus/research/investigation_specs/inv_hdl_low_cardiovascular.yaml | prepared index only |
-| 8 | 2 | signal_triglycerides_high | inv_triglycerides_high_metabolic_v1 | signal_triglycerides_high::inv_triglycerides_high_metabolic_v1 | knowledge_bus/research/investigation_specs/inv_triglycerides_high_metabolic_v1.yaml | prepared index only |
+| 1 | 1 | signal_tsh_high | inv_tsh_high_hypothyroidism | signal_tsh_high::inv_tsh_high_hypothyroidism | knowledge_bus/research/investigation_specs/inv_tsh_high_hypothyroidism_v1.yaml | **RATIFIED (Wave 1 STOP C)** |
+| 2 | 1 | signal_tsh_low | inv_tsh_low_hyperthyroidism | signal_tsh_low::inv_tsh_low_hyperthyroidism | knowledge_bus/research/investigation_specs/inv_tsh_low_hyperthyroidism_v1.yaml | **RATIFIED (Wave 1 STOP C)** |
+| 3 | 1 | signal_free_t3_high | inv_free_t3_high_t3_predominant_thyrotoxicosis | signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis | knowledge_bus/research/investigation_specs/inv_free_t3_high_t3_predominant_thyrotoxicosis.yaml | **RATIFIED (Wave 1 STOP C)** |
+| 4 | 1 | signal_free_t4_high | inv_free_t4_high_thyrotoxicosis_context | signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context | knowledge_bus/research/investigation_specs/inv_free_t4_high_thyrotoxicosis_context.yaml | **RATIFIED (Wave 1 STOP C)** |
+| 5 | 1 | signal_free_t4_low | inv_free_t4_low_thyroid_hormone_deficiency | signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency | knowledge_bus/research/investigation_specs/inv_free_t4_low_thyroid_hormone_deficiency.yaml | **RATIFIED (Wave 1 STOP C)** |
+| 6 | 2 | signal_ldl_cholesterol_high | inv_ldl_high_dyslipidaemia | signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia | knowledge_bus/research/investigation_specs/inv_ldl_high_dyslipidaemia_v1.yaml | **RATIFIED (Wave 2 Gate 1/2)** |
+| 7 | 2 | signal_hdl_cholesterol_low | inv_hdl_low_cardiovascular | signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular | knowledge_bus/research/investigation_specs/inv_hdl_low_cardiovascular.yaml | **RATIFIED (Wave 2 Gate 1/2)** |
+| 8 | 2 | signal_triglycerides_high | inv_triglycerides_high_metabolic | signal_triglycerides_high::inv_triglycerides_high_metabolic | knowledge_bus/research/investigation_specs/inv_triglycerides_high_metabolic_v1.yaml | **RATIFIED (Wave 2 Gate 1/2)** |
 | 9 | 3 | signal_creatinine_high | inv_creatinine_high_renal_v1 | signal_creatinine_high::inv_creatinine_high_renal_v1 | knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml | prepared index only |
 | 10 | 3 | signal_urea_high | inv_urea_high_renal | signal_urea_high::inv_urea_high_renal | knowledge_bus/research/investigation_specs/inv_urea_high_renal.yaml | prepared index only |
 | 11 | 3 | signal_urate_high | inv_uric_acid_high_metabolic | signal_urate_high::inv_uric_acid_high_metabolic | knowledge_bus/research/investigation_specs/inv_uric_acid_high_metabolic.yaml | prepared index only |
@@ -25,6 +25,9 @@
 | 16 | 5 | signal_hemoglobin_low | inv_hgb_low_anemia | signal_hemoglobin_low::inv_hgb_low_anemia | knowledge_bus/research/investigation_specs/inv_hgb_low_anemia.yaml | prepared index only |
 | 17 | 6 | signal_hba1c_high | inv_hba1c_high_glycaemia_v1 | signal_hba1c_high::inv_hba1c_high_glycaemia_v1 | knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemia_v1.yaml | prepared index only |
 
-**Not in the 17:** Wave 1 blocked (`signal_thyroid_tsh_context`, `signal_tgab_high`); bilirubin provisional frames (separate research pack, not medically approved); Wave 0 suppressed.
+**Not in the 17:** Wave 1 blocked (`signal_thyroid_tsh_context`, `signal_tgab_high`); bilirubin provisional frames (separate research pack, not medically approved); Wave 0 suppressed; Wave 2 blocked (`signal_total_cholesterol_high`, `signal_apoa1_cardio_risk`, `signal_lipid_transport_dysfunction`).
 
-First STOP B submission = Wave 1 rows 1–5 only.
+**Identity note (Wave 2):** rows 6 and 8 use embedded canonical `spec_id` values (`inv_ldl_high_dyslipidaemia`, `inv_triglycerides_high_metabolic`). Filename `_v1` suffixes are not activation-key material.
+
+Wave 1 STOP B / STOP C = rows 1–5 complete.  
+Wave 2 Gate 1 / Gate 2 = rows 6–8 ratified — see `docs/architecture/ARCH-CONV-A_wave2_lipid_gate1_gate2_decision.md`.

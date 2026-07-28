@@ -41,6 +41,16 @@ EXPECTED_KEYS = (
     "signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency",
     "signal_tsh_high::inv_tsh_high_primary_hypothyroid_pattern",
     "signal_tsh_low::inv_tsh_low_thyrotoxic_pattern",
+    "signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia",
+    "signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular",
+    "signal_triglycerides_high::inv_triglycerides_high_metabolic",
+    "signal_triglycerides_high::inv_triglycerides_high_insulin_resistant_hypertriglyceridemia",
+    "signal_ldl_high::inv_ldl_high_atherogenic_ldl_burden",
+    "signal_ldl_high::inv_ldl_high_familial_hypercholesterolemia_context",
+    "signal_hdl_low::inv_hdl_low_atherogenic_dyslipidemia",
+    "signal_hdl_low::inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern",
+    "signal_total_cholesterol_high::inv_total_cholesterol_high_atherogenic_hypercholesterolemia",
+    "signal_total_cholesterol_high::inv_total_cholesterol_high_hdl_dominant_elevation_pattern",
 )
 METABOLIC_KEY = "signal_homocysteine_high::inv_homocysteine_high_metabolic"
 FORBIDDEN_COMPILED = REPO_ROOT / "knowledge_bus/compiled/hypotheses/inv_homocysteine_high_metabolic.yaml"
@@ -209,7 +219,7 @@ def main() -> int:
         return _fail(f"unexpected hcy B-vitamin hypothesis ids: {sorted(ids)}")
 
     print("compiled_why_authority_gate: PASS")
-    print(f"frames={len(EXPECTED_KEYS)} compiled_active=14 rejected=1 legacy_retired=2")
+    print(f"frames={len(EXPECTED_KEYS)} compiled_active=17 rejected=1 legacy_retired=9")
     return 0
 
 

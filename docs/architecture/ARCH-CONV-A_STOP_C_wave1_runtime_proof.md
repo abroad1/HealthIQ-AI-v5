@@ -170,6 +170,30 @@ Pass-3 parallel TSH activation keys are registered as `LEGACY_RETIRED` so they s
 
 Branch and `main` each reported the same 13 failing regression tests. New branch regressions versus main: **0**.
 
+## Independent STOP C Re-audit Closure
+
+Independent STOP C re-audit result (recorded after CORRECT):
+
+```text
+STOP C: PASS
+material findings closed: YES
+new regressions versus main: 0
+```
+
+### Minor test portability issue — CLOSED
+
+Audit-identified hygiene only (no production or authority-resolution change):
+
+- file: `backend/tests/unit/test_duplicate_authority_resolution_v1.py`
+- test: `test_no_special_package_map_in_activation_identity_module`
+- fix: resolve `signal_activation_identity_v1.py` from `Path(__file__)` instead of a bare `Path("backend/...")` relative to CWD
+- proven from repository root and from `backend/`
+
+```text
+minor test portability issue: CLOSED
+STOP C final status: PASS
+```
+
 ## Explicit Non-Actions
 
 - Automation Bus `finish` was not called.
@@ -177,11 +201,11 @@ Branch and `main` each reported the same 13 failing regression tests. New branch
 - No legacy thyroid WHY asset was deleted or disconnected.
 - No bilirubin WHY frame was compiled or activated.
 - No Package B hand-off work was performed.
-- No Wave 2 work was started.
+- No Wave 2 frames were compiled or activated by this STOP C closure.
 
 ## Remaining Out-of-Scope Items
 
 - `signal_thyroid_tsh_context` remains outside this Wave 1 compiled promotion and was not newly compiled here.
 - Legacy retirement remains a future STOP D concern.
 - Estate-wide repetition beyond the first proven wave remains blocked pending later approval.
-- Ready for independent STOP C re-audit after this CORRECT commit.
+- Wave 2 medical-review pack assembly may proceed under the existing Package A sequence; Wave 2 Gate 1 / Gate 2 medical review and compilation remain blocked until authorised.
