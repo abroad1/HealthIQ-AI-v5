@@ -3,7 +3,7 @@ work_id: ARCH-CONV-D
 branch: feature/arch-conv-d-alt-identity-closure
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: DOCS_GOVERNANCE
+change_type: CONTENT
 ---
 
 # ARCH-CONV-D — ALT Identity and Authority Closure
