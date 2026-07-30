@@ -432,6 +432,13 @@ def _neutralise_hypothesis_title_for_counter_evidence(
 def _normalise_root_cause_finding(
     finding_row: Dict[str, Any],
 ) -> RootCauseFindingV1:
+    raw_why_role = finding_row.get("why_role")
+    if not isinstance(raw_why_role, str) or not raw_why_role.strip():
+        raise ValueError("root-cause finding requires explicit governed why_role")
+    why_role = raw_why_role.strip()
+    if why_role not in {"causal", "morphology_context"}:
+        raise ValueError(f"unsupported root-cause why_role: {why_role!r}")
+
     hypotheses_in = [
         row for row in _to_list(finding_row.get("hypotheses")) if isinstance(row, dict)
     ]
@@ -502,6 +509,7 @@ def _normalise_root_cause_finding(
         activation_key=str(finding_row.get("activation_key", "")).strip(),
         source_spec_id=str(finding_row.get("source_spec_id", "")).strip(),
         authority_scope=str(finding_row.get("authority_scope", "family_level")).strip() or "family_level",
+        why_role=why_role,
         signal_state=str(finding_row.get("signal_state", "")).strip() or "unknown",
         signal_confidence=_safe_float(finding_row.get("signal_confidence")),
         primary_metric=str(finding_row.get("primary_metric", "")).strip(),

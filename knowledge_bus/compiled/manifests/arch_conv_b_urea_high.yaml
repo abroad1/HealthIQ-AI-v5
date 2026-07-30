@@ -1,0 +1,7 @@
+manifest_id: arch_conv_b_urea_high
+work_id: ARCH-CONV-B
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_urea_high_renal.yaml
+  activation_key: signal_urea_high::inv_urea_high_renal
+notes: Gate 1 / Gate 2 ratified CONTEXT_ONLY_NON_CAUSAL morphology_context lane.

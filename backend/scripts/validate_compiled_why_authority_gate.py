@@ -11,6 +11,8 @@ Fails if:
 - vitamin D / free_t3 unique empty-key resolve fails;
 - rejected-only metabolic emits WHY findings or WHY-engine fallback;
 - vitamin D legacy YAML is selected when compiled path is active.
+- ARCH-CONV-B creatinine/urea approved and deferred renal keys are missing;
+- context-only urea lacks morphology_context authority.
 """
 
 from __future__ import annotations
@@ -51,6 +53,10 @@ EXPECTED_KEYS = (
     "signal_hdl_low::inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern",
     "signal_total_cholesterol_high::inv_total_cholesterol_high_atherogenic_hypercholesterolemia",
     "signal_total_cholesterol_high::inv_total_cholesterol_high_hdl_dominant_elevation_pattern",
+    "signal_creatinine_high::inv_creatinine_high_renal",
+    "signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration",
+    "signal_urea_high::inv_urea_high_renal",
+    "signal_urea_high::inv_urea_high_prerenal_volume_depletion_or_catabolic_load",
 )
 METABOLIC_KEY = "signal_homocysteine_high::inv_homocysteine_high_metabolic"
 FORBIDDEN_COMPILED = REPO_ROOT / "knowledge_bus/compiled/hypotheses/inv_homocysteine_high_metabolic.yaml"
@@ -97,10 +103,17 @@ def main() -> int:
     if FORBIDDEN_COMPILED.is_file():
         return _fail("compiled metabolic artefact must not exist")
 
+    urea_key = "signal_urea_high::inv_urea_high_renal"
+    if str(by_key[urea_key].get("why_role") or "").strip() != "morphology_context":
+        return _fail("ratified urea frame must be morphology_context")
+
     for key in EXPECTED_KEYS:
         row = by_key[key]
         state = str(row.get("authority_state") or "").strip()
         if state == STATE_COMPILED_ACTIVE:
+            why_role = str(row.get("why_role") or "").strip()
+            if why_role not in {"causal", "morphology_context"}:
+                return _fail(f"COMPILED_ACTIVE frame requires explicit supported why_role: {key}")
             artefact = get_compiled_hypothesis_artefact_for_activation_key(key)
             if artefact.activation_key != key:
                 return _fail(f"artefact activation_key mismatch for {key}")
@@ -219,7 +232,7 @@ def main() -> int:
         return _fail(f"unexpected hcy B-vitamin hypothesis ids: {sorted(ids)}")
 
     print("compiled_why_authority_gate: PASS")
-    print(f"frames={len(EXPECTED_KEYS)} compiled_active=17 rejected=1 legacy_retired=9")
+    print(f"frames={len(EXPECTED_KEYS)} compiled_active=19 rejected=1 legacy_retired=11")
     return 0
 
 

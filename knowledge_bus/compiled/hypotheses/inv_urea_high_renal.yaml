@@ -1,0 +1,41 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_urea_high_renal_v1
+hypothesis_set_id: signal_urea_high_non_specific_context_set_v1
+signal_id: signal_urea_high
+activation_key: signal_urea_high::inv_urea_high_renal
+source_spec_ids:
+- inv_urea_high_renal
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_urea_high_renal.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_b_urea_high.yaml
+hypotheses:
+- hypothesis_id: hyp_urea_non_specific_renal_hydration_protein_context
+  rank: 1
+  title: Non-specific urea context
+  physiological_claim: Elevated urea may provide non-specific context involving renal
+    clearance, hydration, protein intake, or catabolic influences, without establishing
+    renal impairment or a single causal explanation.
+  evidence_strength: contextual
+  missing_data_policy: Interpret as context only. Creatinine or eGFR concordance may
+    strengthen renal context but cannot establish a diagnosis. Dehydration, protein
+    intake, catabolic illness, corticosteroid exposure, and gastrointestinal bleeding
+    remain differential or contextual possibilities only.
+  evidence_for:
+  - Urea is above the laboratory range.
+  - High creatinine or low eGFR may strengthen non-specific renal-clearance context when present.
+  evidence_against:
+  - Isolated urea elevation is non-specific and may reflect hydration, protein intake, or catabolic influences.
+  - Low haemoglobin must not be treated as evidence that gastrointestinal bleeding is present.
+  contradiction_markers: []
+  caveats:
+  - Do not emit standalone causal renal-impairment WHY from isolated urea.
+  - Do not diagnose renal failure or gastrointestinal bleeding from this frame.
+  - Do not silently merge renal, prerenal, catabolic, corticosteroid, or bleeding concepts into one causal claim.
+  - Creatinine or eGFR concordance may strengthen context but does not establish diagnosis.
+  - Do not recommend treatment from this frame.
+  confirmatory_tests: []
+  summary_template: Urea is above range and may reflect non-specific renal-clearance, hydration, protein, or catabolic context. It does not establish renal impairment or gastrointestinal bleeding.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-B Gate 1 / Gate 2 ratified CONTEXT_ONLY_NON_CAUSAL morphology_context lane.

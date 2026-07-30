@@ -52,6 +52,9 @@ class RootCauseFindingV1(BaseModel):
     activation_key: str = ""
     source_spec_id: str = ""
     authority_scope: str = "family_level"
+    # Governed Layer-B role propagated without reinterpretation. Required so
+    # missing role metadata cannot silently default a context frame to causal.
+    why_role: Literal["causal", "morphology_context"]
     signal_state: str
     signal_confidence: float = Field(..., ge=0.0, le=1.0)
     primary_metric: str

@@ -432,8 +432,8 @@ def test_root_cause_v1_hba1c_only_finding_unchanged_kb_s46_regression():
     assert _finding_by_signal(dump, "signal_systemic_inflammation") is None
 
 
-def test_root_cause_v1_renal_kb_s56b_emits_hypotheses_for_creatinine_urea_urate():
-    """KB-S56B: renal high signals load governed hypothesis assets without cross-domain leakage."""
+def test_root_cause_v1_arch_conv_b_uses_compiled_creatinine_urea_and_legacy_urate():
+    """ARCH-CONV-B migrates creatinine/urea while excluded urate remains legacy."""
     root = compile_root_cause_v1(
         signal_results=[
             {
@@ -471,12 +471,14 @@ def test_root_cause_v1_renal_kb_s56b_emits_hypotheses_for_creatinine_urea_urate(
     assert len(dump.get("findings") or []) == 3
     cr = _finding_by_signal(dump, "signal_creatinine_high")
     assert isinstance(cr, dict)
-    assert "creatinine_elevated_filtration_stress_v1" in {
+    assert cr.get("why_role") == "causal"
+    assert "hyp_creatinine_possible_reduced_renal_clearance" in {
         str(h.get("hypothesis_id", "")).strip() for h in (cr.get("hypotheses") or []) if isinstance(h, dict)
     }
     ur = _finding_by_signal(dump, "signal_urea_high")
     assert isinstance(ur, dict)
-    assert "urea_elevated_excretory_burden_v1" in {
+    assert ur.get("why_role") == "morphology_context"
+    assert "hyp_urea_non_specific_renal_hydration_protein_context" in {
         str(h.get("hypothesis_id", "")).strip() for h in (ur.get("hypotheses") or []) if isinstance(h, dict)
     }
     uu = _finding_by_signal(dump, "signal_urate_high")

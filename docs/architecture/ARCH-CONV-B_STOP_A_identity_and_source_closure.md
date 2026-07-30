@@ -14,6 +14,15 @@
 > authorise medical decisions, compilation, runtime authority changes, legacy
 > disconnection, Automation Bus finish, or Phase 2.
 
+> **Bounded Phase 2 scope extension (recorded 2026-07-30):** Head of Architecture
+> authorised the minimum clinician-report contract and compiler changes required
+> to preserve governed `why_role` end to end for
+> `signal_urea_high::inv_urea_high_renal`. The extension permits one structured
+> role field, deterministic propagation, fail-closed validation, and focused
+> backend/output tests only. It does not authorise contract redesign, frontend
+> medical logic, unrelated report-field changes, eGFR or urate WHY, package-only
+> Pass 3 promotion, physical legacy deletion, Automation Bus finish, or merge.
+
 ---
 
 ## Work package

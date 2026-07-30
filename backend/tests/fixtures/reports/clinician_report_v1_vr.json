@@ -94,7 +94,8 @@
             "confirmatory_tests": [],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_alp_low",
@@ -142,7 +143,8 @@
             "confirmatory_tests": [],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_homocysteine_elevation_context",
@@ -256,7 +258,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_homocysteine_high",
@@ -370,7 +373,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_homocysteine_high",
@@ -484,7 +488,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_hypercortisolism",
@@ -549,7 +554,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_lipid_transport_dysfunction",
@@ -651,7 +657,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_lipid_transport_dysfunction",
@@ -753,7 +760,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_oxygen_transport_capacity",
@@ -795,7 +803,8 @@
             "confirmatory_tests": [],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_systemic_inflammation",
@@ -893,7 +902,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_systemic_inflammation",
@@ -991,7 +1001,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_vitamin_d_low",
@@ -1028,7 +1039,8 @@
             "confirmatory_tests": [],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       }
     ],
     "root_cause": null,

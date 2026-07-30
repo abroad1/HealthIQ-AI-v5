@@ -7,11 +7,14 @@ ratification_artefact: docs/Medical Research Documents/HEALTHIQ_AI_V5_WHY_PILOT_
 anthony_ratification_date_utc: "2026-07-26"
 wave1_thyroid_ratification_artefact: docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md
 wave2_lipid_ratification_artefact: docs/architecture/ARCH-CONV-A_wave2_lipid_gate1_gate2_decision.md
+arch_conv_b_gate1_decision_artefact: docs/architecture/ARCH-CONV-B_GATE_1_head_of_medical_research_decision.md
+arch_conv_b_gate2_ratification_artefact: docs/architecture/ARCH-CONV-B_GATE_2_Anthony_ratification.md
 frames:
   - activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
     signal_id: signal_vitamin_d_low
     source_spec_id: inv_vitamin_d_low_deficiency
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: RETIREMENT_CONFIRMATION_ONLY
     anthony_decision: APPROVED
     final_disposition: RETIREMENT_CONFIRMATION_ONLY
@@ -24,6 +27,7 @@ frames:
     signal_id: signal_homocysteine_high
     source_spec_id: inv_homocysteine_high_b_vitamin_related_methylation_impairment
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_REVISIONS
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_REVISIONS
@@ -47,6 +51,7 @@ frames:
     signal_id: signal_homocysteine_high
     source_spec_id: inv_homocysteine_high_renal_clearance_reduction
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_REVISIONS
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_REVISIONS
@@ -58,6 +63,7 @@ frames:
     signal_id: signal_mcv_high
     source_spec_id: inv_mcv_high_macrocytosis
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_REVISIONS
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_REVISIONS
@@ -70,6 +76,7 @@ frames:
     signal_id: signal_mcv_high
     source_spec_id: inv_mcv_high_megaloblastic_macrocytosis
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_REVISIONS
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_REVISIONS
@@ -81,6 +88,7 @@ frames:
     signal_id: signal_mcv_high
     source_spec_id: inv_mcv_high_nonmegaloblastic_macrocytosis
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_REVISIONS
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_REVISIONS
@@ -92,6 +100,7 @@ frames:
     signal_id: signal_free_t3_low
     source_spec_id: inv_free_t3_low_low_t3_syndrome
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_REVISIONS
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_REVISIONS
@@ -103,6 +112,7 @@ frames:
     signal_id: signal_tpo_ab_high
     source_spec_id: inv_tpo_ab_high_autoimmune_hypothyroid_pattern
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_REVISIONS
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_REVISIONS
@@ -114,6 +124,7 @@ frames:
     signal_id: signal_tpo_ab_high
     source_spec_id: inv_tpo_ab_high_euthyroid_autoimmune_risk
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_REVISIONS
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_REVISIONS
@@ -155,6 +166,7 @@ frames:
     signal_id: signal_free_t3_high
     source_spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_NARROWING
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_NARROWING
@@ -169,6 +181,7 @@ frames:
     signal_id: signal_free_t4_high
     source_spec_id: inv_free_t4_high_thyrotoxicosis_context
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_NARROWING
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_NARROWING
@@ -183,6 +196,7 @@ frames:
     signal_id: signal_free_t4_low
     source_spec_id: inv_free_t4_low_thyroid_hormone_deficiency
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_NARROWING
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_NARROWING
@@ -224,6 +238,7 @@ frames:
     signal_id: signal_ldl_cholesterol_high
     source_spec_id: inv_ldl_high_dyslipidaemia
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_NARROWING
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_NARROWING
@@ -253,6 +268,7 @@ frames:
     signal_id: signal_triglycerides_high
     source_spec_id: inv_triglycerides_high_metabolic
     authority_state: COMPILED_ACTIVE
+    why_role: causal
     gpt_decision: APPROVE_WITH_NARROWING
     anthony_decision: APPROVED
     final_disposition: APPROVE_WITH_NARROWING
@@ -346,3 +362,57 @@ frames:
     legacy_asset: null
     legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
     notes: Wave 2 Gate 1/2 explicitly does not authorise total-cholesterol causal WHY.
+
+  - activation_key: signal_creatinine_high::inv_creatinine_high_renal
+    signal_id: signal_creatinine_high
+    source_spec_id: inv_creatinine_high_renal
+    authority_state: COMPILED_ACTIVE
+    why_role: causal
+    gpt_decision: APPROVE_WITH_NARROWING
+    anthony_decision: APPROVED
+    final_disposition: CAUSAL_CANDIDATE_NARROWED_RENAL_CLEARANCE_CONTEXT
+    gpt_review_reference: ARCH-CONV-B-GATE1-HMR-2026-07-30
+    anthony_ratification_reference: ARCH-CONV-B-GATE2-ANTHONY-2026-07-30
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_creatinine_high_renal.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/creatinine_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Narrowed possible renal-clearance or filtration-marker lane; no CKD/AKI diagnosis and no eGFR authority displacement.
+
+  - activation_key: signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration
+    signal_id: signal_creatinine_high
+    source_spec_id: inv_creatinine_high_reduced_glomerular_filtration
+    authority_state: LEGACY_RETIRED
+    gpt_decision: DEFER_EVIDENCE_INSUFFICIENT
+    anthony_decision: APPROVED
+    final_disposition: DEFER_EVIDENCE_INSUFFICIENT
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/creatinine_high_hypotheses_v1.yaml
+    legacy_runtime_state: NON_REACHABLE_FOR_FRAME
+    notes: Package-only Pass 3 candidate; no canonical investigation-spec authority and no compile or promotion.
+
+  - activation_key: signal_urea_high::inv_urea_high_renal
+    signal_id: signal_urea_high
+    source_spec_id: inv_urea_high_renal
+    authority_state: COMPILED_ACTIVE
+    why_role: morphology_context
+    gpt_decision: APPROVE_WITH_NARROWING
+    anthony_decision: APPROVED
+    final_disposition: CONTEXT_ONLY_NON_CAUSAL
+    gpt_review_reference: ARCH-CONV-B-GATE1-HMR-2026-07-30
+    anthony_ratification_reference: ARCH-CONV-B-GATE2-ANTHONY-2026-07-30
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_urea_high_renal.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/urea_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Ratified context-only non-causal renal-clearance, hydration, protein, and catabolic context.
+
+  - activation_key: signal_urea_high::inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+    signal_id: signal_urea_high
+    source_spec_id: inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+    authority_state: LEGACY_RETIRED
+    gpt_decision: DEFER_EVIDENCE_INSUFFICIENT
+    anthony_decision: APPROVED
+    final_disposition: DEFER_EVIDENCE_INSUFFICIENT
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/urea_high_hypotheses_v1.yaml
+    legacy_runtime_state: NON_REACHABLE_FOR_FRAME
+    notes: Package-only Pass 3 candidate; no canonical investigation-spec authority and no compile or promotion.
