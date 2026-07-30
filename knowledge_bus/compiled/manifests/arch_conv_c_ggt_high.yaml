@@ -17,7 +17,7 @@ source_specs:
 outputs:
 - output_type: compiled_hypothesis
   output_path: knowledge_bus/compiled/hypotheses/inv_ggt_high_hepatic.yaml
-  output_hash: 55c7beaff048ecf849d389f9e9aee3a5dc8f3b72ede45ef4b5eddee8bdf2af16
+  output_hash: d6b07d0202c8007a964ac9d4bac42e02438078972d46c668e697097f8d914f19
   output_hash_algorithm: sha256
   signal_id: signal_ggt_high
   activation_key: signal_ggt_high::inv_ggt_high_hepatic
