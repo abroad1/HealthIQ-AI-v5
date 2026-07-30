@@ -103,6 +103,22 @@ entries:
   runtime_consumed: true
   generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
   notes: ARCH-CONV-A Wave 2 compiled WHY; narrowed TG/metabolic-risk lane.
+- signal_id: signal_creatinine_high
+  root_cause_id: rc_creatinine_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_creatinine_high_renal.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_creatinine_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-B compiled WHY; narrowed possible renal-clearance or filtration-marker causal-candidate lane.
+- signal_id: signal_urea_high
+  root_cause_id: rc_urea_high_compiled
+  authority_source: knowledge_bus/compiled/hypotheses/inv_urea_high_renal.yaml
+  activation_status: ROOT_CAUSE_GOVERNED_ACTIVE
+  allowed_source_signals: [signal_urea_high]
+  runtime_consumed: true
+  generated_by: core.analytics.root_cause_compiler_v1._compile_compiled_hypothesis_finding
+  notes: ARCH-CONV-B compiled WHY; CONTEXT_ONLY_NON_CAUSAL morphology_context lane.
 - signal_id: signal_homocysteine_high
   root_cause_id: rc_homocysteine_high_compiled_family
   authority_source: knowledge_bus/governance/compiled_why_authority_register_v1.yaml

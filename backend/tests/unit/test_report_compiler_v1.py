@@ -40,6 +40,7 @@ def _report_v1_with_informational_root_cause_fallback() -> dict:
             "findings": [
                 {
                     "signal_id": "signal_homocysteine",
+                    "why_role": "causal",
                     "signal_state": "suboptimal",
                     "signal_confidence": 0.7,
                     "primary_metric": "homocysteine",

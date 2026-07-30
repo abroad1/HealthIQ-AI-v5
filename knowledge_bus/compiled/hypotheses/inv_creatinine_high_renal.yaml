@@ -1,0 +1,41 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_creatinine_high_renal_v1
+hypothesis_set_id: signal_creatinine_high_renal_clearance_context_set_v1
+signal_id: signal_creatinine_high
+activation_key: signal_creatinine_high::inv_creatinine_high_renal
+source_spec_ids:
+- inv_creatinine_high_renal
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_b_creatinine_high.yaml
+hypotheses:
+- hypothesis_id: hyp_creatinine_possible_reduced_renal_clearance
+  rank: 1
+  title: Possible reduced renal clearance context
+  physiological_claim: Elevated creatinine may reflect reduced renal clearance or
+    a filtration-marker abnormality, while muscle mass, creatine supplementation,
+    exercise, and dehydration may provide alternative or modifying explanations.
+  evidence_strength: strong
+  missing_data_policy: Interpret only as possible reduced renal clearance or a
+    filtration-marker abnormality. Low eGFR may strengthen supporting or severity
+    context. Without serial results, UACR, cystatin C, and clinical history, do not
+    infer chronic kidney disease or acute kidney injury.
+  evidence_for:
+  - Creatinine is above the laboratory range.
+  - Low eGFR, high urea, or high potassium may strengthen supporting or severity context when present.
+  evidence_against:
+  - Normal or non-low eGFR weakens a reduced-filtration interpretation and must not be treated as confirmation.
+  - High muscle mass, creatine use, exercise, or dehydration may shift interpretation away from intrinsic renal impairment.
+  contradiction_markers: []
+  caveats:
+  - Do not diagnose chronic kidney disease or acute kidney injury from isolated creatinine.
+  - Do not emit, alias, retire, or displace signal_egfr_low WHY authority.
+  - Low eGFR is supporting or severity context only and is not a creatinine-owned causal frame.
+  - Missing chronicity, serial results, UACR, cystatin C, or clinical history must fail closed against CKD or AKI claims.
+  - Do not recommend medication or treatment changes from this frame.
+  confirmatory_tests: []
+  summary_template: Creatinine is above range and may reflect reduced renal clearance or a filtration-marker abnormality. This alone does not confirm CKD or AKI; muscle, creatine use, exercise, and hydration may alter it.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-B Gate 1 / Gate 2 ratified narrowed causal-candidate renal-clearance context.

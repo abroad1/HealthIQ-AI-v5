@@ -1,0 +1,7 @@
+manifest_id: arch_conv_b_creatinine_high
+work_id: ARCH-CONV-B
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_creatinine_high_renal.yaml
+  activation_key: signal_creatinine_high::inv_creatinine_high_renal
+notes: Gate 1 / Gate 2 ratified narrowed causal-candidate renal-clearance context.

@@ -170,7 +170,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_homocysteine_high",
@@ -298,7 +299,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_homocysteine_high",
@@ -426,7 +428,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_ldl_cholesterol_high",
@@ -497,7 +500,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_lipid_transport_dysfunction",
@@ -599,7 +603,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_lipid_transport_dysfunction",
@@ -701,7 +706,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_mcv_high",
@@ -785,7 +791,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_mcv_high",
@@ -869,7 +876,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_mcv_high",
@@ -953,7 +961,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_oxygen_transport_capacity",
@@ -995,7 +1004,8 @@
             "confirmatory_tests": [],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_systemic_inflammation",
@@ -1093,7 +1103,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_systemic_inflammation",
@@ -1191,7 +1202,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_total_cholesterol_high",
@@ -1263,7 +1275,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_total_cholesterol_high",
@@ -1335,7 +1348,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_transferrin_low",
@@ -1400,7 +1414,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       },
       {
         "signal_id": "signal_transferrin_low",
@@ -1465,7 +1480,8 @@
             ],
             "safety_class": "monitoring"
           }
-        ]
+        ],
+        "why_role": "causal"
       }
     ],
     "root_cause": null,

@@ -41,6 +41,7 @@ from core.knowledge.frame_co_service_v1 import (
     SERVE_CONTEXT,
     SUPPRESS,
     WHY_ROLE_CAUSAL,
+    WHY_ROLE_MORPHOLOGY_CONTEXT,
     anchor_allowed_hypothesis_ids,
     anchor_forbidden_causal_terms,
     evidence_gate_markers,
@@ -374,6 +375,16 @@ def _compile_compiled_hypothesis_finding(
     """
     validate_runtime_promoted_artefact(artefact)
     validate_confirmatory_test_refs(artefact)
+    raw_why_role = target.get("why_role")
+    if not isinstance(raw_why_role, str) or not raw_why_role.strip():
+        raise ValueError(
+            f"compiled finding requires explicit governed why_role: {artefact.activation_key}"
+        )
+    why_role = raw_why_role.strip()
+    if why_role not in {WHY_ROLE_CAUSAL, WHY_ROLE_MORPHOLOGY_CONTEXT}:
+        raise ValueError(
+            f"unsupported compiled why_role {why_role!r}: {artefact.activation_key}"
+        )
     signal_confidence = float(
         target.get("confidence", 0.0) if isinstance(target.get("confidence"), (int, float)) else 0.0
     )
@@ -434,7 +445,7 @@ def _compile_compiled_hypothesis_finding(
         activation_key=str(target.get("activation_key", "")).strip(),
         source_spec_id=str(target.get("source_spec_id", "")).strip(),
         authority_scope=str(target.get("authority_scope", "frame_specific")).strip() or "frame_specific",
-        why_role=str(target.get("why_role", WHY_ROLE_CAUSAL)).strip() or WHY_ROLE_CAUSAL,
+        why_role=why_role,
         primary_metric=str(target.get("primary_metric", "")).strip(),
         signal_state=str(target.get("signal_state", "unknown")).strip() or "unknown",
         signal_confidence=signal_confidence,

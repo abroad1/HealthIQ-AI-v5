@@ -1,10 +1,10 @@
 {
-  "branch": "feature/arch-conv-a-estate-why-authority-migration",
+  "branch": "feature/arch-conv-b-renal-why-authority",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-28T19:54:37Z",
-  "cursor_started_utc": "2026-07-27T16:46:23Z",
-  "head_sha": "f16ec8706b809e3c8e48f89f0662845a0f708760",
+  "cursor_completed_utc": "2026-07-30T08:38:42Z",
+  "cursor_started_utc": "2026-07-30T07:24:06Z",
+  "head_sha": "8700cab0f3eb6aabd36128f6565b95d7d7e13690",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "ARCH-CONV-A"
+  "work_id": "ARCH-CONV-B"
 }

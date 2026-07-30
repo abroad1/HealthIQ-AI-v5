@@ -1,18 +1,17 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-A",
+  "work_id": "ARCH-CONV-B",
   "status": "HARDENED",
-  "hardening_date": "2026-07-27",
+  "hardening_date": "2026-07-30",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
   "risk_level": "HIGH",
   "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
-  "runtime_change": "NO (this prompt authorises only Phase 0/Phase 1 on first receipt — inventory, identity/source closure and STOP A evidence; no compile, no runtime activation, no legacy disconnection)",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "HIGH/MIXED, but the shared Stage 0 docs (all 10 ARCH-CONV-A artefacts plus the verified target inventory) were authored and fully read by this session already, and the estate-fact/wave-allocation numbers in the prompt are a direct, mechanically-checkable transcription of that pack. No disjoint large-scale investigation is required — verification here is file-existence, git-state, and figure cross-checks, done via a handful of batched Bash/Glob/Grep calls."
+    "rationale": "HIGH/MIXED but bounded to 2 signal migrations + 1 boundary item, with an established ARCH-CONV-A precedent pattern already read this session. Verification was file-existence, git-state (commit/branch resolution), and embedded-identity cross-checks via a handful of batched Bash/Grep/Read calls — no disjoint large-scale investigation required."
   },
 
   "prompt_receipt_gate": {
@@ -20,100 +19,99 @@
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type"],
     "declared_risk_level": "HIGH",
     "declared_change_type": "MIXED",
-    "behaviour_changes_touch_intelligence_core": "YES — root_cause_registry_v1.py, why_authority_v1.py, root_cause_compiler_v1.py, Knowledge Bus compiler/promotion path; correctly classified HIGH. Note: this specific prompt's immediate authorised execution boundary (§25) is Phase 0/1 only (inventory + identity closure), which is read-only/documentation-producing against those files — the HIGH/MIXED classification is correct for the whole Package A lifecycle this prompt opens, not evidence that first-receipt execution itself touches runtime behaviour.",
-    "tests_required": "YES for the package as a whole (§21 lists the full estate regression/replay suite); NOT APPLICABLE for the immediate first-receipt boundary (§25), which explicitly excludes compilation and runtime activation — §10 Phase 0 instead requires reconciliation checks and §12 STOP A requires 'relevant deterministic inventory, schema and non-runtime regression checks' only",
-    "scope_proportionality": "PASS — one work package, seven internal waves, explicit prohibition on splitting into per-wave/per-target/per-frame sprints (§7), matching the Stage 0 anti-micro-sprint gate in ARCH-CONV-A_stage0_outcome_and_package_boundary.md §2",
-    "advisory_duplication_detected": "NO — this is a Stage 1 GPT-authored Cursor implementation prompt building directly on the already-ratified Stage 0 design pack, not a re-run of Stage 0 advisory analysis",
-    "scope_creep_signals": "NONE — Package B/C boundaries (§6) verbatim-match the Stage 0 boundary doc; wave structure (§7) verbatim-matches the Stage 0 wave plan",
+    "files_in_scope": "18 explicitly named (10 ARCH-CONV-A source-pattern records + 3 preserved renal-prep docs + 4 Phase-0 outputs + 1 STOP C evidence doc), plus a dynamically-discovered set (investigation specs, legacy WHY assets, loaders, authority registers, tests for signal_creatinine_high / signal_egfr_low / signal_urea_high) enumerated by the prompt's own Stage 1A authority preflight",
+    "behaviour_changes_touch_intelligence_core": "YES — renal WHY-authority compilation, runtime loaders/selectors, authority registers",
+    "tests_required": "YES — dedicated Testing requirements section lists 13 named test behaviours",
+    "scope_proportionality": "PASS — bounded to 2 signal migrations (creatinine, urea) + 1 boundary-protection item (eGFR), explicit non-goals list, explicit rollback boundary, phased STOP-gated execution mirroring the proven ARCH-CONV-A pattern",
+    "advisory_duplication_detected": "NO — automation_bus/latest_scope_advisory.md (dated 2026-06-26) concerns unrelated work_id P2-1 (prose substrate); no ARCH-CONV-B advisory content exists to reconcile",
+    "scope_creep_signals": "NONE — all reads scoped to 3 named signals; no open-ended discovery language",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "eleven_authoritative_sprint_inputs": {
-      "status": "CONFIRMED_EXISTS — all 11, on main",
-      "evidence": "All 10 ARCH-CONV-A_*/ARCH-CONV_ABC_* Stage 0 artefacts confirmed present via `git cat-file -e main:<path>` (committed in e793037/942de1f, published to origin/main). ADR-RT-001_research_to_runtime_day_one_architecture.md confirmed present at the exact path the prompt cites (docs/architecture/) — the prompt's caveat 'locate the exact ADR path if its repository location differs' does not apply; the path is already correct."
+    "canonical_spec_identities": {
+      "status": "CONFIRMED via embedded field, not filename",
+      "evidence": "knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml:1 -> spec_id: inv_creatinine_high_renal (filename carries a _v1 suffix the prompt's own activation_key does not use; prompt explicitly forbids inferring source_spec_id from filenames, and the embedded field matches the prompt's declared identity exactly). inv_urea_high_renal.yaml:1 -> spec_id: inv_urea_high_renal. inv_uric_acid_high_metabolic.yaml:1 -> spec_id: inv_uric_acid_high_metabolic."
     },
-    "protection_baseline_evidence": {
-      "status": "CONFIRMED_EXISTS",
-      "evidence": "Package 1-3 and CORRECT-1 design/verification docs confirmed present under docs/architecture/ and docs/audit-papers/ (ARCH-CONV-PKG1/2/3_*.md, ARCH-CONV-CORRECT-1_*.md, and their audit-papers implementation_and_verification_report.md counterparts)."
+    "egfr_canonical_frames": {
+      "status": "CONFIRMED both exist",
+      "evidence": "knowledge_bus/research/investigation_specs/inv_egfr_low_chronic_kidney_function_reduction.yaml, inv_egfr_low_hemodynamic_filtration_drop.yaml"
     },
-    "runtime_files_underpinning_the_compile_chain": {
-      "status": "CONFIRMED_EXISTS, NO DRIFT SINCE STAGE 0 VERIFICATION",
-      "evidence": "backend/core/knowledge/root_cause_registry_v1.py, backend/core/knowledge/why_authority_v1.py, backend/core/analytics/root_cause_compiler_v1.py, knowledge_bus/governance/compiled_why_authority_register_v1.yaml all present on main. `git log --since=2026-07-25` against these four paths returns only the two commits (bacdd7f PKG3, 2761df2 CORRECT-1) that the Stage 0 inventory (ARCH-CONV-A_active_why_target_inventory.md) was already verified against — no commit has touched them since that inventory was produced, so its per-target citations remain current and do not require re-verification."
+    "legacy_why_authority_active": {
+      "status": "CONFIRMED",
+      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:89-91 registers signal_creatinine_high, signal_urea_high, signal_urate_high against legacy hypothesis loaders"
     },
-    "fixed_estate_facts_cross_check": {
-      "status": "CONFIRMED — exact match to Stage 0 pack, including the post-review correction",
-      "evidence": "Prompt §4 states 41 verified targets / 5 migrated / 36 remaining, matching ARCH-CONV-A_active_why_target_inventory.md §1 exactly. Prompt §4 also states the frame count for the 36 remaining targets is 'UNKNOWN UNTIL PHASE 1 IDENTITY AND SOURCE CLOSURE' and 'Do not assume one target equals one frame' — this is the exact qualification GPT/Anthony required and Claude applied to ARCH-CONV-A_medical_review_wave_plan.md §1.1 and ARCH-CONV-A_stop_gates_and_acceptance.md STOP A in the prior hardening round; the prompt correctly carries this forward rather than reverting to the earlier one-target-one-frame assumption."
+    "preserved_renal_prep_docs": {
+      "status": "CONFIRMED absent from current main, present in cherry-pick source commit — non-blocking, expected by prompt's own sequencing",
+      "evidence": "docs/architecture/ARCH-CONV-A_wave3_renal_medical_review_pack.md and ARCH-CONV-A_wave3_medical_decision_register.yaml missing on main; `git show 31c37a2f8b4dbf06a46a4ecbc474efd2e5c9818a --name-only` confirms both are added by that commit, which the prompt's Branch preparation section instructs Cursor to cherry-pick before Stage 1A reads them"
     },
-    "wave_allocation_cross_check": {
-      "status": "CONFIRMED — exact match",
-      "evidence": "Prompt §7 wave targets (1, 7, 6, 3, 7, 8, 4 = 36) are an exact match to ARCH-CONV-A_medical_review_wave_plan.md §2 wave-by-wave target lists (Wave 0 homocysteine elevation-context; Wave 1 thyroid axis; Wave 2 lipid/cardiometabolic; Wave 3 renal; Wave 4 hepatic/biliary; Wave 5 iron/haematology; Wave 6 metabolic/systemic residual). No renumbering, resequencing, or silent scope change was introduced."
-    },
-    "branch_and_repository_state": {
-      "status": "CONFIRMED clean baseline, ONE PRE-CONDITION FLAGGED (non-blocking, see below)",
-      "evidence": "local main == origin/main == 942de1ffda260bdcab8ab00ded17f4602dba478a (both the Package A Stage 0 pack commit and the estate-audit evidence commit are published). Target branch feature/arch-conv-a-estate-why-authority-migration does not yet exist (git branch --list returns empty) — correctly a new branch, not a reused/stale one."
+    "commit_and_branch_state": {
+      "status": "CONFIRMED",
+      "evidence": "git cat-file -t on both 290ac180a62681da22d3132653c5cbe25d1dbb80 (baseline) and 31c37a2f8b4dbf06a46a4ecbc474efd2e5c9818a (cherry-pick source) return 'commit'; local main == origin/main == 290ac18...; target branch feature/arch-conv-b-renal-why-authority did not exist prior to Cursor's branch prep (git rev-parse --verify failed as expected pre-creation)"
     },
     "kernel_schema_cross_check": {
-      "status": "CONFIRMED — no naming mismatch",
-      "evidence": "backend/scripts/run_work_package.py:151-152 requires latest_prompt_hardening.json's work_id to exactly equal the prompt front matter's work_id before `start` will proceed. This hardening record sets work_id: \"ARCH-CONV-A\" to match the prompt front matter exactly."
+      "status": "CONFIRMED — this is the corrective action for this hardening pass",
+      "evidence": "backend/scripts/run_work_package.py requires latest_prompt_hardening.json work_id to exactly equal the prompt front matter's work_id before `start` proceeds. The prior record on disk carried work_id: \"ARCH-CONV-A\" (stale, from the previous package) and blocked Cursor's kernel start on ARCH-CONV-B. This record sets work_id: \"ARCH-CONV-B\" to match automation_bus/latest_cursor_prompt.md:2 exactly."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "medical_decision_boundary": {
+    "identity_discipline": {
       "status": "SOUND",
-      "evidence": "§8/§13 correctly restrict Cursor to preparing evidence packs and explicitly forbid Cursor from deciding APPROVE/REJECT/DEFER/CONTEXT_ONLY status — matches CLAUDE.md §6 (Claude/Cursor do not make medical or architectural governance decisions) and the Stage 0 dual-gate model in ARCH-CONV-A_medical_review_wave_plan.md §4."
+      "evidence": "Prompt explicitly forbids inferring source_spec_id from filenames/package names and requires embedded-field confirmation only — verified necessary given the inv_creatinine_high_renal_v1.yaml filename/spec_id mismatch found during hardening"
     },
     "stop_gate_sequencing": {
       "status": "SOUND",
-      "evidence": "§9 execution lifecycle and §25 immediate authorised execution boundary correctly limit first-receipt execution to Phase 0 → Phase 1 → STOP A → stop, matching ARCH-CONV-A_compile_and_runtime_integration_design.md Phase 0/1 definitions and ARCH-CONV-A_stop_gates_and_acceptance.md STOP A (as updated with the target-to-frame-map requirement)."
+      "evidence": "STOP A (identity/boundary closure, independent architectural review) -> STOP B (dual medical gate: Head of Medical Research + Anthony ratification) -> STOP C (independent runtime proof) correctly gates all compile/runtime work behind human ratification, consistent with CLAUDE.md §6/§7"
     },
-    "identity_defect_carryover": {
-      "status": "SOUND",
-      "evidence": "§11 correctly requires D-1 through D-9 dispositions and explicitly names D-2 (elevation-context) and D-3 (bilirubin duplication) as pre-medical-review blockers, matching ARCH-CONV-A_identity_and_source_readiness.md §2/§3 without omission or restatement drift."
+    "creatinine_egfr_boundary_protection": {
+      "status": "SOUND, with one flagged discovery item",
+      "evidence": "knowledge_bus/governance/authority_runtime_execution_register_v1.yaml shows signal_egfr_low packages already activated:true at runtime with signal_authority_collision_resolver.py suppressing signal_creatinine_high as a 'supporting' signal when the eGFR primary fires (the 'renal_filtration_axis' authority group). This is signal-activation/display collision authority, distinct from causal-WHY/root-cause authority (root_cause_registry_v1.py). The prompt's Stage 1B claim 'signal_egfr_low has no active WHY authority' is true only under the WHY-specific reading. Prompt's own Stage 1A item 5 ('existing duplicate-authority resolution mechanism') already directs discovery of this file — recommend Cursor explicitly cite and distinguish the collision register from WHY authority in the STOP A record to avoid a false STOP or false pass at Stage 1B."
     },
-    "legacy_retirement_state_model": {
+    "legacy_disconnection_safeguards": {
       "status": "SOUND",
-      "evidence": "§19 six-state model (AUTHORITY_RETIRED / RUNTIME_DISCONNECTED / SHARED_PENDING_PACKAGE_B / HISTORIC_COMPATIBILITY_ONLY / ARCHIVED / PHYSICALLY_DELETED) is a faithful, slightly more granular restatement of ARCH-CONV-A_legacy_retirement_policy.md §1's five-state model (it splits 'archival retention' into ARCHIVED and PHYSICALLY_DELETED as distinct terminal states) — this is a compatible refinement, not a contradiction, and correctly preserves the L-02 shared-file constraint (§19 'shared legacy files must not be deleted while unmigrated or Package B callers remain')."
+      "evidence": "Prompt requires replacement authority compiled, explicit registration, proven reachability, accepted output comparison, fail-closed fallback, and explicit ratified authorisation before any legacy disconnection; forbids physical deletion of legacy assets throughout"
     },
-    "package_boundary_fidelity": {
+    "rollback_boundary": {
       "status": "SOUND",
-      "evidence": "§6 Package A/B/C ownership lists are a verbatim-equivalent restatement of ARCH-CONV-A_stage0_outcome_and_package_boundary.md §5, with no scope absorbed from B or C and no Package A outcome silently deferred."
+      "evidence": "Explicit rollback unit definition and explicit non-goals list (urate, standalone eGFR, hepatic/biliary, iron/haematology, metabolic/systemic, PSI runtime wiring, frontend, general compiler redesign, Package B/C work) prevents scope bleed"
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "Before running the Automation Bus start command, confirm the working tree is clean per §24 — as of hardening time, automation_bus/latest_cursor_prompt.md itself (this Stage 1 hand-off) is an uncommitted modification on main. This is expected hand-off residue, not a defect in the prompt, but §24's own precondition cannot be satisfied until this file (and this hardening record) are committed or otherwise reconciled ahead of `start`.",
-    "Phase 0's LLM allow-flag recording (§10) should be an ops-confirmed read of the live/deployed flag state, not a repository grep alone, consistent with the evidence-gap note already carried in ARCH-CONV_v5_completion_vs_v6_decision.md §7.",
-    "When Phase 1 declares the complete target-to-frame map (§11/§26), record it as a first-class STOP A artefact (not only in the chat-style return format) so ARCH-CONV-A_medical_review_wave_plan.md and ARCH-CONV-A_stop_gates_and_acceptance.md can be updated from it in a later Stage 5 audit without re-deriving the map from the STOP A report text."
+    "Distinguish signal-activation/collision authority (authority_runtime_execution_register_v1.yaml, signal_authority_collision_resolver.py) from causal-WHY authority (root_cause_registry_v1.py) explicitly in the STOP A record when addressing Stage 1A item 5 and Stage 1B's eGFR WHY-authority claim, to prevent misreading the collision register as contradicting the reality check.",
+    "The wave3 preserved-prep docs (ARCH-CONV-A_wave3_renal_medical_review_pack.md, ARCH-CONV-A_wave3_medical_decision_register.yaml) do not exist on main until the cherry-pick lands — do not attempt Stage 1A reads of these paths before Branch preparation step 3 completes."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 8,
+    "checklist_count": 10,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
       {"id": 1, "claim": "Front matter is complete (work_id, branch, risk_level, execution_model, change_type)", "source": "automation_bus/latest_cursor_prompt.md:1-7", "evidence": "All 5 mandatory fields present", "status": "CONFIRMED"},
-      {"id": 2, "claim": "All 11 authoritative sprint input documents exist on main at the cited paths", "source": "git cat-file -e main:<path> for all 10 ARCH-CONV-A/ARCH-CONV_ABC docs; direct existence check for ADR-RT-001", "evidence": "All 11 confirmed present, no path correction needed", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Package 1-3 and CORRECT-1 protection-baseline evidence exists", "source": "Glob of docs/architecture/ and docs/audit-papers/", "evidence": "ARCH-CONV-PKG1/2/3_*.md, ARCH-CONV-CORRECT-1_*.md and matching audit-papers verification reports all present", "status": "CONFIRMED"},
-      {"id": 4, "claim": "Fixed estate facts (41 targets / 5 migrated / 36 remaining) and the frame-count-unknown qualification match the ratified Stage 0 pack exactly", "source": "Direct comparison of prompt §4 against ARCH-CONV-A_active_why_target_inventory.md §1 and ARCH-CONV-A_medical_review_wave_plan.md §1.1", "evidence": "Exact match, including the post-review 'do not assume one target equals one frame' correction carried forward correctly", "status": "CONFIRMED"},
-      {"id": 5, "claim": "Wave allocation (1/7/6/3/7/8/4=36) matches the ratified wave plan exactly", "source": "Direct comparison of prompt §7 against ARCH-CONV-A_medical_review_wave_plan.md §2", "evidence": "Exact match, no resequencing or silent scope change", "status": "CONFIRMED"},
-      {"id": 6, "claim": "Runtime files underpinning the compile chain are unchanged since the Stage 0 inventory was verified, so its citations remain current", "source": "git log --since=2026-07-25 against root_cause_registry_v1.py, why_authority_v1.py, root_cause_compiler_v1.py, compiled_why_authority_register_v1.yaml", "evidence": "Only the two commits (bacdd7f, 2761df2) the inventory was already verified against; no later commit touches these files", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Target branch feature/arch-conv-a-estate-why-authority-migration does not already exist, and local main == origin/main", "source": "git branch --list; git rev-parse main / origin/main", "evidence": "Branch list empty for the target name; both SHAs equal 942de1ffda260bdcab8ab00ded17f4602dba478a", "status": "CONFIRMED"},
-      {"id": 8, "claim": "This hardening record's work_id exactly matches the prompt's front-matter work_id, satisfying the kernel's start-time equality check", "source": "backend/scripts/run_work_package.py:151-152", "evidence": "Both are \"ARCH-CONV-A\"", "status": "CONFIRMED"}
+      {"id": 2, "claim": "Baseline commit 290ac18 equals current local main and origin/main", "source": "git rev-parse main / origin/main", "evidence": "Both equal 290ac180a62681da22d3132653c5cbe25d1dbb80", "status": "CONFIRMED"},
+      {"id": 3, "claim": "Cherry-pick source commit 31c37a2f exists and contains only preserved-doc additions (no compile/runtime/authority/legacy changes)", "source": "git show 31c37a2f8b4dbf06a46a4ecbc474efd2e5c9818a --stat / --name-only", "evidence": "4 files changed, all under docs/architecture/, docs-only diff", "status": "CONFIRMED"},
+      {"id": 4, "claim": "Target branch did not pre-exist as a stale/reused branch", "source": "git rev-parse --verify feature/arch-conv-b-renal-why-authority (pre-creation)", "evidence": "Failed to resolve, confirming a clean new branch", "status": "CONFIRMED"},
+      {"id": 5, "claim": "All 3 target canonical spec_ids verified by embedded field, not filename", "source": "grep ^spec_id: on inv_creatinine_high_renal_v1.yaml, inv_urea_high_renal.yaml, inv_uric_acid_high_metabolic.yaml", "evidence": "inv_creatinine_high_renal, inv_urea_high_renal, inv_uric_acid_high_metabolic — filename/spec_id mismatch found and correctly handled per prompt's own identity-discipline rule", "status": "CONFIRMED"},
+      {"id": 6, "claim": "Both eGFR canonical frames exist", "source": "Glob/ls knowledge_bus/research/investigation_specs/", "evidence": "inv_egfr_low_chronic_kidney_function_reduction.yaml, inv_egfr_low_hemodynamic_filtration_drop.yaml both present", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Legacy WHY authority is currently active for creatinine/urea/urate", "source": "backend/core/knowledge/root_cause_registry_v1.py:89-91", "evidence": "RootCauseTargetSpec entries registered for all three signal_ids", "status": "CONFIRMED"},
+      {"id": 8, "claim": "eGFR signal-activation/collision authority is distinct from WHY authority and must be explicitly disambiguated at Stage 1A/1B", "source": "knowledge_bus/governance/authority_runtime_execution_register_v1.yaml:9-48", "evidence": "eGFR packages activated:true under signal_authority_collision_resolver.py suppression policy, not root_cause_registry_v1.py WHY authority", "status": "CONFIRMED — flagged for Cursor, non-blocking"},
+      {"id": 9, "claim": "Preserved wave3 docs are absent from main but present in the cherry-pick commit", "source": "git show 31c37a2f... --name-only", "evidence": "ARCH-CONV-A_wave3_renal_medical_review_pack.md and ARCH-CONV-A_wave3_medical_decision_register.yaml both added by that commit", "status": "CONFIRMED"},
+      {"id": 10, "claim": "This hardening record's work_id exactly matches the prompt's front-matter work_id, satisfying the kernel's start-time equality check", "source": "backend/scripts/run_work_package.py; automation_bus/latest_cursor_prompt.md:2", "evidence": "Both are \"ARCH-CONV-B\" (corrects the prior stale ARCH-CONV-A record that was blocking Cursor's kernel start)", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Beginning medical review, editing medical authority, compiling new WHY artefacts, activating new runtime authority, or disconnecting/deleting legacy sources on first receipt of this prompt (prohibited by §25) — REJECT_AND_RETURN",
-    "Branching from anywhere other than a clean origin/main tip, or reusing a stale/pre-existing branch — REJECT_AND_RETURN",
-    "Assuming one target equals one frame for any of the 36 remaining targets ahead of STOP A closure — REJECT_AND_RETURN",
-    "Compiling or promoting any frame without both GPT structured review and Anthony's explicit ratification reference recorded — REJECT_AND_RETURN",
-    "Creating a separate work package or sprint per wave, target, frame, compiler change, registry, validator, doc, policy, configuration item, or test-estate expansion (prohibited by §7) — REJECT_AND_RETURN",
-    "Absorbing any Package B or Package C outcome into this package (prohibited by §6) — REJECT_AND_RETURN",
-    "Physically deleting a shared legacy asset without explicit STOP D authority — REJECT_AND_RETURN",
-    "Calling Automation Bus `finish` at an internal STOP gate (prohibited by §9) — REJECT_AND_RETURN"
+    "Beginning medical review, editing medical authority, compiling new WHY artefacts, activating new runtime authority, or disconnecting/deleting legacy sources before STOP A approval — REJECT_AND_RETURN",
+    "Any implementation before STOP A approval and dual Gate 1/Gate 2 completion (explicit prompt non-goal) — REJECT_AND_RETURN",
+    "Compiling, activating, registering, or disconnecting any authority during Phase 0 — REJECT_AND_RETURN",
+    "Creatinine emitting or claiming standalone signal_egfr_low WHY authority — REJECT_AND_RETURN",
+    "Any urate medical decision, compilation, runtime integration, or legacy change (urate is explicitly out of scope) — REJECT_AND_RETURN",
+    "Physically deleting a legacy WHY asset — REJECT_AND_RETURN",
+    "Selecting authority by filename, package name, lexical order, directory order, or load order — REJECT_AND_RETURN",
+    "Reading raw investigation specs at runtime — REJECT_AND_RETURN",
+    "Carrying forward ARCH-CONV-A / Wave 3 as the active work identity in the refreshed docs — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START of Phase 0/Phase 1 only, per the prompt's own §25 immediate authorised execution boundary. All 11 cited authoritative documents exist at their stated paths; Package 1-3/CORRECT-1 protection baselines exist; the runtime files underpinning the compile chain are unchanged since the Stage 0 inventory verified them, so no citation requires re-verification. The prompt's fixed estate facts, frame-count-unknown qualification, and wave allocation are an exact, uncorrupted transcription of the ratified Stage 0 design pack -- no drift, no silent scope change, no reversion to the one-target-one-frame assumption that was explicitly corrected earlier in this programme. One non-blocking pre-condition is flagged: the working tree is not yet clean (this prompt hand-off file itself is an uncommitted modification on main) -- §24's own clean-tree check will correctly hold execution until this is resolved, which is expected hand-off behaviour, not a prompt defect. No blocking defect found."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 3 target canonical spec identities verified by embedded field (one filename/spec_id mismatch found on inv_creatinine_high_renal_v1.yaml and correctly resolved per the prompt's own identity-discipline rule). Both eGFR canonical frames, legacy WHY authority state, and cherry-pick/branch/commit state all confirmed. One discovery item flagged non-blocking: eGFR's existing signal-activation/collision authority (authority_runtime_execution_register_v1.yaml) must be explicitly distinguished from causal-WHY authority during Stage 1A/1B to avoid a false STOP or false pass — the prompt's own Stage 1A item 5 already directs this discovery. This record corrects the kernel-blocking work_id mismatch: the prior latest_prompt_hardening.json carried a stale ARCH-CONV-A record; work_id now reads ARCH-CONV-B, matching the prompt front matter exactly."
 }
