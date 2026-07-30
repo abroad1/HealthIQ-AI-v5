@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-B",
+  "work_id": "ARCH-CONV-C",
   "status": "HARDENED",
   "hardening_date": "2026-07-30",
   "hardened_by": "Claude Code",
@@ -11,7 +11,7 @@
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "HIGH/MIXED but bounded to 2 signal migrations + 1 boundary item, with an established ARCH-CONV-A precedent pattern already read this session. Verification was file-existence, git-state (commit/branch resolution), and embedded-identity cross-checks via a handful of batched Bash/Grep/Read calls — no disjoint large-scale investigation required."
+    "rationale": "HIGH/MIXED but bounded to 2 signal migrations + 1 named collision-axis decision, directly following the ARCH-CONV-B implementation pattern already verified this session. This session also authored the B2 scope advisory that produced this exact package, so shared docs and repo state were already read once; hardening re-verified each advisory citation against current main (git log --since the advisory date) rather than re-deriving from scratch. No disjoint large-scale investigation required."
   },
 
   "prompt_receipt_gate": {
@@ -19,99 +19,105 @@
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type"],
     "declared_risk_level": "HIGH",
     "declared_change_type": "MIXED",
-    "files_in_scope": "18 explicitly named (10 ARCH-CONV-A source-pattern records + 3 preserved renal-prep docs + 4 Phase-0 outputs + 1 STOP C evidence doc), plus a dynamically-discovered set (investigation specs, legacy WHY assets, loaders, authority registers, tests for signal_creatinine_high / signal_egfr_low / signal_urea_high) enumerated by the prompt's own Stage 1A authority preflight",
-    "behaviour_changes_touch_intelligence_core": "YES — renal WHY-authority compilation, runtime loaders/selectors, authority registers",
-    "tests_required": "YES — dedicated Testing requirements section lists 13 named test behaviours",
-    "scope_proportionality": "PASS — bounded to 2 signal migrations (creatinine, urea) + 1 boundary-protection item (eGFR), explicit non-goals list, explicit rollback boundary, phased STOP-gated execution mirroring the proven ARCH-CONV-A pattern",
-    "advisory_duplication_detected": "NO — automation_bus/latest_scope_advisory.md (dated 2026-06-26) concerns unrelated work_id P2-1 (prose substrate); no ARCH-CONV-B advisory content exists to reconcile",
-    "scope_creep_signals": "NONE — all reads scoped to 3 named signals; no open-ended discovery language",
+    "files_in_scope": "7 required ARCH-CONV-B source records (read) + 4 Phase-0 outputs + 1 STOP C evidence doc = 12 explicitly named, plus a dynamically-discovered set (ALP/GGT canonical specs, Pass-3 candidates, legacy WHY assets, loaders, authority registers, liver_injury_axis collision fields, tests) enumerated by the prompt's own Stage 1A authority preflight",
+    "behaviour_changes_touch_intelligence_core": "YES — WHY compilation, liver_injury_axis collision policy, clinician-report/DTO role propagation",
+    "tests_required": "YES — dedicated Testing requirements section lists 17 named test behaviours",
+    "scope_proportionality": "PASS — bounded to 2 signal migrations (ALP-high, GGT-high) + 1 named collision-axis policy decision, explicit non-goals list (ALT, AST, bilirubin, ALP-low, liver-card redesign, frontend, estate-wide migration), explicit rollback boundary, phased STOP-gated execution directly following the ARCH-CONV-B precedent",
+    "advisory_duplication_detected": "YES — automation_bus/latest_scope_advisory.md (2026-07-30, same session) is the B2 scope advisory that produced this exact package recommendation. Citations re-verified per CLAUDE.md's Stage-D-with-advisory-present rule: git log --since=2026-07-30 against every file the advisory cited found only commit 3fed5cb (ARCH-CONV-B's own renal implementation, already known/audited) touching why_authority_v1.py and compiled_why_authority_register_v1.yaml — re-grepped both post-3fed5cb and confirmed zero hepatic/ALP/GGT/bilirubin/ALT entries still exist, so the advisory's 'zero hepatic entries' claim still holds. No material departure found.",
+    "scope_creep_signals": "NONE — reads scoped to 2 named signals plus the named collision axis; exclusions are enumerated explicitly, not open-ended",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "canonical_spec_identities": {
-      "status": "CONFIRMED via embedded field, not filename",
-      "evidence": "knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml:1 -> spec_id: inv_creatinine_high_renal (filename carries a _v1 suffix the prompt's own activation_key does not use; prompt explicitly forbids inferring source_spec_id from filenames, and the embedded field matches the prompt's declared identity exactly). inv_urea_high_renal.yaml:1 -> spec_id: inv_urea_high_renal. inv_uric_acid_high_metabolic.yaml:1 -> spec_id: inv_uric_acid_high_metabolic."
+    "required_source_records_exist": {
+      "status": "CONFIRMED_EXISTS — all 7",
+      "evidence": "docs/architecture/ARCH-CONV-B_STOP_A_identity_and_source_closure.md, _target_to_frame_map.md, _medical_review_pack.md, _medical_decision_register.yaml, _GATE_1_head_of_medical_research_decision.md, _GATE_2_Anthony_ratification.md, _STOP_C_runtime_proof.md all present on main via direct file check"
     },
-    "egfr_canonical_frames": {
-      "status": "CONFIRMED both exist",
-      "evidence": "knowledge_bus/research/investigation_specs/inv_egfr_low_chronic_kidney_function_reduction.yaml, inv_egfr_low_hemodynamic_filtration_drop.yaml"
+    "baseline_is_merged_arch_conv_b": {
+      "status": "CONFIRMED",
+      "evidence": "local main == origin/main == cdc6cf3d463d50902a080b51136ef1a98b431f4a; git log shows cdc6cf3 'merge: ARCH-CONV-B renal WHY authority (Gate PASS, STOP C approved)' as the tip. The prompt's baseline requirement ('current main after completed and merged ARCH-CONV-B') is satisfied."
+    },
+    "canonical_spec_identities": {
+      "status": "CONFIRMED via embedded field",
+      "evidence": "knowledge_bus/research/investigation_specs/inv_alp_high_bone_biliary.yaml:1 -> spec_id: inv_alp_high_bone_biliary; inv_ggt_high_hepatic.yaml:1 -> spec_id: inv_ggt_high_hepatic. Both match the prompt's declared activation-key components exactly (no filename/spec_id mismatch this time, unlike ARCH-CONV-B's creatinine spec)."
     },
     "legacy_why_authority_active": {
       "status": "CONFIRMED",
-      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:89-91 registers signal_creatinine_high, signal_urea_high, signal_urate_high against legacy hypothesis loaders"
+      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:67 (signal_ggt_high) and :75 (signal_alp_high) both registered against legacy hypothesis loaders; no signal_alt_high entry exists anywhere in the file, consistent with the prompt's exclusion rationale"
     },
-    "preserved_renal_prep_docs": {
-      "status": "CONFIRMED absent from current main, present in cherry-pick source commit — non-blocking, expected by prompt's own sequencing",
-      "evidence": "docs/architecture/ARCH-CONV-A_wave3_renal_medical_review_pack.md and ARCH-CONV-A_wave3_medical_decision_register.yaml missing on main; `git show 31c37a2f8b4dbf06a46a4ecbc474efd2e5c9818a --name-only` confirms both are added by that commit, which the prompt's Branch preparation section instructs Cursor to cherry-pick before Stage 1A reads them"
-    },
-    "commit_and_branch_state": {
+    "liver_injury_axis_still_unpopulated_placeholder": {
       "status": "CONFIRMED",
-      "evidence": "git cat-file -t on both 290ac180a62681da22d3132653c5cbe25d1dbb80 (baseline) and 31c37a2f8b4dbf06a46a4ecbc474efd2e5c9818a (cherry-pick source) return 'commit'; local main == origin/main == 290ac18...; target branch feature/arch-conv-b-renal-why-authority did not exist prior to Cursor's branch prep (git rev-parse --verify failed as expected pre-creation)"
+      "evidence": "knowledge_bus/governance/signal_authority_collision_model_v1.yaml:110-121 — status: placeholder_not_adjudicated, primary_signal_family: null, supporting_signal_families: [], all collision_policy fields null, notes: 'Placeholder for ALT / AST / GGT / bilirubin overlap. No medical decision authored.' Matches the prompt's Stage 1B reality-check claim exactly."
+    },
+    "pass3_frame_counts": {
+      "status": "CONFIRMED",
+      "evidence": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml:439-450 shows signal_alp_high with 4 pass3_frame_ids (note: this audit entry groups 2 alp_high frames with 2 alp_low frames under one signal_family_id — a pre-existing audit-data nuance, not a hardening blocker, but worth STOP A attention per below); :583-593 shows signal_ggt_high with 2 pass3_frame_ids + 1 legacy frame"
+    },
+    "branch_and_repository_state": {
+      "status": "CONFIRMED clean baseline",
+      "evidence": "git rev-parse --verify feature/arch-conv-c-alp-ggt-why-authority fails (branch does not pre-exist); working tree clean except the expected automation_bus/latest_cursor_prompt.md hand-off modification; no ARCH-CONV-C product changes exist anywhere in git history (git log --all --oneline | grep -i arch-conv-c returns only unrelated ARCH-CONV-CORRECT-1 commits)"
     },
     "kernel_schema_cross_check": {
-      "status": "CONFIRMED — this is the corrective action for this hardening pass",
-      "evidence": "backend/scripts/run_work_package.py requires latest_prompt_hardening.json work_id to exactly equal the prompt front matter's work_id before `start` proceeds. The prior record on disk carried work_id: \"ARCH-CONV-A\" (stale, from the previous package) and blocked Cursor's kernel start on ARCH-CONV-B. This record sets work_id: \"ARCH-CONV-B\" to match automation_bus/latest_cursor_prompt.md:2 exactly."
+      "status": "CONFIRMED",
+      "evidence": "backend/scripts/run_work_package.py requires latest_prompt_hardening.json work_id to equal the prompt front matter's work_id. This record sets work_id: \"ARCH-CONV-C\" to match automation_bus/latest_cursor_prompt.md:2 exactly, superseding the prior ARCH-CONV-B record now that ARCH-CONV-B is merged and closed."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "identity_discipline": {
+    "exclusion_boundary_fidelity": {
       "status": "SOUND",
-      "evidence": "Prompt explicitly forbids inferring source_spec_id from filenames/package names and requires embedded-field confirmation only — verified necessary given the inv_creatinine_high_renal_v1.yaml filename/spec_id mismatch found during hardening"
+      "evidence": "Every exclusion in the prompt (ALT identity ambiguity, AST no-target, bilirubin retired/no-canonical-spec, ALP-low separate-direction) matches the B2 scope advisory's findings exactly, including the specific reasons (signal_alt_high vs signal_hepatic_alt_context identity split; no signal_ast_high anywhere; signal_hyperbilirubinemia has no canonical spec). No exclusion is asserted without the same evidentiary basis already independently verified in the advisory and re-confirmed here."
     },
     "stop_gate_sequencing": {
       "status": "SOUND",
-      "evidence": "STOP A (identity/boundary closure, independent architectural review) -> STOP B (dual medical gate: Head of Medical Research + Anthony ratification) -> STOP C (independent runtime proof) correctly gates all compile/runtime work behind human ratification, consistent with CLAUDE.md §6/§7"
+      "evidence": "STOP A (identity/collision-boundary reconstruction, independent Head of Architecture approval) -> Gate 1 (Head of Medical Research) -> Gate 2 (Anthony ratification) -> Phase 2 compile -> STOP C (independent runtime proof) mirrors ARCH-CONV-B's proven sequence exactly, with the added liver_injury_axis policy-definition step correctly placed inside STOP A/Gate 1 rather than skipped or deferred to implementation."
     },
-    "creatinine_egfr_boundary_protection": {
-      "status": "SOUND, with one flagged discovery item",
-      "evidence": "knowledge_bus/governance/authority_runtime_execution_register_v1.yaml shows signal_egfr_low packages already activated:true at runtime with signal_authority_collision_resolver.py suppressing signal_creatinine_high as a 'supporting' signal when the eGFR primary fires (the 'renal_filtration_axis' authority group). This is signal-activation/display collision authority, distinct from causal-WHY/root-cause authority (root_cause_registry_v1.py). The prompt's Stage 1B claim 'signal_egfr_low has no active WHY authority' is true only under the WHY-specific reading. Prompt's own Stage 1A item 5 ('existing duplicate-authority resolution mechanism') already directs discovery of this file — recommend Cursor explicitly cite and distinguish the collision register from WHY authority in the STOP A record to avoid a false STOP or false pass at Stage 1B."
+    "fail_closed_role_propagation_carried_forward": {
+      "status": "SOUND",
+      "evidence": "Prompt's Phase 2 rules ('Fail closed on missing, blank or unsupported role metadata') directly reuse the fail-closed why_role validation pattern ARCH-CONV-B added to root_cause_compiler_v1.py and report_compiler_v1.py (verified in the ARCH-CONV-B audit) rather than reinventing or weakening it."
+    },
+    "alp_ggt_cross_signal_safeguards": {
+      "status": "SOUND",
+      "evidence": "ALP safeguards explicitly forbid silent bone-vs-hepatic misrepresentation; GGT safeguards explicitly forbid alcohol/enzyme-induction content surfacing as causal without ratification. Both mirror ARCH-CONV-B's creatinine/eGFR non-displacement and urea non-causal safeguards structurally."
     },
     "legacy_disconnection_safeguards": {
       "status": "SOUND",
-      "evidence": "Prompt requires replacement authority compiled, explicit registration, proven reachability, accepted output comparison, fail-closed fallback, and explicit ratified authorisation before any legacy disconnection; forbids physical deletion of legacy assets throughout"
-    },
-    "rollback_boundary": {
-      "status": "SOUND",
-      "evidence": "Explicit rollback unit definition and explicit non-goals list (urate, standalone eGFR, hepatic/biliary, iron/haematology, metabolic/systemic, PSI runtime wiring, frontend, general compiler redesign, Package B/C work) prevents scope bleed"
+      "evidence": "Requires replacement authority compiled, explicit registration, proven reachability, Gate 1/Gate 2 authorisation, and independent STOP C confirmation before any legacy disconnection; forbids physical deletion throughout — identical structure to ARCH-CONV-B's proven legacy-handling rules"
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "Distinguish signal-activation/collision authority (authority_runtime_execution_register_v1.yaml, signal_authority_collision_resolver.py) from causal-WHY authority (root_cause_registry_v1.py) explicitly in the STOP A record when addressing Stage 1A item 5 and Stage 1B's eGFR WHY-authority claim, to prevent misreading the collision register as contradicting the reality check.",
-    "The wave3 preserved-prep docs (ARCH-CONV-A_wave3_renal_medical_review_pack.md, ARCH-CONV-A_wave3_medical_decision_register.yaml) do not exist on main until the cherry-pick lands — do not attempt Stage 1A reads of these paths before Branch preparation step 3 completes."
+    "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml's signal_alp_high entry (lines 439-450) mixes 2 alp_high Pass-3 frames with 2 alp_low Pass-3 frames under a single signal_family_id. Since ALP-low is explicitly excluded from ARCH-CONV-C, Stage 1A's ALP candidate-and-parallel-source closure should explicitly partition this audit entry by direction (high vs low) rather than treating all 4 listed frames as ALP-high candidates.",
+    "The liver_injury_axis notes field currently reads 'Placeholder for ALT / AST / GGT / bilirubin overlap' — it does not mention ALP by name even though ALP is this package's other primary target. STOP A's liver_injury_axis reconstruction should record this naming gap explicitly rather than silently assuming ALP was always in scope of the placeholder."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 10,
+    "checklist_count": 9,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
       {"id": 1, "claim": "Front matter is complete (work_id, branch, risk_level, execution_model, change_type)", "source": "automation_bus/latest_cursor_prompt.md:1-7", "evidence": "All 5 mandatory fields present", "status": "CONFIRMED"},
-      {"id": 2, "claim": "Baseline commit 290ac18 equals current local main and origin/main", "source": "git rev-parse main / origin/main", "evidence": "Both equal 290ac180a62681da22d3132653c5cbe25d1dbb80", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Cherry-pick source commit 31c37a2f exists and contains only preserved-doc additions (no compile/runtime/authority/legacy changes)", "source": "git show 31c37a2f8b4dbf06a46a4ecbc474efd2e5c9818a --stat / --name-only", "evidence": "4 files changed, all under docs/architecture/, docs-only diff", "status": "CONFIRMED"},
-      {"id": 4, "claim": "Target branch did not pre-exist as a stale/reused branch", "source": "git rev-parse --verify feature/arch-conv-b-renal-why-authority (pre-creation)", "evidence": "Failed to resolve, confirming a clean new branch", "status": "CONFIRMED"},
-      {"id": 5, "claim": "All 3 target canonical spec_ids verified by embedded field, not filename", "source": "grep ^spec_id: on inv_creatinine_high_renal_v1.yaml, inv_urea_high_renal.yaml, inv_uric_acid_high_metabolic.yaml", "evidence": "inv_creatinine_high_renal, inv_urea_high_renal, inv_uric_acid_high_metabolic — filename/spec_id mismatch found and correctly handled per prompt's own identity-discipline rule", "status": "CONFIRMED"},
-      {"id": 6, "claim": "Both eGFR canonical frames exist", "source": "Glob/ls knowledge_bus/research/investigation_specs/", "evidence": "inv_egfr_low_chronic_kidney_function_reduction.yaml, inv_egfr_low_hemodynamic_filtration_drop.yaml both present", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Legacy WHY authority is currently active for creatinine/urea/urate", "source": "backend/core/knowledge/root_cause_registry_v1.py:89-91", "evidence": "RootCauseTargetSpec entries registered for all three signal_ids", "status": "CONFIRMED"},
-      {"id": 8, "claim": "eGFR signal-activation/collision authority is distinct from WHY authority and must be explicitly disambiguated at Stage 1A/1B", "source": "knowledge_bus/governance/authority_runtime_execution_register_v1.yaml:9-48", "evidence": "eGFR packages activated:true under signal_authority_collision_resolver.py suppression policy, not root_cause_registry_v1.py WHY authority", "status": "CONFIRMED — flagged for Cursor, non-blocking"},
-      {"id": 9, "claim": "Preserved wave3 docs are absent from main but present in the cherry-pick commit", "source": "git show 31c37a2f... --name-only", "evidence": "ARCH-CONV-A_wave3_renal_medical_review_pack.md and ARCH-CONV-A_wave3_medical_decision_register.yaml both added by that commit", "status": "CONFIRMED"},
-      {"id": 10, "claim": "This hardening record's work_id exactly matches the prompt's front-matter work_id, satisfying the kernel's start-time equality check", "source": "backend/scripts/run_work_package.py; automation_bus/latest_cursor_prompt.md:2", "evidence": "Both are \"ARCH-CONV-B\" (corrects the prior stale ARCH-CONV-A record that was blocking Cursor's kernel start)", "status": "CONFIRMED"}
+      {"id": 2, "claim": "Baseline is current main after ARCH-CONV-B is completed and merged", "source": "git rev-parse main / origin/main; git log", "evidence": "Both equal cdc6cf3d463d50902a080b51136ef1a98b431f4a, tip commit is the ARCH-CONV-B merge", "status": "CONFIRMED"},
+      {"id": 3, "claim": "All 7 required ARCH-CONV-B source records exist on main", "source": "direct file existence check under docs/architecture/", "evidence": "All 7 present, no path correction needed", "status": "CONFIRMED"},
+      {"id": 4, "claim": "Both target canonical spec_ids verified by embedded field", "source": "grep ^spec_id: on inv_alp_high_bone_biliary.yaml, inv_ggt_high_hepatic.yaml", "evidence": "inv_alp_high_bone_biliary, inv_ggt_high_hepatic — exact match to prompt's declared activation keys, no filename/spec_id mismatch", "status": "CONFIRMED"},
+      {"id": 5, "claim": "Legacy WHY authority is currently active for ALP-high and GGT-high; no signal_alt_high entry exists", "source": "backend/core/knowledge/root_cause_registry_v1.py:67,75", "evidence": "Both RootCauseTargetSpec entries present; no ALT entry found", "status": "CONFIRMED"},
+      {"id": 6, "claim": "liver_injury_axis remains an unpopulated placeholder with no medical policy", "source": "knowledge_bus/governance/signal_authority_collision_model_v1.yaml:110-121", "evidence": "status: placeholder_not_adjudicated, all policy fields null", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Target branch does not already exist, and no ARCH-CONV-C product changes exist anywhere in history", "source": "git rev-parse --verify feature/arch-conv-c-alp-ggt-why-authority; git log --all --oneline | grep -i arch-conv-c", "evidence": "Branch resolution fails as expected; only unrelated ARCH-CONV-CORRECT-1 commits match the grep, confirmed as a different work_id", "status": "CONFIRMED"},
+      {"id": 8, "claim": "Scope advisory citations for this package remain current as of hardening time", "source": "git log --since=2026-07-30 against all files cited in automation_bus/latest_scope_advisory.md", "evidence": "Only commit 3fed5cb (ARCH-CONV-B's own already-audited implementation) touched any cited file; re-grepped post-3fed5cb state and confirmed zero hepatic/ALP/GGT/bilirubin/ALT entries still exist in compiled_why_authority_register_v1.yaml and why_authority_v1.py", "status": "CONFIRMED"},
+      {"id": 9, "claim": "This hardening record's work_id exactly matches the prompt's front-matter work_id, satisfying the kernel's start-time equality check", "source": "backend/scripts/run_work_package.py; automation_bus/latest_cursor_prompt.md:2", "evidence": "Both are \"ARCH-CONV-C\", superseding the closed-out ARCH-CONV-B record", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Beginning medical review, editing medical authority, compiling new WHY artefacts, activating new runtime authority, or disconnecting/deleting legacy sources before STOP A approval — REJECT_AND_RETURN",
-    "Any implementation before STOP A approval and dual Gate 1/Gate 2 completion (explicit prompt non-goal) — REJECT_AND_RETURN",
-    "Compiling, activating, registering, or disconnecting any authority during Phase 0 — REJECT_AND_RETURN",
-    "Creatinine emitting or claiming standalone signal_egfr_low WHY authority — REJECT_AND_RETURN",
-    "Any urate medical decision, compilation, runtime integration, or legacy change (urate is explicitly out of scope) — REJECT_AND_RETURN",
-    "Physically deleting a legacy WHY asset — REJECT_AND_RETURN",
+    "Beginning medical review, editing medical authority, compiling new WHY artefacts, activating new runtime authority, disconnecting/deleting legacy sources, or making liver_injury_axis policy decisions before STOP A approval — REJECT_AND_RETURN",
+    "Any implementation before STOP A approval and dual Gate 1/Gate 2 completion — REJECT_AND_RETURN",
+    "Any ALT, AST, bilirubin/hyperbilirubinemia, or ALP-low medical decision, compile, authority registration, collision-policy decision, or legacy change — REJECT_AND_RETURN",
+    "ALP silently implying hepatic/biliary causality where bone origin remains plausible, or GGT alcohol/enzyme-induction context surfacing as causal without ratification — REJECT_AND_RETURN",
     "Selecting authority by filename, package name, lexical order, directory order, or load order — REJECT_AND_RETURN",
     "Reading raw investigation specs at runtime — REJECT_AND_RETURN",
-    "Carrying forward ARCH-CONV-A / Wave 3 as the active work identity in the refreshed docs — REJECT_AND_RETURN"
+    "Physically deleting a legacy WHY asset — REJECT_AND_RETURN",
+    "Cherry-picking or rebasing any old hepatic/liver branch (explicitly prohibited by Branch preparation §4) — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. All 3 target canonical spec identities verified by embedded field (one filename/spec_id mismatch found on inv_creatinine_high_renal_v1.yaml and correctly resolved per the prompt's own identity-discipline rule). Both eGFR canonical frames, legacy WHY authority state, and cherry-pick/branch/commit state all confirmed. One discovery item flagged non-blocking: eGFR's existing signal-activation/collision authority (authority_runtime_execution_register_v1.yaml) must be explicitly distinguished from causal-WHY authority during Stage 1A/1B to avoid a false STOP or false pass — the prompt's own Stage 1A item 5 already directs this discovery. This record corrects the kernel-blocking work_id mismatch: the prior latest_prompt_hardening.json carried a stale ARCH-CONV-A record; work_id now reads ARCH-CONV-B, matching the prompt front matter exactly."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. Both target canonical spec identities verified by embedded field with no mismatch. Baseline confirmed as current main with ARCH-CONV-B merged. All 7 required source records exist. liver_injury_axis confirmed still an unpopulated placeholder. Target branch does not pre-exist; no ARCH-CONV-C product changes exist anywhere in history. This package's exclusion boundary is a direct, verified match to the B2 scope advisory this session authored, with every advisory citation re-verified against current main rather than trusted as static. Two non-blocking observations flagged for Cursor's Stage 1A attention: the pass3_frame_coverage_audit_v1.yaml ALP entry mixing high/low frames, and the liver_injury_axis placeholder notes not naming ALP explicitly. No blocking defect found."
 }

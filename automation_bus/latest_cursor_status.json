@@ -1,10 +1,10 @@
 {
-  "branch": "feature/arch-conv-b-renal-why-authority",
+  "branch": "feature/arch-conv-c-alp-ggt-why-authority",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-30T08:38:42Z",
-  "cursor_started_utc": "2026-07-30T07:24:06Z",
-  "head_sha": "8700cab0f3eb6aabd36128f6565b95d7d7e13690",
+  "cursor_completed_utc": "2026-07-30T12:11:02Z",
+  "cursor_started_utc": "2026-07-30T09:12:45Z",
+  "head_sha": "495b0292065af3264d0bd484c1a0f8e0adeb3a29",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "ARCH-CONV-B"
+  "work_id": "ARCH-CONV-C"
 }

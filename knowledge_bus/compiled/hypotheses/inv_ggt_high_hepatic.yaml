@@ -1,0 +1,39 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_ggt_high_hepatic_v1
+hypothesis_set_id: signal_ggt_high_non_causal_source_context_set_v1
+signal_id: signal_ggt_high
+activation_key: signal_ggt_high::inv_ggt_high_hepatic
+source_spec_ids:
+- inv_ggt_high_hepatic
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_ggt_high_hepatic.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_c_ggt_high.yaml
+hypotheses:
+- hypothesis_id: hyp_ggt_non_specific_hepatic_source_context
+  rank: 1
+  title: Non-specific GGT source context
+  physiological_claim: Elevated GGT is non-specific. When ALP is also high it may
+    support hepatic source attribution for the consolidated ALP pattern, but it does
+    not independently establish a causal liver, alcohol, medicine, or metabolic claim.
+  evidence_strength: contextual
+  missing_data_policy: Interpret GGT as context only. Normal or unavailable ALP
+    prevents cholestatic causal eligibility. Missing alcohol or medicine history must
+    not be interpreted as presence or absence of exposure.
+  evidence_for:
+  - GGT is above the laboratory range.
+  - Concurrent high ALP may allow GGT to support hepatic source attribution without becoming causal authority.
+  evidence_against:
+  - Isolated GGT elevation is non-specific and cannot establish a cholestatic pattern.
+  - MCV cannot attribute alcohol exposure.
+  contradiction_markers: []
+  caveats:
+  - Do not assert alcohol misuse, medicine-induced liver injury, metabolic steatotic liver disease, obstruction, or severity.
+  - Alcohol, medicines, metabolic factors, ALT, bilirubin, MCV, symptoms, serial results, and imaging remain context only unless separately governed.
+  - GGT remains non-causal when ALP is high and is consolidated under the ALP primary finding.
+  - Do not recommend medication, treatment, or imaging from this frame.
+  confirmatory_tests: []
+  summary_template: GGT is above range and provides non-specific hepatic-source context. It does not establish cholestasis, alcohol exposure, medicine-induced injury, or metabolic liver disease.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-C Gate 1 and Gate 2 ratified CONTEXT_ONLY_NON_CAUSAL GGT lane under cholestatic_source_axis.

@@ -179,6 +179,20 @@ compiled_hypothesis_artefacts:
   runtime_authority: compiled_why_authority_register_v1
   launch_classification: arch_conv_b_compiled_active_context_only
   source_spec_id: inv_urea_high_renal
+- signal_id: signal_alp_high
+  activation_key: signal_alp_high::inv_alp_high_bone_biliary
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_alp_high_bone_biliary.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_conv_c_alp_high.yaml
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: arch_conv_c_compiled_active_conditional_causal
+  source_spec_id: inv_alp_high_bone_biliary
+- signal_id: signal_ggt_high
+  activation_key: signal_ggt_high::inv_ggt_high_hepatic
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_ggt_high_hepatic.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_conv_c_ggt_high.yaml
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: arch_conv_c_compiled_active_context_only
+  source_spec_id: inv_ggt_high_hepatic
 wave1_subsystems_legacy_hard_coded:
   subsystem_ids: []
   launch_classification: none_remaining
@@ -190,6 +204,7 @@ phase0_notes:
 - 'ARCH-CONV-A Wave 1: added 5 thyroid COMPILED_ACTIVE activation keys post Gate 1 / Gate 2 ratification.'
 - 'ARCH-CONV-A Wave 2: added 3 lipid COMPILED_ACTIVE activation keys post Gate 1 / Gate 2 ratification.'
 - 'ARCH-CONV-B: added creatinine narrowed-causal and urea CONTEXT_ONLY COMPILED_ACTIVE keys post Gate 1 / Gate 2 ratification.'
+- 'ARCH-CONV-C: added conditional-causal ALP and CONTEXT_ONLY GGT keys with explicit cholestatic_source_axis policy.'
 - REJECTED frames are intentionally omitted from this index.
 - Card evidence artefacts unchanged (10).
 - Emit path does not read this index; refresh is inventory/governance hygiene.
