@@ -1,0 +1,134 @@
+work_id: ARCH-CONV-E
+branch: feature/arch-conv-e-alt-why-authority
+register_state: STOP_A_SUBMISSION_READY_FOR_HEAD_OF_ARCHITECTURE
+baseline_main_sha: 39da186b7b13a1c2bf571f68c070f6201905649c
+stop_a_evidence_ref: docs/architecture/ARCH-CONV-E_STOP_A_identity_source_and_lineage_closure.md
+target_map_ref: docs/architecture/ARCH-CONV-E_target_to_frame_map.md
+medical_review_pack_ref: docs/architecture/ARCH-CONV-E_medical_review_pack.md
+hash_repair_evidence_ref: docs/architecture/ARCH-CONV-E_arch_conv_c_hash_repair_evidence.md
+stop_a_approved: false
+stop_a_reference: null
+gate1_reference: null
+gate2_reference: null
+medical_decisions_made: false
+collision_policy_decisions_made: false
+runtime_changes_authorised: false
+
+identity:
+  canonical_signal_id: signal_alt_high
+  canonical_source_spec_id: inv_alt_high_hepatocellular_injury
+  canonical_activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
+  canonical_source: knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml
+  predecessor_signal_id: signal_hepatic_alt_context
+  predecessor_activation_key: signal_hepatic_alt_context::inv_alt_context
+  runtime_alias_exists: false
+  current_legacy_why_owner: signal_hepatic_alt_context
+  identity_source: ARCH-CONV-D-STOP-A-HOA-2026-07-30
+
+canonical_frame:
+  activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
+  medical_decision: PENDING
+  why_role: PENDING
+  alt_alone_eligibility: PENDING
+  magnitude_or_severity_handling: PENDING
+  serial_result_requirements: PENDING
+  symptom_history_requirements: PENDING
+  medication_toxin_viral_exposure_boundaries: PENDING
+  prohibited_specific_disease_attribution: PENDING
+  missing_data_fail_closed_rules: PENDING
+  compile_disposition: PENDING
+
+candidate_frames:
+  - activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury_pattern
+    provenance_status: BLOCKED
+    medical_decision: PENDING
+    why_role: PENDING
+    supporting_data_requirements: PENDING
+    prohibited_attribution: PENDING
+    compile_disposition: PENDING
+  - activation_key: signal_alt_high::inv_alt_high_metabolic_steatotic_liver_pattern
+    provenance_status: BLOCKED
+    medical_decision: PENDING
+    why_role: PENDING
+    supporting_data_requirements: PENDING
+    prohibited_attribution: PENDING
+    compile_disposition: PENDING
+  - activation_key: signal_alt_high::inv_alt_high_muscle_source_or_exertional_pattern
+    provenance_status: BLOCKED
+    medical_decision: PENDING
+    why_role: PENDING
+    supporting_data_requirements: PENDING
+    prohibited_attribution: PENDING
+    compile_disposition: PENDING
+
+supporting_marker_roles:
+  ast: PENDING
+  bilirubin: PENDING
+  alp: PENDING
+  ggt: PENDING
+  albumin: PENDING
+  metabolic_context: PENDING
+  exercise_muscle_context: PENDING
+  alcohol_medication_context: PENDING
+  symptoms_and_serial_trends: PENDING
+  independent_why_authority_granted: false
+
+threshold_decisions:
+  signal_alt_high:
+    alt_120: PENDING
+    bilirubin_20: PENDING
+    alp_130: PENDING
+  signal_hepatic_alt_context:
+    ast_45: PENDING
+    ggt_60: PENDING
+    alp_130: PENDING
+    bilirubin_20: PENDING
+  allowed_options:
+    - REPLACE_WITH_GOVERNED_LAB_STATUS
+    - REPLACE_WITH_GOVERNED_SSOT_THRESHOLD
+    - RETAIN_WITH_EXPLICIT_MEDICAL_RATIONALE
+    - REMOVE_FROM_CANONICAL_RUNTIME_PATH
+    - DEFER_AND_BLOCK_IMPLEMENTATION
+
+hepatocellular_collision_policy:
+  axis_or_group_name: PENDING
+  primary_signal_family: PENDING
+  supporting_context_families: PENDING
+  alt_only_behavior: PENDING
+  alt_plus_ast_behavior: PENDING
+  alt_plus_bilirubin_behavior: PENDING
+  alt_plus_alp_ggt_behavior: PENDING
+  alt_plus_exercise_muscle_behavior: PENDING
+  consolidation_suppression_parallel_refusal_rules: PENDING
+  no_duplicate_user_facing_signal: PENDING
+  future_ast_bilirubin_boundaries: PENDING
+  activation_key_explicit_selection: REQUIRED
+
+legacy_disposition:
+  asset: knowledge_bus/root_cause/hypotheses/alt_hypotheses_v1.yaml
+  owner_signal_id: signal_hepatic_alt_context
+  disposition: PENDING
+  allowed_options:
+    - CONDITIONAL_REPLACE
+    - PARTIAL_CONTENT_TRANSFER
+    - RETAIN_TEMPORARILY
+    - RETIRE_WITHOUT_TRANSFER
+    - DEFER
+  runtime_disconnection_condition: PENDING
+  physical_deletion_authorised: false
+
+arch_conv_c_hash_repair:
+  result: REPAIRED_METADATA_ONLY
+  commit: 33e32a5
+  compiled_artifacts_changed: false
+  medical_content_changed: false
+
+explicit_exclusions:
+  - signal_ast_high
+  - signal_bilirubin_high
+  - signal_hyperbilirubinemia
+  - signal_alp_low
+  - cholestatic_source_axis_policy_change
+  - alp_ggt_compiled_medical_content_change
+  - liver_card_scoring
+  - frontend_medical_logic
