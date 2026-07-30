@@ -2,9 +2,11 @@
 
 **Work ID:** `ARCH-CONV-C`  
 **Branch:** `feature/arch-conv-c-alp-ggt-why-authority`  
+**Date (UTC):** 2026-07-30  
+**Author role:** Cursor (`healthiq-core-engine`) — implementation evidence only  
 **Status:** `STOP_C_APPROVED_BY_HEAD_OF_ARCHITECTURE`  
 **Baseline comparison:** `COMPLETE — zero new ARCH-CONV-C-attributable failures`  
-**STOP C approval:** Head of Architecture, 2026-07-30 (in-session)  
+**Automation Bus finish:** completed under this approval (`ab02377` kernel COMPLETE)  
 **Gate 1 reference:** `ARCH-CONV-C-GATE1-HMR-2026-07-30`  
 **Gate 2 reference:** `ARCH-CONV-C-GATE2-ANTHONY-2026-07-30`  
 **Governance commit:** `37f6aed`  
@@ -12,8 +14,14 @@
 **Baseline comparison commit:** `ab2ace2`  
 **Baseline compared:** `cdc6cf3d463d50902a080b51136ef1a98b431f4a`
 
-This document is implementation evidence for independent STOP C. It is not a
-self-certification or approval.
+This document is a review submission, not self-certification. Independent STOP C
+was required before Automation Bus finish, merge, or any claim of completion.
+
+> **Independent STOP C approval (recorded 2026-07-30):** Head of Architecture
+> approved independent STOP C after the baseline comparison confirmed zero new
+> ARCH-CONV-C-attributable failures. Remaining suite failures are the documented
+> baseline/environmental set only. Approval authorises Automation Bus finish;
+> merge remains prohibited without separate human authority.
 
 ## Implemented authority
 
@@ -139,8 +147,8 @@ files remain physically present and unmodified:
 - `knowledge_bus/root_cause/hypotheses/ggt_high_hypotheses_v1.yaml`
 
 No physical deletion occurred. The branch-level runtime disconnection is the
-candidate replacement under independent STOP C; merge and Automation Bus
-finish remain prohibited until that approval.
+candidate replacement under independent STOP C. Merge remains prohibited
+without separate human authority.
 
 ## Explicit exclusions
 
@@ -333,11 +341,21 @@ The independent reviewer must verify:
 9. Baseline comparison above shows zero new ARCH-CONV-C-attributable failures.
 10. Environmental/incomparable nodes are baseline-reproduced as non-passing.
 
+## Independent STOP C decision
+
+Independent STOP C checks were completed by Head of Architecture on 2026-07-30.
+The baseline comparison confirms **zero new ARCH-CONV-C-attributable failures**.
+Outcome: **APPROVED**.
+
+**STOP C status:** `STOP_C_APPROVED_BY_HEAD_OF_ARCHITECTURE`  
+**Cursor verdict:** none; self-certification prohibited.
+
 ## STOP C verdict
 
 `STOP C APPROVED BY HEAD OF ARCHITECTURE — AUTOMATION BUS FINISH AUTHORISED`
 
 Baseline comparison complete: **zero new ARCH-CONV-C-attributable failures**.
-Independent STOP C approved in-session on 2026-07-30.
+Independent STOP C approved by Head of Architecture on 2026-07-30.
 
-Automation Bus finish may proceed under this approval.
+Automation Bus finish completed under this approval. Merge is not authorised by
+this document.
