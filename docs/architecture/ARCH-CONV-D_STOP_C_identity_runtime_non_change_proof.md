@@ -4,12 +4,17 @@
 **Branch:** `feature/arch-conv-d-alt-identity-closure`  
 **Date (UTC):** 2026-07-30  
 **Author role:** Cursor (`healthiq-core-engine`) — implementation evidence only  
-**Status:** `AWAITING_INDEPENDENT_STOP_C_APPROVAL`  
+**Status:** `STOP_C_APPROVED_BY_HEAD_OF_ARCHITECTURE`  
 **STOP A reference:** `ARCH-CONV-D-STOP-A-HOA-2026-07-30`  
 **Decision encoded:** `MERGE_TO_SIGNAL_ALT_HIGH`  
-**Automation Bus finish:** **NOT RUN** (forbidden until independent STOP C)
+**Automation Bus finish:** authorised by STOP C; pending kernel start (see closure)
 
 This document is a review submission, not self-certification.
+
+> **Independent STOP C approval (recorded 2026-07-30):** Head of Architecture
+> approved the ARCH-CONV-D governance-only identity closure and no-behaviour-change
+> evidence. Approval authorises Automation Bus finish only; merge remains prohibited
+> without separate human authority.
 
 ---
 
@@ -111,6 +116,7 @@ Targeted assertions:
 
 ## STOP C status
 
-`AWAITING INDEPENDENT HEAD OF ARCHITECTURE STOP C APPROVAL`
+`STOP_C_APPROVED_BY_HEAD_OF_ARCHITECTURE` — independent approval recorded
+2026-07-30.
 
-Do not run Automation Bus finish or merge until that approval is recorded.
+Automation Bus finish is authorised. Merge is not authorised by this document.

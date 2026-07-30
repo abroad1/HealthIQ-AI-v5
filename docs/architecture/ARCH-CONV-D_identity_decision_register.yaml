@@ -1,6 +1,6 @@
 work_id: ARCH-CONV-D
 branch: feature/arch-conv-d-alt-identity-closure
-register_state: PHASE_1_COMPLETE_AWAITING_STOP_C
+register_state: STOP_C_APPROVED_AWAITING_AUTOMATION_BUS_FINISH
 baseline_main_sha: e2d7ce38adc095387e632c6e50ebad68110cbe10
 stop_a_evidence_ref: docs/architecture/ARCH-CONV-D_STOP_A_alt_identity_closure.md
 hoa_decision_ref: docs/architecture/ARCH-CONV-D_STOP_A_head_of_architecture_decision.md
@@ -10,14 +10,16 @@ stop_c_evidence_ref: docs/architecture/ARCH-CONV-D_STOP_C_identity_runtime_non_c
 stop_a_approved_by_head_of_architecture: true
 stop_a_approval_recorded_utc: '2026-07-30'
 head_of_architecture_stop_a_reference: ARCH-CONV-D-STOP-A-HOA-2026-07-30
+stop_c_approved_by_head_of_architecture: true
+stop_c_approval_recorded_utc: '2026-07-30'
 medical_decisions_made: false
 runtime_changes_authorised: false
 phase1_governance_implemented: true
-note: STOP A identity decision approved by Head of Architecture and encoded in
-  Phase 1 governance-only records. The canonical ALT identity is signal_alt_high.
-  signal_hepatic_alt_context is classified as a legacy predecessor/context
-  implementation pending ARCH-CONV-E. No runtime, medical, threshold, loader,
-  WHY-authority, or legacy-disconnection change is authorised or performed.
+note: STOP A and STOP C approved by Head of Architecture. The canonical ALT
+  identity is signal_alt_high. signal_hepatic_alt_context is classified as a legacy
+  predecessor/context implementation pending ARCH-CONV-E. No runtime, medical, threshold,
+  loader, WHY-authority, or legacy-disconnection change was authorised or performed.
+  Automation Bus finish is authorised; merge is not.
 unresolved_decision_options:
 - MERGE_TO_SIGNAL_ALT_HIGH
 - RETAIN_AS_DISTINCT_CONTEXT_SIGNAL
