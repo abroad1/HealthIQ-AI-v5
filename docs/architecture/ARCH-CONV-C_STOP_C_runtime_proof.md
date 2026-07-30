@@ -2,12 +2,14 @@
 
 **Work ID:** `ARCH-CONV-C`  
 **Branch:** `feature/arch-conv-c-alp-ggt-why-authority`  
-**Status:** `AWAITING_INDEPENDENT_HEAD_OF_ARCHITECTURE_STOP_C`  
+**Status:** `STOP_C_APPROVED_BY_HEAD_OF_ARCHITECTURE`  
 **Baseline comparison:** `COMPLETE — zero new ARCH-CONV-C-attributable failures`  
+**STOP C approval:** Head of Architecture, 2026-07-30 (in-session)  
 **Gate 1 reference:** `ARCH-CONV-C-GATE1-HMR-2026-07-30`  
 **Gate 2 reference:** `ARCH-CONV-C-GATE2-ANTHONY-2026-07-30`  
 **Governance commit:** `37f6aed`  
 **Phase 2 implementation commit:** `3dcfd39`  
+**Baseline comparison commit:** `ab2ace2`  
 **Baseline compared:** `cdc6cf3d463d50902a080b51136ef1a98b431f4a`
 
 This document is implementation evidence for independent STOP C. It is not a
@@ -333,8 +335,9 @@ The independent reviewer must verify:
 
 ## STOP C verdict
 
-`AWAITING INDEPENDENT HEAD OF ARCHITECTURE STOP C APPROVAL`
+`STOP C APPROVED BY HEAD OF ARCHITECTURE — AUTOMATION BUS FINISH AUTHORISED`
 
 Baseline comparison complete: **zero new ARCH-CONV-C-attributable failures**.
+Independent STOP C approved in-session on 2026-07-30.
 
-Automation Bus finish has not been run.
+Automation Bus finish may proceed under this approval.
