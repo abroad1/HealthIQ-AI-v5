@@ -1,15 +1,16 @@
 # ARCH-CONV-B — Renal Medical-Review Pack
 
 **Work ID:** `ARCH-CONV-B`  
-**Date (UTC):** 2026-07-30  
-**Pack state:** `PHASE_0_DRAFT_AWAITING_STOP_A_APPROVAL`  
-**Medical decisions:** **NONE**  
+**Date (UTC):** 2026-07-30 (Phase 1 finalisation)  
+**Pack state:** `GATE_1_SUBMISSION_READY_FOR_HEAD_OF_MEDICAL_RESEARCH`  
+**STOP A approval:** Head of Architecture, recorded 2026-07-30 (see `ARCH-CONV-B_STOP_A_identity_and_source_closure.md`)  
+**Medical decisions:** **NONE — requested from Head of Medical Research (Gate 1)**  
 **Gate 1 reference:** PENDING  
 **Gate 2 reference:** PENDING
 
-This record refreshes the preserved ARCH-CONV-A Wave 3 material into ARCH-CONV-B scope. It is not yet a Gate 1 submission: independent STOP A approval is required first. It authorises no compile, runtime activation, authority registration, or legacy disconnection.
+This is the finalised Gate 1 submission pack. STOP A is approved by the Head of Architecture, authorising this finalisation only. The pack requests structured medical decisions from the Head of Medical Research. Cursor makes no medical decision here, and this record authorises no compile, runtime activation, authority registration, or legacy disconnection.
 
-Allowed reviewer decisions after STOP A approval:
+Allowed reviewer decisions:
 
 ```text
 APPROVE
@@ -205,6 +206,17 @@ Reasons for exclusion:
 
 No urate decision field is presented. No urate medical review, compile, activation, authority registration, or legacy change is permitted.
 
+## Gate 1 decisions requested from Head of Medical Research
+
+For each candidate frame, the Head of Medical Research is asked to record a structured decision, its causal/context-only/rejected/deferred role, an evidence rationale, and a legacy authority disposition. These are entered into `docs/architecture/ARCH-CONV-B_medical_decision_register.yaml`.
+
+| # | Candidate | Decision requested |
+|---|---|---|
+| 1 | `signal_creatinine_high::inv_creatinine_high_renal` | Acceptability; narrowing; Pass 3 reduced-GFR role; eGFR supporting/severity/contradiction handling; eGFR-exclusive claims; fail-closed wording; legacy disposition |
+| 2 | `signal_urea_high::inv_urea_high_renal` | Single vs multiple frames; Pass 3 prerenal/catabolic role; evidence sufficiency; dehydration/protein/catabolic/steroid/GI-bleed/creatinine handling; legacy disposition |
+| — | `signal_egfr_low` (boundary) | Confirm creatinine must not absorb or displace eGFR WHY; specify any permitted eGFR context use |
+| — | `signal_urate_high` (excluded) | No decision requested; confirmation of exclusion only |
+
 ## Gate-readiness checklist
 
 | Requirement | Current state |
@@ -213,14 +225,14 @@ No urate decision field is presented. No urate medical review, compile, activati
 | Creatinine/eGFR boundary documented | COMPLETE |
 | Urea evidence gaps documented | COMPLETE |
 | Urate excluded | COMPLETE |
-| Independent STOP A approval | **PENDING** |
-| Head of Medical Research Gate 1 | **NOT STARTED** |
+| Independent STOP A approval | **APPROVED (Head of Architecture, 2026-07-30)** |
+| Head of Medical Research Gate 1 | **AWAITING DECISIONS** |
 | Anthony Gate 2 ratification | **NOT STARTED** |
 | Compiled frames | 0 |
 | Runtime changes | 0 |
 
 ```text
-PACK DRAFT COMPLETE — STOP AT STOP A
+GATE 1 SUBMISSION READY — AWAITING HEAD OF MEDICAL RESEARCH DECISIONS
 ```
 
-After explicit independent STOP A approval, this pack may be finalised for Gate 1 without Cursor making the medical decisions.
+Cursor has made no medical decision. Compilation and runtime work remain blocked until both Gate 1 (Head of Medical Research) and Gate 2 (Anthony ratification) are recorded.

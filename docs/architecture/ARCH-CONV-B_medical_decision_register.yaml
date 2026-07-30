@@ -1,20 +1,26 @@
 work_id: ARCH-CONV-B
 branch: feature/arch-conv-b-renal-why-authority
-register_state: PHASE_0_DRAFT_AWAITING_STOP_A_APPROVAL
+register_state: GATE_1_SUBMISSION_AWAITING_HEAD_OF_MEDICAL_RESEARCH
 stop_a_evidence_ref: docs/architecture/ARCH-CONV-B_STOP_A_identity_and_source_closure.md
 target_map_ref: docs/architecture/ARCH-CONV-B_target_to_frame_map.md
 pack_ref: docs/architecture/ARCH-CONV-B_medical_review_pack.md
 decision_artefact_ref: null
+stop_a_approved_by_head_of_architecture: true
+stop_a_approval_recorded_utc: "2026-07-30"
 head_of_architecture_stop_a_reference: null
 head_of_medical_research_gate1_reference: null
 anthony_gate2_reference: null
 medical_decisions_made: false
 runtime_changes_authorised: false
 note: >
-  Phase 0 register only. Embedded canonical spec_id fields control identity.
-  No medical approval, compilation, runtime activation, authority registration,
-  or legacy disconnection is authorised until independent STOP A approval and
-  dual Gate 1 / Gate 2 completion.
+  Gate 1 submission register. Embedded canonical spec_id fields control identity.
+  STOP A is approved by the Head of Architecture (recorded 2026-07-30), authorising
+  Phase 1 Gate 1 pack finalisation only. No formal STOP A reference string was
+  supplied; head_of_architecture_stop_a_reference remains null for that reference
+  to be attached. All frame medical_decision fields remain PENDING and are requested
+  from the Head of Medical Research. No medical approval, compilation, runtime
+  activation, authority registration, or legacy disconnection is authorised until
+  both Gate 1 (Head of Medical Research) and Gate 2 (Anthony ratification) are recorded.
 
 frames:
   - signal_id: signal_creatinine_high

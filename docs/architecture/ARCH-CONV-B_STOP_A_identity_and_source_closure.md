@@ -4,7 +4,15 @@
 **Date (UTC):** 2026-07-30  
 **Author role:** Cursor (`healthiq-core-engine`) — repository evidence only  
 **Authority:** Automation Bus SOP v1.3.1; `automation_bus/latest_cursor_prompt.md`  
-**Status:** `AWAITING_INDEPENDENT_ARCHITECTURAL_APPROVAL`
+**Status:** `STOP_A_APPROVED_BY_HEAD_OF_ARCHITECTURE`
+
+> **STOP A approval (recorded 2026-07-30):** Head of Architecture approved this
+> STOP A evidence in-session and authorised Phase 1 (Gate 1 pack finalisation) only.
+> No formal approval reference string was supplied; the Head of Architecture may
+> attach one to `head_of_architecture_stop_a_reference` in
+> `docs/architecture/ARCH-CONV-B_medical_decision_register.yaml`. Approval does not
+> authorise medical decisions, compilation, runtime authority changes, legacy
+> disconnection, Automation Bus finish, or Phase 2.
 
 ---
 
@@ -176,7 +184,7 @@ The broader `test_root_cause_v1_homocysteine.py` module produced 44 passes and o
 ## Verdict
 
 ```text
-STOP A EVIDENCE COMPLETE — AWAITING INDEPENDENT HEAD OF ARCHITECTURE APPROVAL
+STOP A APPROVED BY HEAD OF ARCHITECTURE — PHASE 1 (GATE 1 PACK FINALISATION) AUTHORISED
 ```
 
-No Gate 1 medical review, medical decision, compile, runtime integration, authority registration, or legacy disconnection is authorised by this evidence record.
+Approval authorises finalisation of the Gate 1 medical-review pack for Head of Medical Research only. It does not authorise Cursor to make medical decisions, compile frames, register or modify runtime authority, disconnect legacy authority, run Automation Bus finish, or proceed to Phase 2.
