@@ -1,10 +1,9 @@
 {
-  "branch": "feature/arch-conv-c-alp-ggt-why-authority",
+  "branch": "feature/arch-conv-e-alt-why-authority",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-30T12:11:02Z",
-  "cursor_started_utc": "2026-07-30T09:12:45Z",
-  "head_sha": "495b0292065af3264d0bd484c1a0f8e0adeb3a29",
+  "cursor_started_utc": "2026-07-30T15:34:46Z",
+  "head_sha": "a2dd5f8d30a91b290f98230e7185a674d3fd60d1",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-CONV-C"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-CONV-E"
 }
