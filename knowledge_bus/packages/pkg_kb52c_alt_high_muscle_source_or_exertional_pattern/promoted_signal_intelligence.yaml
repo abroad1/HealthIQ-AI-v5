@@ -2,22 +2,23 @@ promoted_signal_intelligence_contract_version: 1.0.0
 schema_version: 1.0.0
 package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
 translation:
-  source: investigation_spec_v3_pass3_p1_10_batch_a
+  source: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  source_hash: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
   investigation_spec_contract_version: 3.0.0
-  investigation_spec_id: inv_alt_high_muscle_source_or_exertional_pattern
+  investigation_spec_id: inv_alt_high_muscle_source_or_exertional_contribution
   signal_id: signal_alt_high
-  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
-  work_id: P1-10
-  cluster_id: liver_enzymes
+  compiler_version: manual-promotion-v1
+  work_id: ARCH-CONV-E
 signals:
 - signal_id: signal_alt_high
   research_domain: musculoskeletal
-  signal_system: mitochondrial
+  signal_system: hepatic
   primary_metric:
     biomarker_id: alt
-    rationale: Raised ALT can occasionally reflect exercise-related or myopathic enzyme
-      release when muscle markers are also abnormal and liver-specific context is
-      weak.
+    rationale: High ALT and AST can sometimes reflect muscle injury or recent strenuous exercise, so CK
+      and exercise, trauma, myopathy or statin context are important differentials before giving a liver-first
+      explanation.
+    signal_system: hepatic
   trigger_direction: high
   activation:
     activation_logic: lab_range_exceeded
@@ -32,51 +33,80 @@ signals:
   supporting_markers:
   - biomarker_id: creatine_kinase
     expected_direction: high
-    role: mechanism_marker
-    relationship_kind: mechanism
-    availability: common
-    rationale: Marked creatine kinase elevation supports skeletal muscle injury or
-      exertional release as a contributor to raised ALT.
-  - biomarker_id: ast
-    expected_direction: high
     role: corroborator
     relationship_kind: corroboration
     availability: common
-    rationale: AST often rises with muscle injury and can corroborate a non-hepatic
-      source when CK is elevated.
+    rationale: Raised CK supports skeletal-muscle contribution to aminotransferase elevation.
+  - biomarker_id: ast
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: AST is less liver-specific than ALT and can rise substantially with muscle injury.
   - biomarker_id: ggt
-    expected_direction: any
+    expected_direction: either
     role: differential_marker
     relationship_kind: differential
     availability: common
-    rationale: A normal GGT weakens a hepatobiliary source and supports consideration
-      of a muscle-origin transaminase pattern.
+    rationale: GGT helps assess liver or biliary involvement; normal GGT can support but not prove a non-hepatic
+      context.
+  - biomarker_id: bilirubin
+    expected_direction: either
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Raised bilirubin is less consistent with isolated muscle-source aminotransferase elevation
+      and should redirect toward clinical review.
+  - biomarker_id: creatinine
+    expected_direction: high
+    role: severity_marker
+    relationship_kind: severity
+    availability: common
+    rationale: Creatinine can add renal-risk context when severe muscle injury or rhabdomyolysis is a
+      concern.
+  - biomarker_id: alp
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Raised ALP, particularly with raised GGT or bilirubin, supports liver or bile-flow context
+      rather than isolated muscle contribution.
   contradiction_markers:
-  - contradiction_id: ctr_high_ggt
-    marker_reference: ggt
-    contradiction_rationale: Raised GGT weakens a muscle-source interpretation and
-      supports concomitant liver involvement.
+  - contradiction_id: ctr_bilirubin_or_ggt_high
+    marker_reference: bilirubin
+    contradiction_rationale: Raised bilirubin or GGT makes isolated muscle-source explanation less likely
+      and should redirect to liver/biliary clinical review context.
+    contradiction_strength: strong
+  - contradiction_id: ctr_alp_ggt_bilirubin_liver_source_context
+    marker_reference: alp
+    contradiction_rationale: Raised ALP, especially with raised GGT or bilirubin, makes an isolated muscle-source
+      explanation less safe and should redirect to liver or biliary context.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_or_borderline_ck_weakens_exertional_frame
+    marker_reference: creatine_kinase
+    contradiction_rationale: A normal or only borderline CK weakens a significant exertional or transient
+      muscle-source interpretation, as clinically meaningful exercise-related aminotransferase elevation
+      is typically accompanied by marked concurrent CK elevation.
     contradiction_strength: moderate
-  - contradiction_id: ctr_normal_ast_weakens_hepatic_component_of_mixed
-    marker_reference: ast
-    contradiction_rationale: A normal AST weakens a genuine hepatic contributor to
-      a mixed muscle-and-liver pattern, as hepatocellular injury sufficient to raise
-      ALT typically elevates AST concurrently; its normalcy supports a predominantly
-      muscle-source explanation.
+  - contradiction_id: ctr_elevated_ggt_inconsistent_with_exertional_pattern
+    marker_reference: ggt
+    contradiction_rationale: A clearly elevated GGT challenges a purely exertional or transient muscle-source
+      aminotransferase pattern, as GGT is not released by skeletal muscle and its elevation introduces
+      a hepatic signal inconsistent with isolated exercise-related enzyme rise.
     contradiction_strength: moderate
   missing_data:
     policies:
-    - Review exercise, trauma, muscle symptoms, and medication exposures before concluding
-      that ALT is non-hepatic.
-    - Use repeat testing after rest and review liver-specific markers before dismissing
-      hepatocellular pathology.
+    - If CK and exercise/trauma/statin context are missing, do not exclude muscle contribution; state
+      that source localisation is incomplete.
+    - If recent exercise history is missing, do not attribute ALT to exertion; if CK is missing, state
+      that muscle contribution cannot be assessed.
   confidence:
     evidence_strength: moderate
   override_rules:
-  - rule_id: or_alt_high_with_marked_ck
+  - rule_id: or_alt_high_with_ck_high_muscle_context
     resulting_state: at_risk
-    description: Escalate as a possible muscle-source pattern when ALT is high and
-      creatine kinase is concurrently above the laboratory range.
+    description: Escalate or redirect interpretation when ALT elevation coincides with CK above the lab
+      range because muscle contribution becomes plausible.
     conditions:
     - metric_id: creatine_kinase
       operator: '>'
@@ -84,28 +114,57 @@ signals:
       comparator_type: lab_range_boundary
       boundary: above_max
     source_refs:
-    - source_alt_statpearls
-    - source_hackney_lft
+    - source_pettersson_exercise_lft_2008
+    - source_bodybuilding_aminotransferase_review_2020
+    - source_rhabdomyolysis_lft_review_2020
   evidence:
     evidence_strength: moderate
-    physiological_claim: ALT elevation can occasionally reflect muscle-source enzyme
-      release, particularly when creatine kinase is raised and liver-specific markers
-      do not support a hepatic source.
-    threshold_notes: This object relies on laboratory abnormality plus concordant
-      CK elevation rather than a fixed ALT level.
     sources:
-    - source_id: source_alt_statpearls
-      paper_title: Alanine Aminotransferase (ALT) Test
-      journal: StatPearls
-      year: 2024
-    - source_id: source_hackney_lft
-      paper_title: ABNORMAL LIVER FUNCTION TESTS (LFTs) in ADULTS
-      journal: City and Hackney Clinical Commissioning Group pathway
-      year: 2016
+    - source_id: source_aasld_liver_enzymes_2025
+      name: 'AASLD Liver Fellow Network: How to approach elevated liver enzymes'
+      publication_year: 2025
+      locator: Patterns of abnormal liver enzymes; R-value formula and enzyme-source discussion
+      evidence_type: professional_hepatology_education
+      strength: high
+      url: https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes
+      limitations: Educational page, not a formal practice guideline.
+    - source_id: source_pettersson_exercise_lft_2008
+      name: Pettersson et al. Muscular exercise can cause highly pathological liver function tests in
+        healthy men
+      publication_year: 2008
+      locator: Exercise-related ALT/AST/CK changes after weightlifting
+      evidence_type: controlled_study
+      strength: moderate
+      url: https://pubmed.ncbi.nlm.nih.gov/17764474/
+      limitations: Small healthy male cohort.
+    - source_id: source_bodybuilding_aminotransferase_review_2020
+      name: 'Body Building and Aminotransferase Elevations: A Review'
+      publication_year: 2020
+      locator: Muscle injury/exercise as aminotransferase source; CK and muscle markers
+      evidence_type: peer_reviewed_review
+      strength: moderate
+      url: https://pubmed.ncbi.nlm.nih.gov/32832396/
+      limitations: Bodybuilding/muscle-injury emphasis.
+    - source_id: source_rhabdomyolysis_lft_review_2020
+      name: Lim. Abnormal liver function tests associated with severe rhabdomyolysis
+      publication_year: 2020
+      locator: CK/rhabdomyolysis and limits of muscle-only ALT attribution
+      evidence_type: peer_reviewed_review
+      strength: moderate
+      url: https://pmc.ncbi.nlm.nih.gov/articles/PMC7081005/
+      limitations: Not formal guideline; threshold suggestions are contextual.
+    physiological_claim: Muscle injury, strenuous exercise, myopathy or rhabdomyolysis can contribute
+      to ALT and AST elevation, particularly when CK is raised, so high CK should contextualise or downgrade
+      liver-first interpretation.
+    threshold_notes: Use lab-provided CK reference range and context. Do not codify a definitive CK threshold
+      for excluding liver contribution; very high ALT or raised bilirubin/GGT should suppress isolated
+      muscle-source attribution.
   confirmatory_test_refs:
-  - test_id: ct_repeat_alt_after_rest
-    rationale: Repeat ALT after a period of exercise avoidance helps assess whether
-      the elevation is transient and exertional.
   - test_id: ct_creatine_kinase
-    rationale: Creatine kinase is the key confirmatory test for a muscle-source contribution
-      to ALT elevation.
+    rationale: CK is the key common blood marker supporting muscle-source contribution to aminotransferase
+      elevation.
+  - test_id: ct_repeat_after_exercise_avoidance
+    rationale: Repeat testing after avoiding strenuous exercise can help determine whether aminotransferase
+      elevation is transient and exertional.
+  - test_id: ct_renal_function_if_rhabdomyolysis_concern
+    rationale: Renal function is relevant when severe muscle injury or rhabdomyolysis is clinically suspected.

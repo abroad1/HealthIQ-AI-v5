@@ -102,10 +102,21 @@ def test_unknown_package_id_fails_closed():
     assert status == "UNRESOLVED"
 
 
-def test_non_kb47_packages_unaffected():
+def test_non_kb47_packages_load_only_when_explicitly_activated():
+    """PKG2 left non-kb47 loading untouched; ARCH-CONV-E made it register-driven."""
     reg = SignalRegistry()
+    non_kb47 = [
+        r for r in reg.get_all_signals() if not str(r.get("package_id", "")).startswith("pkg_kb47_")
+    ]
+    assert non_kb47
+    assert all(r["runtime_eligibility"] == ELIGIBILITY_PRODUCTION_REACHABLE for r in non_kb47)
+
     alt = [r for r in reg.get_all_signals() if r["signal_id"] == "signal_alt_high"]
-    assert len(alt) == 4
+    assert [r["package_id"] for r in alt] == ["pkg_s24_alt_high_hepatocellular_injury"]
+
+    withheld = {row["package_id"] for row in reg.excluded_unactivated_packages}
+    assert "pkg_kb52c_alt_high_hepatocellular_injury_pattern" in withheld
+    assert not (withheld & {r["package_id"] for r in non_kb47})
 
 
 def test_activation_keys_survive_lineage_attach():

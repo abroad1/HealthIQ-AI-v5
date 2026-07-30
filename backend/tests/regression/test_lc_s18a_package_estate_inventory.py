@@ -30,6 +30,13 @@ from core.knowledge.kb_lifecycle_contract_v1 import (  # noqa: E402
 _INVENTORY_PATH = _REPO_ROOT / ESTATE_INVENTORY_PATH
 _SENTINEL_PATH = _REPO_ROOT / "sentinel" / "packs" / "escaped_defects_v1.json"
 _TEST_FILE = "backend/tests/regression/test_lc_s18a_package_estate_inventory.py"
+_PRE_EXISTING_ESTATE_DEBT = (
+    "pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia",
+    "pkg_kb52c_ferritin_high_iron_overload_context",
+    "pkg_kb52c_iron_high_iron_overload_context",
+    "pkg_kb52c_iron_low_absolute_iron_deficiency",
+    "pkg_kb52c_iron_low_functional_iron_restriction_inflammation",
+)
 
 
 def _load_inventory() -> dict:
@@ -44,13 +51,13 @@ def test_lc_s18a_inventory_parses() -> None:
     assert payload.get("inventory_refresh", {}).get("work_id") == "LC-S18A"
     packages = payload.get("packages")
     assert isinstance(packages, list)
-    assert len(packages) >= 185
+    assert len(packages) >= 188
 
 
 @pytest.mark.regression
-def test_lc_s18a_no_unregistered_disk_orphans_after_refresh() -> None:
+def test_lc_s18a_only_preexisting_estate_debt_remains_unregistered() -> None:
     report = detect_orphan_packages(_REPO_ROOT)
-    assert report.disk_not_in_inventory == ()
+    assert report.disk_not_in_inventory == _PRE_EXISTING_ESTATE_DEBT
     assert report.inventory_not_on_disk == ()
 
 
@@ -62,7 +69,7 @@ def test_lc_s18a_review_queue_not_runtime_approved() -> None:
         for row in payload.get("packages", [])
         if isinstance(row, dict) and row.get("requires_review") is True
     ]
-    assert len(review_rows) == 112
+    assert len(review_rows) == 115
     for row in review_rows:
         assert row.get("runtime_loaded") is False
         assert row.get("validator_ready_for_implementation") is False
@@ -112,9 +119,12 @@ def test_lc_s18a_orphan_reporter_output_stable() -> None:
     cmd = [sys.executable, "backend/scripts/validate_kb_package_estate_orphans_v1.py"]
     proc = subprocess.run(cmd, cwd=_REPO_ROOT, capture_output=True, text=True, check=False)
     payload = json.loads(proc.stdout)
-    assert payload["has_orphans"] is False
-    assert payload["review_queue_count"] == 112
-    assert payload["inventory_package_count"] == 185
+    assert proc.returncode == 1
+    assert payload["has_orphans"] is True
+    assert tuple(payload["disk_not_in_inventory"]) == _PRE_EXISTING_ESTATE_DEBT
+    assert payload["inventory_not_on_disk"] == []
+    assert payload["review_queue_count"] == 115
+    assert payload["inventory_package_count"] == 188
 
 
 @pytest.mark.regression
@@ -122,7 +132,7 @@ def test_lc_s18a_estate_assessment_deterministic() -> None:
     first = assess_package_estate(_REPO_ROOT)
     second = assess_package_estate(_REPO_ROOT)
     assert first == second
-    assert first.review_queue_count == 112
+    assert first.review_queue_count == 115
     assert first.draft_incomplete_count == 0
 
 

@@ -1,0 +1,104 @@
+library:
+  package_id: KBP-4833
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: ARCH-CONV-E — ALT High Cholestatic ALP-Predominant Context
+  description: Governed package asset translated from inv_alt_high_r_value_cholestatic_alp_predominant_context
+    in knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json.
+    Asset construction does not activate runtime authority.
+signals:
+- signal_id: signal_alt_high
+  name: ALT High Cholestatic ALP-Predominant Context
+  description: An ALP-predominant biochemical pattern can be classified when ALP is proportionally more
+    raised than ALT, but hepatic-source localisation and clinical context are required before cholestatic
+    or obstruction language is safe.
+  system: hepatic
+  primary_metric: alt
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: alp
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: ALP predominance is central to cholestatic or ALP-predominant biochemical patterning.
+  - biomarker_id: ggt
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Raised GGT supports hepatic origin of ALP but remains nonspecific.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: severity_marker
+    availability: common
+    rationale: Bilirubin elevation can accompany cholestatic or excretory patterns and increases concern,
+      but does not prove obstruction.
+  - biomarker_id: r_value_alt_alp
+    expected_direction: low
+    role: differential_marker
+    availability: optional
+    rationale: A derived R-value at or below 2 supports an ALP-predominant biochemical pattern when ALT
+      and ALP upper reference limits are available.
+  - biomarker_id: creatine_kinase
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: CK helps identify whether a concurrent aminotransferase signal could partly reflect muscle
+      rather than liver.
+  dependencies:
+    biomarkers:
+    - alt
+    - alp
+    - ggt
+    - bilirubin
+    - creatine_kinase
+    derived_metrics:
+    - r_value_alt_alp
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds: []
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_alp_predominant_with_bilirubin_high
+    resulting_state: at_risk
+    description: Escalate cautiously when an ALP-predominant pattern is accompanied by bilirubin elevation
+      because this adds severity and excretory context.
+    conditions:
+    - metric_id: bilirubin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_bsg_abnormal_liver_tests_2017
+    - source_acg_abnormal_liver_chemistries_2017
+  output:
+    signal_value: alt
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alt
+    supporting_markers:
+    - alp
+    - ggt
+    - bilirubin
+    - r_value_alt_alp
+    - creatine_kinase
+  explanation:
+    mechanism: ALP-predominant patterns can reflect cholestatic or hepatic-source ALP release, but ALP
+      is not liver-specific and can also arise from bone, pregnancy and other sources.
+    biological_pathway: GGT and bilirubin help place ALP in hepatic or biliary context, while imaging
+      and specialist assessment are needed to identify obstruction or structural causes.
+    interpretation: HealthIQ may describe an ALP-predominant biochemical pattern when the R-value is at
+      or below 2, but should avoid saying that cholestasis or obstruction is present unless appropriately
+      qualified.
+    implications: This pattern may warrant clinician review if bilirubin is raised, symptoms are present,
+      or the pattern persists, but the blood panel alone cannot identify the cause.
+    supporting_marker_roles: ALP and derived R-value define proportional predominance; GGT supports liver-source
+      confidence; bilirubin adds excretory/severity context; CK helps contextualise the ALT component.

@@ -1,0 +1,176 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_alt_high_bilirubin_severity_context
+translation:
+  source: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  source_hash: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_alt_high_bilirubin_hys_law_severity_context
+  signal_id: signal_alt_high
+  compiler_version: manual-promotion-v1
+  work_id: ARCH-CONV-E
+signals:
+- signal_id: signal_alt_high
+  research_domain: hepatic
+  signal_system: hepatic
+  primary_metric:
+    biomarker_id: alt
+    rationale: High ALT with raised bilirubin is a higher-concern biochemical severity context, but formal
+      Hy's Law assessment is a DILI and regulatory construct requiring cholestasis and alternative-cause
+      exclusion and should not be stated to consumers.
+    signal_system: hepatic
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: severity_marker
+    relationship_kind: severity
+    availability: common
+    rationale: Bilirubin elevation alongside ALT or AST elevation adds excretory and severity context.
+  - biomarker_id: alp
+    expected_direction: either
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Formal Hy's Law assessment requires absence of substantial cholestasis, so ALP is needed
+      internally before any Hy's-Law-like severity logic.
+  - biomarker_id: ggt
+    expected_direction: either
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: GGT helps interpret cholestatic or hepatic-source context but does not define Hy's Law.
+  - biomarker_id: albumin
+    expected_direction: low
+    role: severity_marker
+    relationship_kind: severity
+    availability: common
+    rationale: Low albumin can add synthetic, chronic or systemic context but is non-specific.
+  - biomarker_id: inr
+    expected_direction: high
+    role: severity_marker
+    relationship_kind: severity
+    availability: specialist
+    rationale: Prolonged INR or PT is a key liver-function and acute-risk marker when interpreted with
+      medication and clinical context.
+  - biomarker_id: ast
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: AST elevation can corroborate aminotransferase injury magnitude but remains nonspecific.
+  contradiction_markers:
+  - contradiction_id: ctr_cholestatic_pattern_present
+    marker_reference: alp
+    contradiction_rationale: Substantial ALP elevation suggests cholestatic involvement and prevents formal
+      Hy's Law interpretation.
+    contradiction_strength: strong
+  - contradiction_id: ctr_unconjugated_or_hemolysis_context
+    marker_reference: bilirubin
+    contradiction_rationale: Unconjugated bilirubin or haemolysis context can explain bilirubin elevation
+      without impaired hepatic excretion.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_elevated_ggt_introduces_cholestatic_alternative
+    marker_reference: ggt
+    contradiction_rationale: A clearly elevated GGT alongside raised bilirubin and ALT introduces a cholestatic
+      or enzyme-induction signal that provides a structural alternative context, weakening the conditions
+      required for a hepatocellular excretory failure framing and making the Hy's Law prohibition frame
+      less the central concern.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_preserved_albumin_inr_reduces_severity_urgency
+    marker_reference: albumin
+    contradiction_rationale: A preserved albumin alongside raised bilirubin and ALT reduces the urgency
+      profile that makes the Hy's Law prohibition frame most clinically pressing, as maintained hepatic
+      synthetic function challenges a severe hepatocellular failure context.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - If bilirubin is missing, do not make severity or excretory-function claims. If ALP is missing, do
+      not apply internal Hy's-Law-like logic. If medication history and alternative-cause context are
+      missing, do not emit DILI wording.
+    - If medication exposure, ALP, bilirubin thresholding or alternative-cause exclusion is unavailable,
+      prohibit Hy's Law logic beyond internal safety escalation.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_alt_high_with_bilirubin_high_severity
+    resulting_state: at_risk
+    description: Escalate when ALT high coincides with bilirubin above the lab range, preserving non-diagnostic
+      wording and prohibiting Hy's Law language.
+    conditions:
+    - metric_id: bilirubin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_fda_dili_guidance_2009
+    - source_bsg_abnormal_liver_tests_2017
+  evidence:
+    evidence_strength: consensus
+    sources:
+    - source_id: source_aasld_liver_enzymes_2025
+      name: 'AASLD Liver Fellow Network: How to approach elevated liver enzymes'
+      publication_year: 2025
+      locator: Patterns of abnormal liver enzymes; R-value formula and enzyme-source discussion
+      evidence_type: professional_hepatology_education
+      strength: high
+      url: https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes
+      limitations: Educational page, not a formal practice guideline.
+    - source_id: source_aasld_dili_guidance_2023
+      name: AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury
+      publication_year: 2023
+      locator: R-value at presentation; hepatocellular/mixed/cholestatic DILI categories
+      evidence_type: society_practice_guidance
+      strength: high
+      url: https://onlinelibrary.wiley.com/doi/10.1002/hep.32689
+      limitations: DILI-specific; general-liver-test use is extrapolative.
+    - source_id: source_fda_dili_guidance_2009
+      name: 'FDA Guidance for Industry: Drug-Induced Liver Injury: Premarketing Clinical Evaluation'
+      publication_year: 2009
+      locator: Hy's Law; serial laboratory assessment; aminotransferase and bilirubin thresholds
+      evidence_type: regulatory_guidance
+      strength: high
+      url: https://www.fda.gov/regulatory-information/search-fda-guidance-documents/drug-induced-liver-injury-premarketing-clinical-evaluation
+      limitations: Premarketing/regulatory context, not consumer diagnostic guidance.
+    - source_id: source_bsg_abnormal_liver_tests_2017
+      name: British Society of Gastroenterology guideline on abnormal liver blood tests
+      publication_year: 2017
+      locator: Initial liver blood-test panel; interpret in clinical context; marked derangement/synthetic
+        failure referral logic
+      evidence_type: uk_clinical_guideline
+      strength: high
+      url: https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests
+      limitations: Does not define R-value; supports context and safety boundaries.
+    - source_id: source_acg_abnormal_liver_chemistries_2017
+      name: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+      publication_year: 2017
+      locator: Hepatocellular vs cholestatic injury definitions; recommended cause workup
+      evidence_type: clinical_guideline
+      strength: high
+      url: https://pubmed.ncbi.nlm.nih.gov/27995906/
+      limitations: US guideline; captured access through abstract-level source.
+    physiological_claim: Bilirubin elevation with raised ALT or AST adds severity and excretory context,
+      but formal Hy's Law requires suspected DILI context, lack of substantial cholestasis and alternative-cause
+      exclusion.
+    threshold_notes: Do not expose Hy's Law wording to consumers. Use bilirubin above lab range or greater
+      than 2x ULN internally for escalation only where all required inputs are available.
+  confirmatory_test_refs:
+  - test_id: ct_fractionated_bilirubin
+    rationale: Fractionated bilirubin helps distinguish conjugated from unconjugated bilirubin and refines
+      severity or haemolysis context.
+  - test_id: ct_pt_inr
+    rationale: PT or INR is a key clinical marker of synthetic function and acute-risk context.
+  - test_id: ct_liver_aetiology_screen
+    rationale: Clinical evaluation may be needed to exclude viral, autoimmune, biliary, medication-related
+      and other causes before DILI attribution.

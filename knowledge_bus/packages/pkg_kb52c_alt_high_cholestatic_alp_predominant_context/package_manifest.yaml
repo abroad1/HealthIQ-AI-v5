@@ -1,0 +1,16 @@
+package_id: pkg_kb52c_alt_high_cholestatic_alp_predominant_context
+package_version: 1.0.0
+description: 'ARCH-CONV-E asset package for inv_alt_high_r_value_cholestatic_alp_predominant_context (signal_alt_high).
+  Promotion is not activation. Runtime readiness: DEFERRED_WITH_EXPLICIT_REASON because governed r_value_alt_alp
+  compute authority and ALT/ALP/GGT collision policy are absent. This package is not runtime-promoted.'
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+promoted_signal_intelligence: promoted_signal_intelligence.yaml
+author: HealthIQ Knowledge Bus — ARCH-CONV-E
+created_at: '2026-07-30'
+behavioural_impact: NONE
+engine_compatibility: v5.x
+source_spec_id: inv_alt_high_r_value_cholestatic_alp_predominant_context
+activation_key: signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
+source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+source_document_hash: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267

@@ -1,0 +1,166 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_alt_high_cholestatic_alp_predominant_context
+translation:
+  source: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  source_hash: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_alt_high_r_value_cholestatic_alp_predominant_context
+  signal_id: signal_alt_high
+  compiler_version: manual-promotion-v1
+  work_id: ARCH-CONV-E
+signals:
+- signal_id: signal_alt_high
+  research_domain: hepatic
+  signal_system: hepatic
+  primary_metric:
+    biomarker_id: alt
+    rationale: An elevated ALT can occur within an ALP-predominant biochemical pattern where ALP is proportionally
+      more raised than ALT; this should be worded as an ALP-predominant or cholestatic-pattern context
+      only when ALP is likely hepatic-source.
+    signal_system: hepatic
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: alp
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: ALP predominance is central to cholestatic or ALP-predominant biochemical patterning.
+  - biomarker_id: ggt
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Raised GGT supports hepatic origin of ALP but remains nonspecific.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: severity_marker
+    relationship_kind: severity
+    availability: common
+    rationale: Bilirubin elevation can accompany cholestatic or excretory patterns and increases concern,
+      but does not prove obstruction.
+  - biomarker_id: r_value_alt_alp
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: optional
+    rationale: A derived R-value at or below 2 supports an ALP-predominant biochemical pattern when ALT
+      and ALP upper reference limits are available.
+  - biomarker_id: creatine_kinase
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: CK helps identify whether a concurrent aminotransferase signal could partly reflect muscle
+      rather than liver.
+  contradiction_markers:
+  - contradiction_id: ctr_ggt_normal_or_missing
+    marker_reference: ggt
+    contradiction_rationale: Normal or missing GGT reduces confidence that raised ALP is hepatic-source.
+    contradiction_strength: strong
+  - contradiction_id: ctr_alt_predominant_r_value
+    marker_reference: r_value_alt_alp
+    contradiction_rationale: R-value at or above 5 redirects toward ALT-predominant biochemical pattern
+      rather than ALP-predominant pattern.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_bilirubin_reduces_biliary_urgency
+    marker_reference: bilirubin
+    contradiction_rationale: A normal bilirubin alongside an ALP-predominant pattern reduces the urgency
+      of structural biliary confirmation, as clinically significant bile-duct obstruction or cholestasis
+      typically produces bilirubin elevation; its absence makes an immediately consequential biliary lesion
+      less likely.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_nonhepatic_alp_possible
+    marker_reference: alp
+    contradiction_rationale: Non-hepatic ALP sources such as bone or pregnancy can create misleading ALP-predominant
+      patterns.
+    contradiction_strength: strong
+  missing_data:
+    policies:
+    - If GGT is missing, avoid high-confidence cholestatic wording; use lower-confidence ALP-predominant
+      wording and recommend clinical localisation where appropriate.
+    - If imaging and hepatic-source markers are absent, do not use obstruction language and do not attribute
+      the ALP rise to liver or bile ducts with confidence.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_alp_predominant_with_bilirubin_high
+    resulting_state: at_risk
+    description: Escalate cautiously when an ALP-predominant pattern is accompanied by bilirubin elevation
+      because this adds severity and excretory context.
+    conditions:
+    - metric_id: bilirubin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_bsg_abnormal_liver_tests_2017
+    - source_acg_abnormal_liver_chemistries_2017
+  evidence:
+    evidence_strength: consensus
+    sources:
+    - source_id: source_aasld_liver_enzymes_2025
+      name: 'AASLD Liver Fellow Network: How to approach elevated liver enzymes'
+      publication_year: 2025
+      locator: Patterns of abnormal liver enzymes; R-value formula and enzyme-source discussion
+      evidence_type: professional_hepatology_education
+      strength: high
+      url: https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes
+      limitations: Educational page, not a formal practice guideline.
+    - source_id: source_aasld_dili_guidance_2023
+      name: AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury
+      publication_year: 2023
+      locator: R-value at presentation; hepatocellular/mixed/cholestatic DILI categories
+      evidence_type: society_practice_guidance
+      strength: high
+      url: https://onlinelibrary.wiley.com/doi/10.1002/hep.32689
+      limitations: DILI-specific; general-liver-test use is extrapolative.
+    - source_id: source_bsg_abnormal_liver_tests_2017
+      name: British Society of Gastroenterology guideline on abnormal liver blood tests
+      publication_year: 2017
+      locator: Initial liver blood-test panel; interpret in clinical context; marked derangement/synthetic
+        failure referral logic
+      evidence_type: uk_clinical_guideline
+      strength: high
+      url: https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests
+      limitations: Does not define R-value; supports context and safety boundaries.
+    - source_id: source_acg_abnormal_liver_chemistries_2017
+      name: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+      publication_year: 2017
+      locator: Hepatocellular vs cholestatic injury definitions; recommended cause workup
+      evidence_type: clinical_guideline
+      strength: high
+      url: https://pubmed.ncbi.nlm.nih.gov/27995906/
+      limitations: US guideline; captured access through abstract-level source.
+    - source_id: source_easl_cholestatic_liver_guideline_2009
+      name: 'EASL Clinical Practice Guidelines: Management of cholestatic liver diseases'
+      publication_year: 2009
+      locator: Drug-induced cholestatic liver disease classification by ALT/AP ratio
+      evidence_type: professional_liver_society_guideline
+      strength: moderate
+      url: https://www.journal-of-hepatology.eu/article/S0168-8278(09)00309-2/fulltext
+      limitations: Older guideline and cholestatic/DILI-specific.
+    physiological_claim: An ALP-predominant biochemical pattern can be classified when ALP is proportionally
+      more raised than ALT, but hepatic-source localisation and clinical context are required before cholestatic
+      or obstruction language is safe.
+    threshold_notes: Use lab-provided ULNs. Internal R-value interpretation may use R <= 2 for ALP-predominant
+      pattern. If GGT is missing or normal, downgrade hepatic-source confidence.
+  confirmatory_test_refs:
+  - test_id: ct_ggt_or_alp_isoenzymes
+    rationale: GGT, ALP isoenzymes or 5-nucleotidase can support hepatic-source localisation of ALP.
+  - test_id: ct_fractionated_bilirubin
+    rationale: Fractionated bilirubin helps distinguish conjugated from unconjugated bilirubin patterns.
+  - test_id: ct_liver_biliary_imaging
+    rationale: Clinical imaging may be required to evaluate obstruction or structural biliary disease.

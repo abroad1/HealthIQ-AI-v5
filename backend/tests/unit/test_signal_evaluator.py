@@ -82,16 +82,26 @@ def test_signal_registry_is_deterministic_across_instances():
 
 
 def test_signal_registry_alt_high_multi_frame_pilot():
-    """ARCH-RT-2: ALT high frames must not silently collapse to one lexicographic winner."""
+    """ARCH-RT-2: frames must not silently collapse to one lexicographic winner.
+
+    ARCH-CONV-E withheld the six non-promoted ALT pattern packages from runtime
+    activation, so the ALT family now loads only its activated legacy frame and the
+    non-collapse guarantee is asserted against the registry's other multi-frame families.
+    """
     registry = SignalRegistry()
-    alt_frames = [row for row in registry.get_all_signals() if row["signal_id"] == "signal_alt_high"]
-    assert len(alt_frames) == 4
-    activation_keys = {row["activation_key"] for row in alt_frames}
-    assert len(activation_keys) == 4
-    assert "signal_alt_high::inv_alt_high_hepatocellular_injury" in activation_keys
-    assert "signal_alt_high::inv_alt_high_hepatocellular_injury_pattern" in activation_keys
-    assert "signal_alt_high::inv_alt_high_metabolic_steatotic_liver_pattern" in activation_keys
-    assert "signal_alt_high::inv_alt_high_muscle_source_or_exertional_pattern" in activation_keys
+    rows = registry.get_all_signals()
+
+    alt_keys = [row["activation_key"] for row in rows if row["signal_id"] == "signal_alt_high"]
+    assert alt_keys == ["signal_alt_high::inv_alt_high_hepatocellular_injury"]
+
+    by_signal_id: dict[str, list[str]] = {}
+    for row in rows:
+        by_signal_id.setdefault(row["signal_id"], []).append(row["activation_key"])
+    multi_frame = {sid: keys for sid, keys in by_signal_id.items() if len(keys) > 1}
+    assert multi_frame, "registry must still expose multi-frame signal families"
+    for signal_id, keys in multi_frame.items():
+        assert len(set(keys)) == len(keys), f"{signal_id} collapsed duplicate activation keys"
+    assert len(multi_frame["signal_ggt_high"]) == 3
 
 
 def test_signal_registry_multi_frame_preserves_distinct_signal_ids(monkeypatch, tmp_path):

@@ -6,681 +6,251 @@ execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# ARCH-CONV-E — ALT WHY-Authority Migration and Legacy Retirement
+# ARCH-CONV-E — Build ALT Knowledge Bus Assets from Validated Pass 3 Research
 
-## Objective
-
-Migrate ALT WHY authority to the canonical identity:
-
-```text
-signal_alt_high::inv_alt_high_hepatocellular_injury
-```
-
-and retire the temporary runtime WHY ownership held by:
-
-```text
-signal_hepatic_alt_context
-```
-
-only after:
-
-- canonical identity and source closure;
-- Head of Medical Research Gate 1 decisions;
-- Anthony Gate 2 ratification;
-- deterministic compilation and runtime implementation;
-- independent STOP C proof.
-
-The intended end state is:
-
-```text
-signal_alt_high
-  = canonical ALT signal identity
-  = governed compiled ALT WHY authority
-
-signal_hepatic_alt_context
-  = no longer owns runtime ALT WHY
-  = retained only as governed legacy/predecessor evidence
-```
-
-This sprint must also close the small, directly related ARCH-CONV-C lineage defect by recomputing and correcting the stale ALP/GGT compiled-output hashes before new hepatic compiled authority is added.
-
-## Governing rules
-
-Apply the repository-governed versions of:
+Execute under:
 
 - `AUTOMATION_BUS_SOP_v1.3.1.md`
 - `KNOWLEDGE_BUS_SOP_v1.3.1.md`
 - `KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md`
 
-Mandatory lifecycle:
+This is a continuation of the existing active `ARCH-CONV-E` work package. Do not create a second work package or branch.
 
-```text
-Stage 0 scope already approved
-→ Claude hardening
-→ Automation Bus start
-→ Phase 0
-→ independent STOP A
-→ Phase 1 Gate 1 submission
-→ Head of Medical Research Gate 1
-→ Anthony Gate 2 ratification
-→ Phase 2 implementation
-→ independent STOP C
-→ Automation Bus finish
-→ independent audit
-→ explicit human merge authority
-```
+## Canonical source
 
-Cursor must not self-certify STOP A, Gate 1, Gate 2 or STOP C.
+Use only:
 
-Identity must come from governed embedded fields and explicit registers, never filenames, package names, directory order or load order.
+`knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json`
 
-Canonical research is the only medical authority. Package files and compiled artefacts may express or reduce canonical research but must not invent new medical meaning.
+SHA-256:
 
-Runtime must consume governed compiled artefacts only. Frontend remains render-only.
+`7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267`
 
-## Mandatory hardening
+The six validated source specs are:
 
-Before Automation Bus start, Claude must execute:
+1. `inv_alt_high_r_value_hepatocellular_biochemical_pattern`
+2. `inv_alt_high_r_value_mixed_biochemical_pattern`
+3. `inv_alt_high_r_value_cholestatic_alp_predominant_context`
+4. `inv_alt_high_muscle_source_or_exertional_contribution`
+5. `inv_alt_high_bilirubin_hys_law_severity_context`
+6. `inv_alt_high_metabolic_masld_context`
 
-```text
-harden work_id: ARCH-CONV-E — verify source content and produce evidence checklist
-```
+All six pass `validate_investigation_spec.py` individually. Do not modify or reinterpret the Pass 3 source.
 
-Do not begin repository implementation until:
+## Objective
 
-```text
-automation_bus/latest_prompt_hardening.json
-```
+Create the normal Knowledge Bus signal packages required by the existing one-package-per-sub-pattern convention.
 
-records:
+Do not collapse medically distinct sub-patterns into one package.
 
-```text
-work_id: ARCH-CONV-E
-status: HARDENED
-```
+## Required package set
 
-## Baseline and branch preparation
+### Regenerate these three existing sibling packages from the new canonical Pass 3 source
 
-1. Fetch and confirm local `main == origin/main`.
-2. Confirm ARCH-CONV-D is merged and published.
-3. Create:
+1. `knowledge_bus/packages/pkg_kb52c_alt_high_hepatocellular_injury_pattern`
+   - source spec: `inv_alt_high_r_value_hepatocellular_biochemical_pattern`
+   - disposition of prior Batch 5 lineage: `REGENERATED_FROM_CANONICAL_RESEARCH`
 
-```text
-feature/arch-conv-e-alt-why-authority
-```
+2. `knowledge_bus/packages/pkg_kb52c_alt_high_muscle_source_or_exertional_pattern`
+   - source spec: `inv_alt_high_muscle_source_or_exertional_contribution`
+   - disposition of prior Batch 5 lineage: `REGENERATED_FROM_CANONICAL_RESEARCH`
 
-from current `main`.
-4. Confirm the working tree is clean.
-5. Confirm stash is empty.
-6. Confirm there is no active Automation Bus token.
-7. Run:
+3. `knowledge_bus/packages/pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern`
+   - source spec: `inv_alt_high_metabolic_masld_context`
+   - disposition of prior Batch 5 lineage: `REGENERATED_FROM_CANONICAL_RESEARCH`
 
-```text
-python backend/scripts/run_work_package.py start
-```
+Preserve the established package IDs and directories unless a locked repository rule proves that a versioned replacement directory is mandatory. Do not silently rename them.
 
-8. Confirm kernel state:
+### Create these three new sibling packages
 
-```text
-work_id: ARCH-CONV-E
-status: IN_PROGRESS
-```
+4. `knowledge_bus/packages/pkg_kb52c_alt_high_mixed_biochemical_pattern`
+   - source spec: `inv_alt_high_r_value_mixed_biochemical_pattern`
 
-STOP if any lifecycle artefact refers to another work ID.
+5. `knowledge_bus/packages/pkg_kb52c_alt_high_cholestatic_alp_predominant_context`
+   - source spec: `inv_alt_high_r_value_cholestatic_alp_predominant_context`
 
-# Scope
+6. `knowledge_bus/packages/pkg_kb52c_alt_high_bilirubin_severity_context`
+   - source spec: `inv_alt_high_bilirubin_hys_law_severity_context`
 
-## In scope
+If an exact repository naming rule requires a different slug, apply that rule consistently and report the final path. Do not change the medical grouping.
 
-### Canonical ALT target
+## Mandatory assets for every package
 
-```text
-signal_alt_high::inv_alt_high_hepatocellular_injury
-knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml
-pkg_s24_alt_high_hepatocellular_injury
-```
+Create or update:
 
-### Candidate ALT frames for medical review
+- `research_brief.yaml`
+- `signal_library.yaml`
+- `package_manifest.yaml`
 
-```text
-signal_alt_high::inv_alt_high_hepatocellular_injury_pattern
-signal_alt_high::inv_alt_high_metabolic_steatotic_liver_pattern
-signal_alt_high::inv_alt_high_muscle_source_or_exertional_pattern
-```
+Use the established schema and nearest valid sibling packages as structural templates only. Medical content must come from the assigned Pass 3 spec.
 
-### Legacy predecessor and WHY authority
+### `research_brief.yaml`
 
-```text
-signal_hepatic_alt_context
-signal_hepatic_alt_context::inv_alt_context
-knowledge_bus/root_cause/hypotheses/alt_hypotheses_v1.yaml
-```
+Include the assigned source spec’s:
 
-### Hepatocellular collision policy
+- primary and supporting biomarkers;
+- derived metrics;
+- physiological claim;
+- hypotheses and evidence strength where supported by the current contract;
+- source references and limitations;
+- contradiction, exclusion, severity and missing-data context;
+- non-diagnostic boundaries.
 
-A new governed hepatocellular authority group/axis may be created only after Gate 1 and Gate 2 adjudication.
+Do not blend content from another source spec merely because all packages use `signal_alt_high`.
 
-### Threshold governance
+### `signal_library.yaml`
 
-Hardcoded ALT-context thresholds must be:
+Represent only the activation architecture supported by the assigned source spec and current schema:
 
-- mapped;
-- medically reviewed;
-- either replaced by governed SSOT/runtime marker status, explicitly retained under ratified evidence, or removed from the new authority path;
-- never silently transferred.
+- `signal_id: signal_alt_high`;
+- direction and lab-range activation;
+- dependencies;
+- supporting, contradiction, exclusion and severity markers;
+- override/escalation conditions;
+- fail-closed missing-data behaviour;
+- collision/dependency metadata supported by the existing contract.
 
-### ARCH-CONV-C lineage repair
+### `package_manifest.yaml`
 
-Verify and, if required, correct only the stale `output_hash` values in:
+Use the established package manifest schema and include the maximum protocol lineage metadata the locked contract supports.
 
-```text
-knowledge_bus/compiled/manifests/arch_conv_c_alp_high.yaml
-knowledge_bus/compiled/manifests/arch_conv_c_ggt_high.yaml
-```
+Required lineage record, either directly in the manifest or in the repository’s established equivalent evidence location:
 
-The repair must:
+- `source_spec_id`;
+- `source_path`;
+- `source_hash`;
+- `compiler_version: manual-promotion-v1` or the established manual marker;
+- `output_artifacts`;
+- `output_hashes` after files are final;
+- `validation_result`;
+- `promoted_utc: null` because this step does not promote;
+- `promotion_mode: PACKAGE_MANUAL` or the existing allowed equivalent.
 
-- recompute hashes from the actual compiled artefacts;
-- prove source and compiled bytes are otherwise unchanged;
-- not recompile, rewrite or medically alter ALP/GGT content;
-- be separately identified in commits and STOP C evidence.
+Do not add invalid manifest fields. If the locked schema cannot carry one of these fields, record it in the normal ARCH-CONV-E evidence report with the package path and output hashes.
 
-## Explicit exclusions
+## Optional assets
 
-Do not migrate or create authority for:
+Create or update only where the package opts in and the locked contract requires them:
 
-```text
-signal_ast_high
-signal_bilirubin_high
-signal_hyperbilirubinemia
-signal_alp_low
-```
+- `intelligence_model.yaml`
+- `promoted_signal_intelligence.yaml`
 
-Do not alter:
+Use `intelligence_model.yaml` where needed to preserve hypotheses, ranking, contradiction logic or confirmatory-test relationships not representable in mandatory assets.
 
-- the ratified `cholestatic_source_axis` ALP/GGT policy;
-- ALP or GGT compiled medical content;
-- liver-card scoring;
-- frontend medical logic;
-- unrelated reports, snapshots, fixtures or estate records;
-- raw Pass 3 sources;
-- unrelated knowledge packages.
+Use `promoted_signal_intelligence.yaml` only according to its locked signal-only contract.
 
-AST, bilirubin, ALP and GGT may appear only as supporting, contradiction or future-boundary context where present in canonical ALT sources. This grants no authority to those families.
+Do not create optional assets merely for symmetry.
 
-# Phase 0 — Architecture identity, source and lineage closure
+## R-value-dependent package disposition
 
-Before making any medical or runtime decision, create:
+The following three packages depend on `r_value_alt_alp` for functional differentiation:
 
-```text
-docs/architecture/ARCH-CONV-E_STOP_A_identity_source_and_lineage_closure.md
-docs/architecture/ARCH-CONV-E_target_to_frame_map.md
-docs/architecture/ARCH-CONV-E_medical_review_pack.md
-docs/architecture/ARCH-CONV-E_medical_decision_register.yaml
-docs/architecture/ARCH-CONV-E_arch_conv_c_hash_repair_evidence.md
-```
+- hepatocellular biochemical pattern;
+- mixed biochemical pattern;
+- cholestatic/ALP-predominant context.
 
-## Phase 0A — Reconfirm ARCH-CONV-D identity closure
+The governed compute path for `r_value_alt_alp` does not yet exist. Therefore:
 
-Verify from current `main` that:
+1. Build and validate the Knowledge Bus assets from the canonical Pass 3 source.
+2. Record the derived-metric contract exactly as supported by the package schemas:
+   - formula intent: `(ALT / ALT ULN) / (ALP / ALP ULN)`;
+   - ALT result and laboratory ULN required;
+   - ALP result and laboratory ULN required;
+   - contemporaneous/same-sample pairing required;
+   - fail closed if any input is absent;
+   - `R >= 5`, `2 < R < 5`, and `R <= 2` classifications.
+3. Mark each of these three packages `DEFERRED_WITH_EXPLICIT_REASON` for runtime readiness/promotion because the governed derived-metric compute authority is absent.
+4. Do not mark them `ready_for_implementation: true`.
+5. Do not add `r_value_alt_alp` to `ratio_registry.py` or any runtime/SSOT registry in this asset-build step.
 
-- `signal_alt_high` is the sole canonical future ALT authority identity;
-- `signal_hepatic_alt_context` is recorded as a legacy predecessor/context implementation;
-- no runtime alias exists;
-- legacy WHY remains temporarily owned by `signal_hepatic_alt_context`;
-- all ARCH-CONV-E successor blockers are present.
+The muscle, bilirubin-severity and metabolic packages are not automatically deferred for this reason. Determine their package readiness from their own validator results and dependencies only.
 
-STOP if the merged repository does not match the approved ARCH-CONV-D decision.
+## Existing authority reconciliation
 
-## Phase 0B — Canonical ALT source reconstruction
+Reconcile and report:
 
-Record for the canonical frame and each candidate:
+- legacy `pkg_s24_alt_high_hepatocellular_injury` lineage;
+- prior Batch 5 kb52c ALT sibling packages;
+- the six ARCH-CONV-E source specs;
+- existing ALP/GGT `liver_injury_axis` authority;
+- `knowledge_bus/governance/signal_authority_collision_model_v1.yaml`.
 
-```text
-activation_key
-signal_id
-embedded spec_id
-canonical source path
-source SHA-256
-package_id
-translation_mode
-identity-index status
-provenance status
-signal-layer status
-legacy WHY status
-compiled WHY status
-runtime authority status
-```
+Required rules:
 
-Do not infer identity from filenames.
+- do not treat adjacent `spec_id` values as identical lineage;
+- do not retire or activate runtime authority in this step;
+- record proposed legacy dispositions using only:
+  - `MAPPED_TO_CANONICAL_RESEARCH`
+  - `REGENERATED_FROM_CANONICAL_RESEARCH`
+  - `ACCEPTED_WITH_RATIONALE`
+  - `RETIRED`
+  - `DEFERRED_WITH_EXPLICIT_REASON`
+- do not edit the collision model in this step;
+- record the required future collision-policy dependency for ALT R-value packages versus the existing ALP/GGT axis.
 
-Validate the canonical investigation spec using the repository validator.
+## Validation and tests
 
-## Phase 0C — Legacy ALT reconstruction
+For each of the six package directories:
 
-Map exactly:
+1. Parse all YAML assets.
+2. Run:
 
-- every hypothesis in `alt_hypotheses_v1.yaml`;
-- the registry and loader path;
-- its primary signal identity;
-- all assumptions, causes, supporting markers, contradiction markers and caveats;
-- any claims not traceable to the canonical ALT source;
-- any family-level collapse or duplicate-output risk;
-- current runtime output when only `signal_hepatic_alt_context` fires;
-- current runtime output when both live ALT signals fire.
+`python backend/scripts/validate_knowledge_package.py --package-dir <package-path>`
 
-No legacy disconnection is authorised in Phase 0 or Phase 1.
+3. Run the existing package/content tests used by comparable kb52c packages, including any repository tests that load and verify:
+   - activation dependencies;
+   - override-condition preservation;
+   - fail-closed missing-data fields;
+   - optional intelligence contracts.
 
-## Phase 0D — Threshold reconstruction
+4. If no existing executable test covers package loading for these fields, add the minimum scoped content-contract test following the existing Knowledge Bus test pattern. Do not add runtime medical behaviour.
 
-Map every numeric literal used in the two live ALT signal implementations, including:
+5. For each R-value-dependent package, prove that package readiness remains deferred and cannot be mistaken for runtime-ready while `r_value_alt_alp` compute authority is absent.
 
-```text
-ALT > 120
-AST > 45
-GGT > 60
-ALP > 130
-bilirubin > 20
-```
+Validator authority remains final. Do not alter validator output.
 
-For each, record:
+## Evidence to publish
 
-```text
-source file
-governed source, if any
-clinical purpose
-runtime effect
-whether it duplicates lab-range SSOT
-whether it is required by canonical ALT research
-whether transfer would alter emitted behaviour
-```
+Publish one bounded ARCH-CONV-E asset-build report containing:
 
-Do not remediate thresholds before Gate 1 and Gate 2.
+1. all six package paths;
+2. files created or modified per package;
+3. source path, source SHA-256 and assigned `source_spec_id` per package;
+4. package-level mapping from source fields to generated assets;
+5. output hashes;
+6. validation results per package;
+7. test commands and results;
+8. reconciliation table for legacy S24, Batch 5 and ARCH-CONV-E lineages;
+9. readiness/disposition per package;
+10. explicit `DEFERRED_WITH_EXPLICIT_REASON` evidence for the three R-value-dependent packages;
+11. future dependency statement for the governed `r_value_alt_alp` compute asset and ALT/ALP/GGT collision policy;
+12. `git diff --name-only` and scoped diff summary.
 
-## Phase 0E — ARCH-CONV-C manifest hash repair
-
-Independently recompute the compiled artefact hashes for canonical ALP and GGT.
-
-If the manifest hashes already match, record `NO_CHANGE_REQUIRED`.
-
-If they do not match:
-
-1. prove the compiled artefact bytes match the merged ARCH-CONV-C implementation;
-2. prove canonical source hashes remain correct;
-3. update only the stale manifest `output_hash` fields;
-4. run the focused ARCH-CONV-C validators and tests;
-5. commit the repair separately:
-
-```text
-fix(governance): repair ARCH-CONV-C compiled manifest hashes
-```
-
-Do not modify compiled ALP/GGT artefacts.
-
-STOP and escalate if any mismatch involves compiled content rather than manifest metadata.
-
-## Phase 0F — Proposed hepatocellular authority boundary
-
-Reconstruct, but do not adjudicate:
-
-- whether ALT can be primary authority for a hepatocellular biochemical pattern;
-- how AST, bilirubin, ALP, GGT, albumin, symptoms, medication/exposure history, exercise/muscle injury and serial results may support or contradict;
-- how the hepatocellular pattern remains separate from `cholestatic_source_axis`;
-- how concurrent ALT and ALP/GGT findings avoid duplicate or conflicting user-facing output;
-- whether one new authority group is required;
-- deterministic selection requirements;
-- future bilirubin and AST boundaries.
-
-No medical or collision-policy decision may be made by Cursor.
-
-# STOP A — Independent architecture approval
-
-Stop after Phase 0.
-
-The STOP A submission must answer:
-
-1. Is the canonical migration target unambiguously:
-
-```text
-signal_alt_high::inv_alt_high_hepatocellular_injury
-```
-
-2. Are all candidate identities, sources, provenance states and legacy paths closed?
-3. Is the ARCH-CONV-C manifest-hash defect either repaired safely or proven absent?
-4. Is the threshold issue fully mapped?
-5. Is the proposed medical-review boundary sufficient?
-6. Are AST, bilirubin and `cholestatic_source_axis` exclusions preserved?
-7. Can Phase 1 prepare Gate 1 decisions without implementation?
-
-Return:
-
-```text
-ARCH-CONV-E PHASE 0 COMPLETE
-
-Branch
-Baseline commit
-Hardening reference
-Automation Bus start result
-Kernel status
-Phase 0 commit(s)
-Working-tree status
-Stash status
-
-Canonical ALT identity
-Candidate frame map
-Legacy WHY ownership and risks
-Threshold map
-ARCH-CONV-C hash-repair result
-Proposed hepatocellular authority boundary
-Explicit exclusions
-
-Created artefacts
-Verification performed
-
-STOP A status:
-AWAITING INDEPENDENT HEAD OF ARCHITECTURE APPROVAL
-```
-
-Do not proceed until explicit STOP A approval.
-
-# Phase 1 — Gate 1 medical-review submission
-
-Proceed only after independent STOP A approval.
-
-Finalise:
-
-```text
-docs/architecture/ARCH-CONV-E_medical_review_pack.md
-docs/architecture/ARCH-CONV-E_medical_decision_register.yaml
-```
-
-Set state:
-
-```text
-GATE_1_SUBMISSION_READY_FOR_HEAD_OF_MEDICAL_RESEARCH
-```
-
-All medical and collision-policy decisions must remain `PENDING`.
-
-## Gate 1 decisions required
-
-### Canonical ALT frame
-
-For:
-
-```text
-signal_alt_high::inv_alt_high_hepatocellular_injury
-```
-
-request structured decisions on:
-
-- `APPROVE`, `APPROVE_WITH_NARROWING`, `REJECT`, `DEFER_EVIDENCE_INSUFFICIENT` or `CONTEXT_ONLY`;
-- causal versus context-only role;
-- whether ALT alone may support a hepatocellular biochemical-pattern WHY;
-- magnitude/severity handling;
-- serial-result requirements;
-- symptom/history requirements;
-- medication/toxin/viral/exposure wording boundaries;
-- specific-disease prohibitions;
-- missing-data fail-closed rules.
-
-### Pass 3 candidate frames
-
-Request separate decisions for:
-
-```text
-inv_alt_high_hepatocellular_injury_pattern
-inv_alt_high_metabolic_steatotic_liver_pattern
-inv_alt_high_muscle_source_or_exertional_pattern
-```
-
-For each, require:
-
-- approval status;
-- causal/context role;
-- provenance sufficiency;
-- required supporting data;
-- prohibited attribution;
-- compile or defer disposition.
-
-### Supporting-marker roles
-
-Request explicit decisions on:
-
-- AST;
-- bilirubin;
-- ALP;
-- GGT;
-- albumin;
-- metabolic context;
-- exercise/muscle injury context;
-- alcohol and medication context;
-- symptoms and serial trends.
-
-No supporting marker may gain independent WHY authority through ARCH-CONV-E.
-
-### Threshold decisions
-
-For every current hardcoded threshold, request one:
-
-```text
-REPLACE_WITH_GOVERNED_LAB_STATUS
-REPLACE_WITH_GOVERNED_SSOT_THRESHOLD
-RETAIN_WITH_EXPLICIT_MEDICAL_RATIONALE
-REMOVE_FROM_CANONICAL_RUNTIME_PATH
-DEFER_AND_BLOCK_IMPLEMENTATION
-```
-
-No threshold may be transferred by default.
-
-### Hepatocellular collision policy
-
-Request decisions on:
-
-- axis/group name;
-- primary/supporting/context families;
-- ALT-only behaviour;
-- ALT plus AST;
-- ALT plus bilirubin;
-- ALT plus ALP/GGT cholestatic pattern;
-- ALT plus exercise/muscle evidence;
-- consolidation, suppression, parallel-output and refusal rules;
-- duplicate-user-facing-signal prohibition;
-- future-safe bilirubin and AST boundaries;
-- activation-key-explicit deterministic selection.
-
-### Legacy disposition
-
-Request explicit adjudication of:
-
-```text
-alt_hypotheses_v1.yaml
-signal_hepatic_alt_context
-signal_hepatic_alt_context::inv_alt_context
-```
-
-Choose:
-
-```text
-CONDITIONAL_REPLACE
-PARTIAL_CONTENT_TRANSFER
-RETAIN_TEMPORARILY
-RETIRE_WITHOUT_TRANSFER
-DEFER
-```
-
-Specify exactly when runtime disconnection is allowed.
-
-Stop for Head of Medical Research Gate 1.
-
-# Gate 2 — Anthony ratification
-
-No Phase 2 implementation may begin until Anthony explicitly ratifies the complete Gate 1 decision register.
-
-The Gate 2 record must identify:
-
-- Gate 1 reference;
-- ratified canonical and candidate-frame decisions;
-- ratified threshold treatment;
-- ratified hepatocellular collision policy;
-- ratified legacy transfer/retirement conditions;
-- explicit exclusions;
-- Phase 2 authorisation boundary.
-
-# Phase 2 — Implementation
-
-Proceed only after both Gate 1 and Gate 2 are recorded.
-
-## Required outcomes
-
-Implement only the ratified decisions.
-
-Where authorised, this may include:
-
-- canonical compiled ALT WHY artefact;
-- compile manifest with source and output hashes;
-- compiled/root-cause authority-register rows;
-- explicit `why_role`;
-- conditional role metadata;
-- hepatocellular authority-group/collision-policy row;
-- activation-key-explicit collision resolution;
-- governed threshold replacement;
-- lineage metadata;
-- root-cause compiler/report/DTO propagation required for the ratified role;
-- deterministic legacy runtime disconnection for the ratified activation key;
-- focused tests.
-
-## Legacy retirement requirement
-
-If Gate 1 and Gate 2 authorise replacement:
-
-- `signal_alt_high` must become the active governed ALT WHY authority;
-- `signal_hepatic_alt_context` must no longer emit runtime ALT WHY;
-- no runtime alias may collapse the two implementations;
-- `alt_hypotheses_v1.yaml` must remain physically present unless deletion is separately authorised;
-- retirement must be represented explicitly in authority registers;
-- direct legacy fallback must be unreachable for the retired identity;
-- no duplicate ALT user-facing findings may remain.
-
-## Fail-closed requirements
-
-- Missing or unsupported activation identity must not select a frame.
-- Missing required supporting markers must not upgrade causal eligibility.
-- Missing history/exposure data must not be inferred.
-- Unsupported role or conditional metadata must raise or refuse, never default to causal.
-- No filename, lexical, package, filesystem or load-order selection.
-- No frontend medical inference.
-
-## Explicit non-goals during implementation
+## Prohibitions
 
 Do not:
 
-- create AST WHY;
-- migrate bilirubin/hyperbilirubinemia;
-- alter ALP/GGT clinical policy;
-- change liver-card scoring;
-- rewrite unrelated report prose;
-- promote blocked Pass 3 candidates without ratified authority;
-- update unrelated fixtures to conceal regressions.
+- modify the Pass 3 source;
+- create a new research or ingestion process;
+- require or build a universal Pass 3 compiler;
+- collapse the six sub-patterns into one package;
+- invent additional medical claims, thresholds or wording;
+- create a new signal identity;
+- modify executable analytics, runtime, SSOT or frontend code;
+- add `r_value_alt_alp` to runtime registries;
+- edit `signal_authority_collision_model_v1.yaml`;
+- promote by updating `latest_knowledge_status.json`;
+- activate WHY output;
+- retire legacy runtime authority;
+- merge or publish.
 
-# STOP C — Independent runtime proof
+## STOP gate
 
-Create:
+STOP after:
 
-```text
-docs/architecture/ARCH-CONV-E_STOP_C_runtime_proof.md
-```
+- all six package asset sets are created or updated;
+- each package has a validator result;
+- scoped content-contract tests complete;
+- package dispositions and reconciliation evidence are published.
 
-Prove:
-
-1. `signal_alt_high` is the active canonical ALT WHY authority.
-2. `signal_hepatic_alt_context` no longer owns runtime ALT WHY if retirement was ratified.
-3. Legacy asset remains physically preserved.
-4. No duplicate ALT user-facing WHY is emitted.
-5. Every ratified ALT concordance/discordance state behaves deterministically.
-6. Every deferred/rejected frame is unreachable.
-7. Threshold behaviour exactly matches Gate 1 and Gate 2.
-8. Unsupported/missing metadata fails closed.
-9. Role survives compiler, report, DTO and serialisation paths.
-10. Hepatocellular and cholestatic authority groups do not suppress or duplicate one another incorrectly.
-11. AST and bilirubin gain no independent authority.
-12. ALP/GGT compiled content remains unchanged.
-13. ARCH-CONV-C manifest hashes are valid.
-14. Frontend remains render-only and unchanged unless DTO typing alone was explicitly required.
-15. Source and output hashes reproduce exactly.
-16. Repeated and reverse-input runs are deterministic.
-17. Full-suite comparison shows zero new ARCH-CONV-E-attributable failures.
-
-If the full suite has baseline failures, compare exact node IDs against an isolated worktree at the baseline commit. Classify shared, resolved, newly introduced and environmental/non-comparable outcomes.
-
-STOP for independent Head of Architecture approval.
-
-Do not run Automation Bus finish before STOP C approval.
-
-# Verification
-
-At minimum run:
-
-- canonical investigation-spec validation;
-- relevant Knowledge Bus package validators;
-- identity-index validator;
-- compiled WHY authority gate;
-- focused ARCH-CONV-C hash/authority tests;
-- focused ARCH-CONV-D identity tests;
-- new ARCH-CONV-E ALT authority tests;
-- combined ARCH-CONV-B/C/E authority suites;
-- collision-policy tests;
-- clinician-report and DTO role-propagation tests;
-- default golden-panel semantic comparison;
-- full backend suite with baseline comparison if failures exist;
-- lint/type checks for touched code;
-- repository hygiene and stash checks.
-
-Do not claim PASS from truncated output. Preserve full command output or exact test-node extracts where needed.
-
-# Post-Implementation Closure Protocol
-
-After independent STOP C approval:
-
-1. Run and report:
-
-```text
-git branch --show-current
-git status --short
-git log --oneline -n 5
-git diff --name-only
-git diff --cached --name-only
-git stash list
-```
-
-2. Classify all tracked, staged, untracked, tooling, out-of-scope and stash items.
-3. Confirm branch and diff boundaries.
-4. Run the required Automation Bus gate.
-5. Run:
-
-```text
-python backend/scripts/run_work_package.py finish
-```
-
-only after gate PASS.
-6. Commit kernel-generated `COMPLETE` status only in accordance with Automation Bus SOP v1.3.1.
-7. Return final gate evidence, kernel status, closure audit and merge-readiness report.
-8. Do not merge without explicit human merge authority.
-
-# Completion criteria
-
-ARCH-CONV-E is complete only when:
-
-- canonical ALT identity/source closure is preserved;
-- Gate 1 and Gate 2 are recorded;
-- `signal_alt_high` owns ratified compiled ALT WHY authority;
-- legacy ALT WHY ownership is retired or retained exactly as ratified;
-- no duplicate ALT user-facing authority remains;
-- thresholds are governed exactly as ratified;
-- hepatocellular collision policy is explicit and deterministic;
-- AST, bilirubin and ALP/GGT boundaries hold;
-- ARCH-CONV-C manifest hashes validate;
-- STOP C proves runtime safety and zero attributable regressions;
-- Automation Bus finish passes;
-- independent audit recommends merge;
-- explicit human merge authority is given.
+If a locked schema prevents faithful representation of a required canonical field, STOP with the exact package, asset path, schema path and validator error. Do not invent a replacement contract.

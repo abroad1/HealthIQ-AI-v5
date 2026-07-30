@@ -1,0 +1,103 @@
+library:
+  package_id: KBP-4832
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: ARCH-CONV-E — ALT High R-Value Mixed Biochemical Pattern
+  description: Governed package asset translated from inv_alt_high_r_value_mixed_biochemical_pattern in
+    knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json.
+    Asset construction does not activate runtime authority.
+signals:
+- signal_id: signal_alt_high
+  name: ALT High R-Value Mixed Biochemical Pattern
+  description: A mixed biochemical pattern reflects proportional contribution from ALT and ALP when both
+    are interpreted relative to lab-provided upper reference limits; it does not diagnose obstruction
+    or cause.
+  system: hepatic
+  primary_metric: alt
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: alp
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: ALP elevation alongside ALT is required to support a mixed ALT/ALP biochemical pattern.
+  - biomarker_id: ggt
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Raised GGT supports hepatic or biliary source for an ALP component but is not disease-specific.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: severity_marker
+    availability: common
+    rationale: Raised bilirubin adds excretory and severity context but does not itself establish obstruction
+      or DILI.
+  - biomarker_id: creatine_kinase
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: CK helps assess whether the aminotransferase component could be muscle-related.
+  - biomarker_id: r_value_alt_alp
+    expected_direction: any
+    role: differential_marker
+    availability: optional
+    rationale: A derived R-value between 2 and 5 supports a mixed biochemical pattern when ALT and ALP
+      upper reference limits are available.
+  dependencies:
+    biomarkers:
+    - alt
+    - alp
+    - ggt
+    - bilirubin
+    - creatine_kinase
+    derived_metrics:
+    - r_value_alt_alp
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds: []
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_mixed_pattern_with_bilirubin_high
+    resulting_state: at_risk
+    description: Escalate cautiously when a mixed biochemical pattern is accompanied by raised bilirubin,
+      because bilirubin adds severity or excretory context.
+    conditions:
+    - metric_id: bilirubin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_fda_dili_guidance_2009
+    - source_bsg_abnormal_liver_tests_2017
+  output:
+    signal_value: alt
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alt
+    supporting_markers:
+    - alp
+    - ggt
+    - bilirubin
+    - creatine_kinase
+    - r_value_alt_alp
+  explanation:
+    mechanism: ALT and ALP represent different enzyme axes, and a mixed pattern means neither aminotransferase
+      nor ALP predominance alone adequately describes the biochemical picture.
+    biological_pathway: The ALT/ALP relationship may reflect overlapping aminotransferase and cholestatic
+      or ALP-source signals, but GGT and clinical context are needed before liver/biliary confidence is
+      high.
+    interpretation: HealthIQ may describe a mixed biochemical pattern when the R-value is between 2 and
+      5, while avoiding claims of obstruction, DILI or simultaneous tissue injury.
+    implications: A mixed pattern can change which clinician follow-up questions are relevant, especially
+      medication history, bilirubin trajectory, GGT and imaging context, but it remains non-diagnostic.
+    supporting_marker_roles: ALP and derived R-value define the mixed relationship; GGT supports hepatic-source
+      ALP; bilirubin adds severity context; CK helps prevent over-attribution to liver.

@@ -4,8 +4,10 @@ ARCH-CONV-PKG2 — canonical package runtime eligibility (launch-critical cohort
 Production reachability for launch-critical packages (pkg_kb47_*) requires
 acceptable explicit lineage (EXPLICIT_SPEC or COMPILED_MANIFEST).
 
-Non-launch-critical packages are out of Package 2 scope and remain loadable
-under existing behaviour.
+ARCH-CONV-E — non-launch-critical packages are production-reachable only when they are
+explicitly activated in the governed runtime activation register. Presence on disk under
+``knowledge_bus/packages/`` is promotion, not activation, so an unregistered package stays
+ELIGIBILITY_OUT_OF_COHORT and does not load in production.
 """
 
 from __future__ import annotations
@@ -16,6 +18,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import yaml
 
+from core.knowledge.package_activation_register_v1 import is_package_runtime_activated
 from core.knowledge.provenance_status_v1 import (
     classify_package_provenance_status,
     is_beta_eligible_explicit_lineage,
@@ -57,12 +60,21 @@ def classify_package_runtime_eligibility(
     manifest: Optional[Dict[str, Any]] = None,
     allow_launch_critical_blocked: bool = False,
     investigation_specs_root: Optional[Path] = None,
+    enforce_activation_register: bool = True,
 ) -> Tuple[str, str]:
     """
     Return (eligibility, provenance_status).
 
     Fail closed for launch-critical packages without acceptable explicit lineage,
     unless an explicit test/harness opt-in is set.
+
+    Non-launch-critical packages fail closed to ELIGIBILITY_OUT_OF_COHORT unless the
+    governed activation register explicitly activates them. The launch-critical test
+    opt-in does not widen that boundary.
+
+    ``enforce_activation_register`` is False only for signal libraries loaded from
+    outside the governed estate at ``knowledge_bus/packages/``, which the register does
+    not describe.
     """
     pid = str(package_id or "").strip()
     if not pid:
@@ -75,6 +87,8 @@ def classify_package_runtime_eligibility(
     )
 
     if not is_launch_critical_package_id(pid):
+        if not enforce_activation_register or is_package_runtime_activated(pid):
+            return ELIGIBILITY_PRODUCTION_REACHABLE, status
         return ELIGIBILITY_OUT_OF_COHORT, status
 
     if is_beta_eligible_explicit_lineage(status):
@@ -92,16 +106,17 @@ def is_production_reachable(
     manifest: Optional[Dict[str, Any]] = None,
     allow_launch_critical_blocked: bool = False,
     investigation_specs_root: Optional[Path] = None,
+    enforce_activation_register: bool = True,
 ) -> bool:
     eligibility, _status = classify_package_runtime_eligibility(
         package_id=package_id,
         manifest=manifest,
         allow_launch_critical_blocked=allow_launch_critical_blocked,
         investigation_specs_root=investigation_specs_root,
+        enforce_activation_register=enforce_activation_register,
     )
     return eligibility in {
         ELIGIBILITY_PRODUCTION_REACHABLE,
-        ELIGIBILITY_OUT_OF_COHORT,
         ELIGIBILITY_TEST_ONLY_OPT_IN,
     }
 

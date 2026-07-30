@@ -1,0 +1,388 @@
+# Governed runtime activation register (ARCH-CONV-E).
+#
+# Placement of a package under knowledge_bus/packages/ does NOT activate it. A
+# non-launch-critical frame is production-reachable only if its activation_key is
+# listed in activated_frames below. Launch-critical (pkg_kb47_*) packages keep their
+# own lineage-based eligibility contract and are deliberately out of this register.
+register_id: package_runtime_activation_register_v1
+version: 1.0.0
+work_id: ARCH-CONV-E
+authority_scope: non_launch_critical_packages
+activation_unit: activation_key
+activation_key_contract: "signal_id::source_spec_id (ADR-RT-002)"
+derivation: >-
+  Baseline-parity snapshot of the non-launch-critical frames loaded by SignalRegistry
+  immediately before the ARCH-CONV-E runtime eligibility boundary fix, minus every frame
+  contributed by the six non-promoted ARCH-CONV-E ALT packages. Adding a package to the
+  repository does not add it here; explicit promotion does.
+promotion_contract: >-
+  A new or regenerated frame stays inert until a governed promotion work package appends
+  its activation_key. Changing a package source_spec_id changes its activation_key and
+  therefore requires re-promotion.
+withheld_reason_arch_conv_e: >-
+  Built and validated from canonical Pass 3 research under ARCH-CONV-E, but not promoted
+  and not runtime-activated. Three of the six additionally depend on an unimplemented
+  r_value_alt_alp compute asset.
+
+withheld_frames_arch_conv_e:
+  - activation_key: signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context
+    package_id: pkg_kb52c_alt_high_bilirubin_severity_context
+  - activation_key: signal_alt_high::inv_alt_high_metabolic_masld_context
+    package_id: pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
+  - activation_key: signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
+    package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
+  - activation_key: signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
+    package_id: pkg_kb52c_alt_high_cholestatic_alp_predominant_context
+  - activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+    package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
+  - activation_key: signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
+    package_id: pkg_kb52c_alt_high_mixed_biochemical_pattern
+
+activated_frame_count: 173
+activated_frames:
+  - activation_key: signal_active_b12_deficiency::inv_active_b12_low_deficiency
+    package_id: pkg_kb45_active_b12_low_deficiency
+  - activation_key: signal_albumin_low::inv_albumin_low_inflammatory_hypoalbuminemia
+    package_id: pkg_kb52c_albumin_low_inflammatory_hypoalbuminemia
+  - activation_key: signal_albumin_low::inv_albumin_low_nutritional
+    package_id: pkg_s24_albumin_low_nutritional
+  - activation_key: signal_albumin_low::inv_albumin_low_protein_loss_or_reduced_synthesis
+    package_id: pkg_kb52c_albumin_low_protein_loss_or_reduced_synthesis
+  - activation_key: signal_alp_high::inv_alp_high_bone_biliary
+    package_id: pkg_s24_alp_high_bone_biliary
+  - activation_key: signal_alp_high::inv_alp_high_cholestatic_pattern
+    package_id: pkg_kb52c_alp_high_cholestatic_pattern
+  - activation_key: signal_alp_low::inv_alp_low_hypophosphatasia_pattern
+    package_id: pkg_kb56_alp_low_hypophosphatasia_pattern
+  - activation_key: signal_alp_low::inv_alp_low_nutrient_or_cofactor_deficiency
+    package_id: pkg_kb56_alp_low_nutrient_or_cofactor_deficiency
+  - activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
+    package_id: pkg_s24_alt_high_hepatocellular_injury
+  - activation_key: signal_apoa1_cardio_risk::inv_apoa1_low_cardio_risk
+    package_id: pkg_kb45_apoa1_low_cardio_risk
+  - activation_key: signal_apoa1_low::inv_apoa1_low_atherogenic_hdl_deficiency
+    package_id: pkg_kb52c_apoa1_low_atherogenic_hdl_deficiency
+  - activation_key: signal_apoa1_low::inv_apoa1_low_severe_primary_hdl_deficiency_pattern
+    package_id: pkg_kb52c_apoa1_low_severe_primary_hdl_deficiency_pattern
+  - activation_key: signal_apob_apoa1_ratio_high::inv_apob_apoa1_ratio_high_atherogenic_particle_imbalance
+    package_id: pkg_kb52c_apob_apoa1_ratio_high_atherogenic_particle_imbalance
+  - activation_key: signal_apob_apoa1_ratio_high::inv_apob_apoa1_ratio_high_insulin_resistance_atherogenic_dyslipidemia
+    package_id: pkg_kb52c_apob_apoa1_ratio_high_insulin_resistance_atherogenic_dyslipidemia
+  - activation_key: signal_apob_atherogenic::inv_apob_high_atherogenic
+    package_id: pkg_kb45_apob_high_atherogenic
+  - activation_key: signal_apob_high::inv_apob_high_atherogenic_particle_excess
+    package_id: pkg_kb52c_apob_high_atherogenic_particle_excess
+  - activation_key: signal_apob_high::inv_apob_high_familial_combined_hyperlipidemia_pattern
+    package_id: pkg_kb52c_apob_high_familial_combined_hyperlipidemia_pattern
+  - activation_key: signal_apob_low::inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern
+    package_id: pkg_kb52c_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern
+  - activation_key: signal_b12_deficiency_context::inv_deficiency_context
+    package_id: pkg_b12_deficiency_context
+  - activation_key: signal_basophil_pct_high::inv_basophil_pct_high_myeloproliferative_signal
+    package_id: pkg_kb52c_basophil_pct_high_myeloproliferative_signal
+  - activation_key: signal_basophil_pct_high::inv_basophil_pct_high_type2_hypersensitivity_inflammation
+    package_id: pkg_kb52c_basophil_pct_high_type2_hypersensitivity_inflammation
+  - activation_key: signal_basophil_pct_low::inv_basophil_pct_low_glucocorticoid_or_acute_stress_pattern
+    package_id: pkg_kb52c_basophil_pct_low_glucocorticoid_or_acute_stress_pattern
+  - activation_key: signal_basophilia_abs::inv_basophils_abs_high_basophilia
+    package_id: pkg_kb45_basophils_abs_high_basophilia
+  - activation_key: signal_basophilia_pct::inv_basophil_pct_high_basophilia
+    package_id: pkg_kb45_basophil_pct_high_basophilia
+  - activation_key: signal_basophils_abs_high::inv_basophils_abs_high_myeloproliferative_signal
+    package_id: pkg_kb52c_basophils_abs_high_myeloproliferative_signal
+  - activation_key: signal_basophils_abs_high::inv_basophils_abs_high_type2_hypersensitivity_inflammation
+    package_id: pkg_kb52c_basophils_abs_high_type2_hypersensitivity_inflammation
+  - activation_key: signal_basophils_abs_low::inv_basophils_abs_low_glucocorticoid_or_acute_stress_pattern
+    package_id: pkg_kb52c_basophils_abs_low_glucocorticoid_or_acute_stress_pattern
+  - activation_key: signal_bilirubin_high::inv_bilirubin_high_hepatobiliary_excretion_impairment
+    package_id: pkg_kb52c_bilirubin_high_hepatobiliary_excretion_impairment
+  - activation_key: signal_calcium_high::inv_calcium_high_endocrine
+    package_id: pkg_s24_calcium_high_endocrine
+  - activation_key: signal_cortisol_high::inv_cortisol_high_hypercortisolism
+    package_id: pkg_kb52c_cortisol_high_hypercortisolism
+  - activation_key: signal_cortisol_low::inv_cortisol_low_adrenal_insufficiency
+    package_id: pkg_kb52c_cortisol_low_adrenal_insufficiency
+  - activation_key: signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration
+    package_id: pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+  - activation_key: signal_creatinine_high::inv_creatinine_high_renal
+    package_id: pkg_s24_creatinine_high_renal
+  - activation_key: signal_creatinine_low::inv_creatinine_low_low_muscle_mass_or_low_generation
+    package_id: pkg_kb52c_creatinine_low_low_muscle_mass_or_low_generation
+  - activation_key: signal_crp_high::inv_crp_high_inflammation
+    package_id: pkg_s24_crp_high_inflammation
+  - activation_key: signal_ferritin_high::inv_ferritin_high_inflammatory_hyperferritinemia
+    package_id: pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia
+  - activation_key: signal_ferritin_high::inv_ferritin_high_iron_overload_context
+    package_id: pkg_kb52c_ferritin_high_iron_overload_context
+  - activation_key: signal_ferritin_high::inv_ferritin_high_overload
+    package_id: pkg_s24_ferritin_high_overload
+  - activation_key: signal_ferritin_low::inv_ferritin_low_iron_store_depletion
+    package_id: pkg_kb52c_ferritin_low_iron_store_depletion
+  - activation_key: signal_ferritin_low::inv_ferritin_spec
+    package_id: pkg_s24_ferritin_low_iron_deficiency
+  - activation_key: signal_folate_high::inv_folate_high_supplementation_or_excess_exposure
+    package_id: pkg_kb52c_folate_high_supplementation_or_excess_exposure
+  - activation_key: signal_folate_low::inv_folate_low_deficiency
+    package_id: pkg_s24_folate_low_deficiency
+  - activation_key: signal_folate_low::inv_folate_low_folate_deficiency
+    package_id: pkg_kb52c_folate_low_folate_deficiency
+  - activation_key: signal_fsh_high::inv_fsh_high_primary_gonadal_failure
+    package_id: pkg_kb52c_fsh_high_primary_gonadal_failure
+  - activation_key: signal_fsh_low::inv_fsh_low_hypogonadotropic_suppression
+    package_id: pkg_kb52c_fsh_low_hypogonadotropic_suppression
+  - activation_key: signal_ggt_high::inv_ggt_high_alcohol_or_enzyme_induction_context
+    package_id: pkg_kb52c_ggt_high_alcohol_or_enzyme_induction_context
+  - activation_key: signal_ggt_high::inv_ggt_high_hepatic
+    package_id: pkg_s24_ggt_high_hepatic
+  - activation_key: signal_ggt_high::inv_ggt_high_hepatobiliary_cholestatic_context
+    package_id: pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context
+  - activation_key: signal_globulin_high::inv_globulin_high_monoclonal_gammopathy_signal
+    package_id: pkg_kb56_globulin_high_monoclonal_gammopathy_signal
+  - activation_key: signal_globulin_high::inv_globulin_high_polyclonal_inflammatory_hypergammaglobulinemia
+    package_id: pkg_kb56_globulin_high_polyclonal_inflammatory_hypergammaglobulinemia
+  - activation_key: signal_globulin_low::inv_globulin_low_hypogammaglobulinemia_or_protein_loss
+    package_id: pkg_kb56_globulin_low_hypogammaglobulinemia_or_protein_loss
+  - activation_key: signal_glucose_dysregulation_hba1c_context::inv_dysregulation_hba1c_context
+    package_id: pkg_glucose_dysregulation_hba1c_context
+  - activation_key: signal_hba1c_high::inv_hba1c_high_diabetes_range_hyperglycemia
+    package_id: pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia
+  - activation_key: signal_hba1c_high::inv_hba1c_high_glycaemia
+    package_id: pkg_s24_hba1c_high_glycaemia
+  - activation_key: signal_hba1c_low::inv_hba1c_low_shortened_erythrocyte_lifespan_context
+    package_id: pkg_kb52c_hba1c_low_shortened_erythrocyte_lifespan_context
+  - activation_key: signal_hba1c_pct_high::inv_hba1c_pct_high_chronic_hyperglycemia_diabetes
+    package_id: pkg_kb52d_hba1c_pct_high_chronic_hyperglycemia_diabetes
+  - activation_key: signal_hba1c_pct_high::inv_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency
+    package_id: pkg_kb52d_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency
+  - activation_key: signal_hdl_cholesterol_high::inv_hdl_high_cardiovascular
+    package_id: pkg_s24_hdl_high_cardiovascular
+  - activation_key: signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular
+    package_id: pkg_s24_hdl_low_cardiovascular
+  - activation_key: signal_hdl_low::inv_hdl_low_atherogenic_dyslipidemia
+    package_id: pkg_kb52c_hdl_low_atherogenic_dyslipidemia
+  - activation_key: signal_hdl_low::inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern
+    package_id: pkg_kb52c_hdl_low_hypertriglyceridemic_insulin_resistance_pattern
+  - activation_key: signal_hematocrit_low::inv_hematocrit_low_anemia_or_hemodilution
+    package_id: pkg_kb52c_hematocrit_low_anemia_or_hemodilution
+  - activation_key: signal_hemoglobin_low::inv_hgb_low_anemia
+    package_id: pkg_s24_hgb_low_anemia
+  - activation_key: signal_hepatic_alt_context::inv_alt_context
+    package_id: pkg_hepatic_alt_context
+  - activation_key: signal_hepatic_metabolic_stress::KBP-0001
+    package_id: KBP-0001
+  - activation_key: signal_hepatic_metabolic_stress::inv_metabolic_stress
+    package_id: pkg_hepatic_metabolic_stress
+  - activation_key: signal_hgb_low::inv_hgb_low_normocytic_underproduction_context
+    package_id: pkg_kb52c_hgb_low_normocytic_underproduction_context
+  - activation_key: signal_homocysteine_elevation_context::inv_elevation_context
+    package_id: pkg_homocysteine_elevation_context
+  - activation_key: signal_homocysteine_high::inv_homocysteine_high_b_vitamin_related_methylation_impairment
+    package_id: pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment
+  - activation_key: signal_homocysteine_high::inv_homocysteine_high_renal_clearance_reduction
+    package_id: pkg_kb52c_homocysteine_high_renal_clearance_reduction
+  - activation_key: signal_hyperbilirubinemia::inv_bilirubin_high_hyperbilirubinemia
+    package_id: pkg_kb45_bilirubin_high_hyperbilirubinemia
+  - activation_key: signal_hypercalcemia::inv_corrected_calcium_high_hypercalcemia
+    package_id: pkg_kb45_corrected_calcium_high_hypercalcemia
+  - activation_key: signal_hyperchloremia::inv_chloride_high_hyperchloremia
+    package_id: pkg_kb45_chloride_high_hyperchloremia
+  - activation_key: signal_hypercortisolism::inv_cortisol_high_hypercortisolism
+    package_id: pkg_kb45_cortisol_high_hypercortisolism
+  - activation_key: signal_inflammation_crp_context::inv_crp_context
+    package_id: pkg_inflammation_crp_context
+  - activation_key: signal_insulin_resistance::KBP-0001
+    package_id: KBP-0001
+  - activation_key: signal_insulin_resistance::inv_resistance
+    package_id: pkg_insulin_resistance
+  - activation_key: signal_iron_deficiency_context::inv_deficiency_context
+    package_id: pkg_iron_deficiency_context
+  - activation_key: signal_iron_high::inv_iron_high_iron_overload_context
+    package_id: pkg_kb52c_iron_high_iron_overload_context
+  - activation_key: signal_iron_low::inv_iron_low_absolute_iron_deficiency
+    package_id: pkg_kb52c_iron_low_absolute_iron_deficiency
+  - activation_key: signal_iron_low::inv_iron_low_functional_iron_restriction_inflammation
+    package_id: pkg_kb52c_iron_low_functional_iron_restriction_inflammation
+  - activation_key: signal_iron_overload_context::inv_overload_context
+    package_id: pkg_iron_overload_context
+  - activation_key: signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia
+    package_id: pkg_s24_ldl_high_dyslipidaemia
+  - activation_key: signal_ldl_high::inv_ldl_high_atherogenic_ldl_burden
+    package_id: pkg_kb52c_ldl_high_atherogenic_ldl_burden
+  - activation_key: signal_ldl_high::inv_ldl_high_familial_hypercholesterolemia_context
+    package_id: pkg_kb52c_ldl_high_familial_hypercholesterolemia_context
+  - activation_key: signal_lh_high::inv_lh_high_primary_gonadal_feedback_loss
+    package_id: pkg_kb52c_lh_high_primary_gonadal_feedback_loss
+  - activation_key: signal_lh_low::inv_lh_low_central_hypogonadotropic_pattern
+    package_id: pkg_kb52c_lh_low_central_hypogonadotropic_pattern
+  - activation_key: signal_lipid_imbalance::inv_apob_apoa1_ratio_high_imbalance
+    package_id: pkg_kb45_apob_apoa1_ratio_high_imbalance
+  - activation_key: signal_lipid_transport_dysfunction::KBP-0001
+    package_id: KBP-0001
+  - activation_key: signal_lipid_transport_dysfunction::inv_transport
+    package_id: pkg_lipid_transport
+  - activation_key: signal_lipoprotein_a_high::inv_lipoprotein_a_high_atherosclerotic_cardiovascular_risk
+    package_id: pkg_kb52c_lipoprotein_a_high_atherosclerotic_cardiovascular_risk
+  - activation_key: signal_lipoprotein_a_high::inv_lipoprotein_a_high_calcific_aortic_valve_risk
+    package_id: pkg_kb52c_lipoprotein_a_high_calcific_aortic_valve_risk
+  - activation_key: signal_lymphocyte_pct_high::inv_lymphocyte_pct_high_relative_reactive_lymphocytosis
+    package_id: pkg_kb52c_lymphocyte_pct_high_relative_reactive_lymphocytosis
+  - activation_key: signal_lymphocyte_pct_low::inv_lymphocyte_pct_low_relative_lymphopenic_shift
+    package_id: pkg_kb52c_lymphocyte_pct_low_relative_lymphopenic_shift
+  - activation_key: signal_lymphocytes_high::inv_lym_high_lymphocytosis
+    package_id: pkg_s24_lym_high_lymphocytosis
+  - activation_key: signal_magnesium_high::inv_magnesium_high_hypermagnesemia_context
+    package_id: pkg_kb52c_magnesium_high_hypermagnesemia_context
+  - activation_key: signal_magnesium_high::inv_magnesium_high_reduced_excretion_or_excess_load
+    package_id: pkg_kb52c_magnesium_high_reduced_excretion_or_excess_load
+  - activation_key: signal_magnesium_low::inv_magnesium_low_hypomagnesemia
+    package_id: pkg_kb52c_magnesium_low_hypomagnesemia
+  - activation_key: signal_mch_low::inv_mch_low_iron_restricted_erythropoiesis
+    package_id: pkg_kb58_mch_low_iron_restricted_erythropoiesis
+  - activation_key: signal_mch_low::inv_mch_low_thalassemia_trait_pattern
+    package_id: pkg_kb58_mch_low_thalassemia_trait_pattern
+  - activation_key: signal_mchc_high::inv_mchc_high_spherocytic_hemolysis_pattern
+    package_id: pkg_kb58_mchc_high_spherocytic_hemolysis_pattern
+  - activation_key: signal_mchc_low::inv_mchc_low_hypochromic_iron_restriction
+    package_id: pkg_kb58_mchc_low_hypochromic_iron_restriction
+  - activation_key: signal_mcv_high::inv_mcv_high_macrocytosis
+    package_id: pkg_s24_mcv_high_macrocytosis
+  - activation_key: signal_mcv_high::inv_mcv_high_megaloblastic_macrocytosis
+    package_id: pkg_kb52c_mcv_high_megaloblastic_macrocytosis
+  - activation_key: signal_mcv_high::inv_mcv_high_nonmegaloblastic_macrocytosis
+    package_id: pkg_kb52c_mcv_high_nonmegaloblastic_macrocytosis
+  - activation_key: signal_monocyte_pct_high::inv_monocyte_pct_high_reactive_monocyte_predominance
+    package_id: pkg_kb58_monocyte_pct_high_reactive_monocyte_predominance
+  - activation_key: signal_monocyte_pct_low::inv_monocyte_pct_low_relative_or_true_monocytopenia
+    package_id: pkg_kb58_monocyte_pct_low_relative_or_true_monocytopenia
+  - activation_key: signal_monocytes_abs_high::inv_monocytes_abs_high_clonal_monocytosis_suspicion
+    package_id: pkg_kb58_monocytes_abs_high_clonal_monocytosis_suspicion
+  - activation_key: signal_monocytes_abs_high::inv_monocytes_abs_high_reactive_monocytosis
+    package_id: pkg_kb58_monocytes_abs_high_reactive_monocytosis
+  - activation_key: signal_monocytes_abs_low::inv_monocytes_abs_low_monocytopenia_marrow_or_glucocorticoid_context
+    package_id: pkg_kb58_monocytes_abs_low_monocytopenia_marrow_or_glucocorticoid_context
+  - activation_key: signal_mpv_high::inv_mpv_high_increased_platelet_turnover_pattern
+    package_id: pkg_kb58_mpv_high_increased_platelet_turnover_pattern
+  - activation_key: signal_mpv_low::inv_mpv_low_reduced_thrombopoietic_output_pattern
+    package_id: pkg_kb58_mpv_low_reduced_thrombopoietic_output_pattern
+  - activation_key: signal_neutrophil_pct_high::inv_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+    package_id: pkg_kb58_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+  - activation_key: signal_neutrophil_pct_low::inv_neutrophil_pct_low_relative_neutrophil_depletion_pattern
+    package_id: pkg_kb58_neutrophil_pct_low_relative_neutrophil_depletion_pattern
+  - activation_key: signal_neutrophils_high::inv_neutrophils_high_neutrophilia
+    package_id: pkg_s24_neutrophils_high_neutrophilia
+  - activation_key: signal_neutrophils_low::inv_neutrophils_low_neutropenia
+    package_id: pkg_s24_neutrophils_low_neutropenia
+  - activation_key: signal_non_hdl_high::inv_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden
+    package_id: pkg_kb52d_non_hdl_cholesterol_high_atherogenic_lipoprotein_burden
+  - activation_key: signal_non_hdl_low::inv_non_hdl_cholesterol_low_reduced_atherogenic_lipoprotein_pool
+    package_id: pkg_kb52d_non_hdl_cholesterol_low_reduced_atherogenic_lipoprotein_pool
+  - activation_key: signal_oxygen_transport_capacity::KBP-0001
+    package_id: KBP-0001
+  - activation_key: signal_pdw_high::inv_pdw_high_platelet_activation_pattern
+    package_id: pkg_kb58_pdw_high_platelet_activation_pattern
+  - activation_key: signal_platelets_high::inv_plt_high_thrombocytosis
+    package_id: pkg_s24_plt_high_thrombocytosis
+  - activation_key: signal_platelets_low::inv_plt_low_thrombocytopenia
+    package_id: pkg_s24_plt_low_thrombocytopenia
+  - activation_key: signal_plt_high::inv_plt_high_clonal_myeloproliferative_thrombocytosis
+    package_id: pkg_kb52c_plt_high_clonal_myeloproliferative_thrombocytosis
+  - activation_key: signal_plt_high::inv_plt_high_reactive_thrombocytosis
+    package_id: pkg_kb52c_plt_high_reactive_thrombocytosis
+  - activation_key: signal_plt_low::inv_plt_low_marrow_suppression_pattern
+    package_id: pkg_kb52c_plt_low_marrow_suppression_pattern
+  - activation_key: signal_plt_low::inv_plt_low_peripheral_consumption_or_immune_destruction
+    package_id: pkg_kb52c_plt_low_peripheral_consumption_or_immune_destruction
+  - activation_key: signal_rbc_high::inv_rbc_high_erythrocytosis_pattern
+    package_id: pkg_kb58_rbc_high_erythrocytosis_pattern
+  - activation_key: signal_rbc_high::inv_rbc_high_microcytic_high_count_thalassemia_trait_pattern
+    package_id: pkg_kb58_rbc_high_microcytic_high_count_thalassemia_trait_pattern
+  - activation_key: signal_rbc_low::inv_rbc_low_iron_restricted_anemia_pattern
+    package_id: pkg_kb58_rbc_low_iron_restricted_anemia_pattern
+  - activation_key: signal_rbc_low::inv_rbc_low_regenerative_or_hemolytic_anemia_pattern
+    package_id: pkg_kb58_rbc_low_regenerative_or_hemolytic_anemia_pattern
+  - activation_key: signal_rdw_cv_high::inv_rdw_cv_high_iron_deficiency_anisocytosis
+    package_id: pkg_kb58_rdw_cv_high_iron_deficiency_anisocytosis
+  - activation_key: signal_rdw_cv_high::inv_rdw_cv_high_mixed_red_cell_population_pattern
+    package_id: pkg_kb58_rdw_cv_high_mixed_red_cell_population_pattern
+  - activation_key: signal_rdw_sd_high::inv_rdw_sd_high_iron_deficiency_anisocytosis
+    package_id: pkg_kb58_rdw_sd_high_iron_deficiency_anisocytosis
+  - activation_key: signal_rdw_sd_high::inv_rdw_sd_high_regenerative_or_mixed_population_pattern
+    package_id: pkg_kb58_rdw_sd_high_regenerative_or_mixed_population_pattern
+  - activation_key: signal_renal_metabolic_stress::KBP-0001
+    package_id: KBP-0001
+  - activation_key: signal_systemic_inflammation::KBP-0001
+    package_id: KBP-0001
+  - activation_key: signal_systemic_inflammation::inv_inflammation
+    package_id: pkg_chronic_inflammation
+  - activation_key: signal_tc_hdl_ratio_high::inv_tc_hdl_ratio_high_atherogenic_discordance_pattern
+    package_id: pkg_kb60_tc_hdl_ratio_high_atherogenic_discordance_pattern
+  - activation_key: signal_tc_hdl_ratio_low::inv_tc_hdl_ratio_low_hdl_dominant_pattern
+    package_id: pkg_kb60_tc_hdl_ratio_low_hdl_dominant_pattern
+  - activation_key: signal_testosterone_free_testosterone_ratio_high::inv_testosterone_free_testosterone_ratio_high_high_binding_low_free_fraction
+    package_id: pkg_kb60_testosterone_free_testosterone_ratio_high_high_binding_low_free_fraction
+  - activation_key: signal_testosterone_free_testosterone_ratio_low::inv_testosterone_free_testosterone_ratio_low_low_binding_high_free_fraction
+    package_id: pkg_kb60_testosterone_free_testosterone_ratio_low_low_binding_high_free_fraction
+  - activation_key: signal_tgab_high::inv_tgab_high_autoimmune_hypothyroid_pattern
+    package_id: pkg_kb59_tgab_high_autoimmune_hypothyroid_pattern
+  - activation_key: signal_tgab_high::inv_tgab_high_euthyroid_autoimmune_risk
+    package_id: pkg_kb59_tgab_high_euthyroid_autoimmune_risk
+  - activation_key: signal_thyroid_tsh_context::inv_tsh_context
+    package_id: pkg_thyroid_tsh_context
+  - activation_key: signal_total_cholesterol_high::inv_total_cholesterol_high_atherogenic_hypercholesterolemia
+    package_id: pkg_kb60_total_cholesterol_high_atherogenic_hypercholesterolemia
+  - activation_key: signal_total_cholesterol_high::inv_total_cholesterol_high_hdl_dominant_elevation_pattern
+    package_id: pkg_kb60_total_cholesterol_high_hdl_dominant_elevation_pattern
+  - activation_key: signal_total_cholesterol_low::inv_total_cholesterol_low_hypocholesterolemia_context
+    package_id: pkg_kb60_total_cholesterol_low_hypocholesterolemia_context
+  - activation_key: signal_tpo_ab_high::inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+    package_id: pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern
+  - activation_key: signal_tpo_ab_high::inv_tpo_ab_high_euthyroid_autoimmune_risk
+    package_id: pkg_kb59_tpo_ab_high_euthyroid_autoimmune_risk
+  - activation_key: signal_transferrin_high::inv_transferrin_high_iron_deficiency_transport_upregulation
+    package_id: pkg_kb61_transferrin_high_iron_deficiency_transport_upregulation
+  - activation_key: signal_transferrin_low::inv_transferrin_low_inflammatory_negative_acute_phase_suppression
+    package_id: pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression
+  - activation_key: signal_transferrin_low::inv_transferrin_low_visceral_protein_depletion_or_synthetic_failure
+    package_id: pkg_kb61_transferrin_low_visceral_protein_depletion_or_synthetic_failure
+  - activation_key: signal_triglycerides_high::inv_triglycerides_high_insulin_resistant_hypertriglyceridemia
+    package_id: pkg_kb52c_triglycerides_high_insulin_resistant_hypertriglyceridemia
+  - activation_key: signal_triglycerides_high::inv_triglycerides_high_metabolic
+    package_id: pkg_s24_triglycerides_high_metabolic
+  - activation_key: signal_tsh_high::inv_tsh_high_hypothyroidism
+    package_id: pkg_s24_tsh_high_hypothyroidism
+  - activation_key: signal_tsh_high::inv_tsh_high_primary_hypothyroid_pattern
+    package_id: pkg_kb52c_tsh_high_primary_hypothyroid_pattern
+  - activation_key: signal_tsh_low::inv_tsh_low_hyperthyroidism
+    package_id: pkg_s24_tsh_low_hyperthyroidism
+  - activation_key: signal_tsh_low::inv_tsh_low_thyrotoxic_pattern
+    package_id: pkg_kb52c_tsh_low_thyrotoxic_pattern
+  - activation_key: signal_tyg_index_high::inv_tyg_index_high_insulin_resistance_pattern
+    package_id: pkg_kb52c_tyg_index_high_insulin_resistance_pattern
+  - activation_key: signal_urate_high::inv_urate_high_gout_crystal_deposition_risk
+    package_id: pkg_kb52c_urate_high_gout_crystal_deposition_risk
+  - activation_key: signal_urate_high::inv_uric_acid_high_metabolic
+    package_id: pkg_s24_urate_high_metabolic
+  - activation_key: signal_urate_low::inv_urate_low_reduced_urate_pool_or_renal_loss
+    package_id: pkg_kb52c_urate_low_reduced_urate_pool_or_renal_loss
+  - activation_key: signal_urea_high::inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+    package_id: pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load
+  - activation_key: signal_urea_high::inv_urea_high_renal
+    package_id: pkg_s24_urea_high_renal
+  - activation_key: signal_urea_low::inv_urea_low_low_protein_or_reduced_urea_cycle_input
+    package_id: pkg_kb52c_urea_low_low_protein_or_reduced_urea_cycle_input
+  - activation_key: signal_vascular_inflammatory_stress::KBP-0001
+    package_id: KBP-0001
+  - activation_key: signal_vitamin_b12_high::inv_vitamin_b12_high_supplementation_or_secondary_elevation
+    package_id: pkg_kb52c_vitamin_b12_high_supplementation_or_secondary_elevation
+  - activation_key: signal_vitamin_b12_low::inv_vitamin_b12_low_b12_deficiency_context
+    package_id: pkg_kb52c_vitamin_b12_low_b12_deficiency_context
+  - activation_key: signal_vitamin_b12_low::inv_vitamin_b12_spec
+    package_id: pkg_s24_vitamin_b12_low_deficiency
+  - activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
+    package_id: pkg_s24_vitamin_d_low_deficiency
+  - activation_key: signal_wbc_high::inv_wbc_high_leukocytosis
+    package_id: pkg_s24_wbc_high_leukocytosis
+  - activation_key: signal_wbc_high::inv_wbc_high_possible_clonal_leukocyte_proliferation
+    package_id: pkg_kb52c_wbc_high_possible_clonal_leukocyte_proliferation
+  - activation_key: signal_wbc_low::inv_wbc_low_leukopenia
+    package_id: pkg_s24_wbc_low_leukopenia

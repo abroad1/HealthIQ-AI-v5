@@ -1,0 +1,1489 @@
+[
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_alt_high_r_value_hepatocellular_biochemical_pattern",
+    "signal_id": "signal_alt_high",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "alt",
+      "rationale": "High ALT can support an ALT-predominant biochemical pattern only when interpreted relative to ALP and lab-provided upper reference limits; the pattern must not be treated as a diagnosis or cause attribution.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "alp",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "ALP is required with its lab upper reference limit to calculate the ALT-to-ALP R-value and distinguish ALT-predominant from mixed or ALP-predominant patterns."
+      },
+      {
+        "biomarker_id": "ast",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "AST elevation can corroborate an aminotransferase-predominant biochemical pattern but is less liver-specific than ALT."
+      },
+      {
+        "biomarker_id": "ggt",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "GGT helps assess whether any ALP component is likely hepatic or biliary source, while remaining nonspecific."
+      },
+      {
+        "biomarker_id": "bilirubin",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Bilirubin elevation alongside ALT or AST adds excretory and severity context but does not identify the cause."
+      },
+      {
+        "biomarker_id": "creatine_kinase",
+        "expected_direction": "high",
+        "role": "exclusion_marker",
+        "relationship_kind": "exclusion",
+        "availability": "common",
+        "rationale": "Raised CK can support muscle contribution to aminotransferase elevation and should downgrade a liver-first ALT interpretation."
+      },
+      {
+        "biomarker_id": "r_value_alt_alp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "optional",
+        "rationale": "A high derived ALT-to-ALP R-value supports an ALT-predominant biochemical pattern when ALT and ALP upper reference limits are both available."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_alt_predominant_biochemical_pattern",
+        "rank": 1,
+        "physiological_claim": "High ALT with proportionally lower ALP may support an ALT-predominant biochemical enzyme pattern when the R-value is at least 5 using same-sample ALT and ALP values.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "This classifies the enzyme pattern only and does not confirm hepatocellular damage, hepatitis, DILI, MASLD, alcohol-related disease or prognosis.",
+          "R-value evidence is strongest in suspected DILI classification and is commonly extrapolated to general liver-test patterning."
+        ],
+        "missing_data": {
+          "policy": "Do not classify the R-value pattern if ALT ULN, ALP ULN or same-sample ALT/ALP pairing is unavailable."
+        },
+        "supporting_marker_refs": [
+          "alp",
+          "ast",
+          "ggt",
+          "bilirubin",
+          "creatine_kinase",
+          "r_value_alt_alp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ck_high_muscle_contribution",
+            "marker_reference": "creatine_kinase",
+            "contradiction_rationale": "Raised CK or clear exertional/muscle context can explain aminotransferase elevation and should downgrade liver-first interpretation.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_alp_or_ggt_biliary_component",
+            "marker_reference": "alp",
+            "contradiction_rationale": "A proportionally raised ALP or GGT component redirects away from a purely ALT-predominant pattern toward mixed or ALP-predominant interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_alt_high_general_liver_test_abnormality_context",
+        "rank": 2,
+        "physiological_claim": "High ALT is a liver-enzyme abnormality that requires clinical-context review, previous results and companion liver markers before cause or duration can be inferred.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "ALT magnitude alone is not a direct measure of liver function or prognosis.",
+          "A single commercial panel cannot reliably distinguish acute from chronic elevation."
+        ],
+        "missing_data": {
+          "policy": "If prior results, symptoms and medication/supplement history are missing, avoid cause and duration claims."
+        },
+        "supporting_marker_refs": [
+          "ast",
+          "ggt",
+          "bilirubin",
+          "alp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ast_pattern_inconsistent_with_general_context",
+            "marker_reference": "ast",
+            "contradiction_rationale": "A markedly elevated or disproportionately high AST alongside elevated ALT challenges a routine general liver test abnormality framing and introduces concern for more significant hepatocellular involvement requiring clinical context beyond pattern classification alone.",
+            "contradiction_strength": "moderate"
+          },
+          {
+            "contradiction_id": "ctr_bilirubin_or_synthetic_failure_context",
+            "marker_reference": "bilirubin",
+            "contradiction_rationale": "Raised bilirubin or synthetic-function markers should move wording from routine education to clinician-review context.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_alt_predominant_biochemical_pattern",
+        "hyp_alt_high_general_liver_test_abnormality_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_liver_blood_tests",
+        "rationale": "Repeat liver blood tests help determine whether ALT elevation is transient, persistent, rising or resolving."
+      },
+      {
+        "test_id": "ct_liver_aetiology_screen",
+        "rationale": "Clinical liver aetiology assessment may include viral, autoimmune, iron and metabolic evaluation depending on pattern and context."
+      },
+      {
+        "test_id": "ct_creatine_kinase",
+        "rationale": "CK helps assess whether muscle injury or strenuous exercise contributes to AST or ALT elevation."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_alt_high_with_bilirubin_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate to at-risk wording when raised ALT coincides with raised bilirubin because bilirubin adds excretory and severity context.",
+        "conditions": [
+          {
+            "metric_id": "bilirubin",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_fda_dili_guidance_2009",
+          "source_bsg_abnormal_liver_tests_2017"
+        ]
+      },
+      {
+        "rule_id": "or_alt_high_with_ck_high",
+        "resulting_state": "at_risk",
+        "description": "Redirect or downgrade liver-first wording when ALT elevation coincides with CK above the lab reference range.",
+        "conditions": [
+          {
+            "metric_id": "creatine_kinase",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_pettersson_exercise_lft_2008",
+          "source_bodybuilding_aminotransferase_review_2020"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_aasld_liver_enzymes_2025",
+          "name": "AASLD Liver Fellow Network: How to approach elevated liver enzymes",
+          "publication_year": 2025,
+          "locator": "Patterns of abnormal liver enzymes; R-value formula and enzyme-source discussion",
+          "evidence_type": "professional_hepatology_education",
+          "strength": "high",
+          "url": "https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes",
+          "limitations": "Educational page, not a formal practice guideline."
+        },
+        {
+          "source_id": "source_aasld_dili_guidance_2023",
+          "name": "AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury",
+          "publication_year": 2023,
+          "locator": "R-value at presentation; hepatocellular/mixed/cholestatic DILI categories",
+          "evidence_type": "society_practice_guidance",
+          "strength": "high",
+          "url": "https://onlinelibrary.wiley.com/doi/10.1002/hep.32689",
+          "limitations": "DILI-specific; general-liver-test use is extrapolative."
+        },
+        {
+          "source_id": "source_fda_dili_guidance_2009",
+          "name": "FDA Guidance for Industry: Drug-Induced Liver Injury: Premarketing Clinical Evaluation",
+          "publication_year": 2009,
+          "locator": "Hy's Law; serial laboratory assessment; aminotransferase and bilirubin thresholds",
+          "evidence_type": "regulatory_guidance",
+          "strength": "high",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/drug-induced-liver-injury-premarketing-clinical-evaluation",
+          "limitations": "Premarketing/regulatory context, not consumer diagnostic guidance."
+        },
+        {
+          "source_id": "source_bsg_abnormal_liver_tests_2017",
+          "name": "British Society of Gastroenterology guideline on abnormal liver blood tests",
+          "publication_year": 2017,
+          "locator": "Initial liver blood-test panel; interpret in clinical context; marked derangement/synthetic failure referral logic",
+          "evidence_type": "uk_clinical_guideline",
+          "strength": "high",
+          "url": "https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests",
+          "limitations": "Does not define R-value; supports context and safety boundaries."
+        },
+        {
+          "source_id": "source_acg_abnormal_liver_chemistries_2017",
+          "name": "ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries",
+          "publication_year": 2017,
+          "locator": "Hepatocellular vs cholestatic injury definitions; recommended cause workup",
+          "evidence_type": "clinical_guideline",
+          "strength": "high",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/27995906/",
+          "limitations": "US guideline; captured access through abstract-level source."
+        },
+        {
+          "source_id": "source_pettersson_exercise_lft_2008",
+          "name": "Pettersson et al. Muscular exercise can cause highly pathological liver function tests in healthy men",
+          "publication_year": 2008,
+          "locator": "Exercise-related ALT/AST/CK changes after weightlifting",
+          "evidence_type": "controlled_study",
+          "strength": "moderate",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/17764474/",
+          "limitations": "Small healthy male cohort."
+        },
+        {
+          "source_id": "source_bodybuilding_aminotransferase_review_2020",
+          "name": "Body Building and Aminotransferase Elevations: A Review",
+          "publication_year": 2020,
+          "locator": "Muscle injury/exercise as aminotransferase source; CK and muscle markers",
+          "evidence_type": "peer_reviewed_review",
+          "strength": "moderate",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/32832396/",
+          "limitations": "Bodybuilding/muscle-injury emphasis."
+        }
+      ],
+      "physiological_claim": "An ALT-predominant pattern can be classified biochemically when ALT is elevated out of proportion to ALP using lab-provided upper reference limits, but the pattern does not identify cause or severity.",
+      "threshold_notes": "Use lab-provided reference limits only. Internal R-value interpretation may use R >= 5 for ALT-predominant pattern, but this is a pattern classifier and not a diagnosis. Revision note: Pass 2 structural feedback applied where relevant; each object carries at least two hypotheses, and ALT self-reference has been removed from contradiction markers."
+    },
+    "narrative": {
+      "mechanism": "ALT is an intracellular aminotransferase enriched in liver but not exclusive to liver tissue, so elevation reflects enzyme leakage or release rather than liver function.",
+      "biological_pathway": "The ALT-to-ALP relationship separates aminotransferase-predominant from ALP-predominant biochemical patterns, while bilirubin, GGT and CK provide severity, hepatic-source and muscle-source context.",
+      "interpretation": "When ALT is above the lab range and proportionally more raised than ALP, HealthIQ may describe an ALT-predominant biochemical pattern, while avoiding disease or injury confirmation.",
+      "implications": "This pattern may justify cautious clinician-review wording when accompanied by bilirubin, marked elevation, symptoms or persistence, but it cannot identify the underlying cause from one panel.",
+      "supporting_marker_roles": "ALP and its ULN support R-value classification; AST corroborates aminotransferase context; GGT and bilirubin add source and severity context; CK can redirect toward muscle contribution."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_alt_high_r_value_mixed_biochemical_pattern",
+    "signal_id": "signal_alt_high",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "alt",
+      "rationale": "High ALT can sit within a mixed biochemical pattern when ALT and ALP are both proportionally contributing; this should not be treated as proof of obstruction or simultaneous hepatocyte and bile-duct disease.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "alp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "ALP elevation alongside ALT is required to support a mixed ALT/ALP biochemical pattern."
+      },
+      {
+        "biomarker_id": "ggt",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised GGT supports hepatic or biliary source for an ALP component but is not disease-specific."
+      },
+      {
+        "biomarker_id": "bilirubin",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Raised bilirubin adds excretory and severity context but does not itself establish obstruction or DILI."
+      },
+      {
+        "biomarker_id": "creatine_kinase",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "CK helps assess whether the aminotransferase component could be muscle-related."
+      },
+      {
+        "biomarker_id": "r_value_alt_alp",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "optional",
+        "rationale": "A derived R-value between 2 and 5 supports a mixed biochemical pattern when ALT and ALP upper reference limits are available."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_mixed_alt_alp_biochemical_pattern",
+        "rank": 1,
+        "physiological_claim": "High ALT with a proportionally raised ALP component may support a mixed biochemical pattern when the R-value is greater than 2 and less than 5.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "A mixed biochemical pattern does not prove obstruction, DILI, bile-duct injury or a specific cause.",
+          "GGT or ALP isoenzyme context is important when ALP source may be non-hepatic."
+        ],
+        "missing_data": {
+          "policy": "Do not classify a mixed pattern without ALT ULN, ALP ULN and contemporaneous ALT/ALP values. If GGT is missing, state lower confidence in hepatic-source ALP."
+        },
+        "supporting_marker_refs": [
+          "alp",
+          "ggt",
+          "bilirubin",
+          "creatine_kinase",
+          "r_value_alt_alp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_ggt_or_nonhepatic_alp",
+            "marker_reference": "ggt",
+            "contradiction_rationale": "Normal or missing GGT reduces confidence that the ALP component is hepatic when ALP may be bone-derived or otherwise non-hepatic.",
+            "contradiction_strength": "moderate"
+          },
+          {
+            "contradiction_id": "ctr_high_ck_muscle_component",
+            "marker_reference": "creatine_kinase",
+            "contradiction_rationale": "High CK can explain part of the aminotransferase contribution and should downgrade liver-first interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_mixed_pattern_requires_source_localisation",
+        "rank": 2,
+        "physiological_claim": "A mixed ALT/ALP biochemical pattern should be interpreted with hepatic-source localisation because ALP can be liver, bone, placental, intestinal or other source.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Raised GGT supports liver/biliary source but is not specific enough to identify cause.",
+          "Normal GGT with raised ALP should reduce confidence in hepatic ALP contribution."
+        ],
+        "missing_data": {
+          "policy": "If GGT, ALP isoenzymes or 5-nucleotidase are unavailable, use low-confidence ALP-predominant or mixed-pattern wording only."
+        },
+        "supporting_marker_refs": [
+          "alp",
+          "ggt",
+          "bilirubin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_alp_source_unconfirmed",
+            "marker_reference": "alp",
+            "contradiction_rationale": "If ALP source is unconfirmed, mixed-pattern language may overstate liver or bile-duct involvement.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_mixed_alt_alp_biochemical_pattern",
+        "hyp_mixed_pattern_requires_source_localisation"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_liver_blood_tests",
+        "rationale": "Repeat liver blood tests help assess trajectory of the mixed pattern."
+      },
+      {
+        "test_id": "ct_ggt_or_alp_isoenzymes",
+        "rationale": "GGT, ALP isoenzymes or 5-nucleotidase can help localise whether ALP is hepatic or non-hepatic."
+      },
+      {
+        "test_id": "ct_liver_imaging_if_clinically_indicated",
+        "rationale": "Imaging may be needed clinically when obstruction or structural disease is suspected, but blood results alone cannot establish obstruction."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mixed_pattern_with_bilirubin_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate cautiously when a mixed biochemical pattern is accompanied by raised bilirubin, because bilirubin adds severity or excretory context.",
+        "conditions": [
+          {
+            "metric_id": "bilirubin",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_fda_dili_guidance_2009",
+          "source_bsg_abnormal_liver_tests_2017"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_aasld_liver_enzymes_2025",
+          "name": "AASLD Liver Fellow Network: How to approach elevated liver enzymes",
+          "publication_year": 2025,
+          "locator": "Patterns of abnormal liver enzymes; R-value formula and enzyme-source discussion",
+          "evidence_type": "professional_hepatology_education",
+          "strength": "high",
+          "url": "https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes",
+          "limitations": "Educational page, not a formal practice guideline."
+        },
+        {
+          "source_id": "source_aasld_dili_guidance_2023",
+          "name": "AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury",
+          "publication_year": 2023,
+          "locator": "R-value at presentation; hepatocellular/mixed/cholestatic DILI categories",
+          "evidence_type": "society_practice_guidance",
+          "strength": "high",
+          "url": "https://onlinelibrary.wiley.com/doi/10.1002/hep.32689",
+          "limitations": "DILI-specific; general-liver-test use is extrapolative."
+        },
+        {
+          "source_id": "source_bsg_abnormal_liver_tests_2017",
+          "name": "British Society of Gastroenterology guideline on abnormal liver blood tests",
+          "publication_year": 2017,
+          "locator": "Initial liver blood-test panel; interpret in clinical context; marked derangement/synthetic failure referral logic",
+          "evidence_type": "uk_clinical_guideline",
+          "strength": "high",
+          "url": "https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests",
+          "limitations": "Does not define R-value; supports context and safety boundaries."
+        },
+        {
+          "source_id": "source_acg_abnormal_liver_chemistries_2017",
+          "name": "ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries",
+          "publication_year": 2017,
+          "locator": "Hepatocellular vs cholestatic injury definitions; recommended cause workup",
+          "evidence_type": "clinical_guideline",
+          "strength": "high",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/27995906/",
+          "limitations": "US guideline; captured access through abstract-level source."
+        },
+        {
+          "source_id": "source_easl_cholestatic_liver_guideline_2009",
+          "name": "EASL Clinical Practice Guidelines: Management of cholestatic liver diseases",
+          "publication_year": 2009,
+          "locator": "Drug-induced cholestatic liver disease classification by ALT/AP ratio",
+          "evidence_type": "professional_liver_society_guideline",
+          "strength": "moderate",
+          "url": "https://www.journal-of-hepatology.eu/article/S0168-8278(09)00309-2/fulltext",
+          "limitations": "Older guideline and cholestatic/DILI-specific."
+        }
+      ],
+      "physiological_claim": "A mixed biochemical pattern reflects proportional contribution from ALT and ALP when both are interpreted relative to lab-provided upper reference limits; it does not diagnose obstruction or cause.",
+      "threshold_notes": "Use lab-provided ULNs. Internal R-value interpretation may use R > 2 and R < 5 for mixed pattern. Do not apply if ALP source is uncertain without caveat. Revision note: Pass 2 structural feedback applied where relevant; each object carries at least two hypotheses, and ALT self-reference has been removed from contradiction markers."
+    },
+    "narrative": {
+      "mechanism": "ALT and ALP represent different enzyme axes, and a mixed pattern means neither aminotransferase nor ALP predominance alone adequately describes the biochemical picture.",
+      "biological_pathway": "The ALT/ALP relationship may reflect overlapping aminotransferase and cholestatic or ALP-source signals, but GGT and clinical context are needed before liver/biliary confidence is high.",
+      "interpretation": "HealthIQ may describe a mixed biochemical pattern when the R-value is between 2 and 5, while avoiding claims of obstruction, DILI or simultaneous tissue injury.",
+      "implications": "A mixed pattern can change which clinician follow-up questions are relevant, especially medication history, bilirubin trajectory, GGT and imaging context, but it remains non-diagnostic.",
+      "supporting_marker_roles": "ALP and derived R-value define the mixed relationship; GGT supports hepatic-source ALP; bilirubin adds severity context; CK helps prevent over-attribution to liver."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_alt_high_r_value_cholestatic_alp_predominant_context",
+    "signal_id": "signal_alt_high",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "alt",
+      "rationale": "An elevated ALT can occur within an ALP-predominant biochemical pattern where ALP is proportionally more raised than ALT; this should be worded as an ALP-predominant or cholestatic-pattern context only when ALP is likely hepatic-source.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "alp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "ALP predominance is central to cholestatic or ALP-predominant biochemical patterning."
+      },
+      {
+        "biomarker_id": "ggt",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised GGT supports hepatic origin of ALP but remains nonspecific."
+      },
+      {
+        "biomarker_id": "bilirubin",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Bilirubin elevation can accompany cholestatic or excretory patterns and increases concern, but does not prove obstruction."
+      },
+      {
+        "biomarker_id": "r_value_alt_alp",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "optional",
+        "rationale": "A derived R-value at or below 2 supports an ALP-predominant biochemical pattern when ALT and ALP upper reference limits are available."
+      },
+      {
+        "biomarker_id": "creatine_kinase",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "CK helps identify whether a concurrent aminotransferase signal could partly reflect muscle rather than liver."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_alp_predominant_biochemical_context",
+        "rank": 1,
+        "physiological_claim": "High ALT may be a secondary component of an ALP-predominant biochemical pattern when ALP is proportionally more elevated and hepatic-source ALP is supported.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "This does not confirm bile-duct obstruction, intrahepatic cholestasis, PBC, PSC or DILI.",
+          "A normal GGT with raised ALP weakens hepatic-source confidence and should trigger non-hepatic ALP caveat."
+        ],
+        "missing_data": {
+          "policy": "If GGT is missing, avoid high-confidence cholestatic wording; use lower-confidence ALP-predominant wording and recommend clinical localisation where appropriate."
+        },
+        "supporting_marker_refs": [
+          "alp",
+          "ggt",
+          "bilirubin",
+          "r_value_alt_alp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ggt_normal_or_missing",
+            "marker_reference": "ggt",
+            "contradiction_rationale": "Normal or missing GGT reduces confidence that raised ALP is hepatic-source.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_alt_predominant_r_value",
+            "marker_reference": "r_value_alt_alp",
+            "contradiction_rationale": "R-value at or above 5 redirects toward ALT-predominant biochemical pattern rather than ALP-predominant pattern.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_biliary_or_cholestatic_context_requires_confirmation",
+        "rank": 2,
+        "physiological_claim": "An ALP-predominant pattern can be seen in bile-flow or cholestatic contexts but requires GGT, bilirubin, symptoms, imaging or specialist tests before obstruction or disease attribution is medically supportable.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Blood chemistry alone does not establish obstruction or structural disease.",
+          "ALP can be non-hepatic, so source localisation is mandatory for high-confidence wording."
+        ],
+        "missing_data": {
+          "policy": "If imaging and hepatic-source markers are absent, do not use obstruction language and do not attribute the ALP rise to liver or bile ducts with confidence."
+        },
+        "supporting_marker_refs": [
+          "alp",
+          "ggt",
+          "bilirubin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_bilirubin_reduces_biliary_urgency",
+            "marker_reference": "bilirubin",
+            "contradiction_rationale": "A normal bilirubin alongside an ALP-predominant pattern reduces the urgency of structural biliary confirmation, as clinically significant bile-duct obstruction or cholestasis typically produces bilirubin elevation; its absence makes an immediately consequential biliary lesion less likely.",
+            "contradiction_strength": "moderate"
+          },
+          {
+            "contradiction_id": "ctr_nonhepatic_alp_possible",
+            "marker_reference": "alp",
+            "contradiction_rationale": "Non-hepatic ALP sources such as bone or pregnancy can create misleading ALP-predominant patterns.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_alp_predominant_biochemical_context",
+        "hyp_biliary_or_cholestatic_context_requires_confirmation"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_ggt_or_alp_isoenzymes",
+        "rationale": "GGT, ALP isoenzymes or 5-nucleotidase can support hepatic-source localisation of ALP."
+      },
+      {
+        "test_id": "ct_fractionated_bilirubin",
+        "rationale": "Fractionated bilirubin helps distinguish conjugated from unconjugated bilirubin patterns."
+      },
+      {
+        "test_id": "ct_liver_biliary_imaging",
+        "rationale": "Clinical imaging may be required to evaluate obstruction or structural biliary disease."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_alp_predominant_with_bilirubin_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate cautiously when an ALP-predominant pattern is accompanied by bilirubin elevation because this adds severity and excretory context.",
+        "conditions": [
+          {
+            "metric_id": "bilirubin",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_bsg_abnormal_liver_tests_2017",
+          "source_acg_abnormal_liver_chemistries_2017"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_aasld_liver_enzymes_2025",
+          "name": "AASLD Liver Fellow Network: How to approach elevated liver enzymes",
+          "publication_year": 2025,
+          "locator": "Patterns of abnormal liver enzymes; R-value formula and enzyme-source discussion",
+          "evidence_type": "professional_hepatology_education",
+          "strength": "high",
+          "url": "https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes",
+          "limitations": "Educational page, not a formal practice guideline."
+        },
+        {
+          "source_id": "source_aasld_dili_guidance_2023",
+          "name": "AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury",
+          "publication_year": 2023,
+          "locator": "R-value at presentation; hepatocellular/mixed/cholestatic DILI categories",
+          "evidence_type": "society_practice_guidance",
+          "strength": "high",
+          "url": "https://onlinelibrary.wiley.com/doi/10.1002/hep.32689",
+          "limitations": "DILI-specific; general-liver-test use is extrapolative."
+        },
+        {
+          "source_id": "source_bsg_abnormal_liver_tests_2017",
+          "name": "British Society of Gastroenterology guideline on abnormal liver blood tests",
+          "publication_year": 2017,
+          "locator": "Initial liver blood-test panel; interpret in clinical context; marked derangement/synthetic failure referral logic",
+          "evidence_type": "uk_clinical_guideline",
+          "strength": "high",
+          "url": "https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests",
+          "limitations": "Does not define R-value; supports context and safety boundaries."
+        },
+        {
+          "source_id": "source_acg_abnormal_liver_chemistries_2017",
+          "name": "ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries",
+          "publication_year": 2017,
+          "locator": "Hepatocellular vs cholestatic injury definitions; recommended cause workup",
+          "evidence_type": "clinical_guideline",
+          "strength": "high",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/27995906/",
+          "limitations": "US guideline; captured access through abstract-level source."
+        },
+        {
+          "source_id": "source_easl_cholestatic_liver_guideline_2009",
+          "name": "EASL Clinical Practice Guidelines: Management of cholestatic liver diseases",
+          "publication_year": 2009,
+          "locator": "Drug-induced cholestatic liver disease classification by ALT/AP ratio",
+          "evidence_type": "professional_liver_society_guideline",
+          "strength": "moderate",
+          "url": "https://www.journal-of-hepatology.eu/article/S0168-8278(09)00309-2/fulltext",
+          "limitations": "Older guideline and cholestatic/DILI-specific."
+        }
+      ],
+      "physiological_claim": "An ALP-predominant biochemical pattern can be classified when ALP is proportionally more raised than ALT, but hepatic-source localisation and clinical context are required before cholestatic or obstruction language is safe.",
+      "threshold_notes": "Use lab-provided ULNs. Internal R-value interpretation may use R <= 2 for ALP-predominant pattern. If GGT is missing or normal, downgrade hepatic-source confidence. Revision note: Pass 2 structural feedback applied where relevant; each object carries at least two hypotheses, and ALT self-reference has been removed from contradiction markers."
+    },
+    "narrative": {
+      "mechanism": "ALP-predominant patterns can reflect cholestatic or hepatic-source ALP release, but ALP is not liver-specific and can also arise from bone, pregnancy and other sources.",
+      "biological_pathway": "GGT and bilirubin help place ALP in hepatic or biliary context, while imaging and specialist assessment are needed to identify obstruction or structural causes.",
+      "interpretation": "HealthIQ may describe an ALP-predominant biochemical pattern when the R-value is at or below 2, but should avoid saying that cholestasis or obstruction is present unless appropriately qualified.",
+      "implications": "This pattern may warrant clinician review if bilirubin is raised, symptoms are present, or the pattern persists, but the blood panel alone cannot identify the cause.",
+      "supporting_marker_roles": "ALP and derived R-value define proportional predominance; GGT supports liver-source confidence; bilirubin adds excretory/severity context; CK helps contextualise the ALT component."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_alt_high_muscle_source_or_exertional_contribution",
+    "signal_id": "signal_alt_high",
+    "research_domain": "musculoskeletal",
+    "primary_marker": {
+      "biomarker_id": "alt",
+      "rationale": "High ALT and AST can sometimes reflect muscle injury or recent strenuous exercise, so CK and exercise, trauma, myopathy or statin context are important differentials before giving a liver-first explanation.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "creatine_kinase",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised CK supports skeletal-muscle contribution to aminotransferase elevation."
+      },
+      {
+        "biomarker_id": "ast",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "AST is less liver-specific than ALT and can rise substantially with muscle injury."
+      },
+      {
+        "biomarker_id": "ggt",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "GGT helps assess liver or biliary involvement; normal GGT can support but not prove a non-hepatic context."
+      },
+      {
+        "biomarker_id": "bilirubin",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Raised bilirubin is less consistent with isolated muscle-source aminotransferase elevation and should redirect toward clinical review."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Creatinine can add renal-risk context when severe muscle injury or rhabdomyolysis is a concern."
+      },
+      {
+        "biomarker_id": "alp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Raised ALP, particularly with raised GGT or bilirubin, supports liver or bile-flow context rather than isolated muscle contribution."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_muscle_source_aminotransferase_contribution",
+        "rank": 1,
+        "physiological_claim": "High ALT may have a muscle-source contribution when CK is raised or there is recent strenuous exercise, trauma, myopathy or statin-related muscle context.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Muscle contribution does not exclude concurrent liver disease.",
+          "Very high ALT, raised bilirubin or raised GGT is less consistent with isolated muscle source.",
+          "Very high aminotransferase magnitude should be handled as a severity or urgent-review modifier, not as a self-referential contradiction marker."
+        ],
+        "missing_data": {
+          "policy": "If CK and exercise/trauma/statin context are missing, do not exclude muscle contribution; state that source localisation is incomplete."
+        },
+        "supporting_marker_refs": [
+          "creatine_kinase",
+          "ast",
+          "ggt",
+          "bilirubin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_bilirubin_or_ggt_high",
+            "marker_reference": "bilirubin",
+            "contradiction_rationale": "Raised bilirubin or GGT makes isolated muscle-source explanation less likely and should redirect to liver/biliary clinical review context.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_alp_ggt_bilirubin_liver_source_context",
+            "marker_reference": "alp",
+            "contradiction_rationale": "Raised ALP, especially with raised GGT or bilirubin, makes an isolated muscle-source explanation less safe and should redirect to liver or biliary context.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_exertional_transient_aminotransferase_pattern",
+        "rank": 2,
+        "physiological_claim": "Recent heavy exercise can produce transient AST and ALT elevation with CK elevation, so repeat testing after exercise avoidance may help distinguish transient exertional change from persistent liver-enzyme elevation.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Exercise studies show plausible transient aminotransferase elevation, but user history and CK are needed.",
+          "HealthIQ must not state that exercise is the definite cause.",
+          "Very high aminotransferase magnitude should be handled as a severity or urgent-review modifier, not as a self-referential contradiction marker."
+        ],
+        "missing_data": {
+          "policy": "If recent exercise history is missing, do not attribute ALT to exertion; if CK is missing, state that muscle contribution cannot be assessed."
+        },
+        "supporting_marker_refs": [
+          "creatine_kinase",
+          "ast"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_or_borderline_ck_weakens_exertional_frame",
+            "marker_reference": "creatine_kinase",
+            "contradiction_rationale": "A normal or only borderline CK weakens a significant exertional or transient muscle-source interpretation, as clinically meaningful exercise-related aminotransferase elevation is typically accompanied by marked concurrent CK elevation.",
+            "contradiction_strength": "moderate"
+          },
+          {
+            "contradiction_id": "ctr_elevated_ggt_inconsistent_with_exertional_pattern",
+            "marker_reference": "ggt",
+            "contradiction_rationale": "A clearly elevated GGT challenges a purely exertional or transient muscle-source aminotransferase pattern, as GGT is not released by skeletal muscle and its elevation introduces a hepatic signal inconsistent with isolated exercise-related enzyme rise.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_muscle_source_aminotransferase_contribution",
+        "hyp_exertional_transient_aminotransferase_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_creatine_kinase",
+        "rationale": "CK is the key common blood marker supporting muscle-source contribution to aminotransferase elevation."
+      },
+      {
+        "test_id": "ct_repeat_after_exercise_avoidance",
+        "rationale": "Repeat testing after avoiding strenuous exercise can help determine whether aminotransferase elevation is transient and exertional."
+      },
+      {
+        "test_id": "ct_renal_function_if_rhabdomyolysis_concern",
+        "rationale": "Renal function is relevant when severe muscle injury or rhabdomyolysis is clinically suspected."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_alt_high_with_ck_high_muscle_context",
+        "resulting_state": "at_risk",
+        "description": "Escalate or redirect interpretation when ALT elevation coincides with CK above the lab range because muscle contribution becomes plausible.",
+        "conditions": [
+          {
+            "metric_id": "creatine_kinase",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_pettersson_exercise_lft_2008",
+          "source_bodybuilding_aminotransferase_review_2020",
+          "source_rhabdomyolysis_lft_review_2020"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_aasld_liver_enzymes_2025",
+          "name": "AASLD Liver Fellow Network: How to approach elevated liver enzymes",
+          "publication_year": 2025,
+          "locator": "Patterns of abnormal liver enzymes; R-value formula and enzyme-source discussion",
+          "evidence_type": "professional_hepatology_education",
+          "strength": "high",
+          "url": "https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes",
+          "limitations": "Educational page, not a formal practice guideline."
+        },
+        {
+          "source_id": "source_pettersson_exercise_lft_2008",
+          "name": "Pettersson et al. Muscular exercise can cause highly pathological liver function tests in healthy men",
+          "publication_year": 2008,
+          "locator": "Exercise-related ALT/AST/CK changes after weightlifting",
+          "evidence_type": "controlled_study",
+          "strength": "moderate",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/17764474/",
+          "limitations": "Small healthy male cohort."
+        },
+        {
+          "source_id": "source_bodybuilding_aminotransferase_review_2020",
+          "name": "Body Building and Aminotransferase Elevations: A Review",
+          "publication_year": 2020,
+          "locator": "Muscle injury/exercise as aminotransferase source; CK and muscle markers",
+          "evidence_type": "peer_reviewed_review",
+          "strength": "moderate",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/32832396/",
+          "limitations": "Bodybuilding/muscle-injury emphasis."
+        },
+        {
+          "source_id": "source_rhabdomyolysis_lft_review_2020",
+          "name": "Lim. Abnormal liver function tests associated with severe rhabdomyolysis",
+          "publication_year": 2020,
+          "locator": "CK/rhabdomyolysis and limits of muscle-only ALT attribution",
+          "evidence_type": "peer_reviewed_review",
+          "strength": "moderate",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7081005/",
+          "limitations": "Not formal guideline; threshold suggestions are contextual."
+        }
+      ],
+      "physiological_claim": "Muscle injury, strenuous exercise, myopathy or rhabdomyolysis can contribute to ALT and AST elevation, particularly when CK is raised, so high CK should contextualise or downgrade liver-first interpretation.",
+      "threshold_notes": "Use lab-provided CK reference range and context. Do not codify a definitive CK threshold for excluding liver contribution; very high ALT or raised bilirubin/GGT should suppress isolated muscle-source attribution. Revision note: Pass 2 structural feedback applied where relevant; each object carries at least two hypotheses, and ALT self-reference has been removed from contradiction markers."
+    },
+    "narrative": {
+      "mechanism": "ALT and AST can be released from skeletal muscle as well as liver, especially after strenuous exercise or muscle injury, and CK provides stronger muscle-source evidence.",
+      "biological_pathway": "Muscle membrane injury or exertional stress can raise CK, myoglobin and aminotransferases, creating a pattern that can mimic liver-enzyme elevation on routine panels.",
+      "interpretation": "HealthIQ may state that muscle contribution is possible when ALT elevation appears with high CK or recent heavy exercise, while clearly saying this does not exclude liver causes. ALT magnitude itself should be handled by severity/escalation logic rather than as a contradiction marker against the primary ALT-high signal.",
+      "implications": "The safest educational action is to place ALT in source-context rather than diagnosing liver disease or dismissing the liver, particularly if bilirubin, GGT or symptoms are present.",
+      "supporting_marker_roles": "CK corroborates muscle-source contribution; AST supports aminotransferase context; GGT and bilirubin contradict isolated muscle-source framing; creatinine adds renal-risk context if severe muscle injury is suspected."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_alt_high_bilirubin_hys_law_severity_context",
+    "signal_id": "signal_alt_high",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "alt",
+      "rationale": "High ALT with raised bilirubin is a higher-concern biochemical severity context, but formal Hy's Law assessment is a DILI and regulatory construct requiring cholestasis and alternative-cause exclusion and should not be stated to consumers.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "bilirubin",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Bilirubin elevation alongside ALT or AST elevation adds excretory and severity context."
+      },
+      {
+        "biomarker_id": "alp",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Formal Hy's Law assessment requires absence of substantial cholestasis, so ALP is needed internally before any Hy's-Law-like severity logic."
+      },
+      {
+        "biomarker_id": "ggt",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "GGT helps interpret cholestatic or hepatic-source context but does not define Hy's Law."
+      },
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "low",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Low albumin can add synthetic, chronic or systemic context but is non-specific."
+      },
+      {
+        "biomarker_id": "inr",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "specialist",
+        "rationale": "Prolonged INR or PT is a key liver-function and acute-risk marker when interpreted with medication and clinical context."
+      },
+      {
+        "biomarker_id": "ast",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "AST elevation can corroborate aminotransferase injury magnitude but remains nonspecific."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_bilirubin_severity_context_with_alt_high",
+        "rank": 1,
+        "physiological_claim": "Raised bilirubin alongside raised ALT or AST may indicate a higher-concern biochemical context that warrants clinical review wording, but it does not identify cause or establish Hy's Law in a consumer product.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Do not state or imply that Hy's Law criteria are met.",
+          "Hy's Law applies to suspected DILI after excluding substantial cholestasis and alternative causes.",
+          "Bilirubin fractionation matters because unconjugated bilirubin can reflect haemolysis or Gilbert's syndrome."
+        ],
+        "missing_data": {
+          "policy": "If bilirubin is missing, do not make severity or excretory-function claims. If ALP is missing, do not apply internal Hy's-Law-like logic. If medication history and alternative-cause context are missing, do not emit DILI wording."
+        },
+        "supporting_marker_refs": [
+          "bilirubin",
+          "alp",
+          "ggt",
+          "albumin",
+          "inr",
+          "ast"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_cholestatic_pattern_present",
+            "marker_reference": "alp",
+            "contradiction_rationale": "Substantial ALP elevation suggests cholestatic involvement and prevents formal Hy's Law interpretation.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_unconjugated_or_hemolysis_context",
+            "marker_reference": "bilirubin",
+            "contradiction_rationale": "Unconjugated bilirubin or haemolysis context can explain bilirubin elevation without impaired hepatic excretion.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_hys_law_term_prohibited_consumer_frame",
+        "rank": 2,
+        "physiological_claim": "Hy's Law is a regulatory and DILI-specific signal requiring drug causality assessment, bilirubin threshold, aminotransferase threshold, lack of cholestasis and exclusion of alternative causes, so the term should be prohibited in consumer output.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Consumer-facing wording should describe raised bilirubin with ALT or AST as a higher-concern pattern, not as Hy's Law.",
+          "Alternative causes must be excluded clinically before DILI or Hy's Law language is supportable."
+        ],
+        "missing_data": {
+          "policy": "If medication exposure, ALP, bilirubin thresholding or alternative-cause exclusion is unavailable, prohibit Hy's Law logic beyond internal safety escalation."
+        },
+        "supporting_marker_refs": [
+          "bilirubin",
+          "alp",
+          "ast"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_ggt_introduces_cholestatic_alternative",
+            "marker_reference": "ggt",
+            "contradiction_rationale": "A clearly elevated GGT alongside raised bilirubin and ALT introduces a cholestatic or enzyme-induction signal that provides a structural alternative context, weakening the conditions required for a hepatocellular excretory failure framing and making the Hy's Law prohibition frame less the central concern.",
+            "contradiction_strength": "moderate"
+          },
+          {
+            "contradiction_id": "ctr_preserved_albumin_inr_reduces_severity_urgency",
+            "marker_reference": "albumin",
+            "contradiction_rationale": "A preserved albumin alongside raised bilirubin and ALT reduces the urgency profile that makes the Hy's Law prohibition frame most clinically pressing, as maintained hepatic synthetic function challenges a severe hepatocellular failure context.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_bilirubin_severity_context_with_alt_high",
+        "hyp_hys_law_term_prohibited_consumer_frame"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_fractionated_bilirubin",
+        "rationale": "Fractionated bilirubin helps distinguish conjugated from unconjugated bilirubin and refines severity or haemolysis context."
+      },
+      {
+        "test_id": "ct_pt_inr",
+        "rationale": "PT or INR is a key clinical marker of synthetic function and acute-risk context."
+      },
+      {
+        "test_id": "ct_liver_aetiology_screen",
+        "rationale": "Clinical evaluation may be needed to exclude viral, autoimmune, biliary, medication-related and other causes before DILI attribution."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_alt_high_with_bilirubin_high_severity",
+        "resulting_state": "at_risk",
+        "description": "Escalate when ALT high coincides with bilirubin above the lab range, preserving non-diagnostic wording and prohibiting Hy's Law language.",
+        "conditions": [
+          {
+            "metric_id": "bilirubin",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_fda_dili_guidance_2009",
+          "source_bsg_abnormal_liver_tests_2017"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_aasld_liver_enzymes_2025",
+          "name": "AASLD Liver Fellow Network: How to approach elevated liver enzymes",
+          "publication_year": 2025,
+          "locator": "Patterns of abnormal liver enzymes; R-value formula and enzyme-source discussion",
+          "evidence_type": "professional_hepatology_education",
+          "strength": "high",
+          "url": "https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes",
+          "limitations": "Educational page, not a formal practice guideline."
+        },
+        {
+          "source_id": "source_aasld_dili_guidance_2023",
+          "name": "AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury",
+          "publication_year": 2023,
+          "locator": "R-value at presentation; hepatocellular/mixed/cholestatic DILI categories",
+          "evidence_type": "society_practice_guidance",
+          "strength": "high",
+          "url": "https://onlinelibrary.wiley.com/doi/10.1002/hep.32689",
+          "limitations": "DILI-specific; general-liver-test use is extrapolative."
+        },
+        {
+          "source_id": "source_fda_dili_guidance_2009",
+          "name": "FDA Guidance for Industry: Drug-Induced Liver Injury: Premarketing Clinical Evaluation",
+          "publication_year": 2009,
+          "locator": "Hy's Law; serial laboratory assessment; aminotransferase and bilirubin thresholds",
+          "evidence_type": "regulatory_guidance",
+          "strength": "high",
+          "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/drug-induced-liver-injury-premarketing-clinical-evaluation",
+          "limitations": "Premarketing/regulatory context, not consumer diagnostic guidance."
+        },
+        {
+          "source_id": "source_bsg_abnormal_liver_tests_2017",
+          "name": "British Society of Gastroenterology guideline on abnormal liver blood tests",
+          "publication_year": 2017,
+          "locator": "Initial liver blood-test panel; interpret in clinical context; marked derangement/synthetic failure referral logic",
+          "evidence_type": "uk_clinical_guideline",
+          "strength": "high",
+          "url": "https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests",
+          "limitations": "Does not define R-value; supports context and safety boundaries."
+        },
+        {
+          "source_id": "source_acg_abnormal_liver_chemistries_2017",
+          "name": "ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries",
+          "publication_year": 2017,
+          "locator": "Hepatocellular vs cholestatic injury definitions; recommended cause workup",
+          "evidence_type": "clinical_guideline",
+          "strength": "high",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/27995906/",
+          "limitations": "US guideline; captured access through abstract-level source."
+        }
+      ],
+      "physiological_claim": "Bilirubin elevation with raised ALT or AST adds severity and excretory context, but formal Hy's Law requires suspected DILI context, lack of substantial cholestasis and alternative-cause exclusion.",
+      "threshold_notes": "Do not expose Hy's Law wording to consumers. Use bilirubin above lab range or greater than 2x ULN internally for escalation only where all required inputs are available. Revision note: Pass 2 structural feedback applied where relevant; each object carries at least two hypotheses, and ALT self-reference has been removed from contradiction markers."
+    },
+    "narrative": {
+      "mechanism": "Bilirubin elevation alongside aminotransferase elevation can indicate impaired excretory handling or a higher-concern biochemical context, but bilirubin patterns are not cause-specific.",
+      "biological_pathway": "Aminotransferase release and bilirubin elevation together can occur in several liver, biliary, haemolytic and drug-related contexts, requiring ALP, bilirubin fractionation, medication history and clinical assessment.",
+      "interpretation": "HealthIQ may state that raised bilirubin with raised ALT or AST is a higher-concern pattern worth clinical review, but must not say Hy's Law is met or DILI is present.",
+      "implications": "This pattern changes urgency wording more than cause attribution; clinician review is especially important if jaundice, systemic illness, INR/PT abnormality or rapidly worsening results are present.",
+      "supporting_marker_roles": "Bilirubin is the severity marker; ALP and GGT help assess cholestatic context; albumin and INR add liver-function context; AST corroborates aminotransferase magnitude."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_alt_high_metabolic_masld_context",
+    "signal_id": "signal_alt_high",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "alt",
+      "rationale": "High ALT can be seen in metabolic liver contexts, but MASLD cannot be diagnosed from ALT alone and requires metabolic risk assessment, longitudinal context and often imaging or fibrosis risk assessment.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hba1c",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Higher glycaemic exposure supports a metabolic-risk context that may be relevant to ALT elevation."
+      },
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High triglycerides support insulin-resistant or metabolic dyslipidaemia context associated with MASLD risk."
+      },
+      {
+        "biomarker_id": "hdl",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low HDL can support a broader metabolic-syndrome context when ALT is raised."
+      },
+      {
+        "biomarker_id": "ggt",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "GGT can be raised in metabolic liver contexts but is nonspecific."
+      },
+      {
+        "biomarker_id": "creatine_kinase",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High CK redirects away from a purely metabolic liver explanation and raises possible muscle contribution."
+      },
+      {
+        "biomarker_id": "bilirubin",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Raised bilirubin with ALT changes clinical concern and should redirect away from routine metabolic-context framing."
+      },
+      {
+        "biomarker_id": "inr",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "specialist",
+        "rationale": "A raised INR would indicate possible synthetic-function concern and should redirect away from routine metabolic-context wording."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_metabolic_liver_context",
+        "rank": 1,
+        "physiological_claim": "High ALT may be relevant to metabolic liver context when accompanied by metabolic risk markers or declared metabolic risk factors, but ALT alone cannot diagnose MASLD or stage fibrosis.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Liver enzymes can be normal in advanced MASLD and raised ALT is not diagnostic of MASLD.",
+          "Imaging or non-invasive fibrosis assessment is needed clinically for structural and fibrosis assessment.",
+          "Very high aminotransferase magnitude should be handled by severity/escalation logic rather than as a self-referential contradiction marker."
+        ],
+        "missing_data": {
+          "policy": "Do not emit MASLD or fatty liver claims if metabolic context, imaging or fibrosis-risk data are missing; use only general metabolic-context wording."
+        },
+        "supporting_marker_refs": [
+          "hba1c",
+          "triglycerides",
+          "hdl",
+          "ggt",
+          "creatine_kinase",
+          "bilirubin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_no_metabolic_context",
+            "marker_reference": "hba1c",
+            "contradiction_rationale": "Absent metabolic-risk markers or declared metabolic context weakens MASLD-context framing from ALT alone.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_bilirubin_or_inr_acute_risk_context",
+            "marker_reference": "inr",
+            "contradiction_rationale": "Raised INR, or raised bilirubin where INR is unavailable, should redirect away from routine metabolic-context wording toward clinical-review severity context.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_alt_high_metabolic_risk_needs_fibrosis_context",
+        "rank": 2,
+        "physiological_claim": "When ALT elevation appears with metabolic risk, the clinically important distinction is not just enzyme elevation but whether there is steatosis, fibrosis risk or another liver disease, which requires imaging, non-invasive fibrosis assessment or clinical workup.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "ALT is not sufficiently sensitive or specific for MASLD severity or fibrosis.",
+          "HealthIQ should not imply that normal or mildly high ALT excludes advanced metabolic liver disease.",
+          "Very high aminotransferase magnitude should be handled by severity/escalation logic rather than as a self-referential contradiction marker."
+        ],
+        "missing_data": {
+          "policy": "If imaging, FIB-4 inputs, elastography or clinician diagnosis are unavailable, avoid structural liver claims and do not stage disease."
+        },
+        "supporting_marker_refs": [
+          "hba1c",
+          "triglycerides",
+          "hdl",
+          "ggt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_triglycerides_reduces_metabolic_fibrosis_weight",
+            "marker_reference": "triglycerides",
+            "contradiction_rationale": "A normal triglycerides reduces the metabolic burden supporting a significant MASLD-related fibrosis context, as metabolic-driven hepatic fibrosis is most associated with a compound dyslipidaemic and insulin-resistant metabolic profile; absence of hypertriglyceridaemia makes a high-risk metabolic fibrosis framing less compelling.",
+            "contradiction_strength": "moderate"
+          },
+          {
+            "contradiction_id": "ctr_bilirubin_high_or_synthetic_context",
+            "marker_reference": "bilirubin",
+            "contradiction_rationale": "Raised bilirubin or synthetic-function concern should redirect away from routine metabolic explanation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_metabolic_liver_context",
+        "hyp_alt_high_metabolic_risk_needs_fibrosis_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_metabolic_risk_assessment",
+        "rationale": "HbA1c, glucose, lipids, blood pressure and anthropometric context help assess whether metabolic risk is relevant to ALT elevation."
+      },
+      {
+        "test_id": "ct_liver_imaging_or_elastography",
+        "rationale": "Imaging or elastography may be needed clinically to assess steatosis or fibrosis and cannot be replaced by ALT alone."
+      },
+      {
+        "test_id": "ct_fibrosis_risk_score_inputs",
+        "rationale": "Age, AST, ALT and platelet count may support non-invasive fibrosis risk scoring where appropriate and governed."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_alt_high_with_metabolic_markers",
+        "resulting_state": "at_risk",
+        "description": "Escalate cautiously when ALT high coincides with metabolic-risk markers, while avoiding MASLD diagnosis.",
+        "conditions": [
+          {
+            "metric_id": "triglycerides",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_easl_masld_guideline_2024",
+          "source_aasld_nafld_guidance_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_bsg_abnormal_liver_tests_2017",
+          "name": "British Society of Gastroenterology guideline on abnormal liver blood tests",
+          "publication_year": 2017,
+          "locator": "Initial liver blood-test panel; interpret in clinical context; marked derangement/synthetic failure referral logic",
+          "evidence_type": "uk_clinical_guideline",
+          "strength": "high",
+          "url": "https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests",
+          "limitations": "Does not define R-value; supports context and safety boundaries."
+        },
+        {
+          "source_id": "source_acg_abnormal_liver_chemistries_2017",
+          "name": "ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries",
+          "publication_year": 2017,
+          "locator": "Hepatocellular vs cholestatic injury definitions; recommended cause workup",
+          "evidence_type": "clinical_guideline",
+          "strength": "high",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/27995906/",
+          "limitations": "US guideline; captured access through abstract-level source."
+        },
+        {
+          "source_id": "source_easl_masld_guideline_2024",
+          "name": "EASL-EASD-EASO Clinical Practice Guidelines on MASLD",
+          "publication_year": 2024,
+          "locator": "MASLD assessment; enzymes are insufficient for structural/fibrosis diagnosis",
+          "evidence_type": "international_society_guideline",
+          "strength": "high",
+          "url": "https://www.journal-of-hepatology.eu/article/S0168-8278(24)00329-5/fulltext",
+          "limitations": "Not specific to isolated ALT-high consumer interpretation."
+        },
+        {
+          "source_id": "source_aasld_nafld_guidance_2023",
+          "name": "AASLD Practice Guidance on NAFLD",
+          "publication_year": 2023,
+          "locator": "NAFLD/MASLD assessment and non-invasive risk stratification",
+          "evidence_type": "society_practice_guidance",
+          "strength": "high",
+          "url": "https://doi.org/10.1097/HEP.0000000000000323",
+          "limitations": "US NAFLD terminology; MASLD terminology evolving."
+        }
+      ],
+      "physiological_claim": "High ALT can sit within metabolic liver risk context when metabolic markers or history support it, but MASLD diagnosis, steatosis and fibrosis staging require clinical assessment beyond ALT.",
+      "threshold_notes": "Use ALT lab range only for signal activation. Do not use ALT alone to diagnose MASLD, exclude advanced disease or stage fibrosis. Revision note: Pass 2 structural feedback applied where relevant; each object carries at least two hypotheses, and ALT self-reference has been removed from contradiction markers."
+    },
+    "narrative": {
+      "mechanism": "Metabolic dysfunction can contribute to hepatic fat accumulation, inflammation and enzyme elevation, but ALT is an indirect and imperfect marker of this process.",
+      "biological_pathway": "Glycaemic exposure, insulin-resistant lipid patterns, adiposity and metabolic syndrome can interact with liver fat and inflammation, while imaging and fibrosis assessment are required for structural interpretation.",
+      "interpretation": "HealthIQ may explain that metabolic context can be relevant to raised ALT when supported by HbA1c, triglycerides, HDL or declared metabolic risk, without diagnosing MASLD or fatty liver. ALT magnitude itself should be handled by severity/escalation logic rather than as a contradiction marker against the primary ALT-high signal.",
+      "implications": "The educational focus should be on context and clinician follow-up rather than disease labelling, especially where ALT elevation persists or other liver-risk markers are present.",
+      "supporting_marker_roles": "HbA1c, triglycerides and HDL support metabolic-risk context; GGT can corroborate liver-enzyme context; CK redirects toward muscle contribution; bilirubin redirects toward higher-concern clinical review."
+    }
+  }
+]

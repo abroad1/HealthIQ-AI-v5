@@ -1,0 +1,67 @@
+research_domain: hepatic
+sources:
+- source_id: source_aasld_liver_enzymes_2025
+  paper_title: 'AASLD Liver Fellow Network: How to approach elevated liver enzymes'
+  journal: professional_hepatology_education
+  year: 2025
+  url: https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes
+- source_id: source_aasld_dili_guidance_2023
+  paper_title: AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury
+  journal: society_practice_guidance
+  year: 2023
+  url: https://onlinelibrary.wiley.com/doi/10.1002/hep.32689
+- source_id: source_bsg_abnormal_liver_tests_2017
+  paper_title: British Society of Gastroenterology guideline on abnormal liver blood tests
+  journal: uk_clinical_guideline
+  year: 2017
+  url: https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests
+- source_id: source_acg_abnormal_liver_chemistries_2017
+  paper_title: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+  journal: clinical_guideline
+  year: 2017
+  url: https://pubmed.ncbi.nlm.nih.gov/27995906/
+- source_id: source_easl_cholestatic_liver_guideline_2009
+  paper_title: 'EASL Clinical Practice Guidelines: Management of cholestatic liver diseases'
+  journal: professional_liver_society_guideline
+  year: 2009
+  url: https://www.journal-of-hepatology.eu/article/S0168-8278(09)00309-2/fulltext
+- source_id: source_fda_dili_guidance_2009
+  paper_title: 'FDA Guidance for Industry: Drug-Induced Liver Injury: Premarketing Clinical Evaluation'
+  journal: regulatory_guidance
+  year: 2009
+  url: https://www.fda.gov/regulatory-information/search-fda-guidance-documents/drug-induced-liver-injury-premarketing-clinical-evaluation
+biomarkers:
+- alt
+- alp
+- ggt
+- bilirubin
+- creatine_kinase
+derived_metrics:
+- r_value_alt_alp
+physiological_claim: A mixed biochemical pattern reflects proportional contribution from ALT and ALP when
+  both are interpreted relative to lab-provided upper reference limits; it does not diagnose obstruction
+  or cause.
+evidence_strength: consensus
+research_summary: 'Canonical ARCH-CONV-E Pass 3 promotion for spec_id=inv_alt_high_r_value_mixed_biochemical_pattern;
+  signal_id=signal_alt_high; contract=3.0.0. Hypotheses: hyp_mixed_alt_alp_biochemical_pattern (rank 1,
+  consensus): High ALT with a proportionally raised ALP component may support a mixed biochemical pattern
+  when the R-value is greater than 2 and less than 5. | hyp_mixed_pattern_requires_source_localisation
+  (rank 2, strong): A mixed ALT/ALP biochemical pattern should be interpreted with hepatic-source localisation
+  because ALP can be liver, bone, placental, intestinal or other source. Missing-data boundaries: Do not
+  classify a mixed pattern without ALT ULN, ALP ULN and contemporaneous ALT/ALP values. If GGT is missing,
+  state lower confidence in hepatic-source ALP. | If GGT, ALP isoenzymes or 5-nucleotidase are unavailable,
+  use low-confidence ALP-predominant or mixed-pattern wording only. Contradiction and exclusion context:
+  ctr_normal_ggt_or_nonhepatic_alp: Normal or missing GGT reduces confidence that the ALP component is
+  hepatic when ALP may be bone-derived or otherwise non-hepatic. | ctr_high_ck_muscle_component: High
+  CK can explain part of the aminotransferase contribution and should downgrade liver-first interpretation.
+  | ctr_alp_source_unconfirmed: If ALP source is unconfirmed, mixed-pattern language may overstate liver
+  or bile-duct involvement. Non-diagnostic caveats: A mixed biochemical pattern does not prove obstruction,
+  DILI, bile-duct injury or a specific cause. | GGT or ALP isoenzyme context is important when ALP source
+  may be non-hepatic. | Raised GGT supports liver/biliary source but is not specific enough to identify
+  cause. | Normal GGT with raised ALP should reduce confidence in hepatic ALP contribution. Source limitations:
+  Educational page, not a formal practice guideline. | DILI-specific; general-liver-test use is extrapolative.
+  | Does not define R-value; supports context and safety boundaries. | US guideline; captured access through
+  abstract-level source. | Older guideline and cholestatic/DILI-specific. Derived-metric contract:
+  r_value_alt_alp = (ALT / ALT ULN) / (ALP / ALP ULN); ALT result and laboratory ULN, ALP result
+  and laboratory ULN, and contemporaneous same-sample pairing are required; fail closed if any
+  input is absent; classify this package only when 2 < R < 5.'

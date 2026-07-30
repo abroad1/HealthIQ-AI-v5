@@ -11,7 +11,7 @@
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "HIGH/MIXED but this session independently audited ARCH-CONV-D's full identity-closure content and the ARCH-CONV-C hash defect two turns ago, so shared docs and repo state were already read once. Verification here re-confirmed each load-bearing claim (identity relationship on merged main, canonical spec, thresholds, hash defect persistence, branch/token cleanliness) via batched Bash/grep rather than re-deriving from scratch."
+    "rationale": "Single bounded package-build scope (6 named directories), building directly on evidence already gathered this session (spec_ids, hashes, existing package lineage, collision model, ratio_registry.py) — no unread ground to cover, only targeted re-verification of new claims (validator flags, schema field names, test file existence, branch/token state)."
   },
 
   "prompt_receipt_gate": {
@@ -19,103 +19,96 @@
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type"],
     "declared_risk_level": "HIGH",
     "declared_change_type": "MIXED",
-    "scope_proportionality": "PASS — phased STOP-gated execution (STOP A -> Gate 1 -> Gate 2 -> STOP C), explicit exclusions (AST, bilirubin/hyperbilirubinemia, ALP-low, cholestatic_source_axis), explicit non-goals, bundles one small directly-related repair (ARCH-CONV-C manifest hash defect) rather than opening a separate package for it — reasonable bundling since Phase 0E treats it as inspect-first (NO_CHANGE_REQUIRED path exists) and requires a separate commit",
+    "scope_proportionality": "PASS — 6 named package directories, explicit test requirement for behavioural content (override/escalation/fail-closed logic), no open-ended discovery",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "arch_conv_d_closure_is_trustworthy_baseline": {
-      "status": "CONFIRMED — verified independently, not assumed",
-      "evidence": "This session's own ARCH-CONV-D post-implementation audit (docs/architecture/ARCH-CONV-D_post_implementation_conformance_and_recovery_audit.md) found PASS_WITH_REMEDIATION / PROCEDURAL_ONLY. The recommended recovery route was NOT taken as literally proposed (no retrospective hardening/start/finish was fabricated); instead docs/architecture/ARCH-CONV-D_lifecycle_exception_and_closure.md (commit c2a8d54) records explicit Head-of-Architecture lifecycle-exception merge authority, citing the audit directly, and explicitly states retrospective hardening/start/finish were 'Not created' — the honest outcome this auditor's own recovery-route analysis was steering toward. ARCH-CONV-D is confirmed merged into main at 39da186 (git merge-base --is-ancestor: MERGED)."
-    },
-    "identity_relationship_intact_on_merged_main": {
+    "branch_and_token_alignment": {
       "status": "CONFIRMED",
-      "evidence": "git show main:knowledge_bus/governance/arch_conv_d_alt_identity_relationship_v1.yaml shows canonical_successor_signal_id: signal_alt_high, legacy_predecessor_signal_id: signal_hepatic_alt_context, runtime_alias_created: false — unchanged from the pre-merge state this session already audited"
+      "evidence": "automation_bus/state/work_package_active.json: work_id=ARCH-CONV-E, branch=feature/arch-conv-e-alt-why-authority, status=STARTED. git branch --show-current returns the same branch, currently checked out. This prompt's front matter matches exactly — genuine continuation of the existing active package, resolving the branch/token blockers found in the prior hardening pass."
     },
-    "canonical_alt_target_verified": {
+    "validator_command_correct": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml:1-2 -> spec_id: inv_alt_high_hepatocellular_injury, signal_id: signal_alt_high, matching the prompt's declared canonical target exactly"
+      "evidence": "python backend/scripts/validate_knowledge_package.py --help confirms --package-dir PACKAGE_DIR as the required flag, exact match to the prompt's required command."
     },
-    "legacy_why_registry_unchanged": {
+    "three_regenerate_targets_exist_and_correctly_mapped": {
       "status": "CONFIRMED",
-      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:32 still registers only signal_hepatic_alt_context; signal_alt_high still absent — matches prompt's stated current state"
+      "evidence": "pkg_kb52c_alt_high_hepatocellular_injury_pattern, pkg_kb52c_alt_high_muscle_source_or_exertional_pattern, pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern all exist with research_brief.yaml/signal_library.yaml/package_manifest.yaml. Their prior spec_ids (Batch_5_Pass_3.json: inv_alt_high_hepatocellular_injury_pattern, _muscle_source_or_exertional_pattern, _metabolic_steatotic_liver_pattern) correctly correspond in medical territory to the assigned new spec_ids (inv_alt_high_r_value_hepatocellular_biochemical_pattern, _muscle_source_or_exertional_contribution, _metabolic_masld_context) — not a naming coincidence, a real content correspondence."
     },
-    "threshold_values_match_prompt": {
+    "three_new_targets_do_not_collide": {
       "status": "CONFIRMED",
-      "evidence": "pkg_s24_alt_high_hepatocellular_injury/signal_library.yaml: 120.0 (ALT severity), 20.0 (bilirubin), 130.0 (ALP); pkg_hepatic_alt_context/signal_library.yaml: 45.0 (AST), 60.0 (GGT), 130.0 (ALP), 20.0 (bilirubin) — exact match to the prompt's Phase 0D threshold list (ALT>120, AST>45, GGT>60, ALP>130, bilirubin>20)"
+      "evidence": "ls knowledge_bus/packages/ | grep -i 'mixed_biochemical|cholestatic_alp_predominant|bilirubin_severity' returns no matches — safe to create."
     },
-    "arch_conv_c_hash_defect_still_present": {
-      "status": "CONFIRMED — repair correctly scoped as still required",
-      "evidence": "Recomputed both compiled artefact hashes directly: ALP actual 973f9a3358..., manifest recorded 387c4e5170... (mismatch); GGT actual d6b07d0202..., manifest recorded 55c7beaff0... (mismatch). Both mismatches persist unchanged on merged main, confirming Phase 0E's repair task is real and not already resolved — the prompt's own inspect-first design (NO_CHANGE_REQUIRED escape hatch) is appropriately cautious given this finding"
+    "referenced_tests_are_real": {
+      "status": "CONFIRMED, with caveat",
+      "evidence": "grep -rl kb52c backend/tests/ returns test_kb_util2_promote_pilot.py, test_lc_s18a_package_estate_inventory.py, test_med_frame_identity_index.py, test_signal_authority_collision_enforcement.py — these exist and are not fabricated. Caveat: none currently reference signal_alt_high or liver_injury_axis by name, so 'comparable kb52c package tests' requires Cursor's own judgement on applicability per package, not a fixed list to blindly run."
     },
-    "hepatocellular_axis_does_not_yet_exist": {
-      "status": "CONFIRMED",
-      "evidence": "grep for hepatocellular_injury_axis / hepatocellular in signal_authority_collision_model_v1.yaml returns zero matches — Phase 0F's 'reconstruct, do not adjudicate' framing is correctly calibrated to a placeholder that doesn't exist yet (unlike liver_injury_axis, which existed as a stub before ARCH-CONV-C)"
+    "manifest_lineage_field_names_partially_mismatch_locked_schema": {
+      "status": "NON-BLOCKING CORRECTION",
+      "evidence": "knowledge_bus/schema/package_manifest_schema.yaml (v1.1.0, LOCKED) recognizes source_spec_id (exact match to prompt), source_document, source_document_hash. It does NOT recognize source_path, source_hash, compiler_version, output_artifacts, output_hashes, promoted_utc, or promotion_mode. validate_package_manifest.py (lines 128-132) only validates fields present in required_fields/optional_fields and does not reject unrecognized extra keys, so this will not fail validation — but Cursor should use source_document/source_document_hash (schema-recognized) rather than inventing parallel source_path/source_hash keys, and should route compiler_version/output_artifacts/output_hashes/promoted_utc/promotion_mode into the evidence report rather than the manifest, per the prompt's own already-present fallback clause ('record it in the normal ARCH-CONV-E evidence report... if the locked schema cannot carry one of these fields')."
     },
-    "branch_and_kernel_state": {
-      "status": "CONFIRMED clean",
-      "evidence": "local main == origin/main == 39da186b7b13a1c2bf571f68c070f6201905649c; git rev-parse --verify feature/arch-conv-e-alt-why-authority fails (branch does not pre-exist); automation_bus/state/work_package_active.json absent (no active token); working tree clean except expected latest_cursor_prompt.md hand-off diff; no ARCH-CONV-E branch or commit exists anywhere in history"
+    "r_value_dependent_deferral_correctly_scoped": {
+      "status": "CONFIRMED SOUND",
+      "evidence": "backend/core/analytics/ratio_registry.py does not contain r_value_alt_alp (confirmed in prior evidence pass). The prompt correctly requires DEFERRED_WITH_EXPLICIT_REASON for exactly the three R-value-dependent packages (hepatocellular, mixed, cholestatic/ALP-predominant), explicitly forbids ready_for_implementation: true for them, and explicitly forbids touching ratio_registry.py or any runtime/SSOT registry in this step."
     },
-    "kernel_schema_cross_check": {
-      "status": "CONFIRMED",
-      "evidence": "backend/scripts/run_work_package.py requires latest_prompt_hardening.json work_id to equal the prompt front matter's work_id. This record sets work_id: \"ARCH-CONV-E\", superseding the stale ARCH-CONV-C record that was still on disk (a leftover from before the ARCH-CONV-D lifecycle exception bypassed normal hardening/start/finish for that package)"
+    "working_tree_state": {
+      "status": "NOTED, non-blocking",
+      "evidence": "git status --short still shows automation_bus/latest_cursor_prompt.md and automation_bus/latest_prompt_hardening.json modified (expected hand-off/hardening iteration files) and the 3 Pass_1/2/3 JSON files still untracked. Not a STOP condition under this prompt (unlike the earlier withdrawn draft) since branch/token alignment is now correct; Cursor should still commit the Pass 3 source appropriately as part of this package's changes."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "no_self_certification_language_present": {
+    "one_package_per_subpattern_structure": {
       "status": "SOUND",
-      "evidence": "Prompt explicitly states 'Cursor must not self-certify STOP A, Gate 1, Gate 2 or STOP C' and requires independent Head of Architecture / Head of Medical Research / Anthony approval at each gate, consistent with every prior package in this programme"
+      "evidence": "Resolves the ambiguity in the withdrawn prior draft — explicitly names all 6 target directories with 1:1 spec assignment, matching the established kb52c one-package-per-sub-pattern convention rather than collapsing distinct medical patterns."
     },
-    "fail_closed_requirements_carried_forward": {
+    "fail_closed_and_deferral_logic": {
       "status": "SOUND",
-      "evidence": "Phase 2's fail-closed requirements (missing/unsupported role never defaults to causal, no filename/lexical/load-order selection) directly reuse the pattern independently verified in ARCH-CONV-B/C's compiler code — not weakened or reinvented"
+      "evidence": "R-value formula, required inputs, contemporaneous-pairing requirement, and fail-closed behaviour are stated exactly as found in the canonical Pass 3 source; explicit prohibition on marking R-value-dependent packages runtime-ready."
     },
-    "legacy_retirement_safeguards": {
+    "collision_handling": {
       "status": "SOUND",
-      "evidence": "Legacy retirement requirement section explicitly requires alt_hypotheses_v1.yaml remain physically present, retirement represented explicitly in authority registers, and no duplicate ALT user-facing findings — matches the proven ARCH-CONV-B/C legacy-disconnection pattern"
+      "evidence": "Requires recording a future dependency statement against signal_authority_collision_model_v1.yaml's liver_injury_axis without editing that governed file directly — correctly scoped, does not self-adjudicate an unresolved collision."
     },
-    "arch_conv_c_repair_correctly_isolated": {
+    "test_requirement_present": {
       "status": "SOUND",
-      "evidence": "Phase 0E explicitly forbids modifying compiled ALP/GGT artefacts, requires the repair be committed separately from ALT work, and requires STOP-and-escalate if any mismatch involves compiled content rather than manifest metadata — correctly scoped as metadata-only given this session's own finding that the defect is provenance-metadata staleness, not a functional defect"
-    },
-    "hepatocellular_axis_correctly_deferred": {
-      "status": "SOUND",
-      "evidence": "Phase 0F explicitly forbids Cursor from adjudicating the new axis, consistent with liver_injury_axis's precedent where the placeholder was reconstructed at STOP A but only adjudicated at Gate 1/Gate 2"
+      "evidence": "Requires running applicable existing tests and adding a minimum scoped content-contract test if none exists, plus explicit proof that R-value-dependent packages remain non-ready — resolves the missing-tests gap from the withdrawn draft."
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "Phase 0A requires Cursor to 're-confirm' the ARCH-CONV-D decision from 'current main' — Cursor should be aware the ARCH-CONV-D governance content was verified twice independently this session (once pre-merge, once post-merge) and is unchanged; no new discrepancy should be expected, but the STOP condition ('STOP if the merged repository does not match the approved ARCH-CONV-D decision') should still be executed as a live check, not skipped as redundant.",
-    "The ARCH-CONV-C hash repair (Phase 0E) is real and required — do not treat it as boilerplate. Both ALP and GGT compiled-artefact hashes are currently mismatched against their manifests; the repair must recompute from the actual files, not merely copy a value from this hardening record."
+    "Use package_manifest_schema.yaml's actual recognized field names (source_document, source_document_hash, source_spec_id) rather than the prompt's source_path/source_hash — avoid creating unrecognized duplicate keys.",
+    "compiler_version, output_artifacts, output_hashes, promoted_utc, promotion_mode have no schema support at all — route these into the evidence report only, per the prompt's own fallback clause, not into package_manifest.yaml.",
+    "Verify per-package which of the four kb52c-referencing test files are actually applicable before treating them as the required 'comparable' test set — none currently reference signal_alt_high by name.",
+    "This is HIGH risk / MIXED change_type: per SOP this hardening clears Stage 3 kernel start, but GPT architectural review and dual approval are still required before this package is treated as fully authorised, consistent with prior ARCH-CONV-E hardening precedent."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 8,
+    "checklist_count": 9,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "Front matter is complete (work_id, branch, risk_level, execution_model, change_type)", "source": "automation_bus/latest_cursor_prompt.md:1-7", "evidence": "All 5 mandatory fields present", "status": "CONFIRMED"},
-      {"id": 2, "claim": "ARCH-CONV-D is merged and published on main, and its identity relationship content is unchanged from this session's own independent audit", "source": "git merge-base --is-ancestor feature/arch-conv-d-alt-identity-closure main; git show main:knowledge_bus/governance/arch_conv_d_alt_identity_relationship_v1.yaml", "evidence": "MERGED at 39da186; canonical_successor_signal_id: signal_alt_high, runtime_alias_created: false, unchanged", "status": "CONFIRMED"},
-      {"id": 3, "claim": "ARCH-CONV-D's lifecycle gap was closed honestly, without backdated hardening/start/finish", "source": "docs/architecture/ARCH-CONV-D_lifecycle_exception_and_closure.md", "evidence": "Explicitly records retrospective hardening/start/finish as 'Not created'; merge authorised via explicit Head-of-Architecture lifecycle exception citing this session's own conformance audit", "status": "CONFIRMED"},
-      {"id": 4, "claim": "Canonical ALT target identity verified by embedded field", "source": "knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml:1-2", "evidence": "spec_id: inv_alt_high_hepatocellular_injury, signal_id: signal_alt_high", "status": "CONFIRMED"},
-      {"id": 5, "claim": "Threshold values cited in Phase 0D match actual signal_library content", "source": "pkg_s24_alt_high_hepatocellular_injury/signal_library.yaml, pkg_hepatic_alt_context/signal_library.yaml", "evidence": "120.0/20.0/130.0 (s24) and 45.0/60.0/130.0/20.0 (hepatic context) — exact match", "status": "CONFIRMED"},
-      {"id": 6, "claim": "ARCH-CONV-C manifest hash defect (found during this session's ARCH-CONV-D audit) is still present and requires Phase 0E's repair", "source": "direct SHA-256 recomputation of both compiled artefacts vs manifest-recorded output_hash", "evidence": "Both ALP and GGT hashes still mismatched, unchanged since the ARCH-CONV-D audit", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Target branch does not pre-exist, no active kernel token, no prior ARCH-CONV-E history", "source": "git rev-parse --verify feature/arch-conv-e-alt-why-authority; ls automation_bus/state/work_package_active.json; git log --all --oneline | grep -i arch-conv-e", "evidence": "Branch resolution fails, token file absent, zero history matches", "status": "CONFIRMED"},
-      {"id": 8, "claim": "This hardening record's work_id exactly matches the prompt's front-matter work_id", "source": "backend/scripts/run_work_package.py; automation_bus/latest_cursor_prompt.md:2", "evidence": "Both are \"ARCH-CONV-E\", superseding the stale ARCH-CONV-C record left on disk after ARCH-CONV-D's lifecycle-exception bypass", "status": "CONFIRMED"}
+      {"id": 1, "claim": "Front matter complete and matches active Automation Bus token exactly", "source": "automation_bus/latest_cursor_prompt.md:1-7; automation_bus/state/work_package_active.json", "evidence": "work_id ARCH-CONV-E, branch feature/arch-conv-e-alt-why-authority match on both sides; token status STARTED (continuation, not new start)", "status": "CONFIRMED"},
+      {"id": 2, "claim": "Declared branch is the actual checked-out branch", "source": "git branch --show-current", "evidence": "feature/arch-conv-e-alt-why-authority", "status": "CONFIRMED"},
+      {"id": 3, "claim": "validate_knowledge_package.py --package-dir is the correct invocation", "source": "backend/scripts/validate_knowledge_package.py --help", "evidence": "--package-dir PACKAGE_DIR required argument, exact match", "status": "CONFIRMED"},
+      {"id": 4, "claim": "3 regenerate-target packages exist with correct spec_id correspondence", "source": "knowledge_bus/packages/pkg_kb52c_alt_high_hepatocellular_injury_pattern/, _muscle_source_or_exertional_pattern/, _metabolic_steatotic_liver_pattern/ research_brief.yaml", "evidence": "All three exist; prior spec_ids from Batch_5_Pass_3.json correspond in medical content to newly assigned spec_ids", "status": "CONFIRMED"},
+      {"id": 5, "claim": "3 new-target package directories do not already exist", "source": "ls knowledge_bus/packages/", "evidence": "No mixed_biochemical/cholestatic_alp_predominant/bilirubin_severity directories present", "status": "CONFIRMED"},
+      {"id": 6, "claim": "Referenced comparable kb52c tests exist in the repository", "source": "backend/tests/regression/test_kb_util2_promote_pilot.py, test_lc_s18a_package_estate_inventory.py, test_med_frame_identity_index.py, test_signal_authority_collision_enforcement.py", "evidence": "All four exist; applicability per package still requires Cursor judgement", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Manifest lineage field names as specified partially do not match the locked schema", "source": "knowledge_bus/schema/package_manifest_schema.yaml v1.1.0 LOCKED", "evidence": "source_spec_id matches; source_path/source_hash/compiler_version/output_artifacts/output_hashes/promoted_utc/promotion_mode are not schema fields (validator does not reject them, but they are unrecognized) — non-blocking correction issued", "status": "CONFIRMED"},
+      {"id": 8, "claim": "r_value_alt_alp remains absent from runtime registries, so deferral scoping is necessary and correctly applied to exactly 3 of 6 packages", "source": "backend/core/analytics/ratio_registry.py (prior evidence pass, re-confirmed unchanged)", "evidence": "Not present in the governed derived-metric list", "status": "CONFIRMED"},
+      {"id": 9, "claim": "Corrected Pass 3 source hash matches the file the prompt cites", "source": "knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json", "evidence": "Get-FileHash -Algorithm SHA256 = 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267, matches prompt exactly", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Beginning medical review, compiling ALT WHY, creating the hepatocellular collision axis, remediating thresholds, or disconnecting legacy ALT WHY before STOP A approval — REJECT_AND_RETURN",
-    "Any implementation before STOP A approval and dual Gate 1/Gate 2 completion — REJECT_AND_RETURN",
-    "Any AST WHY creation, bilirubin/hyperbilirubinemia migration, or ALP/GGT clinical-content/cholestatic_source_axis change — REJECT_AND_RETURN",
-    "Modifying compiled ALP/GGT artefact content while repairing the ARCH-CONV-C manifest hashes (only the manifest output_hash field may change) — REJECT_AND_RETURN",
-    "Selecting authority by filename, package name, lexical order, directory order, or load order — REJECT_AND_RETURN",
-    "Defaulting missing/unsupported role or conditional metadata to causal — REJECT_AND_RETURN",
-    "Using ARCH-CONV-D's lifecycle exception as precedent to skip hardening/start for ARCH-CONV-E itself — REJECT_AND_RETURN",
-    "Running Automation Bus finish before independent STOP C approval — REJECT_AND_RETURN"
+    "Marking any of the three R-value-dependent packages ready_for_implementation: true, or adding r_value_alt_alp to ratio_registry.py/SSOT/any runtime registry in this step — REJECT_AND_RETURN",
+    "Collapsing any of the six medically distinct sub-patterns into a shared package, or creating a package not on the required list — REJECT_AND_RETURN",
+    "Editing knowledge_bus/governance/signal_authority_collision_model_v1.yaml directly in this step — REJECT_AND_RETURN",
+    "Promoting via latest_knowledge_status.json, activating WHY output, retiring legacy authority, or modifying runtime/SSOT/frontend code — REJECT_AND_RETURN",
+    "Introducing medical claims, thresholds or wording not present in the validated Pass 3 source — REJECT_AND_RETURN",
+    "Silently altering validate_knowledge_package.py or validate_investigation_spec.py output to force a pass — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. ARCH-CONV-D's merged baseline independently re-verified as trustworthy: identity relationship content unchanged from this session's own prior audit, and its lifecycle gap was closed honestly via an explicit Head-of-Architecture exception rather than fabricated retrospective records. Canonical ALT target, legacy WHY registry state, and all cited threshold values confirmed exactly as the prompt describes. The ARCH-CONV-C manifest hash defect this session discovered during the ARCH-CONV-D audit is confirmed still present and correctly scoped for metadata-only repair in Phase 0E. Branch, token, and history state all clean. No blocking defect found."
+  "overall_verdict": "HARDENED. CLEARED FOR EXECUTION (subject to standard HIGH-risk GPT architectural review + dual approval per SOP, separate from this hardening). All blockers identified in the prior hardening pass for this same work_id (nonexistent branch, active-token conflict with a mismatched second work_id, uncommitted destructive overwrite of the hand-off file) are resolved: branch, work_id, and Automation Bus token now agree exactly. The prompt correctly resolves the two substantive content gaps flagged in review before hardening — the target package set is now explicitly named as 6 directories (3 regenerate with correct spec correspondence, 3 new) matching the established one-package-per-sub-pattern convention, and the three R-value-dependent packages carry an explicit, correctly-scoped DEFERRED_WITH_EXPLICIT_REASON requirement tied to the confirmed absence of r_value_alt_alp from ratio_registry.py. One non-blocking correction is recorded: the prompt's proposed manifest lineage field names (source_path, source_hash, compiler_version, output_artifacts, output_hashes, promoted_utc, promotion_mode) only partially match the locked package_manifest_schema.yaml v1.1.0 — Cursor should substitute the schema-recognized source_document/source_document_hash and route the remaining fields into the evidence report per the prompt's own existing fallback clause, not invent new manifest keys. No blocking defect found."
 }

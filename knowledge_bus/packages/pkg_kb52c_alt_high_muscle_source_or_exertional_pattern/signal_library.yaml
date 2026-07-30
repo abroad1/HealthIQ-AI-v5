@@ -1,56 +1,71 @@
 library:
   package_id: KBP-4725
   schema_version: 2.0.0
-  package_version: 1.0.0
-  library_name: KB-S52C Wave A — Alt High Muscle Source Or Exertional Pattern
-  description: Ingested from inv_alt_high_muscle_source_or_exertional_pattern (Batch_5_Pass_3.json).
-    KB-S52C Wave A resolver-clean tranche.
+  package_version: 1.1.0
+  library_name: ARCH-CONV-E — ALT High Muscle Source or Exertional Contribution
+  description: Governed package asset translated from inv_alt_high_muscle_source_or_exertional_contribution
+    in knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json.
+    Asset construction does not activate runtime authority.
 signals:
 - signal_id: signal_alt_high
-  name: Alt High Muscle Source Or Exertional Pattern
-  description: Raised ALT can occasionally reflect exercise-related or myopathic enzyme
-    release when muscle markers are also abnormal and liver-specific context is weak.
-  system: mitochondrial
+  name: ALT High Muscle Source or Exertional Contribution
+  description: Muscle injury, strenuous exercise, myopathy or rhabdomyolysis can contribute to ALT and
+    AST elevation, particularly when CK is raised, so high CK should contextualise or downgrade liver-first
+    interpretation.
+  system: hepatic
   primary_metric: alt
   trigger_direction: high
   supporting_metrics:
   - biomarker_id: creatine_kinase
     expected_direction: high
-    role: mechanism_marker
-    availability: common
-    rationale: Marked creatine kinase elevation supports skeletal muscle injury or
-      exertional release as a contributor to raised ALT.
-  - biomarker_id: ast
-    expected_direction: high
     role: corroborator
     availability: common
-    rationale: AST often rises with muscle injury and can corroborate a non-hepatic
-      source when CK is elevated.
+    rationale: Raised CK supports skeletal-muscle contribution to aminotransferase elevation.
+  - biomarker_id: ast
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: AST is less liver-specific than ALT and can rise substantially with muscle injury.
   - biomarker_id: ggt
     expected_direction: any
     role: differential_marker
     availability: common
-    rationale: A normal GGT weakens a hepatobiliary source and supports consideration
-      of a muscle-origin transaminase pattern.
+    rationale: GGT helps assess liver or biliary involvement; normal GGT can support but not prove a non-hepatic
+      context.
+  - biomarker_id: bilirubin
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: Raised bilirubin is less consistent with isolated muscle-source aminotransferase elevation
+      and should redirect toward clinical review.
+  - biomarker_id: creatinine
+    expected_direction: high
+    role: severity_marker
+    availability: common
+    rationale: Creatinine can add renal-risk context when severe muscle injury or rhabdomyolysis is a
+      concern.
+  - biomarker_id: alp
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Raised ALP, particularly with raised GGT or bilirubin, supports liver or bile-flow context
+      rather than isolated muscle contribution.
   dependencies:
     biomarkers:
     - alt
-    - ast
     - creatine_kinase
+    - ast
     - ggt
+    - bilirubin
+    - creatinine
+    - alp
     derived_metrics: []
     signals: []
   optional_dependencies:
     biomarkers: []
     derived_metrics: []
     signals: []
-  thresholds:
-  - threshold_id: signal_alt_high_lab_range_activation_placeholder
-    metric_id: alt
-    operator: '>='
-    value: 9999.0
-    severity: at_risk
-    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  thresholds: []
   activation_logic: lab_range_exceeded
   activation_config:
     enable_upper_bound: true
@@ -58,10 +73,10 @@ signals:
     enable_lower_bound: false
     lower_bound_state: suboptimal
   override_rules:
-  - rule_id: or_alt_high_with_marked_ck
+  - rule_id: or_alt_high_with_ck_high_muscle_context
     resulting_state: at_risk
-    description: Escalate as a possible muscle-source pattern when ALT is high and
-      creatine kinase is concurrently above the laboratory range.
+    description: Escalate or redirect interpretation when ALT elevation coincides with CK above the lab
+      range because muscle contribution becomes plausible.
     conditions:
     - metric_id: creatine_kinase
       operator: '>'
@@ -69,8 +84,9 @@ signals:
       comparator_type: lab_range_boundary
       boundary: above_max
     source_refs:
-    - source_alt_statpearls
-    - source_hackney_lft
+    - source_pettersson_exercise_lft_2008
+    - source_bodybuilding_aminotransferase_review_2020
+    - source_rhabdomyolysis_lft_review_2020
   output:
     signal_value: alt
     signal_state: at_risk
@@ -80,15 +96,20 @@ signals:
     - creatine_kinase
     - ast
     - ggt
+    - bilirubin
+    - creatinine
+    - alp
   explanation:
-    mechanism: Skeletal muscle injury or heavy exertion can release aminotransferases
-      into the circulation, usually with a more prominent creatine kinase rise.
-    biological_pathway: Exercise-induced muscle membrane injury, myopathic processes,
-      and rhabdomyolysis-related leakage can contribute to circulating transaminases.
-    interpretation: A muscle-source explanation becomes more plausible when CK is
-      elevated and liver-specific context is weak, but mixed causes remain possible.
-    implications: This pattern may justify repeat testing after rest and targeted
-      muscle review before a liver-focused pathway is pursued alone.
-    supporting_marker_roles: Creatine kinase provides mechanistic support for muscle
-      release, AST corroborates a muscle injury pattern, and GGT helps differentiate
-      non-hepatic from hepatobiliary source.
+    mechanism: ALT and AST can be released from skeletal muscle as well as liver, especially after strenuous
+      exercise or muscle injury, and CK provides stronger muscle-source evidence.
+    biological_pathway: Muscle membrane injury or exertional stress can raise CK, myoglobin and aminotransferases,
+      creating a pattern that can mimic liver-enzyme elevation on routine panels.
+    interpretation: HealthIQ may state that muscle contribution is possible when ALT elevation appears
+      with high CK or recent heavy exercise, while clearly saying this does not exclude liver causes.
+      Very high ALT values should be treated with escalated clinical-review wording regardless of a plausible
+      muscle-source explanation.
+    implications: The safest educational action is to place ALT in source-context rather than diagnosing
+      liver disease or dismissing the liver, particularly if bilirubin, GGT or symptoms are present.
+    supporting_marker_roles: CK corroborates muscle-source contribution; AST supports aminotransferase
+      context; GGT and bilirubin contradict isolated muscle-source framing; creatinine adds renal-risk
+      context if severe muscle injury is suspected.
