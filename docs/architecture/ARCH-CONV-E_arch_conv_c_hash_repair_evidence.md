@@ -15,6 +15,23 @@ baselines.
 | `knowledge_bus/compiled/hypotheses/inv_alp_high_bone_biliary.yaml` | `387c4e5170cd34ae3bbb65b9cfd9a05eb2917698d262edaa8c38ab4e675db6d7` | `973f9a33581267a6fc7e1b5b87bda800840aa0f78588aa4dd931064374fd7633` |
 | `knowledge_bus/compiled/hypotheses/inv_ggt_high_hepatic.yaml` | `55c7beaff048ecf849d389f9e9aee3a5dc8f3b72ede45ef4b5eddee8bdf2af16` | `d6b07d0202c8007a964ac9d4bac42e02438078972d46c668e697097f8d914f19` |
 
+### Root cause
+
+Independent recomputation shows the stale `output_hash` values are SHA-256 of
+the **same compiled bytes after LF→CRLF conversion**, not different medical
+content:
+
+| Asset | LF (actual file / git blob) | CRLF (stale manifest) |
+|---|---|---|
+| ALP compiled | `973f9a33581267a6…fd7633` | `387c4e5170cd34ae…75db6d7` |
+| GGT compiled | `d6b07d0202c8007a…914f19` | `55c7beaff048ecf8…df2af16` |
+
+This is provenance-metadata drift only.
+
+Note: `docs/architecture/ARCH-CONV-C_STOP_C_runtime_proof.md` still quotes the
+pre-repair stale hashes. That is documentation drift only; runtime artefacts and
+manifests on this branch now match the LF compiled bytes.
+
 ## Byte-preservation proof
 
 For each compiled artefact, SHA-256 and byte length were recomputed from:
