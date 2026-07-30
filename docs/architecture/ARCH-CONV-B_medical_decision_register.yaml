@@ -1,0 +1,132 @@
+work_id: ARCH-CONV-B
+branch: feature/arch-conv-b-renal-why-authority
+register_state: PHASE_0_DRAFT_AWAITING_STOP_A_APPROVAL
+stop_a_evidence_ref: docs/architecture/ARCH-CONV-B_STOP_A_identity_and_source_closure.md
+target_map_ref: docs/architecture/ARCH-CONV-B_target_to_frame_map.md
+pack_ref: docs/architecture/ARCH-CONV-B_medical_review_pack.md
+decision_artefact_ref: null
+head_of_architecture_stop_a_reference: null
+head_of_medical_research_gate1_reference: null
+anthony_gate2_reference: null
+medical_decisions_made: false
+runtime_changes_authorised: false
+note: >
+  Phase 0 register only. Embedded canonical spec_id fields control identity.
+  No medical approval, compilation, runtime activation, authority registration,
+  or legacy disconnection is authorised until independent STOP A approval and
+  dual Gate 1 / Gate 2 completion.
+
+frames:
+  - signal_id: signal_creatinine_high
+    source_spec_id: inv_creatinine_high_renal
+    activation_key: signal_creatinine_high::inv_creatinine_high_renal
+    canonical_source: knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml
+    source_sha256: b53c0d924fde540c08226bf61a4d5b6b24eee9c10e1f8646f5d3a7861482163c
+    source_identity_basis: embedded_spec_id
+    legacy_source: knowledge_bus/root_cause/hypotheses/creatinine_high_hypotheses_v1.yaml
+    current_causal_why_authority: LEGACY_ACTIVE_OUT_OF_MIGRATED_COHORT
+    compiled_authority_state: NONE
+    s24_package: pkg_s24_creatinine_high_renal
+    parallel_candidates:
+      - activation_key: signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration
+        package_id: pkg_kb52c_creatinine_high_reduced_glomerular_filtration
+        source_type: PACKAGE_ONLY_PASS3
+        canonical_investigation_spec_exists: false
+        medical_role: PENDING
+    proposed_interpretation: >
+      Filtration-marker and renal-clearance-stress candidate. Isolated high
+      creatinine does not establish reduced kidney function, CKD, or AKI.
+    medical_decision: PENDING
+    why_role: PENDING
+    legacy_authority_disposition: PENDING
+    head_of_medical_research_reference: null
+    anthony_ratification_reference: null
+    evidence_gaps:
+      - no structured UACR row in canonical source
+      - no serial or known-CKD input for acute-versus-chronic distinction
+      - medication and exercise context not fully structured
+      - same-signal Pass 3 reduced-filtration role requires medical disposition
+    preserved_boundaries:
+      - do not diagnose CKD or AKI from creatinine alone
+      - do not emit or claim standalone signal_egfr_low WHY authority
+      - do not alter renal_filtration_axis signal collision behaviour
+      - do not recommend medication or treatment changes
+
+  - signal_id: signal_urea_high
+    source_spec_id: inv_urea_high_renal
+    activation_key: signal_urea_high::inv_urea_high_renal
+    canonical_source: knowledge_bus/research/investigation_specs/inv_urea_high_renal.yaml
+    source_sha256: 3c8d3d2e8c8138021981f4adfb9545c858d10354bf6a6c93a70f85d70a6abf60
+    source_identity_basis: embedded_spec_id
+    legacy_source: knowledge_bus/root_cause/hypotheses/urea_high_hypotheses_v1.yaml
+    current_causal_why_authority: LEGACY_ACTIVE_OUT_OF_MIGRATED_COHORT
+    compiled_authority_state: NONE
+    s24_package: pkg_s24_urea_high_renal
+    parallel_candidates:
+      - activation_key: signal_urea_high::inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+        package_id: pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load
+        source_type: PACKAGE_ONLY_PASS3
+        canonical_investigation_spec_exists: false
+        medical_role: PENDING
+    proposed_interpretation: >
+      Possible renal filtration or excretory-burden context, distinguished from
+      dehydration, protein load, bleeding differential, and catabolic states.
+      Isolated urea elevation does not diagnose renal impairment.
+    medical_decision: PENDING
+    why_role: PENDING
+    legacy_authority_disposition: PENDING
+    head_of_medical_research_reference: null
+    anthony_ratification_reference: null
+    evidence_gaps:
+      - S24 source is thin relative to the Pass 3 prerenal and catabolic framing
+      - corticosteroid and broader catabolic contexts are not structured in S24
+      - package-only Pass 3 source lacks peer canonical investigation spec
+      - urea family is absent from medical_frame_identity_index_v1.yaml
+    preserved_boundaries:
+      - do not diagnose renal impairment from urea alone
+      - do not silently merge renal prerenal catabolic or bleeding concepts
+      - do not diagnose GI bleeding from low hemoglobin context
+      - do not recommend treatment from this frame alone
+
+cross_signal_boundary:
+  signal_id: signal_egfr_low
+  role: ADJACENT_PRESERVE_NOT_ARCH_CONV_B_COMPILE
+  causal_why_authority_state: NONE
+  signal_authority_state: RUNTIME_ACTIVE_PRIMARY_RENAL_FILTRATION_AXIS
+  canonical_frames:
+    - source_spec_id: inv_egfr_low_chronic_kidney_function_reduction
+      activation_key: signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction
+      canonical_source: knowledge_bus/research/investigation_specs/inv_egfr_low_chronic_kidney_function_reduction.yaml
+      source_sha256: 514607dd894d466b60ea0275787903dda8dd8186bfe44e3d978bfa834a558e10
+      signal_package: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+    - source_spec_id: inv_egfr_low_hemodynamic_filtration_drop
+      activation_key: signal_egfr_low::inv_egfr_low_hemodynamic_filtration_drop
+      canonical_source: knowledge_bus/research/investigation_specs/inv_egfr_low_hemodynamic_filtration_drop.yaml
+      source_sha256: 49a28a760ca5c0d33f0b9f8602166065bfd144a3236b278e43ecb32369bb8c37
+      signal_package: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  safeguards:
+    - cross-signal boundary is not a same-activation-key duplicate
+    - creatinine may use only explicitly ratified eGFR supporting or severity context
+    - creatinine must not emit retire alias or displace signal_egfr_low WHY
+    - existing signal collision authority remains unchanged
+    - future standalone eGFR WHY migration remains possible
+
+excluded:
+  - signal_id: signal_urate_high
+    source_spec_id: inv_uric_acid_high_metabolic
+    activation_key: signal_urate_high::inv_uric_acid_high_metabolic
+    canonical_source: knowledge_bus/research/investigation_specs/inv_uric_acid_high_metabolic.yaml
+    source_sha256: a7edef6ee3c28a4da8be1d79a2f5e36b0f80f7af5c7b7e5a140418208fc078cd
+    canonical_domain: metabolic
+    current_causal_why_authority: LEGACY_ACTIVE_UNCHANGED
+    parallel_activation_key: signal_urate_high::inv_urate_high_gout_crystal_deposition_risk
+    disposition: OUT_OF_SCOPE_DEFERRED
+    reason: >
+      Renal handling is only one component of a wider metabolic and gout/crystal
+      authority problem. Inclusion would widen the medical and rollback boundary.
+    prohibited_actions:
+      - medical decision
+      - compilation
+      - runtime integration
+      - authority registration
+      - legacy disconnection
