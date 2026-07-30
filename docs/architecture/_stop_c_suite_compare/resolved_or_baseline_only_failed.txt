@@ -1,0 +1,3 @@
+backend\tests\regression\test_arch_conv_b_renal_stop_c.py::test_canonical_source_hashes_and_embedded_identity_are_stable
+backend\tests\regression\test_persisted_result_replay_status.py::TestPersistedResultReplayStatus::test_golden_runs_corpus_exists
+backend\tests\unit\test_arch_rt5_launch_gate.py::test_estate_index_loads

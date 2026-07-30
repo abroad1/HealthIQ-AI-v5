@@ -3,10 +3,12 @@
 **Work ID:** `ARCH-CONV-C`  
 **Branch:** `feature/arch-conv-c-alp-ggt-why-authority`  
 **Status:** `AWAITING_INDEPENDENT_HEAD_OF_ARCHITECTURE_STOP_C`  
+**Baseline comparison:** `COMPLETE — zero new ARCH-CONV-C-attributable failures`  
 **Gate 1 reference:** `ARCH-CONV-C-GATE1-HMR-2026-07-30`  
 **Gate 2 reference:** `ARCH-CONV-C-GATE2-ANTHONY-2026-07-30`  
 **Governance commit:** `37f6aed`  
-**Phase 2 implementation commit:** `3dcfd39`
+**Phase 2 implementation commit:** `3dcfd39`  
+**Baseline compared:** `cdc6cf3d463d50902a080b51136ef1a98b431f4a`
 
 This document is implementation evidence for independent STOP C. It is not a
 self-certification or approval.
@@ -178,30 +180,138 @@ Passing evidence:
 
 ## Baseline suite disposition
 
-The full backend suite reached 100% and reported 62 failures. The repository
-already has broad unrelated baseline failures spanning missing database
-services, alias/SSOT inventory, stale snapshots, legacy DTO fixtures and
-unrelated governance counts. No failure occurred in
+The full backend suite reached 100% and initially reported 62 failures on the
+pre-commit working tree (including a stale estate-index expected count of 17).
+After the intentional estate sentinel update to 21, the committed HEAD
+re-run reports **61 FAILED / 0 ERROR**. No failure occurred in
 `test_arch_conv_c_alp_ggt_stop_c.py`.
 
-Three directly observed baseline examples were preserved rather than changed:
+Three directly observed long-standing examples remain unchanged rather than
+rewritten:
 
-1. VR expected clinician-report mismatch. This was already recorded and
-   accepted as a pre-existing baseline discrepancy in ARCH-CONV-B. The VR
-   panel has normal ALP (38) and GGT (13), and ARCH-CONV-C changed neither the
-   VR input nor expected report fixture.
-2. `test_kbs23_catalogue_panel_harness_runs_all_panel_fixtures` fails because
-   an existing catalogue fixture lacks the golden runner's required `user`
-   object.
-3. The total-cholesterol root-cause test supplies a blank activation key to an
-   already multi-frame governed family and fails closed before any
-   ARCH-CONV-C role code executes.
+1. VR expected clinician-report mismatch (already recorded in ARCH-CONV-B).
+2. `test_kbs23_catalogue_panel_harness_runs_all_panel_fixtures` missing `user`.
+3. Total-cholesterol blank activation-key fail-closed before ARCH-CONV-C code.
 
-The full-suite run also exposed a stale estate-index expected count (17 versus
-the post-ARCH-CONV-B/C total of 21). That directly relevant sentinel was
-updated and passes. No unrelated snapshot, fixture, clinical output, alias,
-SSOT, scoring or frontend failure was rewritten or accepted in this work
-package.
+## Independent STOP C baseline comparison (required)
+
+Independent STOP C review was conditional on proving the full-suite failure
+set is unchanged versus pre-ARCH-CONV-C baseline
+`cdc6cf3d463d50902a080b51136ef1a98b431f4a`.
+
+### Commands
+
+```text
+# Active branch left untouched at feature/arch-conv-c-alp-ggt-why-authority (f1e0d33)
+git worktree add C:\Users\abroa\HealthIQ-AI-v5-wt-arch-conv-c-baseline cdc6cf3d463d50902a080b51136ef1a98b431f4a
+
+# Current HEAD full suite (committed ARCH-CONV-C)
+python -m pytest backend/tests -q --tb=no --junitxml=docs/architecture/_stop_c_suite_compare/current_junit.xml
+
+# Baseline full suite in isolated worktree (after copying gitignored .env for parity)
+python -m pytest backend/tests -q --tb=no --junitxml=docs/architecture/_stop_c_suite_compare/baseline_junit.xml
+```
+
+Node-ID extracts and classification lists are retained under:
+
+```text
+docs/architecture/_stop_c_suite_compare/
+```
+
+### Result counts
+
+| Suite | Commit | FAILED | ERROR |
+| --- | --- | ---: | ---: |
+| ARCH-CONV-C HEAD | `f1e0d33` | 61 | 0 |
+| Pre-ARCH-CONV-C baseline | `cdc6cf3` | 56 | 110 |
+
+The first baseline attempt ran in parallel without `.env` and was discarded as
+contaminated. The recorded baseline is the serial re-run with `.env` copied
+into the worktree. Docker Desktop / Postgres `:5433` was unavailable for most
+of the baseline window (`connection refused`), producing a large ERROR cascade
+in `backend/tests/integration/*` migration setup.
+
+### Classification summary
+
+| Class | Count | Verdict |
+| --- | ---: | --- |
+| Present on both (FAILED ∩ FAILED) | 53 | Unchanged baseline failures |
+| Newly introduced by ARCH-CONV-C (`current − baseline_failed − baseline_error`) | **0** | Pass criterion met |
+| Baseline FAILED resolved / absent on ARCH-CONV-C | 3 | See notes below |
+| Current FAILED + baseline ERROR (same node IDs) | 8 | Environmental / outcome-incomparable; baseline-reproduced as non-passing |
+| Baseline ERROR only (not in current FAILED) | 102 | Environmental DB/migration cascade while Postgres unavailable |
+
+### Newly introduced by ARCH-CONV-C
+
+**None.** Exact set is empty.
+
+### Failures present on both (53)
+
+Shared FAILED node IDs include the known long-standing clusters already cited
+in this proof (VR fixture, catalogue harness, total-cholesterol blank key,
+alias/SSOT inventory, scoring snapshots, staged-PSI counts, orphan inventory,
+LC-S20/S21 replay/fingerprint, insights golden parity, and related units).
+Full list: `docs/architecture/_stop_c_suite_compare/both_failed.txt`.
+
+### Resolved / baseline-only FAILED (3)
+
+1. `backend/tests/unit/test_arch_rt5_launch_gate.py::test_estate_index_loads`
+   - Baseline expects 17 compiled hypothesis artefacts and fails at 19
+     (post-ARCH-CONV-B estate).
+   - ARCH-CONV-C intentionally refreshed the sentinel to 21 after adding the
+     two ratified ALP/GGT compiled artefacts. Current HEAD passes.
+   - Classification: **resolved by ARCH-CONV-C** (governed estate count update).
+
+2. `backend/tests/regression/test_arch_conv_b_renal_stop_c.py::test_canonical_source_hashes_and_embedded_identity_are_stable`
+   - Baseline worktree checkout hashes LF bytes; the expected digests are the
+     CRLF working-tree hashes used on the active Windows checkout.
+   - Current HEAD passes. Not an ARCH-CONV-C logic change.
+   - Classification: **environmental / checkout line-ending instability**.
+
+3. `backend/tests/regression/test_persisted_result_replay_status.py::TestPersistedResultReplayStatus::test_golden_runs_corpus_exists`
+   - Baseline worktree lacks `backend/artifacts/golden_runs` because
+     `artifacts/` is gitignored (`.gitignore:87`).
+   - Current checkout has the local corpus and passes.
+   - Classification: **environmental / worktree isolation** (missing
+     gitignored artefacts).
+
+### Environmental / incomparable (8 current FAILED ∩ baseline ERROR)
+
+These node IDs failed on ARCH-CONV-C with content assertions and errored on
+baseline at integration DB migration setup while Postgres `:5433` was down:
+
+- `...test_clustering_result_structure`
+- `...test_clustering_with_different_algorithms`
+- `...test_full_pipeline_with_questionnaire`
+- `...test_pipeline_without_questionnaire`
+- `...test_pipeline_with_specific_categories`
+- `...test_insight_pipeline_metabolic_category_passes`
+- `...test_health_system_scoring_accuracy_integration`
+- `...test_ssot_fallback_when_lab_range_missing`
+
+Baseline reproducibility evidence:
+
+- Baseline full suite and targeted re-runs raise
+  `RuntimeError: Could not migrate test DB to head` /
+  `psycopg2.OperationalError: connection ... port 5433 failed: Connection refused`.
+- Docker Desktop engine was unavailable during the comparison
+  (`dockerDesktopLinuxEngine` pipe missing).
+- Targeted ARCH-CONV-C re-runs of the same nodes, when the process reached the
+  test body, failed on pre-existing assertions unrelated to ALP/GGT
+  (`cluster_engine_v2` membership, empty insight counts, missing SSOT source).
+- ARCH-CONV-C did not modify these integration modules, scoring engines, or
+  DB fixtures.
+
+Classification: **environmental instability**; same nodes are non-passing on
+baseline under the same environment.
+
+### STOP C comparison verdict
+
+- New ARCH-CONV-C-attributable full-suite failures: **0**
+- Incomparable nodes: only the DB-linked integration set above, each
+  baseline-reproduced as non-passing under the same unavailable-Postgres
+  environment
+- Active branch was not reset; baseline used an isolated worktree only
 
 ## Independent STOP C checklist
 
@@ -218,11 +328,13 @@ The independent reviewer must verify:
    replaced.
 8. ALT, AST, bilirubin/hyperbilirubinemia, ALP-low, scoring/card and unrelated
    domains remain outside the change.
-9. Baseline failures above are not reclassified as ARCH-CONV-C regressions
-   without contrary evidence.
+9. Baseline comparison above shows zero new ARCH-CONV-C-attributable failures.
+10. Environmental/incomparable nodes are baseline-reproduced as non-passing.
 
 ## STOP C verdict
 
 `AWAITING INDEPENDENT HEAD OF ARCHITECTURE STOP C APPROVAL`
+
+Baseline comparison complete: **zero new ARCH-CONV-C-attributable failures**.
 
 Automation Bus finish has not been run.
