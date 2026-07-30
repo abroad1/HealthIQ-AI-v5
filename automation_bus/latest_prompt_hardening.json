@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-C",
+  "work_id": "ARCH-CONV-E",
   "status": "HARDENED",
   "hardening_date": "2026-07-30",
   "hardened_by": "Claude Code",
@@ -11,7 +11,7 @@
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "HIGH/MIXED but bounded to 2 signal migrations + 1 named collision-axis decision, directly following the ARCH-CONV-B implementation pattern already verified this session. This session also authored the B2 scope advisory that produced this exact package, so shared docs and repo state were already read once; hardening re-verified each advisory citation against current main (git log --since the advisory date) rather than re-deriving from scratch. No disjoint large-scale investigation required."
+    "rationale": "HIGH/MIXED but this session independently audited ARCH-CONV-D's full identity-closure content and the ARCH-CONV-C hash defect two turns ago, so shared docs and repo state were already read once. Verification here re-confirmed each load-bearing claim (identity relationship on merged main, canonical spec, thresholds, hash defect persistence, branch/token cleanliness) via batched Bash/grep rather than re-deriving from scratch."
   },
 
   "prompt_receipt_gate": {
@@ -19,105 +19,103 @@
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type"],
     "declared_risk_level": "HIGH",
     "declared_change_type": "MIXED",
-    "files_in_scope": "7 required ARCH-CONV-B source records (read) + 4 Phase-0 outputs + 1 STOP C evidence doc = 12 explicitly named, plus a dynamically-discovered set (ALP/GGT canonical specs, Pass-3 candidates, legacy WHY assets, loaders, authority registers, liver_injury_axis collision fields, tests) enumerated by the prompt's own Stage 1A authority preflight",
-    "behaviour_changes_touch_intelligence_core": "YES — WHY compilation, liver_injury_axis collision policy, clinician-report/DTO role propagation",
-    "tests_required": "YES — dedicated Testing requirements section lists 17 named test behaviours",
-    "scope_proportionality": "PASS — bounded to 2 signal migrations (ALP-high, GGT-high) + 1 named collision-axis policy decision, explicit non-goals list (ALT, AST, bilirubin, ALP-low, liver-card redesign, frontend, estate-wide migration), explicit rollback boundary, phased STOP-gated execution directly following the ARCH-CONV-B precedent",
-    "advisory_duplication_detected": "YES — automation_bus/latest_scope_advisory.md (2026-07-30, same session) is the B2 scope advisory that produced this exact package recommendation. Citations re-verified per CLAUDE.md's Stage-D-with-advisory-present rule: git log --since=2026-07-30 against every file the advisory cited found only commit 3fed5cb (ARCH-CONV-B's own renal implementation, already known/audited) touching why_authority_v1.py and compiled_why_authority_register_v1.yaml — re-grepped both post-3fed5cb and confirmed zero hepatic/ALP/GGT/bilirubin/ALT entries still exist, so the advisory's 'zero hepatic entries' claim still holds. No material departure found.",
-    "scope_creep_signals": "NONE — reads scoped to 2 named signals plus the named collision axis; exclusions are enumerated explicitly, not open-ended",
+    "scope_proportionality": "PASS — phased STOP-gated execution (STOP A -> Gate 1 -> Gate 2 -> STOP C), explicit exclusions (AST, bilirubin/hyperbilirubinemia, ALP-low, cholestatic_source_axis), explicit non-goals, bundles one small directly-related repair (ARCH-CONV-C manifest hash defect) rather than opening a separate package for it — reasonable bundling since Phase 0E treats it as inspect-first (NO_CHANGE_REQUIRED path exists) and requires a separate commit",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "required_source_records_exist": {
-      "status": "CONFIRMED_EXISTS — all 7",
-      "evidence": "docs/architecture/ARCH-CONV-B_STOP_A_identity_and_source_closure.md, _target_to_frame_map.md, _medical_review_pack.md, _medical_decision_register.yaml, _GATE_1_head_of_medical_research_decision.md, _GATE_2_Anthony_ratification.md, _STOP_C_runtime_proof.md all present on main via direct file check"
+    "arch_conv_d_closure_is_trustworthy_baseline": {
+      "status": "CONFIRMED — verified independently, not assumed",
+      "evidence": "This session's own ARCH-CONV-D post-implementation audit (docs/architecture/ARCH-CONV-D_post_implementation_conformance_and_recovery_audit.md) found PASS_WITH_REMEDIATION / PROCEDURAL_ONLY. The recommended recovery route was NOT taken as literally proposed (no retrospective hardening/start/finish was fabricated); instead docs/architecture/ARCH-CONV-D_lifecycle_exception_and_closure.md (commit c2a8d54) records explicit Head-of-Architecture lifecycle-exception merge authority, citing the audit directly, and explicitly states retrospective hardening/start/finish were 'Not created' — the honest outcome this auditor's own recovery-route analysis was steering toward. ARCH-CONV-D is confirmed merged into main at 39da186 (git merge-base --is-ancestor: MERGED)."
     },
-    "baseline_is_merged_arch_conv_b": {
+    "identity_relationship_intact_on_merged_main": {
       "status": "CONFIRMED",
-      "evidence": "local main == origin/main == cdc6cf3d463d50902a080b51136ef1a98b431f4a; git log shows cdc6cf3 'merge: ARCH-CONV-B renal WHY authority (Gate PASS, STOP C approved)' as the tip. The prompt's baseline requirement ('current main after completed and merged ARCH-CONV-B') is satisfied."
+      "evidence": "git show main:knowledge_bus/governance/arch_conv_d_alt_identity_relationship_v1.yaml shows canonical_successor_signal_id: signal_alt_high, legacy_predecessor_signal_id: signal_hepatic_alt_context, runtime_alias_created: false — unchanged from the pre-merge state this session already audited"
     },
-    "canonical_spec_identities": {
-      "status": "CONFIRMED via embedded field",
-      "evidence": "knowledge_bus/research/investigation_specs/inv_alp_high_bone_biliary.yaml:1 -> spec_id: inv_alp_high_bone_biliary; inv_ggt_high_hepatic.yaml:1 -> spec_id: inv_ggt_high_hepatic. Both match the prompt's declared activation-key components exactly (no filename/spec_id mismatch this time, unlike ARCH-CONV-B's creatinine spec)."
-    },
-    "legacy_why_authority_active": {
+    "canonical_alt_target_verified": {
       "status": "CONFIRMED",
-      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:67 (signal_ggt_high) and :75 (signal_alp_high) both registered against legacy hypothesis loaders; no signal_alt_high entry exists anywhere in the file, consistent with the prompt's exclusion rationale"
+      "evidence": "knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml:1-2 -> spec_id: inv_alt_high_hepatocellular_injury, signal_id: signal_alt_high, matching the prompt's declared canonical target exactly"
     },
-    "liver_injury_axis_still_unpopulated_placeholder": {
+    "legacy_why_registry_unchanged": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/governance/signal_authority_collision_model_v1.yaml:110-121 — status: placeholder_not_adjudicated, primary_signal_family: null, supporting_signal_families: [], all collision_policy fields null, notes: 'Placeholder for ALT / AST / GGT / bilirubin overlap. No medical decision authored.' Matches the prompt's Stage 1B reality-check claim exactly."
+      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:32 still registers only signal_hepatic_alt_context; signal_alt_high still absent — matches prompt's stated current state"
     },
-    "pass3_frame_counts": {
+    "threshold_values_match_prompt": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml:439-450 shows signal_alp_high with 4 pass3_frame_ids (note: this audit entry groups 2 alp_high frames with 2 alp_low frames under one signal_family_id — a pre-existing audit-data nuance, not a hardening blocker, but worth STOP A attention per below); :583-593 shows signal_ggt_high with 2 pass3_frame_ids + 1 legacy frame"
+      "evidence": "pkg_s24_alt_high_hepatocellular_injury/signal_library.yaml: 120.0 (ALT severity), 20.0 (bilirubin), 130.0 (ALP); pkg_hepatic_alt_context/signal_library.yaml: 45.0 (AST), 60.0 (GGT), 130.0 (ALP), 20.0 (bilirubin) — exact match to the prompt's Phase 0D threshold list (ALT>120, AST>45, GGT>60, ALP>130, bilirubin>20)"
     },
-    "branch_and_repository_state": {
-      "status": "CONFIRMED clean baseline",
-      "evidence": "git rev-parse --verify feature/arch-conv-c-alp-ggt-why-authority fails (branch does not pre-exist); working tree clean except the expected automation_bus/latest_cursor_prompt.md hand-off modification; no ARCH-CONV-C product changes exist anywhere in git history (git log --all --oneline | grep -i arch-conv-c returns only unrelated ARCH-CONV-CORRECT-1 commits)"
+    "arch_conv_c_hash_defect_still_present": {
+      "status": "CONFIRMED — repair correctly scoped as still required",
+      "evidence": "Recomputed both compiled artefact hashes directly: ALP actual 973f9a3358..., manifest recorded 387c4e5170... (mismatch); GGT actual d6b07d0202..., manifest recorded 55c7beaff0... (mismatch). Both mismatches persist unchanged on merged main, confirming Phase 0E's repair task is real and not already resolved — the prompt's own inspect-first design (NO_CHANGE_REQUIRED escape hatch) is appropriately cautious given this finding"
+    },
+    "hepatocellular_axis_does_not_yet_exist": {
+      "status": "CONFIRMED",
+      "evidence": "grep for hepatocellular_injury_axis / hepatocellular in signal_authority_collision_model_v1.yaml returns zero matches — Phase 0F's 'reconstruct, do not adjudicate' framing is correctly calibrated to a placeholder that doesn't exist yet (unlike liver_injury_axis, which existed as a stub before ARCH-CONV-C)"
+    },
+    "branch_and_kernel_state": {
+      "status": "CONFIRMED clean",
+      "evidence": "local main == origin/main == 39da186b7b13a1c2bf571f68c070f6201905649c; git rev-parse --verify feature/arch-conv-e-alt-why-authority fails (branch does not pre-exist); automation_bus/state/work_package_active.json absent (no active token); working tree clean except expected latest_cursor_prompt.md hand-off diff; no ARCH-CONV-E branch or commit exists anywhere in history"
     },
     "kernel_schema_cross_check": {
       "status": "CONFIRMED",
-      "evidence": "backend/scripts/run_work_package.py requires latest_prompt_hardening.json work_id to equal the prompt front matter's work_id. This record sets work_id: \"ARCH-CONV-C\" to match automation_bus/latest_cursor_prompt.md:2 exactly, superseding the prior ARCH-CONV-B record now that ARCH-CONV-B is merged and closed."
+      "evidence": "backend/scripts/run_work_package.py requires latest_prompt_hardening.json work_id to equal the prompt front matter's work_id. This record sets work_id: \"ARCH-CONV-E\", superseding the stale ARCH-CONV-C record that was still on disk (a leftover from before the ARCH-CONV-D lifecycle exception bypassed normal hardening/start/finish for that package)"
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "exclusion_boundary_fidelity": {
+    "no_self_certification_language_present": {
       "status": "SOUND",
-      "evidence": "Every exclusion in the prompt (ALT identity ambiguity, AST no-target, bilirubin retired/no-canonical-spec, ALP-low separate-direction) matches the B2 scope advisory's findings exactly, including the specific reasons (signal_alt_high vs signal_hepatic_alt_context identity split; no signal_ast_high anywhere; signal_hyperbilirubinemia has no canonical spec). No exclusion is asserted without the same evidentiary basis already independently verified in the advisory and re-confirmed here."
+      "evidence": "Prompt explicitly states 'Cursor must not self-certify STOP A, Gate 1, Gate 2 or STOP C' and requires independent Head of Architecture / Head of Medical Research / Anthony approval at each gate, consistent with every prior package in this programme"
     },
-    "stop_gate_sequencing": {
+    "fail_closed_requirements_carried_forward": {
       "status": "SOUND",
-      "evidence": "STOP A (identity/collision-boundary reconstruction, independent Head of Architecture approval) -> Gate 1 (Head of Medical Research) -> Gate 2 (Anthony ratification) -> Phase 2 compile -> STOP C (independent runtime proof) mirrors ARCH-CONV-B's proven sequence exactly, with the added liver_injury_axis policy-definition step correctly placed inside STOP A/Gate 1 rather than skipped or deferred to implementation."
+      "evidence": "Phase 2's fail-closed requirements (missing/unsupported role never defaults to causal, no filename/lexical/load-order selection) directly reuse the pattern independently verified in ARCH-CONV-B/C's compiler code — not weakened or reinvented"
     },
-    "fail_closed_role_propagation_carried_forward": {
+    "legacy_retirement_safeguards": {
       "status": "SOUND",
-      "evidence": "Prompt's Phase 2 rules ('Fail closed on missing, blank or unsupported role metadata') directly reuse the fail-closed why_role validation pattern ARCH-CONV-B added to root_cause_compiler_v1.py and report_compiler_v1.py (verified in the ARCH-CONV-B audit) rather than reinventing or weakening it."
+      "evidence": "Legacy retirement requirement section explicitly requires alt_hypotheses_v1.yaml remain physically present, retirement represented explicitly in authority registers, and no duplicate ALT user-facing findings — matches the proven ARCH-CONV-B/C legacy-disconnection pattern"
     },
-    "alp_ggt_cross_signal_safeguards": {
+    "arch_conv_c_repair_correctly_isolated": {
       "status": "SOUND",
-      "evidence": "ALP safeguards explicitly forbid silent bone-vs-hepatic misrepresentation; GGT safeguards explicitly forbid alcohol/enzyme-induction content surfacing as causal without ratification. Both mirror ARCH-CONV-B's creatinine/eGFR non-displacement and urea non-causal safeguards structurally."
+      "evidence": "Phase 0E explicitly forbids modifying compiled ALP/GGT artefacts, requires the repair be committed separately from ALT work, and requires STOP-and-escalate if any mismatch involves compiled content rather than manifest metadata — correctly scoped as metadata-only given this session's own finding that the defect is provenance-metadata staleness, not a functional defect"
     },
-    "legacy_disconnection_safeguards": {
+    "hepatocellular_axis_correctly_deferred": {
       "status": "SOUND",
-      "evidence": "Requires replacement authority compiled, explicit registration, proven reachability, Gate 1/Gate 2 authorisation, and independent STOP C confirmation before any legacy disconnection; forbids physical deletion throughout — identical structure to ARCH-CONV-B's proven legacy-handling rules"
+      "evidence": "Phase 0F explicitly forbids Cursor from adjudicating the new axis, consistent with liver_injury_axis's precedent where the placeholder was reconstructed at STOP A but only adjudicated at Gate 1/Gate 2"
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml's signal_alp_high entry (lines 439-450) mixes 2 alp_high Pass-3 frames with 2 alp_low Pass-3 frames under a single signal_family_id. Since ALP-low is explicitly excluded from ARCH-CONV-C, Stage 1A's ALP candidate-and-parallel-source closure should explicitly partition this audit entry by direction (high vs low) rather than treating all 4 listed frames as ALP-high candidates.",
-    "The liver_injury_axis notes field currently reads 'Placeholder for ALT / AST / GGT / bilirubin overlap' — it does not mention ALP by name even though ALP is this package's other primary target. STOP A's liver_injury_axis reconstruction should record this naming gap explicitly rather than silently assuming ALP was always in scope of the placeholder."
+    "Phase 0A requires Cursor to 're-confirm' the ARCH-CONV-D decision from 'current main' — Cursor should be aware the ARCH-CONV-D governance content was verified twice independently this session (once pre-merge, once post-merge) and is unchanged; no new discrepancy should be expected, but the STOP condition ('STOP if the merged repository does not match the approved ARCH-CONV-D decision') should still be executed as a live check, not skipped as redundant.",
+    "The ARCH-CONV-C hash repair (Phase 0E) is real and required — do not treat it as boilerplate. Both ALP and GGT compiled-artefact hashes are currently mismatched against their manifests; the repair must recompute from the actual files, not merely copy a value from this hardening record."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 9,
+    "checklist_count": 8,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
       {"id": 1, "claim": "Front matter is complete (work_id, branch, risk_level, execution_model, change_type)", "source": "automation_bus/latest_cursor_prompt.md:1-7", "evidence": "All 5 mandatory fields present", "status": "CONFIRMED"},
-      {"id": 2, "claim": "Baseline is current main after ARCH-CONV-B is completed and merged", "source": "git rev-parse main / origin/main; git log", "evidence": "Both equal cdc6cf3d463d50902a080b51136ef1a98b431f4a, tip commit is the ARCH-CONV-B merge", "status": "CONFIRMED"},
-      {"id": 3, "claim": "All 7 required ARCH-CONV-B source records exist on main", "source": "direct file existence check under docs/architecture/", "evidence": "All 7 present, no path correction needed", "status": "CONFIRMED"},
-      {"id": 4, "claim": "Both target canonical spec_ids verified by embedded field", "source": "grep ^spec_id: on inv_alp_high_bone_biliary.yaml, inv_ggt_high_hepatic.yaml", "evidence": "inv_alp_high_bone_biliary, inv_ggt_high_hepatic — exact match to prompt's declared activation keys, no filename/spec_id mismatch", "status": "CONFIRMED"},
-      {"id": 5, "claim": "Legacy WHY authority is currently active for ALP-high and GGT-high; no signal_alt_high entry exists", "source": "backend/core/knowledge/root_cause_registry_v1.py:67,75", "evidence": "Both RootCauseTargetSpec entries present; no ALT entry found", "status": "CONFIRMED"},
-      {"id": 6, "claim": "liver_injury_axis remains an unpopulated placeholder with no medical policy", "source": "knowledge_bus/governance/signal_authority_collision_model_v1.yaml:110-121", "evidence": "status: placeholder_not_adjudicated, all policy fields null", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Target branch does not already exist, and no ARCH-CONV-C product changes exist anywhere in history", "source": "git rev-parse --verify feature/arch-conv-c-alp-ggt-why-authority; git log --all --oneline | grep -i arch-conv-c", "evidence": "Branch resolution fails as expected; only unrelated ARCH-CONV-CORRECT-1 commits match the grep, confirmed as a different work_id", "status": "CONFIRMED"},
-      {"id": 8, "claim": "Scope advisory citations for this package remain current as of hardening time", "source": "git log --since=2026-07-30 against all files cited in automation_bus/latest_scope_advisory.md", "evidence": "Only commit 3fed5cb (ARCH-CONV-B's own already-audited implementation) touched any cited file; re-grepped post-3fed5cb state and confirmed zero hepatic/ALP/GGT/bilirubin/ALT entries still exist in compiled_why_authority_register_v1.yaml and why_authority_v1.py", "status": "CONFIRMED"},
-      {"id": 9, "claim": "This hardening record's work_id exactly matches the prompt's front-matter work_id, satisfying the kernel's start-time equality check", "source": "backend/scripts/run_work_package.py; automation_bus/latest_cursor_prompt.md:2", "evidence": "Both are \"ARCH-CONV-C\", superseding the closed-out ARCH-CONV-B record", "status": "CONFIRMED"}
+      {"id": 2, "claim": "ARCH-CONV-D is merged and published on main, and its identity relationship content is unchanged from this session's own independent audit", "source": "git merge-base --is-ancestor feature/arch-conv-d-alt-identity-closure main; git show main:knowledge_bus/governance/arch_conv_d_alt_identity_relationship_v1.yaml", "evidence": "MERGED at 39da186; canonical_successor_signal_id: signal_alt_high, runtime_alias_created: false, unchanged", "status": "CONFIRMED"},
+      {"id": 3, "claim": "ARCH-CONV-D's lifecycle gap was closed honestly, without backdated hardening/start/finish", "source": "docs/architecture/ARCH-CONV-D_lifecycle_exception_and_closure.md", "evidence": "Explicitly records retrospective hardening/start/finish as 'Not created'; merge authorised via explicit Head-of-Architecture lifecycle exception citing this session's own conformance audit", "status": "CONFIRMED"},
+      {"id": 4, "claim": "Canonical ALT target identity verified by embedded field", "source": "knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml:1-2", "evidence": "spec_id: inv_alt_high_hepatocellular_injury, signal_id: signal_alt_high", "status": "CONFIRMED"},
+      {"id": 5, "claim": "Threshold values cited in Phase 0D match actual signal_library content", "source": "pkg_s24_alt_high_hepatocellular_injury/signal_library.yaml, pkg_hepatic_alt_context/signal_library.yaml", "evidence": "120.0/20.0/130.0 (s24) and 45.0/60.0/130.0/20.0 (hepatic context) — exact match", "status": "CONFIRMED"},
+      {"id": 6, "claim": "ARCH-CONV-C manifest hash defect (found during this session's ARCH-CONV-D audit) is still present and requires Phase 0E's repair", "source": "direct SHA-256 recomputation of both compiled artefacts vs manifest-recorded output_hash", "evidence": "Both ALP and GGT hashes still mismatched, unchanged since the ARCH-CONV-D audit", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Target branch does not pre-exist, no active kernel token, no prior ARCH-CONV-E history", "source": "git rev-parse --verify feature/arch-conv-e-alt-why-authority; ls automation_bus/state/work_package_active.json; git log --all --oneline | grep -i arch-conv-e", "evidence": "Branch resolution fails, token file absent, zero history matches", "status": "CONFIRMED"},
+      {"id": 8, "claim": "This hardening record's work_id exactly matches the prompt's front-matter work_id", "source": "backend/scripts/run_work_package.py; automation_bus/latest_cursor_prompt.md:2", "evidence": "Both are \"ARCH-CONV-E\", superseding the stale ARCH-CONV-C record left on disk after ARCH-CONV-D's lifecycle-exception bypass", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Beginning medical review, editing medical authority, compiling new WHY artefacts, activating new runtime authority, disconnecting/deleting legacy sources, or making liver_injury_axis policy decisions before STOP A approval — REJECT_AND_RETURN",
+    "Beginning medical review, compiling ALT WHY, creating the hepatocellular collision axis, remediating thresholds, or disconnecting legacy ALT WHY before STOP A approval — REJECT_AND_RETURN",
     "Any implementation before STOP A approval and dual Gate 1/Gate 2 completion — REJECT_AND_RETURN",
-    "Any ALT, AST, bilirubin/hyperbilirubinemia, or ALP-low medical decision, compile, authority registration, collision-policy decision, or legacy change — REJECT_AND_RETURN",
-    "ALP silently implying hepatic/biliary causality where bone origin remains plausible, or GGT alcohol/enzyme-induction context surfacing as causal without ratification — REJECT_AND_RETURN",
+    "Any AST WHY creation, bilirubin/hyperbilirubinemia migration, or ALP/GGT clinical-content/cholestatic_source_axis change — REJECT_AND_RETURN",
+    "Modifying compiled ALP/GGT artefact content while repairing the ARCH-CONV-C manifest hashes (only the manifest output_hash field may change) — REJECT_AND_RETURN",
     "Selecting authority by filename, package name, lexical order, directory order, or load order — REJECT_AND_RETURN",
-    "Reading raw investigation specs at runtime — REJECT_AND_RETURN",
-    "Physically deleting a legacy WHY asset — REJECT_AND_RETURN",
-    "Cherry-picking or rebasing any old hepatic/liver branch (explicitly prohibited by Branch preparation §4) — REJECT_AND_RETURN"
+    "Defaulting missing/unsupported role or conditional metadata to causal — REJECT_AND_RETURN",
+    "Using ARCH-CONV-D's lifecycle exception as precedent to skip hardening/start for ARCH-CONV-E itself — REJECT_AND_RETURN",
+    "Running Automation Bus finish before independent STOP C approval — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. Both target canonical spec identities verified by embedded field with no mismatch. Baseline confirmed as current main with ARCH-CONV-B merged. All 7 required source records exist. liver_injury_axis confirmed still an unpopulated placeholder. Target branch does not pre-exist; no ARCH-CONV-C product changes exist anywhere in history. This package's exclusion boundary is a direct, verified match to the B2 scope advisory this session authored, with every advisory citation re-verified against current main rather than trusted as static. Two non-blocking observations flagged for Cursor's Stage 1A attention: the pass3_frame_coverage_audit_v1.yaml ALP entry mixing high/low frames, and the liver_injury_axis placeholder notes not naming ALP explicitly. No blocking defect found."
+  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. ARCH-CONV-D's merged baseline independently re-verified as trustworthy: identity relationship content unchanged from this session's own prior audit, and its lifecycle gap was closed honestly via an explicit Head-of-Architecture exception rather than fabricated retrospective records. Canonical ALT target, legacy WHY registry state, and all cited threshold values confirmed exactly as the prompt describes. The ARCH-CONV-C manifest hash defect this session discovered during the ARCH-CONV-D audit is confirmed still present and correctly scoped for metadata-only repair in Phase 0E. Branch, token, and history state all clean. No blocking defect found."
 }
