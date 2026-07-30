@@ -3,11 +3,19 @@
 **Work ID:** `ARCH-CONV-B`  
 **Date (UTC):** 2026-07-30  
 **Author role:** Cursor (`healthiq-core-engine`) — implementation evidence only  
-**Status:** `READY_FOR_INDEPENDENT_STOP_C`  
-**Automation Bus finish:** **NOT RUN**
+**Status:** `STOP_C_APPROVED_BY_HEAD_OF_ARCHITECTURE`  
+**Automation Bus finish:** **NOT RUN** (authorised after this evidence update)
 
 This document is a review submission, not self-certification. Independent STOP C
-must pass before Automation Bus finish, merge, or any claim of completion.
+was required before Automation Bus finish, merge, or any claim of completion.
+
+> **Independent STOP C approval (recorded 2026-07-30):** Head of Architecture
+> approved the ARCH-CONV-B implementation as satisfying the ratified medical
+> decisions and required runtime safeguards. Approval authorises finish only
+> after the VR fixture mismatch is recorded as a pre-existing non-ARCH-CONV-B
+> baseline discrepancy, with evidence that expected clinical-content fields are
+> unchanged by ARCH-CONV-B apart from the authorised addition of explicit
+> `why_role` fields. Unrelated VR clinical-content rewrites remain out of scope.
 
 ## Authority and commits
 
@@ -124,30 +132,60 @@ renal root-cause output and clinician-report JSON, canonical source hashes,
 structured role serialisation, invalid/missing role rejection, thyroid/lipid
 role stability, and eGFR/urate exclusion.
 
-## Non-scoped baseline observation
+## VR fixture mismatch — baseline disposition
 
-The full `test_clinician_report_runtime_alignment.py` run has one exact VR
-fixture-comparison failure. Deterministic repeat equality passes. The remaining
-delta includes clinical-content changes outside ARCH-CONV-B (including stale
-expected prior authority selections and panel-completeness content). This work
-added only explicit `why_role` fields to the AB/VR contract fixtures and did not
-accept or rewrite those unrelated expected clinical outputs. Independent STOP C
-should classify or resolve that pre-existing fixture drift separately; it is not
-silently waived here.
+**Disposition:** `PRE_EXISTING_NON_ARCH_CONV_B_BASELINE_DISCREPANCY`  
+**Test:** `backend/tests/unit/test_clinician_report_runtime_alignment.py::test_clinician_report_vr_output_is_deterministic_and_matches_vr_fixture`  
+**Action within ARCH-CONV-B:** none beyond documenting; unrelated clinical-content
+rewrite not accepted.
 
-## Independent STOP C decision requested
+### Evidence that ARCH-CONV-B did not change expected clinical content
 
-The independent reviewer must verify:
+1. Commit `3fed5cb` changed
+   `backend/tests/fixtures/reports/clinician_report_v1_vr.json` only by adding
+   `"why_role": "causal"` to each `sections.root_causes[]` row (12 additive
+   fields). No hypothesis text, authority keys, page1 copy, confirmatory tests,
+   or data-quality clinical values were rewritten in that commit.
+2. Comparing the fixture at governance commit `eef9710` (pre-Phase-2) with
+   `HEAD`, after stripping `why_role`, yields exact equality:
+   `pre_vs_cur_ignore_why_role = True`.
+3. Sorted-key JSON diff between those revisions contains only the authorised
+   `why_role` insertions (38 sorted-diff lines; all `why_role`-related).
+4. Therefore the failing expected clinical-content fields below are unchanged by
+   ARCH-CONV-B:
 
-1. the two compiled artefacts match the ratified medical decisions;
-2. urea can never emerge as causal through internal, clinician, DTO, or consumer
-   output;
-3. creatinine remains the narrowed causal candidate and does not absorb eGFR;
-4. missing or unsupported role metadata fails closed;
-5. thyroid/lipid and legacy non-governed outputs retain their established roles;
-6. eGFR, urate, package-only candidates, frontend logic, and physical legacy
-   assets remain outside scope;
-7. the non-scoped VR fixture drift is dispositioned without broadening this work.
+| Expected clinical field | Value retained from pre-Phase-2 fixture |
+|---|---|
+| `data_quality.panel_completeness_expected` | `9` |
+| `data_quality.panel_completeness_present` | `9` |
+| `data_quality.lab_range_quality_by_primary_metric` | includes `creatine_kinase: complete` among 9 metrics |
+| `sections.root_causes` activation keys | 12 keys including stale `signal_homocysteine_high::inv_homocysteine_high_metabolic` and legacy hcy hypothesis IDs |
+| `sections.page1.primary_concern` | `Homocysteine Elevation Context: also stood out on this panel` |
 
-**STOP C readiness:** `READY_FOR_INDEPENDENT_STOP_C`  
-**Cursor verdict:** none; self-certification prohibited.
+### Observed runtime vs expected (clinical, ignoring `why_role`)
+
+Current runtime remains unequal to the fixture when `why_role` is ignored
+(`equal_ignoring_why_role = False`). Representative non-ARCH-CONV-B deltas:
+
+- panel completeness `8` vs expected `9`; `creatine_kinase` absent from current
+  primary-metric quality list
+- root-cause count `11` vs expected `12`
+- homocysteine B-vitamin finding uses compiled hypothesis IDs
+  (`hyp_folate_related_hyperhomocysteinemia`,
+  `hyp_b12_related_or_combined_methylation_impairment`) vs fixture legacy IDs
+- expected still lists rejected/stale
+  `signal_homocysteine_high::inv_homocysteine_high_metabolic`
+
+These clinical deltas are outside ARCH-CONV-B renal authority scope. Deterministic
+repeat equality of the VR compile path still passes. Focused ARCH-CONV-B suites
+pass. The mismatch is recorded for separate baseline hygiene, not waived by
+rewriting the fixture in this work package.
+
+## Independent STOP C decision
+
+Independent STOP C checks requested in the prior revision were completed by Head
+of Architecture on 2026-07-30. Outcome: **APPROVED**.
+
+**STOP C status:** `STOP_C_APPROVED_BY_HEAD_OF_ARCHITECTURE`  
+**Cursor verdict:** none; self-certification prohibited. Finish may proceed only
+under the approved conditions in this revision.
