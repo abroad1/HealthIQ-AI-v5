@@ -9,6 +9,8 @@ wave1_thyroid_ratification_artefact: docs/architecture/ARCH-CONV-A_wave1_thyroid
 wave2_lipid_ratification_artefact: docs/architecture/ARCH-CONV-A_wave2_lipid_gate1_gate2_decision.md
 arch_conv_b_gate1_decision_artefact: docs/architecture/ARCH-CONV-B_GATE_1_head_of_medical_research_decision.md
 arch_conv_b_gate2_ratification_artefact: docs/architecture/ARCH-CONV-B_GATE_2_Anthony_ratification.md
+arch_conv_c_gate1_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+arch_conv_c_gate2_ratification_artefact: docs/architecture/ARCH-CONV-C_GATE_2_Anthony_ratification.md
 frames:
   - activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
     signal_id: signal_vitamin_d_low
@@ -416,3 +418,87 @@ frames:
     legacy_asset: knowledge_bus/root_cause/hypotheses/urea_high_hypotheses_v1.yaml
     legacy_runtime_state: NON_REACHABLE_FOR_FRAME
     notes: Package-only Pass 3 candidate; no canonical investigation-spec authority and no compile or promotion.
+
+  - activation_key: signal_alp_high::inv_alp_high_bone_biliary
+    signal_id: signal_alp_high
+    source_spec_id: inv_alp_high_bone_biliary
+    authority_state: COMPILED_ACTIVE
+    why_role: causal
+    conditional_why_role:
+      policy_id: cholestatic_source_axis_v1
+      causal_when:
+      - metric_id: ggt
+        boundary: above_max
+      otherwise: morphology_context
+    gpt_decision: APPROVE_WITH_NARROWING
+    anthony_decision: APPROVED
+    final_disposition: CAUSAL_CANDIDATE_CONDITIONAL_CHOLESTATIC_PATTERN
+    gpt_review_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+    anthony_ratification_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_alp_high_bone_biliary.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/alp_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Causal only with high-GGT concordance; otherwise morphology_context preserving non-hepatic source possibilities.
+
+  - activation_key: signal_alp_high::inv_alp_high_cholestatic_pattern
+    signal_id: signal_alp_high
+    source_spec_id: inv_alp_high_cholestatic_pattern
+    authority_state: LEGACY_RETIRED
+    gpt_decision: DEFER_EVIDENCE_INSUFFICIENT
+    anthony_decision: APPROVED
+    final_disposition: DEFER_EVIDENCE_INSUFFICIENT
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/alp_high_hypotheses_v1.yaml
+    legacy_runtime_state: NON_REACHABLE_FOR_FRAME
+    notes: Pass 3 package candidate with blocked provenance; no separate compile or authority promotion.
+
+  - activation_key: signal_alp_high::inv_alp_high_high_bone_turnover_pattern
+    signal_id: signal_alp_high
+    source_spec_id: inv_alp_high_high_bone_turnover_pattern
+    authority_state: LEGACY_RETIRED
+    gpt_decision: DEFER_EVIDENCE_INSUFFICIENT
+    anthony_decision: APPROVED
+    final_disposition: DEFER_EVIDENCE_INSUFFICIENT
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/alp_high_hypotheses_v1.yaml
+    legacy_runtime_state: NON_REACHABLE_FOR_FRAME
+    notes: Unpackaged Pass 3 candidate without standalone canonical investigation-spec authority.
+
+  - activation_key: signal_ggt_high::inv_ggt_high_hepatic
+    signal_id: signal_ggt_high
+    source_spec_id: inv_ggt_high_hepatic
+    authority_state: COMPILED_ACTIVE
+    why_role: morphology_context
+    gpt_decision: APPROVE_WITH_NARROWING
+    anthony_decision: APPROVED
+    final_disposition: CONTEXT_ONLY_NON_CAUSAL
+    gpt_review_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+    anthony_ratification_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_ggt_high_hepatic.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/ggt_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Non-specific GGT context only; supporting and consolidated under ALP when both markers are high.
+
+  - activation_key: signal_ggt_high::inv_ggt_high_hepatobiliary_cholestatic_context
+    signal_id: signal_ggt_high
+    source_spec_id: inv_ggt_high_hepatobiliary_cholestatic_context
+    authority_state: LEGACY_RETIRED
+    gpt_decision: DEFER_EVIDENCE_INSUFFICIENT
+    anthony_decision: APPROVED
+    final_disposition: DEFER_EVIDENCE_INSUFFICIENT
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/ggt_high_hypotheses_v1.yaml
+    legacy_runtime_state: NON_REACHABLE_FOR_FRAME
+    notes: Pass 3 package candidate with blocked provenance; no separate compile or authority promotion.
+
+  - activation_key: signal_ggt_high::inv_ggt_high_alcohol_or_enzyme_induction_context
+    signal_id: signal_ggt_high
+    source_spec_id: inv_ggt_high_alcohol_or_enzyme_induction_context
+    authority_state: LEGACY_RETIRED
+    gpt_decision: DEFER_EVIDENCE_INSUFFICIENT
+    anthony_decision: APPROVED
+    final_disposition: DEFER_EVIDENCE_INSUFFICIENT
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/ggt_high_hypotheses_v1.yaml
+    legacy_runtime_state: NON_REACHABLE_FOR_FRAME
+    notes: Pass 3 alcohol or enzyme-induction candidate; structured exposure is absent and no separate authority is permitted.

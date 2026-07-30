@@ -601,6 +601,42 @@ def _causal_why_preconditions_met(
     return True
 
 
+def _governed_compiled_why_role(
+    *,
+    auth_row: Dict[str, Any],
+    biomarker_context: Dict[str, Any],
+    reference_ranges: Dict[str, Any],
+) -> str:
+    """Resolve explicit static or conditional role metadata without causal defaulting."""
+    role = str(auth_row.get("why_role") or "").strip()
+    if role not in {WHY_ROLE_CAUSAL, WHY_ROLE_MORPHOLOGY_CONTEXT}:
+        raise ValueError("COMPILED_ACTIVE authority requires explicit supported why_role")
+
+    conditional = auth_row.get("conditional_why_role")
+    if conditional is None:
+        return role
+    if not isinstance(conditional, dict):
+        raise ValueError("conditional_why_role must be a mapping")
+    policy_id = str(conditional.get("policy_id") or "").strip()
+    gates = conditional.get("causal_when")
+    otherwise = str(conditional.get("otherwise") or "").strip()
+    if (
+        not policy_id
+        or role != WHY_ROLE_CAUSAL
+        or not isinstance(gates, list)
+        or not gates
+        or otherwise not in {WHY_ROLE_CAUSAL, WHY_ROLE_MORPHOLOGY_CONTEXT}
+    ):
+        raise ValueError("conditional_why_role is incomplete or unsupported")
+
+    conditions_met = _causal_why_preconditions_met(
+        auth_row={"causal_why_preconditions": gates},
+        biomarker_context=biomarker_context,
+        reference_ranges=reference_ranges,
+    )
+    return role if conditions_met else otherwise
+
+
 def _compile_why_engine_fallback_finding(
     lead: Dict[str, Any],
     *,
@@ -733,9 +769,11 @@ def compile_root_cause_v1(
                             artefact=artefact,
                         )
                 elif isinstance(auth_row, dict):
-                    auth_why_role = str(auth_row.get("why_role") or "").strip()
-                    if auth_why_role:
-                        scoped["why_role"] = auth_why_role
+                    scoped["why_role"] = _governed_compiled_why_role(
+                        auth_row=auth_row,
+                        biomarker_context=biomarker_context,
+                        reference_ranges=input_reference_ranges,
+                    )
                 findings.append(
                     _compile_compiled_hypothesis_finding(
                         target=scoped,

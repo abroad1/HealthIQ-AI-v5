@@ -256,6 +256,31 @@ def validate_signal_authority_collision_model(
             f"Signal authority collision model has no enforceable authority groups ({model_path})"
         )
 
+    for group in enforceable:
+        primary_family = str(group.get("primary_signal_family", "")).strip()
+        primary_key = str(group.get("primary_activation_key", "")).strip()
+        if primary_key and not primary_key.startswith(f"{primary_family}::"):
+            raise AuthorityModelLoadError(
+                f"primary_activation_key does not match primary_signal_family ({model_path})"
+            )
+        supporting_families = {
+            str(item).strip()
+            for item in (group.get("supporting_signal_families") or [])
+            if str(item).strip()
+        }
+        supporting_keys = group.get("supporting_activation_keys", [])
+        if not isinstance(supporting_keys, list):
+            raise AuthorityModelLoadError(
+                f"supporting_activation_keys must be a list ({model_path})"
+            )
+        for key in supporting_keys:
+            token = str(key).strip()
+            family = token.split("::", 1)[0] if "::" in token else ""
+            if not token or family not in supporting_families:
+                raise AuthorityModelLoadError(
+                    f"supporting_activation_key does not match supporting_signal_families ({model_path})"
+                )
+
     renal = next(
         (group for group in enforceable if group.get("authority_group_id") == "renal_filtration_axis"),
         None,
@@ -370,6 +395,34 @@ def _distinct_risk_layer_active(
     return False
 
 
+def _filter_to_named_activation_keys(
+    results: List[SignalResult],
+    group: Dict[str, Any],
+) -> List[SignalResult]:
+    """Keep only explicitly ratified frame identities when a group names them."""
+    allowed_by_family: Dict[str, set[str]] = {}
+    primary_family = str(group.get("primary_signal_family", "")).strip()
+    primary_key = str(group.get("primary_activation_key", "")).strip()
+    if primary_family and primary_key:
+        allowed_by_family[primary_family] = {primary_key}
+
+    for raw_key in group.get("supporting_activation_keys", []) or []:
+        key = str(raw_key).strip()
+        if "::" not in key:
+            continue
+        family = key.split("::", 1)[0]
+        allowed_by_family.setdefault(family, set()).add(key)
+
+    if not allowed_by_family:
+        return list(results)
+    return [
+        row
+        for row in results
+        if row.signal_id not in allowed_by_family
+        or row.activation_key in allowed_by_family[row.signal_id]
+    ]
+
+
 def apply_signal_authority_collision_policy(
     results: List[SignalResult],
     *,
@@ -391,6 +444,7 @@ def apply_signal_authority_collision_policy(
     lab_ranges = lab_ranges or {}
     filtered = list(results)
     for group in _iter_enforceable_groups(model):
+        filtered = _filter_to_named_activation_keys(filtered, group)
         primary_family = str(group.get("primary_signal_family", "")).strip()
         supporting_families = {
             str(item).strip()

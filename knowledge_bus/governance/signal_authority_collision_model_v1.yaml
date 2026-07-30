@@ -108,18 +108,35 @@ authority_groups:
   notes: Placeholder for testosterone / SHBG / FAI / free testosterone fraction overlap.
     Blocked pending CF-CONTEXT-MOD-3. No medical decision authored.
 - authority_group_id: liver_injury_axis
-  biological_axis: hepatocellular_injury
-  status: placeholder_not_adjudicated
-  primary_signal_family: null
-  supporting_signal_families: []
+  biological_axis: cholestatic_source_axis
+  status: adjudicated_runtime_enforced
+  primary_signal_family: signal_alp_high
+  primary_activation_key: signal_alp_high::inv_alp_high_bone_biliary
+  supporting_signal_families:
+  - signal_ggt_high
+  supporting_activation_keys:
+  - signal_ggt_high::inv_ggt_high_hepatic
   collision_policy:
-    no_duplicate_user_facing_signal: null
-    suppress_supporting_when_primary_present: null
-    consolidate_into_shared_interpretation: null
-    allow_parallel_if_distinct_risk_layer: null
-  runtime_action: none_governance_only
-  requires_runtime_support: false
-  notes: Placeholder for ALT / AST / GGT / bilirubin overlap. No medical decision authored.
+    no_duplicate_user_facing_signal: true
+    suppress_supporting_when_primary_present: true
+    consolidate_into_shared_interpretation: true
+    allow_parallel_if_distinct_risk_layer: false
+  authority_decision:
+    alp_primary_only_when_alp_and_ggt_high: true
+    ggt_supporting_and_non_causal: true
+    discordant_alp_is_non_specific_context: true
+    discordant_ggt_is_context_only: true
+    bilirubin_supporting_context_only: true
+    alt_and_bilirubin_future_authority_preserved: true
+  runtime_action: apply_explicit_concordance_policy
+  runtime_policy_id: cholestatic_source_axis_v1
+  requires_runtime_support: true
+  gate1_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+  gate2_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
+  notes: Canonical ALP is the sole primary candidate and becomes causal only with
+    high-GGT concordance. Canonical GGT remains context-only and is consolidated
+    under ALP when both fire. Deferred Pass 3 activation keys are non-authoritative.
+    ALT, AST, bilirubin/hyperbilirubinemia, and ALP-low remain outside this policy.
 - authority_group_id: iron_inflammation_axis
   biological_axis: iron_and_inflammatory_context
   status: placeholder_not_adjudicated

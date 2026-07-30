@@ -13,6 +13,7 @@ Fails if:
 - vitamin D legacy YAML is selected when compiled path is active.
 - ARCH-CONV-B creatinine/urea approved and deferred renal keys are missing;
 - context-only urea lacks morphology_context authority.
+- ARCH-CONV-C conditional ALP / context-only GGT and four deferred keys are missing.
 """
 
 from __future__ import annotations
@@ -57,6 +58,12 @@ EXPECTED_KEYS = (
     "signal_creatinine_high::inv_creatinine_high_reduced_glomerular_filtration",
     "signal_urea_high::inv_urea_high_renal",
     "signal_urea_high::inv_urea_high_prerenal_volume_depletion_or_catabolic_load",
+    "signal_alp_high::inv_alp_high_bone_biliary",
+    "signal_alp_high::inv_alp_high_cholestatic_pattern",
+    "signal_alp_high::inv_alp_high_high_bone_turnover_pattern",
+    "signal_ggt_high::inv_ggt_high_hepatic",
+    "signal_ggt_high::inv_ggt_high_hepatobiliary_cholestatic_context",
+    "signal_ggt_high::inv_ggt_high_alcohol_or_enzyme_induction_context",
 )
 METABOLIC_KEY = "signal_homocysteine_high::inv_homocysteine_high_metabolic"
 FORBIDDEN_COMPILED = REPO_ROOT / "knowledge_bus/compiled/hypotheses/inv_homocysteine_high_metabolic.yaml"
@@ -106,6 +113,15 @@ def main() -> int:
     urea_key = "signal_urea_high::inv_urea_high_renal"
     if str(by_key[urea_key].get("why_role") or "").strip() != "morphology_context":
         return _fail("ratified urea frame must be morphology_context")
+    alp_key = "signal_alp_high::inv_alp_high_bone_biliary"
+    ggt_key = "signal_ggt_high::inv_ggt_high_hepatic"
+    if str(by_key[alp_key].get("why_role") or "").strip() != "causal":
+        return _fail("ratified ALP frame must declare causal base role")
+    conditional = by_key[alp_key].get("conditional_why_role")
+    if not isinstance(conditional, dict) or conditional.get("otherwise") != "morphology_context":
+        return _fail("ratified ALP frame must fail closed to morphology_context")
+    if str(by_key[ggt_key].get("why_role") or "").strip() != "morphology_context":
+        return _fail("ratified GGT frame must be morphology_context")
 
     for key in EXPECTED_KEYS:
         row = by_key[key]
@@ -232,7 +248,7 @@ def main() -> int:
         return _fail(f"unexpected hcy B-vitamin hypothesis ids: {sorted(ids)}")
 
     print("compiled_why_authority_gate: PASS")
-    print(f"frames={len(EXPECTED_KEYS)} compiled_active=19 rejected=1 legacy_retired=11")
+    print(f"frames={len(EXPECTED_KEYS)} compiled_active=21 rejected=1 legacy_retired=15")
     return 0
 
 

@@ -1,0 +1,41 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_alp_high_bone_biliary_v1
+hypothesis_set_id: signal_alp_high_conditional_cholestatic_source_set_v1
+signal_id: signal_alp_high
+activation_key: signal_alp_high::inv_alp_high_bone_biliary
+source_spec_ids:
+- inv_alp_high_bone_biliary
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_alp_high_bone_biliary.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_c_alp_high.yaml
+hypotheses:
+- hypothesis_id: hyp_alp_conditional_cholestatic_source_context
+  rank: 1
+  title: Conditional ALP source context
+  physiological_claim: Elevated ALP is not tissue-specific. Concurrent high GGT may
+    support a possible cholestatic or hepatobiliary biochemical pattern, while normal
+    or unavailable GGT preserves bone and other non-hepatic source possibilities.
+  evidence_strength: strong
+  missing_data_policy: High GGT is required for hepatobiliary causal-candidate
+    eligibility. If GGT is normal or unavailable, retain non-specific ALP source
+    context only and preserve bone, placental, intestinal, physiological, and other
+    non-hepatic possibilities.
+  evidence_for:
+  - ALP is above the laboratory range.
+  - Concurrent high GGT supports hepatic source attribution and a possible cholestatic biochemical pattern.
+  evidence_against:
+  - Normal or unavailable GGT prevents hepatobiliary causal WHY from ALP.
+  - ALP alone cannot distinguish hepatobiliary from bone or other non-hepatic sources.
+  contradiction_markers: []
+  caveats:
+  - Do not assert obstruction, cholangitis, malignancy, or another specific liver disease.
+  - Do not assert high bone turnover or a specific bone disorder from ALP alone.
+  - Bilirubin is supporting severity or excretory context only and gains no WHY authority here.
+  - Calcium, phosphate, vitamin D, PTH, age, pregnancy, history, symptoms, serial results, isoenzymes, and imaging remain context only.
+  - Do not recommend medication, treatment, or imaging from this frame.
+  confirmatory_tests: []
+  summary_template: ALP is above range. With high GGT, this may support a possible cholestatic or hepatobiliary biochemical pattern; without high GGT, its source remains non-specific.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-C Gate 1 and Gate 2 ratified conditional ALP causal-candidate lane under cholestatic_source_axis.
