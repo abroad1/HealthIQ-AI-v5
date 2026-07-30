@@ -1,185 +1,271 @@
 work_id: ARCH-CONV-C
 branch: feature/arch-conv-c-alp-ggt-why-authority
-register_state: GATE_1_SUBMISSION_READY_FOR_HEAD_OF_MEDICAL_RESEARCH
+register_state: GATE_2_RATIFIED_PHASE_2_AUTHORISED
 stop_a_evidence_ref: docs/architecture/ARCH-CONV-C_STOP_A_identity_and_source_closure.md
 target_map_ref: docs/architecture/ARCH-CONV-C_target_to_frame_map.md
 pack_ref: docs/architecture/ARCH-CONV-C_medical_review_pack.md
 stop_a_approved_by_head_of_architecture: true
 stop_a_approval_recorded_utc: '2026-07-30'
 head_of_architecture_stop_a_reference: null
-head_of_medical_research_gate1_reference: null
-anthony_gate2_reference: null
-medical_decisions_made: false
-collision_policy_decisions_made: false
-runtime_changes_authorised: false
-note: >-
-  STOP A approved by Head of Architecture; Phase 1 (Gate 1 pack and register
-  finalisation) authorised. This register is submission-ready evidence only. No
-  row is a medical decision, collision-policy decision, compilation approval,
-  runtime authorisation, or legacy-disconnection authority. All decision fields
-  remain PENDING until Head of Medical Research Gate 1 and Anthony Gate 2 are
-  recorded.
-
+head_of_medical_research_gate1_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+anthony_gate2_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
+medical_decisions_made: true
+collision_policy_decisions_made: true
+runtime_changes_authorised: true
+note: Gate 1 medical and collision-policy decisions ratified by Anthony at Gate 2.
+  Phase 2 implementation is authorised only within the existing ARCH-CONV-C prompt,
+  the ratified safeguards, the explicit exclusions, and the STOP C requirements.
 frames:
-  - signal_id: signal_alp_high
-    source_spec_id: inv_alp_high_bone_biliary
-    activation_key: signal_alp_high::inv_alp_high_bone_biliary
-    canonical_source: knowledge_bus/research/investigation_specs/inv_alp_high_bone_biliary.yaml
-    source_sha256: 1a8e2da95d4aeae0505897da445709632f5ea4c39c34d4aaf906ef3462eb61ef
-    source_identity_basis: embedded_spec_id
-    legacy_source: knowledge_bus/root_cause/hypotheses/alp_high_hypotheses_v1.yaml
-    current_causal_why_authority: LEGACY_ACTIVE_OUT_OF_COMPILED_COHORT
-    compiled_authority_state: NONE
-    canonical_package: pkg_s24_alp_high_bone_biliary
-    medical_decision: PENDING
-    why_role: PENDING
-    collision_axis_role: PENDING
-    legacy_authority_disposition: PENDING
-    head_of_medical_research_reference: null
-    anthony_ratification_reference: null
-    evidence_gaps:
-      - isolated ALP cannot distinguish hepatobiliary from bone origin
-      - GGT, bilirubin, calcium, phosphate, vitamin D, history, pregnancy, age and imaging may be absent
-      - canonical source combines biliary and bone interpretation in one frame
-      - legacy WHY can emit hepatobiliary language without a ratified GGT concordance gate
-    gate1_questions:
-      - whether this combined canonical frame is medically acceptable or requires narrowing
-      - whether ALP alone can ever support causal WHY
-      - whether high GGT is required for hepatobiliary interpretation
-      - whether bilirubin is required for cholestatic escalation
-      - how missing source-attribution data must fail closed
-
-  - signal_id: signal_alp_high
-    source_spec_id: inv_alp_high_cholestatic_pattern
-    activation_key: signal_alp_high::inv_alp_high_cholestatic_pattern
-    source_type: PASS3_V3_BATCH_AND_TRANSLATED_PACKAGE
-    source_record: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
-    package_id: pkg_kb52c_alp_high_cholestatic_pattern
-    runtime_signal_state: LOADED_PROVENANCE_BLOCKED
-    compiled_authority_state: NONE
-    medical_decision: PENDING
-    why_role: PENDING
-    collision_axis_role: PENDING
-    legacy_authority_disposition: NOT_SEPARATELY_ADJUDICATED
-    head_of_medical_research_reference: null
-    anthony_ratification_reference: null
-
-  - signal_id: signal_alp_high
-    source_spec_id: inv_alp_high_high_bone_turnover_pattern
-    activation_key: signal_alp_high::inv_alp_high_high_bone_turnover_pattern
-    source_type: PASS3_V3_BATCH_NO_RUNTIME_PACKAGE_FOUND
-    source_record: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
-    runtime_signal_state: NOT_LOADED_AS_SEPARATE_FRAME
-    compiled_authority_state: NONE
-    medical_decision: PENDING
-    why_role: PENDING
-    collision_axis_role: PENDING
-    legacy_authority_disposition: NOT_SEPARATELY_ADJUDICATED
-    head_of_medical_research_reference: null
-    anthony_ratification_reference: null
-
-  - signal_id: signal_ggt_high
-    source_spec_id: inv_ggt_high_hepatic
-    activation_key: signal_ggt_high::inv_ggt_high_hepatic
-    canonical_source: knowledge_bus/research/investigation_specs/inv_ggt_high_hepatic.yaml
-    source_sha256: 3e2cc6cf074dcb73b825e9a97fe93b43c4f50dc874a0c85cbaa34b754d46c8a1
-    source_identity_basis: embedded_spec_id
-    legacy_source: knowledge_bus/root_cause/hypotheses/ggt_high_hypotheses_v1.yaml
-    current_causal_why_authority: LEGACY_ACTIVE_OUT_OF_COMPILED_COHORT
-    compiled_authority_state: NONE
-    canonical_package: pkg_s24_ggt_high_hepatic
-    medical_decision: PENDING
-    why_role: PENDING
-    collision_axis_role: PENDING
-    legacy_authority_disposition: PENDING
-    head_of_medical_research_reference: null
-    anthony_ratification_reference: null
-    evidence_gaps:
-      - isolated GGT is non-specific
-      - alcohol and medication exposure are not structured runtime inputs
-      - canonical source mixes hepatobiliary, alcohol, metabolic and enzyme-induction implications
-      - ALT and bilirubin are excluded authority families despite appearing as context markers
-      - legacy WHY does not preserve causal versus contextual candidate roles
-    gate1_questions:
-      - whether GGT alone can ever support causal hepatobiliary WHY
-      - how ALP concordance changes eligibility, role or confidence
-      - whether alcohol and enzyme induction are context-only, rejected or deferred
-      - how absent exposure, medication, ALP, bilirubin and imaging context fails closed
-
-  - signal_id: signal_ggt_high
-    source_spec_id: inv_ggt_high_hepatobiliary_cholestatic_context
-    activation_key: signal_ggt_high::inv_ggt_high_hepatobiliary_cholestatic_context
-    source_type: PASS3_V3_BATCH_AND_TRANSLATED_PACKAGE_WITH_STAGED_PSI
-    source_record: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
-    package_id: pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context
-    runtime_signal_state: LOADED_PROVENANCE_BLOCKED
-    compiled_authority_state: NONE
-    medical_decision: PENDING
-    why_role: PENDING
-    collision_axis_role: PENDING
-    legacy_authority_disposition: NOT_SEPARATELY_ADJUDICATED
-    head_of_medical_research_reference: null
-    anthony_ratification_reference: null
-
-  - signal_id: signal_ggt_high
-    source_spec_id: inv_ggt_high_alcohol_or_enzyme_induction_context
-    activation_key: signal_ggt_high::inv_ggt_high_alcohol_or_enzyme_induction_context
-    source_type: PASS3_V3_BATCH_AND_TRANSLATED_PACKAGE_WITH_STAGED_PSI
-    source_record: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
-    package_id: pkg_kb52c_ggt_high_alcohol_or_enzyme_induction_context
-    runtime_signal_state: LOADED_PROVENANCE_BLOCKED
-    compiled_authority_state: NONE
-    medical_decision: PENDING
-    why_role: PENDING
-    collision_axis_role: PENDING
-    legacy_authority_disposition: NOT_SEPARATELY_ADJUDICATED
-    head_of_medical_research_reference: null
-    anthony_ratification_reference: null
-
+- signal_id: signal_alp_high
+  source_spec_id: inv_alp_high_bone_biliary
+  activation_key: signal_alp_high::inv_alp_high_bone_biliary
+  canonical_source: knowledge_bus/research/investigation_specs/inv_alp_high_bone_biliary.yaml
+  source_sha256: 1a8e2da95d4aeae0505897da445709632f5ea4c39c34d4aaf906ef3462eb61ef
+  source_identity_basis: embedded_spec_id
+  legacy_source: knowledge_bus/root_cause/hypotheses/alp_high_hypotheses_v1.yaml
+  current_causal_why_authority: LEGACY_ACTIVE_OUT_OF_COMPILED_COHORT
+  compiled_authority_state: NONE
+  canonical_package: pkg_s24_alp_high_bone_biliary
+  medical_decision: APPROVE_WITH_NARROWING
+  why_role: CAUSAL_CANDIDATE_CONDITIONAL_CHOLESTATIC_PATTERN
+  collision_axis_role: PRIMARY_WHEN_ALP_HIGH_AND_GGT_HIGH_OTHERWISE_CONTEXT_ONLY
+  legacy_authority_disposition: CONDITIONAL_REPLACE_AFTER_GATE2_AND_STOP_C
+  head_of_medical_research_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+  anthony_ratification_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
+  evidence_gaps:
+  - isolated ALP cannot distinguish hepatobiliary from bone origin
+  - GGT, bilirubin, calcium, phosphate, vitamin D, history, pregnancy, age and imaging
+    may be absent
+  - canonical source combines biliary and bone interpretation in one frame
+  - legacy WHY can emit hepatobiliary language without a ratified GGT concordance
+    gate
+  gate1_questions:
+  - whether this combined canonical frame is medically acceptable or requires narrowing
+  - whether ALP alone can ever support causal WHY
+  - whether high GGT is required for hepatobiliary interpretation
+  - whether bilirubin is required for cholestatic escalation
+  - how missing source-attribution data must fail closed
+  gate1_conditions:
+  - The frame may describe a possible cholestatic/hepatobiliary biochemical pattern
+    only when ALP and GGT are both high.
+  - It must not diagnose obstruction, cholangitis, primary biliary cholangitis, primary
+    sclerosing cholangitis, malignancy, or another specific liver disease.
+  - Isolated ALP elevation, normal GGT, or unavailable GGT must fail closed to non-specific
+    source context and must not emit hepatobiliary causal WHY.
+  - Normal or unavailable GGT preserves bone, placental, intestinal, physiological,
+    and other non-hepatic source possibilities.
+  - Bilirubin may strengthen severity or excretory context but is not required for
+    basic cholestatic-pattern eligibility and must not confer a specific diagnosis.
+  - Calcium, phosphate, vitamin D, PTH, age, pregnancy, bone history, symptoms, serial
+    results, isoenzymes, and imaging remain supporting or missing-data context only.
+  - The frame must not diagnose high bone turnover or any specific bone disorder from
+    ALP alone.
+  gate2_status: RATIFIED
+- signal_id: signal_alp_high
+  source_spec_id: inv_alp_high_cholestatic_pattern
+  activation_key: signal_alp_high::inv_alp_high_cholestatic_pattern
+  source_type: PASS3_V3_BATCH_AND_TRANSLATED_PACKAGE
+  source_record: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  package_id: pkg_kb52c_alp_high_cholestatic_pattern
+  runtime_signal_state: LOADED_PROVENANCE_BLOCKED
+  compiled_authority_state: NONE
+  medical_decision: DEFER_EVIDENCE_INSUFFICIENT
+  why_role: DEFERRED_NO_COMPILE
+  collision_axis_role: NONE
+  legacy_authority_disposition: NOT_APPLICABLE
+  head_of_medical_research_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+  anthony_ratification_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
+  medical_rationale: Clinically coherent as a cholestatic pattern, but remains package/batch-derived
+    with blocked provenance. Its useful safeguards are incorporated into the narrowed
+    canonical ALP decision without granting separate authority.
+  gate2_status: RATIFIED
+- signal_id: signal_alp_high
+  source_spec_id: inv_alp_high_high_bone_turnover_pattern
+  activation_key: signal_alp_high::inv_alp_high_high_bone_turnover_pattern
+  source_type: PASS3_V3_BATCH_NO_RUNTIME_PACKAGE_FOUND
+  source_record: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  runtime_signal_state: NOT_LOADED_AS_SEPARATE_FRAME
+  compiled_authority_state: NONE
+  medical_decision: DEFER_EVIDENCE_INSUFFICIENT
+  why_role: DEFERRED_NO_COMPILE
+  collision_axis_role: NONE
+  legacy_authority_disposition: NOT_APPLICABLE
+  head_of_medical_research_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+  anthony_ratification_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
+  medical_rationale: ALP alone cannot establish bone turnover or a specific bone disorder.
+    The candidate lacks a canonical investigation specification and separate runtime
+    package.
+  gate2_status: RATIFIED
+- signal_id: signal_ggt_high
+  source_spec_id: inv_ggt_high_hepatic
+  activation_key: signal_ggt_high::inv_ggt_high_hepatic
+  canonical_source: knowledge_bus/research/investigation_specs/inv_ggt_high_hepatic.yaml
+  source_sha256: 3e2cc6cf074dcb73b825e9a97fe93b43c4f50dc874a0c85cbaa34b754d46c8a1
+  source_identity_basis: embedded_spec_id
+  legacy_source: knowledge_bus/root_cause/hypotheses/ggt_high_hypotheses_v1.yaml
+  current_causal_why_authority: LEGACY_ACTIVE_OUT_OF_COMPILED_COHORT
+  compiled_authority_state: NONE
+  canonical_package: pkg_s24_ggt_high_hepatic
+  medical_decision: APPROVE_WITH_NARROWING
+  why_role: CONTEXT_ONLY_NON_CAUSAL
+  collision_axis_role: SUPPORTING_WHEN_ALP_HIGH_OTHERWISE_CONTEXT_ONLY
+  legacy_authority_disposition: CONDITIONAL_REPLACE_WITH_CONTEXT_ONLY_AFTER_GATE2_AND_STOP_C
+  head_of_medical_research_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+  anthony_ratification_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
+  evidence_gaps:
+  - isolated GGT is non-specific
+  - alcohol and medication exposure are not structured runtime inputs
+  - canonical source mixes hepatobiliary, alcohol, metabolic and enzyme-induction
+    implications
+  - ALT and bilirubin are excluded authority families despite appearing as context
+    markers
+  - legacy WHY does not preserve causal versus contextual candidate roles
+  gate1_questions:
+  - whether GGT alone can ever support causal hepatobiliary WHY
+  - how ALP concordance changes eligibility, role or confidence
+  - whether alcohol and enzyme induction are context-only, rejected or deferred
+  - how absent exposure, medication, ALP, bilirubin and imaging context fails closed
+  gate1_conditions:
+  - GGT must remain non-causal and non-diagnostic when isolated.
+  - When ALP is also high, GGT may support hepatic source attribution and the consolidated
+    cholestatic biochemical pattern.
+  - Normal or unavailable ALP must suppress cholestatic causal eligibility from GGT.
+  - GGT must not diagnose alcohol misuse, medication-induced liver injury, metabolic
+    steatotic liver disease, obstruction, cholestasis, or liver-disease severity.
+  - Alcohol use, enzyme-inducing medication, metabolic factors, ALT, bilirubin, MCV,
+    symptoms, serial results, and imaging remain context only unless structured and
+    separately governed.
+  - MCV must not be used to attribute alcohol exposure.
+  - Missing alcohol or medication history must fail closed and must not be interpreted
+    as absence or presence of exposure.
+  gate2_status: RATIFIED
+- signal_id: signal_ggt_high
+  source_spec_id: inv_ggt_high_hepatobiliary_cholestatic_context
+  activation_key: signal_ggt_high::inv_ggt_high_hepatobiliary_cholestatic_context
+  source_type: PASS3_V3_BATCH_AND_TRANSLATED_PACKAGE_WITH_STAGED_PSI
+  source_record: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  package_id: pkg_kb52c_ggt_high_hepatobiliary_cholestatic_context
+  runtime_signal_state: LOADED_PROVENANCE_BLOCKED
+  compiled_authority_state: NONE
+  medical_decision: DEFER_EVIDENCE_INSUFFICIENT
+  why_role: DEFERRED_NO_COMPILE
+  collision_axis_role: NONE
+  legacy_authority_disposition: NOT_APPLICABLE
+  head_of_medical_research_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+  anthony_ratification_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
+  medical_rationale: Clinically useful as supporting cholestatic context, but it remains
+    package/batch-derived with blocked provenance. Its role is represented by the
+    narrowed canonical GGT frame without separate authority.
+  gate2_status: RATIFIED
+- signal_id: signal_ggt_high
+  source_spec_id: inv_ggt_high_alcohol_or_enzyme_induction_context
+  activation_key: signal_ggt_high::inv_ggt_high_alcohol_or_enzyme_induction_context
+  source_type: PASS3_V3_BATCH_AND_TRANSLATED_PACKAGE_WITH_STAGED_PSI
+  source_record: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_6_Pass_3.json
+  package_id: pkg_kb52c_ggt_high_alcohol_or_enzyme_induction_context
+  runtime_signal_state: LOADED_PROVENANCE_BLOCKED
+  compiled_authority_state: NONE
+  medical_decision: DEFER_EVIDENCE_INSUFFICIENT
+  why_role: DEFERRED_NO_COMPILE
+  collision_axis_role: NONE
+  legacy_authority_disposition: NOT_APPLICABLE
+  head_of_medical_research_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+  anthony_ratification_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
+  medical_rationale: GGT is non-specific, and structured alcohol/medication exposure
+    is unavailable. No separate causal or attributive authority is permitted.
+  gate2_status: RATIFIED
 liver_injury_axis:
   authority_group_id: liver_injury_axis
   source: knowledge_bus/governance/signal_authority_collision_model_v1.yaml
   current_status: placeholder_not_adjudicated
   biological_axis: hepatocellular_injury
-  primary_signal_family: null
-  supporting_signal_families: []
+  primary_signal_family: signal_alp_high
+  supporting_signal_families:
+  - signal_ggt_high
   collision_policy:
-    no_duplicate_user_facing_signal: null
-    suppress_supporting_when_primary_present: null
-    consolidate_into_shared_interpretation: null
-    allow_parallel_if_distinct_risk_layer: null
-  runtime_action: none_governance_only
-  requires_runtime_support: false
-  policy_decision: PENDING
-  medical_authority_decision: PENDING
-  head_of_medical_research_reference: null
-  anthony_ratification_reference: null
+    no_duplicate_user_facing_signal: true
+    suppress_supporting_when_primary_present: true
+    consolidate_into_shared_interpretation: true
+    allow_parallel_if_distinct_risk_layer: false
+  runtime_action: apply_explicit_concordance_policy
+  requires_runtime_support: true
+  policy_decision: APPROVE_WITH_NARROWING
+  medical_authority_decision: ALP_PRIMARY_ONLY_WHEN_CONCORDANT_GGT_GGT_SUPPORTING_NON_CAUSAL
+  head_of_medical_research_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
+  anthony_ratification_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
   required_questions:
-    - whether ALP or GGT can ever be primary authority
-    - whether one or both remain supporting or context-only
-    - whether ALP and GGT concordance is required for hepatobiliary or cholestatic causality
-    - how discordant high ALP with normal GGT behaves
-    - how discordant high GGT with normal ALP behaves
-    - how bone-turnover, alcohol and enzyme-induction contexts are represented
-    - how future ALT and bilirubin authority can join without displacement or pre-decision
-    - whether all four collision fields become explicit booleans or a richer governed policy
-
+  - whether ALP or GGT can ever be primary authority
+  - whether one or both remain supporting or context-only
+  - whether ALP and GGT concordance is required for hepatobiliary or cholestatic causality
+  - how discordant high ALP with normal GGT behaves
+  - how discordant high GGT with normal ALP behaves
+  - how bone-turnover, alcohol and enzyme-induction contexts are represented
+  - how future ALT and bilirubin authority can join without displacement or pre-decision
+  - whether all four collision fields become explicit booleans or a richer governed
+    policy
+  recommended_biological_axis: cholestatic_source_axis
+  concordance_policy:
+    alp_high_and_ggt_high: Emit one consolidated cholestatic/hepatobiliary biochemical-pattern
+      finding. ALP is primary causal-candidate authority; GGT is supporting context
+      only.
+    alp_high_and_ggt_normal: Suppress hepatobiliary causal WHY. Emit ALP as non-specific
+      source context, preserving bone and other non-hepatic possibilities.
+    alp_high_and_ggt_missing: 'Fail closed identically to discordant/unknown source:
+      no hepatobiliary causal WHY.'
+    ggt_high_and_alp_normal: Emit GGT context only; suppress cholestatic causal WHY
+      and all alcohol/medicine attribution.
+    ggt_high_and_alp_missing: Emit GGT context only; no hepatobiliary causal WHY.
+  bilirubin_role: Supporting severity/excretory context only. Bilirubin is not required
+    for basic ALP+GGT cholestatic-pattern eligibility and gains no WHY authority under
+    ARCH-CONV-C.
+  future_boundary: ALT and hyperbilirubinemia remain excluded and retain independent
+    future authority. ARCH-CONV-C must not alias, suppress, retire, or pre-adjudicate
+    either family.
+  gate2_status: RATIFIED
 excluded:
-  - signal_id: signal_alt_high
-    disposition: OUT_OF_SCOPE_IDENTITY_AND_AUTHORITY_UNRESOLVED
-    prohibited_actions: [medical_decision, compilation, authority_registration, collision_decision, legacy_change]
-  - signal_id: signal_hepatic_alt_context
-    disposition: OUT_OF_SCOPE_SEPARATE_LEGACY_FAMILY
-    prohibited_actions: [medical_decision, compilation, authority_registration, collision_decision, legacy_change]
-  - signal_id: signal_ast_high
-    disposition: OUT_OF_SCOPE_NO_CANONICAL_WHY_TARGET
-    prohibited_actions: [target_invention, compilation, authority_registration]
-  - signal_id: signal_bilirubin_high
-    disposition: OUT_OF_SCOPE_RETIRED_WHY_IDENTITY
-    prohibited_actions: [identity_reopening, compilation, authority_registration, legacy_change]
-  - signal_id: signal_hyperbilirubinemia
-    disposition: OUT_OF_SCOPE_SURVIVING_FAMILY_NO_CANONICAL_INV_SPEC
-    prohibited_actions: [medical_decision, compilation, authority_registration, legacy_change]
-  - signal_id: signal_alp_low
-    disposition: OUT_OF_SCOPE_SEPARATE_DIRECTION
-    prohibited_actions: [medical_decision, compilation, authority_registration, collision_decision, legacy_change]
+- signal_id: signal_alt_high
+  disposition: OUT_OF_SCOPE_IDENTITY_AND_AUTHORITY_UNRESOLVED
+  prohibited_actions:
+  - medical_decision
+  - compilation
+  - authority_registration
+  - collision_decision
+  - legacy_change
+- signal_id: signal_hepatic_alt_context
+  disposition: OUT_OF_SCOPE_SEPARATE_LEGACY_FAMILY
+  prohibited_actions:
+  - medical_decision
+  - compilation
+  - authority_registration
+  - collision_decision
+  - legacy_change
+- signal_id: signal_ast_high
+  disposition: OUT_OF_SCOPE_NO_CANONICAL_WHY_TARGET
+  prohibited_actions:
+  - target_invention
+  - compilation
+  - authority_registration
+- signal_id: signal_bilirubin_high
+  disposition: OUT_OF_SCOPE_RETIRED_WHY_IDENTITY
+  prohibited_actions:
+  - identity_reopening
+  - compilation
+  - authority_registration
+  - legacy_change
+- signal_id: signal_hyperbilirubinemia
+  disposition: OUT_OF_SCOPE_SURVIVING_FAMILY_NO_CANONICAL_INV_SPEC
+  prohibited_actions:
+  - medical_decision
+  - compilation
+  - authority_registration
+  - legacy_change
+- signal_id: signal_alp_low
+  disposition: OUT_OF_SCOPE_SEPARATE_DIRECTION
+  prohibited_actions:
+  - medical_decision
+  - compilation
+  - authority_registration
+  - collision_decision
+  - legacy_change
+gate2_ratified_by: Anthony
+gate2_ratified_utc: '2026-07-30'
