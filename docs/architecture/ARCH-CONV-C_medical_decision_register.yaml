@@ -1,10 +1,11 @@
 work_id: ARCH-CONV-C
 branch: feature/arch-conv-c-alp-ggt-why-authority
-register_state: PHASE_0_DRAFT_AWAITING_STOP_A_APPROVAL
+register_state: GATE_1_SUBMISSION_READY_FOR_HEAD_OF_MEDICAL_RESEARCH
 stop_a_evidence_ref: docs/architecture/ARCH-CONV-C_STOP_A_identity_and_source_closure.md
 target_map_ref: docs/architecture/ARCH-CONV-C_target_to_frame_map.md
 pack_ref: docs/architecture/ARCH-CONV-C_medical_review_pack.md
-stop_a_approved_by_head_of_architecture: false
+stop_a_approved_by_head_of_architecture: true
+stop_a_approval_recorded_utc: '2026-07-30'
 head_of_architecture_stop_a_reference: null
 head_of_medical_research_gate1_reference: null
 anthony_gate2_reference: null
@@ -12,9 +13,12 @@ medical_decisions_made: false
 collision_policy_decisions_made: false
 runtime_changes_authorised: false
 note: >-
-  Phase 0 evidence register only. No row is a medical decision, collision-policy
-  decision, compilation approval, runtime authorisation, or legacy-disconnection
-  authority.
+  STOP A approved by Head of Architecture; Phase 1 (Gate 1 pack and register
+  finalisation) authorised. This register is submission-ready evidence only. No
+  row is a medical decision, collision-policy decision, compilation approval,
+  runtime authorisation, or legacy-disconnection authority. All decision fields
+  remain PENDING until Head of Medical Research Gate 1 and Anthony Gate 2 are
+  recorded.
 
 frames:
   - signal_id: signal_alp_high

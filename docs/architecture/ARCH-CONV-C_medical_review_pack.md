@@ -1,16 +1,31 @@
 # ARCH-CONV-C — ALP/GGT Medical-Review Pack
 
 **Work ID:** `ARCH-CONV-C`  
-**Date (UTC):** 2026-07-30  
-**Pack state:** `PHASE_0_DRAFT_AWAITING_STOP_A_APPROVAL`  
-**Medical decisions:** **NONE**  
-**Collision-policy decisions:** **NONE**  
+**Date (UTC):** 2026-07-30 (Phase 1 finalisation)  
+**Pack state:** `GATE_1_SUBMISSION_READY_FOR_HEAD_OF_MEDICAL_RESEARCH`  
+**STOP A approval:** Head of Architecture, recorded 2026-07-30 (see `ARCH-CONV-C_STOP_A_identity_and_source_closure.md`)  
+**Medical decisions:** **NONE — requested from Head of Medical Research (Gate 1)**  
+**Collision-policy decisions:** **NONE — requested from Head of Medical Research (Gate 1)**  
+**Gate 1 reference:** PENDING  
+**Gate 2 reference:** PENDING  
 **Runtime authority:** **NOT AUTHORISED**
 
-This Phase 0 draft records repository evidence and the questions that a later
-Head of Medical Research Gate 1 must answer. It is not yet a Gate 1 submission.
-Cursor has made no medical decision and has not compiled, registered, activated,
-retired, or disconnected any WHY authority.
+This is the finalised Gate 1 submission pack. STOP A is approved by the Head of
+Architecture, authorising this finalisation only. It preserves all STOP A
+evidence and requests structured medical and collision-policy decisions from the
+Head of Medical Research. Cursor makes no medical decision here, and this record
+authorises no compilation, runtime activation, authority registration, collision
+policy population, or legacy disconnection.
+
+Allowed reviewer decisions per candidate frame:
+
+```text
+APPROVE
+APPROVE_WITH_NARROWING
+REJECT
+DEFER_EVIDENCE_INSUFFICIENT
+CONTEXT_ONLY
+```
 
 ## Review scope
 
@@ -197,6 +212,57 @@ drawn from this omission.
 ALT and bilirubin may appear only as source-recorded supporting, contradiction,
 or future-boundary context. This does not grant either family WHY authority.
 
+## Gate 1 decisions requested from Head of Medical Research
+
+For each item below, the Head of Medical Research is asked to record a structured
+decision, role, evidence rationale, and any legacy/collision disposition into
+`docs/architecture/ARCH-CONV-C_medical_decision_register.yaml`. Cursor records
+nothing here.
+
+### ALP — `signal_alp_high::inv_alp_high_bone_biliary` (+ Pass 3 candidates)
+
+| Decision item | Requested output |
+|---|---|
+| Causal versus context-only role | `causal` / `context_only` / `rejected` / `deferred` for the canonical frame |
+| Bone versus hepatobiliary interpretation | Which interpretation(s) the frame may express, and which are prohibited from ALP alone |
+| High-GGT concordance requirement | Whether high GGT is required before any hepatobiliary/cholestatic interpretation is eligible |
+| Bilirubin role | Whether bilirubin is required for cholestatic escalation, severity-only, or neither |
+| Pass 3 cholestatic frame | Role for `inv_alp_high_cholestatic_pattern` |
+| Pass 3 high-bone-turnover frame | Role for `inv_alp_high_high_bone_turnover_pattern` (unpackaged) |
+| Fail-closed handling | Behaviour when GGT, bilirubin, calcium, phosphate, vitamin D, bone history, pregnancy/age, serial results, or imaging are absent |
+| Legacy disposition | Retain, conditionally replace, or unchanged for `alp_high_hypotheses_v1.yaml` |
+
+### GGT — `signal_ggt_high::inv_ggt_high_hepatic` (+ Pass 3 candidates)
+
+| Decision item | Requested output |
+|---|---|
+| Hepatobiliary causal eligibility | Whether GGT may support causal hepatobiliary WHY, and under what concordance |
+| Alcohol / medicine-induction role | `causal` / `context_only` / `rejected` / `deferred` for the alcohol/enzyme-induction content |
+| Metabolic-context role | Role for metabolic/steatotic-liver context |
+| ALP concordance requirement | Whether high ALP is required before hepatobiliary/cholestatic eligibility, and how it changes role/confidence |
+| MCV handling | Whether/how MCV may add non-attributive alcohol context |
+| Pass 3 hepatobiliary frame | Role for `inv_ggt_high_hepatobiliary_cholestatic_context` |
+| Pass 3 alcohol/induction frame | Role for `inv_ggt_high_alcohol_or_enzyme_induction_context` |
+| Fail-closed handling | Behaviour when alcohol history, medication exposure, ALP, ALT, bilirubin, metabolic context, serial results, or imaging are absent |
+| Legacy disposition | Retain, conditionally replace, or unchanged for `ggt_high_hypotheses_v1.yaml` |
+
+### liver_injury_axis — collision-policy adjudication
+
+| Decision item | Requested output |
+|---|---|
+| Primary / supporting / context roles | Whether ALP or GGT may be primary; which is supporting or context-only |
+| Concordant ALP+GGT behaviour | Deterministic outcome when both are high |
+| Discordant high-ALP / normal-GGT behaviour | Deterministic outcome and any redirection to bone/non-hepatic context |
+| Discordant high-GGT / normal-ALP behaviour | Deterministic outcome and any suppression of cholestatic causality |
+| Suppression / consolidation / refusal rules | Which of the four `collision_policy` fields become true/false, plus any preconditions |
+| Axis label adequacy | Whether `biological_axis: hepatocellular_injury` is adequate or must be narrowed/renamed |
+| Future-safe ALT/bilirubin boundary | How future ALT and bilirubin authority may join without displacement or pre-decision |
+
+Deterministic selection is mandatory: no filename, package-name, lexical,
+filesystem, or load-order selection is permitted. Concurrent same-signal
+different-key candidates (S24 versus Pass 3) must be resolved by explicit,
+ratified authority, not order.
+
 ## Gate status
 
 | Requirement | State |
@@ -206,11 +272,16 @@ or future-boundary context. This does not grant either family WHY authority.
 | Compiled authority state identified | COMPLETE — none |
 | `liver_injury_axis` placeholder reconstructed | COMPLETE |
 | Exclusions documented | COMPLETE |
-| Independent STOP A | **PENDING** |
-| Head of Medical Research Gate 1 | **NOT STARTED** |
+| Independent STOP A | **APPROVED (Head of Architecture, 2026-07-30)** |
+| Structured Gate 1 decision requests assembled | COMPLETE |
+| Head of Medical Research Gate 1 | **AWAITING DECISIONS** |
 | Anthony Gate 2 | **NOT STARTED** |
 | Runtime or compiled changes | **0** |
 
 ```text
-PHASE 0 DRAFT COMPLETE — AWAITING INDEPENDENT STOP A
+GATE 1 SUBMISSION READY — AWAITING HEAD OF MEDICAL RESEARCH DECISIONS
 ```
+
+Cursor has made no medical or collision-policy decision. Compilation, collision
+policy population, and runtime work remain blocked until both Gate 1 (Head of
+Medical Research) and Gate 2 (Anthony ratification) are recorded.

@@ -5,7 +5,17 @@
 **Author role:** Cursor (`healthiq-core-engine`) — repository evidence only  
 **Authority:** Automation Bus SOP v1.3.1; Knowledge Bus SOP v1.3.1; Pass 3
 Promotion Protocol v1.1; `automation_bus/latest_cursor_prompt.md`  
-**Status:** `AWAITING_INDEPENDENT_HEAD_OF_ARCHITECTURE_STOP_A`
+**Status:** `STOP_A_APPROVED_BY_HEAD_OF_ARCHITECTURE`
+
+> **STOP A approval (recorded 2026-07-30):** Head of Architecture approved this
+> STOP A evidence in-session and authorised Phase 1 (Gate 1 medical-review-pack
+> and decision-register finalisation) only. No formal approval reference string
+> was supplied; the Head of Architecture may attach one to
+> `head_of_architecture_stop_a_reference` in
+> `docs/architecture/ARCH-CONV-C_medical_decision_register.yaml`. Approval does
+> not authorise medical decisions, collision-policy population, compilation,
+> runtime authority changes, legacy disconnection, Automation Bus finish, or
+> Phase 2.
 
 This record contains no medical approval, collision-policy adjudication, runtime
 authorisation, compilation, authority registration, or legacy disconnection.
@@ -290,10 +300,11 @@ No answer is supplied by Cursor.
 ## STOP A verdict
 
 ```text
-AWAITING INDEPENDENT HEAD OF ARCHITECTURE STOP A APPROVAL
+STOP A APPROVED BY HEAD OF ARCHITECTURE — PHASE 1 (GATE 1 PACK FINALISATION) AUTHORISED
 ```
 
-Per the hardened prompt, work stops here. STOP A approval may authorise Phase 1
-medical-review-pack finalisation only. It does not itself authorise medical
-decisions, collision-policy population, compilation, runtime integration,
-legacy disconnection, Automation Bus finish, or Phase 2.
+Approval authorises finalisation of the Gate 1 medical-review pack and decision
+register for Head of Medical Research only. It does not authorise Cursor to make
+medical decisions, populate collision policy, compile frames, register or modify
+runtime authority, disconnect legacy authority, run Automation Bus finish, or
+proceed to Phase 2.
