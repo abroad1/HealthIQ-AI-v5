@@ -1,0 +1,117 @@
+work_id: ARCH-CONV-D
+branch: feature/arch-conv-d-alt-identity-closure
+register_state: STOP_C_APPROVED_AWAITING_AUTOMATION_BUS_FINISH
+baseline_main_sha: e2d7ce38adc095387e632c6e50ebad68110cbe10
+stop_a_evidence_ref: docs/architecture/ARCH-CONV-D_STOP_A_alt_identity_closure.md
+hoa_decision_ref: docs/architecture/ARCH-CONV-D_STOP_A_head_of_architecture_decision.md
+identity_map_ref: docs/architecture/ARCH-CONV-D_alt_identity_map.md
+identity_relationship_ref: knowledge_bus/governance/arch_conv_d_alt_identity_relationship_v1.yaml
+stop_c_evidence_ref: docs/architecture/ARCH-CONV-D_STOP_C_identity_runtime_non_change_proof.md
+stop_a_approved_by_head_of_architecture: true
+stop_a_approval_recorded_utc: '2026-07-30'
+head_of_architecture_stop_a_reference: ARCH-CONV-D-STOP-A-HOA-2026-07-30
+stop_c_approved_by_head_of_architecture: true
+stop_c_approval_recorded_utc: '2026-07-30'
+medical_decisions_made: false
+runtime_changes_authorised: false
+phase1_governance_implemented: true
+note: STOP A and STOP C approved by Head of Architecture. The canonical ALT
+  identity is signal_alt_high. signal_hepatic_alt_context is classified as a legacy
+  predecessor/context implementation pending ARCH-CONV-E. No runtime, medical, threshold,
+  loader, WHY-authority, or legacy-disconnection change was authorised or performed.
+  Automation Bus finish is authorised; merge is not.
+unresolved_decision_options:
+- MERGE_TO_SIGNAL_ALT_HIGH
+- RETAIN_AS_DISTINCT_CONTEXT_SIGNAL
+- RETIRE_WITHOUT_TRANSFER
+- DEFER_IDENTITY_UNRESOLVED
+identities:
+- signal_id: signal_alt_high
+  embedded_canonical_source_spec_id: inv_alt_high_hepatocellular_injury
+  source_identity_basis: investigation_spec_embedded_spec_id_and_package_source_document_derivation
+  canonical_source: knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml
+  source_sha256: 7189a0761558937d4dd4397e823bbe06c7bee0b13ef9bbe0b3afc70a73b7413a
+  package_id: pkg_s24_alt_high_hepatocellular_injury
+  translation_mode: creation
+  identity_index_status: PRESENT
+  signal_layer_status: LIVE
+  primary_marker: alt
+  legacy_why_path: null
+  compiled_why_status: NONE
+  runtime_why_authority_status: NO_WHY_EMIT_PATH
+  identity_decision: CANONICAL_SURVIVOR
+  predecessor_alias_classification: SUCCESSOR_CANONICAL_IDENTITY
+  legacy_why_ownership_classification: NO_CURRENT_LEGACY_WHY_OWNERSHIP
+  status_pending_arch_conv_e: LIVE_UNCHANGED
+- signal_id: signal_hepatic_alt_context
+  embedded_canonical_source_spec_id: null
+  source_identity_basis: architecture_doc_package_anchor_only
+  canonical_source: null
+  package_source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+  inferred_runtime_source_spec_id: inv_alt_context
+  package_id: pkg_hepatic_alt_context
+  translation_mode: creation
+  identity_index_status: ABSENT
+  signal_layer_status: LIVE
+  primary_marker: alt
+  legacy_why_path: knowledge_bus/root_cause/hypotheses/alt_hypotheses_v1.yaml
+  legacy_why_registry: backend/core/knowledge/root_cause_registry_v1.py
+  legacy_why_registry_signal_id: signal_hepatic_alt_context
+  compiled_why_status: NONE
+  runtime_why_authority_status: LEGACY_FAMILY_LEVEL_ACTIVE
+  identity_decision: LEGACY_PREDECESSOR_PENDING_MIGRATION
+  predecessor_alias_classification: LEGACY_PREDECESSOR_NOT_RUNTIME_ALIAS
+  legacy_why_ownership_classification: TEMPORARY_LEGACY_OWNER_UNTIL_ARCH_CONV_E
+  status_pending_arch_conv_e: LIVE_UNCHANGED_NO_TRANSFER_NO_DISCONNECTION
+final_identity_relationship:
+  selected_option: MERGE_TO_SIGNAL_ALT_HIGH
+  surviving_identity_or_distinct_family_relationship: signal_alt_high is the sole
+    canonical future ALT authority identity. signal_hepatic_alt_context is a legacy
+    predecessor/context implementation, not a separately canonical medical family.
+  predecessor_alias_classification: Record predecessor/successor relationship in governance
+    only. Do not create a runtime alias because the two live signal implementations
+    are behaviourally non-identical.
+  legacy_why_ownership_classification: signal_hepatic_alt_context remains the temporary
+    legacy WHY owner until ARCH-CONV-E ratifies and proves transfer or replacement.
+  current_signal_behaviour_status_pending_arch_conv_e: Both live signal implementations
+    remain unchanged. No loader, threshold, activation, WHY reachability, or emitted-output
+    change is permitted in ARCH-CONV-D.
+  hardcoded_threshold_issue_is_mandatory_arch_conv_e_precondition: true
+  future_hepatocellular_injury_axis: RESERVED_REQUIRED_FOR_ARCH_CONV_E_DESIGN_REVIEW;
+    not created or adjudicated in ARCH-CONV-D.
+  requires_bounded_head_of_medical_research_review: false
+pass3_candidates_identity_evidence_only:
+- research_spec_id: inv_alt_high_hepatocellular_injury_pattern
+  activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury_pattern
+  listed_under_signal_families:
+  - signal_alt_high
+  - signal_hepatic_alt_context
+  translated_package_signal_id: signal_alt_high
+  medical_decision: NOT_IN_SCOPE_FOR_ARCH_CONV_D
+- research_spec_id: inv_alt_high_metabolic_steatotic_liver_pattern
+  activation_key: signal_alt_high::inv_alt_high_metabolic_steatotic_liver_pattern
+  listed_under_signal_families:
+  - signal_alt_high
+  - signal_hepatic_alt_context
+  translated_package_signal_id: signal_alt_high
+  medical_decision: NOT_IN_SCOPE_FOR_ARCH_CONV_D
+- research_spec_id: inv_alt_high_muscle_source_or_exertional_pattern
+  activation_key: signal_alt_high::inv_alt_high_muscle_source_or_exertional_pattern
+  listed_under_signal_families:
+  - signal_alt_high
+  - signal_hepatic_alt_context
+  translated_package_signal_id: signal_alt_high
+  medical_decision: NOT_IN_SCOPE_FOR_ARCH_CONV_D
+governance_flags:
+- flag_id: HARDCODED_ALT_CONTEXT_THRESHOLDS_NOT_FROM_BIOMARKER_SSOT
+  status: RECORDED
+  remediation_in_arch_conv_d: FORBIDDEN
+  successor_blocker_if_behaviour_retained_or_transferred: true
+exclusions_unchanged:
+- signal_ast_high
+- cholestatic_source_axis
+- signal_alp_high
+- signal_ggt_high
+- signal_bilirubin_high
+- signal_hyperbilirubinemia
+- frontend

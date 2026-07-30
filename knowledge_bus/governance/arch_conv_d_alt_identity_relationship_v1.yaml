@@ -1,0 +1,47 @@
+schema_version: "1.0.0"
+work_id: ARCH-CONV-D
+artefact_path: knowledge_bus/governance/arch_conv_d_alt_identity_relationship_v1.yaml
+stop_a_reference: ARCH-CONV-D-STOP-A-HOA-2026-07-30
+decision_register_ref: docs/architecture/ARCH-CONV-D_identity_decision_register.yaml
+hoa_decision_ref: docs/architecture/ARCH-CONV-D_STOP_A_head_of_architecture_decision.md
+description: >
+  Governance-only ALT identity predecessor/successor relationship after STOP A.
+  This is not a runtime alias register. It does not change signal activation,
+  thresholds, root-cause registry mappings, legacy WHY reachability, compiled
+  WHY authority, collision resolver behaviour, or emitted output.
+selected_option: MERGE_TO_SIGNAL_ALT_HIGH
+runtime_alias_created: false
+runtime_changes_authorised: false
+relationship:
+  canonical_successor_signal_id: signal_alt_high
+  canonical_successor_package_id: pkg_s24_alt_high_hepatocellular_injury
+  canonical_successor_source_spec_id: inv_alt_high_hepatocellular_injury
+  legacy_predecessor_signal_id: signal_hepatic_alt_context
+  legacy_predecessor_package_id: pkg_hepatic_alt_context
+  predecessor_classification: LEGACY_PREDECESSOR_CONTEXT_IMPLEMENTATION_NOT_RUNTIME_ALIAS
+  separately_canonical_medical_family: false
+legacy_why_ownership:
+  current_owner_signal_id: signal_hepatic_alt_context
+  asset: knowledge_bus/root_cause/hypotheses/alt_hypotheses_v1.yaml
+  registry: backend/core/knowledge/root_cause_registry_v1.py
+  status: TEMPORARY_UNTIL_ARCH_CONV_E
+  transfer_or_disconnection_in_arch_conv_d: forbidden
+arch_conv_e_preconditions:
+  - treat_signal_alt_high_as_only_canonical_alt_migration_target
+  - bounded_medical_review_of_alt_frame_roles
+  - remediate_or_replace_hardcoded_non_ssot_threshold_logic_before_retain_or_transfer
+  - design_and_adjudicate_hepatocellular_injury_axis
+  - explicit_legacy_why_transfer_or_retirement_adjudication
+  - prove_no_accidental_duplicate_alt_user_facing_authority
+hepatocellular_injury_axis:
+  status: RESERVED_REQUIRED_FOR_ARCH_CONV_E_DESIGN_REVIEW
+  created_by_arch_conv_d: false
+  medically_adjudicated_by_arch_conv_d: false
+hardcoded_threshold_flag:
+  flag_id: HARDCODED_ALT_CONTEXT_THRESHOLDS_NOT_FROM_BIOMARKER_SSOT
+  mandatory_arch_conv_e_precondition: true
+  remediation_in_arch_conv_d: forbidden
+notes: >
+  Identity merge records canonical lineage only. The two live signal
+  implementations remain behaviourally non-identical and both continue to
+  evaluate unchanged until ARCH-CONV-E.

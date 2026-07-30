@@ -219,10 +219,13 @@ signal_families:
       medication_modifiers: false
     collision_group_id: alt_legacy_s24_package
     collision_status: requires_adjudication
-    supersedes: null
+    supersedes: pkg_hepatic_alt_context
     superseded_by: null
     notes: 'Legacy override or_alt_impaired_function (ALT + bilirubin). Distinct from
-      Pass_3 kb52c frames; PASS3-FRAME-COVERAGE-1 worked example.
+      Pass_3 kb52c frames; PASS3-FRAME-COVERAGE-1 worked example. ARCH-CONV-D
+      STOP A (ARCH-CONV-D-STOP-A-HOA-2026-07-30): signal_alt_high is the sole
+      canonical future ALT authority identity; governance supersession of
+      pkg_hepatic_alt_context is identity-only and creates no runtime alias.
 
       '
   - signal_family_id: signal_alt_high
@@ -273,6 +276,38 @@ signal_families:
     superseded_by: null
     notes: 'Legacy or_alt_mixed_cholestatic (ALT + ALP). Preserved as distinct frame
       pending Pass_3 enrichment or medical adjudication.
+
+      '
+- signal_family_id: signal_hepatic_alt_context
+  primary_biomarker_id: alt
+  system: hepatic
+  frames:
+  - signal_family_id: signal_hepatic_alt_context
+    primary_biomarker_id: alt
+    medical_frame_id: frame_hepatic_alt_context_legacy_predecessor
+    frame_label: Legacy hepatic ALT context predecessor (ARCH-CONV-D)
+    frame_role: legacy_predecessor_context_implementation
+    research_spec_id: inv_alt_context
+    source_package_id: pkg_hepatic_alt_context
+    source_package_path: knowledge_bus/packages/pkg_hepatic_alt_context
+    activation_key: signal_hepatic_alt_context::inv_alt_context
+    signal_id: signal_hepatic_alt_context
+    promotion_state: superseded
+    runtime_authority_status: none
+    clinical_adjudication_status: not_required
+    context_inputs_supported:
+      biomarker_evidence: true
+      questionnaire_modifiers: false
+      medication_modifiers: false
+    collision_group_id: alt_identity_lineage_arch_conv_d
+    collision_status: resolved_by_supersession
+    supersedes: null
+    superseded_by: pkg_s24_alt_high_hepatocellular_injury
+    notes: 'ARCH-CONV-D STOP A (ARCH-CONV-D-STOP-A-HOA-2026-07-30): MERGE_TO_SIGNAL_ALT_HIGH.
+      Governance-only predecessor classification. Not a separately canonical medical
+      family. Not a runtime alias. Live package behaviour and temporary legacy WHY
+      ownership (alt_hypotheses_v1.yaml) remain unchanged pending ARCH-CONV-E. Index
+      runtime_consumed remains false; this row does not alter signal activation.
 
       '
 - signal_family_id: signal_crp_high
