@@ -174,18 +174,28 @@ ROOT_CAUSE_TARGET_SPECS
 
 ---
 
-## 7. Architecture questions for STOP A (unresolved)
+## 7. STOP A decision (recorded)
 
-These are decision prompts, not recommendations:
+**Reference:** `ARCH-CONV-D-STOP-A-HOA-2026-07-30`  
+**Selected option:** `MERGE_TO_SIGNAL_ALT_HIGH`
 
-1. Is `signal_hepatic_alt_context` a superseded predecessor of `signal_alt_high`,
-   a separately intended context family, or unresolved?
-2. Which identity survives as the future ALT WHY migration target?
-3. How must current legacy WHY ownership on `signal_hepatic_alt_context` be
-   classified while behaviour remains unchanged?
-4. Is a future `hepatocellular_injury_axis` required or merely reserved?
-5. Does the hardcoded-threshold flag block retention or transfer of legacy
-   override behaviour into ARCH-CONV-E?
+| Question | Approved answer |
+|---|---|
+| Canonical survivor | `signal_alt_high` — sole canonical future ALT authority identity |
+| Predecessor | `signal_hepatic_alt_context` — legacy predecessor/context implementation; not a separately canonical medical family |
+| Runtime alias | **Not created** (behaviours are non-identical) |
+| Legacy WHY owner | Remains `signal_hepatic_alt_context` temporarily until ARCH-CONV-E |
+| Threshold flag | Mandatory ARCH-CONV-E precondition |
+| `hepatocellular_injury_axis` | Reserved / required for ARCH-CONV-E design review; not created here |
 
-Final options remain PENDING in
-`docs/architecture/ARCH-CONV-D_identity_decision_register.yaml`.
+Governance encoding:
+
+- `knowledge_bus/governance/arch_conv_d_alt_identity_relationship_v1.yaml`
+- identity-index supersession fields (non-runtime index; `runtime_consumed: false`)
+- `docs/architecture/ARCH-CONV-D_identity_decision_register.yaml`
+
+## 8. Architecture questions answered by STOP A
+
+Final options were PENDING at Phase 0 submission and are now recorded in the
+approved decision register. Medical WHY roles, compile/activate, and threshold
+remediation remain out of scope for ARCH-CONV-D.

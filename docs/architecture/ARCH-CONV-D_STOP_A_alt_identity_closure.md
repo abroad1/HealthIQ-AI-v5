@@ -5,11 +5,20 @@
 **Author role:** Cursor (`healthiq-core-engine`) — repository evidence only  
 **Authority:** Automation Bus SOP v1.3.1; Knowledge Bus SOP v1.3.1; Pass 3
 Promotion Protocol v1.1  
-**Status:** `STOP_A_SUBMISSION_READY_FOR_HEAD_OF_ARCHITECTURE`
+**Status:** `STOP_A_APPROVED_BY_HEAD_OF_ARCHITECTURE`  
+**STOP A reference:** `ARCH-CONV-D-STOP-A-HOA-2026-07-30`  
+**Decision:** `MERGE_TO_SIGNAL_ALT_HIGH`
 
-This record contains no identity approval, medical approval, runtime
-authorisation, compilation, authority registration, legacy disconnection, or
-threshold remediation.
+> **STOP A approval (recorded 2026-07-30):** Head of Architecture approved this
+> STOP A evidence under reference `ARCH-CONV-D-STOP-A-HOA-2026-07-30` and
+> authorised Phase 1 governance-only identity closure. Decision record:
+> `docs/architecture/ARCH-CONV-D_STOP_A_head_of_architecture_decision.md`.
+> Approval does not authorise runtime merge, medical WHY adjudication,
+> threshold remediation, legacy WHY disconnection/transfer, compiled WHY,
+> collision-axis creation, Automation Bus finish, or merge.
+
+This Phase 0 evidence record originally contained no identity approval. The
+approval above authorises governance encoding only.
 
 Companion artefacts:
 
@@ -248,6 +257,8 @@ a bounded Head of Medical Research review before Phase 1 implementation.
 
 ## STOP A status
 
-`AWAITING INDEPENDENT HEAD OF ARCHITECTURE APPROVAL`
+`STOP_A_APPROVED_BY_HEAD_OF_ARCHITECTURE` — reference
+`ARCH-CONV-D-STOP-A-HOA-2026-07-30` — decision `MERGE_TO_SIGNAL_ALT_HIGH`.
 
-Do not proceed to Phase 1, STOP C, Automation Bus finish, or merge.
+Phase 1 governance implementation is authorised. Runtime change, Automation Bus
+finish, and merge remain prohibited until later independent approvals.
