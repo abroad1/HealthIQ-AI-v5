@@ -33,4 +33,9 @@
 
 Wave 1 STOP B / STOP C = rows 1–5 complete.  
 Wave 2 Gate 1 / Gate 2 / STOP C = rows 6–8 complete.  
-Next STOP B pack = Wave 3 rows 9–11 — see `docs/architecture/ARCH-CONV-A_wave3_renal_medical_review_pack.md` (assembled; medical decisions pending).
+
+**Active successor identity:** renal rows 9–11 are preserved preparation only.  
+Active work is `ARCH-CONV-B` on `feature/arch-conv-b-renal-why-authority`.  
+Do not treat `ARCH-CONV-A` / Wave 3 as the active work package.  
+Preserved pack: `docs/architecture/ARCH-CONV-A_wave3_renal_medical_review_pack.md` (assembled; medical decisions pending; Phase 0 refreshes into ARCH-CONV-B docs).  
+`signal_urate_high` (row 11) remains excluded from ARCH-CONV-B implementation unless separately re-authorised.

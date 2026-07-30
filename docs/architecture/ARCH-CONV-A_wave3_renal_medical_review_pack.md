@@ -1,9 +1,16 @@
 # ARCH-CONV-A — Wave 3 Renal Medical-Review Pack (STOP B)
 
-**Work ID:** `ARCH-CONV-A`  
-**Wave:** 3 — Renal function panel (specification-ready subset)  
+> **Preserved preparation only (ARCH-CONV-B branch prep).**  
+> This document is a historical source pack cherry-picked for `ARCH-CONV-B`.  
+> Active work identity is `ARCH-CONV-B` on `feature/arch-conv-b-renal-why-authority`.  
+> Do not treat `ARCH-CONV-A` / Wave 3 as the active work package.  
+> Phase 0 refreshes this material into ARCH-CONV-B authority documents.  
+> No medical approval, compilation, runtime activation, or legacy disconnection is implied by this file.
+
+**Original Work ID (historical):** `ARCH-CONV-A`  
+**Original Wave (historical):** 3 — Renal function panel (specification-ready subset)  
 **Date (UTC):** 2026-07-28  
-**Pack role:** Gate 1 / Gate 2 **submission evidence** assembled by Cursor  
+**Pack role:** Gate 1 / Gate 2 **submission evidence** assembled by Cursor (preserved)  
 **Medical decisions in this pack:** **NONE** — all decision fields left for GPT + Anthony  
 
 Allowed decision values (for reviewers only):

@@ -1,14 +1,22 @@
-work_id: ARCH-CONV-A
-wave: 3
+# Preserved preparation only for ARCH-CONV-B branch prep.
+# Active work identity is ARCH-CONV-B on feature/arch-conv-b-renal-why-authority.
+# Historical ARCH-CONV-A / Wave 3 framing below is source material, not active authority.
+# Phase 0 refreshes this into ARCH-CONV-B_medical_decision_register.yaml.
+work_id_historical: ARCH-CONV-A
+wave_historical: 3
+active_work_id: ARCH-CONV-B
+active_branch: feature/arch-conv-b-renal-why-authority
 pack_ref: docs/architecture/ARCH-CONV-A_wave3_renal_medical_review_pack.md
 decision_artefact_ref: null
 gpt_gate1_reference: null
 anthony_gate2_reference: null
 note: >
-  Wave 3 renal STOP B preparation register. Medical decisions PENDING.
+  Preserved Wave 3 renal STOP B preparation register for ARCH-CONV-B Phase 0.
+  Medical decisions PENDING. Not the active work-package identity.
   Use embedded canonical spec_id identities (no filename _v1 activation keys).
-  Do not compile or activate until Gate 1 / Gate 2 ratification.
+  Do not compile or activate until Gate 1 / Gate 2 ratification under ARCH-CONV-B.
   Preserve separately governed signal_egfr_low authority.
+  Urate remains out of ARCH-CONV-B implementation scope unless separately re-authorised.
 frames:
   - signal_id: signal_creatinine_high
     activation_key: signal_creatinine_high::inv_creatinine_high_renal
