@@ -68,21 +68,55 @@ changed state.
 
 | Registry state | Total frames | Loaded packages | `signal_alt_high` frames |
 |---|---|---|---|
-| Clean `HEAD` (4d09048), pre-ARCH-CONV-E | 182 | 176 | 4 |
+| Clean `HEAD` (`4d09048`), pre-ARCH-CONV-E | 182 | 176 | 4 |
 | Asset build applied, pre-boundary fix | 185 | 179 | 7 |
-| Asset build plus boundary fix | 179 | 173 | 1 |
+| Post-change at implementation commit `a260c53` | 179 | 173 | 1 |
 
-The single remaining ALT frame is
+Implementation commit: `a260c53`
+(`feat(knowledge-bus): ARCH-CONV-E ALT assets with activation boundary`).
+
+The single remaining loaded ALT frame is
 `signal_alt_high::inv_alt_high_hepatocellular_injury` from
-`pkg_s24_alt_high_hepatocellular_injury`, the only explicitly activated ALT frame.
+`pkg_s24_alt_high_hepatocellular_injury`. That package remains loaded.
 
-The `HEAD`-to-final delta of three frames is intentional and is the substantive runtime
-consequence of this work package. The three regenerated `pkg_kb52c_*` ALT packages were
-loading at `HEAD` under their superseded spec IDs while their estate rows recorded
-`requires_review: true` and `runtime_loaded: false`. Regeneration replaced their lineage,
-so their activation keys changed, and neither the old nor the new keys are promoted. They
-are therefore withheld with the three new packages. Restoring any of them to production is
-a promotion decision, made by appending the activation key to the register.
+### Former Batch 5 ALT activation keys (clean-HEAD → `a260c53`)
+
+At clean `HEAD` (`4d09048`) the production registry accidentally loaded three Batch 5 ALT
+frames in addition to S24. Their previous eligibility was
+`out_of_launch_critical_cohort`; `is_production_reachable()` treated that class as
+reachable, so package placement alone activated them. Estate rows recorded
+`requires_review: true` and `runtime_loaded: false` at the same time.
+
+| Former activation key | package_id | Former source_spec_id (path-inferred) | Replacement canonical Pass 3 source_spec_id |
+|---|---|---|---|
+| `signal_alt_high::inv_alt_high_hepatocellular_injury_pattern` | `pkg_kb52c_alt_high_hepatocellular_injury_pattern` | `inv_alt_high_hepatocellular_injury_pattern` | `inv_alt_high_r_value_hepatocellular_biochemical_pattern` |
+| `signal_alt_high::inv_alt_high_metabolic_steatotic_liver_pattern` | `pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern` | `inv_alt_high_metabolic_steatotic_liver_pattern` | `inv_alt_high_metabolic_masld_context` |
+| `signal_alt_high::inv_alt_high_muscle_source_or_exertional_pattern` | `pkg_kb52c_alt_high_muscle_source_or_exertional_pattern` | `inv_alt_high_muscle_source_or_exertional_pattern` | `inv_alt_high_muscle_source_or_exertional_contribution` |
+
+Disposition for each of the three former Batch 5 ALT activation keys:
+
+> Superseded by canonical regeneration and removed from accidental runtime reachability; replacement frames remain unactivated pending explicit promotion.
+
+This is not an independent medical retirement and is not a completed governed retirement
+process. No retirement register entry or medical-retirement evidence was produced for these
+keys under ARCH-CONV-E. The former keys ceased to exist because regeneration replaced
+package lineage; the replacement frames are withheld from
+`package_runtime_activation_register_v1.yaml`.
+
+### Complete runtime delta (`4d09048` → `a260c53`)
+
+- Packages removed from runtime loading: the three packages listed above.
+- Frames removed from runtime loading: the three former activation keys listed above.
+- Packages newly loaded: none.
+- Frames newly loaded: none.
+- No non-ALT runtime package or frame changed.
+
+### Six replacement packages — present, validated, unactivated
+
+The six ARCH-CONV-E packages remain present under `knowledge_bus/packages/` and validate
+via `validate_knowledge_package.py`. None of their six replacement frames is runtime
+activated. They appear in `excluded_unactivated_packages` /
+`excluded_unactivated_frames` as `NOT_RUNTIME_ACTIVATED`.
 
 `SignalRegistry` audit surfaces after the fix:
 
@@ -310,14 +344,15 @@ debt and are not attributed to ARCH-CONV-E:
 
 | Authority / lineage | Disposition | Rationale |
 |---|---|---|
-| `pkg_s24_alt_high_hepatocellular_injury` | `MAPPED_TO_CANONICAL_RESEARCH` | Legacy S24 remains unchanged and non-retired; its ALT-high territory maps to the canonical ARCH-CONV-E research set pending later authority adjudication. |
+| `pkg_s24_alt_high_hepatocellular_injury` | `MAPPED_TO_CANONICAL_RESEARCH` | Legacy S24 remains loaded and non-retired; its ALT-high territory maps to the canonical ARCH-CONV-E research set pending later authority adjudication. |
+| Three former Batch 5 ALT activation keys | Superseded by canonical regeneration and removed from accidental runtime reachability; replacement frames remain unactivated pending explicit promotion. | Accidental `OUT_OF_COHORT` reachability at clean HEAD; lineage replaced by Pass 3. Not an independent medical retirement. |
 | Three prior Batch 5 ALT sibling packages | `REGENERATED_FROM_CANONICAL_RESEARCH` | Existing package IDs/directories were preserved while source lineage and content were replaced by their assigned ARCH-CONV-E specs. |
 | Six ARCH-CONV-E Pass 3 specs | `ACCEPTED_WITH_RATIONALE` | Each validated spec maps one-to-one to a distinct package; no medical sub-pattern was collapsed. |
 | Existing `liver_injury_axis` ALP/GGT authority | `ACCEPTED_WITH_RATIONALE` | Existing governed runtime authority remains unchanged and continues to own the ALP-primary/GGT-supporting cholestatic-source axis. |
 | Three ALT R-value packages | `DEFERRED_WITH_EXPLICIT_REASON` | Governed `r_value_alt_alp` computation and collision-policy adjudication do not yet exist. |
 
-No adjacent `spec_id` was treated as identical lineage. No legacy authority was retired,
-and no package was runtime-activated.
+No adjacent `spec_id` was treated as identical lineage. No package was runtime-activated.
+No independent medical retirement process was completed for the former Batch 5 ALT keys.
 
 ## Future dependencies
 
@@ -333,6 +368,8 @@ Before any R-value package can be considered for runtime promotion:
    build into runtime authority.
 
 ## Scoped diff summary
+
+Implementation commit: `a260c53`.
 
 In-scope implementation consists of:
 
