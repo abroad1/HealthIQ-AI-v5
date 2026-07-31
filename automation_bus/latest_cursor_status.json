@@ -1,10 +1,9 @@
 {
-  "branch": "feature/arch-conv-e-alt-why-authority",
+  "branch": "feature/arch-conv-e2-alt-rvalue-runtime-authority",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-31T08:38:05Z",
-  "cursor_started_utc": "2026-07-30T15:34:46Z",
-  "head_sha": "ca2f0f2256ff01035f722e6f2b5ce012e6cd7bdb",
+  "cursor_started_utc": "2026-07-31T09:52:59Z",
+  "head_sha": "a3537e5a00e918fc03744aefb19c18a114c79003",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-CONV-E"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-CONV-E2"
 }
