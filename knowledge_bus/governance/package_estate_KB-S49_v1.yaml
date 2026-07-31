@@ -4,14 +4,14 @@ artifact_version: 1
 generated_date: '2026-03-28'
 packages_root: knowledge_bus/packages
 inventory_counts:
-  pkg_directories_total: 191
-  governed_packages_in_inventory: 185
+  pkg_directories_total: 194
+  governed_packages_in_inventory: 188
   excluded_placeholders: 1
-  review_queue_packages: 112
+  review_queue_packages: 115
   governed_tier_counts:
     legacy_thin_pre_v3_context: 12
     partially_uplifted_research_fidelity_no_psi: 10
-    post_kb_s49_unreviewed_batch: 112
+    post_kb_s49_unreviewed_batch: 115
     structured_translation_batch_no_psi: 31
     v3_grade_rich_governed: 20
 stage_1c_intelligence_preflight:
@@ -1456,67 +1456,133 @@ packages:
     package_manifest: true
     research_brief: true
     signal_library: true
-    promoted_signal_intelligence: false
-  manifest_promoted_key: false
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
   manifest_intelligence_model: false
   manifest_behavioural_impact: true
-  translation_mode: creation
+  translation_mode: null
   signal_library_schema_version: 2.0.0
   integrity_flag: null
   governed_tier: post_kb_s49_unreviewed_batch
   signal_contract_tier: signal_contract_v2
   validator_ready_for_implementation: false
   validate_knowledge_package_exit_code: null
-  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
-  package_type: signal-only
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  package_type: WHY-enabled
   requires_review: true
   runtime_loaded: false
   kb_wave_1_lipid_relevant: false
-  inventory_refresh_work_id: LC-S18A
+  inventory_refresh_work_id: ARCH-CONV-E
 - package_id: pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
   files:
     package_manifest: true
     research_brief: true
     signal_library: true
-    promoted_signal_intelligence: false
-  manifest_promoted_key: false
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
   manifest_intelligence_model: false
   manifest_behavioural_impact: true
-  translation_mode: creation
+  translation_mode: null
   signal_library_schema_version: 2.0.0
   integrity_flag: null
   governed_tier: post_kb_s49_unreviewed_batch
   signal_contract_tier: signal_contract_v2
   validator_ready_for_implementation: false
   validate_knowledge_package_exit_code: null
-  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
-  package_type: signal-only
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  package_type: WHY-enabled
   requires_review: true
   runtime_loaded: false
   kb_wave_1_lipid_relevant: false
-  inventory_refresh_work_id: LC-S18A
+  inventory_refresh_work_id: ARCH-CONV-E
 - package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
   files:
     package_manifest: true
     research_brief: true
     signal_library: true
-    promoted_signal_intelligence: false
-  manifest_promoted_key: false
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
   manifest_intelligence_model: false
   manifest_behavioural_impact: true
-  translation_mode: creation
+  translation_mode: null
   signal_library_schema_version: 2.0.0
   integrity_flag: null
   governed_tier: post_kb_s49_unreviewed_batch
   signal_contract_tier: signal_contract_v2
   validator_ready_for_implementation: false
   validate_knowledge_package_exit_code: null
-  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
-  package_type: signal-only
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  package_type: WHY-enabled
   requires_review: true
   runtime_loaded: false
   kb_wave_1_lipid_relevant: false
-  inventory_refresh_work_id: LC-S18A
+  inventory_refresh_work_id: ARCH-CONV-E
+- package_id: pkg_kb52c_alt_high_bilirubin_severity_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: null
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: post_kb_s49_unreviewed_batch
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: false
+  validate_knowledge_package_exit_code: null
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  package_type: WHY-enabled
+  requires_review: true
+  runtime_loaded: false
+  kb_wave_1_lipid_relevant: false
+  inventory_refresh_work_id: ARCH-CONV-E
+- package_id: pkg_kb52c_alt_high_cholestatic_alp_predominant_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: null
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: post_kb_s49_unreviewed_batch
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: false
+  validate_knowledge_package_exit_code: null
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  package_type: WHY-enabled
+  requires_review: true
+  runtime_loaded: false
+  kb_wave_1_lipid_relevant: false
+  inventory_refresh_work_id: ARCH-CONV-E
+- package_id: pkg_kb52c_alt_high_mixed_biochemical_pattern
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: null
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: post_kb_s49_unreviewed_batch
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: false
+  validate_knowledge_package_exit_code: null
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  package_type: WHY-enabled
+  requires_review: true
+  runtime_loaded: false
+  kb_wave_1_lipid_relevant: false
+  inventory_refresh_work_id: ARCH-CONV-E
 - package_id: pkg_kb52c_apoa1_low_atherogenic_hdl_deficiency
   files:
     package_manifest: true

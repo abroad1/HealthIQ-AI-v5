@@ -1,0 +1,110 @@
+library:
+  package_id: KBP-4834
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: ARCH-CONV-E — ALT High Bilirubin Severity Context
+  description: Governed package asset translated from inv_alt_high_bilirubin_hys_law_severity_context
+    in knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json.
+    Asset construction does not activate runtime authority.
+signals:
+- signal_id: signal_alt_high
+  name: ALT High Bilirubin Severity Context
+  description: Bilirubin elevation with raised ALT or AST adds severity and excretory context, but formal
+    Hy's Law requires suspected DILI context, lack of substantial cholestasis and alternative-cause exclusion.
+  system: hepatic
+  primary_metric: alt
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: severity_marker
+    availability: common
+    rationale: Bilirubin elevation alongside ALT or AST elevation adds excretory and severity context.
+  - biomarker_id: alp
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: Formal Hy's Law assessment requires absence of substantial cholestasis, so ALP is needed
+      internally before any Hy's-Law-like severity logic.
+  - biomarker_id: ggt
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: GGT helps interpret cholestatic or hepatic-source context but does not define Hy's Law.
+  - biomarker_id: albumin
+    expected_direction: low
+    role: severity_marker
+    availability: common
+    rationale: Low albumin can add synthetic, chronic or systemic context but is non-specific.
+  - biomarker_id: inr
+    expected_direction: high
+    role: severity_marker
+    availability: specialist
+    rationale: Prolonged INR or PT is a key liver-function and acute-risk marker when interpreted with
+      medication and clinical context.
+  - biomarker_id: ast
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: AST elevation can corroborate aminotransferase injury magnitude but remains nonspecific.
+  dependencies:
+    biomarkers:
+    - alt
+    - bilirubin
+    - alp
+    - ggt
+    - albumin
+    - inr
+    - ast
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds: []
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_alt_high_with_bilirubin_high_severity
+    resulting_state: at_risk
+    description: Escalate when ALT high coincides with bilirubin above the lab range, preserving non-diagnostic
+      wording and prohibiting Hy's Law language.
+    conditions:
+    - metric_id: bilirubin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_fda_dili_guidance_2009
+    - source_bsg_abnormal_liver_tests_2017
+  output:
+    signal_value: alt
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alt
+    supporting_markers:
+    - bilirubin
+    - alp
+    - ggt
+    - albumin
+    - inr
+    - ast
+  explanation:
+    mechanism: Bilirubin elevation alongside aminotransferase elevation can indicate impaired excretory
+      handling or a higher-concern biochemical context, but bilirubin patterns are not cause-specific.
+    biological_pathway: Aminotransferase release and bilirubin elevation together can occur in several
+      liver, biliary, haemolytic and drug-related contexts, requiring ALP, bilirubin fractionation, medication
+      history and clinical assessment.
+    interpretation: HealthIQ may state that raised bilirubin with raised ALT or AST is a higher-concern
+      pattern worth clinical review, but must not say Hy's Law is met or DILI is present.
+    implications: This pattern changes urgency wording more than cause attribution; clinician review is
+      especially important if jaundice, systemic illness, INR/PT abnormality or rapidly worsening results
+      are present.
+    supporting_marker_roles: Bilirubin is the severity marker; ALP and GGT help assess cholestatic context;
+      albumin and INR add liver-function context; AST corroborates aminotransferase magnitude.

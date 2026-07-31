@@ -16,7 +16,37 @@ GOV_PATH = (
 )
 PACKAGES_ROOT = REPO_ROOT / "knowledge_bus" / "packages"
 
-_SPEC_FROM_DESC = re.compile(r"for (inv_[a-z0-9_]+)\s*[\(\n]")
+_SPEC_FROM_DESC = re.compile(r"for (inv_[a-z0-9_]+)")
+
+_ARCH_CONV_E_SUPPLEMENTAL_PACKAGES = {
+    "pkg_kb52c_alt_high_bilirubin_severity_context",
+    "pkg_kb52c_alt_high_cholestatic_alp_predominant_context",
+    "pkg_kb52c_alt_high_mixed_biochemical_pattern",
+}
+_ARCH_CONV_E_REGENERATED_PACKAGES = {
+    "pkg_kb52c_alt_high_hepatocellular_injury_pattern":
+        "inv_alt_high_r_value_hepatocellular_biochemical_pattern",
+    "pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern":
+        "inv_alt_high_metabolic_masld_context",
+    "pkg_kb52c_alt_high_muscle_source_or_exertional_pattern":
+        "inv_alt_high_muscle_source_or_exertional_contribution",
+}
+_REPLACED_WAVE_A_SPEC_IDS = {
+    "inv_alt_high_hepatocellular_injury_pattern",
+    "inv_alt_high_metabolic_steatotic_liver_pattern",
+    "inv_alt_high_muscle_source_or_exertional_pattern",
+}
+_REGENERATED_KBP_NUMBERS = {4723, 4724, 4725}
+
+# Pre-existing tracked packages outside the original KB-S52C Wave A contract.
+# They remain separate estate debt and are not attributed to ARCH-CONV-E.
+_PRE_EXISTING_NON_WAVE_A_PACKAGES = {
+    "pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia",
+    "pkg_kb52c_ferritin_high_iron_overload_context",
+    "pkg_kb52c_iron_high_iron_overload_context",
+    "pkg_kb52c_iron_low_absolute_iron_deficiency",
+    "pkg_kb52c_iron_low_functional_iron_restriction_inflammation",
+}
 
 
 def _load_gov() -> dict:
@@ -40,8 +70,16 @@ def test_kb_s52c_package_dirs_count_matches_wave_a() -> None:
     }
     wave_c = set(gov["readiness_waves_spec_ids"]["wave_c_blocked_prerequisite"]["spec_ids"])
 
-    dirs = _kb52c_dirs()
-    assert len(dirs) == 67 == len(wave_a)
+    all_dirs = _kb52c_dirs()
+    supplemental_ids = (
+        _ARCH_CONV_E_SUPPLEMENTAL_PACKAGES
+        | set(_ARCH_CONV_E_REGENERATED_PACKAGES)
+        | _PRE_EXISTING_NON_WAVE_A_PACKAGES
+    )
+    assert {d.name for d in all_dirs if d.name in supplemental_ids} == supplemental_ids
+    dirs = [d for d in all_dirs if d.name not in supplemental_ids]
+    expected_wave_a = wave_a - _REPLACED_WAVE_A_SPEC_IDS
+    assert len(dirs) == 64 == len(expected_wave_a)
 
     found_specs: set[str] = set()
     kbp_ids: list[str] = []
@@ -71,9 +109,17 @@ def test_kb_s52c_package_dirs_count_matches_wave_a() -> None:
         assert kbp.startswith("KBP-")
         kbp_ids.append(kbp)
 
-    assert found_specs == wave_a
+    assert found_specs == expected_wave_a
     assert not found_specs & wave_b
     assert not found_specs & wave_c
 
     nums = sorted(int(x.split("-")[1]) for x in kbp_ids)
-    assert nums == list(range(4720, 4787))
+    assert len(nums) == len(set(nums)) == len(expected_wave_a)
+    assert not set(nums) & _REGENERATED_KBP_NUMBERS
+
+    for package_id, source_spec_id in _ARCH_CONV_E_REGENERATED_PACKAGES.items():
+        manifest = yaml.safe_load(
+            (PACKAGES_ROOT / package_id / "package_manifest.yaml").read_text(encoding="utf-8")
+        )
+        assert manifest["source_spec_id"] == source_spec_id
+        assert manifest["package_id"] == package_id

@@ -17,7 +17,7 @@ source_specs:
 outputs:
 - output_type: compiled_hypothesis
   output_path: knowledge_bus/compiled/hypotheses/inv_alp_high_bone_biliary.yaml
-  output_hash: 387c4e5170cd34ae3bbb65b9cfd9a05eb2917698d262edaa8c38ab4e675db6d7
+  output_hash: 973f9a33581267a6fc7e1b5b87bda800840aa0f78588aa4dd931064374fd7633
   output_hash_algorithm: sha256
   signal_id: signal_alp_high
   activation_key: signal_alp_high::inv_alp_high_bone_biliary

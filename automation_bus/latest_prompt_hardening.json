@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-C",
+  "work_id": "ARCH-CONV-E",
   "status": "HARDENED",
   "hardening_date": "2026-07-30",
   "hardened_by": "Claude Code",
@@ -11,7 +11,7 @@
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "HIGH/MIXED but bounded to 2 signal migrations + 1 named collision-axis decision, directly following the ARCH-CONV-B implementation pattern already verified this session. This session also authored the B2 scope advisory that produced this exact package, so shared docs and repo state were already read once; hardening re-verified each advisory citation against current main (git log --since the advisory date) rather than re-deriving from scratch. No disjoint large-scale investigation required."
+    "rationale": "Single bounded package-build scope (6 named directories), building directly on evidence already gathered this session (spec_ids, hashes, existing package lineage, collision model, ratio_registry.py) — no unread ground to cover, only targeted re-verification of new claims (validator flags, schema field names, test file existence, branch/token state)."
   },
 
   "prompt_receipt_gate": {
@@ -19,76 +19,69 @@
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type"],
     "declared_risk_level": "HIGH",
     "declared_change_type": "MIXED",
-    "files_in_scope": "7 required ARCH-CONV-B source records (read) + 4 Phase-0 outputs + 1 STOP C evidence doc = 12 explicitly named, plus a dynamically-discovered set (ALP/GGT canonical specs, Pass-3 candidates, legacy WHY assets, loaders, authority registers, liver_injury_axis collision fields, tests) enumerated by the prompt's own Stage 1A authority preflight",
-    "behaviour_changes_touch_intelligence_core": "YES — WHY compilation, liver_injury_axis collision policy, clinician-report/DTO role propagation",
-    "tests_required": "YES — dedicated Testing requirements section lists 17 named test behaviours",
-    "scope_proportionality": "PASS — bounded to 2 signal migrations (ALP-high, GGT-high) + 1 named collision-axis policy decision, explicit non-goals list (ALT, AST, bilirubin, ALP-low, liver-card redesign, frontend, estate-wide migration), explicit rollback boundary, phased STOP-gated execution directly following the ARCH-CONV-B precedent",
-    "advisory_duplication_detected": "YES — automation_bus/latest_scope_advisory.md (2026-07-30, same session) is the B2 scope advisory that produced this exact package recommendation. Citations re-verified per CLAUDE.md's Stage-D-with-advisory-present rule: git log --since=2026-07-30 against every file the advisory cited found only commit 3fed5cb (ARCH-CONV-B's own renal implementation, already known/audited) touching why_authority_v1.py and compiled_why_authority_register_v1.yaml — re-grepped both post-3fed5cb and confirmed zero hepatic/ALP/GGT/bilirubin/ALT entries still exist, so the advisory's 'zero hepatic entries' claim still holds. No material departure found.",
-    "scope_creep_signals": "NONE — reads scoped to 2 named signals plus the named collision axis; exclusions are enumerated explicitly, not open-ended",
+    "scope_proportionality": "PASS — 6 named package directories, explicit test requirement for behavioural content (override/escalation/fail-closed logic), no open-ended discovery",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "required_source_records_exist": {
-      "status": "CONFIRMED_EXISTS — all 7",
-      "evidence": "docs/architecture/ARCH-CONV-B_STOP_A_identity_and_source_closure.md, _target_to_frame_map.md, _medical_review_pack.md, _medical_decision_register.yaml, _GATE_1_head_of_medical_research_decision.md, _GATE_2_Anthony_ratification.md, _STOP_C_runtime_proof.md all present on main via direct file check"
-    },
-    "baseline_is_merged_arch_conv_b": {
+    "branch_and_token_alignment": {
       "status": "CONFIRMED",
-      "evidence": "local main == origin/main == cdc6cf3d463d50902a080b51136ef1a98b431f4a; git log shows cdc6cf3 'merge: ARCH-CONV-B renal WHY authority (Gate PASS, STOP C approved)' as the tip. The prompt's baseline requirement ('current main after completed and merged ARCH-CONV-B') is satisfied."
+      "evidence": "automation_bus/state/work_package_active.json: work_id=ARCH-CONV-E, branch=feature/arch-conv-e-alt-why-authority, status=STARTED. git branch --show-current returns the same branch, currently checked out. This prompt's front matter matches exactly — genuine continuation of the existing active package, resolving the branch/token blockers found in the prior hardening pass."
     },
-    "canonical_spec_identities": {
-      "status": "CONFIRMED via embedded field",
-      "evidence": "knowledge_bus/research/investigation_specs/inv_alp_high_bone_biliary.yaml:1 -> spec_id: inv_alp_high_bone_biliary; inv_ggt_high_hepatic.yaml:1 -> spec_id: inv_ggt_high_hepatic. Both match the prompt's declared activation-key components exactly (no filename/spec_id mismatch this time, unlike ARCH-CONV-B's creatinine spec)."
-    },
-    "legacy_why_authority_active": {
+    "validator_command_correct": {
       "status": "CONFIRMED",
-      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:67 (signal_ggt_high) and :75 (signal_alp_high) both registered against legacy hypothesis loaders; no signal_alt_high entry exists anywhere in the file, consistent with the prompt's exclusion rationale"
+      "evidence": "python backend/scripts/validate_knowledge_package.py --help confirms --package-dir PACKAGE_DIR as the required flag, exact match to the prompt's required command."
     },
-    "liver_injury_axis_still_unpopulated_placeholder": {
+    "three_regenerate_targets_exist_and_correctly_mapped": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/governance/signal_authority_collision_model_v1.yaml:110-121 — status: placeholder_not_adjudicated, primary_signal_family: null, supporting_signal_families: [], all collision_policy fields null, notes: 'Placeholder for ALT / AST / GGT / bilirubin overlap. No medical decision authored.' Matches the prompt's Stage 1B reality-check claim exactly."
+      "evidence": "pkg_kb52c_alt_high_hepatocellular_injury_pattern, pkg_kb52c_alt_high_muscle_source_or_exertional_pattern, pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern all exist with research_brief.yaml/signal_library.yaml/package_manifest.yaml. Their prior spec_ids (Batch_5_Pass_3.json: inv_alt_high_hepatocellular_injury_pattern, _muscle_source_or_exertional_pattern, _metabolic_steatotic_liver_pattern) correctly correspond in medical territory to the assigned new spec_ids (inv_alt_high_r_value_hepatocellular_biochemical_pattern, _muscle_source_or_exertional_contribution, _metabolic_masld_context) — not a naming coincidence, a real content correspondence."
     },
-    "pass3_frame_counts": {
+    "three_new_targets_do_not_collide": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml:439-450 shows signal_alp_high with 4 pass3_frame_ids (note: this audit entry groups 2 alp_high frames with 2 alp_low frames under one signal_family_id — a pre-existing audit-data nuance, not a hardening blocker, but worth STOP A attention per below); :583-593 shows signal_ggt_high with 2 pass3_frame_ids + 1 legacy frame"
+      "evidence": "ls knowledge_bus/packages/ | grep -i 'mixed_biochemical|cholestatic_alp_predominant|bilirubin_severity' returns no matches — safe to create."
     },
-    "branch_and_repository_state": {
-      "status": "CONFIRMED clean baseline",
-      "evidence": "git rev-parse --verify feature/arch-conv-c-alp-ggt-why-authority fails (branch does not pre-exist); working tree clean except the expected automation_bus/latest_cursor_prompt.md hand-off modification; no ARCH-CONV-C product changes exist anywhere in git history (git log --all --oneline | grep -i arch-conv-c returns only unrelated ARCH-CONV-CORRECT-1 commits)"
+    "referenced_tests_are_real": {
+      "status": "CONFIRMED, with caveat",
+      "evidence": "grep -rl kb52c backend/tests/ returns test_kb_util2_promote_pilot.py, test_lc_s18a_package_estate_inventory.py, test_med_frame_identity_index.py, test_signal_authority_collision_enforcement.py — these exist and are not fabricated. Caveat: none currently reference signal_alt_high or liver_injury_axis by name, so 'comparable kb52c package tests' requires Cursor's own judgement on applicability per package, not a fixed list to blindly run."
     },
-    "kernel_schema_cross_check": {
-      "status": "CONFIRMED",
-      "evidence": "backend/scripts/run_work_package.py requires latest_prompt_hardening.json work_id to equal the prompt front matter's work_id. This record sets work_id: \"ARCH-CONV-C\" to match automation_bus/latest_cursor_prompt.md:2 exactly, superseding the prior ARCH-CONV-B record now that ARCH-CONV-B is merged and closed."
+    "manifest_lineage_field_names_partially_mismatch_locked_schema": {
+      "status": "NON-BLOCKING CORRECTION",
+      "evidence": "knowledge_bus/schema/package_manifest_schema.yaml (v1.1.0, LOCKED) recognizes source_spec_id (exact match to prompt), source_document, source_document_hash. It does NOT recognize source_path, source_hash, compiler_version, output_artifacts, output_hashes, promoted_utc, or promotion_mode. validate_package_manifest.py (lines 128-132) only validates fields present in required_fields/optional_fields and does not reject unrecognized extra keys, so this will not fail validation — but Cursor should use source_document/source_document_hash (schema-recognized) rather than inventing parallel source_path/source_hash keys, and should route compiler_version/output_artifacts/output_hashes/promoted_utc/promotion_mode into the evidence report rather than the manifest, per the prompt's own already-present fallback clause ('record it in the normal ARCH-CONV-E evidence report... if the locked schema cannot carry one of these fields')."
+    },
+    "r_value_dependent_deferral_correctly_scoped": {
+      "status": "CONFIRMED SOUND",
+      "evidence": "backend/core/analytics/ratio_registry.py does not contain r_value_alt_alp (confirmed in prior evidence pass). The prompt correctly requires DEFERRED_WITH_EXPLICIT_REASON for exactly the three R-value-dependent packages (hepatocellular, mixed, cholestatic/ALP-predominant), explicitly forbids ready_for_implementation: true for them, and explicitly forbids touching ratio_registry.py or any runtime/SSOT registry in this step."
+    },
+    "working_tree_state": {
+      "status": "NOTED, non-blocking",
+      "evidence": "git status --short still shows automation_bus/latest_cursor_prompt.md and automation_bus/latest_prompt_hardening.json modified (expected hand-off/hardening iteration files) and the 3 Pass_1/2/3 JSON files still untracked. Not a STOP condition under this prompt (unlike the earlier withdrawn draft) since branch/token alignment is now correct; Cursor should still commit the Pass 3 source appropriately as part of this package's changes."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "exclusion_boundary_fidelity": {
+    "one_package_per_subpattern_structure": {
       "status": "SOUND",
-      "evidence": "Every exclusion in the prompt (ALT identity ambiguity, AST no-target, bilirubin retired/no-canonical-spec, ALP-low separate-direction) matches the B2 scope advisory's findings exactly, including the specific reasons (signal_alt_high vs signal_hepatic_alt_context identity split; no signal_ast_high anywhere; signal_hyperbilirubinemia has no canonical spec). No exclusion is asserted without the same evidentiary basis already independently verified in the advisory and re-confirmed here."
+      "evidence": "Resolves the ambiguity in the withdrawn prior draft — explicitly names all 6 target directories with 1:1 spec assignment, matching the established kb52c one-package-per-sub-pattern convention rather than collapsing distinct medical patterns."
     },
-    "stop_gate_sequencing": {
+    "fail_closed_and_deferral_logic": {
       "status": "SOUND",
-      "evidence": "STOP A (identity/collision-boundary reconstruction, independent Head of Architecture approval) -> Gate 1 (Head of Medical Research) -> Gate 2 (Anthony ratification) -> Phase 2 compile -> STOP C (independent runtime proof) mirrors ARCH-CONV-B's proven sequence exactly, with the added liver_injury_axis policy-definition step correctly placed inside STOP A/Gate 1 rather than skipped or deferred to implementation."
+      "evidence": "R-value formula, required inputs, contemporaneous-pairing requirement, and fail-closed behaviour are stated exactly as found in the canonical Pass 3 source; explicit prohibition on marking R-value-dependent packages runtime-ready."
     },
-    "fail_closed_role_propagation_carried_forward": {
+    "collision_handling": {
       "status": "SOUND",
-      "evidence": "Prompt's Phase 2 rules ('Fail closed on missing, blank or unsupported role metadata') directly reuse the fail-closed why_role validation pattern ARCH-CONV-B added to root_cause_compiler_v1.py and report_compiler_v1.py (verified in the ARCH-CONV-B audit) rather than reinventing or weakening it."
+      "evidence": "Requires recording a future dependency statement against signal_authority_collision_model_v1.yaml's liver_injury_axis without editing that governed file directly — correctly scoped, does not self-adjudicate an unresolved collision."
     },
-    "alp_ggt_cross_signal_safeguards": {
+    "test_requirement_present": {
       "status": "SOUND",
-      "evidence": "ALP safeguards explicitly forbid silent bone-vs-hepatic misrepresentation; GGT safeguards explicitly forbid alcohol/enzyme-induction content surfacing as causal without ratification. Both mirror ARCH-CONV-B's creatinine/eGFR non-displacement and urea non-causal safeguards structurally."
-    },
-    "legacy_disconnection_safeguards": {
-      "status": "SOUND",
-      "evidence": "Requires replacement authority compiled, explicit registration, proven reachability, Gate 1/Gate 2 authorisation, and independent STOP C confirmation before any legacy disconnection; forbids physical deletion throughout — identical structure to ARCH-CONV-B's proven legacy-handling rules"
+      "evidence": "Requires running applicable existing tests and adding a minimum scoped content-contract test if none exists, plus explicit proof that R-value-dependent packages remain non-ready — resolves the missing-tests gap from the withdrawn draft."
     }
   },
 
   "non_blocking_observations_for_cursor": [
-    "knowledge_bus/governance/pass3_frame_coverage_audit_v1.yaml's signal_alp_high entry (lines 439-450) mixes 2 alp_high Pass-3 frames with 2 alp_low Pass-3 frames under a single signal_family_id. Since ALP-low is explicitly excluded from ARCH-CONV-C, Stage 1A's ALP candidate-and-parallel-source closure should explicitly partition this audit entry by direction (high vs low) rather than treating all 4 listed frames as ALP-high candidates.",
-    "The liver_injury_axis notes field currently reads 'Placeholder for ALT / AST / GGT / bilirubin overlap' — it does not mention ALP by name even though ALP is this package's other primary target. STOP A's liver_injury_axis reconstruction should record this naming gap explicitly rather than silently assuming ALP was always in scope of the placeholder."
+    "Use package_manifest_schema.yaml's actual recognized field names (source_document, source_document_hash, source_spec_id) rather than the prompt's source_path/source_hash — avoid creating unrecognized duplicate keys.",
+    "compiler_version, output_artifacts, output_hashes, promoted_utc, promotion_mode have no schema support at all — route these into the evidence report only, per the prompt's own fallback clause, not into package_manifest.yaml.",
+    "Verify per-package which of the four kb52c-referencing test files are actually applicable before treating them as the required 'comparable' test set — none currently reference signal_alt_high by name.",
+    "This is HIGH risk / MIXED change_type: per SOP this hardening clears Stage 3 kernel start, but GPT architectural review and dual approval are still required before this package is treated as fully authorised, consistent with prior ARCH-CONV-E hardening precedent."
   ],
 
   "stage_2c_evidence_checklist": {
@@ -96,28 +89,26 @@
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "Front matter is complete (work_id, branch, risk_level, execution_model, change_type)", "source": "automation_bus/latest_cursor_prompt.md:1-7", "evidence": "All 5 mandatory fields present", "status": "CONFIRMED"},
-      {"id": 2, "claim": "Baseline is current main after ARCH-CONV-B is completed and merged", "source": "git rev-parse main / origin/main; git log", "evidence": "Both equal cdc6cf3d463d50902a080b51136ef1a98b431f4a, tip commit is the ARCH-CONV-B merge", "status": "CONFIRMED"},
-      {"id": 3, "claim": "All 7 required ARCH-CONV-B source records exist on main", "source": "direct file existence check under docs/architecture/", "evidence": "All 7 present, no path correction needed", "status": "CONFIRMED"},
-      {"id": 4, "claim": "Both target canonical spec_ids verified by embedded field", "source": "grep ^spec_id: on inv_alp_high_bone_biliary.yaml, inv_ggt_high_hepatic.yaml", "evidence": "inv_alp_high_bone_biliary, inv_ggt_high_hepatic — exact match to prompt's declared activation keys, no filename/spec_id mismatch", "status": "CONFIRMED"},
-      {"id": 5, "claim": "Legacy WHY authority is currently active for ALP-high and GGT-high; no signal_alt_high entry exists", "source": "backend/core/knowledge/root_cause_registry_v1.py:67,75", "evidence": "Both RootCauseTargetSpec entries present; no ALT entry found", "status": "CONFIRMED"},
-      {"id": 6, "claim": "liver_injury_axis remains an unpopulated placeholder with no medical policy", "source": "knowledge_bus/governance/signal_authority_collision_model_v1.yaml:110-121", "evidence": "status: placeholder_not_adjudicated, all policy fields null", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Target branch does not already exist, and no ARCH-CONV-C product changes exist anywhere in history", "source": "git rev-parse --verify feature/arch-conv-c-alp-ggt-why-authority; git log --all --oneline | grep -i arch-conv-c", "evidence": "Branch resolution fails as expected; only unrelated ARCH-CONV-CORRECT-1 commits match the grep, confirmed as a different work_id", "status": "CONFIRMED"},
-      {"id": 8, "claim": "Scope advisory citations for this package remain current as of hardening time", "source": "git log --since=2026-07-30 against all files cited in automation_bus/latest_scope_advisory.md", "evidence": "Only commit 3fed5cb (ARCH-CONV-B's own already-audited implementation) touched any cited file; re-grepped post-3fed5cb state and confirmed zero hepatic/ALP/GGT/bilirubin/ALT entries still exist in compiled_why_authority_register_v1.yaml and why_authority_v1.py", "status": "CONFIRMED"},
-      {"id": 9, "claim": "This hardening record's work_id exactly matches the prompt's front-matter work_id, satisfying the kernel's start-time equality check", "source": "backend/scripts/run_work_package.py; automation_bus/latest_cursor_prompt.md:2", "evidence": "Both are \"ARCH-CONV-C\", superseding the closed-out ARCH-CONV-B record", "status": "CONFIRMED"}
+      {"id": 1, "claim": "Front matter complete and matches active Automation Bus token exactly", "source": "automation_bus/latest_cursor_prompt.md:1-7; automation_bus/state/work_package_active.json", "evidence": "work_id ARCH-CONV-E, branch feature/arch-conv-e-alt-why-authority match on both sides; token status STARTED (continuation, not new start)", "status": "CONFIRMED"},
+      {"id": 2, "claim": "Declared branch is the actual checked-out branch", "source": "git branch --show-current", "evidence": "feature/arch-conv-e-alt-why-authority", "status": "CONFIRMED"},
+      {"id": 3, "claim": "validate_knowledge_package.py --package-dir is the correct invocation", "source": "backend/scripts/validate_knowledge_package.py --help", "evidence": "--package-dir PACKAGE_DIR required argument, exact match", "status": "CONFIRMED"},
+      {"id": 4, "claim": "3 regenerate-target packages exist with correct spec_id correspondence", "source": "knowledge_bus/packages/pkg_kb52c_alt_high_hepatocellular_injury_pattern/, _muscle_source_or_exertional_pattern/, _metabolic_steatotic_liver_pattern/ research_brief.yaml", "evidence": "All three exist; prior spec_ids from Batch_5_Pass_3.json correspond in medical content to newly assigned spec_ids", "status": "CONFIRMED"},
+      {"id": 5, "claim": "3 new-target package directories do not already exist", "source": "ls knowledge_bus/packages/", "evidence": "No mixed_biochemical/cholestatic_alp_predominant/bilirubin_severity directories present", "status": "CONFIRMED"},
+      {"id": 6, "claim": "Referenced comparable kb52c tests exist in the repository", "source": "backend/tests/regression/test_kb_util2_promote_pilot.py, test_lc_s18a_package_estate_inventory.py, test_med_frame_identity_index.py, test_signal_authority_collision_enforcement.py", "evidence": "All four exist; applicability per package still requires Cursor judgement", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Manifest lineage field names as specified partially do not match the locked schema", "source": "knowledge_bus/schema/package_manifest_schema.yaml v1.1.0 LOCKED", "evidence": "source_spec_id matches; source_path/source_hash/compiler_version/output_artifacts/output_hashes/promoted_utc/promotion_mode are not schema fields (validator does not reject them, but they are unrecognized) — non-blocking correction issued", "status": "CONFIRMED"},
+      {"id": 8, "claim": "r_value_alt_alp remains absent from runtime registries, so deferral scoping is necessary and correctly applied to exactly 3 of 6 packages", "source": "backend/core/analytics/ratio_registry.py (prior evidence pass, re-confirmed unchanged)", "evidence": "Not present in the governed derived-metric list", "status": "CONFIRMED"},
+      {"id": 9, "claim": "Corrected Pass 3 source hash matches the file the prompt cites", "source": "knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json", "evidence": "Get-FileHash -Algorithm SHA256 = 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267, matches prompt exactly", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Beginning medical review, editing medical authority, compiling new WHY artefacts, activating new runtime authority, disconnecting/deleting legacy sources, or making liver_injury_axis policy decisions before STOP A approval — REJECT_AND_RETURN",
-    "Any implementation before STOP A approval and dual Gate 1/Gate 2 completion — REJECT_AND_RETURN",
-    "Any ALT, AST, bilirubin/hyperbilirubinemia, or ALP-low medical decision, compile, authority registration, collision-policy decision, or legacy change — REJECT_AND_RETURN",
-    "ALP silently implying hepatic/biliary causality where bone origin remains plausible, or GGT alcohol/enzyme-induction context surfacing as causal without ratification — REJECT_AND_RETURN",
-    "Selecting authority by filename, package name, lexical order, directory order, or load order — REJECT_AND_RETURN",
-    "Reading raw investigation specs at runtime — REJECT_AND_RETURN",
-    "Physically deleting a legacy WHY asset — REJECT_AND_RETURN",
-    "Cherry-picking or rebasing any old hepatic/liver branch (explicitly prohibited by Branch preparation §4) — REJECT_AND_RETURN"
+    "Marking any of the three R-value-dependent packages ready_for_implementation: true, or adding r_value_alt_alp to ratio_registry.py/SSOT/any runtime registry in this step — REJECT_AND_RETURN",
+    "Collapsing any of the six medically distinct sub-patterns into a shared package, or creating a package not on the required list — REJECT_AND_RETURN",
+    "Editing knowledge_bus/governance/signal_authority_collision_model_v1.yaml directly in this step — REJECT_AND_RETURN",
+    "Promoting via latest_knowledge_status.json, activating WHY output, retiring legacy authority, or modifying runtime/SSOT/frontend code — REJECT_AND_RETURN",
+    "Introducing medical claims, thresholds or wording not present in the validated Pass 3 source — REJECT_AND_RETURN",
+    "Silently altering validate_knowledge_package.py or validate_investigation_spec.py output to force a pass — REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR KERNEL START. Both target canonical spec identities verified by embedded field with no mismatch. Baseline confirmed as current main with ARCH-CONV-B merged. All 7 required source records exist. liver_injury_axis confirmed still an unpopulated placeholder. Target branch does not pre-exist; no ARCH-CONV-C product changes exist anywhere in history. This package's exclusion boundary is a direct, verified match to the B2 scope advisory this session authored, with every advisory citation re-verified against current main rather than trusted as static. Two non-blocking observations flagged for Cursor's Stage 1A attention: the pass3_frame_coverage_audit_v1.yaml ALP entry mixing high/low frames, and the liver_injury_axis placeholder notes not naming ALP explicitly. No blocking defect found."
+  "overall_verdict": "HARDENED. CLEARED FOR EXECUTION (subject to standard HIGH-risk GPT architectural review + dual approval per SOP, separate from this hardening). All blockers identified in the prior hardening pass for this same work_id (nonexistent branch, active-token conflict with a mismatched second work_id, uncommitted destructive overwrite of the hand-off file) are resolved: branch, work_id, and Automation Bus token now agree exactly. The prompt correctly resolves the two substantive content gaps flagged in review before hardening — the target package set is now explicitly named as 6 directories (3 regenerate with correct spec correspondence, 3 new) matching the established one-package-per-sub-pattern convention, and the three R-value-dependent packages carry an explicit, correctly-scoped DEFERRED_WITH_EXPLICIT_REASON requirement tied to the confirmed absence of r_value_alt_alp from ratio_registry.py. One non-blocking correction is recorded: the prompt's proposed manifest lineage field names (source_path, source_hash, compiler_version, output_artifacts, output_hashes, promoted_utc, promotion_mode) only partially match the locked package_manifest_schema.yaml v1.1.0 — Cursor should substitute the schema-recognized source_document/source_document_hash and route the remaining fields into the evidence report per the prompt's own existing fallback clause, not invent new manifest keys. No blocking defect found."
 }

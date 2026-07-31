@@ -1,0 +1,160 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb52c_alt_high_mixed_biochemical_pattern
+translation:
+  source: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  source_hash: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_alt_high_r_value_mixed_biochemical_pattern
+  signal_id: signal_alt_high
+  compiler_version: manual-promotion-v1
+  work_id: ARCH-CONV-E
+signals:
+- signal_id: signal_alt_high
+  research_domain: hepatic
+  signal_system: hepatic
+  primary_metric:
+    biomarker_id: alt
+    rationale: High ALT can sit within a mixed biochemical pattern when ALT and ALP are both proportionally
+      contributing; this should not be treated as proof of obstruction or simultaneous hepatocyte and
+      bile-duct disease.
+    signal_system: hepatic
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: alp
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: ALP elevation alongside ALT is required to support a mixed ALT/ALP biochemical pattern.
+  - biomarker_id: ggt
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Raised GGT supports hepatic or biliary source for an ALP component but is not disease-specific.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: severity_marker
+    relationship_kind: severity
+    availability: common
+    rationale: Raised bilirubin adds excretory and severity context but does not itself establish obstruction
+      or DILI.
+  - biomarker_id: creatine_kinase
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: CK helps assess whether the aminotransferase component could be muscle-related.
+  - biomarker_id: r_value_alt_alp
+    expected_direction: either
+    role: differential_marker
+    relationship_kind: differential
+    availability: optional
+    rationale: A derived R-value between 2 and 5 supports a mixed biochemical pattern when ALT and ALP
+      upper reference limits are available.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_ggt_or_nonhepatic_alp
+    marker_reference: ggt
+    contradiction_rationale: Normal or missing GGT reduces confidence that the ALP component is hepatic
+      when ALP may be bone-derived or otherwise non-hepatic.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_high_ck_muscle_component
+    marker_reference: creatine_kinase
+    contradiction_rationale: High CK can explain part of the aminotransferase contribution and should
+      downgrade liver-first interpretation.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_alp_source_unconfirmed
+    marker_reference: alp
+    contradiction_rationale: If ALP source is unconfirmed, mixed-pattern language may overstate liver
+      or bile-duct involvement.
+    contradiction_strength: strong
+  missing_data:
+    policies:
+    - Do not classify a mixed pattern without ALT ULN, ALP ULN and contemporaneous ALT/ALP values. If
+      GGT is missing, state lower confidence in hepatic-source ALP.
+    - If GGT, ALP isoenzymes or 5-nucleotidase are unavailable, use low-confidence ALP-predominant or
+      mixed-pattern wording only.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_mixed_pattern_with_bilirubin_high
+    resulting_state: at_risk
+    description: Escalate cautiously when a mixed biochemical pattern is accompanied by raised bilirubin,
+      because bilirubin adds severity or excretory context.
+    conditions:
+    - metric_id: bilirubin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_fda_dili_guidance_2009
+    - source_bsg_abnormal_liver_tests_2017
+  evidence:
+    evidence_strength: consensus
+    sources:
+    - source_id: source_aasld_liver_enzymes_2025
+      name: 'AASLD Liver Fellow Network: How to approach elevated liver enzymes'
+      publication_year: 2025
+      locator: Patterns of abnormal liver enzymes; R-value formula and enzyme-source discussion
+      evidence_type: professional_hepatology_education
+      strength: high
+      url: https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes
+      limitations: Educational page, not a formal practice guideline.
+    - source_id: source_aasld_dili_guidance_2023
+      name: AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury
+      publication_year: 2023
+      locator: R-value at presentation; hepatocellular/mixed/cholestatic DILI categories
+      evidence_type: society_practice_guidance
+      strength: high
+      url: https://onlinelibrary.wiley.com/doi/10.1002/hep.32689
+      limitations: DILI-specific; general-liver-test use is extrapolative.
+    - source_id: source_bsg_abnormal_liver_tests_2017
+      name: British Society of Gastroenterology guideline on abnormal liver blood tests
+      publication_year: 2017
+      locator: Initial liver blood-test panel; interpret in clinical context; marked derangement/synthetic
+        failure referral logic
+      evidence_type: uk_clinical_guideline
+      strength: high
+      url: https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests
+      limitations: Does not define R-value; supports context and safety boundaries.
+    - source_id: source_acg_abnormal_liver_chemistries_2017
+      name: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+      publication_year: 2017
+      locator: Hepatocellular vs cholestatic injury definitions; recommended cause workup
+      evidence_type: clinical_guideline
+      strength: high
+      url: https://pubmed.ncbi.nlm.nih.gov/27995906/
+      limitations: US guideline; captured access through abstract-level source.
+    - source_id: source_easl_cholestatic_liver_guideline_2009
+      name: 'EASL Clinical Practice Guidelines: Management of cholestatic liver diseases'
+      publication_year: 2009
+      locator: Drug-induced cholestatic liver disease classification by ALT/AP ratio
+      evidence_type: professional_liver_society_guideline
+      strength: moderate
+      url: https://www.journal-of-hepatology.eu/article/S0168-8278(09)00309-2/fulltext
+      limitations: Older guideline and cholestatic/DILI-specific.
+    physiological_claim: A mixed biochemical pattern reflects proportional contribution from ALT and ALP
+      when both are interpreted relative to lab-provided upper reference limits; it does not diagnose
+      obstruction or cause.
+    threshold_notes: Use lab-provided ULNs. Internal R-value interpretation may use R > 2 and R < 5 for
+      mixed pattern. Do not apply if ALP source is uncertain without caveat.
+  confirmatory_test_refs:
+  - test_id: ct_repeat_liver_blood_tests
+    rationale: Repeat liver blood tests help assess trajectory of the mixed pattern.
+  - test_id: ct_ggt_or_alp_isoenzymes
+    rationale: GGT, ALP isoenzymes or 5-nucleotidase can help localise whether ALP is hepatic or non-hepatic.
+  - test_id: ct_liver_imaging_if_clinically_indicated
+    rationale: Imaging may be needed clinically when obstruction or structural disease is suspected, but
+      blood results alone cannot establish obstruction.

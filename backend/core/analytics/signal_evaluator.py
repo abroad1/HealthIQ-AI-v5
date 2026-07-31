@@ -28,6 +28,8 @@ class SignalRegistry:
         self.package_hash: str = ""
         self.allow_launch_critical_blocked: bool = bool(allow_launch_critical_blocked)
         self.excluded_launch_critical_packages: List[Dict[str, str]] = []
+        self.excluded_unactivated_packages: List[Dict[str, str]] = []
+        self.excluded_unactivated_frames: List[Dict[str, str]] = []
         self.excluded_rejected_frames: List[Dict[str, str]] = []
         self._load()
 
@@ -48,42 +50,61 @@ class SignalRegistry:
     def _load(self) -> None:
         from core.knowledge.package_runtime_eligibility_v1 import (
             classify_package_runtime_eligibility,
+            is_launch_critical_package_id,
             is_production_reachable,
             load_package_manifest,
         )
         from core.knowledge.frame_runtime_authority_v1 import (
             frame_runtime_exclusion_reason,
         )
+        from core.knowledge.package_activation_register_v1 import (
+            frame_activation_exclusion_reason,
+        )
         from core.knowledge.provenance_status_v1 import classify_package_provenance_status
 
         signals_by_activation_key: Dict[str, Dict[str, Any]] = {}
         exclusions: List[Dict[str, str]] = []
+        unactivated_packages: List[Dict[str, str]] = []
+        unactivated_frames: List[Dict[str, str]] = []
         seen_excluded: set[str] = set()
         rejected_frames: List[Dict[str, str]] = []
+        governed_root = self._packages_dir().resolve()
         for path in self._iter_signal_library_paths():
             package_dir = path.parent
             package_id = package_dir.name
             manifest = load_package_manifest(package_dir)
+            # The activation register describes the governed estate only; libraries
+            # supplied from elsewhere (harness fixtures) keep pre-ARCH-CONV-E behaviour.
+            governed = package_dir.resolve().parent == governed_root
             eligibility, provenance_status = classify_package_runtime_eligibility(
                 package_id=package_id,
                 manifest=manifest,
                 allow_launch_critical_blocked=self.allow_launch_critical_blocked,
+                enforce_activation_register=governed,
             )
+            launch_critical = is_launch_critical_package_id(package_id)
             if not is_production_reachable(
                 package_id=package_id,
                 manifest=manifest,
                 allow_launch_critical_blocked=self.allow_launch_critical_blocked,
+                enforce_activation_register=governed,
             ):
                 if package_id not in seen_excluded:
                     seen_excluded.add(package_id)
-                    exclusions.append(
-                        {
-                            "package_id": package_id,
-                            "eligibility": eligibility,
-                            "provenance_status": provenance_status,
-                        }
-                    )
-                continue
+                    row = {
+                        "package_id": package_id,
+                        "eligibility": eligibility,
+                        "provenance_status": provenance_status,
+                    }
+                    if launch_critical:
+                        exclusions.append(row)
+                    else:
+                        unactivated_packages.append(row)
+                if launch_critical:
+                    continue
+                # Non-launch-critical packages are still walked frame-by-frame so the
+                # rejection authority keeps precedence on the audit surface. Nothing
+                # loads: every frame fails the per-frame activation gate below.
 
             payload = self._load_yaml(path)
             signal_items = payload.get("signals")
@@ -111,6 +132,17 @@ class SignalRegistry:
                         }
                     )
                     continue
+                if governed and not launch_critical:
+                    not_activated = frame_activation_exclusion_reason(activation_key)
+                    if not_activated is not None:
+                        unactivated_frames.append(
+                            {
+                                "activation_key": activation_key,
+                                "package_id": resolved_package_id or package_id,
+                                "runtime_state": not_activated,
+                            }
+                        )
+                        continue
                 compiled = dict(item)
                 compiled["_source_path"] = str(path)
                 compiled["activation_key"] = activation_key
@@ -149,6 +181,12 @@ class SignalRegistry:
         }
         self.excluded_launch_critical_packages = sorted(
             exclusions, key=lambda row: row["package_id"]
+        )
+        self.excluded_unactivated_packages = sorted(
+            unactivated_packages, key=lambda row: row["package_id"]
+        )
+        self.excluded_unactivated_frames = sorted(
+            unactivated_frames, key=lambda row: row["activation_key"]
         )
         self.excluded_rejected_frames = sorted(
             rejected_frames, key=lambda row: row["activation_key"]

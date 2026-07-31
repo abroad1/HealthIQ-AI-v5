@@ -2,21 +2,23 @@ promoted_signal_intelligence_contract_version: 1.0.0
 schema_version: 1.0.0
 package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
 translation:
-  source: investigation_spec_v3_pass3_p1_10_batch_a
+  source: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  source_hash: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
   investigation_spec_contract_version: 3.0.0
-  investigation_spec_id: inv_alt_high_hepatocellular_injury_pattern
+  investigation_spec_id: inv_alt_high_r_value_hepatocellular_biochemical_pattern
   signal_id: signal_alt_high
-  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
-  work_id: P1-10
-  cluster_id: liver_enzymes
+  compiler_version: manual-promotion-v1
+  work_id: ARCH-CONV-E
 signals:
 - signal_id: signal_alt_high
   research_domain: hepatic
   signal_system: hepatic
   primary_metric:
     biomarker_id: alt
-    rationale: Raised ALT is most consistent with hepatocellular injury and is commonly
-      used to support liver-focused interpretation when muscle sources are less likely.
+    rationale: High ALT can support an ALT-predominant biochemical pattern only when interpreted relative
+      to ALP and lab-provided upper reference limits; the pattern must not be treated as a diagnosis or
+      cause attribution.
+    signal_system: hepatic
   trigger_direction: high
   activation:
     activation_logic: lab_range_exceeded
@@ -29,80 +31,176 @@ signals:
     baseline_state: suboptimal
     escalation_state: at_risk
   supporting_markers:
+  - biomarker_id: alp
+    expected_direction: any
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: ALP is required with its lab upper reference limit to calculate the ALT-to-ALP R-value
+      and distinguish ALT-predominant from mixed or ALP-predominant patterns.
   - biomarker_id: ast
     expected_direction: high
     role: corroborator
     relationship_kind: corroboration
     availability: common
-    rationale: Concurrent AST elevation supports a hepatocellular injury pattern,
-      although it is not liver-specific.
-  - biomarker_id: alp
-    expected_direction: high
+    rationale: AST elevation can corroborate an aminotransferase-predominant biochemical pattern but is
+      less liver-specific than ALT.
+  - biomarker_id: ggt
+    expected_direction: either
     role: differential_marker
     relationship_kind: differential
     availability: common
-    rationale: Raised ALP can shift interpretation toward a mixed or cholestatic process
-      rather than predominantly hepatocellular injury.
+    rationale: GGT helps assess whether any ALP component is likely hepatic or biliary source, while remaining
+      nonspecific.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: severity_marker
+    relationship_kind: severity
+    availability: common
+    rationale: Bilirubin elevation alongside ALT or AST adds excretory and severity context but does not
+      identify the cause.
   - biomarker_id: creatine_kinase
     expected_direction: high
+    role: exclusion_marker
+    relationship_kind: exclusion
+    availability: common
+    rationale: Raised CK can support muscle contribution to aminotransferase elevation and should downgrade
+      a liver-first ALT interpretation.
+  - biomarker_id: r_value_alt_alp
+    expected_direction: high
     role: differential_marker
     relationship_kind: differential
-    availability: common
-    rationale: High creatine kinase helps distinguish muscle-source transaminase release
-      from primary liver injury.
+    availability: optional
+    rationale: A high derived ALT-to-ALP R-value supports an ALT-predominant biochemical pattern when
+      ALT and ALP upper reference limits are both available.
   contradiction_markers:
-  - contradiction_id: ctr_high_ck
+  - contradiction_id: ctr_ck_high_muscle_contribution
     marker_reference: creatine_kinase
-    contradiction_rationale: Marked creatine kinase elevation weakens a liver-first
-      interpretation and raises the possibility of muscle-source transaminase release.
+    contradiction_rationale: Raised CK or clear exertional/muscle context can explain aminotransferase
+      elevation and should downgrade liver-first interpretation.
     contradiction_strength: strong
-  - contradiction_id: ctr_normal_alp
+  - contradiction_id: ctr_alp_or_ggt_biliary_component
     marker_reference: alp
-    contradiction_rationale: A normal ALP weakens the interpretation of a mixed cholestatic
-      component and supports predominantly hepatocellular injury.
+    contradiction_rationale: A proportionally raised ALP or GGT component redirects away from a purely
+      ALT-predominant pattern toward mixed or ALP-predominant interpretation.
     contradiction_strength: moderate
+  - contradiction_id: ctr_ast_pattern_inconsistent_with_general_context
+    marker_reference: ast
+    contradiction_rationale: A markedly elevated or disproportionately high AST alongside elevated ALT
+      challenges a routine general liver test abnormality framing and introduces concern for more significant
+      hepatocellular involvement requiring clinical context beyond pattern classification alone.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_bilirubin_or_synthetic_failure_context
+    marker_reference: bilirubin
+    contradiction_rationale: Raised bilirubin or synthetic-function markers should move wording from routine
+      education to clinician-review context.
+    contradiction_strength: strong
   missing_data:
     policies:
-    - Review alcohol, medication, viral risk, and metabolic context before narrowing
-      the cause of hepatocellular injury.
-    - Use bilirubin, GGT, and imaging context to separate mixed liver injury from
-      isolated ALT elevation.
+    - Do not classify the R-value pattern if ALT ULN, ALP ULN or same-sample ALT/ALP pairing is unavailable.
+    - If prior results, symptoms and medication/supplement history are missing, avoid cause and duration
+      claims.
   confidence:
-    evidence_strength: strong
+    evidence_strength: consensus
   override_rules:
-  - rule_id: or_alt_high_with_ast_and_without_muscle_source
+  - rule_id: or_alt_high_with_bilirubin_high
     resulting_state: at_risk
-    description: Escalate when ALT is high with corroborating transaminase abnormality
-      and no strong competing muscle source.
+    description: Escalate to at-risk wording when raised ALT coincides with raised bilirubin because bilirubin
+      adds excretory and severity context.
     conditions:
-    - metric_id: ast
+    - metric_id: bilirubin
       operator: '>'
       condition_type: all_of
       comparator_type: lab_range_boundary
       boundary: above_max
     source_refs:
-    - source_alt_statpearls
-    - source_lft_guide
+    - source_fda_dili_guidance_2009
+    - source_bsg_abnormal_liver_tests_2017
+  - rule_id: or_alt_high_with_ck_high
+    resulting_state: at_risk
+    description: Redirect or downgrade liver-first wording when ALT elevation coincides with CK above
+      the lab reference range.
+    conditions:
+    - metric_id: creatine_kinase
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_pettersson_exercise_lft_2008
+    - source_bodybuilding_aminotransferase_review_2020
   evidence:
-    evidence_strength: strong
-    physiological_claim: Raised ALT is a useful marker of hepatocellular injury but
-      should be interpreted alongside cholestatic markers and muscle-source differentials.
-    threshold_notes: This object uses laboratory upper-bound abnormality rather than
-      disease-specific numerical cut-offs because meaningful thresholds vary by population
-      and context.
+    evidence_strength: consensus
     sources:
-    - source_id: source_alt_statpearls
-      paper_title: Alanine Aminotransferase (ALT) Test
-      journal: StatPearls
-      year: 2024
-    - source_id: source_lft_guide
-      paper_title: Liver function Tests in Adults - A Guide for GPs
-      journal: Royal United Hospitals Bath NHS Foundation Trust
-      year: 2022
+    - source_id: source_aasld_liver_enzymes_2025
+      name: 'AASLD Liver Fellow Network: How to approach elevated liver enzymes'
+      publication_year: 2025
+      locator: Patterns of abnormal liver enzymes; R-value formula and enzyme-source discussion
+      evidence_type: professional_hepatology_education
+      strength: high
+      url: https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes
+      limitations: Educational page, not a formal practice guideline.
+    - source_id: source_aasld_dili_guidance_2023
+      name: AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury
+      publication_year: 2023
+      locator: R-value at presentation; hepatocellular/mixed/cholestatic DILI categories
+      evidence_type: society_practice_guidance
+      strength: high
+      url: https://onlinelibrary.wiley.com/doi/10.1002/hep.32689
+      limitations: DILI-specific; general-liver-test use is extrapolative.
+    - source_id: source_fda_dili_guidance_2009
+      name: 'FDA Guidance for Industry: Drug-Induced Liver Injury: Premarketing Clinical Evaluation'
+      publication_year: 2009
+      locator: Hy's Law; serial laboratory assessment; aminotransferase and bilirubin thresholds
+      evidence_type: regulatory_guidance
+      strength: high
+      url: https://www.fda.gov/regulatory-information/search-fda-guidance-documents/drug-induced-liver-injury-premarketing-clinical-evaluation
+      limitations: Premarketing/regulatory context, not consumer diagnostic guidance.
+    - source_id: source_bsg_abnormal_liver_tests_2017
+      name: British Society of Gastroenterology guideline on abnormal liver blood tests
+      publication_year: 2017
+      locator: Initial liver blood-test panel; interpret in clinical context; marked derangement/synthetic
+        failure referral logic
+      evidence_type: uk_clinical_guideline
+      strength: high
+      url: https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests
+      limitations: Does not define R-value; supports context and safety boundaries.
+    - source_id: source_acg_abnormal_liver_chemistries_2017
+      name: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+      publication_year: 2017
+      locator: Hepatocellular vs cholestatic injury definitions; recommended cause workup
+      evidence_type: clinical_guideline
+      strength: high
+      url: https://pubmed.ncbi.nlm.nih.gov/27995906/
+      limitations: US guideline; captured access through abstract-level source.
+    - source_id: source_pettersson_exercise_lft_2008
+      name: Pettersson et al. Muscular exercise can cause highly pathological liver function tests in
+        healthy men
+      publication_year: 2008
+      locator: Exercise-related ALT/AST/CK changes after weightlifting
+      evidence_type: controlled_study
+      strength: moderate
+      url: https://pubmed.ncbi.nlm.nih.gov/17764474/
+      limitations: Small healthy male cohort.
+    - source_id: source_bodybuilding_aminotransferase_review_2020
+      name: 'Body Building and Aminotransferase Elevations: A Review'
+      publication_year: 2020
+      locator: Muscle injury/exercise as aminotransferase source; CK and muscle markers
+      evidence_type: peer_reviewed_review
+      strength: moderate
+      url: https://pubmed.ncbi.nlm.nih.gov/32832396/
+      limitations: Bodybuilding/muscle-injury emphasis.
+    physiological_claim: An ALT-predominant pattern can be classified biochemically when ALT is elevated
+      out of proportion to ALP using lab-provided upper reference limits, but the pattern does not identify
+      cause or severity.
+    threshold_notes: Use lab-provided reference limits only. Internal R-value interpretation may use R
+      >= 5 for ALT-predominant pattern, but this is a pattern classifier and not a diagnosis.
   confirmatory_test_refs:
-  - test_id: ct_ast
-    rationale: AST helps characterise whether the transaminase pattern is isolated
-      or part of broader hepatocellular injury.
+  - test_id: ct_repeat_liver_blood_tests
+    rationale: Repeat liver blood tests help determine whether ALT elevation is transient, persistent,
+      rising or resolving.
+  - test_id: ct_liver_aetiology_screen
+    rationale: Clinical liver aetiology assessment may include viral, autoimmune, iron and metabolic evaluation
+      depending on pattern and context.
   - test_id: ct_creatine_kinase
-    rationale: Creatine kinase helps distinguish muscle injury from primary hepatic
-      ALT elevation when exercise or myopathy is plausible.
+    rationale: CK helps assess whether muscle injury or strenuous exercise contributes to AST or ALT elevation.

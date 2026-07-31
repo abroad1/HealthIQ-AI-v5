@@ -1,0 +1,69 @@
+research_domain: hepatic
+sources:
+- source_id: source_aasld_liver_enzymes_2025
+  paper_title: 'AASLD Liver Fellow Network: How to approach elevated liver enzymes'
+  journal: professional_hepatology_education
+  year: 2025
+  url: https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes
+- source_id: source_aasld_dili_guidance_2023
+  paper_title: AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury
+  journal: society_practice_guidance
+  year: 2023
+  url: https://onlinelibrary.wiley.com/doi/10.1002/hep.32689
+- source_id: source_fda_dili_guidance_2009
+  paper_title: 'FDA Guidance for Industry: Drug-Induced Liver Injury: Premarketing Clinical Evaluation'
+  journal: regulatory_guidance
+  year: 2009
+  url: https://www.fda.gov/regulatory-information/search-fda-guidance-documents/drug-induced-liver-injury-premarketing-clinical-evaluation
+- source_id: source_bsg_abnormal_liver_tests_2017
+  paper_title: British Society of Gastroenterology guideline on abnormal liver blood tests
+  journal: uk_clinical_guideline
+  year: 2017
+  url: https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests
+- source_id: source_acg_abnormal_liver_chemistries_2017
+  paper_title: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+  journal: clinical_guideline
+  year: 2017
+  url: https://pubmed.ncbi.nlm.nih.gov/27995906/
+biomarkers:
+- alt
+- bilirubin
+- alp
+- ggt
+- albumin
+- ast
+physiological_claim: Bilirubin elevation with raised ALT or AST adds severity and excretory context, but
+  formal Hy's Law requires suspected DILI context, lack of substantial cholestasis and alternative-cause
+  exclusion.
+evidence_strength: consensus
+research_summary: 'Canonical ARCH-CONV-E Pass 3 promotion for spec_id=inv_alt_high_bilirubin_hys_law_severity_context;
+  signal_id=signal_alt_high; contract=3.0.0. Hypotheses: hyp_bilirubin_severity_context_with_alt_high
+  (rank 1, strong): Raised bilirubin alongside raised ALT or AST may indicate a higher-concern biochemical
+  context that warrants clinical review wording, but it does not identify cause or establish Hy''s Law
+  in a consumer product. | hyp_hys_law_term_prohibited_consumer_frame (rank 2, consensus): Hy''s Law is
+  a regulatory and DILI-specific signal requiring drug causality assessment, bilirubin threshold, aminotransferase
+  threshold, lack of cholestasis and exclusion of alternative causes, so the term should be prohibited
+  in consumer output. Missing-data boundaries: If bilirubin is missing, do not make severity or excretory-function
+  claims. If ALP is missing, do not apply internal Hy''s-Law-like logic. If medication history and alternative-cause
+  context are missing, do not emit DILI wording. | If medication exposure, ALP, bilirubin thresholding
+  or alternative-cause exclusion is unavailable, prohibit Hy''s Law logic beyond internal safety escalation.
+  Contradiction and exclusion context: ctr_cholestatic_pattern_present: Substantial ALP elevation suggests
+  cholestatic involvement and prevents formal Hy''s Law interpretation. | ctr_unconjugated_or_hemolysis_context:
+  Unconjugated bilirubin or haemolysis context can explain bilirubin elevation without impaired hepatic
+  excretion. | ctr_elevated_ggt_introduces_cholestatic_alternative: A clearly elevated GGT alongside raised
+  bilirubin and ALT introduces a cholestatic or enzyme-induction signal that provides a structural alternative
+  context, weakening the conditions required for a hepatocellular excretory failure framing and making
+  the Hy''s Law prohibition frame less the central concern. | ctr_preserved_albumin_inr_reduces_severity_urgency:
+  A preserved albumin alongside raised bilirubin and ALT reduces the urgency profile that makes the Hy''s
+  Law prohibition frame most clinically pressing, as maintained hepatic synthetic function challenges
+  a severe hepatocellular failure context. Non-diagnostic caveats: Do not state or imply that Hy''s Law
+  criteria are met. | Hy''s Law applies to suspected DILI after excluding substantial cholestasis and
+  alternative causes. | Bilirubin fractionation matters because unconjugated bilirubin can reflect haemolysis
+  or Gilbert''s syndrome. | Consumer-facing wording should describe raised bilirubin with ALT or AST as
+  a higher-concern pattern, not as Hy''s Law. | Alternative causes must be excluded clinically before
+  DILI or Hy''s Law language is supportable. Source limitations: Educational page, not a formal practice
+  guideline. | DILI-specific; general-liver-test use is extrapolative. | Premarketing/regulatory context,
+  not consumer diagnostic guidance. | Does not define R-value; supports context and safety boundaries.
+  | US guideline; captured access through abstract-level source. Package research_brief biomarker-list
+  limitation: inr are canonical source markers but are absent from the current SSOT biomarker registry;
+  they remain preserved in signal-layer assets and are not activated.'

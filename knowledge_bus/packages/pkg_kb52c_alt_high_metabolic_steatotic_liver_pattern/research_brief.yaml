@@ -1,21 +1,63 @@
 research_domain: metabolic
 sources:
-- source_id: source_lft_guide
-  paper_title: Liver function Tests in Adults - A Guide for GPs
-  journal: Royal United Hospitals Bath NHS Foundation Trust
-  year: 2022
-- source_id: source_alt_statpearls
-  paper_title: Alanine Aminotransferase (ALT) Test
-  journal: StatPearls
+- source_id: source_bsg_abnormal_liver_tests_2017
+  paper_title: British Society of Gastroenterology guideline on abnormal liver blood tests
+  journal: uk_clinical_guideline
+  year: 2017
+  url: https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests
+- source_id: source_acg_abnormal_liver_chemistries_2017
+  paper_title: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+  journal: clinical_guideline
+  year: 2017
+  url: https://pubmed.ncbi.nlm.nih.gov/27995906/
+- source_id: source_easl_masld_guideline_2024
+  paper_title: EASL-EASD-EASO Clinical Practice Guidelines on MASLD
+  journal: international_society_guideline
   year: 2024
+  url: https://www.journal-of-hepatology.eu/article/S0168-8278(24)00329-5/fulltext
+- source_id: source_aasld_nafld_guidance_2023
+  paper_title: AASLD Practice Guidance on NAFLD
+  journal: society_practice_guidance
+  year: 2023
+  url: https://doi.org/10.1097/HEP.0000000000000323
 biomarkers:
 - alt
-- creatine_kinase
 - hba1c
 - triglycerides
-physiological_claim: In asymptomatic adults, elevated ALT commonly occurs in a metabolic
-  steatotic liver context when insulin-resistance markers are also abnormal.
+- ggt
+- creatine_kinase
+- bilirubin
+physiological_claim: High ALT can sit within metabolic liver risk context when metabolic markers or history
+  support it, but MASLD diagnosis, steatosis and fibrosis staging require clinical assessment beyond ALT.
 evidence_strength: strong
-research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_alt_high_metabolic_steatotic_liver_pattern;
-  signal_id=signal_alt_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
-  / translation_remap_contract_KB-S52B_v1.
+research_summary: 'Canonical ARCH-CONV-E Pass 3 promotion for spec_id=inv_alt_high_metabolic_masld_context;
+  signal_id=signal_alt_high; contract=3.0.0. Hypotheses: hyp_metabolic_liver_context (rank 1, moderate):
+  High ALT may be relevant to metabolic liver context when accompanied by metabolic risk markers or declared
+  metabolic risk factors, but ALT alone cannot diagnose MASLD or stage fibrosis. | hyp_alt_high_metabolic_risk_needs_fibrosis_context
+  (rank 2, strong): When ALT elevation appears with metabolic risk, the clinically important distinction
+  is not just enzyme elevation but whether there is steatosis, fibrosis risk or another liver disease,
+  which requires imaging, non-invasive fibrosis assessment or clinical workup. Missing-data boundaries:
+  Do not emit MASLD or fatty liver claims if metabolic context, imaging or fibrosis-risk data are missing;
+  use only general metabolic-context wording. | If imaging, FIB-4 inputs, elastography or clinician diagnosis
+  are unavailable, avoid structural liver claims and do not stage disease. Contradiction and exclusion
+  context: ctr_no_metabolic_context: Absent metabolic-risk markers or declared metabolic context weakens
+  MASLD-context framing from ALT alone. | ctr_bilirubin_or_inr_acute_risk_context: Raised INR, or raised
+  bilirubin where INR is unavailable, should redirect away from routine metabolic-context wording toward
+  clinical-review severity context. | ctr_normal_triglycerides_reduces_metabolic_fibrosis_weight: A normal
+  triglycerides reduces the metabolic burden supporting a significant MASLD-related fibrosis context,
+  as metabolic-driven hepatic fibrosis is most associated with a compound dyslipidaemic and insulin-resistant
+  metabolic profile; absence of hypertriglyceridaemia makes a high-risk metabolic fibrosis framing less
+  compelling. | ctr_bilirubin_high_or_synthetic_context: Raised bilirubin or synthetic-function concern
+  should redirect away from routine metabolic explanation. Non-diagnostic caveats: Liver enzymes can be
+  normal in advanced MASLD and raised ALT is not diagnostic of MASLD. | Imaging or non-invasive fibrosis
+  assessment is needed clinically for structural and fibrosis assessment. | Very high aminotransferase
+  magnitude should prompt escalated clinical-review wording rather than being explained away by a plausible
+  metabolic context alone. | ALT is not sufficiently sensitive or specific for MASLD severity or fibrosis.
+  | HealthIQ should not imply that normal or mildly high ALT excludes advanced metabolic liver disease.
+  | Very high aminotransferase magnitude should prompt escalated clinical-review wording rather than being
+  explained away by a plausible metabolic context alone. Source limitations: Does not define R-value;
+  supports context and safety boundaries. | US guideline; captured access through abstract-level source.
+  | Not specific to isolated ALT-high consumer interpretation. | US NAFLD terminology; MASLD terminology
+  evolving. Package research_brief biomarker-list limitation: hdl, inr are canonical source markers but
+  are absent from the current SSOT biomarker registry; they remain preserved in signal-layer assets and
+  are not activated.'

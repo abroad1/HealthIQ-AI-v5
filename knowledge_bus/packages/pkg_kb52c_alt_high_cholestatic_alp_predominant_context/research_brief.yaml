@@ -1,0 +1,66 @@
+research_domain: hepatic
+sources:
+- source_id: source_aasld_liver_enzymes_2025
+  paper_title: 'AASLD Liver Fellow Network: How to approach elevated liver enzymes'
+  journal: professional_hepatology_education
+  year: 2025
+  url: https://www.aasld.org/liver-fellow-network/core-series/back-basics/how-approach-elevated-liver-enzymes
+- source_id: source_aasld_dili_guidance_2023
+  paper_title: AASLD Practice Guidance on drug, herbal, and dietary supplement-induced liver injury
+  journal: society_practice_guidance
+  year: 2023
+  url: https://onlinelibrary.wiley.com/doi/10.1002/hep.32689
+- source_id: source_bsg_abnormal_liver_tests_2017
+  paper_title: British Society of Gastroenterology guideline on abnormal liver blood tests
+  journal: uk_clinical_guideline
+  year: 2017
+  url: https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests
+- source_id: source_acg_abnormal_liver_chemistries_2017
+  paper_title: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+  journal: clinical_guideline
+  year: 2017
+  url: https://pubmed.ncbi.nlm.nih.gov/27995906/
+- source_id: source_easl_cholestatic_liver_guideline_2009
+  paper_title: 'EASL Clinical Practice Guidelines: Management of cholestatic liver diseases'
+  journal: professional_liver_society_guideline
+  year: 2009
+  url: https://www.journal-of-hepatology.eu/article/S0168-8278(09)00309-2/fulltext
+biomarkers:
+- alt
+- alp
+- ggt
+- bilirubin
+- creatine_kinase
+derived_metrics:
+- r_value_alt_alp
+physiological_claim: An ALP-predominant biochemical pattern can be classified when ALP is proportionally
+  more raised than ALT, but hepatic-source localisation and clinical context are required before cholestatic
+  or obstruction language is safe.
+evidence_strength: consensus
+research_summary: 'Canonical ARCH-CONV-E Pass 3 promotion for spec_id=inv_alt_high_r_value_cholestatic_alp_predominant_context;
+  signal_id=signal_alt_high; contract=3.0.0. Hypotheses: hyp_alp_predominant_biochemical_context (rank
+  1, consensus): High ALT may be a secondary component of an ALP-predominant biochemical pattern when
+  ALP is proportionally more elevated and hepatic-source ALP is supported. | hyp_biliary_or_cholestatic_context_requires_confirmation
+  (rank 2, strong): An ALP-predominant pattern can be seen in bile-flow or cholestatic contexts but requires
+  GGT, bilirubin, symptoms, imaging or specialist tests before obstruction or disease attribution is medically
+  supportable. Missing-data boundaries: If GGT is missing, avoid high-confidence cholestatic wording;
+  use lower-confidence ALP-predominant wording and recommend clinical localisation where appropriate.
+  | If imaging and hepatic-source markers are absent, do not use obstruction language and do not attribute
+  the ALP rise to liver or bile ducts with confidence. Contradiction and exclusion context: ctr_ggt_normal_or_missing:
+  Normal or missing GGT reduces confidence that raised ALP is hepatic-source. | ctr_alt_predominant_r_value:
+  R-value at or above 5 redirects toward ALT-predominant biochemical pattern rather than ALP-predominant
+  pattern. | ctr_normal_bilirubin_reduces_biliary_urgency: A normal bilirubin alongside an ALP-predominant
+  pattern reduces the urgency of structural biliary confirmation, as clinically significant bile-duct
+  obstruction or cholestasis typically produces bilirubin elevation; its absence makes an immediately
+  consequential biliary lesion less likely. | ctr_nonhepatic_alp_possible: Non-hepatic ALP sources such
+  as bone or pregnancy can create misleading ALP-predominant patterns. Non-diagnostic caveats: This does
+  not confirm bile-duct obstruction, intrahepatic cholestasis, PBC, PSC or DILI. | A normal GGT with raised
+  ALP weakens hepatic-source confidence and should trigger non-hepatic ALP caveat. | Blood chemistry alone
+  does not establish obstruction or structural disease. | ALP can be non-hepatic, so source localisation
+  is mandatory for high-confidence wording. Source limitations: Educational page, not a formal practice
+  guideline. | DILI-specific; general-liver-test use is extrapolative. | Does not define R-value; supports
+  context and safety boundaries. | US guideline; captured access through abstract-level source. | Older
+  guideline and cholestatic/DILI-specific. Derived-metric contract: r_value_alt_alp = (ALT / ALT ULN)
+  / (ALP / ALP ULN); ALT result and laboratory ULN, ALP result and laboratory ULN, and contemporaneous
+  same-sample pairing are required; fail closed if any input is absent; classify this package only
+  when R <= 2.'

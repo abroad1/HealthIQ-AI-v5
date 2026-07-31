@@ -2,22 +2,23 @@ promoted_signal_intelligence_contract_version: 1.0.0
 schema_version: 1.0.0
 package_id: pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
 translation:
-  source: investigation_spec_v3_pass3_p1_10_batch_a
+  source: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  source_hash: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
   investigation_spec_contract_version: 3.0.0
-  investigation_spec_id: inv_alt_high_metabolic_steatotic_liver_pattern
+  investigation_spec_id: inv_alt_high_metabolic_masld_context
   signal_id: signal_alt_high
-  compiler_version: p1_10_batch_a_pass3_psi_compiler_v1.0.0
-  work_id: P1-10
-  cluster_id: liver_enzymes
+  compiler_version: manual-promotion-v1
+  work_id: ARCH-CONV-E
 signals:
 - signal_id: signal_alt_high
   research_domain: metabolic
   signal_system: hepatic
   primary_metric:
     biomarker_id: alt
-    rationale: Raised ALT in ambulatory adults is commonly associated with metabolic
-      dysfunction-associated steatotic liver disease when metabolic risk context is
-      present.
+    rationale: High ALT can be seen in metabolic liver contexts, but MASLD cannot be diagnosed from ALT
+      alone and requires metabolic risk assessment, longitudinal context and often imaging or fibrosis
+      risk assessment.
+    signal_system: hepatic
   trigger_direction: high
   activation:
     activation_logic: lab_range_exceeded
@@ -30,84 +31,146 @@ signals:
     baseline_state: suboptimal
     escalation_state: at_risk
   supporting_markers:
-  - biomarker_id: triglycerides
+  - biomarker_id: hba1c
     expected_direction: high
     role: corroborator
     relationship_kind: corroboration
     availability: common
-    rationale: Raised triglycerides support an insulin-resistant metabolic context
-      that commonly accompanies steatotic liver disease.
-  - biomarker_id: hba1c
+    rationale: Higher glycaemic exposure supports a metabolic-risk context that may be relevant to ALT
+      elevation.
+  - biomarker_id: triglycerides
     expected_direction: high
     role: mechanism_marker
     relationship_kind: mechanism
     availability: common
-    rationale: Elevated HbA1c supports dysglycaemic or insulin-resistant metabolic
-      stress associated with hepatic steatosis.
+    rationale: High triglycerides support insulin-resistant or metabolic dyslipidaemia context associated
+      with MASLD risk.
+  - biomarker_id: hdl
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Low HDL can support a broader metabolic-syndrome context when ALT is raised.
+  - biomarker_id: ggt
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: GGT can be raised in metabolic liver contexts but is nonspecific.
   - biomarker_id: creatine_kinase
     expected_direction: high
     role: differential_marker
     relationship_kind: differential
     availability: common
-    rationale: Elevated creatine kinase redirects interpretation toward recent exertion
-      or muscle injury rather than steatotic liver disease.
+    rationale: High CK redirects away from a purely metabolic liver explanation and raises possible muscle
+      contribution.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: severity_marker
+    relationship_kind: severity
+    availability: common
+    rationale: Raised bilirubin with ALT changes clinical concern and should redirect away from routine
+      metabolic-context framing.
+  - biomarker_id: inr
+    expected_direction: high
+    role: severity_marker
+    relationship_kind: severity
+    availability: specialist
+    rationale: A raised INR would indicate possible synthetic-function concern and should redirect away
+      from routine metabolic-context wording.
   contradiction_markers:
-  - contradiction_id: ctr_high_ck
-    marker_reference: creatine_kinase
-    contradiction_rationale: Raised creatine kinase weakens a liver-specific metabolic
-      interpretation and raises the possibility of muscle-source ALT elevation.
-    contradiction_strength: strong
-  - contradiction_id: ctr_normal_metabolic_markers
+  - contradiction_id: ctr_no_metabolic_context
     marker_reference: hba1c
-    contradiction_rationale: Normal glycaemic and triglyceride markers weaken a metabolic-steatotic
-      interpretation, especially if alternative exposures are present.
+    contradiction_rationale: Absent metabolic-risk markers or declared metabolic context weakens MASLD-context
+      framing from ALT alone.
+    contradiction_strength: strong
+  - contradiction_id: ctr_bilirubin_or_inr_acute_risk_context
+    marker_reference: inr
+    contradiction_rationale: Raised INR, or raised bilirubin where INR is unavailable, should redirect
+      away from routine metabolic-context wording toward clinical-review severity context.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_triglycerides_reduces_metabolic_fibrosis_weight
+    marker_reference: triglycerides
+    contradiction_rationale: A normal triglycerides reduces the metabolic burden supporting a significant
+      MASLD-related fibrosis context, as metabolic-driven hepatic fibrosis is most associated with a compound
+      dyslipidaemic and insulin-resistant metabolic profile; absence of hypertriglyceridaemia makes a
+      high-risk metabolic fibrosis framing less compelling.
     contradiction_strength: moderate
+  - contradiction_id: ctr_bilirubin_high_or_synthetic_context
+    marker_reference: bilirubin
+    contradiction_rationale: Raised bilirubin or synthetic-function concern should redirect away from
+      routine metabolic explanation.
+    contradiction_strength: strong
   missing_data:
     policies:
-    - Obtain exposure history and broader liver tests before assigning a single-cause
-      steatotic interpretation.
-    - Review adiposity, diabetes status, alcohol intake, medications, and imaging
-      before treating this as a steatotic liver diagnosis.
+    - Do not emit MASLD or fatty liver claims if metabolic context, imaging or fibrosis-risk data are
+      missing; use only general metabolic-context wording.
+    - If imaging, FIB-4 inputs, elastography or clinician diagnosis are unavailable, avoid structural
+      liver claims and do not stage disease.
   confidence:
     evidence_strength: strong
   override_rules:
-  - rule_id: or_alt_high_with_metabolic_context
+  - rule_id: or_alt_high_with_metabolic_markers
     resulting_state: at_risk
-    description: Escalate when ALT is high with corroborating metabolic-risk markers
-      suggestive of steatotic liver stress.
+    description: Escalate cautiously when ALT high coincides with metabolic-risk markers, while avoiding
+      MASLD diagnosis.
     conditions:
     - metric_id: triglycerides
       operator: '>'
       condition_type: all_of
       comparator_type: lab_range_boundary
       boundary: above_max
-    - metric_id: hba1c
-      operator: '>'
-      condition_type: all_of
-      comparator_type: lab_range_boundary
-      boundary: above_max
     source_refs:
-    - source_lft_guide
-    - source_alt_statpearls
+    - source_easl_masld_guideline_2024
+    - source_aasld_nafld_guidance_2023
   evidence:
     evidence_strength: strong
-    physiological_claim: In asymptomatic adults, elevated ALT commonly occurs in a
-      metabolic steatotic liver context when insulin-resistance markers are also abnormal.
-    threshold_notes: No single ALT threshold establishes MASLD; this frame depends
-      on lab abnormality plus corroborating metabolic context.
     sources:
-    - source_id: source_lft_guide
-      paper_title: Liver function Tests in Adults - A Guide for GPs
-      journal: Royal United Hospitals Bath NHS Foundation Trust
-      year: 2022
-    - source_id: source_alt_statpearls
-      paper_title: Alanine Aminotransferase (ALT) Test
-      journal: StatPearls
-      year: 2024
+    - source_id: source_bsg_abnormal_liver_tests_2017
+      name: British Society of Gastroenterology guideline on abnormal liver blood tests
+      publication_year: 2017
+      locator: Initial liver blood-test panel; interpret in clinical context; marked derangement/synthetic
+        failure referral logic
+      evidence_type: uk_clinical_guideline
+      strength: high
+      url: https://www.bsg.org.uk/clinical-resource/guidelines-on-abnormal-liver-blood-tests
+      limitations: Does not define R-value; supports context and safety boundaries.
+    - source_id: source_acg_abnormal_liver_chemistries_2017
+      name: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+      publication_year: 2017
+      locator: Hepatocellular vs cholestatic injury definitions; recommended cause workup
+      evidence_type: clinical_guideline
+      strength: high
+      url: https://pubmed.ncbi.nlm.nih.gov/27995906/
+      limitations: US guideline; captured access through abstract-level source.
+    - source_id: source_easl_masld_guideline_2024
+      name: EASL-EASD-EASO Clinical Practice Guidelines on MASLD
+      publication_year: 2024
+      locator: MASLD assessment; enzymes are insufficient for structural/fibrosis diagnosis
+      evidence_type: international_society_guideline
+      strength: high
+      url: https://www.journal-of-hepatology.eu/article/S0168-8278(24)00329-5/fulltext
+      limitations: Not specific to isolated ALT-high consumer interpretation.
+    - source_id: source_aasld_nafld_guidance_2023
+      name: AASLD Practice Guidance on NAFLD
+      publication_year: 2023
+      locator: NAFLD/MASLD assessment and non-invasive risk stratification
+      evidence_type: society_practice_guidance
+      strength: high
+      url: https://doi.org/10.1097/HEP.0000000000000323
+      limitations: US NAFLD terminology; MASLD terminology evolving.
+    physiological_claim: High ALT can sit within metabolic liver risk context when metabolic markers or
+      history support it, but MASLD diagnosis, steatosis and fibrosis staging require clinical assessment
+      beyond ALT.
+    threshold_notes: Use ALT lab range only for signal activation. Do not use ALT alone to diagnose MASLD,
+      exclude advanced disease or stage fibrosis.
   confirmatory_test_refs:
-  - test_id: ct_liver_ultrasound
-    rationale: Imaging helps assess whether elevated ALT sits within a steatotic liver
-      pattern.
-  - test_id: ct_fibrosis_assessment
-    rationale: Fibrosis scoring or elastography helps determine whether chronic metabolic
-      liver injury has progressed beyond simple steatosis.
+  - test_id: ct_metabolic_risk_assessment
+    rationale: HbA1c, glucose, lipids, blood pressure and anthropometric context help assess whether metabolic
+      risk is relevant to ALT elevation.
+  - test_id: ct_liver_imaging_or_elastography
+    rationale: Imaging or elastography may be needed clinically to assess steatosis or fibrosis and cannot
+      be replaced by ALT alone.
+  - test_id: ct_fibrosis_risk_score_inputs
+    rationale: Age, AST, ALT and platelet count may support non-invasive fibrosis risk scoring where appropriate
+      and governed.
