@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-e-alt-why-authority",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-07-31T08:38:05Z",
   "cursor_started_utc": "2026-07-30T15:34:46Z",
-  "head_sha": "a2dd5f8d30a91b290f98230e7185a674d3fd60d1",
+  "head_sha": "ca2f0f2256ff01035f722e6f2b5ce012e6cd7bdb",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-E"
 }
