@@ -64,6 +64,22 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
+  mandatory_pre_emission_gates:
+  - gate_id: require_r_value_alt_alp_present
+    metric_id: r_value_alt_alp
+    comparator_type: biomarker_present
+  - gate_id: require_r_value_mixed_band_above_2
+    metric_id: r_value_alt_alp
+    comparator_type: numeric_value
+    operator: '>'
+    value: 2
+    condition_type: all_of
+  - gate_id: require_r_value_mixed_band_below_5
+    metric_id: r_value_alt_alp
+    comparator_type: numeric_value
+    operator: '<'
+    value: 5
+    condition_type: all_of
   override_rules:
   - rule_id: or_mixed_pattern_with_bilirubin_high
     resulting_state: at_risk

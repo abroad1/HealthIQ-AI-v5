@@ -1,44 +1,56 @@
-# Governed runtime activation register (ARCH-CONV-E).
+# Governed runtime activation register (ARCH-CONV-E / ARCH-CONV-E2).
 #
 # Placement of a package under knowledge_bus/packages/ does NOT activate it. A
 # non-launch-critical frame is production-reachable only if its activation_key is
 # listed in activated_frames below. Launch-critical (pkg_kb47_*) packages keep their
 # own lineage-based eligibility contract and are deliberately out of this register.
 register_id: package_runtime_activation_register_v1
-version: 1.0.0
-work_id: ARCH-CONV-E
+version: 1.1.0
+work_id: ARCH-CONV-E2
 authority_scope: non_launch_critical_packages
 activation_unit: activation_key
 activation_key_contract: "signal_id::source_spec_id (ADR-RT-002)"
 derivation: >-
-  Baseline-parity snapshot of the non-launch-critical frames loaded by SignalRegistry
-  immediately before the ARCH-CONV-E runtime eligibility boundary fix, minus every frame
-  contributed by the six non-promoted ARCH-CONV-E ALT packages. Adding a package to the
-  repository does not add it here; explicit promotion does.
+  ARCH-CONV-E baseline-parity snapshot, updated by ARCH-CONV-E2 to activate the two
+  R-value ALT pattern frames with Pass 3 band gates, supersede pkg_s24_alt_high_hepatocellular_injury,
+  and keep the remaining four ARCH-CONV-E ALT packages withheld with explicit reasons.
 promotion_contract: >-
   A new or regenerated frame stays inert until a governed promotion work package appends
   its activation_key. Changing a package source_spec_id changes its activation_key and
   therefore requires re-promotion.
-withheld_reason_arch_conv_e: >-
-  Built and validated from canonical Pass 3 research under ARCH-CONV-E, but not promoted
-  and not runtime-activated. Three of the six additionally depend on an unimplemented
-  r_value_alt_alp compute asset.
+withheld_reason_arch_conv_e2: >-
+  Four ARCH-CONV-E ALT packages remain withheld: cholestatic R-value (duplicates ALP/GGT
+  cholestatic_source_axis); muscle, bilirubin severity, and metabolic/MASLD (missing
+  distinguishing pre-emission gates that would otherwise duplicate ALT primary on every
+  ALT-high panel). Former Batch 5 inferred keys remain superseded and must not be reactivated.
 
 withheld_frames_arch_conv_e:
   - activation_key: signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context
     package_id: pkg_kb52c_alt_high_bilirubin_severity_context
+    promotion_decision: DEFERRED_WITH_EXPLICIT_REASON
   - activation_key: signal_alt_high::inv_alt_high_metabolic_masld_context
     package_id: pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
+    promotion_decision: PROMOTE_BUT_WITHHOLD
   - activation_key: signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
     package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
+    promotion_decision: DEFERRED_WITH_EXPLICIT_REASON
   - activation_key: signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
     package_id: pkg_kb52c_alt_high_cholestatic_alp_predominant_context
-  - activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
-    package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
-  - activation_key: signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
-    package_id: pkg_kb52c_alt_high_mixed_biochemical_pattern
+    promotion_decision: PROMOTE_BUT_WITHHOLD
 
-activated_frame_count: 173
+superseded_frames_arch_conv_e2:
+  - activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
+    package_id: pkg_s24_alt_high_hepatocellular_injury
+    disposition: SUPERSEDED_BY_R_VALUE_PATTERN_FRAMES
+    replacement_keys:
+      - signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+      - signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
+    notes: >-
+      Removed from activated_frames under ARCH-CONV-E2. When r_value_alt_alp is ineligible
+      (missing lab ULNs), no signal_alt_high pattern frame emits — fail closed for R-dependent
+      classification. signal_hepatic_alt_context remains activated for legacy context WHY.
+
+activated_frame_count: 174
 activated_frames:
   - activation_key: signal_active_b12_deficiency::inv_active_b12_low_deficiency
     package_id: pkg_kb45_active_b12_low_deficiency
@@ -56,8 +68,10 @@ activated_frames:
     package_id: pkg_kb56_alp_low_hypophosphatasia_pattern
   - activation_key: signal_alp_low::inv_alp_low_nutrient_or_cofactor_deficiency
     package_id: pkg_kb56_alp_low_nutrient_or_cofactor_deficiency
-  - activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
-    package_id: pkg_s24_alt_high_hepatocellular_injury
+  - activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+    package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
+  - activation_key: signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
+    package_id: pkg_kb52c_alt_high_mixed_biochemical_pattern
   - activation_key: signal_apoa1_cardio_risk::inv_apoa1_low_cardio_risk
     package_id: pkg_kb45_apoa1_low_cardio_risk
   - activation_key: signal_apoa1_low::inv_apoa1_low_atherogenic_hdl_deficiency

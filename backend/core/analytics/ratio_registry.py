@@ -8,15 +8,15 @@ Runs after unit normalisation; uses base-unit values only.
 """
 
 from math import log, sqrt
-from typing import Dict, Optional, Any, List
+from typing import Dict, Optional, Any, List, Mapping, Tuple
 
-from core.analytics.primitives import safe_ratio
+from core.analytics.primitives import has_valid_numeric_lab_range, safe_ratio
 
 
 class RatioRegistry:
     """Centralised ratio computation. Sprint 4/5."""
 
-    version = "1.1.0"
+    version = "1.2.0"
 
 # Ratio precision: 3 decimal places for dimensionless ratios
 RATIO_PRECISION = 3
@@ -24,11 +24,18 @@ RATIO_PRECISION = 3
 NON_HDL_PRECISION = 2
 TYG_SI_CONSTANT = 1596.0  # 88.5714 * 18.018; SI-native TyG constant (no runtime unit conversion)
 
+# ALT/ALP R-value biochemical-pattern boundaries (Pass 3 / ARCH-CONV-E2)
+R_VALUE_HEPATOCELLULAR_MIN = 5.0
+R_VALUE_MIXED_EXCLUSIVE_LOWER = 2.0
+R_VALUE_MIXED_EXCLUSIVE_UPPER = 5.0
+R_VALUE_CHOLESTATIC_MAX = 2.0
+
 # All derived markers (order: lipid first, then others)
 DERIVED_IDS = (
     "tc_hdl_ratio", "tg_hdl_ratio", "ldl_hdl_ratio", "non_hdl_cholesterol", "apob_apoa1_ratio",
     "remnant_cholesterol", "homa_ir", "fib_4", "tyg_index", "tyg_bmi_index", "nlr", "sii",
     "urea_creatinine_ratio", "ast_alt_ratio", "testosterone_free_testosterone_ratio",
+    "r_value_alt_alp",
 )
 RATIO_IDS = DERIVED_IDS  # Backwards compatibility
 
@@ -49,6 +56,7 @@ _DERIVED_INPUTS: Dict[str, List[str]] = {
     "urea_creatinine_ratio": ["urea", "creatinine"],
     "ast_alt_ratio": ["ast", "alt"],
     "testosterone_free_testosterone_ratio": ["testosterone", "free_testosterone"],
+    "r_value_alt_alp": ["alt", "alp"],
 }
 
 
@@ -77,12 +85,59 @@ def _derived_unit(rid: str) -> str:
     return "mmol/L" if rid == "non_hdl_cholesterol" else "ratio"
 
 
-def compute(panel: Dict[str, Any]) -> Dict[str, Any]:
+def _lab_uln(reference_ranges: Optional[Mapping[str, Any]], biomarker_id: str) -> Tuple[Optional[float], Optional[str]]:
+    """
+    Extract a laboratory ULN (reference_range.max) for R-value eligibility.
+
+    Fail-closed: requires dict bounds, source == 'lab', and a positive numeric max.
+    Does not infer population/SSOT thresholds.
+    """
+    if not isinstance(reference_ranges, Mapping):
+        return None, "reference_ranges_missing"
+    ref = reference_ranges.get(biomarker_id)
+    if not isinstance(ref, dict):
+        return None, f"{biomarker_id}_uln_missing"
+    min_val = ref.get("min")
+    max_val = ref.get("max")
+    low = float(min_val) if isinstance(min_val, (int, float)) else None
+    high = float(max_val) if isinstance(max_val, (int, float)) else None
+    if not has_valid_numeric_lab_range(low, high):
+        return None, f"{biomarker_id}_uln_invalid_bounds"
+    if str(ref.get("source", "")).strip().lower() != "lab":
+        return None, f"{biomarker_id}_uln_not_lab_source"
+    if high is None or high <= 0:
+        return None, f"{biomarker_id}_uln_non_positive"
+    return high, None
+
+
+def classify_r_value_alt_alp(r_value: float) -> str:
+    """
+    Classify ALT/ALP R-value into Pass 3 biochemical-pattern bands.
+
+    R >= 5       → hepatocellular
+    2 < R < 5    → mixed
+    R <= 2       → cholestatic_alp_predominant
+    """
+    if r_value >= R_VALUE_HEPATOCELLULAR_MIN:
+        return "hepatocellular"
+    if r_value > R_VALUE_MIXED_EXCLUSIVE_LOWER and r_value < R_VALUE_MIXED_EXCLUSIVE_UPPER:
+        return "mixed"
+    return "cholestatic_alp_predominant"
+
+
+def compute(
+    panel: Dict[str, Any],
+    reference_ranges: Optional[Mapping[str, Any]] = None,
+) -> Dict[str, Any]:
     """
     Compute derived ratios from a biomarker panel.
 
     Panel keys must be canonical. Values may be float, BiomarkerValue, or dict with "value" key.
-    Returns structured output with registry_version and derived dict.
+    `reference_ranges` is optional and required only for ULN-relative derived markers
+    (currently `r_value_alt_alp`). Same-panel inputs are treated as contemporaneous by the
+    single-panel snapshot contract — no separate sample-id pairing exists in this pipeline.
+
+    Returns structured output with registry_version, derived dict, and omitted reasons.
     Never raises; missing inputs result in omitted entries or value None.
 
     Lab-supplied: if a derived marker already exists in panel with valid value, it is skipped.
@@ -90,6 +145,7 @@ def compute(panel: Dict[str, Any]) -> Dict[str, Any]:
     result: Dict[str, Any] = {
         "registry_version": RatioRegistry.version,
         "derived": {},
+        "omitted": {},
     }
 
     # Lipid ratios
@@ -344,15 +400,70 @@ def compute(panel: Dict[str, Any]) -> Dict[str, Any]:
                 "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["testosterone_free_testosterone_ratio"],
             }
 
+    # ALT/ALP R-value (lab ULN-relative; fail closed without lab-source ULNs)
+    if _lab_supplied(panel, "r_value_alt_alp"):
+        v = _numeric(panel["r_value_alt_alp"])
+        result["derived"]["r_value_alt_alp"] = {
+            "value": v,
+            "unit": "ratio",
+            "source": "lab",
+            "bounds_applied": False,
+            "inputs_used": [],
+            "classification": classify_r_value_alt_alp(float(v)) if isinstance(v, (int, float)) else None,
+        }
+    else:
+        alt_for_r = _numeric(panel.get("alt"))
+        alp_for_r = _numeric(panel.get("alp"))
+        omit_reason: Optional[str] = None
+        if alt_for_r is None:
+            omit_reason = "alt_result_missing"
+        elif alp_for_r is None:
+            omit_reason = "alp_result_missing"
+        else:
+            alt_uln, alt_uln_reason = _lab_uln(reference_ranges, "alt")
+            if alt_uln is None:
+                omit_reason = alt_uln_reason or "alt_uln_missing"
+            else:
+                alp_uln, alp_uln_reason = _lab_uln(reference_ranges, "alp")
+                if alp_uln is None:
+                    omit_reason = alp_uln_reason or "alp_uln_missing"
+                else:
+                    alt_x_uln = safe_ratio(alt_for_r, alt_uln)
+                    alp_x_uln = safe_ratio(alp_for_r, alp_uln)
+                    r_value = safe_ratio(alt_x_uln, alp_x_uln)
+                    if r_value is None:
+                        omit_reason = "r_value_divide_by_zero_or_invalid"
+                    else:
+                        rounded = round(r_value, RATIO_PRECISION)
+                        result["derived"]["r_value_alt_alp"] = {
+                            "value": rounded,
+                            "unit": "ratio",
+                            "source": "computed",
+                            "bounds_applied": False,
+                            "inputs_used": _DERIVED_INPUTS["r_value_alt_alp"],
+                            "classification": classify_r_value_alt_alp(rounded),
+                            "uln_inputs": {
+                                "alt_uln": alt_uln,
+                                "alp_uln": alp_uln,
+                                "uln_source": "lab",
+                                "pairing": "same_panel_snapshot",
+                            },
+                        }
+        if omit_reason is not None:
+            result["omitted"]["r_value_alt_alp"] = omit_reason
+
     return result
 
 
-def compute_legacy(panel: Dict[str, Any]) -> Dict[str, Optional[float]]:
+def compute_legacy(
+    panel: Dict[str, Any],
+    reference_ranges: Optional[Mapping[str, Any]] = None,
+) -> Dict[str, Optional[float]]:
     """
     Legacy flat {id: value} output for backwards compatibility with orchestrator.
     Orchestrator will migrate to structured compute() output.
     """
-    structured = compute(panel)
+    structured = compute(panel, reference_ranges=reference_ranges)
     out: Dict[str, Optional[float]] = {rid: None for rid in DERIVED_IDS}
     for rid, entry in structured.get("derived", {}).items():
         if isinstance(entry, dict) and "value" in entry:

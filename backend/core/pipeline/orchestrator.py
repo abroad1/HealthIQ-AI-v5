@@ -1078,10 +1078,11 @@ class AnalysisOrchestrator:
             except (ValueError, TypeError):
                 age = None
             simple_biomarkers["age"] = age
-            derived_result = compute(simple_biomarkers)
+            derived_result = compute(simple_biomarkers, reference_ranges=input_reference_ranges)
             derived_ratios_meta = {
                 "ratio_registry_version": derived_result.get("registry_version", RatioRegistry.version),
                 "ratios": {},
+                "omitted": dict(derived_result.get("omitted") or {}),
             }
             policy_bounds_rejected_reason: Dict[str, str] = {}
 
@@ -1249,6 +1250,8 @@ class AnalysisOrchestrator:
                     ),
                     "bounds_rejected_reason": policy_bounds_rejected_reason.get(ratio_id),
                     "inputs_used": inputs_used if source == "computed" else None,
+                    "classification": entry.get("classification"),
+                    "uln_inputs": entry.get("uln_inputs"),
                 }
 
             # Step 1.55: Create analysis context before context-dependent signal evaluation.

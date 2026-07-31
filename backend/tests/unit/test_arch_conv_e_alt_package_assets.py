@@ -107,32 +107,39 @@ def test_arch_conv_e_lineage_and_signal_content_match_assigned_specs() -> None:
         ]
 
 
-def test_arch_conv_e_r_value_packages_are_explicitly_deferred() -> None:
+def test_arch_conv_e_r_value_packages_carry_explicit_promotion_decisions() -> None:
+    decisions = {
+        "inv_alt_high_r_value_hepatocellular_biochemical_pattern": "PROMOTE_AND_ACTIVATE",
+        "inv_alt_high_r_value_mixed_biochemical_pattern": "PROMOTE_AND_ACTIVATE",
+        "inv_alt_high_r_value_cholestatic_alp_predominant_context": "PROMOTE_BUT_WITHHOLD",
+        "inv_alt_high_muscle_source_or_exertional_contribution": "DEFERRED_WITH_EXPLICIT_REASON",
+        "inv_alt_high_bilirubin_hys_law_severity_context": "DEFERRED_WITH_EXPLICIT_REASON",
+        "inv_alt_high_metabolic_masld_context": "PROMOTE_BUT_WITHHOLD",
+    }
     for spec_id, package_id in SPEC_TO_PACKAGE.items():
         package_dir = PACKAGES_ROOT / package_id
         manifest = _yaml(package_dir / "package_manifest.yaml")
         library = _yaml(package_dir / "signal_library.yaml")
         derived = library["signals"][0]["dependencies"]["derived_metrics"]
-        description = manifest["description"]
+
+        assert manifest["promotion_decision"] == decisions[spec_id]
+        assert manifest["promotion_work_id"] == "ARCH-CONV-E2"
+        assert "ready_for_implementation" not in manifest
 
         if spec_id in R_VALUE_SPECS:
             assert derived == ["r_value_alt_alp"]
-            assert "DEFERRED_WITH_EXPLICIT_REASON" in description
-            assert "not runtime-promoted" in description
+            gates = library["signals"][0]["mandatory_pre_emission_gates"]
+            assert any(g.get("metric_id") == "r_value_alt_alp" for g in gates)
         else:
             assert "r_value_alt_alp" not in derived
-
-        # The package validator's structural-ready output is not a runtime
-        # promotion decision; no unsupported readiness field is embedded.
-        assert "ready_for_implementation" not in manifest
 
     ratio_registry = (
         ROOT / "backend" / "core" / "analytics" / "ratio_registry.py"
     ).read_text(encoding="utf-8")
-    assert "r_value_alt_alp" not in ratio_registry
+    assert "r_value_alt_alp" in ratio_registry
 
 
-def test_arch_conv_e_r_value_formula_contract_is_preserved_without_activation() -> None:
+def test_arch_conv_e_r_value_formula_contract_is_preserved() -> None:
     specs = _source_specs()
     expected_threshold_notes = {
         "inv_alt_high_r_value_hepatocellular_biochemical_pattern": "R >= 5",
@@ -151,7 +158,7 @@ def test_arch_conv_e_r_value_formula_contract_is_preserved_without_activation() 
         assert "fail closed if any input is absent" in summary
 
 
-def test_arch_conv_e_collision_dependency_remains_unadjudicated() -> None:
+def test_arch_conv_e_liver_axis_excludes_alt_family_from_supporting() -> None:
     collision_model = _yaml(
         ROOT
         / "knowledge_bus"
@@ -169,3 +176,11 @@ def test_arch_conv_e_collision_dependency_remains_unadjudicated() -> None:
         liver_axis["primary_signal_family"],
         *liver_axis["supporting_signal_families"],
     }
+    alt_axis = next(
+        row
+        for row in collision_model["authority_groups"]
+        if row["authority_group_id"] == "alt_biochemical_pattern_axis"
+    )
+    assert alt_axis["status"] == "adjudicated_runtime_enforced"
+    assert alt_axis["primary_signal_family"] == "signal_alt_high"
+    assert alt_axis["supporting_signal_families"] == []

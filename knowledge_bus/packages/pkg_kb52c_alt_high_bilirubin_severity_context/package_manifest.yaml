@@ -1,11 +1,12 @@
 package_id: pkg_kb52c_alt_high_bilirubin_severity_context
 package_version: 1.0.0
-description: ARCH-CONV-E asset package for inv_alt_high_bilirubin_hys_law_severity_context (signal_alt_high).
-  Promotion is not activation. Runtime promotion was not performed by this asset-build step.
+description: 'ARCH-CONV-E2 package for inv_alt_high_bilirubin_hys_law_severity_context (signal_alt_high).
+  Promotion decision: DEFERRED_WITH_EXPLICIT_REASON. Package lacks a bilirubin-required mandatory_pre_emission_gate,
+  so activation would emit on every ALT-high panel; consumer Hy''s Law diagnosis remains prohibited.'
 research_brief: research_brief.yaml
 signal_library: signal_library.yaml
 promoted_signal_intelligence: promoted_signal_intelligence.yaml
-author: HealthIQ Knowledge Bus — ARCH-CONV-E
+author: HealthIQ Knowledge Bus — ARCH-CONV-E2
 created_at: '2026-07-30'
 behavioural_impact: NONE
 engine_compatibility: v5.x
@@ -13,3 +14,6 @@ source_spec_id: inv_alt_high_bilirubin_hys_law_severity_context
 activation_key: signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context
 source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
 source_document_hash: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
+promotion_decision: DEFERRED_WITH_EXPLICIT_REASON
+promotion_work_id: ARCH-CONV-E2
+defer_reason: missing_distinguishing_pre_emission_gate_would_duplicate_alt_primary
