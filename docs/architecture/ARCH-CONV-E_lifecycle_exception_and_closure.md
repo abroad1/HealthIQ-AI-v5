@@ -5,7 +5,8 @@
 **Date (UTC):** 2026-07-31  
 **Claude Code audit:** `automation_bus/latest_audit_summary.md`  
 **Audit result:** `gate_status: FAIL` / `failure_type: ARCHITECTURAL`  
-**Lifecycle exception:** `RATIFIED` (retrospective governance ratification of the audited scope excursion)
+**Lifecycle exception:** `RATIFIED` (retrospective governance ratification of the audited scope excursion)  
+**Authority:** Anthony — named human project authority/ratifier, following Head of Architecture review and recommendation.
 
 ## Purpose
 
