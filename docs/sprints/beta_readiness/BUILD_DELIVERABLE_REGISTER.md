@@ -1343,7 +1343,7 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 **Programme block(s):** Architecture convergence — urate compiled-WHY authority (`signal_urate_high`)  
 **Gate 1:** `ARCH-CONV-G-GATE1-HMR-2026-08-01` (`APPROVED_WITH_NARROWING`)  
 **Gate 2:** `ARCH-CONV-G-GATE2-ANTHONY-2026-08-01` (`APPROVED`)  
-**Merge SHA:** _(filled at publish)_  
+**Merge SHA:** `af2207d` — `merge: ARCH-CONV-G urate compiled-WHY authority (Gate 2 ratified)`  
 **Evidence:** `docs/audit-papers/ARCH-CONV-G_implementation_and_verification_report.md`  
 **Medical decision register:** `docs/architecture/ARCH-CONV-G_medical_decision_register.yaml`
 
