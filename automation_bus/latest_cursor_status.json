@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-f-haematology-compiled-why",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-01T20:15:56Z",
   "cursor_started_utc": "2026-08-01T20:01:12Z",
-  "head_sha": "20d2549482b8538acfa63a6df0c821533918f62d",
+  "head_sha": "ee05605f666d5be510bd9affeabbe758663d8ea9",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-F"
 }
