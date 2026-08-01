@@ -257,4 +257,4 @@ class TestCrossCutting:
         assert payload["head_of_medical_research_gate1_reference"] == (
             "ARCH-CONV-E3-GATE1-HMR-2026-08-01"
         )
-        assert payload["gate2_status"] == "PENDING"
+        assert payload["gate2_status"] == "RATIFIED"

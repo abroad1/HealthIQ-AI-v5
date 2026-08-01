@@ -15,14 +15,14 @@ derivation: >-
   Canonical hepatocellular + mixed retained. Cholestatic R<=2, muscle (CK-gated),
   and metabolic (compound lab-gated) activated as subordinate contextual authorities.
   Bilirubin severity remains override-escalation only (package withheld). S24 remains
-  superseded. Gate 2 Anthony ratification pending.
+  superseded. Gate 2 Anthony ratification ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01 is RATIFIED.
 promotion_contract: >-
   A new or regenerated frame stays inert until a governed promotion work package appends
   its activation_key. Changing a package source_spec_id changes its activation_key and
   therefore requires re-promotion.
 gate1_reference: ARCH-CONV-E3-GATE1-HMR-2026-08-01
-gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-PENDING
-gate2_status: PENDING
+gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01
+gate2_status: RATIFIED
 withheld_reason_arch_conv_e3: >-
   Bilirubin severity package remains deferred: represented as override/escalation on
   active ALT frames with presentation_safety prohibiting consumer Hy's Law diagnosis;

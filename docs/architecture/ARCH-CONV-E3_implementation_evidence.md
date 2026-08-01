@@ -3,7 +3,23 @@
 **Work ID:** `ARCH-CONV-E3`  
 **Branch:** `feature/arch-conv-e3-alt-contextual-authority`  
 **Gate 1:** `ARCH-CONV-E3-GATE1-HMR-2026-08-01`  
-**Gate 2:** `ARCH-CONV-E3-GATE2-ANTHONY-PENDING` (merge blocked until ratified)
+**Gate 2:** `ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01` (RATIFIED)
+
+## Gate 2 ratification record
+
+Anthony explicitly ratified Gate 1 under reference `ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01`
+(2026-08-01). Authority surfaces updated to `gate2_status: RATIFIED`:
+
+- `docs/architecture/ARCH-CONV-E3_medical_decision_register.yaml`
+- `docs/architecture/ARCH-CONV-E3_GATE_2_Anthony_ratification.md`
+- `knowledge_bus/governance/signal_authority_collision_model_v1.yaml` (`alt_biochemical_pattern_axis`)
+- `knowledge_bus/governance/package_runtime_activation_register_v1.yaml`
+- package `gate2_reference` metadata on the four E3 ALT contextual package manifests
+  (reference string only; no signal/PSI/medical content changes)
+
+No runtime behaviour, medical rules, or unresolved blocker dispositions were changed by
+the Gate 2 recording commit. Test assertion strings that mirror the Gate 2 reference were
+aligned to the ratified ID.
 
 ## Verified starting state
 

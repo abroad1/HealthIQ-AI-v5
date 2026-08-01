@@ -20,5 +20,5 @@ promotion_work_id: ARCH-CONV-E3
 defer_reason: represented_as_override_escalation_on_active_alt_frames_not_independent_primary
 authority_role: OVERRIDE_ESCALATION_ONLY_NO_INDEPENDENT_ACTIVATION
 gate1_reference: ARCH-CONV-E3-GATE1-HMR-2026-08-01
-gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-PENDING
+gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01
 consumer_hys_law_diagnosis: PROHIBITED

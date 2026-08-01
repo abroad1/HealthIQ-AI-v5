@@ -21,7 +21,7 @@ promotion_decision: PROMOTE_AND_ACTIVATE
 promotion_work_id: ARCH-CONV-E3
 authority_role: SUBORDINATE_CONTEXTUAL_AUTHORITY_LAB_ONLY
 gate1_reference: ARCH-CONV-E3-GATE1-HMR-2026-08-01
-gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-PENDING
+gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01
 unresolved_blockers:
 - no_governed_runtime_user_context_contract
 - very_high_alt_numeric_threshold_absent

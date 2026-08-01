@@ -197,7 +197,7 @@ def test_arch_conv_e_liver_axis_excludes_alt_family_from_supporting() -> None:
     assert alt_axis["primary_signal_family"] == "signal_alt_high"
     assert alt_axis["supporting_signal_families"] == []
     assert alt_axis["gate1_reference"] == "ARCH-CONV-E3-GATE1-HMR-2026-08-01"
-    assert alt_axis["gate2_reference"] == "ARCH-CONV-E3-GATE2-ANTHONY-PENDING"
+    assert alt_axis["gate2_reference"] == "ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01"
     assert alt_axis["authority_decision"]["canonical_hepatocellular_is_s24_successor"] is True
     assert (
         "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"

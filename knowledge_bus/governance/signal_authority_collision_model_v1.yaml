@@ -196,15 +196,16 @@ authority_groups:
   runtime_policy_id: alt_r_value_biochemical_pattern_v1
   requires_runtime_support: true
   gate1_reference: ARCH-CONV-E3-GATE1-HMR-2026-08-01
-  gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-PENDING
-  gate2_status: PENDING
+  gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01
+  gate2_status: RATIFIED
   notes: >-
     ARCH-CONV-E3 Gate 1: cholestatic owns R <= 2 among ALT frames; mixed owns
     2 < R < 5; hepatocellular rank-1 when R >= 5 and rank-2 general when R is
     unavailable/ineligible. Muscle and metabolic activate only with lab
     corroboration gates. Bilirubin severity is override-escalation on active ALT
     frames, not an independent activated package. Empty supporting_signal_families
-    remains intentional for this axis.
+    remains intentional for this axis. Gate 2
+    ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01 is RATIFIED.
 - authority_group_id: iron_inflammation_axis
   biological_axis: iron_and_inflammatory_context
   status: placeholder_not_adjudicated

@@ -386,7 +386,7 @@ class TestGate1RuntimeProofs:
             if g["authority_group_id"] == "alt_biochemical_pattern_axis"
         )
         assert alt_axis["gate1_reference"] == "ARCH-CONV-E3-GATE1-HMR-2026-08-01"
-        assert alt_axis["gate2_reference"] == "ARCH-CONV-E3-GATE2-ANTHONY-PENDING"
+        assert alt_axis["gate2_reference"] == "ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01"
 
     def test_medical_decision_register_supersedes_prior_gate1(self):
         payload = yaml.safe_load(

@@ -237,7 +237,7 @@ def test_register_counts_and_gate_refs():
     }
     assert withheld == set(WITHHELD_ALT_KEYS)
     assert register["gate1_reference"] == "ARCH-CONV-E3-GATE1-HMR-2026-08-01"
-    assert register["gate2_reference"] == "ARCH-CONV-E3-GATE2-ANTHONY-PENDING"
+    assert register["gate2_reference"] == "ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01"
 
 
 def test_missing_register_fails_closed(monkeypatch, tmp_path):
