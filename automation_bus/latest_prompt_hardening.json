@@ -1,149 +1,130 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-E3",
+  "work_id": "ARCH-CONV-F",
   "status": "HARDENED",
   "hardening_date": "2026-08-01",
   "hardened_by": "Claude Code",
-  "source_prompt": "automation_bus/latest_cursor_prompt.md",
+  "source_prompt": "automation_bus/latest_cursor_prompt.md (final, front matter complete: work_id, branch, risk_level HIGH, execution_model TWO_PHASE_START_FINISH, change_type MIXED)",
   "risk_level": "HIGH",
   "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "The four contexts share the same three runtime primitives (override_rules, mandatory_pre_emission_gates, collision-model distinct_risk_layers) and the same governing-contract gap (context_modifier_catalogue is draft/non-runtime), all discovered via a small number of targeted reads. Once those shared primitives were identified, deriving each context's exact application rule was a direct, non-divergent application of the same mechanisms rather than four genuinely independent investigations — forking would have re-derived the same shared substrate four times for no benefit."
+    "rationale": "Single re-verification pass over a small, already-characterised file set (2 investigation specs, 1 SSOT line, 1 JSON research file, 3 runtime mechanism files, 3 governance docs). No disjoint large-scale work requiring a fork."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
-    "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type"],
     "declared_risk_level": "HIGH",
     "declared_change_type": "MIXED",
-    "scope_proportionality": "PASS — four named packages, explicit per-context required decisions, explicit test lists, explicit STOP conditions including the correct anti-recurrence clause from ARCH-CONV-E2",
-    "decision": "ACCEPT"
+    "scope_proportionality": "PASS — two-signal cluster, explicit exclusion list, explicit STOP conditions, matches every prior ARCH-CONV-A/B/C wave pattern",
+    "advisory_duplication": "NO — latest_scope_advisory.md (2026-08-01) covers a different candidate (lipid); latest_pipeline_advisory.md (2026-08-01) explicitly lists both signal_ferritin_high and signal_hemoglobin_low as viable, non-rejected A3 candidates",
+    "decision": "PROCEED"
+  },
+
+  "gate_evidence_verification": {
+    "commit": "43c5564586473c81c55b7ddf541fd80eb6bdd49b, on main HEAD, confirmed via git log",
+    "gate1": {
+      "reference": "ARCH-CONV-F-GATE1-HMR-2026-08-01",
+      "status": "APPROVED_WITH_NARROWING",
+      "source": "docs/architecture/ARCH-CONV-F_GATE_1_GATE_2_decision.md:12; matches docs/architecture/ARCH-CONV-F_hardening_pack.md:9,87-91"
+    },
+    "gate2": {
+      "reference": "ARCH-CONV-F-GATE2-ANTHONY-2026-08-01",
+      "status": "APPROVED",
+      "source": "docs/architecture/ARCH-CONV-F_GATE_1_GATE_2_decision.md:13; matches docs/architecture/ARCH-CONV-F_hardening_pack.md:9,87-91"
+    },
+    "prior_pending_placeholders_removed": "CONFIRMED — grep for 'PENDING' and 'draft — do not execute' in ARCH-CONV-F_hardening_pack.md returns no matches post-commit",
+    "implementation_still_blocked": "CONFIRMED — ARCH-CONV-F_GATE_1_GATE_2_decision.md:70-80 explicit non-claims section states gate recording does not authorise implementation; mandatory precondition is CC HARDENED + Automation Bus start"
   },
 
   "stage_2a_authority_verification": {
-    "branch_and_baseline_state": {
-      "status": "CONFIRMED clean",
-      "evidence": "git branch -a --list '*arch-conv-e3*' returns no matches; automation_bus/state/work_package_active.json absent (no active token); current branch is main, and git merge-base --is-ancestor feature/arch-conv-e2-alt-rvalue-runtime-authority main confirms ARCH-CONV-E2 is MERGED — the correct baseline for E3 to branch from. docs/architecture/ARCH-CONV-E2_medical_decision_register.yaml now shows register_state: GATE_2_RATIFIED, gate2_status: RATIFIED (Anthony's ratification landed since the last audit turn)."
-    },
-    "four_packages_exist_with_mandatory_assets": {
+    "both_targets_confirmed_uncompiled_A3": {
       "status": "CONFIRMED",
-      "evidence": "pkg_kb52c_alt_high_cholestatic_alp_predominant_context, _muscle_source_or_exertional_pattern, _bilirubin_severity_context, _metabolic_steatotic_liver_pattern all present with package_manifest.yaml/research_brief.yaml/signal_library.yaml/promoted_signal_intelligence.yaml, all currently withheld per the E2 activation register (re-confirmed this session's prior audit turns)."
+      "evidence": "grep of knowledge_bus/governance/compiled_why_authority_register_v1.yaml for signal_ferritin_high / signal_hemoglobin_low: zero rows (37 authority_state rows total, 75 COMPILED_ACTIVE/LEGACY_RETIRED tags, none for these two signals)"
     },
-    "runtime_mechanism_1_override_rules_proven_precedent_for_bilirubin_severity": {
-      "status": "CONFIRMED — decisive finding for context 3",
-      "evidence": "backend/core/analytics/signal_evaluator.py:436 _evaluate_override_rules() escalates a package's own signal_state (e.g. suboptimal -> at_risk) via all_of/any_of conditions against biomarkers/derived/lab_ranges, with deterministic rank-based precedence. This exact mechanism already carries the canonical hepatocellular package's or_alt_high_with_bilirubin_high override rule, and it was independently re-verified firing correctly in this session's ARCH-CONV-E2 remediation re-audit (test_kbs24_signals_trigger_suboptimal_then_escalate[signal_alt_high] passes). This directly answers the prompt's own question for the bilirubin severity context: represent it as an override/escalation rule on the already-active canonical ALT frame(s), NOT as a separately activated competing primary package. The bilirubin_severity_context package's medical content (Hy's-Law prohibition wording, fractionation caveats, ALP/GGT interaction) should be folded into override-rule presentation-safety metadata and evidence, while the package itself remains non-primary and does not need independent activation."
-    },
-    "runtime_mechanism_2_mandatory_pre_emission_gates_proven_precedent_for_corroboration": {
-      "status": "CONFIRMED — decisive finding for contexts 2 and 4",
-      "evidence": "backend/core/analytics/signal_evaluator.py:498 _passes_mandatory_pre_emission_gates() already gates package emission on lab-range-boundary or biomarker_present conditions (this exact mechanism gates R-value band selection in ARCH-CONV-E2). This directly satisfies the prompt's requirement for muscle/exertional and metabolic contexts: 'exact pre-emission corroboration threshold using lab-range status, not invented numeric cut-offs' -- gate muscle/exertional emission on creatine_kinase lab_range_boundary above_max (biomarker_present is insufficient per canonical research: 'absent CK/history must not produce confident muscle attribution'), and gate metabolic emission on an any_of compound condition across hba1c/triglycerides/ggt lab_range_boundary above_max or hdl below_min -- both using only lab-range status, inventing no numeric thresholds."
-    },
-    "governed_user_context_contract_does_not_exist": {
-      "status": "CONFIRMED — triggers the prompt's own mandatory STOP condition, correctly scoped rather than blocking both frames entirely",
-      "evidence": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml: runtime_consumed: false, status: draft_governance_non_runtime. No governed, runtime-consumed contract exists for user-declared exercise/statin/trauma/myopathy history or declared metabolic risk factors. backend/ssot/questionnaire.json contains vigorous_exercise_days but it is not wired into any runtime context-modifier evaluation. This exactly matches the prompt's own STOP condition: 'user-context corroboration is required but no governed context contract exists.' Correct scoping (not a full block): both canonical rules for muscle/exertional and metabolic contexts describe user-context corroboration as an OR-alternative to lab corroboration ('CK high OR governed exercise context'), not a strict requirement -- so the lab-only corroboration path (mechanism 2 above) remains fully implementable and should be activated; only the user-declared-context corroboration path is blocked and must be explicitly recorded as an unresolved gap, not silently dropped or silently invented."
-    },
-    "runtime_mechanism_3_confidence_downgrade_for_ggt_absence": {
-      "status": "CONFIRMED — answers cholestatic context's 'low-confidence wording without a contract change' question",
-      "evidence": "backend/core/analytics/signal_confidence_builder.py: calculate_signal_confidence() is an existing reasons-based confidence-scoring mechanism, distinct from the override/gate primitives above. 'Normal or missing GGT reduces hepatic-source confidence' for the ALP-predominant context can be represented as a confidence-downgrade reason through this existing mechanism without a new contract."
-    },
-    "runtime_mechanism_4_collision_subordination_for_cholestatic_context": {
-      "status": "CONFIRMED — answers cholestatic context's coexistence/suppression question",
-      "evidence": "backend/core/analytics/signal_authority_collision_resolver.py implements distinct_risk_layers, suppress_supporting_when_primary_present, and allow_parallel_if_distinct_risk_layer against knowledge_bus/governance/signal_authority_collision_model_v1.yaml's existing liver_injury_axis group (ALP primary / GGT supporting, status: adjudicated_runtime_enforced). The ALT cholestatic/ALP-predominant frame should be added to this group as a subordinate/supporting entry (or a distinct_risk_layer if the ALT angle is judged medically distinct rather than duplicative), with suppress_supporting_when_primary_present ensuring it does not fire as a competing primary when ALP/GGT already own the primary WHY -- directly satisfying 'this frame must not compete with or duplicate the existing ALP/GGT liver_injury_axis.'"
-    },
-    "very_high_alt_numeric_threshold_gap": {
-      "status": "CONFIRMED gap — correctly triggers the prompt's own STOP condition, does not block the whole package",
-      "evidence": "Canonical Pass 3 muscle/exertional and metabolic specs both state 'very high ALT must not be explained away by a plausible muscle/metabolic context alone' but supply no numeric threshold for 'very high.' Searched the Pass 3 source and existing signal_library.yaml/research_brief.yaml assets for any such threshold: none exists. This matches the prompt's own explicit STOP condition ('very high ALT requires a numeric threshold absent from canonical research') exactly -- this specific escalation-suppression behaviour cannot be implemented without inventing a number, and must be recorded as an explicit unresolved blocker for Head of Medical Research decision, while the rest of each frame's corroboration logic (which does not depend on this threshold) proceeds."
-    },
-    "existing_relevant_tests_confirmed": {
+    "pilot_cohort_gate_is_the_binding_mechanism": {
       "status": "CONFIRMED",
-      "evidence": "backend/tests/unit/test_arch_conv_e2_r_value_runtime_authority.py and backend/tests/unit/test_signal_evaluator.py both already contain override-rule and mandatory_pre_emission_gates test patterns directly reusable as templates for the four new contexts' required test lists."
+      "evidence": "backend/core/knowledge/why_authority_v1.py:22 _PILOT_SIGNAL_IDS is a hardcoded frozenset; resolve_frame_why_authority only consults the compiled register for signal_ids in this set. Confirmed as mandatory file-boundary item in latest_cursor_prompt.md:199-200."
+    },
+    "flat_why_role_mechanism_reused_not_invented": {
+      "status": "CONFIRMED",
+      "evidence": "backend/core/analytics/root_cause_compiler_v1.py:378-386 already reads a static declared why_role field constrained to {WHY_ROLE_CAUSAL, WHY_ROLE_MORPHOLOGY_CONTEXT} independent of the separate conditional_why_role path (line 604+, only triggered when a conditional_why_role key is present). Ferritin's flat morphology_context and hemoglobin's flat causal both use the existing static path; no conditional_why_role key is required. Directly supports the prompt's 'no new mechanism' claim (latest_cursor_prompt.md:211-213)."
+    },
+    "ferritin_override_rule_structurally_non_causal": {
+      "status": "CONFIRMED",
+      "evidence": "inv_ferritin_high_overload_v1.yaml:39-51 or_ferritin_extreme_elevation sets resulting_state: at_risk only; no why_role field present anywhere in the file. Escalation state and WHY authority are structurally separate concerns."
+    },
+    "hemoglobin_override_rule_structurally_scoped": {
+      "status": "CONFIRMED",
+      "evidence": "inv_hgb_low_anemia.yaml:28-41,57 or_hgb_severe_anemia sets resulting_state: at_risk only; threshold_notes explicitly scopes the 80 g/L threshold 'in this investigation context', supporting the presentation-safety narrowing required by the gate decision."
+    },
+    "transferrin_saturation_availability_and_research_support": {
+      "status": "CONFIRMED",
+      "evidence": "backend/ssot/biomarkers.yaml:1865 transferrin_saturation is SSOT-canonical (not a derived metric); already consumed at backend/core/insights/modules/fatigue_root_cause.py:50. Batch_4_Pass_3.json directly parsed this session: inv_ferritin_high_iron_overload_context and inv_ferritin_high_inflammatory_hyperferritinemia both list transferrin_saturation as a supporting_marker (corroborator / differential_marker roles respectively). No new SSOT/derived-metric/package work required."
+    },
+    "dual_research_lineage_reconcilable_without_new_research": {
+      "status": "CONFIRMED",
+      "evidence": "pkg_s24_ferritin_high_overload and pkg_s24_hgb_low_anemia source from the canonical inv_*.yaml specs; the three pkg_kb52c_* competitors source from the separate Batch_4_Pass_3.json lineage. Same reconciliation shape already proven for lipid (Wave 2) and ALT (E-track): canonical spec wins, competing frames marked LEGACY_RETIRED for WHY ownership only, content preserved."
+    },
+    "hemoglobin_PSI_gap_confirmed_separable": {
+      "status": "CONFIRMED",
+      "evidence": "BUILD_DELIVERABLE_REGISTER.md P1-11/P1-18/P1-24 'primary oxygen-carrying capacity' PSI/package-activation carry-forward is structurally distinct from the root-cause inv_hgb_low_anemia.yaml spec compiled here; ARCH-CONV-F_GATE_1_GATE_2_decision.md:42 records this gap remains explicitly open."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "no_new_medical_thresholds_invented_by_this_hardening_pass": {
+    "ferritin_flat_non_causal_no_conditional_gate": {
       "status": "SOUND",
-      "evidence": "Every mechanism mapping above reuses an existing runtime primitive against Pass 3's own stated conditions (lab_range_boundary, biomarker_present); the one place canonical research is genuinely silent (the 'very high ALT' numeric cutoff) is flagged as an explicit STOP, not papered over with an invented number."
+      "evidence": "Prior conditional-causal design (CRP normal -> causal) is explicitly withdrawn per hardening pack line 1/11. Current ratified design has no causal branch under any data state -- structurally safer than the withdrawn version, not merely narrower."
     },
-    "activation_decisions_correctly_differentiated_not_activate_all_four": {
+    "fail_closed_missing_corroboration_specified": {
       "status": "SOUND",
-      "evidence": "Hardening produces four distinct dispositions, not a uniform one: bilirubin severity -> represent as override/escalation only (no independent activation); cholestatic/ALP-predominant -> activate as subordinate/contextual authority under the existing liver_injury_axis collision group; muscle/exertional -> activate as subordinate/contextual authority gated on lab-only CK corroboration, with the user-context path explicitly recorded as unresolved; metabolic/MASLD -> activate as subordinate/contextual authority gated on compound lab-marker corroboration, same user-context caveat. This directly satisfies 'do not activate all four by default' and 'do not keep any package withheld merely because application logic has not been worked through.'"
+      "evidence": "Missing all corroborators (no CRP/ALT/iron/transferrin saturation) fails closed to bare-elevation wording with no attribution guess, per hardening pack §2.2 and gate decision record line 52."
     },
-    "anti_recurrence_clause_present": {
+    "hemoglobin_second_frame_disposition_now_gate1_resolved": {
       "status": "SOUND",
-      "evidence": "'Do not use retrospective ratification to bypass a missed STOP' is present verbatim, consistent with ARCH-CONV-E2's equivalent clause, which this session's audits confirmed was actually honoured (no retrospective-exception shortcut was taken for E2's Gate 1/Gate 2 process)."
+      "evidence": "pkg_kb52c_hgb_low_normocytic_underproduction_context retirement for WHY ownership only is now an explicit Gate 1 APPROVED decision (gate decision record line 41), not left unilateral by this hardening pass."
+    },
+    "exclusion_list_matches_verified_repository_state": {
+      "status": "SOUND",
+      "evidence": "signal_ferritin_low, transferrin signals as independent owners, signal_iron_deficiency_context, signal_oxygen_transport_capacity, signal_urate_high, signal_hba1c_high, ALT signal_ids all correctly remain out of scope, consistent across prompt, hardening pack, and gate decision record."
     }
   },
-
-  "hardened_execution_directives_for_cursor": {
-    "context_1_cholestatic_alp_predominant": {
-      "disposition": "ACTIVATE_AS_SUBORDINATE_CONTEXTUAL_AUTHORITY",
-      "mechanism": "Add to signal_authority_collision_model_v1.yaml's existing liver_injury_axis group as a subordinate/supporting entry with suppress_supporting_when_primary_present: true so it never competes with ALP/GGT primary. Gate emission on eligible r_value_alt_alp <= 2 (reuse the existing R-value selector, do not duplicate its logic). Represent GGT-absence confidence downgrade via signal_confidence_builder.py reasons, not a new field. Bilirubin severity interaction reuses the existing override_rule mechanism, applied to this frame the same way it applies to the hepatocellular frame."
-    },
-    "context_2_muscle_exertional": {
-      "disposition": "ACTIVATE_AS_SUBORDINATE_CONTEXTUAL_AUTHORITY_LAB_ONLY",
-      "mechanism": "Gate emission via mandatory_pre_emission_gates requiring creatine_kinase lab_range_boundary above_max (not biomarker_present alone -- canonical research requires CK actually raised, not merely measured). Do not implement the user-declared exercise/trauma/myopathy/statin corroboration path -- no governed runtime context contract exists (context_modifier_catalogue_draft_v1.yaml is non-runtime). Record this explicitly as an unresolved blocker, not a silent omission. Contradiction handling (bilirubin/GGT/ALP redirect away from muscle framing) via existing override/collision suppression, not new logic. The 'very high ALT must not be explained away' escalation-suppression rule is BLOCKED pending a Head of Medical Research numeric threshold decision -- implement the rest of the frame without it and record the gap."
-    },
-    "context_3_bilirubin_severity": {
-      "disposition": "REPRESENT_AS_OVERRIDE_ESCALATION_ONLY_NO_INDEPENDENT_ACTIVATION",
-      "mechanism": "Do not activate pkg_kb52c_alt_high_bilirubin_severity_context as a competing primary frame. Extend/confirm the existing or_alt_high_with_bilirubin_high override_rule pattern (already proven on the hepatocellular package) applies consistently across all currently-active and newly-activated ALT frames from this package. Encode the Hy's-Law prohibition and fractionation/albumin/INR caveats as presentation-safety/evidence metadata on the override, not as new frame content."
-    },
-    "context_4_metabolic_masld": {
-      "disposition": "ACTIVATE_AS_SUBORDINATE_CONTEXTUAL_AUTHORITY_LAB_ONLY",
-      "mechanism": "Gate emission via mandatory_pre_emission_gates requiring an any_of compound condition across hba1c/triglycerides/ggt lab_range_boundary above_max or hdl lab_range_boundary below_min (compound rule, not single-marker, per canonical caveats). Do not implement declared-metabolic-risk-context corroboration -- same governed-context-contract gap as context 2; record as unresolved blocker. Contradiction handling (bilirubin/INR redirect, CK redirect to muscle) via existing override/collision suppression. Same 'very high ALT' threshold gap and BLOCKED sub-item as context 2."
-    }
-  },
-
-  "unresolved_blockers_for_head_of_medical_research": [
-    {
-      "blocker": "No governed, runtime-consumed user-context contract exists for exercise/statin/trauma/myopathy history (muscle/exertional context) or declared metabolic risk factors (metabolic/MASLD context)",
-      "affected_specs": ["inv_alt_high_muscle_source_or_exertional_contribution", "inv_alt_high_metabolic_masld_context"],
-      "why_insufficient": "context_modifier_catalogue_draft_v1.yaml is explicitly status: draft_governance_non_runtime, runtime_consumed: false",
-      "minimum_decision_needed": "Either (a) accept lab-only corroboration as sufficient for these two frames' initial activation (recommended -- canonical research supports lab corroboration as a valid independent path, not solely dependent on user context), or (b) commission a governed context-modifier runtime contract before activating these frames at all"
-    },
-    {
-      "blocker": "'Very high ALT must not be explained away by a plausible muscle/metabolic context' has no numeric threshold in canonical research",
-      "affected_specs": ["inv_alt_high_muscle_source_or_exertional_contribution", "inv_alt_high_metabolic_masld_context"],
-      "why_insufficient": "Pass 3 source states the caveat qualitatively only; no ULN-multiple or absolute value is given",
-      "minimum_decision_needed": "Head of Medical Research must supply an explicit numeric cutoff (e.g. ALT > N x ULN) or explicitly accept the frame without this specific safeguard until a future package adds it"
-    }
-  ],
 
   "non_blocking_observations_for_cursor": [
-    "Reuse signal_evaluator.py's existing _evaluate_override_rules and _passes_mandatory_pre_emission_gates verbatim -- do not add parallel evaluation logic for these four packages.",
-    "For the cholestatic context, decide during implementation whether it belongs in liver_injury_axis as a supporting entry or a distinct_risk_layer -- hardening identifies both mechanisms as available; the medical judgement of which fits is Gate 1's, not an implementation detail Cursor should decide alone.",
-    "Do not treat the two unresolved blockers above as reasons to withhold the lab-only portions of contexts 2 and 4 -- only the user-context and very-high-ALT sub-behaviours are blocked, per the prompt's own instruction not to withhold a whole package merely because part of its logic isn't worked through."
+    "why_authority_v1.py's _PILOT_SIGNAL_IDS edit is small (2 additions) but is the single most important file in this package -- without it, every other change is inert.",
+    "root_cause_authority_register_v1.yaml is documented stale/secondary bookkeeping only; keep consistent but do not treat as an independent source of truth.",
+    "Test 5/9 (ferritin never causal under any input combination, with or without transferrin saturation) is the load-bearing proof for the withdrawn-design correction -- give it primary attention in evidence."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 10,
+    "checklist_count": 9,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "Branch does not pre-exist, no active token, ARCH-CONV-E2 is merged to main and Gate 2 ratified", "source": "git branch -a; automation_bus/state/work_package_active.json; git merge-base --is-ancestor; docs/architecture/ARCH-CONV-E2_medical_decision_register.yaml", "evidence": "All confirmed clean/true", "status": "CONFIRMED"},
-      {"id": 2, "claim": "All four target packages exist with mandatory assets, currently withheld", "source": "knowledge_bus/packages/pkg_kb52c_alt_high_{cholestatic_alp_predominant_context,muscle_source_or_exertional_pattern,bilirubin_severity_context,metabolic_steatotic_liver_pattern}/", "evidence": "All four present, four-file mandatory set complete", "status": "CONFIRMED"},
-      {"id": 3, "claim": "override_rules mechanism is proven, reusable precedent for bilirubin severity", "source": "backend/core/analytics/signal_evaluator.py:436; this session's independently re-verified test_kbs24_signals_trigger_suboptimal_then_escalate[signal_alt_high] pass", "evidence": "Exact mechanism identified and already working in production code", "status": "CONFIRMED"},
-      {"id": 4, "claim": "mandatory_pre_emission_gates mechanism is proven, reusable precedent for muscle/metabolic corroboration gating", "source": "backend/core/analytics/signal_evaluator.py:498", "evidence": "Same mechanism already gates R-value band selection under ARCH-CONV-E2", "status": "CONFIRMED"},
-      {"id": 5, "claim": "No governed runtime user-context contract exists", "source": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml", "evidence": "runtime_consumed: false, status: draft_governance_non_runtime", "status": "CONFIRMED gap, correctly scoped as partial blocker"},
-      {"id": 6, "claim": "Confidence-downgrade mechanism exists for GGT-absence wording", "source": "backend/core/analytics/signal_confidence_builder.py", "evidence": "calculate_signal_confidence() reasons-based scoring available", "status": "CONFIRMED"},
-      {"id": 7, "claim": "Collision-subordination mechanism exists for ALP/GGT axis non-duplication", "source": "backend/core/analytics/signal_authority_collision_resolver.py; knowledge_bus/governance/signal_authority_collision_model_v1.yaml liver_injury_axis group", "evidence": "distinct_risk_layers / suppress_supporting_when_primary_present already implemented and enforced for ARCH-CONV-C", "status": "CONFIRMED"},
-      {"id": 8, "claim": "'Very high ALT' has no numeric threshold in canonical research or existing assets", "source": "Pass 3 source, existing signal_library.yaml/research_brief.yaml for muscle and metabolic packages", "evidence": "Qualitative caveat only, no number anywhere", "status": "CONFIRMED gap, correctly flagged as STOP-worthy sub-item"},
-      {"id": 9, "claim": "Four dispositions are differentiated, not uniform", "source": "hardened_execution_directives_for_cursor block above", "evidence": "One override-only, two lab-gated-subordinate, one collision-subordinate -- not 'activate all four' or 'withhold all four'", "status": "CONFIRMED"},
-      {"id": 10, "claim": "Existing tests provide directly reusable templates", "source": "backend/tests/unit/test_arch_conv_e2_r_value_runtime_authority.py, test_signal_evaluator.py", "evidence": "Both already exercise override_rules and mandatory_pre_emission_gates against ALT packages", "status": "CONFIRMED"}
+      {"id": 1, "claim": "Gate 1 and Gate 2 are recorded as APPROVED on repo, not merely asserted in the prompt", "source": "docs/architecture/ARCH-CONV-F_GATE_1_GATE_2_decision.md:8-13, commit 43c5564586473c81c55b7ddf541fd80eb6bdd49b on main HEAD", "evidence": "Gate 1 APPROVED_WITH_NARROWING (ARCH-CONV-F-GATE1-HMR-2026-08-01); Gate 2 APPROVED (ARCH-CONV-F-GATE2-ANTHONY-2026-08-01)", "status": "CONFIRMED"},
+      {"id": 2, "claim": "Both signals are genuinely uncompiled (A3), not already done", "source": "knowledge_bus/governance/compiled_why_authority_register_v1.yaml direct grep", "evidence": "zero rows for both signal_ids", "status": "CONFIRMED"},
+      {"id": 3, "claim": "why_authority_v1.py's pilot-cohort gate must be edited for either signal to take effect", "source": "backend/core/knowledge/why_authority_v1.py:22", "evidence": "_PILOT_SIGNAL_IDS frozenset does not contain either signal_id", "status": "CONFIRMED"},
+      {"id": 4, "claim": "Flat why_role assignment is an existing mechanism, no new compiler code path needed", "source": "backend/core/analytics/root_cause_compiler_v1.py:378-386", "evidence": "static why_role field already constrained to {CAUSAL, MORPHOLOGY_CONTEXT} independent of conditional_why_role", "status": "CONFIRMED"},
+      {"id": 5, "claim": "Both governed escalation thresholds are pre-existing, not invented", "source": "inv_ferritin_high_overload_v1.yaml:39-51; inv_hgb_low_anemia.yaml:28-41", "evidence": "ferritin >1000 (source_hemochromatosis_uk); hemoglobin <80 (NICE NG24); neither carries a why_role field", "status": "CONFIRMED"},
+      {"id": 6, "claim": "transferrin_saturation is SSOT-canonical and already has research support in the governed Pass-3 lineage", "source": "backend/ssot/biomarkers.yaml:1865; Batch_4_Pass_3.json (parsed directly this session)", "evidence": "SSOT entry confirmed at cited line; both pkg_kb52c_ferritin_high_* specs list transferrin_saturation as a supporting_marker", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Dual research lineage exists for both signals, reconcilable via established precedent", "source": "5 package manifests' source_document fields", "evidence": "pkg_s24_* -> canonical inv_*.yaml; pkg_kb52c_* -> Batch_4_Pass_3.json (separate lineage)", "status": "CONFIRMED"},
+      {"id": 8, "claim": "Hemoglobin compiled-WHY is separable from the unresolved oxygen-carrying PSI research gap", "source": "BUILD_DELIVERABLE_REGISTER.md P1-11/P1-18/P1-24 cross-check; gate decision record line 42", "evidence": "PSI gap is a package/PSI-activation track, distinct from the root-cause spec compiled here, and confirmed still open post-gate", "status": "CONFIRMED"},
+      {"id": 9, "claim": "No STOP condition fires", "source": "cross-check of all mandatory STOP conditions in latest_cursor_prompt.md:321-338 against verified repository state", "evidence": "no invented threshold, no PSI entanglement, no completed-authority touch, no register-delta mismatch, gate evidence now on repo", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Activating pkg_kb52c_alt_high_bilirubin_severity_context as an independent competing primary frame instead of an override/escalation rule -- REJECT_AND_RETURN",
-    "Implementing user-declared exercise/statin/trauma/myopathy or declared-metabolic-risk corroboration without a governed runtime context contract -- REJECT_AND_RETURN",
-    "Inventing a numeric 'very high ALT' threshold not present in canonical research or explicit Head of Medical Research Gate 1 decision -- REJECT_AND_RETURN",
-    "Allowing the ALT cholestatic/ALP-predominant frame to fire as primary when ALP/GGT liver_injury_axis already owns primary authority -- REJECT_AND_RETURN",
-    "Activating all four packages uniformly, or withholding all four merely because application logic wasn't worked through -- REJECT_AND_RETURN",
-    "Using retrospective ratification in place of a required STOP-and-return for any newly discovered prohibited-scope necessity -- REJECT_AND_RETURN",
-    "Merging before Gate 2 explicit ratification and independent Claude Code re-audit -- REJECT_AND_RETURN"
+    "Implementing before Automation Bus kernel start succeeds -- REJECT_AND_RETURN",
+    "Ferritin emitting a causal claim under any tested data state, with or without transferrin saturation -- REJECT_AND_RETURN",
+    "root_cause_compiler_v1.py requiring a genuinely new mechanism beyond the existing static why_role / conditional_why_role paths -- REJECT_AND_RETURN",
+    "Treating this package as resolving the primary-oxygen-carrying PSI research gap -- REJECT_AND_RETURN",
+    "Touching signal_ferritin_low, transferrin signals as independent WHY owners, signal_iron_deficiency_context, signal_urate_high, signal_hba1c_high, or any ALT signal_id -- REJECT_AND_RETURN",
+    "Register delta differing from +2 COMPILED_ACTIVE / +3 LEGACY_RETIRED -- REJECT_AND_RETURN",
+    "Using retrospective ratification in place of a required STOP-and-return -- REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR EXECUTION (subject to Head of Medical Research Gate 1, Anthony Gate 2, and independent Claude Code re-audit, exactly as the prompt's own completion boundary requires). This hardening pass maps all four contexts to concrete, already-proven runtime mechanisms rather than leaving application logic to Cursor discretion, as instructed: override_rules (signal_evaluator.py:436) for bilirubin severity, mandatory_pre_emission_gates (signal_evaluator.py:498) for muscle/metabolic lab corroboration, signal_confidence_builder.py for GGT-absence confidence wording, and the existing liver_injury_axis collision group for ALP/GGT non-duplication. Two genuine, correctly-scoped gaps are identified rather than papered over: no governed runtime user-context contract exists (blocking only the user-declared-history corroboration sub-path of muscle/metabolic, not lab-based activation), and no numeric 'very high ALT' threshold exists in canonical research (blocking only that specific escalation-suppression safeguard). Both are recorded as explicit unresolved blockers for Head of Medical Research decision, consistent with the prompt's STOP conditions and its instruction not to withhold a whole package for a partial gap. No blocking defect found in the hardening itself."
+  "overall_verdict": "HARDENED. Gate 1 (APPROVED_WITH_NARROWING, ARCH-CONV-F-GATE1-HMR-2026-08-01) and Gate 2 (APPROVED, ARCH-CONV-F-GATE2-ANTHONY-2026-08-01) are now recorded on repo at docs/architecture/ARCH-CONV-F_GATE_1_GATE_2_decision.md, committed at 43c5564586473c81c55b7ddf541fd80eb6bdd49b on main HEAD, and are fully consistent with the updated docs/architecture/ARCH-CONV-F_hardening_pack.md (all prior PENDING placeholders and draft-execution caveats removed) and automation_bus/latest_cursor_prompt.md. All load-bearing citations were independently re-verified against current file content this pass: ferritin and hemoglobin investigation specs, the SSOT transferrin_saturation entry, the Batch_4_Pass_3.json supporting-marker claims, the why_authority_v1.py pilot-cohort gate, and the root_cause_compiler_v1.py static why_role path. Baseline confirmed still uncompiled (zero register rows for both signals). No STOP condition fires. Implementation remains correctly blocked pending Automation Bus kernel start (python backend/scripts/run_work_package.py start) -- gate recording and prompt hardening are necessary but not sufficient preconditions, exactly as the gate decision record itself states."
 }
