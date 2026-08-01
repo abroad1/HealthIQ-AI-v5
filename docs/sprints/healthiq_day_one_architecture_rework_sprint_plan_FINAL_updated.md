@@ -1133,20 +1133,29 @@ These items remain open after Gate 2 ratification of ARCH-CONV-E3 (`ARCH-CONV-E3
 These items remain open after Gate 2 ratification and independent audit PASS of ARCH-CONV-F (`ARCH-CONV-F-GATE1-HMR-2026-08-01` / `ARCH-CONV-F-GATE2-ANTHONY-2026-08-01`). They are architecture / medical-governance obligations, not sprint-local notes. ARCH-CONV-F closed compiled-WHY for `signal_ferritin_high` and `signal_hemoglobin_low` only; it did not resolve the items below.
 
 1. **Haemoglobin primary oxygen-carrying PSI research and promotion** — Remains open and structurally distinct from the ARCH-CONV-F root-cause compiled-WHY closure (`inv_hgb_low_anemia`). Do not treat F as resolving `wave1_bio_oxygen_carrying_capacity` / P1-11/P1-18/P1-24 oxygen-carrying PSI promotion.
-2. **`signal_hba1c_high` compiled-WHY** — Remains open; not migrated by ARCH-CONV-F or ARCH-CONV-G.
+2. **`signal_hba1c_high` compiled-WHY** — **Closed by ARCH-CONV-H** (`ARCH-CONV-H-GATE1-HMR-2026-08-01` / `ARCH-CONV-H-GATE2-ANTHONY-2026-08-01`). Retained here only as historical cross-reference; see ARCH-CONV-H section for active residuals.
 3. **`signal_urate_high` compiled-WHY** — **Closed by ARCH-CONV-G** (`ARCH-CONV-G-GATE1-HMR-2026-08-01` / `ARCH-CONV-G-GATE2-ANTHONY-2026-08-01`). Retained here only as historical cross-reference; see ARCH-CONV-G section for active residuals.
 4. **ALT compiled-WHY identity** — Remains unresolved and must not be treated as A3-ready. E/E2/E3 delivered package/PSI/R-value contextual authority; they did not close a compiled-WHY A3 identity for ALT.
 
 ### From ARCH-CONV-G — Urate Compiled-WHY Authority (programme-wide residuals)
 
-These items remain open after Gate 2 ratification and independent audit PASS of ARCH-CONV-G. ARCH-CONV-G closed compiled-WHY for `signal_urate_high` only.
+These items remain open after Gate 2 ratification and independent audit PASS of ARCH-CONV-G. ARCH-CONV-G closed compiled-WHY for `signal_urate_high` only. Item 1 below was subsequently closed by ARCH-CONV-H.
 
-1. **`signal_hba1c_high` compiled-WHY** — Remains the **sole open A3 compiled-WHY target**; not migrated by ARCH-CONV-G.
+1. **`signal_hba1c_high` compiled-WHY** — **Closed by ARCH-CONV-H** (see From ARCH-CONV-H).
 2. **ALT compiled-WHY identity (A4)** — Remains unresolved and must not be treated as A3-ready. E/E2/E3 delivered package/PSI/R-value contextual authority only.
 3. **Package B / Package C sequencing** — Remains downstream of further Package A outputs (estate dual-authority / result-versioning tracks); not authorised by ARCH-CONV-G.
 4. **eGFR / UACR / chronicity independent WHY boundary** — ARCH-CONV-G created no eGFR-, UACR-, or chronicity-owned WHY authority; this exclusion remains a standing programme boundary.
 
-Sequencing note: run a repository-grounded Stage 0 advisory for `signal_hba1c_high` before authoring the next sprint.
+### From ARCH-CONV-H — HbA1c Compiled-WHY Authority (programme-wide residuals)
+
+These items remain open after Gate 2 ratification of ARCH-CONV-H. ARCH-CONV-H closed compiled-WHY for `signal_hba1c_high` only.
+
+1. **ALT compiled-WHY identity (A4)** — Remains unresolved and must not be treated as A3-ready.
+2. **Package B / Package C sequencing** — Remains downstream of further Package A outputs; not authorised by ARCH-CONV-H.
+3. **eGFR / UACR / chronicity independent WHY boundary** — Standing programme exclusion; unchanged by ARCH-CONV-H.
+4. **Adjacent HbA1c identities** — `signal_hba1c_pct_high` and `signal_glucose_dysregulation_hba1c_context` remain separate; not migrated by ARCH-CONV-H.
+
+Sequencing note: run a repository-grounded Stage 0 advisory before selecting the next Package A residual (ALT A4 or dual-authority sequencing).
 
 ## 6. Final note
 

@@ -331,13 +331,17 @@ def test_register_delta_and_unrelated_authority_unchanged():
 
     # Excluded / unrelated signals remain outside the ARCH-CONV-F cohort.
     # Note: signal_urate_high compiled-WHY was later delivered by ARCH-CONV-G.
+    # Note: signal_hba1c_high compiled-WHY was later delivered by ARCH-CONV-H.
     for key in (
         "signal_ferritin_low::inv_ferritin_low_iron_store_depletion",
         "signal_transferrin_high::inv_transferrin_high_iron_deficiency_transport_upregulation",
-        "signal_hba1c_high::inv_hba1c_high_glycaemia",
         "signal_alt_high::inv_alt_high_hepatocellular_injury",
     ):
         assert authority_row_for(key) is None
+    hba1c = authority_row_for("signal_hba1c_high::inv_hba1c_high_glycaemia")
+    assert hba1c is not None
+    assert hba1c["authority_state"] == "COMPILED_ACTIVE"
+    assert hba1c["why_role"] == "morphology_context"
 
 
 def test_no_runtime_research_file_read_introduced():
