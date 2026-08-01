@@ -38,10 +38,14 @@ _PILOT_SIGNAL_IDS = frozenset(
         "signal_urea_high",
         "signal_alp_high",
         "signal_ggt_high",
+        "signal_ferritin_high",
+        "signal_hemoglobin_low",
         # Parallel Pass-3 lipid signal ids (WHY retired; signals may still evaluate)
         "signal_ldl_high",
         "signal_hdl_low",
         "signal_total_cholesterol_high",
+        # Parallel Pass-3 haemoglobin signal id (WHY retired; signal may still evaluate)
+        "signal_hgb_low",
     }
 )
 

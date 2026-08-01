@@ -1,0 +1,65 @@
+work_id: ARCH-CONV-F
+branch: feature/arch-conv-f-haematology-compiled-why
+register_state: GATE_1_AND_GATE_2_RATIFIED_IMPLEMENTATION_COMPLETE
+gate1_status: APPROVED_WITH_NARROWING
+gate2_status: APPROVED
+head_of_medical_research_gate1_reference: ARCH-CONV-F-GATE1-HMR-2026-08-01
+anthony_gate2_reference: ARCH-CONV-F-GATE2-ANTHONY-2026-08-01
+gate_decision_ref: docs/architecture/ARCH-CONV-F_GATE_1_GATE_2_decision.md
+hardening_pack_ref: docs/architecture/ARCH-CONV-F_hardening_pack.md
+runtime_changes_authorised: true
+note: >
+  Gate 1 and Gate 2 ratified ARCH-CONV-F haematology compiled-WHY authority.
+  Implementation records exact canonical activation keys, flat WHY roles, override
+  presentation restrictions, competing-frame retirement for WHY ownership only,
+  unchanged package/PSI status, and the still-open haemoglobin oxygen-carrying PSI gap.
+frames:
+- signal_id: signal_hemoglobin_low
+  source_spec_id: inv_hgb_low_anemia
+  activation_key: signal_hemoglobin_low::inv_hgb_low_anemia
+  why_role: causal
+  causal_scope: anaemia_reduced_oxygen_carrying_capacity
+  mcv_rdw_role: NON_OWNING_MORPHOLOGY_CONTEXT_ONLY
+  no_independent_underproduction_aetiology_claim: true
+  override_rule_retained: or_hgb_severe_anemia
+  override_presentation_safety:
+    not_universal_severe_anaemia_definition: true
+    not_automatic_transfusion_threshold: true
+    not_treatment_recommendation: true
+    concern_escalation_only: true
+  canonical_package: pkg_s24_hgb_low_anemia
+  legacy_disposition:
+    pkg_kb52c_hgb_low_normocytic_underproduction_context: LEGACY_RETIRED_FOR_WHY_ONLY
+  package_psi_status: UNCHANGED
+  oxygen_carrying_psi_research_gap: REMAINS_OPEN
+- signal_id: signal_ferritin_high
+  source_spec_id: inv_ferritin_high_overload
+  activation_key: signal_ferritin_high::inv_ferritin_high_overload
+  why_role: morphology_context
+  flat_non_causal: true
+  conditional_why_role: none
+  corroborator_model:
+    crp_elevated: supports_reactive_inflammatory_context_wording
+    alt_elevated: supports_hepatic_metabolic_context_wording
+    iron_elevated_alone: weak_context_only_not_sufficient_for_overload_wording
+    transferrin_saturation: additional_non_causal_context_enrichment_only
+    missing_all_corroboration: fails_closed_to_bare_elevation_finding_no_attribution_wording
+  override_rule_retained: or_ferritin_extreme_elevation
+  override_presentation_safety:
+    not_haemochromatosis_diagnosis: true
+    not_causal_iron_overload_claim: true
+    concern_escalation_only: true
+  canonical_package: pkg_s24_ferritin_high_overload
+  legacy_disposition:
+    pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia: LEGACY_RETIRED_FOR_WHY_ONLY
+    pkg_kb52c_ferritin_high_iron_overload_context: LEGACY_RETIRED_FOR_WHY_ONLY
+  package_psi_status: UNCHANGED
+retired_why_only_activation_keys:
+- signal_ferritin_high::inv_ferritin_high_inflammatory_hyperferritinemia
+- signal_ferritin_high::inv_ferritin_high_iron_overload_context
+- signal_hgb_low::inv_hgb_low_normocytic_underproduction_context
+register_delta:
+  compiled_active: '+2'
+  legacy_retired: '+3'
+exclusions_preserved: true
+forged_approvals: false
