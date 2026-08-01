@@ -1,0 +1,48 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_ferritin_high_overload_v1
+hypothesis_set_id: signal_ferritin_high_non_causal_context_set_v1
+signal_id: signal_ferritin_high
+activation_key: signal_ferritin_high::inv_ferritin_high_overload
+source_spec_ids:
+- inv_ferritin_high_overload
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_ferritin_high_overload_v1.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_f_ferritin_high.yaml
+hypotheses:
+- hypothesis_id: hyp_ferritin_elevated_non_causal_context
+  rank: 1
+  title: Elevated ferritin context
+  physiological_claim: Elevated ferritin provides a non-causal iron-store or acute-phase
+    context finding. It may reflect storage increase, cellular release, or inflammatory
+    synthesis, without establishing systemic iron overload or haemochromatosis.
+  evidence_strength: contextual
+  missing_data_policy: Interpret as elevated-ferritin context only. When CRP, ALT,
+    serum iron, or transferrin saturation are absent, fail closed to bare elevation
+    wording with no attribution. Do not upgrade authority to causal under any data
+    state.
+  evidence_for:
+  - Ferritin is above the laboratory range.
+  - Elevated CRP may support reactive or inflammatory context wording when present.
+  - Elevated ALT may support hepatic or metabolic context wording when present.
+  - Elevated serum iron is weak contextual corroboration only and is insufficient alone
+    for overload attribution.
+  - Transferrin saturation may provide additional non-causal context enrichment when
+    present and must not upgrade authority to causal.
+  evidence_against:
+  - Normal or unavailable CRP must not be treated as evidence of iron overload.
+  - Isolated elevated ferritin does not establish haemochromatosis or causal systemic
+    iron overload.
+  contradiction_markers: []
+  caveats:
+  - Do not emit causal iron-overload WHY from this frame under any data state.
+  - Do not diagnose haemochromatosis from this frame.
+  - Do not create an independently owning transferrin frame from this corroborator.
+  - Ferritin greater than 1000 ug/L is concern escalation only and does not establish
+    haemochromatosis or causal iron overload.
+  - Do not recommend treatment, genetic testing, or venesection from this frame.
+  confirmatory_tests: []
+  summary_template: Ferritin is above range and provides non-causal iron-store or acute-phase context only. It does not establish systemic iron overload or a hereditary iron-loading diagnosis.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-F Gate 1 / Gate 2 ratified flat CONTEXT_ONLY_NON_CAUSAL morphology_context lane.

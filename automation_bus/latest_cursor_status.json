@@ -1,10 +1,10 @@
 {
-  "branch": "feature/arch-conv-e3-alt-contextual-authority",
+  "branch": "feature/arch-conv-f-haematology-compiled-why",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-08-01T09:52:56Z",
-  "cursor_started_utc": "2026-08-01T09:37:22Z",
-  "head_sha": "b37f286b67f04a0643cc809dd18aa2e087266bbf",
+  "cursor_completed_utc": "2026-08-01T20:15:56Z",
+  "cursor_started_utc": "2026-08-01T20:01:12Z",
+  "head_sha": "ee05605f666d5be510bd9affeabbe758663d8ea9",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "ARCH-CONV-E3"
+  "work_id": "ARCH-CONV-F"
 }

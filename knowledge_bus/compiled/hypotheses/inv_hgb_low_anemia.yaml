@@ -1,0 +1,42 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_hgb_low_anemia_v1
+hypothesis_set_id: signal_hemoglobin_low_anaemia_oxygen_carrying_set_v1
+signal_id: signal_hemoglobin_low
+activation_key: signal_hemoglobin_low::inv_hgb_low_anemia
+source_spec_ids:
+- inv_hgb_low_anemia
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_hgb_low_anemia.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_f_hgb_low.yaml
+hypotheses:
+- hypothesis_id: hyp_hemoglobin_anaemia_reduced_oxygen_carrying
+  rank: 1
+  title: Anaemia / reduced oxygen-carrying capacity
+  physiological_claim: Low hemoglobin reflects anaemia with reduced oxygen-carrying
+    capacity. MCV and RDW may classify morphology or pattern context but do not independently
+    establish an aetiology or underproduction claim.
+  evidence_strength: strong
+  missing_data_policy: Interpret as anaemia / reduced oxygen-carrying capacity. MCV
+    and RDW remain non-owning morphology or context markers only. Without broader
+    clinical context, do not infer a specific aetiology or underproduction mechanism.
+  evidence_for:
+  - Hemoglobin is below the laboratory range.
+  - MCV may classify microcytic, normocytic, or macrocytic pattern context when present.
+  - Elevated RDW may support anisocytosis or mixed-pattern context when present.
+  evidence_against:
+  - Hemoglobin plus MCV or RDW alone must not independently establish an aetiology.
+  - Normocytic morphology must not be treated as an independent underproduction claim.
+  contradiction_markers: []
+  caveats:
+  - Causal scope is limited to anaemia / reduced oxygen-carrying capacity.
+  - Do not emit an independent underproduction aetiology from hemoglobin with MCV or RDW alone.
+  - Hemoglobin below 80 g/L is concern escalation only; not a universal severe-anaemia
+    definition, automatic transfusion threshold, or treatment recommendation.
+  - Do not claim to resolve the separate primary oxygen-carrying capacity PSI research gap.
+  - Do not recommend transfusion or other treatment from this frame.
+  confirmatory_tests: []
+  summary_template: Hemoglobin is below range and may reflect anaemia with reduced oxygen-carrying capacity. MCV and RDW add morphology context only and do not establish aetiology.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-F Gate 1 / Gate 2 ratified narrowed anaemia / reduced oxygen-carrying causal lane.

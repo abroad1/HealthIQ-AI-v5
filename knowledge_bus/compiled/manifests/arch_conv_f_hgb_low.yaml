@@ -1,0 +1,7 @@
+manifest_id: arch_conv_f_hgb_low
+work_id: ARCH-CONV-F
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_hgb_low_anemia.yaml
+  activation_key: signal_hemoglobin_low::inv_hgb_low_anemia
+notes: Gate 1 / Gate 2 ratified narrowed anaemia / reduced oxygen-carrying causal lane.

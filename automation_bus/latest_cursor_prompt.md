@@ -1,312 +1,370 @@
 ---
-work_id: ARCH-CONV-E3
-branch: feature/arch-conv-e3-alt-contextual-authority
+work_id: ARCH-CONV-F
+branch: feature/arch-conv-f-haematology-compiled-why
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# ARCH-CONV-E3 — Complete Remaining ALT Contextual Authority
+# ARCH-CONV-F — Haematology Compiled-WHY Authority
 
-This prompt is for Claude Code hardening before Cursor execution.
+## Governing authority
 
-Govern under:
+Implement the ratified ARCH-CONV-F medical and architectural decisions.
+
+Gate references:
+
+- Gate 1: `ARCH-CONV-F-GATE1-HMR-2026-08-01`
+- Gate 2: `ARCH-CONV-F-GATE2-ANTHONY-2026-08-01`
+
+Controlling design:
+
+- `docs/architecture/ARCH-CONV-F_hardening_pack.md`
+
+Governing SOPs:
 
 - `AUTOMATION_BUS_SOP_v1.3.1.md`
 - `KNOWLEDGE_BUS_SOP_v1.3.1.md`
 - `KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md`
-- current merged ARCH-CONV-E / E2 governance, activation and medical-decision artefacts
+
+Do not deviate from the ratified hardening pack. If repository reality conflicts with it, STOP and return for Claude Code hardening.
 
 ## Product outcome
 
-Complete the remaining four validated ALT contexts from canonical Pass 3 research:
+Complete governed compiled-WHY authority for:
 
-1. ALP-predominant / cholestatic biochemical context
-2. muscle or exertional contribution
-3. bilirubin severity context
-4. metabolic / MASLD context
+- `signal_ferritin_high`
+- `signal_hemoglobin_low`
 
-Translate the existing research rules into governed runtime eligibility, ranking, coexistence, suppression and escalation behaviour.
+This sprint must:
 
-Do not commission new medical research unless hardening proves a specific clinical ambiguity that the canonical Pass 3 source does not resolve.
+1. compile the two canonical WHY artefacts;
+2. activate them through the existing compiled-WHY authority path;
+3. retire the three competing frames for WHY ownership only;
+4. preserve existing package-layer and PSI status;
+5. prove that ferritin never emits causal iron-overload or haemochromatosis authority;
+6. preserve the separate unresolved haemoglobin oxygen-carrying PSI research requirement.
 
-## Canonical medical authority
+This sprint does not create new signal libraries or new medical research.
 
-Use:
+## Stage 0 — branch and baseline
 
-`knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json`
+Before implementation:
 
-Expected SHA-256:
+1. Confirm `main` is clean and synchronized with `origin/main`.
+2. Create and switch to:
 
-`7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267`
+   `feature/arch-conv-f-haematology-compiled-why`
 
-Relevant specs:
+3. Confirm the branch matches the front matter.
+4. Confirm no active Automation Bus work-package token conflicts with `ARCH-CONV-F`.
+5. Confirm the baseline still lacks compiled-WHY authority rows and compiled artefacts for both canonical activation keys.
+6. Confirm the three competing frames have not already been retired for WHY ownership.
+7. Confirm the authoritative register and loader paths below are current and unique.
 
-- `inv_alt_high_r_value_cholestatic_alp_predominant_context`
-- `inv_alt_high_muscle_source_or_exertional_contribution`
-- `inv_alt_high_bilirubin_hys_law_severity_context`
-- `inv_alt_high_metabolic_masld_context`
+If the intended outcome is already delivered, partially delivered in a conflicting form, or controlled by a different authoritative path, STOP. Do not run a redundant sprint.
 
-Preserve the already-active E2 authority:
+## Authoritative paths
 
-- canonical general / hepatocellular ALT frame
-- mixed ALT/ALP frame
-- governed `r_value_alt_alp`
-- existing ALP/GGT `liver_injury_axis`
-- current activation-register semantics
-- current Gate 1 / Gate 2 medical-governance model
+The authoritative compiled-WHY register is:
 
-## Role boundary
+- `knowledge_bus/governance/compiled_why_authority_register_v1.yaml`
 
-Claude Code hardening must extract the exact application rules from the Pass 3 source and existing contracts.
+The runtime compiled-WHY authority resolver is:
 
-Cursor implements those hardened rules.
+- `backend/core/knowledge/why_authority_v1.py`
 
-Cursor must not make new medical judgements, infer missing thresholds, or decide authority precedence not supported by the canonical research and existing governance.
+The runtime consumer/compiler is:
 
-If the research does not resolve a material medical decision, STOP and return the exact ambiguity for Head of Medical Research review.
+- `backend/core/analytics/root_cause_compiler_v1.py`
 
-## Phase 0 — repository-grounded hardening
+The existing legacy target registry is:
 
-Before producing the hardened execution prompt, inspect:
+- `backend/core/knowledge/root_cause_registry_v1.py`
 
-- all four relevant Pass 3 specs in full;
-- their existing package assets;
-- current activation register;
-- current medical decision register;
-- `signal_authority_collision_model_v1.yaml`;
-- existing ALP/GGT `liver_injury_axis`;
-- E2 R-value selector and runtime implementation;
-- current override-rule evaluator;
-- current package activation and collision mechanisms;
-- current biomarker, user-context and missing-data contracts;
-- current tests for ALT, ALP/GGT, bilirubin, CK, metabolic context and authority collisions.
+Canonical research specifications:
 
-Hardening must map every research rule to an exact runtime mechanism or identify a gap.
+- `knowledge_bus/research/investigation_specs/inv_ferritin_high_overload_v1.yaml`
+- `knowledge_bus/research/investigation_specs/inv_hgb_low_anemia.yaml`
 
-Do not leave application logic to Cursor discretion.
+Additional governed ferritin corroborator research:
 
-## Required authority decisions to harden
+- `knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json`
+  - `inv_ferritin_high_iron_overload_context`
+  - `inv_ferritin_high_inflammatory_hyperferritinemia`
 
-### 1. ALP-predominant / cholestatic ALT context
+Relevant packages:
 
-Canonical rules:
+- `knowledge_bus/packages/pkg_s24_ferritin_high_overload/`
+- `knowledge_bus/packages/pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia/`
+- `knowledge_bus/packages/pkg_kb52c_ferritin_high_iron_overload_context/`
+- `knowledge_bus/packages/pkg_s24_hgb_low_anemia/`
+- `knowledge_bus/packages/pkg_kb52c_hgb_low_normocytic_underproduction_context/`
 
-- primary ALT must be high;
-- eligible `r_value_alt_alp <= 2` supports ALP-predominant biochemical context;
-- ALP predominance alone does not prove cholestasis, obstruction or disease;
-- raised GGT supports hepatic-source confidence;
-- normal or missing GGT reduces hepatic-source confidence;
-- bilirubin adds severity / excretory context;
-- non-hepatic ALP remains a required caveat where source is not established;
-- this frame must not compete with or duplicate the existing ALP/GGT `liver_injury_axis`.
+Read the actual contents of every source and authority file before changing anything.
 
-Hardening must decide, from existing governance:
+## Ratified medical authority
 
-- whether this emits as subordinate ALT context under the existing ALP/GGT primary authority;
-- whether it is suppressed when the ALP/GGT axis already owns the primary WHY;
-- exact coexistence / suppression / precedence behaviour;
-- exact confidence downgrade when GGT is absent or normal;
-- whether runtime can represent low-confidence wording without a contract change.
+### 1. Haemoglobin low
 
-### 2. Muscle / exertional contribution
+Canonical activation key:
 
-Canonical rules:
+`signal_hemoglobin_low::inv_hgb_low_anemia`
 
-- ALT high is necessary;
-- raised CK supports muscle-source contribution;
-- recent strenuous exercise, trauma, myopathy or statin-related muscle context may support the frame where governed user context exists;
-- muscle contribution does not exclude concurrent liver disease;
-- raised bilirubin or GGT strongly contradicts isolated muscle-source wording;
-- raised ALP with GGT or bilirubin redirects toward liver/biliary context;
-- normal or borderline CK weakens significant exertional attribution;
-- very high ALT must not be explained away by a plausible muscle context;
-- absent CK/history must not produce confident muscle attribution.
+Implement:
 
-Hardening must specify:
+- `why_role: causal`
+- the causal scope is limited to anaemia / reduced oxygen-carrying capacity;
+- MCV and RDW are non-owning morphology/context markers only;
+- haemoglobin plus MCV/RDW must not independently establish an aetiology;
+- no independent “underproduction” claim may be emitted.
 
-- exact pre-emission corroboration threshold using lab-range status, not invented numeric cut-offs;
-- exact use of user context if a governed context contract exists;
-- fallback when CK or exercise history is absent;
-- coexistence versus suppression with canonical general ALT-high and R-value frames;
-- contradiction handling when bilirubin, GGT or ALP context is present;
-- whether the frame is advisory/subordinate rather than primary authority.
+Retain as canonical source:
 
-### 3. Bilirubin severity context
+- `pkg_s24_hgb_low_anemia`
 
-Canonical rules:
+Retire for WHY ownership only:
 
-- ALT high plus bilirubin above its lab range supports a higher-concern biochemical context;
-- this is severity / escalation, not cause attribution;
-- do not state or imply Hy’s Law in consumer output;
-- formal Hy’s-Law-like logic requires DILI context, bilirubin/aminotransferase thresholds, lack of substantial cholestasis and exclusion of alternatives;
-- ALP and GGT modify interpretation;
-- unconjugated bilirubin or haemolysis context may contradict hepatic-excretory framing;
-- albumin and INR add synthetic-function context;
-- missing bilirubin or missing bilirubin lab range must fail closed.
+- `pkg_kb52c_hgb_low_normocytic_underproduction_context`
 
-Hardening must specify:
+Preserve valid normocytic morphology content as subordinate context within the canonical haemoglobin frame.
 
-- whether this is represented as override/escalation on the active canonical ALT frame rather than a separate competing primary frame;
-- exact state escalation;
-- exact suppression of prohibited terminology;
-- interaction with mixed and ALP-predominant patterns;
-- behaviour when ALP is missing;
-- behaviour when bilirubin fractionation is unavailable;
-- whether package activation is needed or whether the package remains a governed non-primary severity layer.
+Retain the existing haemoglobin `<80 g/L` override only as an `at_risk` concern escalation.
 
-### 4. Metabolic / MASLD context
+Presentation safeguards:
 
-Canonical rules:
+- not a universal definition of severe anaemia;
+- not an automatic transfusion threshold;
+- not a treatment recommendation.
 
-- ALT high is necessary;
-- metabolic context requires corroboration from available governed markers or declared risk context;
-- supporting evidence may include HbA1c high, triglycerides high, HDL low, GGT high and governed user context;
-- ALT alone must not produce MASLD or fatty-liver claims;
-- imaging / fibrosis assessment is required for structural or fibrosis claims;
-- raised bilirubin or INR redirects away from routine metabolic framing;
-- high CK redirects toward muscle contribution;
-- very high ALT must not be explained away as metabolic;
-- absent metabolic context weakens or suppresses the frame.
+Do not alter or claim to resolve the separate haemoglobin primary oxygen-carrying PSI research requirement.
 
-Hardening must specify:
+### 2. Ferritin high
 
-- the minimum safe corroboration rule from the existing research and contracts;
-- whether one supporting marker is enough or whether a compound rule is required;
-- exact relationship to the canonical general ALT-high frame;
-- coexistence/suppression with R-value pattern frames;
-- contradiction handling for bilirubin, INR and CK;
-- wording limits preventing MASLD diagnosis, steatosis claims or fibrosis staging.
+Canonical activation key:
 
-## Promotion and activation decisions
+`signal_ferritin_high::inv_ferritin_high_overload`
 
-For each of the four packages, hardening must produce one explicit decision using existing repository vocabulary:
+Implement:
 
-- activate as primary authority;
-- activate as subordinate/contextual authority;
-- represent as override/escalation only;
-- keep withheld with an exact unresolved blocker.
+- `why_role: morphology_context`
+- flat and non-causal under every data state;
+- no conditional causal branch;
+- no haemochromatosis diagnosis;
+- no causal systemic iron-overload claim.
 
-Do not activate all four by default.
+Context enrichment only:
 
-Do not keep any package withheld merely because application logic has not been worked through. The purpose of hardening is to derive that logic from the research and existing contracts.
+- elevated CRP may support reactive/inflammatory-context wording;
+- elevated ALT may support hepatic/metabolic-context wording;
+- elevated serum iron is weak contextual corroboration only and is insufficient alone for overload attribution;
+- `transferrin_saturation` may provide additional non-causal context enrichment only.
 
-Any remaining deferral must identify:
+Transferrin saturation must not:
 
-- exact unresolved medical or contract ambiguity;
-- exact affected package/spec;
-- why the canonical research and current contracts are insufficient;
-- the minimum decision or implementation needed to unblock it.
+- upgrade the ferritin frame to causal;
+- independently establish systemic iron overload;
+- diagnose haemochromatosis;
+- create a new independently owning transferrin frame;
+- modify transferrin package or PSI authority.
+
+When corroboration is absent, fail closed to a bare elevated-ferritin context finding with no attribution.
+
+Retain the existing ferritin `>1000 µg/L` override only as an `at_risk` concern escalation.
+
+Presentation safeguards:
+
+- not a haemochromatosis diagnosis;
+- not a causal iron-overload claim;
+- concern escalation only.
+
+Retain as canonical source:
+
+- `pkg_s24_ferritin_high_overload`
+
+Retire for WHY ownership only:
+
+- `pkg_kb52c_ferritin_high_inflammatory_hyperferritinemia`
+- `pkg_kb52c_ferritin_high_iron_overload_context`
+
+Do not delete either package or revoke existing PSI activation.
+
+## Required implementation boundary
+
+Expected changes:
+
+- `knowledge_bus/governance/compiled_why_authority_register_v1.yaml`
+  - add two `COMPILED_ACTIVE` canonical rows;
+  - add three `LEGACY_RETIRED` competing-frame rows.
+- `backend/core/knowledge/why_authority_v1.py`
+  - add the two signal IDs to the existing compiled-WHY cohort using the established mechanism.
+- `knowledge_bus/compiled/hypotheses/`
+  - add one ferritin compiled hypothesis artefact;
+  - add one haemoglobin compiled hypothesis artefact.
+- `knowledge_bus/governance/root_cause_authority_register_v1.yaml`
+  - bookkeeping consistency only, if required by established precedent.
+- focused tests and committed evidence/governance documents.
+
+No change is expected in:
+
+- `backend/core/knowledge/root_cause_registry_v1.py`
+- `backend/core/analytics/root_cause_compiler_v1.py`
+
+A change to either file requires a STOP unless it is proven to be a pre-existing, governed mechanism reuse that was omitted from the hardening boundary. Do not introduce a new compiler mechanism.
+
+Do not change:
+
+- any `signal_library.yaml`;
+- any package activation or eligibility logic;
+- PSI opt-in state;
+- SSOT biomarker definitions;
+- derived-metric registries;
+- frontend files;
+- unrelated compiled-WHY authority.
+
+## Explicit exclusions
+
+Do not modify or compile authority for:
+
+- `signal_ferritin_low`
+- `signal_transferrin_high`
+- `signal_transferrin_low`
+- `signal_iron_deficiency_context`
+- `signal_iron_overload_context` as an independently owning frame
+- `signal_oxygen_transport_capacity`
+- `signal_urate_high`
+- `signal_hba1c_high`
+- any ALT signal
+- completed thyroid, lipid, creatinine, urea, ALP or GGT authority
+
+Do not introduce a new biomarker, threshold, ranking, diagnosis, alias or activation-key convention.
+
+## Governance records
+
+Create or update the ARCH-CONV-F governance records so they accurately record:
+
+- Gate 1 reference: `ARCH-CONV-F-GATE1-HMR-2026-08-01`
+- Gate 2 reference: `ARCH-CONV-F-GATE2-ANTHONY-2026-08-01`
+- exact canonical activation keys;
+- ratified WHY roles;
+- override presentation restrictions;
+- competing-frame retirement for WHY ownership only;
+- unchanged package and PSI status;
+- unchanged separate haemoglobin oxygen-carrying PSI research gap.
+
+Do not forge any additional human or medical approval.
 
 ## Required tests
 
-Hardening must define exact tests for at least:
+Prove all of the following:
 
-### ALP-predominant
-- ALT high + eligible R <= 2 + GGT high
-- ALT high + eligible R <= 2 + GGT normal
-- ALT high + eligible R <= 2 + GGT missing
-- non-hepatic ALP uncertainty
-- no duplication with ALP/GGT primary authority
-- bilirubin escalation interaction
+1. `signal_hemoglobin_low::inv_hgb_low_anemia` resolves through compiled authority.
+2. Haemoglobin emits only the governed anaemia/reduced oxygen-carrying-capacity finding.
+3. MCV and RDW remain subordinate context and cannot independently emit an aetiology.
+4. The normocytic-underproduction competitor resolves to `skip` for WHY ownership.
+5. `signal_ferritin_high::inv_ferritin_high_overload` resolves through compiled authority.
+6. Ferritin remains `morphology_context` under every tested input combination.
+7. Normal CRP never creates causal iron-overload authority.
+8. Elevated CRP produces reactive/inflammatory context only.
+9. Elevated ALT may enrich hepatic/metabolic context only.
+10. Serum iron alone never produces iron-overload attribution.
+11. Transferrin saturation may enrich context but never upgrade authority to causal.
+12. Missing corroborators fail closed to bare ferritin-elevation wording.
+13. Ferritin `>1000 µg/L` produces concern escalation only.
+14. Haemoglobin `<80 g/L` produces concern escalation only.
+15. No haemochromatosis diagnosis, transfusion recommendation or treatment recommendation is emitted.
+16. All three competing kb52c frames resolve to `skip` for WHY ownership.
+17. No signal-library, package activation or PSI behaviour changes.
+18. No raw Pass 3 or investigation-spec file is read at runtime.
+19. No unrelated compiled-WHY authority changes.
+20. Deterministic repeatability.
+21. The full compiled-WHY authority validator passes.
+22. Package validators for all five affected packages pass.
+23. Existing compiled-WHY regression suites for thyroid, lipid, renal and ALP/GGT remain passing.
+24. Full relevant test modules must be run; do not cite only selected nodes where a complete module is available.
 
-### Muscle/exertional
-- ALT high + CK high
-- ALT high + CK high + bilirubin high
-- ALT high + CK high + GGT high
-- ALT high + CK absent
-- ALT high + exercise context but CK absent
-- ALT high + normal/borderline CK
-- very high ALT with plausible muscle context
-- no suppression of concurrent liver concern
+Record exact before/after counts for:
 
-### Bilirubin severity
-- ALT high + bilirubin above lab range
-- bilirubin missing
-- bilirubin range missing
-- mixed pattern + bilirubin high
-- ALP-predominant pattern + bilirubin high
-- prohibited Hy’s Law wording absent
-- synthetic-function context where governed inputs exist
+- `COMPILED_ACTIVE` rows;
+- `LEGACY_RETIRED` rows;
+- loaded compiled frames;
+- affected signal families.
 
-### Metabolic
-- ALT high + corroborating metabolic markers
-- ALT high without metabolic corroboration
-- ALT high + bilirubin high
-- ALT high + INR high where available
-- ALT high + CK high
-- no MASLD diagnosis
-- no fibrosis/steatosis claim without governed evidence
+Expected register delta:
 
-### Cross-cutting
-- exact runtime activation identities
-- no duplicate primary ALT authority
-- no non-ALT activation delta
-- existing E2 hepatocellular/general and mixed behaviour preserved
-- R-value boundaries preserved
-- package validators pass
-- launch-critical, rejected-frame and test-only opt-in behaviour preserved
-- deterministic repeatability
-- raw Pass 3 not read at runtime
-- no frontend inference
+- `+2 COMPILED_ACTIVE`
+- `+3 LEGACY_RETIRED`
 
-## Medical governance
+Any different delta requires explanation and a STOP before finish.
 
-This work changes active medical interpretation authority.
+## Evidence requirements
 
-Require:
+Commit an implementation evidence report containing:
 
-- Head of Medical Research Gate 1 decision record;
-- Anthony Gate 2 ratification;
-- per-package disposition;
-- collision/precedence decision table;
-- activation-register references;
-- explicit wording and safety restrictions;
-- no merge before Gate 2 and independent Claude Code audit.
-
-## Evidence deliverables
-
-Publish an ARCH-CONV-E3 evidence report containing:
-
-- exact research rule → runtime mechanism mapping;
-- per-package authority disposition;
-- collision and coexistence table;
-- activation-register delta;
-- before/after runtime identities;
-- all test commands and outputs;
-- package validator results;
+- baseline proof;
+- exact authority and loader paths;
+- source-to-runtime rule mapping;
+- exact files changed;
+- before/after register counts;
 - source and output hashes;
-- medical decision references;
-- unresolved blockers, if any;
-- proof that no new medical rule was invented.
+- all test commands and complete outputs;
+- validator outputs;
+- deterministic repeatability proof;
+- proof that no runtime research-file read was introduced;
+- proof that no signal-library, package activation or PSI state changed;
+- proof that no new medical rule or threshold was invented;
+- confirmation that the separate haemoglobin oxygen-carrying PSI research gap remains open;
+- known unrelated baseline failures, with clean-main comparison where needed.
+
+Do not omit failing tests from evidence. Any new sprint-attributable failure blocks completion.
 
 ## Mandatory STOP conditions
 
-STOP and return for review if:
+STOP and return to Claude Code hardening if:
 
-- existing contracts cannot represent subordinate/contextual authority;
-- low-confidence source-localisation wording cannot be represented safely;
-- user-context corroboration is required but no governed context contract exists;
-- “very high ALT” requires a numeric threshold absent from canonical research;
-- bilirubin severity cannot be represented without creating a competing primary frame;
-- the current collision model cannot represent required precedence;
-- any implementation requires a new medical threshold or unsupported inference;
-- any non-ALT runtime state changes unexpectedly;
-- prohibited files become necessary outside hardened authority.
+- ferritin can emit a causal claim in any data state;
+- transferrin saturation requires new SSOT, derived-metric or package work;
+- implementation requires a new threshold, ranking, alias or activation-key convention;
+- haemoglobin PSI research becomes entangled with compiled-WHY work;
+- completed authority outside the two target signals changes;
+- `root_cause_compiler_v1.py` requires a new mechanism;
+- a package or PSI activation would need to be deleted or revoked;
+- the ratified medical disposition cannot be represented exactly;
+- the register delta differs from `+2 COMPILED_ACTIVE / +3 LEGACY_RETIRED`;
+- an authority source or loader differs from the paths declared above;
+- the baseline no longer exhibits the intended gap;
+- any new sprint-attributable test failure remains.
 
-Do not use retrospective ratification to bypass a missed STOP.
+Retrospective ratification is forbidden. STOP before implementing any deviation.
 
-## Completion boundary
+## Automation Bus lifecycle
 
-STOP after:
+This is an SOP-governed work package.
 
-- all four package dispositions are implemented or explicitly blocked with evidence;
-- all eligible contexts are activated through governed mechanisms;
-- collision, escalation and suppression behaviour is proven;
-- Gate 1 and Gate 2 records are complete;
-- kernel finish passes;
-- evidence is committed.
+After the prompt has been hardened by Claude Code and `latest_prompt_hardening.json` reports `HARDENED`, run:
+
+```powershell
+python backend/scripts/run_work_package.py start
+```
+
+Do not implement unless kernel start succeeds for `ARCH-CONV-F`.
+
+Use the TWO_PHASE_START_FINISH execution model.
+
+After implementation and committed evidence, perform the mandatory Post-Implementation Closure Protocol from Automation Bus SOP v1.3.1 before running finish.
+
+Then run:
+
+```powershell
+python backend/scripts/run_work_package.py finish
+```
+
+If finish leaves only the kernel-owned `automation_bus/latest_cursor_status.json` dirty and it records `COMPLETE` for `ARCH-CONV-F`, commit it exactly as:
+
+```text
+chore(bus): ARCH-CONV-F kernel COMPLETE status
+```
 
 Do not merge.
 
-Return for independent Claude Code audit, GPT review and Anthony final merge authority.
+STOP after successful finish and closure-clean verification for independent Claude Code audit, GPT review and final human merge authority.

@@ -3,7 +3,7 @@
 **Work ID:** `ARCH-CONV-F`  
 **Date:** 2026-08-01  
 **Hardening pack:** `docs/architecture/ARCH-CONV-F_hardening_pack.md`  
-**Implementation status:** **NONE** — gates recorded only; sprint is not implemented, complete, or merged
+**Implementation status:** **IMPLEMENTED on feature branch** — Gate 1 / Gate 2 recorded; compiled-WHY activation delivered under Automation Bus `ARCH-CONV-F`; pending independent audit and human merge.
 
 ## Gate references
 
@@ -21,7 +21,7 @@
 ## Register state
 
 ```text
-register_state: GATE_1_AND_GATE_2_RECORDED_AWAITING_PROMPT_HARDENING
+register_state: GATE_1_AND_GATE_2_RATIFIED_IMPLEMENTATION_COMPLETE
 gate1_status: APPROVED_WITH_NARROWING
 gate2_status: APPROVED
 ```
