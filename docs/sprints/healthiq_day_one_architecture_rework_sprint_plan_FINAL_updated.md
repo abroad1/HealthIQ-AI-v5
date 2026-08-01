@@ -1120,6 +1120,14 @@ These items must be resolved before the day-one architecture can be declared ful
 4. Sentinel pack: `sentinel/packs/day_one_architecture_guardrails_v1.json`.
 5. Day-one architecture rework programme guardrail stream is **complete**; future drift must fail validator/Sentinel before merge.
 
+### From ARCH-CONV-E3 — ALT Contextual Authority (programme-wide residuals)
+
+These items remain open after Gate 2 ratification of ARCH-CONV-E3 (`ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01`). They are architecture / medical-governance obligations, not sprint-local notes.
+
+1. **Governed runtime user-context contract** — No runtime-consumed context-modifier contract exists for declared exercise/trauma/myopathy/statin history or declared metabolic risk. `context_modifier_catalogue_draft_v1.yaml` remains `runtime_consumed: false`. Lab-only muscle/metabolic ALT paths are active; user-declared corroboration paths stay blocked until a governed runtime contract is commissioned.
+2. **Canonical numeric “very high ALT” threshold** — Pass 3 states that very high ALT must not be explained away by plausible muscle or metabolic context alone, but supplies no ULN-multiple or absolute cutoff. Head of Medical Research must supply an explicit numeric rule (or explicitly defer the safeguard) before that suppression behaviour can be implemented.
+3. **Activation-key-level collision suppress (ALT cholestatic vs ALP/GGT primary)** — Current collision contract can suppress by signal family or named-key-filter whole families; it cannot safely suppress only the subordinate ALT cholestatic activation key when ALP/GGT owns primary without collateral damage to hepatocellular/mixed. A governed contract extension is required if hard suppress (rather than role/medical subordination) is mandated.
+
 ## 6. Final note
 
 This is the fewest sensible sprint sequence currently recommended.

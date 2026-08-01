@@ -1072,6 +1072,120 @@ FINAL V5 / V6 DECISION REMAINS OPEN
 
 ---
 
+## ARCH-CONV-E — ALT Package Assets and Runtime Activation Boundary
+
+**Status:** CLOSED — merged and published to `origin/main`  
+**Date closed:** 2026-07-31  
+**Programme block(s):** Architecture convergence — ALT WHY / Knowledge Bus activation boundary  
+**Merge SHA:** `4bcdaef` — `merge(arch-conv-e): ALT package assets and runtime activation boundary`
+
+### Delivered / ticked off
+- Six governed ALT packages built/regenerated from canonical Pass 3 research (hepatocellular, mixed, cholestatic, muscle, bilirubin severity, metabolic/MASLD), with mandatory assets and lineage; none activated by placement alone.
+- Governed `package_runtime_activation_register_v1.yaml` introduced: non-launch-critical production reachability requires explicit `activation_key` membership (ADR-RT-002).
+- Pre-existing placement→reachability defect closed: `ELIGIBILITY_OUT_OF_COHORT` no longer treated as production-reachable.
+- Lifecycle exception for the in-scope runtime-boundary excursion retrospectively ratified (`ARCH-CONV-E_lifecycle_exception_and_closure.md`).
+- S24 ALT-high remained the sole loaded ALT frame at E close; six new packages withheld pending explicit promotion.
+
+### Carry-forwards
+- Runtime promotion/activation of Pass 3 ALT frames (R-value authority, contextual frames) deferred to follow-on sprints.
+- Medical Gate 1 / Gate 2 decisions for ALT pattern activation not completed in E (decision register remained pre-Gate).
+
+### Blockers / risks
+- Package placement must never again imply activation; register membership is mandatory for non-launch-critical frames.
+
+### Recommended next sprint
+- ARCH-CONV-E2 — ALT R-value runtime authority and selective frame activation.
+
+---
+
+## ARCH-CONV-E2 — ALT R-Value Runtime Authority
+
+**Status:** CLOSED — Gate 2 ratified; merged and published to `origin/main`  
+**Date closed:** 2026-08-01  
+**Programme block(s):** Architecture convergence — ALT biochemical-pattern / R-value authority  
+**Gate 1:** `ARCH-CONV-E2-GATE1-HMR-2026-08-01`  
+**Gate 2:** `ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01` (RATIFIED)  
+**Evidence:** `docs/architecture/ARCH-CONV-E2_implementation_evidence.md`
+
+### Delivered / ticked off
+- Governed `r_value_alt_alp` compute authority retained/enforced (lab ULNs only; fail-closed missing ULN/pairing).
+- Canonical Pass 3 hepatocellular package activated as S24 successor with ranked hypothesis selection (R≥5 predominant; R unavailable/ineligible → general ALT-high context).
+- Mixed R-value package activated for `2 < R < 5`; hepatocellular does not emit general fallback in that band.
+- S24 ALT-high superseded and withheld; former Batch 5 inferred keys remain unreachable.
+- `alt_biochemical_pattern_axis` collision governance updated; ALP/GGT `liver_injury_axis` preserved.
+- Cholestatic / muscle / bilirubin severity / metabolic packages remained withheld at E2 close (explicit).
+- Bilirubin lab-range escalation on canonical hepatocellular frame proven; consumer Hy’s Law wording prohibited.
+
+### Carry-forwards
+- Remaining four ALT contextual packages (cholestatic, muscle, bilirubin severity, metabolic) still required explicit disposition/activation work (completed later by ARCH-CONV-E3 for eligible paths).
+
+### Blockers / risks
+- None open from E2 medical design after Gate 2; withheld contextual frames were intentional, not defects.
+
+### Recommended next sprint
+- ARCH-CONV-E3 — remaining ALT contextual authority.
+
+---
+
+## ARCH-CONV-E3 — ALT Contextual Authority Completion
+
+**Status:** CLOSED — Gate 2 ratified; merged and published to `origin/main`  
+**Date closed:** 2026-08-01  
+**Programme block(s):** Architecture convergence — ALT contextual / subordinate authority  
+**Gate 1:** `ARCH-CONV-E3-GATE1-HMR-2026-08-01`  
+**Gate 2:** `ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01` (RATIFIED)  
+**Merge SHA:** `6ccbf3f` — `merge: ARCH-CONV-E3 ALT contextual authority (Gate 2 ratified)`  
+**Evidence:** `docs/architecture/ARCH-CONV-E3_implementation_evidence.md`
+
+### Delivered / ticked off
+- Cholestatic R≤2 activated as subordinate ALT biochemical-pattern context (owns R≤2 among ALT frames; does not displace ALP/GGT source primary).
+- Muscle activated lab-only (`creatine_kinase` above lab max pre-emission gate).
+- Metabolic/MASLD activated lab-only (compound any_of metabolic lab corroboration; no MASLD diagnosis from ALT alone).
+- Bilirubin severity represented as override/escalation only on active ALT frames; package remains withheld; Hy’s Law consumer diagnosis prohibited.
+- E2 hepatocellular/mixed behaviour and R-value boundaries preserved; non-ALT activation delta none.
+- KB-S24 ALT escalate harness pinned to canonical hepatocellular activation key (test-harness remediation).
+
+### Carry-forwards
+- No governed, runtime-consumed user-context contract for exercise/trauma/myopathy/statin or declared metabolic-risk corroboration (`context_modifier_catalogue_draft_v1.yaml` remains non-runtime).
+- No canonical Pass 3 numeric threshold for “very high ALT must not be explained away” (muscle/metabolic safeguard blocked).
+- No activation-key-level suppression between subordinate ALT cholestatic context and ALP/GGT primary under the current collision contract (family-level supporting membership unsafe; contract extension deferred).
+
+### Blockers / risks
+- User-context and very-high-ALT gaps are partial blockers only; lab-only muscle/metabolic paths are active and Gate-2-ratified.
+- Collision activation-key-level suppress remains a contract gap, not a silent medical override.
+
+### Recommended next sprint
+- Programme-wide: context-modifier runtime contract (if ALT user-context paths are required); Head of Medical Research numeric “very high ALT” decision; optional collision-contract extension for activation-key-level ALP/GGT vs ALT-cholestatic suppress — or continue Residual Package A/B/C estate work if prioritised over ALT residual gaps.
+
+---
+
+## Continuity audit — ARCH-CONV-E / E2 / E3 (2026-08-01)
+
+Documentation-only post-merge reconciliation. Sources: committed implementation evidence, medical decision registers, Gate 2 ratification docs, merge state on `main` (`6ccbf3f` / aligned `origin/main`). No runtime, package medical content, tests, or governance decisions changed by this audit.
+
+### Register entries added
+- `ARCH-CONV-E`
+- `ARCH-CONV-E2`
+- `ARCH-CONV-E3`
+
+### Register entries updated
+- None prior incomplete E/E2/E3 rows existed; Residual-Audit recommended-next left intact (estate Package A/B/C remains open and distinct from the ALT E-track).
+
+### Carry-forwards newly promoted to central day-one Active Carry-Forward Register
+- Governed runtime user-context contract gap (ALT muscle/metabolic declared-history paths).
+- Canonical numeric “very high ALT” threshold gap.
+- Activation-key-level ALT-cholestatic vs ALP/GGT primary suppress contract gap.
+
+### Stale items closed or removed
+- Sprint-local E2 carry-forward “four contextual packages remain withheld” superseded by E3 delivery (recorded as closed via E3 entry delivered list; not duplicated as an open E2 programme obligation).
+- No day-one Active Carry-Forward bullets were removed: none uniquely belonged to completed E/E2/E3 deliverables.
+
+### Exact files changed by this continuity audit
+- `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+- `docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_FINAL_updated.md`
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
