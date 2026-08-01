@@ -69,6 +69,8 @@ EXPECTED_KEYS = (
     "signal_ferritin_high::inv_ferritin_high_iron_overload_context",
     "signal_hemoglobin_low::inv_hgb_low_anemia",
     "signal_hgb_low::inv_hgb_low_normocytic_underproduction_context",
+    "signal_urate_high::inv_uric_acid_high_metabolic",
+    "signal_urate_high::inv_urate_high_gout_crystal_deposition_risk",
 )
 METABOLIC_KEY = "signal_homocysteine_high::inv_homocysteine_high_metabolic"
 FORBIDDEN_COMPILED = REPO_ROOT / "knowledge_bus/compiled/hypotheses/inv_homocysteine_high_metabolic.yaml"
@@ -253,7 +255,7 @@ def main() -> int:
         return _fail(f"unexpected hcy B-vitamin hypothesis ids: {sorted(ids)}")
 
     print("compiled_why_authority_gate: PASS")
-    print(f"frames={len(EXPECTED_KEYS)} compiled_active=23 rejected=1 legacy_retired=18")
+    print(f"frames={len(EXPECTED_KEYS)} compiled_active=24 rejected=1 legacy_retired=19")
     return 0
 
 

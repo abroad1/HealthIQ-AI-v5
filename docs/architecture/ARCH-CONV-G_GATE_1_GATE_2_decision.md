@@ -5,7 +5,7 @@
 **Date ratified:** 2026-08-01  
 **Hardening pack:** `docs/architecture/ARCH-CONV-G_hardening_pack.md`  
 **Medical decision register:** `docs/architecture/ARCH-CONV-G_medical_decision_register.yaml`  
-**Implementation status:** **AUTHORISED** — Gate 1 / Gate 2 recorded; resume implementation on the active Automation Bus work package
+**Implementation status:** **IMPLEMENTED on feature branch** — Gate 1 / Gate 2 recorded; compiled-WHY activation delivered under Automation Bus `ARCH-CONV-G`; pending independent audit and human merge.
 
 ## Gate references
 

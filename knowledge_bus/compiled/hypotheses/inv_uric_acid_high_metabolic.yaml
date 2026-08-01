@@ -1,0 +1,49 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_uric_acid_high_metabolic_v1
+hypothesis_set_id: signal_urate_high_non_causal_context_set_v1
+signal_id: signal_urate_high
+activation_key: signal_urate_high::inv_uric_acid_high_metabolic
+source_spec_ids:
+- inv_uric_acid_high_metabolic
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_uric_acid_high_metabolic.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_g_urate_high.yaml
+hypotheses:
+- hypothesis_id: hyp_urate_elevated_non_causal_context
+  rank: 1
+  title: Elevated urate context
+  physiological_claim: Elevated urate provides a non-causal metabolic or clearance-related
+    context finding. It may reflect purine metabolism load, reduced excretion, or
+    broader metabolic influences without establishing gout, crystal deposition, CKD,
+    renal failure, a specific metabolic disease, or treatment need.
+  evidence_strength: contextual
+  missing_data_policy: Interpret as elevated-urate context only. Missing creatinine
+    or triglycerides must not invent metabolic-disease attribution. Missing eGFR
+    prevents renal-risk attribution and override escalation but does not block the
+    basic elevated-urate context finding.
+  evidence_for:
+  - Urate is above the laboratory range.
+  - Elevated creatinine may support reduced-excretion context wording when present.
+  - Elevated triglycerides may support broader metabolic-cluster context wording when present.
+  - Low eGFR may support concern escalation only when the retained override fires; it
+    does not establish CKD from one result.
+  - Subordinate gout or crystal-deposition risk wording, when mentioned, is non-diagnostic
+    context only and does not independently own WHY.
+  evidence_against:
+  - Isolated elevated urate does not establish gout or urate crystal deposition disease.
+  - One low eGFR result must not be treated as CKD or renal-failure confirmation.
+  - Triglyceride concordance must not be treated as a specific metabolic-disease diagnosis.
+  contradiction_markers: []
+  caveats:
+  - Do not diagnose gout or urate crystal deposition from this frame.
+  - Do not diagnose CKD, renal failure, or kidney stones from urate with or without one eGFR.
+  - Do not diagnose a specific metabolic disease or claim treatment need from this frame.
+  - Do not emit creatinine-, urea-, or eGFR-owned WHY authority from this frame.
+  - Do not add UACR or chronicity inference.
+  - Do not recommend treatment, medication change, lifestyle prescription, or specialist referral.
+  confirmatory_tests: []
+  summary_template: Urate is above range and provides non-causal metabolic or clearance-related context only. It does not establish gout, crystal deposition, CKD, or treatment need.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-G Gate 1 / Gate 2 ratified flat CONTEXT_ONLY_NON_CAUSAL morphology_context lane.

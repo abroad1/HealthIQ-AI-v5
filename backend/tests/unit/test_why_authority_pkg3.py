@@ -27,9 +27,9 @@ BVIT = (
 )
 
 
-def test_register_has_twenty_three_compiled_frames_and_rejects_metabolic():
+def test_register_has_twenty_four_compiled_frames_and_rejects_metabolic():
     assert authority_state_for(METABOLIC) == STATE_REJECTED
-    assert len(list_compiled_active_activation_keys()) == 23
+    assert len(list_compiled_active_activation_keys()) == 24
     assert not (
         _REPO / "knowledge_bus/compiled/hypotheses/inv_homocysteine_high_metabolic.yaml"
     ).is_file()
