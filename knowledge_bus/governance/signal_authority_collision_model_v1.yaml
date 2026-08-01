@@ -136,9 +136,9 @@ authority_groups:
   notes: Canonical ALP is the sole primary candidate and becomes causal only with
     high-GGT concordance. Canonical GGT remains context-only and is consolidated
     under ALP when both fire. Deferred Pass 3 activation keys are non-authoritative.
-    ALT hepatocellular and mixed R-value frames (ARCH-CONV-E2) may coexist with this
-    cholestatic axis as a distinct biochemical-pattern layer. ALT cholestatic/ALP-predominant
-    R-value context remains withheld so it cannot duplicate this axis. AST, bilirubin/
+    Under ARCH-CONV-E2 Gate 1, S24 ALT-high remains the foundational active ALT
+    authority; R-value ALT frames are withheld pending a subordinate refinement path
+    and must not duplicate or replace this cholestatic axis. AST, bilirubin/
     hyperbilirubinemia, and ALP-low remain outside this policy.
 - authority_group_id: alt_biochemical_pattern_axis
   biological_axis: hepatocellular_injury_axis
@@ -147,13 +147,13 @@ authority_groups:
   primary_signal_family: signal_alt_high
   supporting_signal_families: []
   related_active_frames:
-    r_value_selected_by_package_gates:
+    foundational_active_alt_high:
+    - signal_alt_high::inv_alt_high_hepatocellular_injury
+    withheld_r_value_pending_subordinate_refinement_path:
     - signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
     - signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
     withheld_duplicate_of_cholestatic_source_axis:
     - signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
-    superseded_legacy_s24:
-    - signal_alt_high::inv_alt_high_hepatocellular_injury
     withheld_pending_distinguishing_gates:
     - signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
     - signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context
@@ -164,26 +164,34 @@ authority_groups:
     consolidate_into_shared_interpretation: false
     allow_parallel_if_distinct_risk_layer: true
   authority_decision:
+    s24_supersession_by_r_value_frames: NOT_APPROVED
+    s24_remains_foundational_active_alt_high_authority: true
+    r_value_role: conditional_biochemical_pattern_refinement_only
+    r_value_must_not_suppress_alt_high_when_uln_or_alp_unavailable: true
     r_value_formula: (ALT / ALT_lab_ULN) / (ALP / ALP_lab_ULN)
     hepatocellular_when_r_ge_5: true
     mixed_when_r_gt_2_and_lt_5: true
     cholestatic_when_r_le_2_withheld_from_runtime: true
-    pattern_selection_mechanism: package_mandatory_pre_emission_gates
+    pattern_selection_mechanism: package_mandatory_pre_emission_gates_retained_for_future_path
     contemporaneous_pairing: same_panel_snapshot_contract
     fail_closed_without_lab_uln: true
     does_not_override_cholestatic_source_axis: true
     no_consumer_hys_law_diagnosis: true
-  runtime_action: runtime_enforced_via_activation_register_and_package_gates
+    r_value_compute_authority_retained: true
+    r_value_runtime_activation: withheld_pending_gate2_and_subordinate_path
+  runtime_action: runtime_enforced_via_activation_register_s24_foundational
   runtime_policy_id: alt_r_value_biochemical_pattern_v1
   requires_runtime_support: true
+  gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
+  gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
   notes: >-
-    ARCH-CONV-E2. Mutually exclusive R-value pattern selection is enforced by
-    package mandatory_pre_emission_gates on r_value_alt_alp bands (Pass 3 thresholds),
-    not by family-level supporting suppression. The ALT cholestatic R-value frame is
-    withheld so it cannot duplicate liver_injury_axis / cholestatic_source_axis.
-    Hepatocellular and mixed frames may coexist with ALP/GGT as a distinct pattern layer.
-    Empty supporting_signal_families is intentional — this group is enforceable for
-    model validation and documents runtime policy; emission exclusivity is gate-based.
+    ARCH-CONV-E2 Gate 1 (HMR): S24 remains the foundational active ALT-high authority.
+    R-value classifications are approved only as eligible biochemical pattern refinements
+    and must not suppress ALT-high signalling when paired ALP or laboratory-specific ULNs
+    are unavailable. r_value_alt_alp compute, ULN validity, fail-closed behaviour, and
+    package band gates are retained for a later governed subordinate/refinement authority
+    path. Both R-value frames are withheld from production activation until that path and
+    Gate 2 ratification. Empty supporting_signal_families remains intentional.
 - authority_group_id: iron_inflammation_axis
   biological_axis: iron_and_inflammatory_context
   status: placeholder_not_adjudicated

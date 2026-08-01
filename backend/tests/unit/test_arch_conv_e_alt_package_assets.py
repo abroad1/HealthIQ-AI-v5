@@ -109,8 +109,8 @@ def test_arch_conv_e_lineage_and_signal_content_match_assigned_specs() -> None:
 
 def test_arch_conv_e_r_value_packages_carry_explicit_promotion_decisions() -> None:
     decisions = {
-        "inv_alt_high_r_value_hepatocellular_biochemical_pattern": "PROMOTE_AND_ACTIVATE",
-        "inv_alt_high_r_value_mixed_biochemical_pattern": "PROMOTE_AND_ACTIVATE",
+        "inv_alt_high_r_value_hepatocellular_biochemical_pattern": "PROMOTE_BUT_WITHHOLD",
+        "inv_alt_high_r_value_mixed_biochemical_pattern": "PROMOTE_BUT_WITHHOLD",
         "inv_alt_high_r_value_cholestatic_alp_predominant_context": "PROMOTE_BUT_WITHHOLD",
         "inv_alt_high_muscle_source_or_exertional_contribution": "DEFERRED_WITH_EXPLICIT_REASON",
         "inv_alt_high_bilirubin_hys_law_severity_context": "DEFERRED_WITH_EXPLICIT_REASON",
@@ -184,3 +184,13 @@ def test_arch_conv_e_liver_axis_excludes_alt_family_from_supporting() -> None:
     assert alt_axis["status"] == "adjudicated_runtime_enforced"
     assert alt_axis["primary_signal_family"] == "signal_alt_high"
     assert alt_axis["supporting_signal_families"] == []
+    assert alt_axis["gate1_reference"] == "ARCH-CONV-E2-GATE1-HMR-2026-07-31"
+    assert alt_axis["gate2_reference"] == "ARCH-CONV-E2-GATE2-ANTHONY-PENDING"
+    assert (
+        alt_axis["authority_decision"]["s24_supersession_by_r_value_frames"]
+        == "NOT_APPROVED"
+    )
+    assert (
+        "signal_alt_high::inv_alt_high_hepatocellular_injury"
+        in alt_axis["related_active_frames"]["foundational_active_alt_high"]
+    )

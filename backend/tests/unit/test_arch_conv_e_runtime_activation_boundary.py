@@ -1,9 +1,9 @@
 """
 ARCH-CONV-E / ARCH-CONV-E2 — governed runtime activation boundary.
 
-Promotion is not activation. ARCH-CONV-E2 activates only the two R-value ALT pattern
-frames with Pass 3 band gates; the other four ALT packages remain withheld with
-explicit reasons. Former Batch 5 inferred keys must not return.
+Promotion is not activation. ARCH-CONV-E2 Gate 1 restores S24 as the foundational
+active ALT-high frame and withholds all six ARCH-CONV-E ALT packages, including the
+two R-value pattern frames, pending a subordinate/refinement authority path.
 """
 
 from __future__ import annotations
@@ -44,31 +44,21 @@ ARCH_CONV_E_PACKAGES = (
     "pkg_kb52c_alt_high_muscle_source_or_exertional_pattern",
 )
 
-ACTIVATED_ALT_KEYS = (
-    "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern",
-    "signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern",
-)
-
-WITHHELD_ALT_KEYS = (
+ARCH_CONV_E_ACTIVATION_KEYS = (
     "signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context",
     "signal_alt_high::inv_alt_high_metabolic_masld_context",
     "signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution",
     "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context",
+    "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern",
+    "signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern",
 )
 
-ACTIVATED_ALT_PACKAGES = (
-    "pkg_kb52c_alt_high_hepatocellular_injury_pattern",
-    "pkg_kb52c_alt_high_mixed_biochemical_pattern",
-)
+FOUNDATIONAL_S24_ALT_KEY = "signal_alt_high::inv_alt_high_hepatocellular_injury"
 
-WITHHELD_ALT_PACKAGES = (
-    "pkg_kb52c_alt_high_bilirubin_severity_context",
-    "pkg_kb52c_alt_high_cholestatic_alp_predominant_context",
-    "pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern",
-    "pkg_kb52c_alt_high_muscle_source_or_exertional_pattern",
+R_VALUE_ALT_KEYS = (
+    "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern",
+    "signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern",
 )
-
-SUPERSEDED_S24_ALT_KEY = "signal_alt_high::inv_alt_high_hepatocellular_injury"
 
 FORMER_BATCH5_KEYS = (
     "signal_alt_high::inv_alt_high_hepatocellular_injury_pattern",
@@ -121,39 +111,35 @@ def test_six_alt_packages_still_validate(package_id: str):
     assert result.returncode == 0, f"{package_id} failed validation:\n{result.stdout}\n{result.stderr}"
 
 
-def test_withheld_alt_packages_absent_from_production_registry():
+def test_six_alt_packages_absent_from_production_registry():
     registry = SignalRegistry()
     loaded_packages = {row["package_id"] for row in registry.get_all_signals()}
     loaded_keys = {row["activation_key"] for row in registry.get_all_signals()}
-    for package_id in WITHHELD_ALT_PACKAGES:
+    for package_id in ARCH_CONV_E_PACKAGES:
         assert package_id not in loaded_packages
-    for activation_key in WITHHELD_ALT_KEYS:
+    for activation_key in ARCH_CONV_E_ACTIVATION_KEYS:
         assert activation_key not in loaded_keys
 
 
-def test_activated_r_value_alt_frames_load():
+def test_foundational_s24_alt_frame_still_loads():
     registry = SignalRegistry()
-    loaded_keys = {row["activation_key"] for row in registry.get_all_signals()}
-    for activation_key in ACTIVATED_ALT_KEYS:
-        assert activation_key in loaded_keys
     alt = [row for row in registry.get_all_signals() if row["signal_id"] == "signal_alt_high"]
-    assert sorted(row["activation_key"] for row in alt) == sorted(ACTIVATED_ALT_KEYS)
-    assert SUPERSEDED_S24_ALT_KEY not in loaded_keys
+    assert [row["activation_key"] for row in alt] == [FOUNDATIONAL_S24_ALT_KEY]
+    assert alt[0]["package_id"] == "pkg_s24_alt_high_hepatocellular_injury"
+    for key in R_VALUE_ALT_KEYS:
+        assert key not in {row["activation_key"] for row in registry.get_all_signals()}
 
 
 def test_withheld_packages_and_frames_are_auditable():
     registry = SignalRegistry()
     withheld_packages = {row["package_id"] for row in registry.excluded_unactivated_packages}
-    assert set(WITHHELD_ALT_PACKAGES).issubset(withheld_packages)
-    assert not (set(ACTIVATED_ALT_PACKAGES) & withheld_packages)
+    assert set(ARCH_CONV_E_PACKAGES).issubset(withheld_packages)
 
     withheld_frames = {
         row["activation_key"]: row["runtime_state"] for row in registry.excluded_unactivated_frames
     }
-    for activation_key in WITHHELD_ALT_KEYS:
+    for activation_key in ARCH_CONV_E_ACTIVATION_KEYS:
         assert withheld_frames[activation_key] == RUNTIME_STATE_NOT_ACTIVATED
-    for activation_key in ACTIVATED_ALT_KEYS:
-        assert activation_key not in withheld_frames
 
     assert len(registry.excluded_launch_critical_packages) == 14
     assert not (
@@ -189,7 +175,7 @@ def test_production_reachable_packages_still_load():
     activated_non_kb47 = {
         row["package_id"] for row in rows if not str(row["package_id"]).startswith("pkg_kb47_")
     }
-    assert len(activated_non_kb47) == 168
+    assert len(activated_non_kb47) == 167
     assert all(is_package_runtime_activated(pid) for pid in activated_non_kb47)
     assert all(row["runtime_eligibility"] == ELIGIBILITY_PRODUCTION_REACHABLE for row in rows)
 
@@ -222,27 +208,20 @@ def test_launch_critical_test_opt_in_still_loads_blocked_fixtures():
 def test_launch_critical_opt_in_does_not_activate_withheld_packages():
     opted_in = SignalRegistry(allow_launch_critical_blocked=True)
     loaded_packages = {row["package_id"] for row in opted_in.get_all_signals()}
-    assert not (loaded_packages & set(WITHHELD_ALT_PACKAGES))
+    assert not (loaded_packages & set(ARCH_CONV_E_PACKAGES))
 
 
-def test_withheld_packages_remain_out_of_cohort():
-    for package_id in WITHHELD_ALT_PACKAGES:
+def test_out_of_cohort_is_not_production_reachable():
+    for package_id in ARCH_CONV_E_PACKAGES:
         manifest = load_package_manifest(PACKAGES_ROOT / package_id)
         eligibility, _status = classify_package_runtime_eligibility(
             package_id=package_id, manifest=manifest
         )
         assert eligibility == ELIGIBILITY_OUT_OF_COHORT
         assert not is_production_reachable(package_id=package_id, manifest=manifest)
-
-
-def test_activated_alt_packages_are_production_reachable():
-    for package_id in ACTIVATED_ALT_PACKAGES:
-        manifest = load_package_manifest(PACKAGES_ROOT / package_id)
-        eligibility, _status = classify_package_runtime_eligibility(
-            package_id=package_id, manifest=manifest
+        assert not is_production_reachable(
+            package_id=package_id, manifest=manifest, allow_launch_critical_blocked=True
         )
-        assert eligibility == ELIGIBILITY_PRODUCTION_REACHABLE
-        assert is_production_reachable(package_id=package_id, manifest=manifest)
 
 
 def test_placement_under_packages_root_does_not_imply_activation():
@@ -257,18 +236,19 @@ def test_placement_under_packages_root_does_not_imply_activation():
     )
 
 
-def test_register_withholds_four_and_activates_two_r_value_frames():
+def test_register_withholds_the_six_and_keeps_s24_active():
     register = load_activation_register()
     activated = activated_activation_keys()
-    assert set(ACTIVATED_ALT_KEYS).issubset(activated)
-    assert not (set(WITHHELD_ALT_KEYS) & activated)
-    assert SUPERSEDED_S24_ALT_KEY not in activated
-    assert register["activated_frame_count"] == len(activated) == 174
+    assert not (set(ARCH_CONV_E_ACTIVATION_KEYS) & activated)
+    assert FOUNDATIONAL_S24_ALT_KEY in activated
+    assert register["activated_frame_count"] == len(activated) == 173
 
     withheld = {
         str(row["activation_key"]) for row in register["withheld_frames_arch_conv_e"]
     }
-    assert withheld == set(WITHHELD_ALT_KEYS)
+    assert withheld == set(ARCH_CONV_E_ACTIVATION_KEYS)
+    assert register["gate1_reference"] == "ARCH-CONV-E2-GATE1-HMR-2026-07-31"
+    assert register["gate2_reference"] == "ARCH-CONV-E2-GATE2-ANTHONY-PENDING"
 
 
 def test_missing_register_fails_closed(monkeypatch, tmp_path):

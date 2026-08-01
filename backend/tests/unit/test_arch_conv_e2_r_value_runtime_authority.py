@@ -32,6 +32,7 @@ MIXED_KEY = "signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern"
 CHOLESTATIC_KEY = (
     "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context"
 )
+S24_ALT_KEY = "signal_alt_high::inv_alt_high_hepatocellular_injury"
 ALP_KEY = "signal_alp_high::inv_alp_high_bone_biliary"
 GGT_KEY = "signal_ggt_high::inv_ggt_high_hepatic"
 
@@ -186,14 +187,14 @@ class TestCollisionAndFrameSelection:
         assert "liver_injury_axis" in group_ids
         assert "alt_biochemical_pattern_axis" in group_ids
 
-    def test_alp_ggt_suppression_preserved_with_alt_hepatocellular_present(self):
+    def test_alp_ggt_suppression_preserved_with_s24_alt_present(self):
         results = [
             _signal_row(ALP_KEY, "signal_alp_high", "pkg_s24_alp_high_bone_biliary"),
             _signal_row(GGT_KEY, "signal_ggt_high", "pkg_s24_ggt_high_hepatic"),
             _signal_row(
-                HEPATOCELLULAR_KEY,
+                S24_ALT_KEY,
                 "signal_alt_high",
-                "pkg_kb52c_alt_high_hepatocellular_injury_pattern",
+                "pkg_s24_alt_high_hepatocellular_injury",
             ),
         ]
         filtered = apply_signal_authority_collision_policy(
@@ -205,32 +206,32 @@ class TestCollisionAndFrameSelection:
         )
         keys = {row.activation_key for row in filtered}
         assert ALP_KEY in keys
-        assert HEPATOCELLULAR_KEY in keys
+        assert S24_ALT_KEY in keys
         assert GGT_KEY not in keys
 
-    def test_evaluator_selects_hepatocellular_band_only(self):
+    def test_s24_alt_loads_and_r_value_frames_do_not(self):
+        registry = SignalRegistry()
+        loaded = {row["activation_key"] for row in registry.get_all_signals()}
+        assert S24_ALT_KEY in loaded
+        assert HEPATOCELLULAR_KEY not in loaded
+        assert MIXED_KEY not in loaded
+        assert CHOLESTATIC_KEY not in loaded
+        alt = [row for row in registry.get_all_signals() if row["signal_id"] == "signal_alt_high"]
+        assert [row["activation_key"] for row in alt] == [S24_ALT_KEY]
+
+    def test_evaluator_emits_s24_alt_even_when_r_value_present(self):
+        """Foundational ALT-high must not be suppressed when R-value is available."""
         evaluator = SignalEvaluator(registry=SignalRegistry())
-        # R = (400/40)/(120/120) = 10
         results = evaluator.evaluate_all(
             {"alt": 400.0, "alp": 120.0},
             {"r_value_alt_alp": 10.0},
             lab_ranges=_lab_ranges(),
         )
         alt = [r for r in results if r.signal_id == "signal_alt_high"]
-        assert [r.activation_key for r in alt] == [HEPATOCELLULAR_KEY]
+        assert [r.activation_key for r in alt] == [S24_ALT_KEY]
 
-    def test_evaluator_selects_mixed_band_only(self):
-        evaluator = SignalEvaluator(registry=SignalRegistry())
-        # R = (120/40)/(120/120) = 3
-        results = evaluator.evaluate_all(
-            {"alt": 120.0, "alp": 120.0},
-            {"r_value_alt_alp": 3.0},
-            lab_ranges=_lab_ranges(),
-        )
-        alt = [r for r in results if r.signal_id == "signal_alt_high"]
-        assert [r.activation_key for r in alt] == [MIXED_KEY]
-
-    def test_missing_r_value_emits_no_alt_pattern_frame(self):
+    def test_evaluator_emits_s24_alt_when_r_value_absent(self):
+        """Missing ULN/R-value must not suppress foundational ALT-high signalling."""
         evaluator = SignalEvaluator(registry=SignalRegistry())
         results = evaluator.evaluate_all(
             {"alt": 120.0, "alp": 120.0},
@@ -238,7 +239,7 @@ class TestCollisionAndFrameSelection:
             lab_ranges=_lab_ranges(),
         )
         alt = [r for r in results if r.signal_id == "signal_alt_high"]
-        assert alt == []
+        assert [r.activation_key for r in alt] == [S24_ALT_KEY]
 
     def test_cholestatic_r_value_frame_remains_withheld(self):
         registry = SignalRegistry()
@@ -248,8 +249,8 @@ class TestCollisionAndFrameSelection:
     def test_promotion_decisions_are_recorded(self):
         packages = ROOT / "knowledge_bus" / "packages"
         expected = {
-            "pkg_kb52c_alt_high_hepatocellular_injury_pattern": "PROMOTE_AND_ACTIVATE",
-            "pkg_kb52c_alt_high_mixed_biochemical_pattern": "PROMOTE_AND_ACTIVATE",
+            "pkg_kb52c_alt_high_hepatocellular_injury_pattern": "PROMOTE_BUT_WITHHOLD",
+            "pkg_kb52c_alt_high_mixed_biochemical_pattern": "PROMOTE_BUT_WITHHOLD",
             "pkg_kb52c_alt_high_cholestatic_alp_predominant_context": "PROMOTE_BUT_WITHHOLD",
             "pkg_kb52c_alt_high_muscle_source_or_exertional_pattern": "DEFERRED_WITH_EXPLICIT_REASON",
             "pkg_kb52c_alt_high_bilirubin_severity_context": "DEFERRED_WITH_EXPLICIT_REASON",
@@ -260,3 +261,17 @@ class TestCollisionAndFrameSelection:
                 (packages / package_id / "package_manifest.yaml").read_text(encoding="utf-8")
             )
             assert payload["promotion_decision"] == decision
+
+    def test_gate1_medical_decision_register_records_s24_foundational(self):
+        payload = yaml.safe_load(
+            (ROOT / "docs" / "architecture" / "ARCH-CONV-E2_medical_decision_register.yaml")
+            .read_text(encoding="utf-8")
+        )
+        assert payload["head_of_medical_research_gate1_reference"] == (
+            "ARCH-CONV-E2-GATE1-HMR-2026-07-31"
+        )
+        assert payload["anthony_gate2_reference"] == "ARCH-CONV-E2-GATE2-ANTHONY-PENDING"
+        assert payload["gate1_decisions"]["s24_supersession_by_r_value_frames"] == (
+            "NOT_APPROVED"
+        )
+        assert "foundational active ALT-high authority" in payload["gate1_decision_statement"]

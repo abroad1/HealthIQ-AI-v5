@@ -3,97 +3,78 @@
 **work_id:** `ARCH-CONV-E2`  
 **branch:** `feature/arch-conv-e2-alt-rvalue-runtime-authority`  
 **risk_level:** HIGH / MIXED  
-**result:** implementation complete — awaiting independent Claude Code audit, GPT architectural review, and Anthony merge authority
+**result:** Gate 1 medical-governance remediation complete — awaiting Anthony Gate 2 ratification and Claude Code re-audit  
+**Do not merge.**
 
-## Verified starting state
+## Gate 1 decision (recorded)
 
-All ten prompt starting-point facts were true at kernel start (`main` / `origin/main` @ `4bcdaef`):
+**Reference:** `ARCH-CONV-E2-GATE1-HMR-2026-07-31`  
+**Gate 2 placeholder:** `ARCH-CONV-E2-GATE2-ANTHONY-PENDING`  
+**Register:** `docs/architecture/ARCH-CONV-E2_medical_decision_register.yaml`
 
-- six `pkg_kb52c_alt_high_*` packages present with mandatory assets + PSI, no `intelligence_model.yaml`
-- all six withheld from runtime activation before this package
-- activation register gated placement vs activation
-- `pkg_s24_alt_high_hepatocellular_injury` was the sole active `signal_alt_high` frame
-- former Batch 5 keys superseded / not reactivated
-- `r_value_alt_alp` absent from `ratio_registry.py`
-- ALP/GGT `liver_injury_axis` unchanged as cholestatic authority
+> S24 remains the foundational active ALT-high authority. R-value classifications are approved only as eligible biochemical pattern refinements and must not suppress ALT-high signalling when paired ALP or laboratory-specific ULNs are unavailable.
+
+| Decision | Gate 1 outcome |
+|---|---|
+| S24 supersession by R-value frames | **NOT APPROVED** |
+| `r_value_alt_alp` compute / ULN / fail-closed | **APPROVED — retain** |
+| Collision-model implementation | **APPROVED — retain / update for Gate 1** |
+| R-value role | Conditional biochemical pattern refinement, not replacement |
+| S24 runtime | Must remain active |
+| R-value hepatocellular + mixed | Withhold pending subordinate/refinement path |
+| Other four ARCH-CONV-E ALT packages | Remain withheld |
+| Non-ALT activation | No change |
+
+## Verified starting state (pre-Gate-1 remediation)
+
+Implementation commit `1bee430` had activated the two R-value frames and superseded S24 without Gate 1/2 medical-governance approval. Claude Code audit identified that defect. This remediation restores the approved activation state while retaining engineering.
 
 Canonical Pass 3 SHA-256 (unchanged):
 
 `7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267`
 
-## Contemporaneous / same-sample contract (Phase 0)
+## Retained engineering (not reverted)
 
-No repository `sample_id` / multi-draw pairing convention exists.  
-`BiomarkerPanel` is a single-snapshot `Dict[str, BiomarkerValue]`.  
-
-**Governed rule adopted:** markers present on the same analysis panel are contemporaneous by the single-panel snapshot contract. No fabricated multi-timestamp pairing mechanism was added. Provenance records `pairing: same_panel_snapshot`.
-
-## R-value metric
-
-| Item | Value |
+| Item | Status |
 |---|---|
-| ID | `r_value_alt_alp` |
-| Formula | `(ALT / ALT lab ULN) / (ALP / ALP lab ULN)` |
-| ULN source | `reference_range.max` with `source == "lab"` only |
-| Registry version | `1.2.0` |
-| Boundaries | `R >= 5` hepatocellular; `2 < R < 5` mixed; `R <= 2` cholestatic |
+| `r_value_alt_alp` in `ratio_registry` (v1.2.0) | retained |
+| Lab-ULN-only eligibility + fail-closed omissions | retained |
+| Orchestrator `reference_ranges` threading | retained |
+| Package R-value band `mandatory_pre_emission_gates` | retained for later subordinate path |
+| `alt_biochemical_pattern_axis` collision group | retained; Gate 1 refs + S24 foundational policy |
+| ALP/GGT `liver_injury_axis` enforcement | preserved |
 
-Fail-closed omissions (exposed via `derived_result.omitted` / `derived_ratios_meta.omitted`):
+## Contemporaneous / same-sample contract
 
-- missing ALT/ALP result
-- missing / non-lab / non-positive / invalid ULN
-- missing `reference_ranges` argument
-- divide-by-zero / invalid ratio
+Same-panel snapshot contract unchanged: markers on one analysis panel are contemporaneous; provenance records `pairing: same_panel_snapshot`.
 
-Orchestrator now passes `input_reference_ranges` into `compute()`. Policy/SSOT bounds are never used as ULN substitutes.
+## Activation state after Gate 1 remediation
 
-## Collision-authority decision table
+| Frame | Runtime |
+|---|---|
+| `signal_alt_high::inv_alt_high_hepatocellular_injury` (S24) | **activated** (foundational) |
+| R-value hepatocellular | withheld (`PROMOTE_BUT_WITHHOLD`) |
+| R-value mixed | withheld (`PROMOTE_BUT_WITHHOLD`) |
+| R-value cholestatic | withheld |
+| Muscle / bilirubin / MASLD | withheld |
+| Former Batch 5 inferred keys | unreachable |
+
+| Metric | Value |
+|---|---:|
+| `activated_frame_count` | 173 |
+| Active `signal_alt_high` keys | S24 only |
+| Withheld ARCH-CONV-E ALT keys | 6 |
+
+## Collision-authority decision table (Gate 1)
 
 | Situation | Decision |
 |---|---|
 | ALP primary + GGT supporting | Unchanged `liver_injury_axis` suppression |
-| ALT hepatocellular (`R >= 5`) + ALP/GGT | Coexist as distinct biochemical-pattern layer |
-| ALT mixed (`2 < R < 5`) + ALP/GGT | Coexist as distinct layer |
-| ALT cholestatic R-value (`R <= 2`) | **PROMOTE_BUT_WITHHOLD** — would duplicate cholestatic_source_axis |
-| Intra-ALT R-band selection | Package `mandatory_pre_emission_gates` on `r_value_alt_alp` (existing evaluator contract; Pass 3 thresholds verbatim) |
-| Missing R-value eligibility | No `signal_alt_high` pattern frame emits (fail closed) |
+| S24 ALT-high + ALP/GGT | Coexist; S24 foundational |
+| R-value frames | Not production-loaded; eligible only after subordinate path + Gate 2 |
+| Missing ALP / lab ULN | R-value fails closed; **S24 ALT-high still emits** |
 
-New group: `alt_biochemical_pattern_axis` (`hepatocellular_injury_axis`) in `signal_authority_collision_model_v1.yaml`.  
-Empty `supporting_signal_families` is intentional — exclusivity is gate-based; family-level named-key filtering would incorrectly drop sibling ALT frames.
-
-## Per-package promotion / activation
-
-| Package | Decision | Runtime |
-|---|---|---|
-| `pkg_kb52c_alt_high_hepatocellular_injury_pattern` | `PROMOTE_AND_ACTIVATE` | activated |
-| `pkg_kb52c_alt_high_mixed_biochemical_pattern` | `PROMOTE_AND_ACTIVATE` | activated |
-| `pkg_kb52c_alt_high_cholestatic_alp_predominant_context` | `PROMOTE_BUT_WITHHOLD` | withheld |
-| `pkg_kb52c_alt_high_muscle_source_or_exertional_pattern` | `DEFERRED_WITH_EXPLICIT_REASON` | withheld |
-| `pkg_kb52c_alt_high_bilirubin_severity_context` | `DEFERRED_WITH_EXPLICIT_REASON` | withheld |
-| `pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern` | `PROMOTE_BUT_WITHHOLD` | withheld |
-
-Vocabulary note: `PROMOTE_AND_ACTIVATE` / `PROMOTE_BUT_WITHHOLD` / `DEFERRED_WITH_EXPLICIT_REASON` did not pre-exist in-repo; introduced as the first promotion+activation decision axis layered on the binary activation register (hardening observation).
-
-## Legacy ALT disposition
-
-| Identity | Disposition |
-|---|---|
-| `signal_alt_high::inv_alt_high_hepatocellular_injury` (S24) | **SUPERSEDED** — removed from `activated_frames` |
-| Former Batch 5 inferred keys | Remain superseded / unreachable; not reactivated |
-| `signal_hepatic_alt_context` | Remains activated for legacy context WHY |
-| Compiled WHY for new ALT R-value frames | Not claimed complete — `root_cause_registry_v1.py` still registers predecessor only |
-
-When R-value is ineligible, no `signal_alt_high` pattern frame emits (fail closed for R-dependent classification).
-
-## Registry before / after
-
-| Metric | Before (ARCH-CONV-E) | After (ARCH-CONV-E2) |
-|---|---:|---:|
-| `activated_frame_count` | 173 | 174 |
-| Active `signal_alt_high` keys | S24 only | hepatocellular + mixed R-value |
-| Withheld ARCH-CONV-E ALT keys | 6 | 4 |
-
-## Tests run
+## Tests run (Gate 1 remediation)
 
 ```text
 python -m pytest backend/tests/unit/test_arch_conv_e2_r_value_runtime_authority.py \
@@ -101,14 +82,17 @@ python -m pytest backend/tests/unit/test_arch_conv_e2_r_value_runtime_authority.
   backend/tests/unit/test_arch_conv_e_alt_package_assets.py \
   backend/tests/unit/test_ratio_registry.py \
   backend/tests/regression/test_signal_authority_collision_enforcement.py -q
-→ PASS
-
-python -m pytest backend/tests/regression/test_arch_conv_c_alp_ggt_stop_c.py -q
-→ 20 passed
-
-python backend/scripts/validate_compiled_why_authority_gate.py
-→ PASS; 37 frames, 21 compiled_active, 1 rejected, 15 legacy_retired
 ```
+
+Proof targets:
+
+- S24 ALT frame loads
+- Neither R-value frame is production-loaded
+- `r_value_alt_alp` still calculates/classifies when directly exercised
+- Missing-result and missing/invalid-ULN paths remain fail-closed
+- Non-ALT activated package count remains 167 (+ Wave-1 kb47 unchanged)
+- Package validators still pass for all six ALT packages
+- R-value engineering remains available for the later refinement-authority step
 
 ## Confirmations
 
@@ -116,22 +100,10 @@ python backend/scripts/validate_compiled_why_authority_gate.py
 - No frontend medical inference added
 - No Pass 3 JSON modification
 - Former Batch 5 keys not reactivated
-- ALP/GGT cholestatic enforcement preserved (GGT still suppressed when ALP primary present alongside ALT hepatocellular)
+- No merge
 
-## Unresolved / deferred
+## Awaiting
 
-- Cholestatic ALT R-value frame withheld until a key-level (not family-level) collision suppress can avoid duplicating ALP/GGT without a resolver contract change
-- Muscle / bilirubin / MASLD deferred pending distinguishing pre-emission gates
-- Compiled WHY migration for `signal_alt_high` R-value frames not executed in this package
-- Medical-frame identity index may still list stale Batch 5 rows (hygiene; out of minimal scope)
-
-## Files changed (scoped)
-
-See `git diff --name-only` on the implementation commit. Primary surfaces:
-
-- `backend/core/analytics/ratio_registry.py`
-- `backend/core/pipeline/orchestrator.py`
-- `knowledge_bus/governance/signal_authority_collision_model_v1.yaml`
-- `knowledge_bus/governance/package_runtime_activation_register_v1.yaml`
-- six ALT package manifests (+ R-value signal_library gates)
-- unit/regression tests + this evidence report
+1. Anthony Gate 2 ratification (`ARCH-CONV-E2-GATE2-ANTHONY-PENDING`)
+2. Claude Code re-audit of this Gate 1 remediation
+3. Later governed subordinate/refinement authority path before any R-value frame activation
