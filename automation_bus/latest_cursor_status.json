@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-g-urate-compiled-why",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-01T21:10:57Z",
   "cursor_started_utc": "2026-08-01T20:55:47Z",
-  "head_sha": "809821c997a805f5df2936c86f062564e63d2e54",
+  "head_sha": "345819612895b83fb66132e8583a6575220fd557",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-G"
 }
