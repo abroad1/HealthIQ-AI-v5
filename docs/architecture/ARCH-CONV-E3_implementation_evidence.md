@@ -76,3 +76,88 @@ Package validators: muscle + metabolic + other ALT packages validated via activa
 ## Files changed (implementation)
 
 See `git diff --name-only` on the feature branch for the authoritative list.
+
+---
+
+## Test-harness remediation (post-audit; bounded)
+
+**Scope:** test harness + evidence only. No production, runtime, governance, package, Gate 1, collision, activation, or blocker changes.
+
+### Helper ambiguity
+
+`backend/tests/unit/test_signal_evaluator.py` helper `_load_signal_definition(signal_id)` resolved by bare `signal_id` and returned `matches[0]` (after preferring `pkg_s24_*`).
+
+That assumption became invalid after ARCH-CONV-E3 multi-frame ALT activation: `signal_alt_high` now has **five** production-reachable frames. Registry iteration order is not a governed selector, so the KB-S24 ALT baseline/escalation case could bind the wrong frame.
+
+### Exact harness fix
+
+1. `_KB_S24_SIGNAL_CASES["signal_alt_high"]` now carries:
+   `activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern`
+2. `_load_signal_definition(..., activation_key=None)` resolves by exact activation key when provided; raises on ambiguous multi-frame `signal_id` without a key.
+3. `_single_signal_evaluator` and KB-S24 baseline/escalation tests pass the case `activation_key`.
+4. ALT escalate assertions require:
+   - canonical hepatocellular `activation_key`
+   - rank-2 general hypothesis when derived R-value is empty
+   - `suboptimal` → `at_risk` when bilirubin exceeds governed lab max
+
+### Full `test_signal_evaluator.py` command and output
+
+```text
+PYTHONPATH=backend python -m pytest backend/tests/unit/test_signal_evaluator.py -q
+```
+
+Output (feature branch after harness fix):
+
+```text
+........................................................................ [ 43%]
+F....................................................................... [ 86%]
+.......................                                                  [100%]
+================================== FAILURES ===================================
+C:\Users\abroa\HealthIQ-AI-v5\backend\tools\run_golden_panel.py:74: ValueError: Golden panel fixture must include biomarkers and user
+=========================== short test summary info ===========================
+FAILED backend\tests\unit\test_signal_evaluator.py::test_kbs23_catalogue_panel_harness_runs_all_panel_fixtures
+```
+
+- ALT KB-S24 baseline/escalation case: **PASS** against the canonical hepatocellular activation key.
+- Sole remaining failure in this file: `test_kbs23_catalogue_panel_harness_runs_all_panel_fixtures`.
+
+### Pre-existing catalogue failure (re-confirmed on clean `main`)
+
+Detached worktree at `main` (`6d28d30`):
+
+```text
+PYTHONPATH=backend python -m pytest \
+  backend/tests/unit/test_signal_evaluator.py::test_kbs23_catalogue_panel_harness_runs_all_panel_fixtures -q
+```
+
+```text
+F                                                                        [100%]
+================================== FAILURES ===================================
+...\backend\tools\run_golden_panel.py:74: ValueError: Golden panel fixture must include biomarkers and user
+FAILED backend\tests\unit\test_signal_evaluator.py::test_kbs23_catalogue_panel_harness_runs_all_panel_fixtures
+MAIN_EXIT=1
+```
+
+Recorded as **pre-existing on main**; out of scope for this remediation.
+
+### Focused regression + validators (remediation)
+
+```text
+PYTHONPATH=backend python -m pytest \
+  backend/tests/unit/test_arch_conv_e3_alt_contextual_authority.py \
+  backend/tests/unit/test_arch_conv_e2_r_value_runtime_authority.py \
+  backend/tests/unit/test_arch_conv_e_alt_package_assets.py \
+  backend/tests/unit/test_arch_conv_e_runtime_activation_boundary.py \
+  backend/tests/regression/test_signal_authority_collision_enforcement.py -q
+```
+
+Result: **PASS** (exit 0).
+
+Four ARCH-CONV-E3 package validators (`cholestatic`, `muscle`, `bilirubin_severity`, `metabolic`): each `manifest/research/signal/PSI` **PASS**.
+
+### Production/runtime/governance unchanged in remediation
+
+`git diff --name-only` for this remediation commit is limited to:
+
+- `backend/tests/unit/test_signal_evaluator.py`
+- `docs/architecture/ARCH-CONV-E3_implementation_evidence.md`
