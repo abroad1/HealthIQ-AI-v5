@@ -157,7 +157,8 @@ python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus
 | Gate 2 status | RATIFIED | `ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01` |
 | Merge authorised | Yes | Human approval 2026-08-01 |
 | Sprint branch | `feature/arch-conv-e2-alt-rvalue-runtime-authority` | Fast-forward into `main` |
-| Merge tip SHA | `7db1495` | `git rev-parse --short main` after FF merge |
+| Merge tip SHA | `7db1495` | FF merge of feature into `main` |
+| Published `main` / `origin/main` | `26fe0e7` | Aligned after push |
 | Working tree (pre-merge) | Clean | `git status --short` empty |
 | Stash | Empty | `git stash list` empty |
 | Kernel status | COMPLETE | `automation_bus/latest_cursor_status.json` |
