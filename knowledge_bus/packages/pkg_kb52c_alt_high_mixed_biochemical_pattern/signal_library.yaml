@@ -84,13 +84,16 @@ signals:
   - rule_id: or_mixed_pattern_with_bilirubin_high
     resulting_state: at_risk
     description: Escalate cautiously when a mixed biochemical pattern is accompanied by raised bilirubin,
-      because bilirubin adds severity or excretory context.
+      because bilirubin adds severity or excretory context. Consumer Hy's Law diagnosis is prohibited.
     conditions:
     - metric_id: bilirubin
       operator: '>'
       condition_type: all_of
       comparator_type: lab_range_boundary
       boundary: above_max
+    presentation_safety:
+      consumer_hys_law_diagnosis: PROHIBITED
+      role: severity_escalation_not_cause_attribution
     source_refs:
     - source_fda_dili_guidance_2009
     - source_bsg_abnormal_liver_tests_2017

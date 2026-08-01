@@ -128,23 +128,28 @@ authority_groups:
     discordant_ggt_is_context_only: true
     bilirubin_supporting_context_only: true
     alt_and_bilirubin_future_authority_preserved: true
+    alt_cholestatic_r_value_not_supporting_family_under_this_axis: true
+    alt_cholestatic_r_value_does_not_displace_alp_ggt_source_primary: true
   runtime_action: apply_explicit_concordance_policy
   runtime_policy_id: cholestatic_source_axis_v1
   requires_runtime_support: true
   gate1_reference: ARCH-CONV-C-GATE1-HMR-2026-07-30
   gate2_reference: ARCH-CONV-C-GATE2-ANTHONY-2026-07-30
-  notes: Canonical ALP is the sole primary candidate and becomes causal only with
+  notes: >-
+    Canonical ALP is the sole primary candidate and becomes causal only with
     high-GGT concordance. Canonical GGT remains context-only and is consolidated
     under ALP when both fire. Deferred Pass 3 activation keys are non-authoritative.
-    Under ARCH-CONV-E2 Gate 1 (2026-08-01), the canonical hepatocellular package is
-    the foundational ALT-high successor (with rank-2 general hypothesis when R-value
-    is unavailable); mixed R-value may coexist as a distinct pattern band. ALT
-    cholestatic R-value remains withheld so it cannot duplicate this axis. AST,
-    bilirubin/hyperbilirubinemia, and ALP-low remain outside this policy.
+    Under ARCH-CONV-E3 Gate 1, ALT cholestatic R<=2 may emit as a subordinate ALT
+    biochemical-pattern context, but signal_alt_high is intentionally NOT listed as
+    a supporting_signal_family here because named activation-key filtering would drop
+    hepatocellular/mixed, and family-level suppress would suppress all ALT when ALP
+    primary is present. ALP/GGT remains sole primary for cholestatic SOURCE.
+    Activation-key-level suppress of only the cholestatic ALT key when ALP primary
+    is present is deferred pending a collision-contract extension work package.
 - authority_group_id: alt_biochemical_pattern_axis
   biological_axis: hepatocellular_injury_axis
   status: adjudicated_runtime_enforced
-  work_id: ARCH-CONV-E2
+  work_id: ARCH-CONV-E3
   primary_signal_family: signal_alt_high
   supporting_signal_families: []
   related_active_frames:
@@ -152,14 +157,16 @@ authority_groups:
     - signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
     activated_mixed_r_value_band:
     - signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
+    activated_cholestatic_r_value_band_subordinate:
+    - signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
+    activated_muscle_lab_only_subordinate:
+    - signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
+    activated_metabolic_lab_only_subordinate:
+    - signal_alt_high::inv_alt_high_metabolic_masld_context
     superseded_legacy_s24:
     - signal_alt_high::inv_alt_high_hepatocellular_injury
-    withheld_duplicate_of_cholestatic_source_axis:
-    - signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
-    withheld_pending_distinguishing_gates:
-    - signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
+    withheld_override_escalation_only:
     - signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context
-    - signal_alt_high::inv_alt_high_metabolic_masld_context
   collision_policy:
     no_duplicate_user_facing_signal: true
     suppress_supporting_when_primary_present: true
@@ -176,26 +183,28 @@ authority_groups:
     r_value_formula: (ALT / ALT_lab_ULN) / (ALP / ALP_lab_ULN)
     hepatocellular_when_r_ge_5: true
     mixed_when_r_gt_2_and_lt_5: true
-    cholestatic_when_r_le_2_withheld_from_runtime: true
-    pattern_selection_mechanism: runtime_hypothesis_selection_plus_mixed_package_gates
+    cholestatic_when_r_le_2_activated_subordinate: true
+    pattern_selection_mechanism: runtime_hypothesis_selection_plus_band_package_gates
     contemporaneous_pairing: same_panel_snapshot_contract
     fail_closed_without_lab_uln: true
     does_not_override_cholestatic_source_axis: true
     no_consumer_hys_law_diagnosis: true
     r_value_compute_authority_retained: true
+    bilirubin_severity_is_override_escalation_only: true
+    muscle_and_metabolic_require_lab_corroboration_gates: true
   runtime_action: runtime_enforced_via_activation_register_and_hypothesis_selection
   runtime_policy_id: alt_r_value_biochemical_pattern_v1
   requires_runtime_support: true
-  gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
-  gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-  gate2_status: RATIFIED
+  gate1_reference: ARCH-CONV-E3-GATE1-HMR-2026-08-01
+  gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-PENDING
+  gate2_status: PENDING
   notes: >-
-    ARCH-CONV-E2 Gate 1 (HMR 2026-08-01) ratified at Gate 2
-    (ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01): canonical Pass 3 hepatocellular package
-    succeeds S24. Rank-1 hyp when R >= 5; rank-2 general ALT-high hyp when R-value
-    cannot be calculated or is ineligible (and when R <= 2 while cholestatic package
-    remains withheld). Mixed package owns 2 < R < 5 and must not be duplicated by the
-    general fallback. Empty supporting_signal_families remains intentional.
+    ARCH-CONV-E3 Gate 1: cholestatic owns R <= 2 among ALT frames; mixed owns
+    2 < R < 5; hepatocellular rank-1 when R >= 5 and rank-2 general when R is
+    unavailable/ineligible. Muscle and metabolic activate only with lab
+    corroboration gates. Bilirubin severity is override-escalation on active ALT
+    frames, not an independent activated package. Empty supporting_signal_families
+    remains intentional for this axis.
 - authority_group_id: iron_inflammation_axis
   biological_axis: iron_and_inflammatory_context
   status: placeholder_not_adjudicated

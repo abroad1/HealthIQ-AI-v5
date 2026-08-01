@@ -82,11 +82,10 @@ def test_signal_registry_is_deterministic_across_instances():
 
 
 def test_signal_registry_alt_high_multi_frame_pilot():
-    """ARCH-CONV-E2: ALT-high runtime activation is exactly the two canonical frames.
+    """ARCH-CONV-E3: ALT-high runtime activation is five governed frames.
 
-    Canonical hepatocellular + mixed R-value frames are activated. S24 is superseded.
-    The other four ALT packages remain withheld. No duplicate foundational ALT-high
-    authority. Non-collapse for other multi-frame families is still asserted.
+    Hepatocellular, mixed, cholestatic, muscle, and metabolic are activated.
+    Bilirubin severity remains withheld (override-escalation only). S24 superseded.
     """
     registry = SignalRegistry()
     rows = registry.get_all_signals()
@@ -95,21 +94,22 @@ def test_signal_registry_alt_high_multi_frame_pilot():
         "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
     )
     mixed = "signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern"
+    cholestatic = (
+        "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context"
+    )
+    muscle = "signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution"
+    metabolic = "signal_alt_high::inv_alt_high_metabolic_masld_context"
     s24 = "signal_alt_high::inv_alt_high_hepatocellular_injury"
     withheld = (
-        "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context",
-        "signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution",
         "signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context",
-        "signal_alt_high::inv_alt_high_metabolic_masld_context",
     )
+    activated = [hepatocellular, mixed, cholestatic, muscle, metabolic]
 
     alt_keys = [row["activation_key"] for row in rows if row["signal_id"] == "signal_alt_high"]
-    assert sorted(alt_keys) == sorted([hepatocellular, mixed])
+    assert sorted(alt_keys) == sorted(activated)
     assert s24 not in alt_keys
     for key in withheld:
         assert key not in alt_keys
-    assert alt_keys.count(hepatocellular) == 1
-    assert alt_keys.count(mixed) == 1
 
     by_signal_id: dict[str, list[str]] = {}
     for row in rows:

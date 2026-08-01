@@ -1,8 +1,9 @@
 """
-ARCH-CONV-E / ARCH-CONV-E2 — governed runtime activation boundary.
+ARCH-CONV-E / E2 / E3 — governed runtime activation boundary.
 
-Gate 1 (2026-08-01): canonical hepatocellular + mixed R-value activated; S24
-superseded; four other ARCH-CONV-E ALT packages remain withheld.
+Gate 1 E3 (2026-08-01): hepatocellular + mixed + cholestatic + muscle + metabolic
+activated; bilirubin severity remains override-escalation only (withheld); S24
+superseded.
 """
 
 from __future__ import annotations
@@ -46,25 +47,25 @@ ARCH_CONV_E_PACKAGES = (
 ACTIVATED_ALT_KEYS = (
     "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern",
     "signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern",
+    "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context",
+    "signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution",
+    "signal_alt_high::inv_alt_high_metabolic_masld_context",
 )
 
 WITHHELD_ALT_KEYS = (
     "signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context",
-    "signal_alt_high::inv_alt_high_metabolic_masld_context",
-    "signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution",
-    "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context",
 )
 
 ACTIVATED_ALT_PACKAGES = (
     "pkg_kb52c_alt_high_hepatocellular_injury_pattern",
     "pkg_kb52c_alt_high_mixed_biochemical_pattern",
+    "pkg_kb52c_alt_high_cholestatic_alp_predominant_context",
+    "pkg_kb52c_alt_high_muscle_source_or_exertional_pattern",
+    "pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern",
 )
 
 WITHHELD_ALT_PACKAGES = (
     "pkg_kb52c_alt_high_bilirubin_severity_context",
-    "pkg_kb52c_alt_high_cholestatic_alp_predominant_context",
-    "pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern",
-    "pkg_kb52c_alt_high_muscle_source_or_exertional_pattern",
 )
 
 SUPERSEDED_S24_ALT_KEY = "signal_alt_high::inv_alt_high_hepatocellular_injury"
@@ -171,7 +172,7 @@ def test_production_reachable_packages_still_load():
     activated_non_kb47 = {
         row["package_id"] for row in rows if not str(row["package_id"]).startswith("pkg_kb47_")
     }
-    assert len(activated_non_kb47) == 168
+    assert len(activated_non_kb47) == 171
     assert all(is_package_runtime_activated(pid) for pid in activated_non_kb47)
     assert all(row["runtime_eligibility"] == ELIGIBILITY_PRODUCTION_REACHABLE for row in rows)
 
@@ -230,13 +231,13 @@ def test_register_counts_and_gate_refs():
     assert set(ACTIVATED_ALT_KEYS).issubset(activated)
     assert not (set(WITHHELD_ALT_KEYS) & activated)
     assert SUPERSEDED_S24_ALT_KEY not in activated
-    assert register["activated_frame_count"] == len(activated) == 174
+    assert register["activated_frame_count"] == len(activated) == 177
     withheld = {
         str(row["activation_key"]) for row in register["withheld_frames_arch_conv_e"]
     }
     assert withheld == set(WITHHELD_ALT_KEYS)
-    assert register["gate1_reference"] == "ARCH-CONV-E2-GATE1-HMR-2026-08-01"
-    assert register["gate2_reference"] == "ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01"
+    assert register["gate1_reference"] == "ARCH-CONV-E3-GATE1-HMR-2026-08-01"
+    assert register["gate2_reference"] == "ARCH-CONV-E3-GATE2-ANTHONY-PENDING"
 
 
 def test_missing_register_fails_closed(monkeypatch, tmp_path):

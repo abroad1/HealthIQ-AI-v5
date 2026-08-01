@@ -1,49 +1,41 @@
-# Governed runtime activation register (ARCH-CONV-E / ARCH-CONV-E2).
+# Governed runtime activation register (ARCH-CONV-E / E2 / E3).
 #
 # Placement of a package under knowledge_bus/packages/ does NOT activate it. A
 # non-launch-critical frame is production-reachable only if its activation_key is
 # listed in activated_frames below. Launch-critical (pkg_kb47_*) packages keep their
 # own lineage-based eligibility contract and are deliberately out of this register.
 register_id: package_runtime_activation_register_v1
-version: 1.3.0
-work_id: ARCH-CONV-E2
+version: 1.4.0
+work_id: ARCH-CONV-E3
 authority_scope: non_launch_critical_packages
 activation_unit: activation_key
 activation_key_contract: "signal_id::source_spec_id (ADR-RT-002)"
 derivation: >-
-  ARCH-CONV-E baseline-parity snapshot, remediated under ARCH-CONV-E2 Gate 1
-  (ARCH-CONV-E2-GATE1-HMR-2026-08-01). Canonical hepatocellular package is the
-  foundational ALT-high successor (with rank-2 general hypothesis when R-value is
-  unavailable). Mixed R-value package is activated with its band gate. S24 ALT-high
-  is superseded and withheld. Cholestatic, muscle, bilirubin and metabolic packages
-  remain withheld.
+  ARCH-CONV-E3 Gate 1 (ARCH-CONV-E3-GATE1-HMR-2026-08-01) extends ARCH-CONV-E2.
+  Canonical hepatocellular + mixed retained. Cholestatic R<=2, muscle (CK-gated),
+  and metabolic (compound lab-gated) activated as subordinate contextual authorities.
+  Bilirubin severity remains override-escalation only (package withheld). S24 remains
+  superseded. Gate 2 Anthony ratification pending.
 promotion_contract: >-
   A new or regenerated frame stays inert until a governed promotion work package appends
   its activation_key. Changing a package source_spec_id changes its activation_key and
   therefore requires re-promotion.
-gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
-gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-gate2_status: RATIFIED
-withheld_reason_arch_conv_e2: >-
-  Gate 1 (2026-08-01): cholestatic R-value remains withheld (duplicates ALP/GGT axis).
-  Muscle, bilirubin severity, and metabolic/MASLD remain deferred (missing distinguishing
-  gates). S24 ALT-high is superseded by the canonical hepatocellular package and must not
-  remain co-active with the canonical general fallback. Former Batch 5 inferred keys remain
-  superseded and must not be reactivated.
+gate1_reference: ARCH-CONV-E3-GATE1-HMR-2026-08-01
+gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-PENDING
+gate2_status: PENDING
+withheld_reason_arch_conv_e3: >-
+  Bilirubin severity package remains deferred: represented as override/escalation on
+  active ALT frames with presentation_safety prohibiting consumer Hy's Law diagnosis;
+  independent activation would create a competing primary ALT authority. S24 ALT-high
+  remains superseded. Former Batch 5 inferred keys must not be reactivated. User-context
+  corroboration paths and very-high-ALT numeric suppress remain unresolved blockers
+  recorded on muscle/metabolic manifests (lab-only paths activated).
 
 withheld_frames_arch_conv_e:
   - activation_key: signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context
     package_id: pkg_kb52c_alt_high_bilirubin_severity_context
     promotion_decision: DEFERRED_WITH_EXPLICIT_REASON
-  - activation_key: signal_alt_high::inv_alt_high_metabolic_masld_context
-    package_id: pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
-    promotion_decision: PROMOTE_BUT_WITHHOLD
-  - activation_key: signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
-    package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
-    promotion_decision: DEFERRED_WITH_EXPLICIT_REASON
-  - activation_key: signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
-    package_id: pkg_kb52c_alt_high_cholestatic_alp_predominant_context
-    promotion_decision: PROMOTE_BUT_WITHHOLD
+    authority_role: OVERRIDE_ESCALATION_ONLY_NO_INDEPENDENT_ACTIVATION
 
 superseded_frames_arch_conv_e2:
   - activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
@@ -56,7 +48,7 @@ superseded_frames_arch_conv_e2:
       successor. Rank-2 general ALT-high hypothesis covers ALT elevation when R-value
       cannot be calculated. S24 must not remain co-active with that canonical fallback.
 
-activated_frame_count: 174
+activated_frame_count: 177
 activated_frames:
   - activation_key: signal_active_b12_deficiency::inv_active_b12_low_deficiency
     package_id: pkg_kb45_active_b12_low_deficiency
@@ -78,6 +70,12 @@ activated_frames:
     package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
   - activation_key: signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
     package_id: pkg_kb52c_alt_high_mixed_biochemical_pattern
+  - activation_key: signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
+    package_id: pkg_kb52c_alt_high_cholestatic_alp_predominant_context
+  - activation_key: signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
+    package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
+  - activation_key: signal_alt_high::inv_alt_high_metabolic_masld_context
+    package_id: pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
   - activation_key: signal_apoa1_cardio_risk::inv_apoa1_low_cardio_risk
     package_id: pkg_kb45_apoa1_low_cardio_risk
   - activation_key: signal_apoa1_low::inv_apoa1_low_atherogenic_hdl_deficiency
