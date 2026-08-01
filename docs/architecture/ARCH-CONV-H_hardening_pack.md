@@ -6,9 +6,9 @@
 **Change type:** MIXED  
 **Execution model:** TWO_PHASE_START_FINISH  
 **Implementation owner:** Core Engine agent  
-**Status:** Phase 0 mapping complete. Gate 1 `PENDING`. Gate 2 `PENDING`. **Implementation prohibited** until both gates are recorded on disk and match this pack (or the prompt is revised and re-hardened).
+**Status:** Phase 0 mapping complete. Gate 1 `APPROVED_WITH_NARROWING` (`ARCH-CONV-H-GATE1-HMR-2026-08-01`). Gate 2 `PENDING` (`ARCH-CONV-H-GATE2-ANTHONY-PENDING`). **Implementation remains prohibited** until Gate 2 is recorded on disk and matches the Gate 1 disposition.
 
-**Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-H` / `HARDENED` (Phase 0 + Gate STOP only).
+**Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-H` / `HARDENED` (Phase 0 + Gate STOP; Gate 1 now recorded).
 
 ---
 
@@ -55,22 +55,22 @@ Source path: `knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemi
 | Physiological claim | Non-enzymatic glycation of HbA N-terminal valine |
 | Narrative implications (raw) | Retinopathy/neuropathy/CVD risk; **directive** “Requires lifestyle intervention or pharmacological management” — **must not compile verbatim** |
 
-### Proposed compiled-WHY content boundary (Gate 1 must ratify)
+### Approved compiled-WHY content boundary (Gate 1)
 
 - Identify a **persistent hyperglycaemia / sustained glycaemic-exposure pattern** supported by the canonical source.
 - HbA1c is **not** an independently proven cause of diabetes-related pathology.
-- Diabetes-range escalation only via governed `>= 48 mmol/mol` threshold with **cautious** wording.
-- One HbA1c result must not be an unqualified diabetes diagnosis where confirmation/repeat/symptoms/clinical assessment are required.
-- TG/HDL (and ALT if mentioned) may enrich metabolic context only to the extent Gate 1 authorises from this source.
-- No treatment, medication, complication diagnosis, unsupported chronicity, or unsupported causal claims.
+- HbA1c `>= 48 mmol/mol`: **diabetes-range concern requiring clinical confirmation only**.
+- One HbA1c result must not be an unqualified diabetes diagnosis.
+- TG/HDL: **subordinate metabolic-pattern context only**; **no metabolic-syndrome diagnosis**.
+- Prohibited: treatment directives, chronicity inference, diabetes subtype, complications, causal attribution, or diagnosis from HbA1c alone.
 
-### Proposed `why_role` (Gate 1 must ratify)
+### 2.1 Approved WHY role (Gate 1 ratified)
 
-**Primary recommendation:** `morphology_context` (flat; no `conditional_why_role`).
+**Approved:** `why_role: morphology_context` (flat, no `conditional_why_role`).
 
-**Alternative for Gate 1 only:** narrowed `causal` limited strictly to “sustained glycaemic-exposure / persistent hyperglycaemia pattern” with identical presentation prohibitions.
+Gate reference: `ARCH-CONV-H-GATE1-HMR-2026-08-01` (`APPROVED_WITH_NARROWING`).
 
-Rationale for morphology_context preference: diabetes-diagnosis and treatment-directive risks in source narrative; matches urate/HDL/urea non-diagnostic pattern when pathology claims must not fire.
+The alternative narrowed-causal option from Phase 0 is **withdrawn** — not selected.
 
 ---
 
@@ -78,12 +78,12 @@ Rationale for morphology_context preference: diabetes-diagnosis and treatment-di
 
 | Package | Activation key | Source / provenance | WHY ownership (current) | Package / PSI | Proposed disposition |
 |---|---|---|---|---|---|
-| `pkg_s24_hba1c_high_glycaemia` | `signal_hba1c_high::inv_hba1c_high_glycaemia` | `inv_hba1c_high_glycaemia_v1.yaml` | Legacy WHY via registry (no compiled row) | Active package; **no PSI file** | **RETAIN / COMPILE** as canonical |
-| `pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia` | `signal_hba1c_high::inv_hba1c_high_diabetes_range_hyperglycemia` | `Batch_6_Pass_3.json` | Competing same-`signal_id` frame | Active package; `behavioural_impact: NONE`; **no PSI file** | **LEGACY_RETIRED_FOR_WHY_ONLY** |
+| `pkg_s24_hba1c_high_glycaemia` | `signal_hba1c_high::inv_hba1c_high_glycaemia` | `inv_hba1c_high_glycaemia_v1.yaml` | Legacy WHY via registry (no compiled row) | Active package; **no PSI file** | **RETAIN / COMPILE** as canonical (Gate 1) |
+| `pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia` | `signal_hba1c_high::inv_hba1c_high_diabetes_range_hyperglycemia` | `Batch_6_Pass_3.json` | Competing same-`signal_id` frame | Active package; `behavioural_impact: NONE`; **no PSI file** | **LEGACY_RETIRED_FOR_WHY_ONLY** (Gate 1) |
 
 Collision inventory confirms governed arbitration (2 packages). Hardening notes SignalRegistry lexicographic overwrite currently prefers S24 live winner — WHY retirement still required so the competitor cannot dual-serve as compiled/legacy WHY owner after pilot inclusion.
 
-**Expected post-gate register delta (subject to Gate 1):** `+1 COMPILED_ACTIVE` / `+1 LEGACY_RETIRED`.
+**Expected post-Gate-2 register delta:** `+1 COMPILED_ACTIVE` / `+1 LEGACY_RETIRED`.
 
 ---
 
@@ -99,13 +99,13 @@ No alias, merge, retirement, or suppression of these adjacent identities is perm
 
 ---
 
-## 4. Proposed retained and retired authority rows
+## 4. Approved retained and retired authority rows (Gate 1)
 
 ```text
 RETAIN / COMPILE:
 signal_hba1c_high::inv_hba1c_high_glycaemia
-  why_role: morphology_context   # or Gate-1-chosen alternative
-  artefact: knowledge_bus/compiled/hypotheses/inv_hba1c_high_glycaemia.yaml  # post-gate only
+  why_role: morphology_context
+  artefact: knowledge_bus/compiled/hypotheses/inv_hba1c_high_glycaemia.yaml  # post-Gate-2 only
 
 RETIRE FOR WHY OWNERSHIP ONLY:
 signal_hba1c_high::inv_hba1c_high_diabetes_range_hyperglycemia
@@ -113,29 +113,30 @@ signal_hba1c_high::inv_hba1c_high_diabetes_range_hyperglycemia
   artefact_path: null
 ```
 
-Package deletion forbidden. Package-layer activation and PSI status unchanged.
+Package deletion forbidden. Package-layer activation and PSI status unchanged. Adjacent identities unchanged.
 
 ---
 
-## 5. Override / escalation interpretation (proposed)
+## 5. Override / escalation interpretation (Gate 1 approved)
 
-| Rule | Condition | Result | Proposed presentation |
+| Rule | Condition | Result | Approved presentation |
 |---|---|---|---|
-| `or_hba1c_diagnostic_diabetes` | `hba1c >= 48` mmol/mol | `at_risk` | Concern / diabetes-range escalation only; **not** unqualified diabetes diagnosis from one result |
-| `or_hba1c_metabolic_syndrome` | TG above max AND HDL below min (canonical lab-boundary form) | `at_risk` | Metabolic-pattern concern escalation / context only if Gate 1 authorises; **not** metabolic-syndrome diagnosis |
+| `or_hba1c_diagnostic_diabetes` | `hba1c >= 48` mmol/mol | `at_risk` | Diabetes-range concern requiring clinical confirmation only; **not** diagnosis from HbA1c alone |
+| `or_hba1c_metabolic_syndrome` | TG above max AND HDL below min (canonical lab-boundary form) | `at_risk` | Subordinate metabolic-pattern context only; **no** metabolic-syndrome diagnosis |
 
-Note: S24 `signal_library.yaml` encodes metabolic override with fixed numeric TG `>1.7` / HDL `<1.0`, while the investigation spec uses lab-range boundaries. Phase 0 does **not** change package overrides. Gate 1 should ratify whether compiled wording follows the **canonical lab-boundary** semantics and whether any fixed-number wording is prohibited.
+Note: S24 `signal_library.yaml` encodes metabolic override with fixed numeric TG `>1.7` / HDL `<1.0`, while the investigation spec uses lab-range boundaries. Phase 0 / Gate 1 recording does **not** change package overrides. Compiled wording (post-Gate-2) must stay within Gate 1 boundaries above.
 
 ---
 
-## 6. Prohibited claims (proposed for Gate 1)
+## 6. Prohibited claims (Gate 1)
 
-- Unqualified diabetes diagnosis from a single HbA1c result (unless Gate 1 explicitly authorises a precise bounded statement).
-- Treatment, medication, lifestyle-prescription, or pharmacological-management directives (raw S24 implications must not compile verbatim).
-- Complication diagnosis (retinopathy/neuropathy/CVD as established disease) from this frame alone.
-- Unsupported chronicity beyond the marker’s supported ~8–12 week exposure interpretation.
-- Causal claim that HbA1c independently proves diabetes-related pathology.
-- TG/HDL/ALT use beyond Gate-1-authorised context enrichment.
+- Diagnosis from HbA1c alone / unqualified diabetes diagnosis from a single result.
+- Treatment directives (medication, lifestyle-prescription, pharmacological-management; raw S24 implications must not compile verbatim).
+- Chronicity inference.
+- Diabetes subtype.
+- Complications (retinopathy/neuropathy/CVD as established disease) from this frame alone.
+- Causal attribution (HbA1c independently proves diabetes-related pathology).
+- Metabolic-syndrome diagnosis from TG/HDL pattern.
 - Any merge with `signal_hba1c_pct_high` or glucose-dysregulation context.
 
 ---
@@ -164,13 +165,9 @@ Hardening gap flagged for Gate 1 awareness: `pkg_s24_hba1c_high_glycaemia` carri
 
 ---
 
-## 9. Gate STOP
+## 9. Gate status
 
-This Phase 0 pack is committed with Gate 1 / Gate 2 statuses **PENDING**.
+Gate 1: `ARCH-CONV-H-GATE1-HMR-2026-08-01` — `APPROVED_WITH_NARROWING` (recorded)  
+Gate 2: `ARCH-CONV-H-GATE2-ANTHONY-PENDING` — `PENDING`
 
-Return for:
-
-1. GPT / Head of Medical Research Gate 1 (`ARCH-CONV-H-GATE1-HMR-PENDING` → replace on approval) — must record approved `why_role`, claim boundary, diabetes-range wording, TG/HDL use, prohibited claims, retained key, retired key.
-2. Anthony Gate 2 (`ARCH-CONV-H-GATE2-ANTHONY-PENDING` → replace on approval).
-
-**Do not create compiled artefacts, alter authority registers, retire legacy ownership, or change runtime behaviour until both approvals are committed and consistent with this pack.**
+**Remain stopped.** Do not create compiled artefacts, alter authority registers, retire legacy ownership, or change runtime behaviour until Gate 2 `APPROVED` is committed on disk.
