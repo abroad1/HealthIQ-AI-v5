@@ -188,8 +188,10 @@ authority_groups:
   requires_runtime_support: true
   gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
   gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  gate2_status: RATIFIED
   notes: >-
-    ARCH-CONV-E2 Gate 1 (HMR 2026-08-01): canonical Pass 3 hepatocellular package
+    ARCH-CONV-E2 Gate 1 (HMR 2026-08-01) ratified at Gate 2
+    (ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01): canonical Pass 3 hepatocellular package
     succeeds S24. Rank-1 hyp when R >= 5; rank-2 general ALT-high hyp when R-value
     cannot be calculated or is ineligible (and when R <= 2 while cholestatic package
     remains withheld). Mixed package owns 2 < R < 5 and must not be duplicated by the

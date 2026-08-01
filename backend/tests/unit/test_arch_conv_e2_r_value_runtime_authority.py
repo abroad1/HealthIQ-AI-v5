@@ -376,4 +376,4 @@ class TestGate1RuntimeProofs:
         assert payload["anthony_gate2_reference"] == (
             "ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01"
         )
-        assert payload["gate2_status"] == "PENDING_EXPLICIT_RATIFICATION"
+        assert payload["gate2_status"] == "RATIFIED"

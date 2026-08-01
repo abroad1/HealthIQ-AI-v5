@@ -1,22 +1,21 @@
 work_id: ARCH-CONV-E2
 branch: feature/arch-conv-e2-alt-rvalue-runtime-authority
-register_state: GATE_1_RECORDED_AWAITING_GATE_2_EXPLICIT_RATIFICATION
+register_state: GATE_2_RATIFIED
 evidence_ref: docs/architecture/ARCH-CONV-E2_implementation_evidence.md
 supersedes_prior_gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
 head_of_medical_research_gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
 anthony_gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-gate2_status: PENDING_EXPLICIT_RATIFICATION
+gate2_status: RATIFIED
 medical_decisions_made: true
 collision_policy_decisions_made: true
 runtime_activation_changes_authorised_at_gate1: true
-runtime_activation_changes_authorised_at_gate2: false
+runtime_activation_changes_authorised_at_gate2: true
 note: >-
   Gate 1 decision ARCH-CONV-E2-GATE1-HMR-2026-07-31 (commit 6d9259f) is superseded by
   ARCH-CONV-E2-GATE1-HMR-2026-08-01. Canonical Pass 3 hepatocellular package is the
   intended S24 successor. Rank-2 general ALT-high hypothesis covers ALT elevation when
-  R-value cannot be calculated. Anthony Gate 2 reference ID is reserved as
-  ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01 and must not be treated as ratified until his
-  explicit ratification.
+  R-value cannot be calculated. Anthony Gate 2 reference ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  is RATIFIED (2026-08-01). See docs/architecture/ARCH-CONV-E2_GATE_2_Anthony_ratification.md.
 
 gate1_decision_statement: >-
   The canonical Pass 3 hepatocellular package is the intended successor to the legacy
@@ -66,7 +65,7 @@ frames:
   suppress_emission_when: mixed_band_2_lt_r_lt_5
   head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
   anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-  gate2_status: PENDING_EXPLICIT_RATIFICATION
+  gate2_status: RATIFIED
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_r_value_mixed_biochemical_pattern
@@ -79,7 +78,7 @@ frames:
   must_not_duplicate_general_fallback: true
   head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
   anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-  gate2_status: PENDING_EXPLICIT_RATIFICATION
+  gate2_status: RATIFIED
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_hepatocellular_injury
@@ -90,7 +89,7 @@ frames:
   why_role: NONE
   head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
   anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-  gate2_status: PENDING_EXPLICIT_RATIFICATION
+  gate2_status: RATIFIED
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_r_value_cholestatic_alp_predominant_context
@@ -99,7 +98,7 @@ frames:
   medical_decision: PROMOTE_BUT_WITHHOLD
   head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
   anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-  gate2_status: PENDING_EXPLICIT_RATIFICATION
+  gate2_status: RATIFIED
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_muscle_source_or_exertional_contribution
@@ -108,7 +107,7 @@ frames:
   medical_decision: DEFERRED_WITH_EXPLICIT_REASON
   head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
   anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-  gate2_status: PENDING_EXPLICIT_RATIFICATION
+  gate2_status: RATIFIED
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_bilirubin_hys_law_severity_context
@@ -118,7 +117,7 @@ frames:
   consumer_hys_law_diagnosis: PROHIBITED
   head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
   anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-  gate2_status: PENDING_EXPLICIT_RATIFICATION
+  gate2_status: RATIFIED
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_metabolic_masld_context
@@ -127,7 +126,7 @@ frames:
   medical_decision: PROMOTE_BUT_WITHHOLD
   head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
   anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-  gate2_status: PENDING_EXPLICIT_RATIFICATION
+  gate2_status: RATIFIED
 
 metric_authority:
   metric_id: r_value_alt_alp
@@ -139,17 +138,18 @@ metric_authority:
   contemporaneous_pairing: same_panel_snapshot_contract
   head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
   anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
-  gate2_status: PENDING_EXPLICIT_RATIFICATION
+  gate2_status: RATIFIED
 
 collision_governance:
   liver_injury_axis_alp_ggt: PRESERVED
   alt_biochemical_pattern_axis: UPDATED_FOR_GATE1_2026_08_01
   gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
   gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  gate2_status: RATIFIED
 
 exclusions:
   - Do not alter canonical Pass 3 research
   - Do not add another fallback package
   - Do not preserve S24 merely to compensate for missing rank-2 hypothesis
   - Do not reactivate former Batch 5 inferred ALT keys
-  - Do not merge without Gate 2 explicit ratification and Claude Code re-audit
+  - Gate 2 explicit ratification recorded; merge only under explicit human merge authority and Post-Implementation Closure

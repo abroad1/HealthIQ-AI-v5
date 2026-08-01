@@ -3,15 +3,15 @@
 **work_id:** `ARCH-CONV-E2`  
 **branch:** `feature/arch-conv-e2-alt-rvalue-runtime-authority`  
 **risk_level:** HIGH / MIXED  
-**result:** Mechanical remediation of bilirubin-escalation regression + stale registry assertion — awaiting Claude Code re-audit  
-**Do not merge.**
+**result:** Gate 2 ratified; Post-Implementation Closure / merge authorised  
+**Gate 2:** `ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01` — **RATIFIED** (see `docs/architecture/ARCH-CONV-E2_GATE_2_Anthony_ratification.md`)
 
 ## Gate references
 
 | Gate | Reference | Status |
 |---|---|---|
 | Gate 1 (HMR) | `ARCH-CONV-E2-GATE1-HMR-2026-08-01` | Recorded (supersedes `ARCH-CONV-E2-GATE1-HMR-2026-07-31` / commit `6d9259f`) |
-| Gate 2 (Anthony) | `ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01` | ID reserved — `PENDING_EXPLICIT_RATIFICATION` |
+| Gate 2 (Anthony) | `ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01` | **RATIFIED** |
 
 Register: `docs/architecture/ARCH-CONV-E2_medical_decision_register.yaml`
 
@@ -146,9 +146,16 @@ python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus
 - No additional fallback package added
 - No frontend inference
 - Medical Gate 1 / R-value / collision / rank-2 design not reopened
-- No merge
+- Gate 2 (`ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01`) explicitly ratified by Anthony (2026-08-01)
+- Gate 2 ratification commit updates governance status only (register / collision refs / activation register / evidence); no metric, package, collision-policy, or runtime behaviour change
+- Merge authorised under Post-Implementation Closure Protocol
 
-## Awaiting
+## Post-Implementation Closure
 
-1. Claude Code re-audit (this mechanical remediation)
-2. Anthony explicit Gate 2 ratification (`ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01`)
+Recorded at closure time (see command evidence in the closure commit / chat):
+
+| Check | Result |
+|---|---|
+| Gate 2 status | RATIFIED |
+| Merge authorised | Yes (human) |
+| Publish | push `main` → `origin/main`; verify local `main` == `origin/main` |
