@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-h-hba1c-compiled-why-authority",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-01T22:32:19Z",
   "cursor_started_utc": "2026-08-01T22:04:06Z",
-  "head_sha": "a7743a803dbd25572942f1f82200be63b1997551",
+  "head_sha": "94a7d304019e6d14789f2dba75e88459b0934e20",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-H"
 }
