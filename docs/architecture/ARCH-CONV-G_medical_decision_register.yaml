@@ -1,19 +1,19 @@
 work_id: ARCH-CONV-G
 branch: feature/arch-conv-g-urate-compiled-why
-register_state: PHASE_0_MAPPED_AWAITING_GATE_1_AND_GATE_2
-gate1_status: PENDING
-gate2_status: PENDING
-head_of_medical_research_gate1_reference: ARCH-CONV-G-GATE1-HMR-PENDING
-anthony_gate2_reference: ARCH-CONV-G-GATE2-ANTHONY-PENDING
+register_state: GATE_1_AND_GATE_2_RATIFIED_IMPLEMENTATION_AUTHORISED
+gate1_status: APPROVED_WITH_NARROWING
+gate2_status: APPROVED
+head_of_medical_research_gate1_reference: ARCH-CONV-G-GATE1-HMR-2026-08-01
+anthony_gate2_reference: ARCH-CONV-G-GATE2-ANTHONY-2026-08-01
 hardening_pack_ref: docs/architecture/ARCH-CONV-G_hardening_pack.md
 gate_decision_ref: docs/architecture/ARCH-CONV-G_GATE_1_GATE_2_decision.md
-runtime_changes_authorised: false
+runtime_changes_authorised: true
 note: >
-  Phase 0 source-to-runtime mapping complete. Gate 1 and Gate 2 are PENDING.
-  Implementation of compiled-WHY authority is prohibited until both gates are
-  recorded on disk. Retrospective ratification is forbidden.
+  Gate 1 APPROVED_WITH_NARROWING and Gate 2 APPROVED on 2026-08-01.
+  Implementation of the ratified morphology_context urate compiled-WHY disposition
+  is authorised on the active ARCH-CONV-G Automation Bus work package.
 
-proposed_canonical_frame:
+canonical_frame:
   signal_id: signal_urate_high
   source_spec_id: inv_uric_acid_high_metabolic
   activation_key: signal_urate_high::inv_uric_acid_high_metabolic
@@ -21,12 +21,11 @@ proposed_canonical_frame:
   source_document: knowledge_bus/research/investigation_specs/inv_uric_acid_high_metabolic.yaml
   source_sha256: A7EDEF6EE3C28A4DA8BE1D79A2F5E36B0F80F7AF5C7B7E5A140418208FC078CD
   naming_resolution: >
-    urate (biomarker/signal) versus uric_acid (historical spec_id token) is an
-    existing convention only; no new alias or activation-key convention required.
-  proposed_why_role: morphology_context
-  proposed_why_role_flat: true
-  proposed_conditional_why_role: none
-  alternative_why_role_for_gate1_only: causal_narrowed_hyperuricaemia_metabolic_finding
+    urate (biomarker/signal) versus uric_acid (historical spec_id token) remains an
+    existing terminology convention only; no new alias or identity was created.
+  why_role: morphology_context
+  why_role_flat: true
+  conditional_why_role: none
   supporting_markers:
     creatinine: mechanism_marker_context_only
     triglycerides: corroborator_context_only
@@ -39,28 +38,32 @@ proposed_canonical_frame:
     not_egfr_owned_why: true
     not_creatinine_or_urea_authority_change: true
     not_uacr_or_chronicity_addition: true
+    missing_egfr_blocks_renal_risk_attribution_only: true
   presentation_safety:
-    not_gout_diagnosis_from_urate_alone: true
-    not_crystal_arthropathy_diagnosis: true
-    not_renal_failure_or_kidney_stone_diagnosis: true
-    not_metabolic_syndrome_diagnosis: true
-    not_treatment_or_referral_directive: true
+    not_gout_diagnosis: true
+    not_urate_crystal_deposition_diagnosis: true
+    not_ckd_diagnosis: true
+    not_renal_failure_diagnosis: true
+    not_specific_metabolic_disease_diagnosis: true
+    not_treatment_need_claim: true
     do_not_compile_raw_implications_verbatim: true
+  missing_egfr_behaviour: >
+    Missing eGFR prevents renal-risk attribution / override escalation but does not
+    block the basic elevated-urate morphology_context finding.
 
-proposed_competitor_disposition:
+competitor_disposition:
   activation_key: signal_urate_high::inv_urate_high_gout_crystal_deposition_risk
   package_id: pkg_kb52c_urate_high_gout_crystal_deposition_risk
   collision_class: governed_arbitration_same_signal_id
-  proposed_disposition: LEGACY_RETIRED_FOR_WHY_ONLY
+  disposition: LEGACY_RETIRED_FOR_WHY_ONLY
   package_layer_status: UNCHANGED
   psi_status: UNCHANGED
   package_deletion: forbidden
   subordinate_context_fold_in: >
-    Only if Gate 1 explicitly authorises bounded non-diagnostic gout/crystal or
-    renal-underexcretion context wording inside the canonical frame; otherwise
-    fail closed to bare elevated-urate wording.
+    Valid gout/crystal-deposition content may remain only as subordinate non-diagnostic
+    risk context within the canonical frame; it must not independently own WHY.
 
-expected_register_delta_subject_to_gate1:
+expected_register_delta:
   compiled_active: '+1'
   legacy_retired: '+1'
 
@@ -81,7 +84,7 @@ mechanism_sufficiency:
   root_cause_compiler_v1_change_expected: false
   root_cause_registry_v1_change_expected: false
 
-baseline_counts:
+baseline_counts_at_phase0:
   compiled_active: 23
   legacy_retired: 18
   rejected: 1

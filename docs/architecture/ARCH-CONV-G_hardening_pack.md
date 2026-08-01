@@ -6,9 +6,9 @@
 **Change type:** MIXED  
 **Execution model:** TWO_PHASE_START_FINISH  
 **Implementation owner:** Core Engine agent  
-**Status:** Phase 0 mapping complete. Gate 1 `PENDING`. Gate 2 `PENDING`. **Implementation prohibited** until both gates are recorded on disk and the approved disposition matches this pack (or the prompt is revised and re-hardened).
+**Status:** Phase 0 mapping complete. Gate 1 `APPROVED_WITH_NARROWING` (`ARCH-CONV-G-GATE1-HMR-2026-08-01`). Gate 2 `APPROVED` (`ARCH-CONV-G-GATE2-ANTHONY-2026-08-01`). **Implementation authorised** for the ratified disposition below on the active Automation Bus work package. Do not invent additional medical rules beyond this pack and the gate decision record.
 
-**Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-G` / `HARDENED` (Phase 0 + Gate STOP only).
+**Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-G` / `HARDENED` (Phase 0 + subsequent gate-ratified implementation under the same work package).
 
 ---
 
@@ -74,17 +74,13 @@ Source: `knowledge_bus/research/investigation_specs/inv_uric_acid_high_metabolic
 | Missing data | No structured missing-data policy beyond lab-range activation | Missing corroborators → bare elevated-urate wording; no attribution guess |
 | Evidence | Strong; Nature Reviews Nephrology 2018 (“Uric acid and renal disease”) | Provenance only; do not invent new thresholds |
 
-### 2.1 Proposed WHY role (Gate 1 must ratify)
+### 2.1 Approved WHY role (Gate 1 ratified)
 
-**Primary recommendation:** `why_role: morphology_context` (flat, no `conditional_why_role`).
+**Approved:** `why_role: morphology_context` (flat, no `conditional_why_role`).
 
-Rationale:
+Gate reference: `ARCH-CONV-G-GATE1-HMR-2026-08-01` (`APPROVED_WITH_NARROWING`).
 
-- Canonical narrative associates urate with gout risk and renal disease, but does **not** safely authorise emitting gout, crystal-deposition disease, CKD, or treatment need from urate alone.
-- Directive-leaning implications wording in both packages must be narrowed before any compiled artefact is drafted (hardening non-blocking observation).
-- Matches the established non-diagnostic risk/context pattern used for urea / HDL / ferritin when diagnosis must not fire.
-
-**Alternative for Gate 1 only:** narrowed `causal` limited strictly to “elevated urate / hyperuricaemia metabolic finding” with the same presentation prohibitions. Prefer morphology_context unless Head of Medical Research explicitly requires causal.
+The alternative narrowed-causal option from Phase 0 is **withdrawn** — not selected.
 
 ### 2.2 Presentation-safety restrictions (proposed; Gate 1 must ratify)
 
@@ -118,16 +114,14 @@ Same `signal_id` as canonical → collision class **Governed arbitration** (inve
 | Medically distinct independent WHY owner? | Not required for safe Day-One compiled-WHY; independent ownership would dual-serve under the same signal_id |
 | Unsupported for independent WHY? | Safe to retire for WHY ownership if Gate 1 accepts subordination / retirement |
 
-### Proposed disposition (Gate 1 must ratify)
+### Approved disposition (Gate 1 / Gate 2 ratified)
 
 **`LEGACY_RETIRED_FOR_WHY_ONLY`**
 
 - Package layer unchanged.
-- PSI status unchanged (no revocation; package currently has no promoted PSI file in-tree).
+- PSI status unchanged (no revocation).
 - No package deletion.
-- Valid crystal/gout-risk / renal-underexcretion wording may be folded only as **subordinate non-diagnostic context** inside the canonical frame if Gate 1 explicitly authorises bounded context phrases; otherwise omit gout/crystal attribution entirely (fail closed to bare elevation).
-
-Any disposition other than retirement requires explicit Gate 1 medical rationale.
+- Valid gout/crystal-deposition content may remain **only as subordinate non-diagnostic risk context** within the canonical frame.
 
 ---
 
@@ -205,13 +199,9 @@ Do not compile or modify: HbA1c (any), creatinine, urea, eGFR/UACR/chronicity as
 
 ---
 
-## 9. Gate STOP
+## 9. Gate ratification (recorded)
 
-This Phase 0 pack is committed with Gate 1 / Gate 2 statuses **PENDING**.
+Gate 1: `ARCH-CONV-G-GATE1-HMR-2026-08-01` — `APPROVED_WITH_NARROWING`  
+Gate 2: `ARCH-CONV-G-GATE2-ANTHONY-2026-08-01` — `APPROVED`
 
-Return for:
-
-1. GPT Gate 1 medical + architectural review (`ARCH-CONV-G-GATE1-HMR-PENDING` → replace on approval);
-2. Anthony Gate 2 project-authority approval (`ARCH-CONV-G-GATE2-ANTHONY-PENDING` → replace on approval).
-
-**Do not implement compiled artefacts, register rows, pilot-cohort edits, or runtime tests until both approvals are committed and consistent with this pack (or a revised re-hardened prompt).**
+Implementation may proceed on the active `ARCH-CONV-G` Automation Bus work package without re-running `start`. Do not invent medical rules beyond the ratified disposition.
