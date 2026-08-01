@@ -152,10 +152,14 @@ python backend/scripts/validate_knowledge_package.py --package-dir knowledge_bus
 
 ## Post-Implementation Closure
 
-Recorded at closure time (see command evidence in the closure commit / chat):
-
-| Check | Result |
-|---|---|
-| Gate 2 status | RATIFIED |
-| Merge authorised | Yes (human) |
-| Publish | push `main` → `origin/main`; verify local `main` == `origin/main` |
+| Check | Result | Evidence |
+|---|---|---|
+| Gate 2 status | RATIFIED | `ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01` |
+| Merge authorised | Yes | Human approval 2026-08-01 |
+| Sprint branch | `feature/arch-conv-e2-alt-rvalue-runtime-authority` | Fast-forward into `main` |
+| Feature tip SHA | `b71684a` | Kernel COMPLETE + Gate 2 ratification tip |
+| Working tree (pre-merge) | Clean | `git status --short` empty |
+| Stash | Empty | `git stash list` empty |
+| Kernel status | COMPLETE | `automation_bus/latest_cursor_status.json` |
+| Finish | PASS | `python backend/scripts/run_work_package.py finish` exit 0 |
+| Publish | Required | push `main` → `origin/main`; verify local `main` == `origin/main` |
