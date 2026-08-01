@@ -75,17 +75,22 @@ signals:
     operator: '<='
     value: 2
     condition_type: all_of
+  # ARCH-CONV-E3: R <= 2 band already gated above. Subordinate contextual ALT authority —
+  # does not displace ALP/GGT liver_injury_axis primary for cholestatic SOURCE.
   override_rules:
   - rule_id: or_alp_predominant_with_bilirubin_high
     resulting_state: at_risk
     description: Escalate cautiously when an ALP-predominant pattern is accompanied by bilirubin elevation
-      because this adds severity and excretory context.
+      because this adds severity and excretory context. Consumer Hy's Law diagnosis is prohibited.
     conditions:
     - metric_id: bilirubin
       operator: '>'
       condition_type: all_of
       comparator_type: lab_range_boundary
       boundary: above_max
+    presentation_safety:
+      consumer_hys_law_diagnosis: PROHIBITED
+      role: severity_escalation_not_cause_attribution
     source_refs:
     - source_bsg_abnormal_liver_tests_2017
     - source_acg_abnormal_liver_chemistries_2017

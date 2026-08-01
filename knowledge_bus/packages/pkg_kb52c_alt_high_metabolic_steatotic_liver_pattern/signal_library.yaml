@@ -78,6 +78,33 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
+  # ARCH-CONV-E3: compound lab corroboration (any_of). Declared metabolic-risk user
+  # context is blocked — no governed runtime context-modifier contract. Very-high-ALT
+  # numeric suppress is blocked — no Pass 3 numeric threshold. Uses canonical
+  # hdl_cholesterol id (hdl is an alias only).
+  mandatory_pre_emission_gates:
+  - gate_id: require_metabolic_lab_corroboration_any_of
+    conditions:
+    - metric_id: hba1c
+      operator: '>'
+      condition_type: any_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: triglycerides
+      operator: '>'
+      condition_type: any_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: ggt
+      operator: '>'
+      condition_type: any_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: hdl_cholesterol
+      operator: '<'
+      condition_type: any_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
   override_rules:
   - rule_id: or_alt_high_with_metabolic_markers
     resulting_state: at_risk
@@ -92,6 +119,22 @@ signals:
     source_refs:
     - source_easl_masld_guideline_2024
     - source_aasld_nafld_guidance_2023
+  - rule_id: or_alt_high_with_bilirubin_high
+    resulting_state: at_risk
+    description: Escalate severity context when raised bilirubin accompanies ALT; redirects away from
+      routine metabolic framing. Consumer Hy's Law diagnosis is prohibited.
+    conditions:
+    - metric_id: bilirubin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    presentation_safety:
+      consumer_hys_law_diagnosis: PROHIBITED
+      role: severity_escalation_not_cause_attribution
+    source_refs:
+    - source_bsg_abnormal_liver_tests_2017
+    - source_acg_abnormal_liver_chemistries_2017
   output:
     signal_value: alt
     signal_state: at_risk

@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+from typing import Optional
 from uuid import uuid4
 
 import pytest
@@ -82,11 +83,10 @@ def test_signal_registry_is_deterministic_across_instances():
 
 
 def test_signal_registry_alt_high_multi_frame_pilot():
-    """ARCH-CONV-E2: ALT-high runtime activation is exactly the two canonical frames.
+    """ARCH-CONV-E3: ALT-high runtime activation is five governed frames.
 
-    Canonical hepatocellular + mixed R-value frames are activated. S24 is superseded.
-    The other four ALT packages remain withheld. No duplicate foundational ALT-high
-    authority. Non-collapse for other multi-frame families is still asserted.
+    Hepatocellular, mixed, cholestatic, muscle, and metabolic are activated.
+    Bilirubin severity remains withheld (override-escalation only). S24 superseded.
     """
     registry = SignalRegistry()
     rows = registry.get_all_signals()
@@ -95,21 +95,22 @@ def test_signal_registry_alt_high_multi_frame_pilot():
         "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
     )
     mixed = "signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern"
+    cholestatic = (
+        "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context"
+    )
+    muscle = "signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution"
+    metabolic = "signal_alt_high::inv_alt_high_metabolic_masld_context"
     s24 = "signal_alt_high::inv_alt_high_hepatocellular_injury"
     withheld = (
-        "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context",
-        "signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution",
         "signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context",
-        "signal_alt_high::inv_alt_high_metabolic_masld_context",
     )
+    activated = [hepatocellular, mixed, cholestatic, muscle, metabolic]
 
     alt_keys = [row["activation_key"] for row in rows if row["signal_id"] == "signal_alt_high"]
-    assert sorted(alt_keys) == sorted([hepatocellular, mixed])
+    assert sorted(alt_keys) == sorted(activated)
     assert s24 not in alt_keys
     for key in withheld:
         assert key not in alt_keys
-    assert alt_keys.count(hepatocellular) == 1
-    assert alt_keys.count(mixed) == 1
 
     by_signal_id: dict[str, list[str]] = {}
     for row in rows:
@@ -1497,6 +1498,12 @@ _KB_S24_PACKAGE_DIRS = [
 
 _KB_S24_SIGNAL_CASES = {
     "signal_alt_high": {
+        # ARCH-CONV-E3: signal_alt_high has five active frames. This harness must
+        # target the canonical hepatocellular activation key explicitly — never
+        # rely on registry iteration order / matches[0].
+        "activation_key": (
+            "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        ),
         "no_trigger_biomarkers": {"alt": 30.0, "bilirubin": 12.0, "alp": 100.0},
         "baseline_biomarkers": {"alt": 70.0, "bilirubin": 12.0, "alp": 100.0},
         "escalation_biomarkers": {"alt": 70.0, "bilirubin": 25.0, "alp": 100.0},
@@ -1694,19 +1701,52 @@ _KB_S24_SIGNAL_CASES = {
 }
 
 
-def _load_signal_definition(signal_id: str) -> dict:
+def _load_signal_definition(
+    signal_id: str,
+    *,
+    activation_key: Optional[str] = None,
+) -> dict:
+    """Load one runtime signal definition.
+
+    When ``activation_key`` is provided, resolve that exact frame. Multi-frame
+    signal families (e.g. signal_alt_high after ARCH-CONV-E3) must not depend on
+    registry iteration order.
+    """
     registry = SignalRegistry()
-    matches = [dict(signal) for signal in registry.get_all_signals() if signal.get("signal_id") == signal_id]
+    matches = [
+        dict(signal)
+        for signal in registry.get_all_signals()
+        if signal.get("signal_id") == signal_id
+    ]
     if not matches:
         raise AssertionError(f"Signal not found in registry: {signal_id}")
+
+    if activation_key is not None:
+        keyed = [row for row in matches if str(row.get("activation_key", "")) == activation_key]
+        if not keyed:
+            raise AssertionError(
+                f"Activation key not found for {signal_id}: {activation_key} "
+                f"(loaded={[row.get('activation_key') for row in matches]})"
+            )
+        return keyed[0]
+
     s24_matches = [row for row in matches if str(row.get("package_id", "")).startswith("pkg_s24_")]
     if s24_matches:
         return s24_matches[0]
+    if len(matches) > 1:
+        raise AssertionError(
+            f"Ambiguous multi-frame signal_id={signal_id}; pass activation_key. "
+            f"loaded={[row.get('activation_key') for row in matches]}"
+        )
     return matches[0]
 
 
-def _single_signal_evaluator(signal_id: str) -> SignalEvaluator:
-    signal = _load_signal_definition(signal_id)
+def _single_signal_evaluator(
+    signal_id: str,
+    *,
+    activation_key: Optional[str] = None,
+) -> SignalEvaluator:
+    signal = _load_signal_definition(signal_id, activation_key=activation_key)
 
     class _SingleSignalRegistry:
         @staticmethod
@@ -1959,8 +1999,11 @@ def test_kbs24_signal_libraries_parse_and_use_lab_range_activation():
 
 @pytest.mark.parametrize("signal_id", sorted(_KB_S24_SIGNAL_CASES.keys()))
 def test_kbs24_signals_no_trigger_when_primary_in_range(signal_id: str):
-    evaluator = _single_signal_evaluator(signal_id)
     case = _KB_S24_SIGNAL_CASES[signal_id]
+    evaluator = _single_signal_evaluator(
+        signal_id,
+        activation_key=case.get("activation_key"),
+    )
 
     out = evaluator.evaluate_all(
         signal_biomarkers=case["no_trigger_biomarkers"],
@@ -1972,8 +2015,9 @@ def test_kbs24_signals_no_trigger_when_primary_in_range(signal_id: str):
 
 @pytest.mark.parametrize("signal_id", sorted(_KB_S24_SIGNAL_CASES.keys()))
 def test_kbs24_signals_trigger_suboptimal_then_escalate(signal_id: str):
-    evaluator = _single_signal_evaluator(signal_id)
     case = _KB_S24_SIGNAL_CASES[signal_id]
+    activation_key = case.get("activation_key")
+    evaluator = _single_signal_evaluator(signal_id, activation_key=activation_key)
 
     baseline = evaluator.evaluate_all(
         signal_biomarkers=case["baseline_biomarkers"],
@@ -1982,6 +2026,13 @@ def test_kbs24_signals_trigger_suboptimal_then_escalate(signal_id: str):
     )
     assert len(baseline) == 1
     assert baseline[0].signal_state == "suboptimal"
+    if activation_key is not None:
+        assert baseline[0].activation_key == activation_key
+        # ALT hepatocellular: empty derived R-value → rank-2 general hyp.
+        if signal_id == "signal_alt_high":
+            assert baseline[0].selected_hypothesis_id == (
+                "hyp_alt_high_general_liver_test_abnormality_context"
+            )
 
     escalated = evaluator.evaluate_all(
         signal_biomarkers=case["escalation_biomarkers"],
@@ -1991,6 +2042,12 @@ def test_kbs24_signals_trigger_suboptimal_then_escalate(signal_id: str):
     assert len(escalated) == 1
     assert escalated[0].signal_state == "at_risk"
     assert STATE_RANK[escalated[0].signal_state] >= STATE_RANK[baseline[0].signal_state]
+    if activation_key is not None:
+        assert escalated[0].activation_key == activation_key
+        if signal_id == "signal_alt_high":
+            assert escalated[0].selected_hypothesis_id == (
+                "hyp_alt_high_general_liver_test_abnormality_context"
+            )
 
 
 def test_kbs24_rejected_homocysteine_metabolic_frame_is_not_runtime_eligible():

@@ -37,19 +37,23 @@ S24_ALT_KEY = "signal_alt_high::inv_alt_high_hepatocellular_injury"
 ALP_KEY = "signal_alp_high::inv_alp_high_bone_biliary"
 GGT_KEY = "signal_ggt_high::inv_ggt_high_hepatic"
 
+WITHHELD_KEYS = (
+    "signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context",
+)
+MUSCLE_KEY = "signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution"
+METABOLIC_KEY = "signal_alt_high::inv_alt_high_metabolic_masld_context"
+BILIRUBIN_KEY = "signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context"
+
 LAB_RANGES = {
     "alt": {"min": 0.0, "max": 40.0, "unit": "U/L", "source": "lab"},
     "alp": {"min": 30.0, "max": 120.0, "unit": "U/L", "source": "lab"},
     "bilirubin": {"min": 0.0, "max": 20.0, "unit": "umol/L", "source": "lab"},
     "ggt": {"min": 0.0, "max": 60.0, "unit": "U/L", "source": "lab"},
+    "creatine_kinase": {"min": 0.0, "max": 200.0, "unit": "U/L", "source": "lab"},
+    "hba1c": {"min": 20.0, "max": 42.0, "unit": "mmol/mol", "source": "lab"},
+    "triglycerides": {"min": 0.0, "max": 1.7, "unit": "mmol/L", "source": "lab"},
+    "hdl_cholesterol": {"min": 1.0, "max": 2.5, "unit": "mmol/L", "source": "lab"},
 }
-
-WITHHELD_KEYS = (
-    CHOLESTATIC_KEY,
-    "signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution",
-    "signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context",
-    "signal_alt_high::inv_alt_high_metabolic_masld_context",
-)
 
 
 @pytest.fixture(autouse=True)
@@ -309,24 +313,41 @@ class TestGate1RuntimeProofs:
         assert "hys_law" not in surface
         assert "hy_law" not in surface
 
-    def test_s24_absent_and_exactly_one_foundational_alt_authority(self):
+    def test_s24_absent_and_foundational_alt_authorities_loaded(self):
         registry = SignalRegistry()
         loaded = {row["activation_key"] for row in registry.get_all_signals()}
         assert S24_ALT_KEY not in loaded
         assert HEPATOCELLULAR_KEY in loaded
         assert MIXED_KEY in loaded
+        assert CHOLESTATIC_KEY in loaded
+        assert MUSCLE_KEY in loaded
+        assert METABOLIC_KEY in loaded
+        assert BILIRUBIN_KEY not in loaded
         alt = [
             row for row in registry.get_all_signals() if row["signal_id"] == "signal_alt_high"
         ]
         assert sorted(row["activation_key"] for row in alt) == sorted(
-            [HEPATOCELLULAR_KEY, MIXED_KEY]
+            [HEPATOCELLULAR_KEY, MIXED_KEY, CHOLESTATIC_KEY, MUSCLE_KEY, METABOLIC_KEY]
         )
 
-    def test_four_withheld_remain_withheld(self):
+    def test_bilirubin_severity_package_remains_withheld(self):
         registry = SignalRegistry()
         loaded = {row["activation_key"] for row in registry.get_all_signals()}
         for key in WITHHELD_KEYS:
             assert key not in loaded
+
+    def test_r_le_2_selects_cholestatic_not_general(self):
+        evaluator = SignalEvaluator(registry=SignalRegistry())
+        results = evaluator.evaluate_all(
+            {"alt": 50.0, "alp": 200.0},
+            {"r_value_alt_alp": 1.5},
+            lab_ranges=_lab_ranges(),
+        )
+        alt = _alt_results(results)
+        keys = {r.activation_key for r in alt}
+        assert CHOLESTATIC_KEY in keys
+        assert HEPATOCELLULAR_KEY not in keys
+        assert MIXED_KEY not in keys
 
     def test_alp_ggt_suppression_preserved(self):
         results = [
@@ -337,17 +358,23 @@ class TestGate1RuntimeProofs:
                 "signal_alt_high",
                 "pkg_kb52c_alt_high_hepatocellular_injury_pattern",
             ),
+            _signal_row(
+                CHOLESTATIC_KEY,
+                "signal_alt_high",
+                "pkg_kb52c_alt_high_cholestatic_alp_predominant_context",
+            ),
         ]
         filtered = apply_signal_authority_collision_policy(
             results,
-            signal_biomarkers={"alp": 200.0, "ggt": 100.0, "alt": 400.0},
-            signal_derived={"r_value_alt_alp": 10.0},
+            signal_biomarkers={"alp": 200.0, "ggt": 100.0, "alt": 50.0},
+            signal_derived={"r_value_alt_alp": 1.5},
             lab_ranges=_lab_ranges(),
             model_path=MODEL_PATH,
         )
         keys = {row.activation_key for row in filtered}
         assert ALP_KEY in keys
         assert HEPATOCELLULAR_KEY in keys
+        assert CHOLESTATIC_KEY in keys
         assert GGT_KEY not in keys
 
     def test_collision_model_gate_refs(self):
@@ -358,8 +385,8 @@ class TestGate1RuntimeProofs:
             for g in model["authority_groups"]
             if g["authority_group_id"] == "alt_biochemical_pattern_axis"
         )
-        assert alt_axis["gate1_reference"] == "ARCH-CONV-E2-GATE1-HMR-2026-08-01"
-        assert alt_axis["gate2_reference"] == "ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01"
+        assert alt_axis["gate1_reference"] == "ARCH-CONV-E3-GATE1-HMR-2026-08-01"
+        assert alt_axis["gate2_reference"] == "ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01"
 
     def test_medical_decision_register_supersedes_prior_gate1(self):
         payload = yaml.safe_load(

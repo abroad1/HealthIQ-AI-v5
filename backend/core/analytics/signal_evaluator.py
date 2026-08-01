@@ -433,6 +433,43 @@ class SignalEvaluator:
             return observed >= compare_value
         return observed == compare_value
 
+    def _evaluate_condition_group(
+        self,
+        conditions: Any,
+        signal_biomarkers: Dict[str, float],
+        signal_derived: Dict[str, float],
+        lab_ranges: Dict[str, dict],
+    ) -> tuple[bool, int]:
+        """Evaluate any_of/all_of condition groups (shared by overrides and gates)."""
+        if not isinstance(conditions, list) or not conditions:
+            raise ValueError(f"Unsupported condition group shape: {conditions}")
+
+        any_of_results: List[bool] = []
+        all_of_results: List[bool] = []
+        satisfied_count = 0
+        for condition in conditions:
+            if not isinstance(condition, dict):
+                raise ValueError(f"Unsupported override condition shape: {condition}")
+            condition_type = str(condition.get("condition_type", "")).strip()
+            if condition_type not in {"any_of", "all_of"}:
+                raise ValueError(f"Unsupported override condition_type: {condition}")
+            condition_result = self._evaluate_single_condition(
+                condition=condition,
+                signal_biomarkers=signal_biomarkers,
+                signal_derived=signal_derived,
+                lab_ranges=lab_ranges,
+            )
+            if condition_type == "any_of":
+                any_of_results.append(condition_result)
+            else:
+                all_of_results.append(condition_result)
+            if condition_result:
+                satisfied_count += 1
+
+        all_of_ok = all(all_of_results) if all_of_results else True
+        any_of_ok = any(any_of_results) if any_of_results else True
+        return all_of_ok and any_of_ok, satisfied_count
+
     def _evaluate_override_rules(
         self,
         override_rules: Any,
@@ -456,31 +493,12 @@ class SignalEvaluator:
             if not _rule_id or resulting_state not in self._STATE_RANK or not isinstance(conditions, list) or not conditions:
                 raise ValueError(f"Unsupported override rule shape: {rule}")
 
-            any_of_results: List[bool] = []
-            all_of_results: List[bool] = []
-            satisfied_count = 0
-            for condition in conditions:
-                if not isinstance(condition, dict):
-                    raise ValueError(f"Unsupported override condition shape: {condition}")
-                condition_type = str(condition.get("condition_type", "")).strip()
-                if condition_type not in {"any_of", "all_of"}:
-                    raise ValueError(f"Unsupported override condition_type: {condition}")
-                condition_result = self._evaluate_single_condition(
-                    condition=condition,
-                    signal_biomarkers=signal_biomarkers,
-                    signal_derived=signal_derived,
-                    lab_ranges=lab_ranges,
-                )
-                if condition_type == "any_of":
-                    any_of_results.append(condition_result)
-                else:
-                    all_of_results.append(condition_result)
-                if condition_result:
-                    satisfied_count += 1
-
-            all_of_ok = all(all_of_results) if all_of_results else True
-            any_of_ok = any(any_of_results) if any_of_results else True
-            fires = all_of_ok and any_of_ok
+            fires, satisfied_count = self._evaluate_condition_group(
+                conditions=conditions,
+                signal_biomarkers=signal_biomarkers,
+                signal_derived=signal_derived,
+                lab_ranges=lab_ranges,
+            )
             if not fires:
                 continue
 
@@ -509,6 +527,19 @@ class SignalEvaluator:
         for gate in gates:
             if not isinstance(gate, dict):
                 return False
+
+            # ARCH-CONV-E3: compound any_of/all_of gates reuse override condition grouping.
+            nested_conditions = gate.get("conditions")
+            if isinstance(nested_conditions, list) and nested_conditions:
+                fires, _ = self._evaluate_condition_group(
+                    conditions=nested_conditions,
+                    signal_biomarkers=signal_biomarkers,
+                    signal_derived=signal_derived,
+                    lab_ranges=lab_ranges or {},
+                )
+                if not fires:
+                    return False
+                continue
 
             comparator_type = str(gate.get("comparator_type", "")).strip()
             metric_id = str(gate.get("metric_id", "")).strip()

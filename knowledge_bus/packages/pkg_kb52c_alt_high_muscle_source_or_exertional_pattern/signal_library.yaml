@@ -1,7 +1,7 @@
 library:
   package_id: KBP-4725
   schema_version: 2.0.0
-  package_version: 1.1.0
+  package_version: 1.2.0
   library_name: ARCH-CONV-E — ALT High Muscle Source or Exertional Contribution
   description: Governed package asset translated from inv_alt_high_muscle_source_or_exertional_contribution
     in knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json.
@@ -72,6 +72,16 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
+  # ARCH-CONV-E3: lab-only corroboration. CK must be above lab max (not merely present).
+  # User-declared exercise/trauma/myopathy/statin context is blocked — no governed
+  # runtime context-modifier contract. Very-high-ALT numeric suppress is blocked —
+  # no Pass 3 numeric threshold.
+  mandatory_pre_emission_gates:
+  - gate_id: require_creatine_kinase_above_lab_max
+    metric_id: creatine_kinase
+    comparator_type: lab_range_boundary
+    boundary: above_max
+    condition_type: all_of
   override_rules:
   - rule_id: or_alt_high_with_ck_high_muscle_context
     resulting_state: at_risk
@@ -87,6 +97,22 @@ signals:
     - source_pettersson_exercise_lft_2008
     - source_bodybuilding_aminotransferase_review_2020
     - source_rhabdomyolysis_lft_review_2020
+  - rule_id: or_alt_high_with_bilirubin_high
+    resulting_state: at_risk
+    description: Escalate severity context when raised bilirubin accompanies ALT; redirects away from
+      isolated muscle-source wording. Consumer Hy's Law diagnosis is prohibited.
+    conditions:
+    - metric_id: bilirubin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    presentation_safety:
+      consumer_hys_law_diagnosis: PROHIBITED
+      role: severity_escalation_not_cause_attribution
+    source_refs:
+    - source_aasld_liver_enzymes_2025
+    - source_pettersson_exercise_lft_2008
   output:
     signal_value: alt
     signal_state: at_risk

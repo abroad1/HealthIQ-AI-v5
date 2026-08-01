@@ -74,23 +74,28 @@ signals:
     upper_bound_state: suboptimal
     enable_lower_bound: false
     lower_bound_state: suboptimal
-  # ARCH-CONV-E2 Gate 1 (2026-08-01): emit on ALT lab-range elevation. Ranked Pass 3
-  # hypotheses are selected at runtime: R >= 5 → hyp_alt_predominant_biochemical_pattern;
-  # missing/ineligible R-value (or R <= 2 while cholestatic package withheld) →
-  # hyp_alt_high_general_liver_test_abnormality_context. When 2 < R < 5 the mixed
-  # package owns the pattern and this package does not emit.
+  # ARCH-CONV-E2/E3: emit on ALT lab-range elevation. Ranked Pass 3 hypotheses:
+  # R >= 5 → hyp_alt_predominant_biochemical_pattern; missing/ineligible R-value →
+  # hyp_alt_high_general_liver_test_abnormality_context. When 2 < R < 5 mixed owns
+  # the band; when R <= 2 cholestatic owns the band (ARCH-CONV-E3).
   mandatory_pre_emission_gates: []
   override_rules:
   - rule_id: or_alt_high_with_bilirubin_high
     resulting_state: at_risk
     description: Escalate to at-risk wording when raised ALT coincides with raised bilirubin because bilirubin
-      adds excretory and severity context.
+      adds excretory and severity context. Severity escalation only — not cause attribution.
+      Consumer Hy's Law diagnosis is prohibited.
     conditions:
     - metric_id: bilirubin
       operator: '>'
       condition_type: all_of
       comparator_type: lab_range_boundary
       boundary: above_max
+    presentation_safety:
+      consumer_hys_law_diagnosis: PROHIBITED
+      role: severity_escalation_not_cause_attribution
+      fractionation_unavailable: do_not_infer_conjugated_vs_unconjugated
+      synthetic_function_markers: albumin_inr_add_context_when_present_do_not_invent
     source_refs:
     - source_fda_dili_guidance_2009
     - source_bsg_abnormal_liver_tests_2017

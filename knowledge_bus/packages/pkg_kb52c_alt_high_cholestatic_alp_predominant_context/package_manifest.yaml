@@ -1,20 +1,25 @@
 package_id: pkg_kb52c_alt_high_cholestatic_alp_predominant_context
-package_version: 1.0.0
-description: 'ARCH-CONV-E2 package for inv_alt_high_r_value_cholestatic_alp_predominant_context
-  (signal_alt_high). Promotion decision: PROMOTE_BUT_WITHHOLD. R-value band gates (R <= 2) are present,
-  but runtime activation is withheld to avoid duplicating the governed ALP/GGT cholestatic_source_axis
-  / liver_injury_axis primary authority.'
+package_version: 1.1.0
+description: 'ARCH-CONV-E3 Gate 1 package for inv_alt_high_r_value_cholestatic_alp_predominant_context
+  (signal_alt_high). Promotion decision: PROMOTE_AND_ACTIVATE as SUBORDINATE_CONTEXTUAL_AUTHORITY.
+  Owns R <= 2 ALT biochemical band. Does not displace ALP/GGT liver_injury_axis primary for
+  cholestatic SOURCE localisation. signal_alt_high is intentionally NOT added as a supporting
+  family under liver_injury_axis (named-key filter would drop hepatocellular/mixed or family-level
+  suppress would suppress all ALT when ALP primary is present).'
 research_brief: research_brief.yaml
 signal_library: signal_library.yaml
 promoted_signal_intelligence: promoted_signal_intelligence.yaml
-author: HealthIQ Knowledge Bus — ARCH-CONV-E2
+author: HealthIQ Knowledge Bus — ARCH-CONV-E3
 created_at: '2026-07-30'
+promoted_at: '2026-08-01'
 behavioural_impact: NONE
 engine_compatibility: v5.x
 source_spec_id: inv_alt_high_r_value_cholestatic_alp_predominant_context
 activation_key: signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
 source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
 source_document_hash: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
-promotion_decision: PROMOTE_BUT_WITHHOLD
-promotion_work_id: ARCH-CONV-E2
-withhold_reason: duplicates_cholestatic_source_axis_alp_ggt_authority
+promotion_decision: PROMOTE_AND_ACTIVATE
+promotion_work_id: ARCH-CONV-E3
+authority_role: SUBORDINATE_CONTEXTUAL_AUTHORITY
+gate1_reference: ARCH-CONV-E3-GATE1-HMR-2026-08-01
+gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01

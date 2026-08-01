@@ -1,20 +1,27 @@
 package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
-package_version: 1.1.0
-description: 'ARCH-CONV-E2 package for inv_alt_high_muscle_source_or_exertional_contribution (signal_alt_high).
-  Promotion decision: DEFERRED_WITH_EXPLICIT_REASON. Package lacks a CK-required mandatory_pre_emission_gate,
-  so activation would emit on every ALT-high panel and duplicate primary ALT pattern authority. Legacy
-  disposition: REGENERATED_FROM_CANONICAL_RESEARCH.'
+package_version: 1.2.0
+description: 'ARCH-CONV-E3 Gate 1 package for inv_alt_high_muscle_source_or_exertional_contribution
+  (signal_alt_high). Promotion decision: PROMOTE_AND_ACTIVATE as SUBORDINATE_CONTEXTUAL_AUTHORITY
+  lab-only. Emission gated on creatine_kinase lab_range_boundary above_max. User-context
+  corroboration path deferred (no governed runtime context-modifier contract). Very-high-ALT
+  numeric suppress deferred (no Pass 3 numeric threshold).'
 research_brief: research_brief.yaml
 signal_library: signal_library.yaml
 promoted_signal_intelligence: promoted_signal_intelligence.yaml
-author: HealthIQ Knowledge Bus — ARCH-CONV-E2
+author: HealthIQ Knowledge Bus — ARCH-CONV-E3
 created_at: '2026-07-30'
+promoted_at: '2026-08-01'
 behavioural_impact: NONE
 engine_compatibility: v5.x
 source_spec_id: inv_alt_high_muscle_source_or_exertional_contribution
 activation_key: signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
 source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
 source_document_hash: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
-promotion_decision: DEFERRED_WITH_EXPLICIT_REASON
-promotion_work_id: ARCH-CONV-E2
-defer_reason: missing_distinguishing_pre_emission_gate_would_duplicate_alt_primary
+promotion_decision: PROMOTE_AND_ACTIVATE
+promotion_work_id: ARCH-CONV-E3
+authority_role: SUBORDINATE_CONTEXTUAL_AUTHORITY_LAB_ONLY
+gate1_reference: ARCH-CONV-E3-GATE1-HMR-2026-08-01
+gate2_reference: ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01
+unresolved_blockers:
+- no_governed_runtime_user_context_contract
+- very_high_alt_numeric_threshold_absent

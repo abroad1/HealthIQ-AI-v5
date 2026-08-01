@@ -1,16 +1,18 @@
 """
-ARCH-CONV-E2 — governed ALT R-value hypothesis selection (no raw Pass 3 runtime read).
+ARCH-CONV-E2 / E3 — governed ALT R-value hypothesis selection (no raw Pass 3 runtime read).
 
 Selects among the two ranked hypotheses of
 ``inv_alt_high_r_value_hepatocellular_biochemical_pattern``:
 
 - rank 1: ``hyp_alt_predominant_biochemical_pattern`` when R >= 5
 - rank 2: ``hyp_alt_high_general_liver_test_abnormality_context`` when ALT is high
-  but R-value classification is unavailable/ineligible, or when R <= 2 while the
-  cholestatic R-value package remains withheld
+  but R-value classification is unavailable/ineligible
 
-When ``2 < R < 5``, returns None so the mixed package owns the pattern and the
-hepatocellular general fallback is not duplicated.
+When ``2 < R < 5``, returns None so the mixed package owns the pattern.
+
+When ``R <= 2``, returns None so the cholestatic ALP-predominant package owns the
+pattern (ARCH-CONV-E3). Rank-2 general is no longer used as a stand-in for the
+cholestatic band once that package is activated.
 """
 
 from __future__ import annotations
@@ -30,6 +32,9 @@ HEPATOCELLULAR_ACTIVATION_KEY = (
 MIXED_ACTIVATION_KEY = (
     "signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern"
 )
+CHOLESTATIC_ACTIVATION_KEY = (
+    "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context"
+)
 
 HYP_ALT_PREDOMINANT_BIOCHEMICAL_PATTERN = "hyp_alt_predominant_biochemical_pattern"
 HYP_ALT_HIGH_GENERAL_LIVER_TEST_ABNORMALITY_CONTEXT = (
@@ -40,7 +45,7 @@ HYP_ALT_HIGH_GENERAL_LIVER_TEST_ABNORMALITY_CONTEXT = (
 def select_hepatocellular_hypothesis_id(r_value: Optional[float]) -> Optional[str]:
     """
     Return the hypothesis id for the canonical hepatocellular package, or None to
-    suppress emission when the mixed R-value band owns the pattern.
+    suppress emission when mixed or cholestatic R-value bands own the pattern.
     """
     if r_value is None:
         return HYP_ALT_HIGH_GENERAL_LIVER_TEST_ABNORMALITY_CONTEXT
@@ -53,5 +58,6 @@ def select_hepatocellular_hypothesis_id(r_value: Optional[float]) -> Optional[st
     ):
         return None
     if value <= R_VALUE_CHOLESTATIC_MAX:
-        return HYP_ALT_HIGH_GENERAL_LIVER_TEST_ABNORMALITY_CONTEXT
+        # ARCH-CONV-E3: cholestatic package owns R <= 2.
+        return None
     return HYP_ALT_HIGH_GENERAL_LIVER_TEST_ABNORMALITY_CONTEXT

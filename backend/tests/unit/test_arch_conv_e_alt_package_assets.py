@@ -111,10 +111,18 @@ def test_arch_conv_e_r_value_packages_carry_explicit_promotion_decisions() -> No
     decisions = {
         "inv_alt_high_r_value_hepatocellular_biochemical_pattern": "PROMOTE_AND_ACTIVATE",
         "inv_alt_high_r_value_mixed_biochemical_pattern": "PROMOTE_AND_ACTIVATE",
-        "inv_alt_high_r_value_cholestatic_alp_predominant_context": "PROMOTE_BUT_WITHHOLD",
-        "inv_alt_high_muscle_source_or_exertional_contribution": "DEFERRED_WITH_EXPLICIT_REASON",
+        "inv_alt_high_r_value_cholestatic_alp_predominant_context": "PROMOTE_AND_ACTIVATE",
+        "inv_alt_high_muscle_source_or_exertional_contribution": "PROMOTE_AND_ACTIVATE",
         "inv_alt_high_bilirubin_hys_law_severity_context": "DEFERRED_WITH_EXPLICIT_REASON",
-        "inv_alt_high_metabolic_masld_context": "PROMOTE_BUT_WITHHOLD",
+        "inv_alt_high_metabolic_masld_context": "PROMOTE_AND_ACTIVATE",
+    }
+    work_ids = {
+        "inv_alt_high_r_value_hepatocellular_biochemical_pattern": "ARCH-CONV-E2",
+        "inv_alt_high_r_value_mixed_biochemical_pattern": "ARCH-CONV-E2",
+        "inv_alt_high_r_value_cholestatic_alp_predominant_context": "ARCH-CONV-E3",
+        "inv_alt_high_muscle_source_or_exertional_contribution": "ARCH-CONV-E3",
+        "inv_alt_high_bilirubin_hys_law_severity_context": "ARCH-CONV-E3",
+        "inv_alt_high_metabolic_masld_context": "ARCH-CONV-E3",
     }
     for spec_id, package_id in SPEC_TO_PACKAGE.items():
         package_dir = PACKAGES_ROOT / package_id
@@ -123,7 +131,7 @@ def test_arch_conv_e_r_value_packages_carry_explicit_promotion_decisions() -> No
         derived = library["signals"][0]["dependencies"]["derived_metrics"]
 
         assert manifest["promotion_decision"] == decisions[spec_id]
-        assert manifest["promotion_work_id"] == "ARCH-CONV-E2"
+        assert manifest["promotion_work_id"] == work_ids[spec_id]
         assert "ready_for_implementation" not in manifest
 
         if spec_id in R_VALUE_SPECS:
@@ -188,10 +196,14 @@ def test_arch_conv_e_liver_axis_excludes_alt_family_from_supporting() -> None:
     assert alt_axis["status"] == "adjudicated_runtime_enforced"
     assert alt_axis["primary_signal_family"] == "signal_alt_high"
     assert alt_axis["supporting_signal_families"] == []
-    assert alt_axis["gate1_reference"] == "ARCH-CONV-E2-GATE1-HMR-2026-08-01"
-    assert alt_axis["gate2_reference"] == "ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01"
+    assert alt_axis["gate1_reference"] == "ARCH-CONV-E3-GATE1-HMR-2026-08-01"
+    assert alt_axis["gate2_reference"] == "ARCH-CONV-E3-GATE2-ANTHONY-2026-08-01"
     assert alt_axis["authority_decision"]["canonical_hepatocellular_is_s24_successor"] is True
     assert (
         "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
         in alt_axis["related_active_frames"]["foundational_canonical_hepatocellular"]
+    )
+    assert (
+        "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context"
+        in alt_axis["related_active_frames"]["activated_cholestatic_r_value_band_subordinate"]
     )
