@@ -1298,6 +1298,44 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ---
 
+## ARCH-CONV-F — Haematology Compiled-WHY Authority
+
+**Status:** CLOSED — Gate 2 ratified; independent audit PASS; merged and published to `origin/main`  
+**Date closed:** 2026-08-01  
+**Programme block(s):** Architecture convergence — haematology compiled-WHY authority (`signal_ferritin_high`, `signal_hemoglobin_low`)  
+**Gate 1:** `ARCH-CONV-F-GATE1-HMR-2026-08-01` (`APPROVED_WITH_NARROWING`)  
+**Gate 2:** `ARCH-CONV-F-GATE2-ANTHONY-2026-08-01` (`APPROVED`)  
+**Merge SHA:** _(filled at publish)_  
+**Evidence:** `docs/audit-papers/ARCH-CONV-F_implementation_and_verification_report.md`  
+**Medical decision register:** `docs/architecture/ARCH-CONV-F_medical_decision_register.yaml`
+
+### Delivered / ticked off
+- Compiled-WHY authority for `signal_ferritin_high` (`signal_ferritin_high::inv_ferritin_high_overload`).
+- Compiled-WHY authority for `signal_hemoglobin_low` (`signal_hemoglobin_low::inv_hgb_low_anemia`).
+- `+2 COMPILED_ACTIVE` authority rows (21 → 23).
+- `+3 LEGACY_RETIRED` competing WHY rows (15 → 18).
+- Ferritin constrained to flat non-causal `morphology_context` authority under every tested data state.
+- Haemoglobin constrained to anaemia / reduced oxygen-carrying-capacity causal authority.
+- MCV/RDW retained as non-owning morphology/context only (no independent aetiology / underproduction claim).
+- Concern-only escalation safeguards retained for ferritin `>1000 µg/L` and haemoglobin `<80 g/L`.
+- Existing package-layer and PSI status unchanged for all five affected packages.
+- Independent audit PASS.
+
+### Carry-forwards
+- Haemoglobin primary oxygen-carrying PSI research and promotion remains open (structurally distinct from compiled-WHY closure).
+- `signal_hba1c_high` compiled-WHY remains open.
+- `signal_urate_high` compiled-WHY remains open.
+- ALT compiled-WHY identity remains unresolved and must not be treated as A3-ready.
+
+### Blockers / risks
+- None open from ARCH-CONV-F medical design after Gate 2 and independent audit PASS.
+- Selecting HbA1c or urate without a repository-grounded Stage 0 sequencing advisory risks out-of-order estate work.
+
+### Recommended next sprint
+- Run a repository-grounded Stage 0 sequencing advisory before selecting HbA1c or urate as the next compiled-WHY wave.
+
+---
+
 ## Continuity audit — ARCH-CONV-E / E2 / E3 (2026-08-01)
 
 Documentation-only post-merge reconciliation. Sources: committed implementation evidence, medical decision registers, Gate 2 ratification docs, merge state on `main` (`6ccbf3f` / aligned `origin/main`). No runtime, package medical content, tests, or governance decisions changed by this audit.

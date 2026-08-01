@@ -1128,6 +1128,17 @@ These items remain open after Gate 2 ratification of ARCH-CONV-E3 (`ARCH-CONV-E3
 2. **Canonical numeric “very high ALT” threshold** — Pass 3 states that very high ALT must not be explained away by plausible muscle or metabolic context alone, but supplies no ULN-multiple or absolute cutoff. Head of Medical Research must supply an explicit numeric rule (or explicitly defer the safeguard) before that suppression behaviour can be implemented.
 3. **Activation-key-level collision suppress (ALT cholestatic vs ALP/GGT primary)** — Current collision contract can suppress by signal family or named-key-filter whole families; it cannot safely suppress only the subordinate ALT cholestatic activation key when ALP/GGT owns primary without collateral damage to hepatocellular/mixed. A governed contract extension is required if hard suppress (rather than role/medical subordination) is mandated.
 
+### From ARCH-CONV-F — Haematology Compiled-WHY Authority (programme-wide residuals)
+
+These items remain open after Gate 2 ratification and independent audit PASS of ARCH-CONV-F (`ARCH-CONV-F-GATE1-HMR-2026-08-01` / `ARCH-CONV-F-GATE2-ANTHONY-2026-08-01`). They are architecture / medical-governance obligations, not sprint-local notes. ARCH-CONV-F closed compiled-WHY for `signal_ferritin_high` and `signal_hemoglobin_low` only; it did not resolve the items below.
+
+1. **Haemoglobin primary oxygen-carrying PSI research and promotion** — Remains open and structurally distinct from the ARCH-CONV-F root-cause compiled-WHY closure (`inv_hgb_low_anemia`). Do not treat F as resolving `wave1_bio_oxygen_carrying_capacity` / P1-11/P1-18/P1-24 oxygen-carrying PSI promotion.
+2. **`signal_hba1c_high` compiled-WHY** — Remains open; not migrated by ARCH-CONV-F.
+3. **`signal_urate_high` compiled-WHY** — Remains open; explicitly excluded from ARCH-CONV-B and untouched by ARCH-CONV-F.
+4. **ALT compiled-WHY identity** — Remains unresolved and must not be treated as A3-ready. E/E2/E3 delivered package/PSI/R-value contextual authority; they did not close a compiled-WHY A3 identity for ALT.
+
+Sequencing note: run a repository-grounded Stage 0 sequencing advisory before selecting HbA1c or urate as the next compiled-WHY wave.
+
 ## 6. Final note
 
 This is the fewest sensible sprint sequence currently recommended.
