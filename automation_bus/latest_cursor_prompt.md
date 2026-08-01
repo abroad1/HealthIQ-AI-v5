@@ -1,56 +1,38 @@
 ---
-work_id: ARCH-CONV-E2
-branch: feature/arch-conv-e2-alt-rvalue-runtime-authority
+work_id: ARCH-CONV-E3
+branch: feature/arch-conv-e3-alt-contextual-authority
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# ARCH-CONV-E2 — ALT R-Value Authority, Collision Governance and Explicit Runtime Promotion
+# ARCH-CONV-E3 — Complete Remaining ALT Contextual Authority
 
-Execute under:
+This prompt is for Claude Code hardening before Cursor execution.
+
+Govern under:
 
 - `AUTOMATION_BUS_SOP_v1.3.1.md`
 - `KNOWLEDGE_BUS_SOP_v1.3.1.md`
 - `KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md`
-- accepted research-to-runtime ADRs and current repository governance artefacts
-
-This prompt is for Claude Code hardening before Cursor execution.
+- current merged ARCH-CONV-E / E2 governance, activation and medical-decision artefacts
 
 ## Product outcome
 
-Complete the governed ALT-high WHY-authority migration by:
+Complete the remaining four validated ALT contexts from canonical Pass 3 research:
 
-1. creating the governed `r_value_alt_alp` derived-metric compute authority;
-2. adjudicating ALT R-value frames against the existing ALP/GGT liver-injury authority;
-3. explicitly promoting only medically and technically eligible ALT packages;
-4. proving correct runtime reachability, fail-closed behaviour and legacy disposition.
+1. ALP-predominant / cholestatic biochemical context
+2. muscle or exertional contribution
+3. bilirubin severity context
+4. metabolic / MASLD context
 
-Do not reopen Pass 1–3 research or rebuild the six Knowledge Bus packages unless hardening identifies a concrete package defect.
+Translate the existing research rules into governed runtime eligibility, ranking, coexistence, suppression and escalation behaviour.
 
-## Repository-verified starting point
-
-Before hardening, verify the merged repository state rather than relying on this prompt alone.
-
-Expected starting state:
-
-- six validated ARCH-CONV-E ALT sibling packages exist under `knowledge_bus/packages/`;
-- each contains the mandatory package assets and `promoted_signal_intelligence.yaml`;
-- none contains `intelligence_model.yaml`;
-- all six are withheld from runtime activation;
-- package placement alone no longer implies activation;
-- the governed runtime activation register exists;
-- `pkg_s24_alt_high_hepatocellular_injury` remains the active ALT frame;
-- the three former Batch 5 ALT frames are superseded by canonical regeneration and removed from accidental runtime reachability;
-- no independent medical-retirement process has yet been completed for those former frames;
-- `r_value_alt_alp` has no governed runtime compute authority;
-- the existing ALP/GGT `liver_injury_axis` remains governed separately.
-
-If any expected fact is false, hardening must correct the prompt scope before execution.
+Do not commission new medical research unless hardening proves a specific clinical ambiguity that the canonical Pass 3 source does not resolve.
 
 ## Canonical medical authority
 
-Use only the validated Pass 3 source and its six promoted package assets as medical authority:
+Use:
 
 `knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json`
 
@@ -58,264 +40,273 @@ Expected SHA-256:
 
 `7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267`
 
-Source specs:
+Relevant specs:
 
-1. `inv_alt_high_r_value_hepatocellular_biochemical_pattern`
-2. `inv_alt_high_r_value_mixed_biochemical_pattern`
-3. `inv_alt_high_r_value_cholestatic_alp_predominant_context`
-4. `inv_alt_high_muscle_source_or_exertional_contribution`
-5. `inv_alt_high_bilirubin_hys_law_severity_context`
-6. `inv_alt_high_metabolic_masld_context`
+- `inv_alt_high_r_value_cholestatic_alp_predominant_context`
+- `inv_alt_high_muscle_source_or_exertional_contribution`
+- `inv_alt_high_bilirubin_hys_law_severity_context`
+- `inv_alt_high_metabolic_masld_context`
 
-Do not add, reinterpret or weaken medical claims, thresholds, exclusions, caveats or safety wording.
+Preserve the already-active E2 authority:
 
-## Phase 0 — hardening and exact target mapping
+- canonical general / hepatocellular ALT frame
+- mixed ALT/ALP frame
+- governed `r_value_alt_alp`
+- existing ALP/GGT `liver_injury_axis`
+- current activation-register semantics
+- current Gate 1 / Gate 2 medical-governance model
 
-Claude Code must inspect and harden against:
+## Role boundary
 
-- the six ALT package manifests, signal libraries, research briefs and PSI assets;
-- the current derived-metric registries and established metric-definition conventions;
-- laboratory ULN handling and same-sample/contemporaneous-data conventions;
-- `SignalRegistry` and package activation-register semantics;
+Claude Code hardening must extract the exact application rules from the Pass 3 source and existing contracts.
+
+Cursor implements those hardened rules.
+
+Cursor must not make new medical judgements, infer missing thresholds, or decide authority precedence not supported by the canonical research and existing governance.
+
+If the research does not resolve a material medical decision, STOP and return the exact ambiguity for Head of Medical Research review.
+
+## Phase 0 — repository-grounded hardening
+
+Before producing the hardened execution prompt, inspect:
+
+- all four relevant Pass 3 specs in full;
+- their existing package assets;
+- current activation register;
+- current medical decision register;
 - `signal_authority_collision_model_v1.yaml`;
-- the existing ALP/GGT `liver_injury_axis`;
-- current root-cause/WHY compilation and activation paths;
-- the current legacy ALT runtime authority;
-- tests governing package reachability, collision precedence, deterministic evaluation and missing-data behaviour.
-
-Hardening must replace generic placeholders with exact repository paths, schema fields, IDs, commands and expected outputs.
-
-Do not author a new parallel framework where an existing governed mechanism can represent the requirement.
-
-## Required implementation
-
-### 1. Governed `r_value_alt_alp` derived metric
-
-Implement the derived metric using the repository’s established governed derived-metric architecture.
-
-Medical definition:
-
-```text
-R = (ALT / ALT laboratory ULN) / (ALP / ALP laboratory ULN)
-```
-
-Classification:
-
-```text
-R >= 5       → hepatocellular biochemical pattern
-2 < R < 5    → mixed biochemical pattern
-R <= 2       → cholestatic / ALP-predominant biochemical context
-```
-
-Required eligibility:
-
-- ALT result present;
-- ALT laboratory ULN present and valid;
-- ALP result present;
-- ALP laboratory ULN present and valid;
-- ALT and ALP satisfy the repository’s governed contemporaneous/same-sample rule;
-- no divide-by-zero or invalid-reference-range path;
-- deterministic output and provenance.
-
-Required fail-closed behaviour:
-
-- do not calculate or classify when either result is absent;
-- do not calculate or classify when either ULN is absent, zero or invalid;
-- do not infer a generic ULN;
-- do not substitute population thresholds;
-- do not emit an R-value-dependent frame when pairing eligibility is not met;
-- expose the governed missing/deferred reason through the existing evidence or provenance contract.
-
-Use existing numeric precision and boundary conventions. Harden exact boundary tests for `2` and `5`.
-
-### 2. ALT / ALP / GGT collision governance
-
-Extend the existing governed collision model rather than adding local evaluator branching.
-
-The adjudication must cover:
-
-- ALT-predominant R-value frame;
-- mixed ALT/ALP R-value frame;
-- ALP-predominant/cholestatic R-value context;
 - existing ALP/GGT `liver_injury_axis`;
-- bilirubin severity context;
-- muscle/exertional contribution;
-- metabolic/MASLD context;
-- retained S24 ALT authority during transition.
+- E2 R-value selector and runtime implementation;
+- current override-rule evaluator;
+- current package activation and collision mechanisms;
+- current biomarker, user-context and missing-data contracts;
+- current tests for ALT, ALP/GGT, bilirubin, CK, metabolic context and authority collisions.
 
-Required principles:
+Hardening must map every research rule to an exact runtime mechanism or identify a gap.
 
-- one laboratory pattern must not create contradictory primary WHY authorities;
-- R-value frames must not duplicate or silently override the governed ALP/GGT axis;
-- bilirubin severity is escalation/context, not a competing anatomical diagnosis;
-- muscle/exertional and metabolic frames may coexist only according to canonical supporting/contradiction rules;
-- no consumer-facing Hy’s Law diagnosis or terminology;
-- missing R-value eligibility must fail closed, not fall through to a misleading R-value frame;
-- precedence, coexistence and suppression must be explicit, deterministic and testable.
+Do not leave application logic to Cursor discretion.
 
-Hardening must identify the exact authority-group and collision-policy changes required.
+## Required authority decisions to harden
 
-### 3. Explicit package promotion and activation
+### 1. ALP-predominant / cholestatic ALT context
 
-Use the existing Knowledge Bus promotion and governed activation mechanisms.
+Canonical rules:
 
-For each of the six packages, produce an explicit readiness decision:
+- primary ALT must be high;
+- eligible `r_value_alt_alp <= 2` supports ALP-predominant biochemical context;
+- ALP predominance alone does not prove cholestasis, obstruction or disease;
+- raised GGT supports hepatic-source confidence;
+- normal or missing GGT reduces hepatic-source confidence;
+- bilirubin adds severity / excretory context;
+- non-hepatic ALP remains a required caveat where source is not established;
+- this frame must not compete with or duplicate the existing ALP/GGT `liver_injury_axis`.
 
-- `PROMOTE_AND_ACTIVATE`
-- `PROMOTE_BUT_WITHHOLD`
-- `DEFERRED_WITH_EXPLICIT_REASON`
+Hardening must decide, from existing governance:
 
-Use existing repository vocabulary where it differs; do not invent a second status system.
+- whether this emits as subordinate ALT context under the existing ALP/GGT primary authority;
+- whether it is suppressed when the ALP/GGT axis already owns the primary WHY;
+- exact coexistence / suppression / precedence behaviour;
+- exact confidence downgrade when GGT is absent or normal;
+- whether runtime can represent low-confidence wording without a contract change.
 
-Promotion must include the protocol-required lineage and evidence:
+### 2. Muscle / exertional contribution
 
-- source spec ID;
-- source path and source hash;
-- package/output artefacts and hashes;
-- validation result;
-- promotion mode/version;
-- promotion timestamp where applicable;
-- activation-register decision;
-- collision-governance dependency;
-- runtime proof.
+Canonical rules:
 
-Do not activate a package merely because its assets validate.
+- ALT high is necessary;
+- raised CK supports muscle-source contribution;
+- recent strenuous exercise, trauma, myopathy or statin-related muscle context may support the frame where governed user context exists;
+- muscle contribution does not exclude concurrent liver disease;
+- raised bilirubin or GGT strongly contradicts isolated muscle-source wording;
+- raised ALP with GGT or bilirubin redirects toward liver/biliary context;
+- normal or borderline CK weakens significant exertional attribution;
+- very high ALT must not be explained away by a plausible muscle context;
+- absent CK/history must not produce confident muscle attribution.
 
-Do not activate any R-value-dependent package until the metric, collision model and runtime tests all pass.
+Hardening must specify:
 
-### 4. Legacy ALT disposition
+- exact pre-emission corroboration threshold using lab-range status, not invented numeric cut-offs;
+- exact use of user context if a governed context contract exists;
+- fallback when CK or exercise history is absent;
+- coexistence versus suppression with canonical general ALT-high and R-value frames;
+- contradiction handling when bilirubin, GGT or ALP context is present;
+- whether the frame is advisory/subordinate rather than primary authority.
 
-Reconcile:
+### 3. Bilirubin severity context
 
-- `pkg_s24_alt_high_hepatocellular_injury`;
-- the three superseded Batch 5 activation keys;
-- the six canonical ARCH-CONV-E package frames.
+Canonical rules:
 
-The former Batch 5 keys must remain:
+- ALT high plus bilirubin above its lab range supports a higher-concern biochemical context;
+- this is severity / escalation, not cause attribution;
+- do not state or imply Hy’s Law in consumer output;
+- formal Hy’s-Law-like logic requires DILI context, bilirubin/aminotransferase thresholds, lack of substantial cholestasis and exclusion of alternatives;
+- ALP and GGT modify interpretation;
+- unconjugated bilirubin or haemolysis context may contradict hepatic-excretory framing;
+- albumin and INR add synthetic-function context;
+- missing bilirubin or missing bilirubin lab range must fail closed.
 
-> Superseded by canonical regeneration and removed from accidental runtime reachability; replacement frames remain unactivated pending explicit promotion.
+Hardening must specify:
 
-Do not reactivate the old inferred keys.
+- whether this is represented as override/escalation on the active canonical ALT frame rather than a separate competing primary frame;
+- exact state escalation;
+- exact suppression of prohibited terminology;
+- interaction with mixed and ALP-predominant patterns;
+- behaviour when ALP is missing;
+- behaviour when bilirubin fractionation is unavailable;
+- whether package activation is needed or whether the package remains a governed non-primary severity layer.
 
-Do not claim completed medical retirement unless the governing retirement process is actually executed and evidenced.
+### 4. Metabolic / MASLD context
 
-The retained S24 frame may be superseded, retained temporarily or retired only through an explicit, tested and medically governed decision. Hardening must identify the applicable repository mechanism and required authority evidence.
+Canonical rules:
 
-## Runtime and output requirements
+- ALT high is necessary;
+- metabolic context requires corroboration from available governed markers or declared risk context;
+- supporting evidence may include HbA1c high, triglycerides high, HDL low, GGT high and governed user context;
+- ALT alone must not produce MASLD or fatty-liver claims;
+- imaging / fibrosis assessment is required for structural or fibrosis claims;
+- raised bilirubin or INR redirects away from routine metabolic framing;
+- high CK redirects toward muscle contribution;
+- very high ALT must not be explained away as metabolic;
+- absent metabolic context weakens or suppresses the frame.
 
-Prove:
+Hardening must specify:
 
-- `r_value_alt_alp` is calculated only from eligible paired ALT/ALP results and their own laboratory ULNs;
-- all three R-value boundaries behave exactly as specified;
-- absent/invalid ULNs and non-contemporaneous inputs fail closed;
-- only explicitly activated packages load;
-- withheld packages remain absent from the production registry;
-- collision precedence produces no duplicate or contradictory primary authority;
-- existing ALP/GGT behaviour is preserved except where the new governed collision decision explicitly changes it;
-- no frontend medical inference is introduced;
-- raw Pass 3 research is not read at runtime;
-- emitted reasoning remains traceable to package/spec/metric provenance.
+- the minimum safe corroboration rule from the existing research and contracts;
+- whether one supporting marker is enough or whether a compound rule is required;
+- exact relationship to the canonical general ALT-high frame;
+- coexistence/suppression with R-value pattern frames;
+- contradiction handling for bilirubin, INR and CK;
+- wording limits preventing MASLD diagnosis, steatosis claims or fibrosis staging.
+
+## Promotion and activation decisions
+
+For each of the four packages, hardening must produce one explicit decision using existing repository vocabulary:
+
+- activate as primary authority;
+- activate as subordinate/contextual authority;
+- represent as override/escalation only;
+- keep withheld with an exact unresolved blocker.
+
+Do not activate all four by default.
+
+Do not keep any package withheld merely because application logic has not been worked through. The purpose of hardening is to derive that logic from the research and existing contracts.
+
+Any remaining deferral must identify:
+
+- exact unresolved medical or contract ambiguity;
+- exact affected package/spec;
+- why the canonical research and current contracts are insufficient;
+- the minimum decision or implementation needed to unblock it.
 
 ## Required tests
 
-Hardening must identify exact existing tests and the minimum new tests required. At minimum cover:
+Hardening must define exact tests for at least:
 
-1. R-value formula correctness.
-2. Exact boundary cases: below, at and above `2`; below, at and above `5`.
-3. Missing ALT, ALP, ALT ULN and ALP ULN.
-4. Zero/invalid ULN.
-5. Non-contemporaneous or mismatched sample eligibility.
-6. Deterministic repeatability.
-7. Hepatocellular, mixed and cholestatic frame selection.
-8. ALT R-value versus ALP/GGT collision precedence.
-9. Bilirubin severity escalation without diagnostic wording.
-10. Muscle-source contradiction/redirect behaviour.
-11. Metabolic context coexistence/suppression behaviour.
-12. Production registry before/after activation.
-13. Withheld-package exclusion.
-14. Retained or superseded S24 behaviour according to the approved disposition.
-15. No non-ALT runtime regression.
-16. Package validators and promotion-lineage checks.
-17. Existing launch-critical, rejected-frame and test-only opt-in behaviour.
+### ALP-predominant
+- ALT high + eligible R <= 2 + GGT high
+- ALT high + eligible R <= 2 + GGT normal
+- ALT high + eligible R <= 2 + GGT missing
+- non-hepatic ALP uncertainty
+- no duplication with ALP/GGT primary authority
+- bilirubin escalation interaction
 
-Use a clean baseline and the gate ladder:
+### Muscle/exertional
+- ALT high + CK high
+- ALT high + CK high + bilirubin high
+- ALT high + CK high + GGT high
+- ALT high + CK absent
+- ALT high + exercise context but CK absent
+- ALT high + normal/borderline CK
+- very high ALT with plausible muscle context
+- no suppression of concurrent liver concern
 
-```text
-clean HEAD probe
-→ focused metric tests
-→ collision/authority tests
-→ package and promotion validators
-→ runtime reachability tests
-→ baseline harness
-→ exact-node baseline attribution for any failures
-```
+### Bilirubin severity
+- ALT high + bilirubin above lab range
+- bilirubin missing
+- bilirubin range missing
+- mixed pattern + bilirubin high
+- ALP-predominant pattern + bilirubin high
+- prohibited Hy’s Law wording absent
+- synthetic-function context where governed inputs exist
 
-Do not start with an uncontrolled full backend suite. Run broader suites only where required by the hardened risk assessment.
+### Metabolic
+- ALT high + corroborating metabolic markers
+- ALT high without metabolic corroboration
+- ALT high + bilirubin high
+- ALT high + INR high where available
+- ALT high + CK high
+- no MASLD diagnosis
+- no fibrosis/steatosis claim without governed evidence
+
+### Cross-cutting
+- exact runtime activation identities
+- no duplicate primary ALT authority
+- no non-ALT activation delta
+- existing E2 hepatocellular/general and mixed behaviour preserved
+- R-value boundaries preserved
+- package validators pass
+- launch-critical, rejected-frame and test-only opt-in behaviour preserved
+- deterministic repeatability
+- raw Pass 3 not read at runtime
+- no frontend inference
+
+## Medical governance
+
+This work changes active medical interpretation authority.
+
+Require:
+
+- Head of Medical Research Gate 1 decision record;
+- Anthony Gate 2 ratification;
+- per-package disposition;
+- collision/precedence decision table;
+- activation-register references;
+- explicit wording and safety restrictions;
+- no merge before Gate 2 and independent Claude Code audit.
 
 ## Evidence deliverables
 
-Publish a bounded ARCH-CONV-E2 evidence report containing:
+Publish an ARCH-CONV-E3 evidence report containing:
 
-- verified starting state;
-- exact files changed;
-- R-value metric definition and registration;
-- eligibility and fail-closed contract;
-- collision-authority decision table;
-- per-package promotion and activation disposition;
-- legacy ALT disposition;
-- source/output hashes and promotion lineage;
-- before/after runtime registry identities and counts;
-- test commands and results;
-- baseline attribution for any failures;
-- confirmation of no raw-research runtime read;
-- confirmation of no frontend inference;
-- unresolved risks or deferred packages;
-- `git diff --name-only` and scoped diff summary.
-
-## Prohibitions
-
-Do not:
-
-- modify the canonical Pass 3 research;
-- create new medical research;
-- invent R-value thresholds or ULNs;
-- use generic population ULNs;
-- bypass package promotion with direct evaluator logic;
-- encode ALT-specific collision precedence outside the governed collision mechanism unless hardening proves the current contract cannot represent it and returns for approval;
-- reactivate superseded Batch 5 keys;
-- activate all six packages by default;
-- read raw research at runtime;
-- add frontend interpretation;
-- broaden into unrelated liver, package-estate or derived-metric cleanup;
-- repair unrelated failing tests;
-- silently expand beyond hardened scope;
-- merge or publish.
+- exact research rule → runtime mechanism mapping;
+- per-package authority disposition;
+- collision and coexistence table;
+- activation-register delta;
+- before/after runtime identities;
+- all test commands and outputs;
+- package validator results;
+- source and output hashes;
+- medical decision references;
+- unresolved blockers, if any;
+- proof that no new medical rule was invented.
 
 ## Mandatory STOP conditions
 
-STOP and return for renewed architecture approval if:
+STOP and return for review if:
 
-- the established derived-metric contract cannot represent laboratory-specific ULNs or contemporaneous pairing;
-- the collision model cannot represent the required ALT/ALP/GGT precedence without a contract change;
-- implementation requires files explicitly prohibited by the hardened prompt;
-- a package requires medical interpretation not present in canonical Pass 3;
-- activating a frame would create duplicate or contradictory runtime authority;
-- legacy S24 disposition cannot be made safely from existing evidence;
-- any non-ALT runtime package or frame changes unexpectedly;
-- a broad estate migration is required;
-- validator or gate failure cannot be attributed cleanly.
+- existing contracts cannot represent subordinate/contextual authority;
+- low-confidence source-localisation wording cannot be represented safely;
+- user-context corroboration is required but no governed context contract exists;
+- “very high ALT” requires a numeric threshold absent from canonical research;
+- bilirubin severity cannot be represented without creating a competing primary frame;
+- the current collision model cannot represent required precedence;
+- any implementation requires a new medical threshold or unsupported inference;
+- any non-ALT runtime state changes unexpectedly;
+- prohibited files become necessary outside hardened authority.
 
-Do not use a retrospective lifecycle exception in place of the required STOP-and-return path.
+Do not use retrospective ratification to bypass a missed STOP.
 
 ## Completion boundary
 
 STOP after:
 
-- the governed R-value metric is implemented and validated;
-- collision governance is implemented and validated;
-- explicit promotion/activation decisions are applied only to eligible packages;
-- runtime reachability and non-regression are proven;
-- evidence is committed;
-- Automation Bus kernel finish completes.
+- all four package dispositions are implemented or explicitly blocked with evidence;
+- all eligible contexts are activated through governed mechanisms;
+- collision, escalation and suppression behaviour is proven;
+- Gate 1 and Gate 2 records are complete;
+- kernel finish passes;
+- evidence is committed.
 
-Do not merge. Return for independent Claude Code audit, GPT architectural review and Anthony’s final merge authority.
+Do not merge.
+
+Return for independent Claude Code audit, GPT review and Anthony final merge authority.

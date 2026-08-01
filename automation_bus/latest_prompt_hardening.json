@@ -1,8 +1,8 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-E2",
+  "work_id": "ARCH-CONV-E3",
   "status": "HARDENED",
-  "hardening_date": "2026-07-31",
+  "hardening_date": "2026-08-01",
   "hardened_by": "Claude Code",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
   "risk_level": "HIGH",
@@ -11,7 +11,7 @@
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "Single cohesive runtime/analytics implementation scope (derived metric + collision governance + activation, all in the same evaluation pipeline). Shared docs (Pass3 Promotion Protocol, collision model, ARCH-CONV-E's runtime activation mechanism) already read in full during this session's ARCH-CONV-E hardening and audit passes; this pass extended that context rather than re-reading it, and added new targeted reads (ratio_registry.py compute signature, orchestrator.py's derived-marker call site, root_cause_registry_v1.py, signal_authority_collision_resolver.py) via batched Bash/Read/Grep."
+    "rationale": "The four contexts share the same three runtime primitives (override_rules, mandatory_pre_emission_gates, collision-model distinct_risk_layers) and the same governing-contract gap (context_modifier_catalogue is draft/non-runtime), all discovered via a small number of targeted reads. Once those shared primitives were identified, deriving each context's exact application rule was a direct, non-divergent application of the same mechanisms rather than four genuinely independent investigations — forking would have re-derived the same shared substrate four times for no benefit."
   },
 
   "prompt_receipt_gate": {
@@ -19,117 +19,131 @@
     "fields_present": ["work_id", "branch", "risk_level", "execution_model", "change_type"],
     "declared_risk_level": "HIGH",
     "declared_change_type": "MIXED",
-    "scope_proportionality": "PASS — bounded to r_value_alt_alp compute authority, ALT/ALP/GGT collision governance, explicit per-package promotion decisions, and legacy disposition; extensive explicit prohibitions and STOP conditions; 17 named test categories; incorporates the exact lesson from ARCH-CONV-E's audit ('Do not use a retrospective lifecycle exception in place of the required STOP-and-return path')",
+    "scope_proportionality": "PASS — four named packages, explicit per-context required decisions, explicit test lists, explicit STOP conditions including the correct anti-recurrence clause from ARCH-CONV-E2",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "branch_and_token_state": {
+    "branch_and_baseline_state": {
       "status": "CONFIRMED clean",
-      "evidence": "git branch -a --list '*arch-conv-e2*' returns no matches (branch does not pre-exist, as expected for a new TWO_PHASE_START_FINISH package). automation_bus/state/work_package_active.json does not exist (no active token) — ARCH-CONV-E's token was released on its finish."
+      "evidence": "git branch -a --list '*arch-conv-e3*' returns no matches; automation_bus/state/work_package_active.json absent (no active token); current branch is main, and git merge-base --is-ancestor feature/arch-conv-e2-alt-rvalue-runtime-authority main confirms ARCH-CONV-E2 is MERGED — the correct baseline for E3 to branch from. docs/architecture/ARCH-CONV-E2_medical_decision_register.yaml now shows register_state: GATE_2_RATIFIED, gate2_status: RATIFIED (Anthony's ratification landed since the last audit turn)."
     },
-    "repository_verified_starting_point_all_ten_facts": {
-      "status": "CONFIRMED — all ten expected facts verified true, none required prompt correction",
-      "evidence": "(1) six pkg_kb52c_alt_high_* directories exist under knowledge_bus/packages/; (2) each contains package_manifest.yaml, promoted_signal_intelligence.yaml, research_brief.yaml, signal_library.yaml; (3) none contains intelligence_model.yaml (directory listing confirmed for all six); (4) all six absent from SignalRegistry() at runtime (re-confirmed this session's ARCH-CONV-E audit, unchanged since — git diff ca2f0f2..HEAD --stat for backend/knowledge_bus paths is empty); (5) package_runtime_activation_register_v1.yaml exists and gates placement-vs-activation; (6) confirmed by direct SignalRegistry() instantiation in the prior audit: 173 packages/179 frames loaded, six ALT keys excluded; (7) pkg_s24_alt_high_hepatocellular_injury is the sole loaded signal_alt_high frame; (8) the three former Batch 5 keys carry exactly the required disposition wording in the package asset-build report and lifecycle-exception closure doc; (9) no retirement register entry exists for those keys (confirmed absent); (10) grep -c r_value_alt_alp backend/core/analytics/ratio_registry.py returns 0; (11) grep -c signal_alt_high knowledge_bus/governance/signal_authority_collision_model_v1.yaml returns 0 — liver_injury_axis remains ALP/GGT-only."
-    },
-    "canonical_source_unchanged": {
+    "four_packages_exist_with_mandatory_assets": {
       "status": "CONFIRMED",
-      "evidence": "Pass 3 source file and its 6 spec_ids unchanged since ARCH-CONV-E; SHA-256 stated in this prompt (7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267) matches the value independently recomputed and re-verified across two prior sessions this conversation."
+      "evidence": "pkg_kb52c_alt_high_cholestatic_alp_predominant_context, _muscle_source_or_exertional_pattern, _bilirubin_severity_context, _metabolic_steatotic_liver_pattern all present with package_manifest.yaml/research_brief.yaml/signal_library.yaml/promoted_signal_intelligence.yaml, all currently withheld per the E2 activation register (re-confirmed this session's prior audit turns)."
     },
-    "exact_target_mapping_ratio_registry_cannot_currently_carry_uln": {
-      "status": "CONFIRMED — concrete architecture finding, not a blocker",
-      "evidence": "backend/core/analytics/ratio_registry.py:80 compute(panel: Dict[str, Any]) — DERIVED_IDS/_DERIVED_INPUTS (lines 28-52) list 15 existing ratios, none of which use a laboratory reference-range/ULN input; _numeric() (line 55) only extracts .value, discarding any reference_range. The actual runtime call site is backend/core/pipeline/orchestrator.py:1081: derived_result = compute(simple_biomarkers) — simple_biomarkers is a raw-value-only dict; reference ranges live in a SEPARATE sibling dict, input_reference_ranges (orchestrator.py:1069), never passed into compute(). r_value_alt_alp is the FIRST ULN-relative derived metric in this registry and requires either (a) extending compute()'s signature to also accept input_reference_ranges, or (b) computing it downstream in orchestrator.py using both dicts directly. Data IS available (BiomarkerValue.reference_range: backend/core/models/biomarker.py:34, with min/max/unit/source fields) — this is a genuine signature/call-site extension, not an unrepresentable requirement, so it does not trigger the prompt's own STOP condition ('the established derived-metric contract cannot represent laboratory-specific ULNs')."
+    "runtime_mechanism_1_override_rules_proven_precedent_for_bilirubin_severity": {
+      "status": "CONFIRMED — decisive finding for context 3",
+      "evidence": "backend/core/analytics/signal_evaluator.py:436 _evaluate_override_rules() escalates a package's own signal_state (e.g. suboptimal -> at_risk) via all_of/any_of conditions against biomarkers/derived/lab_ranges, with deterministic rank-based precedence. This exact mechanism already carries the canonical hepatocellular package's or_alt_high_with_bilirubin_high override rule, and it was independently re-verified firing correctly in this session's ARCH-CONV-E2 remediation re-audit (test_kbs24_signals_trigger_suboptimal_then_escalate[signal_alt_high] passes). This directly answers the prompt's own question for the bilirubin severity context: represent it as an override/escalation rule on the already-active canonical ALT frame(s), NOT as a separately activated competing primary package. The bilirubin_severity_context package's medical content (Hy's-Law prohibition wording, fractionation caveats, ALP/GGT interaction) should be folded into override-rule presentation-safety metadata and evidence, while the package itself remains non-primary and does not need independent activation."
     },
-    "exact_target_mapping_lab_source_uln_validity_precedent_exists": {
-      "status": "CONFIRMED — directly reusable precedent found",
-      "evidence": "orchestrator.py:1105 _is_valid_lab_range(ref) already requires ref.get('source') == 'lab' in addition to numeric min/max bounds, and orchestrator.py:1091 _has_valid_numeric_bounds() is the existing bounds-validity helper. This is the exact established mechanism for 'do not infer a generic ULN / do not substitute population thresholds' — r_value_alt_alp's ULN eligibility check should reuse this pattern (require reference_range.source == 'lab' for both ALT and ALP), not invent a new validity concept."
+    "runtime_mechanism_2_mandatory_pre_emission_gates_proven_precedent_for_corroboration": {
+      "status": "CONFIRMED — decisive finding for contexts 2 and 4",
+      "evidence": "backend/core/analytics/signal_evaluator.py:498 _passes_mandatory_pre_emission_gates() already gates package emission on lab-range-boundary or biomarker_present conditions (this exact mechanism gates R-value band selection in ARCH-CONV-E2). This directly satisfies the prompt's requirement for muscle/exertional and metabolic contexts: 'exact pre-emission corroboration threshold using lab-range status, not invented numeric cut-offs' -- gate muscle/exertional emission on creatine_kinase lab_range_boundary above_max (biomarker_present is insufficient per canonical research: 'absent CK/history must not produce confident muscle attribution'), and gate metabolic emission on an any_of compound condition across hba1c/triglycerides/ggt lab_range_boundary above_max or hdl below_min -- both using only lab-range status, inventing no numeric thresholds."
     },
-    "exact_target_mapping_contemporaneous_pairing_has_no_existing_convention": {
-      "status": "CONFIRMED gap — hardening flag for Cursor, not a blocker",
-      "evidence": "grep -rli 'contemporaneous|same_sample|same-sample' backend/core/ returns zero matches. No existing derived metric in ratio_registry.py performs per-marker timestamp/sample comparison — all 15 existing ratios implicitly assume the whole input panel is one same-sample snapshot. r_value_alt_alp's 'contemporaneous/same-sample rule' requirement has no established repository convention to point to; Cursor's Phase 0 hardening execution must either (a) establish that the existing single-panel-snapshot assumption already satisfies this requirement for this pipeline's actual data model (panels are per-report, not multi-timepoint, per BiomarkerValue.timestamp being optional/informational), and document that finding, or (b) STOP per the prompt's own condition if same-sample pairing genuinely cannot be established from available data. This is exactly the kind of exact-mapping question Phase 0 is scoped to resolve, not something this hardening pass can resolve without Cursor's own panel-model investigation."
+    "governed_user_context_contract_does_not_exist": {
+      "status": "CONFIRMED — triggers the prompt's own mandatory STOP condition, correctly scoped rather than blocking both frames entirely",
+      "evidence": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml: runtime_consumed: false, status: draft_governance_non_runtime. No governed, runtime-consumed contract exists for user-declared exercise/statin/trauma/myopathy history or declared metabolic risk factors. backend/ssot/questionnaire.json contains vigorous_exercise_days but it is not wired into any runtime context-modifier evaluation. This exactly matches the prompt's own STOP condition: 'user-context corroboration is required but no governed context contract exists.' Correct scoping (not a full block): both canonical rules for muscle/exertional and metabolic contexts describe user-context corroboration as an OR-alternative to lab corroboration ('CK high OR governed exercise context'), not a strict requirement -- so the lab-only corroboration path (mechanism 2 above) remains fully implementable and should be activated; only the user-declared-context corroboration path is blocked and must be explicitly recorded as an unresolved gap, not silently dropped or silently invented."
     },
-    "exact_target_mapping_root_cause_registry_alt_still_absent": {
+    "runtime_mechanism_3_confidence_downgrade_for_ggt_absence": {
+      "status": "CONFIRMED — answers cholestatic context's 'low-confidence wording without a contract change' question",
+      "evidence": "backend/core/analytics/signal_confidence_builder.py: calculate_signal_confidence() is an existing reasons-based confidence-scoring mechanism, distinct from the override/gate primitives above. 'Normal or missing GGT reduces hepatic-source confidence' for the ALP-predominant context can be represented as a confidence-downgrade reason through this existing mechanism without a new contract."
+    },
+    "runtime_mechanism_4_collision_subordination_for_cholestatic_context": {
+      "status": "CONFIRMED — answers cholestatic context's coexistence/suppression question",
+      "evidence": "backend/core/analytics/signal_authority_collision_resolver.py implements distinct_risk_layers, suppress_supporting_when_primary_present, and allow_parallel_if_distinct_risk_layer against knowledge_bus/governance/signal_authority_collision_model_v1.yaml's existing liver_injury_axis group (ALP primary / GGT supporting, status: adjudicated_runtime_enforced). The ALT cholestatic/ALP-predominant frame should be added to this group as a subordinate/supporting entry (or a distinct_risk_layer if the ALT angle is judged medically distinct rather than duplicative), with suppress_supporting_when_primary_present ensuring it does not fire as a competing primary when ALP/GGT already own the primary WHY -- directly satisfying 'this frame must not compete with or duplicate the existing ALP/GGT liver_injury_axis.'"
+    },
+    "very_high_alt_numeric_threshold_gap": {
+      "status": "CONFIRMED gap — correctly triggers the prompt's own STOP condition, does not block the whole package",
+      "evidence": "Canonical Pass 3 muscle/exertional and metabolic specs both state 'very high ALT must not be explained away by a plausible muscle/metabolic context alone' but supply no numeric threshold for 'very high.' Searched the Pass 3 source and existing signal_library.yaml/research_brief.yaml assets for any such threshold: none exists. This matches the prompt's own explicit STOP condition ('very high ALT requires a numeric threshold absent from canonical research') exactly -- this specific escalation-suppression behaviour cannot be implemented without inventing a number, and must be recorded as an explicit unresolved blocker for Head of Medical Research decision, while the rest of each frame's corroboration logic (which does not depend on this threshold) proceeds."
+    },
+    "existing_relevant_tests_confirmed": {
       "status": "CONFIRMED",
-      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:32 still registers only signal_hepatic_alt_context; signal_alt_high is absent — unchanged since ARCH-CONV-D's audit finding, consistent with this prompt's premise that ALT WHY-authority migration is not yet complete."
-    },
-    "exact_target_mapping_collision_extension_point_exists_and_is_proven": {
-      "status": "CONFIRMED — real, tested, reusable mechanism, not a placeholder",
-      "evidence": "backend/core/analytics/signal_authority_collision_resolver.py (479 lines) implements load_signal_authority_collision_model(), validate_signal_authority_collision_model(), apply_signal_authority_collision_policy(), override-condition evaluation, and distinct-risk-layer handling — this is the exact governed mechanism ARCH-CONV-C used to adjudicate the existing ALP/GGT liver_injury_axis. Extending signal_authority_collision_model_v1.yaml with a new/extended authority group for ALT R-value frames and reusing this resolver directly satisfies the prompt's 'extend the existing governed collision model rather than adding local evaluator branching' requirement with a concrete, already-tested extension point."
-    },
-    "promotion_status_vocabulary_does_not_pre_exist": {
-      "status": "CONFIRMED — new vocabulary, correctly scoped as new rather than invented-in-conflict",
-      "evidence": "grep -rli 'PROMOTE_AND_ACTIVATE|PROMOTE_BUT_WITHHOLD' across backend/, knowledge_bus/, docs/ returns zero matches. No existing three-way promotion+activation decision vocabulary exists in the repository — the closest existing systems are Pass3 Protocol's research-lineage classifications (MAPPED_TO_CANONICAL_RESEARCH etc., a different axis: research provenance, not activation decision) and the binary activation-register mechanism (activated / NOT_RUNTIME_ACTIVATED, no 'withhold vs defer' distinction). The prompt's instruction to 'use existing repository vocabulary where it differs; do not invent a second status system' has no pre-existing target to defer to for this specific decision axis — introducing PROMOTE_AND_ACTIVATE / PROMOTE_BUT_WITHHOLD / DEFERRED_WITH_EXPLICIT_REASON is establishing the first such vocabulary, layered on top of (not duplicating) the existing lineage and activation-register systems. Non-blocking observation for Cursor: state this explicitly in the evidence report rather than searching for a nonexistent pre-existing equivalent."
-    },
-    "existing_relevant_tests_confirmed_present": {
-      "status": "CONFIRMED",
-      "evidence": "backend/tests/regression/test_signal_authority_collision_enforcement.py and backend/tests/unit/test_arch_conv_e_runtime_activation_boundary.py both exist and were independently re-run and passing in this session's ARCH-CONV-E re-audit — legitimate starting points for the collision-precedence and reachability test categories in this prompt's 'Required tests' list."
-    },
-    "no_frontend_or_ssot_path_implicated": {
-      "status": "CONFIRMED",
-      "evidence": "Nothing in Phase 0's inspection list or the required implementation touches frontend/ or backend/ssot/ files directly; the prompt's own prohibitions correctly bar this."
+      "evidence": "backend/tests/unit/test_arch_conv_e2_r_value_runtime_authority.py and backend/tests/unit/test_signal_evaluator.py both already contain override-rule and mandatory_pre_emission_gates test patterns directly reusable as templates for the four new contexts' required test lists."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "fail_closed_requirements_are_concrete_and_testable": {
+    "no_new_medical_thresholds_invented_by_this_hardening_pass": {
       "status": "SOUND",
-      "evidence": "Eligibility/fail-closed list (absent result, absent/zero/invalid ULN, non-lab-source ULN, non-contemporaneous pairing) maps directly onto reusable orchestrator.py primitives identified above, not abstract wording."
+      "evidence": "Every mechanism mapping above reuses an existing runtime primitive against Pass 3's own stated conditions (lab_range_boundary, biomarker_present); the one place canonical research is genuinely silent (the 'very high ALT' numeric cutoff) is flagged as an explicit STOP, not papered over with an invented number."
     },
-    "no_self_certification_language": {
+    "activation_decisions_correctly_differentiated_not_activate_all_four": {
       "status": "SOUND",
-      "evidence": "Completion boundary explicitly requires return for 'independent Claude Code audit, GPT architectural review and Anthony's final merge authority' — Cursor cannot self-close this package."
+      "evidence": "Hardening produces four distinct dispositions, not a uniform one: bilirubin severity -> represent as override/escalation only (no independent activation); cholestatic/ALP-predominant -> activate as subordinate/contextual authority under the existing liver_injury_axis collision group; muscle/exertional -> activate as subordinate/contextual authority gated on lab-only CK corroboration, with the user-context path explicitly recorded as unresolved; metabolic/MASLD -> activate as subordinate/contextual authority gated on compound lab-marker corroboration, same user-context caveat. This directly satisfies 'do not activate all four by default' and 'do not keep any package withheld merely because application logic has not been worked through.'"
     },
-    "explicit_anti_recurrence_clause": {
-      "status": "SOUND — directly closes the ARCH-CONV-E process gap",
-      "evidence": "'Do not use a retrospective lifecycle exception in place of the required STOP-and-return path' (Mandatory STOP conditions section) is a direct, explicit response to this session's ARCH-CONV-E audit finding. The STOP-condition list itself ('implementation requires files explicitly prohibited by the hardened prompt', 'a broad estate migration is required', etc.) gives Cursor a live escape hatch for exactly the situation that caused ARCH-CONV-E's violation."
-    },
-    "legacy_s24_disposition_correctly_left_open": {
+    "anti_recurrence_clause_present": {
       "status": "SOUND",
-      "evidence": "Prompt does not predetermine whether S24 is superseded/retained/retired — it requires Cursor to identify the applicable repository mechanism and required authority evidence, consistent with 'no independent medical retirement without an actual governed process' established across ARCH-CONV-D and ARCH-CONV-E."
-    },
-    "gate_ladder_prevents_uncontrolled_suite_runs": {
-      "status": "SOUND",
-      "evidence": "Explicit ordered gate ladder (clean HEAD probe → focused → collision → package validators → runtime → baseline → exact-node attribution) and explicit prohibition on starting with an uncontrolled full backend suite matches this session's own standing practice (run once, attribute precisely, don't re-run to adjust)."
+      "evidence": "'Do not use retrospective ratification to bypass a missed STOP' is present verbatim, consistent with ARCH-CONV-E2's equivalent clause, which this session's audits confirmed was actually honoured (no retrospective-exception shortcut was taken for E2's Gate 1/Gate 2 process)."
     }
   },
 
+  "hardened_execution_directives_for_cursor": {
+    "context_1_cholestatic_alp_predominant": {
+      "disposition": "ACTIVATE_AS_SUBORDINATE_CONTEXTUAL_AUTHORITY",
+      "mechanism": "Add to signal_authority_collision_model_v1.yaml's existing liver_injury_axis group as a subordinate/supporting entry with suppress_supporting_when_primary_present: true so it never competes with ALP/GGT primary. Gate emission on eligible r_value_alt_alp <= 2 (reuse the existing R-value selector, do not duplicate its logic). Represent GGT-absence confidence downgrade via signal_confidence_builder.py reasons, not a new field. Bilirubin severity interaction reuses the existing override_rule mechanism, applied to this frame the same way it applies to the hepatocellular frame."
+    },
+    "context_2_muscle_exertional": {
+      "disposition": "ACTIVATE_AS_SUBORDINATE_CONTEXTUAL_AUTHORITY_LAB_ONLY",
+      "mechanism": "Gate emission via mandatory_pre_emission_gates requiring creatine_kinase lab_range_boundary above_max (not biomarker_present alone -- canonical research requires CK actually raised, not merely measured). Do not implement the user-declared exercise/trauma/myopathy/statin corroboration path -- no governed runtime context contract exists (context_modifier_catalogue_draft_v1.yaml is non-runtime). Record this explicitly as an unresolved blocker, not a silent omission. Contradiction handling (bilirubin/GGT/ALP redirect away from muscle framing) via existing override/collision suppression, not new logic. The 'very high ALT must not be explained away' escalation-suppression rule is BLOCKED pending a Head of Medical Research numeric threshold decision -- implement the rest of the frame without it and record the gap."
+    },
+    "context_3_bilirubin_severity": {
+      "disposition": "REPRESENT_AS_OVERRIDE_ESCALATION_ONLY_NO_INDEPENDENT_ACTIVATION",
+      "mechanism": "Do not activate pkg_kb52c_alt_high_bilirubin_severity_context as a competing primary frame. Extend/confirm the existing or_alt_high_with_bilirubin_high override_rule pattern (already proven on the hepatocellular package) applies consistently across all currently-active and newly-activated ALT frames from this package. Encode the Hy's-Law prohibition and fractionation/albumin/INR caveats as presentation-safety/evidence metadata on the override, not as new frame content."
+    },
+    "context_4_metabolic_masld": {
+      "disposition": "ACTIVATE_AS_SUBORDINATE_CONTEXTUAL_AUTHORITY_LAB_ONLY",
+      "mechanism": "Gate emission via mandatory_pre_emission_gates requiring an any_of compound condition across hba1c/triglycerides/ggt lab_range_boundary above_max or hdl lab_range_boundary below_min (compound rule, not single-marker, per canonical caveats). Do not implement declared-metabolic-risk-context corroboration -- same governed-context-contract gap as context 2; record as unresolved blocker. Contradiction handling (bilirubin/INR redirect, CK redirect to muscle) via existing override/collision suppression. Same 'very high ALT' threshold gap and BLOCKED sub-item as context 2."
+    }
+  },
+
+  "unresolved_blockers_for_head_of_medical_research": [
+    {
+      "blocker": "No governed, runtime-consumed user-context contract exists for exercise/statin/trauma/myopathy history (muscle/exertional context) or declared metabolic risk factors (metabolic/MASLD context)",
+      "affected_specs": ["inv_alt_high_muscle_source_or_exertional_contribution", "inv_alt_high_metabolic_masld_context"],
+      "why_insufficient": "context_modifier_catalogue_draft_v1.yaml is explicitly status: draft_governance_non_runtime, runtime_consumed: false",
+      "minimum_decision_needed": "Either (a) accept lab-only corroboration as sufficient for these two frames' initial activation (recommended -- canonical research supports lab corroboration as a valid independent path, not solely dependent on user context), or (b) commission a governed context-modifier runtime contract before activating these frames at all"
+    },
+    {
+      "blocker": "'Very high ALT must not be explained away by a plausible muscle/metabolic context' has no numeric threshold in canonical research",
+      "affected_specs": ["inv_alt_high_muscle_source_or_exertional_contribution", "inv_alt_high_metabolic_masld_context"],
+      "why_insufficient": "Pass 3 source states the caveat qualitatively only; no ULN-multiple or absolute value is given",
+      "minimum_decision_needed": "Head of Medical Research must supply an explicit numeric cutoff (e.g. ALT > N x ULN) or explicitly accept the frame without this specific safeguard until a future package adds it"
+    }
+  ],
+
   "non_blocking_observations_for_cursor": [
-    "r_value_alt_alp requires extending ratio_registry.compute()'s signature or adding a downstream computation in orchestrator.py to thread input_reference_ranges through — this is a genuine, non-trivial extension of the established architecture, not a one-line registry entry like the existing 15 ratios. Budget for this accordingly.",
-    "Reuse orchestrator.py's existing _is_valid_lab_range() / _has_valid_numeric_bounds() pattern for ULN validity (source == 'lab') rather than inventing a new validity check — this directly satisfies 'do not infer a generic ULN / do not substitute population thresholds'.",
-    "No existing repository convention establishes 'contemporaneous/same-sample pairing' as a distinct check — Phase 0 execution must either ground this in the existing single-panel-snapshot data model (document why that already satisfies the requirement) or STOP per the prompt's own condition. Do not fabricate a new pairing mechanism without first confirming this.",
-    "PROMOTE_AND_ACTIVATE / PROMOTE_BUT_WITHHOLD vocabulary does not exist yet anywhere in the repo — this is legitimately new, not a missed lookup. State that plainly in the evidence report.",
-    "signal_authority_collision_resolver.py + signal_authority_collision_model_v1.yaml is the correct, already-proven extension point for ALT/ALP/GGT collision governance — do not add local branching in signal_evaluator.py or elsewhere.",
-    "This is HIGH/MIXED risk touching the Intelligence Core (ratio_registry.py, collision resolver, SignalRegistry activation path) — GPT architectural review and Anthony's final merge authority remain required per the prompt's own completion boundary; this hardening does not substitute for either."
+    "Reuse signal_evaluator.py's existing _evaluate_override_rules and _passes_mandatory_pre_emission_gates verbatim -- do not add parallel evaluation logic for these four packages.",
+    "For the cholestatic context, decide during implementation whether it belongs in liver_injury_axis as a supporting entry or a distinct_risk_layer -- hardening identifies both mechanisms as available; the medical judgement of which fits is Gate 1's, not an implementation detail Cursor should decide alone.",
+    "Do not treat the two unresolved blockers above as reasons to withhold the lab-only portions of contexts 2 and 4 -- only the user-context and very-high-ALT sub-behaviours are blocked, per the prompt's own instruction not to withhold a whole package merely because part of its logic isn't worked through."
   ],
 
   "stage_2c_evidence_checklist": {
-    "checklist_count": 11,
+    "checklist_count": 10,
     "all_confirmed": true,
     "correction_required": false,
     "items": [
-      {"id": 1, "claim": "Front matter complete, branch does not pre-exist, no active Automation Bus token", "source": "automation_bus/latest_cursor_prompt.md:1-6; git branch -a --list '*arch-conv-e2*'; automation_bus/state/work_package_active.json", "evidence": "All 5 fields present; branch absent as expected for new package; token file absent (released after ARCH-CONV-E finish)", "status": "CONFIRMED"},
-      {"id": 2, "claim": "All ten repository-verified starting-point facts are true", "source": "knowledge_bus/packages/pkg_kb52c_alt_high_*, backend/core/analytics/ratio_registry.py, knowledge_bus/governance/signal_authority_collision_model_v1.yaml, direct SignalRegistry() instantiation (this session's ARCH-CONV-E audit)", "evidence": "Ten-for-ten verified true; zero required prompt correction", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Canonical Pass 3 source and six spec_ids unchanged", "source": "knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json", "evidence": "SHA-256 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267 matches prior independent verification", "status": "CONFIRMED"},
-      {"id": 4, "claim": "ratio_registry.py's established architecture cannot currently carry lab ULN into compute(), requiring a genuine signature/call-site extension", "source": "backend/core/analytics/ratio_registry.py:28-80; backend/core/pipeline/orchestrator.py:1069-1081", "evidence": "compute(panel) receives simple_biomarkers only; input_reference_ranges is a separate, unpassed dict at the real call site", "status": "CONFIRMED"},
-      {"id": 5, "claim": "A directly reusable lab-source ULN validity pattern already exists", "source": "backend/core/pipeline/orchestrator.py:1091,1105", "evidence": "_has_valid_numeric_bounds() and _is_valid_lab_range() (requiring reference_range.source == 'lab') are exact precedent for the fail-closed ULN requirement", "status": "CONFIRMED"},
-      {"id": 6, "claim": "No existing 'contemporaneous/same-sample' convention exists in the repository", "source": "grep -rli 'contemporaneous|same_sample|same-sample' backend/core/", "evidence": "Zero matches; flagged as a Phase 0 open question for Cursor, not resolved by this hardening pass", "status": "CONFIRMED gap, correctly flagged"},
-      {"id": 7, "claim": "root_cause_registry_v1.py still lacks signal_alt_high registration", "source": "backend/core/knowledge/root_cause_registry_v1.py:32", "evidence": "Only signal_hepatic_alt_context registered", "status": "CONFIRMED"},
-      {"id": 8, "claim": "A proven, already-tested collision-governance extension point exists for ALT/ALP/GGT", "source": "backend/core/analytics/signal_authority_collision_resolver.py (479 lines)", "evidence": "Same mechanism ARCH-CONV-C used for the existing liver_injury_axis (ALP primary/GGT supporting)", "status": "CONFIRMED"},
-      {"id": 9, "claim": "PROMOTE_AND_ACTIVATE/PROMOTE_BUT_WITHHOLD vocabulary is new, not a missed existing system", "source": "grep -rli across backend/, knowledge_bus/, docs/", "evidence": "Zero pre-existing matches", "status": "CONFIRMED"},
-      {"id": 10, "claim": "Existing collision/reachability tests referenced by the prompt's test requirements are real and currently passing", "source": "backend/tests/regression/test_signal_authority_collision_enforcement.py, backend/tests/unit/test_arch_conv_e_runtime_activation_boundary.py", "evidence": "Both exist; re-confirmed passing in this session's ARCH-CONV-E re-audit", "status": "CONFIRMED"},
-      {"id": 11, "claim": "Prompt's mandatory STOP conditions include the exact anti-recurrence clause closing the ARCH-CONV-E process gap", "source": "automation_bus/latest_cursor_prompt.md, 'Mandatory STOP conditions' section", "evidence": "'Do not use a retrospective lifecycle exception in place of the required STOP-and-return path' — directly answers this session's ARCH-CONV-E audit finding", "status": "CONFIRMED"}
+      {"id": 1, "claim": "Branch does not pre-exist, no active token, ARCH-CONV-E2 is merged to main and Gate 2 ratified", "source": "git branch -a; automation_bus/state/work_package_active.json; git merge-base --is-ancestor; docs/architecture/ARCH-CONV-E2_medical_decision_register.yaml", "evidence": "All confirmed clean/true", "status": "CONFIRMED"},
+      {"id": 2, "claim": "All four target packages exist with mandatory assets, currently withheld", "source": "knowledge_bus/packages/pkg_kb52c_alt_high_{cholestatic_alp_predominant_context,muscle_source_or_exertional_pattern,bilirubin_severity_context,metabolic_steatotic_liver_pattern}/", "evidence": "All four present, four-file mandatory set complete", "status": "CONFIRMED"},
+      {"id": 3, "claim": "override_rules mechanism is proven, reusable precedent for bilirubin severity", "source": "backend/core/analytics/signal_evaluator.py:436; this session's independently re-verified test_kbs24_signals_trigger_suboptimal_then_escalate[signal_alt_high] pass", "evidence": "Exact mechanism identified and already working in production code", "status": "CONFIRMED"},
+      {"id": 4, "claim": "mandatory_pre_emission_gates mechanism is proven, reusable precedent for muscle/metabolic corroboration gating", "source": "backend/core/analytics/signal_evaluator.py:498", "evidence": "Same mechanism already gates R-value band selection under ARCH-CONV-E2", "status": "CONFIRMED"},
+      {"id": 5, "claim": "No governed runtime user-context contract exists", "source": "knowledge_bus/governance/context_modifier_catalogue_draft_v1.yaml", "evidence": "runtime_consumed: false, status: draft_governance_non_runtime", "status": "CONFIRMED gap, correctly scoped as partial blocker"},
+      {"id": 6, "claim": "Confidence-downgrade mechanism exists for GGT-absence wording", "source": "backend/core/analytics/signal_confidence_builder.py", "evidence": "calculate_signal_confidence() reasons-based scoring available", "status": "CONFIRMED"},
+      {"id": 7, "claim": "Collision-subordination mechanism exists for ALP/GGT axis non-duplication", "source": "backend/core/analytics/signal_authority_collision_resolver.py; knowledge_bus/governance/signal_authority_collision_model_v1.yaml liver_injury_axis group", "evidence": "distinct_risk_layers / suppress_supporting_when_primary_present already implemented and enforced for ARCH-CONV-C", "status": "CONFIRMED"},
+      {"id": 8, "claim": "'Very high ALT' has no numeric threshold in canonical research or existing assets", "source": "Pass 3 source, existing signal_library.yaml/research_brief.yaml for muscle and metabolic packages", "evidence": "Qualitative caveat only, no number anywhere", "status": "CONFIRMED gap, correctly flagged as STOP-worthy sub-item"},
+      {"id": 9, "claim": "Four dispositions are differentiated, not uniform", "source": "hardened_execution_directives_for_cursor block above", "evidence": "One override-only, two lab-gated-subordinate, one collision-subordinate -- not 'activate all four' or 'withhold all four'", "status": "CONFIRMED"},
+      {"id": 10, "claim": "Existing tests provide directly reusable templates", "source": "backend/tests/unit/test_arch_conv_e2_r_value_runtime_authority.py, test_signal_evaluator.py", "evidence": "Both already exercise override_rules and mandatory_pre_emission_gates against ALT packages", "status": "CONFIRMED"}
     ]
   },
 
   "rejection_conditions": [
-    "Implementing r_value_alt_alp with a population/SSOT-assumed ULN instead of a lab-source (reference_range.source == 'lab') ULN — REJECT_AND_RETURN",
-    "Adding local ALT-vs-ALP/GGT branching in signal_evaluator.py or elsewhere instead of extending signal_authority_collision_model_v1.yaml + signal_authority_collision_resolver.py — REJECT_AND_RETURN",
-    "Activating any of the six packages by default or because their assets merely validate — REJECT_AND_RETURN",
-    "Fabricating a 'contemporaneous/same-sample' mechanism without first documenting why the single-panel-snapshot model does or does not already satisfy it — REJECT_AND_RETURN",
-    "Reactivating the three superseded Batch 5 keys, or claiming completed medical retirement without an actual executed governed retirement process — REJECT_AND_RETURN",
-    "Using a retrospective lifecycle exception instead of the required STOP-and-return path if scope must expand beyond this hardened prompt — REJECT_AND_RETURN",
-    "Broadening into unrelated liver/package-estate/derived-metric cleanup, or repairing unrelated failing tests (e.g. the known pre-existing test_kbs23_catalogue_panel_harness_runs_all_panel_fixtures failure) — REJECT_AND_RETURN"
+    "Activating pkg_kb52c_alt_high_bilirubin_severity_context as an independent competing primary frame instead of an override/escalation rule -- REJECT_AND_RETURN",
+    "Implementing user-declared exercise/statin/trauma/myopathy or declared-metabolic-risk corroboration without a governed runtime context contract -- REJECT_AND_RETURN",
+    "Inventing a numeric 'very high ALT' threshold not present in canonical research or explicit Head of Medical Research Gate 1 decision -- REJECT_AND_RETURN",
+    "Allowing the ALT cholestatic/ALP-predominant frame to fire as primary when ALP/GGT liver_injury_axis already owns primary authority -- REJECT_AND_RETURN",
+    "Activating all four packages uniformly, or withholding all four merely because application logic wasn't worked through -- REJECT_AND_RETURN",
+    "Using retrospective ratification in place of a required STOP-and-return for any newly discovered prohibited-scope necessity -- REJECT_AND_RETURN",
+    "Merging before Gate 2 explicit ratification and independent Claude Code re-audit -- REJECT_AND_RETURN"
   ],
 
-  "overall_verdict": "HARDENED. CLEARED FOR EXECUTION (subject to standard HIGH-risk GPT architectural review + Anthony's final merge authority, separate from this hardening, exactly as the prompt's own completion boundary states). All ten repository-verified starting-point facts confirmed true. Three concrete exact-target-mapping findings materially de-risk execution: (1) ratio_registry.py's current compute() signature cannot carry lab ULN and needs a genuine, identified extension via orchestrator.py's input_reference_ranges; (2) a directly reusable lab-source ULN validity pattern already exists (_is_valid_lab_range) and should be reused rather than reinvented; (3) signal_authority_collision_resolver.py is a proven, already-tested extension point for the required ALT/ALP/GGT collision governance, not a placeholder. One genuine gap correctly left open rather than papered over: no existing repository convention for 'contemporaneous/same-sample pairing' — flagged for Cursor's Phase 0 execution to resolve or STOP on, not resolved by this hardening pass. The prompt's explicit prohibition on using a retrospective lifecycle exception in place of STOP-and-return directly closes the process gap identified in this session's ARCH-CONV-E audit. No blocking defect found."
+  "overall_verdict": "HARDENED. CLEARED FOR EXECUTION (subject to Head of Medical Research Gate 1, Anthony Gate 2, and independent Claude Code re-audit, exactly as the prompt's own completion boundary requires). This hardening pass maps all four contexts to concrete, already-proven runtime mechanisms rather than leaving application logic to Cursor discretion, as instructed: override_rules (signal_evaluator.py:436) for bilirubin severity, mandatory_pre_emission_gates (signal_evaluator.py:498) for muscle/metabolic lab corroboration, signal_confidence_builder.py for GGT-absence confidence wording, and the existing liver_injury_axis collision group for ALP/GGT non-duplication. Two genuine, correctly-scoped gaps are identified rather than papered over: no governed runtime user-context contract exists (blocking only the user-declared-history corroboration sub-path of muscle/metabolic, not lab-based activation), and no numeric 'very high ALT' threshold exists in canonical research (blocking only that specific escalation-suppression safeguard). Both are recorded as explicit unresolved blockers for Head of Medical Research decision, consistent with the prompt's STOP conditions and its instruction not to withhold a whole package for a partial gap. No blocking defect found in the hardening itself."
 }
