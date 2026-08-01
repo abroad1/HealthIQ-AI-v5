@@ -1336,6 +1336,46 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ---
 
+## ARCH-CONV-G — Urate Compiled-WHY Authority
+
+**Status:** CLOSED — Gate 2 ratified; independent audit PASS; merged and published to `origin/main`  
+**Date closed:** 2026-08-01  
+**Programme block(s):** Architecture convergence — urate compiled-WHY authority (`signal_urate_high`)  
+**Gate 1:** `ARCH-CONV-G-GATE1-HMR-2026-08-01` (`APPROVED_WITH_NARROWING`)  
+**Gate 2:** `ARCH-CONV-G-GATE2-ANTHONY-2026-08-01` (`APPROVED`)  
+**Merge SHA:** _(filled at publish)_  
+**Evidence:** `docs/audit-papers/ARCH-CONV-G_implementation_and_verification_report.md`  
+**Medical decision register:** `docs/architecture/ARCH-CONV-G_medical_decision_register.yaml`
+
+### Delivered / ticked off
+- Compiled-WHY authority for `signal_urate_high`.
+- Canonical activation key: `signal_urate_high::inv_uric_acid_high_metabolic`.
+- `why_role: morphology_context` (flat; non-causal).
+- `+1 COMPILED_ACTIVE` authority row (23 → 24).
+- `+1 LEGACY_RETIRED` competing WHY row (18 → 19) for `signal_urate_high::inv_urate_high_gout_crystal_deposition_risk`.
+- Competing gout/crystal-deposition frame retired for WHY ownership only; valid content subordinate risk context only.
+- Package-layer and PSI status unchanged.
+- `or_uric_acid_renal_risk` (`egfr < 60`) retained as concern escalation only; no CKD diagnosis from one eGFR result; no eGFR-owned WHY.
+- Creatinine and urea compiled authority unchanged.
+- No new alias, signal identity, SSOT biomarker, derived metric, compiler mechanism, or frontend change.
+- Urate versus uric acid remains existing terminology convention only.
+- Independent audit PASS.
+
+### Carry-forwards
+- `signal_hba1c_high` remains the sole open A3 compiled-WHY target.
+- ALT compiled-WHY identity remains unresolved at A4.
+- Package B and Package C sequencing remains downstream of further Package A outputs.
+- No eGFR/UACR/chronicity independent WHY authority was created.
+
+### Blockers / risks
+- None open from ARCH-CONV-G medical design after Gate 2 and independent audit PASS.
+- Selecting HbA1c without a repository-grounded Stage 0 advisory risks out-of-order estate work.
+
+### Recommended next sprint
+- Run a repository-grounded Stage 0 advisory for `signal_hba1c_high` before authoring the next sprint.
+
+---
+
 ## Continuity audit — ARCH-CONV-E / E2 / E3 (2026-08-01)
 
 Documentation-only post-merge reconciliation. Sources: committed implementation evidence, medical decision registers, Gate 2 ratification docs, merge state on `main` (`6ccbf3f` / aligned `origin/main`). No runtime, package medical content, tests, or governance decisions changed by this audit.

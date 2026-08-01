@@ -1,0 +1,7 @@
+manifest_id: arch_conv_g_urate_high
+work_id: ARCH-CONV-G
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_uric_acid_high_metabolic.yaml
+  activation_key: signal_urate_high::inv_uric_acid_high_metabolic
+notes: Gate 1 / Gate 2 ratified flat CONTEXT_ONLY_NON_CAUSAL morphology_context lane.

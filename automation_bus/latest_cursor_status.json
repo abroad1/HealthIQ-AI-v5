@@ -1,10 +1,10 @@
 {
-  "branch": "feature/arch-conv-f-haematology-compiled-why",
+  "branch": "feature/arch-conv-g-urate-compiled-why",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-08-01T20:15:56Z",
-  "cursor_started_utc": "2026-08-01T20:01:12Z",
-  "head_sha": "ee05605f666d5be510bd9affeabbe758663d8ea9",
+  "cursor_completed_utc": "2026-08-01T21:10:57Z",
+  "cursor_started_utc": "2026-08-01T20:55:47Z",
+  "head_sha": "345819612895b83fb66132e8583a6575220fd557",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "ARCH-CONV-F"
+  "work_id": "ARCH-CONV-G"
 }

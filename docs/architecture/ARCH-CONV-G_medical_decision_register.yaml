@@ -1,0 +1,91 @@
+work_id: ARCH-CONV-G
+branch: feature/arch-conv-g-urate-compiled-why
+register_state: GATE_1_AND_GATE_2_RATIFIED_IMPLEMENTATION_AUTHORISED
+gate1_status: APPROVED_WITH_NARROWING
+gate2_status: APPROVED
+head_of_medical_research_gate1_reference: ARCH-CONV-G-GATE1-HMR-2026-08-01
+anthony_gate2_reference: ARCH-CONV-G-GATE2-ANTHONY-2026-08-01
+hardening_pack_ref: docs/architecture/ARCH-CONV-G_hardening_pack.md
+gate_decision_ref: docs/architecture/ARCH-CONV-G_GATE_1_GATE_2_decision.md
+runtime_changes_authorised: true
+note: >
+  Gate 1 APPROVED_WITH_NARROWING and Gate 2 APPROVED on 2026-08-01.
+  Implementation of the ratified morphology_context urate compiled-WHY disposition
+  is authorised on the active ARCH-CONV-G Automation Bus work package.
+
+canonical_frame:
+  signal_id: signal_urate_high
+  source_spec_id: inv_uric_acid_high_metabolic
+  activation_key: signal_urate_high::inv_uric_acid_high_metabolic
+  canonical_package: pkg_s24_urate_high_metabolic
+  source_document: knowledge_bus/research/investigation_specs/inv_uric_acid_high_metabolic.yaml
+  source_sha256: A7EDEF6EE3C28A4DA8BE1D79A2F5E36B0F80F7AF5C7B7E5A140418208FC078CD
+  naming_resolution: >
+    urate (biomarker/signal) versus uric_acid (historical spec_id token) remains an
+    existing terminology convention only; no new alias or identity was created.
+  why_role: morphology_context
+  why_role_flat: true
+  conditional_why_role: none
+  supporting_markers:
+    creatinine: mechanism_marker_context_only
+    triglycerides: corroborator_context_only
+  override_rule_retained: or_uric_acid_renal_risk
+  override_condition: egfr_numeric_less_than_60
+  override_resulting_state: at_risk
+  override_presentation_safety:
+    concern_escalation_only: true
+    not_ckd_diagnosis_from_single_egfr: true
+    not_egfr_owned_why: true
+    not_creatinine_or_urea_authority_change: true
+    not_uacr_or_chronicity_addition: true
+    missing_egfr_blocks_renal_risk_attribution_only: true
+  presentation_safety:
+    not_gout_diagnosis: true
+    not_urate_crystal_deposition_diagnosis: true
+    not_ckd_diagnosis: true
+    not_renal_failure_diagnosis: true
+    not_specific_metabolic_disease_diagnosis: true
+    not_treatment_need_claim: true
+    do_not_compile_raw_implications_verbatim: true
+  missing_egfr_behaviour: >
+    Missing eGFR prevents renal-risk attribution / override escalation but does not
+    block the basic elevated-urate morphology_context finding.
+
+competitor_disposition:
+  activation_key: signal_urate_high::inv_urate_high_gout_crystal_deposition_risk
+  package_id: pkg_kb52c_urate_high_gout_crystal_deposition_risk
+  collision_class: governed_arbitration_same_signal_id
+  disposition: LEGACY_RETIRED_FOR_WHY_ONLY
+  package_layer_status: UNCHANGED
+  psi_status: UNCHANGED
+  package_deletion: forbidden
+  subordinate_context_fold_in: >
+    Valid gout/crystal-deposition content may remain only as subordinate non-diagnostic
+    risk context within the canonical frame; it must not independently own WHY.
+
+expected_register_delta:
+  compiled_active: '+1'
+  legacy_retired: '+1'
+
+exclusions:
+  - signal_hba1c_high
+  - signal_hba1c_pct_high
+  - signal_creatinine_high
+  - signal_urea_high
+  - egfr_uacr_chronicity_as_independent_why
+  - ferritin_hemoglobin
+  - ALT
+  - thyroid_lipid_alp_ggt_bilirubin_total_cholesterol_why
+  - urate_low_and_unrelated_urate_signals
+
+mechanism_sufficiency:
+  static_why_role: sufficient
+  new_compiler_mechanism_required: false
+  root_cause_compiler_v1_change_expected: false
+  root_cause_registry_v1_change_expected: false
+
+baseline_counts_at_phase0:
+  compiled_active: 23
+  legacy_retired: 18
+  rejected: 1
+  total_frames: 42

@@ -250,31 +250,20 @@ def test_deferred_package_only_frames_skip_without_fallback():
     assert authority_row_for(UREA_PASS3)["artefact_path"] is None
 
 
-def test_egfr_and_urate_authority_remain_outside_arch_conv_b():
-    for key in EGFR_KEYS | {URATE}:
+def test_egfr_authority_remains_outside_arch_conv_b():
+    for key in EGFR_KEYS:
         assert authority_row_for(key) is None
     compiled_names = {
         path.name for path in (REPO / "knowledge_bus/compiled/hypotheses").glob("*.yaml")
     }
     assert "inv_egfr_low_chronic_kidney_function_reduction.yaml" not in compiled_names
     assert "inv_egfr_low_hemodynamic_filtration_drop.yaml" not in compiled_names
-    assert "inv_uric_acid_high_metabolic.yaml" not in compiled_names
-
-    root = compile_root_cause_v1(
-        signal_results=[
-            {
-                "signal_id": "signal_urate_high",
-                "signal_state": "suboptimal",
-                "confidence": 0.8,
-                "primary_metric": "urate",
-            }
-        ],
-        biomarker_context={"urate": 480.0},
-        input_reference_ranges={"urate": {"min": 150.0, "max": 420.0}},
-    )
-    assert root is not None
-    ids = {hyp.hypothesis_id for finding in root.findings for hyp in finding.hypotheses}
-    assert "urate_elevated_serum_hyperuricaemia_v1" in ids
+    # Urate compiled-WHY was later delivered by ARCH-CONV-G; B must not be read as
+    # owning or excluding that later migration.
+    assert "inv_uric_acid_high_metabolic.yaml" in compiled_names
+    assert authority_row_for(URATE) is not None
+    assert authority_row_for(URATE)["authority_state"] == "COMPILED_ACTIVE"
+    assert authority_row_for(URATE)["why_role"] == "morphology_context"
 
 
 def test_existing_thyroid_and_lipid_roles_unchanged():
