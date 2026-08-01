@@ -44,6 +44,7 @@
 - `backend/tests/regression/test_arch_conv_f_haematology_stop_c.py` (HbA1c exclusion updated for H migration)
 - `backend/tests/unit/test_why_authority_pkg3.py`
 - `backend/tests/unit/test_arch_rt5_launch_gate.py`
+- `backend/tests/fixtures/panels/phenotypes/phenotype_expectations_v1.yaml` (`ph_hba1c_metabolic_stress_v1` min hypotheses 2→1)
 - Gate / evidence / Build Deliverables / Active Carry-Forward docs
 
 Unchanged: compiler, root_cause_registry, packages, PSI, SSOT, frontend, urate artefacts.
@@ -84,6 +85,10 @@ python -m pytest backend/tests/regression/test_arch_conv_h_hba1c_stop_c.py \
 → passed
 
 Sibling ARCH-CONV regression suites (A1/A2/B/C/F/G) + unit count gates → passed
+
+Phenotype expectation update:
+`backend/tests/fixtures/panels/phenotypes/phenotype_expectations_v1.yaml`
+`ph_hba1c_metabolic_stress_v1` `min_hypothesis_count` 2 → 1 (Gate-approved single compiled morphology_context hypothesis).
 ```
 
 ## 7. Proof statements

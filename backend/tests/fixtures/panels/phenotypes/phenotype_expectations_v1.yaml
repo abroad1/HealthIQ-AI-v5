@@ -145,7 +145,9 @@ phenotypes:
       optional_expected_sequences: []
     expected_root_cause:
       must_exist: true
-      min_hypothesis_count: 2
+      # ARCH-CONV-H: single Gate-approved morphology_context compiled hypothesis
+      # (legacy dual-hypothesis asset retired for WHY ownership).
+      min_hypothesis_count: 1
       applies_to_signal_id: "signal_hba1c_high"
 
   - phenotype_id: "ph_hepatic_alt_inflammatory_v1"
