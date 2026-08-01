@@ -1305,7 +1305,7 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 **Programme block(s):** Architecture convergence — haematology compiled-WHY authority (`signal_ferritin_high`, `signal_hemoglobin_low`)  
 **Gate 1:** `ARCH-CONV-F-GATE1-HMR-2026-08-01` (`APPROVED_WITH_NARROWING`)  
 **Gate 2:** `ARCH-CONV-F-GATE2-ANTHONY-2026-08-01` (`APPROVED`)  
-**Merge SHA:** _(filled at publish)_  
+**Merge SHA:** `65646cc` — `merge: ARCH-CONV-F haematology compiled-WHY authority (Gate 2 ratified)`  
 **Evidence:** `docs/audit-papers/ARCH-CONV-F_implementation_and_verification_report.md`  
 **Medical decision register:** `docs/architecture/ARCH-CONV-F_medical_decision_register.yaml`
 
