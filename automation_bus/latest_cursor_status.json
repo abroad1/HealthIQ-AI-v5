@@ -1,10 +1,9 @@
 {
   "branch": "feature/arch-conv-e2-alt-rvalue-runtime-authority",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-07-31T10:12:52Z",
   "cursor_started_utc": "2026-07-31T09:52:59Z",
-  "head_sha": "1bee430f661500f73579aeea9c8e80ccdabd9d0f",
+  "head_sha": "a81ac56f643b660a75a8115bec57a21c05ee7985",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
+  "status": "IN_PROGRESS",
   "work_id": "ARCH-CONV-E2"
 }
