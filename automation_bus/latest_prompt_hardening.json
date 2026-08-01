@@ -1,110 +1,72 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-G",
+  "work_id": "ARCH-CONV-H",
   "status": "HARDENED",
   "hardening_date": "2026-08-01",
   "hardened_by": "Claude Code",
-  "source_prompt": "automation_bus/latest_cursor_prompt.md (front matter complete: work_id, branch, risk_level HIGH, execution_model TWO_PHASE_START_FINISH, change_type MIXED, plus explicit gate1_status/gate2_status: PENDING declared upfront)",
+  "source_prompt": "automation_bus/latest_cursor_prompt.md (front matter complete: work_id, branch feature/arch-conv-h-hba1c-compiled-why-authority, risk_level HIGH, execution_model TWO_PHASE_START_FINISH, change_type MIXED)",
   "risk_level": "HIGH",
   "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "Single-signal Phase-0-only mapping package with a small, bounded source set (2 packages x 3 files, 1 canonical spec, register/runtime mechanism files already fully characterised through ARCH-CONV-B/F precedent). No disjoint large-scale work requiring a fork."
+    "rationale": "Single-signal Phase-0-gated compiled-WHY package, identical bounded shape to ARCH-CONV-F/G. Nearly all cited repository content was already read verbatim during this session's Stage 0 evidence pass and this session's pipeline-advisory pass; remaining gaps (ADR acceptance status, compiled-WHY mechanism file existence, register/pilot-list absence) closed with a small number of targeted parallel reads. No disjoint large-scale work requiring a fork."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "declared_risk_level": "HIGH",
     "declared_change_type": "MIXED",
-    "scope_proportionality": "PASS -- single-signal wave, identical shape to every completed prior compiled-WHY wave",
-    "advisory_duplication": "NO conflict -- this prompt closely and correctly implements automation_bus/latest_pipeline_advisory.md's ARCH-CONV-B2-URATE-WHY recommendation (same canonical/competitor packages, same exclusions), renamed to ARCH-CONV-G",
-    "phase0_only_scope_correctly_declared": "CONFIRMED -- prompt explicitly STOPs before Gate 1/Gate 2 approval and before implementation; gate1_status/gate2_status both PENDING in its own front matter; retrospective ratification explicitly forbidden in-prompt",
+    "scope_proportionality": "PASS -- single-signal wave, identical shape to every completed compiled-WHY wave (ARCH-CONV-A Waves 1-3, ARCH-CONV-B, ARCH-CONV-C, ARCH-CONV-F, ARCH-CONV-G)",
+    "advisory_duplication": "NO conflict -- this prompt implements Sprint 1 of automation_bus/latest_pipeline_advisory.md (2026-08-01, post-ARCH-CONV-G) exactly: canonical signal_hba1c_high::inv_hba1c_high_glycaemia, single competitor pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia, explicit exclusion of signal_hba1c_pct_high and signal_glucose_dysregulation_hba1c_context",
+    "phase0_only_scope_correctly_declared": "CONFIRMED -- prompt explicitly STOPs before Gate 1/Gate 2 approval and before implementation (lines 159-239); no gate1_status/gate2_status front-matter fields present, but Gate 1 STOP (line 204) and Gate 2 STOP (line 228) are both mandatory, explicit, and precede all implementation scope (line 241 heading 'Implementation scope after Gate 2'); retrospective ratification explicitly forbidden ('Do not proceed on verbal or conversational approval alone', line 226)",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "baseline_confirmed_clean": {
+    "canonical_research_authority": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/governance/compiled_why_authority_register_v1.yaml: 42 total authority_state rows, zero mentions of 'urate' anywhere in the file. backend/core/knowledge/why_authority_v1.py: zero mentions of 'urate' in _PILOT_SIGNAL_IDS. knowledge_bus/compiled/estate_index_v1.yaml: zero mentions of 'urate'. Matches the prompt's Stage 0 baseline requirements exactly."
+      "evidence": "knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemia_v1.yaml -- spec_id: inv_hba1c_high_glycaemia (line1), signal_id: signal_hba1c_high (line2), activation_logic lab_range_exceeded / upper-bound-only (lines11-20), override_rules or_hba1c_diagnostic_diabetes >=48 mmol/mol WHO2011/NICE-NG28-sourced (lines47-59) and or_hba1c_metabolic_syndrome TG-above-range AND HDL-below-range IDF2006-sourced (lines60-76), confounders haemoglobinopathy/iron-deficiency/shortened-RBC-lifespan (lines77-89), evidence_strength strong (line91), narrative mechanism/biological_pathway/interpretation/implications/supporting_marker_roles present (lines106-118). All Stage 1A-required fields present."
     },
-    "canonical_identity_1to1_confirmed": {
-      "status": "CONFIRMED",
-      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:91 RootCauseTargetSpec('signal_urate_high', ...) matches inv_uric_acid_high_metabolic.yaml's own signal_id: signal_urate_high field exactly. The urate/uric-acid naming difference is a spec-filename convention only (spec_id: inv_uric_acid_high_metabolic, signal_id: signal_urate_high) -- no new alias, signal ID, or activation-key convention is needed to resolve it, matching the prompt's own instruction not to invent one."
+    "package_and_identity_estate": {
+      "status": "CONFIRMED, prompt's assumed collision shape matches repository exactly",
+      "evidence": "knowledge_bus/governance/package_runtime_activation_register_v1.yaml lines165-168: activation_key signal_hba1c_high::inv_hba1c_high_diabetes_range_hyperglycemia -> pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia; activation_key signal_hba1c_high::inv_hba1c_high_glycaemia -> pkg_s24_hba1c_high_glycaemia. docs/architecture/signal_id_collision_inventory.md line90: signal_hba1c_high, 2 packages, 'Governed arbitration'. knowledge_bus/governance/medical_frame_identity_index_v1.yaml lines778-906: kb52c frame runtime_authority_status=none/clinical_adjudication_status=required_before_activation (lines778-806, runtime-inert); s24 frame runtime_authority_status=active/clinical_adjudication_status=blocked_pending_medical_review, collision_status=requires_adjudication (lines857-881,875). SignalRegistry lexicographic-overwrite rule (backend/core/analytics/signal_evaluator.py lines43-54) confirms pkg_s24_... (sorts after pkg_kb52c_...) is the sole live runtime winner -- matches prompt's declared canonical-retained (inv_hba1c_high_glycaemia / s24) vs genuine-competitor (pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia) shape exactly. Package manifests independently read: knowledge_bus/packages/pkg_s24_hba1c_high_glycaemia/package_manifest.yaml (created 2026-03-12, sourced directly from canonical spec); knowledge_bus/packages/pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia/package_manifest.yaml (created 2026-03-29, sourced from Batch_6_Pass_3.json, behavioural_impact NONE). non_pass3_package_revalidation_register_v1.yaml lines863-893: pkg_s24_hba1c_high_glycaemia classified non_pass3_runtime_revalidation_required, cross_validation_recommendation needs_manual_review -- consistent with the blocked_pending_medical_review status the prompt must respect."
     },
-    "canonical_spec_valid": {
-      "status": "CONFIRMED",
-      "evidence": "python backend/scripts/validate_investigation_spec.py --spec knowledge_bus/research/investigation_specs/inv_uric_acid_high_metabolic.yaml -> PASS, contract_mode: v2, 0 errors (re-run this session)."
+    "adjacent_identities": {
+      "status": "CONFIRMED separate, non-competing",
+      "evidence": "signal_id_collision_inventory.md line91: signal_hba1c_pct_high is its own 2-package collision family (pkg_kb52d_hba1c_pct_high_chronic_hyperglycemia_diabetes, pkg_kb52d_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency), classification 'Multi-frame support' not 'Governed arbitration' -- structurally distinct from signal_hba1c_high. medical_frame_identity_index_v1.yaml line828 explicit note: 'Percent-unit Pass_3 variant; distinct signal_id from mmol/mol high frame.' Both pct packages runtime_authority_status=none (lines807-831, deferred, not reachable). pkg_glucose_dysregulation_hba1c_context: own signal_id signal_glucose_dysregulation_hba1c_context (knowledge_bus/packages/pkg_glucose_dysregulation_hba1c_context/signal_library.yaml line11), classified ROUTE_C_multiple_pass3_frames_adjudication_needed / current_package_authority runtime_loaded but under its OWN signal_id in pass3_frame_coverage_audit_v1.yaml lines90-107 -- runtime-loaded but does not collide with signal_hba1c_high in SignalRegistry (different signal_id key). Neither adjacent identity competes for signal_hba1c_high WHY ownership; prompt's prohibition on merging them is correctly scoped to a real risk (both are genuinely proximate in content, not in identity)."
     },
-    "egfr_override_rule_verified": {
-      "status": "CONFIRMED",
-      "evidence": "inv_uric_acid_high_metabolic.yaml: or_uric_acid_renal_risk, condition egfr < 60 (numeric_value comparator), resulting_state: at_risk only -- no why_role field, structurally separate from WHY authority (same pattern as every prior override in this programme). egfr independently confirmed SSOT-canonical at backend/ssot/biomarkers.yaml:1469 -- no new SSOT/derived-metric work needed."
+    "current_why_runtime_path": {
+      "status": "CONFIRMED -- no compiled artefact/register row exists; legacy path is sole current WHY path",
+      "evidence": "knowledge_bus/root_cause/hypotheses/hba1c_hypotheses_v1.yaml (schema v1, primary_signal_id signal_hba1c_high, 2 hypotheses, safety_class monitoring, no diagnosis/medication language per line8 note). backend/core/knowledge/root_cause_registry_v1.py line31: RootCauseTargetSpec('signal_hba1c_high', lrc.load_hba1c_hypotheses_v1, 'hba1c_hypotheses_v1.yaml') -- legacy wiring only. knowledge_bus/governance/compiled_why_authority_register_v1.yaml: zero 'hba1c' matches (direct grep, this session) -- no COMPILED_ACTIVE/LEGACY_RETIRED/REJECTED row exists yet. backend/core/knowledge/why_authority_v1.py lines22-46 (_PILOT_SIGNAL_IDS frozenset): signal_hba1c_high absent (signal_ferritin_high, signal_hemoglobin_low, signal_urate_high all present, confirming the set is actively maintained and hba1c genuinely has not been added). docs/architecture/ARCH-CONV-A_active_why_target_inventory.md line95: signal_hba1c_high status legacy, tier A3 'spec exists, compile incomplete', 'no COMPILED_ACTIVE'. backend/tests/unit/test_compiled_hypothesis_arch_rt4.py line79: assert load_shadow_compiled_hypothesis('signal_hba1c_high') is None -- runtime-confirms no shadow-compile exists either. Mechanism files confirmed present for reuse: backend/core/knowledge/compiled_hypothesis.py, compiled_hypothesis_registry_v1.py, root_cause_divergence_v1.py, why_authority_v1.py, compiled_output_authority_v1.py; backend/core/analytics/output_authority_provenance_builder_v1.py; backend/core/contracts/output_authority_provenance_v1.py; schema knowledge_bus/schema/compiled_hypothesis_schema_v1.yaml. backend/core/analytics/root_cause_compiler_v1.py: zero 'hba1c' mentions (grep, this session) -- matches ARCH-CONV-G's confirmed zero-diff mechanism-reuse precedent (latest_audit_summary.md lines74-77), supporting the prompt's 'reuse existing mechanism, no new compiler path' instruction as achievable without invention. Confirmatory test test_hba1c_repeat_v1 present and wired to signal_hba1c_high in knowledge_bus/registries/confirmatory_tests_v1.yaml lines131-140. Existing HbA1c test coverage: backend/tests/unit/test_hba1c_governance.py (Layer B mmol/mol<->% arbitration -- NOT a WHY test, out of scope but must remain green) and backend/tests/unit/test_compiled_hypothesis_arch_rt4.py (compiled-WHY shadow-registry framework tests, will need a hba1c-specific extension)."
     },
-    "both_packages_read_in_full_and_validated": {
-      "status": "CONFIRMED",
-      "evidence": "All 6 files (package_manifest.yaml, research_brief.yaml, signal_library.yaml) under both pkg_s24_urate_high_metabolic/ and pkg_kb52c_urate_high_gout_crystal_deposition_risk/ read directly this session. Both packages independently re-run through validate_knowledge_package.py: manifest/research/signal_validation all PASS, ready_for_implementation: True for both."
+    "governing_authority_files": {
+      "status": "CONFIRMED all exist and are in the declared state",
+      "evidence": "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md, docs/governance/KNOWLEDGE_BUS_SOP_v1.3.1.md, docs/governance/KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md all present on disk. docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md, ADR-RT-002_signal_spec_identity_and_registry_policy.md, ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md, ADR-RT-004_compile_manifest_and_package_provenance_policy.md all present, all four independently confirmed **Status** ACCEPTED (direct grep, this session)."
     },
-    "competitor_shape_confirmed_not_a_new_frame_class": {
+    "prior_wave_regression_dependencies": {
       "status": "CONFIRMED",
-      "evidence": "docs/architecture/signal_id_collision_inventory.md:113 classifies signal_urate_high (2 packages) as 'Governed arbitration' -- the same classification already used for every completed compiled-WHY wave (creatinine, triglycerides, tsh, hba1c_high). No sibling-signal complication exists for urate (unlike hba1c's separate signal_hba1c_pct_high neighbour)."
+      "evidence": "backend/tests/regression/test_arch_conv_f_haematology_stop_c.py and test_arch_conv_g_urate_stop_c.py both present -- the two regression suites the prompt requires to remain green (Verification requirements item 3)."
     },
-    "runtime_mechanism_sufficiency_confirmed": {
+    "build_deliverable_register_baseline": {
       "status": "CONFIRMED",
-      "evidence": "root_cause_compiler_v1.py:378-386 already supports static why_role in {CAUSAL, MORPHOLOGY_CONTEXT} independent of the conditional_why_role path (line 604+); why_authority_v1.py:22 _PILOT_SIGNAL_IDS frozenset is the established cohort-inclusion mechanism; retirement/skip handling already proven for ferritin/hemoglobin competitors in ARCH-CONV-F. No new compiler mechanism is required for a single-competitor, flat-why_role urate frame -- matches the prompt's own 'no change expected' claim for root_cause_compiler_v1.py and root_cause_registry_v1.py."
+      "evidence": "docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md lines1364-1375 (ARCH-CONV-G carry-forwards): 'signal_hba1c_high remains the sole open A3 compiled-WHY target' and 'Run a repository-grounded Stage 0 advisory for signal_hba1c_high before authoring the next sprint' -- this prompt is the direct, correctly-sequenced successor; automation_bus/latest_pipeline_advisory.md (this session, post-ARCH-CONV-G) independently arrived at the same Sprint-1 recommendation with matching canonical/competitor identification."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "package_narrative_text_needs_gate1_narrowing_not_verbatim_compile": {
-      "status": "FLAGGED FOR GATE 1 -- non-blocking for hardening, but load-bearing for implementation",
-      "evidence": "Both packages' raw explanation.implications fields contain directive/causal-leaning language that must not be carried into compiled runtime output verbatim: pkg_s24_urate_high_metabolic/research_brief.yaml and signal_library.yaml explanation.implications reads 'High risk of painful flares (gout) and potential kidney stones'; pkg_kb52c_urate_high_gout_crystal_deposition_risk/signal_library.yaml explanation.implications reads 'This finding may justify renal review, lifestyle and medication review, or gout-focused assessment if symptoms suggest crystal disease.' Both read as management/diagnosis-adjacent wording, the same class of over-reach the withdrawn ARCH-CONV-F ferritin design had to correct for CRP-normal causal claims. Phase 0's own instruction ('do not infer gout, crystal deposition, chronic kidney disease, renal failure, treatment need, or causal metabolic disease from urate alone unless the canonical research explicitly authorises that wording') already anticipates this -- Gate 1 must explicitly narrow this wording before it reaches a compiled artefact, not inherit it verbatim from either package's raw narrative text."
-    },
-    "competing_egfr_condition_encoding_differs_between_packages_non_blocking": {
-      "status": "SOUND, informational",
-      "evidence": "pkg_s24's override uses a plain numeric_value egfr<60 condition (matches the canonical spec exactly); pkg_kb52c's override (or_urate_high_with_low_egfr) uses a different comparator_type (lab_range_boundary, boundary: below_min) for the same egfr<60 concept. This is a package-layer encoding difference only -- since pkg_kb52c is expected to retire for WHY ownership only (package/PSI untouched, its own evaluation logic keeps running independently), this does not affect the compiled-WHY implementation and requires no reconciliation."
-    },
-    "gate1_disposition_correctly_left_open_not_prejudged": {
-      "status": "SOUND",
-      "evidence": "The prompt correctly requires Cursor to propose (not assume) one of LEGACY_RETIRED_FOR_WHY_ONLY / SUBORDINATE_CONTEXT_ONLY / retain-as-independent for the competitor, based on the Phase 0 mapping. Content read this session (CRP/eGFR/creatinine as differential/corroborating markers only, same core biological claim as canonical) supports LEGACY_RETIRED_FOR_WHY_ONLY as the well-precedented outcome, matching the pattern already used for every other single-competitor wave -- but this hardening pass does not prejudge Gate 1's decision."
-    },
-    "exclusion_list_matches_verified_repository_state": {
-      "status": "SOUND",
-      "evidence": "signal_hba1c_high, signal_hba1c_pct_high, signal_creatinine_high, signal_urea_high, eGFR/UACR/chronicity as independent targets, ferritin, hemoglobin, ALT, thyroid, lipid, ALP/GGT, bilirubin WHY, total-cholesterol WHY, urate-low all correctly remain out of scope, consistent with the current register state and this session's own pipeline advisory."
-    }
+    "reality_check_1b": "Repository-confirmed TRUE as of this session: compiled-WHY authority for signal_hba1c_high::inv_hba1c_high_glycaemia does not exist, and the legacy path (pkg_s24_hba1c_high_glycaemia via root_cause_registry_v1.py) is active/eligible. The Stage 1B question in the prompt (line142) resolves to proceed, not STOP.",
+    "intelligence_core_surface": "Confirmed bounded to: compiled-WHY artefact authoring (new file under knowledge_bus/compiled/hypotheses/), compiled_why_authority_register_v1.yaml (+1 COMPILED_ACTIVE, +1 LEGACY_RETIRED), why_authority_v1.py _PILOT_SIGNAL_IDS (+1 entry), and reuse-only of root_cause_compiler_v1.py / output_authority_provenance_builder_v1.py. No SSOT, PSI, package-manifest, or frontend surface is in scope per the prompt's own exclusions -- matches repository reality; nothing found that would force those boundaries to be crossed.",
+    "directive_wording_risk_flagged_for_gate_1": "pkg_s24_hba1c_high_glycaemia's signal_library.yaml explanation.implications field ('Requires lifestyle intervention or pharmacological management', lines83-84) is directive clinical language inconsistent with CLAUDE.md standing lesson 12 ('directive clinical language should be replaced with neutral interpretive framing') and must not reach the compiled artefact verbatim -- flagging this explicitly for Gate 1 Head of Medical Research review, in the same manner the ARCH-CONV-G hardening pass flagged and Gate 1 correctly resolved an analogous directive-wording risk in the urate candidate packages (latest_audit_summary.md lines39-55).",
+    "no_new_mechanism_required": "Confirmed achievable with existing mechanism -- root_cause_compiler_v1.py has zero existing hba1c coupling to disturb, and the compiled_hypothesis.py / compiled_hypothesis_registry_v1.py / why_authority_v1.py pilot-cohort pattern used for the five prior waves (thyroid, lipid, renal, ferritin/hemoglobin, urate) is structurally identical here: one canonical signal_id, one genuine competing package, no parallel Pass-3-id complication (unlike hemoglobin's ARCH-CONV-F case)."
   },
 
-  "non_blocking_observations_for_cursor": [
-    "Do not compile either package's explanation.implications text verbatim -- both contain directive-leaning wording ('high risk of painful flares... kidney stones', 'may justify renal review... or gout-focused assessment') that Gate 1 must explicitly narrow to neutral interpretive framing before any compiled artefact is drafted, per the standing lesson on directive clinical language.",
-    "pkg_kb52c's eGFR override uses a different condition encoding (lab_range_boundary/below_min) than the canonical spec's plain numeric comparator -- this is package-layer only and does not require reconciliation, since the competing package's own runtime evaluation is untouched by WHY-ownership retirement.",
-    "The urate/uric-acid naming difference is already resolved by the existing signal_id -- do not treat this as an open identity question at Phase 0; it only needs restating in the decision pack, not re-litigating."
+  "gaps_or_risks_flagged_for_gpt_and_gate_1": [
+    "Directive clinical wording in pkg_s24_hba1c_high_glycaemia's explanation.implications field must be narrowed before compiling, not carried verbatim -- flag for explicit Gate 1 narrowing condition, per the identical pattern already used and resolved in ARCH-CONV-G.",
+    "pkg_s24_hba1c_high_glycaemia is independently flagged non_pass3_runtime_revalidation_required / needs_manual_review in non_pass3_package_revalidation_register_v1.yaml -- this is pre-existing package-layer status, unaffected by a WHY-ownership-only retirement decision, but Gate 1 reviewers should be aware the canonical package itself carries this open revalidation flag (package-layer change remains explicitly out of scope for this sprint per the prompt).",
+    "The prompt's own Stage 1A instruction to 'not assume' the collision shape is satisfied -- repository evidence independently confirms the assumed shape is correct, so no re-scoping is required, but Cursor must still perform its own confirmation per the prompt's instruction rather than relying on this hardening pass alone."
   ],
 
-  "stage_2c_evidence_checklist": {
-    "checklist_count": 7,
-    "all_confirmed": true,
-    "correction_required": false,
-    "items": [
-      {"id": 1, "claim": "Baseline is genuinely uncompiled -- no urate row, pilot-cohort entry, or estate-index entry exists", "source": "compiled_why_authority_register_v1.yaml, why_authority_v1.py, estate_index_v1.yaml direct grep", "evidence": "zero matches for 'urate' in all three", "status": "CONFIRMED"},
-      {"id": 2, "claim": "Canonical signal identity is a clean 1:1 match, no new alias/identity convention needed", "source": "backend/core/knowledge/root_cause_registry_v1.py:91; inv_uric_acid_high_metabolic.yaml", "evidence": "both declare signal_id: signal_urate_high; naming difference is spec-filename only", "status": "CONFIRMED"},
-      {"id": 3, "claim": "Canonical spec is valid and sufficient, no new research required", "source": "validate_investigation_spec.py re-run this session", "evidence": "PASS, contract_mode v2, 0 errors", "status": "CONFIRMED"},
-      {"id": 4, "claim": "eGFR override is pre-existing, concern-escalation-only, and eGFR is SSOT-canonical", "source": "inv_uric_acid_high_metabolic.yaml override_rules; backend/ssot/biomarkers.yaml:1469", "evidence": "no why_role field on the override; eGFR entry confirmed present", "status": "CONFIRMED"},
-      {"id": 5, "claim": "Both packages read in full and independently validated PASS", "source": "6 files read directly; validate_knowledge_package.py re-run for both", "evidence": "manifest/research/signal_validation PASS, ready_for_implementation True, both packages", "status": "CONFIRMED"},
-      {"id": 6, "claim": "Competitor is a single, well-precedented 'governed arbitration' shape, not a novel frame class", "source": "docs/architecture/signal_id_collision_inventory.md:113", "evidence": "signal_urate_high: 2 packages, Governed arbitration -- same classification as every completed wave", "status": "CONFIRMED"},
-      {"id": 7, "claim": "No new compiler mechanism is required", "source": "root_cause_compiler_v1.py:378-386, 604+; why_authority_v1.py:22", "evidence": "static why_role path and pilot-cohort/retirement mechanism already exist and are proven through ARCH-CONV-F", "status": "CONFIRMED"}
-    ]
-  },
-
-  "rejection_conditions": [
-    "Implementing before Gate 1 and Gate 2 are both recorded and committed -- REJECT_AND_RETURN",
-    "Compiling either package's raw explanation.implications wording verbatim without Gate 1 narrowing -- REJECT_AND_RETURN",
-    "Inventing a new urate/uric-acid alias, signal ID, or activation-key convention -- REJECT_AND_RETURN",
-    "root_cause_compiler_v1.py or root_cause_registry_v1.py requiring a genuinely new mechanism -- REJECT_AND_RETURN",
-    "Touching signal_hba1c_high, signal_hba1c_pct_high, signal_creatinine_high, signal_urea_high, eGFR/UACR/chronicity as independent targets, or any other excluded signal -- REJECT_AND_RETURN",
-    "Diagnosing CKD from a single eGFR result, or emitting gout/crystal-deposition diagnosis without explicit Gate 1 authorisation of bounded context wording -- REJECT_AND_RETURN",
-    "Authority delta differing from +1 COMPILED_ACTIVE / +1 LEGACY_RETIRED -- REJECT_AND_RETURN",
-    "Using retrospective ratification in place of a required STOP-and-return -- REJECT_AND_RETURN"
-  ],
-
-  "overall_verdict": "HARDENED (Phase 0 mapping and Gate 1/Gate 2 STOP only). Baseline independently confirmed clean (zero urate presence in register, pilot cohort, or estate index). Canonical identity is a clean 1:1 match between the registry target and the investigation spec; the urate/uric-acid naming difference is resolved by the existing signal_id and needs no new convention. Canonical spec re-validated PASS. Both candidate packages (pkg_s24_urate_high_metabolic canonical, pkg_kb52c_urate_high_gout_crystal_deposition_risk competitor) were read in full this session and independently re-validated PASS. The competitor sits in the well-precedented single-frame 'governed arbitration' collision class, not a novel identity problem. The eGFR override rule is pre-existing, concern-escalation-only, and eGFR is SSOT-canonical -- no new research or schema work required. No new compiler mechanism is anticipated; the static why_role and pilot-cohort/retirement paths already proven through ARCH-CONV-B/C/F are sufficient. One material finding for Gate 1's attention: both packages' raw narrative text contains directive-leaning implications wording that must be explicitly narrowed before any compiled artefact is drafted -- flagged as a non-blocking observation for Cursor, not a hardening blocker, since Phase 0 correctly stops before any compiled wording is produced. Gate 1 and Gate 2 are NOT yet recorded by this hardening pass -- Automation Bus kernel start may proceed for Phase 0 mapping and the Gate 1/Gate 2 STOP only; implementation remains blocked until both gates are approved and committed on disk."
+  "evidence_checklist_status": "COMPLETE -- see chat response for the mandatory Stage 2C table"
 }
