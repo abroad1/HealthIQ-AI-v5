@@ -82,17 +82,34 @@ def test_signal_registry_is_deterministic_across_instances():
 
 
 def test_signal_registry_alt_high_multi_frame_pilot():
-    """ARCH-RT-2: frames must not silently collapse to one lexicographic winner.
+    """ARCH-CONV-E2: ALT-high runtime activation is exactly the two canonical frames.
 
-    ARCH-CONV-E withheld the six non-promoted ALT pattern packages from runtime
-    activation, so the ALT family now loads only its activated legacy frame and the
-    non-collapse guarantee is asserted against the registry's other multi-frame families.
+    Canonical hepatocellular + mixed R-value frames are activated. S24 is superseded.
+    The other four ALT packages remain withheld. No duplicate foundational ALT-high
+    authority. Non-collapse for other multi-frame families is still asserted.
     """
     registry = SignalRegistry()
     rows = registry.get_all_signals()
 
+    hepatocellular = (
+        "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+    )
+    mixed = "signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern"
+    s24 = "signal_alt_high::inv_alt_high_hepatocellular_injury"
+    withheld = (
+        "signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context",
+        "signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution",
+        "signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context",
+        "signal_alt_high::inv_alt_high_metabolic_masld_context",
+    )
+
     alt_keys = [row["activation_key"] for row in rows if row["signal_id"] == "signal_alt_high"]
-    assert alt_keys == ["signal_alt_high::inv_alt_high_hepatocellular_injury"]
+    assert sorted(alt_keys) == sorted([hepatocellular, mixed])
+    assert s24 not in alt_keys
+    for key in withheld:
+        assert key not in alt_keys
+    assert alt_keys.count(hepatocellular) == 1
+    assert alt_keys.count(mixed) == 1
 
     by_signal_id: dict[str, list[str]] = {}
     for row in rows:
@@ -1483,7 +1500,12 @@ _KB_S24_SIGNAL_CASES = {
         "no_trigger_biomarkers": {"alt": 30.0, "bilirubin": 12.0, "alp": 100.0},
         "baseline_biomarkers": {"alt": 70.0, "bilirubin": 12.0, "alp": 100.0},
         "escalation_biomarkers": {"alt": 70.0, "bilirubin": 25.0, "alp": 100.0},
-        "lab_ranges": {"alt": {"min": 0.0, "max": 40.0}},
+        # Canonical hepatocellular override uses lab_range_boundary for bilirubin;
+        # omitting bilirubin max is medically incomplete (fail-closed → no escalate).
+        "lab_ranges": {
+            "alt": {"min": 0.0, "max": 40.0},
+            "bilirubin": {"min": 0.0, "max": 20.0},
+        },
     },
     "signal_albumin_low": {
         "no_trigger_biomarkers": {"albumin": 42.0, "crp": 2.0, "alt": 25.0, "calcium": 2.3},

@@ -267,6 +267,48 @@ class TestGate1RuntimeProofs:
         )
         assert _alt_results(results) == []
 
+    def test_canonical_alt_high_escalates_at_risk_when_bilirubin_above_lab_max(self):
+        """Canonical hepatocellular frame: bilirubin above governed lab max → at_risk."""
+        evaluator = SignalEvaluator(registry=SignalRegistry())
+        ranges = _lab_ranges()
+        baseline = evaluator.evaluate_all(
+            {"alt": 70.0, "bilirubin": 12.0, "alp": 100.0},
+            {},
+            lab_ranges=ranges,
+        )
+        baseline_alt = _alt_results(baseline)
+        assert [r.activation_key for r in baseline_alt] == [HEPATOCELLULAR_KEY]
+        assert baseline_alt[0].signal_state == "suboptimal"
+        assert baseline_alt[0].selected_hypothesis_id == (
+            HYP_ALT_HIGH_GENERAL_LIVER_TEST_ABNORMALITY_CONTEXT
+        )
+
+        escalated = evaluator.evaluate_all(
+            {"alt": 70.0, "bilirubin": 25.0, "alp": 100.0},
+            {},
+            lab_ranges=ranges,
+        )
+        escalated_alt = _alt_results(escalated)
+        assert [r.activation_key for r in escalated_alt] == [HEPATOCELLULAR_KEY]
+        assert escalated_alt[0].signal_state == "at_risk"
+        assert escalated_alt[0].selected_hypothesis_id == (
+            HYP_ALT_HIGH_GENERAL_LIVER_TEST_ABNORMALITY_CONTEXT
+        )
+        assert MIXED_KEY not in {r.activation_key for r in escalated}
+        # No consumer Hy's Law wording on the result surface identifiers.
+        surface = " ".join(
+            str(v)
+            for v in (
+                escalated_alt[0].signal_id,
+                escalated_alt[0].activation_key,
+                escalated_alt[0].selected_hypothesis_id,
+                escalated_alt[0].package_id,
+            )
+        ).lower()
+        assert "hy's" not in surface
+        assert "hys_law" not in surface
+        assert "hy_law" not in surface
+
     def test_s24_absent_and_exactly_one_foundational_alt_authority(self):
         registry = SignalRegistry()
         loaded = {row["activation_key"] for row in registry.get_all_signals()}
