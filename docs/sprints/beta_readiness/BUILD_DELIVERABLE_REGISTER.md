@@ -1072,6 +1072,145 @@ FINAL V5 / V6 DECISION REMAINS OPEN
 
 ---
 
+## ARCH-CONV-A Wave 0 — Homocysteine suppression / identity closure
+
+**Status:** Complete (suppression disposition; not a compile wave)  
+**Date closed:** 2026-07-27  
+**Programme block(s):** Architecture convergence — Package A estate WHY / Wave 0  
+**Evidence:** `docs/architecture/ARCH-CONV-A_wave0_suppression_closure.md`; `docs/architecture/ARCH-CONV-A_STOP_A_ratification_record.md` (D-2)  
+**Merge into main:** `290ac18` — `merge: ARCH-CONV-A revised-scope Waves 0-2 into main`
+
+### Delivered / ticked off
+- `signal_homocysteine_elevation_context` ratified `FOLD_SUPPRESS` — no independent WHY frame; no investigation spec; no compiled artefact.
+- Finding context retained only via governed non-causal signal / card / presentation surfaces.
+- Existing `signal_homocysteine_high` COMPILED_ACTIVE / REJECTED pilot frames left unchanged.
+- STOP A also recorded D-3 bilirubin `MERGE_TO_ONE` (WHY-target identity → `signal_hyperbilirubinemia`; not a Wave 0 compile).
+
+### Carry-forwards
+- Shared legacy `hcy_hypotheses_v1.yaml` remains connected for elevation-context and high frames — physical / selector retirement is Package B scope.
+- Inflammation-only legacy hyp disposition deferred with shared-file retirement.
+
+### Blockers / risks
+- Dual-serve / shared-file shadow risk remains until Package B exclusivity / retirement work.
+
+### Recommended next sprint
+- ARCH-CONV-A Wave 1 — thyroid WHY-authority migration (completed subsequently).
+
+---
+
+## ARCH-CONV-A Wave 1 — Thyroid WHY-authority migration
+
+**Status:** Complete — Gate 1/2 ratified; STOP C PASS after CORRECT re-audit  
+**Date closed:** 2026-07-28  
+**Programme block(s):** Architecture convergence — Package A estate WHY / Wave 1 thyroid  
+**Gate 1:** `GPT-GATE1-ARCH-CONV-A-W1-THYROID-2026-07-28-v1`  
+**Gate 2:** `ANTHONY-GATE2-ARCH-CONV-A-W1-THYROID-2026-07-28-v1`  
+**STOP C:** `docs/architecture/ARCH-CONV-A_STOP_C_wave1_runtime_proof.md` (`STOP C final status: PASS`)  
+**Merge into main:** `290ac18`
+
+### Delivered / ticked off
+- Five thyroid frames compiled and registered `COMPILED_ACTIVE`:
+  - `signal_tsh_high::inv_tsh_high_hypothyroidism` (morphology_context)
+  - `signal_tsh_low::inv_tsh_low_hyperthyroidism` (morphology_context)
+  - `signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis`
+  - `signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context`
+  - `signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency`
+- Pass-3 parallel TSH pattern keys recorded `LEGACY_RETIRED` (WHY superseded).
+- Runtime pilot cohort extended; duplicate-authority resolution hardened; FT4-low presence STOP C CORRECT applied.
+- Prior pilot frames `signal_free_t3_low` / `signal_tpo_ab_high` retained as COMPILED_ACTIVE.
+
+### Carry-forwards
+- `signal_thyroid_tsh_context` remains legacy / non-compiled (not a Wave 1 frame).
+- `signal_tgab_high` remains legacy-only (no Wave 1 TgAb frame).
+
+### Blockers / risks
+- None open for the five ratified Wave 1 frames after STOP C PASS.
+
+### Recommended next sprint
+- ARCH-CONV-A Wave 2 — lipid WHY-authority migration.
+
+---
+
+## ARCH-CONV-A Wave 2 — Lipid WHY-authority migration
+
+**Status:** Complete — Gate 1/2 ratified; STOP C PASS (independent audit)  
+**Date closed:** 2026-07-28  
+**Programme block(s):** Architecture convergence — Package A estate WHY / Wave 2 lipid  
+**Gate 1:** `GPT-GATE1-ARCH-CONV-A-W2-LIPID-2026-07-28-v1`  
+**Gate 2:** `ANTHONY-GATE2-ARCH-CONV-A-W2-LIPID-2026-07-28-v1`  
+**STOP C:** `docs/architecture/ARCH-CONV-A_STOP_C_wave2_runtime_proof.md` (`Wave 2 STOP C: PASS`)  
+**Merge into main:** `290ac18`
+
+### Delivered / ticked off
+- Three lipid frames compiled and registered `COMPILED_ACTIVE`:
+  - `signal_ldl_cholesterol_high::inv_ldl_high_dyslipidaemia` (causal, narrowed)
+  - `signal_hdl_cholesterol_low::inv_hdl_low_cardiovascular` (CONTEXT_ONLY / morphology_context)
+  - `signal_triglycerides_high::inv_triglycerides_high_metabolic` (causal, narrowed)
+- Competing Pass-3 parallel LDL/HDL/TG and unauthorised total-cholesterol WHY rows recorded `LEGACY_RETIRED`.
+- Wave 1 thyroid boundaries proven unchanged on lipid panels; 0 new regressions vs main at STOP C boundary.
+
+### Carry-forwards
+- `signal_total_cholesterol_high`, `signal_apoa1_cardio_risk`, `signal_lipid_transport_dysfunction` — no Wave 2 causal compiled authority.
+- ApoA1 / lipid-transport remain research / legacy gaps for later waves.
+
+### Blockers / risks
+- Total-cholesterol WHY intentionally not authorised; pilot membership suppresses retired / unregistered keys (no silent legacy win).
+
+### Recommended next sprint
+- Wave 3 renal planning (delivered later as successor package ARCH-CONV-B, not as ARCH-CONV-A Wave 3 compile).
+
+---
+
+## ARCH-CONV-A Wave 3 — Renal creatinine/urea WHY-authority migration
+
+**Status:** Deferred under ARCH-CONV-A; creatinine/urea outcome delivered via successor `ARCH-CONV-B` (urate not migrated)  
+**Date closed:** ARCH-CONV-A Wave 3 compile never closed on Package A — STOP B pack preserved then reframed; creatinine/urea runtime closed 2026-07-30 under `ARCH-CONV-B`  
+**Programme block(s):** Architecture convergence — Package A Wave 3 (historical) → `ARCH-CONV-B` renal WHY  
+**ARCH-CONV-A evidence:** `docs/architecture/ARCH-CONV-A_wave3_renal_medical_review_pack.md` (preserved prep only); revised-scope split `docs/architecture/ARCH-CONV-A_revised_scope_and_split_decision.md`  
+**ARCH-CONV-B Gate 1 / Gate 2:** `ARCH-CONV-B-GATE1-HMR-2026-07-30` / `ARCH-CONV-B-GATE2-ANTHONY-2026-07-30`  
+**ARCH-CONV-B STOP C:** `docs/architecture/ARCH-CONV-B_STOP_C_runtime_proof.md` (`STOP_C_APPROVED_BY_HEAD_OF_ARCHITECTURE`)  
+**Merge into main:** `cdc6cf3` — `merge: ARCH-CONV-B renal WHY authority (Gate PASS, STOP C approved)`
+
+### Delivered / ticked off
+- Under ARCH-CONV-A: Wave 3 STOP B pack assembled then removed from Package A branch by revised-scope split; no A Wave 3 compile/runtime on the revised-scope merge (`290ac18`).
+- Under ARCH-CONV-B (successor vehicle for the creatinine/urea Wave 3 intent):
+  - `signal_creatinine_high::inv_creatinine_high_renal` → `COMPILED_ACTIVE` (narrowed causal renal-clearance / filtration-marker lane)
+  - `signal_urea_high::inv_urea_high_renal` → `COMPILED_ACTIVE` (CONTEXT_ONLY / morphology_context)
+  - Package-only Pass-3 creatinine/urea parallels recorded `LEGACY_RETIRED` / non-reachable
+  - No eGFR WHY displacement; no urate authority change
+
+### Carry-forwards
+- **`signal_urate_high` remains separate and incomplete** — investigation spec exists (`inv_uric_acid_high_metabolic`); no `COMPILED_ACTIVE` register row; legacy WHY still the runtime path. Do not treat Wave 3 / ARCH-CONV-B as having completed urate.
+- eGFR WHY / chronicity / UACR gaps remain outside creatinine/urea compiled lanes.
+
+### Blockers / risks
+- Advisories must not attribute creatinine/urea compile to ARCH-CONV-A Wave 3 completion; Package A revised scope explicitly deferred Wave 3.
+- Urate naming (`urate` vs `uric_acid` spec_id) remains an identity caveat for any future urate compile wave.
+
+### Recommended next sprint
+- Remaining Package A estate targets (e.g. urate; iron/haematology; metabolic residuals) and/or Package B dual-authority retirement — distinct from ALT E-track signal activation.
+
+---
+
+## Continuity audit — ARCH-CONV-A Waves 0–3 (2026-08-01)
+
+Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate decision artefacts, `compiled_why_authority_register_v1.yaml`, `ROOT_CAUSE_TARGET_SPECS`, merged history (`290ac18`, `cdc6cf3`). No runtime, Knowledge Bus packages, tests, medical rules, activation decisions, or governance decisions changed.
+
+### Register entries added
+- `ARCH-CONV-A Wave 0` — Homocysteine suppression / identity closure
+- `ARCH-CONV-A Wave 1` — Thyroid WHY-authority migration
+- `ARCH-CONV-A Wave 2` — Lipid WHY-authority migration
+- `ARCH-CONV-A Wave 3` — Renal creatinine/urea (deferred under A; delivered via ARCH-CONV-B; urate excluded)
+
+### Inventory file updated
+- `docs/architecture/ARCH-CONV-A_active_why_target_inventory.md` — freshness banner; re-derived classifications for Waves 0–3 affected signals + ALT post E/E2/E3; urate recorded separately.
+
+### Exact files changed by this continuity audit
+- `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+- `docs/architecture/ARCH-CONV-A_active_why_target_inventory.md`
+
+---
+
 ## ARCH-CONV-E — ALT Package Assets and Runtime Activation Boundary
 
 **Status:** CLOSED — merged and published to `origin/main`  
