@@ -3,78 +3,65 @@
 **work_id:** `ARCH-CONV-E2`  
 **branch:** `feature/arch-conv-e2-alt-rvalue-runtime-authority`  
 **risk_level:** HIGH / MIXED  
-**result:** Gate 1 medical-governance remediation complete — awaiting Anthony Gate 2 ratification and Claude Code re-audit  
+**result:** Gate 1 (2026-08-01) canonical successor remediation complete — awaiting Anthony Gate 2 explicit ratification and Claude Code re-audit  
 **Do not merge.**
 
-## Gate 1 decision (recorded)
+## Gate references
 
-**Reference:** `ARCH-CONV-E2-GATE1-HMR-2026-07-31`  
-**Gate 2 placeholder:** `ARCH-CONV-E2-GATE2-ANTHONY-PENDING`  
-**Register:** `docs/architecture/ARCH-CONV-E2_medical_decision_register.yaml`
+| Gate | Reference | Status |
+|---|---|---|
+| Gate 1 (HMR) | `ARCH-CONV-E2-GATE1-HMR-2026-08-01` | Recorded (supersedes `ARCH-CONV-E2-GATE1-HMR-2026-07-31` / commit `6d9259f`) |
+| Gate 2 (Anthony) | `ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01` | ID reserved — `PENDING_EXPLICIT_RATIFICATION` |
 
-> S24 remains the foundational active ALT-high authority. R-value classifications are approved only as eligible biochemical pattern refinements and must not suppress ALT-high signalling when paired ALP or laboratory-specific ULNs are unavailable.
+Register: `docs/architecture/ARCH-CONV-E2_medical_decision_register.yaml`
 
-| Decision | Gate 1 outcome |
-|---|---|
-| S24 supersession by R-value frames | **NOT APPROVED** |
-| `r_value_alt_alp` compute / ULN / fail-closed | **APPROVED — retain** |
-| Collision-model implementation | **APPROVED — retain / update for Gate 1** |
-| R-value role | Conditional biochemical pattern refinement, not replacement |
-| S24 runtime | Must remain active |
-| R-value hepatocellular + mixed | Withhold pending subordinate/refinement path |
-| Other four ARCH-CONV-E ALT packages | Remain withheld |
-| Non-ALT activation | No change |
+## Gate 1 decision (2026-08-01)
 
-## Verified starting state (pre-Gate-1 remediation)
+Canonical Pass 3 hepatocellular package is the intended S24 successor. ALT above lab range must produce the canonical general ALT-high context even when `r_value_alt_alp` cannot be calculated. R-value governs only biochemical-pattern refinement. Missing ALP/ULN/pairing fails closed **only** for R-value classification — it must not suppress elevated-ALT recognition.
 
-Implementation commit `1bee430` had activated the two R-value frames and superseded S24 without Gate 1/2 medical-governance approval. Claude Code audit identified that defect. This remediation restores the approved activation state while retaining engineering.
+Both ranked hypotheses from `inv_alt_high_r_value_hepatocellular_biochemical_pattern` are implemented at runtime (no Pass 3 JSON read):
 
-Canonical Pass 3 SHA-256 (unchanged):
+| Rank | Hypothesis | Selected when |
+|---|---|---|
+| 1 | `hyp_alt_predominant_biochemical_pattern` | `R >= 5` |
+| 2 | `hyp_alt_high_general_liver_test_abnormality_context` | R unavailable/ineligible, or `R <= 2` while cholestatic package withheld |
 
-`7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267`
+When `2 < R < 5`, the mixed package owns the pattern; hepatocellular does not emit (no general+mixed duplicate).
 
-## Retained engineering (not reverted)
-
-| Item | Status |
-|---|---|
-| `r_value_alt_alp` in `ratio_registry` (v1.2.0) | retained |
-| Lab-ULN-only eligibility + fail-closed omissions | retained |
-| Orchestrator `reference_ranges` threading | retained |
-| Package R-value band `mandatory_pre_emission_gates` | retained for later subordinate path |
-| `alt_biochemical_pattern_axis` collision group | retained; Gate 1 refs + S24 foundational policy |
-| ALP/GGT `liver_injury_axis` enforcement | preserved |
-
-## Contemporaneous / same-sample contract
-
-Same-panel snapshot contract unchanged: markers on one analysis panel are contemporaneous; provenance records `pairing: same_panel_snapshot`.
-
-## Activation state after Gate 1 remediation
+## Activation state
 
 | Frame | Runtime |
 |---|---|
-| `signal_alt_high::inv_alt_high_hepatocellular_injury` (S24) | **activated** (foundational) |
-| R-value hepatocellular | withheld (`PROMOTE_BUT_WITHHOLD`) |
-| R-value mixed | withheld (`PROMOTE_BUT_WITHHOLD`) |
-| R-value cholestatic | withheld |
-| Muscle / bilirubin / MASLD | withheld |
-| Former Batch 5 inferred keys | unreachable |
+| Canonical hepatocellular | **activated** (foundational successor) |
+| Mixed R-value (`2 < R < 5` gates) | **activated** |
+| S24 ALT-high | **superseded / withheld** |
+| Cholestatic / muscle / bilirubin / MASLD | withheld |
+| Former Batch 5 keys | unreachable |
 
-| Metric | Value |
-|---|---:|
-| `activated_frame_count` | 173 |
-| Active `signal_alt_high` keys | S24 only |
-| Withheld ARCH-CONV-E ALT keys | 6 |
+`activated_frame_count`: **174**  
+Non-ALT activated package count: **168** (unchanged delta vs prior activated estate except ALT swap)
 
-## Collision-authority decision table (Gate 1)
+## Retained engineering
 
-| Situation | Decision |
-|---|---|
-| ALP primary + GGT supporting | Unchanged `liver_injury_axis` suppression |
-| S24 ALT-high + ALP/GGT | Coexist; S24 foundational |
-| R-value frames | Not production-loaded; eligible only after subordinate path + Gate 2 |
-| Missing ALP / lab ULN | R-value fails closed; **S24 ALT-high still emits** |
+- `r_value_alt_alp` compute, lab-ULN validity, same-panel pairing, fail-closed omissions (`pairing_eligible=False` → `alt_alp_pairing_ineligible`)
+- Orchestrator ULN threading
+- Collision model (`alt_biochemical_pattern_axis` updated for Gate 1 2026-08-01)
+- ALP/GGT `liver_injury_axis` preserved
 
-## Tests run (Gate 1 remediation)
+## Runtime proofs (A–G)
+
+Covered by `backend/tests/unit/test_arch_conv_e2_r_value_runtime_authority.py`:
+
+- A: `R >= 5` → hepatocellular + rank-1 predominant; no mixed; no general duplicate
+- B: `2 < R < 5` → mixed only; no general fallback
+- C: ALP absent → general hyp; no R-value pattern
+- D/E: missing R-value path (ULN absent upstream) → general hyp
+- F: ineligible pairing → R omitted; general hyp emits
+- G: ALT not high → no ALT-high emission
+
+Also: S24 absent; exactly one foundational canonical hepatocellular authority (+ mixed refinement); four withheld remain withheld; package validators pass; launch-critical / rejected / opt-in intact.
+
+## Tests
 
 ```text
 python -m pytest backend/tests/unit/test_arch_conv_e2_r_value_runtime_authority.py \
@@ -84,26 +71,14 @@ python -m pytest backend/tests/unit/test_arch_conv_e2_r_value_runtime_authority.
   backend/tests/regression/test_signal_authority_collision_enforcement.py -q
 ```
 
-Proof targets:
-
-- S24 ALT frame loads
-- Neither R-value frame is production-loaded
-- `r_value_alt_alp` still calculates/classifies when directly exercised
-- Missing-result and missing/invalid-ULN paths remain fail-closed
-- Non-ALT activated package count remains 167 (+ Wave-1 kb47 unchanged)
-- Package validators still pass for all six ALT packages
-- R-value engineering remains available for the later refinement-authority step
-
 ## Confirmations
 
-- No raw Pass 3 research read at runtime
-- No frontend medical inference added
-- No Pass 3 JSON modification
-- Former Batch 5 keys not reactivated
+- Canonical Pass 3 research not modified and not read at runtime
+- No additional fallback package added
+- No frontend inference
 - No merge
 
 ## Awaiting
 
-1. Anthony Gate 2 ratification (`ARCH-CONV-E2-GATE2-ANTHONY-PENDING`)
-2. Claude Code re-audit of this Gate 1 remediation
-3. Later governed subordinate/refinement authority path before any R-value frame activation
+1. Anthony explicit Gate 2 ratification (`ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01`)
+2. Claude Code re-audit

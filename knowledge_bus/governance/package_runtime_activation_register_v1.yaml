@@ -5,30 +5,31 @@
 # listed in activated_frames below. Launch-critical (pkg_kb47_*) packages keep their
 # own lineage-based eligibility contract and are deliberately out of this register.
 register_id: package_runtime_activation_register_v1
-version: 1.2.0
+version: 1.3.0
 work_id: ARCH-CONV-E2
 authority_scope: non_launch_critical_packages
 activation_unit: activation_key
 activation_key_contract: "signal_id::source_spec_id (ADR-RT-002)"
 derivation: >-
-  ARCH-CONV-E baseline-parity snapshot. ARCH-CONV-E2 Gate 1 (HMR) remediation restores
-  pkg_s24_alt_high_hepatocellular_injury as the foundational active ALT-high frame and
-  withholds all six ARCH-CONV-E ALT packages, including the two R-value pattern frames,
-  pending a governed subordinate/refinement authority path. r_value_alt_alp compute
-  authority remains implemented but does not activate those frames.
+  ARCH-CONV-E baseline-parity snapshot, remediated under ARCH-CONV-E2 Gate 1
+  (ARCH-CONV-E2-GATE1-HMR-2026-08-01). Canonical hepatocellular package is the
+  foundational ALT-high successor (with rank-2 general hypothesis when R-value is
+  unavailable). Mixed R-value package is activated with its band gate. S24 ALT-high
+  is superseded and withheld. Cholestatic, muscle, bilirubin and metabolic packages
+  remain withheld.
 promotion_contract: >-
   A new or regenerated frame stays inert until a governed promotion work package appends
   its activation_key. Changing a package source_spec_id changes its activation_key and
   therefore requires re-promotion.
-gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
+gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+gate2_status: PENDING_EXPLICIT_RATIFICATION
 withheld_reason_arch_conv_e2: >-
-  Gate 1: S24 supersession by R-value frames is NOT APPROVED. All six ARCH-CONV-E ALT
-  packages remain withheld. R-value hepatocellular/mixed frames are eligible only as
-  future subordinate biochemical pattern refinements and must not replace foundational
-  ALT-high signalling. Cholestatic R-value remains withheld (duplicates ALP/GGT axis).
+  Gate 1 (2026-08-01): cholestatic R-value remains withheld (duplicates ALP/GGT axis).
   Muscle, bilirubin severity, and metabolic/MASLD remain deferred (missing distinguishing
-  gates). Former Batch 5 inferred keys remain superseded and must not be reactivated.
+  gates). S24 ALT-high is superseded by the canonical hepatocellular package and must not
+  remain co-active with the canonical general fallback. Former Batch 5 inferred keys remain
+  superseded and must not be reactivated.
 
 withheld_frames_arch_conv_e:
   - activation_key: signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context
@@ -43,25 +44,19 @@ withheld_frames_arch_conv_e:
   - activation_key: signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
     package_id: pkg_kb52c_alt_high_cholestatic_alp_predominant_context
     promotion_decision: PROMOTE_BUT_WITHHOLD
-  - activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
-    package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
-    promotion_decision: PROMOTE_BUT_WITHHOLD
-    withhold_reason: gate1_pending_subordinate_refinement_authority_path
-  - activation_key: signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
-    package_id: pkg_kb52c_alt_high_mixed_biochemical_pattern
-    promotion_decision: PROMOTE_BUT_WITHHOLD
-    withhold_reason: gate1_pending_subordinate_refinement_authority_path
 
-foundational_active_alt_arch_conv_e2:
+superseded_frames_arch_conv_e2:
   - activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
     package_id: pkg_s24_alt_high_hepatocellular_injury
-    disposition: FOUNDATIONAL_ACTIVE_ALT_HIGH_AUTHORITY
-    gate1_decision: >-
-      S24 remains the foundational active ALT-high authority. R-value classifications
-      are approved only as eligible biochemical pattern refinements and must not suppress
-      ALT-high signalling when paired ALP or laboratory-specific ULNs are unavailable.
+    disposition: SUPERSEDED_BY_CANONICAL_HEPATOCELLULAR_PACKAGE
+    replacement_keys:
+      - signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+    notes: >-
+      Gate 1 (2026-08-01): canonical Pass 3 hepatocellular package is the intended
+      successor. Rank-2 general ALT-high hypothesis covers ALT elevation when R-value
+      cannot be calculated. S24 must not remain co-active with that canonical fallback.
 
-activated_frame_count: 173
+activated_frame_count: 174
 activated_frames:
   - activation_key: signal_active_b12_deficiency::inv_active_b12_low_deficiency
     package_id: pkg_kb45_active_b12_low_deficiency
@@ -79,8 +74,10 @@ activated_frames:
     package_id: pkg_kb56_alp_low_hypophosphatasia_pattern
   - activation_key: signal_alp_low::inv_alp_low_nutrient_or_cofactor_deficiency
     package_id: pkg_kb56_alp_low_nutrient_or_cofactor_deficiency
-  - activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
-    package_id: pkg_s24_alt_high_hepatocellular_injury
+  - activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+    package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
+  - activation_key: signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
+    package_id: pkg_kb52c_alt_high_mixed_biochemical_pattern
   - activation_key: signal_apoa1_cardio_risk::inv_apoa1_low_cardio_risk
     package_id: pkg_kb45_apoa1_low_cardio_risk
   - activation_key: signal_apoa1_low::inv_apoa1_low_atherogenic_hdl_deficiency

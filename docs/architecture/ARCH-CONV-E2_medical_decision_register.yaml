@@ -1,138 +1,133 @@
 work_id: ARCH-CONV-E2
 branch: feature/arch-conv-e2-alt-rvalue-runtime-authority
-register_state: GATE_1_RECORDED_AWAITING_GATE_2_RATIFICATION
+register_state: GATE_1_RECORDED_AWAITING_GATE_2_EXPLICIT_RATIFICATION
 evidence_ref: docs/architecture/ARCH-CONV-E2_implementation_evidence.md
-head_of_medical_research_gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-anthony_gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
-gate2_status: PENDING
+supersedes_prior_gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
+head_of_medical_research_gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+anthony_gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+gate2_status: PENDING_EXPLICIT_RATIFICATION
 medical_decisions_made: true
 collision_policy_decisions_made: true
 runtime_activation_changes_authorised_at_gate1: true
 runtime_activation_changes_authorised_at_gate2: false
 note: >-
-  Gate 1 (Head of Medical Research) recorded 2026-07-31. Production supersession of
-  S24 ALT-high by R-value frames is NOT APPROVED. Bounded remediation restores S24 as
-  foundational active ALT-high authority and withholds R-value frames pending a governed
-  subordinate/refinement authority path and Anthony Gate 2 ratification. r_value_alt_alp
-  compute, ULN validity, fail-closed behaviour, package band gates, and collision-model
-  documentation are retained.
+  Gate 1 decision ARCH-CONV-E2-GATE1-HMR-2026-07-31 (commit 6d9259f) is superseded by
+  ARCH-CONV-E2-GATE1-HMR-2026-08-01. Canonical Pass 3 hepatocellular package is the
+  intended S24 successor. Rank-2 general ALT-high hypothesis covers ALT elevation when
+  R-value cannot be calculated. Anthony Gate 2 reference ID is reserved as
+  ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01 and must not be treated as ratified until his
+  explicit ratification.
 
 gate1_decision_statement: >-
-  S24 remains the foundational active ALT-high authority. R-value classifications are
-  approved only as eligible biochemical pattern refinements and must not suppress ALT-high
-  signalling when paired ALP or laboratory-specific ULNs are unavailable.
+  The canonical Pass 3 hepatocellular package is the intended successor to the legacy
+  S24 ALT-high authority. ALT above the laboratory reference range must produce the
+  canonical general ALT-high context even when r_value_alt_alp cannot be calculated.
+  R-value eligibility governs only biochemical-pattern refinement. Missing ALT, ALP,
+  either laboratory ULN, or eligible pairing must fail closed only for the R-value-specific
+  classification and must not suppress recognition of elevated ALT.
 
 gate1_decisions:
-  s24_supersession_by_r_value_frames: NOT_APPROVED
+  prior_s24_retention_gate1_2026_07_31: SUPERSEDED
+  canonical_hepatocellular_is_s24_successor: APPROVED
+  rank1_hypothesis: hyp_alt_predominant_biochemical_pattern
+  rank2_hypothesis: hyp_alt_high_general_liver_test_abnormality_context
+  rank2_required_when_r_value_unavailable_or_ineligible: APPROVED
+  r_value_bands:
+    hepatocellular: R_GE_5
+    mixed: R_GT_2_AND_LT_5
+    cholestatic: R_LE_2
   r_value_alt_alp_compute_authority: APPROVED_RETAIN
   uln_validity_and_fail_closed_behaviour: APPROVED_RETAIN
-  collision_model_implementation: APPROVED_RETAIN_AS_GOVERNANCE
-  r_value_role: CONDITIONAL_BIOCHEMICAL_PATTERN_REFINEMENT_NOT_REPLACEMENT
-  s24_runtime_activation: MUST_REMAIN_ACTIVE
-  r_value_hepatocellular_and_mixed_runtime_activation: WITHHOLD_PENDING_SUBORDINATE_PATH
-  remaining_four_arch_conv_e_alt_packages: REMAIN_WITHHELD
+  collision_model_implementation: APPROVED_RETAIN_UPDATED
+  activate_canonical_hepatocellular: APPROVED
+  activate_mixed_with_band_gate: APPROVED
+  supersede_and_withhold_s24: APPROVED
+  s24_must_not_coexist_with_canonical_general_fallback: APPROVED
+  cholestatic_muscle_bilirubin_metabolic: REMAIN_WITHHELD
   non_alt_activation_state: NO_CHANGE
+  do_not_add_another_fallback_package: APPROVED
+  do_not_alter_canonical_pass3_source: APPROVED
 
 frames:
-- signal_id: signal_alt_high
-  source_spec_id: inv_alt_high_hepatocellular_injury
-  activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
-  package_id: pkg_s24_alt_high_hepatocellular_injury
-  role: FOUNDATIONAL_ACTIVE_ALT_HIGH_AUTHORITY
-  medical_decision: RETAIN_RUNTIME_ACTIVE
-  why_role: FOUNDATIONAL_ALT_HIGH_SIGNAL_NOT_SUPERSEDED
-  collision_axis_role: FOUNDATIONAL_PRIMARY_ALT_HIGH
-  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
-  gate2_status: PENDING
-  gate1_conditions:
-  - Must remain runtime active until Gate 2 and any later subordinate-path ratification
-    explicitly change that disposition.
-  - Must not be suppressed by missing ALP pairing or missing laboratory-specific ULNs.
-
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_r_value_hepatocellular_biochemical_pattern
   activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
   package_id: pkg_kb52c_alt_high_hepatocellular_injury_pattern
-  role: ELIGIBLE_BIOCHEMICAL_PATTERN_REFINEMENT_ONLY
-  medical_decision: PROMOTE_BUT_WITHHOLD
-  why_role: NO_INDEPENDENT_RUNTIME_AUTHORITY_UNTIL_SUBORDINATE_PATH
-  collision_axis_role: WITHHELD_PENDING_SUBORDINATE_REFINEMENT_PATH
-  r_value_band: R_GE_5
-  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
-  gate2_status: PENDING
-  gate1_conditions:
-  - Must not replace or suppress foundational S24 ALT-high signalling.
-  - Runtime activation deferred until a governed subordinate/refinement authority path
-    is ratified at Gate 2.
-  - Package band gates and r_value_alt_alp compute remain available for that later path.
+  role: CANONICAL_FOUNDATIONAL_ALT_HIGH_SUCCESSOR
+  medical_decision: PROMOTE_AND_ACTIVATE
+  why_role: RANKED_HYPOTHESES_RUNTIME_SELECTED
+  hypotheses:
+  - hypothesis_id: hyp_alt_predominant_biochemical_pattern
+    rank: 1
+    selected_when: r_value_ge_5
+  - hypothesis_id: hyp_alt_high_general_liver_test_abnormality_context
+    rank: 2
+    selected_when: r_value_unavailable_or_ineligible_or_r_le_2_while_cholestatic_withheld
+  suppress_emission_when: mixed_band_2_lt_r_lt_5
+  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  gate2_status: PENDING_EXPLICIT_RATIFICATION
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_r_value_mixed_biochemical_pattern
   activation_key: signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
   package_id: pkg_kb52c_alt_high_mixed_biochemical_pattern
-  role: ELIGIBLE_BIOCHEMICAL_PATTERN_REFINEMENT_ONLY
-  medical_decision: PROMOTE_BUT_WITHHOLD
-  why_role: NO_INDEPENDENT_RUNTIME_AUTHORITY_UNTIL_SUBORDINATE_PATH
-  collision_axis_role: WITHHELD_PENDING_SUBORDINATE_REFINEMENT_PATH
+  role: R_VALUE_MIXED_PATTERN_REFINEMENT
+  medical_decision: PROMOTE_AND_ACTIVATE
+  why_role: MIXED_BAND_ONLY
   r_value_band: R_GT_2_AND_LT_5
-  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
-  gate2_status: PENDING
-  gate1_conditions:
-  - Must not replace or suppress foundational S24 ALT-high signalling.
-  - Runtime activation deferred until a governed subordinate/refinement authority path
-    is ratified at Gate 2.
+  must_not_duplicate_general_fallback: true
+  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  gate2_status: PENDING_EXPLICIT_RATIFICATION
+
+- signal_id: signal_alt_high
+  source_spec_id: inv_alt_high_hepatocellular_injury
+  activation_key: signal_alt_high::inv_alt_high_hepatocellular_injury
+  package_id: pkg_s24_alt_high_hepatocellular_injury
+  role: SUPERSEDED_LEGACY
+  medical_decision: SUPERSEDE_AND_WITHHOLD
+  why_role: NONE
+  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  gate2_status: PENDING_EXPLICIT_RATIFICATION
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_r_value_cholestatic_alp_predominant_context
   activation_key: signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
   package_id: pkg_kb52c_alt_high_cholestatic_alp_predominant_context
-  role: WITHHELD_DUPLICATE_RISK_VS_CHOLESTATIC_SOURCE_AXIS
   medical_decision: PROMOTE_BUT_WITHHOLD
-  why_role: NONE
-  collision_axis_role: WITHHELD_AVOID_DUPLICATING_ALP_GGT_AXIS
-  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
-  gate2_status: PENDING
+  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  gate2_status: PENDING_EXPLICIT_RATIFICATION
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_muscle_source_or_exertional_contribution
   activation_key: signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
   package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
   medical_decision: DEFERRED_WITH_EXPLICIT_REASON
-  why_role: NONE
-  collision_axis_role: WITHHELD
-  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
-  gate2_status: PENDING
-  defer_reason: missing_distinguishing_pre_emission_gate_would_duplicate_alt_primary
+  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  gate2_status: PENDING_EXPLICIT_RATIFICATION
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_bilirubin_hys_law_severity_context
   activation_key: signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context
   package_id: pkg_kb52c_alt_high_bilirubin_severity_context
   medical_decision: DEFERRED_WITH_EXPLICIT_REASON
-  why_role: NONE
-  collision_axis_role: WITHHELD
-  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
-  gate2_status: PENDING
-  defer_reason: missing_distinguishing_pre_emission_gate_would_duplicate_alt_primary
   consumer_hys_law_diagnosis: PROHIBITED
+  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  gate2_status: PENDING_EXPLICIT_RATIFICATION
 
 - signal_id: signal_alt_high
   source_spec_id: inv_alt_high_metabolic_masld_context
   activation_key: signal_alt_high::inv_alt_high_metabolic_masld_context
   package_id: pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
   medical_decision: PROMOTE_BUT_WITHHOLD
-  why_role: NONE
-  collision_axis_role: WITHHELD
-  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
-  gate2_status: PENDING
-  withhold_reason: missing_distinguishing_pre_emission_gate_would_duplicate_alt_primary
+  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  gate2_status: PENDING_EXPLICIT_RATIFICATION
 
 metric_authority:
   metric_id: r_value_alt_alp
@@ -140,19 +135,21 @@ metric_authority:
   formula: (ALT / ALT_lab_ULN) / (ALP / ALP_lab_ULN)
   uln_source_requirement: laboratory_reference_range_max_with_source_lab_only
   fail_closed_without_paired_alp_or_lab_uln: true
+  fail_closed_does_not_suppress_alt_high_recognition: true
   contemporaneous_pairing: same_panel_snapshot_contract
-  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
-  gate2_status: PENDING
+  head_of_medical_research_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+  anthony_ratification_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
+  gate2_status: PENDING_EXPLICIT_RATIFICATION
 
 collision_governance:
-  liver_injury_axis_alp_ggt: PRESERVED_UNCHANGED_EXCEPT_NOTES
-  alt_biochemical_pattern_axis: UPDATED_FOR_GATE1_S24_FOUNDATIONAL_AND_R_VALUE_WITHHELD
-  gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-07-31
-  gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-PENDING
+  liver_injury_axis_alp_ggt: PRESERVED
+  alt_biochemical_pattern_axis: UPDATED_FOR_GATE1_2026_08_01
+  gate1_reference: ARCH-CONV-E2-GATE1-HMR-2026-08-01
+  gate2_reference: ARCH-CONV-E2-GATE2-ANTHONY-2026-08-01
 
 exclusions:
+  - Do not alter canonical Pass 3 research
+  - Do not add another fallback package
+  - Do not preserve S24 merely to compensate for missing rank-2 hypothesis
   - Do not reactivate former Batch 5 inferred ALT keys
-  - Do not activate all six ARCH-CONV-E ALT packages by default
-  - Do not claim completed medical retirement of S24
-  - Do not merge without Gate 2 ratification and Claude Code re-audit
+  - Do not merge without Gate 2 explicit ratification and Claude Code re-audit

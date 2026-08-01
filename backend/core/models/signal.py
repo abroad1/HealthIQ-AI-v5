@@ -22,4 +22,6 @@ class SignalResult(BaseModel):
     lab_normal_but_flagged: bool = False
     supporting_markers: List[str] = Field(default_factory=list)
     explanation: Optional[Dict[str, Any]] = None
+    # ARCH-CONV-E2: ranked Pass 3 hypothesis id selected for this emission (optional).
+    selected_hypothesis_id: Optional[str] = None
 

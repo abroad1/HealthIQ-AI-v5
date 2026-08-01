@@ -128,6 +128,8 @@ def classify_r_value_alt_alp(r_value: float) -> str:
 def compute(
     panel: Dict[str, Any],
     reference_ranges: Optional[Mapping[str, Any]] = None,
+    *,
+    pairing_eligible: bool = True,
 ) -> Dict[str, Any]:
     """
     Compute derived ratios from a biomarker panel.
@@ -136,6 +138,8 @@ def compute(
     `reference_ranges` is optional and required only for ULN-relative derived markers
     (currently `r_value_alt_alp`). Same-panel inputs are treated as contemporaneous by the
     single-panel snapshot contract — no separate sample-id pairing exists in this pipeline.
+    Pass ``pairing_eligible=False`` to fail closed for R-value when pairing is governed
+    ineligible (does not suppress ALT-high recognition elsewhere).
 
     Returns structured output with registry_version, derived dict, and omitted reasons.
     Never raises; missing inputs result in omitted entries or value None.
@@ -415,7 +419,9 @@ def compute(
         alt_for_r = _numeric(panel.get("alt"))
         alp_for_r = _numeric(panel.get("alp"))
         omit_reason: Optional[str] = None
-        if alt_for_r is None:
+        if not pairing_eligible:
+            omit_reason = "alt_alp_pairing_ineligible"
+        elif alt_for_r is None:
             omit_reason = "alt_result_missing"
         elif alp_for_r is None:
             omit_reason = "alp_result_missing"
@@ -458,12 +464,18 @@ def compute(
 def compute_legacy(
     panel: Dict[str, Any],
     reference_ranges: Optional[Mapping[str, Any]] = None,
+    *,
+    pairing_eligible: bool = True,
 ) -> Dict[str, Optional[float]]:
     """
     Legacy flat {id: value} output for backwards compatibility with orchestrator.
     Orchestrator will migrate to structured compute() output.
     """
-    structured = compute(panel, reference_ranges=reference_ranges)
+    structured = compute(
+        panel,
+        reference_ranges=reference_ranges,
+        pairing_eligible=pairing_eligible,
+    )
     out: Dict[str, Optional[float]] = {rid: None for rid in DERIVED_IDS}
     for rid, entry in structured.get("derived", {}).items():
         if isinstance(entry, dict) and "value" in entry:

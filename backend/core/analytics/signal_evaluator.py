@@ -10,6 +10,10 @@ from typing import Any, Dict, List, Optional
 
 import yaml
 
+from core.analytics.alt_r_value_hypothesis_selection_v1 import (
+    HEPATOCELLULAR_ACTIVATION_KEY,
+    select_hepatocellular_hypothesis_id,
+)
 from core.analytics.runtime_context_evaluator import passes_runtime_context_requirements
 from core.analytics.signal_authority_collision_resolver import apply_signal_authority_collision_policy
 from core.analytics.signal_confidence_builder import calculate_signal_confidence
@@ -614,6 +618,16 @@ class SignalEvaluator:
             ):
                 continue
 
+            activation_key = str(signal.get("activation_key", "")).strip()
+            selected_hypothesis_id: Optional[str] = None
+            if activation_key == HEPATOCELLULAR_ACTIVATION_KEY:
+                r_raw = signal_derived.get("r_value_alt_alp")
+                r_value = float(r_raw) if isinstance(r_raw, (int, float)) else None
+                selected_hypothesis_id = select_hepatocellular_hypothesis_id(r_value)
+                if selected_hypothesis_id is None:
+                    # Mixed R-value band owns this pattern; do not emit general fallback.
+                    continue
+
             output = signal.get("output", {})
             supporting_markers = []
             if isinstance(output, dict) and isinstance(output.get("supporting_markers"), list):
@@ -634,7 +648,7 @@ class SignalEvaluator:
 
             result = SignalResult(
                 signal_id=str(signal.get("signal_id", "")).strip(),
-                activation_key=str(signal.get("activation_key", "")).strip(),
+                activation_key=activation_key,
                 source_spec_id=str(signal.get("source_spec_id", "")).strip(),
                 package_id=str(signal.get("package_id", "")).strip(),
                 provenance_status=str(signal.get("provenance_status") or "LEGACY_INFERRED").strip()
@@ -653,6 +667,7 @@ class SignalEvaluator:
                 ),
                 supporting_markers=supporting_markers,
                 explanation=explanation,
+                selected_hypothesis_id=selected_hypothesis_id,
             )
             results.append(result)
 
