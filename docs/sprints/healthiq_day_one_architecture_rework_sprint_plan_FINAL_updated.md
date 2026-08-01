@@ -1139,13 +1139,14 @@ These items remain open after Gate 2 ratification and independent audit PASS of 
 
 ### From ARCH-CONV-G — Urate Compiled-WHY Authority (programme-wide residuals)
 
-These items remain open after Gate 2 ratification of ARCH-CONV-G. ARCH-CONV-G closed compiled-WHY for `signal_urate_high` only.
+These items remain open after Gate 2 ratification and independent audit PASS of ARCH-CONV-G. ARCH-CONV-G closed compiled-WHY for `signal_urate_high` only.
 
-1. **`signal_hba1c_high` compiled-WHY** — Remains open; not migrated by ARCH-CONV-G.
-2. **Haemoglobin primary oxygen-carrying PSI research and promotion** — Remains open; untouched by ARCH-CONV-G.
-3. **ALT compiled-WHY identity** — Remains unresolved and must not be treated as A3-ready.
+1. **`signal_hba1c_high` compiled-WHY** — Remains the **sole open A3 compiled-WHY target**; not migrated by ARCH-CONV-G.
+2. **ALT compiled-WHY identity (A4)** — Remains unresolved and must not be treated as A3-ready. E/E2/E3 delivered package/PSI/R-value contextual authority only.
+3. **Package B / Package C sequencing** — Remains downstream of further Package A outputs (estate dual-authority / result-versioning tracks); not authorised by ARCH-CONV-G.
+4. **eGFR / UACR / chronicity independent WHY boundary** — ARCH-CONV-G created no eGFR-, UACR-, or chronicity-owned WHY authority; this exclusion remains a standing programme boundary.
 
-Sequencing note: run a repository-grounded Stage 0 sequencing advisory before selecting HbA1c as the next compiled-WHY wave.
+Sequencing note: run a repository-grounded Stage 0 advisory for `signal_hba1c_high` before authoring the next sprint.
 
 ## 6. Final note
 
