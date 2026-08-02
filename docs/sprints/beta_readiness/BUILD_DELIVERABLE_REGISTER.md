@@ -1549,11 +1549,11 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ## ARCH-CONV-I-ALT-IDPROV-1 — Identity/Provenance Multi-Frame Test-Estate Restoration
 
-**Status:** COMPLETE on branch — awaiting Claude audit, GPT architectural review, Anthony merge  
-**Date closed (implementation):** 2026-08-02  
+**Status:** CLOSED — Anthony merge authorised; merged and published to `origin/main`  
+**Date closed:** 2026-08-02  
 **Programme block(s):** Architecture convergence — test-estate restoration (ARCH-CONV-I follow-on)  
 **Risk:** STANDARD / BEHAVIOUR  
-**Branch:** `feature/arch-conv-i-alt-idprov-test-estate-restoration`  
+**Merge SHA:** `d865f87` — `merge: ARCH-CONV-I-ALT-IDPROV-1 multi-frame identity test-estate restoration (Anthony merge authorised)`  
 **Evidence:** `docs/audit-papers/ARCH-CONV-I-ALT-IDPROV-1_implementation_and_verification_report.md`
 
 ### Delivered / ticked off

@@ -3,7 +3,7 @@
 **Work ID:** `ARCH-CONV-I-ALT-IDPROV-1`  
 **Branch:** `feature/arch-conv-i-alt-idprov-test-estate-restoration`  
 **Risk / change type:** STANDARD / BEHAVIOUR  
-**Status:** Implementation complete — awaiting Claude audit / GPT review / Anthony merge
+**Status:** **CLOSED** — merged to `main` (`d865f87`); published to `origin/main`
 
 ## 1. Preflight
 
