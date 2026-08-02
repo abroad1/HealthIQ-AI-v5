@@ -1,432 +1,270 @@
 ---
-work_id: ARCH-CONV-H
-branch: feature/arch-conv-h-hba1c-compiled-why-authority
+work_id: ARCH-CONV-I
+branch: feature/arch-conv-i-alt-compiled-why-identity-resolution
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# ARCH-CONV-H — HbA1c Compiled-WHY Authority
+# ARCH-CONV-I — ALT Compiled-WHY Identity Resolution and Governed Disposition
 
-## Objective
+## Purpose
 
-Deliver governed compiled-WHY authority for:
+Resolve the remaining ALT compiled-WHY identity ambiguity between:
 
-```text
-signal_hba1c_high::inv_hba1c_high_glycaemia
-```
+- legacy WHY identity: `signal_hepatic_alt_context`
+- current multi-frame ALT family: `signal_alt_high`
 
-Retain one canonical HbA1c WHY authority, retire the genuinely competing HbA1c package frame from WHY ownership only, and preserve all separate non-competing HbA1c-percentage and glucose-dysregulation identities.
+This work package must complete Phase 0 repository mapping, stop for Gate 1 and Gate 2, and then implement only the ratified disposition.
 
-This sprint must not alter package-layer activation, PSI status, scoring policy, biomarker thresholds, frontend behaviour, or unrelated glucose/HbA1c signal families.
+The permitted implementation outcomes are:
 
-## Governing instructions
+1. narrowly compile the canonical hepatocellular ALT frame and retire the legacy WHY identity; or
+2. retire the legacy WHY identity without a compiled successor.
 
-Follow:
+No other disposition is authorised without re-scoping.
+
+## Governing sources
+
+Read and apply:
 
 - `AUTOMATION_BUS_SOP_v1.3.1.md`
 - `KNOWLEDGE_BUS_SOP_v1.3.1.md`
-- `KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md` only as the current draft companion governance where relevant
-- accepted ADR-RT-001, ADR-RT-002, ADR-RT-003 and ADR-RT-004
-- the current merged repository and latest Build Deliverables Register
-
-Do not rely on conversational summaries where repository evidence differs.
-
-## Required repository baseline
-
-Before any implementation work:
-
-1. Confirm the current branch is exactly:
-
-```text
-feature/arch-conv-h-hba1c-compiled-why-authority
-```
-
-2. Confirm the branch starts from current clean `main` and report:
-
-```powershell
-git branch --show-current
-git status --short
-git rev-parse HEAD
-git rev-parse main
-git rev-parse origin/main
-```
-
-3. Confirm local `main == origin/main` before branch creation or sprint start.
-
-4. Read the current authoritative files in full before proposing changes.
+- `KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md`
+- `docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md`
+- `docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md`
+- `docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md`
+- `docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md`
+- `automation_bus/latest_scope_advisory.md`
+- `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+- relevant ARCH-CONV-D, E, E2 and E3 decision/evidence artefacts
 
 ## Stage 1A — Authority preflight
 
-Verify and cite the exact current repository paths and line numbers for all of the following:
+Before implementation, verify and record:
 
-### Canonical research authority
+1. The current canonical investigation spec for the general hepatocellular ALT frame.
+2. The legacy package and live legacy WHY asset for `signal_hepatic_alt_context`.
+3. The current root-cause registry wiring for the legacy identity.
+4. The complete `signal_alt_high` activation-frame estate.
+5. Current compiled-WHY authority-register state for both identities.
+6. Current runtime reachability and activation-register state.
+7. That no existing compiled ALT WHY authority already resolves this work.
+8. That no raw investigation spec is read directly at runtime.
+9. That the current compiler/loader mechanism can support the ratified outcome without a new compiler mechanism.
+10. That package, PSI, card and signal-activation behaviour can remain unchanged under a WHY-only retirement.
 
-The canonical investigation spec for:
-
-```text
-spec_id: inv_hba1c_high_glycaemia
-signal_id: signal_hba1c_high
-```
-
-Read and extract the repository-backed content needed to confirm:
-
-- activation conditions;
-- hypotheses and ranking;
-- contradictions;
-- confirmatory tests;
-- override or escalation rules;
-- evidence;
-- narrative fields relevant to compiled WHY;
-- the governed diabetes-range threshold already present in source research;
-- any metabolic-context override involving triglyceride/HDL evidence.
-
-### Current package and identity estate
-
-Identify every package and authority row associated with:
-
-```text
-signal_hba1c_high
-```
-
-For each, record:
-
-- package ID;
-- activation key;
-- source/provenance;
-- runtime reachability;
-- package activation status;
-- PSI status;
-- current legacy or compiled WHY ownership status.
-
-Explicitly verify the expected collision shape:
-
-- canonical retained frame:
-  `signal_hba1c_high::inv_hba1c_high_glycaemia`
-- genuine competing WHY frame:
-  `pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia`
-
-Do not assume this shape if the merged repository differs.
-
-### Adjacent identities that must remain separate
-
-Inspect and classify all relevant entries for:
-
-```text
-signal_hba1c_pct_high
-signal_glucose_dysregulation_hba1c_context
-```
-
-Confirm whether they are separate signal families or activation-frame identities and prove they do not compete for `signal_hba1c_high` WHY ownership.
-
-No alias, identity merge, retirement, suppression or authority change is permitted for these adjacent identities in this sprint.
-
-### Current WHY runtime path
-
-Read and cite:
-
-- the existing HbA1c legacy hypothesis asset;
-- root-cause registry or selector entries;
-- compiled-WHY authority register;
-- compiled-WHY loader/compiler;
-- collision and exclusivity governance;
-- DTO/report projection paths carrying `why_role` or equivalent authority metadata;
-- existing HbA1c and compiled-WHY tests.
-
-Confirm that no compiled artefact or active compiled-WHY register row already exists for the canonical activation key.
+Record exact paths and line references in the Phase 0 evidence pack.
 
 ## Stage 1B — Reality check
 
-Before authoring any code or artefact change, answer:
+Confirm the problem still exists on current `main`:
 
-> Does the current merged baseline still lack compiled-WHY authority for `signal_hba1c_high::inv_hba1c_high_glycaemia`, while a legacy HbA1c WHY path remains active or eligible?
+- `signal_hepatic_alt_context` remains wired to the live legacy WHY asset;
+- neither `signal_hepatic_alt_context` nor `signal_alt_high` has compiled-WHY authority;
+- the legacy CRP-coupled hypothesis has no canonical `signal_alt_high` counterpart;
+- the legacy hard-coded AST/GGT/ALP/bilirubin thresholds remain non-SSOT behaviour and must not be transferred.
 
-If NO, STOP and report a no-op or re-scope condition.
+If any of these statements is no longer true, STOP and report the changed repository reality.
 
 ## Stage 1C — Intelligence preflight
 
-Identify the exact Intelligence Core surface affected by this sprint, including:
+Identify all affected Intelligence Core surfaces, including at minimum:
 
-- compiled-WHY artefact generation or authored compiled artefact path;
 - compiled-WHY authority register;
-- legacy root-cause ownership/selector path;
-- runtime compiler/loader only if an existing mechanism must be reused;
-- output-authority and report projection tests;
-- architecture validation gate and authority-count expectations.
+- legacy root-cause authority register;
+- compiled hypothesis artefact and manifest paths, if Outcome A is ratified;
+- WHY authority resolver/pilot membership;
+- root-cause compiler and registry;
+- report/output authority projection;
+- regression and architecture validation gates.
 
-No new compiler mechanism may be introduced unless current repository evidence proves the existing mechanism cannot represent the approved HbA1c contract. If that occurs, STOP before implementation.
+Expected output change must be limited to ALT WHY ownership and wording.
 
-## Phase 0 — Mandatory Gate 1 / Gate 2 STOP
+Do not change signal activation, R-value classification, package reachability, PSI status, scoring, frontend behaviour or biomarker SSOT.
 
-Phase 0 is evidence and decision recording only. Do not create the compiled artefact, alter authority registers, retire legacy ownership, or change runtime behaviour before Gate 2 is recorded.
+# Phase 0 — Mandatory Gate 1 / Gate 2 preparation
 
-### Phase 0 deliverables
+After kernel start, perform repository mapping only.
 
-Create a concise repository-grounded medical and authority review pack containing:
+Create and commit:
 
-1. Canonical source mapping.
-2. Package collision and ownership table.
-3. Adjacent identity exclusion table.
-4. Proposed compiled-WHY content.
-5. Proposed retained and retired authority rows.
-6. Prohibited claims.
-7. Expected runtime and test delta.
+- `docs/architecture/ARCH-CONV-I_hardening_pack.md`
+- `docs/architecture/ARCH-CONV-I_medical_decision_register.yaml`
+- `docs/architecture/ARCH-CONV-I_GATE_1_GATE_2_decision.md`
 
-The pack must preserve source terminology and must not introduce medical meaning absent from the canonical investigation spec.
+The decision pack must explicitly present these two choices.
 
-### Proposed medical boundary for Gate 1 review
+## Outcome A — Narrow MAP_AND_COMPILE
 
-Submit the following proposed boundary to the Head of Medical Research for explicit adjudication:
+- Compile only the canonical general hepatocellular ALT frame:
+  - `signal_alt_high::<canonical hepatocellular spec_id>`
+- Retire `signal_hepatic_alt_context` for WHY ownership only.
+- Transfer only content jointly supported by:
+  - the canonical hepatocellular ALT investigation spec; and
+  - the legacy hepatocellular-stress hypothesis.
+- Exclude the legacy CRP/inflammatory-coupling hypothesis.
+- Do not transfer legacy hard-coded AST/GGT/ALP/bilirubin thresholds.
+- Preserve all ARCH-CONV-E2/E3 R-value and contextual activation behaviour unchanged.
+- Expected register delta: `+1 COMPILED_ACTIVE`, `+1 LEGACY_RETIRED`.
 
-- HbA1c represents sustained glycaemic exposure over the preceding period, not an independently proven cause of diabetes-related pathology.
-- The compiled WHY may identify a persistent hyperglycaemia / glycaemic-exposure pattern supported by the canonical source.
-- Diabetes-range escalation may be included only using the governed source threshold and cautious wording.
-- A single HbA1c result must not be presented as an unqualified diagnosis where the source or runtime context requires confirmation, repeat testing, symptoms, or clinical assessment.
-- Triglyceride/HDL or metabolic-pattern evidence may modify context only to the extent explicitly authorised by the canonical research.
-- No treatment recommendation, medication instruction, complication diagnosis, chronicity claim beyond the marker's supported interpretation, or unsupported causal claim may be introduced.
-- `signal_hba1c_pct_high` and `signal_glucose_dysregulation_hba1c_context` remain separate and non-owning for this authority decision.
+## Outcome B — RETIRE_WITHOUT_SUCCESSOR
 
-### Proposed authority disposition for Gate 1 review
+- Retire `signal_hepatic_alt_context` for WHY ownership only.
+- Do not create a compiled ALT WHY artefact.
+- Keep package, PSI, card and activation behaviour unchanged.
+- Record that canonical research was insufficient for a safe compiled successor.
+- Expected register delta: `+0 COMPILED_ACTIVE`, `+1 LEGACY_RETIRED`.
 
-Submit:
+## Gate 1 questions
 
-```text
-RETAIN / COMPILE:
-signal_hba1c_high::inv_hba1c_high_glycaemia
+Head of Medical Research must decide:
 
-RETIRE FOR WHY OWNERSHIP ONLY:
-the confirmed competing activation key hosted by
-pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia
-```
+1. Whether the legacy hepatocellular-stress hypothesis maps safely and narrowly to the canonical hepatocellular `signal_alt_high` frame.
+2. Whether Outcome A or Outcome B is approved.
+3. The exact approved `why_role` if Outcome A is selected.
+4. The exact consumer-safe wording boundaries.
+5. The explicit disposition of the legacy CRP/inflammatory-coupling hypothesis.
+6. Confirmation that no hard-coded legacy thresholds may transfer.
+7. Confirmation that no Hy’s Law, MASLD, fibrosis, disease-specific, treatment or chronicity claim may be introduced.
 
-Retirement is limited to WHY ownership. Do not delete the package or alter its package-layer, PSI, validation or historical status unless separately authorised.
+## Gate 2
 
-### Gate 1 STOP
+Anthony must ratify Gate 1 exactly.
 
-STOP and obtain a repository-recorded Head of Medical Research decision.
+No runtime implementation is authorised until both Gate 1 and Gate 2 decisions are recorded on disk and agree.
 
-Required decision values:
+## Mandatory STOP
 
-```text
-APPROVED
-APPROVED_WITH_NARROWING
-BLOCKED
-```
+After committing the Phase 0 pack:
 
-The decision record must state:
+- STOP.
+- Keep the work package `IN_PROGRESS`.
+- Do not create a compiled artefact.
+- Do not alter authority registers.
+- Do not retire legacy WHY ownership.
+- Do not change runtime code or tests beyond Phase 0 evidence preparation.
+- Report the exact Gate 1 decision required.
 
-- approved `why_role`;
-- approved summary/claim boundary;
-- approved diabetes-range escalation wording;
-- approved use or exclusion of TG/HDL metabolic context;
-- prohibited claims;
-- retained activation key;
-- retired competing WHY activation key.
+# Phase 1 — Implementation after Gate 1 and Gate 2 only
 
-Do not proceed on verbal or conversational approval alone.
+Implement only the ratified outcome.
 
-### Gate 2 STOP
+## If Outcome A is ratified
 
-After Gate 1 approval, STOP again and obtain Anthony's explicit repository-recorded production ratification.
+Create a governed compiled hypothesis artefact and compile manifest for the canonical hepatocellular ALT frame.
 
-Required decision values:
+Requirements:
 
-```text
-APPROVED
-BLOCKED
-```
+- one activation-key-specific compiled authority;
+- approved `why_role` only;
+- no CRP/inflammatory-coupling hypothesis;
+- no transfer of hard-coded AST/GGT/ALP/bilirubin thresholds;
+- no consumer Hy’s Law diagnosis;
+- no MASLD, steatosis, fibrosis or disease-specific diagnosis from ALT alone;
+- no treatment directive;
+- no chronicity inference;
+- no reinterpretation of E2/E3 R-value or contextual frame authority;
+- no change to package/PSI/runtime activation status.
 
-No implementation may begin until both Gate 1 and Gate 2 records exist and match the proposed activation keys and medical boundary.
+Add the canonical activation key to the existing WHY authority mechanism only if required by the current architecture.
 
-## Implementation scope after Gate 2
+Retire `signal_hepatic_alt_context` for WHY ownership only.
 
-Implement only the ratified decision.
+## If Outcome B is ratified
 
-Expected scope:
+- Add only the governed legacy retirement/disposition required to stop legacy WHY ownership.
+- Do not create a compiled ALT WHY artefact.
+- Do not add ALT to compiled-WHY pilot membership.
+- Preserve all package, PSI, card, activation and R-value behaviour.
 
-1. Create or update the governed compiled-WHY artefact for:
-
-```text
-signal_hba1c_high::inv_hba1c_high_glycaemia
-```
-
-2. Add one `COMPILED_ACTIVE` authority row for the canonical activation key.
-
-3. Add one `LEGACY_RETIRED` row for the confirmed competing HbA1c WHY activation key.
-
-4. Preserve the existing legacy HbA1c asset only where required for historical compatibility or non-owning comparison; prevent it from remaining an active competing WHY owner.
-
-5. Reuse the existing compiled-WHY loader, compiler, register and exclusivity mechanisms.
-
-6. Preserve package-layer activation and PSI state for every affected package.
-
-7. Preserve all non-competing identities and signal families.
-
-## Explicit prohibitions
+# Explicit prohibitions
 
 Do not:
 
-- introduce a new signal ID, activation key format, alias or SSOT biomarker;
-- merge `signal_hba1c_high` with `signal_hba1c_pct_high`;
-- merge HbA1c with glucose-dysregulation context signals;
-- change HbA1c scoring bands or reference-range policy;
-- activate or deactivate packages outside WHY ownership;
-- alter PSI opt-in or runtime PSI wiring;
-- add frontend medical logic or copy;
-- diagnose diabetes solely from one result unless the ratified wording explicitly permits the precise bounded statement;
-- introduce treatment, medication, complication or prognosis claims;
-- use triglyceride/HDL context beyond the ratified source-backed role;
-- modify unrelated compiled-WHY frames;
-- create a new generic compiler mechanism;
-- delete historical packages or evidence assets.
+- create a runtime alias between `signal_hepatic_alt_context` and `signal_alt_high`;
+- compile the CRP/inflammatory-coupling hypothesis without new canonical research;
+- transfer the legacy hard-coded thresholds;
+- change the R-value formula or boundaries;
+- change ALT package activation or reachability;
+- alter ALP/GGT primary source authority;
+- activate the bilirubin-severity package independently;
+- introduce Hy’s Law diagnosis wording;
+- change biomarker aliases, SSOT identities, derived metrics or scoring;
+- modify frontend medical logic;
+- introduce a new compiler or fallback parser;
+- read raw research at runtime;
+- delete package or PSI assets.
 
-## Required tests
+# Tests
 
-At minimum, add or update tests proving:
+Add a dedicated regression suite:
 
-### Authority and exclusivity
+`backend/tests/regression/test_arch_conv_i_alt_stop_c.py`
 
-- canonical HbA1c activation key is `COMPILED_ACTIVE`;
-- exactly one genuine competing HbA1c WHY owner becomes `LEGACY_RETIRED`;
-- no duplicate active WHY authority remains for `signal_hba1c_high`;
-- compiled-WHY authority counts change only by the expected delta;
-- adjacent `signal_hba1c_pct_high` and glucose-dysregulation identities remain unchanged.
+At minimum prove:
 
-### Medical boundary
+1. The ratified disposition is represented exactly.
+2. If Outcome A:
+   - canonical hepatocellular activation key resolves `COMPILED_ACTIVE`;
+   - approved `why_role` is flat and exact;
+   - legacy ALT WHY identity resolves `LEGACY_RETIRED`;
+   - CRP content is absent;
+   - legacy hard-coded thresholds are absent;
+   - prohibited claims are absent from emitted output.
+3. If Outcome B:
+   - no compiled ALT authority row exists;
+   - legacy ALT WHY identity resolves retired/skip;
+   - no runtime fallback silently restores the legacy WHY path.
+4. All `signal_alt_high` activation and E2/E3 R-value/contextual behaviour remains unchanged.
+5. ALP/GGT authority remains unchanged.
+6. Package and PSI status remain unchanged.
+7. No raw research file read is introduced.
+8. Register counts change only by the ratified delta.
+9. ARCH-CONV-F, G and H regression suites remain green.
+10. Existing architecture, root-cause, output-authority and phenotype tests remain green.
 
-- approved base HbA1c explanation is emitted without unsupported diagnosis or causality;
-- diabetes-range escalation occurs only at the ratified threshold and with ratified wording;
-- below-threshold cases do not receive diabetes-range escalation;
-- TG/HDL context is applied only if ratified conditions are satisfied;
-- absent or incomplete supporting context fails closed;
-- prohibited treatment, complication, unsupported chronicity and unqualified diagnostic wording is absent.
+Run all targeted suites plus:
 
-### Runtime preservation
+- `python backend/scripts/validate_compiled_why_authority_gate.py`
+- architecture validation gate
+- baseline test suite required by the Automation Bus
+- three-layer pipeline verification
 
-- package-layer reachability and activation status are unchanged;
-- PSI status is unchanged;
-- no non-HbA1c compiled-WHY frame changes;
-- report/DTO authority metadata remains structurally stable;
-- existing ARCH-CONV-F and ARCH-CONV-G regression suites remain green;
-- the compiled-WHY authority gate and full architecture validation gate pass.
+# STOP conditions during implementation
 
-Use existing project test patterns and canonical test modules. Do not create redundant test harnesses when current suites can be extended.
+STOP if:
 
-## STOP conditions during implementation
+- Gate 1 and Gate 2 do not match;
+- the canonical hepatocellular activation key is ambiguous;
+- safe mapping requires content absent from canonical research;
+- CRP content is required for parity under Outcome A;
+- hard-coded legacy thresholds would need to be retained;
+- implementation requires a runtime alias;
+- implementation changes signal activation, R-value behaviour, package reachability, PSI, scoring, frontend or SSOT;
+- any non-ALT compiled-WHY authority changes;
+- any relevant regression cannot be explained and bounded;
+- the expected register delta differs from the ratified outcome.
 
-STOP immediately if:
+# Evidence and closure
 
-- the canonical investigation spec differs materially from Phase 0 evidence;
-- more than one genuine competing `signal_hba1c_high` WHY frame is found;
-- the retained or retired activation key differs from the Gate records;
-- adjacent identities are aliases or competing authorities rather than separate signals;
-- the approved medical content cannot be represented by the existing compiled-WHY schema;
-- implementation would require a new compiler mechanism, signal identity, alias, SSOT biomarker or scoring rule;
-- package-layer activation or PSI status would need to change;
-- a diabetes diagnosis, chronicity claim, treatment claim or metabolic causal claim would have to be inferred rather than sourced;
-- unrelated compiled-WHY frames change;
-- expected authority-count deltas do not match repository reality;
-- baseline failures prevent attribution of sprint regressions.
+Produce:
 
-Produce a blocker report rather than improvising.
+- `docs/audit-papers/ARCH-CONV-I_implementation_and_verification_report.md`
+- updated Gate decision record;
+- updated medical decision register;
+- updated Build Deliverables Register entry;
+- updated central carry-forward register only where the ratified outcome genuinely closes or creates a programme carry-forward.
 
-## Verification requirements
+Before `finish`, complete the mandatory Post-Implementation Closure Protocol from Automation Bus SOP v1.3.1.
 
-Run and report:
+Run kernel finish only after:
 
-1. Focused HbA1c compiled-WHY tests.
-2. Compiled-WHY authority and collision tests.
-3. Existing ARCH-CONV-F and ARCH-CONV-G regression suites.
-4. Output-authority / report projection tests relevant to compiled WHY.
-5. Canonical architecture validation gate.
-6. Any current programme closure suite that protects compiled-WHY authority counts and legacy retirement.
+- implementation is complete;
+- targeted and required regression suites pass;
+- repo hygiene is proven;
+- no unrelated files remain.
 
-Where broader tests fail, compare against clean `main` and prove whether failures are pre-existing. Do not claim PASS without attribution evidence.
+Do not merge.
 
-## Post-implementation closure protocol
-
-Before running Automation Bus finish, execute and report:
-
-```powershell
-git branch --show-current
-git status --short
-git log --oneline -n 5
-git diff --name-only
-git diff --cached --name-only
-git stash list
-```
-
-Explicitly classify:
-
-- tracked modified files;
-- staged files;
-- untracked files;
-- tooling files;
-- out-of-scope files;
-- relevant stash entries.
-
-Do not run finish unless the branch is clean, all changes are in scope, no tooling leakage exists, and no stash ambiguity remains.
-
-Then run:
-
-```powershell
-python backend/scripts/run_work_package.py finish
-```
-
-After finish, follow the kernel status artefact policy in Automation Bus SOP v1.3.1 and re-confirm branch cleanliness.
-
-## Independent audit requirements
-
-After finish, Claude Code must independently review:
-
-- Gate 1 and Gate 2 decision records;
-- canonical source fidelity;
-- compiled artefact content;
-- authority register delta;
-- retired legacy ownership;
-- package and PSI non-change;
-- adjacent identity non-change;
-- prohibited-claim absence;
-- focused and regression test results;
-- Automation Bus gate evidence;
-- repository diff and closure cleanliness.
-
-The audit must explicitly state whether:
-
-- deterministic behaviour is preserved;
-- no unintended behavioural drift occurred;
-- output structure is unchanged except for the authorised HbA1c WHY content;
-- exactly one canonical HbA1c compiled authority is active;
-- the competing WHY owner is retired only for WHY ownership;
-- all separate HbA1c-percentage and glucose-dysregulation identities remain unchanged.
-
-## Closure deliverables
-
-Produce or update only the repository artefacts required by the established compiled-WHY sprint pattern, including:
-
-- Phase 0 medical/authority review pack;
-- Gate 1 decision record;
-- Gate 2 ratification record;
-- compiled-WHY artefact;
-- authority-register update;
-- implementation and verification report;
-- focused tests and necessary regression updates;
-- Build Deliverables Register entry;
-- central carry-forward register only if this sprint creates a genuine new programme carry-forward.
-
-The Build Deliverables Register entry must record the actual merge SHA after merge and publication.
-
-## Success criteria
-
-This sprint is complete only when:
-
-- Gate 1 and Gate 2 are repository-recorded and aligned;
-- `signal_hba1c_high::inv_hba1c_high_glycaemia` is the sole active compiled-WHY authority for the canonical HbA1c-high frame;
-- the one confirmed competing HbA1c WHY owner is retired for WHY ownership only;
-- medical wording remains within the ratified canonical source boundary;
-- diabetes-range escalation is precise, cautious and threshold-governed;
-- package-layer and PSI status are unchanged;
-- adjacent HbA1c-percentage and glucose-dysregulation identities are unchanged;
-- all focused and required regression gates pass;
-- independent audit passes;
-- the branch is closure-clean and ready for Head of Architecture review and Anthony's merge authority.
+After kernel COMPLETE, stop for independent Claude Code audit, GPT architectural review and Anthony merge authority.
