@@ -30,6 +30,7 @@ ROOT_CAUSE_TARGET_SPECS: Tuple[RootCauseTargetSpec, ...] = (
     RootCauseTargetSpec("signal_homocysteine_high", lrc.load_hcy_hypotheses_v1, "hcy_hypotheses_v1.yaml"),
     RootCauseTargetSpec("signal_hba1c_high", lrc.load_hba1c_hypotheses_v1, "hba1c_hypotheses_v1.yaml"),
     RootCauseTargetSpec("signal_hepatic_alt_context", lrc.load_alt_hypotheses_v1, "alt_hypotheses_v1.yaml"),
+    RootCauseTargetSpec("signal_alt_high", lrc.load_alt_high_hypotheses_v1, "alt_high_hypotheses_v1.yaml"),
     RootCauseTargetSpec("signal_thyroid_tsh_context", lrc.load_tsh_hypotheses_v1, "tsh_hypotheses_v1.yaml"),
     RootCauseTargetSpec("signal_insulin_resistance", lrc.load_insulin_resistance_hypotheses_v1, "insulin_resistance_hypotheses_v1.yaml"),
     RootCauseTargetSpec("signal_systemic_inflammation", lrc.load_systemic_inflammation_hypotheses_v1, "systemic_inflammation_hypotheses_v1.yaml"),

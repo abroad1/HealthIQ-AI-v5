@@ -1,0 +1,53 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_alt_high_r_value_hepatocellular_biochemical_pattern_v1
+hypothesis_set_id: signal_alt_high_hepatocellular_context_set_v1
+signal_id: signal_alt_high
+activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+source_spec_ids:
+- inv_alt_high_r_value_hepatocellular_biochemical_pattern
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_i_alt_high_hepatocellular.yaml
+hypotheses:
+- hypothesis_id: hyp_alt_hepatocellular_biochemical_pattern_context
+  rank: 1
+  title: Elevated ALT hepatocellular biochemical-pattern context
+  physiological_claim: Elevated ALT provides a non-causal hepatocellular biochemical-pattern
+    or hepatocellular-stress context finding. An ALT-predominant pattern may be classified
+    biochemically when ALT is elevated relative to laboratory limits and interpreted
+    with ALP and other hepatic chemistry, without establishing disease cause, severity,
+    DILI, MASLD, fibrosis, or treatment need from ALT alone.
+  evidence_strength: contextual
+  missing_data_policy: Interpret as elevated-ALT hepatocellular-pattern context only.
+    Missing ALP prevents ALT-to-ALP pattern classification wording but does not block
+    the basic elevated-ALT context finding.     Missing AST or GGT does not invent cause
+    attribution. Missing inflammatory markers must not invent inflammatory-coupling content.
+  evidence_for:
+  - ALT is above the laboratory range.
+  - ALP with a lab upper limit may support ALT-to-ALP pattern-classification wording
+    when same-sample pairing is available; R-band ownership remains on the signal layer.
+  - AST elevation may corroborate aminotransferase context when present.
+  - GGT or bilirubin may add hepatic-source or severity context without establishing cause.
+  evidence_against:
+  - Isolated ALT elevation does not establish hepatocellular disease diagnosis.
+  - Raised CK or muscle/exertional context should downgrade liver-first wording.
+  - Proportionally raised ALP/GGT redirects away from a purely ALT-predominant pattern;
+    mixed/cholestatic ownership remains on those signal frames.
+  - Raised bilirubin moves wording toward clinician-review severity context, not cause attribution.
+  contradiction_markers: []
+  caveats:
+  - Do not diagnose hepatocellular injury cause, hepatitis, DILI, or obstruction from this frame.
+  - Do not diagnose Hy's Law from this frame.
+  - Do not diagnose MASLD, steatosis, or fibrosis from ALT alone.
+  - Do not emit inflammatory-coupling WHY from this frame.
+  - Do not transfer hardcoded legacy numeric AST/GGT/ALP/bilirubin thresholds into this artefact.
+  - Do not infer chronicity from one panel.
+  - Do not recommend treatment, medication, lifestyle prescription, or specialist referral.
+  - Do not emit WHY authority for signal_hepatic_alt_context from this frame or create a runtime alias.
+  confirmatory_tests: []
+  summary_template: ALT above range is non-causal hepatocellular biochemical-pattern
+    context only; does not confirm injury cause, DILI met, MASLD, fibrosis, or treatment need.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-I Gate 1 / Gate 2 ratified flat CONTEXT_ONLY_NON_CAUSAL morphology_context lane.

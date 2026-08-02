@@ -1401,7 +1401,7 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 - No new alias, signal identity, SSOT biomarker, derived metric, compiler mechanism, or frontend change.
 
 ### Carry-forwards
-- ALT compiled-WHY identity remains unresolved at A4.
+- ALT compiled-WHY identity closed by ARCH-CONV-I (see ARCH-CONV-I register entry).
 - Package B and Package C sequencing remains downstream of further Package A outputs.
 - No eGFR/UACR/chronicity independent WHY authority was created.
 - `signal_hba1c_pct_high` and glucose-dysregulation context remain separate identities (not migrated).
@@ -1410,7 +1410,41 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 - None open from ARCH-CONV-H medical design after Gate 2.
 
 ### Recommended next sprint
-- Repository-grounded Stage 0 advisory for next Package A residual (ALT A4 or dual-authority sequencing).
+- Proceed to Package B / dual-authority sequencing per Active Carry-Forward (post-ARCH-CONV-I).
+
+---
+
+## ARCH-CONV-I — ALT Compiled-WHY Identity Resolution
+
+**Status:** IMPLEMENTED — Gate 2 ratified; pending finish / independent audit / merge  
+**Date implemented:** 2026-08-02  
+**Programme block(s):** Architecture convergence — ALT compiled-WHY identity (`signal_alt_high` / `signal_hepatic_alt_context`)  
+**Gate 1:** `ARCH-CONV-I-GATE1-HMR-2026-08-02` (`APPROVED_WITH_NARROWING`, Outcome A `MAP_AND_COMPILE`)  
+**Gate 2:** `ARCH-CONV-I-GATE2-ANTHONY-2026-08-02` (`APPROVED`)  
+**Evidence:** `docs/audit-papers/ARCH-CONV-I_implementation_and_verification_report.md`  
+**Medical decision register:** `docs/architecture/ARCH-CONV-I_medical_decision_register.yaml`
+
+### Delivered / ticked off
+- Compiled-WHY authority for `signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern`.
+- `why_role: morphology_context` (flat; non-causal).
+- `+1 COMPILED_ACTIVE` (25 → 26).
+- `+5 LEGACY_RETIRED` (20 → 25): legacy `signal_hepatic_alt_context::inv_alt_context` plus four live sibling WHY-skip rows.
+- CRP/inflammatory-coupling excluded; no compile / no transfer.
+- Hard-coded legacy thresholds not transferred.
+- E2/E3 R-value, contextual-frame, package, PSI and activation behaviour unchanged.
+- No runtime alias; no Hy’s Law / MASLD / fibrosis / treatment / chronicity / unsupported causal claims.
+- Registry target added for `signal_alt_high` emit (stub asset only).
+
+### Carry-forwards
+- Package B and Package C sequencing remains downstream.
+- eGFR / UACR / chronicity independent WHY boundary unchanged.
+- Sibling ALT frames remain package-active without independent compiled WHY (by design).
+
+### Blockers / risks
+- None open from ARCH-CONV-I medical design after Gate 2.
+
+### Recommended next sprint
+- Repository-grounded Stage 0 advisory for next residual (Package B / dual-authority sequencing).
 
 ---
 

@@ -1,0 +1,96 @@
+work_id: ARCH-CONV-I
+branch: feature/arch-conv-i-alt-compiled-why-identity-resolution
+register_state: GATES_APPROVED_RUNTIME_AUTHORISED
+gate1_status: APPROVED_WITH_NARROWING
+gate2_status: APPROVED
+head_of_medical_research_gate1_reference: ARCH-CONV-I-GATE1-HMR-2026-08-02
+anthony_gate2_reference: ARCH-CONV-I-GATE2-ANTHONY-2026-08-02
+hardening_pack_ref: docs/architecture/ARCH-CONV-I_hardening_pack.md
+gate_decision_ref: docs/architecture/ARCH-CONV-I_GATE_1_GATE_2_decision.md
+runtime_changes_authorised: true
+note: >
+  Gate 1 APPROVED_WITH_NARROWING and Gate 2 APPROVED recorded on 2026-08-02.
+  Gate 2 ratifies Gate 1 Outcome A MAP_AND_COMPILE. Runtime compiled-WHY
+  implementation is authorised under the active Automation Bus work package.
+
+baseline_counts:
+  compiled_active: 25
+  legacy_retired: 20
+  rejected: 1
+  total_frames: 46
+
+approved_outcome: MAP_AND_COMPILE
+
+canonical_frame:
+  signal_id: signal_alt_high
+  source_spec_id: inv_alt_high_r_value_hepatocellular_biochemical_pattern
+  activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+  canonical_package: pkg_kb52c_alt_high_hepatocellular_injury_pattern
+  source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  source_sha256: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
+  why_role: morphology_context
+  why_role_flat: true
+  conditional_why_role: none
+  primary_finding_boundary: >
+    ALT-predominant / hepatocellular biochemical-pattern or hepatocellular-stress
+    context only; not disease confirmation from ALT alone.
+  transferable_legacy_hypothesis_only: alt_hepatic_cell_stress_pattern_v1
+  exclude_crp_hypothesis: alt_inflammatory_coupling_context_v1
+  superseded_do_not_compile: signal_alt_high::inv_alt_high_hepatocellular_injury
+  presentation_safety:
+    not_crp_inflammatory_coupling: true
+    not_hardcoded_threshold_transfer: true
+    not_consumer_hys_law_diagnosis: true
+    not_masld_steatosis_fibrosis_diagnosis: true
+    not_treatment_directives: true
+    not_chronicity_inference: true
+    not_unsupported_causal_claims: true
+    not_runtime_alias_to_hepatic_alt_context: true
+
+competitor_disposition:
+  activation_key: signal_hepatic_alt_context::inv_alt_context
+  signal_id: signal_hepatic_alt_context
+  package_id: pkg_hepatic_alt_context
+  disposition: LEGACY_RETIRED_FOR_WHY_ONLY
+  package_layer_status: UNCHANGED
+  psi_status: UNCHANGED
+  package_deletion: forbidden
+
+sibling_why_skip_rows_required_for_pilot:
+  - signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
+  - signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
+  - signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
+  - signal_alt_high::inv_alt_high_metabolic_masld_context
+
+hardcoded_thresholds_transfer: prohibited
+
+preserve_unchanged:
+  - e2_e3_r_value_behaviour
+  - contextual_frame_authority
+  - package_psi_activation_behaviour
+  - alp_ggt_compiled_authority
+  - bilirubin_severity_override_only_posture
+
+expected_register_delta:
+  compiled_active: '+1'
+  legacy_retired: '+5'
+  note: >
+    +1 hepatocellular COMPILED_ACTIVE; +1 legacy hepatic_alt WHY retirement;
+    +4 live sibling signal_alt_high frames LEGACY_RETIRED for WHY ownership only
+    to avoid pilot fail-closed (package layer unchanged).
+
+exclusions:
+  - no_runtime_alias_hepatic_alt_context_to_alt_high
+  - no_compile_crp_without_new_canonical_research
+  - no_transfer_hardcoded_legacy_thresholds
+  - no_r_value_formula_or_boundary_change
+  - no_package_activation_or_psi_change
+  - no_frontend_medical_logic
+  - no_new_compiler_mechanism
+  - no_unrelated_compiled_why_frame_change
+
+mechanism_sufficiency:
+  static_why_role: sufficient
+  new_compiler_mechanism_required: false
+  root_cause_compiler_v1_change_expected: false
+  root_cause_registry_v1_change_required_for_emit: true

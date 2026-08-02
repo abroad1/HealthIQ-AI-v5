@@ -1,0 +1,33 @@
+schema_version: "v1"
+asset_id: "alt_high_hypotheses_v1"
+updated_at: "2026-08-02"
+primary_signal_id: "signal_alt_high"
+primary_metric: "alt"
+notes:
+  - "ARCH-CONV-I registry validation stub only. Runtime WHY for signal_alt_high is compiled."
+  - "No CRP/inflammatory-coupling content. No hardcoded numeric thresholds."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "alt_high_registry_stub_context_v1"
+    title: "ALT high registry stub context"
+    safety_class: "monitoring"
+    evidence_strength: "exploratory"
+    summary_template: "ALT is elevated and provides registry-validation stub context only; compiled WHY owns runtime emission."
+    required_markers:
+      - "alt"
+    confirmatory_markers: []
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "alt_high_or_flagged"
+        markers_all:
+          - "alt"
+        direction: "flagged_or_high"
+        evidence_for_item: "ALT is elevated relative to range."
+        marker_refs:
+          - "alt"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "alt"
+        reason: "ALT is required to anchor this stub."
+    confirmatory_tests: []

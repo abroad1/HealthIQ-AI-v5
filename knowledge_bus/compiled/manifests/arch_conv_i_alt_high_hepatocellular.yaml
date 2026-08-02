@@ -1,0 +1,7 @@
+manifest_id: arch_conv_i_alt_high_hepatocellular
+work_id: ARCH-CONV-I
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_alt_high_r_value_hepatocellular_biochemical_pattern.yaml
+  activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+notes: Gate 1 / Gate 2 ratified flat CONTEXT_ONLY_NON_CAUSAL morphology_context lane.

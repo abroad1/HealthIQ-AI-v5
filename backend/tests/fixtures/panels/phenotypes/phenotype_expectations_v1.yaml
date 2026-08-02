@@ -165,8 +165,9 @@ phenotypes:
       must_include_any_signal: []
       optional_expected_sequences: []
     expected_root_cause:
-      must_exist: true
-      min_hypothesis_count: 2
+      must_exist: false
+      # ARCH-CONV-I: signal_hepatic_alt_context WHY retired; CRP hyp not transferred.
+      min_hypothesis_count: 0
       applies_to_signal_id: "signal_hepatic_alt_context"
 
   - phenotype_id: "ph_tsh_axis_metabolic_v1"
