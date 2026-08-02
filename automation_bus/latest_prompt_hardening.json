@@ -1,75 +1,62 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-PKGC-1",
+  "work_id": "ARCH-CONV-PKGC-2",
   "status": "HARDENED",
   "hardening_date": "2026-08-02",
   "hardened_by": "Claude Code",
-  "source_prompt": "automation_bus/latest_cursor_prompt.md (front matter complete: work_id, branch feature/arch-conv-pkgc-1-waist-unit-remediation, risk_level STANDARD, execution_model TWO_PHASE_START_FINISH, change_type MIXED)",
-  "risk_level": "STANDARD",
+  "source_prompt": "automation_bus/latest_cursor_prompt.md (front matter complete: work_id, branch feature/arch-conv-pkgc-2-provenance-identity-closure, risk_level PROVISIONAL [deliberate -- this prompt's own Stage 1A exists to resolve it into HIGH or STANDARD before implementation], execution_model TWO_PHASE_START_FINISH, change_type MIXED)",
+  "risk_level": "PROVISIONAL (hardening recommendation: STANDARD -- CONTRACT_ADJACENT; see stage_2a_authority_verification.risk_classification below)",
   "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "This work package directly implements the ARCH-CONV-PKGC-1 half of this session's own Stage 0 bundling revalidation (SPLIT INTO ARCH-CONV-PKGC-1, ARCH-CONV-PKGC-2). The governing sources (WAIST_UNIT_LEGACY_IMPACT_AUDIT.md, LAUNCH-CORE-3 policy, result_versioning_policy_v1.py, analysis_regeneration_v1.py) were already read in full in that immediately-prior Stage 0 pass. Remaining gaps (migration mechanism availability, schema audit-trail capacity, fresh branch/carry-forward state) closed with a small number of targeted parallel reads. No disjoint large-scale work requiring a fork."
+    "rationale": "output_authority_provenance_builder_v1.py and its bare-key fixture were already read in full during this session's Stage 0 bundling revalidation (which produced the SPLIT recommendation this prompt implements). Remaining gaps for this hardening pass -- the canonical activation-key grammar's authoritative source, all direct callers/consumers, and prior architecture classification of this exact code area -- closed with a small number of targeted parallel reads. No disjoint large-scale work requiring a fork."
   },
 
   "prompt_receipt_gate": {
-    "front_matter_complete": "YES",
-    "declared_risk_level": "STANDARD",
+    "front_matter_complete": "YES, with one deliberate exception",
+    "declared_risk_level": "PROVISIONAL -- not one of LOW/STANDARD/HIGH by design. This prompt's Stage 1A (lines 62-98) is structured explicitly to resolve this into a definitive HIGH or STANDARD classification before any implementation proceeds, and requires the hardening pack itself to record 'RISK_CLASSIFICATION: HIGH -- INTELLIGENCE_CORE' or 'RISK_CLASSIFICATION: STANDARD -- CONTRACT_ADJACENT' as an explicit deliverable (lines 77-98). Treated as ACCEPT rather than REJECT-for-missing-field because the ambiguity is disclosed, bounded, and the resolution mechanism is built into the prompt itself, not silently deferred -- and because this exact ambiguity was the flagged, unresolved output of this session's own prior hardening pass on ARCH-CONV-PKGC-1 ('Risk classification ... is explicitly re-checked at Stage 1A by the prompt itself rather than inherited').",
     "declared_change_type": "MIXED",
-    "scope_proportionality": "PASS -- matches this session's own Stage 0 revalidation recommendation exactly (waist-unit stale-detection rule + governed 12-row remediation only); explicitly excludes ARCH-CONV-PKGC-2 (provenance-identity), the deferred regeneration job, CF-MEDREV2-002, and full result-versioning advancement",
-    "advisory_duplication": "NO conflict -- direct implementation of this session's own split recommendation from the immediately-prior Stage 0 bundling revalidation",
-    "phase0_only_scope_correctly_declared": "CONFIRMED -- prompt explicitly STOPs after committing the Phase 0 data-governance pack and before any historic-row mutation or rule addition (lines 189-200: 'Do not add the stale-detection rule... Do not mutate any historic analysis row... Do not run a remediation script in write mode'); Phase 1 heading (line 202) is explicitly gated on 'data-governance approval only', with a required Anthony (not Head of Medical Research) decision -- correctly reflecting that this is a data-governance disposition, not a medical-content Gate 1/Gate 2 decision (prompt line 54: 'No medical-content Gate 1 or Gate 2 is expected')",
+    "scope_proportionality": "PASS -- matches this session's own Stage 0 split recommendation exactly (provenance-identity validation + fixture replacement only); explicitly excludes ARCH-CONV-PKGC-1 waist-unit work, CF-ARCH-CONV-VERSION-1, regeneration, CF-MEDREV2-002, and compiled-WHY/signal-authority redesign",
+    "advisory_duplication": "NO conflict -- direct implementation of this session's own split recommendation from the Stage 0 bundling revalidation",
+    "phase0_only_scope_correctly_declared": "CONFIRMED -- Phase 0 (lines 136-148) lists mandatory STOP conditions before implementation, explicitly including 'risk is HIGH and Gate 1/Gate 2 are not recorded'; Phase 1 heading (line 150) is gated on 'all required Phase 0 conditions are satisfied'",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
+    "risk_classification": {
+      "status": "HARDENING RECOMMENDATION: STANDARD -- CONTRACT_ADJACENT (not authoritative -- Cursor's own Stage 1A must independently confirm per the prompt's explicit instruction not to assume either classification)",
+      "evidence": "backend/core/analytics/output_authority_provenance_builder_v1.py (read in full, this session and the prior Stage 0 revalidation): build_report_output_authority_provenance_v1() consumes already-computed report.top_findings and root_cause.findings and produces a SEPARATE OutputAuthorityProvenanceBundleV1 (governed/quarantined element lists) -- it does not mutate report.top_findings or root_cause.findings, does not select or rank hypotheses, and does not change which content is rendered. docs/audit-papers/ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion.md:11 (the module's own originating work package): 'Runtime provenance metadata is attached ADDITIVELY to ReportV1.output_authority_provenance_v1' -- explicitly additive, not assembly. The classification logic it calls (core/knowledge/compiled_output_authority_v1.py, classify_root_cause_finding) reads already-decided governance artefacts (root_cause_authority_register_v1.yaml, card_authority_register_v1.yaml) read-only; it does not decide authority, only labels an already-made decision for audit-trail purposes. Callers confirmed via grep: backend/core/analytics/report_compiler_v1.py, backend/core/contracts/report_v1.py -- consumed as a post-hoc additive field on the report DTO, not as an input to report assembly itself. On this evidence, output_authority_provenance_builder_v1.py does not meet the Stage 1A test ('changes medical interpretation, selects or ranks hypotheses, changes signal/frame authority, changes clinical narrative, changes report inclusion') -- it only serialises/labels already-decided provenance, matching the prompt's own 'otherwise STANDARD' branch (line 58)."
+    },
+    "canonical_activation_key_grammar": {
+      "status": "CONFIRMED, authoritative source located",
+      "evidence": "backend/core/knowledge/signal_result_index_v1.py:1-8 (docstring): 'Shared activation-frame indexing for signal results (ADR-RT-IDENTITY-PROV-001). Canonical unit: activation_key = signal_id::source_spec_id.' docs/architecture/ADR-RT-IDENTITY-PROV-001_activation_frame_and_provenance_integrity.md confirmed present as the governing ADR. require_activation_key() (lines 12-21) already implements a parser that reconstructs activation_key from signal_id/source_spec_id and raises ValueError when neither a direct key nor reconstructable components are present -- this is the 'existing parser, constructor or registry helper' the prompt requires reuse of (line 161) rather than inventing a second grammar. A second related module, backend/core/knowledge/signal_activation_identity_v1.py:53 (resolve_activation_identity), also exists and should be reconciled against during Cursor's Stage 1A item 5/10 to confirm only one grammar is authoritative, not two competing ones."
+    },
+    "bare_key_confirmed_still_synthetic_only": {
+      "status": "CONFIRMED, freshly re-verified this session (third independent check across the Stage 0 revalidation, the PKGC-1 hardening pass, and now this pass)",
+      "evidence": "grep for the literal string 'signal_homocysteine_high::inv_homocysteine_high' across backend/core/, backend/tests/, and knowledge_bus/governance/ this session: exactly one match, backend/tests/regression/test_output_authority_provenance.py:133 -- the same synthetic fixture identified in the Stage 0 pass, unchanged. Zero matches in any live governance register or production code path."
+    },
     "carry_forward_status": {
       "status": "CONFIRMED still Open",
-      "evidence": "docs/sprints/launch_core_carry_forward_register.md:99 -- CF-ARCH-CONV-WAIST-1, status Open, '48 legacy bare waist rows audited; 12 classified used_incorrectly. Forward path fixed; historic disposition not executed.' Re-confirmed this session, unchanged since the prior Stage 0 pass."
+      "evidence": "docs/sprints/launch_core_carry_forward_register.md:98 -- CF-ARCH-CONV-PROV-1, status Open, unchanged since the Stage 0 revalidation and the ARCH-CONV-PKGC-1 audit."
     },
-    "twelve_row_affected_set": {
-      "status": "CONFIRMED",
-      "evidence": "docs/audit-papers/WAIST_UNIT_LEGACY_IMPACT_AUDIT.md read in full in the immediately-prior Stage 0 pass: 48 legacy bare rows classified, 12 used_incorrectly (exact analysis_id, created_at, original_value, incorrect_mapped_cm_if_inches columns present for each), 36 dropped_as_implausible, 0 analysis_start_blocked. This audit table is the governed evidence source the prompt's own Phase 0 data-remediation register (lines 150-167) must be populated from."
-    },
-    "stale_detection_framework_and_gap": {
-      "status": "CONFIRMED",
-      "evidence": "backend/core/dto/result_versioning_policy_v1.py read in full (173 lines) in the immediately-prior Stage 0 pass and re-confirmed this session: detect_launch_core_stale_reasons() implements exactly six existing stale-reason rules (completeness_policy_mismatch/missing, card_subsystem_completeness_mismatch, legacy_hard_coded_subsystem_trace, legacy_total_bilirubin_false_missing). Grep for 'waist' across result_versioning_policy_v1.py, persisted_replay_contract_v1.py, and analysis_regeneration_v1.py: zero matches, this session -- the waist-unit rule genuinely does not exist yet."
-    },
-    "regeneration_job_and_dependencies_confirmed_absent": {
-      "status": "CONFIRMED",
-      "evidence": "backend/core/dto/analysis_regeneration_v1.py read in full: assess_regeneration_available() is a pure read-only boolean check (stored_raw_biomarkers_sufficient) -- no analysis-creation/regeneration job exists. This confirms Stage 1A item 11 -- the governed remap/stale-mark treatment this prompt scopes does not require the unbuilt regeneration job, CF-MEDREV2-002, a DB lineage table, or result-versioning redesign."
-    },
-    "schema_audit_trail_capacity": {
-      "status": "CONFIRMED sufficient without new columns, migration path also available if needed",
-      "evidence": "backend/core/models/database.py: Analysis.raw_biomarkers (JSON, line 117), Analysis.processing_metadata and AnalysisResult.processing_metadata (JSON, lines 179/371/503), AnalysisResult.result_version (String, line 177) -- flexible JSON columns can carry remediation action/reason/timestamp/actor/reversibility metadata without a new migration. backend/migrations/ (alembic) confirmed present and actively used (recent targeted migrations: add_replay_manifest_column.py, insight_provenance_columns.py, s7_profiles_billing_columns.py) -- the 'repository's established migration/remediation mechanism' the prompt requires preference for (line 255) genuinely exists."
-    },
-    "existing_test_surface": {
-      "status": "CONFIRMED, disjoint from PKGC-2",
-      "evidence": "backend/tests/regression/test_internal_uat_result_versioning_dto_contract.py, test_med_rev2_domain_card_copy_and_regeneration.py, backend/tests/unit/test_launch_core3_result_versioning.py -- confirmed via grep this session, zero overlap with the provenance test surface (test_output_authority_provenance.py, test_arch_rt_identity_prov_1.py), consistent with this session's Stage 0 split rationale."
-    },
-    "risk_classification_check": {
-      "status": "STANDARD confirmed correct on current evidence, with an explicit caveat carried into the Phase 0 pack",
-      "evidence": "result_versioning_policy_v1.py lives under backend/core/dto/, not backend/core/analytics/ or backend/core/pipeline/ -- it performs presentation/staleness metadata assessment over already-computed results, not signal evaluation, WHY compilation, ranking, or output construction. detect_launch_core_stale_reasons() reads persisted DTO shape only; it does not alter medical reasoning, ranking, interpretation, or output construction. This supports STANDARD, matching the prompt's own expected classification and its Stage 1A classification-check question. Flagged as CONFIRMED rather than merely inherited from the prior Stage 0 pass's provisional label, since this session traced the actual file path and function behaviour rather than assuming it."
-    },
-    "repo_state": {
-      "status": "CONFIRMED",
-      "evidence": "git branch --show-current: main; git rev-parse HEAD == git rev-parse origin/main: a433f9f6b846a82317f928048c316bc1d8a78b0c; git status --short: only automation_bus/latest_cursor_prompt.md modified (the prompt being hardened itself, expected); git stash list: empty."
+    "no_pkgc1_or_result_versioning_dependency": {
+      "status": "CONFIRMED zero code coupling, re-verified",
+      "evidence": "Consistent with the Stage 0 bundling revalidation's own finding (zero cross-imports either direction between result_versioning_policy_v1.py/analysis_regeneration_v1.py and output_authority_provenance_builder_v1.py/output_authority_provenance_v1.py) -- this work package has no technical dependency on ARCH-CONV-PKGC-1's closure, matching the prompt's own explicit exclusion of waist-unit scope."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "reality_check_1b": "Repository-confirmed TRUE as of this session for all Stage 1B premises: the 12 audit-listed analysis IDs are the governed evidence set (no re-verification of live DB state possible from static repo files -- this is an explicit Phase-0-only verification gap, see below); the stale-detection framework still lacks a waist-unit rule; the six-rule framework can represent a seventh rule without redesign (same function, same return-shape contract); remediation does not require regeneration (confirmed above); this is not a no-op sprint.",
-    "genuine_hardening_limitation_disclosed": "This hardening pass cannot verify Stage 1A item 9 (whether any of the 12 rows has already been remediated, deleted, superseded, or regenerated) or the live 'current persisted value' for each row (Stage 1A item 5) from static repository files -- that requires direct database access, which is correctly scoped as Cursor's own Phase 0 repository-mapping responsibility, not something hardening can substitute for. This is disclosed rather than silently assumed.",
-    "data_governance_boundary_correctly_distinct_from_medical_gate": "Confirmed the prompt correctly routes this to an Anthony-only data-governance decision (line 178-187), not a Head of Medical Research Gate 1 -- consistent with the register's own field for L-11/CF-ARCH-CONV-WAIST-1 ('medical-review requirement: No (data integrity)') read in the prior Stage 0 investigation.",
-    "no_new_mechanism_required": "Confirmed achievable with existing mechanisms -- the stale-detection rule reuses the existing detect_launch_core_stale_reasons() contract and return shape (six precedent rules to follow); the remediation mechanism has a governed migration path available (alembic) if schema changes are needed, or the existing JSON processing_metadata columns if not."
+    "reality_check_1b": "Repository-confirmed TRUE as of this session for all Stage 1B premises: the synthetic fixture still exists and is not backed by a real evaluated authority row; the provenance builder still lacks defensive canonical-key validation (confirmed no cross-check against governance registers exists in the builder, per the Stage 0 revalidation's direct code read); no live governance register contains the malformed key; CF-ARCH-CONV-PROV-1 remains open; this is not a no-op sprint.",
+    "validation_boundary_question_flagged_as_genuinely_open": "The prompt's own Stage 1A item 10 ('Whether validation belongs in the provenance builder, a shared identity constructor, a registry boundary, or an earlier emitter') is correctly left open by this hardening pass, not pre-answered -- signal_result_index_v1.py's require_activation_key() is a strong candidate for the validation boundary (already raises on malformed/unreconstructable keys), which would mean the correct fix may be to harden or call through that shared constructor rather than adding a second, provenance-builder-local validation function. Cursor's Stage 1A should resolve this explicitly, per the prompt's own instruction not to force the guard into the provenance builder if a more authoritative shared boundary exists (line 171).",
+    "no_new_mechanism_required": "Confirmed achievable with an existing mechanism -- require_activation_key()/activation_key_or_empty() in signal_result_index_v1.py already implement the canonical grammar and already fail on malformed input; the work is extending or calling into this existing boundary, not inventing a new identity grammar."
   },
 
-  "gaps_or_risks_flagged_for_gpt_and_anthony": [
-    "This hardening pass could not independently verify live database state for the 12 analysis IDs (current values, whether already remediated) from static repository files. Cursor's own Stage 1A repository-mapping phase must perform this verification with real database access before the Phase 0 data-remediation register is populated -- this is a genuine, disclosed limit of hardening-stage verification, not an oversight.",
-    "The prompt's permitted disposition set (GOVERNED_REMAP, MARK_STALE_NO_REWRITE, ALREADY_REMEDIATED_NO_ACTION, BLOCKED_AMBIGUOUS) has no guarantee all 12 rows will cleanly sort into these four buckets -- Anthony's data-governance approval should be prepared to receive a register where some rows are BLOCKED_AMBIGUOUS, and the prompt's own instruction (line 253: 'Do not claim all 12 were remediated if any remain blocked or no-action') and closure instruction (line 360: partial-closure handling) already anticipate this correctly.",
-    "Risk classification (STANDARD) is confirmed correct on current evidence but is explicitly re-checked at Stage 1A by the prompt itself (line 52, 101-109) rather than inherited -- this hardening pass supports that re-check with a concrete file-path/function-behaviour trace rather than treating STANDARD as settled."
+  "gaps_or_risks_flagged_for_gpt_and_cursor_stage_1a": [
+    "This hardening pass recommends STANDARD -- CONTRACT_ADJACENT based on the provenance builder being additive/descriptive rather than decision-making, but this is a recommendation, not the authoritative Stage 1A answer the prompt itself requires Cursor to produce. If Cursor's own Stage 1A finds a code path this hardening pass missed where output_authority_provenance_builder_v1.py's output actually feeds back into report inclusion or clinician-facing filtering (as opposed to the separate 'compiler quarantine filter' mentioned in ARCH-COMPLETION-2's revert list, which this pass believes is a distinct mechanism), the classification must flip to HIGH and Gate 1/Gate 2 must be recorded before any implementation.",
+    "Two related identity-grammar modules exist (signal_result_index_v1.py::require_activation_key and signal_activation_identity_v1.py::resolve_activation_identity) -- Cursor's Stage 1A must confirm these represent one consistent grammar, not two competing ones, before choosing where to place the validation guard.",
+    "The 'compiler quarantine filter' mentioned in ARCH-COMPLETION-2's revert list (docs/audit-papers/ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion.md:186) as a component distinct from 'provenance contracts/builder' was not independently traced to its exact file/function in this hardening pass -- if Cursor's Stage 1A finds this quarantine filter lives inside output_authority_provenance_builder_v1.py itself (rather than being genuinely separate, e.g. in report_compiler_v1.py), the additive-only basis for the STANDARD recommendation above would need to be revisited."
   ],
 
   "evidence_checklist_status": "COMPLETE -- see chat response for the mandatory Stage 2C table"
