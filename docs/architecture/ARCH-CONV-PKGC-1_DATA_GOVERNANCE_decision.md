@@ -2,139 +2,75 @@
 
 **Work ID:** `ARCH-CONV-PKGC-1`  
 **Date opened:** 2026-08-02  
+**Anthony decision recorded:** 2026-08-02  
 **Hardening pack:** `docs/architecture/ARCH-CONV-PKGC-1_hardening_pack.md`  
 **Remediation register:** `docs/architecture/ARCH-CONV-PKGC-1_data_remediation_register.yaml`  
-**Implementation status:** **NOT AUTHORISED** — awaiting Anthony data-governance approval
+**Implementation status:** **AUTHORISED WITH CONDITIONS** — Phase 1 may proceed under recorded conditions
 
 ## Decision authority
 
-- **Anthony (project / data-governance authority)** must approve the complete row-by-row remediation register.
-- This is **not** a Head of Medical Research Gate 1 / Gate 2 medical-content decision (`ARCH-CONV_legacy_dependency_register.md` L-11: medical-review requirement = No).
+- **Anthony (project / data-governance authority)** approved the complete row-by-row remediation register.
+- This is **not** a Head of Medical Research Gate 1 / Gate 2 medical-content decision.
 
 ## Register state
 
 ```text
-register_state: AWAITING_ANTHONY_DATA_GOVERNANCE
-implementation_authorised: false
-live_db_probe: CONNECTION_REFUSED (localhost:5433)
+register_state: ANTHONY_APPROVED_WITH_CONDITIONS
+decision_id: ARCH-CONV-PKGC-1-DATA-GOV-ANTHONY-2026-08-02
+decision: APPROVED_WITH_CONDITIONS
+implementation_authorised: true
 risk_level: STANDARD
 ```
 
 ---
 
-## Exact Anthony decision required
-
-Anthony must approve **all** of the following. Silent omission is not approval.
-
-### D1 — Stale-reason identifier
-
-Approve proposed stale-reason id:
+## Anthony decision (`ARCH-CONV-PKGC-1-DATA-GOV-ANTHONY-2026-08-02`)
 
 ```text
-legacy_waist_unit_defect:used_incorrectly
+decision_id: ARCH-CONV-PKGC-1-DATA-GOV-ANTHONY-2026-08-02
+decision: APPROVED_WITH_CONDITIONS
+d1_stale_reason_id: legacy_waist_unit_defect:used_incorrectly
+d2_row_dispositions: MARK_STALE_NO_REWRITE for all 12 governed analysis IDs
+d3_persisted_value_rewrite_allowed: false
+d4_stale_only_no_rewrite: true
+d5_audit_trail_mechanism: existing processing_metadata JSON
+d6_ambiguous_row_treatment: MARK_STALE_NO_REWRITE retained for all 12 (including d7417288)
+d7_live_db_precondition_acknowledged: true
+d8_implementation_authorised: true
+governed_remap: deferred_out_of_scope
+regeneration: deferred_out_of_scope
 ```
 
-or name a replacement identifier and semantics.
+### Approved conditions
 
-### D2 — Default disposition for the 12 audit `used_incorrectly` rows
+1. Historic values and units must **not** be rewritten.
+2. Governed remap and regeneration remain deferred / out of scope.
+3. Audit trail must use existing `processing_metadata` JSON.
+4. Before any write, reconnect to the live governed database and re-verify:
+   - each approved analysis ID exists;
+   - current state matches Phase 0 precondition;
+   - not already remediated, superseded, or marked stale for this work;
+   - no additional / unexpected analysis IDs included.
+5. Any missing, changed, ambiguous, or already-remediated row must **fail closed** and be reported without mutation.
+6. Operation must be dry-run first, idempotent, and limited exactly to the approved 12 IDs.
 
-Phase 0 proposes:
+### Approved analysis IDs (exactly 12)
 
-```text
-MARK_STALE_NO_REWRITE
-```
-
-for **all 12** analysis IDs listed in the remediation register.
-
-Confirm or revise each row. Permitted dispositions:
-
-- `GOVERNED_REMAP`
-- `MARK_STALE_NO_REWRITE`
-- `ALREADY_REMEDIATED_NO_ACTION`
-- `BLOCKED_AMBIGUOUS`
-
-### D3 — Persisted value rewrite policy
-
-Confirm whether any persisted waist / questionnaire value may be rewritten.
-
-Phase 0 recommendation: **No rewrite** (`MARK_STALE_NO_REWRITE` only).  
-`GOVERNED_REMAP` is not proposed because correcting derived clinical outputs requires the unbuilt regeneration job.
-
-### D4 — Stale-only policy
-
-Confirm that rows approved as `MARK_STALE_NO_REWRITE` must not have clinical values overwritten.
-
-### D5 — Audit trail and reversibility
-
-Confirm remediation metadata may be stored in existing JSON `processing_metadata` (and/or equivalent) without a new DB lineage-table migration, recording at minimum:
-
-- original value / unit payload preserved
-- remediation action
-- reason / stale_reason
-- timestamp
-- actor / work_id (`ARCH-CONV-PKGC-1`)
-- reversibility / supersession linkage
-
-### D6 — Ambiguous / blocked rows
-
-Confirm treatment of `d7417288-7e11-48da-8716-d0f63f77c491` (`original_value=22`, outside typical UK-cm cluster):
-
-- Phase 0 default: still `MARK_STALE_NO_REWRITE`
-- Anthony may elevate to `BLOCKED_AMBIGUOUS`
-
-Confirm no inferred historic value is authorised for any row.
-
-### D7 — Live DB precondition
-
-Acknowledge Phase 0 could not reach the live database (`CONNECTION_REFUSED`). Approve that Phase 1 write mode must:
-
-1. re-verify all 12 IDs live;
-2. fail closed if any row is missing, already remediated differently, or precondition-mismatched;
-3. refuse to invent values when evidence is insufficient.
-
-### D8 — Implementation authorisation
-
-Set explicitly:
-
-```text
-implementation_authorised: true | false
-```
-
-Runtime Phase 1 (stale rule + remediation) is forbidden until this is `true` on disk.
+1. `e5cfbc62-93fa-4bac-8894-dcb69117ac4c`
+2. `02df9062-eba8-4df1-8072-8d2182aca35d`
+3. `7fc35b86-15c2-4d76-843a-e964263be0b7`
+4. `a3244490-dd74-4922-a1c6-49a25c1f6604`
+5. `7f780514-d288-4331-8020-8866744b70ae`
+6. `ad721d67-f2e8-4942-8450-8598b8e35343`
+7. `7cc8b2d5-c8f0-4138-ba18-8540eece06a1`
+8. `91046b62-114f-44a3-a2ab-2b885ea5782b`
+9. `7b8c58b5-191f-41e7-8fe4-a66938bb0a98`
+10. `e3a1ee79-963e-46a1-afee-58657d1ffb55`
+11. `7aacc734-95cf-4ea5-a19c-0d03d98dd2e9`
+12. `d7417288-7e11-48da-8716-d0f63f77c491`
 
 ---
 
-## Anthony decision block (to be completed)
+## Live-write dependency
 
-```text
-decision_id: ARCH-CONV-PKGC-1-DATA-GOV-ANTHONY-YYYY-MM-DD
-decision: PENDING
-d1_stale_reason_id: PENDING
-d2_row_dispositions: PENDING
-d3_persisted_value_rewrite_allowed: PENDING
-d4_stale_only_no_rewrite: PENDING
-d5_audit_trail_mechanism: PENDING
-d6_ambiguous_row_treatment: PENDING
-d7_live_db_precondition_acknowledged: PENDING
-d8_implementation_authorised: false
-notes:
-```
-
----
-
-## Non-claims until approval
-
-- Cursor must not add the waist-unit stale-detection rule.
-- Cursor must not mutate any historic analysis row.
-- Cursor must not run remediation write mode.
-- Cursor must not invoke or build regeneration.
-- Cursor must not touch provenance-identity / PKGC-2 surfaces.
-- Cursor must not infer missing conversion context.
-
-## Resume condition
-
-Phase 1 is authorised only when:
-
-1. This decision record is completed by Anthony; and  
-2. The remediation register matches the approved dispositions; and  
-3. `implementation_authorised: true` is written into this file and the register.
+If the live database remains unavailable, Phase 1 may implement and test the stale-detection and remediation mechanism, but must **not** execute the governed data write or claim the 12-row remediation complete. Work package remains `IN_PROGRESS` until live write verification succeeds or is explicitly re-scoped.

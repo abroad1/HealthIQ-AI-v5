@@ -6,7 +6,7 @@
 **Change type:** MIXED  
 **Execution model:** TWO_PHASE_START_FINISH  
 **Implementation owner:** Core Engine agent  
-**Status:** Phase 0 complete. **Awaiting Anthony data-governance approval.** Runtime / historic-row mutation **not authorised**.
+**Status:** Phase 1 mechanism implemented under `APPROVED_WITH_CONDITIONS`. Live DB write **outstanding** — WP remains `IN_PROGRESS`.
 
 **Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-PKGC-1` / `HARDENED`.
 
