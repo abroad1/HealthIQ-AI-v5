@@ -1,0 +1,299 @@
+work_id: ARCH-CONV-PKGC-1
+branch: feature/arch-conv-pkgc-1-waist-unit-remediation
+register_state: AWAITING_ANTHONY_DATA_GOVERNANCE
+risk_level: STANDARD
+change_type: MIXED
+hardening_pack_ref: docs/architecture/ARCH-CONV-PKGC-1_hardening_pack.md
+data_governance_decision_ref: docs/architecture/ARCH-CONV-PKGC-1_DATA_GOVERNANCE_decision.md
+carry_forward: CF-ARCH-CONV-WAIST-1
+audit_source: docs/audit-papers/WAIST_UNIT_LEGACY_IMPACT_AUDIT.md
+live_db_probe:
+  status: CONNECTION_REFUSED
+  detail: DATABASE_URL postgresql localhost:5433 connection refused during Phase 0
+  implication: >
+    Current persisted values, unit provenance, result_version, stale state, and
+    already-remediated status are UNKNOWN pending live verification. Phase 1
+    write mode must fail closed if live preconditions cannot be proven.
+proposed_stale_reason_id: legacy_waist_unit_defect:used_incorrectly
+proposed_default_disposition: MARK_STALE_NO_REWRITE
+implementation_authorised: false
+note: >
+  Phase 0 mapping complete 2026-08-02. No historic-row mutation and no stale
+  rule addition until Anthony records data-governance approval with
+  implementation_authorised true. GOVERNED_REMAP not proposed because correcting
+  derived clinical outputs would require the unbuilt regeneration job.
+
+rows:
+  - analysis_id: e5cfbc62-93fa-4bac-8894-dcb69117ac4c
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-04-25 21:23:55.250977"
+    audit_original_value: 77
+    audit_incorrect_mapped_cm_if_inches: 195.58
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly. Prefer stale mark without rewrite; remap
+      would require regeneration to correct derived scores.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: 02df9062-eba8-4df1-8072-8d2182aca35d
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-04-27 17:38:36.874452"
+    audit_original_value: 77
+    audit_incorrect_mapped_cm_if_inches: 195.58
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly. Prefer stale mark without rewrite; remap
+      would require regeneration to correct derived scores.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: 7fc35b86-15c2-4d76-843a-e964263be0b7
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-04-28 15:47:57.486470"
+    audit_original_value: 77
+    audit_incorrect_mapped_cm_if_inches: 195.58
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly. Prefer stale mark without rewrite; remap
+      would require regeneration to correct derived scores.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: a3244490-dd74-4922-a1c6-49a25c1f6604
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-04-28 16:55:54.174297"
+    audit_original_value: 60
+    audit_incorrect_mapped_cm_if_inches: 152.4
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly (value below ~75-93 UK-cm cluster but still
+      governed by audit). Stale mark without rewrite avoids inference.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: 7f780514-d288-4331-8020-8866744b70ae
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-04-28 17:42:57.302704"
+    audit_original_value: 67
+    audit_incorrect_mapped_cm_if_inches: 170.18
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly (value below ~75-93 UK-cm cluster but still
+      governed by audit). Stale mark without rewrite avoids inference.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: ad721d67-f2e8-4942-8450-8598b8e35343
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-05-02 08:27:35.201627"
+    audit_original_value: 75
+    audit_incorrect_mapped_cm_if_inches: 190.5
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly. Prefer stale mark without rewrite; remap
+      would require regeneration to correct derived scores.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: 7cc8b2d5-c8f0-4138-ba18-8540eece06a1
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-05-17 10:04:35.466853"
+    audit_original_value: 78
+    audit_incorrect_mapped_cm_if_inches: 198.12
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly. Prefer stale mark without rewrite; remap
+      would require regeneration to correct derived scores.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: 91046b62-114f-44a3-a2ab-2b885ea5782b
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-05-17 11:18:39.186429"
+    audit_original_value: 78
+    audit_incorrect_mapped_cm_if_inches: 198.12
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly. Prefer stale mark without rewrite; remap
+      would require regeneration to correct derived scores.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: 7b8c58b5-191f-41e7-8fe4-a66938bb0a98
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-05-17 11:48:34.624050"
+    audit_original_value: 78
+    audit_incorrect_mapped_cm_if_inches: 198.12
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly. Prefer stale mark without rewrite; remap
+      would require regeneration to correct derived scores.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: e3a1ee79-963e-46a1-afee-58657d1ffb55
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-05-17 17:04:26.290169"
+    audit_original_value: 78
+    audit_incorrect_mapped_cm_if_inches: 198.12
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly. Prefer stale mark without rewrite; remap
+      would require regeneration to correct derived scores.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: 7aacc734-95cf-4ea5-a19c-0d03d98dd2e9
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-05-24 06:55:24.044068"
+    audit_original_value: 76
+    audit_incorrect_mapped_cm_if_inches: 193.04
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly. Prefer stale mark without rewrite; remap
+      would require regeneration to correct derived scores.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+
+  - analysis_id: d7417288-7e11-48da-8716-d0f63f77c491
+    audit_classification: used_incorrectly
+    audit_created_at: "2026-05-26 17:23:37.527400"
+    audit_original_value: 22
+    audit_incorrect_mapped_cm_if_inches: 55.88
+    current_value: UNKNOWN_PENDING_LIVE_DB
+    current_unit: UNKNOWN_PENDING_LIVE_DB
+    source_or_lineage_evidence: WAIST_UNIT_LEGACY_IMPACT_AUDIT.md used_incorrectly row
+    proposed_disposition: MARK_STALE_NO_REWRITE
+    proposed_corrected_value: null
+    proposed_corrected_unit: null
+    stale_reason: legacy_waist_unit_defect:used_incorrectly
+    original_preserved: true
+    reversible: true
+    rationale: >
+      Audit-marked used_incorrectly despite original_value=22 outside typical
+      UK-cm cluster. Still propose stale mark without rewrite (no inferred
+      correction). Anthony may elevate to BLOCKED_AMBIGUOUS.
+    confidence: audit_only_pending_live_verification
+    live_verification: PENDING
+    implementation_authorised: false
+    anthony_attention: value_outside_typical_cm_cluster
+
+proposed_stale_detection_rule:
+  function: detect_launch_core_stale_reasons
+  path: backend/core/dto/result_versioning_policy_v1.py
+  proposed_reason_id: legacy_waist_unit_defect:used_incorrectly
+  preserve_existing_six_rules: true
+  no_parallel_engine: true
+  no_regeneration_trigger: true
+  false_positive_guard: >
+    Must not mark valid explicit-cm or valid explicit-inches provenance stale;
+    must not infer solely from surprising waist magnitude.
+
+exclusions:
+  - no_pkgc2_provenance_identity
+  - no_cf_arch_conv_prov_1
+  - no_cf_arch_conv_version_1_redesign
+  - no_regeneration_job
+  - no_compiled_why_or_medical_content
+  - no_frontend_medical_logic
+  - no_inferred_historic_measurements
