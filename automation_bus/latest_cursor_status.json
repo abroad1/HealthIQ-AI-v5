@@ -1,10 +1,10 @@
 {
-  "branch": "feature/arch-conv-g-urate-compiled-why",
+  "branch": "feature/arch-conv-h-hba1c-compiled-why-authority",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-08-01T21:10:57Z",
-  "cursor_started_utc": "2026-08-01T20:55:47Z",
-  "head_sha": "345819612895b83fb66132e8583a6575220fd557",
+  "cursor_completed_utc": "2026-08-01T22:32:19Z",
+  "cursor_started_utc": "2026-08-01T22:04:06Z",
+  "head_sha": "94a7d304019e6d14789f2dba75e88459b0934e20",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "ARCH-CONV-G"
+  "work_id": "ARCH-CONV-H"
 }

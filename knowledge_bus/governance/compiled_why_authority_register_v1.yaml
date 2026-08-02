@@ -15,6 +15,8 @@ arch_conv_f_gate1_reference: ARCH-CONV-F-GATE1-HMR-2026-08-01
 arch_conv_f_gate2_reference: ARCH-CONV-F-GATE2-ANTHONY-2026-08-01
 arch_conv_g_gate1_reference: ARCH-CONV-G-GATE1-HMR-2026-08-01
 arch_conv_g_gate2_reference: ARCH-CONV-G-GATE2-ANTHONY-2026-08-01
+arch_conv_h_gate1_reference: ARCH-CONV-H-GATE1-HMR-2026-08-01
+arch_conv_h_gate2_reference: ARCH-CONV-H-GATE2-ANTHONY-2026-08-01
 frames:
   - activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
     signal_id: signal_vitamin_d_low
@@ -599,3 +601,30 @@ frames:
     legacy_asset: null
     legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
     notes: Competing Pass-3 gout/crystal-deposition frame retired for WHY ownership only; package and PSI status unchanged; valid content may remain only as subordinate non-diagnostic risk context.
+
+  - activation_key: signal_hba1c_high::inv_hba1c_high_glycaemia
+    signal_id: signal_hba1c_high
+    source_spec_id: inv_hba1c_high_glycaemia
+    authority_state: COMPILED_ACTIVE
+    why_role: morphology_context
+    gpt_decision: APPROVE_WITH_NARROWING
+    anthony_decision: APPROVED
+    final_disposition: CONTEXT_ONLY_NON_CAUSAL
+    gpt_review_reference: ARCH-CONV-H-GATE1-HMR-2026-08-01
+    anthony_ratification_reference: ARCH-CONV-H-GATE2-ANTHONY-2026-08-01
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_hba1c_high_glycaemia.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/hba1c_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Flat non-causal sustained glycaemic-exposure context only; HbA1c >=48 mmol/mol is diabetes-range concern requiring clinical confirmation only; TG/HDL subordinate metabolic-pattern context only; no diagnosis, subtype, complications, chronicity, causal attribution, or treatment directives; adjacent pct and glucose-dysregulation identities unchanged.
+
+  - activation_key: signal_hba1c_high::inv_hba1c_high_diabetes_range_hyperglycemia
+    signal_id: signal_hba1c_high
+    source_spec_id: inv_hba1c_high_diabetes_range_hyperglycemia
+    authority_state: LEGACY_RETIRED
+    gpt_decision: SUPERSEDED_BY_ARCH_CONV_H
+    anthony_decision: APPROVED
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Competing Pass-3 diabetes-range hyperglycemia frame retired for WHY ownership only; package and PSI status unchanged.

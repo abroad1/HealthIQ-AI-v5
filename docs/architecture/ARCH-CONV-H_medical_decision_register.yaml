@@ -1,0 +1,91 @@
+work_id: ARCH-CONV-H
+branch: feature/arch-conv-h-hba1c-compiled-why-authority
+register_state: GATES_APPROVED_RUNTIME_AUTHORISED
+gate1_status: APPROVED_WITH_NARROWING
+gate2_status: APPROVED
+head_of_medical_research_gate1_reference: ARCH-CONV-H-GATE1-HMR-2026-08-01
+anthony_gate2_reference: ARCH-CONV-H-GATE2-ANTHONY-2026-08-01
+hardening_pack_ref: docs/architecture/ARCH-CONV-H_hardening_pack.md
+gate_decision_ref: docs/architecture/ARCH-CONV-H_GATE_1_GATE_2_decision.md
+runtime_changes_authorised: true
+note: >
+  Gate 1 APPROVED_WITH_NARROWING and Gate 2 APPROVED recorded on 2026-08-01.
+  Gate 2 ratifies Gate 1 disposition. Runtime compiled-WHY implementation is
+  authorised under the active Automation Bus work package.
+
+canonical_frame:
+  signal_id: signal_hba1c_high
+  source_spec_id: inv_hba1c_high_glycaemia
+  activation_key: signal_hba1c_high::inv_hba1c_high_glycaemia
+  canonical_package: pkg_s24_hba1c_high_glycaemia
+  source_document: knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemia_v1.yaml
+  source_sha256: 2CFA335DEBBA2F430C12E2F0605823B9752A3AD78389F32A7D978B8286501247
+  why_role: morphology_context
+  why_role_flat: true
+  conditional_why_role: none
+  primary_finding_boundary: >
+    Persistent hyperglycaemia / sustained glycaemic-exposure pattern; not an
+    independently proven cause of diabetes-related pathology; not a diagnosis
+    from HbA1c alone.
+  supporting_markers:
+    glucose: corroborator_context_only
+    triglycerides: subordinate_metabolic_pattern_context_only
+    hdl_cholesterol: subordinate_metabolic_pattern_context_only
+    alt: context_only_if_used_no_independent_why
+  override_rules:
+    or_hba1c_diagnostic_diabetes:
+      condition: hba1c_mmol_mol_gte_48
+      resulting_state: at_risk
+      presentation: diabetes_range_concern_requiring_clinical_confirmation_only
+    or_hba1c_metabolic_syndrome:
+      condition: triglycerides_and_hdl_metabolic_pattern
+      resulting_state: at_risk
+      presentation: subordinate_metabolic_pattern_context_only_no_metabolic_syndrome_diagnosis
+  presentation_safety:
+    not_diagnosis_from_hba1c_alone: true
+    not_treatment_directives: true
+    not_chronicity_inference: true
+    not_diabetes_subtype: true
+    not_complications: true
+    not_causal_attribution: true
+    not_metabolic_syndrome_diagnosis: true
+    do_not_compile_raw_implications_verbatim: true
+
+competitor_disposition:
+  activation_key: signal_hba1c_high::inv_hba1c_high_diabetes_range_hyperglycemia
+  package_id: pkg_kb52c_hba1c_high_diabetes_range_hyperglycemia
+  collision_class: governed_arbitration_same_signal_id
+  disposition: LEGACY_RETIRED_FOR_WHY_ONLY
+  package_layer_status: UNCHANGED
+  psi_status: UNCHANGED
+  package_deletion: forbidden
+
+adjacent_identities_unchanged:
+  - signal_hba1c_pct_high
+  - signal_glucose_dysregulation_hba1c_context
+  - signal_hba1c_low
+
+expected_register_delta:
+  compiled_active: '+1'
+  legacy_retired: '+1'
+
+exclusions:
+  - no_new_signal_id_alias_or_ssot_biomarker
+  - no_merge_with_hba1c_pct_or_glucose_dysregulation
+  - no_scoring_band_or_reference_range_change
+  - no_package_activation_or_psi_change
+  - no_frontend_medical_logic
+  - no_new_compiler_mechanism
+  - no_unrelated_compiled_why_frame_change
+
+mechanism_sufficiency:
+  static_why_role: sufficient
+  new_compiler_mechanism_required: false
+  root_cause_compiler_v1_change_expected: false
+  root_cause_registry_v1_change_expected: false
+
+baseline_counts:
+  compiled_active: 24
+  legacy_retired: 19
+  rejected: 1
+  total_frames: 44

@@ -1,0 +1,7 @@
+manifest_id: arch_conv_h_hba1c_high
+work_id: ARCH-CONV-H
+schema_version: 1.0.0
+outputs:
+- artefact_path: knowledge_bus/compiled/hypotheses/inv_hba1c_high_glycaemia.yaml
+  activation_key: signal_hba1c_high::inv_hba1c_high_glycaemia
+notes: Gate 1 / Gate 2 ratified flat CONTEXT_ONLY_NON_CAUSAL morphology_context lane.

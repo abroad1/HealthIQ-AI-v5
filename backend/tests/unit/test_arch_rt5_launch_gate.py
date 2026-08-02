@@ -28,7 +28,7 @@ def test_estate_index_loads():
     assert payload["estate_id"] == "healthiq_launch_estate_v1"
     # ARCH-CONV-G estate: 10 card artefacts; 24 COMPILED_ACTIVE WHY artefacts.
     assert len(payload["card_evidence_artefacts"]) == 10
-    assert len(payload["compiled_hypothesis_artefacts"]) == 24
+    assert len(payload["compiled_hypothesis_artefacts"]) == 25
     assert len(payload["wave1_subsystems_legacy_hard_coded"]["subsystem_ids"]) == 0
 
 

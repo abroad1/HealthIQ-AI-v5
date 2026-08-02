@@ -1362,17 +1362,54 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 - Independent audit PASS.
 
 ### Carry-forwards
-- `signal_hba1c_high` remains the sole open A3 compiled-WHY target.
+- `signal_hba1c_high` compiled-WHY closed by ARCH-CONV-H (see ARCH-CONV-H register entry).
 - ALT compiled-WHY identity remains unresolved at A4.
 - Package B and Package C sequencing remains downstream of further Package A outputs.
 - No eGFR/UACR/chronicity independent WHY authority was created.
 
 ### Blockers / risks
 - None open from ARCH-CONV-G medical design after Gate 2 and independent audit PASS.
-- Selecting HbA1c without a repository-grounded Stage 0 advisory risks out-of-order estate work.
 
 ### Recommended next sprint
-- Run a repository-grounded Stage 0 advisory for `signal_hba1c_high` before authoring the next sprint.
+- Proceed to ALT / Package A residual sequencing per Active Carry-Forward (post-ARCH-CONV-H).
+
+---
+
+## ARCH-CONV-H — HbA1c Compiled-WHY Authority
+
+**Status:** IMPLEMENTED — Gate 2 ratified; pending finish / independent audit / merge  
+**Date implemented:** 2026-08-01  
+**Programme block(s):** Architecture convergence — HbA1c compiled-WHY authority (`signal_hba1c_high`)  
+**Gate 1:** `ARCH-CONV-H-GATE1-HMR-2026-08-01` (`APPROVED_WITH_NARROWING`)  
+**Gate 2:** `ARCH-CONV-H-GATE2-ANTHONY-2026-08-01` (`APPROVED`)  
+**Evidence:** `docs/audit-papers/ARCH-CONV-H_implementation_and_verification_report.md`  
+**Medical decision register:** `docs/architecture/ARCH-CONV-H_medical_decision_register.yaml`
+
+### Delivered / ticked off
+- Compiled-WHY authority for `signal_hba1c_high`.
+- Canonical activation key: `signal_hba1c_high::inv_hba1c_high_glycaemia`.
+- `why_role: morphology_context` (flat; non-causal).
+- `+1 COMPILED_ACTIVE` authority row (24 → 25).
+- `+1 LEGACY_RETIRED` competing WHY row (19 → 20) for `signal_hba1c_high::inv_hba1c_high_diabetes_range_hyperglycemia`.
+- Competing diabetes-range hyperglycemia frame retired for WHY ownership only.
+- Package-layer and PSI status unchanged.
+- HbA1c `>= 48 mmol/mol`: diabetes-range concern requiring clinical confirmation only.
+- TG/HDL: subordinate metabolic-pattern context only; no metabolic-syndrome diagnosis.
+- Adjacent identities unchanged: `signal_hba1c_pct_high`, `signal_glucose_dysregulation_hba1c_context`.
+- No treatment directives, chronicity inference, diabetes subtype, complications, causal attribution, or diagnosis from HbA1c alone.
+- No new alias, signal identity, SSOT biomarker, derived metric, compiler mechanism, or frontend change.
+
+### Carry-forwards
+- ALT compiled-WHY identity remains unresolved at A4.
+- Package B and Package C sequencing remains downstream of further Package A outputs.
+- No eGFR/UACR/chronicity independent WHY authority was created.
+- `signal_hba1c_pct_high` and glucose-dysregulation context remain separate identities (not migrated).
+
+### Blockers / risks
+- None open from ARCH-CONV-H medical design after Gate 2.
+
+### Recommended next sprint
+- Repository-grounded Stage 0 advisory for next Package A residual (ALT A4 or dual-authority sequencing).
 
 ---
 

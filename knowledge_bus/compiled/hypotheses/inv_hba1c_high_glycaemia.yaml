@@ -1,0 +1,56 @@
+schema_version: 1.0.0
+artefact_id: compiled_hypothesis_inv_hba1c_high_glycaemia_v1
+hypothesis_set_id: signal_hba1c_high_non_causal_glycaemia_context_set_v1
+signal_id: signal_hba1c_high
+activation_key: signal_hba1c_high::inv_hba1c_high_glycaemia
+source_spec_ids:
+- inv_hba1c_high_glycaemia
+source_spec_provenance: explicit
+source_document: knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemia_v1.yaml
+compile_manifest_ref: knowledge_bus/compiled/manifests/arch_conv_h_hba1c_high.yaml
+hypotheses:
+- hypothesis_id: hyp_hba1c_elevated_glycaemia_context
+  rank: 1
+  title: Elevated HbA1c glycaemic-exposure context
+  physiological_claim: Elevated HbA1c provides a non-causal sustained glycaemic-exposure
+    / persistent hyperglycaemia-pattern context finding. It reflects non-enzymatic
+    glycation of haemoglobin over the preceding red-cell exposure window without
+    establishing diabetes diagnosis, diabetes subtype, complications, chronicity,
+    causal attribution of diabetes-related pathology, or treatment need from HbA1c alone.
+  evidence_strength: contextual
+  missing_data_policy: Interpret as elevated-HbA1c glycaemic-exposure context only.
+    Missing glucose must not invent acute hyperglycaemia confirmation beyond available
+    markers. Missing triglycerides or HDL prevents metabolic-pattern override escalation
+    but does not block the basic elevated-HbA1c context finding.
+  evidence_for:
+  - HbA1c is above the laboratory range.
+  - Glucose above range may support acute corroboration wording when present; it does
+    not independently own this WHY frame.
+  - Triglycerides above range with HDL below range may support subordinate metabolic-pattern
+    context wording when the retained override fires; this is not a metabolic-syndrome diagnosis.
+  - HbA1c at or above 48 mmol/mol may support diabetes-range concern escalation requiring
+    clinical confirmation only; it does not establish diabetes from one result.
+  evidence_against:
+  - Isolated elevated HbA1c does not establish a diabetes diagnosis.
+  - One diabetes-range HbA1c result must not be treated as confirmed diabetes without
+    clinical confirmation.
+  - Triglyceride/HDL concordance must not be treated as a metabolic-syndrome diagnosis.
+  - This frame must not attribute retinopathy, neuropathy, cardiovascular disease, or
+    other complications as established disease.
+  contradiction_markers: []
+  caveats:
+  - Do not diagnose diabetes from HbA1c alone.
+  - Do not infer diabetes subtype.
+  - Do not diagnose metabolic syndrome from TG/HDL pattern in this frame.
+  - Do not claim complications from this frame.
+  - Do not claim causal attribution that HbA1c independently proves diabetes-related pathology.
+  - Do not infer chronicity beyond the marker's supported exposure-window wording.
+  - Do not recommend treatment, medication, lifestyle prescription, or pharmacological management.
+  - Do not emit WHY authority for signal_hba1c_pct_high or signal_glucose_dysregulation_hba1c_context
+    from this frame.
+  confirmatory_tests: []
+  summary_template: HbA1c above range is non-causal glycaemic-exposure context only; does not establish diabetes, subtype, complications, metabolic syndrome, or treatment need. >=48 mmol/mol needs clinical confirmation.
+provenance:
+  artefact_kind: compiled_hypothesis_v1
+  compile_status: compile_pipeline
+  notes: ARCH-CONV-H Gate 1 / Gate 2 ratified flat CONTEXT_ONLY_NON_CAUSAL morphology_context lane.
