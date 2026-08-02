@@ -1,10 +1,9 @@
 {
-  "branch": "feature/arch-conv-i-alt-compiled-why-identity-resolution",
+  "branch": "feature/arch-conv-pkgb-1-homocysteine-exclusivity-resolver-closure",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-08-02T08:08:36Z",
-  "cursor_started_utc": "2026-08-02T07:49:23Z",
-  "head_sha": "ba0b6e61a35721fe9b54e35a2c7afb87d263664f",
+  "cursor_started_utc": "2026-08-02T10:20:03Z",
+  "head_sha": "b8777e97b002ad926d963cf53e9748b6b5f7703d",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-CONV-I"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-CONV-PKGB-1"
 }
