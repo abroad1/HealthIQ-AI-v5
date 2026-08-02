@@ -7,12 +7,17 @@ Read-only assessment of persisted client-result payloads. Does not mutate stored
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from core.dto.analysis_regeneration_v1 import (
     REGENERATION_POLICY_ID,
     assess_regeneration_available,
     regeneration_unavailable_reason,
+)
+from core.dto.arch_conv_pkgc_1_waist_remediation_v1 import (
+    APPROVED_ANALYSIS_ID_SET,
+    STALE_REASON as WAIST_UNIT_STALE_REASON,
+    has_pkgc1_remediation_stamp,
 )
 from core.dto.persisted_replay_contract_v1 import (
     CURRENT_RESULT_VERSION,
@@ -71,33 +76,37 @@ def detect_launch_core_stale_reasons(stored: Dict[str, Any]) -> List[str]:
         reasons.append("completeness_policy_missing")
 
     scores = stored.get("consumer_domain_scores")
-    if not isinstance(scores, list):
-        return reasons
-
-    for row in scores:
-        if not isinstance(row, dict):
-            continue
-        domain_id = str(row.get("domain_id") or "").strip()
-        card_num = row.get("evidence_completeness_numerator")
-        card_den = row.get("evidence_completeness_denominator")
-        union_num, union_den = _subsystem_marker_union(row)
-        if (
-            union_den > 0
-            and isinstance(card_num, int)
-            and isinstance(card_den, int)
-            and (card_num, card_den) != (union_num, union_den)
-        ):
-            reasons.append(f"card_subsystem_completeness_mismatch:{domain_id}")
-
-        for sub in row.get("subsystems") or []:
-            if not isinstance(sub, dict):
+    if isinstance(scores, list):
+        for row in scores:
+            if not isinstance(row, dict):
                 continue
-            trace = str(sub.get("source_trace") or "")
-            if "wave1_subsystem_evidence_v1:" in trace:
-                reasons.append(f"legacy_hard_coded_subsystem_trace:{sub.get('subsystem_id')}")
-            missing = sub.get("missing_marker_ids") or []
-            if "total_bilirubin" in missing:
-                reasons.append("legacy_total_bilirubin_false_missing")
+            domain_id = str(row.get("domain_id") or "").strip()
+            card_num = row.get("evidence_completeness_numerator")
+            card_den = row.get("evidence_completeness_denominator")
+            union_num, union_den = _subsystem_marker_union(row)
+            if (
+                union_den > 0
+                and isinstance(card_num, int)
+                and isinstance(card_den, int)
+                and (card_num, card_den) != (union_num, union_den)
+            ):
+                reasons.append(f"card_subsystem_completeness_mismatch:{domain_id}")
+
+            for sub in row.get("subsystems") or []:
+                if not isinstance(sub, dict):
+                    continue
+                trace = str(sub.get("source_trace") or "")
+                if "wave1_subsystem_evidence_v1:" in trace:
+                    reasons.append(f"legacy_hard_coded_subsystem_trace:{sub.get('subsystem_id')}")
+                missing = sub.get("missing_marker_ids") or []
+                if "total_bilirubin" in missing:
+                    reasons.append("legacy_total_bilirubin_false_missing")
+
+    # ARCH-CONV-PKGC-1 — historic waist-unit used_incorrectly (Anthony-approved allowlist
+    # and/or remediation stamp). Does not infer solely from waist magnitude.
+    analysis_id = str(stored.get("analysis_id") or "").strip()
+    if analysis_id in APPROVED_ANALYSIS_ID_SET or has_pkgc1_remediation_stamp(stored):
+        reasons.append(WAIST_UNIT_STALE_REASON)
 
     return list(dict.fromkeys(reasons))
 
