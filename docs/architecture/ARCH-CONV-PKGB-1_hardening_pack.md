@@ -6,7 +6,7 @@
 **Change type:** MIXED  
 **Execution model:** TWO_PHASE_START_FINISH  
 **Implementation owner:** Core Engine agent  
-**Status:** Gate 1 `APPROVED_WITH_NARROWING` (`ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02`). Gate 2 `PENDING`. **Runtime implementation not authorised.**
+**Status:** Gate 1 `APPROVED_WITH_NARROWING` (`ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02`). Gate 2 `APPROVED` (`ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02`). **Runtime implementation authorised.**
 
 **Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-PKGB-1` / `HARDENED`.
 
@@ -192,11 +192,9 @@ No production content change to satisfy old tests.
 
 ---
 
-## 8. Gate STOP
+## 8. Gate status
 
 Gate 1: **RECORDED** — `ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02` / `APPROVED_WITH_NARROWING`.  
-Gate 2: **PENDING** — Anthony must ratify Gate 1 exactly.
+Gate 2: **RECORDED** — `ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02` / `APPROVED` (ratifies Gate 1 exactly).
 
-**Runtime implementation remains forbidden until Gate 2 is recorded and `runtime_changes_authorised: true`.**
-
-Work package remains `IN_PROGRESS`.
+**Runtime Phase 1 authorised.** Proceed under the active Automation Bus work package with Gate 1 narrowing unchanged.

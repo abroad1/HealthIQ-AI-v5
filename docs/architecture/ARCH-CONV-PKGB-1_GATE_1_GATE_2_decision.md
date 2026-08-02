@@ -3,17 +3,17 @@
 **Work ID:** `ARCH-CONV-PKGB-1`  
 **Date opened:** 2026-08-02  
 **Gate 1 recorded:** 2026-08-02  
-**Gate 2 recorded:** *pending*  
+**Gate 2 recorded:** 2026-08-02  
 **Hardening pack:** `docs/architecture/ARCH-CONV-PKGB-1_hardening_pack.md`  
 **Medical decision register:** `docs/architecture/ARCH-CONV-PKGB-1_medical_decision_register.yaml`  
-**Implementation status:** **NOT AUTHORISED** — Gate 1 recorded; awaiting Gate 2 ratification
+**Implementation status:** **AUTHORISED** — Gate 1 and Gate 2 recorded; runtime Phase 1 may proceed under the active Automation Bus work package
 
 ## Gate references
 
 | Gate | Reference | Status |
 |---|---|---|
 | Gate 1 — Head of Medical Research | `ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02` | `APPROVED_WITH_NARROWING` |
-| Gate 2 — Anthony (project authority) | *pending* | `PENDING` |
+| Gate 2 — Anthony (project authority) | `ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02` | `APPROVED` |
 
 ## Decision authority split
 
@@ -23,10 +23,10 @@
 ## Register state
 
 ```text
-register_state: GATE_1_RECORDED_AWAITING_GATE_2
+register_state: GATES_APPROVED_RUNTIME_AUTHORISED
 gate1_status: APPROVED_WITH_NARROWING
-gate2_status: PENDING
-runtime_changes_authorised: false
+gate2_status: APPROVED
+runtime_changes_authorised: true
 ```
 
 ---
@@ -102,40 +102,47 @@ governed_skip_only_when_all_rows_unambiguously_retired_or_non_owning: true
 genuine_ambiguity_or_missing_governance: fail_closed
 no_new_compiled_authority_or_medical_content_for_ldl_hdl_tc_hgb_hepatic_alt: true
 mechanism_preference: DEFER_TO_IMPLEMENTATION
-runtime_changes_authorised: false
-gate2_status: PENDING
 ```
 
 ---
 
-## Gate 2 ratification block (to be completed by Anthony)
-
-Gate 2 must ratify Gate 1 **exactly** (`ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02` / `APPROVED_WITH_NARROWING`). If Gate 1 is revised, Gate 2 must ratify the revised text, not a different disposition.
+## Gate 2 ratification (`ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02`)
 
 ```text
-gate2_reference: ARCH-CONV-PKGB-1-GATE2-ANTHONY-YYYY-MM-DD
-decision: PENDING
+gate2_reference: ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02
+decision: APPROVED
 ratifies: ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02
-runtime_changes_authorised: false
-notes:
+signal_homocysteine_elevation_context: FOLD_SUPPRESS
+independent_why_ownership_emission: prohibited
+new_hypothesis_or_replacement_narrative: prohibited
+signal_homocysteine_high_compiled_content: unchanged
+bare_key_resolver_correction: mechanical_authority_handling_only
+resolver_scope: five_phase0_all_legacy_retired_zero_compiled_active_pilots
+governed_skip_only_when_all_rows_unambiguously_retired_or_non_owning: true
+genuine_ambiguity_or_missing_governance: fail_closed
+no_new_compiled_authority_or_medical_content_for_ldl_hdl_tc_hgb_hepatic_alt: true
+hba1c_urate_changes: assertion_alignment_only
+l04_l05_l06_product_policy: out_of_scope
+runtime_changes_authorised: true
 ```
+
+Gate 2 ratifies Gate 1 **exactly**. No medical disposition change.
 
 ---
 
-## Non-claims until Gate 2 is recorded
+## Authorised runtime Phase 1
 
-- Cursor must not alter resolver behaviour.
-- Cursor must not disconnect or split the shared homocysteine asset.
-- Cursor must not change authority registers.
-- Cursor must not modify test expectations.
-- Cursor must not touch L-04, L-05, L-06, or Package C.
-- Retrospective ratification after runtime change is forbidden.
-- Gate 1 alone does **not** authorise runtime implementation.
-
-## Resume condition
-
-Runtime Phase 1 is authorised only when:
+Runtime Phase 1 is authorised:
 
 1. Gate 1 answers Q1–Q7 on disk (**satisfied** — `ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02`); and  
-2. Gate 2 records `APPROVED` ratifying that exact Gate 1; and  
-3. `runtime_changes_authorised: true` is written into this file and the medical decision register.
+2. Gate 2 records `APPROVED` ratifying that exact Gate 1 (**satisfied** — `ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02`); and  
+3. `runtime_changes_authorised: true` is written into this file and the medical decision register (**satisfied**).
+
+### Still prohibited
+
+- Changing `signal_homocysteine_high` compiled medical content
+- Creating independent WHY for elevation-context
+- Creating new compiled authority / medical content for the five zero-compiled pilots
+- L-04 / L-05 / L-06 product-policy decisions
+- Package C replay/versioning
+- Package / PSI / scoring / frontend activation changes beyond WHY exclusivity

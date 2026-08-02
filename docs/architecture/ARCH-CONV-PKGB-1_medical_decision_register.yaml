@@ -1,19 +1,19 @@
 work_id: ARCH-CONV-PKGB-1
 branch: feature/arch-conv-pkgb-1-homocysteine-exclusivity-resolver-closure
-register_state: GATE_1_RECORDED_AWAITING_GATE_2
+register_state: GATES_APPROVED_RUNTIME_AUTHORISED
 gate1_status: APPROVED_WITH_NARROWING
-gate2_status: PENDING
+gate2_status: APPROVED
 head_of_medical_research_gate1_reference: ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02
-anthony_gate2_reference: null
+anthony_gate2_reference: ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02
 hardening_pack_ref: docs/architecture/ARCH-CONV-PKGB-1_hardening_pack.md
 gate_decision_ref: docs/architecture/ARCH-CONV-PKGB-1_GATE_1_GATE_2_decision.md
-runtime_changes_authorised: false
+runtime_changes_authorised: true
 note: >
-  Gate 1 APPROVED_WITH_NARROWING recorded on 2026-08-02
-  (ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02). Gate 2 remains PENDING.
-  Runtime implementation is not authorised until Gate 2 ratifies Gate 1
-  exactly. FOLD_SUPPRESS for signal_homocysteine_elevation_context remains
-  the disposition; no new elevation-context medical content.
+  Gate 1 APPROVED_WITH_NARROWING and Gate 2 APPROVED recorded on 2026-08-02.
+  Gate 2 ratifies Gate 1 exactly. Runtime Phase 1 is authorised under the
+  active Automation Bus work package. FOLD_SUPPRESS for
+  signal_homocysteine_elevation_context remains the disposition; no new
+  elevation-context medical content.
 
 baseline_counts:
   compiled_active: 26
