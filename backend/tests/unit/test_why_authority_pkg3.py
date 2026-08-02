@@ -134,7 +134,18 @@ def test_bare_multi_frame_signal_fail_closed():
 
 def test_out_of_pilot_signal_still_legacy():
     mode, _ = resolve_frame_why_authority(
-        signal_id="signal_homocysteine_elevation_context",
+        signal_id="signal_thyroid_tsh_context",
         activation_key="",
     )
     assert mode == "legacy"
+
+
+def test_elevation_context_fold_suppress_skips_why():
+    """ARCH-CONV-PKGB-1: elevation-context is pilot + LEGACY_RETIRED → skip."""
+    mode, row = resolve_frame_why_authority(
+        signal_id="signal_homocysteine_elevation_context",
+        activation_key="signal_homocysteine_elevation_context::inv_elevation_context",
+    )
+    assert mode == "skip"
+    assert row is not None
+    assert row["authority_state"] == "LEGACY_RETIRED"

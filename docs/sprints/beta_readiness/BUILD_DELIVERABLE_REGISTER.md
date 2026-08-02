@@ -1445,7 +1445,42 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 - None open from ARCH-CONV-I medical design after Gate 2.
 
 ### Recommended next sprint
-- Repository-grounded Stage 0 advisory for next residual (Package B / dual-authority sequencing).
+- Repository-grounded Stage 0 advisory for next residual (Package B Wave 2 / Package C sequencing).
+
+---
+
+## ARCH-CONV-PKGB-1 — Homocysteine Dual-Authority Exclusivity and Shared Resolver Defect Closure
+
+**Status:** IMPLEMENTED — Gate 2 ratified; awaiting independent audit / merge  
+**Date closed (implementation):** 2026-08-02  
+**Programme block(s):** Architecture convergence — Package B Wave 1 (homocysteine exclusivity + bare-key resolver)  
+**Gate 1:** `ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02` (`APPROVED_WITH_NARROWING`)  
+**Gate 2:** `ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02` (`APPROVED`)  
+**Evidence:** `docs/audit-papers/ARCH-CONV-PKGB-1_implementation_and_verification_report.md`  
+**Medical decision register:** `docs/architecture/ARCH-CONV-PKGB-1_medical_decision_register.yaml`
+
+### Delivered / ticked off
+- `signal_homocysteine_elevation_context` FOLD_SUPPRESS implemented as WHY-only `LEGACY_RETIRED` skip.
+- `signal_homocysteine_high` remains sole compiled-WHY owner (content unchanged).
+- Bare-key resolver: zero-`COMPILED_ACTIVE` all-non-owning pilot families → governed `skip`.
+- Genuine ambiguity / missing governance still fail closed.
+- Five zero-compiled pilots covered: `ldl_high`, `hdl_low`, `total_cholesterol_high`, `hgb_low`, `hepatic_alt_context`.
+- HbA1c / urate stale hypothesis-ID assertions aligned.
+- Dedicated regression suite `test_arch_conv_pkgb_1_exclusivity_resolver.py`.
+- Phenotype expectations updated for elevation-context non-emit.
+- `CF-ARCH-CONV-DUAL-HCY-1` resolved.
+
+### Carry-forwards
+- Package B Wave 2 (L-04 / L-05 / L-06) remains open — product-policy blocked.
+- Package C replay / provenance / versioning remains downstream.
+- Optional later hygiene: physical retirement/disconnect of shared `hcy_hypotheses_v1.yaml` (not required for exclusivity).
+- Baseline gate still omits `test_root_cause_v1_homocysteine.py` (golden-panel heavy); disclosed in verification report.
+
+### Blockers / risks
+- None open from ARCH-CONV-PKGB-1 medical design after Gate 2.
+
+### Recommended next sprint
+- Package B Wave 2 only after L-04/L-05/L-06 product-policy decisions, or Package C sequencing per advisory.
 
 ---
 
