@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-pkgb-1-homocysteine-exclusivity-resolver-closure",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-02T10:40:07Z",
   "cursor_started_utc": "2026-08-02T10:20:03Z",
-  "head_sha": "b8777e97b002ad926d963cf53e9748b6b5f7703d",
+  "head_sha": "368fe3b6b2cb3f2715d172dec01670d791714a59",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-PKGB-1"
 }
