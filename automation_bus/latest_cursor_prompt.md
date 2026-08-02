@@ -1,304 +1,337 @@
 ---
-work_id: ARCH-CONV-PKGC-2
-title: Provenance-Identity Bare-Key Closure
-risk_level: PROVISIONAL
-change_type: MIXED
+work_id: ARCH-CONV-I-ALT-IDPROV-1
+title: Identity/Provenance Multi-Frame Test-Estate Restoration
+risk_level: STANDARD
+change_type: BEHAVIOUR
 execution_model: TWO_PHASE_START_FINISH
-branch: feature/arch-conv-pkgc-2-provenance-identity-closure
+branch: feature/arch-conv-i-alt-idprov-test-estate-restoration
 ---
 
-# ARCH-CONV-PKGC-2 — Provenance-Identity Bare-Key Closure
+# ARCH-CONV-I-ALT-IDPROV-1 — Identity/Provenance Multi-Frame Test-Estate Restoration
 
 ## Authority and operating mode
 
 Execute under:
 
 - `AUTOMATION_BUS_SOP_v1.3.1.md`
-- `KNOWLEDGE_BUS_SOP_v1.3.1.md` where applicable
 - the current Automation Bus hardening protocol
-- the current repository architecture and carry-forward governance
 - `automation_bus/latest_pipeline_advisory.md`
-- `docs/architecture/ARCH-CONV_legacy_dependency_register.md`
-- `docs/architecture/ARCH-CONV_programme_closure_record.md`
-- `docs/sprints/launch_core_carry_forward_register.md`
-- `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-- the current implementation of `output_authority_provenance_builder_v1.py`
-- the current provenance regression tests
-
-This is the second Package C work package produced by the Stage 0 bundling split.
-
-Do not absorb waist-unit remediation, full result-versioning advancement, regeneration-job work, DB-lineage-table work, compiled-WHY migration, or signal-authority redesign.
-
-## Product outcome
-
-Close `CF-ARCH-CONV-PROV-1` by:
-
-1. replacing the synthetic bare-key provenance fixture with a real evaluated authority row;
-2. adding defensive validation that rejects non-canonical provenance identity before output-authority provenance is emitted;
-3. proving all currently live activation keys are canonical and unaffected;
-4. preserving fail-closed behaviour without changing medical content or authority decisions.
-
-## Current Stage 0 finding
-
-Repository investigation previously found:
-
-- the suspect bare key `signal_homocysteine_high::inv_homocysteine_high` exists only as a synthetic test fixture;
-- it does not appear in live governance registers;
-- no known live emitter produces it;
-- `output_authority_provenance_builder_v1.py` lacks a defensive validation guard against non-canonical activation keys;
-- the risk is dormant but real.
-
-Reverify all of these facts on current `main`.
-
-## Provisional classification
-
-The Stage 0 recommendation left risk unresolved:
-
-- `HIGH` if `output_authority_provenance_builder_v1.py` is an Intelligence Core output-assembly component under Automation Bus SOP v1.3.1;
-- otherwise `STANDARD` if it is contract-adjacent DTO/provenance validation only.
-
-Do not assume either classification.
-
-# Stage 1A — Mandatory risk and boundary classification
-
-Before implementation, inspect and record:
-
-1. The full implementation of `output_authority_provenance_builder_v1.py`, all direct callers, all output DTOs/contracts it populates, and all consumers of its output.
-2. Whether it changes medical interpretation, selects or ranks hypotheses, changes signal/frame authority, changes clinical narrative, changes report inclusion, or only serialises/validates already-decided provenance.
-3. Its current architecture classification in repository documents.
-4. Whether prior sprints treated it as Intelligence Core, contract-adjacent, DTO/output assembly, or boundary code.
-5. The exact canonical activation-key contract and where it is defined.
-6. Every live source of activation keys entering the provenance builder.
-7. Every current live activation key emitted by compiled-WHY authority, legacy authority, package/signal evaluation, report compilation, and any production-modelled test fixture.
-8. Whether the suspicious bare key exists anywhere outside synthetic tests.
-9. Whether malformed keys can currently reach production output.
-10. Whether validation belongs in the provenance builder, a shared identity constructor, a registry boundary, or an earlier emitter.
-
-## Classification decision
-
-The hardening pack must conclude exactly one of:
-
-- `RISK_CLASSIFICATION: HIGH — INTELLIGENCE_CORE`
-- `RISK_CLASSIFICATION: STANDARD — CONTRACT_ADJACENT`
-
-### If HIGH
-
-STOP after Phase 0 mapping and prepare Gate 1/Gate 2 material.
-
-No runtime implementation is authorised until Gate 1 confirms the validation is mechanical only and must not alter medical authority or content, and Anthony ratifies Gate 1 exactly.
-
-### If STANDARD
-
-No medical Gate 1/Gate 2 is required, but proceed only after the hardening pack proves:
-
-- no medical interpretation changes;
-- no authority-state changes;
-- no live canonical key is rejected;
-- no output-contract shape changes except fail-closed rejection of malformed identity.
-
-# Stage 1B — Reality check
-
-Confirm on current `main` that:
-
-- the synthetic bare-key fixture still exists;
-- it is not backed by a real live evaluated authority row;
-- the provenance builder still lacks defensive canonical-key validation;
-- no live governance register contains the malformed key;
-- no live emitter currently produces it;
-- the carry-forward item remains open;
-- the sprint is not already complete.
-
-If any premise is false, STOP and re-scope.
-
-# Stage 1C — Hardening deliverables
-
-Harden `automation_bus/latest_cursor_prompt.md` and create:
-
-- `docs/architecture/ARCH-CONV-PKGC-2_hardening_pack.md`
+- `docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy(1).md`
+- `docs/architecture/ARCH-CONV-I_hardening_pack.md`
+- `docs/architecture/ARCH-CONV-I_GATE_1_GATE_2_decision.md`
+- `docs/architecture/ARCH-CONV-I_medical_decision_register.yaml`
+- `docs/audit-papers/ARCH-CONV-I_implementation_and_verification_report.md`
 - `docs/architecture/ARCH-CONV-PKGC-2_identity_contract_map.md`
-- `docs/architecture/ARCH-CONV-PKGC-2_GATE_1_GATE_2_decision.md` only if classified HIGH
+- `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+- `docs/sprints/launch_core_carry_forward_register.md`
 
-The hardening pack must include:
+This is a bounded, test-estate-only restoration sprint.
 
-- final risk classification;
-- exact canonical activation-key grammar;
-- authoritative source of that grammar;
-- all live emitters;
-- all live keys sampled or enumerated;
-- malformed-key examples;
-- exact validation boundary;
-- expected exception/failure contract;
-- fixture-replacement plan;
-- test matrix;
-- rollback plan;
-- explicit exclusions.
+Do not modify production runtime code, medical content, signal authority, compiled-WHY content, package activation, provenance runtime behaviour, result versioning, frontend behaviour or any governance register other than the two delivery/carry-forward records required for closure.
 
-# Phase 0 — Mandatory STOP conditions
+## Product/architecture outcome
 
-STOP before implementation if:
+Restore pilot-cohort-migration-safe regression coverage for:
 
-- risk is HIGH and Gate 1/Gate 2 are not recorded;
-- the canonical identity contract is not unambiguous;
-- more than one incompatible activation-key grammar exists;
-- any currently live key would be rejected by the proposed guard;
-- the suspicious bare key is actually emitted in live runtime;
-- fixing it requires authority-register or medical-content changes;
-- the correct validation boundary cannot be established;
-- the change would alter report inclusion or clinical narrative;
-- the carry-forward item is inaccurately scoped.
+- multi-frame activation identity preservation;
+- report compilation preserving multiple findings for one signal;
+- clinician-report avoidance of silent singleton collapse;
+- DTO serialisation preserving all activation keys;
+- persistence/replay round-trip fidelity;
+- deterministic ordering;
+- root-cause compiler per-frame emission;
+- package-manifest schema path robustness.
+
+Then add the repaired test file to the governed baseline suite so future Package A/B migrations cannot silently break this contract again.
+
+## Repository-verified Stage 0 findings
+
+The current carry-forward records eight failures, but Stage 0 re-verification established:
+
+- only seven tests genuinely fail for the recorded architecture reason;
+- `test_package_manifest_schema_declares_source_spec_id` passes when pytest is invoked from repository root;
+- its prior failure was caused by a working-directory-dependent relative path;
+- the seven genuine failures occur before their assertions because the test fixtures use synthetic or dynamically selected activation identities that now correctly hit the pilot-cohort fail-closed boundary;
+- no production path uses `signal_alt_high::inv_alt_high_frame_*`;
+- no production runtime defect was identified;
+- the coverage remains architecturally required;
+- the debt is fixture fragility, not obsolete test intent.
+
+## Exact scope
+
+Modify only:
+
+- `backend/tests/unit/test_arch_rt_identity_prov_1.py`
+- `backend/scripts/run_baseline_tests.py`
+- standard sprint evidence/closure documents
+- `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+- `docs/sprints/launch_core_carry_forward_register.md`
+
+No production file under `backend/core/` may change.
+
+No file under `knowledge_bus/`, `backend/ssot/` or `frontend/` may change.
+
+# Stage 1A — Mandatory preflight and reality check
+
+Before implementation:
+
+1. Confirm branch creation from current `main`.
+2. Confirm `main == origin/main`.
+3. Confirm working tree and stash state.
+4. Read `backend/tests/unit/test_arch_rt_identity_prov_1.py` in full.
+5. Re-run the file from repository root.
+6. Re-run the file from `backend/` or the exact invocation context that caused the prior false eighth failure.
+7. Confirm exactly seven genuine fail-closed failures and one path-dependent robustness issue.
+8. Confirm the seven failing tests are:
+
+   - `test_report_and_output_authority_preserve_both_frames`
+   - `test_clinician_report_retains_multi_findings_without_silent_singleton`
+   - `test_dto_serialization_preserves_multiple_frames`
+   - `test_persistence_replay_round_trip_preserves_activation_identity_and_provenance`
+   - `test_deterministic_ordering_across_repeated_executions`
+   - `test_three_or_more_simultaneous_frames`
+   - `test_root_cause_compiler_emits_finding_per_frame_for_shared_signal_id`
+
+9. Confirm `test_package_manifest_schema_declares_source_spec_id` passes from repository root.
+10. Confirm `signal_alt_high::inv_alt_high_frame_*` appears only in this test file.
+11. Confirm no production path depends on those synthetic identities.
+12. Confirm the underlying production behaviour is already correct and the failures occur only because fixture construction reaches the governed fail-closed boundary.
+
+If any of these findings differs materially, STOP and re-scope.
+
+# Stage 1B — Fixture strategy decision
+
+Choose one robust fixture-isolation strategy for the seven genuine failing tests.
+
+Permitted strategies:
+
+## Option A — Explicit synthetic non-pilot fixture isolation
+
+Use a clearly synthetic test-only signal identity, for example:
+
+`signal_test_synthetic_multiframe_v1`
+
+and ensure the test explicitly isolates it from `_PILOT_SIGNAL_IDS` for the duration of the test using the narrowest safe fixture/monkeypatch mechanism.
+
+Requirements:
+
+- no production registry entry;
+- no production authority row;
+- no production code change;
+- test-only isolation;
+- deterministic restoration after test execution;
+- no global state leakage across tests.
+
+## Option B — Explicit real non-pilot target with migration guard
+
+Use a currently non-pilot real target only if:
+
+- the target is appropriate for the test behaviour;
+- each affected test explicitly asserts the target remains outside `_PILOT_SIGNAL_IDS`;
+- failure messaging clearly states that a future pilot migration requires fixture review;
+- no current medical/authority content is relied upon beyond the mechanics under test.
+
+Do not simply hardcode another currently safe signal without a guard.
+
+## Required choice
+
+Prefer the strategy that:
+
+- is least coupled to current product rollout state;
+- cannot silently recur when more signals become piloted;
+- does not require production code or register changes;
+- keeps the original behavioural assertions intact.
+
+Record the chosen strategy and rationale in the implementation report.
 
 # Phase 1 — Implementation
 
-Proceed only after all required Phase 0 conditions are satisfied.
+## A. Repair the six multi-frame mechanics tests
 
-## A. Canonical identity validation
+Repair:
 
-Add the narrowest safe validation mechanism that ensures provenance output uses canonical activation identity.
-
-Requirements:
-
-1. Validate against the repository's existing canonical activation-key contract.
-2. Reuse an existing parser, constructor or registry helper if one exists.
-3. Do not create a second competing identity grammar.
-4. Reject malformed or bare activation keys before provenance output is emitted.
-5. Preserve valid canonical keys unchanged.
-6. Preserve deterministic output ordering and shape.
-7. Fail closed with a clear, testable error or governed omission according to the existing output contract.
-8. Do not silently rewrite malformed keys into guessed canonical identities.
-9. Do not derive missing investigation identity from signal identity alone.
-10. Do not create new authority rows or medical content.
-
-The implementation location must follow the hardening evidence. Do not force the guard into the provenance builder if a more authoritative shared boundary already exists.
-
-## B. Synthetic fixture replacement
-
-Replace the synthetic malformed fixture in the provenance test with a real evaluated authority row or repository-backed production-equivalent fixture.
+- `test_report_and_output_authority_preserve_both_frames`
+- `test_clinician_report_retains_multi_findings_without_silent_singleton`
+- `test_dto_serialization_preserves_multiple_frames`
+- `test_persistence_replay_round_trip_preserves_activation_identity_and_provenance`
+- `test_deterministic_ordering_across_repeated_executions`
+- `test_three_or_more_simultaneous_frames`
 
 Requirements:
 
-1. The replacement must use a canonical live-shaped activation key.
-2. It must exercise the actual evaluation path used in production.
-3. It must not fabricate an authority state that cannot exist.
-4. Keep a separate negative test proving malformed bare keys are rejected.
-5. Do not weaken existing assertions merely to make the new guard pass.
-6. Do not change expected medical content.
+1. Preserve the original architectural intent.
+2. Keep multi-frame identities distinct.
+3. Preserve activation-key fidelity through all exercised layers.
+4. Do not weaken assertions.
+5. Do not convert positive architecture-contract tests into negative fail-closed tests.
+6. Do not use a real governed activation key in a way that couples the test to current medical content.
+7. Ensure the fixture remains safe if future Package A/B waves add more signals to `_PILOT_SIGNAL_IDS`.
 
-## C. Carry-forward closure
+## B. Repair root-cause compiler per-frame test
 
-Close `CF-ARCH-CONV-PROV-1` only if:
+Repair:
 
-- the malformed synthetic fixture is removed or explicitly converted into a negative test;
-- canonical-key validation is live;
-- all current live keys pass;
-- malformed keys fail closed;
-- no authority or content behaviour changes;
-- all regression and architecture gates pass.
+`test_root_cause_compiler_emits_finding_per_frame_for_shared_signal_id`
+
+Requirements:
+
+1. Remove the fragile `_ROOT_CAUSE_TARGETS[0]` dynamic-selection strategy.
+2. Use the same migration-safe fixture strategy selected for the six tests above.
+3. Preserve the assertion that one root-cause finding is emitted per activation frame, not per signal ID.
+4. Do not change `root_cause_compiler_v1.py`.
+5. Do not add new production registry or authority rows.
+
+## C. Fix schema-path robustness
+
+Repair:
+
+`test_package_manifest_schema_declares_source_spec_id`
+
+Requirements:
+
+1. Replace the working-directory-dependent relative path with the existing repository-root helper already used in the same file.
+2. Ensure the test passes from:
+   - repository root;
+   - `backend/`;
+   - the baseline runner invocation.
+3. Do not change the package manifest schema.
+
+## D. Correct recorded failure count
+
+Update closure records to state:
+
+- seven genuine fail-closed fixture failures;
+- one audit-invocation path artefact;
+- no production defect.
+
+Correct the carry-forward record from eight to seven genuine failures before closing it.
+
+## E. Add to governed baseline suite
+
+After the entire test file is green:
+
+- add `backend/tests/unit/test_arch_rt_identity_prov_1.py` to `backend/scripts/run_baseline_tests.py`;
+- use the repository’s established curated-baseline invocation pattern;
+- ensure the baseline runner executes it from a stable working directory;
+- do not broaden the baseline suite beyond this file.
 
 # Explicit exclusions
 
-Do not:
+Do not modify:
 
-- modify waist-unit code or records;
-- reopen `ARCH-CONV-PKGC-1`;
-- implement `CF-ARCH-CONV-VERSION-1`;
-- build regeneration;
-- implement `CF-MEDREV2-002`;
-- change compiled-WHY or legacy authority states;
-- add or remove signal activation;
-- alter hypotheses, narratives, ranking, report inclusion or clinical wording;
-- introduce aliases between malformed and canonical keys;
-- infer an investigation ID;
-- alter package, PSI, SSOT or frontend medical logic;
-- redesign provenance output schema;
-- broaden into general identity-registry refactoring.
+- `backend/core/knowledge/why_authority_v1.py`
+- `backend/core/analytics/root_cause_compiler_v1.py`
+- `backend/core/analytics/output_authority_provenance_builder_v1.py`
+- `backend/core/knowledge/signal_result_index_v1.py`
+- any authority or governance register
+- any compiled-WHY content
+- any signal package
+- any PSI/SSOT/frontend file
+- any medical narrative, hypothesis, ranking or activation logic
+- any production identity grammar
+- any runtime fallback or fail-closed behaviour
 
-# Required tests
+Do not make real registered ALT frames pass by weakening authority enforcement.
 
-Add a focused regression suite for `ARCH-CONV-PKGC-2`.
+Do not add aliases for synthetic activation keys.
 
-At minimum prove:
+Do not retain `signal_alt_high::inv_alt_high_frame_*` as positive production-shaped fixtures.
 
-## Canonical identity
+# Required verification
 
-1. Every currently live canonical activation key passes validation.
-2. The real evaluated authority-row fixture produces expected provenance.
-3. A bare signal-only key is rejected.
-4. A signal-plus-wrong-investigation key is rejected if the contract requires registry membership.
-5. Missing activation key fails according to the existing governed contract.
-6. Unknown signal identity fails closed.
-7. Unknown investigation identity fails closed.
-8. Malformed delimiter or empty segments fail closed.
-9. Validation does not alter canonical key text.
-10. Validation is deterministic.
+## Focused test file
 
-## Provenance behaviour
+Run from repository root:
 
-11. Valid provenance output remains byte-for-byte or structurally unchanged.
-12. No medical content, authority state, ranking or report inclusion changes.
-13. Existing provenance tests remain green.
-14. The former malformed synthetic fixture cannot masquerade as a production-valid case.
-15. Negative malformed-key tests are explicit and isolated.
-16. Multiple valid rows preserve existing ordering and deduplication.
-17. Error handling does not leak partial or misleading provenance.
+```text
+pytest backend/tests/unit/test_arch_rt_identity_prov_1.py
+```
 
-## Non-regression
+Run from `backend/` using the equivalent supported invocation.
 
-18. Compiled-WHY authority gates remain green.
-19. Root-cause and report-compiler regression suites remain green.
-20. Package, PSI, SSOT and frontend state remain unchanged.
-21. Result-versioning and waist-unit behaviour remain unchanged.
-22. Architecture validation, baseline and three-layer pipeline pass.
+All tests in the file must pass under both contexts.
 
-# Verification
+## Behaviour preservation
 
-Run at minimum:
+Prove:
 
-- the new `ARCH-CONV-PKGC-2` regression suite;
-- all existing output-authority provenance tests;
-- relevant authority-registry and activation-key tests;
-- relevant report-compiler and DTO contract tests;
-- compiled-WHY authority validation;
+1. Two frames of one signal survive report compilation.
+2. Clinician output does not silently collapse multiple findings to one.
+3. DTO serialisation preserves all activation keys.
+4. Persistence/replay round-trip preserves activation identity and provenance.
+5. Ordering remains deterministic across repeated executions.
+6. Three or more simultaneous frames remain preserved.
+7. Root-cause compiler emits one finding per frame.
+8. Duplicate activation keys still fail closed.
+9. Existing passing identity/provenance tests remain unchanged in behaviour.
+10. Pilot-cohort fail-closed behaviour remains unchanged in production code.
+11. Schema test passes from both invocation roots.
+
+## Baseline inclusion
+
+Run:
+
+- the updated baseline suite;
 - architecture validation gate;
-- baseline test suite;
 - three-layer pipeline verification;
-- a repository-wide search proving the malformed key is absent from live governance/configuration and retained only in explicit negative-test context, if anywhere.
+- relevant identity/provenance regression tests;
+- relevant ARCH-CONV-I and ARCH-CONV-PKGC-2 regression suites.
 
-# STOP conditions during implementation
+Confirm the new baseline entry is exercised and not silently skipped.
+
+# STOP conditions
 
 STOP if:
 
-- risk classification changes;
-- a Gate is required but absent;
-- any live canonical key fails;
-- malformed identity exists in live production data or governance;
-- fixing the issue requires a new authority decision;
-- validation changes report inclusion or medical output;
-- the guard requires guessing missing identity;
-- more than one canonical grammar is found;
-- the change expands into PKGC-1, result versioning, regeneration or compiled-WHY;
-- unrelated regressions cannot be bounded and attributed.
+- any repair requires a production file change;
+- any authority register or compiled-WHY row must change;
+- a real registered activation key fails for a reason other than the known fixture/pilot-cohort mismatch;
+- a genuine runtime regression is discovered;
+- more than this one test file shares the same fragile fixture pattern;
+- baseline inclusion introduces unrelated instability;
+- tests can only be made green by weakening fail-closed behaviour;
+- any medical or authority decision becomes necessary;
+- any scope outside the two declared implementation files is required.
+
+If a STOP condition occurs, leave the work package `IN_PROGRESS` and report the new evidence without implementing out-of-scope remediation.
 
 # Evidence and closure
 
 Produce:
 
-- `docs/audit-papers/ARCH-CONV-PKGC-2_implementation_and_verification_report.md`
-- final `docs/architecture/ARCH-CONV-PKGC-2_hardening_pack.md`
-- final `docs/architecture/ARCH-CONV-PKGC-2_identity_contract_map.md`
-- final Gate decision record if HIGH
+- `docs/audit-papers/ARCH-CONV-I-ALT-IDPROV-1_implementation_and_verification_report.md`
 - updated `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
 - updated `docs/sprints/launch_core_carry_forward_register.md`
 
-Complete the mandatory Post-Implementation Closure Protocol before kernel finish.
+The implementation report must include:
 
-Run `python backend/scripts/run_work_package.py finish` only when:
+- pre-change seven-failure evidence;
+- explanation of the false eighth failure;
+- selected fixture-isolation strategy;
+- before/after test mapping;
+- both working-directory invocation results;
+- baseline inclusion proof;
+- confirmation of zero production-code changes;
+- confirmation that no live medical or authority behaviour changed.
+
+Close `CF-ARCH-CONV-I-ALT-IDPROV-1` only when:
+
+- all seven genuine failures are repaired;
+- the path robustness issue is fixed;
+- the complete test file passes under both invocation contexts;
+- the file is included in the governed baseline suite;
+- all required gates pass;
+- no production file changed.
+
+Complete the mandatory Post-Implementation Closure Protocol.
+
+Run kernel finish only when:
 
 - implementation is complete;
-- all required gates are satisfied;
-- all tests and architecture checks pass;
-- carry-forward closure is accurate;
-- no out-of-scope files are present;
-- repository and stash hygiene are clean.
+- required tests and gates pass;
+- the working tree is clean except for permitted kernel status handling;
+- stash state is governed;
+- no out-of-scope files are present.
 
 Do not merge.
 
