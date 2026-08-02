@@ -14,7 +14,6 @@ import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, List
-from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 BACKEND = REPO / "backend"
@@ -29,7 +28,12 @@ from core.dto.arch_conv_pkgc_1_waist_remediation_v1 import (  # noqa: E402
 
 
 def _load_env() -> None:
-    for rel in (".env", "backend/.env"):
+    """Load env files with backend/.env winning (matches alembic migrations/env.py).
+
+    A stale shell DATABASE_URL (e.g. localhost:5433/healthiq_test) must not
+    override the governed project DATABASE_URL in backend/.env.
+    """
+    for rel, override in ((".env", False), ("backend/.env", True)):
         path = REPO / rel
         if not path.is_file():
             continue
@@ -38,7 +42,10 @@ def _load_env() -> None:
             if not line or line.startswith("#") or "=" not in line:
                 continue
             key, value = line.split("=", 1)
-            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if override or key not in os.environ:
+                os.environ[key] = value
 
 
 def _load_rows_from_db() -> List[Dict[str, Any]]:

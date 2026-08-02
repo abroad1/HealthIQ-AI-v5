@@ -4,7 +4,7 @@
 **Branch:** `feature/arch-conv-pkgc-1-waist-unit-remediation`  
 **Risk / change type:** STANDARD / MIXED  
 **Data governance:** `ARCH-CONV-PKGC-1-DATA-GOV-ANTHONY-2026-08-02` (`APPROVED_WITH_CONDITIONS`)  
-**Status:** **IN_PROGRESS** — mechanism implemented and tested; **live 12-row write not executed**
+**Status:** **LIVE WRITE VERIFIED** — awaiting independent Claude audit, GPT architectural review, and Anthony merge authority
 
 ## 1. Authority
 
@@ -12,10 +12,10 @@
 |---|---|
 | Stale reason | `legacy_waist_unit_defect:used_incorrectly` |
 | Disposition (all 12) | `MARK_STALE_NO_REWRITE` |
-| Value/unit rewrite | **Forbidden** |
+| Value/unit rewrite | **Forbidden / not performed** |
 | Remap / regeneration | Deferred / out of scope |
 | Audit trail | `processing_metadata` JSON (`arch_conv_pkgc_1_waist_remediation`) |
-| Implementation authorised | `true` (with live-write conditions) |
+| Implementation authorised | `true` |
 
 ## 2. Implemented
 
@@ -26,49 +26,97 @@
 | Operator runner (dry-run default) | `backend/scripts/arch_conv_pkgc_1_waist_remediation.py` |
 | Regression suite | `backend/tests/regression/test_arch_conv_pkgc_1_waist_remediation.py` |
 
-### Stale rule behaviour
+### Env-load correction (live-write blocker)
 
-- Emits `legacy_waist_unit_defect:used_incorrectly` when:
-  - `analysis_id` is in the Anthony-approved 12-ID allowlist; or
-  - remediation stamp is present in DTO `meta`.
-- Does **not** infer from waist magnitude alone.
-- Preserves existing six LAUNCH-CORE-3 heuristics; composes via dedupe.
+Runner `_load_env` now loads `backend/.env` with override so a stale shell `DATABASE_URL` pointing at `localhost:5433/healthiq_test` cannot mask the governed project database (matches Alembic `migrations/env.py` precedence documented in `docs/ops/local-development.md`).
 
-### Remediation behaviour
+## 3. Governed database identity
 
-- Dry-run plans exact 12-ID set.
-- Write refused on unexpected IDs, missing approved IDs, missing rows, value/shape precondition mismatch, or supersession.
-- Idempotent: already-stamped rows → `ALREADY_REMEDIATED` / no-op.
-- Never rewrites questionnaire waist values/units.
+| Field | Value |
+|---|---|
+| Source of truth | `backend/.env` `DATABASE_URL` (repo-documented project Postgres) |
+| Host | `aws-0-eu-west-1.pooler.supabase.com` |
+| Port | `5432` |
+| Database | `postgres` |
+| Alembic revision | `s7_profiles_billing` |
+| Analyses count (estate) | 167 |
+| Approved IDs present | **12 / 12** |
 
-## 3. Verification
+Not used (and rejected as targets):
+
+- Process/shell `DATABASE_URL` → `localhost:5433/healthiq_test` (down; CI test DB)
+- Repo-root `.env` Supabase eu-west-2 (33 analyses; **0 / 12** approved IDs)
+- Docker Compose default `localhost:5432/healthiq` (Docker Desktop unavailable; would not contain the governed historic set)
+
+No wipe, reseed, credential bypass, or empty substitute database was used.
+
+## 4. Pre-write reverify
+
+All 12 approved IDs:
+
+- existed;
+- matched audit bare numeric waist originals;
+- had null/absent unit fields (unchanged);
+- had no prior PKGC-1 remediation stamp;
+- retained approved disposition `MARK_STALE_NO_REWRITE`.
+
+## 5. Dry-run
+
+```text
+mode: dry_run
+write_executed: false
+approved_count: 12
+unexpected_ids: []
+missing_approved_ids: []
+summary: pass_ready=12 already_remediated=0 failed=0
+fail_closed: false
+stale_reason (all): legacy_waist_unit_defect:used_incorrectly
+value_rewritten / unit_rewritten: false
+```
+
+## 6. Governed write
+
+```text
+mode: write
+write_executed: true
+complete_success: true
+timestamp_utc: 2026-08-02T13:49:15Z
+persisted_rows: 12
+fail_closed: false
+```
+
+Metadata-only updates to latest `analysis_results.processing_metadata` per analysis. Questionnaire waist values untouched.
+
+## 7. Post-write independent verification
+
+| Check | Result |
+|---|---|
+| Stamp present on all 12 | PASS |
+| Stale reason exact | `legacy_waist_unit_defect:used_incorrectly` |
+| Original waist values unchanged | PASS (77,77,77,60,67,75,78,78,78,78,76,22) |
+| Original units unchanged | PASS (still absent/null) |
+| Audit stamp work_id / decision_id | `ARCH-CONV-PKGC-1` / `ARCH-CONV-PKGC-1-DATA-GOV-ANTHONY-2026-08-02` |
+| Collateral stamps outside approved set | **0** (12 stamped result rows / 12 distinct IDs) |
+| Idempotent dry-run | `already_remediated=12`, actions `NO_OP_IDEMPOTENT` |
+
+## 8. Test / gate evidence
 
 | Check | Result |
 |---|---|
 | `test_arch_conv_pkgc_1_waist_remediation.py` | PASS |
-| `test_launch_core3_result_versioning.py` | PASS |
-| Live DB dry-run | **FAIL** — `CONNECTION_REFUSED` localhost:5433 |
-| Live write | **Not executed** |
-| 12-row remediation complete | **Not claimed** |
+| `tests/unit/test_launch_core3_result_versioning.py` | PASS |
+| `tests/integration/test_persistence_service.py` | PASS |
+| Architecture validation gate | PASS |
+| Baseline / three-layer | Executed at kernel finish (golden gate) |
+| `test_internal_uat_result_versioning_dto_contract.py` | Pre-existing fails on `missing_wave1_domain_cards` — **not** PKGC-1 attributable; no waist/remediation assertions |
 
-## 4. Outstanding execution dependency
+## 9. Carry-forward
 
-```text
-dependency: live governed DATABASE_URL reachable
-blocker: psycopg2 OperationalError connection refused (localhost:5433)
-required before closure:
-  1) reconnect live DB
-  2) dry-run against live 12 IDs
-  3) write mode only if dry-run fail_closed=false
-  4) post-write verify stamps + stale reasons
-  5) then finish / carry-forward closure
-```
+`CF-ARCH-CONV-WAIST-1` closed as **Resolved** after live write + independent verification of all 12 rows.
 
-`CF-ARCH-CONV-WAIST-1` remains **Open** until live remediation is verified.
+## 10. Explicit non-claims
 
-## 5. Explicit non-claims
-
-- Historic waist values were not rewritten.
-- The 12 governed rows were not stamped in the live database.
-- Kernel `finish` was not run.
-- Work package remains `IN_PROGRESS`.
+- Historic waist values/units were **not** rewritten.
+- Remap and regeneration were **not** invoked.
+- PKGC-2 provenance / compiled-WHY / unrelated versioning surfaces were **not** changed.
+- Branch was **not** merged by Cursor.

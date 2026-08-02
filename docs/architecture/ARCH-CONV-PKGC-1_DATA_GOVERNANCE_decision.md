@@ -5,7 +5,7 @@
 **Anthony decision recorded:** 2026-08-02  
 **Hardening pack:** `docs/architecture/ARCH-CONV-PKGC-1_hardening_pack.md`  
 **Remediation register:** `docs/architecture/ARCH-CONV-PKGC-1_data_remediation_register.yaml`  
-**Implementation status:** **AUTHORISED WITH CONDITIONS** — Phase 1 may proceed under recorded conditions
+**Implementation status:** **LIVE WRITE VERIFIED** — all 12 rows stamped; values/units unchanged; awaiting Claude/GPT audit and Anthony merge
 
 ## Decision authority
 
@@ -71,6 +71,22 @@ regeneration: deferred_out_of_scope
 
 ---
 
-## Live-write dependency
+## Live-write execution (2026-08-02)
 
-If the live database remains unavailable, Phase 1 may implement and test the stale-detection and remediation mechanism, but must **not** execute the governed data write or claim the 12-row remediation complete. Work package remains `IN_PROGRESS` until live write verification succeeds or is explicitly re-scoped.
+```text
+live_write_status: EXECUTED_AND_VERIFIED
+timestamp_utc: 2026-08-02T13:49:15Z
+database: backend/.env project Postgres (aws-0-eu-west-1.pooler.supabase.com:5432/postgres)
+alembic_version: s7_profiles_billing
+rows_stamped: 12 / 12
+disposition: MARK_STALE_NO_REWRITE
+stale_reason: legacy_waist_unit_defect:used_incorrectly
+value_rewritten: false
+unit_rewritten: false
+collateral_stamps_outside_approved_set: 0
+idempotent_dry_run: already_remediated=12 / NO_OP_IDEMPOTENT
+carry_forward: CF-ARCH-CONV-WAIST-1 Resolved
+```
+
+All Anthony conditions for live write were satisfied before `--write`. See
+`docs/audit-papers/ARCH-CONV-PKGC-1_implementation_and_verification_report.md`.

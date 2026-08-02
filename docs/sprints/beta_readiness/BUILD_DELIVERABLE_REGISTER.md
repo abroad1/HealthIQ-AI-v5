@@ -1485,6 +1485,38 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ---
 
+## ARCH-CONV-PKGC-1 — Historic Waist-Unit Stale-Detection and Remediation
+
+**Status:** COMPLETE on branch — awaiting Claude audit, GPT architectural review, Anthony merge  
+**Date closed (implementation):** 2026-08-02  
+**Programme block(s):** Architecture convergence — Package C Wave 1 (waist stale-detection + historic remediation)  
+**Data governance:** `ARCH-CONV-PKGC-1-DATA-GOV-ANTHONY-2026-08-02` (`APPROVED_WITH_CONDITIONS`)  
+**Branch:** `feature/arch-conv-pkgc-1-waist-unit-remediation`  
+**Evidence:** `docs/audit-papers/ARCH-CONV-PKGC-1_implementation_and_verification_report.md`  
+**Remediation register:** `docs/architecture/ARCH-CONV-PKGC-1_data_remediation_register.yaml`
+
+### Delivered / ticked off
+- LAUNCH-CORE-3 stale rule `legacy_waist_unit_defect:used_incorrectly` (allowlist + remediation stamp).
+- Governed MARK_STALE_NO_REWRITE planner/runner (dry-run default; `--write` gated).
+- Live re-verify + dry-run + write of exactly the Anthony-approved 12 analysis IDs.
+- Original waist values and units preserved; audit stamp in `processing_metadata`.
+- Idempotent post-write dry-run (`ALREADY_REMEDIATED` / `NO_OP_IDEMPOTENT` × 12).
+- Collateral stamp check: 0 unexpected analysis IDs.
+- `CF-ARCH-CONV-WAIST-1` resolved.
+
+### Carry-forwards
+- Package C provenance-identity (`CF-ARCH-CONV-PROV-1` / PKGC-2) remains open.
+- Result-versioning regeneration advancement (`CF-ARCH-CONV-VERSION-1`) remains open.
+- Governed waist remap / regeneration remain deferred.
+
+### Blockers / risks
+- None open for the Anthony-approved 12-row MARK_STALE_NO_REWRITE disposition.
+
+### Recommended next sprint
+- Package C Wave 2 provenance-identity / versioning per advisory, or Package B Wave 2 after product-policy decisions.
+
+---
+
 ## Continuity audit — ARCH-CONV-E / E2 / E3 (2026-08-01)
 
 Documentation-only post-merge reconciliation. Sources: committed implementation evidence, medical decision registers, Gate 2 ratification docs, merge state on `main` (`6ccbf3f` / aligned `origin/main`). No runtime, package medical content, tests, or governance decisions changed by this audit.

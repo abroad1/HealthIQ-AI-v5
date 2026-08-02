@@ -1,10 +1,9 @@
 {
-  "branch": "feature/arch-conv-pkgb-1-homocysteine-exclusivity-resolver-closure",
+  "branch": "feature/arch-conv-pkgc-1-waist-unit-remediation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-08-02T10:40:07Z",
-  "cursor_started_utc": "2026-08-02T10:20:03Z",
-  "head_sha": "368fe3b6b2cb3f2715d172dec01670d791714a59",
+  "cursor_started_utc": "2026-08-02T12:30:27Z",
+  "head_sha": "9ae8a9ebb14689388cefc2fc7b25c79de979732c",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-CONV-PKGB-1"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-CONV-PKGC-1"
 }
