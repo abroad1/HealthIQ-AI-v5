@@ -106,6 +106,7 @@ def test_index_preserves_two_activation_keys():
 def test_duplicate_activation_key_fails_closed():
     rows = _two_frames()
     rows[1]["activation_key"] = rows[0]["activation_key"]
+    rows[1]["source_spec_id"] = rows[0]["source_spec_id"]
     with pytest.raises(ValueError, match="Duplicate activation_key"):
         index_by_activation_key(rows, require_key=True)
 

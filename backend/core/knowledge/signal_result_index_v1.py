@@ -8,15 +8,60 @@ from __future__ import annotations
 
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
+ACTIVATION_KEY_SEP = "::"
+
+# Historic non-frame stub retained only as an explicit fail-closed denylist entry
+# (CF-ARCH-CONV-PROV-1 / ARCH-CONV-PKGC-2). Not a general registry membership check.
+FORBIDDEN_NON_FRAME_ACTIVATION_KEYS = frozenset(
+    {
+        "signal_homocysteine_high::inv_homocysteine_high",
+    }
+)
+
+
+def parse_activation_key(activation_key: str) -> Tuple[str, str]:
+    """Parse canonical activation_key form. Fail closed on malformed identity."""
+    key = str(activation_key or "").strip()
+    if not key:
+        raise ValueError("activation_key is empty")
+    if key in FORBIDDEN_NON_FRAME_ACTIVATION_KEYS:
+        raise ValueError(
+            f"non-frame activation_key is forbidden: {key}"
+        )
+    parts = key.split(ACTIVATION_KEY_SEP)
+    if len(parts) != 2:
+        raise ValueError(
+            "activation_key must be exactly signal_id::source_spec_id "
+            f"(got {key!r})"
+        )
+    signal_id, source_spec_id = parts[0].strip(), parts[1].strip()
+    if not signal_id or not source_spec_id:
+        raise ValueError(
+            "activation_key segments must be non-empty "
+            f"(got {key!r})"
+        )
+    return signal_id, source_spec_id
+
 
 def require_activation_key(row: Dict[str, Any]) -> str:
     key = str(row.get("activation_key") or "").strip()
-    if key:
-        return key
     signal_id = str(row.get("signal_id") or "").strip()
     source_spec_id = str(row.get("source_spec_id") or "").strip()
+    if key:
+        parsed_signal_id, parsed_spec_id = parse_activation_key(key)
+        if signal_id and parsed_signal_id != signal_id:
+            raise ValueError(
+                "activation_key signal_id mismatch: "
+                f"key={key!r} signal_id={signal_id!r}"
+            )
+        if source_spec_id and parsed_spec_id != source_spec_id:
+            raise ValueError(
+                "activation_key source_spec_id mismatch: "
+                f"key={key!r} source_spec_id={source_spec_id!r}"
+            )
+        return key
     if signal_id and source_spec_id:
-        return f"{signal_id}::{source_spec_id}"
+        return f"{signal_id}{ACTIVATION_KEY_SEP}{source_spec_id}"
     raise ValueError(
         "signal result missing activation_key (and cannot reconstruct from signal_id::source_spec_id)"
     )

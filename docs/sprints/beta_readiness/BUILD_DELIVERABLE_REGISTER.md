@@ -1517,6 +1517,36 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ---
 
+## ARCH-CONV-PKGC-2 — Provenance-Identity Bare-Key Closure
+
+**Status:** COMPLETE on branch — awaiting Claude audit, GPT architectural review, Anthony merge  
+**Date closed (implementation):** 2026-08-02  
+**Programme block(s):** Architecture convergence — Package C Wave 2 (provenance identity)  
+**Risk:** STANDARD — CONTRACT_ADJACENT (Stage 1A confirmed)  
+**Branch:** `feature/arch-conv-pkgc-2-provenance-identity-closure`  
+**Evidence:** `docs/audit-papers/ARCH-CONV-PKGC-2_implementation_and_verification_report.md`  
+**Hardening pack:** `docs/architecture/ARCH-CONV-PKGC-2_hardening_pack.md`
+
+### Delivered / ticked off
+- Stage 1A classification: provenance builder additive; one activation-key grammar; compiler quarantine filter distinct.
+- Shared `require_activation_key` / `parse_activation_key` form validation + historic non-frame denylist.
+- Provenance builder fail-closed on claimed malformed/non-frame keys (no silent rewrite).
+- Synthetic truncated HCY positive fixture replaced with real evaluated canonical row.
+- Truncated key retained only as explicit negative test.
+- `CF-ARCH-CONV-PROV-1` resolved.
+
+### Carry-forwards
+- `CF-ARCH-CONV-VERSION-1` remains open (result-versioning / regeneration).
+- `CF-ARCH-CONV-I-ALT-IDPROV-1` opened — eight pre-existing `test_arch_rt_identity_prov_1` failures on obsolete synthetic `signal_alt_high::inv_alt_high_frame_*` fixtures (ARCH-CONV-I boundary); not attributable to PKGC-2; separate scoping required.
+
+### Blockers / risks
+- None open for the STANDARD provenance-identity closure.
+
+### Recommended next sprint
+- Package C versioning / regeneration (`CF-ARCH-CONV-VERSION-1`) or Package B Wave 2 after product-policy decisions.
+
+---
+
 ## Continuity audit — ARCH-CONV-E / E2 / E3 (2026-08-01)
 
 Documentation-only post-merge reconciliation. Sources: committed implementation evidence, medical decision registers, Gate 2 ratification docs, merge state on `main` (`6ccbf3f` / aligned `origin/main`). No runtime, package medical content, tests, or governance decisions changed by this audit.

@@ -1,374 +1,304 @@
 ---
-work_id: ARCH-CONV-PKGC-1
-title: Historic Waist-Unit Stale-Detection and Remediation
-risk_level: STANDARD
+work_id: ARCH-CONV-PKGC-2
+title: Provenance-Identity Bare-Key Closure
+risk_level: PROVISIONAL
 change_type: MIXED
 execution_model: TWO_PHASE_START_FINISH
-branch: feature/arch-conv-pkgc-1-waist-unit-remediation
+branch: feature/arch-conv-pkgc-2-provenance-identity-closure
 ---
 
-# ARCH-CONV-PKGC-1 — Historic Waist-Unit Stale-Detection and Remediation
+# ARCH-CONV-PKGC-2 — Provenance-Identity Bare-Key Closure
 
 ## Authority and operating mode
 
 Execute under:
 
 - `AUTOMATION_BUS_SOP_v1.3.1.md`
+- `KNOWLEDGE_BUS_SOP_v1.3.1.md` where applicable
 - the current Automation Bus hardening protocol
 - the current repository architecture and carry-forward governance
-- the locked LAUNCH-CORE-3 result-versioning, replay and regeneration policy
-- `docs/audit-papers/WAIST_UNIT_LEGACY_IMPACT_AUDIT.md`
 - `automation_bus/latest_pipeline_advisory.md`
+- `docs/architecture/ARCH-CONV_legacy_dependency_register.md`
+- `docs/architecture/ARCH-CONV_programme_closure_record.md`
+- `docs/sprints/launch_core_carry_forward_register.md`
+- `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+- the current implementation of `output_authority_provenance_builder_v1.py`
+- the current provenance regression tests
 
-This is a bounded Package C Wave 1 work package.
+This is the second Package C work package produced by the Stage 0 bundling split.
 
-Do not absorb `ARCH-CONV-PKGC-2` provenance-identity work, full result-versioning advancement, or the deferred regeneration job.
+Do not absorb waist-unit remediation, full result-versioning advancement, regeneration-job work, DB-lineage-table work, compiled-WHY migration, or signal-authority redesign.
 
 ## Product outcome
 
-Close `CF-ARCH-CONV-WAIST-1` by:
+Close `CF-ARCH-CONV-PROV-1` by:
 
-1. adding the missing waist-unit stale-detection rule to the existing LAUNCH-CORE-3 stale-detection framework;
-2. applying a governed, auditable disposition to the 12 analysis IDs identified in `WAIST_UNIT_LEGACY_IMPACT_AUDIT.md`;
-3. preserving original historic values and sufficient lineage to explain every remediation action;
-4. proving that unaffected results remain unchanged.
+1. replacing the synthetic bare-key provenance fixture with a real evaluated authority row;
+2. adding defensive validation that rejects non-canonical provenance identity before output-authority provenance is emitted;
+3. proving all currently live activation keys are canonical and unaffected;
+4. preserving fail-closed behaviour without changing medical content or authority decisions.
 
-## Current Stage 0 decision
+## Current Stage 0 finding
 
-The work has been separated from provenance-identity closure because the two outcomes do not share implementation, testing, rollback or acceptance boundaries.
+Repository investigation previously found:
 
-This sprint covers waist-unit stale detection and historic-row remediation only.
+- the suspect bare key `signal_homocysteine_high::inv_homocysteine_high` exists only as a synthetic test fixture;
+- it does not appear in live governance registers;
+- no known live emitter produces it;
+- `output_authority_provenance_builder_v1.py` lacks a defensive validation guard against non-canonical activation keys;
+- the risk is dormant but real.
 
-Expected classification:
+Reverify all of these facts on current `main`.
 
-```yaml
-risk_level: STANDARD
-change_type: MIXED
-```
+## Provisional classification
 
-- `BEHAVIOUR`: one new stale-detection rule.
-- `DATA`: governed treatment of the 12 historic analysis rows.
+The Stage 0 recommendation left risk unresolved:
 
-If repository mapping shows that the changed runtime path qualifies as Intelligence Core under Automation Bus SOP v1.3.1, STOP and reclassify to `HIGH` before implementation.
+- `HIGH` if `output_authority_provenance_builder_v1.py` is an Intelligence Core output-assembly component under Automation Bus SOP v1.3.1;
+- otherwise `STANDARD` if it is contract-adjacent DTO/provenance validation only.
 
-No medical-content Gate 1 or Gate 2 is expected.
+Do not assume either classification.
 
-A separate Anthony data-governance decision is mandatory before any historic row is changed.
+# Stage 1A — Mandatory risk and boundary classification
 
-# Stage 1A — Repository and authority preflight
+Before implementation, inspect and record:
 
-Before kernel start or implementation, verify and record:
+1. The full implementation of `output_authority_provenance_builder_v1.py`, all direct callers, all output DTOs/contracts it populates, and all consumers of its output.
+2. Whether it changes medical interpretation, selects or ranks hypotheses, changes signal/frame authority, changes clinical narrative, changes report inclusion, or only serialises/validates already-decided provenance.
+3. Its current architecture classification in repository documents.
+4. Whether prior sprints treated it as Intelligence Core, contract-adjacent, DTO/output assembly, or boundary code.
+5. The exact canonical activation-key contract and where it is defined.
+6. Every live source of activation keys entering the provenance builder.
+7. Every current live activation key emitted by compiled-WHY authority, legacy authority, package/signal evaluation, report compilation, and any production-modelled test fixture.
+8. Whether the suspicious bare key exists anywhere outside synthetic tests.
+9. Whether malformed keys can currently reach production output.
+10. Whether validation belongs in the provenance builder, a shared identity constructor, a registry boundary, or an earlier emitter.
 
-1. The exact current branch and `main == origin/main` state.
-2. Working-tree and stash state.
-3. The current status of `CF-ARCH-CONV-WAIST-1`.
-4. The full 12-row affected set from:
-   - `docs/audit-papers/WAIST_UNIT_LEGACY_IMPACT_AUDIT.md`
-5. For each affected analysis ID:
-   - current persisted value;
-   - current unit or unit provenance;
-   - current result-version metadata;
-   - current stale state;
-   - source record or lineage evidence;
-   - audit classification;
-   - repository-supported remediation options.
-6. The locked LAUNCH-CORE-3 stale-detection policy and all existing stale-reason rules.
-7. The implementation and callers of `detect_launch_core_stale_reasons()`.
-8. Every reader, writer, replay path and report path that consumes the affected historic records.
-9. Whether any of the 12 rows has already been remediated, deleted, superseded or regenerated.
-10. Whether the current schema can preserve:
-    - original value;
-    - original unit;
-    - remediation action;
-    - reason;
-    - timestamp;
-    - actor/work ID;
-    - reversibility or supersession linkage.
-11. Whether the audit's recommended governed-remap/stale-mark treatment can be completed without:
-    - the unbuilt regeneration job;
-    - `CF-MEDREV2-002`;
-    - a DB lineage-table change;
-    - result-versioning redesign.
-12. Current tests covering:
-    - stale-reason detection;
-    - launch-core versioning;
-    - replay/regeneration;
-    - data repair or migration;
-    - historic-result rendering.
+## Classification decision
 
-Use exact paths and line references in the hardening/evidence pack.
+The hardening pack must conclude exactly one of:
 
-## Stage 1A classification check
+- `RISK_CLASSIFICATION: HIGH — INTELLIGENCE_CORE`
+- `RISK_CLASSIFICATION: STANDARD — CONTRACT_ADJACENT`
 
-Explicitly answer:
+### If HIGH
 
-- Does `detect_launch_core_stale_reasons()` alter medical reasoning, ranking, interpretation or output construction?
-- Is it an Intelligence Core component under Automation Bus SOP §3?
-- Does this sprint remain `STANDARD`, or must it be `HIGH`?
+STOP after Phase 0 mapping and prepare Gate 1/Gate 2 material.
 
-Do not rely on the Stage 0 assumption. Record the repository-backed answer.
+No runtime implementation is authorised until Gate 1 confirms the validation is mechanical only and must not alter medical authority or content, and Anthony ratifies Gate 1 exactly.
+
+### If STANDARD
+
+No medical Gate 1/Gate 2 is required, but proceed only after the hardening pack proves:
+
+- no medical interpretation changes;
+- no authority-state changes;
+- no live canonical key is rejected;
+- no output-contract shape changes except fail-closed rejection of malformed identity.
 
 # Stage 1B — Reality check
 
-Confirm that:
+Confirm on current `main` that:
 
-- all 12 audit-listed analysis IDs still exist or have an explicitly traceable successor state;
-- each still has the waist-unit legacy defect described by the audit, unless already governed as remediated;
-- the stale-detection framework still lacks a waist-unit rule;
-- the existing framework can represent the required stale reason without redesign;
-- the remediation does not require regeneration;
-- no correct historic value needs to be guessed or reconstructed from insufficient evidence;
-- this is not a no-op sprint.
+- the synthetic bare-key fixture still exists;
+- it is not backed by a real live evaluated authority row;
+- the provenance builder still lacks defensive canonical-key validation;
+- no live governance register contains the malformed key;
+- no live emitter currently produces it;
+- the carry-forward item remains open;
+- the sprint is not already complete.
 
-If any core premise is false, STOP and re-scope.
+If any premise is false, STOP and re-scope.
 
 # Stage 1C — Hardening deliverables
 
-Harden `automation_bus/latest_cursor_prompt.md` and produce the standard evidence checklist.
+Harden `automation_bus/latest_cursor_prompt.md` and create:
+
+- `docs/architecture/ARCH-CONV-PKGC-2_hardening_pack.md`
+- `docs/architecture/ARCH-CONV-PKGC-2_identity_contract_map.md`
+- `docs/architecture/ARCH-CONV-PKGC-2_GATE_1_GATE_2_decision.md` only if classified HIGH
 
 The hardening pack must include:
 
-- exact affected-code surface;
-- exact affected-data surface;
-- row-by-row evidence table;
-- risk classification decision;
-- proposed stale-reason identifier and semantics;
-- proposed row disposition for all 12 IDs;
-- rollback/reversal design;
-- idempotency design;
-- acceptance-test matrix;
-- explicit exclusion proof for PKGC-2, compiled-WHY and full result versioning.
+- final risk classification;
+- exact canonical activation-key grammar;
+- authoritative source of that grammar;
+- all live emitters;
+- all live keys sampled or enumerated;
+- malformed-key examples;
+- exact validation boundary;
+- expected exception/failure contract;
+- fixture-replacement plan;
+- test matrix;
+- rollback plan;
+- explicit exclusions.
 
-# Phase 0 — Mandatory data-governance STOP
+# Phase 0 — Mandatory STOP conditions
 
-After mapping and before any historic-row mutation, create and commit:
+STOP before implementation if:
 
-- `docs/architecture/ARCH-CONV-PKGC-1_hardening_pack.md`
-- `docs/architecture/ARCH-CONV-PKGC-1_data_remediation_register.yaml`
-- `docs/architecture/ARCH-CONV-PKGC-1_DATA_GOVERNANCE_decision.md`
+- risk is HIGH and Gate 1/Gate 2 are not recorded;
+- the canonical identity contract is not unambiguous;
+- more than one incompatible activation-key grammar exists;
+- any currently live key would be rejected by the proposed guard;
+- the suspicious bare key is actually emitted in live runtime;
+- fixing it requires authority-register or medical-content changes;
+- the correct validation boundary cannot be established;
+- the change would alter report inclusion or clinical narrative;
+- the carry-forward item is inaccurately scoped.
 
-The data-remediation register must contain one entry for each of the 12 analysis IDs with:
+# Phase 1 — Implementation
 
-```yaml
-analysis_id:
-audit_classification:
-current_value:
-current_unit:
-source_or_lineage_evidence:
-proposed_disposition:
-proposed_corrected_value:
-proposed_corrected_unit:
-stale_reason:
-original_preserved:
-reversible:
-rationale:
-confidence:
-implementation_authorised: false
-```
+Proceed only after all required Phase 0 conditions are satisfied.
 
-Permitted proposed dispositions are limited to repository-supported treatments, for example:
+## A. Canonical identity validation
 
-- `GOVERNED_REMAP`
-- `MARK_STALE_NO_REWRITE`
-- `ALREADY_REMEDIATED_NO_ACTION`
-- `BLOCKED_AMBIGUOUS`
-
-Do not invent a disposition merely to make all 12 rows actionable.
-
-## Required Anthony decision
-
-Anthony must approve the complete row-by-row remediation register, including:
-
-- the treatment selected for every analysis ID;
-- whether a persisted value may be rewritten;
-- whether a row must instead be marked stale without rewriting;
-- the audit-trail and reversibility mechanism;
-- any blocked or ambiguous rows;
-- confirmation that no inferred historic value is authorised.
-
-## Mandatory STOP
-
-After committing Phase 0:
-
-- STOP.
-- Keep the work package `IN_PROGRESS`.
-- Do not add the stale-detection rule.
-- Do not mutate any historic analysis row.
-- Do not run a remediation script in write mode.
-- Do not invoke or build regeneration.
-- Do not touch provenance-identity code.
-- Report the exact data-governance decision required.
-
-# Phase 1 — Implementation after data-governance approval only
-
-Proceed only after Anthony's decision is recorded on disk and `implementation_authorised: true`.
-
-## A. Waist-unit stale-detection rule
-
-Add one narrowly bounded rule to the existing `detect_launch_core_stale_reasons()` framework.
+Add the narrowest safe validation mechanism that ensures provenance output uses canonical activation identity.
 
 Requirements:
 
-1. Use the existing stale-reason contract and return shape.
-2. Detect only the proven waist-unit legacy defect.
-3. Use canonical, deterministic evidence available in the persisted result and its version/lineage metadata.
-4. Do not infer a defect solely from a surprising waist value.
-5. Do not classify records stale where the unit and provenance are valid.
-6. Produce a stable, named stale-reason identifier.
-7. Preserve all six existing rules and their ordering/semantics unless the governing policy requires otherwise.
-8. Do not create a parallel stale-detection engine.
-9. Do not trigger regeneration.
-10. Repeated evaluation must be deterministic.
+1. Validate against the repository's existing canonical activation-key contract.
+2. Reuse an existing parser, constructor or registry helper if one exists.
+3. Do not create a second competing identity grammar.
+4. Reject malformed or bare activation keys before provenance output is emitted.
+5. Preserve valid canonical keys unchanged.
+6. Preserve deterministic output ordering and shape.
+7. Fail closed with a clear, testable error or governed omission according to the existing output contract.
+8. Do not silently rewrite malformed keys into guessed canonical identities.
+9. Do not derive missing investigation identity from signal identity alone.
+10. Do not create new authority rows or medical content.
 
-The exact rule must be derived from the audit and repository evidence, not from assumptions in this prompt.
+The implementation location must follow the hardening evidence. Do not force the guard into the provenance builder if a more authoritative shared boundary already exists.
 
-## B. Historic-row remediation
+## B. Synthetic fixture replacement
 
-Implement the approved row-by-row dispositions for the 12 analysis IDs.
+Replace the synthetic malformed fixture in the provenance test with a real evaluated authority row or repository-backed production-equivalent fixture.
 
 Requirements:
 
-1. Apply exactly the approved action for each row.
-2. Preserve original values and units through the repository's existing audit, supersession or lineage mechanism.
-3. Never overwrite a row where the approved disposition is `MARK_STALE_NO_REWRITE`.
-4. Never touch a row marked `BLOCKED_AMBIGUOUS`.
-5. Do not infer missing conversion context.
-6. Ensure remediation is idempotent.
-7. Ensure a dry-run mode produces the exact intended change set before write mode.
-8. Ensure write mode refuses to run if:
-   - the target row no longer matches its approved precondition;
-   - the affected-set count differs unexpectedly;
-   - an unknown analysis ID appears;
-   - the operation would affect rows outside the approved 12;
-   - audit-trail persistence fails.
-9. Produce a machine-readable remediation output showing:
-   - analysis ID;
-   - precondition result;
-   - action;
-   - before state;
-   - after state;
-   - stale reason;
-   - audit reference;
-   - success/failure.
-10. Do not claim all 12 were remediated if any remain blocked or no-action.
+1. The replacement must use a canonical live-shaped activation key.
+2. It must exercise the actual evaluation path used in production.
+3. It must not fabricate an authority state that cannot exist.
+4. Keep a separate negative test proving malformed bare keys are rejected.
+5. Do not weaken existing assertions merely to make the new guard pass.
+6. Do not change expected medical content.
 
-Prefer the repository's established migration/remediation mechanism. Do not introduce ad hoc direct database mutation if a governed mechanism exists.
+## C. Carry-forward closure
+
+Close `CF-ARCH-CONV-PROV-1` only if:
+
+- the malformed synthetic fixture is removed or explicitly converted into a negative test;
+- canonical-key validation is live;
+- all current live keys pass;
+- malformed keys fail closed;
+- no authority or content behaviour changes;
+- all regression and architecture gates pass.
 
 # Explicit exclusions
 
 Do not:
 
-- modify `output_authority_provenance_builder_v1.py`;
-- modify `test_output_authority_provenance.py` for PKGC-2;
-- implement provenance activation-key validation;
-- advance `CF-ARCH-CONV-PROV-1`;
-- advance `CF-ARCH-CONV-VERSION-1`;
-- build or invoke the deferred regeneration job;
+- modify waist-unit code or records;
+- reopen `ARCH-CONV-PKGC-1`;
+- implement `CF-ARCH-CONV-VERSION-1`;
+- build regeneration;
 - implement `CF-MEDREV2-002`;
-- redesign result versioning, replay or lineage;
-- touch compiled-WHY authority, root-cause authority or medical content;
-- touch signal activation, packages, PSI, SSOT or frontend medical logic;
-- change waist thresholds or clinical interpretation;
-- infer historic measurements from demographics, later results or current values;
-- broaden remediation beyond the 12 governed analysis IDs;
-- combine this work with `ARCH-CONV-PKGC-2`.
+- change compiled-WHY or legacy authority states;
+- add or remove signal activation;
+- alter hypotheses, narratives, ranking, report inclusion or clinical wording;
+- introduce aliases between malformed and canonical keys;
+- infer an investigation ID;
+- alter package, PSI, SSOT or frontend medical logic;
+- redesign provenance output schema;
+- broaden into general identity-registry refactoring.
 
 # Required tests
 
-Add a focused regression suite for `ARCH-CONV-PKGC-1`.
+Add a focused regression suite for `ARCH-CONV-PKGC-2`.
 
 At minimum prove:
 
-## Stale-detection behaviour
+## Canonical identity
 
-1. Every governed affected record shape receives the new waist-unit stale reason.
-2. Correct centimetre records are not marked stale.
-3. Correct inch records with valid provenance are not marked stale.
-4. Records without sufficient proof of the legacy defect are not automatically rewritten.
-5. Existing stale-detection rules remain unchanged.
-6. Multiple applicable stale reasons compose according to the locked policy.
-7. Repeated detection is deterministic.
+1. Every currently live canonical activation key passes validation.
+2. The real evaluated authority-row fixture produces expected provenance.
+3. A bare signal-only key is rejected.
+4. A signal-plus-wrong-investigation key is rejected if the contract requires registry membership.
+5. Missing activation key fails according to the existing governed contract.
+6. Unknown signal identity fails closed.
+7. Unknown investigation identity fails closed.
+8. Malformed delimiter or empty segments fail closed.
+9. Validation does not alter canonical key text.
+10. Validation is deterministic.
 
-## Remediation behaviour
+## Provenance behaviour
 
-8. Dry-run identifies exactly the approved affected rows.
-9. Each of the 12 analysis IDs receives exactly its approved disposition.
-10. No unapproved row is mutated.
-11. Governed remaps preserve original value/unit and audit lineage.
-12. Stale-only rows are not rewritten.
-13. Blocked rows remain untouched and are reported.
-14. Re-running remediation creates no additional mutation.
-15. Changed preconditions cause a fail-closed refusal.
-16. Partial failure cannot be reported as complete success.
-17. Rollback or supersession behaviour works as designed.
+11. Valid provenance output remains byte-for-byte or structurally unchanged.
+12. No medical content, authority state, ranking or report inclusion changes.
+13. Existing provenance tests remain green.
+14. The former malformed synthetic fixture cannot masquerade as a production-valid case.
+15. Negative malformed-key tests are explicit and isolated.
+16. Multiple valid rows preserve existing ordering and deduplication.
+17. Error handling does not leak partial or misleading provenance.
 
 ## Non-regression
 
-18. Result-versioning rules 1–6 remain unchanged.
-19. Replay behaviour remains unchanged except for the approved stale classification.
-20. No regeneration job is called.
-21. No provenance-identity behaviour changes.
-22. No compiled-WHY, package, PSI, SSOT or frontend drift occurs.
-23. Architecture and baseline gates remain green.
+18. Compiled-WHY authority gates remain green.
+19. Root-cause and report-compiler regression suites remain green.
+20. Package, PSI, SSOT and frontend state remain unchanged.
+21. Result-versioning and waist-unit behaviour remain unchanged.
+22. Architecture validation, baseline and three-layer pipeline pass.
 
 # Verification
 
 Run at minimum:
 
-- the new focused regression suite;
-- all existing launch-core stale-detection tests;
-- all relevant result-versioning and replay tests;
-- relevant persistence/data-remediation tests;
+- the new `ARCH-CONV-PKGC-2` regression suite;
+- all existing output-authority provenance tests;
+- relevant authority-registry and activation-key tests;
+- relevant report-compiler and DTO contract tests;
+- compiled-WHY authority validation;
 - architecture validation gate;
 - baseline test suite;
 - three-layer pipeline verification;
-- any database/migration validation required by the actual implementation;
-- a dry-run against the governed 12-row set;
-- a post-write verification proving exact approved outcomes, if the repository test environment supports governed write execution.
-
-Do not use production data or an uncontrolled live database.
+- a repository-wide search proving the malformed key is absent from live governance/configuration and retained only in explicit negative-test context, if anywhere.
 
 # STOP conditions during implementation
 
 STOP if:
 
-- repository evidence raises risk to `HIGH` and the work package has not been re-hardened;
-- Anthony's data-governance approval is absent, incomplete or differs from the implementation;
-- any row's correct disposition is ambiguous beyond the audit;
-- any corrected value would need to be inferred;
-- remediation requires the unbuilt regeneration job;
-- the schema cannot preserve the required audit trail;
-- the stale rule produces false positives on valid records;
-- the affected set differs from the approved register;
-- implementation touches PKGC-2, provenance, compiled-WHY or medical content;
-- result-versioning redesign is required;
-- a write cannot be made idempotent and fail-closed;
+- risk classification changes;
+- a Gate is required but absent;
+- any live canonical key fails;
+- malformed identity exists in live production data or governance;
+- fixing the issue requires a new authority decision;
+- validation changes report inclusion or medical output;
+- the guard requires guessing missing identity;
+- more than one canonical grammar is found;
+- the change expands into PKGC-1, result versioning, regeneration or compiled-WHY;
 - unrelated regressions cannot be bounded and attributed.
 
 # Evidence and closure
 
 Produce:
 
-- `docs/audit-papers/ARCH-CONV-PKGC-1_implementation_and_verification_report.md`
-- final `docs/architecture/ARCH-CONV-PKGC-1_data_remediation_register.yaml`
-- final `docs/architecture/ARCH-CONV-PKGC-1_DATA_GOVERNANCE_decision.md`
+- `docs/audit-papers/ARCH-CONV-PKGC-2_implementation_and_verification_report.md`
+- final `docs/architecture/ARCH-CONV-PKGC-2_hardening_pack.md`
+- final `docs/architecture/ARCH-CONV-PKGC-2_identity_contract_map.md`
+- final Gate decision record if HIGH
 - updated `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
 - updated `docs/sprints/launch_core_carry_forward_register.md`
-
-Close only the carry-forward obligation actually resolved.
-
-If any of the 12 rows remains blocked, record that explicitly and do not mark the carry-forward item fully resolved unless its governing definition permits partial closure.
 
 Complete the mandatory Post-Implementation Closure Protocol before kernel finish.
 
 Run `python backend/scripts/run_work_package.py finish` only when:
 
 - implementation is complete;
-- approved data actions are verified;
-- all required tests and gates pass;
-- the branch is clean except for permitted kernel-owned status handling;
-- no out-of-scope or tooling files are present;
-- stash state is governed and empty unless explicitly authorised.
+- all required gates are satisfied;
+- all tests and architecture checks pass;
+- carry-forward closure is accurate;
+- no out-of-scope files are present;
+- repository and stash hygiene are clean.
 
 Do not merge.
 
