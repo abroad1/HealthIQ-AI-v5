@@ -17,6 +17,8 @@ arch_conv_g_gate1_reference: ARCH-CONV-G-GATE1-HMR-2026-08-01
 arch_conv_g_gate2_reference: ARCH-CONV-G-GATE2-ANTHONY-2026-08-01
 arch_conv_h_gate1_reference: ARCH-CONV-H-GATE1-HMR-2026-08-01
 arch_conv_h_gate2_reference: ARCH-CONV-H-GATE2-ANTHONY-2026-08-01
+arch_conv_i_gate1_reference: ARCH-CONV-I-GATE1-HMR-2026-08-02
+arch_conv_i_gate2_reference: ARCH-CONV-I-GATE2-ANTHONY-2026-08-02
 frames:
   - activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
     signal_id: signal_vitamin_d_low
@@ -628,3 +630,78 @@ frames:
     legacy_asset: null
     legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
     notes: Competing Pass-3 diabetes-range hyperglycemia frame retired for WHY ownership only; package and PSI status unchanged.
+
+  - activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+    signal_id: signal_alt_high
+    source_spec_id: inv_alt_high_r_value_hepatocellular_biochemical_pattern
+    authority_state: COMPILED_ACTIVE
+    why_role: morphology_context
+    gpt_decision: APPROVE_WITH_NARROWING
+    anthony_decision: APPROVED
+    final_disposition: CONTEXT_ONLY_NON_CAUSAL
+    gpt_review_reference: ARCH-CONV-I-GATE1-HMR-2026-08-02
+    anthony_ratification_reference: ARCH-CONV-I-GATE2-ANTHONY-2026-08-02
+    artefact_path: knowledge_bus/compiled/hypotheses/inv_alt_high_r_value_hepatocellular_biochemical_pattern.yaml
+    legacy_asset: knowledge_bus/root_cause/hypotheses/alt_high_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Flat non-causal hepatocellular biochemical-pattern context only; CRP excluded; no hardcoded threshold transfer; no Hy's Law/MASLD/fibrosis/treatment/chronicity/unsupported causal claims; no runtime alias to signal_hepatic_alt_context; E2/E3 sibling frames unchanged at package layer.
+
+  - activation_key: signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
+    signal_id: signal_alt_high
+    source_spec_id: inv_alt_high_r_value_mixed_biochemical_pattern
+    authority_state: LEGACY_RETIRED
+    gpt_decision: WHY_SKIP_SIBLING_PRESERVE_PACKAGE_E2
+    anthony_decision: APPROVED
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Live E2 mixed R-value frame; WHY ownership skipped to avoid pilot fail-closed; package/PSI/activation unchanged.
+
+  - activation_key: signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
+    signal_id: signal_alt_high
+    source_spec_id: inv_alt_high_r_value_cholestatic_alp_predominant_context
+    authority_state: LEGACY_RETIRED
+    gpt_decision: WHY_SKIP_SIBLING_PRESERVE_PACKAGE_E3
+    anthony_decision: APPROVED
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Live E3 cholestatic R<=2 subordinate frame; WHY ownership skipped to avoid pilot fail-closed; package/PSI/activation unchanged.
+
+  - activation_key: signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
+    signal_id: signal_alt_high
+    source_spec_id: inv_alt_high_muscle_source_or_exertional_contribution
+    authority_state: LEGACY_RETIRED
+    gpt_decision: WHY_SKIP_SIBLING_PRESERVE_PACKAGE_E3
+    anthony_decision: APPROVED
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Live E3 muscle/exertional frame; WHY ownership skipped to avoid pilot fail-closed; package/PSI/activation unchanged.
+
+  - activation_key: signal_alt_high::inv_alt_high_metabolic_masld_context
+    signal_id: signal_alt_high
+    source_spec_id: inv_alt_high_metabolic_masld_context
+    authority_state: LEGACY_RETIRED
+    gpt_decision: WHY_SKIP_SIBLING_PRESERVE_PACKAGE_E3
+    anthony_decision: APPROVED
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Live E3 metabolic/MASLD contextual frame; WHY ownership skipped to avoid pilot fail-closed; package/PSI/activation unchanged; no MASLD diagnosis from ALT alone.
+
+  - activation_key: signal_hepatic_alt_context::inv_alt_context
+    signal_id: signal_hepatic_alt_context
+    source_spec_id: inv_alt_context
+    authority_state: LEGACY_RETIRED
+    gpt_decision: SUPERSEDED_BY_ARCH_CONV_I
+    anthony_decision: APPROVED
+    final_disposition: LEGACY_RETIRED
+    artefact_path: null
+    legacy_asset: null
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: Legacy hepatic ALT context WHY retired for ownership only; CRP/inflammatory-coupling excluded from transfer; hardcoded thresholds not transferred; package and PSI unchanged; no runtime alias to signal_alt_high.

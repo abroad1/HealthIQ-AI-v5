@@ -211,10 +211,12 @@ def test_root_cause_v1_hba1c_hypotheses_emit_for_hba1c_signal():
 
 
 def test_root_cause_v1_alt_hypotheses_emit_for_alt_signal():
+    """ARCH-CONV-I: legacy hepatic_alt WHY is retired; compiled hepatocellular owns ALT WHY."""
     root = compile_root_cause_v1(
         signal_results=[
             {
                 "signal_id": "signal_hepatic_alt_context",
+                "activation_key": "signal_hepatic_alt_context::inv_alt_context",
                 "signal_state": "at_risk",
                 "confidence": 0.74,
                 "primary_metric": "alt",
@@ -233,16 +235,41 @@ def test_root_cause_v1_alt_hypotheses_emit_for_alt_signal():
             "crp": {"min": 0.0, "max": 3.0},
         },
     )
-    dump = root.model_dump() if root is not None else {}
-    finding = _finding_by_signal(dump, "signal_hepatic_alt_context")
+    assert root is None
+
+    root_compiled = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_alt_high",
+                "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern",
+                "source_spec_id": "inv_alt_high_r_value_hepatocellular_biochemical_pattern",
+                "signal_state": "at_risk",
+                "confidence": 0.74,
+                "primary_metric": "alt",
+            }
+        ],
+        biomarker_context={
+            "alt": {"value": 200.0},
+            "alp": {"value": 40.0},
+            "ast": {"value": 62.0},
+        },
+        input_reference_ranges={
+            "alt": {"min": 10.0, "max": 45.0},
+            "alp": {"min": 30.0, "max": 130.0},
+            "ast": {"min": 10.0, "max": 40.0},
+        },
+    )
+    dump = root_compiled.model_dump() if root_compiled is not None else {}
+    finding = _finding_by_signal(dump, "signal_alt_high")
     assert isinstance(finding, dict)
     hypothesis_ids = {
         str(h.get("hypothesis_id", "")).strip()
         for h in (finding.get("hypotheses") or [])
         if isinstance(h, dict)
     }
-    assert "alt_hepatic_cell_stress_pattern_v1" in hypothesis_ids
-    assert "alt_inflammatory_coupling_context_v1" in hypothesis_ids
+    assert "hyp_alt_hepatocellular_biochemical_pattern_context" in hypothesis_ids
+    assert "alt_inflammatory_coupling_context_v1" not in hypothesis_ids
+    assert "alt_hepatic_cell_stress_pattern_v1" not in hypothesis_ids
 
 
 def test_root_cause_v1_tsh_hypotheses_emit_for_tsh_signal():
@@ -287,10 +314,12 @@ def test_root_cause_v1_tsh_hypotheses_emit_for_tsh_signal():
 
 
 def test_root_cause_v1_suppresses_non_repeat_confirmatory_tests_when_present():
+    """ARCH-CONV-I: legacy hepatic_alt WHY retired — skip with activation_key; no CRP emit."""
     root = compile_root_cause_v1(
         signal_results=[
             {
                 "signal_id": "signal_hepatic_alt_context",
+                "activation_key": "signal_hepatic_alt_context::inv_alt_context",
                 "signal_state": "suboptimal",
                 "confidence": 0.61,
                 "primary_metric": "alt",
@@ -307,22 +336,7 @@ def test_root_cause_v1_suppresses_non_repeat_confirmatory_tests_when_present():
             "ggt": {"min": 10.0, "max": 55.0},
         },
     )
-    dump = root.model_dump() if root is not None else {}
-    finding = _finding_by_signal(dump, "signal_hepatic_alt_context")
-    assert isinstance(finding, dict)
-    by_id = {
-        str(h.get("hypothesis_id", "")).strip(): h
-        for h in (finding.get("hypotheses") or [])
-        if isinstance(h, dict)
-    }
-    alt_hypothesis = by_id.get("alt_hepatic_cell_stress_pattern_v1")
-    assert isinstance(alt_hypothesis, dict)
-    confirmatory_test_ids = {
-        str(t.get("test_id", "")).strip()
-        for t in (alt_hypothesis.get("confirmatory_tests") or [])
-        if isinstance(t, dict)
-    }
-    assert "test_liver_ggt_alt_ast_v1" not in confirmatory_test_ids
+    assert root is None
 
 
 def test_root_cause_v1_insulin_resistance_hypotheses_emit_kb_s46():

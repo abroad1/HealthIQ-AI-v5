@@ -1148,14 +1148,23 @@ These items remain open after Gate 2 ratification and independent audit PASS of 
 
 ### From ARCH-CONV-H — HbA1c Compiled-WHY Authority (programme-wide residuals)
 
-These items remain open after Gate 2 ratification of ARCH-CONV-H. ARCH-CONV-H closed compiled-WHY for `signal_hba1c_high` only.
+These items remain open after Gate 2 ratification of ARCH-CONV-H. Item 1 below was subsequently closed by ARCH-CONV-I.
 
-1. **ALT compiled-WHY identity (A4)** — Remains unresolved and must not be treated as A3-ready.
+1. **ALT compiled-WHY identity (A4)** — **Closed by ARCH-CONV-I** (see From ARCH-CONV-I).
 2. **Package B / Package C sequencing** — Remains downstream of further Package A outputs; not authorised by ARCH-CONV-H.
 3. **eGFR / UACR / chronicity independent WHY boundary** — Standing programme exclusion; unchanged by ARCH-CONV-H.
 4. **Adjacent HbA1c identities** — `signal_hba1c_pct_high` and `signal_glucose_dysregulation_hba1c_context` remain separate; not migrated by ARCH-CONV-H.
 
-Sequencing note: run a repository-grounded Stage 0 advisory before selecting the next Package A residual (ALT A4 or dual-authority sequencing).
+### From ARCH-CONV-I — ALT Compiled-WHY Identity Resolution (programme-wide residuals)
+
+These items remain open after Gate 2 ratification of ARCH-CONV-I. ARCH-CONV-I closed hepatocellular compiled-WHY for `signal_alt_high` and WHY-retired `signal_hepatic_alt_context` only.
+
+1. **Package B / Package C sequencing** — Remains downstream; not authorised by ARCH-CONV-I.
+2. **eGFR / UACR / chronicity independent WHY boundary** — Standing programme exclusion; unchanged by ARCH-CONV-I.
+3. **Sibling ALT frames without independent compiled WHY** — Mixed / cholestatic / muscle / metabolic remain package-active with WHY-skip by design; not a defect unless a later Gate opens independent compiled WHY.
+4. **CRP/inflammatory-coupling research gap** — Explicitly excluded; requires new canonical research before any compile.
+
+Sequencing note: run a repository-grounded Stage 0 advisory before selecting the next residual (Package B / dual-authority sequencing).
 
 ## 6. Final note
 

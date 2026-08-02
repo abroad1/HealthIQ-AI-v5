@@ -80,6 +80,10 @@ def load_alt_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("alt_hypotheses_v1.yaml")
 
 
+def load_alt_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("alt_high_hypotheses_v1.yaml")
+
+
 def load_tsh_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("tsh_hypotheses_v1.yaml")
 

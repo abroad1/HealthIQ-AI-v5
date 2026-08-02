@@ -221,6 +221,13 @@ compiled_hypothesis_artefacts:
   runtime_authority: compiled_why_authority_register_v1
   launch_classification: arch_conv_h_compiled_active_context_only
   source_spec_id: inv_hba1c_high_glycaemia
+- signal_id: signal_alt_high
+  activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+  artefact_path: knowledge_bus/compiled/hypotheses/inv_alt_high_r_value_hepatocellular_biochemical_pattern.yaml
+  compile_manifest_path: knowledge_bus/compiled/manifests/arch_conv_i_alt_high_hepatocellular.yaml
+  runtime_authority: compiled_why_authority_register_v1
+  launch_classification: arch_conv_i_compiled_active_context_only
+  source_spec_id: inv_alt_high_r_value_hepatocellular_biochemical_pattern
 wave1_subsystems_legacy_hard_coded:
   subsystem_ids: []
   launch_classification: none_remaining
@@ -236,6 +243,7 @@ phase0_notes:
 - 'ARCH-CONV-F: added flat morphology_context ferritin and narrowed anaemia/oxygen-carrying hemoglobin COMPILED_ACTIVE keys; three competing WHY frames LEGACY_RETIRED.'
 - 'ARCH-CONV-G: added flat morphology_context urate COMPILED_ACTIVE key; competing gout/crystal-deposition WHY frame LEGACY_RETIRED.'
 - 'ARCH-CONV-H: added flat morphology_context HbA1c COMPILED_ACTIVE key; competing diabetes-range hyperglycemia WHY frame LEGACY_RETIRED; adjacent pct and glucose-dysregulation identities unchanged.'
+- 'ARCH-CONV-I: added flat morphology_context ALT hepatocellular COMPILED_ACTIVE key; legacy signal_hepatic_alt_context WHY LEGACY_RETIRED; four live sibling signal_alt_high frames WHY-skipped; CRP excluded; E2/E3 package behaviour unchanged.'
 - REJECTED frames are intentionally omitted from this index.
 - Card evidence artefacts unchanged (10).
 - Emit path does not read this index; refresh is inventory/governance hygiene.
