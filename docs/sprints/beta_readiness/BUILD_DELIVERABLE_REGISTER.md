@@ -1537,7 +1537,7 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ### Carry-forwards
 - `CF-ARCH-CONV-VERSION-1` remains open (result-versioning / regeneration).
-- Pre-existing synthetic-frame WHY fail-closed cases in `test_arch_rt_identity_prov_1` remain out of scope.
+- `CF-ARCH-CONV-I-ALT-IDPROV-1` opened — eight pre-existing `test_arch_rt_identity_prov_1` failures on obsolete synthetic `signal_alt_high::inv_alt_high_frame_*` fixtures (ARCH-CONV-I boundary); not attributable to PKGC-2; separate scoping required.
 
 ### Blockers / risks
 - None open for the STANDARD provenance-identity closure.

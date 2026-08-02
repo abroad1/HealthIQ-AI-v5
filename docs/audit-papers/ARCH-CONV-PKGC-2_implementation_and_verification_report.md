@@ -39,7 +39,7 @@ Historic truncated key `signal_homocysteine_high::inv_homocysteine_high` retaine
 | Truncated HCY non-frame key | REJECTED |
 | Bare signal-only / empty / multi-separator | REJECTED |
 
-Pre-existing (not introduced): several `test_arch_rt_identity_prov_1` cases that call `compile_report_v1` on synthetic alt frames still fail WHY authority fail-closed — confirmed by stash-reverting our runtime changes; unrelated to this sprint.
+Pre-existing (not introduced by PKGC-2): eight `test_arch_rt_identity_prov_1` cases using obsolete synthetic `signal_alt_high::inv_alt_high_frame_*` identities fail under the ARCH-CONV-I pilot-cohort WHY fail-closed boundary — independently confirmed by stash-reverting PKGC-2 runtime changes. Tracked as **`CF-ARCH-CONV-I-ALT-IDPROV-1`** (Open); not remediated on this branch.
 
 ## 4. Carry-forward
 
