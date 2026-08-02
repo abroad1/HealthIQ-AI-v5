@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-i-alt-compiled-why-identity-resolution",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-02T08:08:36Z",
   "cursor_started_utc": "2026-08-02T07:49:23Z",
-  "head_sha": "50a170846c3b951c2218c1861fda61dc9138c244",
+  "head_sha": "ba0b6e61a35721fe9b54e35a2c7afb87d263664f",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-I"
 }
