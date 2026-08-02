@@ -1,87 +1,91 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-I",
+  "work_id": "ARCH-CONV-PKGB-1",
   "status": "HARDENED",
   "hardening_date": "2026-08-02",
   "hardened_by": "Claude Code",
-  "source_prompt": "automation_bus/latest_cursor_prompt.md (front matter complete: work_id, branch feature/arch-conv-i-alt-compiled-why-identity-resolution, risk_level HIGH, execution_model TWO_PHASE_START_FINISH, change_type MIXED)",
+  "source_prompt": "automation_bus/latest_cursor_prompt.md (front matter complete: work_id, branch feature/arch-conv-pkgb-1-homocysteine-exclusivity-resolver-closure, risk_level HIGH, execution_model TWO_PHASE_START_FINISH, change_type MIXED)",
   "risk_level": "HIGH",
   "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "Phase-0-gated two-outcome package with a small, bounded source set. Nearly all cited repository content was already independently read and cited verbatim during this session's ALT Stage 0 scope advisory (automation_bus/latest_scope_advisory.md); remaining gaps (test-file absence, exact spec_id/signal_id pair, current register zero-state, ARCH-CONV-H recommended-next-sprint linkage) closed with a small number of targeted parallel reads. No disjoint large-scale work requiring a fork."
+    "rationale": "This work package directly implements Sprint 1 of automation_bus/latest_pipeline_advisory.md, which this session authored and independently re-verified twice (initial Stage 0 advisory, then a deep-investigation revision). Nearly all cited repository content -- root_cause_registry_v1.py wiring, why_authority_v1.py resolver logic, the 3 pre-existing test failures (reproduced live and via a clean-baseline git worktree), the FOLD_SUPPRESS ratification, and the F/G/H/I regression suites -- was already read verbatim this session. The one genuinely new verification (enumerating every pilot signal_id with zero COMPILED_ACTIVE rows, not just total_cholesterol_high) was done directly via a register load, not delegated. No disjoint large-scale work requiring a fork."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "declared_risk_level": "HIGH",
     "declared_change_type": "MIXED",
-    "scope_proportionality": "PASS -- single-identity Phase-0-gated two-outcome wave, same bounded shape as ARCH-CONV-D/E/E3/F/G/H",
-    "advisory_duplication": "NO conflict -- this prompt is the direct, correctly-sequenced implementation of automation_bus/latest_scope_advisory.md's ALT advisory (2026-08-02): Outcome A here matches the advisory's Option A (MAP_AND_COMPILE, hepatocellular-only, exclude CRP, no threshold transfer); Outcome B matches Option C (RETIRE_LEGACY_WHY_IDENTITY, no compiled successor). The prompt's own STOP conditions (CRP content, hard-coded threshold transfer, runtime alias) reproduce the advisory's flagged risks verbatim.",
-    "phase0_only_scope_correctly_declared": "CONFIRMED -- prompt explicitly STOPs after committing the Phase 0 pack and before Gate 1/Gate 2 approval (lines 137-147: 'Do not create a compiled artefact... Do not alter authority registers... Do not retire legacy WHY ownership'); Phase 1 implementation heading (line 149) is explicitly gated on 'Gate 1 and Gate 2 only'; no gate1_status/gate2_status front-matter fields present but the in-body STOP is unambiguous and precedes all implementation scope",
+    "scope_proportionality": "PASS -- matches automation_bus/latest_pipeline_advisory.md Sprint 1 exactly (homocysteine exclusivity + bare-key resolver fix + 2 stale test-ID corrections), explicitly excludes Package B Wave 2 (L-04/L-05/L-06) and Package C, matching this session's own bundling analysis",
+    "advisory_duplication": "NO conflict -- directly implements the pipeline advisory's Sprint 1 recommendation; the prompt's added 'baseline coverage check' (whether to add test_root_cause_v1_homocysteine.py to run_baseline_tests.py) is a reasonable extension not explicitly in the advisory but consistent with its own finding that this file's failures were invisible to the baseline gate",
+    "phase0_only_scope_correctly_declared": "CONFIRMED -- prompt explicitly STOPs after committing the Phase 0 pack and before Gate 1/Gate 2 approval (lines 119-130: 'Do not alter resolver behaviour... Do not change authority registers... Do not modify test expectations'); Phase 1 heading (line 132) is explicitly gated on 'Gate 1 and Gate 2 only'",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "canonical_hepatocellular_spec": {
+    "homocysteine_compiled_authority": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml lines1-2: spec_id: inv_alt_high_hepatocellular_injury, signal_id: signal_alt_high -- unambiguous canonical activation key signal_alt_high::inv_alt_high_hepatocellular_injury, matching the prompt's 'canonical hepatocellular spec_id' placeholder exactly (this session's own ALT Stage 0 advisory, automation_bus/latest_scope_advisory.md, independently derived and cited the same spec_id)."
+      "evidence": "knowledge_bus/governance/compiled_why_authority_register_v1.yaml: 3 COMPILED_ACTIVE rows for signal_homocysteine_high (activation keys ...b_vitamin_related_methylation_impairment, ...metabolic, ...renal_clearance_reduction), confirmed by direct register load this session. why_authority_v1.py _PILOT_SIGNAL_IDS: signal_homocysteine_high present (line 25)."
     },
-    "legacy_package_and_why_asset": {
+    "elevation_context_legacy_path": {
+      "status": "CONFIRMED still live",
+      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:29-30 -- both RootCauseTargetSpec('signal_homocysteine_elevation_context', lrc.load_hcy_hypotheses_v1, 'hcy_hypotheses_v1.yaml') and RootCauseTargetSpec('signal_homocysteine_high', lrc.load_hcy_hypotheses_v1, 'hcy_hypotheses_v1.yaml') wired to the same loader/file. why_authority_v1.py: zero matches for 'signal_homocysteine_elevation_context' in _PILOT_SIGNAL_IDS (grep, this session and prior) -- confirmed out-of-pilot-cohort, resolves plain 'legacy' per resolve_frame_why_authority's final branch (line 164-165), meaning it still emits shared-file content today."
+    },
+    "shared_asset_and_wiring": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_hepatic_alt_context/signal_library.yaml line10 (signal_hepatic_alt_context, hardcoded override thresholds ast>45/ggt>60/alp>130/bilirubin>20, lines58-73); knowledge_bus/root_cause/hypotheses/alt_hypotheses_v1.yaml line4 (primary_signal_id signal_hepatic_alt_context), two hypotheses alt_hepatic_cell_stress_pattern_v1 (lines12-54, AST/GGT/bilirubin/ALP-supported) and alt_inflammatory_coupling_context_v1 (lines56-87, CRP-coupled, no canonical counterpart)."
+      "evidence": "knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml:4 -- primary_signal_id: 'signal_homocysteine_elevation_context'. Loader lrc.load_hcy_hypotheses_v1 confirmed referenced by both registry rows above -- single shared physical asset, single shared loader function, two RootCauseTargetSpec registrations pointing at it."
     },
-    "current_registry_wiring": {
-      "status": "CONFIRMED live and unchanged",
-      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:32 -- RootCauseTargetSpec('signal_hepatic_alt_context', lrc.load_alt_hypotheses_v1, 'alt_hypotheses_v1.yaml'), file last modified 2026-07-27, untouched by ARCH-CONV-D/E/E2/E3 (2026-07-30 through 2026-08-01)."
-    },
-    "signal_alt_high_frame_estate": {
-      "status": "CONFIRMED complete",
-      "evidence": "knowledge_bus/governance/package_runtime_activation_register_v1.yaml lines35-78 and medical_frame_identity_index_v1.yaml lines124-280: canonical hepatocellular (s24 + kb52c Pass3), mixed R-value, cholestatic R<=2 (E3, SUBORDINATE_CONTEXTUAL_AUTHORITY), muscle/exertional, metabolic/MASLD, bilirubin-severity (OVERRIDE_ESCALATION_ONLY_NO_INDEPENDENT_ACTIVATION), plus two inactive legacy s24 override rows still collision_status requires_adjudication (lines242,267) -- correctly out of scope per prompt's own exclusions (line 190: 'do not activate the bilirubin-severity package independently'; line 244 STOP list covers R-value/activation non-change)."
-    },
-    "compiled_why_register_state": {
-      "status": "CONFIRMED zero rows for both identities",
-      "evidence": "grep -c 'alt_high\\|hepatic_alt' knowledge_bus/governance/compiled_why_authority_register_v1.yaml returns 0 this session -- matches prompt Stage 1A item 5/7 requirement that no existing compiled ALT WHY authority already resolves this work."
-    },
-    "pilot_cohort_absence": {
+    "fold_suppress_ratification": {
       "status": "CONFIRMED",
-      "evidence": "backend/core/knowledge/why_authority_v1.py -- zero matches for 'alt' anywhere in the file (case-insensitive grep, this session and the prior ALT advisory session) -- ALT never added to _PILOT_SIGNAL_IDS; confirms the prompt's 'add to existing WHY authority mechanism only if required' instruction has a clean, empty starting state to add a single entry to, mirroring the exact one-line addition pattern used for ferritin/hemoglobin/urate/hba1c in ARCH-CONV-F/G/H."
+      "evidence": "docs/architecture/ARCH-CONV-A_phase1_target_to_frame_map.md:69 -- 'STOP A ratified: FOLD_SUPPRESS. No independent WHY frame. Context only via non-causal surfaces. Shared hcy_hypotheses_v1.yaml not disconnected -- Package B hand-off.' Cross-confirmed by docs/sprints/launch_core_carry_forward_register.md:102 (CF-ARCH-CONV-DUAL-HCY-1, Open, 'Residual Package B')."
     },
-    "mechanism_sufficiency": {
-      "status": "CONFIRMED no new compiler mechanism required",
-      "evidence": "The compiled_hypothesis.py / compiled_hypothesis_registry_v1.py / why_authority_v1.py / root_cause_compiler_v1.py / compiled_output_authority_v1.py pilot-cohort mechanism (independently verified present and reused with zero root_cause_compiler_v1.py/root_cause_registry_v1.py diff across ARCH-CONV-G and ARCH-CONV-H) is structurally identical to what Outcome A requires here: one canonical signal_id, one activation-key-specific compiled row, WHY-only retirement of the competing legacy identity -- no evidence found that ALT's dual-identity (rather than dual-package) shape requires a new mechanism."
+    "resolver_and_fail_closed_behaviour": {
+      "status": "CONFIRMED, reproduced directly",
+      "evidence": "backend/core/knowledge/why_authority_v1.py resolve_frame_why_authority (lines 116-165): bare-activation-key branch (lines 134-147) -- 'if not key: ... if len(matches) == 1: return compiled, matches[0]; return fail_closed, None'. backend/core/analytics/root_cause_compiler_v1.py:737-741 -- 'if mode == fail_closed: raise ValueError(...)'. Directly invoked resolve_frame_why_authority(signal_id='signal_total_cholesterol_high', activation_key='') this session: returns fail_closed. Directly reproduced end-to-end via SignalEvaluator + compile_root_cause_v1 during the ARCH-CONV-I audit and again this session: raises ValueError."
     },
-    "test_file_target_available": {
-      "status": "CONFIRMED does not yet exist",
-      "evidence": "find backend/tests/regression -iname '*arch_conv_i*' returns nothing this session -- backend/tests/regression/test_arch_conv_i_alt_stop_c.py is a genuinely new file, not an unreported overwrite."
+    "full_pilot_zero_compiled_enumeration": {
+      "status": "CONFIRMED, exceeds prompt's own named example",
+      "evidence": "Direct register load this session (all 27 _PILOT_SIGNAL_IDS entries checked against compiled_why_authority_register_v1.yaml COMPILED_ACTIVE rows) found exactly FIVE pilot signal_ids with zero COMPILED_ACTIVE rows: signal_ldl_high (2 rows, both LEGACY_RETIRED), signal_hdl_low (2 rows, both LEGACY_RETIRED), signal_total_cholesterol_high (2 rows, both LEGACY_RETIRED), signal_hgb_low (1 row, LEGACY_RETIRED), signal_hepatic_alt_context (1 row, LEGACY_RETIRED -- the ARCH-CONV-I retirement row itself). All five share an IDENTICAL governance shape: every row for each is LEGACY_RETIRED, none REJECTED/DEFERRED/BLOCKED/LEGACY_ACTIVE. This directly satisfies Stage 1A item 6 and confirms the prompt's STOP condition ('any pilot family with zero COMPILED_ACTIVE rows has a materially different governance shape requiring separate adjudication') is NOT triggered -- a uniform fix is safe to scope for all five, not just signal_total_cholesterol_high."
+    },
+    "stale_test_assertions": {
+      "status": "CONFIRMED, reproduced twice",
+      "evidence": "backend/tests/unit/test_root_cause_v1_homocysteine.py -- test_root_cause_v1_hba1c_hypotheses_emit_for_hba1c_signal (expects stale 'hba1c_glycaemic_exposure_pattern_v1', actual 'hyp_hba1c_elevated_glycaemia_context'), test_root_cause_v1_arch_conv_b_uses_compiled_creatinine_urea_and_legacy_urate (expects stale 'urate_elevated_serum_hyperuricaemia_v1', actual 'hyp_urate_elevated_non_causal_context'), test_root_cause_v1_r8_total_cholesterol_high_emits_governed_hypotheses_not_fallback (fail_closed ValueError). Independently re-run this session against current merged main: all three still fail identically. Previously proven pre-existing (not ARCH-CONV-I-caused) via a temporary git worktree at the pre-ARCH-CONV-I baseline commit during the ARCH-CONV-I audit -- same three failures reproduced there."
+    },
+    "l04_l05_l06_out_of_scope_confirmed_correctly_excluded": {
+      "status": "CONFIRMED",
+      "evidence": "docs/architecture/ARCH-CONV_legacy_dependency_register.md:94-150 read in full this session (prior turn): L-04 (why_engine_fallback_v1, _compile_why_engine_fallback_finding in root_cause_compiler_v1.py) deletion precondition 'Product policy on missing-WHY behaviour ratified' -- not ratified; L-05 (_why_template, report_compiler_v1.py) deletion precondition 'Coverage proof for ranked signals' -- not performed; L-06 (family-level phenotype/interaction maps) deletion precondition 'Product decision: family aggregation is intentional vs defect' -- not made. None of these preconditions is met, correctly justifying the prompt's explicit exclusion of all three from this sprint's scope."
+    },
+    "no_new_medical_research_required": {
+      "status": "CONFIRMED",
+      "evidence": "FOLD_SUPPRESS is an already-ratified disposition (no new hypothesis content needed for elevation-context); the resolver fix is pure mechanics (governed skip disposition, no new compiled content for total_cholesterol_high or any of the other 4 zero-compiled signal_ids); the two test corrections use already-ratified hypothesis IDs from ARCH-CONV-G/H. Matches Stage 1A item 8."
+    },
+    "baseline_coverage_gap_confirmed": {
+      "status": "CONFIRMED",
+      "evidence": "backend/scripts/run_baseline_tests.py (read in full during ARCH-CONV-I audit, re-confirmed unchanged): curated pytest file list does not include backend/tests/unit/test_root_cause_v1_homocysteine.py -- this is why the 3 pre-existing failures were invisible to the kernel's run_baseline_tests gate check (which passed, exit 0, on both ARCH-CONV-H's and ARCH-CONV-I's gate evidence) despite these failures being live throughout."
     },
     "governing_authority_files": {
-      "status": "CONFIRMED all exist (re-verified this session and in the prior ARCH-CONV-H hardening pass)",
-      "evidence": "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md, KNOWLEDGE_BUS_SOP_v1.3.1.md, KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md present; ADR-RT-001/002/003/004 all present and independently confirmed **Status** ACCEPTED in the ARCH-CONV-H hardening pass this session (unchanged since)."
+      "status": "CONFIRMED all exist",
+      "evidence": "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md, KNOWLEDGE_BUS_SOP_v1.3.1.md, KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md present (re-confirmed in prior hardening passes this session, unchanged). docs/architecture/ARCH-CONV-A_stage0_outcome_and_package_boundary.md, ARCH-CONV-A_phase1_target_to_frame_map.md, ARCH-CONV_legacy_dependency_register.md, automation_bus/latest_pipeline_advisory.md, docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md all present and read in full or in relevant part this session."
     },
     "prior_wave_regression_dependencies": {
       "status": "CONFIRMED",
-      "evidence": "backend/tests/regression/test_arch_conv_f_haematology_stop_c.py, test_arch_conv_g_urate_stop_c.py, test_arch_conv_h_hba1c_stop_c.py all present and passing as of the ARCH-CONV-H audit this session -- the three regression suites the prompt requires to remain green (Tests item 9)."
-    },
-    "advisory_and_register_baseline": {
-      "status": "CONFIRMED",
-      "evidence": "automation_bus/latest_scope_advisory.md (this session, 2026-08-02) independently arrived at the same two-outcome framing (MAP_AND_COMPILE hepatocellular-only vs RETIRE_LEGACY_WHY_IDENTITY) with matching risk flags (CRP exclusion, hardcoded-threshold non-transfer, runtime-alias prohibition, legacy s24 override rows out of scope). automation_bus/latest_audit_summary.md (ARCH-CONV-H audit, this session) set pipeline_advisory_trigger reasoning naming ALT identity as the correctly-sequenced next item."
+      "evidence": "backend/tests/regression/test_arch_conv_f_haematology_stop_c.py, test_arch_conv_g_urate_stop_c.py, test_arch_conv_h_hba1c_stop_c.py, test_arch_conv_i_alt_stop_c.py all present and independently confirmed passing during the ARCH-CONV-I audit this session -- the four regression suites the prompt requires to remain green."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "reality_check_1b": "Repository-confirmed TRUE as of this session, matching all four Stage 1B assertions verbatim: signal_hepatic_alt_context remains wired to the live legacy WHY asset (root_cause_registry_v1.py:32); neither identity has compiled-WHY authority (zero register rows); the legacy CRP-coupled hypothesis has no canonical signal_alt_high counterpart (confirmed absent from the canonical spec and all six activated Pass 3 frames); the legacy hardcoded AST/GGT/ALP/bilirubin thresholds remain non-SSOT and unremediated (pkg_hepatic_alt_context/signal_library.yaml unchanged since 2026-03-12).",
-    "intelligence_core_surface": "Confirmed bounded to: compiled-WHY authority register (+1 COMPILED_ACTIVE/+1 LEGACY_RETIRED under Outcome A, +0/+1 under Outcome B), root-cause authority register, a new compiled artefact/manifest pair only under Outcome A, WHY authority pilot membership (single addition, only if Outcome A), and reuse-only of root_cause_compiler_v1.py / output-authority projection. No R-value formula, package activation, PSI, SSOT, or frontend surface is in scope per the prompt's own exclusions -- matches repository reality confirmed this session; nothing found that would force those boundaries to be crossed.",
-    "outcome_selection_is_a_genuine_open_gate1_question": "Confirmed correctly framed as undetermined by this hardening pass, not a hardening gap: whether the legacy hepatocellular-stress hypothesis maps 'safely and narrowly' enough to the canonical frame to justify Outcome A, versus the more conservative Outcome B, is exactly the medical judgement this session's Stage 0 advisory identified as missing and could not make itself -- the prompt correctly routes this to Gate 1 rather than pre-deciding it.",
-    "no_new_mechanism_required": "Confirmed achievable with existing mechanism under Outcome A -- structurally identical to the ferritin/hemoglobin/urate/hba1c pilot-cohort pattern (one canonical signal_id/activation_key, one WHY-only-retired competing identity, zero compiler/registry diff expected). Outcome B requires even less: a registry-wiring change only, no compiled artefact, no pilot-list addition -- confirmed by the prompt's own explicit prohibition (line 178: 'Do not add ALT to compiled-WHY pilot membership' under Outcome B)."
+    "reality_check_1b": "Repository-confirmed TRUE as of this session, matching all six Stage 1B assertions verbatim: elevation-context still reaches legacy WHY content; homocysteine_high already compiled; both reference the shared asset; the bare-key resolver still raises for signal_total_cholesterol_high (and 4 other pilot signal_ids, per the expanded enumeration above); the HbA1c/urate tests are stale; none of the defects are already resolved.",
+    "intelligence_core_surface": "Confirmed bounded to exactly the three behaviour changes the prompt names (lines 85-89): elevation-context no longer independently emits; bare-key resolution for a zero-compiled pilot family returns a governed non-emitting disposition instead of raising; two stale test assertions corrected. No compiled homocysteine content, no new total-cholesterol authority, no L-04/L-05/L-06 change is required by anything found this session.",
+    "governance_shape_uniformity_de_risks_part_B": "The expanded five-signal enumeration (ldl_high, hdl_low, total_cholesterol_high, hgb_low, hepatic_alt_context) all sharing the identical all-LEGACY_RETIRED shape means Part B's fix can be implemented as one governed rule ('all relevant rows retired/rejected/non-owning -> skip') rather than needing per-signal special-casing -- reduces implementation risk below what the prompt's single named example (total_cholesterol_high) might have suggested.",
+    "no_new_mechanism_required": "Confirmed achievable with existing mechanism -- Part A (exclusivity) can use the existing skip/retired disposition pattern already proven in ARCH-CONV-F/G/H/I (adding signal_homocysteine_elevation_context's activation_key to the pilot cohort with a LEGACY_RETIRED row, mirroring exactly how ARCH-CONV-I retired signal_hepatic_alt_context's WHY ownership); Part B is a resolver-logic correction, not a new mechanism, within the same function already exercised by every prior wave."
   },
 
   "gaps_or_risks_flagged_for_gpt_and_gate_1": [
-    "The legacy s24 ALT override rows (Hy's Law bilirubin escalation, severity escalation, mixed-cholestatic escalation -- medical_frame_identity_index_v1.yaml lines203-280, collision_status requires_adjudication) remain a separate, still-open collision entirely distinct from the signal_hepatic_alt_context vs signal_alt_high identity question this prompt scopes. The prompt does not name these rows explicitly in its STOP conditions; recommend Gate 1 reviewers explicitly confirm these are out of scope for ARCH-CONV-I, consistent with this session's ALT advisory flag, so a future reviewer does not mistake their continued requires_adjudication status for something this package should have resolved.",
-    "Outcome A's 'safely and narrowly' mapping test for the hepatocellular-stress hypothesis has no independent repository-recorded prior precedent (unlike ARCH-CONV-F/G/H's single-competing-package collisions) -- this is the first Package A wave adjudicating a content-level hypothesis-to-spec mapping rather than a package-selection-only collision. Gate 1 reviewers should treat the mapping-sufficiency judgement as the primary open question, not a formality.",
-    "If Outcome B is selected, confirm the prompt's own STOP condition ('no runtime fallback silently restores the legacy WHY path', Tests item 3) is interpreted to require an explicit regression assertion, not just absence of new code -- retiring a RootCauseTargetSpec registration silently is easy to under-test."
+    "The prompt's Stage 1A item 6 names only signal_total_cholesterol_high as an example; this hardening pass independently found FOUR additional pilot signal_ids in the identical governance shape (signal_ldl_high, signal_hdl_low, signal_hgb_low, signal_hepatic_alt_context). All five should be covered by Part B's fix and by the required test class (prompt Tests item 7: 'every pilot family with zero COMPILED_ACTIVE rows resolves deterministically') -- flagging so Cursor does not treat total_cholesterol_high as the only affected signal.",
+    "signal_hepatic_alt_context now appearing in this zero-compiled-rows set is a direct, expected consequence of ARCH-CONV-I's own retirement of its WHY ownership last sprint, not a new defect -- Gate 1 reviewers should be aware this is confirmation that ARCH-CONV-I's disposition is behaving as intended under the resolver fix, not evidence of a regression.",
+    "The 'baseline coverage check' instruction (prompt lines 227-233) asks Cursor to decide whether to add test_root_cause_v1_homocysteine.py to run_baseline_tests.py. This is a reasonable, evidence-grounded ask (this session confirmed the file's absence from that gate is exactly why these failures went uncaught for three prior waves) but is itself a judgement call with a STOP escape hatch already built into the prompt -- no additional flag needed beyond confirming the underlying gap is real."
   ],
 
   "evidence_checklist_status": "COMPLETE -- see chat response for the mandatory Stage 2C table"
