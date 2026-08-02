@@ -1519,11 +1519,11 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ## ARCH-CONV-PKGC-2 — Provenance-Identity Bare-Key Closure
 
-**Status:** COMPLETE on branch — awaiting Claude audit, GPT architectural review, Anthony merge  
-**Date closed (implementation):** 2026-08-02  
+**Status:** CLOSED — Anthony merge authorised; merged and published to `origin/main`  
+**Date closed:** 2026-08-02  
 **Programme block(s):** Architecture convergence — Package C Wave 2 (provenance identity)  
 **Risk:** STANDARD — CONTRACT_ADJACENT (Stage 1A confirmed)  
-**Branch:** `feature/arch-conv-pkgc-2-provenance-identity-closure`  
+**Merge SHA:** `bfce365` — `merge: ARCH-CONV-PKGC-2 provenance-identity bare-key closure (Anthony merge authorised)`  
 **Evidence:** `docs/audit-papers/ARCH-CONV-PKGC-2_implementation_and_verification_report.md`  
 **Hardening pack:** `docs/architecture/ARCH-CONV-PKGC-2_hardening_pack.md`
 

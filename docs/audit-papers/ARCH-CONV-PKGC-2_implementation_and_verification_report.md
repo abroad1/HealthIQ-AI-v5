@@ -3,7 +3,7 @@
 **Work ID:** `ARCH-CONV-PKGC-2`  
 **Branch:** `feature/arch-conv-pkgc-2-provenance-identity-closure`  
 **Risk:** **STANDARD — CONTRACT_ADJACENT**  
-**Status:** Implementation complete — awaiting Claude audit / GPT review / Anthony merge
+**Status:** **CLOSED** — merged to `main` (`bfce365`); published to `origin/main`
 
 ## 1. Stage 1A classification
 
