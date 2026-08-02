@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-i-alt-idprov-test-estate-restoration",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-02T16:39:20Z",
   "cursor_started_utc": "2026-08-02T16:16:29Z",
-  "head_sha": "e48217b7b63f93dd9b953f03ae0e16833faa4a50",
+  "head_sha": "0ccf0d161ee882a6298857a0b2917db0ad12aaa9",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-I-ALT-IDPROV-1"
 }
