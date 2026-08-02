@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-pkgc-1-waist-unit-remediation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-02T13:58:14Z",
   "cursor_started_utc": "2026-08-02T12:30:27Z",
-  "head_sha": "9ae8a9ebb14689388cefc2fc7b25c79de979732c",
+  "head_sha": "f44e26178de6c111b6bdb7106f6b981f337776b5",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-PKGC-1"
 }
