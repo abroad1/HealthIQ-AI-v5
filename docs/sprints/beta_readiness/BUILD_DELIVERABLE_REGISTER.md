@@ -1537,10 +1537,39 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ### Carry-forwards
 - `CF-ARCH-CONV-VERSION-1` remains open (result-versioning / regeneration).
-- `CF-ARCH-CONV-I-ALT-IDPROV-1` opened — eight pre-existing `test_arch_rt_identity_prov_1` failures on obsolete synthetic `signal_alt_high::inv_alt_high_frame_*` fixtures (ARCH-CONV-I boundary); not attributable to PKGC-2; separate scoping required.
+- `CF-ARCH-CONV-I-ALT-IDPROV-1` resolved by ARCH-CONV-I-ALT-IDPROV-1 (synthetic non-pilot fixtures + baseline inclusion).
 
 ### Blockers / risks
 - None open for the STANDARD provenance-identity closure.
+
+### Recommended next sprint
+- Package C versioning / regeneration (`CF-ARCH-CONV-VERSION-1`) or Package B Wave 2 after product-policy decisions.
+
+---
+
+## ARCH-CONV-I-ALT-IDPROV-1 — Identity/Provenance Multi-Frame Test-Estate Restoration
+
+**Status:** COMPLETE on branch — awaiting Claude audit, GPT architectural review, Anthony merge  
+**Date closed (implementation):** 2026-08-02  
+**Programme block(s):** Architecture convergence — test-estate restoration (ARCH-CONV-I follow-on)  
+**Risk:** STANDARD / BEHAVIOUR  
+**Branch:** `feature/arch-conv-i-alt-idprov-test-estate-restoration`  
+**Evidence:** `docs/audit-papers/ARCH-CONV-I-ALT-IDPROV-1_implementation_and_verification_report.md`
+
+### Delivered / ticked off
+- Corrected CF count: seven genuine fail-closed fixture failures + one cwd-dependent schema path artefact (no production defect).
+- Option A synthetic non-pilot fixtures (`signal_test_synthetic_multiframe_v1`) with pilot-migration guard.
+- Schema path uses `REPO_ROOT` (passes from repo root and `backend/`).
+- Root-cause per-frame test no longer uses fragile `_ROOT_CAUSE_TARGETS[0]`.
+- File added to governed baseline suite (`run_baseline_tests.py`).
+- `CF-ARCH-CONV-I-ALT-IDPROV-1` resolved.
+- Zero production / knowledge_bus / frontend changes.
+
+### Carry-forwards
+- `CF-ARCH-CONV-VERSION-1` remains open.
+
+### Blockers / risks
+- None open for this test-estate restoration.
 
 ### Recommended next sprint
 - Package C versioning / regeneration (`CF-ARCH-CONV-VERSION-1`) or Package B Wave 2 after product-policy decisions.
