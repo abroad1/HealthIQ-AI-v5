@@ -1,9 +1,10 @@
 {
   "branch": "feature/arch-conv-pkgc-2-provenance-identity-closure",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-02T15:02:42Z",
   "cursor_started_utc": "2026-08-02T14:54:29Z",
-  "head_sha": "413804c33466ae61b5e1d4db83e6f99a8a0da6a8",
+  "head_sha": "3f03c1c14a87e4d23b4682ea6e9abccc48546b8c",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-PKGC-2"
 }
