@@ -1,10 +1,9 @@
 {
-  "branch": "feature/arch-conv-h-hba1c-compiled-why-authority",
+  "branch": "feature/arch-conv-i-alt-compiled-why-identity-resolution",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-08-01T22:32:19Z",
-  "cursor_started_utc": "2026-08-01T22:04:06Z",
-  "head_sha": "94a7d304019e6d14789f2dba75e88459b0934e20",
+  "cursor_started_utc": "2026-08-02T07:49:23Z",
+  "head_sha": "50a170846c3b951c2218c1861fda61dc9138c244",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "ARCH-CONV-H"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-CONV-I"
 }
