@@ -6,9 +6,9 @@
 **Change type:** MIXED  
 **Execution model:** TWO_PHASE_START_FINISH  
 **Implementation owner:** Core Engine agent  
-**Status:** Phase 0 mapping complete. Gate 1 `APPROVED_WITH_NARROWING` (`ARCH-CONV-I-GATE1-HMR-2026-08-02`, Outcome A `MAP_AND_COMPILE`). Gate 2 `PENDING` (`ARCH-CONV-I-GATE2-ANTHONY-PENDING`). **Implementation remains prohibited** until Gate 2 is recorded on disk and matches the Gate 1 disposition.
+**Status:** Gate 1 `APPROVED_WITH_NARROWING` (`ARCH-CONV-I-GATE1-HMR-2026-08-02`, Outcome A `MAP_AND_COMPILE`). Gate 2 `APPROVED` (`ARCH-CONV-I-GATE2-ANTHONY-2026-08-02`). **Runtime implementation authorised.**
 
-**Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-I` / `HARDENED` (Phase 0 + Gate STOP; Gate 1 now recorded).
+**Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-I` / `HARDENED`.
 
 ---
 
@@ -177,6 +177,6 @@ The alternative narrowed-causal option from Phase 0 is **withdrawn** — not sel
 ## 9. Gate status
 
 Gate 1: `ARCH-CONV-I-GATE1-HMR-2026-08-02` — `APPROVED_WITH_NARROWING` (Outcome A recorded)  
-Gate 2: `ARCH-CONV-I-GATE2-ANTHONY-PENDING` — `PENDING`
+Gate 2: `ARCH-CONV-I-GATE2-ANTHONY-2026-08-02` — `APPROVED` (ratifies Gate 1)
 
-**Remain stopped.** Do not create compiled artefacts, alter authority registers, retire legacy ownership, or change runtime behaviour until Gate 2 `APPROVED` is committed on disk.
+**Runtime implementation authorised.** Proceed under the active Automation Bus work package with Gate 1 boundaries unchanged. Sibling WHY skip-class rows are required for live non-compiled `signal_alt_high` frames when piloted.

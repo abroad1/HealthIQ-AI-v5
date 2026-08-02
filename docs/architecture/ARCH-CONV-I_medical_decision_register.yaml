@@ -1,17 +1,17 @@
 work_id: ARCH-CONV-I
 branch: feature/arch-conv-i-alt-compiled-why-identity-resolution
-register_state: GATE_1_RECORDED_AWAITING_GATE_2
+register_state: GATES_APPROVED_RUNTIME_AUTHORISED
 gate1_status: APPROVED_WITH_NARROWING
-gate2_status: PENDING
+gate2_status: APPROVED
 head_of_medical_research_gate1_reference: ARCH-CONV-I-GATE1-HMR-2026-08-02
-anthony_gate2_reference: ARCH-CONV-I-GATE2-ANTHONY-PENDING
+anthony_gate2_reference: ARCH-CONV-I-GATE2-ANTHONY-2026-08-02
 hardening_pack_ref: docs/architecture/ARCH-CONV-I_hardening_pack.md
 gate_decision_ref: docs/architecture/ARCH-CONV-I_GATE_1_GATE_2_decision.md
-runtime_changes_authorised: false
+runtime_changes_authorised: true
 note: >
-  Gate 1 APPROVED_WITH_NARROWING recorded on 2026-08-02 (Outcome A MAP_AND_COMPILE).
-  Gate 2 remains PENDING. Implementation of ALT compiled-WHY disposition remains
-  prohibited until Anthony Gate 2 ratification is recorded on disk.
+  Gate 1 APPROVED_WITH_NARROWING and Gate 2 APPROVED recorded on 2026-08-02.
+  Gate 2 ratifies Gate 1 Outcome A MAP_AND_COMPILE. Runtime compiled-WHY
+  implementation is authorised under the active Automation Bus work package.
 
 baseline_counts:
   compiled_active: 25
@@ -26,6 +26,8 @@ canonical_frame:
   source_spec_id: inv_alt_high_r_value_hepatocellular_biochemical_pattern
   activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
   canonical_package: pkg_kb52c_alt_high_hepatocellular_injury_pattern
+  source_document: knowledge_bus/research/investigation_specs/multi_llm_research/ALT_High_Hepatic_Pattern_Classification_ARCH_CONV_E_Pass_3.json
+  source_sha256: 7F20BF9A06B3427217AD7F753C4D9304E5D5A2C46C484699257778844B9D3267
   why_role: morphology_context
   why_role_flat: true
   conditional_why_role: none
@@ -54,6 +56,12 @@ competitor_disposition:
   psi_status: UNCHANGED
   package_deletion: forbidden
 
+sibling_why_skip_rows_required_for_pilot:
+  - signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
+  - signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
+  - signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
+  - signal_alt_high::inv_alt_high_metabolic_masld_context
+
 hardcoded_thresholds_transfer: prohibited
 
 preserve_unchanged:
@@ -63,14 +71,13 @@ preserve_unchanged:
   - alp_ggt_compiled_authority
   - bilirubin_severity_override_only_posture
 
-expected_register_delta_subject_to_gate2:
+expected_register_delta:
   compiled_active: '+1'
-  legacy_retired: '+1'
-  note: sibling skip-class rows may be required if signal_alt_high is piloted
-
-implementation_hazards_acknowledged_for_gate2:
-  - signal_alt_high_absent_from_ROOT_CAUSE_TARGET_SPECS
-  - multi_frame_fail_closed_if_piloted_without_sibling_rows
+  legacy_retired: '+5'
+  note: >
+    +1 hepatocellular COMPILED_ACTIVE; +1 legacy hepatic_alt WHY retirement;
+    +4 live sibling signal_alt_high frames LEGACY_RETIRED for WHY ownership only
+    to avoid pilot fail-closed (package layer unchanged).
 
 exclusions:
   - no_runtime_alias_hepatic_alt_context_to_alt_high
@@ -86,4 +93,4 @@ mechanism_sufficiency:
   static_why_role: sufficient
   new_compiler_mechanism_required: false
   root_cause_compiler_v1_change_expected: false
-  root_cause_registry_v1_change_possible_under_outcome_a: true
+  root_cause_registry_v1_change_required_for_emit: true
