@@ -8,7 +8,7 @@ notes:
 phenotypes:
   - phenotype_id: "ph_vascular_hcy_inflammation_v1"
     chain_coverage_status: "enforced"
-    clinical_intent: "Homocysteine elevation with inflammatory context; should produce vascular chain and root-cause hypotheses."
+    clinical_intent: "Homocysteine elevation with inflammatory context; should produce vascular chain. ARCH-CONV-PKGB-1: elevation-context WHY is FOLD_SUPPRESS (no independent root-cause emit)."
     fixture_filename: "ph_vascular_hcy_inflammation_v1.json"
     expected_signals:
       must_fire:
@@ -22,8 +22,9 @@ phenotypes:
         - "signal_homocysteine_elevation_context"
       optional_expected_sequences: []
     expected_root_cause:
-      must_exist: true
-      min_hypothesis_count: 3
+      must_exist: false
+      # ARCH-CONV-PKGB-1: FOLD_SUPPRESS — elevation-context must not independently emit WHY.
+      min_hypothesis_count: 0
       applies_to_signal_id: "signal_homocysteine_elevation_context"
 
   - phenotype_id: "ph_renal_stress_v1"
@@ -207,8 +208,10 @@ phenotypes:
       must_include_any_signal: []
       optional_expected_sequences: []
     expected_root_cause:
-      must_exist: true
-      min_hypothesis_count: 1
+      must_exist: false
+      # ARCH-CONV-PKGB-1: FOLD_SUPPRESS — elevation-context WHY retired; metabolic
+      # signal_homocysteine_high frame remains REJECTED on this fixture.
+      min_hypothesis_count: 0
       applies_to_signal_id: "signal_homocysteine_elevation_context"
 
   - phenotype_id: "ph_lipid_residual_ldl_favourable_transport_v1"

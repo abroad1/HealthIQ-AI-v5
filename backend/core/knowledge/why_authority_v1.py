@@ -23,6 +23,8 @@ _PILOT_SIGNAL_IDS = frozenset(
     {
         "signal_vitamin_d_low",
         "signal_homocysteine_high",
+        # ARCH-CONV-PKGB-1: FOLD_SUPPRESS — WHY-only retirement; package activation unchanged
+        "signal_homocysteine_elevation_context",
         "signal_mcv_high",
         "signal_free_t3_low",
         "signal_tpo_ab_high",
@@ -50,6 +52,16 @@ _PILOT_SIGNAL_IDS = frozenset(
         "signal_total_cholesterol_high",
         # Parallel Pass-3 haemoglobin signal id (WHY retired; signal may still evaluate)
         "signal_hgb_low",
+    }
+)
+
+# Authority states that never emit WHY for a pilot signal (keyed or bare-key class).
+_NON_OWNING_AUTHORITY_STATES = frozenset(
+    {
+        STATE_LEGACY_RETIRED,
+        STATE_REJECTED,
+        STATE_DEFERRED,
+        STATE_BLOCKED,
     }
 )
 
@@ -135,15 +147,30 @@ def resolve_frame_why_authority(
         if not key:
             # Bare signal_id is forbidden for multi-frame pilot signals.
             # Unique COMPILED_ACTIVE resolution is allowed (e.g. vitamin D / free T3).
+            # ARCH-CONV-PKGB-1: zero COMPILED_ACTIVE with all rows unambiguously
+            # non-owning → governed skip (not unconditional fail_closed).
             reg = load_why_authority_register()
-            matches = [
+            sid_rows = [
                 r
                 for r in reg["_by_activation_key"].values()
                 if str(r.get("signal_id") or "").strip() == sid
-                and str(r.get("authority_state") or "").strip() == STATE_COMPILED_ACTIVE
+            ]
+            matches = [
+                r
+                for r in sid_rows
+                if str(r.get("authority_state") or "").strip() == STATE_COMPILED_ACTIVE
             ]
             if len(matches) == 1:
                 return "compiled", matches[0]
+            if len(matches) > 1:
+                return "fail_closed", None
+            if not sid_rows:
+                return "fail_closed", None
+            if all(
+                str(r.get("authority_state") or "").strip() in _NON_OWNING_AUTHORITY_STATES
+                for r in sid_rows
+            ):
+                return "skip", sid_rows[0]
             return "fail_closed", None
         if row is None:
             return "fail_closed", None

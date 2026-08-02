@@ -19,6 +19,8 @@ arch_conv_h_gate1_reference: ARCH-CONV-H-GATE1-HMR-2026-08-01
 arch_conv_h_gate2_reference: ARCH-CONV-H-GATE2-ANTHONY-2026-08-01
 arch_conv_i_gate1_reference: ARCH-CONV-I-GATE1-HMR-2026-08-02
 arch_conv_i_gate2_reference: ARCH-CONV-I-GATE2-ANTHONY-2026-08-02
+arch_conv_pkgb_1_gate1_reference: ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02
+arch_conv_pkgb_1_gate2_reference: ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02
 frames:
   - activation_key: signal_vitamin_d_low::inv_vitamin_d_low_deficiency
     signal_id: signal_vitamin_d_low
@@ -705,3 +707,20 @@ frames:
     legacy_asset: null
     legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
     notes: Legacy hepatic ALT context WHY retired for ownership only; CRP/inflammatory-coupling excluded from transfer; hardcoded thresholds not transferred; package and PSI unchanged; no runtime alias to signal_alt_high.
+
+  - activation_key: signal_homocysteine_elevation_context::inv_elevation_context
+    signal_id: signal_homocysteine_elevation_context
+    source_spec_id: inv_elevation_context
+    authority_state: LEGACY_RETIRED
+    gpt_decision: FOLD_SUPPRESS_WHY_ONLY
+    anthony_decision: APPROVED
+    final_disposition: LEGACY_RETIRED
+    gpt_review_reference: ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02
+    anthony_ratification_reference: ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02
+    artefact_path: null
+    legacy_asset: knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml
+    legacy_runtime_state: LEGACY_RETIRED_FOR_FRAME
+    notes: >
+      ARCH-CONV-PKGB-1 FOLD_SUPPRESS - elevation-context must not independently emit WHY;
+      signal_homocysteine_high remains sole compiled-WHY owner; package/PSI/activation unchanged;
+      shared hcy_hypotheses_v1.yaml retained on disk; no new medical hypothesis or narrative.

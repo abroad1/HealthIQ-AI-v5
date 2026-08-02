@@ -57,12 +57,14 @@ def test_root_cause_v1_present_for_homocysteine_and_non_regression(tmp_path, fix
     assert isinstance(root_b, dict)
     assert root_a.get("version") == "v1"
     assert root_b.get("version") == "v1"
-    finding = _finding_by_signal(root_a, "signal_homocysteine_elevation_context")
+    finding = _finding_by_signal(root_a, "signal_homocysteine_high")
     assert isinstance(finding, dict)
-    assert finding.get("signal_id") == "signal_homocysteine_elevation_context"
+    assert finding.get("signal_id") == "signal_homocysteine_high"
     hypotheses = finding.get("hypotheses", [])
-    assert len(hypotheses) >= 3
+    assert len(hypotheses) >= 1
     assert any(float(h.get("hypothesis_confidence", 0.0)) >= 0.40 for h in hypotheses if isinstance(h, dict))
+    # ARCH-CONV-PKGB-1: elevation-context must not independently emit WHY.
+    assert _finding_by_signal(root_a, "signal_homocysteine_elevation_context") is None
 
     # Non-regression guards: signal and intervention outputs remain deterministic and unchanged.
     assert insight_a.get("signal_results", []) == insight_b.get("signal_results", [])
@@ -122,6 +124,7 @@ def test_root_cause_v1_text_fields_respect_safety_denylist(tmp_path):
 
 
 def test_confirmatory_test_suppression_and_repeat_behavior_for_ab_panel(tmp_path):
+    """ARCH-CONV-PKGB-1: AB panel emits compiled hcy-high WHY only; elevation-context suppressed."""
     fixture = ab_acceptance_fixture_path()
     run_dir, _ = run_golden_panel(
         fixture_path=fixture,
@@ -131,29 +134,21 @@ def test_confirmatory_test_suppression_and_repeat_behavior_for_ab_panel(tmp_path
     )
     insight = _load_json(run_dir / "insight_graph.json") or {}
     root_cause = (insight.get("report_v1") or {}).get("root_cause_v1") or {}
-    findings = root_cause.get("findings") or []
-    hcy_finding = _finding_by_signal(root_cause, "signal_homocysteine_elevation_context")
+    assert _finding_by_signal(root_cause, "signal_homocysteine_elevation_context") is None
+    hcy_finding = _finding_by_signal(root_cause, "signal_homocysteine_high")
     assert isinstance(hcy_finding, dict)
     hypotheses = hcy_finding.get("hypotheses", [])
     by_id = {str(h.get("hypothesis_id", "")).strip(): h for h in hypotheses if isinstance(h, dict)}
-    b12 = by_id.get("hcy_b12_pattern_v1")
-    assert isinstance(b12, dict)
-    tests = {str(t.get("test_id", "")).strip() for t in (b12.get("confirmatory_tests") or []) if isinstance(t, dict)}
-
-    # Present in AB panel -> should be suppressed.
-    assert "test_serum_vitamin_b12_v1" not in tests
-    assert "test_holotranscobalamin_active_b12_v1" not in tests
-    # Absent in AB panel -> should remain.
-    assert "test_methylmalonic_acid_v1" in tests
-    # Repeat tests should not be suppressed.
-    folate = by_id.get("hcy_folate_pattern_v1")
-    assert isinstance(folate, dict)
-    folate_tests = {
-        str(t.get("test_id", "")).strip()
-        for t in (folate.get("confirmatory_tests") or [])
-        if isinstance(t, dict)
-    }
-    assert "test_homocysteine_repeat_v1" in folate_tests
+    assert "hyp_folate_related_hyperhomocysteinemia" in by_id
+    assert "hyp_b12_related_or_combined_methylation_impairment" in by_id
+    # Legacy elevation-context hypothesis IDs must not appear.
+    assert "hcy_b12_pattern_v1" not in by_id
+    assert "hcy_folate_pattern_v1" not in by_id
+    assert "hcy_inflammation_context_v1" not in by_id
+    # Compiled artefacts declare empty confirmatory_tests (no legacy suppression surface).
+    for hyp in hypotheses:
+        if isinstance(hyp, dict):
+            assert list(hyp.get("confirmatory_tests") or []) == []
 
 
 def test_confirmatory_test_suppression_output_is_deterministic_for_ab_panel(tmp_path):
@@ -206,8 +201,10 @@ def test_root_cause_v1_hba1c_hypotheses_emit_for_hba1c_signal():
         for h in (finding.get("hypotheses") or [])
         if isinstance(h, dict)
     }
-    assert "hba1c_glycaemic_exposure_pattern_v1" in hypothesis_ids
-    assert "hba1c_lipid_coupling_context_v1" in hypothesis_ids
+    assert "hyp_hba1c_elevated_glycaemia_context" in hypothesis_ids
+    # ARCH-CONV-H: lipid-coupling legacy hypothesis is not part of compiled WHY.
+    assert "hba1c_lipid_coupling_context_v1" not in hypothesis_ids
+    assert "hba1c_glycaemic_exposure_pattern_v1" not in hypothesis_ids
 
 
 def test_root_cause_v1_alt_hypotheses_emit_for_alt_signal():
@@ -497,13 +494,13 @@ def test_root_cause_v1_arch_conv_b_uses_compiled_creatinine_urea_and_legacy_urat
     }
     uu = _finding_by_signal(dump, "signal_urate_high")
     assert isinstance(uu, dict)
-    assert "urate_elevated_serum_hyperuricaemia_v1" in {
+    assert "hyp_urate_elevated_non_causal_context" in {
         str(h.get("hypothesis_id", "")).strip() for h in (uu.get("hypotheses") or []) if isinstance(h, dict)
     }
 
 
 def test_root_cause_v1_r8_total_cholesterol_high_emits_governed_hypotheses_not_fallback():
-    """R-8 Wave 1: signal_total_cholesterol_high maps to governed WHY assets."""
+    """ARCH-CONV-PKGB-1: bare TC is non-owning skip — no invented WHY, no crash."""
     root = compile_root_cause_v1(
         signal_results=[
             {
@@ -524,12 +521,20 @@ def test_root_cause_v1_r8_total_cholesterol_high_emits_governed_hypotheses_not_f
             "hdl_cholesterol": {"min": 1.0, "max": 3.0},
         },
     )
-    assert root is not None
+    # Bare TC with all LEGACY_RETIRED rows → skip; no finding and no ValueError.
+    if root is None:
+        return
     dump = root.model_dump()
     finding = _finding_by_signal(dump, "signal_total_cholesterol_high")
-    assert isinstance(finding, dict)
-    ids = {str(h.get("hypothesis_id", "")).strip() for h in (finding.get("hypotheses") or []) if isinstance(h, dict)}
-    assert "tc_atherogenic_panel_context_v1" in ids
+    assert finding is None
+    ids = {
+        str(h.get("hypothesis_id", "")).strip()
+        for f in (dump.get("findings") or [])
+        if isinstance(f, dict)
+        for h in (f.get("hypotheses") or [])
+        if isinstance(h, dict)
+    }
+    assert "tc_atherogenic_panel_context_v1" not in ids
     assert "why_engine_fallback_v1" not in ids
 
 

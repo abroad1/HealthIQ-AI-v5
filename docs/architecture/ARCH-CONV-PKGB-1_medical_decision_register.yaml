@@ -1,0 +1,147 @@
+work_id: ARCH-CONV-PKGB-1
+branch: feature/arch-conv-pkgb-1-homocysteine-exclusivity-resolver-closure
+register_state: GATES_APPROVED_RUNTIME_IMPLEMENTED
+gate1_status: APPROVED_WITH_NARROWING
+gate2_status: APPROVED
+head_of_medical_research_gate1_reference: ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02
+anthony_gate2_reference: ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02
+hardening_pack_ref: docs/architecture/ARCH-CONV-PKGB-1_hardening_pack.md
+gate_decision_ref: docs/architecture/ARCH-CONV-PKGB-1_GATE_1_GATE_2_decision.md
+runtime_changes_authorised: true
+implementation_mechanism: option_a_why_only_legacy_retired
+note: >
+  Gate 1 APPROVED_WITH_NARROWING and Gate 2 APPROVED recorded on 2026-08-02.
+  Gate 2 ratifies Gate 1 exactly. Phase 1 implemented under Option A
+  (pilot + LEGACY_RETIRED WHY-only retirement). Register delta:
+  frames 52->53, LEGACY_RETIRED 25->26, COMPILED_ACTIVE unchanged at 26.
+
+baseline_counts:
+  compiled_active: 26
+  legacy_retired: 26
+  rejected: 1
+  total_frames: 53
+
+post_implementation_delta:
+  compiled_active: '0'
+  legacy_retired: '+1'
+  frames: '+1'
+  note: elevation-context WHY-only LEGACY_RETIRED row only; no new COMPILED_ACTIVE
+
+prior_ratified_disposition:
+  signal_id: signal_homocysteine_elevation_context
+  disposition: FOLD_SUPPRESS
+  independent_frame_count: 0
+  authority_sources:
+    - docs/architecture/ARCH-CONV-A_wave0_suppression_closure.md
+    - docs/architecture/ARCH-CONV-A_phase1_target_to_frame_map.md
+    - docs/architecture/ARCH-CONV-A_STOP_A_ratification_record.md
+  package_b_hand_off: >
+    Shared hcy_hypotheses_v1.yaml remains connected; exclusivity / selector
+    retirement is this Package B Wave 1 sprint after Gate 1/Gate 2.
+  carry_forward_open: CF-ARCH-CONV-DUAL-HCY-1
+
+canonical_compiled_owner:
+  signal_id: signal_homocysteine_high
+  compiled_active_activation_keys:
+    - signal_homocysteine_high::inv_homocysteine_high_b_vitamin_related_methylation_impairment
+    - signal_homocysteine_high::inv_homocysteine_high_renal_clearance_reduction
+  rejected_activation_key: signal_homocysteine_high::inv_homocysteine_high_metabolic
+  compiled_content_change_authorised: false
+
+competitor_disposition_gate1_approved:
+  signal_id: signal_homocysteine_elevation_context
+  activation_key: signal_homocysteine_elevation_context::inv_elevation_context
+  package_id: pkg_homocysteine_elevation_context
+  disposition: FOLD_SUPPRESS
+  package_layer_status: UNCHANGED
+  psi_status: UNCHANGED
+  package_deletion: forbidden
+  independent_why_ownership: prohibited
+  independent_why_emit: prohibited
+  new_medical_hypothesis: prohibited
+  new_narrative: prohibited
+  gate1_reference: ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02
+
+shared_asset:
+  path: knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml
+  primary_signal_id: signal_homocysteine_elevation_context
+  loader: load_hcy_hypotheses_v1
+  dual_root_cause_target_specs: true
+  physical_delete_in_this_sprint: forbidden
+
+bare_key_resolver_defect:
+  function: resolve_frame_why_authority
+  path: backend/core/knowledge/why_authority_v1.py
+  classification: mechanical_authority_handling_only
+  current_bare_zero_compiled_behaviour: fail_closed
+  required_bare_zero_compiled_behaviour: skip
+  governed_skip_only_when_all_rows_unambiguously_retired_or_non_owning: true
+  preserve_fail_closed_for_genuine_ambiguity_or_missing_governance: true
+  create_compiled_authority_for_total_cholesterol: false
+  revive_legacy_total_cholesterol_why: false
+  no_new_compiled_authority_or_medical_content_for:
+    - signal_ldl_high
+    - signal_hdl_low
+    - signal_total_cholesterol_high
+    - signal_hgb_low
+    - signal_hepatic_alt_context
+  zero_compiled_active_pilot_signal_ids:
+    - signal_ldl_high
+    - signal_hdl_low
+    - signal_total_cholesterol_high
+    - signal_hgb_low
+    - signal_hepatic_alt_context
+  governance_shape: all_rows_LEGACY_RETIRED_uniform
+  separate_adjudication_required: false
+  gate1_reference: ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02
+
+stale_test_assertion_alignment:
+  - family: hba1c
+    file: backend/tests/unit/test_root_cause_v1_homocysteine.py
+    stale_id: hba1c_glycaemic_exposure_pattern_v1
+    ratified_id: hyp_hba1c_elevated_glycaemia_context
+    production_content_change: forbidden
+  - family: urate
+    file: backend/tests/unit/test_root_cause_v1_homocysteine.py
+    stale_id: urate_elevated_serum_hyperuricaemia_v1
+    ratified_id: hyp_urate_elevated_non_causal_context
+    production_content_change: forbidden
+
+proposed_mechanism_options_for_gate1:
+  - id: A
+    name: why_only_legacy_retired_via_existing_authority_model
+    summary: >
+      Add elevation-context to pilot cohort with LEGACY_RETIRED register row
+      for activation_key signal_homocysteine_elevation_context::inv_elevation_context,
+      mirroring ARCH-CONV-I hepatic_alt retirement.
+  - id: B
+    name: disconnect_elevation_context_from_shared_selector
+    summary: >
+      Narrow registry disconnect so elevation-context cannot emit shared
+      hypotheses without changing package/signal activation.
+  - id: C
+    name: other_existing_governed_skip_retired_disposition
+    summary: Only if proven narrower than A/B while preserving determinism.
+
+exclusions:
+  - no_change_to_signal_homocysteine_high_compiled_medical_content
+  - no_independent_why_authority_for_elevation_context
+  - no_new_total_cholesterol_medical_content_or_compiled_active
+  - no_l04_why_engine_fallback_change
+  - no_l05_why_template_change
+  - no_l06_family_aggregation_decision
+  - no_package_c_replay_versioning
+  - no_frontend_medical_logic
+  - no_package_psi_scoring_activation_change
+  - no_new_compiler_mechanism
+
+expected_behaviour_change_after_gates:
+  - elevation_context_no_independent_legacy_why_emit
+  - bare_key_zero_compiled_pilot_returns_governed_skip
+  - stale_hba1c_urate_assertions_aligned_to_ratified_ids
+
+mechanism_sufficiency:
+  new_compiler_mechanism_required: false
+  new_medical_research_required: false
+  new_signal_identity_required: false
+  package_activation_change_required: false
