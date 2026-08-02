@@ -1,271 +1,375 @@
 ---
-work_id: ARCH-CONV-PKGB-1
-branch: feature/arch-conv-pkgb-1-homocysteine-exclusivity-resolver-closure
-risk_level: HIGH
-execution_model: TWO_PHASE_START_FINISH
+work_id: ARCH-CONV-PKGC-1
+title: Historic Waist-Unit Stale-Detection and Remediation
+risk_level: STANDARD
 change_type: MIXED
+execution_model: TWO_PHASE_START_FINISH
+branch: feature/arch-conv-pkgc-1-waist-unit-remediation
 ---
 
-# ARCH-CONV-PKGB-1 — Homocysteine Dual-Authority Exclusivity and Shared Resolver Defect Closure
+# ARCH-CONV-PKGC-1 — Historic Waist-Unit Stale-Detection and Remediation
 
-## Purpose
+## Authority and operating mode
 
-Deliver the first concrete Package B outcome:
-
-- eliminate live dual-authority WHY output for the homocysteine family;
-- implement the already-ratified `FOLD_SUPPRESS` disposition for `signal_homocysteine_elevation_context`;
-- correct the shared bare-activation-key resolver defect affecting pilot signal families with no `COMPILED_ACTIVE` row;
-- absorb the two stale HbA1c and urate hypothesis-ID regression assertions into the same bounded implementation sprint.
-
-This sprint must not expand into Package B Wave 2 fallback quarantine, cross-producer precedence, family aggregation policy, or Package C replay/versioning work.
-
-## Governing sources
-
-Read and apply:
+Execute under:
 
 - `AUTOMATION_BUS_SOP_v1.3.1.md`
-- `KNOWLEDGE_BUS_SOP_v1.3.1.md`
-- `KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md`
-- `docs/architecture/ARCH-CONV-A_stage0_outcome_and_package_boundary.md`
-- `docs/architecture/ARCH-CONV-A_phase1_target_to_frame_map.md`
-- `docs/architecture/ARCH-CONV_legacy_dependency_register.md`
+- the current Automation Bus hardening protocol
+- the current repository architecture and carry-forward governance
+- the locked LAUNCH-CORE-3 result-versioning, replay and regeneration policy
+- `docs/audit-papers/WAIST_UNIT_LEGACY_IMPACT_AUDIT.md`
 - `automation_bus/latest_pipeline_advisory.md`
-- `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-- relevant ARCH-CONV-PKG3, A Wave 0, G, H and I decision/evidence artefacts
 
-## Stage 1A — Authority preflight
+This is a bounded Package C Wave 1 work package.
 
-Before implementation, verify and record:
+Do not absorb `ARCH-CONV-PKGC-2` provenance-identity work, full result-versioning advancement, or the deferred regeneration job.
 
-1. The current compiled-WHY authority for `signal_homocysteine_high`.
-2. The current live legacy WHY path for `signal_homocysteine_elevation_context`.
-3. The shared physical asset and loader/registry wiring:
-   - `hcy_hypotheses_v1.yaml`
-   - its loader
-   - both `RootCauseTargetSpec` registrations
-4. The ratified `FOLD_SUPPRESS` disposition for `signal_homocysteine_elevation_context`.
-5. The current behaviour of:
-   - `resolve_frame_why_authority`
-   - bare-activation-key resolution
-   - fail-closed handling in `root_cause_compiler_v1.py`
-6. Every pilot `signal_id` with zero `COMPILED_ACTIVE` rows, not only `signal_total_cholesterol_high`.
-7. The current failing assertions in `backend/tests/unit/test_root_cause_v1_homocysteine.py`.
-8. That no new medical research, compiled hypothesis content, signal identity, package activation or frontend behaviour is required.
-9. That L-04 `why_engine_fallback_v1`, L-05 `_why_template`, and L-06 family-level aggregation remain outside this sprint.
+## Product outcome
 
-Record exact paths and line references in the Phase 0 evidence pack.
+Close `CF-ARCH-CONV-WAIST-1` by:
 
-## Stage 1B — Reality check
+1. adding the missing waist-unit stale-detection rule to the existing LAUNCH-CORE-3 stale-detection framework;
+2. applying a governed, auditable disposition to the 12 analysis IDs identified in `WAIST_UNIT_LEGACY_IMPACT_AUDIT.md`;
+3. preserving original historic values and sufficient lineage to explain every remediation action;
+4. proving that unaffected results remain unchanged.
 
-Confirm on current `main` that:
+## Current Stage 0 decision
 
-- `signal_homocysteine_elevation_context` still reaches legacy WHY content;
-- `signal_homocysteine_high` already has compiled-WHY authority;
-- both identities still reference the shared homocysteine hypothesis asset or selector path;
-- the bare-key resolver still raises for `signal_total_cholesterol_high`;
-- the HbA1c and urate hypothesis-ID tests are stale in the shared regression file;
-- the defects are not already resolved.
+The work has been separated from provenance-identity closure because the two outcomes do not share implementation, testing, rollback or acceptance boundaries.
 
-If any statement is false, STOP and re-scope rather than creating a no-op sprint.
+This sprint covers waist-unit stale detection and historic-row remediation only.
 
-## Stage 1C — Intelligence preflight
+Expected classification:
 
-Identify all affected Intelligence Core surfaces, including at minimum:
+```yaml
+risk_level: STANDARD
+change_type: MIXED
+```
 
-- `backend/core/knowledge/why_authority_v1.py`
-- `backend/core/knowledge/root_cause_registry_v1.py`
-- homocysteine hypothesis loader and asset
-- `backend/core/analytics/root_cause_compiler_v1.py`
-- compiled-WHY authority register
-- legacy root-cause authority register
-- output-authority/provenance projection where relevant
-- shared root-cause regression tests
-- architecture and compiled-WHY gates
+- `BEHAVIOUR`: one new stale-detection rule.
+- `DATA`: governed treatment of the 12 historic analysis rows.
 
-Expected behaviour change must be limited to:
+If repository mapping shows that the changed runtime path qualifies as Intelligence Core under Automation Bus SOP v1.3.1, STOP and reclassify to `HIGH` before implementation.
 
-1. `signal_homocysteine_elevation_context` no longer independently emitting legacy WHY content.
-2. Bare-key resolution for a pilot family with no compiled-active row returning a governed non-emitting disposition rather than raising.
-3. Stale tests reflecting already-ratified HbA1c and urate compiled hypothesis IDs.
+No medical-content Gate 1 or Gate 2 is expected.
 
-# Phase 0 — Mandatory Gate 1 / Gate 2 preparation
+A separate Anthony data-governance decision is mandatory before any historic row is changed.
 
-After kernel start, perform repository mapping only.
+# Stage 1A — Repository and authority preflight
 
-Create and commit:
+Before kernel start or implementation, verify and record:
 
-- `docs/architecture/ARCH-CONV-PKGB-1_hardening_pack.md`
-- `docs/architecture/ARCH-CONV-PKGB-1_medical_decision_register.yaml`
-- `docs/architecture/ARCH-CONV-PKGB-1_GATE_1_GATE_2_decision.md`
+1. The exact current branch and `main == origin/main` state.
+2. Working-tree and stash state.
+3. The current status of `CF-ARCH-CONV-WAIST-1`.
+4. The full 12-row affected set from:
+   - `docs/audit-papers/WAIST_UNIT_LEGACY_IMPACT_AUDIT.md`
+5. For each affected analysis ID:
+   - current persisted value;
+   - current unit or unit provenance;
+   - current result-version metadata;
+   - current stale state;
+   - source record or lineage evidence;
+   - audit classification;
+   - repository-supported remediation options.
+6. The locked LAUNCH-CORE-3 stale-detection policy and all existing stale-reason rules.
+7. The implementation and callers of `detect_launch_core_stale_reasons()`.
+8. Every reader, writer, replay path and report path that consumes the affected historic records.
+9. Whether any of the 12 rows has already been remediated, deleted, superseded or regenerated.
+10. Whether the current schema can preserve:
+    - original value;
+    - original unit;
+    - remediation action;
+    - reason;
+    - timestamp;
+    - actor/work ID;
+    - reversibility or supersession linkage.
+11. Whether the audit's recommended governed-remap/stale-mark treatment can be completed without:
+    - the unbuilt regeneration job;
+    - `CF-MEDREV2-002`;
+    - a DB lineage-table change;
+    - result-versioning redesign.
+12. Current tests covering:
+    - stale-reason detection;
+    - launch-core versioning;
+    - replay/regeneration;
+    - data repair or migration;
+    - historic-result rendering.
 
-## Gate 1 questions
+Use exact paths and line references in the hardening/evidence pack.
 
-Head of Medical Research must confirm:
+## Stage 1A classification check
 
-1. `signal_homocysteine_elevation_context` remains `FOLD_SUPPRESS`.
-2. It must not independently own or emit WHY content.
-3. No new medical hypothesis or replacement narrative is required for that identity.
-4. `signal_homocysteine_high` compiled content remains unchanged.
-5. The total-cholesterol resolver correction is mechanical authority handling only and must not create new medical content.
-6. The HbA1c and urate test corrections are assertion alignment only and must not alter runtime content.
-7. No L-04/L-05/L-06 product-policy decision is being made in this sprint.
+Explicitly answer:
 
-## Gate 2
+- Does `detect_launch_core_stale_reasons()` alter medical reasoning, ranking, interpretation or output construction?
+- Is it an Intelligence Core component under Automation Bus SOP §3?
+- Does this sprint remain `STANDARD`, or must it be `HIGH`?
 
-Anthony must ratify Gate 1 exactly.
+Do not rely on the Stage 0 assumption. Record the repository-backed answer.
 
-No runtime implementation is authorised until both decisions are recorded on disk and agree.
+# Stage 1B — Reality check
+
+Confirm that:
+
+- all 12 audit-listed analysis IDs still exist or have an explicitly traceable successor state;
+- each still has the waist-unit legacy defect described by the audit, unless already governed as remediated;
+- the stale-detection framework still lacks a waist-unit rule;
+- the existing framework can represent the required stale reason without redesign;
+- the remediation does not require regeneration;
+- no correct historic value needs to be guessed or reconstructed from insufficient evidence;
+- this is not a no-op sprint.
+
+If any core premise is false, STOP and re-scope.
+
+# Stage 1C — Hardening deliverables
+
+Harden `automation_bus/latest_cursor_prompt.md` and produce the standard evidence checklist.
+
+The hardening pack must include:
+
+- exact affected-code surface;
+- exact affected-data surface;
+- row-by-row evidence table;
+- risk classification decision;
+- proposed stale-reason identifier and semantics;
+- proposed row disposition for all 12 IDs;
+- rollback/reversal design;
+- idempotency design;
+- acceptance-test matrix;
+- explicit exclusion proof for PKGC-2, compiled-WHY and full result versioning.
+
+# Phase 0 — Mandatory data-governance STOP
+
+After mapping and before any historic-row mutation, create and commit:
+
+- `docs/architecture/ARCH-CONV-PKGC-1_hardening_pack.md`
+- `docs/architecture/ARCH-CONV-PKGC-1_data_remediation_register.yaml`
+- `docs/architecture/ARCH-CONV-PKGC-1_DATA_GOVERNANCE_decision.md`
+
+The data-remediation register must contain one entry for each of the 12 analysis IDs with:
+
+```yaml
+analysis_id:
+audit_classification:
+current_value:
+current_unit:
+source_or_lineage_evidence:
+proposed_disposition:
+proposed_corrected_value:
+proposed_corrected_unit:
+stale_reason:
+original_preserved:
+reversible:
+rationale:
+confidence:
+implementation_authorised: false
+```
+
+Permitted proposed dispositions are limited to repository-supported treatments, for example:
+
+- `GOVERNED_REMAP`
+- `MARK_STALE_NO_REWRITE`
+- `ALREADY_REMEDIATED_NO_ACTION`
+- `BLOCKED_AMBIGUOUS`
+
+Do not invent a disposition merely to make all 12 rows actionable.
+
+## Required Anthony decision
+
+Anthony must approve the complete row-by-row remediation register, including:
+
+- the treatment selected for every analysis ID;
+- whether a persisted value may be rewritten;
+- whether a row must instead be marked stale without rewriting;
+- the audit-trail and reversibility mechanism;
+- any blocked or ambiguous rows;
+- confirmation that no inferred historic value is authorised.
 
 ## Mandatory STOP
 
-After committing the Phase 0 pack:
+After committing Phase 0:
 
 - STOP.
 - Keep the work package `IN_PROGRESS`.
-- Do not alter resolver behaviour.
-- Do not disconnect or split the shared homocysteine asset.
-- Do not change authority registers.
-- Do not modify test expectations.
-- Do not touch L-04, L-05, L-06 or Package C.
-- Report the exact Gate 1 decision required.
+- Do not add the stale-detection rule.
+- Do not mutate any historic analysis row.
+- Do not run a remediation script in write mode.
+- Do not invoke or build regeneration.
+- Do not touch provenance-identity code.
+- Report the exact data-governance decision required.
 
-# Phase 1 — Implementation after Gate 1 and Gate 2 only
+# Phase 1 — Implementation after data-governance approval only
 
-Implement the ratified disposition with the smallest safe mechanism.
+Proceed only after Anthony's decision is recorded on disk and `implementation_authorised: true`.
 
-## A. Homocysteine exclusivity
+## A. Waist-unit stale-detection rule
 
-Ensure:
-
-- `signal_homocysteine_elevation_context` cannot independently emit legacy WHY content;
-- `signal_homocysteine_high` remains the sole compiled-WHY owner for the ratified homocysteine-high frame;
-- no fallback path silently restores the retired/suppressed elevation-context WHY;
-- package, PSI, card, signal activation and compiled homocysteine content remain unchanged.
-
-Use the existing authority model. Do not invent a new medical hypothesis, signal identity, alias or compiler path.
-
-The final implementation may:
-
-- disconnect the legacy identity from the shared selector;
-- split the registry path;
-- add a governed skip/retired disposition;
-- or use another existing mechanism proven by Phase 0.
-
-Choose the narrowest implementation that satisfies exclusivity and preserves determinism.
-
-## B. Shared bare-key resolver defect
-
-Fix `resolve_frame_why_authority` so that a pilot `signal_id` with zero `COMPILED_ACTIVE` rows does not unconditionally cause a runtime `ValueError` when resolved without an activation key.
+Add one narrowly bounded rule to the existing `detect_launch_core_stale_reasons()` framework.
 
 Requirements:
 
-- return a governed non-emitting/skip disposition when all relevant rows are retired/rejected/non-owning;
-- preserve fail-closed behaviour for genuine ambiguity or missing governance;
-- do not create compiled authority for `signal_total_cholesterol_high`;
-- do not revive legacy total-cholesterol WHY;
-- inspect and disclose every pilot signal family with zero `COMPILED_ACTIVE` rows;
-- add tests for each affected structural class, not only the one observed example.
+1. Use the existing stale-reason contract and return shape.
+2. Detect only the proven waist-unit legacy defect.
+3. Use canonical, deterministic evidence available in the persisted result and its version/lineage metadata.
+4. Do not infer a defect solely from a surprising waist value.
+5. Do not classify records stale where the unit and provenance are valid.
+6. Produce a stable, named stale-reason identifier.
+7. Preserve all six existing rules and their ordering/semantics unless the governing policy requires otherwise.
+8. Do not create a parallel stale-detection engine.
+9. Do not trigger regeneration.
+10. Repeated evaluation must be deterministic.
 
-## C. Stale test corrections
+The exact rule must be derived from the audit and repository evidence, not from assumptions in this prompt.
 
-Update only the stale assertions to the already-ratified IDs:
+## B. Historic-row remediation
 
-- HbA1c: `hyp_hba1c_elevated_glycaemia_context`
-- Urate: `hyp_urate_elevated_non_causal_context`
+Implement the approved row-by-row dispositions for the 12 analysis IDs.
 
-Do not alter production content to satisfy old tests.
+Requirements:
+
+1. Apply exactly the approved action for each row.
+2. Preserve original values and units through the repository's existing audit, supersession or lineage mechanism.
+3. Never overwrite a row where the approved disposition is `MARK_STALE_NO_REWRITE`.
+4. Never touch a row marked `BLOCKED_AMBIGUOUS`.
+5. Do not infer missing conversion context.
+6. Ensure remediation is idempotent.
+7. Ensure a dry-run mode produces the exact intended change set before write mode.
+8. Ensure write mode refuses to run if:
+   - the target row no longer matches its approved precondition;
+   - the affected-set count differs unexpectedly;
+   - an unknown analysis ID appears;
+   - the operation would affect rows outside the approved 12;
+   - audit-trail persistence fails.
+9. Produce a machine-readable remediation output showing:
+   - analysis ID;
+   - precondition result;
+   - action;
+   - before state;
+   - after state;
+   - stale reason;
+   - audit reference;
+   - success/failure.
+10. Do not claim all 12 were remediated if any remain blocked or no-action.
+
+Prefer the repository's established migration/remediation mechanism. Do not introduce ad hoc direct database mutation if a governed mechanism exists.
 
 # Explicit exclusions
 
 Do not:
 
-- change `signal_homocysteine_high` compiled medical content;
-- add independent WHY authority for `signal_homocysteine_elevation_context`;
-- alter homocysteine activation logic, thresholds, package reachability, PSI or frontend output;
-- create new total-cholesterol medical content;
-- add total cholesterol to `COMPILED_ACTIVE`;
-- change lipid activation or scoring;
-- alter L-04 `_compile_why_engine_fallback_finding`;
-- alter L-05 `_why_template`;
-- decide or change L-06 family aggregation;
-- begin Package C replay, provenance, waist remediation or result versioning;
-- introduce a new fallback parser or compiler mechanism;
-- read raw research at runtime;
-- make governance-only or register-only changes without the corresponding runtime proof.
+- modify `output_authority_provenance_builder_v1.py`;
+- modify `test_output_authority_provenance.py` for PKGC-2;
+- implement provenance activation-key validation;
+- advance `CF-ARCH-CONV-PROV-1`;
+- advance `CF-ARCH-CONV-VERSION-1`;
+- build or invoke the deferred regeneration job;
+- implement `CF-MEDREV2-002`;
+- redesign result versioning, replay or lineage;
+- touch compiled-WHY authority, root-cause authority or medical content;
+- touch signal activation, packages, PSI, SSOT or frontend medical logic;
+- change waist thresholds or clinical interpretation;
+- infer historic measurements from demographics, later results or current values;
+- broaden remediation beyond the 12 governed analysis IDs;
+- combine this work with `ARCH-CONV-PKGC-2`.
 
-# Tests
+# Required tests
 
-Add a dedicated regression suite:
-
-`backend/tests/regression/test_arch_conv_pkgb_1_exclusivity_resolver.py`
+Add a focused regression suite for `ARCH-CONV-PKGC-1`.
 
 At minimum prove:
 
-1. `signal_homocysteine_elevation_context` does not independently emit WHY.
-2. `signal_homocysteine_high` compiled WHY remains unchanged.
-3. A panel containing both identities produces only the ratified compiled homocysteine WHY.
-4. No legacy/fallback path restores the suppressed elevation-context content.
-5. Bare-key `signal_total_cholesterol_high` no longer raises.
-6. Total cholesterol remains non-owning and emits no invented compiled WHY.
-7. Every pilot family with zero `COMPILED_ACTIVE` rows resolves deterministically.
-8. Genuine ambiguous or ungoverned cases still fail closed.
-9. HbA1c and urate assertions use the ratified hypothesis IDs.
-10. ARCH-CONV-F, G, H and I regression suites remain green.
-11. Package, PSI, scoring, frontend and SSOT state remain unchanged.
-12. No L-04/L-05/L-06 behaviour changes.
+## Stale-detection behaviour
+
+1. Every governed affected record shape receives the new waist-unit stale reason.
+2. Correct centimetre records are not marked stale.
+3. Correct inch records with valid provenance are not marked stale.
+4. Records without sufficient proof of the legacy defect are not automatically rewritten.
+5. Existing stale-detection rules remain unchanged.
+6. Multiple applicable stale reasons compose according to the locked policy.
+7. Repeated detection is deterministic.
+
+## Remediation behaviour
+
+8. Dry-run identifies exactly the approved affected rows.
+9. Each of the 12 analysis IDs receives exactly its approved disposition.
+10. No unapproved row is mutated.
+11. Governed remaps preserve original value/unit and audit lineage.
+12. Stale-only rows are not rewritten.
+13. Blocked rows remain untouched and are reported.
+14. Re-running remediation creates no additional mutation.
+15. Changed preconditions cause a fail-closed refusal.
+16. Partial failure cannot be reported as complete success.
+17. Rollback or supersession behaviour works as designed.
+
+## Non-regression
+
+18. Result-versioning rules 1–6 remain unchanged.
+19. Replay behaviour remains unchanged except for the approved stale classification.
+20. No regeneration job is called.
+21. No provenance-identity behaviour changes.
+22. No compiled-WHY, package, PSI, SSOT or frontend drift occurs.
+23. Architecture and baseline gates remain green.
+
+# Verification
 
 Run at minimum:
 
-- the new regression suite;
-- `backend/tests/unit/test_root_cause_v1_homocysteine.py`;
-- ARCH-CONV-F/G/H/I regression suites;
-- `python backend/scripts/validate_compiled_why_authority_gate.py`;
+- the new focused regression suite;
+- all existing launch-core stale-detection tests;
+- all relevant result-versioning and replay tests;
+- relevant persistence/data-remediation tests;
 - architecture validation gate;
-- baseline tests required by the Automation Bus;
-- three-layer pipeline verification.
+- baseline test suite;
+- three-layer pipeline verification;
+- any database/migration validation required by the actual implementation;
+- a dry-run against the governed 12-row set;
+- a post-write verification proving exact approved outcomes, if the repository test environment supports governed write execution.
 
-## Baseline coverage check
-
-Because the shared root-cause unit file was previously absent from the curated baseline suite, determine whether it should be added to `backend/scripts/run_baseline_tests.py`.
-
-If adding it is safe and proportionate, include it so these failures cannot remain invisible.
-
-If adding it would introduce unrelated unstable coverage, STOP and report rather than silently broadening the baseline gate.
+Do not use production data or an uncontrolled live database.
 
 # STOP conditions during implementation
 
 STOP if:
 
-- Gate 1 and Gate 2 do not match;
-- exclusivity requires changing compiled homocysteine medical content;
-- the legacy elevation-context identity cannot be suppressed without changing package/signal activation;
-- the resolver correction would convert ambiguity into silent skipping;
-- any pilot family with zero `COMPILED_ACTIVE` rows has a materially different governance shape requiring separate adjudication;
-- total cholesterol requires new medical content or authority;
-- L-04/L-05/L-06 behaviour must change;
-- any Package C file or behaviour must change;
-- any unrelated compiled-WHY authority or register row changes;
-- any regression cannot be attributed and bounded.
+- repository evidence raises risk to `HIGH` and the work package has not been re-hardened;
+- Anthony's data-governance approval is absent, incomplete or differs from the implementation;
+- any row's correct disposition is ambiguous beyond the audit;
+- any corrected value would need to be inferred;
+- remediation requires the unbuilt regeneration job;
+- the schema cannot preserve the required audit trail;
+- the stale rule produces false positives on valid records;
+- the affected set differs from the approved register;
+- implementation touches PKGC-2, provenance, compiled-WHY or medical content;
+- result-versioning redesign is required;
+- a write cannot be made idempotent and fail-closed;
+- unrelated regressions cannot be bounded and attributed.
 
 # Evidence and closure
 
 Produce:
 
-- `docs/audit-papers/ARCH-CONV-PKGB-1_implementation_and_verification_report.md`
-- updated Gate decision record
-- updated medical decision register
-- updated Build Deliverables Register entry
-- updated central carry-forward register only for genuinely closed or newly exposed obligations
+- `docs/audit-papers/ARCH-CONV-PKGC-1_implementation_and_verification_report.md`
+- final `docs/architecture/ARCH-CONV-PKGC-1_data_remediation_register.yaml`
+- final `docs/architecture/ARCH-CONV-PKGC-1_DATA_GOVERNANCE_decision.md`
+- updated `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
+- updated `docs/sprints/launch_core_carry_forward_register.md`
 
-Before `finish`, complete the mandatory Post-Implementation Closure Protocol.
+Close only the carry-forward obligation actually resolved.
 
-Run kernel finish only after:
+If any of the 12 rows remains blocked, record that explicitly and do not mark the carry-forward item fully resolved unless its governing definition permits partial closure.
 
-- implementation and tests are complete;
-- repo hygiene is proven;
-- no unrelated files remain;
-- all required gates pass.
+Complete the mandatory Post-Implementation Closure Protocol before kernel finish.
+
+Run `python backend/scripts/run_work_package.py finish` only when:
+
+- implementation is complete;
+- approved data actions are verified;
+- all required tests and gates pass;
+- the branch is clean except for permitted kernel-owned status handling;
+- no out-of-scope or tooling files are present;
+- stash state is governed and empty unless explicitly authorised.
 
 Do not merge.
 
-After kernel COMPLETE, stop for independent Claude Code audit, GPT architectural review and Anthony merge authority.
+After kernel `COMPLETE`, stop for independent Claude Code audit, GPT architectural review and Anthony merge authority.

@@ -1,91 +1,75 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-PKGB-1",
+  "work_id": "ARCH-CONV-PKGC-1",
   "status": "HARDENED",
   "hardening_date": "2026-08-02",
   "hardened_by": "Claude Code",
-  "source_prompt": "automation_bus/latest_cursor_prompt.md (front matter complete: work_id, branch feature/arch-conv-pkgb-1-homocysteine-exclusivity-resolver-closure, risk_level HIGH, execution_model TWO_PHASE_START_FINISH, change_type MIXED)",
-  "risk_level": "HIGH",
+  "source_prompt": "automation_bus/latest_cursor_prompt.md (front matter complete: work_id, branch feature/arch-conv-pkgc-1-waist-unit-remediation, risk_level STANDARD, execution_model TWO_PHASE_START_FINISH, change_type MIXED)",
+  "risk_level": "STANDARD",
   "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
 
   "verification_mode_used": {
     "mode": "batched parallel calls, no fork",
-    "rationale": "This work package directly implements Sprint 1 of automation_bus/latest_pipeline_advisory.md, which this session authored and independently re-verified twice (initial Stage 0 advisory, then a deep-investigation revision). Nearly all cited repository content -- root_cause_registry_v1.py wiring, why_authority_v1.py resolver logic, the 3 pre-existing test failures (reproduced live and via a clean-baseline git worktree), the FOLD_SUPPRESS ratification, and the F/G/H/I regression suites -- was already read verbatim this session. The one genuinely new verification (enumerating every pilot signal_id with zero COMPILED_ACTIVE rows, not just total_cholesterol_high) was done directly via a register load, not delegated. No disjoint large-scale work requiring a fork."
+    "rationale": "This work package directly implements the ARCH-CONV-PKGC-1 half of this session's own Stage 0 bundling revalidation (SPLIT INTO ARCH-CONV-PKGC-1, ARCH-CONV-PKGC-2). The governing sources (WAIST_UNIT_LEGACY_IMPACT_AUDIT.md, LAUNCH-CORE-3 policy, result_versioning_policy_v1.py, analysis_regeneration_v1.py) were already read in full in that immediately-prior Stage 0 pass. Remaining gaps (migration mechanism availability, schema audit-trail capacity, fresh branch/carry-forward state) closed with a small number of targeted parallel reads. No disjoint large-scale work requiring a fork."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
-    "declared_risk_level": "HIGH",
+    "declared_risk_level": "STANDARD",
     "declared_change_type": "MIXED",
-    "scope_proportionality": "PASS -- matches automation_bus/latest_pipeline_advisory.md Sprint 1 exactly (homocysteine exclusivity + bare-key resolver fix + 2 stale test-ID corrections), explicitly excludes Package B Wave 2 (L-04/L-05/L-06) and Package C, matching this session's own bundling analysis",
-    "advisory_duplication": "NO conflict -- directly implements the pipeline advisory's Sprint 1 recommendation; the prompt's added 'baseline coverage check' (whether to add test_root_cause_v1_homocysteine.py to run_baseline_tests.py) is a reasonable extension not explicitly in the advisory but consistent with its own finding that this file's failures were invisible to the baseline gate",
-    "phase0_only_scope_correctly_declared": "CONFIRMED -- prompt explicitly STOPs after committing the Phase 0 pack and before Gate 1/Gate 2 approval (lines 119-130: 'Do not alter resolver behaviour... Do not change authority registers... Do not modify test expectations'); Phase 1 heading (line 132) is explicitly gated on 'Gate 1 and Gate 2 only'",
+    "scope_proportionality": "PASS -- matches this session's own Stage 0 revalidation recommendation exactly (waist-unit stale-detection rule + governed 12-row remediation only); explicitly excludes ARCH-CONV-PKGC-2 (provenance-identity), the deferred regeneration job, CF-MEDREV2-002, and full result-versioning advancement",
+    "advisory_duplication": "NO conflict -- direct implementation of this session's own split recommendation from the immediately-prior Stage 0 bundling revalidation",
+    "phase0_only_scope_correctly_declared": "CONFIRMED -- prompt explicitly STOPs after committing the Phase 0 data-governance pack and before any historic-row mutation or rule addition (lines 189-200: 'Do not add the stale-detection rule... Do not mutate any historic analysis row... Do not run a remediation script in write mode'); Phase 1 heading (line 202) is explicitly gated on 'data-governance approval only', with a required Anthony (not Head of Medical Research) decision -- correctly reflecting that this is a data-governance disposition, not a medical-content Gate 1/Gate 2 decision (prompt line 54: 'No medical-content Gate 1 or Gate 2 is expected')",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "homocysteine_compiled_authority": {
+    "carry_forward_status": {
+      "status": "CONFIRMED still Open",
+      "evidence": "docs/sprints/launch_core_carry_forward_register.md:99 -- CF-ARCH-CONV-WAIST-1, status Open, '48 legacy bare waist rows audited; 12 classified used_incorrectly. Forward path fixed; historic disposition not executed.' Re-confirmed this session, unchanged since the prior Stage 0 pass."
+    },
+    "twelve_row_affected_set": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/governance/compiled_why_authority_register_v1.yaml: 3 COMPILED_ACTIVE rows for signal_homocysteine_high (activation keys ...b_vitamin_related_methylation_impairment, ...metabolic, ...renal_clearance_reduction), confirmed by direct register load this session. why_authority_v1.py _PILOT_SIGNAL_IDS: signal_homocysteine_high present (line 25)."
+      "evidence": "docs/audit-papers/WAIST_UNIT_LEGACY_IMPACT_AUDIT.md read in full in the immediately-prior Stage 0 pass: 48 legacy bare rows classified, 12 used_incorrectly (exact analysis_id, created_at, original_value, incorrect_mapped_cm_if_inches columns present for each), 36 dropped_as_implausible, 0 analysis_start_blocked. This audit table is the governed evidence source the prompt's own Phase 0 data-remediation register (lines 150-167) must be populated from."
     },
-    "elevation_context_legacy_path": {
-      "status": "CONFIRMED still live",
-      "evidence": "backend/core/knowledge/root_cause_registry_v1.py:29-30 -- both RootCauseTargetSpec('signal_homocysteine_elevation_context', lrc.load_hcy_hypotheses_v1, 'hcy_hypotheses_v1.yaml') and RootCauseTargetSpec('signal_homocysteine_high', lrc.load_hcy_hypotheses_v1, 'hcy_hypotheses_v1.yaml') wired to the same loader/file. why_authority_v1.py: zero matches for 'signal_homocysteine_elevation_context' in _PILOT_SIGNAL_IDS (grep, this session and prior) -- confirmed out-of-pilot-cohort, resolves plain 'legacy' per resolve_frame_why_authority's final branch (line 164-165), meaning it still emits shared-file content today."
-    },
-    "shared_asset_and_wiring": {
+    "stale_detection_framework_and_gap": {
       "status": "CONFIRMED",
-      "evidence": "knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml:4 -- primary_signal_id: 'signal_homocysteine_elevation_context'. Loader lrc.load_hcy_hypotheses_v1 confirmed referenced by both registry rows above -- single shared physical asset, single shared loader function, two RootCauseTargetSpec registrations pointing at it."
+      "evidence": "backend/core/dto/result_versioning_policy_v1.py read in full (173 lines) in the immediately-prior Stage 0 pass and re-confirmed this session: detect_launch_core_stale_reasons() implements exactly six existing stale-reason rules (completeness_policy_mismatch/missing, card_subsystem_completeness_mismatch, legacy_hard_coded_subsystem_trace, legacy_total_bilirubin_false_missing). Grep for 'waist' across result_versioning_policy_v1.py, persisted_replay_contract_v1.py, and analysis_regeneration_v1.py: zero matches, this session -- the waist-unit rule genuinely does not exist yet."
     },
-    "fold_suppress_ratification": {
+    "regeneration_job_and_dependencies_confirmed_absent": {
       "status": "CONFIRMED",
-      "evidence": "docs/architecture/ARCH-CONV-A_phase1_target_to_frame_map.md:69 -- 'STOP A ratified: FOLD_SUPPRESS. No independent WHY frame. Context only via non-causal surfaces. Shared hcy_hypotheses_v1.yaml not disconnected -- Package B hand-off.' Cross-confirmed by docs/sprints/launch_core_carry_forward_register.md:102 (CF-ARCH-CONV-DUAL-HCY-1, Open, 'Residual Package B')."
+      "evidence": "backend/core/dto/analysis_regeneration_v1.py read in full: assess_regeneration_available() is a pure read-only boolean check (stored_raw_biomarkers_sufficient) -- no analysis-creation/regeneration job exists. This confirms Stage 1A item 11 -- the governed remap/stale-mark treatment this prompt scopes does not require the unbuilt regeneration job, CF-MEDREV2-002, a DB lineage table, or result-versioning redesign."
     },
-    "resolver_and_fail_closed_behaviour": {
-      "status": "CONFIRMED, reproduced directly",
-      "evidence": "backend/core/knowledge/why_authority_v1.py resolve_frame_why_authority (lines 116-165): bare-activation-key branch (lines 134-147) -- 'if not key: ... if len(matches) == 1: return compiled, matches[0]; return fail_closed, None'. backend/core/analytics/root_cause_compiler_v1.py:737-741 -- 'if mode == fail_closed: raise ValueError(...)'. Directly invoked resolve_frame_why_authority(signal_id='signal_total_cholesterol_high', activation_key='') this session: returns fail_closed. Directly reproduced end-to-end via SignalEvaluator + compile_root_cause_v1 during the ARCH-CONV-I audit and again this session: raises ValueError."
+    "schema_audit_trail_capacity": {
+      "status": "CONFIRMED sufficient without new columns, migration path also available if needed",
+      "evidence": "backend/core/models/database.py: Analysis.raw_biomarkers (JSON, line 117), Analysis.processing_metadata and AnalysisResult.processing_metadata (JSON, lines 179/371/503), AnalysisResult.result_version (String, line 177) -- flexible JSON columns can carry remediation action/reason/timestamp/actor/reversibility metadata without a new migration. backend/migrations/ (alembic) confirmed present and actively used (recent targeted migrations: add_replay_manifest_column.py, insight_provenance_columns.py, s7_profiles_billing_columns.py) -- the 'repository's established migration/remediation mechanism' the prompt requires preference for (line 255) genuinely exists."
     },
-    "full_pilot_zero_compiled_enumeration": {
-      "status": "CONFIRMED, exceeds prompt's own named example",
-      "evidence": "Direct register load this session (all 27 _PILOT_SIGNAL_IDS entries checked against compiled_why_authority_register_v1.yaml COMPILED_ACTIVE rows) found exactly FIVE pilot signal_ids with zero COMPILED_ACTIVE rows: signal_ldl_high (2 rows, both LEGACY_RETIRED), signal_hdl_low (2 rows, both LEGACY_RETIRED), signal_total_cholesterol_high (2 rows, both LEGACY_RETIRED), signal_hgb_low (1 row, LEGACY_RETIRED), signal_hepatic_alt_context (1 row, LEGACY_RETIRED -- the ARCH-CONV-I retirement row itself). All five share an IDENTICAL governance shape: every row for each is LEGACY_RETIRED, none REJECTED/DEFERRED/BLOCKED/LEGACY_ACTIVE. This directly satisfies Stage 1A item 6 and confirms the prompt's STOP condition ('any pilot family with zero COMPILED_ACTIVE rows has a materially different governance shape requiring separate adjudication') is NOT triggered -- a uniform fix is safe to scope for all five, not just signal_total_cholesterol_high."
+    "existing_test_surface": {
+      "status": "CONFIRMED, disjoint from PKGC-2",
+      "evidence": "backend/tests/regression/test_internal_uat_result_versioning_dto_contract.py, test_med_rev2_domain_card_copy_and_regeneration.py, backend/tests/unit/test_launch_core3_result_versioning.py -- confirmed via grep this session, zero overlap with the provenance test surface (test_output_authority_provenance.py, test_arch_rt_identity_prov_1.py), consistent with this session's Stage 0 split rationale."
     },
-    "stale_test_assertions": {
-      "status": "CONFIRMED, reproduced twice",
-      "evidence": "backend/tests/unit/test_root_cause_v1_homocysteine.py -- test_root_cause_v1_hba1c_hypotheses_emit_for_hba1c_signal (expects stale 'hba1c_glycaemic_exposure_pattern_v1', actual 'hyp_hba1c_elevated_glycaemia_context'), test_root_cause_v1_arch_conv_b_uses_compiled_creatinine_urea_and_legacy_urate (expects stale 'urate_elevated_serum_hyperuricaemia_v1', actual 'hyp_urate_elevated_non_causal_context'), test_root_cause_v1_r8_total_cholesterol_high_emits_governed_hypotheses_not_fallback (fail_closed ValueError). Independently re-run this session against current merged main: all three still fail identically. Previously proven pre-existing (not ARCH-CONV-I-caused) via a temporary git worktree at the pre-ARCH-CONV-I baseline commit during the ARCH-CONV-I audit -- same three failures reproduced there."
+    "risk_classification_check": {
+      "status": "STANDARD confirmed correct on current evidence, with an explicit caveat carried into the Phase 0 pack",
+      "evidence": "result_versioning_policy_v1.py lives under backend/core/dto/, not backend/core/analytics/ or backend/core/pipeline/ -- it performs presentation/staleness metadata assessment over already-computed results, not signal evaluation, WHY compilation, ranking, or output construction. detect_launch_core_stale_reasons() reads persisted DTO shape only; it does not alter medical reasoning, ranking, interpretation, or output construction. This supports STANDARD, matching the prompt's own expected classification and its Stage 1A classification-check question. Flagged as CONFIRMED rather than merely inherited from the prior Stage 0 pass's provisional label, since this session traced the actual file path and function behaviour rather than assuming it."
     },
-    "l04_l05_l06_out_of_scope_confirmed_correctly_excluded": {
+    "repo_state": {
       "status": "CONFIRMED",
-      "evidence": "docs/architecture/ARCH-CONV_legacy_dependency_register.md:94-150 read in full this session (prior turn): L-04 (why_engine_fallback_v1, _compile_why_engine_fallback_finding in root_cause_compiler_v1.py) deletion precondition 'Product policy on missing-WHY behaviour ratified' -- not ratified; L-05 (_why_template, report_compiler_v1.py) deletion precondition 'Coverage proof for ranked signals' -- not performed; L-06 (family-level phenotype/interaction maps) deletion precondition 'Product decision: family aggregation is intentional vs defect' -- not made. None of these preconditions is met, correctly justifying the prompt's explicit exclusion of all three from this sprint's scope."
-    },
-    "no_new_medical_research_required": {
-      "status": "CONFIRMED",
-      "evidence": "FOLD_SUPPRESS is an already-ratified disposition (no new hypothesis content needed for elevation-context); the resolver fix is pure mechanics (governed skip disposition, no new compiled content for total_cholesterol_high or any of the other 4 zero-compiled signal_ids); the two test corrections use already-ratified hypothesis IDs from ARCH-CONV-G/H. Matches Stage 1A item 8."
-    },
-    "baseline_coverage_gap_confirmed": {
-      "status": "CONFIRMED",
-      "evidence": "backend/scripts/run_baseline_tests.py (read in full during ARCH-CONV-I audit, re-confirmed unchanged): curated pytest file list does not include backend/tests/unit/test_root_cause_v1_homocysteine.py -- this is why the 3 pre-existing failures were invisible to the kernel's run_baseline_tests gate check (which passed, exit 0, on both ARCH-CONV-H's and ARCH-CONV-I's gate evidence) despite these failures being live throughout."
-    },
-    "governing_authority_files": {
-      "status": "CONFIRMED all exist",
-      "evidence": "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md, KNOWLEDGE_BUS_SOP_v1.3.1.md, KNOWLEDGE_BUS_PASS3_PROMOTION_PROTOCOL_v1.1.md present (re-confirmed in prior hardening passes this session, unchanged). docs/architecture/ARCH-CONV-A_stage0_outcome_and_package_boundary.md, ARCH-CONV-A_phase1_target_to_frame_map.md, ARCH-CONV_legacy_dependency_register.md, automation_bus/latest_pipeline_advisory.md, docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md all present and read in full or in relevant part this session."
-    },
-    "prior_wave_regression_dependencies": {
-      "status": "CONFIRMED",
-      "evidence": "backend/tests/regression/test_arch_conv_f_haematology_stop_c.py, test_arch_conv_g_urate_stop_c.py, test_arch_conv_h_hba1c_stop_c.py, test_arch_conv_i_alt_stop_c.py all present and independently confirmed passing during the ARCH-CONV-I audit this session -- the four regression suites the prompt requires to remain green."
+      "evidence": "git branch --show-current: main; git rev-parse HEAD == git rev-parse origin/main: a433f9f6b846a82317f928048c316bc1d8a78b0c; git status --short: only automation_bus/latest_cursor_prompt.md modified (the prompt being hardened itself, expected); git stash list: empty."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "reality_check_1b": "Repository-confirmed TRUE as of this session, matching all six Stage 1B assertions verbatim: elevation-context still reaches legacy WHY content; homocysteine_high already compiled; both reference the shared asset; the bare-key resolver still raises for signal_total_cholesterol_high (and 4 other pilot signal_ids, per the expanded enumeration above); the HbA1c/urate tests are stale; none of the defects are already resolved.",
-    "intelligence_core_surface": "Confirmed bounded to exactly the three behaviour changes the prompt names (lines 85-89): elevation-context no longer independently emits; bare-key resolution for a zero-compiled pilot family returns a governed non-emitting disposition instead of raising; two stale test assertions corrected. No compiled homocysteine content, no new total-cholesterol authority, no L-04/L-05/L-06 change is required by anything found this session.",
-    "governance_shape_uniformity_de_risks_part_B": "The expanded five-signal enumeration (ldl_high, hdl_low, total_cholesterol_high, hgb_low, hepatic_alt_context) all sharing the identical all-LEGACY_RETIRED shape means Part B's fix can be implemented as one governed rule ('all relevant rows retired/rejected/non-owning -> skip') rather than needing per-signal special-casing -- reduces implementation risk below what the prompt's single named example (total_cholesterol_high) might have suggested.",
-    "no_new_mechanism_required": "Confirmed achievable with existing mechanism -- Part A (exclusivity) can use the existing skip/retired disposition pattern already proven in ARCH-CONV-F/G/H/I (adding signal_homocysteine_elevation_context's activation_key to the pilot cohort with a LEGACY_RETIRED row, mirroring exactly how ARCH-CONV-I retired signal_hepatic_alt_context's WHY ownership); Part B is a resolver-logic correction, not a new mechanism, within the same function already exercised by every prior wave."
+    "reality_check_1b": "Repository-confirmed TRUE as of this session for all Stage 1B premises: the 12 audit-listed analysis IDs are the governed evidence set (no re-verification of live DB state possible from static repo files -- this is an explicit Phase-0-only verification gap, see below); the stale-detection framework still lacks a waist-unit rule; the six-rule framework can represent a seventh rule without redesign (same function, same return-shape contract); remediation does not require regeneration (confirmed above); this is not a no-op sprint.",
+    "genuine_hardening_limitation_disclosed": "This hardening pass cannot verify Stage 1A item 9 (whether any of the 12 rows has already been remediated, deleted, superseded, or regenerated) or the live 'current persisted value' for each row (Stage 1A item 5) from static repository files -- that requires direct database access, which is correctly scoped as Cursor's own Phase 0 repository-mapping responsibility, not something hardening can substitute for. This is disclosed rather than silently assumed.",
+    "data_governance_boundary_correctly_distinct_from_medical_gate": "Confirmed the prompt correctly routes this to an Anthony-only data-governance decision (line 178-187), not a Head of Medical Research Gate 1 -- consistent with the register's own field for L-11/CF-ARCH-CONV-WAIST-1 ('medical-review requirement: No (data integrity)') read in the prior Stage 0 investigation.",
+    "no_new_mechanism_required": "Confirmed achievable with existing mechanisms -- the stale-detection rule reuses the existing detect_launch_core_stale_reasons() contract and return shape (six precedent rules to follow); the remediation mechanism has a governed migration path available (alembic) if schema changes are needed, or the existing JSON processing_metadata columns if not."
   },
 
-  "gaps_or_risks_flagged_for_gpt_and_gate_1": [
-    "The prompt's Stage 1A item 6 names only signal_total_cholesterol_high as an example; this hardening pass independently found FOUR additional pilot signal_ids in the identical governance shape (signal_ldl_high, signal_hdl_low, signal_hgb_low, signal_hepatic_alt_context). All five should be covered by Part B's fix and by the required test class (prompt Tests item 7: 'every pilot family with zero COMPILED_ACTIVE rows resolves deterministically') -- flagging so Cursor does not treat total_cholesterol_high as the only affected signal.",
-    "signal_hepatic_alt_context now appearing in this zero-compiled-rows set is a direct, expected consequence of ARCH-CONV-I's own retirement of its WHY ownership last sprint, not a new defect -- Gate 1 reviewers should be aware this is confirmation that ARCH-CONV-I's disposition is behaving as intended under the resolver fix, not evidence of a regression.",
-    "The 'baseline coverage check' instruction (prompt lines 227-233) asks Cursor to decide whether to add test_root_cause_v1_homocysteine.py to run_baseline_tests.py. This is a reasonable, evidence-grounded ask (this session confirmed the file's absence from that gate is exactly why these failures went uncaught for three prior waves) but is itself a judgement call with a STOP escape hatch already built into the prompt -- no additional flag needed beyond confirming the underlying gap is real."
+  "gaps_or_risks_flagged_for_gpt_and_anthony": [
+    "This hardening pass could not independently verify live database state for the 12 analysis IDs (current values, whether already remediated) from static repository files. Cursor's own Stage 1A repository-mapping phase must perform this verification with real database access before the Phase 0 data-remediation register is populated -- this is a genuine, disclosed limit of hardening-stage verification, not an oversight.",
+    "The prompt's permitted disposition set (GOVERNED_REMAP, MARK_STALE_NO_REWRITE, ALREADY_REMEDIATED_NO_ACTION, BLOCKED_AMBIGUOUS) has no guarantee all 12 rows will cleanly sort into these four buckets -- Anthony's data-governance approval should be prepared to receive a register where some rows are BLOCKED_AMBIGUOUS, and the prompt's own instruction (line 253: 'Do not claim all 12 were remediated if any remain blocked or no-action') and closure instruction (line 360: partial-closure handling) already anticipate this correctly.",
+    "Risk classification (STANDARD) is confirmed correct on current evidence but is explicitly re-checked at Stage 1A by the prompt itself (line 52, 101-109) rather than inherited -- this hardening pass supports that re-check with a concrete file-path/function-behaviour trace rather than treating STANDARD as settled."
   ],
 
   "evidence_checklist_status": "COMPLETE -- see chat response for the mandatory Stage 2C table"
