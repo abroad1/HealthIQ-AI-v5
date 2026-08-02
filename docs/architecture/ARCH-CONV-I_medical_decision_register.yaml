@@ -1,17 +1,17 @@
 work_id: ARCH-CONV-I
 branch: feature/arch-conv-i-alt-compiled-why-identity-resolution
-register_state: PHASE_0_MAPPED_AWAITING_GATE_1_AND_GATE_2
-gate1_status: PENDING
+register_state: GATE_1_RECORDED_AWAITING_GATE_2
+gate1_status: APPROVED_WITH_NARROWING
 gate2_status: PENDING
-head_of_medical_research_gate1_reference: ARCH-CONV-I-GATE1-HMR-PENDING
+head_of_medical_research_gate1_reference: ARCH-CONV-I-GATE1-HMR-2026-08-02
 anthony_gate2_reference: ARCH-CONV-I-GATE2-ANTHONY-PENDING
 hardening_pack_ref: docs/architecture/ARCH-CONV-I_hardening_pack.md
 gate_decision_ref: docs/architecture/ARCH-CONV-I_GATE_1_GATE_2_decision.md
 runtime_changes_authorised: false
 note: >
-  Phase 0 repository mapping complete. Gate 1 and Gate 2 are PENDING.
-  Implementation of ALT compiled-WHY disposition is prohibited until both gates
-  are recorded on disk. Retrospective ratification is forbidden.
+  Gate 1 APPROVED_WITH_NARROWING recorded on 2026-08-02 (Outcome A MAP_AND_COMPILE).
+  Gate 2 remains PENDING. Implementation of ALT compiled-WHY disposition remains
+  prohibited until Anthony Gate 2 ratification is recorded on disk.
 
 baseline_counts:
   compiled_active: 25
@@ -19,40 +19,22 @@ baseline_counts:
   rejected: 1
   total_frames: 46
 
-legacy_why_identity:
-  signal_id: signal_hepatic_alt_context
-  activation_key: signal_hepatic_alt_context::inv_alt_context
-  package_id: pkg_hepatic_alt_context
-  legacy_asset: knowledge_bus/root_cause/hypotheses/alt_hypotheses_v1.yaml
-  legacy_asset_sha256: 1A8B35E9CEDDAB2F93B044E81FAF2A857C6C236C69CB493C0A06E5FE2593D698
-  registry_wiring: backend/core/knowledge/root_cause_registry_v1.py:32
-  hypotheses:
-    hepatocellular_stress: alt_hepatic_cell_stress_pattern_v1
-    crp_inflammatory: alt_inflammatory_coupling_context_v1
-  hardcoded_thresholds_non_ssot:
-    ast_gt: 45.0
-    ggt_gt: 60.0
-    alp_gt: 130.0
-    bilirubin_gt: 20.0
-  package_layer_status: LIVE_UNCHANGED_UNDER_WHY_ONLY_RETIREMENT
+approved_outcome: MAP_AND_COMPILE
 
-outcome_a_map_and_compile:
-  disposition_name: MAP_AND_COMPILE
-  recommended_activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
-  recommended_package: pkg_kb52c_alt_high_hepatocellular_injury_pattern
-  superseded_do_not_compile: signal_alt_high::inv_alt_high_hepatocellular_injury
-  proposed_why_role: morphology_context
-  proposed_why_role_flat: true
+canonical_frame:
+  signal_id: signal_alt_high
+  source_spec_id: inv_alt_high_r_value_hepatocellular_biochemical_pattern
+  activation_key: signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern
+  canonical_package: pkg_kb52c_alt_high_hepatocellular_injury_pattern
+  why_role: morphology_context
+  why_role_flat: true
+  conditional_why_role: none
+  primary_finding_boundary: >
+    ALT-predominant / hepatocellular biochemical-pattern or hepatocellular-stress
+    context only; not disease confirmation from ALT alone.
   transferable_legacy_hypothesis_only: alt_hepatic_cell_stress_pattern_v1
   exclude_crp_hypothesis: alt_inflammatory_coupling_context_v1
-  retire_why_only: signal_hepatic_alt_context::inv_alt_context
-  expected_register_delta:
-    compiled_active: '+1'
-    legacy_retired: '+1'
-    note: sibling skip-class rows may be required if signal_alt_high is piloted
-  implementation_hazards_for_gate1:
-    - signal_alt_high_absent_from_ROOT_CAUSE_TARGET_SPECS
-    - multi_frame_fail_closed_if_piloted_without_sibling_rows
+  superseded_do_not_compile: signal_alt_high::inv_alt_high_hepatocellular_injury
   presentation_safety:
     not_crp_inflammatory_coupling: true
     not_hardcoded_threshold_transfer: true
@@ -60,28 +42,35 @@ outcome_a_map_and_compile:
     not_masld_steatosis_fibrosis_diagnosis: true
     not_treatment_directives: true
     not_chronicity_inference: true
+    not_unsupported_causal_claims: true
     not_runtime_alias_to_hepatic_alt_context: true
 
-outcome_b_retire_without_successor:
-  disposition_name: RETIRE_WITHOUT_SUCCESSOR
-  retire_why_only: signal_hepatic_alt_context::inv_alt_context
-  create_compiled_artefact: false
-  add_signal_alt_high_to_pilot: false
-  expected_register_delta:
-    compiled_active: '+0'
-    legacy_retired: '+1'
-  rationale_options_for_gate1:
-    - canonical_research_insufficient_for_safe_compiled_successor
-    - outcome_a_multi_frame_risk_requires_further_scoping
+competitor_disposition:
+  activation_key: signal_hepatic_alt_context::inv_alt_context
+  signal_id: signal_hepatic_alt_context
+  package_id: pkg_hepatic_alt_context
+  disposition: LEGACY_RETIRED_FOR_WHY_ONLY
+  package_layer_status: UNCHANGED
+  psi_status: UNCHANGED
+  package_deletion: forbidden
 
-adjacent_frames_unchanged:
-  - signal_alt_high::inv_alt_high_r_value_mixed_biochemical_pattern
-  - signal_alt_high::inv_alt_high_r_value_cholestatic_alp_predominant_context
-  - signal_alt_high::inv_alt_high_muscle_source_or_exertional_contribution
-  - signal_alt_high::inv_alt_high_metabolic_masld_context
-  - signal_alt_high::inv_alt_high_bilirubin_hys_law_severity_context
-  - signal_alp_high compiled authority
-  - signal_ggt_high compiled authority
+hardcoded_thresholds_transfer: prohibited
+
+preserve_unchanged:
+  - e2_e3_r_value_behaviour
+  - contextual_frame_authority
+  - package_psi_activation_behaviour
+  - alp_ggt_compiled_authority
+  - bilirubin_severity_override_only_posture
+
+expected_register_delta_subject_to_gate2:
+  compiled_active: '+1'
+  legacy_retired: '+1'
+  note: sibling skip-class rows may be required if signal_alt_high is piloted
+
+implementation_hazards_acknowledged_for_gate2:
+  - signal_alt_high_absent_from_ROOT_CAUSE_TARGET_SPECS
+  - multi_frame_fail_closed_if_piloted_without_sibling_rows
 
 exclusions:
   - no_runtime_alias_hepatic_alt_context_to_alt_high
@@ -94,8 +83,7 @@ exclusions:
   - no_unrelated_compiled_why_frame_change
 
 mechanism_sufficiency:
-  outcome_b_static_paths: sufficient
-  outcome_a_static_paths: sufficient_with_known_config_extensions
+  static_why_role: sufficient
   new_compiler_mechanism_required: false
   root_cause_compiler_v1_change_expected: false
   root_cause_registry_v1_change_possible_under_outcome_a: true

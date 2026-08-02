@@ -2,132 +2,100 @@
 
 **Work ID:** `ARCH-CONV-I`  
 **Date opened:** 2026-08-02  
+**Gate 1 recorded:** 2026-08-02  
 **Hardening pack:** `docs/architecture/ARCH-CONV-I_hardening_pack.md`  
 **Medical decision register:** `docs/architecture/ARCH-CONV-I_medical_decision_register.yaml`  
-**Implementation status:** **NONE** — Phase 0 mapping only; sprint is not implemented, complete, or merged
+**Implementation status:** **BLOCKED PENDING GATE 2** — Gate 1 recorded; no compiled-WHY implementation until Anthony Gate 2 ratification is on disk
 
 ## Gate references
 
 | Gate | Reference | Status |
 |---|---|---|
-| Gate 1 — Head of Medical Research | `ARCH-CONV-I-GATE1-HMR-PENDING` | `PENDING` |
+| Gate 1 — Head of Medical Research | `ARCH-CONV-I-GATE1-HMR-2026-08-02` | `APPROVED_WITH_NARROWING` |
 | Gate 2 — Anthony (project authority) | `ARCH-CONV-I-GATE2-ANTHONY-PENDING` | `PENDING` |
 
 ## Decision authority split
 
-- **Head of Medical Research (Gate 1)** decides medical disposition: Outcome A vs B, exact activation key if A, `why_role`, wording boundaries, CRP disposition, threshold-transfer prohibition, prohibited claims.
-- **Head of Architecture** advises readiness for Anthony Gate 2 after Gate 1 is recorded (including Outcome A multi-frame / registry-target hazards).
+- **Head of Medical Research (Gate 1)** is the source of the medical judgement and narrowing recorded below.
+- **Head of Architecture** advises readiness for Anthony Gate 2 after Gate 1 (including Outcome A multi-frame / registry-target hazards).
 - **Anthony (Gate 2)** is human project authority for proceed/hold. Anthony is **not** the source of medical judgement.
 
 ## Register state
 
 ```text
-register_state: PHASE_0_MAPPED_AWAITING_GATE_1_AND_GATE_2
-gate1_status: PENDING
+register_state: GATE_1_RECORDED_AWAITING_GATE_2
+gate1_status: APPROVED_WITH_NARROWING
 gate2_status: PENDING
+runtime_changes_authorised: false
 ```
 
-## Exact proposed decisions for Gate 1 / Gate 2
+## Gate 1 approved disposition (`ARCH-CONV-I-GATE1-HMR-2026-08-02`)
 
-### Choice 1 — Outcome A or Outcome B
+### Outcome
 
-Gate 1 must select exactly one:
+- **Approved outcome:** `MAP_AND_COMPILE` (Outcome A)
+- Outcome B withdrawn for this decision
 
-| Outcome | Name | Expected delta |
-|---|---|---|
-| **A** | Narrow `MAP_AND_COMPILE` | `+1 COMPILED_ACTIVE` / `+1 LEGACY_RETIRED` (minimum; sibling rows may be required) |
-| **B** | `RETIRE_WITHOUT_SUCCESSOR` | `+0 COMPILED_ACTIVE` / `+1 LEGACY_RETIRED` |
+### Canonical authority
 
-No other disposition is authorised without re-scoping.
+- **Approved activation key:** `signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern`
+- **Approved `why_role`:** `morphology_context` (flat; no conditional branch)
+- **Canonical package:** `pkg_kb52c_alt_high_hepatocellular_injury_pattern`
+- Superseded S24 key `signal_alt_high::inv_alt_high_hepatocellular_injury` must not be compiled or reactivated
 
-### Choice 2 — If Outcome A: exact activation key
+### WHY-only retirement
 
-Phase 0 presents two hepatocellular identities; Gate 1 must name one:
+- **Retired activation key:** `signal_hepatic_alt_context::inv_alt_context`
+- **Disposition:** `LEGACY_RETIRED_FOR_WHY_ONLY`
+- Package-layer and PSI status unchanged; no package deletion
 
-| Candidate | Status | Phase 0 note |
-|---|---|---|
-| `signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern` | **Live activated** (E2 Pass 3 successor) | **Recommended compile target** |
-| `signal_alt_high::inv_alt_high_hepatocellular_injury` | **SUPERSEDED** | Must not be compiled / must not be reactivated |
+### CRP / inflammatory-coupling
 
-### Choice 3 — If Outcome A: `why_role`
+- Legacy hypothesis `alt_inflammatory_coupling_context_v1`: **excluded**
+- No compile and no transfer
 
-Proposed: `morphology_context` (flat).  
-Alternative for Gate 1 only: narrowed `causal` limited to hepatocellular enzyme-leakage / cell-stress pattern with identical prohibitions.
+### Threshold transfer
 
-### Choice 4 — CRP / inflammatory-coupling disposition
+- Legacy hard-coded AST/GGT/ALP/bilirubin thresholds: **prohibited from transfer**
 
-Legacy hypothesis `alt_inflammatory_coupling_context_v1` has **no** canonical `signal_alt_high` counterpart.
+### Preserve unchanged
 
-Gate 1 must record one of:
+- E2/E3 R-value behaviour
+- Contextual-frame authority
+- Package / PSI / activation behaviour
 
-- **Exclude / do not transfer** (required under Outcome A as written in the sprint prompt); or  
-- **Block pending new canonical research** (still no compile).
+### Prohibited claims
 
-Compiling CRP content without new canonical research is prohibited.
+- Runtime alias between `signal_hepatic_alt_context` and `signal_alt_high`
+- Consumer Hy’s Law / DILI diagnosis
+- MASLD / steatosis / fibrosis diagnosis from ALT alone
+- Treatment directives
+- Chronicity inference
+- Unsupported causal claims
 
-### Choice 5 — Threshold transfer
+### Expected authority delta (subject to Gate 2)
 
-Confirm: legacy hard-coded AST>45 / GGT>60 / ALP>130 / bilirubin>20 **must not transfer** into compiled WHY or retained WHY behaviour.
+- `+1 COMPILED_ACTIVE` (minimum)
+- `+1 LEGACY_RETIRED` (legacy WHY identity)
+- Sibling skip-class rows may still be required if `signal_alt_high` is piloted (implementation hazard remains for Gate 2 / implementation resume)
 
-### Choice 6 — Prohibited claims (must confirm)
-
-- No consumer Hy’s Law / DILI diagnosis  
-- No MASLD / steatosis / fibrosis diagnosis from ALT alone  
-- No treatment directives  
-- No chronicity inference  
-- No disease-specific cause attribution beyond ratified contextual limits  
-- No runtime alias between `signal_hepatic_alt_context` and `signal_alt_high`
-
-### Choice 7 — WHY-only retirement key (both outcomes)
-
-Retire for WHY ownership only:
-
-`signal_hepatic_alt_context::inv_alt_context`
-
-Package-layer activation and PSI unchanged; no package deletion.
-
-### Adjacent frames unchanged
-
-- Mixed / cholestatic / muscle / metabolic `signal_alt_high` frames  
-- Bilirubin-severity override-only posture  
-- ALP / GGT compiled-WHY authority  
-- R-value formula and bands  
-
-### Gate 1 required recorded values
+## Gate 2 status
 
 ```text
-OUTCOME_A_MAP_AND_COMPILE | OUTCOME_B_RETIRE_WITHOUT_SUCCESSOR | BLOCKED
+ARCH-CONV-I-GATE2-ANTHONY-PENDING
+status: PENDING
+required_values: APPROVED | BLOCKED
 ```
 
-If Outcome A, decision record must also state:
-
-- approved activation key;
-- approved `why_role`;
-- approved claim / wording boundary;
-- CRP disposition;
-- confirmation that hard-coded thresholds do not transfer;
-- prohibited claims;
-- acknowledgment of Outcome A implementation hazards (registry target / sibling fail-closed) or explicit narrowing that removes them;
-- retired WHY activation key.
-
-### Gate 2 required recorded values
-
-```text
-APPROVED | BLOCKED
-```
-
-Gate 2 must ratify Gate 1 exactly.
+No implementation may begin until Gate 2 is repository-recorded as `APPROVED` and matches this Gate 1 disposition.
 
 ## Non-claims
 
-- This document does **not** authorise implementation.
-- Gate recording (when later approved) still requires Automation Bus resume under a gate-consistent hardened prompt before runtime changes.
+- Gate 1 recording alone does **not** authorise implementation (`runtime_changes_authorised: false`).
 - Retrospective ratification is forbidden.
-- No compiled artefact, authority-register edit, legacy WHY retirement, or runtime behaviour change may occur while gates are PENDING.
+- No compiled artefact, authority-register edit, legacy WHY retirement, or runtime behaviour change may occur while Gate 2 is PENDING.
 
-## Required next human actions
+## Required next human action
 
-1. GPT / Head of Medical Research: record Gate 1 against Outcome A or Outcome B with the required fields above.
-2. Anthony: record Gate 2 after Gate 1.
-3. Commit both gate statuses on disk (replace `PENDING` references).
-4. Resume `ARCH-CONV-I` for implementation only if disposition matches this pack, or revise prompt + re-harden if material change is required.
+1. Anthony: record Gate 2 (`APPROVED` or `BLOCKED`) on disk.
+2. Only after Gate 2 `APPROVED`, resume `ARCH-CONV-I` implementation under the active Automation Bus work package.

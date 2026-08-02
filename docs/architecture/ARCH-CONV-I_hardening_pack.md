@@ -6,9 +6,9 @@
 **Change type:** MIXED  
 **Execution model:** TWO_PHASE_START_FINISH  
 **Implementation owner:** Core Engine agent  
-**Status:** Phase 0 mapping complete. Gate 1 `PENDING`. Gate 2 `PENDING`. **Implementation prohibited** until both gates are recorded on disk and match this pack (or the prompt is revised and re-hardened).
+**Status:** Phase 0 mapping complete. Gate 1 `APPROVED_WITH_NARROWING` (`ARCH-CONV-I-GATE1-HMR-2026-08-02`, Outcome A `MAP_AND_COMPILE`). Gate 2 `PENDING` (`ARCH-CONV-I-GATE2-ANTHONY-PENDING`). **Implementation remains prohibited** until Gate 2 is recorded on disk and matches the Gate 1 disposition.
 
-**Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-I` / `HARDENED` (Phase 0 + Gate STOP only).
+**Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-I` / `HARDENED` (Phase 0 + Gate STOP; Gate 1 now recorded).
 
 ---
 
@@ -121,40 +121,33 @@ R-value bands, package reachability, PSI status, ALP/GGT primary source authorit
 
 ## 5. Two Gate 1 outcomes (only authorised dispositions)
 
-### Outcome A — Narrow `MAP_AND_COMPILE`
+### Outcome A — Narrow `MAP_AND_COMPILE` (Gate 1 approved)
 
-- Compile only one hepatocellular activation key (Gate 1 must name it; Phase 0 recommends live Pass 3 key above).
+- Compile only: `signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern`.
 - Retire `signal_hepatic_alt_context::inv_alt_context` for WHY ownership only.
 - Exclude CRP/inflammatory-coupling hypothesis.
 - Do not transfer hard-coded legacy thresholds.
 - Preserve all E2/E3 R-value and contextual activation behaviour.
-- **Headline register delta:** `+1 COMPILED_ACTIVE`, `+1 LEGACY_RETIRED`.
+- **Headline register delta (subject to Gate 2):** `+1 COMPILED_ACTIVE`, `+1 LEGACY_RETIRED`.
 
-**Implementation hazard Gate 1 must acknowledge if Outcome A is chosen:**
+**Implementation hazard (acknowledged; Gate 2 / implementation resume must close safely):**
 
-1. `signal_alt_high` is **absent** from `ROOT_CAUSE_TARGET_SPECS` today — compiler does not iterate it; Outcome A may need a registry-target extension (configuration reuse, not a new compiler algorithm) for compiled emit to fire.
-2. Adding `signal_alt_high` to `_PILOT_SIGNAL_IDS` without authority rows for other live sibling frames fail-closes those frames. Outcome A must either include governed skip-class rows for non-compiled live siblings, or Gate 1 must explicitly authorise a bounded disposition that avoids fail-closed leakage. Headline `+1/+1` may understate required sibling rows.
+1. `signal_alt_high` is **absent** from `ROOT_CAUSE_TARGET_SPECS` today — Outcome A may need a registry-target extension for compiled emit.
+2. Adding `signal_alt_high` to `_PILOT_SIGNAL_IDS` without authority rows for other live sibling frames fail-closes those frames — sibling skip-class rows may be required.
 
-If safe Outcome A requires inventing content, a runtime alias, threshold transfer, or a new compiler mechanism → **STOP / re-scope** (Outcome B or revised prompt).
+### Outcome B — `RETIRE_WITHOUT_SUCCESSOR` (not selected)
 
-### Outcome B — `RETIRE_WITHOUT_SUCCESSOR`
-
-- Retire `signal_hepatic_alt_context::inv_alt_context` for WHY ownership only.
-- Do **not** create a compiled ALT WHY artefact.
-- Do **not** add `signal_alt_high` to compiled-WHY pilot membership for this sprint.
-- Package / PSI / card / activation / R-value behaviour unchanged.
-- Record that Gate 1 judged canonical research insufficient for a safe compiled successor **or** that multi-frame fail-closed risk makes Outcome A unsafe without further scoping.
-- **Register delta:** `+0 COMPILED_ACTIVE`, `+1 LEGACY_RETIRED`.
+Withdrawn by Gate 1 `APPROVED_WITH_NARROWING` in favour of Outcome A.
 
 ---
 
-## 6. Proposed `why_role` (Outcome A only — Gate 1 must ratify)
+## 6. Approved `why_role` (Gate 1 ratified)
 
-**Primary recommendation:** `morphology_context` (flat; no `conditional_why_role`).
+**Approved:** `why_role: morphology_context` (flat, no `conditional_why_role`).
 
-Rationale: Pass 3 / legacy stress wording is pattern/context language; disease confirmation, Hy’s Law diagnosis, MASLD/fibrosis, and treatment claims are prohibited.
+Gate reference: `ARCH-CONV-I-GATE1-HMR-2026-08-02` (`APPROVED_WITH_NARROWING`, Outcome A `MAP_AND_COMPILE`).
 
-**Alternative for Gate 1 only:** narrowed `causal` limited strictly to “hepatocellular enzyme-leakage / cell-stress pattern” with identical presentation prohibitions.
+The alternative narrowed-causal option from Phase 0 is **withdrawn** — not selected.
 
 ---
 
@@ -162,20 +155,20 @@ Rationale: Pass 3 / legacy stress wording is pattern/context language; disease c
 
 | Outcome | New compiler mechanism required? | Reuse path |
 |---|---|---|
-| B | **No** | Add `signal_hepatic_alt_context` to pilot + `LEGACY_RETIRED` on `…::inv_alt_context` → `"skip"` (F/G/H parallel-id retirement shape) |
-| A | **No new algorithm**, but configuration beyond naive +1/+1 may be required | Pilot + COMPILED_ACTIVE artefact + legacy retirement + possible registry target + sibling skip-class rows |
+| B | N/A (not selected) | — |
+| A (approved) | **No new algorithm**, but configuration beyond naive +1/+1 may be required | Pilot + COMPILED_ACTIVE artefact + legacy retirement + possible registry target + sibling skip-class rows |
 
 ---
 
-## 8. Intelligence Core surfaces (expected impact)
+## 8. Intelligence Core surfaces (expected impact after Gate 2)
 
 | Surface | Expected change after gates |
 |---|---|
-| `compiled_why_authority_register_v1.yaml` | Outcome A: +1 active + ≥1 retired; Outcome B: +1 retired only |
-| `_PILOT_SIGNAL_IDS` / `why_authority_v1.py` | As required by ratified outcome |
-| Compiled artefact / manifest | Outcome A only |
-| `root_cause_authority_register_v1.yaml` | Outcome A consistency row only |
-| `root_cause_registry_v1.py` | Outcome A may need `signal_alt_high` target; Outcome B leaves table row but pilot skip suppresses emit |
+| `compiled_why_authority_register_v1.yaml` | +1 COMPILED_ACTIVE (hepatocellular); +1 LEGACY_RETIRED (legacy WHY); sibling skip-class rows may be required |
+| `_PILOT_SIGNAL_IDS` / `why_authority_v1.py` | As required by ratified Outcome A |
+| Compiled artefact / manifest | Outcome A — hepatocellular only |
+| `root_cause_authority_register_v1.yaml` | Consistency row |
+| `root_cause_registry_v1.py` | May need `signal_alt_high` target for emit |
 | Packages / PSI / SSOT / scoring / frontend | **Unchanged** |
 | F / G / H regression suites | Must remain green |
 
@@ -183,7 +176,7 @@ Rationale: Pass 3 / legacy stress wording is pattern/context language; disease c
 
 ## 9. Gate status
 
-Gate 1: `ARCH-CONV-I-GATE1-HMR-PENDING` — `PENDING`  
+Gate 1: `ARCH-CONV-I-GATE1-HMR-2026-08-02` — `APPROVED_WITH_NARROWING` (Outcome A recorded)  
 Gate 2: `ARCH-CONV-I-GATE2-ANTHONY-PENDING` — `PENDING`
 
-**Remain stopped.** Do not create compiled artefacts, alter authority registers, retire legacy ownership, or change runtime behaviour until both approvals are committed and consistent with this pack.
+**Remain stopped.** Do not create compiled artefacts, alter authority registers, retire legacy ownership, or change runtime behaviour until Gate 2 `APPROVED` is committed on disk.
