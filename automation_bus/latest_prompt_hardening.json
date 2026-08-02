@@ -1,62 +1,78 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-PKGC-2",
+  "work_id": "ARCH-CONV-I-ALT-IDPROV-1",
   "status": "HARDENED",
   "hardening_date": "2026-08-02",
   "hardened_by": "Claude Code",
-  "source_prompt": "automation_bus/latest_cursor_prompt.md (front matter complete: work_id, branch feature/arch-conv-pkgc-2-provenance-identity-closure, risk_level PROVISIONAL [deliberate -- this prompt's own Stage 1A exists to resolve it into HIGH or STANDARD before implementation], execution_model TWO_PHASE_START_FINISH, change_type MIXED)",
-  "risk_level": "PROVISIONAL (hardening recommendation: STANDARD -- CONTRACT_ADJACENT; see stage_2a_authority_verification.risk_classification below)",
-  "change_type": "MIXED",
+  "risk_level": "STANDARD",
+  "change_type": "BEHAVIOUR",
   "execution_model": "TWO_PHASE_START_FINISH",
+  "branch": "feature/arch-conv-i-alt-idprov-test-estate-restoration",
+  "source_prompt": "automation_bus/latest_cursor_prompt.md",
 
   "verification_mode_used": {
-    "mode": "batched parallel calls, no fork",
-    "rationale": "output_authority_provenance_builder_v1.py and its bare-key fixture were already read in full during this session's Stage 0 bundling revalidation (which produced the SPLIT recommendation this prompt implements). Remaining gaps for this hardening pass -- the canonical activation-key grammar's authoritative source, all direct callers/consumers, and prior architecture classification of this exact code area -- closed with a small number of targeted parallel reads. No disjoint large-scale work requiring a fork."
+    "mode": "batched parallel/sequential direct verification, no fork",
+    "rationale": "Single self-contained test file plus a bounded set of authority/scope paths; no disjoint large-scale work requiring a fork."
   },
 
   "prompt_receipt_gate": {
-    "front_matter_complete": "YES, with one deliberate exception",
-    "declared_risk_level": "PROVISIONAL -- not one of LOW/STANDARD/HIGH by design. This prompt's Stage 1A (lines 62-98) is structured explicitly to resolve this into a definitive HIGH or STANDARD classification before any implementation proceeds, and requires the hardening pack itself to record 'RISK_CLASSIFICATION: HIGH -- INTELLIGENCE_CORE' or 'RISK_CLASSIFICATION: STANDARD -- CONTRACT_ADJACENT' as an explicit deliverable (lines 77-98). Treated as ACCEPT rather than REJECT-for-missing-field because the ambiguity is disclosed, bounded, and the resolution mechanism is built into the prompt itself, not silently deferred -- and because this exact ambiguity was the flagged, unresolved output of this session's own prior hardening pass on ARCH-CONV-PKGC-1 ('Risk classification ... is explicitly re-checked at Stage 1A by the prompt itself rather than inherited').",
-    "declared_change_type": "MIXED",
-    "scope_proportionality": "PASS -- matches this session's own Stage 0 split recommendation exactly (provenance-identity validation + fixture replacement only); explicitly excludes ARCH-CONV-PKGC-1 waist-unit work, CF-ARCH-CONV-VERSION-1, regeneration, CF-MEDREV2-002, and compiled-WHY/signal-authority redesign",
-    "advisory_duplication": "NO conflict -- direct implementation of this session's own split recommendation from the Stage 0 bundling revalidation",
-    "phase0_only_scope_correctly_declared": "CONFIRMED -- Phase 0 (lines 136-148) lists mandatory STOP conditions before implementation, explicitly including 'risk is HIGH and Gate 1/Gate 2 are not recorded'; Phase 1 heading (line 150) is gated on 'all required Phase 0 conditions are satisfied'",
+    "front_matter_complete": "YES",
+    "declared_risk_level": "STANDARD",
+    "declared_change_type": "BEHAVIOUR",
+    "files_in_scope": [
+      "backend/tests/unit/test_arch_rt_identity_prov_1.py",
+      "backend/scripts/run_baseline_tests.py",
+      "docs/audit-papers/ARCH-CONV-I-ALT-IDPROV-1_implementation_and_verification_report.md",
+      "docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md",
+      "docs/sprints/launch_core_carry_forward_register.md"
+    ],
+    "behaviour_changes_touch_intelligence_core": "NO -- Intelligence Core files (root_cause_compiler_v1.py, why_authority_v1.py, output_authority_provenance_builder_v1.py, signal_result_index_v1.py) are explicitly excluded from modification in the prompt itself; only the test file and baseline-runner script are edited",
+    "tests_listed_for_behaviour_changes": "YES",
+    "scope_proportionality": "PASS -- STANDARD/BEHAVIOUR with a tightly bounded test-estate-only scope, explicit exclusions list, and STOP conditions",
+    "advisory_duplication": "NO",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "risk_classification": {
-      "status": "HARDENING RECOMMENDATION: STANDARD -- CONTRACT_ADJACENT (not authoritative -- Cursor's own Stage 1A must independently confirm per the prompt's explicit instruction not to assume either classification)",
-      "evidence": "backend/core/analytics/output_authority_provenance_builder_v1.py (read in full, this session and the prior Stage 0 revalidation): build_report_output_authority_provenance_v1() consumes already-computed report.top_findings and root_cause.findings and produces a SEPARATE OutputAuthorityProvenanceBundleV1 (governed/quarantined element lists) -- it does not mutate report.top_findings or root_cause.findings, does not select or rank hypotheses, and does not change which content is rendered. docs/audit-papers/ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion.md:11 (the module's own originating work package): 'Runtime provenance metadata is attached ADDITIVELY to ReportV1.output_authority_provenance_v1' -- explicitly additive, not assembly. The classification logic it calls (core/knowledge/compiled_output_authority_v1.py, classify_root_cause_finding) reads already-decided governance artefacts (root_cause_authority_register_v1.yaml, card_authority_register_v1.yaml) read-only; it does not decide authority, only labels an already-made decision for audit-trail purposes. Callers confirmed via grep: backend/core/analytics/report_compiler_v1.py, backend/core/contracts/report_v1.py -- consumed as a post-hoc additive field on the report DTO, not as an input to report assembly itself. On this evidence, output_authority_provenance_builder_v1.py does not meet the Stage 1A test ('changes medical interpretation, selects or ranks hypotheses, changes signal/frame authority, changes clinical narrative, changes report inclusion') -- it only serialises/labels already-decided provenance, matching the prompt's own 'otherwise STANDARD' branch (line 58)."
-    },
-    "canonical_activation_key_grammar": {
-      "status": "CONFIRMED, authoritative source located",
-      "evidence": "backend/core/knowledge/signal_result_index_v1.py:1-8 (docstring): 'Shared activation-frame indexing for signal results (ADR-RT-IDENTITY-PROV-001). Canonical unit: activation_key = signal_id::source_spec_id.' docs/architecture/ADR-RT-IDENTITY-PROV-001_activation_frame_and_provenance_integrity.md confirmed present as the governing ADR. require_activation_key() (lines 12-21) already implements a parser that reconstructs activation_key from signal_id/source_spec_id and raises ValueError when neither a direct key nor reconstructable components are present -- this is the 'existing parser, constructor or registry helper' the prompt requires reuse of (line 161) rather than inventing a second grammar. A second related module, backend/core/knowledge/signal_activation_identity_v1.py:53 (resolve_activation_identity), also exists and should be reconciled against during Cursor's Stage 1A item 5/10 to confirm only one grammar is authoritative, not two competing ones."
-    },
-    "bare_key_confirmed_still_synthetic_only": {
-      "status": "CONFIRMED, freshly re-verified this session (third independent check across the Stage 0 revalidation, the PKGC-1 hardening pass, and now this pass)",
-      "evidence": "grep for the literal string 'signal_homocysteine_high::inv_homocysteine_high' across backend/core/, backend/tests/, and knowledge_bus/governance/ this session: exactly one match, backend/tests/regression/test_output_authority_provenance.py:133 -- the same synthetic fixture identified in the Stage 0 pass, unchanged. Zero matches in any live governance register or production code path."
-    },
-    "carry_forward_status": {
-      "status": "CONFIRMED still Open",
-      "evidence": "docs/sprints/launch_core_carry_forward_register.md:98 -- CF-ARCH-CONV-PROV-1, status Open, unchanged since the Stage 0 revalidation and the ARCH-CONV-PKGC-1 audit."
-    },
-    "no_pkgc1_or_result_versioning_dependency": {
-      "status": "CONFIRMED zero code coupling, re-verified",
-      "evidence": "Consistent with the Stage 0 bundling revalidation's own finding (zero cross-imports either direction between result_versioning_policy_v1.py/analysis_regeneration_v1.py and output_authority_provenance_builder_v1.py/output_authority_provenance_v1.py) -- this work package has no technical dependency on ARCH-CONV-PKGC-1's closure, matching the prompt's own explicit exclusion of waist-unit scope."
+    "authority_and_scope_paths_checked": 12,
+    "result": "11/12 exist as cited",
+    "citation_error_found": {
+      "cited_path": "docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy(1).md",
+      "actual_path": "docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md",
+      "detail": "trailing '(1)' does not exist in the real filename, confirmed via glob. Underlying ADR content exists and is readable -- citation string only needs correction before Cursor treats it as an authority reference."
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "reality_check_1b": "Repository-confirmed TRUE as of this session for all Stage 1B premises: the synthetic fixture still exists and is not backed by a real evaluated authority row; the provenance builder still lacks defensive canonical-key validation (confirmed no cross-check against governance registers exists in the builder, per the Stage 0 revalidation's direct code read); no live governance register contains the malformed key; CF-ARCH-CONV-PROV-1 remains open; this is not a no-op sprint.",
-    "validation_boundary_question_flagged_as_genuinely_open": "The prompt's own Stage 1A item 10 ('Whether validation belongs in the provenance builder, a shared identity constructor, a registry boundary, or an earlier emitter') is correctly left open by this hardening pass, not pre-answered -- signal_result_index_v1.py's require_activation_key() is a strong candidate for the validation boundary (already raises on malformed/unreconstructable keys), which would mean the correct fix may be to harden or call through that shared constructor rather than adding a second, provenance-builder-local validation function. Cursor's Stage 1A should resolve this explicitly, per the prompt's own instruction not to force the guard into the provenance builder if a more authoritative shared boundary exists (line 171).",
-    "no_new_mechanism_required": "Confirmed achievable with an existing mechanism -- require_activation_key()/activation_key_or_empty() in signal_result_index_v1.py already implement the canonical grammar and already fail on malformed input; the work is extending or calling into this existing boundary, not inventing a new identity grammar."
+    "claim_exactly_seven_genuine_failures": {
+      "status": "CONFIRMED by direct execution",
+      "evidence": "python -m pytest backend/tests/unit/test_arch_rt_identity_prov_1.py -q from repo root: exactly the 7 named tests failed (test_report_and_output_authority_preserve_both_frames, test_clinician_report_retains_multi_findings_without_silent_singleton, test_dto_serialization_preserves_multiple_frames, test_persistence_replay_round_trip_preserves_activation_identity_and_provenance, test_deterministic_ordering_across_repeated_executions, test_three_or_more_simultaneous_frames, test_root_cause_compiler_emits_finding_per_frame_for_shared_signal_id), no others."
+    },
+    "claim_schema_test_path_dependent": {
+      "status": "CONFIRMED by direct execution",
+      "evidence": "test_package_manifest_schema_declares_source_spec_id passes when run from repo root; fails with FileNotFoundError('knowledge_bus\\\\schema\\\\package_manifest_schema.yaml') when run from backend/ -- matches prompt's stated false-eighth-failure diagnosis exactly."
+    },
+    "claim_root_cause_is_pilot_cohort_fail_closed_boundary": {
+      "status": "CONFIRMED",
+      "evidence": "Failure traceback: backend/core/analytics/root_cause_compiler_v1.py:738, ValueError 'WHY authority fail-closed for signal_id=\\'signal_alt_high\\' activation_key=\\'signal_alt_high::inv_alt_high_frame_a\\''. backend/core/knowledge/why_authority_v1.py:22-47 _PILOT_SIGNAL_IDS contains 'signal_alt_high' (line 47) -- confirms the fixture's real signal_id is already piloted, exactly as the prompt's Stage 0 finding states."
+    },
+    "claim_no_production_path_uses_synthetic_identities": {
+      "status": "CONFIRMED",
+      "evidence": "Repo-wide grep for 'inv_alt_high_frame_' returns only backend/tests/unit/test_arch_rt_identity_prov_1.py plus 3 closure/carry-forward docs (ARCH-CONV-PKGC-2 report, BUILD_DELIVERABLE_REGISTER.md, launch_core_carry_forward_register.md). Zero production code hits."
+    },
+    "claim_root_cause_compiler_test_uses_fragile_dynamic_selection": {
+      "status": "CONFIRMED",
+      "evidence": "backend/tests/unit/test_arch_rt_identity_prov_1.py:261 -- 'signal_id, _loader = targets[0]' selects _ROOT_CAUSE_TARGETS[0] dynamically, matching the prompt's Stage 1B(B)(1) instruction to remove this pattern."
+    },
+    "claim_explicit_exclusions_cover_all_genuine_intelligence_core_files": {
+      "status": "CONFIRMED",
+      "evidence": "Cross-checked the 6 excluded files/paths against the 5 in-scope files -- no overlap; scope is confined to test file, baseline runner, and closure docs."
+    }
   },
 
   "gaps_or_risks_flagged_for_gpt_and_cursor_stage_1a": [
-    "This hardening pass recommends STANDARD -- CONTRACT_ADJACENT based on the provenance builder being additive/descriptive rather than decision-making, but this is a recommendation, not the authoritative Stage 1A answer the prompt itself requires Cursor to produce. If Cursor's own Stage 1A finds a code path this hardening pass missed where output_authority_provenance_builder_v1.py's output actually feeds back into report inclusion or clinician-facing filtering (as opposed to the separate 'compiler quarantine filter' mentioned in ARCH-COMPLETION-2's revert list, which this pass believes is a distinct mechanism), the classification must flip to HIGH and Gate 1/Gate 2 must be recorded before any implementation.",
-    "Two related identity-grammar modules exist (signal_result_index_v1.py::require_activation_key and signal_activation_identity_v1.py::resolve_activation_identity) -- Cursor's Stage 1A must confirm these represent one consistent grammar, not two competing ones, before choosing where to place the validation guard.",
-    "The 'compiler quarantine filter' mentioned in ARCH-COMPLETION-2's revert list (docs/audit-papers/ARCH-COMPLETION-2_compiled_card_and_root_cause_authority_completion.md:186) as a component distinct from 'provenance contracts/builder' was not independently traced to its exact file/function in this hardening pass -- if Cursor's Stage 1A finds this quarantine filter lives inside output_authority_provenance_builder_v1.py itself (rather than being genuinely separate, e.g. in report_compiler_v1.py), the additive-only basis for the STANDARD recommendation above would need to be revisited."
+    "Citation error: docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy(1).md should be read as docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md (no '(1)' suffix) -- correct before treating it as an authority reference during Stage 1A.",
+    "Fixture-isolation strategy choice (Option A vs Option B, Stage 1B) is correctly left open by the prompt for Cursor to decide and record with rationale in the implementation report -- this hardening pass did not pre-select one."
   ],
 
   "evidence_checklist_status": "COMPLETE -- see chat response for the mandatory Stage 2C table"

@@ -1,4 +1,9 @@
-"""ARCH-RT-IDENTITY-PROV-1 — multi-frame preservation and provenance honesty tests."""
+"""ARCH-RT-IDENTITY-PROV-1 — multi-frame preservation and provenance honesty tests.
+
+ARCH-CONV-I-ALT-IDPROV-1: multi-frame mechanics fixtures use a synthetic non-pilot
+signal identity so Package A/B pilot-cohort migrations cannot silently break the
+contract via real signal_id collision (e.g. former signal_alt_high::inv_alt_high_frame_*).
+"""
 
 from __future__ import annotations
 
@@ -26,11 +31,34 @@ from core.knowledge.signal_result_index_v1 import (
     index_by_activation_key,
     participating_activation_keys,
 )
+from core.knowledge.why_authority_v1 import is_pilot_signal_id
 from core.models.results import SubsystemEvidenceV1
 from core.models.signal import SignalResult
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 FRONTEND_ANALYSIS_TYPES = REPO_ROOT / "frontend" / "app" / "types" / "analysis.ts"
+
+# Option A (ARCH-CONV-I-ALT-IDPROV-1): test-only synthetic identity, never piloted.
+SYNTHETIC_MULTIFRAME_SIGNAL_ID = "signal_test_synthetic_multiframe_v1"
+SYNTHETIC_FRAME_SPEC_PREFIX = "inv_test_synthetic_multiframe_frame_"
+
+
+def _require_synthetic_non_pilot() -> None:
+    """Migration guard: fail loudly if this fixture identity ever becomes piloted."""
+    assert not is_pilot_signal_id(SYNTHETIC_MULTIFRAME_SIGNAL_ID), (
+        f"{SYNTHETIC_MULTIFRAME_SIGNAL_ID} is now in _PILOT_SIGNAL_IDS; "
+        "ARCH-CONV-I-ALT-IDPROV-1 multi-frame fixtures require review before continuing"
+    )
+
+
+def _frame_key(index: int) -> str:
+    letter = chr(ord("a") + index)
+    return f"{SYNTHETIC_MULTIFRAME_SIGNAL_ID}::{SYNTHETIC_FRAME_SPEC_PREFIX}{letter}"
+
+
+def _frame_spec(index: int) -> str:
+    letter = chr(ord("a") + index)
+    return f"{SYNTHETIC_FRAME_SPEC_PREFIX}{letter}"
 
 
 class _MultiSignalRegistry:
@@ -74,12 +102,13 @@ def _synthetic_threshold_frame(
 
 
 def _n_frames(n: int) -> list[dict]:
+    _require_synthetic_non_pilot()
     return [
         {
-            "signal_id": "signal_alt_high",
-            "activation_key": f"signal_alt_high::inv_alt_high_frame_{chr(ord('a') + i)}",
-            "source_spec_id": f"inv_alt_high_frame_{chr(ord('a') + i)}",
-            "package_id": f"pkg_test_alt_{chr(ord('a') + i)}",
+            "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+            "activation_key": _frame_key(i),
+            "source_spec_id": _frame_spec(i),
+            "package_id": f"pkg_test_synthetic_mf_{chr(ord('a') + i)}",
             "provenance_status": "LEGACY_INFERRED",
             "system": "liver",
             "signal_state": "at_risk" if i == 0 else "suboptimal",
@@ -100,7 +129,7 @@ def test_index_preserves_two_activation_keys():
     idx = index_by_activation_key(_two_frames(), require_key=True)
     assert len(idx) == 2
     groups = group_by_signal_id(_two_frames())
-    assert len(groups["signal_alt_high"]) == 2
+    assert len(groups[SYNTHETIC_MULTIFRAME_SIGNAL_ID]) == 2
 
 
 def test_duplicate_activation_key_fails_closed():
@@ -112,16 +141,15 @@ def test_duplicate_activation_key_fails_closed():
 
 
 def test_interaction_builder_retains_participating_activation_keys():
-    # Minimal map with signal_alt_high node so family presence is exercised.
     map_payload = {
         "map_version": "test",
-        "nodes": [{"signal_id": "signal_alt_high"}],
+        "nodes": [{"signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID}],
         "edges": [],
     }
     out = build_signal_interactions_v1(_two_frames(), map_payload=map_payload)
     keys = out.get("participating_activation_keys") or []
-    assert "signal_alt_high::inv_alt_high_frame_a" in keys
-    assert "signal_alt_high::inv_alt_high_frame_b" in keys
+    assert _frame_key(0) in keys
+    assert _frame_key(1) in keys
     assert out["interaction_graph"].get("aggregation_scope") == "signal_family"
 
 
@@ -134,20 +162,19 @@ def test_report_and_output_authority_preserve_both_frames():
         signal_registry_hash_sha256="0" * 64,
     )
     keys = {f.activation_key for f in report.top_findings}
-    assert "signal_alt_high::inv_alt_high_frame_a" in keys
-    assert "signal_alt_high::inv_alt_high_frame_b" in keys
+    assert _frame_key(0) in keys
+    assert _frame_key(1) in keys
     bundle = build_report_output_authority_provenance_v1(
         signal_results=_two_frames(),
         report=report,
         root_cause=report.root_cause_v1,
     )
     element_ids = [e.output_element_id for e in bundle.governed_elements]
-    assert any("inv_alt_high_frame_a" in eid for eid in element_ids)
-    assert any("inv_alt_high_frame_b" in eid for eid in element_ids)
+    assert any(_frame_spec(0) in eid for eid in element_ids)
+    assert any(_frame_spec(1) in eid for eid in element_ids)
 
 
 def test_clinician_report_retains_multi_findings_without_silent_singleton():
-    # Synthesize multi finding root_cause_v1 payload
     report = compile_report_v1(
         signal_results=_two_frames(),
         interaction_summary=[],
@@ -156,14 +183,13 @@ def test_clinician_report_retains_multi_findings_without_silent_singleton():
         signal_registry_hash_sha256="0" * 64,
     )
     payload = report.model_dump()
-    # Force two root findings with distinct activation keys
     payload["root_cause_v1"] = {
         "version": "v1",
         "findings": [
             {
-                "signal_id": "signal_alt_high",
-                "activation_key": "signal_alt_high::inv_alt_high_frame_a",
-                "source_spec_id": "inv_alt_high_frame_a",
+                "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+                "activation_key": _frame_key(0),
+                "source_spec_id": _frame_spec(0),
                 "authority_scope": "family_level",
                 "why_role": "causal",
                 "primary_metric": "alt",
@@ -172,9 +198,9 @@ def test_clinician_report_retains_multi_findings_without_silent_singleton():
                 "hypotheses": [],
             },
             {
-                "signal_id": "signal_alt_high",
-                "activation_key": "signal_alt_high::inv_alt_high_frame_b",
-                "source_spec_id": "inv_alt_high_frame_b",
+                "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+                "activation_key": _frame_key(1),
+                "source_spec_id": _frame_spec(1),
                 "authority_scope": "family_level",
                 "why_role": "causal",
                 "primary_metric": "alt",
@@ -195,8 +221,8 @@ def test_clinician_report_legacy_singleton_when_one_finding():
         "top_findings": [
             {
                 "priority_rank": 1,
-                "signal_id": "signal_alt_high",
-                "activation_key": "signal_alt_high::inv_alt_high_frame_a",
+                "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+                "activation_key": _frame_key(0),
                 "system": "liver",
                 "signal_state": "at_risk",
                 "confidence": 0.8,
@@ -212,9 +238,9 @@ def test_clinician_report_legacy_singleton_when_one_finding():
             "version": "v1",
             "findings": [
                 {
-                    "signal_id": "signal_alt_high",
-                    "activation_key": "signal_alt_high::inv_alt_high_frame_a",
-                    "source_spec_id": "inv_alt_high_frame_a",
+                    "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+                    "activation_key": _frame_key(0),
+                    "source_spec_id": _frame_spec(0),
                     "authority_scope": "family_level",
                     "why_role": "causal",
                     "primary_metric": "alt",
@@ -229,7 +255,7 @@ def test_clinician_report_legacy_singleton_when_one_finding():
     assert clinician is not None
     assert len(clinician.sections.root_causes) == 1
     assert clinician.sections.root_cause is not None
-    assert clinician.sections.root_cause.activation_key == "signal_alt_high::inv_alt_high_frame_a"
+    assert clinician.sections.root_cause.activation_key == _frame_key(0)
 
 
 def test_provenance_batch_json_not_explicit():
@@ -245,26 +271,48 @@ def test_provenance_batch_json_not_explicit():
 
 def test_package_manifest_schema_declares_source_spec_id():
     schema = yaml.safe_load(
-        Path("knowledge_bus/schema/package_manifest_schema.yaml").read_text(encoding="utf-8")
+        (REPO_ROOT / "knowledge_bus" / "schema" / "package_manifest_schema.yaml").read_text(
+            encoding="utf-8"
+        )
     )
     assert schema["schema_version"] == "1.1.0"
     assert "source_spec_id" in schema["optional_fields"]
 
 
 def test_root_cause_compiler_emits_finding_per_frame_for_shared_signal_id(monkeypatch):
-    # Use a registered target if available; otherwise skip.
+    """Per-frame emission using synthetic non-pilot target (not dynamic _ROOT_CAUSE_TARGETS[0])."""
     from core.analytics import root_cause_compiler_v1 as mod
 
-    targets = list(mod._ROOT_CAUSE_TARGETS)
-    if not targets:
-        pytest.skip("no root cause targets")
-    signal_id, _loader = targets[0]
+    _require_synthetic_non_pilot()
+    signal_id = SYNTHETIC_MULTIFRAME_SIGNAL_ID
+
+    def _synthetic_hypotheses_loader() -> dict:
+        return {
+            "hypotheses": [
+                {
+                    "hypothesis_id": "hyp_test_synthetic_multiframe_v1",
+                    "title": "Synthetic multi-frame hypothesis",
+                    "summary_template": "Test-only hypothesis for frame preservation.",
+                    "safety_class": "informational",
+                    "evidence_for_rules": [],
+                    "evidence_against_rules": [],
+                    "missing_data_markers": [],
+                    "confirmatory_tests": [],
+                }
+            ]
+        }
+
+    monkeypatch.setattr(
+        mod,
+        "_ROOT_CAUSE_TARGETS",
+        [(signal_id, _synthetic_hypotheses_loader)],
+    )
     rows = [
         {
             "signal_id": signal_id,
-            "activation_key": f"{signal_id}::frame_a",
-            "source_spec_id": "frame_a",
-            "package_id": "pkg_a",
+            "activation_key": _frame_key(0),
+            "source_spec_id": _frame_spec(0),
+            "package_id": "pkg_test_synthetic_mf_a",
             "system": "test",
             "signal_state": "at_risk",
             "confidence": 0.9,
@@ -273,9 +321,9 @@ def test_root_cause_compiler_emits_finding_per_frame_for_shared_signal_id(monkey
         },
         {
             "signal_id": signal_id,
-            "activation_key": f"{signal_id}::frame_b",
-            "source_spec_id": "frame_b",
-            "package_id": "pkg_b",
+            "activation_key": _frame_key(1),
+            "source_spec_id": _frame_spec(1),
+            "package_id": "pkg_test_synthetic_mf_b",
             "system": "test",
             "signal_state": "suboptimal",
             "confidence": 0.7,
@@ -288,23 +336,24 @@ def test_root_cause_compiler_emits_finding_per_frame_for_shared_signal_id(monkey
     keyed = [f for f in result.findings if f.signal_id == signal_id]
     assert len(keyed) >= 2
     keys = {f.activation_key for f in keyed}
-    assert f"{signal_id}::frame_a" in keys
-    assert f"{signal_id}::frame_b" in keys
+    assert _frame_key(0) in keys
+    assert _frame_key(1) in keys
 
 
 def test_evaluator_independent_firing_same_signal_id_frames():
     """Evaluator emits one SignalResult per registry frame when same signal_id fires."""
+    _require_synthetic_non_pilot()
     frames = [
         _synthetic_threshold_frame(
-            signal_id="signal_alt_high",
-            source_spec_id="inv_alt_high_frame_a",
-            package_id="pkg_test_alt_a",
+            signal_id=SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+            source_spec_id=_frame_spec(0),
+            package_id="pkg_test_synthetic_mf_a",
             severity="at_risk",
         ),
         _synthetic_threshold_frame(
-            signal_id="signal_alt_high",
-            source_spec_id="inv_alt_high_frame_b",
-            package_id="pkg_test_alt_b",
+            signal_id=SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+            source_spec_id=_frame_spec(1),
+            package_id="pkg_test_synthetic_mf_b",
             severity="suboptimal",
         ),
     ]
@@ -314,11 +363,8 @@ def test_evaluator_independent_firing_same_signal_id_frames():
         lab_ranges={"alt": {"min": 7.0, "max": 55.0}},
     )
     assert len(results) == 2
-    assert {r.signal_id for r in results} == {"signal_alt_high"}
-    assert {r.activation_key for r in results} == {
-        "signal_alt_high::inv_alt_high_frame_a",
-        "signal_alt_high::inv_alt_high_frame_b",
-    }
+    assert {r.signal_id for r in results} == {SYNTHETIC_MULTIFRAME_SIGNAL_ID}
+    assert {r.activation_key for r in results} == {_frame_key(0), _frame_key(1)}
     assert all(isinstance(r, SignalResult) for r in results)
 
 
@@ -333,8 +379,8 @@ def test_dto_serialization_preserves_multiple_frames():
     dumped = report.model_dump()
     restored = ReportV1.model_validate(dumped)
     keys = {f.activation_key for f in restored.top_findings}
-    assert "signal_alt_high::inv_alt_high_frame_a" in keys
-    assert "signal_alt_high::inv_alt_high_frame_b" in keys
+    assert _frame_key(0) in keys
+    assert _frame_key(1) in keys
     wire = json.loads(report.model_dump_json())
     assert len(wire["top_findings"]) >= 2
 
@@ -364,8 +410,8 @@ def test_persistence_replay_round_trip_preserves_activation_identity_and_provena
     persisted = json.loads(json.dumps([s.model_dump() for s in signal_models]))
     revived = [SignalResult.model_validate(item) for item in persisted]
     assert {(s.activation_key, s.provenance_status, s.source_spec_id) for s in revived} == {
-        ("signal_alt_high::inv_alt_high_frame_a", "SOURCE_DOCUMENT_DERIVED", "inv_alt_high_frame_a"),
-        ("signal_alt_high::inv_alt_high_frame_b", "LEGACY_INFERRED", "inv_alt_high_frame_b"),
+        (_frame_key(0), "SOURCE_DOCUMENT_DERIVED", _frame_spec(0)),
+        (_frame_key(1), "LEGACY_INFERRED", _frame_spec(1)),
     }
 
     report = compile_report_v1(
@@ -380,9 +426,9 @@ def test_persistence_replay_round_trip_preserves_activation_identity_and_provena
         "version": "v1",
         "findings": [
             {
-                "signal_id": "signal_alt_high",
-                "activation_key": "signal_alt_high::inv_alt_high_frame_a",
-                "source_spec_id": "inv_alt_high_frame_a",
+                "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+                "activation_key": _frame_key(0),
+                "source_spec_id": _frame_spec(0),
                 "authority_scope": "family_level",
                 "why_role": "causal",
                 "primary_metric": "alt",
@@ -391,9 +437,9 @@ def test_persistence_replay_round_trip_preserves_activation_identity_and_provena
                 "hypotheses": [],
             },
             {
-                "signal_id": "signal_alt_high",
-                "activation_key": "signal_alt_high::inv_alt_high_frame_b",
-                "source_spec_id": "inv_alt_high_frame_b",
+                "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+                "activation_key": _frame_key(1),
+                "source_spec_id": _frame_spec(1),
                 "authority_scope": "family_level",
                 "why_role": "causal",
                 "primary_metric": "alt",
@@ -409,25 +455,22 @@ def test_persistence_replay_round_trip_preserves_activation_identity_and_provena
     revived_clinician = ClinicianReportV1.model_validate(wire)
     assert len(revived_clinician.sections.root_causes) == 2
     assert {f.activation_key for f in revived_clinician.sections.root_causes} == {
-        "signal_alt_high::inv_alt_high_frame_a",
-        "signal_alt_high::inv_alt_high_frame_b",
+        _frame_key(0),
+        _frame_key(1),
     }
     assert revived_clinician.sections.root_cause is None
 
 
 def test_deterministic_ordering_across_repeated_executions():
     rows = list(reversed(_n_frames(3)))
-    # group_by_signal_id: stable activation_key ascending within signal_id.
-    grouped = group_by_signal_id(rows)["signal_alt_high"]
+    grouped = group_by_signal_id(rows)[SYNTHETIC_MULTIFRAME_SIGNAL_ID]
     group_keys = [r["activation_key"] for r in grouped]
     assert group_keys == sorted(group_keys)
 
-    # index_by_activation_key: insertion-stable and identical across repeated builds.
     idx_runs = [list(index_by_activation_key(rows, require_key=True).keys()) for _ in range(5)]
     assert all(run == idx_runs[0] for run in idx_runs)
     assert set(idx_runs[0]) == set(group_keys)
 
-    # Report compiler ranking is a named presentation policy; order must be stable across runs.
     report_key_runs = []
     for _ in range(5):
         report = compile_report_v1(
@@ -438,14 +481,14 @@ def test_deterministic_ordering_across_repeated_executions():
             signal_registry_hash_sha256="0" * 64,
         )
         report_key_runs.append(
-            [f.activation_key for f in report.top_findings if f.signal_id == "signal_alt_high"]
+            [
+                f.activation_key
+                for f in report.top_findings
+                if f.signal_id == SYNTHETIC_MULTIFRAME_SIGNAL_ID
+            ]
         )
     assert all(run == report_key_runs[0] for run in report_key_runs)
-    assert set(report_key_runs[0]) == {
-        "signal_alt_high::inv_alt_high_frame_a",
-        "signal_alt_high::inv_alt_high_frame_b",
-        "signal_alt_high::inv_alt_high_frame_c",
-    }
+    assert set(report_key_runs[0]) == {_frame_key(0), _frame_key(1), _frame_key(2)}
 
 
 def test_three_or_more_simultaneous_frames():
@@ -459,22 +502,18 @@ def test_three_or_more_simultaneous_frames():
         signal_registry_hash_sha256="0" * 64,
     )
     keys = {f.activation_key for f in report.top_findings}
-    assert "signal_alt_high::inv_alt_high_frame_a" in keys
-    assert "signal_alt_high::inv_alt_high_frame_b" in keys
-    assert "signal_alt_high::inv_alt_high_frame_c" in keys
+    assert _frame_key(0) in keys
+    assert _frame_key(1) in keys
+    assert _frame_key(2) in keys
     map_payload = {
         "map_version": "test",
-        "nodes": [{"signal_id": "signal_alt_high"}],
+        "nodes": [{"signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID}],
         "edges": [],
     }
     out = build_signal_interactions_v1(rows, map_payload=map_payload)
     part = set(out.get("participating_activation_keys") or [])
     assert len(part) >= 3
-    assert part == {
-        "signal_alt_high::inv_alt_high_frame_a",
-        "signal_alt_high::inv_alt_high_frame_b",
-        "signal_alt_high::inv_alt_high_frame_c",
-    }
+    assert part == {_frame_key(0), _frame_key(1), _frame_key(2)}
 
 
 def test_canonical_compile_manifest_ref_resolution():
@@ -483,7 +522,6 @@ def test_canonical_compile_manifest_ref_resolution():
     assert resolved is not None
     assert resolved.is_file()
     assert resolved.name == "arch_rt4_vitamin_d_hypothesis.yaml"
-    # Bare filename form also resolves under manifests/
     bare = resolve_compile_manifest_ref("arch_rt4_vitamin_d_hypothesis.yaml")
     assert bare is not None and bare.is_file()
 
@@ -493,11 +531,9 @@ def test_internal_compile_manifest_paths_do_not_leak_into_consumer_dtos():
     fields = SubsystemEvidenceV1.model_fields
     assert "compile_manifest_ref" in fields
     assert "compile_manifest_path" not in fields
-    # Frontend contract mirrors ref naming (no path leak).
     fe = FRONTEND_ANALYSIS_TYPES.read_text(encoding="utf-8")
     assert "compile_manifest_ref" in fe
     assert "compile_manifest_path" not in fe
-    # Estate index may keep internal path; that is not a consumer DTO.
     estate = yaml.safe_load(
         (REPO_ROOT / "knowledge_bus" / "compiled" / "estate_index_v1.yaml").read_text(encoding="utf-8")
     )
@@ -516,35 +552,37 @@ def test_blocked_launch_critical_reported_without_blocking_unrelated_legacy():
     cohort = _active_kb47_packages()
     assert cohort
     assert all(p.name.startswith("pkg_kb47_") for p in cohort)
-    # Unrelated legacy packages exist outside cohort
     packages_root = REPO_ROOT / "knowledge_bus" / "packages"
     legacy = [p for p in packages_root.iterdir() if p.is_dir() and not p.name.startswith("pkg_kb47_")]
     assert legacy, "expected non-kb47 packages to prove cohort bounding"
     exit_code = gate_main()
     assert exit_code == 0
-    inventory = (REPO_ROOT / "docs" / "architecture" / "ARCH-RT-IDENTITY-PROV-1_launch_critical_provenance_inventory.md").read_text(
-        encoding="utf-8"
-    )
+    inventory = (
+        REPO_ROOT
+        / "docs"
+        / "architecture"
+        / "ARCH-RT-IDENTITY-PROV-1_launch_critical_provenance_inventory.md"
+    ).read_text(encoding="utf-8")
     assert "BLOCKED" in inventory or "beta-ineligible" in inventory.lower() or "LEGACY_INFERRED" in inventory
     for pkg in legacy[:5]:
-        # Inventory may mention packages only in cohort rows — legacy ids must not appear as gate errors.
-        # Soft check: non-kb47 package_id not required in inventory table.
-        assert not re.search(rf"\|\s*{re.escape(pkg.name)}\s*\|", inventory) or pkg.name.startswith("pkg_kb47_")
+        assert not re.search(rf"\|\s*{re.escape(pkg.name)}\s*\|", inventory) or pkg.name.startswith(
+            "pkg_kb47_"
+        )
 
 
 def test_package_manifest_schema_compatibility_and_naming_drift_regression():
     schema = yaml.safe_load(
-        (REPO_ROOT / "knowledge_bus" / "schema" / "package_manifest_schema.yaml").read_text(encoding="utf-8")
+        (REPO_ROOT / "knowledge_bus" / "schema" / "package_manifest_schema.yaml").read_text(
+            encoding="utf-8"
+        )
     )
     assert schema["schema_version"] == "1.1.0"
     optional = schema["optional_fields"]
     assert "source_spec_id" in optional
     assert "source_document" in optional
     assert "activation_key" in optional
-    # Historical required fields unchanged — packages without optional provenance remain valid shape.
     required = set(schema["required_fields"])
     assert required == {"package_id", "package_version", "research_brief", "signal_library"}
-    # Naming drift: consumer DTO uses compile_manifest_ref exclusively.
     assert "compile_manifest_path" not in SubsystemEvidenceV1.model_fields
     assert "compile_manifest_ref" in SubsystemEvidenceV1.model_fields
 
@@ -587,8 +625,8 @@ def test_clinician_report_multi_finding_serialization_backend_and_frontend_contr
         "top_findings": [
             {
                 "priority_rank": 1,
-                "signal_id": "signal_alt_high",
-                "activation_key": "signal_alt_high::inv_alt_high_frame_a",
+                "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+                "activation_key": _frame_key(0),
                 "system": "liver",
                 "signal_state": "at_risk",
                 "confidence": 0.8,
@@ -599,8 +637,8 @@ def test_clinician_report_multi_finding_serialization_backend_and_frontend_contr
             },
             {
                 "priority_rank": 2,
-                "signal_id": "signal_alt_high",
-                "activation_key": "signal_alt_high::inv_alt_high_frame_b",
+                "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+                "activation_key": _frame_key(1),
                 "system": "liver",
                 "signal_state": "suboptimal",
                 "confidence": 0.6,
@@ -616,9 +654,9 @@ def test_clinician_report_multi_finding_serialization_backend_and_frontend_contr
             "version": "v1",
             "findings": [
                 {
-                    "signal_id": "signal_alt_high",
-                    "activation_key": "signal_alt_high::inv_alt_high_frame_a",
-                    "source_spec_id": "inv_alt_high_frame_a",
+                    "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+                    "activation_key": _frame_key(0),
+                    "source_spec_id": _frame_spec(0),
                     "authority_scope": "family_level",
                     "why_role": "causal",
                     "primary_metric": "alt",
@@ -627,9 +665,9 @@ def test_clinician_report_multi_finding_serialization_backend_and_frontend_contr
                     "hypotheses": [],
                 },
                 {
-                    "signal_id": "signal_alt_high",
-                    "activation_key": "signal_alt_high::inv_alt_high_frame_b",
-                    "source_spec_id": "inv_alt_high_frame_b",
+                    "signal_id": SYNTHETIC_MULTIFRAME_SIGNAL_ID,
+                    "activation_key": _frame_key(1),
+                    "source_spec_id": _frame_spec(1),
                     "authority_scope": "family_level",
                     "why_role": "causal",
                     "primary_metric": "alt",
@@ -654,7 +692,6 @@ def test_clinician_report_multi_finding_serialization_backend_and_frontend_contr
     assert "export interface ClinicianRootCauseFindingV1" in fe
     assert "root_causes?: ClinicianRootCauseFindingV1[]" in fe
     assert "activation_key?: string" in fe
-    # Additive list + legacy singleton documented in frontend types
     assert re.search(r"root_cause:\s*ClinicianRootCauseFindingV1\s*\|\s*null", fe)
 
 
