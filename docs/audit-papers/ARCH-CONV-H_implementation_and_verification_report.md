@@ -113,5 +113,8 @@ Finish succeeded; kernel COMPLETE committed. Merged and published under explicit
 | Stash | Empty |
 | Tooling leakage | None in sprint commits |
 | Merge commit | `f91ef18` — `merge: ARCH-CONV-H HbA1c compiled-WHY authority (Gate 2 ratified)` |
-| Publish | `main` pushed to `origin/main` |
-| Equality | local `main` == `origin/main` verified by SHA |
+| Published tip | `eb967ac` — merge-SHA docs on `main` |
+| Publish | `main` → `origin/main` |
+| Equality | **PASS** — local `main` == `origin/main` = `eb967acbdf293bf84e48ab7f2187bf87a4d417a8` |
+| Feature branch (local) | Retained: `feature/arch-conv-h-hba1c-compiled-why-authority` |
+| Active WP token | Cleared |
