@@ -1,19 +1,19 @@
 work_id: ARCH-CONV-PKGB-1
 branch: feature/arch-conv-pkgb-1-homocysteine-exclusivity-resolver-closure
-register_state: AWAITING_GATE_1_GATE_2
-gate1_status: PENDING
+register_state: GATE_1_RECORDED_AWAITING_GATE_2
+gate1_status: APPROVED_WITH_NARROWING
 gate2_status: PENDING
-head_of_medical_research_gate1_reference: null
+head_of_medical_research_gate1_reference: ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02
 anthony_gate2_reference: null
 hardening_pack_ref: docs/architecture/ARCH-CONV-PKGB-1_hardening_pack.md
 gate_decision_ref: docs/architecture/ARCH-CONV-PKGB-1_GATE_1_GATE_2_decision.md
 runtime_changes_authorised: false
 note: >
-  Phase 0 repository mapping complete on 2026-08-02. Gate 1 and Gate 2 are
-  required before any runtime resolver, register, registry, or test-expectation
-  change. FOLD_SUPPRESS for signal_homocysteine_elevation_context was already
-  ratified under ARCH-CONV-A Wave 0 / STOP A; this sprint implements that
-  disposition, it does not re-open medical content for elevation-context.
+  Gate 1 APPROVED_WITH_NARROWING recorded on 2026-08-02
+  (ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02). Gate 2 remains PENDING.
+  Runtime implementation is not authorised until Gate 2 ratifies Gate 1
+  exactly. FOLD_SUPPRESS for signal_homocysteine_elevation_context remains
+  the disposition; no new elevation-context medical content.
 
 baseline_counts:
   compiled_active: 26
@@ -42,17 +42,19 @@ canonical_compiled_owner:
   rejected_activation_key: signal_homocysteine_high::inv_homocysteine_high_metabolic
   compiled_content_change_authorised: false
 
-competitor_disposition_pending_gate:
+competitor_disposition_gate1_approved:
   signal_id: signal_homocysteine_elevation_context
   activation_key: signal_homocysteine_elevation_context::inv_elevation_context
   package_id: pkg_homocysteine_elevation_context
-  proposed_disposition: FOLD_SUPPRESS_IMPLEMENTED_AS_WHY_NON_OWNING
+  disposition: FOLD_SUPPRESS
   package_layer_status: UNCHANGED
   psi_status: UNCHANGED
   package_deletion: forbidden
-  independent_why_emit: forbidden
-  new_medical_hypothesis: forbidden
-  new_narrative: forbidden
+  independent_why_ownership: prohibited
+  independent_why_emit: prohibited
+  new_medical_hypothesis: prohibited
+  new_narrative: prohibited
+  gate1_reference: ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02
 
 shared_asset:
   path: knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml
@@ -64,11 +66,19 @@ shared_asset:
 bare_key_resolver_defect:
   function: resolve_frame_why_authority
   path: backend/core/knowledge/why_authority_v1.py
+  classification: mechanical_authority_handling_only
   current_bare_zero_compiled_behaviour: fail_closed
   required_bare_zero_compiled_behaviour: skip
-  preserve_fail_closed_for_genuine_ambiguity: true
+  governed_skip_only_when_all_rows_unambiguously_retired_or_non_owning: true
+  preserve_fail_closed_for_genuine_ambiguity_or_missing_governance: true
   create_compiled_authority_for_total_cholesterol: false
   revive_legacy_total_cholesterol_why: false
+  no_new_compiled_authority_or_medical_content_for:
+    - signal_ldl_high
+    - signal_hdl_low
+    - signal_total_cholesterol_high
+    - signal_hgb_low
+    - signal_hepatic_alt_context
   zero_compiled_active_pilot_signal_ids:
     - signal_ldl_high
     - signal_hdl_low
@@ -77,6 +87,7 @@ bare_key_resolver_defect:
     - signal_hepatic_alt_context
   governance_shape: all_rows_LEGACY_RETIRED_uniform
   separate_adjudication_required: false
+  gate1_reference: ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02
 
 stale_test_assertion_alignment:
   - family: hba1c

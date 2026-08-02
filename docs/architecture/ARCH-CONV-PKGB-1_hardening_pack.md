@@ -6,7 +6,7 @@
 **Change type:** MIXED  
 **Execution model:** TWO_PHASE_START_FINISH  
 **Implementation owner:** Core Engine agent  
-**Status:** Phase 0 complete. **Awaiting Gate 1 and Gate 2.** Runtime implementation **not authorised**.
+**Status:** Gate 1 `APPROVED_WITH_NARROWING` (`ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02`). Gate 2 `PENDING`. **Runtime implementation not authorised.**
 
 **Hardening clearance:** `automation_bus/latest_prompt_hardening.json` — `ARCH-CONV-PKGB-1` / `HARDENED`.
 
@@ -194,9 +194,9 @@ No production content change to satisfy old tests.
 
 ## 8. Gate STOP
 
-Gate 1: **REQUIRED** — Head of Medical Research must answer the seven Gate 1 questions in `ARCH-CONV-PKGB-1_GATE_1_GATE_2_decision.md`.  
-Gate 2: **REQUIRED** — Anthony must ratify Gate 1 exactly.
+Gate 1: **RECORDED** — `ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02` / `APPROVED_WITH_NARROWING`.  
+Gate 2: **PENDING** — Anthony must ratify Gate 1 exactly.
 
-**Runtime implementation is forbidden until both decisions are recorded on disk and agree.**
+**Runtime implementation remains forbidden until Gate 2 is recorded and `runtime_changes_authorised: true`.**
 
 Work package remains `IN_PROGRESS`.
