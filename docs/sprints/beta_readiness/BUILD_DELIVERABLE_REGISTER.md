@@ -1416,11 +1416,12 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ## ARCH-CONV-I — ALT Compiled-WHY Identity Resolution
 
-**Status:** IMPLEMENTED — Gate 2 ratified; pending finish / independent audit / merge  
-**Date implemented:** 2026-08-02  
+**Status:** CLOSED — Gate 2 ratified; merged and published to `origin/main`  
+**Date closed:** 2026-08-02  
 **Programme block(s):** Architecture convergence — ALT compiled-WHY identity (`signal_alt_high` / `signal_hepatic_alt_context`)  
 **Gate 1:** `ARCH-CONV-I-GATE1-HMR-2026-08-02` (`APPROVED_WITH_NARROWING`, Outcome A `MAP_AND_COMPILE`)  
 **Gate 2:** `ARCH-CONV-I-GATE2-ANTHONY-2026-08-02` (`APPROVED`)  
+**Merge SHA:** `bd04648` — `merge: ARCH-CONV-I ALT compiled-WHY identity resolution (Gate 2 ratified)`  
 **Evidence:** `docs/audit-papers/ARCH-CONV-I_implementation_and_verification_report.md`  
 **Medical decision register:** `docs/architecture/ARCH-CONV-I_medical_decision_register.yaml`
 

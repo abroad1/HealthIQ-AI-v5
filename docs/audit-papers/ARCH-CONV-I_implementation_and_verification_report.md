@@ -89,4 +89,18 @@ Focused ARCH-CONV-I + F/G/H + phenotype suites — see closure evidence.
 
 ## 8. Closure posture
 
-Finish after evidence commit. Kernel COMPLETE status commit per SOP §6.8.1. No merge by Cursor.
+Finish succeeded; kernel COMPLETE committed. Merged and published under explicit human authority.
+
+## 9. Post-Implementation Closure (published)
+
+| Check | Result |
+|---|---|
+| Branch at finish | `feature/arch-conv-i-alt-compiled-why-identity-resolution` |
+| Working tree at merge | Clean |
+| Stash | Empty |
+| Tooling leakage | None in sprint commits |
+| Merge commit | `bd04648` — `merge: ARCH-CONV-I ALT compiled-WHY identity resolution (Gate 2 ratified)` |
+| Publish | `main` → `origin/main` |
+| Equality | Verified after publish |
+| Feature branch (local) | Retained: `feature/arch-conv-i-alt-compiled-why-identity-resolution` |
+| Active WP token | Cleared |
