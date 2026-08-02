@@ -126,32 +126,47 @@ def _evaluate(signal: dict, biomarkers: dict[str, float], *, runtime_context=Non
 
 
 def test_report_includes_output_authority_provenance():
-    signal_results = [
-        {
-            "signal_id": "signal_homocysteine_high",
-            "package_id": "pkg_s24_homocysteine_high",
-            "activation_key": "signal_homocysteine_high::inv_homocysteine_high",
-            "system": "cardiovascular",
-            "signal_state": "at_risk",
-            "confidence": 0.8,
-            "confidence_reasons": [],
-            "primary_metric": "homocysteine",
-            "supporting_markers": [],
-        }
-    ]
+    """Positive fixture must be a real evaluated canonical activation row (ARCH-CONV-PKGC-2)."""
+    signal = _load_package_signal(
+        "pkg_kb47_free_t3_low_low_t3_syndrome",
+        "signal_free_t3_low",
+    )
+    ctx = build_runtime_context_snapshot(
+        questionnaire_responses={
+            "long_term_medications": [],
+            "chronic_conditions": [],
+            "pregnancy_status": False,
+        },
+        lifestyle_factors={"calorie_restriction": False, "fasting": False},
+    )
+    lab_ranges = {
+        "free_t3": {"min": 2.0, "max": 4.4},
+        "tsh": {"min": 0.4, "max": 4.5},
+        "free_t4": {"min": 0.8, "max": 1.8},
+    }
+    signal_results = _evaluate(
+        signal,
+        {"free_t3": 1.5, "tsh": 2.0, "free_t4": 1.2},
+        runtime_context=ctx,
+        lab_ranges=lab_ranges,
+    )
+    assert signal_results
+    assert "::" in str(signal_results[0].get("activation_key") or "")
+    assert signal_results[0]["activation_key"] != "signal_homocysteine_high::inv_homocysteine_high"
     report = compile_report_v1(
         signal_results=signal_results,
         interaction_summary=[],
         interventions_v1=[],
         signal_registry_version="test",
         signal_registry_hash_sha256="abc",
-        biomarker_context={"homocysteine": {"value": 15.0}},
-        input_reference_ranges={"homocysteine": {"min": 5.0, "max": 12.0}},
+        biomarker_context={"free_t3": {"value": 1.5}, "tsh": {"value": 2.0}, "free_t4": {"value": 1.2}},
+        input_reference_ranges=lab_ranges,
     )
     prov = report.output_authority_provenance_v1
     assert prov is not None
     assert prov.governed_elements
     assert all(element.authority_status for element in prov.governed_elements)
+
 
 
 def test_why_engine_fallback_quarantined_not_governed_hypothesis():

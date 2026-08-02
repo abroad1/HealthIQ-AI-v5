@@ -29,16 +29,29 @@ from core.knowledge.compiled_output_authority_v1 import (
 
 
 def _signal_index(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
-    """Index by activation_key when present; fall back to signal_id only for legacy single-frame rows."""
-    from core.knowledge.signal_result_index_v1 import activation_key_or_empty, signal_family_id
+    """Index by canonical activation_key; fail closed on malformed claimed keys.
+
+    Legacy rows with no activation_key and no reconstructable pair may still
+    index by signal_id only. A present but malformed/non-frame activation_key
+    must not silently fall back to signal_id (ARCH-CONV-PKGC-2).
+    """
+    from core.knowledge.signal_result_index_v1 import (
+        require_activation_key,
+        signal_family_id,
+    )
 
     out: Dict[str, Dict[str, Any]] = {}
     for row in rows:
         if not isinstance(row, dict):
             continue
-        key = activation_key_or_empty(row)
-        if not key:
-            key = signal_family_id(row)
+        claimed = str(row.get("activation_key") or "").strip()
+        if claimed:
+            key = require_activation_key(row)
+        else:
+            try:
+                key = require_activation_key(row)
+            except ValueError:
+                key = signal_family_id(row)
         if key:
             # Prefer first insertion order for stable legacy; do not overwrite distinct activation keys.
             if key not in out:
@@ -47,8 +60,17 @@ def _signal_index(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
 
 
 def _governed_signal_card_element(row: Dict[str, Any], *, rank: int) -> OutputElementAuthorityV1:
+    from core.knowledge.signal_result_index_v1 import require_activation_key
+
     signal_id = str(row.get("signal_id", "")).strip()
-    activation_key = str(row.get("activation_key", "")).strip()
+    claimed = str(row.get("activation_key", "")).strip()
+    if claimed:
+        activation_key = require_activation_key(row)
+    else:
+        try:
+            activation_key = require_activation_key(row)
+        except ValueError:
+            activation_key = ""
     package_id = str(row.get("package_id", "")).strip()
     primary_metric = str(row.get("primary_metric", "")).strip()
     policy = element_type_policy("signal_card") or {}
@@ -107,11 +129,24 @@ def build_report_output_authority_provenance_v1(
     governed: List[OutputElementAuthorityV1] = []
     quarantined: List[OutputElementAuthorityV1] = []
 
+    from core.knowledge.signal_result_index_v1 import parse_activation_key, require_activation_key
+
     signal_by_id = _signal_index(signal_results)
     for finding in report.top_findings:
-        key = str(getattr(finding, "activation_key", "") or "").strip() or finding.signal_id
+        finding_key = str(getattr(finding, "activation_key", "") or "").strip()
+        if finding_key:
+            # Fail closed on malformed / non-frame claimed keys (do not rewrite to signal_id).
+            parse_activation_key(finding_key)
+            key = finding_key
+        else:
+            key = finding.signal_id
         row = signal_by_id.get(key) or signal_by_id.get(finding.signal_id, {})
-        element = _governed_signal_card_element(row or {"signal_id": finding.signal_id, "activation_key": key}, rank=finding.priority_rank)
+        row_payload = row or {"signal_id": finding.signal_id}
+        if finding_key and not str(row_payload.get("activation_key") or "").strip():
+            row_payload = {**row_payload, "activation_key": finding_key}
+        if str(row_payload.get("activation_key") or "").strip():
+            require_activation_key(row_payload)
+        element = _governed_signal_card_element(row_payload, rank=finding.priority_rank)
         if finding.signal_state in {"suboptimal", "at_risk"}:
             governed.append(element)
         else:

@@ -99,9 +99,10 @@ Proceed under STANDARD — CONTRACT_ADJACENT. No Gate 1 / Gate 2 required.
 
 ### Validation boundary
 
-- Primary: `signal_result_index_v1.require_activation_key` (shared constructor).
+- Primary: `signal_result_index_v1.require_activation_key` / `parse_activation_key` (shared constructor).
+- Historic truncated stub `signal_homocysteine_high::inv_homocysteine_high` is an explicit one-key denylist (`FORBIDDEN_NON_FRAME_ACTIVATION_KEYS`) — not a general investigation-registry membership system.
 - Provenance builder calls through that helper rather than inventing a second grammar.
-- Registry membership of investigation IDs is **not** required by the existing shared contract for this sprint (structural + reconstructable identity only). Wrong-investigation registry checks remain out of scope unless a live key fails.
+- Broader registry membership of investigation IDs remains out of scope.
 
 ### Expected failure contract
 
