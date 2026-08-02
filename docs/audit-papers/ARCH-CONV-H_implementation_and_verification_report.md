@@ -102,4 +102,16 @@ Phenotype expectation update:
 
 ## 8. Closure posture
 
-Finish after evidence commit. Kernel COMPLETE status commit per SOP §6.8.1. No merge by Cursor.
+Finish succeeded; kernel COMPLETE committed. Merged and published under explicit human authority.
+
+## 9. Post-Implementation Closure (published)
+
+| Check | Result |
+|---|---|
+| Branch at finish | `feature/arch-conv-h-hba1c-compiled-why-authority` |
+| Working tree at merge | Clean |
+| Stash | Empty |
+| Tooling leakage | None in sprint commits |
+| Merge commit | `f91ef18` — `merge: ARCH-CONV-H HbA1c compiled-WHY authority (Gate 2 ratified)` |
+| Publish | `main` pushed to `origin/main` |
+| Equality | local `main` == `origin/main` verified by SHA |

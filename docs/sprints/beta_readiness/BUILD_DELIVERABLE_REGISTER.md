@@ -1377,11 +1377,12 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ## ARCH-CONV-H — HbA1c Compiled-WHY Authority
 
-**Status:** IMPLEMENTED — Gate 2 ratified; pending finish / independent audit / merge  
-**Date implemented:** 2026-08-01  
+**Status:** CLOSED — Gate 2 ratified; merged and published to `origin/main`  
+**Date closed:** 2026-08-01  
 **Programme block(s):** Architecture convergence — HbA1c compiled-WHY authority (`signal_hba1c_high`)  
 **Gate 1:** `ARCH-CONV-H-GATE1-HMR-2026-08-01` (`APPROVED_WITH_NARROWING`)  
 **Gate 2:** `ARCH-CONV-H-GATE2-ANTHONY-2026-08-01` (`APPROVED`)  
+**Merge SHA:** `f91ef18` — `merge: ARCH-CONV-H HbA1c compiled-WHY authority (Gate 2 ratified)`  
 **Evidence:** `docs/audit-papers/ARCH-CONV-H_implementation_and_verification_report.md`  
 **Medical decision register:** `docs/architecture/ARCH-CONV-H_medical_decision_register.yaml`
 
