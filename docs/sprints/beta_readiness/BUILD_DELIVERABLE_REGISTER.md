@@ -1451,11 +1451,12 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ## ARCH-CONV-PKGB-1 — Homocysteine Dual-Authority Exclusivity and Shared Resolver Defect Closure
 
-**Status:** IMPLEMENTED — Gate 2 ratified; awaiting independent audit / merge  
-**Date closed (implementation):** 2026-08-02  
+**Status:** CLOSED — Gate 2 ratified; merged and published to `origin/main`  
+**Date closed:** 2026-08-02  
 **Programme block(s):** Architecture convergence — Package B Wave 1 (homocysteine exclusivity + bare-key resolver)  
 **Gate 1:** `ARCH-CONV-PKGB-1-GATE1-HMR-2026-08-02` (`APPROVED_WITH_NARROWING`)  
 **Gate 2:** `ARCH-CONV-PKGB-1-GATE2-ANTHONY-2026-08-02` (`APPROVED`)  
+**Merge SHA:** `027d2e7` — `merge: ARCH-CONV-PKGB-1 homocysteine exclusivity and bare-key resolver (Gate 2 ratified)`  
 **Evidence:** `docs/audit-papers/ARCH-CONV-PKGB-1_implementation_and_verification_report.md`  
 **Medical decision register:** `docs/architecture/ARCH-CONV-PKGB-1_medical_decision_register.yaml`
 
