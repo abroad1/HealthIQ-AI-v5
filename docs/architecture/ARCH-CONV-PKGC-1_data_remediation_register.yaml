@@ -1,6 +1,6 @@
 work_id: ARCH-CONV-PKGC-1
 branch: feature/arch-conv-pkgc-1-waist-unit-remediation
-register_state: LIVE_WRITE_VERIFIED_AWAITING_MERGE
+register_state: MERGED_AND_PUBLISHED
 risk_level: STANDARD
 change_type: MIXED
 hardening_pack_ref: docs/architecture/ARCH-CONV-PKGC-1_hardening_pack.md
@@ -10,6 +10,7 @@ anthony_decision: APPROVED_WITH_CONDITIONS
 implementation_report_ref: docs/audit-papers/ARCH-CONV-PKGC-1_implementation_and_verification_report.md
 live_write_status: EXECUTED_AND_VERIFIED
 live_write_timestamp_utc: "2026-08-02T13:49:15Z"
+merge_sha: d056931
 carry_forward_closure: CF-ARCH-CONV-WAIST-1 Resolved
 audit_source: docs/audit-papers/WAIST_UNIT_LEGACY_IMPACT_AUDIT.md
 live_db_probe:
@@ -33,6 +34,7 @@ implementation_authorised: true
 note: >
   Anthony APPROVED_WITH_CONDITIONS on 2026-08-02. All 12 rows MARK_STALE_NO_REWRITE.
   Live write executed 2026-08-02T13:49:15Z. Values/units unchanged. Idempotent dry-run NO_OP.
+  Merged to main as d056931 under Anthony merge authority.
 
 rows:
   - analysis_id: e5cfbc62-93fa-4bac-8894-dcb69117ac4c

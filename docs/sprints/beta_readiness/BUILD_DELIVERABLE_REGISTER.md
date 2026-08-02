@@ -1487,11 +1487,11 @@ Documentation-only reconciliation on `main`. Sources: STOP A/C proofs, Gate deci
 
 ## ARCH-CONV-PKGC-1 — Historic Waist-Unit Stale-Detection and Remediation
 
-**Status:** COMPLETE on branch — awaiting Claude audit, GPT architectural review, Anthony merge  
-**Date closed (implementation):** 2026-08-02  
+**Status:** CLOSED — Anthony merge authorised; merged and published to `origin/main`  
+**Date closed:** 2026-08-02  
 **Programme block(s):** Architecture convergence — Package C Wave 1 (waist stale-detection + historic remediation)  
 **Data governance:** `ARCH-CONV-PKGC-1-DATA-GOV-ANTHONY-2026-08-02` (`APPROVED_WITH_CONDITIONS`)  
-**Branch:** `feature/arch-conv-pkgc-1-waist-unit-remediation`  
+**Merge SHA:** `d056931` — `merge: ARCH-CONV-PKGC-1 waist stale-detection and historic remediation (Anthony merge authorised)`  
 **Evidence:** `docs/audit-papers/ARCH-CONV-PKGC-1_implementation_and_verification_report.md`  
 **Remediation register:** `docs/architecture/ARCH-CONV-PKGC-1_data_remediation_register.yaml`
 

@@ -4,7 +4,7 @@
 **Branch:** `feature/arch-conv-pkgc-1-waist-unit-remediation`  
 **Risk / change type:** STANDARD / MIXED  
 **Data governance:** `ARCH-CONV-PKGC-1-DATA-GOV-ANTHONY-2026-08-02` (`APPROVED_WITH_CONDITIONS`)  
-**Status:** **LIVE WRITE VERIFIED** — awaiting independent Claude audit, GPT architectural review, and Anthony merge authority
+**Status:** **CLOSED** — merged to `main` (`d056931`); published to `origin/main`
 
 ## 1. Authority
 
