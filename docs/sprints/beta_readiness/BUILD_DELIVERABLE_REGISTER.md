@@ -1603,6 +1603,34 @@ Documentation-only post-merge reconciliation. Sources: committed implementation 
 
 ---
 
+## Upload Questionnaire Context Audit (2026-08-03)
+
+**Status:** Complete — read-only repository audit  
+**Date closed:** 2026-08-03  
+**Programme block(s):** Pre-SOP discovery — questionnaire/clinical-context contract  
+**Evidence:** `docs/audit-papers/HEALTHIQ_UPLOAD_QUESTIONNAIRE_CONTEXT_AUDIT_v0.1.md`
+
+### Delivered / ticked off
+- Confirmed no `pregnancy_status` question exists anywhere in `backend/ssot/questionnaire.json`; the field is absent, not merely misconfigured.
+- Confirmed `pregnancy_sensitive_interpretation_required` does not exist anywhere in the codebase.
+- Confirmed the governance-gated validator (`backend/scripts/validate_active_signal_context_gate_reachability.py`) actively forbids any pregnancy gate from accepting `answered_yes`, and requires `not_answered` to be treated as safe-to-proceed — so even a captured "pregnant" answer has no governed rule path today.
+- Confirmed `biological_sex` is mandatory in SSOT and enforced in the normal frontend flow, but **not** enforced server-side: a request omitting `user.sex` silently resolves to `Sex.OTHER` (`context_factory.py:414-438`) rather than being rejected.
+- Confirmed `AnalysisStartRequest.questionnaire_data` is fully optional at the API boundary and `ContextFactory` never requires questionnaire presence — the entire questionnaire can be omitted by a non-frontend caller.
+- Identified the one existing server-side enforcement seam (`ContextFactory.create_analysis_context(..., validate_requirements=...)`) is present in code but never invoked in the live request path.
+- Corrected the historical record on `CF-BETA-READINESS-1`: its recorded resolution (`BETA-READINESS-SPRINT-2`) widened pregnancy gates to accept `not_answered`/`not_applicable` rather than adding the missing question — the underlying gap this audit re-confirms was never closed, only made safe-to-proceed-around.
+
+### Carry-forwards
+- `CF-QUESTIONNAIRE-CONTEXT-1` opened (pregnancy question + derived flag + governance policy decision) — see carry-forward register.
+- `CF-QUESTIONNAIRE-CONTEXT-2` opened (server-side mandatory-field enforcement, `sex` and questionnaire presence generally) — see carry-forward register.
+
+### Blockers / risks
+- G3 (governance policy actively forbids pregnancy-aware gating) is a medical/clinical decision, not an engineering one, and must be resolved before or alongside adding the question — adding the question alone would create a dead end.
+
+### Recommended next sprint
+- A Package A-style clinical scoping decision on pregnancy-aware interpretation policy (resolves G3), sequenced before or bundled with the schema/runtime change (G1/G2). Server-side mandatory-field enforcement (G4-G6) is independently schedulable and lower-risk.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:
