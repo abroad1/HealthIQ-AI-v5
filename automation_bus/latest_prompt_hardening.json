@@ -1,79 +1,96 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "ARCH-CONV-I-ALT-IDPROV-1",
+  "work_id": "CLIN-PRIORITY-CORE-1",
   "status": "HARDENED",
-  "hardening_date": "2026-08-02",
+  "hardening_date": "2026-08-04",
   "hardened_by": "Claude Code",
-  "risk_level": "STANDARD",
-  "change_type": "BEHAVIOUR",
+  "risk_level": "HIGH",
+  "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
-  "branch": "feature/arch-conv-i-alt-idprov-test-estate-restoration",
+  "branch": "feature/clin-priority-core-1",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
 
   "verification_mode_used": {
-    "mode": "batched parallel/sequential direct verification, no fork",
-    "rationale": "Single self-contained test file plus a bounded set of authority/scope paths; no disjoint large-scale work requiring a fork."
+    "mode": "batched direct verification, no fork",
+    "rationale": "Nearly all governing documents (contract, ruleset, register, closure report, medical adjudication, approval pack v1.2, product ratification, architecture-hardening report, repository inspection report, package definition v1.1, sprint plan vNEXT_1, ADR-RT-001-004, six domain rulesets, and core runtime files signal_evaluator.py/insight_graph_builder.py/insight_graph_v1.py/results.py) were authored or freshly read by this same Claude Code session earlier in the engagement -- re-reading them would be redundant, not stronger verification. The remaining unread runtime/harness paths were a small, bounded set of quick existence/content checks, not large disjoint work, so direct verification was used instead of a fork."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
-    "declared_risk_level": "STANDARD",
-    "declared_change_type": "BEHAVIOUR",
-    "files_in_scope": [
-      "backend/tests/unit/test_arch_rt_identity_prov_1.py",
-      "backend/scripts/run_baseline_tests.py",
-      "docs/audit-papers/ARCH-CONV-I-ALT-IDPROV-1_implementation_and_verification_report.md",
-      "docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md",
-      "docs/sprints/launch_core_carry_forward_register.md"
-    ],
-    "behaviour_changes_touch_intelligence_core": "NO -- Intelligence Core files (root_cause_compiler_v1.py, why_authority_v1.py, output_authority_provenance_builder_v1.py, signal_result_index_v1.py) are explicitly excluded from modification in the prompt itself; only the test file and baseline-runner script are edited",
-    "tests_listed_for_behaviour_changes": "YES",
-    "scope_proportionality": "PASS -- STANDARD/BEHAVIOUR with a tightly bounded test-estate-only scope, explicit exclusions list, and STOP conditions",
+    "declared_risk_level": "HIGH",
+    "declared_change_type": "MIXED",
+    "files_in_scope": "15 mandatory governing documents (prompt section 3) + six domain rulesets + ~10 runtime/harness paths referenced across sections 4/7/11 -- all enumerated, none open-ended",
+    "behaviour_changes_touch_intelligence_core": "YES -- explicit in the prompt itself (section 6): signal-to-finding construction, governed-content compilation/loading, consolidation, urgency/severity/tier assignment, InsightGraph and AnalysisDTO output assembly",
+    "tests_listed_for_behaviour_changes": "YES -- section 13, extensive",
+    "scope_proportionality": "PASS -- bounded internal checkpoints, explicit exclusions list (section 11), no open-ended discovery language",
     "advisory_duplication": "NO",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "authority_and_scope_paths_checked": 12,
-    "result": "11/12 exist as cited",
-    "citation_error_found": {
-      "cited_path": "docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy(1).md",
-      "actual_path": "docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md",
-      "detail": "trailing '(1)' does not exist in the real filename, confirmed via glob. Underlying ADR content exists and is readable -- citation string only needs correction before Cursor treats it as an authority reference."
+    "clinical_and_architecture_authority_paths": {
+      "result": "all previously read in full this session; no citation errors found (contract v0.6.3, ruleset v0.5, adjudication register v0.4, closure report v0.4, medical adjudication v0.1, approval pack v1.2, product ratification v1.0, architecture-hardening report, repository inspection report, package definition v1.1, sprint plan vNEXT_1, ADR-RT-001 through 004, six domain rulesets)"
+    },
+    "runtime_authority_paths_freshly_verified_this_hardening_pass": {
+      "backend/core/analytics/signal_evaluator.py": "confirmed prior read this session -- SignalRegistry, activation-key-keyed (lines 26-202)",
+      "backend/core/analytics/insight_graph_builder.py": "confirmed prior read this session -- sole InsightGraphV1 assembler",
+      "backend/core/contracts/insight_graph_v1.py": "confirmed prior read this session -- canonical InsightGraph contract",
+      "backend/core/models/results.py": "confirmed prior read this session -- AnalysisDTO and related response classes",
+      "backend/tools/run_arbitration_scenarios.py": "freshly read this pass (lines 1-60) -- confirms the JSON-fixture-driven scenario-runner pattern the prompt cites as the harness model (scenarios list, scenario_id-keyed, deterministic sort)",
+      "backend/core/analytics/arbitration_engine.py": "existence confirmed via ls this pass",
+      "backend/core/analytics/state_engine.py": "existence confirmed via ls this pass",
+      "backend/core/models/questionnaire.py": "existence confirmed via ls this pass",
+      "backend/tests/fixtures/arbitration_scenarios_v2.json": "existence confirmed via ls this pass"
+    },
+    "no_parallel_finding_constructor_claim": {
+      "status": "CONFIRMED",
+      "evidence": "grep for 'clinical_concern_set|ClinicalFinding|ConsolidatedConcernSet|concern_constructor' across backend/core returned zero files -- the prompt's Stage 1B no-op check (section 5) is accurate; no such capability exists yet"
+    },
+    "scenario_count_claim": {
+      "status": "CONFIRMED",
+      "evidence": "grep count of scenario-ID table rows (XD-AS-/HAEM-AS-/HEP-AS-/RE-AS-/IRIN-AS-/THY-AS-/CN-AS- prefixes) in HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_APPROVAL_PACK_v1_2.md returns exactly 109, matching the prompt's per-domain breakdown (39+6+14+14+12+12+12=109) and its required APPROVED_SCENARIO_ESTATE_COVERAGE: 109/109 exit criterion"
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "claim_exactly_seven_genuine_failures": {
-      "status": "CONFIRMED by direct execution",
-      "evidence": "python -m pytest backend/tests/unit/test_arch_rt_identity_prov_1.py -q from repo root: exactly the 7 named tests failed (test_report_and_output_authority_preserve_both_frames, test_clinician_report_retains_multi_findings_without_silent_singleton, test_dto_serialization_preserves_multiple_frames, test_persistence_replay_round_trip_preserves_activation_identity_and_provenance, test_deterministic_ordering_across_repeated_executions, test_three_or_more_simultaneous_frames, test_root_cause_compiler_emits_finding_per_frame_for_shared_signal_id), no others."
+    "intelligence_core_scope_explicit": "YES -- section 6 names every affected surface",
+    "regression_targets_included": "YES -- section 13",
+    "hidden_scope_creep": "NONE FOUND -- section 11 explicit exclusions and do-not-modify list (precedence_engine.py, arbitration_engine.py, state_engine.py, questionnaire schema, existing WHY/root-cause authority) are consistent with, not contradicted by, the in-scope section 7 work",
+    "stop_conditions_protect_behavioural_correctness": "YES -- 15 explicit STOP conditions (section 12), including the FIB-4/CV-risk live-path check (STOP 5) that the repository inspection report correctly left as an unresolved verification item rather than resolving speculatively",
+    "determinism_risks_surfaced": "YES -- deterministic ordering, deterministic manifest, compile-manifest provenance all explicitly required (sections 7.2, 7.8, 9)",
+    "no_forced_lead_and_technical_tiebreak_boundary": {
+      "status": "CONFIRMED consistent with prior architecture work",
+      "evidence": "Section 7.5 explicitly prohibits adapting or reusing technical_tiebreak_lead as the finding-level algorithm -- this matches the repository inspection report's finding (WhyThisLeadWonSection.tsx / clinician_report_v1.py:96-99) that the existing primary_concern_mode literal includes a forced-tiebreak mode incompatible with the ratified no-forced-lead policy"
     },
-    "claim_schema_test_path_dependent": {
-      "status": "CONFIRMED by direct execution",
-      "evidence": "test_package_manifest_schema_declares_source_spec_id passes when run from repo root; fails with FileNotFoundError('knowledge_bus\\\\schema\\\\package_manifest_schema.yaml') when run from backend/ -- matches prompt's stated false-eighth-failure diagnosis exactly."
-    },
-    "claim_root_cause_is_pilot_cohort_fail_closed_boundary": {
+    "longitudinal_boundary_consistency": {
       "status": "CONFIRMED",
-      "evidence": "Failure traceback: backend/core/analytics/root_cause_compiler_v1.py:738, ValueError 'WHY authority fail-closed for signal_id=\\'signal_alt_high\\' activation_key=\\'signal_alt_high::inv_alt_high_frame_a\\''. backend/core/knowledge/why_authority_v1.py:22-47 _PILOT_SIGNAL_IDS contains 'signal_alt_high' (line 47) -- confirms the fixture's real signal_id is already piloted, exactly as the prompt's Stage 0 finding states."
+      "evidence": "Section 10 restricts START to only RE-AS-3/RE-AS-5 minimum-necessary longitudinal logic and explicitly reserves GOVERNED_LONGITUDINAL_RULE_COVERAGE: 6/6 for FINISH -- exactly matches package definition v1.1 section 10's two-of-six-scenario-proven position"
     },
-    "claim_no_production_path_uses_synthetic_identities": {
+    "serious_result_framing_consistency": {
       "status": "CONFIRMED",
-      "evidence": "Repo-wide grep for 'inv_alt_high_frame_' returns only backend/tests/unit/test_arch_rt_identity_prov_1.py plus 3 closure/carry-forward docs (ARCH-CONV-PKGC-2 report, BUILD_DELIVERABLE_REGISTER.md, launch_core_carry_forward_register.md). Zero production code hits."
-    },
-    "claim_root_cause_compiler_test_uses_fragile_dynamic_selection": {
-      "status": "CONFIRMED",
-      "evidence": "backend/tests/unit/test_arch_rt_identity_prov_1.py:261 -- 'signal_id, _loader = targets[0]' selects _ROOT_CAUSE_TARGETS[0] dynamically, matching the prompt's Stage 1B(B)(1) instruction to remove this pattern."
-    },
-    "claim_explicit_exclusions_cover_all_genuine_intelligence_core_files": {
-      "status": "CONFIRMED",
-      "evidence": "Cross-checked the 6 excluded files/paths against the 5 in-scope files -- no overlap; scope is confined to test file, baseline runner, and closure docs."
+      "evidence": "Section 7.6 and section 11's exclusion of 'comprehensive Tier 0 escalation pathways' matches the corrected serious-result scope in sprint plan vNEXT_1 section 7 and package definition v1.1 section 8 -- no drift back to an escalation-service framing"
     }
   },
 
+  "prior_task_findings_inheritance": {
+    "policy_applied": "Findings from the CLIN-PRIORITY-ARCH-HARDEN-1 architecture-hardening pass and the CLIN-PRIORITY-IMPLEMENTATION-RESET-1 repository inspection are both artefact-backed (written this same session, both re-read/re-verified in this pass) -- not inherited without an artefact.",
+    "no_op_or_rescope_check": "Stage 1B (prompt section 5) claims are independently re-confirmed this pass via the grep in stage_2a above, not merely inherited from the inspection report's prose."
+  },
+
   "gaps_or_risks_flagged_for_gpt_and_cursor_stage_1a": [
-    "Citation error: docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy(1).md should be read as docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md (no '(1)' suffix) -- correct before treating it as an authority reference during Stage 1A.",
-    "Fixture-isolation strategy choice (Option A vs Option B, Stage 1B) is correctly left open by the prompt for Cursor to decide and record with rationale in the implementation report -- this hardening pass did not pre-select one."
+    "FIB-4/cardiovascular-risk live-path status remains genuinely unresolved (repository inspection report section 10 risk 2; prompt Checkpoint 0 and STOP condition 5 correctly assign this to Cursor's Phase 0, not to hardening) -- Cursor must not proceed past Phase 0 to hepatic implementation until this is resolved one way or the other.",
+    "Branch declared in front matter (feature/clin-priority-core-1) does not yet exist as the current branch -- Stage 0 kernel branch-alignment check at 'run_work_package.py start' will require creating/checking out that branch before execution; this is expected kernel behaviour, not a hardening defect."
   ],
 
-  "evidence_checklist_status": "COMPLETE -- see chat response for the mandatory Stage 2C table"
+  "changes": [
+    {
+      "date": "2026-08-04",
+      "section": "7.2 Compiled prioritisation artefact",
+      "change": "Added an explicit 'Compilation scope boundary' paragraph: compile only the rules necessary to reproduce the 109 approved scenarios and their governing structural context; any domain-ruleset band/threshold recorded as unset (e.g. marked '[U]') must be excluded from compilation and recorded as a follow-on item, never estimated.",
+      "reason": "User-identified gap during post-hardening review: STOP condition 1 (section 12) is scoped to 'any of the 109 scenarios' and would not obviously fire for a domain-ruleset table row with an unset threshold that no approved scenario exercises (concrete example found: haematology ruleset HAEM-U-D-5, 'marked leucocytosis with abnormal differential pattern', recorded as '[U] -- threshold not set' inside an otherwise-governed within-days urgency table). The prior general prohibition ('do not invent a new clinical rule') and the fail-closed compiler requirement already existed but did not explicitly name this failure mode. A proactive scope-bounding instruction was chosen over a 16th STOP condition because: (1) it prevents the ambiguity rather than reacting to it; (2) an unset '[U]' threshold is an already-known, already-classified authoring gap, not a novel discovery requiring escalation, so a STOP is the wrong severity; (3) this pattern recurs across multiple domains (e.g. iron/inflammatory IRIN-U2/IRIN-U3, thyroid THY-U2), so a STOP condition would trigger repeatedly for a uniformly-already-decided disposition rather than being handled once by a scoping rule.",
+      "classification": "Scope-narrowing safety correction. Reduces risk (closes an ambiguity that could permit undetected clinical-rule invention); does not expand scope, does not touch clinical content, does not change front matter, does not require re-running Stage 2A/2B verification against new authority files."
+    }
+  ],
+
+  "evidence_checklist_status": "COMPLETE -- see chat response for the mandatory Stage 2C table; re-issued 2026-08-04 following the section 7.2 scope-boundary correction above -- status remains HARDENED, no re-verification of authority paths required since the change narrows existing scope rather than introducing new authority or new files"
 }
