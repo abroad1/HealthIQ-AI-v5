@@ -95,6 +95,21 @@ def test_current_policy_stamp_not_stale():
     )
     assessment = assess_result_versioning(stored)
     assert not any("card_subsystem_completeness_mismatch" in r for r in assessment.stale_reasons)
+    assert not any("analysis_policy_version" in r for r in assessment.stale_reasons)
+    assert not assessment.stale
+
+
+def test_missing_clinical_concern_set_legacy_is_not_current():
+    """Stage 1B / Outcome D — pre-CORE-1 payload without analysis_policy stamp is stale."""
+    stored = _render_contract_shell(meta={"completeness_policy_id": CURRENT_COMPLETENESS_POLICY_ID})
+    # completeness present but analysis_policy missing → stale (not current)
+    meta = build_result_versioning_metadata(
+        stored,
+        raw_biomarkers={"glucose": 5.0},
+    )
+    assert meta["result_status"] == "stale"
+    assert "analysis_policy_version_missing" in meta["stale_reasons"]
+    assert meta["regeneration_available"] is True
 
 
 def test_legacy_total_bilirubin_missing_flagged():

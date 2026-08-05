@@ -5,6 +5,7 @@ Analysis routes for biomarker processing and result retrieval.
 import copy
 import logging
 import os
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 from uuid import UUID, uuid4
 
@@ -28,6 +29,8 @@ class AnalysisStartRequest(BaseModel):
         default=None,
         validation_alias=AliasChoices("questionnaire_data", "questionnaire"),
     )
+    # CLIN-PRIORITY-RESULT-REGEN-1 — single user-entered clinical chronology date (ISO YYYY-MM-DD).
+    result_date: Optional[str] = None
 
 class AnalysisStartResponse(BaseModel):
     """Response model for analysis start."""
@@ -72,6 +75,7 @@ from config.database import get_db_optional
 from app.analysis_pdf_export import build_summary_pdf_bytes
 from app.billing_entitlement import enforce_new_analysis_entitlement
 from app.analysis_regeneration import build_client_result_shape_from_dto, run_pipeline_from_raw_biomarkers
+from core.dto.analysis_policy_version_v1 import resolve_result_date_for_new_analysis
 from core.dto.analysis_regeneration_v1 import assess_regeneration_available, regeneration_unavailable_reason
 from core.dto.result_versioning_policy_v1 import build_result_versioning_metadata, stamp_current_policy_meta
 from services.storage.persistence_service import CLIENT_RESULT_SHAPE_V1, PersistenceService
@@ -235,6 +239,14 @@ async def start_analysis(
         meta["display_unit_policy"] = build_display_policy_meta()
         meta["upload_panel_observations"] = upload_panel_observations
         meta = stamp_current_policy_meta(meta)
+        resolved_date, date_provenance = resolve_result_date_for_new_analysis(
+            requested_result_date=request.result_date,
+            created_at=datetime.now(timezone.utc),
+        )
+        result_date_iso = resolved_date.isoformat()
+        meta["result_date"] = result_date_iso
+        meta["result_date_provenance"] = date_provenance
+        meta["lineage_root_analysis_id"] = analysis_id
         stored = {
             "analysis_id": dto.analysis_id,
             "meta": meta,
@@ -284,6 +296,8 @@ async def start_analysis(
             "risk_assessment": {},
             "recommendations": [],
             "result_version": "1.0.0",
+            "result_date": result_date_iso,
+            "result_date_provenance": date_provenance,
             "interpretation_display_layer_v1": (
                 dto.interpretation_display_layer_v1.model_dump()
                 if getattr(dto, "interpretation_display_layer_v1", None) is not None
@@ -311,6 +325,9 @@ async def start_analysis(
                     client_result=stored,
                     raw_biomarkers=request.biomarkers,
                     questionnaire_data=request.questionnaire_data,
+                    result_date=resolved_date,
+                    result_date_provenance=date_provenance,
+                    lineage_root_analysis_id=UUID(analysis_id),
                 )
             except Exception as exc:
                 logger.exception("Failed to persist analysis for user %s", auth_user.id)
@@ -436,6 +453,20 @@ async def get_analysis_result(
         if db is not None and auth_user is not None:
             row = _analysis_row_for_owner(analysis_id, db, auth_user)
             raw_biomarkers = row.raw_biomarkers if isinstance(row.raw_biomarkers, dict) else None
+            # Overlay canonical chronology / lineage from Analysis row (authoritative for backfills).
+            if getattr(row, "result_date", None) is not None:
+                dto["result_date"] = row.result_date.isoformat()
+                meta = dto.get("meta") if isinstance(dto.get("meta"), dict) else {}
+                meta = dict(meta)
+                meta["result_date"] = dto["result_date"]
+                if getattr(row, "result_date_provenance", None):
+                    dto["result_date_provenance"] = row.result_date_provenance
+                    meta["result_date_provenance"] = row.result_date_provenance
+                dto["meta"] = meta
+            if getattr(row, "supersedes_analysis_id", None) is not None:
+                dto["supersedes_analysis_id"] = str(row.supersedes_analysis_id)
+            if getattr(row, "lineage_root_analysis_id", None) is not None:
+                dto["lineage_root_analysis_id"] = str(row.lineage_root_analysis_id)
         dto["result_versioning"] = build_result_versioning_metadata(
             dto,
             raw_biomarkers=raw_biomarkers,
@@ -520,6 +551,51 @@ async def get_analysis_history(
         ) from exc
 
 
+@router.get("/trend-eligible")
+async def get_trend_eligible_analyses(
+    limit: int = 50,
+    offset: int = 0,
+    auth_user: CurrentUser = Depends(require_analysis_submitter),
+    db: Optional[Session] = Depends(get_db_optional),
+):
+    """
+    Canonical backend trend/history selection.
+
+    Returns only active (non-superseded) completed analyses, ordered by result_date.
+    Frontend must not invent trend eligibility or clinical chronology ordering.
+    """
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Trend selection requires database persistence",
+        )
+    if limit < 1 or limit > 100:
+        raise HTTPException(status_code=400, detail="limit must be between 1 and 100")
+    if offset < 0:
+        raise HTTPException(status_code=400, detail="offset must be non-negative")
+
+    try:
+        owner_uuid = ensure_profile_for_auth_user(db, auth_user)
+        svc = PersistenceService(db, enable_fallback=False)
+        history = svc.get_trend_eligible_history(owner_uuid, limit=limit, offset=offset)
+        total = svc.count_trend_eligible_for_user(owner_uuid)
+        page = offset // limit + 1
+        return {
+            "history": history,
+            "total": total,
+            "page": page,
+            "limit": limit,
+        }
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Failed to load trend-eligible analyses for user %s", auth_user.id)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to load trend-eligible analyses",
+        ) from exc
+
+
 @router.post("/{analysis_id}/regenerate", response_model=AnalysisRegenerateResponse)
 async def regenerate_analysis(
     analysis_id: str,
@@ -553,6 +629,25 @@ async def regenerate_analysis(
     questionnaire_data = (
         source_row.questionnaire_data if isinstance(source_row.questionnaire_data, dict) else None
     )
+    # Preserve original clinical chronology; never invent a new user-entered date.
+    from core.dto.analysis_policy_version_v1 import (
+        RESULT_DATE_PROVENANCE_LEGACY_CREATED_AT,
+        resolve_result_date_for_new_analysis,
+    )
+
+    if getattr(source_row, "result_date", None) is not None:
+        resolved_date = source_row.result_date
+        date_provenance = (
+            source_row.result_date_provenance or RESULT_DATE_PROVENANCE_LEGACY_CREATED_AT
+        )
+    else:
+        resolved_date, date_provenance = resolve_result_date_for_new_analysis(
+            created_at=source_row.created_at,
+        )
+    result_date_iso = resolved_date.isoformat()
+    source_lineage_root = getattr(source_row, "lineage_root_analysis_id", None)
+    lineage_root_id = source_lineage_root if source_lineage_root is not None else source_row.id
+
     normalized_user = normalize_analysis_user_dict({"user_id": str(auth_user.id)})
     try:
         apply_questionnaire_objective_waist_to_user(normalized_user, questionnaire_data)
@@ -603,6 +698,9 @@ async def regenerate_analysis(
         lab_origin_meta=lab_origin_meta,
         upload_panel_observations=upload_panel_observations,
         source_analysis_id=analysis_id,
+        result_date=result_date_iso,
+        result_date_provenance=date_provenance,
+        lineage_root_analysis_id=str(lineage_root_id),
     )
     _analysis_results[new_analysis_id] = stored
 
@@ -614,6 +712,10 @@ async def regenerate_analysis(
             client_result=stored,
             raw_biomarkers=dict(raw_biomarkers or {}),
             questionnaire_data=questionnaire_data,
+            result_date=resolved_date,
+            result_date_provenance=date_provenance,
+            supersedes_analysis_id=UUID(analysis_id),
+            lineage_root_analysis_id=lineage_root_id if isinstance(lineage_root_id, UUID) else UUID(str(lineage_root_id)),
         )
     except Exception as exc:
         logger.exception("Failed to persist regenerated analysis for user %s", auth_user.id)

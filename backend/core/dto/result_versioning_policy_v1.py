@@ -19,6 +19,11 @@ from core.dto.arch_conv_pkgc_1_waist_remediation_v1 import (
     STALE_REASON as WAIST_UNIT_STALE_REASON,
     has_pkgc1_remediation_stamp,
 )
+from core.dto.analysis_policy_version_v1 import (
+    CURRENT_ANALYSIS_POLICY_VERSION,
+    detect_analysis_policy_stale_reasons,
+    stamp_analysis_policy_meta,
+)
 from core.dto.persisted_replay_contract_v1 import (
     CURRENT_RESULT_VERSION,
     PersistedCompatibilityAssessment,
@@ -108,6 +113,10 @@ def detect_launch_core_stale_reasons(stored: Dict[str, Any]) -> List[str]:
     if analysis_id in APPROVED_ANALYSIS_ID_SET or has_pkgc1_remediation_stamp(stored):
         reasons.append(WAIST_UNIT_STALE_REASON)
 
+    # CLIN-PRIORITY-RESULT-REGEN-1 — governed analysis-policy version (covers missing
+    # clinical_concern_set / pre-CORE-1 personalised output without field-specific checks).
+    reasons.extend(detect_analysis_policy_stale_reasons(stored))
+
     return list(dict.fromkeys(reasons))
 
 
@@ -154,6 +163,9 @@ def build_result_versioning_metadata(
             "This saved result cannot be displayed with the current results page contract."
         )
 
+    meta = stored.get("meta") if isinstance(stored.get("meta"), dict) else {}
+    stored_policy = str(meta.get("analysis_policy_version") or "").strip() or None
+
     return {
         "immutable_snapshot": True,
         "result_status": status,
@@ -163,6 +175,8 @@ def build_result_versioning_metadata(
         "completeness_policy_id": assessment.completeness_policy_id,
         "current_completeness_policy_id": CURRENT_COMPLETENESS_POLICY_ID,
         "result_versioning_policy_id": CURRENT_RESULT_VERSIONING_POLICY_ID,
+        "analysis_policy_version": stored_policy,
+        "current_analysis_policy_version": CURRENT_ANALYSIS_POLICY_VERSION,
         "regeneration_policy": REGENERATION_POLICY_ID,
         "regeneration_available": assessment.regeneration_available,
         "regeneration_unavailable_reason": regeneration_unavailable_reason(raw_biomarkers),
@@ -179,4 +193,5 @@ def stamp_current_policy_meta(meta: Dict[str, Any]) -> Dict[str, Any]:
     out = dict(meta)
     out["completeness_policy_id"] = CURRENT_COMPLETENESS_POLICY_ID
     out["result_versioning_policy_id"] = CURRENT_RESULT_VERSIONING_POLICY_ID
+    out = stamp_analysis_policy_meta(out)
     return out

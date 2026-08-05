@@ -77,6 +77,13 @@ export function normalizeAnalysisResultPayload(raw: unknown): AnalysisResult {
     result_versioning: (r.result_versioning ?? null) as AnalysisResult['result_versioning'],
     created_at: typeof r.created_at === 'string' ? r.created_at : undefined,
     completed_at: typeof r.completed_at === 'string' ? r.completed_at : undefined,
+    result_date: typeof r.result_date === 'string' ? r.result_date : undefined,
+    result_date_provenance:
+      typeof r.result_date_provenance === 'string' ? r.result_date_provenance : undefined,
+    supersedes_analysis_id:
+      typeof r.supersedes_analysis_id === 'string' ? r.supersedes_analysis_id : undefined,
+    lineage_root_analysis_id:
+      typeof r.lineage_root_analysis_id === 'string' ? r.lineage_root_analysis_id : undefined,
   } as AnalysisResult;
 }
 
@@ -303,6 +310,48 @@ export class AnalysisService {
         data: { history: [], total: 0, page: 1, limit },
         success: false,
         error: error instanceof Error ? error.message : 'Failed to get analysis history',
+      };
+    }
+  }
+
+  /**
+   * Canonical backend trend selection (CLIN-PRIORITY-RESULT-REGEN-1).
+   * Returns only active (non-superseded) completed analyses ordered by result_date.
+   */
+  static async getTrendEligibleHistory(
+    limit: number = 50,
+    offset: number = 0
+  ): Promise<ApiResponse<AnalysisHistoryResponse>> {
+    try {
+      const response = await fetch(
+        `${API_URL}/analysis/trend-eligible?limit=${limit}&offset=${offset}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            ...analysisAuthHeaders(),
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      return {
+        data: result,
+        success: true,
+        message: 'Trend-eligible analyses retrieved successfully',
+      };
+    } catch (error) {
+      return {
+        data: { history: [], total: 0, page: 1, limit },
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Failed to get trend-eligible analyses',
       };
     }
   }

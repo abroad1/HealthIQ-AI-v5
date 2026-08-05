@@ -22,6 +22,9 @@ def build_client_result_shape_from_dto(
     lab_origin_meta: Optional[Dict[str, Any]],
     upload_panel_observations: Dict[str, Any],
     source_analysis_id: Optional[str] = None,
+    result_date: Optional[str] = None,
+    result_date_provenance: Optional[str] = None,
+    lineage_root_analysis_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Mirror POST /start stored payload shape for persistence."""
     from core.dto.builders import (
@@ -42,11 +45,18 @@ def build_client_result_shape_from_dto(
     meta["display_unit_policy"] = build_display_policy_meta()
     meta["upload_panel_observations"] = upload_panel_observations
     meta = stamp_current_policy_meta(meta)
+    if result_date is not None:
+        meta["result_date"] = result_date
+    if result_date_provenance is not None:
+        meta["result_date_provenance"] = result_date_provenance
+    if lineage_root_analysis_id is not None:
+        meta["lineage_root_analysis_id"] = lineage_root_analysis_id
     if source_analysis_id:
         meta["regenerated_from_analysis_id"] = source_analysis_id
+        meta["supersedes_analysis_id"] = source_analysis_id
         meta["regeneration_policy_id"] = REGENERATION_POLICY_ID
 
-    return {
+    payload = {
         "analysis_id": analysis_id,
         "meta": meta,
         "replay_manifest": getattr(dto, "replay_manifest", None),
@@ -111,6 +121,11 @@ def build_client_result_shape_from_dto(
             else None
         ),
     }
+    if result_date is not None:
+        payload["result_date"] = result_date
+    if result_date_provenance is not None:
+        payload["result_date_provenance"] = result_date_provenance
+    return payload
 
 
 def run_pipeline_from_raw_biomarkers(
