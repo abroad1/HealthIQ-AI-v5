@@ -1,9 +1,10 @@
 {
   "branch": "feature/clin-priority-result-regen-1",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-05T17:14:25Z",
   "cursor_started_utc": "2026-08-05T17:03:15Z",
-  "head_sha": "fe87ccb46e7b116c8027de0137379d8b78f1b0a4",
+  "head_sha": "79abe022918c436526fae5d865f4e9ef6e104fc3",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "CLIN-PRIORITY-RESULT-REGEN-1"
 }
