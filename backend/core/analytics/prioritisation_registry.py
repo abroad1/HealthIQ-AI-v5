@@ -39,7 +39,7 @@ def _default_manifest_path() -> Path:
         / "knowledge_bus"
         / "compiled"
         / "manifests"
-        / "clin_priority_prioritisation_hepatic_v1.yaml"
+        / "clin_priority_prioritisation_six_domain_v1.yaml"
     )
 
 
@@ -143,7 +143,7 @@ def load_prioritisation_package(
     _validate_raw(raw)
 
     package_hash = content_sha256(text)
-    compile_run_id = f"clin-priority-hepatic-{package_hash[:12]}"
+    compile_run_id = f"clin-priority-six-domain-{package_hash[:12]}"
     stamp = PrioritisationPackageStamp(
         package_id=str(raw["package_id"]),
         package_version=str(raw["package_version"]),
