@@ -26,6 +26,8 @@ export interface PrimaryFindingAndWhyProps {
   omitConfirmatoryInClarify?: boolean;
   /** FE-R6A — hero lead pattern label when hypothesis title differs. */
   leadPatternLabel?: string | null;
+  /** CLIN-PRIORITY — when set, replaces missing clinician-report empty state with concern-set lead. */
+  concernSetLeadTitle?: string | null;
   /** LC-S7 — evidence chains / raw ranking rationale only when user enables technical detail. */
   showTechnicalDetail?: boolean;
 }
@@ -38,9 +40,34 @@ export function PrimaryFindingAndWhy({
   omitIntroDuplicate = false,
   omitConfirmatoryInClarify = false,
   leadPatternLabel = null,
+  concernSetLeadTitle = null,
   showTechnicalDetail = false,
 }: PrimaryFindingAndWhyProps) {
   if (!report) {
+    if (concernSetLeadTitle) {
+      return (
+        <section aria-labelledby="primary-finding-why-heading" data-testid="primary-finding-and-why">
+          <Card className="border-indigo-100 bg-white shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle id="primary-finding-why-heading" className="text-xl font-semibold text-gray-900">
+                Primary finding and why
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm text-gray-800">
+              <p className="text-xs font-semibold uppercase tracking-wide text-indigo-900/80">
+                Primary finding
+              </p>
+              <p className="text-lg font-medium text-gray-900" data-testid="primary-finding-concern-set-title">
+                {concernSetLeadTitle}
+              </p>
+              <p className="text-sm text-slate-600">
+                Priority is supplied by the clinical concern set. Marker evidence and follow-up detail continue below.
+              </p>
+            </CardContent>
+          </Card>
+        </section>
+      );
+    }
     return (
       <section aria-labelledby="primary-finding-why-heading" data-testid="primary-finding-and-why">
         <Card className="border-indigo-100 bg-white shadow-sm">
@@ -101,14 +128,32 @@ export function PrimaryFindingAndWhy({
           <CardTitle id="primary-finding-why-heading" className="text-xl font-semibold text-gray-900">
             Primary finding and why
           </CardTitle>
-          {hyp0?.title ? (
+          {concernSetLeadTitle ? (
+            <p
+              className="text-sm font-medium text-indigo-950 pt-1"
+              data-testid="primary-finding-concern-set-title"
+            >
+              {concernSetLeadTitle}
+            </p>
+          ) : hyp0?.title ? (
             <p className="text-sm font-medium text-indigo-950 pt-1">{scrubConsumerRetailNarrative(hyp0.title)}</p>
           ) : null}
-          {leadPatternLabel && hyp0?.title && leadPatternLabel.trim().toLowerCase() !== hyp0.title.trim().toLowerCase() ? (
+          {!concernSetLeadTitle &&
+          leadPatternLabel &&
+          hyp0?.title &&
+          leadPatternLabel.trim().toLowerCase() !== hyp0.title.trim().toLowerCase() ? (
             <p className="text-sm text-slate-600 pt-1" data-testid="primary-finding-lead-pattern-bridge">
               Lead pattern on this panel:{' '}
               <span className="font-medium text-slate-800">{scrubConsumerRetailNarrative(leadPatternLabel)}</span>
               . The hypothesis below explains how that pattern is being interpreted from your markers.
+            </p>
+          ) : null}
+          {concernSetLeadTitle && hyp0?.title &&
+          hyp0.title.trim().toLowerCase() !== concernSetLeadTitle.trim().toLowerCase() ? (
+            <p className="text-sm text-slate-600 pt-1" data-testid="primary-finding-legacy-hypothesis-context">
+              Additional interpretation context:{' '}
+              <span className="font-medium text-slate-800">{scrubConsumerRetailNarrative(hyp0.title)}</span>
+              . Clinical priority is supplied by the concern set above.
             </p>
           ) : null}
         </CardHeader>

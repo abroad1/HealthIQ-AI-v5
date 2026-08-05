@@ -61,6 +61,14 @@ import {
   getClinicalConcernSet,
   hasClinicalConcernAuthority,
 } from '@/lib/clinicalConcernSet';
+import {
+  broaderContextLineFromLegacyLabel,
+  resolveAuthoritativeBodyOverview,
+  resolveAuthoritativeHeroSummary,
+  resolveAuthoritativeLeadNarrative,
+  resolveClinicalPresentationAuthority,
+} from '@/lib/clinicalConcernPresentationAuthority';
+import { buildBodyOverviewPrimarySentence } from '@/lib/bodyOverviewPrimarySentence';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
 import { filterConsumerInsights, legacyInsightsDebugEnabled } from '@/lib/legacyInsightsVisibility';
 import { LC_S4_MOCK_MODE_HONESTY_DISCLOSURE } from '@/lib/lcS4ResultsCopy';
@@ -175,6 +183,10 @@ export default function ResultsPage() {
     () => hasClinicalConcernAuthority(currentAnalysis),
     [currentAnalysis]
   );
+  const presentationAuthority = useMemo(
+    () => resolveClinicalPresentationAuthority(currentAnalysis),
+    [currentAnalysis]
+  );
   const balancedSystems = currentAnalysis?.balanced_systems_v1;
   const narrativeReport = currentAnalysis?.narrative_report_v1;
   const { created_at, completed_at } = currentAnalysis || {};
@@ -224,19 +236,77 @@ export default function ResultsPage() {
     [clinicianReport, firstIdl, primaryDriver]
   );
 
-  const heroSummary = useMemo(
-    () => buildPrimaryHeroSummary(narrativeReport?.retail_summary, clinicianReport, firstIdl),
-    [narrativeReport?.retail_summary, clinicianReport, firstIdl]
-  );
+  const heroSummary = useMemo(() => {
+    const legacy = buildPrimaryHeroSummary(
+      narrativeReport?.retail_summary,
+      clinicianReport,
+      presentationAuthority.source === 'clinical_concern_set' ? null : firstIdl
+    );
+    return resolveAuthoritativeHeroSummary(presentationAuthority, legacy);
+  }, [
+    narrativeReport?.retail_summary,
+    clinicianReport,
+    firstIdl,
+    presentationAuthority,
+  ]);
 
-  const heroStory = useMemo(
-    () => resolveHeroPrimaryStory(clinicianReport, phenotypeLabel, firstIdl),
-    [clinicianReport, phenotypeLabel, firstIdl]
-  );
+  const heroStory = useMemo(() => {
+    if (
+      presentationAuthority.source === 'clinical_concern_set' &&
+      presentationAuthority.primaryTitle
+    ) {
+      return {
+        heroTitle: presentationAuthority.primaryTitle,
+        systemContextLine: broaderContextLineFromLegacyLabel(
+          presentationAuthority,
+          firstIdlRetailLabel || phenotypeLabel
+        ),
+        bridgeExplanation: null as string | null,
+      };
+    }
+    return resolveHeroPrimaryStory(clinicianReport, phenotypeLabel, firstIdl);
+  }, [
+    presentationAuthority,
+    clinicianReport,
+    phenotypeLabel,
+    firstIdl,
+    firstIdlRetailLabel,
+  ]);
 
-  const heroSeverity = useMemo(
-    () => resolvePrimaryFindingSeverity(firstIdl, primaryCluster),
-    [firstIdl, primaryCluster]
+  const heroSeverity = useMemo(() => {
+    if (presentationAuthority.source === 'clinical_concern_set') {
+      return {
+        label: presentationAuthority.severityLabel || 'Priority',
+        tone: presentationAuthority.severityTone,
+      };
+    }
+    return resolvePrimaryFindingSeverity(firstIdl, primaryCluster);
+  }, [presentationAuthority, firstIdl, primaryCluster]);
+
+  const authoritativeBodyOverview = useMemo(() => {
+    const legacyPrimary = buildBodyOverviewPrimarySentence(
+      clinicianReport?.sections?.page1,
+      { clinicalConcernAuthority }
+    );
+    return resolveAuthoritativeBodyOverview(
+      presentationAuthority,
+      narrativeReport?.body_overview,
+      legacyPrimary
+    );
+  }, [
+    presentationAuthority,
+    narrativeReport?.body_overview,
+    clinicianReport,
+    clinicalConcernAuthority,
+  ]);
+
+  const authoritativeLeadNarrative = useMemo(
+    () =>
+      resolveAuthoritativeLeadNarrative(
+        presentationAuthority,
+        narrativeReport?.lead_narrative
+      ),
+    [presentationAuthority, narrativeReport?.lead_narrative]
   );
 
   const wave1DriverKeys = (currentAnalysis?.meta as { wave1_aligned_drivers?: Wave1AlignedDriversV1 } | undefined)
@@ -708,7 +778,7 @@ export default function ResultsPage() {
             <ResultsBodyOverview
               clinicianReport={clinicianReport}
               clusters={clusters}
-              compiledBodyOverview={narrativeReport?.body_overview}
+              compiledBodyOverview={authoritativeBodyOverview}
               showPatternGroupBuckets={showDetails}
               clinicalConcernAuthority={clinicalConcernAuthority}
               sectionHeading="Your body overview"
@@ -731,6 +801,11 @@ export default function ResultsPage() {
               omitIntroDuplicate
               omitConfirmatoryInClarify={showConfirmatoryInNextSteps}
               leadPatternLabel={heroStory.heroTitle}
+              concernSetLeadTitle={
+                presentationAuthority.source === 'clinical_concern_set'
+                  ? presentationAuthority.primaryTitle
+                  : null
+              }
               showTechnicalDetail={showDetails}
             />
           </div>
@@ -854,10 +929,22 @@ export default function ResultsPage() {
             <SystemUnderstandingSection
               balanced={balancedSystems}
               clusters={clusters}
-              primaryDriver={primaryDriver}
-              idlRetailLabel={firstIdlRetailLabel}
+              primaryDriver={
+                presentationAuthority.source === 'clinical_concern_set' ? null : primaryDriver
+              }
+              idlRetailLabel={
+                presentationAuthority.source === 'clinical_concern_set'
+                  ? broaderContextLineFromLegacyLabel(
+                      presentationAuthority,
+                      firstIdlRetailLabel
+                    )?.replace(/^Broader pattern context:\s*/i, '') ?? null
+                  : firstIdlRetailLabel
+              }
             />
-            <NarrativeLeadAndSupportingSections narrative={narrativeReport} />
+            <NarrativeLeadAndSupportingSections
+              narrative={narrativeReport}
+              authoritativeLeadNarrative={authoritativeLeadNarrative}
+            />
           </ResultsDisclosureSection>
 
           <ResultsDisclosureSection
