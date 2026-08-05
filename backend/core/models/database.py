@@ -8,7 +8,7 @@ from typing import Optional, List, Dict, Any
 from uuid import uuid4
 
 from sqlalchemy import (
-    Column, String, Text, Integer, Float, Boolean, DateTime, 
+    Column, String, Text, Integer, Float, Boolean, DateTime, Date,
     ForeignKey, JSON, ARRAY, Enum as SQLEnum, Index, CheckConstraint,
     UniqueConstraint, func
 )
@@ -123,6 +123,16 @@ class Analysis(Base):
     # Metadata
     analysis_version = Column(String(20), nullable=False, default="1.0.0")
     pipeline_version = Column(String(20), nullable=False, default="1.0.0")
+
+    # CLIN-PRIORITY-RESULT-REGEN-1 — clinical chronology + supersession lineage
+    result_date = Column(Date, nullable=True, index=True)
+    result_date_provenance = Column(String(64), nullable=True)
+    supersedes_analysis_id = Column(
+        UUID(as_uuid=True), ForeignKey("analyses.id"), nullable=True, index=True
+    )
+    lineage_root_analysis_id = Column(
+        UUID(as_uuid=True), ForeignKey("analyses.id"), nullable=True, index=True
+    )
     
     # Timestamps
     created_at = Column(DateTime, default=func.now(), nullable=False, index=True)
@@ -145,6 +155,8 @@ class Analysis(Base):
         Index("idx_analyses_user_id_status", "user_id", "status"),
         Index("idx_analyses_completed_at", "completed_at"),
         Index("idx_analyses_analysis_version", "analysis_version"),
+        Index("idx_analyses_user_id_result_date", "user_id", "result_date"),
+        Index("idx_analyses_lineage_root", "lineage_root_analysis_id"),
     )
 
 

@@ -107,8 +107,16 @@ class PersistenceService:
                 "processing_time_seconds": analysis_dto.get("processing_time_seconds"),
                 "analysis_version": analysis_dto.get("analysis_version", "1.0.0"),
                 "pipeline_version": analysis_dto.get("pipeline_version", "1.0.0"),
-                "completed_at": datetime.now(UTC) if analysis_dto.get("status") == "completed" else None
+                "completed_at": datetime.now(UTC) if analysis_dto.get("status") == "completed" else None,
             }
+            if "result_date" in analysis_dto:
+                analysis_data["result_date"] = analysis_dto.get("result_date")
+            if "result_date_provenance" in analysis_dto:
+                analysis_data["result_date_provenance"] = analysis_dto.get("result_date_provenance")
+            if "supersedes_analysis_id" in analysis_dto:
+                analysis_data["supersedes_analysis_id"] = analysis_dto.get("supersedes_analysis_id")
+            if "lineage_root_analysis_id" in analysis_dto:
+                analysis_data["lineage_root_analysis_id"] = analysis_dto.get("lineage_root_analysis_id")
             
             analysis = self.analysis_repo.upsert_by_analysis_id(str(analysis_id), **analysis_data)
             
@@ -325,6 +333,10 @@ class PersistenceService:
         client_result: Dict[str, Any],
         raw_biomarkers: Optional[Dict[str, Any]],
         questionnaire_data: Optional[Dict[str, Any]],
+        result_date: Any = None,
+        result_date_provenance: Optional[str] = None,
+        supersedes_analysis_id: Optional[UUID] = None,
+        lineage_root_analysis_id: Optional[UUID] = None,
     ) -> None:
         """
         Persist one completed live analysis for an authenticated user.
@@ -336,7 +348,7 @@ class PersistenceService:
         Normalized Cluster / Insight / BiomarkerScore child rows are intentionally not written here
         (Insight ORM requires provenance fields that pipeline insights do not populate).
         """
-        analysis_payload = {
+        analysis_payload: Dict[str, Any] = {
             "analysis_id": str(analysis_id),
             "status": client_result.get("status", "completed"),
             "raw_biomarkers": raw_biomarkers,
@@ -344,6 +356,16 @@ class PersistenceService:
             "analysis_version": "1.0.0",
             "pipeline_version": "1.0.0",
         }
+        if result_date is not None:
+            analysis_payload["result_date"] = result_date
+        if result_date_provenance is not None:
+            analysis_payload["result_date_provenance"] = result_date_provenance
+        if supersedes_analysis_id is not None:
+            analysis_payload["supersedes_analysis_id"] = supersedes_analysis_id
+        if lineage_root_analysis_id is not None:
+            analysis_payload["lineage_root_analysis_id"] = lineage_root_analysis_id
+        else:
+            analysis_payload["lineage_root_analysis_id"] = analysis_id
         saved_id = self.save_analysis(analysis_payload, owner_user_id)
         if saved_id is None:
             raise RuntimeError("save_analysis failed")
@@ -512,6 +534,22 @@ class PersistenceService:
                     "status": analysis.status,
                     "overall_score": overall_score,
                     "processing_time_seconds": analysis.processing_time_seconds,
+                    "result_date": (
+                        analysis.result_date.isoformat()
+                        if getattr(analysis, "result_date", None) is not None
+                        else None
+                    ),
+                    "result_date_provenance": getattr(analysis, "result_date_provenance", None),
+                    "supersedes_analysis_id": (
+                        str(analysis.supersedes_analysis_id)
+                        if getattr(analysis, "supersedes_analysis_id", None) is not None
+                        else None
+                    ),
+                    "lineage_root_analysis_id": (
+                        str(analysis.lineage_root_analysis_id)
+                        if getattr(analysis, "lineage_root_analysis_id", None) is not None
+                        else aid
+                    ),
                 })
 
             return history
@@ -519,6 +557,41 @@ class PersistenceService:
         except Exception as e:
             logger.error(f"Error getting analysis history for user {user_id}: {str(e)}")
             return []
+
+    def get_trend_eligible_history(
+        self, user_id: UUID, limit: int = 50, offset: int = 0
+    ) -> List[Dict[str, Any]]:
+        """
+        Canonical trend/history selection: active completed lineages only,
+        ordered by result_date (not upload/created timestamps for clinical placement).
+        """
+        from core.dto.trend_selection_v1 import (
+            record_from_analysis_row,
+            select_trend_eligible,
+            trend_history_item,
+        )
+
+        # Fetch a bounded estate for selection (offset applied after eligibility).
+        fetch_cap = max(limit + offset, 100)
+        analyses = self.analysis_repo.list_by_user_id(user_id, limit=fetch_cap, offset=0)
+        records = []
+        for analysis in analyses:
+            result = self.analysis_result_repo.get_by_analysis_id(analysis.id)
+            overall_score = result.overall_score if result else None
+            records.append(record_from_analysis_row(analysis, overall_score=overall_score))
+        eligible = select_trend_eligible(records)
+        sliced = eligible[offset : offset + limit]
+        return [trend_history_item(r) for r in sliced]
+
+    def count_trend_eligible_for_user(self, user_id: UUID) -> int:
+        from core.dto.trend_selection_v1 import (
+            record_from_analysis_row,
+            select_trend_eligible,
+        )
+
+        analyses = self.analysis_repo.list_by_user_id(user_id, limit=500, offset=0)
+        records = [record_from_analysis_row(a) for a in analyses]
+        return len(select_trend_eligible(records))
 
     def count_analyses_for_user(self, user_id: UUID) -> int:
         """Total analyses owned by user (for pagination)."""

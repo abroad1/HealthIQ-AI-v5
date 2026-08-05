@@ -143,9 +143,15 @@ export function sortTrendRows(rows: BiomarkerTrendRow[]): BiomarkerTrendRow[] {
   });
 }
 
-/** Most recent completed analyses first (by `created_at`). */
+/** Most recent completed analyses first (by `result_date`, then `created_at`).
+ * Prefer GET /api/analysis/trend-eligible for trend participation authority.
+ * This helper remains for non-trend display sorting only.
+ */
 export function sortCompletedHistoryNewestFirst(items: AnalysisHistoryItem[]): AnalysisHistoryItem[] {
   return [...items].filter((h) => h.status === 'completed').sort((a, b) => {
+    const da = (a.result_date || a.created_at || '').slice(0, 10);
+    const db = (b.result_date || b.created_at || '').slice(0, 10);
+    if (da !== db) return db.localeCompare(da);
     const ta = new Date(a.created_at).getTime();
     const tb = new Date(b.created_at).getTime();
     return tb - ta;

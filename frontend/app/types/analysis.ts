@@ -31,6 +31,8 @@ export interface AnalysisRequest {
   questionnaire_data?: Record<string, unknown>;
   /** @deprecated use questionnaire_data — still serialized by some clients; prefer questionnaire_data */
   questionnaire?: Record<string, unknown>;
+  /** CLIN-PRIORITY-RESULT-REGEN-1 — ISO YYYY-MM-DD clinical chronology (sample or report date). */
+  result_date?: string;
 }
 
 export interface ClusterData {
@@ -472,6 +474,12 @@ export interface AnalysisResultMetaV1 {
   display_unit_policy?: DisplayUnitPolicyMeta;
   completeness_policy_id?: string;
   result_versioning_policy_id?: string;
+  analysis_policy_version?: string;
+  result_date?: string;
+  result_date_provenance?: string;
+  supersedes_analysis_id?: string;
+  lineage_root_analysis_id?: string;
+  regenerated_from_analysis_id?: string;
   [key: string]: unknown;
 }
 
@@ -484,6 +492,8 @@ export interface ResultVersioningMetadataV1 {
   completeness_policy_id?: string | null;
   current_completeness_policy_id?: string;
   result_versioning_policy_id?: string;
+  analysis_policy_version?: string | null;
+  current_analysis_policy_version?: string;
   regeneration_policy?: string;
   regeneration_available?: boolean;
   regeneration_unavailable_reason?: string | null;
@@ -536,6 +546,11 @@ export interface AnalysisResult {
   status: string;
   created_at?: string;
   completed_at?: string;
+  /** CLIN-PRIORITY-RESULT-REGEN-1 — clinical chronology date (ISO YYYY-MM-DD). */
+  result_date?: string;
+  result_date_provenance?: string;
+  supersedes_analysis_id?: string;
+  lineage_root_analysis_id?: string;
   result_version?: string;
   risk_assessment?: Record<string, any>;
   recommendations?: string[];
@@ -571,6 +586,12 @@ export interface AnalysisHistoryItem {
   status: 'pending' | 'processing' | 'completed' | 'failed';
   overall_score: number | null;
   processing_time_seconds?: number;
+  /** CLIN-PRIORITY-RESULT-REGEN-1 — server-provided clinical chronology. */
+  result_date?: string | null;
+  result_date_provenance?: string | null;
+  supersedes_analysis_id?: string | null;
+  lineage_root_analysis_id?: string | null;
+  trend_eligible?: boolean;
 }
 
 export interface AnalysisHistoryResponse {

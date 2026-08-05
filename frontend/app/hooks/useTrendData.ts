@@ -1,5 +1,9 @@
 /**
- * Loads the two most recent completed analyses and builds longitudinal biomarker rows.
+ * Loads the two most recent *trend-eligible* analyses (backend authority) and builds
+ * longitudinal biomarker rows.
+ *
+ * CLIN-PRIORITY-RESULT-REGEN-1: eligibility, supersession exclusion, and result_date
+ * ordering are server-owned via GET /api/analysis/trend-eligible.
  */
 
 import { useState, useEffect } from 'react';
@@ -7,7 +11,6 @@ import { AnalysisService } from '@/services/analysis';
 import type { AnalysisHistoryItem, AnalysisResult } from '@/types/analysis';
 import {
   buildBiomarkerTrendRows,
-  sortCompletedHistoryNewestFirst,
   type BiomarkerTrendRow,
 } from '@/lib/trendComparison';
 
@@ -41,7 +44,7 @@ export function useTrendData(enabled = true): TrendDataState {
     (async () => {
       setState({ status: 'loading' });
 
-      const histRes = await AnalysisService.getAnalysisHistory(HISTORY_LIMIT, 0);
+      const histRes = await AnalysisService.getTrendEligibleHistory(HISTORY_LIMIT, 0);
       if (cancelled) return;
 
       if (!histRes.success || !histRes.data) {
@@ -52,7 +55,8 @@ export function useTrendData(enabled = true): TrendDataState {
         return;
       }
 
-      const completed = sortCompletedHistoryNewestFirst(histRes.data.history || []);
+      // Server already filtered to completed + non-superseded, ordered by result_date.
+      const completed = histRes.data.history || [];
 
       if (completed.length < 2) {
         setState({ status: 'insufficient', completedCount: completed.length });
