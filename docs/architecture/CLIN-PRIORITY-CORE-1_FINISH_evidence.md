@@ -107,4 +107,16 @@ Clinical-priority, longitudinal, and scenario harness suites are green.
 
 - No merge performed by this phase prior to independent audit.
 - No Knowledge Bus promotion / signal activation changes.
-- Automation Bus `finish` run only after this evidence commit (see gate artefacts).
+- Automation Bus `finish` **ran successfully**.
+
+## Automation Bus finish
+
+| Item | Value |
+|---|---|
+| Command | `python backend/scripts/run_work_package.py finish` |
+| Kernel status | `COMPLETE` |
+| Gate overall | `PASS` (exit_code 0) |
+| Completed UTC | `2026-08-05T14:59:58Z` |
+| Finish HEAD | `a748d9a029bedebe1827ba81793627843194fb16` |
+
+Gate checks: architecture validation PASS; baseline tests PASS; three-layer pipeline PASS; metric namespace validation PASS.

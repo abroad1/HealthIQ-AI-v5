@@ -1,9 +1,10 @@
 {
   "branch": "feature/clin-priority-core-1",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-05T14:59:58Z",
   "cursor_started_utc": "2026-08-05T11:47:34Z",
-  "head_sha": "ecef04fd46556d2c327e1e6f218f2a9890349c3c",
+  "head_sha": "a748d9a029bedebe1827ba81793627843194fb16",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "CLIN-PRIORITY-CORE-1"
 }
