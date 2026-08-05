@@ -96,11 +96,10 @@ Internal `ratio_registry.fib_4` exists (KB-S10, 2026-03-09). Not consumer-facing
 
 ## Explicit incompleteness (FINISH carry-forwards)
 
-- **Checkpoint 4 longitudinal:** only RE-AS-3 / RE-AS-5 minimums implemented; `GOVERNED_LONGITUDINAL_RULE_COVERAGE: 6/6` **not** claimed  
-- **Checkpoint 5 frontend:** `technical_tiebreak_lead` UI retirement / render-only concern-set consumption **not** complete  
-- Orchestrator → AnalysisDTO population may still need FINISH hardening beyond InsightGraph builder wiring  
-- `run_work_package.py finish` **not** run  
-- **No merge**
+- **Checkpoint 4 longitudinal:** completed in FINISH — see `CLIN-PRIORITY-CORE-1_FINISH_evidence.md` (`GOVERNED_LONGITUDINAL_RULE_COVERAGE: 6/6`)
+- **Checkpoint 5 frontend:** completed in FINISH — `clinical_concern_set` rendered; `technical_tiebreak_lead` demoted when concern set present
+- Schema-level removal of `primary_concern_mode` / full clinician-report lead retirement remains a release carry-forward (UI demotion complete)
+- Final consumer serious-result copy where not already governed remains a release carry-forward
 
 ## Bounded corrections after independent START STOP review
 
