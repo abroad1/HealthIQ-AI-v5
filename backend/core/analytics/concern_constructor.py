@@ -23,6 +23,14 @@ from core.analytics.concern_helpers import (
     tier0_flags,
     x_uln,
 )
+from core.analytics.longitudinal_rules import (
+    evaluate_aki_re_t1,
+    evaluate_ckd_chronicity_re_s2,
+    evaluate_cytopenia_haem_t5,
+    evaluate_hba1c_confirmation_cn_t2_t3,
+    evaluate_statin_doubling_hep_t1,
+    evaluate_thyroid_two_occasion_thy_t1,
+)
 from core.analytics.prioritisation_registry import (
     LoadedPrioritisationPackage,
     load_prioritisation_package,
@@ -1651,52 +1659,146 @@ def build_haematology(ctx: PanelContext) -> DomainBuild:
 
 def _aki_from_priors(ctx: PanelContext) -> bool:
     prior = ctx.priors.get("creatinine")
-    if not isinstance(prior, dict) or ctx.creatinine is None:
-        return False
-    prior_val = prior.get("value")
-    days_ago = prior.get("days_ago")
-    if prior_val is None or days_ago is None:
-        return False
-    try:
-        prior_f = float(prior_val)
-        days = float(days_ago)
-    except (TypeError, ValueError):
-        return False
-    if prior_f <= 0:
-        return False
-    rise = ctx.creatinine - prior_f
-    pct = (rise / prior_f) * 100.0
-    if days <= 7 and pct >= 50:
-        return True
-    if days <= 2 and rise >= 26:
-        return True
-    return False
+    if not isinstance(prior, dict):
+        prior = None
+    ok, _notes = evaluate_aki_re_t1(ctx.creatinine, prior)
+    return ok
 
 
 def _stable_ckd_g3a(ctx: PanelContext) -> bool:
-    if ctx.egfr is None or not (45 <= ctx.egfr <= 59):
-        return False
-    prior = ctx.priors.get("egfr") or ctx.priors.get("creatinine")
+    prior = ctx.priors.get("egfr")
     if not isinstance(prior, dict):
-        return False
-    months = prior.get("months_ago")
-    if months is None and prior.get("days_ago") is not None:
-        try:
-            months = float(prior["days_ago"]) / 30.0
-        except (TypeError, ValueError):
-            months = None
-    if months is None or float(months) < 3:
-        return False
-    prior_egfr = prior.get("value") if "egfr" in str(prior.get("biomarker", "egfr")) else prior.get("egfr")
-    if prior_egfr is None and ctx.priors.get("egfr"):
-        prior_egfr = ctx.priors["egfr"].get("value")
-    if prior_egfr is None:
-        # Accept similar prior creatinine/eGFR marked similar
-        return bool(prior.get("similar") or prior.get("stable"))
-    try:
-        return abs(float(prior_egfr) - ctx.egfr) <= 5
-    except (TypeError, ValueError):
-        return bool(prior.get("similar") or prior.get("stable"))
+        prior = ctx.priors.get("creatinine") if isinstance(ctx.priors.get("creatinine"), dict) else None
+    ok, _notes = evaluate_ckd_chronicity_re_s2(ctx.egfr, prior)
+    return ok
+
+
+def apply_longitudinal_annotations(
+    ctx: PanelContext,
+    findings: List[ClinicalFinding],
+    domain_notes: List[str],
+) -> List[ClinicalFinding]:
+    """
+    Apply the four FINISH longitudinal rules (HEP-T1, HAEM-T5, THY-T1, CN-T2/T3)
+    as annotations only — never tier promotion or finding suppression.
+    RE-T1 / RE-S-2 remain in build_renal via _aki_from_priors / _stable_ckd_g3a.
+    """
+    updated: List[ClinicalFinding] = []
+    enzyme = ctx.alt if ctx.alt is not None else ctx.ast
+    enzyme_prior = ctx.priors.get("alt") or ctx.priors.get("ast")
+    if not isinstance(enzyme_prior, dict):
+        enzyme_prior = None
+    hep_status, hep_caveats, hep_notes = evaluate_statin_doubling_hep_t1(
+        enzyme, enzyme_prior, ctx.context
+    )
+    domain_notes.extend(hep_notes)
+
+    plt_prior = ctx.priors.get("platelets") or ctx.priors.get("plt")
+    if not isinstance(plt_prior, dict):
+        plt_prior = None
+    haem_status, haem_notes = evaluate_cytopenia_haem_t5(ctx.platelets, plt_prior)
+
+    tsh_prior = ctx.priors.get("tsh")
+    if not isinstance(tsh_prior, dict):
+        tsh_prior = None
+    thy_status, thy_caveats, thy_prohibited = evaluate_thyroid_two_occasion_thy_t1(
+        ctx.tsh, ctx.tsh_uln, tsh_prior
+    )
+
+    hba_prior = ctx.priors.get("hba1c")
+    if not isinstance(hba_prior, dict):
+        hba_prior = None
+    cn_status, cn_caveats, cn_prohibited = evaluate_hba1c_confirmation_cn_t2_t3(
+        ctx.hba1c, hba_prior
+    )
+
+    for f in findings:
+        caveats = list(f.caveats)
+        prohibited = list(f.prohibited_behaviours_asserted)
+        missing = list(f.missing_data_notes)
+        rules = list(f.provenance.clinical_rule_ids)
+        nested = list(f.nested_constituent_labels)
+
+        if f.domain == "hepatic" and f.finding_type in {"HEP-F1", "HEP-F2", "HEP-F3"}:
+            if hep_status == "doubled":
+                caveats = sorted(set(caveats + hep_caveats))
+                nested.append("hep_t1_statin_enzyme_doubling")
+                rules = sorted(set(rules + ["HEP-T1"]))
+            elif hep_status == "not_assessable":
+                missing = sorted(set(missing + ["hep_t1_statin_doubling_not_assessable"]))
+                caveats = sorted(set(caveats + hep_caveats))
+                rules = sorted(set(rules + ["HEP-T1"]))
+            elif hep_status == "not_doubled":
+                caveats = sorted(set(caveats + hep_caveats))
+                rules = sorted(set(rules + ["HEP-T1"]))
+
+        if f.domain == "haematology" and f.finding_type in {
+            "HAEM-F4",
+            "HAEM-PLT",
+            "HAEM-F10",
+            "HAEM-F6",
+        }:
+            domain_notes.extend([n for n in haem_notes if n not in domain_notes])
+            rules = sorted(set(rules + ["HAEM-T5"]))
+            if haem_status == "new_no_prior":
+                missing = sorted(
+                    set(missing + ["cytopenia_chronicity_unknown_absent_prior"])
+                )
+                prohibited = sorted(
+                    set(prohibited + ["treat_absent_prior_as_chronicity"])
+                )
+            elif haem_status == "chronicity_established":
+                nested.append("cytopenia_chronicity_established")
+            elif haem_status in {"rate_window_only", "chronicity_window_only"}:
+                nested.append(f"cytopenia_{haem_status}")
+
+        if f.finding_type == "THY-F2" and thy_status != "not_applicable":
+            caveats = sorted(set(caveats + thy_caveats))
+            prohibited = sorted(set(prohibited + thy_prohibited))
+            rules = sorted(set(rules + ["THY-T1"]))
+            if thy_status == "confirmed":
+                nested.append("thy_t1_two_occasion_confirmed")
+            elif thy_status == "pending_interval":
+                missing = sorted(set(missing + ["thy_t1_interval_lt_3_months"]))
+            else:
+                missing = sorted(set(missing + ["thy_t1_confirmation_pending"]))
+
+        if f.finding_type == "CN-F4" and cn_status != "not_applicable":
+            caveats = sorted(set(caveats + cn_caveats))
+            prohibited = sorted(set(prohibited + cn_prohibited))
+            rules = sorted(set(rules + ["CN-T2", "CN-T3"]))
+            if cn_status == "spacing_met":
+                nested.append("cn_t2_t3_confirmation_spacing_met")
+            elif cn_status == "prior_too_recent":
+                missing = sorted(
+                    set(missing + ["cn_t2_prior_not_independent_timepoint"])
+                )
+            else:
+                missing = sorted(set(missing + ["cn_t3_confirmation_required"]))
+
+        if (
+            caveats != list(f.caveats)
+            or prohibited != list(f.prohibited_behaviours_asserted)
+            or missing != list(f.missing_data_notes)
+            or rules != list(f.provenance.clinical_rule_ids)
+            or nested != list(f.nested_constituent_labels)
+        ):
+            updated.append(
+                f.model_copy(
+                    update={
+                        "caveats": caveats,
+                        "prohibited_behaviours_asserted": prohibited,
+                        "missing_data_notes": missing,
+                        "nested_constituent_labels": nested,
+                        "provenance": f.provenance.model_copy(
+                            update={"clinical_rule_ids": rules}
+                        ),
+                    }
+                )
+            )
+        else:
+            updated.append(f)
+    return updated
 
 
 def build_renal(ctx: PanelContext) -> DomainBuild:
@@ -2912,6 +3014,8 @@ def construct_clinical_concern_set(
         # Ensure note present even if other findings exist (XD-AS-9)
         if "calcium_insufficient_data_albumin_required" not in domain_notes:
             domain_notes.append("calcium_insufficient_data_albumin_required")
+
+    findings = apply_longitudinal_annotations(ctx, findings, domain_notes)
 
     findings, lead_ids, co_lead_ids, presentation_mode, no_forced_lead = select_leads(
         findings
