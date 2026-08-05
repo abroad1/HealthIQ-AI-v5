@@ -1,0 +1,660 @@
+# CLIN-PRIORITY-CORE-1 — Compiled prioritisation rules (six-domain Checkpoint 2)
+# Hand-authored START artefact; deterministic and versioned.
+# Authority: contract v0.6.3, cross-domain ruleset v0.5, domain rulesets v0.1/v0.2,
+# approval pack v1.2. Do not invent thresholds. [U] items excluded.
+
+schema_version: "1.0.0"
+package_id: clin_priority_prioritisation_six_domain_v1
+package_version: "0.2.0-six-domain"
+contract_version: "0.6.3"
+ruleset_version: "0.5"
+hepatic_ruleset_version: "0.2"
+haematology_ruleset_version: "0.1"
+renal_ruleset_version: "0.1"
+iron_ruleset_version: "0.1"
+thyroid_ruleset_version: "0.1"
+cardiometabolic_ruleset_version: "0.1"
+approval_pack_version: "1.2"
+compiler_name: clin_priority_hand_compile_v1
+compiler_version: "0.2.0"
+domains_compiled:
+  - hepatic
+  - haematology
+  - renal_electrolyte
+  - iron_inflammatory
+  - thyroid_endocrine
+  - cardiometabolic_nutritional
+  - cross_domain
+
+source_documents:
+  - path: docs/discussion documents/HEALTHIQ_CLINICAL_FINDING_PRIORITISATION_CONTRACT_v0_6_3.md
+    version: "0.6.3"
+  - path: docs/discussion documents/HEALTHIQ_CROSS_DOMAIN_CLINICAL_PRIORITISATION_RULESET_v0_5.md
+    version: "0.5"
+  - path: docs/discussion documents/HEALTHIQ_HEPATIC_PRIORITISATION_RULESET_v0_2.md
+    version: "0.2"
+  - path: docs/discussion documents/HEALTHIQ_HAEMATOLOGY_PRIORITISATION_RULESET_v0_1.md
+    version: "0.1"
+  - path: docs/discussion documents/HEALTHIQ_RENAL_ELECTROLYTE_PRIORITISATION_RULESET_v0_1.md
+    version: "0.1"
+  - path: docs/discussion documents/HEALTHIQ_IRON_INFLAMMATORY_PRIORITISATION_RULESET_v0_1.md
+    version: "0.1"
+  - path: docs/discussion documents/HEALTHIQ_THYROID_ENDOCRINE_PRIORITISATION_RULESET_v0_1.md
+    version: "0.1"
+  - path: docs/discussion documents/HEALTHIQ_CARDIOMETABOLIC_NUTRITIONAL_PRIORITISATION_RULESET_v0_1.md
+    version: "0.1"
+  - path: docs/discussion documents/HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_APPROVAL_PACK_v1_2.md
+    version: "1.2"
+  - path: docs/discussion documents/HEALTHIQ_ELECTROLYTE_SUPPLEMENTAL_EVIDENCE_v0_1.md
+    version: "0.1"
+
+# Unset / excluded from compilation (follow-on; never estimated)
+excluded_unset_thresholds:
+  - id: HEP-U2
+    reason: "Numeric jaundice-range bilirubin same-day threshold unset; A9 declined standalone bilirubin Tier 0"
+  - id: HEP-U3
+    reason: "Isolated GGT routine exception open but HEP-GGT-1 implemented as written"
+  - id: HEP-U6
+    reason: "Lower internal ALT ULN not set — use lab ULN only"
+  - id: HEP-U7
+    reason: "Unsafe-without-context register incomplete"
+  - id: HAEM-U1
+    reason: "Severe-anaemia Hb same-day threshold unset; XD A5 — no same-day anaemia rule"
+  - id: HAEM-U2
+    reason: "Ethnic neutropenia adjustment prohibited without governed ancestry data"
+  - id: HAEM-U3
+    reason: "Marked leucocytosis within-days numeric threshold unset"
+  - id: IRIN-U1
+    reason: "Very high ferritin urgency threshold unset"
+  - id: IRIN-U2
+    reason: "CRP numeric severity bands unset; persistence governs IRIN-F7"
+  - id: IRIN-U3
+    reason: "Low-TSAT deficiency threshold unset"
+  - id: RE-U5
+    reason: "Whether urea ever forms an independent finding — open; RE-CONS-3 governs"
+  - id: THY-U2
+    reason: "Subclinical hyper numeric bands absent by XD A6 decision"
+  - id: CN-U2
+    reason: "CV-risk calculation quarantined — named thresholds only, no risk %"
+  - id: CN-U1
+    reason: "B12 neuro self-report pathway unset"
+
+quarantine_namespaces:
+  - namespace: fib_4
+    rule_ids: [XD-QUAR-1, R3, HEP-U5]
+    behaviour: "Do not compute or display FIB-4 as finding authority; HEP-F5 uses AST:ALT and platelets only"
+  - namespace: cardiovascular_risk
+    rule_ids: [XD-QUAR-CV, R2]
+    behaviour: "Do not compute consumer-facing CV-risk % findings in this package"
+  - namespace: disease_name_haemochromatosis
+    rule_ids: [R4, XD-AS-36]
+    behaviour: "Must not name haemochromatosis or imply genetic diagnosis to consumer; provenance may retain clinician wording"
+
+structural_context:
+  - rule_id: XD-HEP-FLOOR-1
+    summary: "Any OOR core hepatic analyte → consolidated Tier 1 hepatic finding unless more urgent hepatic rule applies"
+  - rule_id: XD-HEP-FLOOR-2
+    summary: "Hepatic Tier 1 floor is non-exportable to other domains"
+  - rule_id: XD-QUAR-1
+    summary: "FIB-4 quarantine removes calculation/display, not HEP-F5 finding"
+  - rule_id: NO_FORCED_LEAD
+    summary: "When >=3 co-equal non-same-day findings lack distinguisher → no_forced_lead"
+  - rule_id: SAME_DAY_COEQUAL
+    summary: "Same-day findings form uncapped co-equal group; no cross-domain severity comparison"
+  - rule_id: XD-PREG-1
+    summary: "Pregnancy/may_be_pregnant → domain/panel withheld visible; never silent suppress"
+  - rule_id: XD-VITD-1
+    summary: "VitD <25 deficiency Tier 2; 25-50 no independent finding; >50 no VitD concern"
+  - rule_id: XD-VITD-2
+    summary: "VitD nesting under hypocalcaemia is concentration-dependent"
+
+core_hepatic_analytes:
+  - alt
+  - ast
+  - alp
+  - ggt
+  - bilirubin
+  - albumin
+  - inr
+
+# --- Severity / urgency bands compiled from ratified authority only ---
+severity_bands:
+  alt_ast:
+    method: multiples_of_uln
+    bands:
+      - id: mild
+        min_x_uln: 1.0
+        max_x_uln_exclusive: 3.0
+      - id: moderate
+        min_x_uln: 3.0
+        max_x_uln_exclusive: 5.0
+      - id: marked
+        min_x_uln: 5.0
+        max_x_uln_exclusive: 10.0
+      - id: severe
+        min_x_uln: 10.0
+        max_x_uln_exclusive: null
+        or_absolute_gt: 1000.0
+  alp:
+    method: multiples_of_uln
+    bands:
+      - id: mild
+        min_x_uln: 1.0
+        max_x_uln_exclusive: 2.0
+      - id: significant
+        min_x_uln: 2.0
+        max_x_uln_exclusive: null
+  potassium_high:
+    method: absolute_mmol_l
+    bands:
+      - id: mild
+        min: 5.5
+        max_exclusive: 6.0
+      - id: moderate
+        min: 6.0
+        max_exclusive: 6.5
+      - id: severe
+        min: 6.5
+        max_exclusive: null
+  potassium_low:
+    method: absolute_mmol_l
+    bands:
+      - id: mild
+        min: 3.0
+        max_exclusive: 3.5
+      - id: moderate
+        min: 2.5
+        max_exclusive: 3.0
+      - id: severe
+        max_exclusive: 2.5
+  sodium_low:
+    method: absolute_mmol_l
+    bands:
+      - id: mild
+        min: 130
+        max_exclusive: 134
+      - id: moderate
+        min: 125
+        max_exclusive: 130
+      - id: profound
+        max_exclusive: 125
+  sodium_high:
+    method: absolute_mmol_l
+    note: "[C]/[J] hypernatraemia bands"
+    bands:
+      - id: mild
+        min: 146
+        max_exclusive: 151
+      - id: moderate
+        min: 151
+        max_exclusive: 156
+      - id: severe
+        min: 156
+        max_exclusive: null
+  calcium_high_adjusted:
+    method: absolute_mmol_l
+    bands:
+      - id: mild
+        min: 2.65
+        max_exclusive: 3.01
+      - id: moderate
+        min: 3.01
+        max_exclusive: 3.41
+      - id: severe
+        min: 3.41
+        max_exclusive: null
+  platelets:
+    method: absolute_x10e9_l
+    bands:
+      - id: severe
+        max_exclusive: 20
+      - id: moderate
+        min: 20
+        max_exclusive: 50
+      - id: mild
+        min: 50
+        max_exclusive: 100
+  anc:
+    method: absolute_x10e9_l
+    bands:
+      - id: severe
+        max_exclusive: 0.5
+      - id: moderate
+        min: 0.5
+        max_exclusive: 1.0
+      - id: mild
+        min: 1.0
+        max_exclusive: 1.5
+  mcv_macrocytosis:
+    method: absolute_fl
+    bands:
+      - id: mild
+        note: ">ULN to 105"
+        max_inclusive: 105
+      - id: moderate
+        min_exclusive: 105
+        max_inclusive: 115
+      - id: marked
+        min_exclusive: 115
+  vitamin_d:
+    method: absolute_nmol_l
+    bands:
+      - id: deficiency
+        max_exclusive: 25
+      - id: insufficient_no_independent_finding
+        min: 25
+        max_exclusive: 50
+      - id: adequate
+        min: 50
+
+urgency_thresholds:
+  potassium_same_day_gt: 6.0
+  potassium_same_day_lt: 2.5
+  sodium_same_day_lt: 125
+  sodium_same_day_gte: 155
+  sodium_within_days_min: 146
+  sodium_within_days_max_exclusive: 155
+  calcium_same_day_gt: 3.0
+  calcium_same_day_lt: 1.9
+  platelets_same_day_lt: 20
+  platelets_independent_lt: 50
+  anc_same_day_lt: 0.5
+  tsat_overload_gt: 45
+  tsh_treatment_consideration_gte: 10
+  tg_same_day_gt: 20
+  tg_within_days_gt: 10
+  tc_specialist_gt: 9.0
+  non_hdl_specialist_gt: 7.5
+  hba1c_diabetes_gte: 48
+  hba1c_ndh_min: 42
+  hba1c_ndh_max_exclusive: 48
+  egfr_g5_lt: 15
+  egfr_g4_lt: 30
+  egfr_g3_lt: 60
+  egfr_not_ckd_alone_min: 60
+  vitamin_d_deficiency_lt: 25
+  vitamin_d_independent_max_exclusive: 50
+  aki_creatinine_rise_umol_48h: 26
+  aki_creatinine_rise_pct_7d: 50
+  ckd_chronicity_months: 3
+
+r_value:
+  rule_id: HEP-R-1
+  formula: "(alt/alt_uln)/(alp/alp_uln)"
+  hepatocellular_min: 5.0
+  mixed_exclusive_lower: 2.0
+  mixed_exclusive_upper: 5.0
+  cholestatic_max: 2.0
+  may_set_urgency: false
+  may_set_severity: false
+  consumer_headline_forbidden: true
+
+haemoglobin_sex_thresholds:
+  male_lt: 130
+  female_lt: 120
+  sex_absent_behaviour: "use_female_threshold_and_state_assumption"
+
+finding_types:
+  # --- Hepatic ---
+  - finding_type: HEP-F1
+    label: hepatocellular_injury_pattern
+    domain: hepatic
+    activation: "r_value >= 5 OR qualitative alt>>alp with raised alt/ast"
+  - finding_type: HEP-F2
+    label: cholestatic_injury_pattern
+    domain: hepatic
+    activation: "r_value <= 2 with raised alp"
+  - finding_type: HEP-F3
+    label: mixed_injury_pattern
+    domain: hepatic
+    activation: "2 < r_value < 5"
+  - finding_type: HEP-F4
+    label: hepatic_synthetic_dysfunction
+    domain: hepatic
+    activation: "abnormal_hepatic AND (albumin < lrl OR inr > 1.5 without anticoagulation)"
+  - finding_type: HEP-F5
+    label: suspected_advanced_fibrosis
+    domain: hepatic
+    activation: "ast_alt_ratio > 1 AND/OR low_platelets_with_hepatic_context"
+    fib_4_forbidden: true
+    biomarker_derived_provenance_key: "clinical_prioritisation::HEP-F5:ast_alt_platelets_pattern"
+  - finding_type: HEP-F6
+    label: isolated_hyperbilirubinaemia_gilbert_pattern
+    domain: hepatic
+    activation: "isolated raised bilirubin without anaemia"
+    must_not_assert_gilbert_without_conjugated: true
+  - finding_type: HEP-F7
+    label: isolated_raised_alp_origin_undetermined_or_non_hepatic
+    domain: hepatic
+    activation: "raised alp; ggt normal → non_hepatic_likely; ggt absent → undetermined"
+  - finding_type: HEP-F8
+    label: isolated_raised_ggt
+    domain: hepatic
+    activation: "isolated ggt raised"
+  - finding_type: HEP-F9
+    label: non_classifiable_hepatic_abnormality
+    domain: hepatic
+    activation: "raised alt, alp absent (HEP-IND-1); R not computed"
+  - finding_type: HEP-F10
+    label: possible_iron_overload_hepatic_context
+    domain: hepatic
+    activation: "legacy alias — Checkpoint 2 emits IRIN-F3 for TSAT>45 overload"
+    retired_in_favour_of: IRIN-F3
+  # --- Haematology ---
+  - finding_type: HAEM-F1
+    label: anaemia
+    domain: haematology
+    activation: "Hb below sex-specific threshold; MCV subtypes as constituents"
+  - finding_type: HAEM-F2
+    label: isolated_macrocytosis
+    domain: haematology
+    activation: "mcv > uln; isolated → Tier 2 unconditional"
+  - finding_type: HAEM-F3
+    label: isolated_microcytosis
+    domain: haematology
+    activation: "mcv < lrl with normal Hb"
+  - finding_type: HAEM-F4
+    label: thrombocytopenia
+    domain: haematology
+    activation: "platelets < lrl; <20 same day; <50 independent vs hepatic"
+  - finding_type: HAEM-F6
+    label: neutropenia
+    domain: haematology
+    activation: "ANC absolute; <0.5 same day"
+  - finding_type: HAEM-F7
+    label: leucopenia_or_low_wcc
+    domain: haematology
+    activation: "total WCC low; neutropenia not assessable without differential"
+  - finding_type: HAEM-F10
+    label: multi_lineage_cytopenia
+    domain: haematology
+    activation: ">=2 of low Hb / platelets / ANC"
+  - finding_type: HAEM-PLT
+    label: thrombocytopenia
+    domain: haematology
+    activation: "alias retained for HEP-AS-14 platelets <50 boundary"
+  # --- Renal / electrolyte ---
+  - finding_type: RE-F1
+    label: acute_kidney_injury
+    domain: renal_electrolyte
+    activation: "NICE NG148 creatinine rise with valid baseline"
+  - finding_type: RE-F2
+    label: reduced_egfr_ckd_or_chronic
+    domain: renal_electrolyte
+    activation: "reduced eGFR with chronicity established"
+  - finding_type: RE-F3
+    label: hyperkalaemia
+    domain: renal_electrolyte
+    activation: "K+ above reference"
+  - finding_type: RE-F4
+    label: hypokalaemia
+    domain: renal_electrolyte
+    activation: "K+ below reference"
+  - finding_type: RE-F5
+    label: hyponatraemia
+    domain: renal_electrolyte
+    activation: "Na+ below reference"
+  - finding_type: RE-F6
+    label: hypernatraemia
+    domain: renal_electrolyte
+    activation: "Na+ above reference"
+  - finding_type: RE-F7
+    label: hypercalcaemia
+    domain: renal_electrolyte
+    activation: "adjusted calcium high; albumin required"
+  - finding_type: RE-F8
+    label: hypocalcaemia
+    domain: renal_electrolyte
+    activation: "adjusted calcium low; albumin required"
+  - finding_type: RE-F9
+    label: renal_impairment_with_electrolyte_disturbance
+    domain: renal_electrolyte
+    activation: "reduced eGFR + electrolyte abnormality"
+  - finding_type: RE-F10
+    label: reduced_egfr_undetermined_chronicity
+    domain: renal_electrolyte
+    activation: "reduced eGFR/creatinine without baseline; AKI not assessable"
+  # --- Iron / inflammatory ---
+  - finding_type: IRIN-F1
+    label: iron_deficiency_without_anaemia
+    domain: iron_inflammatory
+    activation: "low ferritin without anaemia"
+  - finding_type: IRIN-F2
+    label: iron_deficiency_anaemia
+    domain: iron_inflammatory
+    activation: "low ferritin + low Hb; consolidate with haematology"
+  - finding_type: IRIN-F3
+    label: possible_iron_overload
+    domain: iron_inflammatory
+    activation: "raised ferritin AND TSAT > 45"
+  - finding_type: IRIN-F4
+    label: raised_ferritin_inflammatory_or_dysmetabolic
+    domain: iron_inflammatory
+    activation: "raised ferritin AND TSAT <= 45"
+  - finding_type: IRIN-F5
+    label: masked_iron_deficiency_inflammatory
+    domain: iron_inflammatory
+    activation: "in-range ferritin + raised CRP + anaemia or low TSAT"
+  - finding_type: IRIN-F6
+    label: raised_crp
+    domain: iron_inflammatory
+    activation: "raised CRP"
+  - finding_type: IRIN-F7
+    label: persistent_unexplained_inflammation
+    domain: iron_inflammatory
+    activation: "CRP persistence over governed window"
+  - finding_type: IRIN-F8
+    label: raised_ferritin_tsat_indeterminate
+    domain: iron_inflammatory
+    activation: "raised ferritin, TSAT absent and underivable"
+  # --- Thyroid ---
+  - finding_type: THY-F1
+    label: overt_hypothyroidism
+    domain: thyroid_endocrine
+    activation: "TSH high + free T4 low"
+  - finding_type: THY-F2
+    label: subclinical_hypothyroidism
+    domain: thyroid_endocrine
+    activation: "TSH high + free T4 normal; TSH>=10 within weeks else routine"
+  - finding_type: THY-F3
+    label: overt_hyperthyroidism
+    domain: thyroid_endocrine
+    activation: "TSH suppressed + free T4 or T3 raised"
+  - finding_type: THY-F4
+    label: subclinical_hyperthyroidism
+    domain: thyroid_endocrine
+    activation: "TSH suppressed + free T4/T3 normal"
+  - finding_type: THY-F5
+    label: indeterminate_thyroid_axis_abnormality
+    domain: thyroid_endocrine
+    activation: "TSH abnormal, free T4 unavailable"
+  - finding_type: THY-F6
+    label: discordant_thyroid_axis
+    domain: thyroid_endocrine
+    activation: "both raised or both low; no auto-explain"
+  # --- Cardiometabolic / nutritional ---
+  - finding_type: CN-F1
+    label: severe_hypertriglyceridaemia
+    domain: cardiometabolic_nutritional
+    activation: "TG > 20"
+  - finding_type: CN-F2
+    label: possible_familial_hypercholesterolaemia_pattern
+    domain: cardiometabolic_nutritional
+    activation: "TC/non-HDL at NICE specialist thresholds"
+  - finding_type: CN-F3
+    label: elevated_lipid_finding
+    domain: cardiometabolic_nutritional
+    activation: "abnormal lipid fractions; one consolidated finding; no CV-risk %"
+  - finding_type: CN-F4
+    label: dysglycaemia
+    domain: cardiometabolic_nutritional
+    activation: "HbA1c in diagnostic or NDH range; no diabetes claim from single result"
+  - finding_type: CN-F5
+    label: b12_deficiency
+    domain: cardiometabolic_nutritional
+    activation: "low B12"
+  - finding_type: CN-F7
+    label: functional_b12_concern
+    domain: cardiometabolic_nutritional
+    activation: "in-range B12 + macrocytosis/neuro context"
+  - finding_type: CN-F8
+    label: vitamin_d_deficiency
+    domain: cardiometabolic_nutritional
+    activation: "vitamin D < 25 nmol/L"
+  - finding_type: CN-F9
+    label: indeterminate_lipid_risk
+    domain: cardiometabolic_nutritional
+    activation: "lipids without full risk-factor set"
+
+tier_algebra:
+  same_day: 0
+  within_days: 1
+  within_weeks: 1
+  routine: 2
+  contextual: 3
+  notes:
+    - "initial_tier = urgency-derived floor; significance may not lower below floor"
+    - "HEP-P2 floors OOR core hepatic at Tier 1"
+    - "Tier 0 is SPECIFICATION_ONLY; evaluate then withhold, never demote"
+    - "More serious of urgency-derived and severity-derived tiers governs (XD-AS-31)"
+
+lead_rules:
+  - rule_id: HEP-LEAD-1
+    summary: "HEP-F4 outranks HEP-F1/F2/F3 at equal tier"
+  - rule_id: NO_TECHNICAL_TIEBREAK
+    summary: "Do not reuse technical_tiebreak_lead"
+  - rule_id: NO_FORCED_LEAD
+    summary: "When >=3 co-equal non-same-day findings lack distinguisher → no_forced_lead"
+  - rule_id: SAME_DAY_COEQUAL
+    summary: "Same-day multi-finding groups are co-equal; no manufactured single lead by severity"
+
+calcium_interpretation:
+  rule_id: RE-MOD-1
+  requires_albumin_or_preadjusted: true
+  note: "Uncorrected calcium without albumin → insufficient_data. Prefer fixture/lab adjusted_calcium when supplied; do not invent undocumented correction constants."
+
+aki_rule:
+  rule_id: RE-T1
+  authority: "NICE NG148"
+  creatinine_rise_umol_48h: 26
+  creatinine_rise_pct_7d: 50
+
+ckd_chronicity_rule:
+  rule_id: RE-S-2
+  min_months: 3
+  note: "Sustained abnormality >=3 months required before CKD established"
+
+scenarios_in_scope:
+  - CONTRACT-FIX-1
+  - HEP-AS-1
+  - HEP-AS-2
+  - HEP-AS-3
+  - HEP-AS-4
+  - HEP-AS-5
+  - HEP-AS-6
+  - HEP-AS-7
+  - HEP-AS-8
+  - HEP-AS-9
+  - HEP-AS-10
+  - HEP-AS-11
+  - HEP-AS-12
+  - HEP-AS-13
+  - HEP-AS-14
+  - HAEM-AS-1
+  - HAEM-AS-2
+  - HAEM-AS-3
+  - HAEM-AS-4
+  - HAEM-AS-5
+  - HAEM-AS-6
+  - RE-AS-1
+  - RE-AS-2
+  - RE-AS-3
+  - RE-AS-4
+  - RE-AS-5
+  - RE-AS-6
+  - RE-AS-7
+  - RE-AS-8
+  - RE-AS-9
+  - RE-AS-10
+  - RE-AS-11
+  - RE-AS-12
+  - RE-AS-13
+  - RE-AS-14
+  - IRIN-AS-1
+  - IRIN-AS-2
+  - IRIN-AS-3
+  - IRIN-AS-4
+  - IRIN-AS-5
+  - IRIN-AS-6
+  - IRIN-AS-7
+  - IRIN-AS-8
+  - IRIN-AS-9
+  - IRIN-AS-10
+  - IRIN-AS-11
+  - IRIN-AS-12
+  - THY-AS-1
+  - THY-AS-2
+  - THY-AS-3
+  - THY-AS-4
+  - THY-AS-5
+  - THY-AS-6
+  - THY-AS-7
+  - THY-AS-8
+  - THY-AS-9
+  - THY-AS-10
+  - THY-AS-11
+  - THY-AS-12
+  - CN-AS-1
+  - CN-AS-2
+  - CN-AS-3
+  - CN-AS-4
+  - CN-AS-5
+  - CN-AS-6
+  - CN-AS-7
+  - CN-AS-8
+  - CN-AS-9
+  - CN-AS-10
+  - CN-AS-12
+  - CN-AS-13
+  - XD-AS-1
+  - XD-AS-1b
+  - XD-AS-2
+  - XD-AS-3
+  - XD-AS-4
+  - XD-AS-5
+  - XD-AS-6
+  - XD-AS-7
+  - XD-AS-8
+  - XD-AS-9
+  - XD-AS-10
+  - XD-AS-11
+  - XD-AS-12
+  - XD-AS-13
+  - XD-AS-14
+  - XD-AS-15
+  - XD-AS-16
+  - XD-AS-17
+  - XD-AS-18
+  - XD-AS-19
+  - XD-AS-20
+  - XD-AS-20b
+  - XD-AS-21
+  - XD-AS-22
+  - XD-AS-23
+  - XD-AS-23b
+  - XD-AS-24
+  - XD-AS-25
+  - XD-AS-26
+  - XD-AS-27
+  - XD-AS-28
+  - XD-AS-29
+  - XD-AS-30
+  - XD-AS-31
+  - XD-AS-32
+  - XD-AS-33
+  - XD-AS-34
+  - XD-AS-35
+  - XD-AS-36
+
+retired_scenarios_excluded:
+  - CN-AS-11

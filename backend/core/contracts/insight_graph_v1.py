@@ -23,6 +23,7 @@ from core.contracts.arbitration_v1 import (
     CausalEdge,
 )
 from core.contracts.report_v1 import ReportV1
+from core.models.clinical_finding import ConsolidatedConcernSet
 
 if TYPE_CHECKING:
     from core.contracts.confidence_model_v1 import ConfidenceModelV1
@@ -282,3 +283,9 @@ class InsightGraphV1(BaseModel):
     # ARCH-CONV-CORRECT-1 — governed lead projected onto cluster identity so Layer C
     # renders the Layer B ranked lead instead of arbitrating its own primary driver.
     primary_driver_v1: Optional[Dict[str, Any]] = Field(default=None)
+
+    # CLIN-PRIORITY-CORE-1 — additive clinical concern set (optional; hepatic pilot+)
+    clinical_concern_set: Optional[ConsolidatedConcernSet] = Field(
+        default=None,
+        description="Governed consolidated clinical findings / prioritisation output",
+    )

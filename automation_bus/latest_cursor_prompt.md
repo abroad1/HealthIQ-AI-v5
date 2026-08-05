@@ -1,338 +1,697 @@
 ---
-work_id: ARCH-CONV-I-ALT-IDPROV-1
-title: Identity/Provenance Multi-Frame Test-Estate Restoration
-risk_level: STANDARD
-change_type: BEHAVIOUR
+work_id: CLIN-PRIORITY-CORE-1
+branch: feature/clin-priority-core-1
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-branch: feature/arch-conv-i-alt-idprov-test-estate-restoration
+change_type: MIXED
 ---
 
-# ARCH-CONV-I-ALT-IDPROV-1 — Identity/Provenance Multi-Frame Test-Estate Restoration
+# CLIN-PRIORITY-CORE-1
+## Cross-Domain Clinical Findings and Prioritisation — START Phase
 
-## Authority and operating mode
+## 1. Authority and execution boundary
 
-Execute under:
+This is the Automation Bus START prompt for `CLIN-PRIORITY-CORE-1`.
 
-- `AUTOMATION_BUS_SOP_v1.3.1.md`
-- the current Automation Bus hardening protocol
-- `automation_bus/latest_pipeline_advisory.md`
-- `docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy(1).md`
-- `docs/architecture/ARCH-CONV-I_hardening_pack.md`
-- `docs/architecture/ARCH-CONV-I_GATE_1_GATE_2_decision.md`
-- `docs/architecture/ARCH-CONV-I_medical_decision_register.yaml`
-- `docs/audit-papers/ARCH-CONV-I_implementation_and_verification_report.md`
-- `docs/architecture/ARCH-CONV-PKGC-2_identity_contract_map.md`
-- `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-- `docs/sprints/launch_core_carry_forward_register.md`
+It authorises Cursor implementation only after:
 
-This is a bounded, test-estate-only restoration sprint.
+1. Claude Code has hardened this exact work package using:
 
-Do not modify production runtime code, medical content, signal authority, compiled-WHY content, package activation, provenance runtime behaviour, result versioning, frontend behaviour or any governance register other than the two delivery/carry-forward records required for closure.
+   `harden work_id: CLIN-PRIORITY-CORE-1 — verify source content and produce evidence checklist`
 
-## Product/architecture outcome
+2. `automation_bus/latest_prompt_hardening.json` records:
 
-Restore pilot-cohort-migration-safe regression coverage for:
+   `"status": "HARDENED"`
 
-- multi-frame activation identity preservation;
-- report compilation preserving multiple findings for one signal;
-- clinician-report avoidance of silent singleton collapse;
-- DTO serialisation preserving all activation keys;
-- persistence/replay round-trip fidelity;
+3. The kernel has successfully run:
+
+   `python backend/scripts/run_work_package.py start`
+
+4. `automation_bus/state/work_package_active.json` exists and matches:
+
+   - `work_id: CLIN-PRIORITY-CORE-1`
+   - `branch: feature/clin-priority-core-1`
+   - the current repository HEAD
+
+Cursor must not implement before kernel-issued execution authority exists.
+
+This START phase authorises work through:
+
+- Phase 0 verification;
+- hepatic pilot;
+- remaining five-domain rollout;
+- `APPROVED_SCENARIO_ESTATE_COVERAGE: 109/109`.
+
+After those outcomes are complete, Cursor must STOP for independent review.
+
+This START phase does **not** authorise:
+
+- longitudinal Checkpoint 4 implementation beyond any minimum scaffolding strictly necessary for the START architecture;
+- frontend Checkpoint 5 completion beyond additive DTO compatibility or minimal non-behavioural scaffolding strictly required to keep existing builds green;
+- Automation Bus `finish`;
+- merge;
+- release;
+- any new clinical, product, regulatory or legal decision.
+
+## 2. Product outcome
+
+Construct the governed runtime layer that converts current blood-test signals into consolidated clinical findings and surfaces those findings in the already-approved clinical priority order.
+
+HealthIQ is a secondary, consumer-facing blood-test interpretation application. Users upload blood-test results produced elsewhere. HealthIQ interprets, consolidates, prioritises and explains those results to support informed discussion with a healthcare professional.
+
+HealthIQ does not:
+
+- provide blood testing;
+- replace the originating laboratory or clinician;
+- diagnose autonomously;
+- prescribe or manage treatment;
+- operate an emergency escalation service;
+- route users to emergency or clinical services;
+- monitor whether users act on advice.
+
+Do not introduce behaviour that conflicts with this product boundary.
+
+## 3. Governing authority
+
+Read in full before implementation and apply in this precedence order:
+
+1. `docs/discussion documents/HEALTHIQ_CLINICAL_FINDING_PRIORITISATION_CONTRACT_v0_6_3.md`
+2. `docs/discussion documents/HEALTHIQ_CROSS_DOMAIN_CLINICAL_PRIORITISATION_RULESET_v0_5.md`
+3. `docs/discussion documents/HEALTHIQ_CROSS_DOMAIN_HMR_ADJUDICATION_REGISTER_v0_4.md`
+4. `docs/discussion documents/HEALTHIQ_SIX_DOMAIN_CLINICAL_CLOSURE_REPORT_v0_4.md`
+5. `docs/discussion documents/HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_MEDICAL_ADJUDICATION_v0_1.md`
+6. `docs/discussion documents/HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_APPROVAL_PACK_v1_2.md`
+7. `docs/discussion documents/HEALTHIQ_CROSS_DOMAIN_PRODUCT_RATIFICATION_CLINICIAN_FIRST_v1_0.md`
+8. `docs/architecture/CLIN-PRIORITY-ARCH-HARDEN-1_cross_domain_prioritisation_architecture_hardening.md`
+9. `docs/architecture/CLIN-PRIORITY-IMPLEMENTATION-RESET-1_repository_inspection.md`
+10. `docs/sprints/CLIN-PRIORITY-CORE-1_cross_domain_clinical_findings_and_prioritisation_v1_1.md`
+11. `docs/sprints/healthiq_day_one_architecture_rework_sprint_plan_vNEXT_1.md`
+12. `docs/architecture/ADR-RT-001_research_to_runtime_day_one_architecture.md`
+13. `docs/architecture/ADR-RT-002_signal_spec_identity_and_registry_policy.md`
+14. `docs/architecture/ADR-RT-003_hypothesis_artefact_and_root_cause_transition.md`
+15. `docs/architecture/ADR-RT-004_compile_manifest_and_package_provenance_policy.md`
+
+Also read the six domain prioritisation rulesets referenced by the closure report.
+
+Use actual repository paths where names differ. Do not create duplicate authority files to match the paths above.
+
+The six domain rulesets are subordinate evidence. Their content may be compiled only where incorporated, preserved, adjudicated or left unchanged by the higher-order ratified package.
+
+Do not reopen or reinterpret any approved clinical or product decision.
+
+## 3A. Signal preservation and non-subordination
+
+### 3A.1 Purpose
+
+The Cross-Domain Clinical Findings and Prioritisation layer sits **above** the existing signal estate. Its job is to organise, consolidate and prioritise signals that already fire, so the user knows what to focus on. It is **not** a second activation authority.
+
+This package must not switch off, suppress, retire, subordinate or rewrite existing runtime signals or supporting signals.
+
+### 3A.2 Required invariants
+
+- All currently wired, promoted, runtime-eligible signals and supporting signals must continue to fire under the same conditions as before this package.
+- Existing activation thresholds, biomarker requirements, activation keys, package lineage and runtime eligibility must remain unchanged.
+- Prioritisation tier, finding role and consolidation must not act as activation gates. A finding's tier, role, or consolidation state may change how it is *presented*; it must never determine whether the underlying signal *fires*.
+- An independent signal must not become supporting-only unless an explicit approved relationship rule (a named combination/consolidation rule in the ratified authority, e.g. `HAEM-OV-*`, `RE-OV-*`, `IRIN-OV-*`, `XD-C*`) requires that treatment for the current result set. Absent such a rule, an independently-firing signal remains an independent finding.
+- Constituent signals must remain identifiable and provenance-complete after consolidation — consolidating frames into one finding must never destroy the ability to recover which signals/activation-keys contributed to it.
+- No Knowledge Bus promotion status may change as a result of this package. This package is a runtime consumer of the existing promoted estate, not a promotion authority.
+- The 109 approved scenarios validate concern-construction and prioritisation *behaviour*. They do not authorise signal suppression, retirement, or threshold changes — a scenario passing must never be achieved by altering what an existing signal does.
+- `SIGNALS_INTENTIONALLY_RETIRED` must be `0` for this package, unless a pre-existing explicit retirement authority (a named, dated decision in a ratified document, distinct from this package) is cited as the basis.
+
+### 3A.3 Revised authority hierarchy
+
+Distinguish these five layers; do not let one silently override another:
+
+1. **The existing authorised signal activation and promotion estate defines what fires.** `SignalRegistry`, activation keys, package promotion status, and runtime eligibility as they exist today are the ground truth for signal activation and are not reopened by this package.
+2. **Domain clinical authority defines what active signals mean.** The six domain rulesets, subordinate to the ratified cross-domain package, supply clinical meaning for a signal once it has fired.
+3. **Cross-domain authority defines how findings are consolidated and prioritised.** Contract v0.6.3, ruleset v0.5, adjudication register v0.4, closure report v0.4 govern consolidation, tiering, urgency, severity, and lead selection — all operating on findings built from signals that already fired under layer 1.
+4. **Product authority defines presentation.** Clinician-first v1.0 governs prominence, ordering display, and lead/co-lead/no-forced-lead presentation — never activation.
+5. **Acceptance scenarios validate the implementation.** The 109-scenario estate proves concern-construction and prioritisation behave correctly; it does not independently authorise signal retirement, threshold change, or promotion-status change at any layer above.
+
+## 4. Stage 1A authority preflight
+
+Before changing code, Cursor must verify and record in the implementation evidence:
+
+### 4.1 Authoritative clinical source
+
+Confirm the exact repository paths and version/status metadata for:
+
+- the clinical prioritisation contract;
+- cross-domain ruleset;
+- HMR adjudication register;
+- closure report;
+- approval pack v1.2;
+- clinician-first product ratification;
+- all six domain rulesets.
+
+Confirm no later competing or duplicate authority source governs the same clinical-finding and prioritisation behaviour.
+
+### 4.2 Runtime authority path
+
+Confirm:
+
+- `backend/core/analytics/signal_evaluator.py` supplies the activation-key-keyed upstream signal registry;
+- `backend/core/analytics/insight_graph_builder.py` is the sole current `InsightGraphV1` assembly path;
+- `backend/core/contracts/insight_graph_v1.py` is the canonical InsightGraph contract;
+- `backend/core/models/results.py` is the relevant response DTO path;
+- no parallel clinical-finding constructor already exists.
+
+If a parallel finding authority, loader or constructor exists, STOP before implementation and report it.
+
+### 4.3 Compiled prioritisation authority
+
+Determine the canonical location, schema, compiler and loader for the new compiled prioritisation artefact.
+
+The implementation must produce one authoritative compiled prioritisation source consumed by one runtime loader.
+
+Do not:
+
+- hard-code the 109 scenarios into runtime logic;
+- create one authority file per test;
+- make domain rulesets runtime-authoritative independently;
+- create a second clinical-prioritisation loader;
+- allow tests and runtime to load different authority sources.
+
+If the repository does not contain enough architecture to establish one canonical compiled artefact path without guessing, STOP.
+
+### 4.4 Signal activation baseline
+
+Before Cursor changes any concern-construction behaviour, it must create a repository-derived baseline inventory of every currently active and promoted signal and supporting signal.
+
+For each record, capture:
+
+- signal ID;
+- activation key;
+- package/source;
+- promotion and runtime status;
+- primary biomarker;
+- supporting biomarkers/signals;
+- derived-marker dependencies;
+- existing DTO or frontend exposure;
+- regression fixture or test evidence showing current activation.
+
+This inventory is mandatory implementation evidence. It must be used as the non-regression baseline for the closure metrics in §13/§15 — every signal and supporting signal in the baseline must still be shown firing, under the same conditions, at Checkpoint 3 closure. Build this inventory during Checkpoint 0 (§9), before any concern-construction code changes.
+
+## 5. Stage 1B baseline reality check
+
+Confirm on the current branch that the problem still exists:
+
+- no canonical `ClinicalFinding` model implements the approved contract;
+- no `ConsolidatedConcernSet` exists;
+- no runtime layer separates urgency, severity and tier;
+- no finding-level same-domain and cross-domain consolidation exists;
+- current lead selection still includes or depends on technical tiebreak behaviour;
+- no finding-level insufficient-data versus indeterminate-severity state machine exists;
+- no approved 109-scenario clinical-concern runner exists.
+
+If these capabilities already exist and satisfy the approved specification, STOP and report the no-op or rescope condition.
+
+## 6. Intelligence Core surface
+
+This package changes Intelligence Core behaviour.
+
+Affected surfaces include:
+
+- signal-to-finding construction;
+- governed-content compilation and loading;
+- same-domain and cross-domain consolidation;
+- urgency, severity and tier assignment;
+- finding roles and relationships;
+- serious-result classification;
+- lead, co-lead and no-forced-lead selection;
+- InsightGraph and AnalysisDTO output assembly;
+- acceptance and regression harnesses.
+
+Expected output changes:
+
+- a new additive `clinical_concern_set`;
+- deterministic clinical findings with full provenance;
+- governed ordering and role assignment;
+- no forced lead where no governed clinical distinguisher exists;
+- preserved serious findings without downgrade or suppression;
+- explicit missing-data and indeterminate states;
+- quarantine-consistent constrained outputs.
+
+## 7. In-scope START implementation
+
+### 7.1 Canonical models
+
+Create additive, version-stamped models for at least:
+
+- `ClinicalFinding`;
+- `ConsolidatedConcernSet`;
+- finding provenance;
+- finding role;
+- urgency;
+- severity or severity treatment;
+- tier;
+- missing-data or indeterminate state;
+- serious-result state;
+- consolidation and supporting/contextual relationships;
+- dependency or quarantine state;
+- lead/co-lead/no-forced-lead presentation state.
+
+Preferred location:
+
+- `backend/core/models/clinical_finding.py`
+
+Use repository conventions and exact final paths determined during preflight.
+
+Do not rename, remove or restructure existing `Insight`, `InsightGraphV1`, `AnalysisDTO`, report or clinician-report fields in START.
+
+### 7.2 Compiled prioritisation artefact
+
+Create the canonical governed prioritisation artefact schema, compiler and loader needed to transform the approved authority into deterministic runtime rules.
+
+Requirements:
+
+- stable rule and source identifiers;
+- source document/version provenance;
+- activation-key lineage where applicable;
+- domain and cross-domain consolidation mappings;
+- urgency and severity rules;
+- tier algebra;
+- role and lead-selection constraints;
+- missing-data and indeterminate-state rules;
+- overrides and prohibited behaviours;
+- serious-result classification;
+- quarantine/dependency states;
+- compile-manifest and package provenance consistent with ADR-RT-004;
 - deterministic ordering;
-- root-cause compiler per-frame emission;
-- package-manifest schema path robustness.
+- fail-closed rejection of malformed, ambiguous or unsupported content.
 
-Then add the repaired test file to the governed baseline suite so future Package A/B migrations cannot silently break this contract again.
+Use the hepatic domain as the first real compiled vertical slice, then extend the same architecture to the remaining five domains.
 
-## Repository-verified Stage 0 findings
+Do not invent a new clinical rule to make compilation easier.
 
-The current carry-forward records eight failures, but Stage 0 re-verification established:
+**Compilation scope boundary.** Compile only the rules necessary to reproduce the 109 approved scenarios (`HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_APPROVAL_PACK_v1_2.md`) and their governing structural context. Do not attempt to compile a domain's full band/threshold table merely because the domain ruleset presents it as a table. Any domain-ruleset band or threshold recorded as unset or unresolved (for example a value marked `[U]`) must be excluded from compilation and recorded as a follow-on item — never estimated, approximated, or inferred from an adjacent band.
 
-- only seven tests genuinely fail for the recorded architecture reason;
-- `test_package_manifest_schema_declares_source_spec_id` passes when pytest is invoked from repository root;
-- its prior failure was caused by a working-directory-dependent relative path;
-- the seven genuine failures occur before their assertions because the test fixtures use synthetic or dynamically selected activation identities that now correctly hit the pilot-cohort fail-closed boundary;
-- no production path uses `signal_alt_high::inv_alt_high_frame_*`;
-- no production runtime defect was identified;
-- the coverage remains architecturally required;
-- the debt is fixture fragility, not obsolete test intent.
+### 7.3 Concern-construction service
 
-## Exact scope
+Create one canonical concern-construction service between upstream signal evaluation and InsightGraph assembly.
 
-Modify only:
+Preferred location:
 
-- `backend/tests/unit/test_arch_rt_identity_prov_1.py`
-- `backend/scripts/run_baseline_tests.py`
-- standard sprint evidence/closure documents
-- `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-- `docs/sprints/launch_core_carry_forward_register.md`
+- `backend/core/analytics/concern_constructor.py`
 
-No production file under `backend/core/` may change.
+The service must:
 
-No file under `knowledge_bus/`, `backend/ssot/` or `frontend/` may change.
+1. consume governed current-result inputs and activation-key provenance;
+2. construct clinical findings;
+3. apply same-domain consolidation;
+4. apply cross-domain combination and duplicate rules;
+5. separate urgency from severity;
+6. assign the governed tier;
+7. create supporting, contextual and independent-secondary relationships;
+8. represent insufficient data and indeterminate severity distinctly;
+9. preserve serious findings and attach bounded serious-result state;
+10. select lead/co-lead/no-forced-lead according to approved authority;
+11. produce a deterministic ordered visible concern set;
+12. preserve complete rule and source provenance.
 
-# Stage 1A — Mandatory preflight and reality check
+It must not reuse cluster-level arbitration scoring as clinical finding prioritisation.
 
-Before implementation:
+It must not act as a second activation authority: it consumes signals that have already fired under the existing `SignalRegistry`/promotion estate (§3A.3 layer 1) and organises them; it must never decide whether a signal fires in the first place, and tier/role/consolidation assignment must never feed back into upstream activation.
 
-1. Confirm branch creation from current `main`.
-2. Confirm `main == origin/main`.
-3. Confirm working tree and stash state.
-4. Read `backend/tests/unit/test_arch_rt_identity_prov_1.py` in full.
-5. Re-run the file from repository root.
-6. Re-run the file from `backend/` or the exact invocation context that caused the prior false eighth failure.
-7. Confirm exactly seven genuine fail-closed failures and one path-dependent robustness issue.
-8. Confirm the seven failing tests are:
+### 7.4 InsightGraph and DTO integration
 
-   - `test_report_and_output_authority_preserve_both_frames`
-   - `test_clinician_report_retains_multi_findings_without_silent_singleton`
-   - `test_dto_serialization_preserves_multiple_frames`
-   - `test_persistence_replay_round_trip_preserves_activation_identity_and_provenance`
-   - `test_deterministic_ordering_across_repeated_executions`
-   - `test_three_or_more_simultaneous_frames`
-   - `test_root_cause_compiler_emits_finding_per_frame_for_shared_signal_id`
+Extend additively:
 
-9. Confirm `test_package_manifest_schema_declares_source_spec_id` passes from repository root.
-10. Confirm `signal_alt_high::inv_alt_high_frame_*` appears only in this test file.
-11. Confirm no production path depends on those synthetic identities.
-12. Confirm the underlying production behaviour is already correct and the failures occur only because fixture construction reaches the governed fail-closed boundary.
+- `backend/core/contracts/insight_graph_v1.py`
+- `backend/core/analytics/insight_graph_builder.py`
+- `backend/core/models/results.py`
 
-If any of these findings differs materially, STOP and re-scope.
+Add:
 
-# Stage 1B — Fixture strategy decision
+`clinical_concern_set: Optional[ConsolidatedConcernSet]`
 
-Choose one robust fixture-isolation strategy for the seven genuine failing tests.
-
-Permitted strategies:
-
-## Option A — Explicit synthetic non-pilot fixture isolation
-
-Use a clearly synthetic test-only signal identity, for example:
-
-`signal_test_synthetic_multiframe_v1`
-
-and ensure the test explicitly isolates it from `_PILOT_SIGNAL_IDS` for the duration of the test using the narrowest safe fixture/monkeypatch mechanism.
+or the repository-conventional equivalent confirmed during implementation.
 
 Requirements:
 
-- no production registry entry;
-- no production authority row;
-- no production code change;
-- test-only isolation;
-- deterministic restoration after test execution;
-- no global state leakage across tests.
+- one server-side construction call;
+- no duplicate construction in report or frontend paths;
+- deterministic serialisation;
+- backward compatibility for existing consumers;
+- explicit contract version stamp;
+- provenance retained through DTO assembly.
 
-## Option B — Explicit real non-pilot target with migration guard
+### 7.5 Lead behaviour
 
-Use a currently non-pilot real target only if:
+Implement the approved product model:
 
-- the target is appropriate for the test behaviour;
-- each affected test explicitly asserts the target remains outside `_PILOT_SIGNAL_IDS`;
-- failure messaging clearly states that a future pilot migration requires fixture review;
-- no current medical/authority content is relied upon beyond the mechanics under test.
+- one lead where governed clinical authority identifies one;
+- co-leads only where governed clinical rules permit;
+- same-day co-equal groups preserved without arbitrary ranking;
+- below the same-day band, the ordinary two-co-lead rule is a maximum, not a requirement;
+- where three or more equally ranked non-same-day findings have no governed clinical distinguisher, do not force a lead and do not manufacture two co-leads;
+- keep all clinically distinct findings visible in their governed tier.
 
-Do not simply hardcode another currently safe signal without a guard.
+Do not adapt or reuse `technical_tiebreak_lead` as the finding-level algorithm.
 
-## Required choice
+START may add backend compatibility mapping if required to prevent existing frontend breakage, but must not complete the frontend behaviour redesign. The frontend redesign belongs to FINISH.
 
-Prefer the strategy that:
+### 7.6 Serious-result state
 
-- is least coupled to current product rollout state;
-- cannot silently recur when more signals become piloted;
-- does not require production code or register changes;
-- keeps the original behavioural assertions intact.
-
-Record the chosen strategy and rationale in the implementation report.
-
-# Phase 1 — Implementation
-
-## A. Repair the six multi-frame mechanics tests
-
-Repair:
-
-- `test_report_and_output_authority_preserve_both_frames`
-- `test_clinician_report_retains_multi_findings_without_silent_singleton`
-- `test_dto_serialization_preserves_multiple_frames`
-- `test_persistence_replay_round_trip_preserves_activation_identity_and_provenance`
-- `test_deterministic_ordering_across_repeated_executions`
-- `test_three_or_more_simultaneous_frames`
+Implement a bounded data classification, not an escalation workflow.
 
 Requirements:
 
-1. Preserve the original architectural intent.
-2. Keep multi-frame identities distinct.
-3. Preserve activation-key fidelity through all exercised layers.
-4. Do not weaken assertions.
-5. Do not convert positive architecture-contract tests into negative fail-closed tests.
-6. Do not use a real governed activation key in a way that couples the test to current medical content.
-7. Ensure the fixture remains safe if future Package A/B waves add more signals to `_PILOT_SIGNAL_IDS`.
+- preserve governed severity, urgency and priority;
+- never silently downgrade, suppress or convert a serious finding to no-concern;
+- expose a deterministic serious-result state;
+- support later consumer-safe presentation wording;
+- preserve auditability and provenance;
+- do not route users;
+- do not choose services;
+- do not manage escalation;
+- do not monitor response;
+- do not create territory-specific emergency logic.
 
-## B. Repair root-cause compiler per-frame test
+Internal Tier 0 terminology may remain where the ratified clinical contract uses it.
 
-Repair:
+Do not describe this implementation as preparation for a future HealthIQ-operated escalation service.
 
-`test_root_cause_compiler_emits_finding_per_frame_for_shared_signal_id`
+### 7.7 Quarantines
 
-Requirements:
+Preserve and prove existing quarantine behaviour for:
 
-1. Remove the fragile `_ROOT_CAUSE_TARGETS[0]` dynamic-selection strategy.
-2. Use the same migration-safe fixture strategy selected for the six tests above.
-3. Preserve the assertion that one root-cause finding is emitted per activation frame, not per signal ID.
-4. Do not change `root_cause_compiler_v1.py`.
-5. Do not add new production registry or authority rows.
+- cardiovascular-risk calculation;
+- FIB-4 calculation;
+- consumer-facing disease diagnosis;
+- specialist pregnancy interpretation;
+- any other R1-R6 constrained capability identified by the governing documents.
 
-## C. Fix schema-path robustness
+If a live consumer-facing FIB-4 or cardiovascular-risk calculation exists, apply the STOP condition in §12 before hepatic implementation.
 
-Repair:
+Do not activate quarantined capabilities.
 
-`test_package_manifest_schema_declares_source_spec_id`
+### 7.8 Acceptance harness
 
-Requirements:
+Create one clinical-prioritisation scenario harness modelled on:
 
-1. Replace the working-directory-dependent relative path with the existing repository-root helper already used in the same file.
-2. Ensure the test passes from:
-   - repository root;
-   - `backend/`;
-   - the baseline runner invocation.
-3. Do not change the package manifest schema.
+- `backend/tools/run_arbitration_scenarios.py`
+- `backend/tests/unit/test_arbitration_scenario_runner.py`
+- `backend/tests/fixtures/arbitration_scenarios_v2.json`
 
-## D. Correct recorded failure count
+The new harness must:
 
-Update closure records to state:
+- load one canonical scenario fixture estate;
+- enumerate every approved active scenario ID;
+- run the real compiled prioritisation loader and concern-construction service;
+- assert the complete expected field set;
+- assert prohibited behaviours negatively;
+- emit a deterministic manifest and per-scenario evidence;
+- report pass/fail without skips;
+- prove `APPROVED_SCENARIO_ESTATE_COVERAGE`.
 
-- seven genuine fail-closed fixture failures;
-- one audit-invocation path artefact;
-- no production defect.
+Do not build 109 bespoke runtime code paths.
 
-Correct the carry-forward record from eight to seven genuine failures before closing it.
+## 8. Approved scenario estate
 
-## E. Add to governed baseline suite
+The governing acceptance specification is:
 
-After the entire test file is green:
+`HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_APPROVAL_PACK_v1_2.md`
 
-- add `backend/tests/unit/test_arch_rt_identity_prov_1.py` to `backend/scripts/run_baseline_tests.py`;
-- use the repository’s established curated-baseline invocation pattern;
-- ensure the baseline runner executes it from a stable working directory;
-- do not broaden the baseline suite beyond this file.
+Required START exit:
 
-# Explicit exclusions
+`APPROVED_SCENARIO_ESTATE_COVERAGE: 109/109`
 
-Do not modify:
+The harness must cover:
 
-- `backend/core/knowledge/why_authority_v1.py`
-- `backend/core/analytics/root_cause_compiler_v1.py`
-- `backend/core/analytics/output_authority_provenance_builder_v1.py`
-- `backend/core/knowledge/signal_result_index_v1.py`
-- any authority or governance register
-- any compiled-WHY content
-- any signal package
-- any PSI/SSOT/frontend file
-- any medical narrative, hypothesis, ranking or activation logic
-- any production identity grammar
-- any runtime fallback or fail-closed behaviour
+- 39 cross-domain scenarios;
+- 6 formal haematology scenarios;
+- 14 hepatic scenarios;
+- 14 renal/electrolyte scenarios;
+- 12 iron/inflammatory scenarios;
+- 12 thyroid/endocrine scenarios;
+- 12 active cardiometabolic/nutritional scenarios;
+- the contract hepatic fixture and its documented duplicate relationship to `HEP-AS-1`.
 
-Do not make real registered ALT frames pass by weakening authority enforcement.
+Reconcile literal rows versus unique active scenarios exactly as the approved pack does.
 
-Do not add aliases for synthetic activation keys.
+No scenario may be silently skipped because a capability is quarantined. Quarantined scenarios must assert the approved constrained state.
 
-Do not retain `signal_alt_high::inv_alt_high_frame_*` as positive production-shaped fixtures.
+## 9. Internal START checkpoints
 
-# Required verification
+### Checkpoint 0 — Phase 0 verification
 
-## Focused test file
+Before new behavioural code:
 
-Run from repository root:
+- verify branch and clean-tree state;
+- verify `SignalRegistry` activation-key behaviour;
+- verify canonical authority paths and loaders;
+- verify no parallel finding constructor exists;
+- inspect all live FIB-4 and cardiovascular-risk code paths;
+- verify forbidden-path boundaries;
+- identify canonical existing regression commands;
+- record baseline tests;
+- **build the signal activation baseline inventory required by §4.4, before any concern-construction behaviour is changed.**
 
-```text
-pytest backend/tests/unit/test_arch_rt_identity_prov_1.py
-```
+If Phase 0 passes, proceed.
 
-Run from `backend/` using the equivalent supported invocation.
+### Checkpoint 1 — Hepatic pilot
 
-All tests in the file must pass under both contexts.
+Implement:
 
-## Behaviour preservation
+- canonical models;
+- compiled artefact schema/compiler/loader;
+- concern-construction service;
+- serious-result state;
+- additive InsightGraph/DTO integration;
+- hepatic compiled rules;
+- hepatic scenario fixtures and tests;
+- contract hepatic regression fixture;
+- deterministic evidence.
 
-Prove:
+Required outcome:
 
-1. Two frames of one signal survive report compilation.
-2. Clinician output does not silently collapse multiple findings to one.
-3. DTO serialisation preserves all activation keys.
-4. Persistence/replay round-trip preserves activation identity and provenance.
-5. Ordering remains deterministic across repeated executions.
-6. Three or more simultaneous frames remain preserved.
-7. Root-cause compiler emits one finding per frame.
-8. Duplicate activation keys still fail closed.
-9. Existing passing identity/provenance tests remain unchanged in behaviour.
-10. Pilot-cohort fail-closed behaviour remains unchanged in production code.
-11. Schema test passes from both invocation roots.
+- every active hepatic scenario passes;
+- `CONTRACT-FIX-1` and `HEP-AS-1` retain their documented duplicate relationship;
+- no existing cluster arbitration or WHY behaviour is repurposed;
+- no quarantine is activated.
 
-## Baseline inclusion
+Commit Checkpoint 1 separately.
 
-Run:
+### Checkpoint 2 — Six-domain estate rollout
 
-- the updated baseline suite;
-- architecture validation gate;
-- three-layer pipeline verification;
-- relevant identity/provenance regression tests;
-- relevant ARCH-CONV-I and ARCH-CONV-PKGC-2 regression suites.
+Extend the same architecture to:
 
-Confirm the new baseline entry is exercised and not silently skipped.
+- haematology;
+- renal/electrolyte;
+- iron/inflammatory;
+- thyroid/endocrine;
+- cardiometabolic/nutritional;
+- cross-domain rules.
 
-# STOP conditions
+Required outcome:
 
-STOP if:
+- one canonical compiled prioritisation package;
+- one canonical loader;
+- one concern-construction service;
+- all 109 approved active scenarios pass;
+- zero skips;
+- zero unresolved expectation differences;
+- zero invented clinical or product rules;
+- no-forced-lead behaviour matches `XD-AS-32`;
+- serious findings are preserved and never downgraded;
+- quarantined capabilities remain constrained.
 
-- any repair requires a production file change;
-- any authority register or compiled-WHY row must change;
-- a real registered activation key fails for a reason other than the known fixture/pilot-cohort mismatch;
-- a genuine runtime regression is discovered;
-- more than this one test file shares the same fragile fixture pattern;
-- baseline inclusion introduces unrelated instability;
-- tests can only be made green by weakening fail-closed behaviour;
-- any medical or authority decision becomes necessary;
-- any scope outside the two declared implementation files is required.
+Commit Checkpoint 2 separately.
 
-If a STOP condition occurs, leave the work package `IN_PROGRESS` and report the new evidence without implementing out-of-scope remediation.
+### Checkpoint 3 — START evidence and STOP preparation
 
-# Evidence and closure
+Produce evidence for independent review:
 
-Produce:
+- branch and HEAD;
+- changed-file inventory;
+- compile-manifest and package provenance;
+- exact test commands;
+- test totals;
+- scenario manifest showing 109/109;
+- hepatic-pilot evidence;
+- cross-domain ordering and consolidation evidence;
+- no-forced-lead evidence;
+- serious-result-state evidence;
+- missing-data versus indeterminate evidence;
+- quarantine negative assertions;
+- regression summary;
+- known carry-forwards;
+- confirmation that longitudinal Checkpoint 4 and frontend Checkpoint 5 are not complete.
 
-- `docs/audit-papers/ARCH-CONV-I-ALT-IDPROV-1_implementation_and_verification_report.md`
-- updated `docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md`
-- updated `docs/sprints/launch_core_carry_forward_register.md`
+Do not run Automation Bus `finish`.
 
-The implementation report must include:
+STOP after presenting the evidence.
 
-- pre-change seven-failure evidence;
-- explanation of the false eighth failure;
-- selected fixture-isolation strategy;
-- before/after test mapping;
-- both working-directory invocation results;
-- baseline inclusion proof;
-- confirmation of zero production-code changes;
-- confirmation that no live medical or authority behaviour changed.
+## 10. Longitudinal boundary during START
 
-Close `CF-ARCH-CONV-I-ALT-IDPROV-1` only when:
+The FINISH phase will implement the six explicitly governed longitudinal rules and report:
 
-- all seven genuine failures are repaired;
-- the path robustness issue is fixed;
-- the complete test file passes under both invocation contexts;
-- the file is included in the governed baseline suite;
-- all required gates pass;
-- no production file changed.
+`GOVERNED_LONGITUDINAL_RULE_COVERAGE: 6/6`
 
-Complete the mandatory Post-Implementation Closure Protocol.
+START must not claim that result.
 
-Run kernel finish only when:
+During START, only implement longitudinal code that is strictly necessary for:
 
-- implementation is complete;
-- required tests and gates pass;
-- the working tree is clean except for permitted kernel status handling;
-- stash state is governed;
-- no out-of-scope files are present.
+- `RE-AS-3`;
+- `RE-AS-5`;
+- preserving existing prior-result data contracts;
+- keeping the new finding architecture compatible with later FINISH integration.
+
+Do not implement:
+
+- new trend thresholds;
+- generic score-band movement as a clinical finding;
+- comprehensive trend interpretation;
+- trend-triggered tier promotion;
+- the four additional longitudinal fixtures reserved for FINISH.
+
+If concern construction cannot support `RE-AS-3` or `RE-AS-5` without broader longitudinal implementation, implement only the minimum governed logic required for those two approved scenarios and document the boundary.
+
+## 11. Explicit exclusions
+
+Do not implement or modify:
+
+- comprehensive Tier 0 escalation pathways;
+- emergency-service routing;
+- user-response monitoring;
+- autonomous disease diagnosis;
+- specialist pregnancy interpretation;
+- broad questionnaire redesign;
+- laboratory-provider integrations;
+- FIB-4 activation;
+- cardiovascular-risk activation;
+- trend-triggered tier promotion;
+- comprehensive trend interpretation;
+- treatment or prescribing logic;
+- final regulatory-release documentation;
+- merge or release automation.
+
+Do not modify unless a STOP condition is met and explicit approval is obtained:
+
+- `backend/core/analytics/precedence_engine.py`
+- `backend/core/analytics/arbitration_engine.py`
+- `backend/core/analytics/state_engine.py`
+- questionnaire schema or broad questionnaire flow
+- existing WHY/root-cause compiler or presentation authority
+
+## 12. Mandatory STOP conditions
+
+STOP immediately and report exact evidence if:
+
+1. Any of the 109 scenarios cannot be implemented without inventing a threshold, tier, urgency band, severity rule, override, action class, product rule or wording policy.
+2. Authority files conflict in a way that the ratified source-precedence hierarchy cannot resolve.
+3. A duplicate or parallel clinical-finding authority, loader or constructor is found.
+4. Tests and runtime would need to consume different prioritisation authority sources.
+5. Phase 0 finds a live consumer-facing FIB-4 or cardiovascular-risk calculation path. Do not proceed to hepatic implementation until explicit quarantine-implementation scope is approved.
+6. The package would require changing cluster-level `precedence_engine.py`, `arbitration_engine.py` or `state_engine.py`.
+7. The package would require broad questionnaire-schema redesign or specialist pregnancy rules.
+8. Serious-result representation cannot be implemented without implying a HealthIQ-operated escalation workflow.
+9. No-forced-lead behaviour cannot coexist with existing DTO/report compatibility without a product-policy change.
+10. A six-domain rule cannot be compiled without silently treating a draft domain ruleset as independent runtime authority.
+11. A baseline regression failure is introduced and cannot be attributed to an approved expected-output change.
+12. The working tree contains unrelated, tooling or out-of-scope changes.
+13. The kernel-issued work-package token is missing, mismatched or invalid.
+14. Any Automation Bus state would need manual editing.
+15. START would need to implement longitudinal Checkpoint 4 or frontend Checkpoint 5 to claim 109/109 coverage beyond the narrow compatibility boundary in §§7.5 and 10.
+16. A scenario can pass only by disabling, hiding, or altering an existing active signal or supporting signal.
+17. Consolidation loses activation-key or signal provenance — the constituent signal identities behind a consolidated finding cannot be fully recovered.
+18. Prioritisation logic (tier, role, consolidation) changes upstream signal activation behaviour, rather than only how an already-fired finding is presented.
+19. Implementation requires changing Knowledge Bus promotion status or runtime eligibility for any existing signal.
+20. A newer document appears to retire an established signal without a clear, cited, pre-existing superseding decision.
+21. Existing signal behaviour conflicts with the prioritisation contract in a way that cannot be resolved by presentation/consolidation alone.
+
+For STOP conditions 16-21, report the conflict as a **provenance conflict** and escalate it — do not silently resolve it in favour of the newest document. The existing authorised signal activation and promotion estate (§3A.3, layer 1) is not overridden merely because a later document exists; a genuine conflict between the signal estate and the prioritisation contract requires explicit human/GPT adjudication, not an implementation-time judgement call.
+
+Do not weaken a STOP condition to complete the sprint.
+
+## 13. Required tests and evidence
+
+Determine exact repository commands during Phase 0 and record them before implementation.
+
+At minimum, evidence must include:
+
+- focused model/schema tests;
+- compiler and loader tests;
+- concern-construction unit tests;
+- hepatic pilot scenario tests;
+- full clinical-prioritisation scenario harness;
+- `APPROVED_SCENARIO_ESTATE_COVERAGE: 109/109`;
+- `SIGNAL_ACTIVATION_BASELINE_TOTAL`, `SIGNAL_ACTIVATION_PRESERVED_TOTAL`, `SUPPORTING_SIGNAL_BASELINE_TOTAL`, `SUPPORTING_SIGNAL_PRESERVED_TOTAL`, `SIGNALS_INTENTIONALLY_RETIRED` — required result: activation preserved for every baseline signal and supporting signal (preserved totals equal baseline totals), no disappearance caused by consolidation or ordering, all constituent identities retained in finding provenance, `SIGNALS_INTENTIONALLY_RETIRED: 0` unless explicit prior authority is cited;
+- no-forced-lead test;
+- same-day co-equal-group tests;
+- more-serious-tier-wins test;
+- consolidation and duplicate tests;
+- supporting/contextual nesting tests;
+- insufficient-data tests;
+- indeterminate-severity tests;
+- serious-result non-downgrade tests;
+- quarantine negative tests;
+- DTO serialisation and backwards-compatibility tests;
+- existing relevant backend regression suites;
+- static/type checks required by the repository;
+- frontend build/type compatibility only to the extent needed to prove additive DTO changes do not break the current baseline.
+
+Do not claim a pass without command output.
+
+## 14. Commit discipline
+
+Use bounded commits aligned to checkpoints.
+
+Suggested commit sequence:
+
+1. `feat(clin-priority): add canonical finding models and hepatic compiler`
+2. `feat(clin-priority): implement hepatic concern construction`
+3. `test(clin-priority): prove hepatic acceptance scenarios`
+4. `feat(clin-priority): compile six-domain prioritisation estate`
+5. `feat(clin-priority): implement cross-domain concern prioritisation`
+6. `test(clin-priority): prove 109-scenario acceptance estate`
+7. `docs(clin-priority): record START evidence and carry-forwards`
+
+Adjust descriptions to actual changes, but preserve checkpoint separation and avoid unrelated files.
 
 Do not merge.
 
-After kernel `COMPLETE`, stop for independent Claude Code audit, GPT architectural review and Anthony merge authority.
+## 15. START completion response
+
+At STOP, return:
+
+- current branch;
+- HEAD SHA;
+- commits created;
+- files changed;
+- canonical authority paths;
+- compiled artefact path;
+- compiler path;
+- loader path;
+- concern-construction path;
+- DTO paths;
+- exact test commands and outcomes;
+- hepatic scenario result;
+- `APPROVED_SCENARIO_ESTATE_COVERAGE`;
+- number of skipped scenarios;
+- unresolved scenario differences;
+- `SIGNAL_ACTIVATION_BASELINE_TOTAL`;
+- `SIGNAL_ACTIVATION_PRESERVED_TOTAL`;
+- `SUPPORTING_SIGNAL_BASELINE_TOTAL`;
+- `SUPPORTING_SIGNAL_PRESERVED_TOTAL`;
+- `SIGNALS_INTENTIONALLY_RETIRED` (and citation to prior authority if non-zero);
+- no-forced-lead result;
+- serious-result-state result;
+- quarantine verification;
+- regression result;
+- deviations from this prompt;
+- blockers;
+- carry-forwards for FINISH;
+- confirmation that Checkpoint 4 longitudinal integration is incomplete;
+- confirmation that Checkpoint 5 frontend completion is incomplete;
+- confirmation that `run_work_package.py finish` was not run;
+- confirmation that no merge occurred.
+
+End with exactly one START verdict:
+
+- `START_READY_FOR_INDEPENDENT_STOP_REVIEW`
+- `START_BLOCKED`
+- `START_FAILED`
+
+Do not self-authorise FINISH.

@@ -1,10 +1,10 @@
 {
-  "branch": "feature/arch-conv-i-alt-idprov-test-estate-restoration",
+  "branch": "feature/clin-priority-core-1",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-08-02T16:39:20Z",
-  "cursor_started_utc": "2026-08-02T16:16:29Z",
-  "head_sha": "0ccf0d161ee882a6298857a0b2917db0ad12aaa9",
+  "cursor_completed_utc": "2026-08-05T14:59:58Z",
+  "cursor_started_utc": "2026-08-05T11:47:34Z",
+  "head_sha": "a748d9a029bedebe1827ba81793627843194fb16",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "ARCH-CONV-I-ALT-IDPROV-1"
+  "work_id": "CLIN-PRIORITY-CORE-1"
 }

@@ -31,6 +31,7 @@ from core.analytics.report_compiler_v1 import compile_report_v1
 from core.analytics.primary_driver_authority_v1 import build_primary_driver_authority_v1
 from core.analytics.signal_interaction_builder import build_signal_interactions_v1
 from core.knowledge.frame_runtime_authority_v1 import filter_runtime_eligible_rows
+from core.analytics.concern_constructor import construct_clinical_concern_set
 
 
 def _as_float(value: Any) -> Optional[float]:
@@ -450,6 +451,17 @@ def build_insight_graph_v1(
         signal_results=signal_results if signal_results is not None else [],
     )
 
+    clinical_concern_set = None
+    if signal_results is not None:
+        clinical_concern_set = construct_clinical_concern_set(
+            signal_results=signal_results,
+            biomarkers=filtered_biomarkers,
+            lab_ranges=input_reference_ranges,
+            derived=(derived_ratios_meta or {}).get("derived")
+            if isinstance(derived_ratios_meta, dict)
+            else None,
+        )
+
     return InsightGraphV1(
         graph_version=INSIGHTGRAPH_V1_VERSION,
         analysis_id=analysis_id,
@@ -479,6 +491,7 @@ def build_insight_graph_v1(
         biomarker_context=context_nodes,
         layer_c_features=layer_c_features,
         primary_driver_v1=primary_driver_v1,
+        clinical_concern_set=clinical_concern_set,
         biomarker_nodes=nodes,
         edges=[],
     )

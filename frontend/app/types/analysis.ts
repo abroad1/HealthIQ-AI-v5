@@ -205,6 +205,57 @@ export type PrimaryConcernModeV1 =
   | 'near_tie_ambiguity'
   | 'technical_tiebreak_lead';
 
+/** CLIN-PRIORITY-CORE-1 — server-computed clinical concern set (render-only). */
+export type ClinicalConcernPresentationModeV1 =
+  | 'principal'
+  | 'co_lead'
+  | 'no_forced_lead'
+  | 'nested_supporting';
+
+export type ClinicalFindingUrgencyV1 =
+  | 'same_day'
+  | 'within_days'
+  | 'within_weeks'
+  | 'routine';
+
+export interface ClinicalFindingV1 {
+  finding_id: string;
+  domain: string;
+  finding_type: string;
+  label: string;
+  constituent_activation_keys: string[];
+  constituent_biomarker_ids?: string[];
+  urgency_time_band: ClinicalFindingUrgencyV1;
+  severity_band?: string | null;
+  concern_tier: 0 | 1 | 2 | 3;
+  role: string;
+  presentation_state?: ClinicalConcernPresentationModeV1;
+  caveats?: string[];
+  missing_data_notes?: string[];
+  nested_constituent_labels?: string[];
+  serious_result_state?: string;
+  withheld?: boolean;
+  provenance?: {
+    clinical_rule_ids?: string[];
+  };
+}
+
+export interface ConsolidatedConcernSetV1 {
+  contract_version?: string;
+  ruleset_version?: string;
+  findings: ClinicalFindingV1[];
+  lead_finding_ids: string[];
+  co_lead_finding_ids: string[];
+  presentation_mode: ClinicalConcernPresentationModeV1;
+  no_forced_lead: boolean;
+  no_concern?: boolean;
+  no_concern_notes?: string[];
+  domain_notes?: string[];
+  quarantine_notes?: string[];
+  fib_4_computed?: boolean;
+  fib_4_displayed?: boolean;
+}
+
 export interface ClinicianReportV1 {
   header: {
     report_version: 'v1';

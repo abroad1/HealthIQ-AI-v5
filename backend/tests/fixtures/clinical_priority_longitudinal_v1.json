@@ -1,0 +1,128 @@
+{
+  "fixture_version": "1.0.0",
+  "scope": "governed_longitudinal_rule_coverage",
+  "notes": [
+    "Separate from the 109-scenario approval-pack estate.",
+    "RE-AS-3 and RE-AS-5 reused from approved estate; remaining four authored against governed domain rules only."
+  ],
+  "default_lab_ranges": {
+    "alt": {"min": 0, "max": 49, "source": "lab"},
+    "ast": {"min": 0, "max": 40, "source": "lab"},
+    "alp": {"min": 30, "max": 116, "source": "lab"},
+    "bilirubin": {"min": 0, "max": 21, "source": "lab"},
+    "ggt": {"min": 0, "max": 55, "source": "lab"},
+    "tsh": {"min": 0.27, "max": 4.2, "source": "lab"},
+    "free_t4": {"min": 12, "max": 22, "source": "lab"},
+    "platelets": {"min": 150, "max": 400, "source": "lab"}
+  },
+  "rules": [
+    {
+      "rule_id": "RE-T1",
+      "scenario_id": "RE-AS-3",
+      "description": "AKI creatinine rise ≥50% within 7 days",
+      "biomarkers": {"creatinine": 145, "egfr": 42},
+      "signal_results": [
+        {"signal_id": "signal_creatinine_high", "activation_key": "signal_creatinine_high::activation"}
+      ],
+      "context": {"priors": {"creatinine": {"value": 70, "days_ago": 6, "unit": "umol/L"}}},
+      "expected": {
+        "finding_types": ["RE-F1"],
+        "urgency": "same_day",
+        "tier": 0,
+        "longitudinal_notes_any": ["re_t1_aki_50pct_within_7d"]
+      }
+    },
+    {
+      "rule_id": "RE-S-2",
+      "scenario_id": "RE-AS-5",
+      "description": "CKD chronicity ≥3 months for stable G3a",
+      "biomarkers": {"egfr": 52, "creatinine": 110},
+      "signal_results": [
+        {"signal_id": "signal_egfr_low", "activation_key": "signal_egfr_low::activation"}
+      ],
+      "context": {"priors": {"egfr": {"value": 54, "months_ago": 4}}},
+      "expected": {
+        "finding_types": ["RE-F2"],
+        "urgency": "routine",
+        "tier": 2,
+        "longitudinal_notes_any": ["re_s2_ckd_chronicity_established"]
+      }
+    },
+    {
+      "rule_id": "HEP-T1",
+      "scenario_id": "LONG-HEP-T1",
+      "description": "Statin enzyme doubling within 3 months of start — assessable, no cessation advice",
+      "biomarkers": {"alt": 120, "alp": 80, "bilirubin": 12, "ggt": 40},
+      "signal_results": [
+        {"signal_id": "signal_alt_high", "activation_key": "signal_alt_high::activation"}
+      ],
+      "context": {
+        "statin_monitoring": true,
+        "statin_start_days_ago": 60,
+        "priors": {"alt": {"value": 55, "days_ago": 55, "unit": "U/L"}}
+      },
+      "expected": {
+        "finding_types": ["HEP-F1"],
+        "caveats_any": ["must_not_advise_medication_cessation"],
+        "nested_any": ["hep_t1_statin_enzyme_doubling"],
+        "rule_ids_any": ["HEP-T1"],
+        "must_not_promote_tier_above": 1
+      }
+    },
+    {
+      "rule_id": "HAEM-T5",
+      "scenario_id": "LONG-HAEM-T5",
+      "description": "Cytopenia chronicity window 12 months; absent history is not stability",
+      "biomarkers": {"platelets": 85, "hgb": 140, "mcv": 90, "anc": 2.5},
+      "signal_results": [
+        {"signal_id": "signal_platelets_low", "activation_key": "signal_platelets_low::activation"}
+      ],
+      "context": {
+        "sex": "male",
+        "priors": {"platelets": {"value": 90, "months_ago": 8, "unit": "10^9/L"}}
+      },
+      "expected": {
+        "finding_types_contains": ["HAEM-F4", "HAEM-PLT"],
+        "nested_any": ["cytopenia_chronicity_established"],
+        "rule_ids_any": ["HAEM-T5"],
+        "prohibited_absent": ["treat_absent_prior_as_chronicity"]
+      }
+    },
+    {
+      "rule_id": "THY-T1",
+      "scenario_id": "LONG-THY-T1",
+      "description": "Subclinical thyroid two-occasion confirmation ≥3 months",
+      "biomarkers": {"tsh": 12.0, "free_t4": 15.0},
+      "signal_results": [
+        {"signal_id": "signal_tsh_high", "activation_key": "signal_tsh_high::activation"}
+      ],
+      "context": {
+        "priors": {"tsh": {"value": 11.0, "months_ago": 4, "unit": "mIU/L"}}
+      },
+      "expected": {
+        "finding_types": ["THY-F2"],
+        "nested_any": ["thy_t1_two_occasion_confirmed"],
+        "rule_ids_any": ["THY-T1"],
+        "caveats_any": ["nice_two_occasion_confirmed"]
+      }
+    },
+    {
+      "rule_id": "CN-T2/CN-T3",
+      "scenario_id": "LONG-CN-T2-T3",
+      "description": "HbA1c confirmation spacing ≥3 months; no diabetes assertion",
+      "biomarkers": {"hba1c": 52},
+      "signal_results": [
+        {"signal_id": "signal_hba1c_high", "activation_key": "signal_hba1c_high::activation"}
+      ],
+      "context": {
+        "priors": {"hba1c": {"value": 50, "months_ago": 4, "unit": "mmol/mol"}}
+      },
+      "expected": {
+        "finding_types": ["CN-F4"],
+        "nested_any": ["cn_t2_t3_confirmation_spacing_met"],
+        "rule_ids_any": ["CN-T2", "CN-T3"],
+        "prohibited_any": ["assert_diabetes_from_single_result"]
+      }
+    }
+  ]
+}

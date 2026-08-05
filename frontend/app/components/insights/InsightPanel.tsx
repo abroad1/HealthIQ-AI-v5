@@ -16,6 +16,8 @@ export interface InsightPanelProps {
    * Mode badge and sr-only ranking policy remain.
    */
   contextOnly?: boolean;
+  /** CLIN-PRIORITY-CORE-1 — demote technical_tiebreak_lead when concern set owns priority. */
+  clinicalConcernAuthority?: boolean;
   className?: string;
 }
 
@@ -24,7 +26,13 @@ function formatSignalIdForDisplay(signalId: string): string {
   return stripped.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function modeLabel(mode: PrimaryConcernModeV1 | undefined): { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' } {
+function modeLabel(
+  mode: PrimaryConcernModeV1 | undefined,
+  clinicalConcernAuthority?: boolean
+): { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' } {
+  if (clinicalConcernAuthority) {
+    return { label: 'Clinical concern set governs priority', variant: 'outline' };
+  }
   switch (mode) {
     case 'near_tie_ambiguity':
       return { label: 'Several top findings are close', variant: 'outline' };
@@ -36,7 +44,13 @@ function modeLabel(mode: PrimaryConcernModeV1 | undefined): { label: string; var
   }
 }
 
-function modeAudienceNote(mode: PrimaryConcernModeV1 | undefined): string | null {
+function modeAudienceNote(
+  mode: PrimaryConcernModeV1 | undefined,
+  clinicalConcernAuthority?: boolean
+): string | null {
+  if (clinicalConcernAuthority) {
+    return null;
+  }
   if (mode === 'near_tie_ambiguity') {
     return 'More than one pattern may be similarly important. The headline shows one first for clarity—not that the others are unimportant.';
   }
@@ -54,6 +68,7 @@ export function InsightPanel({
   report,
   primaryDriverSystemGroupName,
   contextOnly = false,
+  clinicalConcernAuthority = false,
   className = '',
 }: InsightPanelProps) {
   const page1 = report?.sections?.page1;
@@ -76,14 +91,16 @@ export function InsightPanel({
   }
 
   const mode = page1.primary_concern_mode;
-  const { label: modeText, variant: modeVariant } = modeLabel(mode);
-  const ambiguityNote = modeAudienceNote(mode);
+  const { label: modeText, variant: modeVariant } = modeLabel(mode, clinicalConcernAuthority);
+  const ambiguityNote = modeAudienceNote(mode, clinicalConcernAuthority);
   const coPrimaries = page1.co_primary_signal_ids?.filter(Boolean) ?? [];
   const runnerTopic = (page1.runner_up_topic_line || '').trim();
   const runnerWhy = (page1.runner_up_why_not_lead_line || '').trim();
   /** Ranked payload from compiler — preferred over co_primary_signal_ids-only gating (BE-W2-RQ2). */
   const showRunnerUp =
-    Boolean(runnerTopic) && (mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead');
+    Boolean(runnerTopic) &&
+    !clinicalConcernAuthority &&
+    (mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead');
 
   const headline = (page1.primary_concern || '').trim();
   const interpretationParagraph = (page1.key_findings?.[0] || '').trim();
@@ -91,7 +108,9 @@ export function InsightPanel({
   const nextStepCue = (page1.top_hypothesis_line || '').trim();
 
   const showCoPrimaryRow =
-    coPrimaries.length > 0 && (mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead');
+    coPrimaries.length > 0 &&
+    !clinicalConcernAuthority &&
+    (mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead');
 
   return (
     <Card

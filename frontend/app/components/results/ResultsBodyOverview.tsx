@@ -20,6 +20,8 @@ export interface ResultsBodyOverviewProps {
   sectionHeading?: string;
   /** FE-R6A — cluster bucket counters contradict lead finding; hide from default retail. */
   showPatternGroupBuckets?: boolean;
+  /** CLIN-PRIORITY-CORE-1 — skip legacy technical_tiebreak rider when concern set owns priority. */
+  clinicalConcernAuthority?: boolean;
   className?: string;
 }
 
@@ -32,6 +34,7 @@ export function ResultsBodyOverview({
   compiledBodyOverview,
   sectionHeading = 'Your body overview',
   showPatternGroupBuckets = false,
+  clinicalConcernAuthority = false,
   className = '',
 }: ResultsBodyOverviewProps) {
   const page1 = clinicianReport?.sections?.page1;
@@ -39,7 +42,7 @@ export function ResultsBodyOverview({
   const primaryRaw =
     compiled ||
     (page1 && (page1.primary_concern || page1.top_hypothesis_line || page1.key_findings?.[0])
-      ? buildBodyOverviewPrimarySentence(page1)
+      ? buildBodyOverviewPrimarySentence(page1, { clinicalConcernAuthority })
       : BODY_OVERVIEW_FALLBACK_PRIMARY);
   const primary = scrubConsumerRetailNarrative(primaryRaw);
 

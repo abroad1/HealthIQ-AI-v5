@@ -15,6 +15,7 @@ from core.models.context import AnalysisContext
 from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayLayerBundleV1
 from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
 from core.contracts.narrative_report_v1 import NarrativeReportV1
+from core.models.clinical_finding import ConsolidatedConcernSet
 
 
 class BiomarkerScore(BaseModel):
@@ -456,4 +457,8 @@ class AnalysisDTO(BaseModel):
     intervention_annotations_v1: Optional[InterventionAnnotationsV1] = Field(
         default=None,
         description="LC-S2+: Layer B intervention annotations (parallel; no signal/ranking mutation)",
+    )
+    clinical_concern_set: Optional[ConsolidatedConcernSet] = Field(
+        default=None,
+        description="CLIN-PRIORITY-CORE-1: additive ConsolidatedConcernSet from concern construction",
     )

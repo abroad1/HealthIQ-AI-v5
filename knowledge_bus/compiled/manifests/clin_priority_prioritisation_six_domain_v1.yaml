@@ -1,0 +1,50 @@
+compile_run_id: clin-priority-six-domain-74c4d61ebd6a
+compile_utc: '2026-08-05T13:00:00+00:00'
+compiler_name: clin_priority_hand_compile_v1
+compiler_version: 0.2.0
+policy_version: ADR-RT-004
+work_id: CLIN-PRIORITY-CORE-1
+checkpoint: 2
+domain_slice: six_domain
+contract_version: 0.6.3
+ruleset_version: '0.5'
+approval_pack_version: '1.2'
+package_id: clin_priority_prioritisation_six_domain_v1
+package_version: 0.2.0-six-domain
+input_spec_hashes:
+  HEALTHIQ_CLINICAL_FINDING_PRIORITISATION_CONTRACT_v0_6_3: contract_0.6.3
+  HEALTHIQ_CROSS_DOMAIN_CLINICAL_PRIORITISATION_RULESET_v0_5: ruleset_0.5
+  HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_APPROVAL_PACK_v1_2: approval_1.2
+outputs:
+- artefact_path: knowledge_bus/compiled/prioritisation/compiled_prioritisation_rules.yaml
+  content_sha256: 74c4d61ebd6a9772a7d5d04d0336b21fcc4a901d68e6ee2f5794c626d8099eaf
+  legacy_retained: false
+  runtime_loaded: true
+  source_document: docs/discussion documents/HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_APPROVAL_PACK_v1_2.md
+  source_spec_id: clin_priority_six_domain_checkpoint_2
+activation_keys_emitted: []
+collisions_detected: []
+excluded_unset_thresholds:
+- HEP-U2
+- HEP-U3
+- HEP-U6
+- HEP-U7
+- HAEM-U1
+- HAEM-U2
+- HAEM-U3
+- IRIN-U1
+- IRIN-U2
+- IRIN-U3
+- RE-U5
+- THY-U2
+- CN-U2
+- CN-U1
+quarantine_namespaces_recorded:
+- fib_4
+- cardiovascular_risk
+- disease_name_haemochromatosis
+notes:
+- Hand-authored START compile for Checkpoint 2 six-domain estate.
+- SIGNALS_INTENTIONALLY_RETIRED remains 0; no Knowledge Bus promotion changes.
+- FIB-4 / CV-risk / consumer disease-name quarantined.
+- CN-AS-11 retired and excluded from scenarios_in_scope.

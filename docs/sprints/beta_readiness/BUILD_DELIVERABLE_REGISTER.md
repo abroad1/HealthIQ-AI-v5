@@ -1631,6 +1631,32 @@ Documentation-only post-merge reconciliation. Sources: committed implementation 
 
 ---
 
+## CLIN-PRIORITY-CORE-1 — Cross-domain clinical findings and prioritisation
+
+**Status:** Complete — awaiting independent post-FINISH audit / merge  
+**Date closed:** 2026-08-05  
+**Programme block(s):** Intelligence Core clinical prioritisation + results shell
+
+### Delivered / ticked off
+- Canonical `ClinicalFinding` / `ConsolidatedConcernSet`, six-domain constructor, 109/109 scenario estate.
+- Signal preservation 183/183; intentional retirements 0.
+- Bounded correction of cross-domain same-day co-equal outcomes (`XD-AS-1`/`RE-AS-12`, `XD-AS-7`).
+- Governed longitudinal coverage 6/6 (AKI, CKD chronicity, statin doubling, cytopenia windows, thyroid two-occasion, HbA1c spacing).
+- Frontend renders server `clinical_concern_set` as sole clinical-priority authority; `technical_tiebreak_lead` demoted when present.
+
+### Carry-forwards
+- Schema-level retirement of legacy `primary_concern_mode` (UI demotion done).
+- Governed consumer serious-result wording where copy is still unauthorised.
+- Pre-existing questionnaire/pregnancy context CFs unchanged.
+
+### Blockers / risks
+- None blocking FINISH completion; merge awaits independent audit.
+
+### Recommended next sprint
+- Independent post-FINISH audit, then merge when authorised; then release-wording / questionnaire context packages as sequenced.
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

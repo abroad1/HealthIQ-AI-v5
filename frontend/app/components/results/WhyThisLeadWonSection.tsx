@@ -10,33 +10,39 @@ import {
 
 export interface WhyThisLeadWonSectionProps {
   report: ClinicianReportV1 | null | undefined;
+  /** When true, clinical_concern_set owns priority — demote technical_tiebreak_lead framing. */
+  clinicalConcernAuthority?: boolean;
 }
 
 /**
  * FE-R3 Section 4 — Why this lead won / uncertainty (clinician_report deterministic fields only).
+ * CLIN-PRIORITY-CORE-1: when clinicalConcernAuthority, suppress competing-lead / close-call clinical authority.
  */
-export function WhyThisLeadWonSection({ report }: WhyThisLeadWonSectionProps) {
-  if (!shouldRenderWhyThisLeadWonSection(report) || !report) {
+export function WhyThisLeadWonSection({
+  report,
+  clinicalConcernAuthority = false,
+}: WhyThisLeadWonSectionProps) {
+  if (!shouldRenderWhyThisLeadWonSection(report, { clinicalConcernAuthority }) || !report) {
     return null;
   }
 
   const p1 = report.sections.page1;
   const mode = p1.primary_concern_mode;
-  const tie = isCloseCallMode(mode);
+  const tie = isCloseCallMode(mode, { clinicalConcernAuthority });
   const hasCo = (p1.co_primary_signal_ids?.filter(Boolean).length ?? 0) > 0;
 
   const runnerWhy = (p1.runner_up_why_not_lead_line || '').trim();
   const runnerTopic = (p1.runner_up_topic_line || '').trim();
-  const showRunnerUpBlock = Boolean(runnerTopic) && tie;
+  const showRunnerUpBlock = Boolean(runnerTopic) && tie && !clinicalConcernAuthority;
 
   const { interpretationLimits, panelCaveatOrPointer } = buildConfidenceBlocksForSection4(report);
 
-  const showWhyWon = Boolean(runnerWhy);
+  const showWhyWon = Boolean(runnerWhy) && !clinicalConcernAuthority;
   const showCompeting = showRunnerUpBlock;
   const showConfidenceBlock = Boolean(interpretationLimits || panelCaveatOrPointer);
 
   /** Avoid repeating “close call” prose when the competing-finding block already carries the story. */
-  const showTieCoPrimaryNote = tie && (!showCompeting || hasCo);
+  const showTieCoPrimaryNote = tie && (!showCompeting || hasCo) && !clinicalConcernAuthority;
 
   if (!showWhyWon && !showCompeting && !showConfidenceBlock && !showTieCoPrimaryNote) {
     return null;
@@ -50,7 +56,9 @@ export function WhyThisLeadWonSection({ report }: WhyThisLeadWonSectionProps) {
             How confident is this read?
           </CardTitle>
           <p className="text-sm text-gray-600 pt-1">
-            How the headline was chosen, what else was close, and how much room for doubt remains on this panel.
+            {clinicalConcernAuthority
+              ? 'Confidence and panel limits for this result. Clinical priority is shown in the concern set above.'
+              : 'How the headline was chosen, what else was close, and how much room for doubt remains on this panel.'}
           </p>
         </CardHeader>
         <CardContent className="space-y-6 text-sm text-gray-800">
