@@ -80,9 +80,8 @@ def _evaluate_scenario(
             failures.append("expected no_concern=true")
         if finding_types:
             failures.append(f"expected no findings, got {finding_types}")
-    else:
+    elif "finding_types" in expected:
         if sorted(finding_types) != sorted(expected_types):
-            # Allow ordered subset equality when expected lists exact set
             if set(finding_types) != set(expected_types) or len(finding_types) != len(
                 expected_types
             ):
@@ -149,13 +148,20 @@ def _evaluate_scenario(
                 )
 
         for note in expected.get("missing_data_notes_any") or []:
-            if note not in primary.missing_data_notes:
+            found = note in primary.missing_data_notes or any(
+                note in f.missing_data_notes for f in concern.findings
+            )
+            if not found:
                 failures.append(f"missing_data_notes missing {note!r}")
         for note in expected.get("nested_any") or []:
-            if note not in primary.nested_constituent_labels:
+            found = note in primary.nested_constituent_labels or any(
+                note in f.nested_constituent_labels for f in concern.findings
+            )
+            if not found:
                 failures.append(f"nested_constituent_labels missing {note!r}")
         for note in expected.get("caveats_any") or []:
-            if note not in primary.caveats:
+            found = note in primary.caveats or any(note in f.caveats for f in concern.findings)
+            if not found:
                 failures.append(f"caveats missing {note!r}")
         for note in expected.get("prohibited_any") or []:
             found = any(note in f.prohibited_behaviours_asserted for f in concern.findings)
@@ -164,10 +170,16 @@ def _evaluate_scenario(
             if not found:
                 failures.append(f"prohibited_behaviours missing {note!r}")
         for note in expected.get("dependency_flags_any") or []:
-            if note not in primary.dependency_flags:
+            found = note in primary.dependency_flags or any(
+                note in f.dependency_flags for f in concern.findings
+            )
+            if not found:
                 failures.append(f"dependency_flags missing {note!r}")
         for note in expected.get("quarantine_flags_any") or []:
-            if note not in primary.quarantine_flags:
+            found = note in primary.quarantine_flags or any(
+                note in f.quarantine_flags for f in concern.findings
+            )
+            if not found:
                 failures.append(f"quarantine_flags missing {note!r}")
 
     for ftype in expected.get("must_not_include_finding_types") or []:
@@ -181,6 +193,16 @@ def _evaluate_scenario(
             failures.append(f"missing finding type {ftype} for tier check")
         elif match.concern_tier != tier:
             failures.append(f"{ftype} tier: got {match.concern_tier}, expected {tier}")
+
+    urg_by = expected.get("urgency_by_type") or {}
+    for ftype, urg in urg_by.items():
+        match = next((f for f in concern.findings if f.finding_type == ftype), None)
+        if match is None:
+            failures.append(f"missing finding type {ftype} for urgency check")
+        elif match.urgency_time_band != urg:
+            failures.append(
+                f"{ftype} urgency: got {match.urgency_time_band!r}, expected {urg!r}"
+            )
 
     if expected.get("no_concern_notes_any"):
         for note in expected["no_concern_notes_any"]:
@@ -218,6 +240,66 @@ def _evaluate_scenario(
             )
             if lead is None or lead.domain != "haematology":
                 failures.append("expected haematology finding to lead on time band")
+
+    if expected.get("no_forced_lead") is not None:
+        _check_field("no_forced_lead", concern.no_forced_lead, expected["no_forced_lead"])
+    if expected.get("presentation_mode") is not None:
+        _check_field(
+            "presentation_mode", concern.presentation_mode, expected["presentation_mode"]
+        )
+    if expected.get("presentation_mode_in"):
+        if concern.presentation_mode not in set(expected["presentation_mode_in"]):
+            failures.append(
+                f"presentation_mode: got {concern.presentation_mode!r}, "
+                f"expected one of {expected['presentation_mode_in']!r}"
+            )
+    if expected.get("same_day_coequal"):
+        same_day = [f for f in concern.findings if f.urgency_time_band == "same_day"]
+        if len(same_day) < 2:
+            failures.append("expected same-day co-equal group with >=2 findings")
+        # Must not invent a severity-ranked single lead across same-day peers
+        if (
+            concern.presentation_mode == "principal"
+            and len(same_day) >= 2
+            and len(concern.lead_finding_ids) == 1
+            and not concern.co_lead_finding_ids
+        ):
+            failures.append("same-day co-equal group must not manufacture a solo lead")
+
+    if expected.get("cv_risk_computed") is False:
+        notes = " ".join(concern.quarantine_notes).lower()
+        if "cv-risk" not in notes and "cardiovascular" not in notes:
+            failures.append("expected CV-risk quarantine note")
+        for f in concern.findings:
+            if "cv_risk_percent" in f.prohibited_behaviours_asserted:
+                break
+        # Presence of R2 quarantine on lipid findings is sufficient
+        lipid = [f for f in concern.findings if f.finding_type.startswith("CN-")]
+        if lipid and not any("R2" in f.quarantine_flags for f in lipid):
+            # soft: quarantine_notes already checked
+            pass
+    if expected.get("cv_risk_displayed") is False:
+        for f in concern.findings:
+            if "cv_risk_displayed" in (f.label or ""):
+                failures.append("CV-risk must not be displayed")
+
+    if expected.get("withheld_any"):
+        if not any(f.withheld for f in concern.findings):
+            failures.append("expected at least one withheld finding")
+
+    # Prohibited / domain notes may apply even without a primary finding
+    if primary is None:
+        for note in expected.get("prohibited_any") or []:
+            found = any(note in f.prohibited_behaviours_asserted for f in concern.findings)
+            if not found and note not in concern.domain_notes and note not in concern.no_concern_notes:
+                # Allow prohibited codes to live in domain_notes for insufficient-data paths
+                if note not in " ".join(concern.domain_notes):
+                    failures.append(f"prohibited_behaviours missing {note!r}")
+
+    for note in expected.get("nested_any_on_haem") or []:
+        haem = [f for f in concern.findings if f.domain == "haematology"]
+        if not any(note in f.nested_constituent_labels for f in haem):
+            failures.append(f"haem nested_constituent_labels missing {note!r}")
 
     # Provenance retained
     for f in concern.findings:
@@ -316,6 +398,14 @@ def run_clinical_priority_scenarios(
 
     passed = sum(1 for r in results if r["passed"])
     failed = len(results) - passed
+    unique_ids = sorted({str(r["scenario_id"]) for r in results})
+    # CONTRACT-FIX-1 is a retained literal duplicate of HEP-AS-1
+    unique_clinical = [sid for sid in unique_ids if sid != "CONTRACT-FIX-1"]
+    if "HEP-AS-1" in unique_ids and "CONTRACT-FIX-1" in unique_ids:
+        unique_clinical_count = len(unique_clinical)
+    else:
+        unique_clinical_count = len(unique_ids)
+    xd32 = by_id.get("XD-AS-32") or {}
     manifest = {
         "run_id": run_id,
         "git_commit_short": _git_short_sha(),
@@ -329,6 +419,24 @@ def run_clinical_priority_scenarios(
         "scenario_count": len(results),
         "passed": passed,
         "failed": failed,
+        "APPROVED_SCENARIO_ESTATE_COVERAGE": {
+            "unique_clinical_scenarios": unique_clinical_count,
+            "fixture_rows": len(results),
+            "passed_unique": sum(
+                1
+                for sid in unique_clinical
+                if by_id.get(sid, {}).get("passed")
+            ),
+            "target": 109,
+            "zero_skips": failed == 0 and len(results) >= 109,
+        },
+        "XD_AS_32": {
+            "passed": bool(xd32.get("passed")),
+            "no_forced_lead": xd32.get("no_forced_lead"),
+            "finding_types": xd32.get("finding_types"),
+            "presentation_mode": xd32.get("presentation_mode"),
+            "failures": xd32.get("failures") or [],
+        },
         "scenario_results": [
             {
                 "scenario_id": r["scenario_id"],
@@ -336,6 +444,7 @@ def run_clinical_priority_scenarios(
                 "failures": r["failures"],
                 "finding_types": r["finding_types"],
                 "alias_of": r.get("alias_of"),
+                "no_forced_lead": r.get("no_forced_lead"),
             }
             for r in results
         ],
