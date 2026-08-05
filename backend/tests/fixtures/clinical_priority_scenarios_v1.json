@@ -1,0 +1,438 @@
+{
+  "fixture_version": "1.0.0",
+  "contract_version": "0.6.3",
+  "ruleset_version": "0.5",
+  "approval_pack_version": "1.2",
+  "scope": "hepatic_checkpoint_1",
+  "notes": [
+    "CONTRACT-FIX-1 is a confirmed literal duplicate of HEP-AS-1 (alias_of).",
+    "FIB-4 must not be computed or displayed for HEP-AS-10.",
+    "No standalone bilirubin Tier 0 escalation (HEP-U2 unset / A9)."
+  ],
+  "default_lab_ranges": {
+    "alt": {"min": 0, "max": 49, "source": "lab"},
+    "ast": {"min": 0, "max": 40, "source": "lab"},
+    "alp": {"min": 30, "max": 116, "source": "lab"},
+    "ggt": {"min": 0, "max": 55, "source": "lab"},
+    "bilirubin": {"min": 0, "max": 21, "source": "lab"},
+    "albumin": {"min": 35, "max": 50, "source": "lab"},
+    "inr": {"min": 0.8, "max": 1.2, "source": "lab"},
+    "platelets": {"min": 150, "max": 450, "source": "lab"},
+    "mcv": {"min": 83, "max": 96, "source": "lab"},
+    "hgb": {"min": 130, "max": 170, "source": "lab"},
+    "ferritin": {"min": 30, "max": 300, "source": "lab"},
+    "transferrin": {"min": 2.0, "max": 3.6, "source": "lab"},
+    "tsat": {"min": 20, "max": 50, "source": "lab"}
+  },
+  "scenarios": [
+    {
+      "scenario_id": "CONTRACT-FIX-1",
+      "alias_of": "HEP-AS-1",
+      "biomarkers": {
+        "alt": 250,
+        "alp": 46,
+        "bilirubin": 12,
+        "ggt": 40,
+        "mcv": 99.5,
+        "transferrin": 1.9
+      },
+      "context": {},
+      "signal_results": [
+        {
+          "signal_id": "signal_alt_high",
+          "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F1"],
+        "urgency": "within_days",
+        "severity": "marked",
+        "tier": 1,
+        "role": "principal_concern",
+        "missing_data_notes_any": ["albumin_inr_not_assessable"],
+        "nested_any": ["mcv_mild_macrocytosis", "transferrin_low"],
+        "prohibited_any": ["urgent_diagnostic_claim"],
+        "fib_4_computed": false,
+        "fib_4_displayed": false,
+        "identical_to": "HEP-AS-1"
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-1",
+      "alias_of": "CONTRACT-FIX-1",
+      "biomarkers": {
+        "alt": 250,
+        "alp": 46,
+        "bilirubin": 12,
+        "ggt": 40,
+        "mcv": 99.5,
+        "transferrin": 1.9
+      },
+      "context": {},
+      "signal_results": [
+        {
+          "signal_id": "signal_alt_high",
+          "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F1"],
+        "urgency": "within_days",
+        "severity": "marked",
+        "tier": 1,
+        "role": "principal_concern",
+        "missing_data_notes_any": ["albumin_inr_not_assessable"],
+        "nested_any": ["mcv_mild_macrocytosis", "transferrin_low"],
+        "prohibited_any": ["urgent_diagnostic_claim"],
+        "fib_4_computed": false,
+        "fib_4_displayed": false,
+        "identical_to": "CONTRACT-FIX-1"
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-2",
+      "biomarkers": {
+        "alt": 250,
+        "alp": 46,
+        "bilirubin": 12,
+        "ggt": 40,
+        "albumin": 28
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_alt_high",
+          "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        },
+        {
+          "signal_id": "signal_albumin_low",
+          "activation_key": "signal_albumin_low::inv_albumin_low_protein_loss_or_reduced_synthesis"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F4"],
+        "urgency": "same_day",
+        "severity": "severe",
+        "tier": 0,
+        "role": "principal_concern",
+        "withheld": true,
+        "serious_result_state": "tier_0_withheld",
+        "dependency_flags_any": ["TIER_0_PATHWAY_DEPENDENCY"],
+        "caveats_any": ["albumin_non_hepatic_cause_mandatory"],
+        "prohibited_any": ["assert_albumin_cause_hepatic_without_exclusion"],
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-3",
+      "biomarkers": {
+        "alt": 550,
+        "alp": 80,
+        "bilirubin": 12,
+        "ggt": 40
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_alt_high",
+          "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F1"],
+        "urgency": "same_day",
+        "severity": "severe",
+        "tier": 0,
+        "role": "principal_concern",
+        "withheld": true,
+        "serious_result_state": "tier_0_withheld",
+        "dependency_flags_any": ["TIER_0_PATHWAY_DEPENDENCY"],
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-4",
+      "biomarkers": {
+        "alt": 60,
+        "alp": 80,
+        "bilirubin": 12,
+        "ggt": 40
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_alt_high",
+          "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F1"],
+        "urgency": "within_weeks",
+        "severity": "mild",
+        "tier": 1,
+        "role": "principal_concern",
+        "prohibited_any": ["describe_as_urgent_merely_because_tier1"],
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-5",
+      "biomarkers": {
+        "alp": 240,
+        "ggt": 40,
+        "alt": 30,
+        "bilirubin": 12
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_alp_high",
+          "activation_key": "signal_alp_high::inv_alp_high_bone_biliary"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F7"],
+        "tier": 1,
+        "role": "reclassified",
+        "prohibited_any": ["assume_hepatic_origin_without_ggt"],
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-6",
+      "biomarkers": {
+        "bilirubin": 38,
+        "alt": 30,
+        "alp": 80,
+        "ggt": 40,
+        "hgb": 145
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_bilirubin_high",
+          "activation_key": "signal_bilirubin_high::inv_bilirubin_high_hepatobiliary_excretion_impairment"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F6"],
+        "urgency": "routine",
+        "tier": 2,
+        "role": "principal_concern",
+        "prohibited_any": ["assert_gilberts_without_conjugated_fraction"],
+        "no_bilirubin_tier0_escalation": true,
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-7",
+      "biomarkers": {
+        "bilirubin": 38,
+        "alt": 30,
+        "alp": 80,
+        "ggt": 40,
+        "hgb": 110
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_bilirubin_high",
+          "activation_key": "signal_bilirubin_high::inv_bilirubin_high_hepatobiliary_excretion_impairment"
+        },
+        {
+          "signal_id": "signal_hgb_low",
+          "activation_key": "signal_hgb_low::inv_hgb_low_anemia"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F6"],
+        "label_contains": "anaemia",
+        "urgency": "within_weeks",
+        "tier": 1,
+        "role": "principal_concern",
+        "prohibited_any": ["dismiss_haemolysis"],
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-8",
+      "biomarkers": {
+        "ferritin": 1400,
+        "tsat": 22,
+        "alt": 90,
+        "alp": 80,
+        "bilirubin": 12,
+        "ggt": 40
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_alt_high",
+          "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        },
+        {
+          "signal_id": "signal_ferritin_high",
+          "activation_key": "signal_ferritin_high::inv_ferritin_high_overload"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F1"],
+        "tier": 1,
+        "role": "principal_concern",
+        "nested_any": ["ferritin_contextual"],
+        "must_not_include_finding_types": ["HEP-F10"],
+        "prohibited_any_on_set": ["magnitude_promote_ferritin"],
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-9",
+      "biomarkers": {
+        "ferritin": 420,
+        "tsat": 58,
+        "alt": 90,
+        "alp": 80,
+        "bilirubin": 12,
+        "ggt": 40
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_alt_high",
+          "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        },
+        {
+          "signal_id": "signal_ferritin_high",
+          "activation_key": "signal_ferritin_high::inv_ferritin_high_overload"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F1", "HEP-F10"],
+        "tier_by_type": {"HEP-F1": 1, "HEP-F10": 1},
+        "presentation_mode_in": ["co_lead", "principal"],
+        "co_lead_eligible": true,
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-10",
+      "biomarkers": {
+        "alt": 30,
+        "ast": 45,
+        "platelets": 130,
+        "alp": 80,
+        "bilirubin": 12,
+        "ggt": 40
+      },
+      "context": {"age": 58},
+      "derived": {
+        "fib_4": {"value": 1.8, "source": "computed"}
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_platelets_low",
+          "activation_key": "signal_platelets_low::inv_platelets_low_thrombocytopenia"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F5"],
+        "urgency": "within_weeks",
+        "tier": 1,
+        "role": "principal_concern",
+        "fib_4_computed": false,
+        "fib_4_displayed": false,
+        "quarantine_flags_any": ["XD-QUAR-1"],
+        "dependency_flags_any": ["REGULATORY_DEPENDENCY_R3"],
+        "assert_fib_4_unused": true
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-11",
+      "biomarkers": {
+        "alt": 250,
+        "bilirubin": 12,
+        "ggt": 40
+      },
+      "context": {"alp_absent": true},
+      "signal_results": [
+        {
+          "signal_id": "signal_alt_high",
+          "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F9"],
+        "tier": 1,
+        "role": "principal_concern",
+        "severity_indeterminate": true,
+        "prohibited_any": ["call_hepatocellular_without_alp"],
+        "missing_data_notes_any": ["pattern_not_assessable_r_not_computed"],
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-12",
+      "biomarkers": {
+        "alt": 30,
+        "ast": 25,
+        "alp": 80,
+        "ggt": 40,
+        "bilirubin": 12,
+        "albumin": 42
+      },
+      "signal_results": [],
+      "expected": {
+        "no_concern": true,
+        "finding_types": [],
+        "no_concern_notes_any": ["normal_enzymes_do_not_exclude_fibrosis_cirrhosis"],
+        "domain_notes_any": ["must_not_state_liver_is_healthy"],
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-13",
+      "biomarkers": {
+        "alt": 250,
+        "alp": 80,
+        "bilirubin": 12,
+        "ggt": 40,
+        "mcv": 118
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_alt_high",
+          "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        },
+        {
+          "signal_id": "signal_mcv_high",
+          "activation_key": "signal_mcv_high::inv_mcv_high_macrocytosis"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F1", "HAEM-F2"],
+        "tier_by_type": {"HEP-F1": 1, "HAEM-F2": 1},
+        "prohibited_any": ["attach_mcv_as_context_above_mild_band"],
+        "fib_4_computed": false
+      }
+    },
+    {
+      "scenario_id": "HEP-AS-14",
+      "biomarkers": {
+        "alt": 250,
+        "alp": 80,
+        "bilirubin": 12,
+        "ggt": 40,
+        "platelets": 35
+      },
+      "signal_results": [
+        {
+          "signal_id": "signal_alt_high",
+          "activation_key": "signal_alt_high::inv_alt_high_r_value_hepatocellular_biochemical_pattern"
+        },
+        {
+          "signal_id": "signal_platelets_low",
+          "activation_key": "signal_platelets_low::inv_platelets_low_thrombocytopenia"
+        }
+      ],
+      "expected": {
+        "finding_types": ["HEP-F1", "HAEM-PLT"],
+        "tier_by_type": {"HEP-F1": 1, "HAEM-PLT": 0},
+        "haem_leads_on_time_band": true,
+        "prohibited_any": ["absorb_platelets_below_50"],
+        "fib_4_computed": false
+      }
+    }
+  ]
+}
