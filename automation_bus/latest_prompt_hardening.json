@@ -1,131 +1,125 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "CLIN-PRIORITY-CORE-1",
+  "work_id": "CLIN-PRIORITY-RESULT-REGEN-1",
   "status": "HARDENED",
   "hardening_date": "2026-08-05",
   "hardened_by": "Claude Code",
   "risk_level": "HIGH",
-  "change_type": "MIXED",
+  "change_type": "BEHAVIOUR",
   "execution_model": "TWO_PHASE_START_FINISH",
-  "branch": "feature/clin-priority-core-1",
+  "branch": "feature/clin-priority-result-regen-1",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
   "prompt_sha256": {
-    "before_signal_preservation_amendment": "e373568457f531ca40c1d1a21254ef736cc2168930e676b691f0ad37ae1c2cc0",
-    "after_signal_preservation_amendment": "6ad7d88eb2e6644f4f04df9081d095f4bb304ad0ebab907d2937d7bb125997c2",
-    "measured_by": "sha256sum automation_bus/latest_cursor_prompt.md, run before and after the section 3A/4.4/12/13/15 edits in this hardening pass"
+    "resubmitted_version_hardened_this_record": "8b4aa2cde8ac3c6642bf95d92590d77473a94f3435934789520fc85f986b26a1",
+    "measured_by": "sha256sum automation_bus/latest_cursor_prompt.md, current file as re-hardened in this record"
   },
 
   "verification_mode_used": {
     "mode": "batched direct verification, no fork",
-    "rationale": "Nearly all governing documents (contract, ruleset, register, closure report, medical adjudication, approval pack v1.2, product ratification, architecture-hardening report, repository inspection report, package definition v1.1, sprint plan vNEXT_1, ADR-RT-001-004, six domain rulesets, and core runtime files signal_evaluator.py/insight_graph_builder.py/insight_graph_v1.py/results.py) were authored or freshly read by this same Claude Code session earlier in the engagement -- re-reading them would be redundant, not stronger verification. The remaining unread runtime/harness paths were a small, bounded set of quick existence/content checks, not large disjoint work, so direct verification was used instead of a fork."
+    "rationale": "Single cohesive HIGH/BEHAVIOUR package with 8 interdependent authority areas (not disjoint), verified via parallel Grep/Read/Bash calls across two hardening passes in this same session; no fork used since the work does not decompose into independent non-overlapping chunks."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "declared_risk_level": "HIGH",
-    "declared_change_type": "MIXED",
-    "files_in_scope": "15 mandatory governing documents (prompt section 3) + six domain rulesets + ~10 runtime/harness paths referenced across sections 4/7/11 -- all enumerated, none open-ended",
-    "behaviour_changes_touch_intelligence_core": "YES -- explicit in the prompt itself (section 6): signal-to-finding construction, governed-content compilation/loading, consolidation, urgency/severity/tier assignment, InsightGraph and AnalysisDTO output assembly",
-    "tests_listed_for_behaviour_changes": "YES -- section 13, extensive",
-    "scope_proportionality": "PASS -- bounded internal checkpoints, explicit exclusions list (section 11), no open-ended discovery language",
-    "advisory_duplication": "NO",
+    "declared_change_type": "BEHAVIOUR",
+    "files_in_scope": "not enumerated as a literal list in the prompt; Stage 1A preflight required across 8 named subsystems (versioning classifier, persisted-result compatibility, regeneration, retention policy, persistence/result-date, trend/longitudinal, frontend banner, existing lineage fields)",
+    "behaviour_changes_touch_intelligence_core": "NO for clinical/signal/prioritisation logic (explicitly excluded by Authority boundaries); YES for backend/core/dto versioning classifier and new persistence/trend paths, consistent with declared HIGH",
+    "tests_listed_for_behaviour_changes": "YES -- 16 explicit regression scenarios in 'Required evidence and tests'",
+    "scope_proportionality": "PASS -- bounded by explicit Authority boundaries, STOP conditions, and Out-of-scope sections; STOP list explicitly caps expansion at 'result-date schema, analysis-policy versioning, regeneration lineage, backend trend selection, and frontend trend rewire'",
+    "advisory_duplication": "NO -- automation_bus/latest_scope_advisory.md concerns an unrelated Stage 0 pipeline-sequencing item",
     "decision": "ACCEPT"
   },
 
   "stage_2a_authority_verification": {
-    "clinical_and_architecture_authority_paths": {
-      "result": "all previously read in full this session; no citation errors found (contract v0.6.3, ruleset v0.5, adjudication register v0.4, closure report v0.4, medical adjudication v0.1, approval pack v1.2, product ratification v1.0, architecture-hardening report, repository inspection report, package definition v1.1, sprint plan vNEXT_1, ADR-RT-001 through 004, six domain rulesets)"
+    "result_versioning_classification": {
+      "citation": "backend/core/dto/result_versioning_policy_v1.py:114-174 (assess_result_versioning, build_result_versioning_metadata)",
+      "status": "single authority, CONFIRMED"
     },
-    "runtime_authority_paths_freshly_verified_this_hardening_pass": {
-      "backend/core/analytics/signal_evaluator.py": "confirmed prior read this session -- SignalRegistry, activation-key-keyed (lines 26-202)",
-      "backend/core/analytics/insight_graph_builder.py": "confirmed prior read this session -- sole InsightGraphV1 assembler",
-      "backend/core/contracts/insight_graph_v1.py": "confirmed prior read this session -- canonical InsightGraph contract",
-      "backend/core/models/results.py": "confirmed prior read this session -- AnalysisDTO and related response classes",
-      "backend/tools/run_arbitration_scenarios.py": "freshly read this pass (lines 1-60) -- confirms the JSON-fixture-driven scenario-runner pattern the prompt cites as the harness model (scenarios list, scenario_id-keyed, deterministic sort)",
-      "backend/core/analytics/arbitration_engine.py": "existence confirmed via ls this pass",
-      "backend/core/analytics/state_engine.py": "existence confirmed via ls this pass",
-      "backend/core/models/questionnaire.py": "existence confirmed via ls this pass",
-      "backend/tests/fixtures/arbitration_scenarios_v2.json": "existence confirmed via ls this pass"
+    "persisted_result_compatibility": {
+      "citation": "backend/core/dto/persisted_replay_contract_v1.py:64-105 (assess_persisted_result_compatibility)",
+      "status": "single authority, CONFIRMED"
     },
-    "no_parallel_finding_constructor_claim": {
-      "status": "CONFIRMED",
-      "evidence": "grep for 'clinical_concern_set|ClinicalFinding|ConsolidatedConcernSet|concern_constructor' across backend/core returned zero files -- the prompt's Stage 1B no-op check (section 5) is accurate; no such capability exists yet"
+    "regeneration_eligibility_and_execution": {
+      "citation": "eligibility: backend/core/dto/analysis_regeneration_v1.py:30-34 (assess_regeneration_available); execution: backend/app/routes/analysis.py:523-630 (POST /{analysis_id}/regenerate) calling backend/app/analysis_regeneration.py:18-165",
+      "status": "single authority, CONFIRMED"
     },
-    "scenario_count_claim": {
-      "status": "CONFIRMED",
-      "evidence": "grep count of scenario-ID table rows (XD-AS-/HAEM-AS-/HEP-AS-/RE-AS-/IRIN-AS-/THY-AS-/CN-AS- prefixes) in HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_APPROVAL_PACK_v1_2.md returns exactly 109, matching the prompt's per-domain breakdown (39+6+14+14+12+12+12=109) and its required APPROVED_SCENARIO_ESTATE_COVERAGE: 109/109 exit criterion"
+    "retention_immutable_snapshot_policy": {
+      "citation": "docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md:7-9",
+      "status": "CONFIRMED, not contradicted anywhere in code -- analysis_regeneration.py only ever builds a new payload for a new analysis_id, never mutates a stored row"
+    },
+    "persistence_and_result_date_storage": {
+      "citation": "backend/core/models/database.py:104-195 -- Analysis (created_at, completed_at, updated_at) and AnalysisResult (created_at) are the only date columns",
+      "status": "no result_date field exists anywhere in schema or frontend types (repo-wide search for result_date/sample_date/collection_date/report_date returns zero hits); this is the net-new field Outcome A explicitly authorises"
+    },
+    "trend_longitudinal_selection_path": {
+      "citation": "frontend-only today: frontend/app/hooks/useTrendData.ts:44,55,62-63; frontend/app/lib/trendComparison.ts:147-153 (sortCompletedHistoryNewestFirst sorts all completed analyses by created_at, no stale/superseded exclusion)",
+      "status": "no backend trend authority exists; this is the net-new subsystem Outcome F explicitly authorises"
+    },
+    "frontend_stale_banner_and_refresh_action": {
+      "citation": "frontend/app/components/results/StaleResultBanner.tsx:16-108 -- gated purely on server-provided versioning.result_status / regeneration_available (lines 21-24, 85); no frontend inference",
+      "status": "CONFIRMED reusable as-is per Outcome G"
+    },
+    "existing_supersession_lineage_fields": {
+      "citation": "backend/app/analysis_regeneration.py:45-47 stamps meta['regenerated_from_analysis_id'] and meta['regeneration_policy_id']",
+      "status": "field is written once and never read anywhere else in the repo -- inert, not an active lineage/authority mechanism; no parallel authority exists"
+    },
+    "backfill_source_check_for_outcome_a": {
+      "citation": "backend/ssot/questionnaire.json:1-24 -- only date-typed field is date_of_birth; repo-wide search for sample_date/collection_date/report_date in frontend returns zero hits",
+      "status": "no legacy-equivalent user-supplied clinical-chronology date exists anywhere; every pre-existing analysis record will backfill via the third tier only (legacy_created_at_fallback), none will qualify for legacy_equivalent_source -- consistent with the prompt's own hierarchy, not a STOP condition"
     }
   },
 
   "stage_2b_behavioural_hardening": {
-    "intelligence_core_scope_explicit": "YES -- section 6 names every affected surface",
-    "regression_targets_included": "YES -- section 13",
-    "hidden_scope_creep": "NONE FOUND -- section 11 explicit exclusions and do-not-modify list (precedence_engine.py, arbitration_engine.py, state_engine.py, questionnaire schema, existing WHY/root-cause authority) are consistent with, not contradicted by, the in-scope section 7 work",
-    "stop_conditions_protect_behavioural_correctness": "YES -- 21 explicit STOP conditions (section 12; expanded from 15 in this pass), including the FIB-4/CV-risk live-path check (STOP 5) and the six new signal-preservation/provenance-conflict conditions (STOPs 16-21) added this pass, each required to be reported as a provenance conflict and escalated rather than silently resolved in favour of the newest document",
-    "determinism_risks_surfaced": "YES -- deterministic ordering, deterministic manifest, compile-manifest provenance all explicitly required (sections 7.2, 7.8, 9)",
-    "no_forced_lead_and_technical_tiebreak_boundary": {
-      "status": "CONFIRMED consistent with prior architecture work",
-      "evidence": "Section 7.5 explicitly prohibits adapting or reusing technical_tiebreak_lead as the finding-level algorithm -- this matches the repository inspection report's finding (WhyThisLeadWonSection.tsx / clinician_report_v1.py:96-99) that the existing primary_concern_mode literal includes a forced-tiebreak mode incompatible with the ratified no-forced-lead policy"
-    },
-    "longitudinal_boundary_consistency": {
-      "status": "CONFIRMED",
-      "evidence": "Section 10 restricts START to only RE-AS-3/RE-AS-5 minimum-necessary longitudinal logic and explicitly reserves GOVERNED_LONGITUDINAL_RULE_COVERAGE: 6/6 for FINISH -- exactly matches package definition v1.1 section 10's two-of-six-scenario-proven position"
-    },
-    "serious_result_framing_consistency": {
-      "status": "CONFIRMED",
-      "evidence": "Section 7.6 and section 11's exclusion of 'comprehensive Tier 0 escalation pathways' matches the corrected serious-result scope in sprint plan vNEXT_1 section 7 and package definition v1.1 section 8 -- no drift back to an escalation-service framing"
-    }
-  },
-
-  "prior_task_findings_inheritance": {
-    "policy_applied": "Findings from the CLIN-PRIORITY-ARCH-HARDEN-1 architecture-hardening pass and the CLIN-PRIORITY-IMPLEMENTATION-RESET-1 repository inspection are both artefact-backed (written this same session, both re-read/re-verified in this pass) -- not inherited without an artefact.",
-    "no_op_or_rescope_check": "Stage 1B (prompt section 5) claims are independently re-confirmed this pass via the grep in stage_2a above, not merely inherited from the inspection report's prose."
-  },
-
-  "gaps_or_risks_flagged_for_gpt_and_cursor_stage_1a": [
-    "FIB-4/cardiovascular-risk live-path status has since been resolved by direct repository investigation (see changes entry 2026-08-05 below): a FIB-4 derived-ratio calculation exists (backend/core/analytics/ratio_registry.py, added commit e0412a6, 2026-03-09, 'KB-S10') but is not exposed as a consumer-facing fibrosis-risk finding -- it appears only as a supporting_metrics entry in the (not currently promoted) pkg_hepatic_metabolic_stress package, and zero frontend files reference it. Cursor's Phase 0 must still record this finding as evidence (prompt section 9 Checkpoint 0) rather than rediscover it, and must not extend this existing derived-ratio computation into a fibrosis-risk finding/output -- the ratified 'AST:ALT ratio and platelets only' rule (hepatic ruleset, HEP-AS-10) still governs.",
-    "CORRECTION (2026-08-05): the branch feature/clin-priority-core-1 now exists and IS the current branch; kernel start has already run -- see existing_work_package_state below. The 2026-08-04 note that the branch 'does not yet exist' is superseded."
-  ],
-
-  "existing_work_package_state": {
-    "checked_this_pass": true,
-    "work_package_active_json": {
-      "exists": true,
-      "content": {"work_id": "CLIN-PRIORITY-CORE-1", "branch": "feature/clin-priority-core-1", "status": "STARTED", "timestamp_utc": "2026-08-04T21:20:18.484238+00:00"}
-    },
-    "latest_cursor_status_json": {"status": "IN_PROGRESS", "head_sha": "d9b92b2334dd0a7494062cf5d67898f27d133625"},
-    "implementation_code_written": false,
-    "evidence": "git diff main feature/clin-priority-core-1 --stat shows changes confined to automation_bus/latest_cursor_prompt.md and automation_bus/latest_prompt_hardening.json only -- no backend/ or frontend/ files touched. git log on the branch shows only documentation/staging commits (chore(bus): stage CLIN-PRIORITY-CORE-1; merge: cross-domain clinical findings documentation estate; docs(clin-priority): ...). Kernel start was run and succeeded, but Cursor has not yet written any implementation code.",
-    "token_validity_assessment": "The work_package_active.json schema carries no prompt-content hash, so the kernel cannot mechanically detect that the hardened prompt changed underneath an already-STARTED token. Since this pass materially amended the prompt (new section 3A, new section 4.4, six new STOP conditions, five new closure metrics) after the token was issued, and since SOP non-negotiable rules require execution only under a prompt that matches its hardening record, the existing STARTED token's basis is stale even though it has not mechanically expired. Because zero implementation code exists, there is no in-flight work to reconcile or lose.",
-    "recommendation": "Treat the existing token as requiring a fresh kernel start cycle before Cursor writes any implementation code, even though no destructive conflict exists. This hardening record (status HARDENED, new hash 6ad7d88e...) is valid and ready to support a fresh 'python backend/scripts/run_work_package.py start' once the current STARTED/IN_PROGRESS state is cleared through the standard kernel lifecycle. Claude Code does not run kernel lifecycle commands or edit work_package_active.json/latest_cursor_status.json directly -- this is reported for GPT/Cursor/human action, not executed here."
-  },
-
-  "changes": [
-    {
-      "date": "2026-08-05",
-      "section": "3A (new), 4.4 (new), 7.3, 12 (STOPs 16-21), 13, 15",
-      "change": "Added full Signal Preservation and Non-Subordination requirements: (1) section 3A states the purpose (the prioritisation layer sits above the existing signal estate and is not a second activation authority) and seven required invariants (existing signals/supporting signals continue firing unchanged; thresholds/activation keys/package lineage/runtime eligibility unchanged; tier/role/consolidation never gate activation; independent signals only become supporting-only under an explicit approved relationship rule; constituent signals remain identifiable and provenance-complete after consolidation; no Knowledge Bus promotion status changes; the 109 scenarios validate behaviour but never authorise signal suppression/retirement/threshold change; SIGNALS_INTENTIONALLY_RETIRED must be 0 absent cited prior authority); (2) section 3A.3 states the revised five-layer authority hierarchy (signal activation estate defines what fires -> domain clinical authority defines meaning -> cross-domain authority defines consolidation/prioritisation -> product authority defines presentation -> acceptance scenarios validate only); (3) section 4.4 requires the Phase 0 signal activation baseline inventory (signal ID, activation key, package/source, promotion/runtime status, primary biomarker, supporting biomarkers/signals, derived-marker dependencies, DTO/frontend exposure, regression evidence) and ties it into Checkpoint 0; (4) section 7.3 adds an explicit non-subordination line to the concern-construction service requirements; (5) section 12 adds STOP conditions 16-21 covering signal disabling, provenance loss, activation-behaviour change, promotion/eligibility change, silent retirement by a newer document, and unresolvable contract-vs-signal-estate conflict, each required to be reported as a provenance conflict and escalated rather than silently resolved in favour of the newest document; (6) sections 13 and 15 add the five mandatory closure metrics (SIGNAL_ACTIVATION_BASELINE_TOTAL, SIGNAL_ACTIVATION_PRESERVED_TOTAL, SUPPORTING_SIGNAL_BASELINE_TOTAL, SUPPORTING_SIGNAL_PRESERVED_TOTAL, SIGNALS_INTENTIONALLY_RETIRED) to both the required-evidence list and the START completion response.",
-      "verification_checklist": {
-        "signal_preservation_invariant_present": "YES -- section 3A.2, seven bullets",
-        "phase_0_signal_baseline_present": "YES -- section 4.4, referenced from Checkpoint 0 in section 9",
-        "preservation_metrics_present": "YES -- section 13 and section 15, five named metrics",
-        "zero_retirement_default_present": "YES -- section 3A.2 last bullet and section 13/15 metric definition, both state SIGNALS_INTENTIONALLY_RETIRED must be 0 unless explicit prior authority is cited",
-        "non_subordination_rules_present": "YES -- section 3A.1 purpose statement, section 3A.2 tier/role/consolidation-must-not-gate-activation bullet, section 7.3 added line",
-        "provenance_retention_present": "YES -- section 3A.2 constituent-identifiability bullet, section 12 STOP condition 17, section 13/15 'all constituent identities retained in finding provenance' requirement",
-        "stop_conditions_for_conflicts_present": "YES -- section 12 STOP conditions 16-21 plus the provenance-conflict escalation instruction immediately following them",
-        "revised_authority_hierarchy_present": "YES -- section 3A.3, five layers exactly as specified"
+    "authority_boundaries_respected": "YES -- prompt explicitly excludes clinical prioritisation/signal/threshold/tiering/lead-selection/longitudinal-medical-rule changes; verified no such files are in the required-outcomes list",
+    "stop_conditions_evaluated_against_current_repo_state": [
+      {
+        "condition": "current repository has more than one plausible result-versioning authority",
+        "result": "NOT TRIGGERED -- single authority confirmed (result_versioning_policy_v1.py)"
       },
-      "reason": "User-identified requirement: the Cross-Domain Clinical Findings and Prioritisation layer must organise and prioritise existing signals, not become a second activation authority or silently suppress/retire/subordinate them.",
-      "classification": "Scope-clarifying safety addition. Adds new mandatory invariants, a new Phase 0 evidence requirement, six new STOP conditions, and five new closure metrics. Does not touch clinical content, does not change front matter, does not remove any existing requirement. Re-verified this pass: no parallel finding constructor exists (repeat of prior grep, unchanged result) and the existing work-package token state was freshly checked (see existing_work_package_state above)."
+      {
+        "condition": "more than one competing backend trend authority would be created",
+        "result": "NOT TRIGGERED -- none exists today, only one is being created"
+      },
+      {
+        "condition": "implementing supersession requires deleting or mutating historic results",
+        "result": "NOT TRIGGERED -- additive only, per retention policy citation above"
+      },
+      {
+        "condition": "result_date cannot be added/populated via authorised bounded migration without destructive/misleading rewriting",
+        "result": "NOT TRIGGERED -- deterministic 3-tier hierarchy applies; all legacy records resolve cleanly to legacy_created_at_fallback"
+      },
+      {
+        "condition": "a new user-entered date appears necessary",
+        "result": "NOT TRIGGERED -- single result_date field is sufficient per Outcome A"
+      },
+      {
+        "condition": "existing wording cannot represent stale/refresh state",
+        "result": "NOT TRIGGERED -- StaleResultBanner.tsx wording is reusable as-is"
+      },
+      {
+        "condition": "work expands beyond the explicitly authorised scope (result-date schema, analysis-policy versioning, regeneration lineage, backend trend selection, frontend trend rewire)",
+        "result": "NOT TRIGGERED -- all required outcomes A-G map onto this authorised set"
+      }
+    ],
+    "prior_hardening_blockers_resolution": {
+      "blocker_1_no_result_date_field": "Resolved by resubmitted prompt Outcome A (lines 98-125): explicitly authorises adding result_date with a deterministic backfill/provenance hierarchy; storage-location decision (Analysis vs AnalysisResult) is correctly left as a Stage D task",
+      "blocker_2_trend_authority_frontend_only": "Resolved by resubmitted prompt Outcome F (lines 178-198): explicitly authorises a new backend trend/history selection path and frontend migration off useTrendData.ts/trendComparison.ts"
     },
-    {
-      "date": "2026-08-04",
-      "section": "7.2 Compiled prioritisation artefact",
-      "change": "Added an explicit 'Compilation scope boundary' paragraph: compile only the rules necessary to reproduce the 109 approved scenarios and their governing structural context; any domain-ruleset band/threshold recorded as unset (e.g. marked '[U]') must be excluded from compilation and recorded as a follow-on item, never estimated.",
-      "reason": "User-identified gap during post-hardening review: STOP condition 1 (section 12) is scoped to 'any of the 109 scenarios' and would not obviously fire for a domain-ruleset table row with an unset threshold that no approved scenario exercises (concrete example found: haematology ruleset HAEM-U-D-5, 'marked leucocytosis with abnormal differential pattern', recorded as '[U] -- threshold not set' inside an otherwise-governed within-days urgency table). The prior general prohibition ('do not invent a new clinical rule') and the fail-closed compiler requirement already existed but did not explicitly name this failure mode. A proactive scope-bounding instruction was chosen over a 16th STOP condition because: (1) it prevents the ambiguity rather than reacting to it; (2) an unset '[U]' threshold is an already-known, already-classified authoring gap, not a novel discovery requiring escalation, so a STOP is the wrong severity; (3) this pattern recurs across multiple domains (e.g. iron/inflammatory IRIN-U2/IRIN-U3, thyroid THY-U2), so a STOP condition would trigger repeatedly for a uniformly-already-decided disposition rather than being handled once by a scoping rule.",
-      "classification": "Scope-narrowing safety correction. Reduces risk (closes an ambiguity that could permit undetected clinical-rule invention); does not expand scope, does not touch clinical content, does not change front matter, does not require re-running Stage 2A/2B verification against new authority files."
-    }
+    "recommendation_for_stage_d": "result_date should be added as a new nullable column on Analysis (not AnalysisResult) since Analysis already holds raw_biomarkers/questionnaire_data and AnalysisResult is 1:1 with it -- avoids duplicating the field across both tables. The existing inert regenerated_from_analysis_id field should be considered for promotion to a first-class queryable lineage column rather than inventing a second lineage mechanism."
+  },
+
+  "canonical_existing_test_paths": [
+    "backend/tests/unit/test_launch_core3_result_versioning.py",
+    "backend/tests/regression/test_internal_uat_result_versioning_dto_contract.py",
+    "backend/tests/regression/test_med_rev2_domain_card_copy_and_regeneration.py"
   ],
 
-  "evidence_checklist_status": "COMPLETE -- see chat response for the mandatory Stage 2C table; re-issued 2026-08-05 following the section 3A/4.4/12/13/15 signal-preservation amendment above -- status remains HARDENED. Authority-path re-verification was not required (no new source documents introduced); the work-package token state WAS freshly re-checked this pass and requires GPT/Cursor/human action before implementation proceeds -- see existing_work_package_state."
+  "untracked_artefact_disposition": {
+    "file": "docs/audit-papers/CLIN-PRIORITY_RESULT_REGENERATION_AUDIT.md",
+    "nature": "read-only pre-existing audit paper authored by Claude Code prior to this work package's prompt being issued -- documents the CLIN-PRIORITY-CORE-1 missing-clinical_concern_set classification gap that this work package (CLIN-PRIORITY-CORE-1's Stage 1B reality-check items) exists to fix",
+    "disposition": "in-scope evidence, not code -- should be committed to main (or the feature branch) as supporting documentation alongside this work package's completion evidence; not a stash/triage issue and does not block kernel start"
+  },
+
+  "evidence_checklist_status": "COMPLETE -- Stage 2A (8/8 authority citations), Stage 2B (7/7 STOP conditions evaluated against current repo state, both prior blockers confirmed resolved), canonical test paths identified. This record's work_id/branch/risk_level/change_type match automation_bus/latest_cursor_prompt.md exactly. Ready for kernel 'python backend/scripts/run_work_package.py start' on feature/clin-priority-result-regen-1."
 }
