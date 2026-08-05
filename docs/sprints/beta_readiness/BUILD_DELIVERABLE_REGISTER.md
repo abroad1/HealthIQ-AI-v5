@@ -1633,8 +1633,12 @@ Documentation-only post-merge reconciliation. Sources: committed implementation 
 
 ## CLIN-PRIORITY-CORE-1 — Cross-domain clinical findings and prioritisation
 
-**Status:** Complete — awaiting independent post-FINISH audit / merge  
+**Status:** Complete — merged  
 **Date closed:** 2026-08-05  
+**Date merged:** 2026-08-05  
+**Merge commit:** `3197d42584b5eda42d5519ecfa8108f63b3e54d1`  
+**Gate:** `PASS` (`automation_bus/latest_gate_evidence.json`, work_id `CLIN-PRIORITY-CORE-1`)  
+**Post-FINISH audit:** `POST_FINISH_AUDIT_PASS_WITH_NON_BLOCKING_CARRY_FORWARDS` (`docs/architecture/CLIN-PRIORITY-CORE-1_POST_FINISH_audit.md`)  
 **Programme block(s):** Intelligence Core clinical prioritisation + results shell
 
 ### Delivered / ticked off
@@ -1643,17 +1647,19 @@ Documentation-only post-merge reconciliation. Sources: committed implementation 
 - Bounded correction of cross-domain same-day co-equal outcomes (`XD-AS-1`/`RE-AS-12`, `XD-AS-7`).
 - Governed longitudinal coverage 6/6 (AKI, CKD chronicity, statin doubling, cytopenia windows, thyroid two-occasion, HbA1c spacing).
 - Frontend renders server `clinical_concern_set` as sole clinical-priority authority; `technical_tiebreak_lead` demoted when present.
+- Merged to `main` after independent post-FINISH audit.
 
 ### Carry-forwards
-- Schema-level retirement of legacy `primary_concern_mode` (UI demotion done).
-- Governed consumer serious-result wording where copy is still unauthorised.
-- Pre-existing questionnaire/pregnancy context CFs unchanged.
+- Final consumer serious-result wording (where copy is still unauthorised).
+- Schema-level retirement of legacy `primary_concern_mode` (UI demotion done; field remains for compatibility).
+- Pre-existing questionnaire/pregnancy context gaps (CF register).
+- Unchanged R2/R3 quarantines (CV-risk %, FIB-4 consumer finding).
 
 ### Blockers / risks
-- None blocking FINISH completion; merge awaits independent audit.
+- None.
 
 ### Recommended next sprint
-- Independent post-FINISH audit, then merge when authorised; then release-wording / questionnaire context packages as sequenced.
+- Release-wording / questionnaire context packages as sequenced; optional schema cleanup of legacy `primary_concern_mode`.
 
 ---
 
