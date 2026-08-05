@@ -99,6 +99,35 @@ The six domain rulesets are subordinate evidence. Their content may be compiled 
 
 Do not reopen or reinterpret any approved clinical or product decision.
 
+## 3A. Signal preservation and non-subordination
+
+### 3A.1 Purpose
+
+The Cross-Domain Clinical Findings and Prioritisation layer sits **above** the existing signal estate. Its job is to organise, consolidate and prioritise signals that already fire, so the user knows what to focus on. It is **not** a second activation authority.
+
+This package must not switch off, suppress, retire, subordinate or rewrite existing runtime signals or supporting signals.
+
+### 3A.2 Required invariants
+
+- All currently wired, promoted, runtime-eligible signals and supporting signals must continue to fire under the same conditions as before this package.
+- Existing activation thresholds, biomarker requirements, activation keys, package lineage and runtime eligibility must remain unchanged.
+- Prioritisation tier, finding role and consolidation must not act as activation gates. A finding's tier, role, or consolidation state may change how it is *presented*; it must never determine whether the underlying signal *fires*.
+- An independent signal must not become supporting-only unless an explicit approved relationship rule (a named combination/consolidation rule in the ratified authority, e.g. `HAEM-OV-*`, `RE-OV-*`, `IRIN-OV-*`, `XD-C*`) requires that treatment for the current result set. Absent such a rule, an independently-firing signal remains an independent finding.
+- Constituent signals must remain identifiable and provenance-complete after consolidation — consolidating frames into one finding must never destroy the ability to recover which signals/activation-keys contributed to it.
+- No Knowledge Bus promotion status may change as a result of this package. This package is a runtime consumer of the existing promoted estate, not a promotion authority.
+- The 109 approved scenarios validate concern-construction and prioritisation *behaviour*. They do not authorise signal suppression, retirement, or threshold changes — a scenario passing must never be achieved by altering what an existing signal does.
+- `SIGNALS_INTENTIONALLY_RETIRED` must be `0` for this package, unless a pre-existing explicit retirement authority (a named, dated decision in a ratified document, distinct from this package) is cited as the basis.
+
+### 3A.3 Revised authority hierarchy
+
+Distinguish these five layers; do not let one silently override another:
+
+1. **The existing authorised signal activation and promotion estate defines what fires.** `SignalRegistry`, activation keys, package promotion status, and runtime eligibility as they exist today are the ground truth for signal activation and are not reopened by this package.
+2. **Domain clinical authority defines what active signals mean.** The six domain rulesets, subordinate to the ratified cross-domain package, supply clinical meaning for a signal once it has fired.
+3. **Cross-domain authority defines how findings are consolidated and prioritised.** Contract v0.6.3, ruleset v0.5, adjudication register v0.4, closure report v0.4 govern consolidation, tiering, urgency, severity, and lead selection — all operating on findings built from signals that already fired under layer 1.
+4. **Product authority defines presentation.** Clinician-first v1.0 governs prominence, ordering display, and lead/co-lead/no-forced-lead presentation — never activation.
+5. **Acceptance scenarios validate the implementation.** The 109-scenario estate proves concern-construction and prioritisation behave correctly; it does not independently authorise signal retirement, threshold change, or promotion-status change at any layer above.
+
 ## 4. Stage 1A authority preflight
 
 Before changing code, Cursor must verify and record in the implementation evidence:
@@ -144,6 +173,24 @@ Do not:
 - allow tests and runtime to load different authority sources.
 
 If the repository does not contain enough architecture to establish one canonical compiled artefact path without guessing, STOP.
+
+### 4.4 Signal activation baseline
+
+Before Cursor changes any concern-construction behaviour, it must create a repository-derived baseline inventory of every currently active and promoted signal and supporting signal.
+
+For each record, capture:
+
+- signal ID;
+- activation key;
+- package/source;
+- promotion and runtime status;
+- primary biomarker;
+- supporting biomarkers/signals;
+- derived-marker dependencies;
+- existing DTO or frontend exposure;
+- regression fixture or test evidence showing current activation.
+
+This inventory is mandatory implementation evidence. It must be used as the non-regression baseline for the closure metrics in §13/§15 — every signal and supporting signal in the baseline must still be shown firing, under the same conditions, at Checkpoint 3 closure. Build this inventory during Checkpoint 0 (§9), before any concern-construction code changes.
 
 ## 5. Stage 1B baseline reality check
 
@@ -263,6 +310,8 @@ The service must:
 12. preserve complete rule and source provenance.
 
 It must not reuse cluster-level arbitration scoring as clinical finding prioritisation.
+
+It must not act as a second activation authority: it consumes signals that have already fired under the existing `SignalRegistry`/promotion estate (§3A.3 layer 1) and organises them; it must never decide whether a signal fires in the first place, and tier/role/consolidation assignment must never feed back into upstream activation.
 
 ### 7.4 InsightGraph and DTO integration
 
@@ -396,7 +445,8 @@ Before new behavioural code:
 - inspect all live FIB-4 and cardiovascular-risk code paths;
 - verify forbidden-path boundaries;
 - identify canonical existing regression commands;
-- record baseline tests.
+- record baseline tests;
+- **build the signal activation baseline inventory required by §4.4, before any concern-construction behaviour is changed.**
 
 If Phase 0 passes, proceed.
 
@@ -544,6 +594,14 @@ STOP immediately and report exact evidence if:
 13. The kernel-issued work-package token is missing, mismatched or invalid.
 14. Any Automation Bus state would need manual editing.
 15. START would need to implement longitudinal Checkpoint 4 or frontend Checkpoint 5 to claim 109/109 coverage beyond the narrow compatibility boundary in §§7.5 and 10.
+16. A scenario can pass only by disabling, hiding, or altering an existing active signal or supporting signal.
+17. Consolidation loses activation-key or signal provenance — the constituent signal identities behind a consolidated finding cannot be fully recovered.
+18. Prioritisation logic (tier, role, consolidation) changes upstream signal activation behaviour, rather than only how an already-fired finding is presented.
+19. Implementation requires changing Knowledge Bus promotion status or runtime eligibility for any existing signal.
+20. A newer document appears to retire an established signal without a clear, cited, pre-existing superseding decision.
+21. Existing signal behaviour conflicts with the prioritisation contract in a way that cannot be resolved by presentation/consolidation alone.
+
+For STOP conditions 16-21, report the conflict as a **provenance conflict** and escalate it — do not silently resolve it in favour of the newest document. The existing authorised signal activation and promotion estate (§3A.3, layer 1) is not overridden merely because a later document exists; a genuine conflict between the signal estate and the prioritisation contract requires explicit human/GPT adjudication, not an implementation-time judgement call.
 
 Do not weaken a STOP condition to complete the sprint.
 
@@ -559,6 +617,7 @@ At minimum, evidence must include:
 - hepatic pilot scenario tests;
 - full clinical-prioritisation scenario harness;
 - `APPROVED_SCENARIO_ESTATE_COVERAGE: 109/109`;
+- `SIGNAL_ACTIVATION_BASELINE_TOTAL`, `SIGNAL_ACTIVATION_PRESERVED_TOTAL`, `SUPPORTING_SIGNAL_BASELINE_TOTAL`, `SUPPORTING_SIGNAL_PRESERVED_TOTAL`, `SIGNALS_INTENTIONALLY_RETIRED` — required result: activation preserved for every baseline signal and supporting signal (preserved totals equal baseline totals), no disappearance caused by consolidation or ordering, all constituent identities retained in finding provenance, `SIGNALS_INTENTIONALLY_RETIRED: 0` unless explicit prior authority is cited;
 - no-forced-lead test;
 - same-day co-equal-group tests;
 - more-serious-tier-wins test;
@@ -612,6 +671,11 @@ At STOP, return:
 - `APPROVED_SCENARIO_ESTATE_COVERAGE`;
 - number of skipped scenarios;
 - unresolved scenario differences;
+- `SIGNAL_ACTIVATION_BASELINE_TOTAL`;
+- `SIGNAL_ACTIVATION_PRESERVED_TOTAL`;
+- `SUPPORTING_SIGNAL_BASELINE_TOTAL`;
+- `SUPPORTING_SIGNAL_PRESERVED_TOTAL`;
+- `SIGNALS_INTENTIONALLY_RETIRED` (and citation to prior authority if non-zero);
 - no-forced-lead result;
 - serious-result-state result;
 - quarantine verification;

@@ -2,13 +2,18 @@
   "bus_version": "1.3.1",
   "work_id": "CLIN-PRIORITY-CORE-1",
   "status": "HARDENED",
-  "hardening_date": "2026-08-04",
+  "hardening_date": "2026-08-05",
   "hardened_by": "Claude Code",
   "risk_level": "HIGH",
   "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
   "branch": "feature/clin-priority-core-1",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
+  "prompt_sha256": {
+    "before_signal_preservation_amendment": "e373568457f531ca40c1d1a21254ef736cc2168930e676b691f0ad37ae1c2cc0",
+    "after_signal_preservation_amendment": "6ad7d88eb2e6644f4f04df9081d095f4bb304ad0ebab907d2937d7bb125997c2",
+    "measured_by": "sha256sum automation_bus/latest_cursor_prompt.md, run before and after the section 3A/4.4/12/13/15 edits in this hardening pass"
+  },
 
   "verification_mode_used": {
     "mode": "batched direct verification, no fork",
@@ -56,7 +61,7 @@
     "intelligence_core_scope_explicit": "YES -- section 6 names every affected surface",
     "regression_targets_included": "YES -- section 13",
     "hidden_scope_creep": "NONE FOUND -- section 11 explicit exclusions and do-not-modify list (precedence_engine.py, arbitration_engine.py, state_engine.py, questionnaire schema, existing WHY/root-cause authority) are consistent with, not contradicted by, the in-scope section 7 work",
-    "stop_conditions_protect_behavioural_correctness": "YES -- 15 explicit STOP conditions (section 12), including the FIB-4/CV-risk live-path check (STOP 5) that the repository inspection report correctly left as an unresolved verification item rather than resolving speculatively",
+    "stop_conditions_protect_behavioural_correctness": "YES -- 21 explicit STOP conditions (section 12; expanded from 15 in this pass), including the FIB-4/CV-risk live-path check (STOP 5) and the six new signal-preservation/provenance-conflict conditions (STOPs 16-21) added this pass, each required to be reported as a provenance conflict and escalated rather than silently resolved in favour of the newest document",
     "determinism_risks_surfaced": "YES -- deterministic ordering, deterministic manifest, compile-manifest provenance all explicitly required (sections 7.2, 7.8, 9)",
     "no_forced_lead_and_technical_tiebreak_boundary": {
       "status": "CONFIRMED consistent with prior architecture work",
@@ -78,11 +83,41 @@
   },
 
   "gaps_or_risks_flagged_for_gpt_and_cursor_stage_1a": [
-    "FIB-4/cardiovascular-risk live-path status remains genuinely unresolved (repository inspection report section 10 risk 2; prompt Checkpoint 0 and STOP condition 5 correctly assign this to Cursor's Phase 0, not to hardening) -- Cursor must not proceed past Phase 0 to hepatic implementation until this is resolved one way or the other.",
-    "Branch declared in front matter (feature/clin-priority-core-1) does not yet exist as the current branch -- Stage 0 kernel branch-alignment check at 'run_work_package.py start' will require creating/checking out that branch before execution; this is expected kernel behaviour, not a hardening defect."
+    "FIB-4/cardiovascular-risk live-path status has since been resolved by direct repository investigation (see changes entry 2026-08-05 below): a FIB-4 derived-ratio calculation exists (backend/core/analytics/ratio_registry.py, added commit e0412a6, 2026-03-09, 'KB-S10') but is not exposed as a consumer-facing fibrosis-risk finding -- it appears only as a supporting_metrics entry in the (not currently promoted) pkg_hepatic_metabolic_stress package, and zero frontend files reference it. Cursor's Phase 0 must still record this finding as evidence (prompt section 9 Checkpoint 0) rather than rediscover it, and must not extend this existing derived-ratio computation into a fibrosis-risk finding/output -- the ratified 'AST:ALT ratio and platelets only' rule (hepatic ruleset, HEP-AS-10) still governs.",
+    "CORRECTION (2026-08-05): the branch feature/clin-priority-core-1 now exists and IS the current branch; kernel start has already run -- see existing_work_package_state below. The 2026-08-04 note that the branch 'does not yet exist' is superseded."
   ],
 
+  "existing_work_package_state": {
+    "checked_this_pass": true,
+    "work_package_active_json": {
+      "exists": true,
+      "content": {"work_id": "CLIN-PRIORITY-CORE-1", "branch": "feature/clin-priority-core-1", "status": "STARTED", "timestamp_utc": "2026-08-04T21:20:18.484238+00:00"}
+    },
+    "latest_cursor_status_json": {"status": "IN_PROGRESS", "head_sha": "d9b92b2334dd0a7494062cf5d67898f27d133625"},
+    "implementation_code_written": false,
+    "evidence": "git diff main feature/clin-priority-core-1 --stat shows changes confined to automation_bus/latest_cursor_prompt.md and automation_bus/latest_prompt_hardening.json only -- no backend/ or frontend/ files touched. git log on the branch shows only documentation/staging commits (chore(bus): stage CLIN-PRIORITY-CORE-1; merge: cross-domain clinical findings documentation estate; docs(clin-priority): ...). Kernel start was run and succeeded, but Cursor has not yet written any implementation code.",
+    "token_validity_assessment": "The work_package_active.json schema carries no prompt-content hash, so the kernel cannot mechanically detect that the hardened prompt changed underneath an already-STARTED token. Since this pass materially amended the prompt (new section 3A, new section 4.4, six new STOP conditions, five new closure metrics) after the token was issued, and since SOP non-negotiable rules require execution only under a prompt that matches its hardening record, the existing STARTED token's basis is stale even though it has not mechanically expired. Because zero implementation code exists, there is no in-flight work to reconcile or lose.",
+    "recommendation": "Treat the existing token as requiring a fresh kernel start cycle before Cursor writes any implementation code, even though no destructive conflict exists. This hardening record (status HARDENED, new hash 6ad7d88e...) is valid and ready to support a fresh 'python backend/scripts/run_work_package.py start' once the current STARTED/IN_PROGRESS state is cleared through the standard kernel lifecycle. Claude Code does not run kernel lifecycle commands or edit work_package_active.json/latest_cursor_status.json directly -- this is reported for GPT/Cursor/human action, not executed here."
+  },
+
   "changes": [
+    {
+      "date": "2026-08-05",
+      "section": "3A (new), 4.4 (new), 7.3, 12 (STOPs 16-21), 13, 15",
+      "change": "Added full Signal Preservation and Non-Subordination requirements: (1) section 3A states the purpose (the prioritisation layer sits above the existing signal estate and is not a second activation authority) and seven required invariants (existing signals/supporting signals continue firing unchanged; thresholds/activation keys/package lineage/runtime eligibility unchanged; tier/role/consolidation never gate activation; independent signals only become supporting-only under an explicit approved relationship rule; constituent signals remain identifiable and provenance-complete after consolidation; no Knowledge Bus promotion status changes; the 109 scenarios validate behaviour but never authorise signal suppression/retirement/threshold change; SIGNALS_INTENTIONALLY_RETIRED must be 0 absent cited prior authority); (2) section 3A.3 states the revised five-layer authority hierarchy (signal activation estate defines what fires -> domain clinical authority defines meaning -> cross-domain authority defines consolidation/prioritisation -> product authority defines presentation -> acceptance scenarios validate only); (3) section 4.4 requires the Phase 0 signal activation baseline inventory (signal ID, activation key, package/source, promotion/runtime status, primary biomarker, supporting biomarkers/signals, derived-marker dependencies, DTO/frontend exposure, regression evidence) and ties it into Checkpoint 0; (4) section 7.3 adds an explicit non-subordination line to the concern-construction service requirements; (5) section 12 adds STOP conditions 16-21 covering signal disabling, provenance loss, activation-behaviour change, promotion/eligibility change, silent retirement by a newer document, and unresolvable contract-vs-signal-estate conflict, each required to be reported as a provenance conflict and escalated rather than silently resolved in favour of the newest document; (6) sections 13 and 15 add the five mandatory closure metrics (SIGNAL_ACTIVATION_BASELINE_TOTAL, SIGNAL_ACTIVATION_PRESERVED_TOTAL, SUPPORTING_SIGNAL_BASELINE_TOTAL, SUPPORTING_SIGNAL_PRESERVED_TOTAL, SIGNALS_INTENTIONALLY_RETIRED) to both the required-evidence list and the START completion response.",
+      "verification_checklist": {
+        "signal_preservation_invariant_present": "YES -- section 3A.2, seven bullets",
+        "phase_0_signal_baseline_present": "YES -- section 4.4, referenced from Checkpoint 0 in section 9",
+        "preservation_metrics_present": "YES -- section 13 and section 15, five named metrics",
+        "zero_retirement_default_present": "YES -- section 3A.2 last bullet and section 13/15 metric definition, both state SIGNALS_INTENTIONALLY_RETIRED must be 0 unless explicit prior authority is cited",
+        "non_subordination_rules_present": "YES -- section 3A.1 purpose statement, section 3A.2 tier/role/consolidation-must-not-gate-activation bullet, section 7.3 added line",
+        "provenance_retention_present": "YES -- section 3A.2 constituent-identifiability bullet, section 12 STOP condition 17, section 13/15 'all constituent identities retained in finding provenance' requirement",
+        "stop_conditions_for_conflicts_present": "YES -- section 12 STOP conditions 16-21 plus the provenance-conflict escalation instruction immediately following them",
+        "revised_authority_hierarchy_present": "YES -- section 3A.3, five layers exactly as specified"
+      },
+      "reason": "User-identified requirement: the Cross-Domain Clinical Findings and Prioritisation layer must organise and prioritise existing signals, not become a second activation authority or silently suppress/retire/subordinate them.",
+      "classification": "Scope-clarifying safety addition. Adds new mandatory invariants, a new Phase 0 evidence requirement, six new STOP conditions, and five new closure metrics. Does not touch clinical content, does not change front matter, does not remove any existing requirement. Re-verified this pass: no parallel finding constructor exists (repeat of prior grep, unchanged result) and the existing work-package token state was freshly checked (see existing_work_package_state above)."
+    },
     {
       "date": "2026-08-04",
       "section": "7.2 Compiled prioritisation artefact",
@@ -92,5 +127,5 @@
     }
   ],
 
-  "evidence_checklist_status": "COMPLETE -- see chat response for the mandatory Stage 2C table; re-issued 2026-08-04 following the section 7.2 scope-boundary correction above -- status remains HARDENED, no re-verification of authority paths required since the change narrows existing scope rather than introducing new authority or new files"
+  "evidence_checklist_status": "COMPLETE -- see chat response for the mandatory Stage 2C table; re-issued 2026-08-05 following the section 3A/4.4/12/13/15 signal-preservation amendment above -- status remains HARDENED. Authority-path re-verification was not required (no new source documents introduced); the work-package token state WAS freshly re-checked this pass and requires GPT/Cursor/human action before implementation proceeds -- see existing_work_package_state."
 }
