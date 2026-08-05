@@ -821,6 +821,23 @@ def build_hepatic(ctx: PanelContext) -> DomainBuild:
             urg, tier = "same_day", 0
             ftype, label = "HEP-F1", "consolidated_hepatocellular_enzyme_elevation"
 
+        # XD-AS-1 / RE-AS-12: ratified cross-domain same-day co-equal with
+        # potassium >6.0. Generic hepatic ≥5×ULN is within_days, but the
+        # cross-domain ruleset / approval pack require both findings same-day
+        # Tier 0 — do not let the subordinate enzyme band defeat that outcome.
+        xd_k_hepatic_same_day = False
+        if (
+            ctx.potassium is not None
+            and ctx.potassium > 6.0
+            and urg == "within_days"
+            and (
+                (x_alt is not None and x_alt >= 5)
+                or (x_ast is not None and x_ast >= 5)
+            )
+        ):
+            urg, tier = "same_day", 0
+            xd_k_hepatic_same_day = True
+
         # Severity from the worse of ALT/AST (XD-AS-3 marked via AST)
         sev_candidates = [
             _severity_alt_ast(x_alt, alt),
@@ -840,6 +857,9 @@ def build_hepatic(ctx: PanelContext) -> DomainBuild:
         action = "immediate" if urg == "same_day" else "discuss_investigate"
         if urg == "within_weeks" and tier == 1:
             prohibited.append("describe_as_urgent_merely_because_tier1")
+        hep_rule_ids = ["HEP-CONS-1", "HEP-P2", "XD-HEP-FLOOR-1", ftype]
+        if xd_k_hepatic_same_day:
+            hep_rule_ids.extend(["XD-AS-1", "RE-AS-12"])
         hepatic_pattern = _bf(
             ctx,
             domain="hepatic",
@@ -856,7 +876,7 @@ def build_hepatic(ctx: PanelContext) -> DomainBuild:
             caveats=caveats,
             prohibited=prohibited
             + (["urgent_diagnostic_claim"] if urg != "same_day" else []),
-            rule_ids=["HEP-CONS-1", "HEP-P2", "XD-HEP-FLOOR-1", ftype],
+            rule_ids=hep_rule_ids,
             nested_labels=nested_labels,
             actionability=action,
             confidence="reduced_ast_absent" if ast is None and alt_high else None,
@@ -1805,9 +1825,21 @@ def build_renal(ctx: PanelContext) -> DomainBuild:
                 )
             )
         elif na <= 129:
+            # XD-ARTEFACT-1 / XD-AS-7: TG >20 with hyponatraemia → sodium remains
+            # same-day Tier 0 with mandatory pseudohyponatraemia caveat; generic
+            # Na 125–129 within_days band must not suppress or downgrade it.
             caveats = []
             if tg is not None and tg > 20:
                 caveats.extend(["pseudohyponatraemia", "pseudohyponatraemia_caveat_tg_gt_20"])
+                urg, tier, sev = "same_day", 0, "moderate"
+                t0 = tier0_flags(True)
+                rule_ids = ["RE-F5", "XD-ARTEFACT-1", "XD-AS-7"]
+                action = "immediate"
+            else:
+                urg, tier, sev = "within_days", 1, "moderate"
+                t0 = {}
+                rule_ids = ["RE-F5"]
+                action = "discuss"
             keys = ctx.renal_keys or [synthetic_key("RE-F5", "hyponatraemia")]
             electrolyte_findings.append(
                 _bf(
@@ -1817,12 +1849,14 @@ def build_renal(ctx: PanelContext) -> DomainBuild:
                     label="moderate_hyponatraemia",
                     keys=keys,
                     biomarkers=["sodium"],
-                    urgency="within_days",
-                    severity="moderate",
-                    tier=1,
+                    urgency=urg,
+                    severity=sev,
+                    tier=tier,
                     role="principal_concern",
                     caveats=caveats,
-                    rule_ids=["RE-F5"],
+                    rule_ids=rule_ids,
+                    actionability=action,
+                    **t0,
                 )
             )
         elif na <= 133:
@@ -2699,9 +2733,9 @@ def select_leads(
     if f4:
         lead_ids = [f4[0].finding_id]
     elif top_band == "same_day" and len(same_band) > 1:
-        # Co-equal group — all as co_leads; no manufactured solo lead
-        lead_ids = [same_band[0].finding_id]
-        co_lead_ids = [f.finding_id for f in same_band[1:]]
+        # Co-equal group — no manufactured solo lead / no arbitrary internal order
+        lead_ids = []
+        co_lead_ids = [f.finding_id for f in same_band]
         presentation_mode = "co_lead"
     elif len(same_band) >= 3 and top_band != "same_day":
         no_forced_lead = True

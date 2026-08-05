@@ -396,10 +396,11 @@ def build_all() -> dict:
             "RE-AS-12",
             {"potassium": 6.8, "alt": 300, "alp": 80, "bilirubin": 12, "ggt": 40},
             {
-                # Authority alignment: K same_day Tier 0 leads; ALT 6.1× hepatic within_days Tier 1
+                # Cross-domain / RE-AS-12: both same-day Tier 0 co-equal (ruleset v0.5)
                 "finding_types": ["RE-F3", "HEP-F1"],
-                "tier_by_type": {"RE-F3": 0, "HEP-F1": 1},
-                "urgency_by_type": {"RE-F3": "same_day", "HEP-F1": "within_days"},
+                "tier_by_type": {"RE-F3": 0, "HEP-F1": 0},
+                "urgency_by_type": {"RE-F3": "same_day", "HEP-F1": "same_day"},
+                "same_day_coequal": True,
                 "dependency_flags_any": ["TIER_0_PATHWAY_DEPENDENCY"],
             },
             signals=[sig("signal_potassium_high"), sig("signal_alt_high")],
@@ -1048,10 +1049,11 @@ def _xd_scenarios() -> list:
             "XD-AS-1",
             {"potassium": 6.8, "alt": 300, "alp": 80, "bilirubin": 12, "ggt": 40},
             {
-                # Authority alignment: ALT 6.1× is within_days Tier 1 (hepatic ≥10× for same-day)
+                # Cross-domain ruleset v0.5 / pack v1.2: both same-day Tier 0 co-equal
                 "finding_types": ["RE-F3", "HEP-F1"],
-                "tier_by_type": {"RE-F3": 0, "HEP-F1": 1},
-                "urgency_by_type": {"RE-F3": "same_day", "HEP-F1": "within_days"},
+                "tier_by_type": {"RE-F3": 0, "HEP-F1": 0},
+                "urgency_by_type": {"RE-F3": "same_day", "HEP-F1": "same_day"},
+                "same_day_coequal": True,
                 "dependency_flags_any": ["TIER_0_PATHWAY_DEPENDENCY"],
             },
             signals=[sig("signal_potassium_high"), sig("signal_alt_high")],
@@ -1161,10 +1163,11 @@ def _xd_scenarios() -> list:
             "XD-AS-7",
             {"triglycerides": 24, "sodium": 128},
             {
-                # Authority alignment: Na 128 is within_days (same-day Na is <125); TG same_day
+                # XD-ARTEFACT-1 / XD-AS-7: both same-day; Na caveat retained, not suppressed
                 "finding_types": ["CN-F1", "RE-F5"],
-                "tier_by_type": {"CN-F1": 0, "RE-F5": 1},
-                "urgency_by_type": {"CN-F1": "same_day", "RE-F5": "within_days"},
+                "tier_by_type": {"CN-F1": 0, "RE-F5": 0},
+                "urgency_by_type": {"CN-F1": "same_day", "RE-F5": "same_day"},
+                "same_day_coequal": True,
                 "caveats_any": ["pseudohyponatraemia"],
                 "dependency_flags_any": ["TIER_0_PATHWAY_DEPENDENCY"],
             },

@@ -9,7 +9,7 @@
 
 ## Verdict target
 
-`START_READY_FOR_INDEPENDENT_STOP_REVIEW`
+`BOUNDED_CORRECTIONS_READY_FOR_REVIEW` (post independent START STOP review)
 
 ## Kernel restart evidence
 
@@ -102,12 +102,82 @@ Internal `ratio_registry.fib_4` exists (KB-S10, 2026-03-09). Not consumer-facing
 - `run_work_package.py finish` **not** run  
 - **No merge**
 
+## Bounded corrections after independent START STOP review
+
+**Independent verdict:** `START_STOP_APPROVED_WITH_BOUNDED_CORRECTIONS`  
+**Starting HEAD for corrections:** `f36cc178cfb8493ceb50bfa476496df2828adf12`  
+**Defect class:** Cursor resolved cross-domain vs generic domain-band tension in favour of subordinate generic domain bands for two approved scenarios.
+
+### Authority applied
+
+| Case | Authority |
+|---|---|
+| `XD-AS-1` / `RE-AS-12` | Cross-domain ruleset v0.5 §13; approval pack v1.2; renal AS-12 |
+| `XD-AS-7` | `XD-ARTEFACT-1`; cross-domain ruleset v0.5; approval pack v1.2 |
+
+### Logic corrected (`concern_constructor.py`)
+
+1. **K⁺ >6.0 + hepatic enzyme ≥5×ULN within_days band:** promote hepatic finding to same-day Tier 0 so both form a same-day co-equal group (`XD-AS-1` / `RE-AS-12`). Generic ≥10×ULN enzyme same-day band must not defeat this ratified cross-domain outcome.
+2. **TG >20 + Na 125–129:** elevate sodium to same-day Tier 0 with mandatory pseudohyponatraemia caveat (`XD-ARTEFACT-1` / `XD-AS-7`). Generic Na &lt;125 same-day band must not suppress/downgrade the sodium concern under the artefact rule.
+3. **Same-day multi-member lead selection:** all same-day peers become co-leads with empty solo `lead_finding_ids` (no manufactured lead / no arbitrary internal ordering).
+
+### Before / after
+
+| Scenario | Before (incorrect) | After (restored) |
+|---|---|---|
+| `XD-AS-1` / `RE-AS-12` | K⁺ same_day Tier 0; HEP-F1 within_days Tier 1; not co-equal | Both same_day Tier 0; `same_day_coequal`; no solo lead |
+| `XD-AS-7` | CN-F1 same_day Tier 0; RE-F5 within_days Tier 1 + caveat | Both same_day Tier 0; co-equal; caveat retained |
+
+### Full fixture-authority comparison (109 unique)
+
+Compared approval pack v1.2 table rows × fixture estate × implementation outputs.
+
+| Result | Detail |
+|---|---|
+| Unique scenarios | 109 (110 fixture rows; `CONTRACT-FIX-1` ≡ `HEP-AS-1`) |
+| Fixture vs implementation diffs | **NONE** |
+| Unauthorised pack vs fixture diffs | **0** |
+| Independently accepted corrections retained | `XD-AS-15` (severity mild→moderate); `XD-AS-17` (CN-F3); `XD-AS-25` (HEP-F3 mixed) |
+| Pack table-row parse note | `HEP-AS-4` / `HEP-AS-10` / `RE-AS-2` / `RE-AS-11` carry `**(corrected)**` in the ID cell; present in pack §9, matched by implementation/fixtures |
+
+### Post-correction verification
+
+```text
+PYTHONPATH=backend python backend/tools/run_clinical_priority_scenarios.py
+→ passed: 110, failed: 0  (109 unique; zero skips)
+
+pytest backend/tests/unit/test_clin_priority_cross_domain_corrections.py \
+  backend/tests/unit/test_clinical_finding_models.py \
+  backend/tests/unit/test_clinical_priority_scenario_runner.py -q
+→ 12 passed
+
+SIGNAL_ACTIVATION_BASELINE_TOTAL: 183
+SIGNAL_ACTIVATION_PRESERVED_TOTAL: 183
+SIGNALS_INTENTIONALLY_RETIRED: 0
+```
+
+### Files changed in bounded correction
+
+- `backend/core/analytics/concern_constructor.py`
+- `backend/tests/fixtures/clinical_priority_scenarios_v1.json`
+- `backend/tools/generate_clinical_priority_fixtures_v2.py`
+- `backend/tests/unit/test_clin_priority_cross_domain_corrections.py`
+- `docs/architecture/CLIN-PRIORITY-CORE-1_checkpoint2_fixture_authority_notes.md`
+- `docs/architecture/CLIN-PRIORITY-CORE-1_START_evidence.md`
+
+### Confirmations (corrections)
+
+- `finish` **not** run  
+- No FINISH-phase longitudinal / frontend work  
+- No merge  
+- No upstream signal activation / Knowledge Bus promotion changes  
+
 ## Confirmations
 
 - No Knowledge Bus promotion / activation-register changes for signal retirement  
 - No precedence/arbitration/state_engine modifications  
-- Amended §3A hierarchy applied; fixture vs pack prose conflicts escalated to ratified domain rules (see Checkpoint 2 notes), not silent newest-doc override of the signal estate  
+- Amended §3A hierarchy applied; cross-domain ruleset outranks subordinate generic domain bands for `XD-AS-1`/`RE-AS-12`/`XD-AS-7` (see corrected Checkpoint 2 notes)
 
 ## Awaiting
 
-Independent STOP review (Claude Code / human). Do not self-authorise FINISH.
+Independent review of bounded corrections. Do not self-authorise FINISH.

@@ -1,46 +1,55 @@
 # CLIN-PRIORITY-CORE-1 Checkpoint 2 — Fixture authority alignment notes
 
 **Work ID:** CLIN-PRIORITY-CORE-1  
-**Date:** 2026-08-05  
-**Scope:** Acceptance-scenario fixture expectations vs ratified domain rules
+**Date:** 2026-08-05 (corrected after independent START STOP review)  
+**Scope:** Acceptance-scenario fixture expectations vs ratified domain / cross-domain authority
 
 ## Purpose
 
-Where approval-pack v1.2 scenario *narrative* wording conflicted with ratified hepatic / electrolyte numeric rules already compiled into the prioritisation package, fixtures were aligned to the **ratified domain authority**, not to pack prose that implied a different threshold.
+Record where fixture expectations differ from a literal reading of approval-pack v1.2 prose, and how authority hierarchy was applied.
 
 No new clinical thresholds were invented. `[U]` items remain excluded.
 
-## Alignments
+## Cross-domain versus generic domain-band tension (corrected)
 
-### 1. ALT 6.1× is not same-day (XD-AS-1, RE-AS-12)
+During START, an apparent tension was identified between:
 
-| Source | Claim |
-|---|---|
-| Approval pack v1.2 (XD-AS-1 / RE-AS-12) | ALT300 (~6.1× ULN) treated as same-day Tier 0 co-equal with K⁺ |
-| Hepatic ruleset (ratified) | Same-day enzyme rule requires ≥10× ULN **or** absolute >1000; 5–10× is **within_days Tier 1** |
+* ratified **cross-domain** scenario outcomes (ruleset v0.5 §13; approval pack v1.2); and
+* subordinate **generic domain urgency bands** (hepatic enzyme ≥10×ULN same-day; sodium same-day Na &lt;125).
 
-**Fixture alignment:** `RE-F3` / hyperkalaemia remains same_day Tier 0; `HEP-F1` is within_days Tier 1. Potassium leads on time band. Not `same_day_coequal`.
+Cursor originally resolved that tension **incorrectly** in favour of the subordinate generic domain bands for items 1 and 2 below, and weakened fixture expectations to match. Independent START STOP review applied the governing source hierarchy: the ratified cross-domain ruleset and approved scenario outcomes control these specific cases. Implementation and fixtures were corrected accordingly.
 
-### 2. Na⁺ 128 is not same-day (XD-AS-7)
+### 1. XD-AS-1 / RE-AS-12 — same-day co-equal (restored)
 
 | Source | Claim |
 |---|---|
-| Approval pack v1.2 (XD-AS-7) | Na128 + TG24 as same-day co-equal |
-| Renal ruleset (ratified) | Same-day hyponatraemia is Na **&lt;125**; Na 125–129 is within_days |
+| Cross-domain ruleset v0.5 §13 / approval pack v1.2 | K⁺ 6.8 + ALT 300 (~6.1× ULN): **both same-day Tier 0**, co-equal group, no ordering, no manufactured lead |
+| Generic hepatic enzyme band | ≥5×ULN is within_days; same-day requires ≥10×ULN or absolute &gt;1000 |
 
-**Fixture alignment:** `CN-F1` (TG&gt;20) same_day Tier 0; `RE-F5` within_days Tier 1 with pseudohyponatraemia caveat when TG&gt;20.
+**Correction:** Cross-domain / RE-AS-12 outcomes control. `RE-F3` and `HEP-F1` are both `same_day` Tier 0 with `same_day_coequal`. The generic hepatic within_days band must not override this ratified outcome.
+
+### 2. XD-AS-7 — same-day co-equal with artefact caveat (restored)
+
+| Source | Claim |
+|---|---|
+| Cross-domain ruleset v0.5 / `XD-ARTEFACT-1` / approval pack v1.2 | TG 24 + Na⁺ 128: **both same-day Tier 0**, co-equal; sodium carries mandatory pseudohyponatraemia caveat and must not be suppressed |
+| Generic renal sodium band | Same-day hyponatraemia is Na &lt;125; Na 125–129 is within_days |
+
+**Correction:** `XD-ARTEFACT-1` is the governing cross-domain override for this artefact condition. `CN-F1` and `RE-F5` are both `same_day` Tier 0 with `same_day_coequal`; caveat retained without downgrade.
+
+## Retained legitimate alignments (accepted by independent review)
 
 ### 3. Hypernatraemia severity bands (XD-AS-15)
 
-Na 152 sits in **151–154 moderate** (146–150 mild; ≥155 same_day). Fixture severity updated from `mild` to `moderate`; `[J]` caveat retained.
+Na 152 sits in **151–154 moderate** (146–150 mild; ≥155 same_day). Fixture severity updated from `mild` to `moderate`; `[J]` caveat retained. Arithmetic correction against the ratified band table — not a policy override.
 
 ### 4. XD-AS-17 lipid class
 
-Pack inputs TC 8.9 / non-HDL 7.2 do **not** meet specialist thresholds (TC&gt;9 or non-HDL&gt;7.5). With full risk-factor set, fixture expects consolidated `CN-F3` Tier 1 with CV-risk quarantine (R2), not `CN-F2`.
+Pack inputs TC 8.9 / non-HDL 7.2 do **not** meet specialist thresholds (TC&gt;9 or non-HDL&gt;7.5). With full risk-factor set, fixture expects consolidated `CN-F3` Tier 1 with CV-risk quarantine (R2), not `CN-F2`. Correct application of domain thresholds.
 
 ### 5. XD-AS-25 pattern class
 
-R-value ≈2.8 is **mixed** → `HEP-F3` (one consolidated finding with nested constituents). Pack said “one hepatic concern” without forcing F1.
+R-value ≈2.8 is **mixed** → `HEP-F3` (one consolidated finding with nested constituents). Pack said “one hepatic concern” without forcing F1. Correct application of the governed R-value formula.
 
 ## Non-alignments (constructor follows domain rules as written)
 
