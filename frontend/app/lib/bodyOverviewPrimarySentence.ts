@@ -30,7 +30,8 @@ export function ensureTerminalPunctuation(s: string): string {
  * Not a raw concatenation of all page1 fields; shapes one scannable sentence (+ optional clause for tie modes).
  */
 export function buildBodyOverviewPrimarySentence(
-  page1: ClinicianReportV1['sections']['page1'] | undefined
+  page1: ClinicianReportV1['sections']['page1'] | undefined,
+  opts?: { clinicalConcernAuthority?: boolean }
 ): string {
   if (!page1) return BODY_OVERVIEW_FALLBACK_PRIMARY;
 
@@ -47,7 +48,8 @@ export function buildBodyOverviewPrimarySentence(
   const lead = ensureTerminalPunctuation(extractFirstSentence(leadSource));
 
   const wider =
-    mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead'
+    !opts?.clinicalConcernAuthority &&
+    (mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead')
       ? ' More than one pattern is close; the sections below show how we set focus.'
       : " We'll show how this fits the wider picture as you go.";
 

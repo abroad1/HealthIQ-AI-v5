@@ -4,14 +4,30 @@ function trim(s: string | undefined | null): string {
   return (s || '').trim();
 }
 
-export function isCloseCallMode(mode: PrimaryConcernModeV1 | undefined): boolean {
+/**
+ * Legacy close-call modes from clinician_report page1.
+ * When clinical_concern_set is present it is the sole clinical-priority authority —
+ * technical_tiebreak_lead must not present as competing clinical lead authority.
+ */
+export function isCloseCallMode(
+  mode: PrimaryConcernModeV1 | undefined,
+  opts?: { clinicalConcernAuthority?: boolean }
+): boolean {
+  if (opts?.clinicalConcernAuthority) {
+    // Demote technical_tiebreak_lead entirely; near_tie remains non-authoritative when concern set owns priority
+    return false;
+  }
   return mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead';
 }
 
 /**
  * Case 4 — omit Section 4 when no meaningful deterministic uncertainty assets exist.
+ * When clinical concern authority is present, suppress legacy "why this lead won" tiebreak framing.
  */
-export function shouldRenderWhyThisLeadWonSection(report: ClinicianReportV1 | null | undefined): boolean {
+export function shouldRenderWhyThisLeadWonSection(
+  report: ClinicianReportV1 | null | undefined,
+  opts?: { clinicalConcernAuthority?: boolean }
+): boolean {
   if (!report?.sections?.page1 || !report.data_quality) return false;
 
   const p1 = report.sections.page1;
@@ -22,8 +38,15 @@ export function shouldRenderWhyThisLeadWonSection(report: ClinicianReportV1 | nu
   const conf = trim(p1.confidence_and_missing_data);
   const caveat = trim(dq.confidence_caveat);
   const mode = p1.primary_concern_mode;
-  const tie = isCloseCallMode(mode);
+  const tie = isCloseCallMode(mode, opts);
   const hasCo = (p1.co_primary_signal_ids?.filter(Boolean).length ?? 0) > 0;
+
+  if (opts?.clinicalConcernAuthority) {
+    // Confidence / caveats only — no legacy lead-won / close-call clinical framing
+    if (conf) return true;
+    if (caveat) return true;
+    return false;
+  }
 
   if (runnerWhy || runnerTopic) return true;
   if (conf) return true;

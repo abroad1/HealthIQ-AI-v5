@@ -17,6 +17,7 @@ import ClinicianReportRenderer from '@/components/results/ClinicianReportRendere
 import { BalancedSystemsSummary } from '@/components/results/BalancedSystemsSummary';
 import { PrimaryFindingAndWhy } from '@/components/results/PrimaryFindingAndWhy';
 import { WhyThisLeadWonSection } from '@/components/results/WhyThisLeadWonSection';
+import { ClinicalConcernPrioritySection } from '@/components/results/ClinicalConcernPrioritySection';
 import { SystemUnderstandingSection } from '@/components/results/SystemUnderstandingSection';
 import { LayerCInsightSection } from '@/components/results/LayerCInsightSection';
 import { InterpretationPatternsSection } from '@/components/results/InterpretationPatternsSection';
@@ -56,6 +57,10 @@ import type {
 import type { LayerCFeatureBundleV1 } from '@/types/layerCFeatures';
 import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
+import {
+  getClinicalConcernSet,
+  hasClinicalConcernAuthority,
+} from '@/lib/clinicalConcernSet';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
 import { filterConsumerInsights, legacyInsightsDebugEnabled } from '@/lib/legacyInsightsVisibility';
 import { LC_S4_MOCK_MODE_HONESTY_DISCLOSURE } from '@/lib/lcS4ResultsCopy';
@@ -162,6 +167,14 @@ export default function ResultsPage() {
   const biomarkers = currentAnalysis?.biomarkers ?? [];
   const clusters = currentAnalysis?.clusters ?? [];
   const clinicianReport = currentAnalysis?.clinician_report_v1;
+  const clinicalConcernSet = useMemo(
+    () => getClinicalConcernSet(currentAnalysis),
+    [currentAnalysis]
+  );
+  const clinicalConcernAuthority = useMemo(
+    () => hasClinicalConcernAuthority(currentAnalysis),
+    [currentAnalysis]
+  );
   const balancedSystems = currentAnalysis?.balanced_systems_v1;
   const narrativeReport = currentAnalysis?.narrative_report_v1;
   const { created_at, completed_at } = currentAnalysis || {};
@@ -697,6 +710,7 @@ export default function ResultsPage() {
               clusters={clusters}
               compiledBodyOverview={narrativeReport?.body_overview}
               showPatternGroupBuckets={showDetails}
+              clinicalConcernAuthority={clinicalConcernAuthority}
               sectionHeading="Your body overview"
             />
             <p className="text-sm text-slate-600 leading-relaxed max-w-3xl border-l-2 border-slate-200 pl-3">
@@ -704,6 +718,12 @@ export default function ResultsPage() {
               how confident we are, patterns across your body when available, marker evidence, and suggested follow-up.
             </p>
           </section>
+
+          {clinicalConcernAuthority ? (
+            <div data-testid="clinical-concern-priority-journey">
+              <ClinicalConcernPrioritySection concernSet={clinicalConcernSet} />
+            </div>
+          ) : null}
 
           <div data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[1]}>
             <PrimaryFindingAndWhy
@@ -746,7 +766,10 @@ export default function ResultsPage() {
             <h2 id="fe-r2-uncertainty-heading" className="sr-only">
               How confident is this read
             </h2>
-            <WhyThisLeadWonSection report={clinicianReport} />
+            <WhyThisLeadWonSection
+              report={clinicianReport}
+              clinicalConcernAuthority={clinicalConcernAuthority}
+            />
             <PipelineStatus
               dataQuality={clinicianReport?.data_quality}
               confirmatoryTests={confirmatoryTestsForJourney}
@@ -848,6 +871,7 @@ export default function ResultsPage() {
               balancedSystems={balancedSystems}
               deterministicClinicianSynthesis={narrativeReport?.clinician_synthesis}
               showTechnicalDetail={showDetails}
+              clinicalConcernAuthority={clinicalConcernAuthority}
             />
           </ResultsDisclosureSection>
 
@@ -949,6 +973,7 @@ export default function ResultsPage() {
                 report={clinicianReport}
                 primaryDriverSystemGroupName={primaryDriver?.name ?? null}
                 contextOnly
+                clinicalConcernAuthority={clinicalConcernAuthority}
               />
             </div>
 

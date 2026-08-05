@@ -16,6 +16,8 @@ interface ClinicianReportRendererProps {
   deterministicClinicianSynthesis?: string | null;
   /** LC-S7 — when false, ranking policy version string stays out of default visual scan. */
   showTechnicalDetail?: boolean;
+  /** CLIN-PRIORITY-CORE-1 — clinical_concern_set is sole clinical-priority authority when true. */
+  clinicalConcernAuthority?: boolean;
 }
 
 function formatSignalIdForDisplay(signalId: string): string {
@@ -35,9 +37,12 @@ function normalizeConcernMode(mode: PrimaryConcernModeV1 | undefined): PrimaryCo
 function Page1RankingContext({
   page1,
   showTechnicalDetail,
+  clinicalConcernAuthority = false,
 }: {
   page1: ClinicianReportV1['sections']['page1'];
   showTechnicalDetail: boolean;
+  /** When true, demote technical_tiebreak_lead to non-clinical technical ordering only. */
+  clinicalConcernAuthority?: boolean;
 }) {
   const mode = normalizeConcernMode(page1.primary_concern_mode);
   const coIds = page1.co_primary_signal_ids ?? [];
@@ -45,9 +50,14 @@ function Page1RankingContext({
   const runnerTopic = (page1.runner_up_topic_line ?? '').trim();
   const runnerWhy = (page1.runner_up_why_not_lead_line ?? '').trim();
   const showRunnerUp =
-    Boolean(runnerTopic) && (mode === 'technical_tiebreak_lead' || mode === 'near_tie_ambiguity');
+    Boolean(runnerTopic) &&
+    !clinicalConcernAuthority &&
+    (mode === 'technical_tiebreak_lead' || mode === 'near_tie_ambiguity');
 
   const showPolicyStamp = policyVersion.length > 0;
+  const showTechnicalTiebreakNote =
+    mode === 'technical_tiebreak_lead' &&
+    (clinicalConcernAuthority ? showTechnicalDetail : true);
 
   return (
     <div className="space-y-2" data-testid="page1-ranking-context">
@@ -62,18 +72,20 @@ function Page1RankingContext({
         </div>
       )}
 
-      {mode === 'technical_tiebreak_lead' && (
+      {showTechnicalTiebreakNote && (
         <div
           className="rounded-md border border-amber-200/80 bg-amber-50/60 px-3 py-2 text-sm text-amber-950"
           data-testid="primary-concern-mode-technical"
         >
-          <p className="font-medium">Ordering note</p>
-          <p className="mt-1 text-foreground/90">
-            The lead concern follows the report&rsquo;s structured ranking policy. Where evidence-aligned
-            steps did not fully separate similar items, a technical tie-break may have determined order. This
-            is not by itself a statement of clinical priority among close alternatives.
+          <p className="font-medium">
+            {clinicalConcernAuthority ? 'Technical ordering note' : 'Ordering note'}
           </p>
-          {coIds.length > 0 && (
+          <p className="mt-1 text-foreground/90">
+            {clinicalConcernAuthority
+              ? 'Legacy signal-ranking used a technical tie-break for display order only. Clinical priority is governed by the clinical concern set, not this note.'
+              : "The lead concern follows the report's structured ranking policy. Where evidence-aligned steps did not fully separate similar items, a technical tie-break may have determined order. This is not by itself a statement of clinical priority among close alternatives."}
+          </p>
+          {coIds.length > 0 && !clinicalConcernAuthority && (
             <p className="mt-2">
               <span className="font-medium">Co-ranked patterns:</span>{' '}
               {coIds.map((id) => formatSignalIdForDisplay(id)).join(' · ')}
@@ -82,7 +94,7 @@ function Page1RankingContext({
         </div>
       )}
 
-      {mode === 'near_tie_ambiguity' && (
+      {mode === 'near_tie_ambiguity' && !clinicalConcernAuthority && (
         <div
           className="rounded-md border border-sky-200/80 bg-sky-50/60 px-3 py-2 text-sm text-sky-950"
           data-testid="primary-concern-mode-ambiguity"
@@ -132,6 +144,7 @@ export default function ClinicianReportRenderer({
   balancedSystems,
   deterministicClinicianSynthesis,
   showTechnicalDetail = false,
+  clinicalConcernAuthority = false,
 }: ClinicianReportRendererProps) {
   if (!report) {
     return (
@@ -216,7 +229,11 @@ export default function ClinicianReportRenderer({
           <CardTitle>Page 1 Summary</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          <Page1RankingContext page1={page1} showTechnicalDetail={showTechnicalDetail} />
+          <Page1RankingContext
+            page1={page1}
+            showTechnicalDetail={showTechnicalDetail}
+            clinicalConcernAuthority={clinicalConcernAuthority}
+          />
           <p>
             <strong>Primary concern:</strong> {page1.primary_concern}
           </p>
