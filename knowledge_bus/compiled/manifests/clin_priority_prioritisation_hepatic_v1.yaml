@@ -1,0 +1,50 @@
+# ADR-RT-004-style compile manifest — CLIN-PRIORITY-CORE-1 hepatic Checkpoint 1
+compile_run_id: clin-priority-hepatic-cf52969ba031
+compile_utc: "2026-08-05T12:00:00+00:00"
+compiler_name: clin_priority_hand_compile_v1
+compiler_version: "0.1.0"
+policy_version: ADR-RT-004
+work_id: CLIN-PRIORITY-CORE-1
+checkpoint: 1
+domain_slice: hepatic
+
+contract_version: "0.6.3"
+ruleset_version: "0.5"
+hepatic_ruleset_version: "0.2"
+approval_pack_version: "1.2"
+package_id: clin_priority_prioritisation_hepatic_v1
+package_version: "0.1.0-hepatic"
+
+input_spec_hashes:
+  # Content hashes of governing docs are not re-digested here; package hash binds the compiled artefact.
+  HEALTHIQ_CLINICAL_FINDING_PRIORITISATION_CONTRACT_v0_6_3: contract_0.6.3
+  HEALTHIQ_CROSS_DOMAIN_CLINICAL_PRIORITISATION_RULESET_v0_5: ruleset_0.5
+  HEALTHIQ_HEPATIC_PRIORITISATION_RULESET_v0_2: hepatic_0.2
+  HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_APPROVAL_PACK_v1_2: approval_1.2
+
+outputs:
+  - artefact_path: knowledge_bus/compiled/prioritisation/compiled_prioritisation_rules.yaml
+    content_sha256: cf52969ba031db31cfb67c18a86bd8a0a94bbb20b688bf0a878c6a54db400be2
+    legacy_retained: false
+    runtime_loaded: true
+    source_document: docs/discussion documents/HEALTHIQ_HEPATIC_PRIORITISATION_RULESET_v0_2.md
+    source_spec_id: clin_priority_hepatic_checkpoint_1
+
+activation_keys_emitted: []
+# Prioritisation package does not emit signal activation keys; it consumes them.
+collisions_detected: []
+
+excluded_unset_thresholds:
+  - HEP-U2
+  - HEP-U3
+  - HEP-U6
+  - HEP-U7
+
+quarantine_namespaces_recorded:
+  - fib_4
+  - cardiovascular_risk
+
+notes:
+  - "Hand-authored START compile; deterministic package hash over YAML bytes."
+  - "SIGNALS_INTENTIONALLY_RETIRED remains 0; no Knowledge Bus promotion changes."
+  - "FIB-4 / CV-risk quarantined — do not compute as findings."

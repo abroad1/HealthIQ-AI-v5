@@ -1,0 +1,270 @@
+# CLIN-PRIORITY-CORE-1 — Compiled prioritisation rules (hepatic Checkpoint 1 slice)
+# Hand-authored START artefact; deterministic and versioned.
+# Authority: contract v0.6.3, cross-domain ruleset v0.5, hepatic ruleset v0.2
+# (subordinate), approval pack v1.2. Do not invent thresholds. [U] items excluded.
+
+schema_version: "1.0.0"
+package_id: clin_priority_prioritisation_hepatic_v1
+package_version: "0.1.0-hepatic"
+contract_version: "0.6.3"
+ruleset_version: "0.5"
+hepatic_ruleset_version: "0.2"
+approval_pack_version: "1.2"
+compiler_name: clin_priority_hand_compile_v1
+compiler_version: "0.1.0"
+domains_compiled:
+  - hepatic
+  # Minimal non-hepatic stubs required for HEP-AS-8/9/13/14 only (Checkpoint 1)
+  - haematology_stub
+  - iron_stub
+
+source_documents:
+  - path: docs/discussion documents/HEALTHIQ_CLINICAL_FINDING_PRIORITISATION_CONTRACT_v0_6_3.md
+    version: "0.6.3"
+  - path: docs/discussion documents/HEALTHIQ_CROSS_DOMAIN_CLINICAL_PRIORITISATION_RULESET_v0_5.md
+    version: "0.5"
+  - path: docs/discussion documents/HEALTHIQ_HEPATIC_PRIORITISATION_RULESET_v0_2.md
+    version: "0.2"
+  - path: docs/discussion documents/HEALTHIQ_CROSS_DOMAIN_ACCEPTANCE_SCENARIO_APPROVAL_PACK_v1_2.md
+    version: "1.2"
+  - path: docs/discussion documents/HEALTHIQ_HAEMATOLOGY_PRIORITISATION_RULESET_v0_1.md
+    version: "0.1"
+    note: "Bands referenced for MCV mild / platelets <50 only"
+
+# Unset / excluded from compilation (follow-on; never estimated)
+excluded_unset_thresholds:
+  - id: HEP-U2
+    reason: "Numeric jaundice-range bilirubin same-day threshold unset; A9 declined standalone bilirubin Tier 0"
+  - id: HEP-U3
+    reason: "Isolated GGT routine exception open but HEP-GGT-1 implemented as written"
+  - id: HEP-U6
+    reason: "Lower internal ALT ULN not set — use lab ULN only"
+  - id: HEP-U7
+    reason: "Unsafe-without-context register incomplete"
+
+quarantine_namespaces:
+  - namespace: fib_4
+    rule_ids: [XD-QUAR-1, R3, HEP-U5]
+    behaviour: "Do not compute or display FIB-4 as finding authority; HEP-F5 uses AST:ALT and platelets only"
+  - namespace: cardiovascular_risk
+    rule_ids: [XD-QUAR-CV, R2]
+    behaviour: "Do not compute consumer-facing CV-risk findings in this package"
+
+structural_context:
+  - rule_id: XD-HEP-FLOOR-1
+    summary: "Any OOR core hepatic analyte → consolidated Tier 1 hepatic finding unless more urgent hepatic rule applies"
+  - rule_id: XD-HEP-FLOOR-2
+    summary: "Hepatic Tier 1 floor is non-exportable to other domains"
+  - rule_id: XD-QUAR-1
+    summary: "FIB-4 quarantine removes calculation/display, not HEP-F5 finding"
+  - rule_id: HEP-CONS-1
+    summary: "ALT/AST/ALP/GGT/bilirubin forming a recognised pattern → one finding"
+  - rule_id: HEP-P2
+    summary: "First-panel OOR core hepatic floors at Tier 1 (literal BSG); HEP-U1 closed"
+  - rule_id: HEP-LEAD-1
+    summary: "HEP-F4 outranks injury patterns at equal tier"
+  - rule_id: HEP-GGT-1
+    summary: "Isolated GGT ≤100 U/L → routine (exception to HEP-P2)"
+
+core_hepatic_analytes:
+  - alt
+  - ast
+  - alp
+  - ggt
+  - bilirubin
+  - albumin
+  - inr
+
+severity_bands:
+  alt_ast:
+    method: multiples_of_uln
+    bands:
+      - id: mild
+        min_x_uln: 1.0
+        max_x_uln_exclusive: 3.0
+      - id: moderate
+        min_x_uln: 3.0
+        max_x_uln_exclusive: 5.0
+      - id: marked
+        min_x_uln: 5.0
+        max_x_uln_exclusive: 10.0
+      - id: severe
+        min_x_uln: 10.0
+        max_x_uln_exclusive: null
+        or_absolute_gt: 1000.0
+  alp:
+    method: multiples_of_uln
+    bands:
+      - id: mild
+        min_x_uln: 1.0
+        max_x_uln_exclusive: 2.0
+      - id: significant
+        min_x_uln: 2.0
+        max_x_uln_exclusive: null
+
+r_value:
+  rule_id: HEP-R-1
+  formula: "(alt/alt_uln)/(alp/alp_ulp)"
+  hepatocellular_min: 5.0
+  mixed_exclusive_lower: 2.0
+  mixed_exclusive_upper: 5.0
+  cholestatic_max: 2.0
+  may_set_urgency: false
+  may_set_severity: false
+  consumer_headline_forbidden: true
+
+urgency_rules:
+  - rule_id: HEP-U-SD-ENZYME-10X
+    band: same_day
+    when: "alt_or_ast_x_uln >= 10 OR alt_or_ast_absolute > 1000"
+  - rule_id: HEP-U-SD-HY
+    band: same_day
+    when: "alt_or_ast_x_uln >= 3 AND bilirubin_x_uln >= 2 AND alp_x_uln < 2"
+    note: "Hy's law combination; no standalone bilirubin Tier 0 (HEP-U2 excluded)"
+  - rule_id: HEP-U-SD-SYNTHETIC
+    band: same_day
+    when: "abnormal_hepatic_analyte AND (albumin < lrl OR (inr > 1.5 AND not_anticoagulated))"
+  - rule_id: HEP-U-DAYS-5X
+    band: within_days
+    when: "alt_or_ast_x_uln >= 5 AND alt_or_ast_x_uln < 10"
+  - rule_id: HEP-U-WEEKS-P2
+    band: within_weeks
+    when: "any_other_oor_core_hepatic"
+  - rule_id: HEP-U-WEEKS-FIBROSIS
+    band: within_weeks
+    when: "hep_f5_pattern"
+  - rule_id: HEP-U-WEEKS-GGT-HIGH
+    band: within_weeks
+    when: "isolated_ggt > 100"
+  - rule_id: HEP-U-WEEKS-BILI-ANAEMIA
+    band: within_weeks
+    when: "isolated_bilirubin AND anaemia"
+  - rule_id: HEP-U-ROUTINE-GGT
+    band: routine
+    when: "isolated_ggt <= 100"
+  - rule_id: HEP-U-ROUTINE-GILBERT
+    band: routine
+    when: "hep_f6_gilbert_pattern"
+
+finding_types:
+  - finding_type: HEP-F1
+    label: hepatocellular_injury_pattern
+    domain: hepatic
+    activation: "r_value >= 5 OR qualitative alt>>alp with raised alt/ast"
+  - finding_type: HEP-F2
+    label: cholestatic_injury_pattern
+    domain: hepatic
+    activation: "r_value <= 2 with raised alp"
+  - finding_type: HEP-F3
+    label: mixed_injury_pattern
+    domain: hepatic
+    activation: "2 < r_value < 5"
+  - finding_type: HEP-F4
+    label: hepatic_synthetic_dysfunction
+    domain: hepatic
+    activation: "abnormal_hepatic AND (albumin < lrl OR inr > 1.5 without anticoagulation)"
+  - finding_type: HEP-F5
+    label: suspected_advanced_fibrosis
+    domain: hepatic
+    activation: "ast_alt_ratio > 1 AND/OR low_platelets_with_hepatic_context"
+    fib_4_forbidden: true
+    biomarker_derived_provenance_key: "clinical_prioritisation::HEP-F5:ast_alt_platelets_pattern"
+  - finding_type: HEP-F6
+    label: isolated_hyperbilirubinaemia_gilbert_pattern
+    domain: hepatic
+    activation: "isolated raised bilirubin without anaemia"
+    must_not_assert_gilbert_without_conjugated: true
+  - finding_type: HEP-F7
+    label: isolated_raised_alp_origin_undetermined_or_non_hepatic
+    domain: hepatic
+    activation: "raised alp; ggt normal → non_hepatic_likely; ggt absent → undetermined"
+  - finding_type: HEP-F8
+    label: isolated_raised_ggt
+    domain: hepatic
+    activation: "isolated ggt raised"
+  - finding_type: HEP-F9
+    label: non_classifiable_hepatic_abnormality
+    domain: hepatic
+    activation: "raised alt, alp absent (HEP-IND-1); R not computed"
+  - finding_type: HEP-F10
+    label: possible_iron_overload_hepatic_context
+    domain: hepatic
+    activation: "ferritin raised AND tsat > 45"
+  - finding_type: HAEM-F2
+    label: isolated_macrocytosis
+    domain: haematology
+    activation: "mcv > uln; stub for HEP-AS-13 contextual boundary"
+  - finding_type: HAEM-PLT
+    label: thrombocytopenia
+    domain: haematology
+    activation: "platelets < 50 → independent (not absorbed); platelets < lrl may support HEP-F5"
+
+tier_algebra:
+  same_day: 0
+  within_days: 1
+  within_weeks: 1
+  routine_isolated_ggt: 2
+  routine_gilbert: 2
+  contextual: 3
+  notes:
+    - "initial_tier = urgency-derived floor; significance may not lower below floor"
+    - "HEP-P2 floors OOR core hepatic at Tier 1"
+    - "Tier 0 is SPECIFICATION_ONLY; evaluate then withhold, never demote"
+
+lead_rules:
+  - rule_id: HEP-LEAD-1
+    summary: "HEP-F4 outranks HEP-F1/F2/F3 at equal tier"
+  - rule_id: HEP-LEAD-2
+    summary: "Injury patterns outrank HEP-F5 only at marked severity+"
+  - rule_id: HEP-LEAD-3
+    summary: "Contextual never leads"
+  - rule_id: NO_TECHNICAL_TIEBREAK
+    summary: "Do not reuse technical_tiebreak_lead"
+  - rule_id: NO_FORCED_LEAD
+    summary: "When >=3 co-equal non-same-day findings lack distinguisher → no_forced_lead"
+
+nesting_rules:
+  - rule_id: HEP-NEST-MCV-MILD
+    when: "mcv mild band (>uln to 105) AND hepatic parent Tier 0/1"
+    role: contextual
+  - rule_id: HEP-NEST-MCV-ABOVE-MILD
+    when: "mcv > 105 OR marked (>115)"
+    role: independent
+    note: "Must not attach as context (HEP-AS-13)"
+  - rule_id: HEP-NEST-PLT-FIBROSIS
+    when: "platelets >= 50 AND hepatic fibrosis context"
+    role: contextual_or_constituent
+  - rule_id: HEP-NEST-PLT-BELOW-50
+    when: "platelets < 50"
+    role: independent_haematology
+    urgency: same_day_eligible
+  - rule_id: HEP-NEST-FERRITIN-TSAT-LE-45
+    when: "ferritin raised AND tsat <= 45 AND hepatic finding"
+    role: contextual
+  - rule_id: HEP-NEST-TRANSFERRIN-LOW
+    when: "transferrin mildly low AND hepatic finding"
+    role: contextual
+
+no_concern:
+  rule_id: HEP-NO-CONCERN-1
+  mandatory_notes:
+    - "normal_enzymes_do_not_exclude_fibrosis_cirrhosis"
+  prohibited:
+    - "state_liver_is_healthy"
+
+scenarios_in_scope:
+  - CONTRACT-FIX-1
+  - HEP-AS-1
+  - HEP-AS-2
+  - HEP-AS-3
+  - HEP-AS-4
+  - HEP-AS-5
+  - HEP-AS-6
+  - HEP-AS-7
+  - HEP-AS-8
+  - HEP-AS-9
+  - HEP-AS-10
+  - HEP-AS-11
+  - HEP-AS-12
+  - HEP-AS-13
+  - HEP-AS-14
