@@ -554,9 +554,11 @@ class PersistenceService:
 
             return history
 
-        except Exception as e:
-            logger.error(f"Error getting analysis history for user {user_id}: {str(e)}")
-            return []
+        except Exception:
+            # Do not convert schema/DB failures into a successful empty history list
+            # (false "no records" UX). Genuine empty estates still return [] above.
+            logger.exception("Error getting analysis history for user %s", user_id)
+            raise
 
     def get_trend_eligible_history(
         self, user_id: UUID, limit: int = 50, offset: int = 0
