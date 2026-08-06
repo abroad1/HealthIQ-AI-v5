@@ -1663,6 +1663,98 @@ Documentation-only post-merge reconciliation. Sources: committed implementation 
 
 ---
 
+## CLIN-PRIORITY-RESULT-REGEN-1 — Governed result regeneration and trend supersession
+
+**Status:** Complete — kernel-complete, independently audited PASS  
+**Date closed:** 2026-08-05  
+**Branch:** `feature/clin-priority-result-regen-1`  
+**Gate:** `PASS` (`automation_bus/latest_gate_evidence.json`, work_id `CLIN-PRIORITY-RESULT-REGEN-1`)  
+**Independent audit:** PASS — `docs/sprints/beta_readiness/CLIN-PRIORITY-RESULT-REGEN-1_implementation_verification.md`; audit re-run this session confirmed 15/15 new tests + 38/38 adjacent regression suites passing, migration idempotent/additive-only  
+**Programme block(s):** Result versioning, regeneration and trend authority (Package C)
+
+### Delivered / ticked off
+- Governed analysis-policy version (`analysis_policy_version_v1.py`) as the single broad stale-detection trigger, replacing an indefinitely-growing field-specific check list; closes the pre-CLIN-PRIORITY-CORE-1 gap where a result missing `clinical_concern_set` could remain classified `current` (see `docs/audit-papers/CLIN-PRIORITY_RESULT_REGENERATION_AUDIT.md`).
+- `result_date` field with a deterministic 3-tier provenance hierarchy (user-entered / legacy-equivalent / legacy-created-at-fallback) — the single user-entered clinical chronology date.
+- Regeneration lineage (`supersedes_analysis_id`, `lineage_root_analysis_id`) without mutating or deleting historic records.
+- New canonical backend-owned trend/history selection path (`GET /api/analysis/trend-eligible`), replacing prior client-side trend-selection logic in `useTrendData.ts`/`trendComparison.ts`.
+- **This resolves `CF-ARCH-CONV-VERSION-1`** (result-versioning / regeneration authority), open since `ARCH-CONV-PKGC-1` (2026-08-02) through `ARCH-CONV-PKGC-2` and `ARCH-CONV-I-ALT-IDPROV-1`.
+
+### Carry-forwards
+- None material — package closed its own scope in full per independent audit.
+
+### Blockers / risks
+- None.
+
+### Recommended next sprint
+- See "Immediate sequence" entry below.
+
+---
+
+## fix/uat-alt-prioritisation — Bounded ALT/UAT presentation-authority fix
+
+**Status:** Complete — independently audited PASS; not yet merged  
+**Date closed:** 2026-08-05  
+**Branch:** `fix/uat-alt-prioritisation`  
+**Commits:** `92a5dde` (fix), `c3f457e` (test)  
+**Independent audit:** PASS — verdict `ALT_PRESENTATION_FIX_AUDIT_PASS_MERGE_AUTHORISED`, `automation_bus/latest_audit_summary.md` (as of 2026-08-05); tests re-run independently (5 suites / 21 tests PASS), `tsc --noEmit` clean, `next build` succeeds  
+**Programme block(s):** Results page / UX — concern-set presentation authority
+
+### Delivered / ticked off
+- `resolveClinicalPresentationAuthority` makes `clinical_concern_set` the sole hero/body-overview/lead-narrative authority when a valid concern set exists; frontend computes no ranking, confidence, or supporting-marker comparison.
+- Confirmed by direct audit: zero backend files touched (concern construction, prioritisation, thresholds, signal activation, FIB-4, and history/supersession logic all unchanged).
+
+### Carry-forwards
+- **New defect surfaced by immediate follow-on UAT investigation** (`docs/audit-papers/UAT_RESULTS_PAGE_PRESENTATION_INVESTIGATION_1ce310e1.md`), classified `RESULTS_PAGE_REQUIRES_PRODUCT_COPY_DECISION` — a presentation/copy-boundary defect, not a ranking defect: raw internal finding `label`/urgency/severity enums leak into consumer prose; conflicting legacy narrative fragments survive; no governed `consumer_display_label` field exists on the finding contract. Scoped as `FE-RESULTS-PRESENTATION-STRUCTURE-1` (bounded, no product decision needed) and a separate consumer-label product/clinical decision — see `docs/audit-papers/POST_CLIN_PRIORITY_PROGRAMME_SEQUENCING_AUDIT.md`.
+
+### Blockers / risks
+- None blocking this package's own merge; the UAT-surfaced consumer-copy gap is out of this package's scope and does not block it.
+
+### Recommended next sprint
+- See "Immediate sequence" entry below.
+
+---
+
+## 2026-08-06 — Verified system estate and residual programme status (documentation reconciliation)
+
+**Status:** Reconciliation entry — no code change  
+**Date:** 2026-08-06  
+**Source:** `docs/audit-papers/HEALTHIQ_MAIN_SYSTEM_SUBSYSTEM_COMPLETION_AUDIT.md`; `docs/audit-papers/POST_CLIN_PRIORITY_PROGRAMME_SEQUENCING_AUDIT.md`; `docs/planning-papers/ARCH-CONV-A_wave_plan_resurfacing_note.md`
+
+### Verified system estate
+- Six launch-core systems backend-assembled and DTO-exposed: Cardiovascular health, Blood sugar control, Liver health, Kidney function, Blood/iron/oxygen, Thyroid/energy regulation.
+- Three consumer-visible: Cardiovascular health, Blood sugar control, Liver health.
+- Three consumer-invisible despite being backend-complete: Kidney function, Blood/iron/oxygen, Thyroid/energy regulation (frontend `Wave1DomainCards.tsx` hardcodes only the first three domain IDs).
+- Two second-wave systems remain deliberately deferred: Silent inflammation, Hormone balance/gonadal axis — research-present, domain-unmapped, not a build gap.
+- MED-REV-1 deliberately exposes only one approved bounded subsystem per visible domain; 5 of 10 compiled subsystems are hidden by a named, tested, CI-enforced medical-review decision (`docs/audit-papers/MED-REV-1_wave1_subsystem_visibility_and_label_alignment_report.md`), not implementation debt.
+- **Known active defect:** `test_p1_22_thyroid_activation_pack.py::test_ft3_high_requires_tsh_suppressed_companion_gate` currently fails — a genuine thyroid signal-firing correctness defect, independent of the MED-REV-1 visibility decisions.
+
+### Residual clinical-intelligence programme (ARCH-CONV-A medical-review wave plan)
+Re-surfaced as an active, never-retired-or-superseded programme (`docs/architecture/ARCH-CONV-A_medical_review_wave_plan.md`). Verified status:
+- Wave 0 (homocysteine disposition): **closed** — `ARCH-CONV-PKGB-1`.
+- Wave 1 (thyroid axis completion): not started.
+- Wave 2 (lipid/cardiometabolic): **partial** — urate (`ARCH-CONV-G`) and HbA1c (`ARCH-CONV-H`) closed; remainder of panel unconfirmed.
+- Wave 3 (renal function): not started.
+- Wave 4 (hepatic/biliary): **partial** — ALT (`ARCH-CONV-I`) closed.
+- Wave 5 (iron/haematology): not started.
+- Wave 6 (metabolic/systemic residual): not started.
+
+The Stage 0 residual medical-review sequencing advisory called for in the day-one architecture carry-forward register immediately after `ARCH-CONV-I` (2026-08-02) **was never run** and remains the outstanding planning gate before any detailed residual-wave order is selected or ratified. No detailed residual-wave order is ratified by this entry.
+
+### Immediate sequence (only this is ratified — no detailed residual-wave order)
+1. Reconcile documentation (this entry and the accompanying strategy/baseline/carry-forward updates) and close the current branch.
+2. Fix the thyroid FT3/TSH firing defect (bounded correctness package).
+3. Run the B2 Stage 0 residual medical-review sequencing advisory.
+4. Update the existing strategy and this register with the ratified detailed sequence resulting from step 3.
+5. Execute that ratified sequence.
+
+### Blockers / risks
+- None introduced by this reconciliation entry.
+
+### Recommended next sprint
+- Thyroid FT3/TSH firing-defect fix (step 2 above).
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

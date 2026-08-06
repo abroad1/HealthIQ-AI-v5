@@ -1166,6 +1166,14 @@ These items remain open after Gate 2 ratification of ARCH-CONV-I. ARCH-CONV-I cl
 
 Sequencing note: run a repository-grounded Stage 0 advisory before selecting the next residual (Package B / dual-authority sequencing).
 
+### 2026-08-06 status note (documentation reconciliation)
+
+The day-one architecture rework programme documented in this file (Sprints 0-6, ARCH-RT-0 through ARCH-RT-6) is **complete and is not reopened** by this note. Its research-to-runtime and authority guardrails (`backend/scripts/validate_day_one_architecture.py`, the architecture validation gate, Sentinel pack) remain governing and unchanged.
+
+The **residual ARCH-CONV-A medical-review waves** referenced above ("Package B / Package C sequencing," "the next residual") are a distinct, still-active downstream clinical-intelligence completion programme — see `docs/architecture/ARCH-CONV-A_medical_review_wave_plan.md` and `docs/planning-papers/ARCH-CONV-A_wave_plan_resurfacing_note.md`. As of this date: Wave 0 closed; Wave 2 and Wave 4 partially closed (urate, HbA1c, ALT); Waves 1, 3, 5, 6 not started. The Stage 0 sequencing advisory called for immediately above **was never run** and remains the outstanding planning gate before any detailed residual-wave order is selected or ratified.
+
+This file is not the governing beta-readiness sprint plan — that role belongs to the definitive beta-readiness strategy (`docs/strategy/beta_readiness/HEALTHIQ_AI_BETA_READINESS_DEFINITIVE_STRATEGY_FINAL_2026-06-20.md`, §24) and the Build Deliverable Register. This file remains the authority for the day-one architecture identity/provenance/WHY-pilot track specifically, and for the residual ARCH-CONV-A wave-plan carry-forward status recorded above, until the outstanding Stage 0 advisory produces a ratified detailed sequence.
+
 ## 6. Final note
 
 This is the fewest sensible sprint sequence currently recommended.

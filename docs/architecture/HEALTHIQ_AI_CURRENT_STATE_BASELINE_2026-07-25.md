@@ -63,7 +63,7 @@ Summary labels are qualitative, evidence-backed, and **not** percentage scores.
 
 | Block | Current posture | Notes |
 |---|---|---|
-| 1 Core health systems model | Materially advanced | Six Wave 1 domains built and wired |
+| 1 Core health systems model | Materially advanced | Six Wave 1 domains backend-assembled and DTO-exposed; only three are frontend-rendered to consumers (see §14) |
 | 2 Subsystems and depth | Materially advanced | 10 estate-indexed compiled cards |
 | 3 Layer B intelligence/prose | Partial | Production prose/registries exist; frame routing and modifier binding not delivered |
 | 4 Layer C / Gemini | Gated | Gemini non-authoritative; deny-default narrative |
@@ -76,7 +76,7 @@ Summary labels are qualitative, evidence-backed, and **not** percentage scores.
 
 ## 6. Verified delivered capabilities
 
-- Six Wave 1 consumer domains built and wired: `wave1_cardiovascular`, `wave1_blood_sugar`, `wave1_liver`, `wave1_kidney`, `wave1_blood_iron_oxygen`, `wave1_thyroid`.
+- Six Wave 1 domains backend-assembled and DTO-exposed: `wave1_cardiovascular`, `wave1_blood_sugar`, `wave1_liver`, `wave1_kidney`, `wave1_blood_iron_oxygen`, `wave1_thyroid`. Frontend rendering is confirmed for only the first three; `wave1_kidney`, `wave1_blood_iron_oxygen`, and `wave1_thyroid` do not appear in `Wave1DomainCards.tsx` or any other frontend component — see §14 for the full backend/DTO/consumer-visibility distinction and the verified thyroid firing defect.
 - Compiled card evidence active; hard-coded card evidence inactive.
 - Activation-key identity active at registry load.
 - Day-one architecture / launch-estate / architecture-validation gates PASS on pre-change baseline (ARCH-GOV-BASELINE-1 Phase 1).
@@ -128,6 +128,7 @@ Summary labels are qualitative, evidence-backed, and **not** percentage scores.
 | AUTHORITY_MAP KB SOP v1.3 / pre-SOP v0_4 | Superseded by KB SOP v1.3.1 and pre-SOP v0.6.2 |
 | MR-BATCH-001B completion/output “medical review then promote” recommendations | Superseded: benchmark/test-only; no medical-review promotion route |
 | Stale RT-5D inventory expectations (186 packages / 7 cards) | Superseded by live estate: 191 provenance rows / 10 cards (refreshed in ARCH-GOV-BASELINE-1 tests) |
+| This baseline's §5/§6 "six Wave 1 domains built and wired" | Qualified 2026-08-06 (§14): "wired" meant backend/DTO only — three domains are not frontend-rendered. See `docs/audit-papers/HEALTHIQ_MAIN_SYSTEM_SUBSYSTEM_COMPLETION_AUDIT.md`. |
 
 ---
 
@@ -149,3 +150,24 @@ Do not invent completion percentages. Do not select or author the next implement
 | Compiled hypotheses | 1 (`signal_vitamin_d_low`) |
 | `pkg_kb52c_*` packages (batch-blocked class) | 72 |
 | `knowledge_bus/current/latest_knowledge_status.json` | Absent |
+
+---
+
+## 14. 2026-08-06 Verification Update — main-system backend/DTO/consumer-visibility distinction
+
+Source: `docs/audit-papers/HEALTHIQ_MAIN_SYSTEM_SUBSYSTEM_COMPLETION_AUDIT.md` (repository-grounded, includes direct code inspection and test execution).
+
+| System | Backend-assembled | DTO-exposed | Consumer-visible | Status |
+|---|---|---|---|---|
+| Cardiovascular health | Yes | Yes | Yes | 1 of 3 compiled subsystems visible (MED-REV-1 deliberately hides 2) |
+| Blood sugar control | Yes | Yes | Yes | 1 of 2 compiled subsystems visible (MED-REV-1 deliberately hides 1) |
+| Liver health | Yes | Yes | Yes | 0 of 2 compiled subsystems visible — flat evidence only, by design |
+| Kidney function | Yes | Yes | **No** | Not in `Wave1DomainCards.tsx`; no other frontend path found |
+| Blood / iron / oxygen | Yes | Yes | **No** | Same; also no primary IDL narrative selected |
+| Thyroid / energy regulation | Yes | Yes | **No** | Same; also has an active firing defect (below) |
+| Silent inflammation (second-wave) | No | No | No | Deliberately deferred; research-present, domain-unmapped |
+| Hormone balance / gonadal axis (second-wave) | No | No | No | Deliberately deferred; research-present, domain-unmapped |
+
+**Known active defect (recorded, not diagnosed or corrected by this update):** `backend/tests/unit/test_p1_22_thyroid_activation_pack.py::test_ft3_high_requires_tsh_suppressed_companion_gate` fails on the current repository state — `signal_free_t3_high` does not fire when expected (FT3=7.0, TSH=0.2 suppressed). This is a genuine runtime-firing correctness defect in the thyroid domain, independent of and not to be conflated with the MED-REV-1 visibility decisions above.
+
+This section qualifies, and takes precedence over, the "six Wave 1 domains built and wired" phrasing in §5 and §6 above for any reader relying on consumer-facing completeness.
