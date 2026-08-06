@@ -143,12 +143,17 @@ def test_hormonal_system_orchestration_scores_tsh_from_lab_range():
     assert result.biomarker_scores[0].unscored_reason is None
 
 
-def test_ft3_high_requires_tsh_suppressed_companion_gate():
+def _ft3_high_evaluator() -> SignalEvaluator:
     signal = _load_package_signal(
         "pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis",
         "signal_free_t3_high",
     )
-    evaluator = SignalEvaluator(_SingleSignalRegistry(signal))
+    return SignalEvaluator(_SingleSignalRegistry(signal))
+
+
+def test_ft3_high_requires_tsh_suppressed_companion_gate():
+    """FT3 high + TSH suppressed fires; FT3 high + non-suppressed TSH does not."""
+    evaluator = _ft3_high_evaluator()
     blocked = evaluator.evaluate_all(
         signal_biomarkers={"free_t3": 7.0, "tsh": 2.0},
         signal_derived={},
@@ -162,6 +167,87 @@ def test_ft3_high_requires_tsh_suppressed_companion_gate():
     )
     assert len(allowed) == 1
     assert allowed[0].signal_id == "signal_free_t3_high"
+
+
+def test_ft3_high_does_not_fire_when_ft3_not_high_even_if_tsh_suppressed():
+    evaluator = _ft3_high_evaluator()
+    # free_t3 at ULN (6.5) is not lab_range_exceeded / suboptimal-high
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"free_t3": 6.5, "tsh": 0.2},
+        signal_derived={},
+        lab_ranges=THYROID_LAB_RANGES,
+    )
+    assert results == []
+
+
+def test_ft3_high_does_not_fire_when_tsh_absent():
+    evaluator = _ft3_high_evaluator()
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"free_t3": 7.0},
+        signal_derived={},
+        lab_ranges=THYROID_LAB_RANGES,
+    )
+    assert results == []
+
+
+def test_ft3_high_boundary_just_above_uln_with_tsh_at_suppression_edge():
+    """Governed FT3 ULN 6.5 and TSH LLN 0.4 — fire only when both sides satisfy."""
+    evaluator = _ft3_high_evaluator()
+    # Just above FT3 ULN, TSH just below LLN
+    fire = evaluator.evaluate_all(
+        signal_biomarkers={"free_t3": 6.5000001, "tsh": 0.3999999},
+        signal_derived={},
+        lab_ranges=THYROID_LAB_RANGES,
+    )
+    assert len(fire) == 1
+    assert fire[0].signal_id == "signal_free_t3_high"
+    # FT3 just at ULN — not exceeded
+    no_ft3 = evaluator.evaluate_all(
+        signal_biomarkers={"free_t3": 6.5, "tsh": 0.3999999},
+        signal_derived={},
+        lab_ranges=THYROID_LAB_RANGES,
+    )
+    assert no_ft3 == []
+    # TSH at LLN — not suppressed
+    no_tsh = evaluator.evaluate_all(
+        signal_biomarkers={"free_t3": 6.5000001, "tsh": 0.4},
+        signal_derived={},
+        lab_ranges=THYROID_LAB_RANGES,
+    )
+    assert no_tsh == []
+
+
+def test_ft3_high_suppressed_when_free_t4_elevated():
+    """Keep deliberate T3-predominant / broader-thyrotoxicosis differential."""
+    evaluator = _ft3_high_evaluator()
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"free_t3": 7.0, "tsh": 0.2, "free_t4": 25.0},
+        signal_derived={},
+        lab_ranges=THYROID_LAB_RANGES,
+    )
+    assert results == []
+
+
+def test_ft3_high_fires_when_free_t4_present_and_not_elevated():
+    evaluator = _ft3_high_evaluator()
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"free_t3": 7.0, "tsh": 0.2, "free_t4": 18.0},
+        signal_derived={},
+        lab_ranges=THYROID_LAB_RANGES,
+    )
+    assert len(results) == 1
+    assert results[0].signal_id == "signal_free_t3_high"
+
+
+def test_ft3_high_alias_free_t3_canonical_id_only_in_fixture_keys():
+    """Canonical SSOT ids are free_t3 / tsh — no duplicate emission."""
+    evaluator = _ft3_high_evaluator()
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"free_t3": 7.0, "tsh": 0.2},
+        signal_derived={},
+        lab_ranges=THYROID_LAB_RANGES,
+    )
+    assert [r.signal_id for r in results] == ["signal_free_t3_high"]
 
 
 def test_ft3_low_in_thyroid_domain_allowlist_after_p1_25():

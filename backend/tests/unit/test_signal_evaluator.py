@@ -438,6 +438,56 @@ def test_kb_s45a_lab_range_boundary_out_of_range_either_side():
     assert high[0].signal_state == "at_risk"
 
 
+def test_kb_s51_lab_range_boundary_not_above_max_passes_when_companion_absent():
+    """Companion-normality gates pass when the companion metric is missing."""
+
+    class _Reg:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_nam_missing",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "supporting_metrics": [],
+                    "thresholds": [
+                        {"severity": "suboptimal", "operator": "range", "min_value": 70, "max_value": 99}
+                    ],
+                    "activation_logic": "lab_range_exceeded",
+                    "activation_config": {"upper_bound_state": "suboptimal", "enable_upper_bound": True},
+                    "mandatory_pre_emission_gates": [
+                        {
+                            "gate_id": "require_ggt_not_high",
+                            "metric_id": "ggt",
+                            "comparator_type": "lab_range_boundary",
+                            "boundary": "not_above_max",
+                            "condition_type": "all_of",
+                        }
+                    ],
+                    "override_rules": [],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    ev = SignalEvaluator(_Reg())
+    labs = {"glucose": {"min": 70, "max": 99}, "ggt": {"min": 5.0, "max": 55.0}}
+    # Primary high; companion absent — normality gate must not fail-closed
+    missing = ev.evaluate_all(
+        signal_biomarkers={"glucose": 120.0},
+        signal_derived={},
+        lab_ranges=labs,
+    )
+    assert len(missing) == 1
+    assert missing[0].signal_id == "signal_nam_missing"
+    # Companion elevated — gate blocks
+    blocked = ev.evaluate_all(
+        signal_biomarkers={"glucose": 120.0, "ggt": 56.0},
+        signal_derived={},
+        lab_ranges=labs,
+    )
+    assert blocked == []
+
+
 def test_kb_s51_lab_range_boundary_not_above_max_fires_when_companion_not_elevated():
     class _Reg:
         @staticmethod
