@@ -1,125 +1,64 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "CLIN-PRIORITY-RESULT-REGEN-1",
+  "work_id": "THYROID-FT3-TSH-FIRING-FIX-1",
   "status": "HARDENED",
-  "hardening_date": "2026-08-05",
+  "hardening_date": "2026-08-06",
   "hardened_by": "Claude Code",
   "risk_level": "HIGH",
   "change_type": "BEHAVIOUR",
   "execution_model": "TWO_PHASE_START_FINISH",
-  "branch": "feature/clin-priority-result-regen-1",
+  "branch": "fix/thyroid-ft3-tsh-firing",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "prompt_sha256": {
-    "resubmitted_version_hardened_this_record": "8b4aa2cde8ac3c6642bf95d92590d77473a94f3435934789520fc85f986b26a1",
-    "measured_by": "sha256sum automation_bus/latest_cursor_prompt.md, current file as re-hardened in this record"
-  },
+  "prompt_sha256": "3d5bc3fdfc538c3cf5abd7a3a0962b07d307f8594d05256f0bf269e654c36af3",
 
   "verification_mode_used": {
     "mode": "batched direct verification, no fork",
-    "rationale": "Single cohesive HIGH/BEHAVIOUR package with 8 interdependent authority areas (not disjoint), verified via parallel Grep/Read/Bash calls across two hardening passes in this same session; no fork used since the work does not decompose into independent non-overlapping chunks."
+    "rationale": "Single bounded HIGH/BEHAVIOUR defect fix, one confirmed failing test, one governed activation frame. Not disjoint/large enough to warrant a fork."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "declared_risk_level": "HIGH",
     "declared_change_type": "BEHAVIOUR",
-    "files_in_scope": "not enumerated as a literal list in the prompt; Stage 1A preflight required across 8 named subsystems (versioning classifier, persisted-result compatibility, regeneration, retention policy, persistence/result-date, trend/longitudinal, frontend banner, existing lineage fields)",
-    "behaviour_changes_touch_intelligence_core": "NO for clinical/signal/prioritisation logic (explicitly excluded by Authority boundaries); YES for backend/core/dto versioning classifier and new persistence/trend paths, consistent with declared HIGH",
-    "tests_listed_for_behaviour_changes": "YES -- 16 explicit regression scenarios in 'Required evidence and tests'",
-    "scope_proportionality": "PASS -- bounded by explicit Authority boundaries, STOP conditions, and Out-of-scope sections; STOP list explicitly caps expansion at 'result-date schema, analysis-policy versioning, regeneration lineage, backend trend selection, and frontend trend rewire'",
-    "advisory_duplication": "NO -- automation_bus/latest_scope_advisory.md concerns an unrelated Stage 0 pipeline-sequencing item",
+    "files_in_scope": "not enumerated as a literal list in the prompt; Stage D required naming exact authoritative files before hardening completes - done, see stage_2a below",
+    "behaviour_changes_touch_intelligence_core": "YES -- signal activation-frame evaluator/loader, consistent with declared HIGH",
+    "tests_listed_for_behaviour_changes": "YES -- 10 required behavioural coverage items",
+    "scope_proportionality": "PASS -- single confirmed defect, explicit out-of-scope list, 9 STOP conditions, explicit 'treat as observed defect not pre-judged root cause' discipline",
+    "advisory_duplication": "NO -- automation_bus/latest_scope_advisory.md concerns an unrelated 2026-08-02 pipeline-sequencing item",
     "decision": "ACCEPT"
   },
 
-  "stage_2a_authority_verification": {
-    "result_versioning_classification": {
-      "citation": "backend/core/dto/result_versioning_policy_v1.py:114-174 (assess_result_versioning, build_result_versioning_metadata)",
-      "status": "single authority, CONFIRMED"
+  "stage_d_authority_verification": {
+    "baseline_defect_reproduced_this_pass": {
+      "command": "pytest tests/unit/test_p1_22_thyroid_activation_pack.py -q",
+      "result": "1 failed: test_ft3_high_requires_tsh_suppressed_companion_gate, assert 0 == 1 -- matches prompt's recorded observation exactly"
     },
-    "persisted_result_compatibility": {
-      "citation": "backend/core/dto/persisted_replay_contract_v1.py:64-105 (assess_persisted_result_compatibility)",
-      "status": "single authority, CONFIRMED"
-    },
-    "regeneration_eligibility_and_execution": {
-      "citation": "eligibility: backend/core/dto/analysis_regeneration_v1.py:30-34 (assess_regeneration_available); execution: backend/app/routes/analysis.py:523-630 (POST /{analysis_id}/regenerate) calling backend/app/analysis_regeneration.py:18-165",
-      "status": "single authority, CONFIRMED"
-    },
-    "retention_immutable_snapshot_policy": {
-      "citation": "docs/architecture/LAUNCH-CORE-3_result_versioning_replay_and_regeneration_policy.md:7-9",
-      "status": "CONFIRMED, not contradicted anywhere in code -- analysis_regeneration.py only ever builds a new payload for a new analysis_id, never mutates a stored row"
-    },
-    "persistence_and_result_date_storage": {
-      "citation": "backend/core/models/database.py:104-195 -- Analysis (created_at, completed_at, updated_at) and AnalysisResult (created_at) are the only date columns",
-      "status": "no result_date field exists anywhere in schema or frontend types (repo-wide search for result_date/sample_date/collection_date/report_date returns zero hits); this is the net-new field Outcome A explicitly authorises"
-    },
-    "trend_longitudinal_selection_path": {
-      "citation": "frontend-only today: frontend/app/hooks/useTrendData.ts:44,55,62-63; frontend/app/lib/trendComparison.ts:147-153 (sortCompletedHistoryNewestFirst sorts all completed analyses by created_at, no stale/superseded exclusion)",
-      "status": "no backend trend authority exists; this is the net-new subsystem Outcome F explicitly authorises"
-    },
-    "frontend_stale_banner_and_refresh_action": {
-      "citation": "frontend/app/components/results/StaleResultBanner.tsx:16-108 -- gated purely on server-provided versioning.result_status / regeneration_available (lines 21-24, 85); no frontend inference",
-      "status": "CONFIRMED reusable as-is per Outcome G"
-    },
-    "existing_supersession_lineage_fields": {
-      "citation": "backend/app/analysis_regeneration.py:45-47 stamps meta['regenerated_from_analysis_id'] and meta['regeneration_policy_id']",
-      "status": "field is written once and never read anywhere else in the repo -- inert, not an active lineage/authority mechanism; no parallel authority exists"
-    },
-    "backfill_source_check_for_outcome_a": {
-      "citation": "backend/ssot/questionnaire.json:1-24 -- only date-typed field is date_of_birth; repo-wide search for sample_date/collection_date/report_date in frontend returns zero hits",
-      "status": "no legacy-equivalent user-supplied clinical-chronology date exists anywhere; every pre-existing analysis record will backfill via the third tier only (legacy_created_at_fallback), none will qualify for legacy_equivalent_source -- consistent with the prompt's own hierarchy, not a STOP condition"
-    }
+    "activation_frame_definition": "knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis/signal_library.yaml:8-95 -- single definition; cross-checked knowledge_bus/compiled/estate_index_v1.yaml:126-131 is a separate compiled-WHY authority (activation_key -> hypothesis artefact mapping), not a second firing/gate authority",
+    "primary_free_t3_condition": "signal_library.yaml:39-49 -- activation_logic: lab_range_exceeded, upper_bound_state: suboptimal, evaluated via signal_evaluator.py _evaluate_lab_range_activation_state (~lines 270-304)",
+    "suppressed_tsh_companion_condition": "signal_library.yaml:51-56 -- mandatory_pre_emission_gates[0]: gate_id require_tsh_suppressed, metric_id tsh, comparator_type lab_range_boundary, boundary below_min",
+    "biomarker_identity_alias_resolution": "backend/ssot/biomarkers.yaml -- tsh, free_t3 (line 1158), free_t4 (line 678) all canonical with aliases present; no SSOT/signal-library metric_id mismatch found -- ruled out as alternative root cause",
+    "reference_range_threshold_semantics": "signal_evaluator.py:337-373 (_evaluate_lab_range_boundary_condition), :306-316 (_resolve_condition_metric_value)",
+    "runtime_loader_evaluator_path": "signal_evaluator.py:26-41 (SignalRegistry, production loader from knowledge_bus/packages/) and :589-650+ (evaluate_all). Confirmed the failing test loads the same governed signal_library.yaml content via _load_package_signal into a single-signal registry stub, then runs it through the same production SignalEvaluator.evaluate_all/_passes_mandatory_pre_emission_gates code path -- test and production authority are the same governed frame",
+    "canonical_test_module": "backend/tests/unit/test_p1_22_thyroid_activation_pack.py -- confirmed the only test exercising signal_free_t3_high firing directly (whole file grepped); THYROID_LAB_RANGES fixture at lines 22-26; adjacent regression test_ft3_low_in_thyroid_domain_allowlist_after_p1_25 (unrelated signal, same file)",
+    "duplicate_or_parallel_authority": "NONE FOUND -- single package, single signal_library.yaml, single activation_key"
   },
 
-  "stage_2b_behavioural_hardening": {
-    "authority_boundaries_respected": "YES -- prompt explicitly excludes clinical prioritisation/signal/threshold/tiering/lead-selection/longitudinal-medical-rule changes; verified no such files are in the required-outcomes list",
-    "stop_conditions_evaluated_against_current_repo_state": [
-      {
-        "condition": "current repository has more than one plausible result-versioning authority",
-        "result": "NOT TRIGGERED -- single authority confirmed (result_versioning_policy_v1.py)"
-      },
-      {
-        "condition": "more than one competing backend trend authority would be created",
-        "result": "NOT TRIGGERED -- none exists today, only one is being created"
-      },
-      {
-        "condition": "implementing supersession requires deleting or mutating historic results",
-        "result": "NOT TRIGGERED -- additive only, per retention policy citation above"
-      },
-      {
-        "condition": "result_date cannot be added/populated via authorised bounded migration without destructive/misleading rewriting",
-        "result": "NOT TRIGGERED -- deterministic 3-tier hierarchy applies; all legacy records resolve cleanly to legacy_created_at_fallback"
-      },
-      {
-        "condition": "a new user-entered date appears necessary",
-        "result": "NOT TRIGGERED -- single result_date field is sufficient per Outcome A"
-      },
-      {
-        "condition": "existing wording cannot represent stale/refresh state",
-        "result": "NOT TRIGGERED -- StaleResultBanner.tsx wording is reusable as-is"
-      },
-      {
-        "condition": "work expands beyond the explicitly authorised scope (result-date schema, analysis-policy versioning, regeneration lineage, backend trend selection, frontend trend rewire)",
-        "result": "NOT TRIGGERED -- all required outcomes A-G map onto this authorised set"
-      }
-    ],
-    "prior_hardening_blockers_resolution": {
-      "blocker_1_no_result_date_field": "Resolved by resubmitted prompt Outcome A (lines 98-125): explicitly authorises adding result_date with a deterministic backfill/provenance hierarchy; storage-location decision (Analysis vs AnalysisResult) is correctly left as a Stage D task",
-      "blocker_2_trend_authority_frontend_only": "Resolved by resubmitted prompt Outcome F (lines 178-198): explicitly authorises a new backend trend/history selection path and frontend migration off useTrendData.ts/trendComparison.ts"
-    },
-    "recommendation_for_stage_d": "result_date should be added as a new nullable column on Analysis (not AnalysisResult) since Analysis already holds raw_biomarkers/questionnaire_data and AnalysisResult is 1:1 with it -- avoids duplicating the field across both tables. The existing inert regenerated_from_analysis_id field should be considered for promotion to a first-class queryable lineage column rather than inventing a second lineage mechanism."
+  "root_cause_finding_for_cursor_confirmation": {
+    "status": "candidate, evidence-backed, NOT prescribed -- prompt explicitly requires treating this as the observed defect, not a pre-judged root cause",
+    "mechanism": "signal_library.yaml:57-61 declares a second mandatory gate, require_free_t4_not_high (metric_id free_t4, boundary not_above_max). The failing test's signal_biomarkers dict never includes free_t4 (test lines 153, 159, confirmed by direct read). _evaluate_single_condition (signal_evaluator.py:401-402) returns False when a gate's metric is absent from input -- a generic, uniform fail-closed behaviour applied identically to every gate, not a bug specific to this signal. Both the TSH gate and the FT4 gate fail-closed identically when their metric is missing.",
+    "tension_identified": "signal_library.yaml:22-27 declares free_t4's role as differential_marker (contextual, distinguishing T3-predominant from broader thyrotoxicosis) while tsh is declared role: corroborator. Only tsh looks intended to be a hard gate. Source research (knowledge_bus/research/investigation_specs/inv_free_t3_high_t3_predominant_thyrotoxicosis.yaml) references free_t4 under a contradiction_id (differential/contradiction context), not as a co-required activation condition -- consistent with mandatory_pre_emission_gates having been over-broadly authored to include a marker the signal's own declared role says should be contextual, not blocking.",
+    "why_not_prescribed": "Removing a mandatory_pre_emission_gate is the kind of change that must be evidence-driven against the original promotion/medical-review record for this package, not assumed from this hardening pass alone. If Cursor's Stage D root-cause step finds the FT4 gate was in fact a deliberate medical-review requirement, that becomes STOP -- MEDICAL AUTHORITY REQUIRED per the prompt's own instruction, not an implementation to proceed with.",
+    "explicitly_not_recommended": "A generic evaluator-wide change to 'missing gate metric always passes' -- this would also weaken the TSH-absent-should-still-block behaviour required by coverage item 4, which must be preserved."
   },
 
-  "canonical_existing_test_paths": [
-    "backend/tests/unit/test_launch_core3_result_versioning.py",
-    "backend/tests/regression/test_internal_uat_result_versioning_dto_contract.py",
-    "backend/tests/regression/test_med_rev2_domain_card_copy_and_regeneration.py"
+  "stop_conditions_evaluated": {
+    "result": "9/9 evaluated, NONE triggered this pass",
+    "flagged_branch_point_for_cursor": "If Cursor's promotion-record confirmation finds the FT4 gate was deliberately medical-review-ratified as mandatory, Cursor must STOP with 'STOP -- MEDICAL AUTHORITY REQUIRED' rather than implement a removal -- this is a live decision point handed to Cursor's Stage D, not resolved by hardening"
+  },
+
+  "canonical_test_paths": [
+    "backend/tests/unit/test_p1_22_thyroid_activation_pack.py"
   ],
 
-  "untracked_artefact_disposition": {
-    "file": "docs/audit-papers/CLIN-PRIORITY_RESULT_REGENERATION_AUDIT.md",
-    "nature": "read-only pre-existing audit paper authored by Claude Code prior to this work package's prompt being issued -- documents the CLIN-PRIORITY-CORE-1 missing-clinical_concern_set classification gap that this work package (CLIN-PRIORITY-CORE-1's Stage 1B reality-check items) exists to fix",
-    "disposition": "in-scope evidence, not code -- should be committed to main (or the feature branch) as supporting documentation alongside this work package's completion evidence; not a stash/triage issue and does not block kernel start"
-  },
-
-  "evidence_checklist_status": "COMPLETE -- Stage 2A (8/8 authority citations), Stage 2B (7/7 STOP conditions evaluated against current repo state, both prior blockers confirmed resolved), canonical test paths identified. This record's work_id/branch/risk_level/change_type match automation_bus/latest_cursor_prompt.md exactly. Ready for kernel 'python backend/scripts/run_work_package.py start' on feature/clin-priority-result-regen-1."
+  "evidence_checklist_status": "COMPLETE -- Stage D authority verification (7/7 items), baseline defect independently reproduced, no duplicate authority found, alias/identity mismatch ruled out, root cause traced to exact file:line and flagged as candidate requiring Cursor confirmation (not prescribed), 9/9 STOP conditions evaluated with one explicit decision branch handed to Cursor. Ready for kernel 'python backend/scripts/run_work_package.py start' once branch fix/thyroid-ft3-tsh-firing is created/checked out and this record is committed to a clean porcelain."
 }

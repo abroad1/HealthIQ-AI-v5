@@ -1,303 +1,257 @@
 ---
-work_id: CLIN-PRIORITY-RESULT-REGEN-1
-branch: feature/clin-priority-result-regen-1
+work_id: THYROID-FT3-TSH-FIRING-FIX-1
+branch: fix/thyroid-ft3-tsh-firing
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# CLIN-PRIORITY-RESULT-REGEN-1 — Governed Result Regeneration and Trend Supersession
+# THYROID-FT3-TSH-FIRING-FIX-1
 
 ## Objective
 
-Implement the minimum complete governed result-regeneration architecture so that any future code change capable of altering a user’s personalised analysis, clinical findings, prioritisation, interpretation, or clinically meaningful user-facing narrative can make earlier results eligible for refresh without mutating historic records.
+Correct the confirmed runtime defect in which the governed `signal_free_t3_high` activation frame does not fire when free T3 is high and the required suppressed-TSH companion condition is satisfied.
 
-This package explicitly includes:
+The correction must restore the existing governed behaviour only. It must not create or revise thyroid medical policy.
 
-- one persisted user-entered clinical chronology field, `result_date`;
-- a canonical backend-owned trend/history selection path;
-- result supersession lineage;
-- frontend migration away from client-side trend authority.
+## Confirmed baseline defect
 
-Once a stale result is refreshed, only the refreshed result may contribute to trend and longitudinal analysis for that original uploaded result.
+The current baseline has exhibited the following failing test:
 
-## Governing product policy
+```text
+backend/tests/unit/test_p1_22_thyroid_activation_pack.py::test_ft3_high_requires_tsh_suppressed_companion_gate
+```
 
-1. Historic results remain immutable and accessible.
-2. Any deployed change capable of changing personalised analytical output must advance a governed analysis-policy version.
-3. Results created under an earlier analysis-policy version become `stale`, not `incompatible`, where they remain renderable and regenerable.
-4. Existing stale-result wording and refresh UX must be reused unless repository evidence proves it cannot represent this policy.
-5. Refresh creates a new analysis result from the original stored source data. It must not overwrite the original result.
-6. The refreshed result retains the original user-entered **result date**.
-7. The result date is the single user-entered clinical chronology date. It may represent:
-   - the blood sample date; or
-   - where unavailable, the report date.
-8. Upload and processing timestamps remain system metadata only and must not be requested from the user.
-9. After successful refresh:
-   - the stale result remains available for audit/history;
-   - the stale result is excluded from trend display and longitudinal calculations;
-   - the refreshed result becomes the sole active trend/longitudinal representative for that original uploaded result;
-   - the refreshed result occupies the same chronological position using the unchanged result date.
-10. Repeated refresh must not create duplicate active trend points. The newest valid refreshed version becomes active and earlier versions remain superseded history.
-11. Purely technical changes that cannot alter personalised analytical output must not advance the analysis-policy version.
+Recorded representative case:
 
-## Authority boundaries
+```text
+FT3 = 7.0
+TSH = 0.2
+```
 
-This package must not:
+Expected:
 
-- change any clinical prioritisation rule;
-- change signal activation, thresholds, severity, urgency, tiering, consolidation, lead/co-lead selection, or longitudinal medical rules;
-- change the approved historic-result retention principle;
-- create a second result-status authority;
-- create a frontend-only inference for whether a result is stale;
-- invent new user-facing wording unless existing wording is demonstrably insufficient and the package is formally re-scoped;
-- delete historic analysis records;
-- use upload timestamp or regeneration timestamp for clinical trend placement;
-- create multiple user-entered date fields.
+```text
+signal_free_t3_high fires
+```
 
-The backend must remain the sole authority for:
+Observed:
 
-- analysis-policy version;
-- `current`, `stale`, and `incompatible` classification;
-- regeneration eligibility;
-- supersession lineage;
-- active-versus-superseded trend participation.
+```text
+no signal returned
+```
 
-The frontend must render server-provided state only.
+Treat this as the observed defect, not as a pre-judged root cause.
 
-## Required Stage 1A authority preflight
+## Architectural and authority constraints
 
-Before implementation, verify and cite the current repository authority paths for:
+The implementation must preserve the accepted research-to-runtime architecture:
 
-1. result versioning and stale/incompatible classification;
-2. persisted-result compatibility;
-3. regeneration eligibility and regeneration execution;
-4. historic-result retention and immutable-snapshot policy;
-5. analysis result persistence and result-date storage;
-6. trend and longitudinal analysis query/selection paths;
-7. frontend stale-result banner and refresh action;
-8. any existing supersession, lineage, replacement, or active-version fields.
+```text
+canonical research authority
+→ governed compiled/runtime artefacts
+→ thin runtime loaders/evaluators
+→ structured outputs
+→ frontend render-only
+```
 
-Confirm that no parallel authority already exists for analysis-policy versioning or trend supersession.
+Do not introduce:
 
-If authority is ambiguous, STOP before implementation.
+- a second thyroid authority source;
+- raw investigation-spec reads at runtime;
+- hand-authored fallback medical logic;
+- a signal-specific bypass around the governed activation path;
+- frontend medical inference.
 
-## Required Stage 1B reality check
+The runtime identity model remains:
 
-Confirm the current baseline still exhibits all of the following:
+```text
+signal_id = signal-family identity
+activation_key = activation-frame identity
+```
 
-- a pre-`CLIN-PRIORITY-CORE-1` result can be classified `current` while lacking `clinical_concern_set`;
-- such a result does not expose the existing refresh option;
-- current trend/longitudinal selection does not already exclude superseded result versions;
-- no governed general analysis-policy version currently covers all personalised-output changes.
+Do not collapse, rename, duplicate, or replace the existing activation frame.
 
-If any item is already fully solved, re-scope or cancel the relevant part rather than implementing duplicate logic.
+## Stage D authority verification requirements
 
-## Required implementation outcomes
+During hardening, Claude must identify and read the repository files that are authoritative for:
 
-### A. Single user-entered result date
+1. the `signal_free_t3_high` activation-frame definition;
+2. its primary free-T3 condition;
+3. its suppressed-TSH companion condition;
+4. biomarker identity and alias resolution for free T3 and TSH;
+5. reference-range or threshold comparison semantics;
+6. the runtime loader/evaluator path consuming that authority;
+7. the canonical test module and adjacent regression coverage.
 
-Add one canonical persisted field:
+Claude must verify that:
 
-`result_date`
+- the baseline defect still exists;
+- the test, authority source, loader and evaluator refer to the same governed activation frame;
+- no duplicate or parallel thyroid activation authority exists;
+- the proposed sprint remains a bounded behavioural correction;
+- the exact in-scope implementation and test files can be named before hardening completes.
 
-Product meaning:
+If the defect no longer exists, hardening must BLOCK the sprint as a no-op.
 
-- normally the date the blood sample was taken;
-- where that is unavailable, the date shown on the laboratory report.
+## In scope
 
-Rules:
+- Reproduce the confirmed failing case on the current branch.
+- Trace the failure through the existing governed thyroid activation path.
+- Identify the exact root cause.
+- Apply the smallest policy-preserving correction at the true defect source.
+- Add or strengthen regression coverage for the affected activation frame.
+- Prove that the correction does not change unrelated thyroid activation behaviour.
+- Preserve signal-estate identity and count.
+- Produce implementation and validation evidence.
+- Update the existing Build Deliverable Register at closure.
 
-- this is the only date the user is asked to provide for clinical chronology;
-- it must be stored on the analysis record or another single canonical persisted model identified during hardening;
-- it must flow through API/DTO/frontend types without creating competing date fields;
-- it determines trend and longitudinal placement;
-- regeneration must copy it unchanged;
-- system timestamps such as upload, creation, completion, and regeneration timestamps remain automatic audit metadata and must not be shown as alternative user-entered clinical dates.
+## Required behavioural coverage
 
-Existing analyses require a bounded migration/backfill policy:
+The hardened prompt must require tests covering at least:
 
-- where the repository already preserves an equivalent user-supplied date in payload or metadata, deterministically backfill from that source;
-- where no such source exists, use the existing analysis `created_at` date as a legacy fallback classification only, without representing it as a confirmed blood-sample date;
-- record the provenance of the populated date as `user_entered`, `legacy_equivalent_source`, or `legacy_created_at_fallback`;
-- do not ask users to enter additional dates during regeneration.
+1. free T3 high + TSH suppressed  
+   `signal_free_t3_high` fires.
 
-Stage D must verify the least invasive schema and migration path. This schema addition and bounded migration are explicitly authorised by this package and are not a STOP condition unless repository evidence shows destructive or ambiguous data rewriting would be required.
+2. free T3 high + TSH not suppressed  
+   `signal_free_t3_high` does not fire.
 
-### B. Governed analysis-policy version
+3. free T3 not high + TSH suppressed  
+   `signal_free_t3_high` does not fire.
 
-Introduce or extend one canonical analysis-policy version that represents the personalised analytical behaviour used to generate a result.
+4. free T3 high + TSH absent  
+   behaviour matches the current governed missing-companion rule.
 
-It must cover changes capable of affecting:
+5. boundary behaviour at the governed free-T3 high threshold.
 
-- signal outputs;
-- clinical findings;
-- concern consolidation;
-- severity, urgency, tier or prioritisation;
-- lead/co-lead/no-forced-lead selection;
-- longitudinal interpretation;
-- WHY/root-cause output;
-- scoring or derived analytical outputs;
-- clinically meaningful questionnaire/context interpretation;
-- clinically meaningful narrative assembly or presentation policy.
+6. boundary behaviour at the governed TSH suppression threshold.
 
-Do not maintain an indefinitely growing list of field-specific stale checks as the primary architecture.
+7. canonical biomarker identifiers and any currently supported aliases implicated in the defect.
 
-The implementation must preserve existing specialised stale reasons where they remain useful for diagnosis or remediation, but the analysis-policy version must be the broad governing trigger for personalised-output change.
+8. no duplicate `signal_free_t3_high` result.
 
-### C. Current-result stamping
+9. no unintended firing or suppression of adjacent thyroid signals.
 
-Newly generated results must persist the current analysis-policy version through the existing governed persistence path.
+10. unchanged active signal-estate baseline, unless Stage D finds a later repository-ratified baseline.
 
-The stamp must be deterministic, backend-owned, and available to the result-versioning classifier.
+The test values must be drawn from existing governed authority and current test conventions. Do not encode `7.0` or `0.2` as new policy constants merely because they appear in the observed failing fixture.
 
-### D. Historic-result classification
+## Implementation rules
 
-A stored result generated under an earlier analysis-policy version must be classified:
-
-- `stale` when still renderable and regenerable;
-- `incompatible` only under the existing compatibility rules.
-
-Do not relabel results `incompatible` merely because their personalised analysis is out of date.
-
-The existing missing-`clinical_concern_set` case must be covered by the new policy.
-
-### E. Regeneration behaviour
-
-Regeneration must:
-
-- use the preserved original source data;
-- create a new immutable analysis/result record;
-- preserve the original user-entered `result_date`;
-- record lineage to the result it supersedes;
-- leave the prior result intact;
-- return the refreshed result as the active version for that original upload/result lineage.
-
-Do not introduce additional user-entered dates.
-
-### F. Backend trend and longitudinal authority
-
-Create one canonical backend-owned trend/history selection path because repository preflight has confirmed that no such authority currently exists and the frontend presently selects and sorts completed analyses itself.
-
-This package explicitly authorises:
-
-- a backend query/service/DTO path that returns trend-eligible analyses;
-- lineage-aware exclusion of superseded result versions;
-- ordering and placement by `result_date`;
-- frontend migration away from `useTrendData.ts` / `trendComparison.ts` as decision authorities.
-
-Trend and longitudinal selection must use only the active result version for each original result lineage.
-
-Required behaviour:
-
-- before refresh, the stale result may remain the only available result but must not be silently represented as current;
-- after successful refresh, the stale version is excluded from trend display and longitudinal calculations;
-- the refreshed version is included at the unchanged original `result_date`;
-- repeated refresh yields one active trend point, not duplicates;
-- separate genuinely distinct uploaded results sharing the same result date must not be incorrectly collapsed;
-- lineage identity, not date alone, determines replacement.
-
-### G. Frontend behaviour
-
-Reuse the existing stale-result banner, wording, and refresh control.
-
-The frontend must not:
-
-- calculate policy-version mismatch;
-- infer supersession;
-- decide which result participates in trends;
-- use upload or processing dates for trend placement.
-
-## Required evidence and tests
-
-At minimum, add regression coverage for:
-
-1. current-policy result remains `current`;
-2. older-policy renderable result becomes `stale`;
-3. older-policy result with preserved source data exposes regeneration;
-4. incompatible-result behaviour remains unchanged;
-5. missing `clinical_concern_set` legacy result is no longer classified `current`;
-6. refresh preserves the original `result_date`;
-7. refresh creates a new analysis/result identity;
-8. original result remains stored and accessible;
-9. refreshed result records supersession lineage;
-10. stale/superseded result is excluded from trend output;
-11. refreshed result appears once in trends at the original result date;
-12. repeated refresh still produces only one active trend point;
-13. two separate uploads with the same result date remain separate trend observations;
-14. existing waist-remediation, completeness-policy, replay-manifest, and compatibility rules remain green;
-15. frontend stale-result banner continues to render from backend status only;
-16. no clinical-priority, signal, threshold, or concern-construction behaviour changes.
-
-Use canonical existing test modules where available. Stage D must identify exact test paths before hardening completes.
-
-## Migration and existing data
-
-A bounded migration is authorised only for introducing `result_date` and supporting supersession/trend authority.
-
-Requirements:
-
-- no historic analysis payload may be deleted or overwritten;
-- lineage should be explicit on newly regenerated results;
-- existing non-regenerated analyses may be treated as singleton active lineages;
-- deterministic `result_date` backfill must follow the hierarchy defined in Required Outcome A;
-- migration must be idempotent, auditable, and reversible;
-- any record that cannot be populated under that hierarchy must be reported and left unmodified rather than guessed.
-
-STOP only if the migration would require clinical interpretation, destructive rewriting, or an additional user-entered date.
-
-## STOP conditions
-
-STOP and escalate if:
-
-- current repository has more than one plausible result-versioning authority;
-- more than one competing backend trend authority would be created;
-- implementing supersession requires deleting or mutating historic results;
-- `result_date` cannot be added and populated using the authorised bounded migration/fallback policy without destructive or clinically misleading rewriting;
-- regeneration cannot reuse the original stored source data;
-- a new user-entered date appears necessary;
-- a clinical or product rule must be invented;
-- existing wording cannot represent the stale/refresh state and new consumer wording would be required;
-- same-date distinct uploads cannot be distinguished without a new identity decision;
-- the change requires altering clinical prioritisation, signal activation, thresholds, or longitudinal medical rules;
-- test evidence cannot prove one active trend point per original result lineage;
-- the work expands beyond the explicitly authorised result-date schema, analysis-policy versioning, regeneration lineage, backend trend selection, and frontend trend rewire.
+- Correct the defect at the existing authority, loader, evaluator, normalisation, or filtering point demonstrated by evidence.
+- Preserve deterministic behaviour.
+- Preserve the governed suppressed-TSH companion requirement.
+- Preserve existing signal identity, activation identity, severity, urgency and prioritisation.
+- Preserve existing compiled-WHY and research artefacts.
+- Keep the change bounded to the thyroid firing defect and required tests.
+- Do not edit unrelated files.
 
 ## Out of scope
 
-- new clinical-priority logic;
-- new trend algorithms;
-- new medical thresholds;
-- questionnaire redesign;
-- new consumer copy;
-- deletion of historic results;
-- estate-wide regeneration;
-- manual data repair unrelated to this package;
-- changes to raw biomarker interpretation;
-- changes to the single user-entered result-date model.
+- Changing thyroid thresholds or reference-range policy.
+- Changing the clinical meaning of high free T3.
+- Weakening or removing the suppressed-TSH companion condition.
+- Adding new thyroid signals or activation frames.
+- Resuming ARCH-CONV-A medical-review waves.
+- Editing compiled-WHY medical content.
+- Changing root-cause or narrative content.
+- Changing system/subsystem visibility.
+- Changing consumer copy or frontend presentation.
+- Changing cross-domain clinical prioritisation.
+- Broad refactoring of the signal evaluator.
+- Knowledge Bus package promotion or canonical research edits.
 
-## Completion evidence
+## STOP conditions
 
-Produce:
+STOP and report the exact blocker if any of the following applies:
 
-- implementation and verification report;
-- before/after examples for a pre-CLIN-PRIORITY result;
-- result-version classification evidence;
-- regeneration lineage evidence;
-- trend output evidence proving stale replacement without duplicate points;
-- changed-file classification;
-- regression results;
-- explicit confirmation that clinical rules and signal activation are unchanged.
+- the baseline defect cannot be reproduced;
+- the sprint would be a no-op;
+- the governing activation authority is ambiguous or duplicated;
+- the test and governing medical authority legitimately disagree;
+- fixing the defect requires a threshold, companion-rule, severity, urgency, or other medical-policy decision;
+- the active signal baseline cannot be reconciled;
+- the correct fix requires broad evaluator redesign outside this bounded package;
+- the defect is caused by unresolved or unratified thyroid research/compiled-WHY authority;
+- unrelated working-tree changes prevent clean isolation;
+- required regression coverage cannot be made deterministic.
 
-## Hardening instruction
+Where medical authority is insufficient, stop with:
 
-Re-harden work_id: CLIN-PRIORITY-RESULT-REGEN-1 — verify source content and produce evidence checklist
+```text
+STOP — MEDICAL AUTHORITY REQUIRED
+```
 
-The prior hardening blockers are explicitly resolved as follows:
+Do not infer or invent the missing rule.
 
-1. This package authorises adding and persisting the single `result_date` field, with the bounded migration/fallback policy above.
-2. This package authorises creation of a new canonical backend trend/history selection path and frontend migration away from client-side trend authority.
+## Required validation
 
-Claude must apply the Automation Bus SOP v1.3.1 Stage 2A–2C requirements, including file-and-line citations for every authority path and exact canonical test paths.
+The hardened prompt must name the exact commands after repository inspection.
 
-Do not execute implementation until hardening status is `HARDENED` and the kernel has issued the active execution token.
+Validation must include, as applicable:
+
+- the confirmed failing thyroid test;
+- the complete thyroid activation-pack test module;
+- directly affected evaluator/loader tests;
+- thyroid regression tests;
+- signal registry/package validation relevant to the changed path;
+- signal-estate baseline validation;
+- relevant cross-domain prioritisation regressions;
+- deterministic repeat execution for the corrected case;
+- repository-standard broader backend validation proportionate to the touched files.
+
+Do not claim full-suite success unless the full suite is run.
+
+## Required evidence
+
+Cursor must record:
+
+- starting branch and HEAD;
+- reproduced baseline failure;
+- authoritative source and runtime path inspected;
+- root cause;
+- exact files changed;
+- why the correction preserves rather than changes policy;
+- tests added or changed;
+- every validation command and result;
+- signal-estate baseline before and after;
+- any unrelated pre-existing failures;
+- final working-tree and stash state.
+
+## Automation Bus execution
+
+After Stage D hardening succeeds:
+
+```powershell
+python backend/scripts/run_work_package.py start
+```
+
+Cursor must verify the active execution token before modifying repository files.
+
+After implementation, commits and the mandatory closure audit are complete, Cursor must run:
+
+```powershell
+python backend/scripts/run_work_package.py finish
+```
+
+Cursor must follow the full post-implementation closure protocol in Automation Bus SOP v1.3.1, including branch, status, diff, log and stash evidence before finish.
+
+Cursor must not self-certify correctness and must not merge.
+
+## Completion condition
+
+After successful kernel finish, stop for independent Claude audit.
+
+Required terminal handoff:
+
+```text
+READY_FOR_CLAUDE_AUDIT
+```
+
+Merge requires:
+
+- successful kernel finish;
+- gate PASS;
+- Claude audit summary;
+- GPT architectural review;
+- explicit Anthony merge authority.
