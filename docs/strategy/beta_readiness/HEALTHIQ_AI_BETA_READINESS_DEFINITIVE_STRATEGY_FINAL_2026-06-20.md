@@ -2168,4 +2168,34 @@ The formal programme baseline is six phases and approximately sixteen primary sp
 
 The next recommended sprint is P1-1: Launch-core domain build-materials map. It should identify exactly what already exists for blood/iron/oxygen, thyroid/energy and kidney function before any implementation begins.
 
+---
+
+## 24. 2026-08-06 Current Programme Position Addendum
+
+**Status:** Repository-verified addendum. Does not replace or re-author this strategy; records where programme execution has reached and what remains open, per `docs/audit-papers/POST_CLIN_PRIORITY_PROGRAMME_SEQUENCING_AUDIT.md` and `docs/audit-papers/HEALTHIQ_MAIN_SYSTEM_SUBSYSTEM_COMPLETION_AUDIT.md`. Where this addendum conflicts with §23's "three of six domains implemented" framing above, this addendum is the current position; §23 is retained as historical record of the position at strategy ratification (2026-06-20), not deleted.
+
+**Clinical-intelligence authority — complete and stable:**
+- Clinical finding/prioritisation authority (`CLIN-PRIORITY-CORE-1`) is complete, merged, and independently post-finish audited PASS.
+- Result-versioning/regeneration authority (`CLIN-PRIORITY-RESULT-REGEN-1`) is complete and independently audited PASS; it resolves the long-open `CF-ARCH-CONV-VERSION-1` carry-forward.
+
+**Core health systems model (Block 1) — backend materially ahead of consumer surface:**
+- All six launch-core systems (Cardiovascular health, Blood sugar control, Liver health, Kidney function, Blood/iron/oxygen, Thyroid/energy regulation) are assembled in the backend and exposed through the DTO.
+- Only three are currently rendered to consumers: Cardiovascular health, Blood sugar control, Liver health.
+- Kidney function, Blood/iron/oxygen and Thyroid/energy regulation are backend-assembled but consumer-invisible — a frontend/product-scope gap, not a backend build gap.
+- Silent inflammation and Hormone balance/gonadal axis remain deliberately deferred second-wave systems (research-present, domain-unmapped) — not a build gap, a standing strategic deferral.
+
+**Subsystems and depth model (Block 2) — deliberately bounded, not stalled:**
+- MED-REV-1 deliberately exposes only one approved bounded subsystem per visible domain; the remaining compiled subsystems are hidden by a named, tested, CI-enforced medical-review decision, not ordinary implementation debt requiring a work item.
+
+**Residual clinical-intelligence completion track — active, not superseded:**
+- The ARCH-CONV-A medical-review wave plan (`docs/architecture/ARCH-CONV-A_medical_review_wave_plan.md`) remains active and was never formally retired or superseded by CLIN-PRIORITY-CORE-1, CLIN-PRIORITY-RESULT-REGEN-1, or any system-card work.
+- This residual wave programme is a separate clinical-intelligence completion track (per-signal compiled-WHY medical identity ratification) — it is not replaced by the cross-domain concern-set work, nor by launch-core system-card delivery.
+
+**Three coordinated beta-readiness tracks (none substitutes for either of the others):**
+1. Residual compiled-WHY / clinical-intelligence completion (ARCH-CONV-A wave plan).
+2. Launch-core system visibility and governed subsystem delivery (Wave-2 domain frontend wiring; MED-REV-1 scope decisions).
+3. Consumer results-page narrative and presentation consolidation (concern-set presentation authority; governed consumer-copy labels).
+
+Final consumer results-page consolidation remains downstream of both the system-scope decision (track 2) and the narrative-authority decision (track 3) — it should not proceed as a single full redesign until those are settled.
+
 The team is asked to review, challenge and ratify this final strategy as the basis for the eight-block beta-readiness build programme.

@@ -70,11 +70,14 @@ export function NarrativeRetailSummaryCard({
 export function NarrativeLeadAndSupportingSections({
   narrative,
   className = '',
+  /** CLIN-PRIORITY — when set, replaces conflicting legacy lead_narrative. */
+  authoritativeLeadNarrative = null,
 }: {
   narrative?: NarrativeReportV1 | null;
   className?: string;
+  authoritativeLeadNarrative?: string | null;
 }) {
-  const lead = narrative?.lead_narrative?.trim();
+  const lead = (authoritativeLeadNarrative ?? narrative?.lead_narrative)?.trim();
   const secondary = narrative?.secondary_narratives?.trim();
   const otherSystems = narrative?.secondary_systems?.trim();
   if (!lead && !secondary && !otherSystems) return null;
