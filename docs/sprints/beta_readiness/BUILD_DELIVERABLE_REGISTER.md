@@ -1755,6 +1755,31 @@ The Stage 0 residual medical-review sequencing advisory called for in the day-on
 
 ---
 
+## THYROID-FT3-TSH-FIRING-FIX-1 — Restore governed `signal_free_t3_high` companion-normality gating
+
+**Status:** Complete — pending independent Claude audit / gate finish  
+**Date closed:** 2026-08-06  
+**Branch:** `fix/thyroid-ft3-tsh-firing`  
+**Programme block(s):** Block 1 / thyroid activation correctness (bounded behavioural fix)
+
+### Delivered / ticked off
+- Reproduced baseline failure of `test_ft3_high_requires_tsh_suppressed_companion_gate` (FT3 high + TSH suppressed returned no signal).
+- Root cause: companion-normality gate `not_above_max` (`require_free_t4_not_high`) fail-closed when `free_t4` was absent, over-blocking relative to clinical sign-off (TSH mandatory; FT4 recommended) while the gate itself remains required to suppress when FT4 is elevated.
+- Corrected evaluator so missing metrics pass only for `not_above_max` / `not_below_min`; presence-requiring boundaries (including TSH `below_min`) remain fail-closed.
+- Expanded P1-22 coverage for absent TSH, non-high FT3, ULN/LLN boundaries, FT4-elevated suppress, and FT4-present-not-elevated fire paths.
+- Signal estate baseline unchanged at 183 loaded frames; single `signal_free_t3_high` retained with both mandatory gates.
+
+### Carry-forwards
+- None material for this package. Stage 0 residual medical-review sequencing advisory remains the next planning gate per the 2026-08-06 reconciliation entry.
+
+### Blockers / risks
+- None. Pre-existing unrelated failure in `test_kbs23_catalogue_panel_harness_runs_all_panel_fixtures` observed when sweeping the full evaluator module; out of scope.
+
+### Recommended next sprint
+- B2 Stage 0 residual medical-review sequencing advisory (per 2026-08-06 ratified immediate sequence step 3).
+
+---
+
 ## Build programme register rule for future sprints
 
 At closure, future beta-readiness sprints should append a short entry using this format:

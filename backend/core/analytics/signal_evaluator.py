@@ -399,6 +399,18 @@ class SignalEvaluator:
                 signal_derived=signal_derived,
             )
             if observed is None:
+                # Presence-requiring boundaries (below_min / above_max / out_of_range)
+                # remain fail-closed when the metric is absent — e.g. TSH-suppressed
+                # companion gates must not pass without TSH.
+                #
+                # Companion-normality boundaries (not_above_max / not_below_min) mean
+                # "companion is not abnormal in that direction". Absence is not proof of
+                # abnormality, so the gate passes. This preserves deliberate suppress-when-
+                # elevated policy (observed high still fails not_above_max) while matching
+                # thyroid clinical sign-off: TSH mandatory; FT4 recommended, not a hard
+                # block on missing FT4 for signal_free_t3_high.
+                if boundary_mode in {"not_above_max", "not_below_min"}:
+                    return True
                 return False
             return self._evaluate_lab_range_boundary_condition(
                 boundary_mode=boundary_mode,
