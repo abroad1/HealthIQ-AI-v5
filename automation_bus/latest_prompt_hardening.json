@@ -1,64 +1,62 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "THYROID-FT3-TSH-FIRING-FIX-1",
+  "work_id": "V5-RUNTIME-AUTHORITY-INTEGRITY-1",
   "status": "HARDENED",
-  "hardening_date": "2026-08-06",
+  "hardening_date": "2026-08-08",
   "hardened_by": "Claude Code",
   "risk_level": "HIGH",
-  "change_type": "BEHAVIOUR",
+  "change_type": "MIXED",
   "execution_model": "TWO_PHASE_START_FINISH",
-  "branch": "fix/thyroid-ft3-tsh-firing",
+  "branch": "fix/v5-runtime-authority-integrity-1",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "prompt_sha256": "3d5bc3fdfc538c3cf5abd7a3a0962b07d307f8594d05256f0bf269e654c36af3",
+  "prompt_sha256": "49c6d7b1a065e3d6fda81d52c9ac64a68dac2248b0841ff9168a7e2b4414106d",
 
   "verification_mode_used": {
     "mode": "batched direct verification, no fork",
-    "rationale": "Single bounded HIGH/BEHAVIOUR defect fix, one confirmed failing test, one governed activation frame. Not disjoint/large enough to warrant a fork."
+    "rationale": "Single bounded HIGH/MIXED integrity package built directly on findings already established this session (V5/V6 strategic reassessment); did not require disjoint parallel research."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "declared_risk_level": "HIGH",
-    "declared_change_type": "BEHAVIOUR",
-    "files_in_scope": "not enumerated as a literal list in the prompt; Stage D required naming exact authoritative files before hardening completes - done, see stage_2a below",
-    "behaviour_changes_touch_intelligence_core": "YES -- signal activation-frame evaluator/loader, consistent with declared HIGH",
-    "tests_listed_for_behaviour_changes": "YES -- 10 required behavioural coverage items",
-    "scope_proportionality": "PASS -- single confirmed defect, explicit out-of-scope list, 9 STOP conditions, explicit 'treat as observed defect not pre-judged root cause' discipline",
-    "advisory_duplication": "NO -- automation_bus/latest_scope_advisory.md concerns an unrelated 2026-08-02 pipeline-sequencing item",
+    "declared_change_type": "MIXED",
+    "files_in_scope": "6 named authority files (Stage 1A) + 4 new artefacts to produce -- enumerated, none open-ended",
+    "behaviour_changes_touch_intelligence_core": "YES -- signal_evaluator.py / SignalRegistry runtime activation, consistent with declared HIGH",
+    "tests_listed_for_behaviour_changes": "YES -- 7 canonical regression targets",
+    "scope_proportionality": "PASS -- bounded, single failure class, explicit non-scope list, 11 STOP conditions",
+    "advisory_duplication": "NO",
     "decision": "ACCEPT"
   },
 
   "stage_d_authority_verification": {
-    "baseline_defect_reproduced_this_pass": {
-      "command": "pytest tests/unit/test_p1_22_thyroid_activation_pack.py -q",
-      "result": "1 failed: test_ft3_high_requires_tsh_suppressed_companion_gate, assert 0 == 1 -- matches prompt's recorded observation exactly"
+    "baseline_defect_reproduced_this_pass": "YES -- fresh SignalRegistry() load confirms all three signals (signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_lipid_transport_dysfunction) still loaded",
+    "authority_files": {
+      "compiled_why_authority_register_v1.yaml": "exists -- read exact entries for all three disputed signals (lines ~354-370): authority_state LEGACY_RETIRED, gpt_decision NOT_AUTHORISED_WAVE2, anthony_decision NOT_AUTHORISED_WAVE2",
+      "package_runtime_activation_register_v1.yaml": "exists, unchanged",
+      "signal_evaluator.py (SignalRegistry._load)": "exists, unchanged",
+      "root_cause_compiler_v1.py": "exists -- PATH CORRECTION: resolve_frame_why_authority is called here (lines ~733,808) but DEFINED in backend/core/knowledge/why_authority_v1.py:128. Confirmed by direct read this function governs WHY-narrative selection only (compiled/legacy/skip/fail_closed for a firing signal's narrative), not activation/reachability. Minor stale-path note, not a blocker.",
+      "validate_day_one_architecture.py": "exists -- existing governed entry point identified: run_day_one_architecture_validation() at line 479, aggregates ~15 validate_*(errors) functions (lines 78-440)",
+      "test_runtime_medical_authority_integrity.py": "does not exist yet -- correct and expected, Scope B/E creates it; Stage 1A phrasing is prospective, not a claim of prior existence"
     },
-    "activation_frame_definition": "knowledge_bus/packages/pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis/signal_library.yaml:8-95 -- single definition; cross-checked knowledge_bus/compiled/estate_index_v1.yaml:126-131 is a separate compiled-WHY authority (activation_key -> hypothesis artefact mapping), not a second firing/gate authority",
-    "primary_free_t3_condition": "signal_library.yaml:39-49 -- activation_logic: lab_range_exceeded, upper_bound_state: suboptimal, evaluated via signal_evaluator.py _evaluate_lab_range_activation_state (~lines 270-304)",
-    "suppressed_tsh_companion_condition": "signal_library.yaml:51-56 -- mandatory_pre_emission_gates[0]: gate_id require_tsh_suppressed, metric_id tsh, comparator_type lab_range_boundary, boundary below_min",
-    "biomarker_identity_alias_resolution": "backend/ssot/biomarkers.yaml -- tsh, free_t3 (line 1158), free_t4 (line 678) all canonical with aliases present; no SSOT/signal-library metric_id mismatch found -- ruled out as alternative root cause",
-    "reference_range_threshold_semantics": "signal_evaluator.py:337-373 (_evaluate_lab_range_boundary_condition), :306-316 (_resolve_condition_metric_value)",
-    "runtime_loader_evaluator_path": "signal_evaluator.py:26-41 (SignalRegistry, production loader from knowledge_bus/packages/) and :589-650+ (evaluate_all). Confirmed the failing test loads the same governed signal_library.yaml content via _load_package_signal into a single-signal registry stub, then runs it through the same production SignalEvaluator.evaluate_all/_passes_mandatory_pre_emission_gates code path -- test and production authority are the same governed frame",
-    "canonical_test_module": "backend/tests/unit/test_p1_22_thyroid_activation_pack.py -- confirmed the only test exercising signal_free_t3_high firing directly (whole file grepped); THYROID_LAB_RANGES fixture at lines 22-26; adjacent regression test_ft3_low_in_thyroid_domain_allowlist_after_p1_25 (unrelated signal, same file)",
-    "duplicate_or_parallel_authority": "NONE FOUND -- single package, single signal_library.yaml, single activation_key"
+    "stop_2_superseding_authority_check": "NOT FOUND -- searched for any later ratified decision reversing the Wave 2 lipid rejection; none found",
+    "stop_3_4_semantic_distinction_risk": {
+      "status": "DE-RISKED with concrete evidence, not eliminated as a Stage-D task",
+      "finding": "The distinguishing field already exists and is already ratified, just unconsumed for enforcement. Genuine activation prohibition (the three lipid signals) carries anthony_decision: NOT_AUTHORISED_WAVE2. Ordinary WHY-retirement where the signal legitimately still fires (checked signal_hepatic_alt_context::inv_alt_context, signal_homocysteine_elevation_context::inv_elevation_context) carries anthony_decision: APPROVED regardless of gpt_decision value (SUPERSEDED_BY_ARCH_CONV_I, WHY_SKIP_SIBLING_PRESERVE_PACKAGE_E2, FOLD_SUPPRESS_WHY_ONLY all seen with anthony_decision APPROVED). The invariant Cursor builds should key off anthony_decision != APPROVED as the activation-prohibition signal, not authority_state alone (authority_state: LEGACY_RETIRED is used in BOTH cases and is not the distinguishing field)."
+    }
   },
 
-  "root_cause_finding_for_cursor_confirmation": {
-    "status": "candidate, evidence-backed, NOT prescribed -- prompt explicitly requires treating this as the observed defect, not a pre-judged root cause",
-    "mechanism": "signal_library.yaml:57-61 declares a second mandatory gate, require_free_t4_not_high (metric_id free_t4, boundary not_above_max). The failing test's signal_biomarkers dict never includes free_t4 (test lines 153, 159, confirmed by direct read). _evaluate_single_condition (signal_evaluator.py:401-402) returns False when a gate's metric is absent from input -- a generic, uniform fail-closed behaviour applied identically to every gate, not a bug specific to this signal. Both the TSH gate and the FT4 gate fail-closed identically when their metric is missing.",
-    "tension_identified": "signal_library.yaml:22-27 declares free_t4's role as differential_marker (contextual, distinguishing T3-predominant from broader thyrotoxicosis) while tsh is declared role: corroborator. Only tsh looks intended to be a hard gate. Source research (knowledge_bus/research/investigation_specs/inv_free_t3_high_t3_predominant_thyrotoxicosis.yaml) references free_t4 under a contradiction_id (differential/contradiction context), not as a co-required activation condition -- consistent with mandatory_pre_emission_gates having been over-broadly authored to include a marker the signal's own declared role says should be contextual, not blocking.",
-    "why_not_prescribed": "Removing a mandatory_pre_emission_gate is the kind of change that must be evidence-driven against the original promotion/medical-review record for this package, not assumed from this hardening pass alone. If Cursor's Stage D root-cause step finds the FT4 gate was in fact a deliberate medical-review requirement, that becomes STOP -- MEDICAL AUTHORITY REQUIRED per the prompt's own instruction, not an implementation to proceed with.",
-    "explicitly_not_recommended": "A generic evaluator-wide change to 'missing gate metric always passes' -- this would also weaken the TSH-absent-should-still-block behaviour required by coverage item 4, which must be preserved."
+  "determinism_note": {
+    "status": "QUALIFIES a claim in docs/audit-papers/HEALTHIQ_V5_VS_V6_STRATEGIC_REASSESSMENT.md",
+    "finding": "That document reported the SignalRegistry loaded-count variance as fully cleared/not reproducible. Re-tested this pass: 9 of 10 fresh runs gave 183 (identical content hash), 1 isolated run gave 128. Not a confirmed deterministic-code defect (all 10 runs agreed the three disputed signals were loaded regardless of total count), but not fully clean either -- a low-frequency, uncharacterized flake.",
+    "recommendation_for_cursor": "Canonical regression target #6 (identical repository/input state produces identical validator and registry results) should be proven with multiple repeated runs, not a single run, given this observation."
   },
 
-  "stop_conditions_evaluated": {
-    "result": "9/9 evaluated, NONE triggered this pass",
-    "flagged_branch_point_for_cursor": "If Cursor's promotion-record confirmation finds the FT4 gate was deliberately medical-review-ratified as mandatory, Cursor must STOP with 'STOP -- MEDICAL AUTHORITY REQUIRED' rather than implement a removal -- this is a live decision point handed to Cursor's Stage D, not resolved by hardening"
-  },
-
-  "canonical_test_paths": [
-    "backend/tests/unit/test_p1_22_thyroid_activation_pack.py"
+  "canonical_artefacts_to_produce": [
+    "docs/architecture/V5_RUNTIME_AUTHORITY_INTEGRITY_prechange_evidence.md",
+    "docs/architecture/V5_RUNTIME_AUTHORITY_same_class_sweep.md",
+    "backend/tests/architecture/test_runtime_medical_authority_integrity.py",
+    "docs/architecture/V5_RUNTIME_ACTIVATION_CANONICAL_GATE_TRANSITION.md"
   ],
 
-  "evidence_checklist_status": "COMPLETE -- Stage D authority verification (7/7 items), baseline defect independently reproduced, no duplicate authority found, alias/identity mismatch ruled out, root cause traced to exact file:line and flagged as candidate requiring Cursor confirmation (not prescribed), 9/9 STOP conditions evaluated with one explicit decision branch handed to Cursor. Ready for kernel 'python backend/scripts/run_work_package.py start' once branch fix/thyroid-ft3-tsh-firing is created/checked out and this record is committed to a clean porcelain."
+  "evidence_checklist_status": "COMPLETE -- baseline defect reproduced fresh, all 6 Stage 1A authority paths verified (1 minor location correction), STOP 2 checked (not found), STOP 3/4 semantic-ambiguity risk de-risked with concrete register evidence showing the distinguishing field (anthony_decision) already exists, determinism claim in the dependency document re-tested and qualified for Cursor's awareness. Ready for kernel 'python backend/scripts/run_work_package.py start' once branch fix/v5-runtime-authority-integrity-1 is created/checked out."
 }
