@@ -1,10 +1,9 @@
 {
-  "branch": "refactor/v5-canonical-activation-gate-2",
+  "branch": "governance/arch-conv-a-thyroid-residual-disposition-1",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-08-08T11:22:40Z",
-  "cursor_started_utc": "2026-08-08T11:10:50Z",
-  "head_sha": "079f06a490338fec8db10278f0bf9a3934555e71",
+  "cursor_started_utc": "2026-08-08T12:11:59Z",
+  "head_sha": "7f30c87e79a0519e3ceb70e6b1e96fe080b4ba1d",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "V5-CANONICAL-ACTIVATION-GATE-2"
+  "status": "IN_PROGRESS",
+  "work_id": "ARCH-CONV-A-THYROID-RESIDUAL-DISPOSITION-1"
 }
