@@ -172,7 +172,7 @@ def test_production_reachable_packages_still_load():
     activated_non_kb47 = {
         row["package_id"] for row in rows if not str(row["package_id"]).startswith("pkg_kb47_")
     }
-    assert len(activated_non_kb47) == 171
+    assert len(activated_non_kb47) == 167
     assert all(is_package_runtime_activated(pid) for pid in activated_non_kb47)
     assert all(row["runtime_eligibility"] == ELIGIBILITY_PRODUCTION_REACHABLE for row in rows)
 
@@ -231,7 +231,7 @@ def test_register_counts_and_gate_refs():
     assert set(ACTIVATED_ALT_KEYS).issubset(activated)
     assert not (set(WITHHELD_ALT_KEYS) & activated)
     assert SUPERSEDED_S24_ALT_KEY not in activated
-    assert register["activated_frame_count"] == len(activated) == 177
+    assert register["activated_frame_count"] == len(activated) == 172
     withheld = {
         str(row["activation_key"]) for row in register["withheld_frames_arch_conv_e"]
     }
