@@ -1,0 +1,85 @@
+# ARCH-CONV-A Residual Programme — Repository Reality Sanity Check
+
+**Purpose:** bounded repository-reality check of the proposed residual clinical-intelligence programme, before GPT and Anthony decide sprint sequence. Not an implementation task, not a sequencing recommendation beyond genuine hard dependencies. No code changed, no medical policy invented, no fresh research authored.
+**Method:** four disjoint parallel research passes (Thyroid; Iron/Haematology; Lipid + Hepatic/Biliary; Metabolic/Systemic + Renal), each independently citing file paths, cross-checked and re-verified for one high-severity item.
+
+## Headline finding — read this first
+
+**Three lipid signals explicitly rejected by a dual-gate-ratified decision are currently loaded in the runtime signal registry.** `docs/architecture/ARCH-CONV-A_wave2_lipid_gate1_gate2_decision.md:61-63,173-175` (GPT Gate 1 + Anthony Gate 2, ratified 2026-07-28) states verbatim: *"Do not create or activate `signal_total_cholesterol_high`. Do not create or activate `signal_lipid_transport_dysfunction`. Do not create or activate `signal_apoa1_cardio_risk`."* Independently confirmed via a fresh `SignalRegistry()` load (re-run multiple times, `backend/core/analytics/signal_evaluator.py`) that **all three are present and loaded today**, and are listed as activated in `knowledge_bus/governance/package_runtime_activation_register_v1.yaml:79-80,236-239,349-351` — that register's `signal_total_cholesterol_high` entries carry work_id `ARCH-CONV-E3`, dated 2026-08-01, **after** the prohibition. This is not a residual-programme sequencing question — it is a possible governed-decision violation currently live in production and should be escalated to GPT/Anthony ahead of, and separately from, the rest of this reconciliation. This audit does not attempt to explain or resolve it; only to confirm it is real and not a stale/misread document.
+
+*(Aside, unrelated to the above and not chased further as out of scope: the total loaded-signal count itself was observed to vary between runs of the identical, unmodified `SignalRegistry()` load — 128 in three consecutive runs, 183 in one run with additional diagnostics active, 197 with `allow_launch_critical_blocked=True`. All runs agreed on the three disputed signals' presence regardless. This looks like a pre-existing loader non-determinism worth a separate look, not a finding of this reconciliation.)*
+
+## Reconciliation table
+
+| Original domain/wave | Target | Current research authority | Current runtime/WHY authority | Actual residual | Disposition |
+|---|---|---|---|---|---|
+| Wave 1 — Thyroid | `signal_tsh_high` | `inv_tsh_high_hypothyroidism_v1.yaml` | Compiled, active, allowlisted | None | **COMPLETE** |
+| Wave 1 — Thyroid | `signal_tsh_low` | `inv_tsh_low_hyperthyroidism_v1.yaml` | Compiled, active, allowlisted | Minor: no `confirmatory_tests` block vs. TPOAb side | **COMPLETE** |
+| Wave 1 — Thyroid | `signal_free_t3_high/low`, `signal_free_t4_high/low` | Investigation specs present for all four | Compiled, active, allowlisted | None (firing defect fixed separately, unrelated to research) | **COMPLETE** |
+| Wave 1 — Thyroid | `signal_tpo_ab_high` (hypothyroid variant) | `inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml` incl. `confirmatory_tests` (repeat panel, ultrasound) | Compiled, active, allowlisted | Confirmatory-test content not wired to `intervention_library_v1.yaml` (zero thyroid/antibody entries) | **COMPLETE (finding)**; wiring gap noted separately below |
+| Wave 1 — Thyroid | `signal_tpo_ab_high` (euthyroid variant) | `inv_tpo_ab_high_euthyroid_autoimmune_risk.yaml`, has `confirmatory_tests` | Not compiled — deliberately deferred per `ADR-THYROID-MR-V2-ACTIVATION-1.md:43` | Reactivation is a promotion decision, not research | **DISPOSITION REQUIRED** |
+| Wave 1 — Thyroid | `signal_tgab_high` (both variants) | Real package + Pass 3 source (`thyroid_antibodies_pass_3.json`); no split `inv_tgab_*.yaml` but source is real | Not compiled anywhere; deliberately deferred, same ADR | Promotion, not research | **EXISTING_RESEARCH — REVIEW/PROMOTION/COMPILATION REQUIRED** |
+| Wave 1 — Thyroid | `signal_thyroid_tsh_context` | `pkg_thyroid_tsh_context` exists | Explicitly, deliberately excluded (`domain_score_assembler.py:67-68`; ADR) | None — closed decision | **RETIRE/SUBSUME (already dispositioned)** |
+| Wave 1 — Thyroid | TSH-receptor antibody (TRAb/TSI) — Graves'-specific marker | **Absent** — no SSOT biomarker entry, no package, no spec anywhere | None | Real gap | **GENUINE_RESEARCH GAP** |
+| Wave 1 — Thyroid | Consumer disclosure of Hashimoto's/Graves' naming | — | — | THY-U5 in `docs/discussion documents/HEALTHIQ_THYROID_ENDOCRINE_PRIORITISATION_RULESET_v0_1.md:302` marked `Blocking: Yes — communication`, unresolved | **OTHER — open governance/communication decision, not a research task** |
+| Wave 5 — Iron/Haem | `signal_ferritin_high`, `signal_hemoglobin_low` | Compiled investigation specs | Compiled, `compiled_why_authority_register_v1.yaml` | None | **COMPLETE** (closed by ARCH-CONV-F) |
+| Wave 5 — Iron/Haem | `signal_ferritin_low` | Pass-3 (`pkg_kb52c_ferritin_low_iron_store_depletion`) + legacy | Legacy root-cause only, not compiled | Promotion/compilation only | **EXISTING_RESEARCH — REVIEW/PROMOTION/COMPILATION REQUIRED** |
+| Wave 5 — Iron/Haem | `signal_transferrin_high` | Pass-3, PSI-promoted (`pkg_kb61_...`) | Legacy root-cause only, not compiled | Promotion/compilation only | **EXISTING_RESEARCH — REVIEW/PROMOTION/COMPILATION REQUIRED** |
+| Wave 5 — Iron/Haem | `signal_transferrin_low` | **Two** Pass-3 PSI-promoted packages, different clinical framings | Legacy root-cause only, not compiled | Promotion/compilation **+** a disposition decision on which framing (or both) | **EXISTING_RESEARCH — REVIEW/PROMOTION/COMPILATION REQUIRED**, dual-package ambiguity noted |
+| Wave 5 — Iron/Haem | `signal_iron_deficiency_context` vs. newer `signal_iron_low` | Old (2026-03-11) package vs. distinct newer Pass-3 identity | Legacy root-cause only | Identity reconciliation, not research | **DISPOSITION REQUIRED** |
+| Wave 5 — Iron/Haem | `signal_iron_overload_context` vs. newer `signal_iron_high` | Same pattern | Legacy root-cause only | Same | **DISPOSITION REQUIRED** |
+| Wave 5 — Iron/Haem | `signal_oxygen_transport_capacity` | Only match: `KBP-0001` package, empty/unreadable manifest | Legacy root-cause only | Package-identity health check needed before any decision | **OTHER — verify package integrity first** |
+| Wave 5 — Iron/Haem (adjacent) | TSAT calculated-mode | Previously blocked (`DERIVED_MARKER_IDS` policy) through P1-26 | Lab-provided TSAT resolved (P1-18); calculated mode not confirmed resolved this pass | Unconfirmed | **OTHER — needs a direct check, not asserted either way** |
+| Wave 2 — Lipid | `signal_total_cholesterol_high` | Investigation specs present | **Ratified-rejected yet runtime-loaded** — see headline finding | Governance-drift flag, not a research/compilation task | **OTHER — escalate, do not resolve here** |
+| Wave 2 — Lipid | `signal_apoa1_cardio_risk` | `pkg_kb45_apoa1_low_cardio_risk` | Same contradiction | Same | **OTHER — escalate** |
+| Wave 2 — Lipid | `signal_lipid_transport_dysfunction` | `pkg_lipid_transport` (2026-03-08) + `study_02_lipid_transport_dysfunction.md` | Same contradiction, **plus** its own `clinical_signoff.md` has sat `PENDING REVIEW` since 2026-03-08 against an unresolved threshold conflict with the still-active legacy `KBP-0001` version | Same escalation, plus a pre-existing unclosed clinical sign-off | **OTHER — escalate** |
+| Wave 4 — Hepatic | ALP-high, GGT-high | — | Compiled (`ARCH-CONV-C_GATE_2_Anthony_ratification.md:17,22`) | None | **COMPLETE** |
+| Wave 4 — Hepatic | ALT-high (hepatocellular) | — | Compiled (ARCH-CONV-I) | None | **COMPLETE** |
+| Wave 4 — Hepatic | ALP-low | Not located under standard investigation-spec directory in time available | No compiled WHY; confirmed runtime-loaded | Could not confirm research exists elsewhere vs. genuinely absent | **OTHER — inconclusive, needs a follow-up check** |
+| Wave 4 — Hepatic | Bilirubin / hyperbilirubinaemia | `pkg_kb45_bilirubin_high_hyperbilirubinemia`; **3 ratified frame identities already exist** in `medical_frame_identity_index_v1.yaml:907-994` (Gilbert, hemolytic, hepatobiliary-excretion) | No compiled WHY; confirmed runtime-loaded | Promotion step only — identity work looks largely done | **EXISTING_RESEARCH — REVIEW/PROMOTION/COMPILATION REQUIRED** |
+| — | `WAVE1-EQUIV1_total_bilirubin_false_missing_fix` (Sprint 0) | — | — | Confirmed: a display/false-missing-marker fix only; does **not** touch the WHY-identity gap above — do not conflate | **COMPLETE (narrow scope only)** |
+| Wave 6 — Metabolic | `signal_insulin_resistance` | `pkg_insulin_resistance` (legacy, non-compiled) | Runtime-active via legacy narrative; insulin-resistance context already narrated within compiled `signal_hdl_low` frame | A standalone compiled WHY may duplicate an existing story | **DISPOSITION REQUIRED — independent WHY may not be necessary** |
+| Wave 6 — Metabolic | `signal_systemic_inflammation` | Pass-3 CRP spec exists (`inv_crp_high_inflammation_v1.yaml`) | Root-cause registry entry only; the signal that actually **fires** is a differently-named `signal_crp_high` — a known, previously-diagnosed naming split | Identity reconciliation must precede compilation; **already tracked** as `CF-ARCHLEG1-002` in `ARCH-LEGACY-1_pathway_retirement_audit.md`, outside this wave plan | **EXISTING_RESEARCH — REVIEW/PROMOTION/COMPILATION REQUIRED**, gated on identity disposition |
+| Wave 6 — Metabolic | `signal_hypercortisolism` vs. `signal_cortisol_high` | Two source packages, same underlying frame suffix, different signal_ids | Both runtime-registered under different identities — same pattern as the already-resolved ferritin-high collision | Identity collision must be resolved before any compiled-WHY work | **DISPOSITION REQUIRED**; also flagged as possibly outside the original wave plan's named Wave 6 scope — verify with GPT |
+| Wave 3 — Renal | `signal_creatinine_high`, `signal_urea_high` | — | Compiled, `APPROVE_WITH_NARROWING` (ARCH-CONV-B) | None | **COMPLETE** |
+| Wave 3 — Renal | `signal_urate_high` | — | Compiled (ARCH-CONV-G) | None | **COMPLETE** |
+| Wave 3 — Renal | eGFR / UACR / chronicity | — | — | Confirmed standing programme exclusion, never in Wave 3's scope | **RETIRE/SUBSUME (not applicable, not a residual)** |
+
+## 1. Genuine medical-research gaps
+
+Only two items meet this bar with repository evidence:
+- **TSH-receptor antibody (TRAb/TSI)** — the standard clinical marker for confirming Graves' disease — does not exist anywhere in the biomarker SSOT, packages, or research estate. If Graves'-specific follow-up-testing guidance is required (see product requirement below), this is the one place fresh research would genuinely be needed.
+- **ALP-low** — inconclusive rather than confirmed-absent; flagged as needing a direct follow-up check before either researching it or promoting it, not classified as a gap outright.
+
+Everything else initially framed as a "residual" in the old wave plan turned out, on inspection, to be a promotion/compilation/disposition item, not a research gap.
+
+## 2. Existing research not yet fully exploited
+
+This is the largest category, concentrated exactly where the brief expected: **iron/haematology** (`signal_ferritin_low`, `signal_transferrin_high`, `signal_transferrin_low` — all have real Pass-3/PSI-promoted research sitting uncompiled) and **thyroid** (`signal_tgab_high` — real package and Pass-3 source, deliberately deferred, not researched-and-forgotten). Also newly found in **hepatic**: bilirubin/hyperbilirubinaemia already has three ratified frame identities mapped, just not compiled — the same shape as the already-closed ALP-high/GGT-high/ALT-high work, i.e. likely a small, well-precedented promotion sprint. And in **metabolic**: `signal_systemic_inflammation`'s CRP research exists but is blocked behind an identity-naming split with `signal_crp_high` that a separate prior audit already tracked under its own carry-forward.
+
+## 3. Targets that may no longer justify independent WHY
+
+- `signal_insulin_resistance` — its clinical story already lives inside the compiled `signal_hdl_low` frame; a standalone compiled WHY risks narrating the same pattern twice.
+- `signal_hypercortisolism` / `signal_cortisol_high` — before any WHY work, this is a signal-identity collision (two identities for one underlying frame) that must be resolved first, exactly as ferritin-high was resolved via a dedicated ADR; whether *either* identity ultimately gets independent WHY is a downstream question, not answerable until the collision itself is dispositioned.
+- `signal_thyroid_tsh_context` — already excluded by deliberate decision; no further work implied by this reconciliation.
+
+## 4. True sequencing dependencies
+
+**None found.** Across all four domains examined, no residual clinical-intelligence target was found to hard-block launch-core system visibility (the Wave-2 kidney/blood-iron-oxygen/thyroid frontend-wiring gap) or governed consumer narrative/presentation work. The renal and metabolic forks explicitly confirmed these are independent tracks that can proceed in parallel with no technical coupling. The disposition-required identity collisions (insulin resistance/HDL-low, cortisol, iron context signals, CRP/systemic-inflammation) are internal prerequisites *within* their own domains only — they gate compiling those specific signals, nothing outside them.
+
+## 5. Corrections to GPT's provisional assumptions
+
+1. **The "old Wave 5 A4/A5 means fresh research required" assumption was wrong**, as GPT itself suspected — nearly every iron/haematology target just needs promotion/compilation of research that already exists. GPT's caution here was correct.
+2. **A residual category the original framing didn't anticipate: identity/naming reconciliation**, distinct from both "research gap" and "needs promotion." Iron (`iron_deficiency_context` vs `iron_low`, `iron_overload_context` vs `iron_high`), metabolic (`systemic_inflammation` vs `crp_high`, `hypercortisolism` vs `cortisol_high`) all have this shape — old and new Pass-3-era identities coexisting unreconciled. This should be its own disposition track, not folded into "medical review" or "promotion."
+3. **Thyroid is further along than "Wave 1 not started" suggests** — P1-22/23/25 happened after the wave plan was written and closed most of it. The genuine remaining items are narrower: TgAb promotion, a confirmatory-test-wiring gap for TPOAb, one real research gap (TRAb/TSI), and one unresolved consumer-communication policy question (THY-U5) that could gate the entire Hashimoto's/Graves' follow-up-testing product requirement regardless of research completeness.
+4. **The lipid section needs the most significant correction of all.** These three signals are not dormant residuals awaiting a promotion decision — they are the opposite: actively running in production against an explicit dual-gate rejection. This should be treated as its own escalation, separate from and prior to any residual-programme sequencing discussion.
+5. **Hepatic is closer to done than a generic "residual" framing implies** — bilirubin/hyperbilirubinaemia already has the identity work; what's missing is the same promotion step already proven out three times (ALP-high, GGT-high, ALT-high).
+6. **Renal needed no correction** — GPT's implicit assumption that creatinine/urea/urate leave nothing material was confirmed exactly right.
+
+## Product requirement — Hashimoto's / Graves' follow-up testing
+
+Direct answer, not folded into the table above: **Hashimoto's is substantially supported already** — `signal_tpo_ab_high` is compiled, active, and its research already includes confirmatory-test content (repeat panel, ultrasound); the gap is wiring that content to consumer-facing next-steps output, not research. **Graves' is materially thinner** — the biochemical pattern (TSH low + FT4/FT3 high) is fully compiled and active, so a pattern-level "discuss further testing" flag is achievable today, but the disease-specific confirmatory marker (TRAb/TSI) is a genuine research gap (§1). Separately and importantly: `ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md` already ratifies "do not imply Graves' disease or any other specific cause," and a distinct, apparently never-closed question (THY-U5) asks whether HealthIQ may even *name* Hashimoto's or Graves' in consumer output at all. That policy question sits upstream of whichever research/compilation work gets sequenced and should be resolved alongside it, not after.
+
+## Stop condition
+
+Per the brief, this reconciliation stops here for GPT and Anthony review. No sprint sequencing is recommended beyond the dependency findings in §4 (none found) and the escalation flagged at the top (lipid governance drift), which this audit recommends be addressed as its own item ahead of, and separately from, deciding the residual programme's order.
