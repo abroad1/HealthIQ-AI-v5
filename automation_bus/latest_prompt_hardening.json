@@ -1,72 +1,61 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "V5-CANONICAL-ACTIVATION-GATE-2",
+  "work_id": "ARCH-CONV-A-THYROID-RESIDUAL-DISPOSITION-1",
   "status": "HARDENED",
   "hardening_date": "2026-08-08",
   "hardened_by": "Claude Code",
   "risk_level": "HIGH",
-  "change_type": "BEHAVIOUR",
+  "change_type": "CONTENT",
   "execution_model": "TWO_PHASE_START_FINISH",
-  "branch": "refactor/v5-canonical-activation-gate-2",
+  "branch": "governance/arch-conv-a-thyroid-residual-disposition-1",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "prompt_sha256": "b30c5d0b184fab2be11fc3c3949cc187c6888d24744f4f61cf60a9cf2668a319",
+  "prompt_sha256": "47739dd2f41d2c92238af7d1302712a3e93433c03dd85e42410d9dcbafb8cb6f",
 
   "verification_mode_used": {
     "mode": "batched direct verification, no fork",
-    "rationale": "Single bounded HIGH/BEHAVIOUR fold-in package building directly on V5-CANONICAL-ACTIVATION-GATE-1's merged Stage 1 architecture; small (6-item) cohort; did not require disjoint parallel research."
+    "rationale": "Single bounded CONTENT/HIGH authority-disposition sprint, single domain (thyroid), building on substantial existing session context; did not require disjoint parallel research."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "declared_risk_level": "HIGH",
-    "declared_change_type": "BEHAVIOUR",
-    "files_in_scope": "6 named authority files (Stage 1A) + 3 new/updated artefacts -- enumerated",
-    "behaviour_changes_touch_intelligence_core": "YES -- launch-critical runtime activation, consistent with declared HIGH",
-    "tests_listed_for_behaviour_changes": "YES -- 10 estate-wide canonical-authority proof items + exact-set determinism",
-    "scope_proportionality": "PASS -- bounded fold-in of a small, already-inventoried cohort, 13 STOP conditions",
+    "declared_change_type": "CONTENT",
+    "files_in_scope": "6 named authority sources (Stage 1A) + 2 required deliverables -- enumerated",
+    "behaviour_changes_touch_intelligence_core": "NO direct runtime change authorised, but content/authority decisions govern future Intelligence Core promotion -- consistent with declared HIGH",
+    "tests_listed_for_behaviour_changes": "N/A -- content/governance sprint, no runtime tests required",
+    "scope_proportionality": "PASS -- single domain, 8 STOP conditions, explicit non-scope list",
     "advisory_duplication": "NO",
     "decision": "ACCEPT"
   },
 
-  "stage_d_authority_verification": {
-    "prior_package_merged": "V5-CANONICAL-ACTIVATION-GATE-1 confirmed merged to main at 55d3b60",
-    "all_6_named_files_confirmed_current": true,
-    "item_8_no_later_permanent_duality_ratification": "Confirmed -- nothing since the prior audit. This prompt is itself the ratification answering the open two-cohort-vs-fold-in question raised in the V5-CANONICAL-ACTIVATION-GATE-1 audit.",
-    "stage_1b_reality_check_reproduced_fresh": {
-      "total_loaded": 178,
-      "launch_critical_loaded": 6,
-      "launch_critical_already_in_register": 0,
-      "cohort": [
-        "signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction",
-        "signal_egfr_low::inv_egfr_low_hemodynamic_filtration_drop",
-        "signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis",
-        "signal_free_t3_low::inv_free_t3_low_low_t3_syndrome",
-        "signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context",
-        "signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency"
-      ],
-      "conclusion": "Not a no-op. Small, clean, bounded cohort."
-    }
+  "stale_path_correction": {
+    "cited_path": "docs/architecture/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md",
+    "actual_path": "docs/audit-papers/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md",
+    "instruction": "Cursor's authority pack should cite the correct path; the document exists and is authoritative, just not at the location the prompt named."
   },
 
-  "key_finding_derisking_stop_3": {
-    "question": "Would migrating launch-critical eligibility into canonical activation entries invent new medical authorisation (STOP 3), or formalise authority that already exists?",
-    "answer": "Already exists, specifically, independently citable -- not inferred from package presence alone.",
-    "evidence": "docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md:912-924 (ARCH-CONV-PKG2, closed 2026-07-26): 'STOP Gate 1 PASS: Wave 1 INCLUDE kept reachable; lineage recovered from Pass 3' and 'Explicit lineage attached for 6 Wave 1 pkg_kb47_* packages (free_t3x2, free_t4x2, egfrx2)' -- exact match by count and identity to the 6 keys found loaded this pass.",
-    "negative_control_verified": "Same BDR entry names '14 androgen/CK/eos kb47 packages made production non-reachable'. Independently confirmed this pass: exactly 14 packages currently in excluded_launch_critical_packages, all androgen/DHEA/creatine-kinase/eosinophil, all non_reachable, matching the BDR's named exclusion category precisely.",
-    "instruction_to_cursor": "Use this exact 14-package list as a cross-reference for the pre-change inventory's CURRENTLY_BLOCKED_OR_INELIGIBLE bucket -- if Cursor's own independent inventory doesn't land at these same 14 package IDs, that discrepancy is worth scrutiny before proceeding, not something to reconcile silently."
+  "central_finding_likely_stop_1_trigger": {
+    "status": "STRONG CANDIDATE -- flagged for Cursor's explicit STOP determination, not resolved by hardening",
+    "claim": "signal_tgab_high (both variants) and the TPOAb euthyroid variant are documented as 'Keep deferred' in a ratified ADR, but are currently loading and firing at runtime -- the same architectural failure class as the lipid-authority violation this session's V5-RUNTIME-AUTHORITY-INTEGRITY-1 package was built to catch, but below that validator's semantic floor.",
+    "evidence": {
+      "ratified_deferral": "docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md:43 -- 'Keep deferred: TPOAb euthyroid context (pkg_kb59_tpo_ab_high_euthyroid_autoimmune_risk), TgAb packages.'",
+      "registered_anyway": "knowledge_bus/governance/package_runtime_activation_register_v1.yaml:350-353 (signal_tgab_high, both activation keys), :360-361 (signal_tpo_ab_high euthyroid variant)",
+      "empirically_loaded": "Fresh SignalRegistry() load this pass confirms all three activation keys actually present in get_all_signals(), and excluded_rejected_frames shows none of them rejected -- not merely registered, genuinely firing.",
+      "provenance": "git log -S confirms these entries were introduced by commit a260c53 (ARCH-CONV-E, 2026-07-31) -- the identical mechanical baseline-snapshot bootstrap that caused the lipid violation, sweeping in this second, previously-uninspected class of ADR-deferred content."
+    },
+    "why_the_existing_integrity_validator_did_not_catch_this": "runtime_medical_authority_integrity_v1 only matches explicit prohibition tokens (NOT_AUTHORISED*, DO_NOT_ACTIVATE, REJECTED_FOR_ACTIVATION, REJECTED). 'Keep deferred' was never one of those tokens -- architecturally distinct from explicit rejection by design, not a bug in that validator. This is a new instance of the same underlying class of problem (bootstrap-swept content a later ratified decision never re-blessed), just below that validator's semantic floor.",
+    "instruction_to_cursor": "This sprint is content/disposition-only; fixing the drift is an out-of-scope runtime change. Do not silently classify TgAb or the TPOAb euthyroid variant as REMAIN_DEFERRED without naming this contradiction explicitly in the authority pack and the disposition register. Determine explicitly whether this triggers STOP 1 ('current authority conflicts on whether a thyroid residual is active, deferred, rejected, or superseded') -- do not resolve the conflict yourself by picking one side."
   },
 
-  "remaining_risk_areas_not_resolved_by_hardening": [
-    "STOP 6/7 (identity mapping / duplicate-conflicting identities): the 6-key cohort looks clean on inspection but Cursor must still do its own deterministic mapping per the prompt's explicit instruction not to assume from prior conversational material, including this hardening pack.",
-    "STOP 4 (weakening safety to achieve one authority): the write-path close (Required Implementation E) needs the same 're-validate candidate state before writing' discipline activation_register_mutation_v1.py already has for the non-launch-critical path -- extend, do not bypass, that existing pattern.",
-    "Items F/G (estate-wide determinism, 10-part canonical-authority proof) are large but mechanical extensions of Stage 1's already-proven test shapes (test_canonical_runtime_activation_gate.py) -- no new design risk identified."
-  ],
+  "other_re_verified_findings": {
+    "signal_thyroid_tsh_context": {
+      "finding": "Exclusion is real but narrower than 'fully excluded' -- confirmed still excluded from consumer domain-card presentation (domain_score_assembler.py:80-84, _THYROID_EXCLUDED_SIGNAL_IDS, unchanged, ADR-consistent). But it HAS ALWAYS been present in the activation register (package_runtime_activation_register_v1.yaml:354) since the same original bootstrap -- not something the V5 canonical-gate work added (it is not pkg_kb47_*). This is a deliberate two-layer split (loadable at SignalRegistry level but not domain-card-surfaced), not a later reopening. State this precisely in the disposition pack rather than claiming blanket exclusion."
+    },
+    "tpoab_hypothyroid_confirmatory_tests": {
+      "finding": "More specific than a pure downstream-wiring gap. The compiled artefact actually feeding runtime WHY output (knowledge_bus/compiled/hypotheses/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml:22,43) shows confirmatory_tests: [] -- EMPTY for both hypothesis rows. The content cited in prior session research (ct_repeat_thyroid_function_panel, ct_thyroid_ultrasound) exists only in the raw investigation spec (knowledge_bus/research/investigation_specs/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml:83-87) and was not carried through at compile time. This is a compilation completeness gap, upstream of and distinct from the separately-confirmed downstream intervention-library wiring gap (knowledge_bus/interventions/intervention_library_v1.yaml has zero thyroid/TPO/antibody entries). Classify as two distinct gaps, not one."
+    },
+    "trab_tsi": "Re-confirmed absent -- no hits across SSOT, packages, or investigation specs this pass."
+  },
 
-  "canonical_artefacts_to_produce": [
-    "docs/architecture/V5_CANONICAL_ACTIVATION_GATE_STAGE2_prechange_inventory.md",
-    "backend/tests/architecture/test_canonical_runtime_activation_gate_stage2.py",
-    "updated/superseded docs/architecture/V5_RUNTIME_ACTIVATION_CANONICAL_GATE_TRANSITION.md"
-  ],
-
-  "evidence_checklist_status": "COMPLETE -- prior package confirmed merged, all 6 Stage 1A authority paths verified current, Stage 1B reality check reproduced fresh (6-item bounded cohort, not a no-op), STOP-3 authorisation-sufficiency risk de-risked with an exact-match citation to a specific closed ARCH-CONV-PKG2 decision plus an independently-verified negative control (14 blocked packages). Ready for kernel 'python backend/scripts/run_work_package.py start' once branch refactor/v5-canonical-activation-gate-2 is created/checked out."
+  "evidence_checklist_status": "COMPLETE -- stale path identified and corrected, all 6 provisional residuals independently re-verified against current main (not assumed), central STOP-1-candidate finding identified with hard empirical evidence (register + fresh SignalRegistry load + git provenance) for two previously-unexamined deferred thyroid antibody frames, signal_thyroid_tsh_context exclusion scope clarified precisely, TPOAb confirmatory-test gap reclassified into two distinct sub-gaps with exact citations, TRAb/TSI absence reconfirmed. Ready for kernel 'python backend/scripts/run_work_package.py start' once branch governance/arch-conv-a-thyroid-residual-disposition-1 is created/checked out."
 }
