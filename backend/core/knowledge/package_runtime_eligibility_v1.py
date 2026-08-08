@@ -1,20 +1,18 @@
 """
-ARCH-CONV-PKG2 / V5-CANONICAL-ACTIVATION-GATE-1 — package runtime eligibility.
+ARCH-CONV-PKG2 / V5-CANONICAL-ACTIVATION-GATE-2 — package runtime eligibility.
 
-This module is **not** the estate-wide activation-grant authority.
+This module is **not** the estate-wide positive activation-grant authority.
+The sole positive grant is ``package_runtime_activation_register_v1.yaml`` via
+``canonical_runtime_activation_gate_v1``.
 
-Non-launch-critical cohort (ARCH-CONV-E):
-  Package-level eligibility mirrors membership in
-  ``package_runtime_activation_register_v1.yaml``. That register — via
-  ``canonical_runtime_activation_gate_v1`` — is the sole activation GRANT for
-  non-launch frames. This eligibility check is a package-level precondition /
-  mirror only; it must not be treated as an independent grant path.
+Non-launch-critical cohort:
+  Package-level eligibility mirrors register membership (precondition / mirror only).
 
-Launch-critical cohort (``pkg_kb47_*``) — TEMPORARY RATIFIED EXCEPTION:
-  Production reachability still requires acceptable explicit lineage
-  (EXPLICIT_SPEC or COMPILED_MANIFEST). This remains a second, disjoint grant
-  path until the immediately following Stage 2 package folds ``pkg_kb47_*`` into
-  the canonical activation register while preserving provenance/lineage safety.
+Launch-critical cohort (``pkg_kb47_*``):
+  Provenance/lineage eligibility (EXPLICIT_SPEC / COMPILED_MANIFEST) is a
+  **mandatory prerequisite / veto**. After Stage 2 fold-in it cannot independently
+  grant activation: register membership is still required when
+  ``enforce_activation_register`` is true.
 
 Presence on disk under ``knowledge_bus/packages/`` is promotion, not activation.
 """
@@ -23,9 +21,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Tuple
-
-import yaml
+from typing import Any, Dict, List, Optional, Tuple
 
 from core.knowledge.package_activation_register_v1 import is_package_runtime_activated
 from core.knowledge.provenance_status_v1 import (
@@ -59,8 +55,24 @@ def load_package_manifest(package_dir: Path) -> Dict[str, Any]:
     path = package_dir / "package_manifest.yaml"
     if not path.is_file():
         return {}
+    import yaml
+
     payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     return payload if isinstance(payload, dict) else {}
+
+
+def launch_critical_lineage_eligible(
+    *,
+    manifest: Optional[Dict[str, Any]] = None,
+    investigation_specs_root: Optional[Path] = None,
+) -> Tuple[bool, str]:
+    """Return (eligible, provenance_status) for launch-critical lineage veto only."""
+    man = dict(manifest or {})
+    status = classify_package_provenance_status(
+        manifest=man,
+        investigation_specs_root=investigation_specs_root,
+    )
+    return is_beta_eligible_explicit_lineage(status), status
 
 
 def classify_package_runtime_eligibility(
@@ -74,16 +86,11 @@ def classify_package_runtime_eligibility(
     """
     Return (eligibility, provenance_status).
 
-    Fail closed for launch-critical packages without acceptable explicit lineage,
-    unless an explicit test/harness opt-in is set.
+    Launch-critical: lineage failure → NON_REACHABLE (or TEST_ONLY_OPT_IN under
+    explicit harness opt-in). Lineage success is necessary but not sufficient;
+    register membership is still required when ``enforce_activation_register``.
 
-    Non-launch-critical packages fail closed to ELIGIBILITY_OUT_OF_COHORT unless the
-    governed activation register explicitly activates them. The launch-critical test
-    opt-in does not widen that boundary.
-
-    ``enforce_activation_register`` is False only for signal libraries loaded from
-    outside the governed estate at ``knowledge_bus/packages/``, which the register does
-    not describe.
+    Non-launch-critical: register membership mirror only.
     """
     pid = str(package_id or "").strip()
     if not pid:
@@ -100,13 +107,19 @@ def classify_package_runtime_eligibility(
             return ELIGIBILITY_PRODUCTION_REACHABLE, status
         return ELIGIBILITY_OUT_OF_COHORT, status
 
-    if is_beta_eligible_explicit_lineage(status):
+    lineage_ok = is_beta_eligible_explicit_lineage(status)
+    if not lineage_ok:
+        if allow_launch_critical_blocked or _env_allows_blocked_launch_critical():
+            # Opt-in relaxes lineage veto only; register membership still required below
+            # when enforce_activation_register is true (Stage 2: no independent grant).
+            if not enforce_activation_register or is_package_runtime_activated(pid):
+                return ELIGIBILITY_TEST_ONLY_OPT_IN, status
+            return ELIGIBILITY_OUT_OF_COHORT, status
+        return ELIGIBILITY_NON_REACHABLE, status
+
+    if not enforce_activation_register or is_package_runtime_activated(pid):
         return ELIGIBILITY_PRODUCTION_REACHABLE, status
-
-    if allow_launch_critical_blocked or _env_allows_blocked_launch_critical():
-        return ELIGIBILITY_TEST_ONLY_OPT_IN, status
-
-    return ELIGIBILITY_NON_REACHABLE, status
+    return ELIGIBILITY_OUT_OF_COHORT, status
 
 
 def is_production_reachable(

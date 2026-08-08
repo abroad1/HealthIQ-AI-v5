@@ -1,17 +1,18 @@
 """
-V5-CANONICAL-ACTIVATION-GATE-1 — governed write path for the activation register.
+V5-CANONICAL-ACTIVATION-GATE-2 — governed write path for the activation register.
 
 All programmatic mutations of ``package_runtime_activation_register_v1.yaml`` must go
 through this module. Direct YAML edits remain possible via git, but day-one / integrity
 validators fail closed on prohibited content; this helper is the required automation
 path for append/remove so new entries cannot bypass:
 
-- canonical activation-authority rules (non-launch register membership);
+- canonical activation-authority rules (register membership);
 - ``runtime_medical_authority_integrity_v1`` prohibition validation;
-- basic package-existence / eligibility preconditions.
+- package-existence / identity preconditions;
+- launch-critical provenance/lineage eligibility when mutating ``pkg_kb47_*``.
 
-Does not invent medical policy. Does not activate launch-critical ``pkg_kb47_*``
-frames (those remain the temporary Stage 2 carry-forward exception).
+Does not invent medical policy. Launch-critical entries are allowed only when lineage
+eligibility already passes (Stage 2 fold-in).
 """
 
 from __future__ import annotations
@@ -24,13 +25,16 @@ import yaml
 
 from core.knowledge.canonical_runtime_activation_gate_v1 import (
     clear_canonical_activation_gate_cache,
-    is_non_launch_critical_cohort,
 )
 from core.knowledge.package_activation_register_v1 import (
     activation_register_path,
     clear_activation_register_cache,
 )
-from core.knowledge.package_runtime_eligibility_v1 import load_package_manifest
+from core.knowledge.package_runtime_eligibility_v1 import (
+    is_launch_critical_package_id,
+    launch_critical_lineage_eligible,
+    load_package_manifest,
+)
 from core.knowledge.runtime_medical_authority_integrity_v1 import (
     run_runtime_medical_authority_integrity_validation,
 )
@@ -79,26 +83,27 @@ def _sorted_frames(frames: Sequence[Mapping[str, Any]]) -> List[Dict[str, str]]:
 
 def _validate_candidate_frame(repo_root: Path, activation_key: str, package_id: str) -> List[str]:
     errors: List[str] = []
-    if not is_non_launch_critical_cohort(package_id):
-        errors.append(
-            f"refusing to mutate launch-critical package {package_id!r} via non-launch "
-            "canonical register write path (Stage 2 carry-forward)"
-        )
-        return errors
     package_dir = _packages_dir(repo_root) / package_id
     if not package_dir.is_dir():
         errors.append(f"package directory missing for {package_id!r}: {package_dir}")
         return errors
     if not (package_dir / "signal_library.yaml").is_file():
         errors.append(f"signal_library.yaml missing for {package_id!r}")
-    # Manifest load is a provenance/eligibility precondition surface (fail soft on empty).
-    load_package_manifest(package_dir)
-    expected_prefix = f"{activation_key.split('::', 1)[0]}::" if "::" in activation_key else ""
-    if expected_prefix and not activation_key.startswith(expected_prefix):
-        errors.append(f"malformed activation_key {activation_key!r}")
+
     signal_id = activation_key.split("::", 1)[0] if "::" in activation_key else activation_key
     if not signal_id.startswith("signal_"):
         errors.append(f"activation_key signal_id must start with 'signal_': {activation_key!r}")
+    if "::" not in activation_key:
+        errors.append(f"activation_key must be signal_id::source_spec_id: {activation_key!r}")
+
+    manifest = load_package_manifest(package_dir)
+    if is_launch_critical_package_id(package_id):
+        lineage_ok, status = launch_critical_lineage_eligible(manifest=manifest)
+        if not lineage_ok:
+            errors.append(
+                f"launch-critical provenance/lineage eligibility failed for {package_id!r} "
+                f"(status={status!r}); refusing register mutation"
+            )
     return errors
 
 
@@ -115,8 +120,10 @@ def mutate_runtime_activation_register(
     Fail closed: returns ``ok=False`` with errors and does not write on any validation failure.
     """
     root = repo_root or _repo_root()
-    path = activation_register_path() if repo_root is None else (
-        root / "knowledge_bus" / "governance" / "package_runtime_activation_register_v1.yaml"
+    path = (
+        activation_register_path()
+        if repo_root is None
+        else root / "knowledge_bus" / "governance" / "package_runtime_activation_register_v1.yaml"
     )
     errors: List[str] = []
     added: List[str] = []
@@ -208,7 +215,6 @@ def mutate_runtime_activation_register(
             dry_run=True,
         )
 
-    # Preserve non-frame header keys; rewrite frames + count deterministically.
     out_doc = dict(doc)
     out_doc["activated_frame_count"] = len(new_frames)
     out_doc["activated_frames"] = new_frames

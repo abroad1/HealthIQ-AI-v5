@@ -174,31 +174,31 @@ def test_production_reachable_packages_still_load():
     }
     assert len(activated_non_kb47) == 167
     assert all(is_package_runtime_activated(pid) for pid in activated_non_kb47)
+    assert all(is_package_runtime_activated(pid) for pid in loaded_kb47)
     assert all(row["runtime_eligibility"] == ELIGIBILITY_PRODUCTION_REACHABLE for row in rows)
 
 
 def test_every_loaded_frame_is_explicitly_activated_or_launch_critical():
     registry = SignalRegistry()
     for row in registry.get_all_signals():
-        if str(row["package_id"]).startswith("pkg_kb47_"):
-            continue
         assert is_activation_key_activated(row["activation_key"])
 
 
-def test_launch_critical_test_opt_in_still_loads_blocked_fixtures():
+def test_launch_critical_test_opt_in_does_not_grant_without_register():
+    """Stage 2: opt-in relaxes lineage veto only; register membership still required."""
     opted_in = SignalRegistry(allow_launch_critical_blocked=True)
     kb47 = [
         row
         for row in opted_in.get_all_signals()
         if str(row["package_id"]).startswith("pkg_kb47_")
     ]
-    assert len(kb47) == 20
+    assert len(kb47) == 6
     eligibility, _status = classify_package_runtime_eligibility(
         package_id=BLOCKED_KB47,
         manifest=load_package_manifest(PACKAGES_ROOT / BLOCKED_KB47),
         allow_launch_critical_blocked=True,
     )
-    assert eligibility == ELIGIBILITY_TEST_ONLY_OPT_IN
+    assert eligibility == ELIGIBILITY_OUT_OF_COHORT
 
 
 def test_launch_critical_opt_in_does_not_activate_withheld_packages():
@@ -231,7 +231,7 @@ def test_register_counts_and_gate_refs():
     assert set(ACTIVATED_ALT_KEYS).issubset(activated)
     assert not (set(WITHHELD_ALT_KEYS) & activated)
     assert SUPERSEDED_S24_ALT_KEY not in activated
-    assert register["activated_frame_count"] == len(activated) == 172
+    assert register["activated_frame_count"] == len(activated) == 178
     withheld = {
         str(row["activation_key"]) for row in register["withheld_frames_arch_conv_e"]
     }

@@ -1,20 +1,16 @@
 """
-V5-CANONICAL-ACTIVATION-GATE-1 — non-launch-critical canonical activation grant.
+V5-CANONICAL-ACTIVATION-GATE-2 — estate-wide canonical activation grant.
 
-Scope (explicit, mandatory):
-- This module is the sole runtime activation-GRANT authority for the
-  **non-launch-critical** governed cohort (everything under ``knowledge_bus/packages/``
-  that is not ``pkg_kb47_*``).
-- Launch-critical ``pkg_kb47_*`` remains a **temporary ratified exception**: activation
-  is still granted by lineage eligibility in ``package_runtime_eligibility_v1``. That
-  cohort is carried forward to the immediately following Stage 2 package, which must
-  fold it into this canonical activation authority while preserving provenance/lineage
-  safety constraints.
-- This sprint does **not** claim estate-wide single-authority convergence.
+Positive activation-grant authority (estate-wide):
+  ``package_runtime_activation_register_v1.yaml`` via this module.
+
+Launch-critical ``pkg_kb47_*`` provenance/lineage eligibility
+(``package_runtime_eligibility_v1``) is a **prerequisite / veto only**. It must not
+independently grant runtime activation.
 
 Supporting mechanisms (eligibility mirrors, provenance, WHY ``REJECTED``, harness
-bypasses) may constrain or veto, but must not independently grant activation for the
-non-launch cohort.
+bypasses outside ``knowledge_bus/packages/``) may constrain or veto, but must not
+independently grant activation for governed estate packages.
 """
 
 from __future__ import annotations
@@ -35,18 +31,24 @@ from core.knowledge.runtime_medical_authority_integrity_v1 import (
 RUNTIME_STATE_EXPLICIT_ACTIVATION_PROHIBITED = "EXPLICIT_ACTIVATION_PROHIBITED"
 
 COHORT_NON_LAUNCH_CRITICAL = "non_launch_critical"
-COHORT_LAUNCH_CRITICAL_TEMPORARY_EXCEPTION = "launch_critical_temporary_exception"
+COHORT_LAUNCH_CRITICAL = "launch_critical"
+# Back-compat alias from Stage 1 (exception retired in Stage 2).
+COHORT_LAUNCH_CRITICAL_TEMPORARY_EXCEPTION = COHORT_LAUNCH_CRITICAL
 
 
 def activation_cohort_for_package(package_id: str) -> str:
-    """Classify which activation-authority regime applies to a package id."""
+    """Classify cohort for audit/docs; both cohorts share the same positive grant."""
     if is_launch_critical_package_id(package_id):
-        return COHORT_LAUNCH_CRITICAL_TEMPORARY_EXCEPTION
+        return COHORT_LAUNCH_CRITICAL
     return COHORT_NON_LAUNCH_CRITICAL
 
 
 def is_non_launch_critical_cohort(package_id: str) -> bool:
     return activation_cohort_for_package(package_id) == COHORT_NON_LAUNCH_CRITICAL
+
+
+def is_launch_critical_cohort(package_id: str) -> bool:
+    return activation_cohort_for_package(package_id) == COHORT_LAUNCH_CRITICAL
 
 
 @lru_cache(maxsize=1)
@@ -82,13 +84,16 @@ def is_explicitly_activation_prohibited(activation_key: str) -> bool:
     return f"sid::{signal_id}" in tokens
 
 
-def non_launch_frame_activation_exclusion_reason(activation_key: str) -> Optional[str]:
+def canonical_frame_activation_exclusion_reason(activation_key: str) -> Optional[str]:
     """
-    Sole non-launch activation grant gate.
+    Sole estate-wide positive activation grant gate for governed packages.
 
-    A governed non-launch frame loads only when:
+    A governed frame loads only when:
     1. its activation_key is present in ``package_runtime_activation_register_v1.yaml``; and
     2. it is not covered by an explicit governed activation prohibition.
+
+    Launch-critical provenance/lineage checks remain separate prerequisites/vetoes in
+    ``package_runtime_eligibility_v1`` / ``SignalRegistry._load``.
 
     Returns None when activation is granted; otherwise an audit exclusion reason.
     """
@@ -100,3 +105,7 @@ def non_launch_frame_activation_exclusion_reason(activation_key: str) -> Optiona
     if is_explicitly_activation_prohibited(key):
         return RUNTIME_STATE_EXPLICIT_ACTIVATION_PROHIBITED
     return None
+
+
+# Stage 1 name retained as a thin alias (same estate-wide grant semantics after Stage 2).
+non_launch_frame_activation_exclusion_reason = canonical_frame_activation_exclusion_reason

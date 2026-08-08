@@ -185,29 +185,30 @@ def test_exact_activation_key_set_deterministic_across_repeated_loads():
         )
 
 
-def test_non_launch_loaded_keys_are_exactly_register_membership():
-    """No duplicate non-launch grant path: loaded NL set == register set."""
+def test_non_launch_loaded_keys_subset_of_register_membership():
+    """Non-launch loaded keys are in the register; register may also hold LC fold-in keys."""
     registry = SignalRegistry()
     loaded_nl = set(_non_launch_key_set(registry))
     register_keys = set(activated_activation_keys())
-    assert loaded_nl == register_keys
+    assert loaded_nl <= register_keys
+    assert loaded_nl
     for signal_id in _PROHIBITED:
         assert not any(key.startswith(f"{signal_id}::") or key == signal_id for key in loaded_nl)
 
 
-def test_mutation_write_path_refuses_launch_critical_package():
+def test_mutation_write_path_refuses_lineage_blocked_launch_critical_package():
     result = mutate_runtime_activation_register(
         add_frames=[
             {
-                "activation_key": "signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis",
-                "package_id": "pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis",
+                "activation_key": "signal_dhea_high::inv_dhea_high_androgen_excess_context",
+                "package_id": "pkg_kb47_dhea_high_androgen_excess_context",
             }
         ],
         repo_root=_REPO,
         dry_run=True,
     )
     assert result.ok is False
-    assert any("launch-critical" in err for err in result.errors)
+    assert any("lineage" in err.lower() or "launch-critical" in err.lower() for err in result.errors)
 
 
 def test_prior_integrity_module_still_passes_on_estate():
