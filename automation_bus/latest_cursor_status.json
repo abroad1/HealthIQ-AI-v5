@@ -1,9 +1,10 @@
 {
   "branch": "governance/arch-conv-a-thyroid-residual-disposition-1",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-08-08T12:22:57Z",
   "cursor_started_utc": "2026-08-08T12:11:59Z",
-  "head_sha": "7f30c87e79a0519e3ceb70e6b1e96fe080b4ba1d",
+  "head_sha": "dbf416b1696ea5b34d46082041e91a383ac60261",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "ARCH-CONV-A-THYROID-RESIDUAL-DISPOSITION-1"
 }
