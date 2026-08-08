@@ -1,10 +1,10 @@
 {
-  "branch": "fix/thyroid-ft3-tsh-firing",
+  "branch": "fix/v5-runtime-authority-integrity-1",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-08-06T21:53:22Z",
-  "cursor_started_utc": "2026-08-06T21:38:03Z",
-  "head_sha": "36e60cbfa5b4db8528d59d03304fc099d65be932",
+  "cursor_completed_utc": "2026-08-08T09:40:47Z",
+  "cursor_started_utc": "2026-08-08T09:22:37Z",
+  "head_sha": "3e28ad2a51e0311b119174d182146df814a2c314",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "THYROID-FT3-TSH-FIRING-FIX-1"
+  "work_id": "V5-RUNTIME-AUTHORITY-INTEGRITY-1"
 }

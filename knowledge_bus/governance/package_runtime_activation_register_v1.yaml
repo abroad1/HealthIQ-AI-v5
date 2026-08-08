@@ -48,7 +48,7 @@ superseded_frames_arch_conv_e2:
       successor. Rank-2 general ALT-high hypothesis covers ALT elevation when R-value
       cannot be calculated. S24 must not remain co-active with that canonical fallback.
 
-activated_frame_count: 177
+activated_frame_count: 172
 activated_frames:
   - activation_key: signal_active_b12_deficiency::inv_active_b12_low_deficiency
     package_id: pkg_kb45_active_b12_low_deficiency
@@ -76,8 +76,6 @@ activated_frames:
     package_id: pkg_kb52c_alt_high_muscle_source_or_exertional_pattern
   - activation_key: signal_alt_high::inv_alt_high_metabolic_masld_context
     package_id: pkg_kb52c_alt_high_metabolic_steatotic_liver_pattern
-  - activation_key: signal_apoa1_cardio_risk::inv_apoa1_low_cardio_risk
-    package_id: pkg_kb45_apoa1_low_cardio_risk
   - activation_key: signal_apoa1_low::inv_apoa1_low_atherogenic_hdl_deficiency
     package_id: pkg_kb52c_apoa1_low_atherogenic_hdl_deficiency
   - activation_key: signal_apoa1_low::inv_apoa1_low_severe_primary_hdl_deficiency_pattern
@@ -234,10 +232,6 @@ activated_frames:
     package_id: pkg_kb52c_lh_low_central_hypogonadotropic_pattern
   - activation_key: signal_lipid_imbalance::inv_apob_apoa1_ratio_high_imbalance
     package_id: pkg_kb45_apob_apoa1_ratio_high_imbalance
-  - activation_key: signal_lipid_transport_dysfunction::KBP-0001
-    package_id: KBP-0001
-  - activation_key: signal_lipid_transport_dysfunction::inv_transport
-    package_id: pkg_lipid_transport
   - activation_key: signal_lipoprotein_a_high::inv_lipoprotein_a_high_atherosclerotic_cardiovascular_risk
     package_id: pkg_kb52c_lipoprotein_a_high_atherosclerotic_cardiovascular_risk
   - activation_key: signal_lipoprotein_a_high::inv_lipoprotein_a_high_calcific_aortic_valve_risk
@@ -346,10 +340,6 @@ activated_frames:
     package_id: pkg_kb59_tgab_high_euthyroid_autoimmune_risk
   - activation_key: signal_thyroid_tsh_context::inv_tsh_context
     package_id: pkg_thyroid_tsh_context
-  - activation_key: signal_total_cholesterol_high::inv_total_cholesterol_high_atherogenic_hypercholesterolemia
-    package_id: pkg_kb60_total_cholesterol_high_atherogenic_hypercholesterolemia
-  - activation_key: signal_total_cholesterol_high::inv_total_cholesterol_high_hdl_dominant_elevation_pattern
-    package_id: pkg_kb60_total_cholesterol_high_hdl_dominant_elevation_pattern
   - activation_key: signal_total_cholesterol_low::inv_total_cholesterol_low_hypocholesterolemia_context
     package_id: pkg_kb60_total_cholesterol_low_hypocholesterolemia_context
   - activation_key: signal_tpo_ab_high::inv_tpo_ab_high_autoimmune_hypothyroid_pattern

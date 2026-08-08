@@ -495,8 +495,19 @@ def run_day_one_architecture_validation(*, repo_root: Path | None = None) -> Lis
     validate_med_rev1_wave1_visibility(errors)
     validate_kb_util1_wave1_card_enrichment(errors)
     validate_signal_library_uniqueness(errors)
+    validate_runtime_medical_authority_integrity(errors)
     validate_medical_intelligence_architecture(errors)
     return errors
+
+
+def validate_runtime_medical_authority_integrity(errors: List[str]) -> None:
+    """V5-RUNTIME-AUTHORITY-INTEGRITY-1 — explicit activation prohibitions vs runtime register."""
+    sys.path.insert(0, str(_REPO / "backend"))
+    from core.knowledge.runtime_medical_authority_integrity_v1 import (  # noqa: PLC0415
+        run_runtime_medical_authority_integrity_validation,
+    )
+
+    errors.extend(run_runtime_medical_authority_integrity_validation(repo_root=_REPO))
 
 
 def validate_medical_intelligence_architecture(errors: List[str]) -> None:
