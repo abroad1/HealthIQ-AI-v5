@@ -1,62 +1,72 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "V5-CANONICAL-ACTIVATION-GATE-1",
+  "work_id": "V5-CANONICAL-ACTIVATION-GATE-2",
   "status": "HARDENED",
   "hardening_date": "2026-08-08",
   "hardened_by": "Claude Code",
   "risk_level": "HIGH",
   "change_type": "BEHAVIOUR",
   "execution_model": "TWO_PHASE_START_FINISH",
-  "branch": "refactor/v5-canonical-activation-gate-1",
+  "branch": "refactor/v5-canonical-activation-gate-2",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "prompt_sha256": "acc5ee3f26e2e343d8640c1acb6c296eba07187c1f3be56dcbf2eee4e1e12c24",
+  "prompt_sha256": "b30c5d0b184fab2be11fc3c3949cc187c6888d24744f4f61cf60a9cf2668a319",
 
   "verification_mode_used": {
     "mode": "batched direct verification, no fork",
-    "rationale": "Single bounded HIGH/BEHAVIOUR refactor package building directly on V5-RUNTIME-AUTHORITY-INTEGRITY-1's merged transition design; did not require disjoint parallel research."
+    "rationale": "Single bounded HIGH/BEHAVIOUR fold-in package building directly on V5-CANONICAL-ACTIVATION-GATE-1's merged Stage 1 architecture; small (6-item) cohort; did not require disjoint parallel research."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "declared_risk_level": "HIGH",
     "declared_change_type": "BEHAVIOUR",
-    "files_in_scope": "4 named authority files (Stage 1A) + 2 new artefacts + 1 updated document -- enumerated",
-    "behaviour_changes_touch_intelligence_core": "YES -- SignalRegistry activation gating, consistent with declared HIGH",
-    "tests_listed_for_behaviour_changes": "YES -- 8 canonical regression targets + exact-set determinism proof",
-    "scope_proportionality": "PASS -- bounded, builds on a prior closed package's transition design, 9 STOP conditions",
+    "files_in_scope": "6 named authority files (Stage 1A) + 3 new/updated artefacts -- enumerated",
+    "behaviour_changes_touch_intelligence_core": "YES -- launch-critical runtime activation, consistent with declared HIGH",
+    "tests_listed_for_behaviour_changes": "YES -- 10 estate-wide canonical-authority proof items + exact-set determinism",
+    "scope_proportionality": "PASS -- bounded fold-in of a small, already-inventoried cohort, 13 STOP conditions",
     "advisory_duplication": "NO",
     "decision": "ACCEPT"
   },
 
   "stage_d_authority_verification": {
-    "prior_package_merged": "V5-RUNTIME-AUTHORITY-INTEGRITY-1 confirmed merged to main at afa4dab",
-    "authority_files_confirmed_current": [
-      "docs/architecture/V5_RUNTIME_ACTIVATION_CANONICAL_GATE_TRANSITION.md",
-      "knowledge_bus/governance/package_runtime_activation_register_v1.yaml",
-      "backend/core/analytics/signal_evaluator.py",
-      "backend/core/knowledge/runtime_medical_authority_integrity_v1.py"
-    ],
-    "stage_1b_reality_check": "CONFIRMED -- more than one mechanism can currently grant activation independently. Not a no-op."
+    "prior_package_merged": "V5-CANONICAL-ACTIVATION-GATE-1 confirmed merged to main at 55d3b60",
+    "all_6_named_files_confirmed_current": true,
+    "item_8_no_later_permanent_duality_ratification": "Confirmed -- nothing since the prior audit. This prompt is itself the ratification answering the open two-cohort-vs-fold-in question raised in the V5-CANONICAL-ACTIVATION-GATE-1 audit.",
+    "stage_1b_reality_check_reproduced_fresh": {
+      "total_loaded": 178,
+      "launch_critical_loaded": 6,
+      "launch_critical_already_in_register": 0,
+      "cohort": [
+        "signal_egfr_low::inv_egfr_low_chronic_kidney_function_reduction",
+        "signal_egfr_low::inv_egfr_low_hemodynamic_filtration_drop",
+        "signal_free_t3_high::inv_free_t3_high_t3_predominant_thyrotoxicosis",
+        "signal_free_t3_low::inv_free_t3_low_low_t3_syndrome",
+        "signal_free_t4_high::inv_free_t4_high_thyrotoxicosis_context",
+        "signal_free_t4_low::inv_free_t4_low_thyroid_hormone_deficiency"
+      ],
+      "conclusion": "Not a no-op. Small, clean, bounded cohort."
+    }
   },
 
-  "central_finding_flagged_for_cursor_stage_1a_1b": {
-    "status": "CANDIDATE STOP-2 TRIGGER -- not pre-resolved, flagged for Cursor's explicit classification",
-    "mechanism": "backend/core/knowledge/package_runtime_eligibility_v1.py:57-100 (classify_package_runtime_eligibility). Non-launch-critical packages (line 89-92) are gated by is_package_runtime_activated() -- genuinely consult the activation register, consistent with the transition document. Launch-critical packages (pkg_kb47_*) skip that branch entirely (line 89 condition false) and are eligible solely via is_beta_eligible_explicit_lineage(status) -- provenance/lineage quality. The activation register is never consulted for this cohort. Confirmed independently in SignalRegistry._load: line 139's 'if governed and not launch_critical' also skips the frame-level register check for launch-critical frames.",
-    "why_this_matters": "package_runtime_eligibility_v1.py's own docstring (line 2) calls itself 'canonical package runtime eligibility (launch-critical cohort)' -- a second, self-described canonical authority, separately ratified under ARCH-CONV-PKG2, governing a disjoint high-stakes cohort (TSH/FT3/FT4/eGFR-class signals). The prior transition document classified this only as a 'supporting constraint to fold Later' -- read strictly against the current code, that undersells it: for launch-critical packages, eligibility IS the entire grant decision, not a veto on top of the register's grant.",
-    "why_not_simply_foldable_this_sprint": "Folding would require either migrating ~150 pkg_kb47_* entries into the register (a 'broad package migration', explicitly named in STOP 9 as out of scope) or redefining what 'canonical' means per-cohort (new architecture policy, per STOP 4).",
-    "proposed_narrowest_safe_resolution": "Scope this sprint's 'canonical gate' claim to the non-launch-critical cohort only, and explicitly document the launch-critical eligibility path as a second, disjoint-cohort canonical authority this sprint does not touch -- rather than falsely claiming one universal gate now, or attempting the launch-critical fold and risking STOP 9. A full merge of the two cohorts under one gate is the genuinely 'Later' work the prior transition document already deferred.",
-    "instruction_to_cursor": "This is a proposal, not a directive. Cursor's Stage 1A item 5 classification must make this call explicitly and STOP under condition 2 if it disagrees that the disjoint-cohort framing is safe, rather than silently proceeding either way."
+  "key_finding_derisking_stop_3": {
+    "question": "Would migrating launch-critical eligibility into canonical activation entries invent new medical authorisation (STOP 3), or formalise authority that already exists?",
+    "answer": "Already exists, specifically, independently citable -- not inferred from package presence alone.",
+    "evidence": "docs/sprints/beta_readiness/BUILD_DELIVERABLE_REGISTER.md:912-924 (ARCH-CONV-PKG2, closed 2026-07-26): 'STOP Gate 1 PASS: Wave 1 INCLUDE kept reachable; lineage recovered from Pass 3' and 'Explicit lineage attached for 6 Wave 1 pkg_kb47_* packages (free_t3x2, free_t4x2, egfrx2)' -- exact match by count and identity to the 6 keys found loaded this pass.",
+    "negative_control_verified": "Same BDR entry names '14 androgen/CK/eos kb47 packages made production non-reachable'. Independently confirmed this pass: exactly 14 packages currently in excluded_launch_critical_packages, all androgen/DHEA/creatine-kinase/eosinophil, all non_reachable, matching the BDR's named exclusion category precisely.",
+    "instruction_to_cursor": "Use this exact 14-package list as a cross-reference for the pre-change inventory's CURRENTLY_BLOCKED_OR_INELIGIBLE bucket -- if Cursor's own independent inventory doesn't land at these same 14 package IDs, that discrepancy is worth scrutiny before proceeding, not something to reconcile silently."
   },
 
-  "other_findings": {
-    "governed_bypass": "backend/core/analytics/signal_evaluator.py:82 -- packages outside knowledge_bus/packages/ (e.g. test harness fixtures) bypass activation-register gating entirely, per a pre-existing documented comment. Narrower concern than the launch-critical finding, confined to non-estate test fixtures, unlikely to be STOP-relevant alone but worth Cursor citing in the pre-change map."
-  },
+  "remaining_risk_areas_not_resolved_by_hardening": [
+    "STOP 6/7 (identity mapping / duplicate-conflicting identities): the 6-key cohort looks clean on inspection but Cursor must still do its own deterministic mapping per the prompt's explicit instruction not to assume from prior conversational material, including this hardening pack.",
+    "STOP 4 (weakening safety to achieve one authority): the write-path close (Required Implementation E) needs the same 're-validate candidate state before writing' discipline activation_register_mutation_v1.py already has for the non-launch-critical path -- extend, do not bypass, that existing pattern.",
+    "Items F/G (estate-wide determinism, 10-part canonical-authority proof) are large but mechanical extensions of Stage 1's already-proven test shapes (test_canonical_runtime_activation_gate.py) -- no new design risk identified."
+  ],
 
   "canonical_artefacts_to_produce": [
-    "docs/architecture/V5_CANONICAL_ACTIVATION_GATE_prechange_map.md",
-    "backend/tests/architecture/test_canonical_runtime_activation_gate.py",
+    "docs/architecture/V5_CANONICAL_ACTIVATION_GATE_STAGE2_prechange_inventory.md",
+    "backend/tests/architecture/test_canonical_runtime_activation_gate_stage2.py",
     "updated/superseded docs/architecture/V5_RUNTIME_ACTIVATION_CANONICAL_GATE_TRANSITION.md"
   ],
 
-  "evidence_checklist_status": "COMPLETE -- prior package confirmed merged, all 4 authority files verified current, Stage 1B reality check confirmed (not a no-op), central STOP-2-candidate finding identified with exact line citations and a proposed narrowest-safe resolution left for Cursor to confirm or override with STOP. Ready for kernel 'python backend/scripts/run_work_package.py start' once branch refactor/v5-canonical-activation-gate-1 is created/checked out."
+  "evidence_checklist_status": "COMPLETE -- prior package confirmed merged, all 6 Stage 1A authority paths verified current, Stage 1B reality check reproduced fresh (6-item bounded cohort, not a no-op), STOP-3 authorisation-sufficiency risk de-risked with an exact-match citation to a specific closed ARCH-CONV-PKG2 decision plus an independently-verified negative control (14 blocked packages). Ready for kernel 'python backend/scripts/run_work_package.py start' once branch refactor/v5-canonical-activation-gate-2 is created/checked out."
 }
