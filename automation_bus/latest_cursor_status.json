@@ -1,10 +1,10 @@
 {
-  "branch": "refactor/v5-canonical-activation-gate-1",
+  "branch": "refactor/v5-canonical-activation-gate-2",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-08-08T10:23:51Z",
-  "cursor_started_utc": "2026-08-08T10:06:34Z",
-  "head_sha": "6499cfb84b37a5caf017c36d948034aa0a5707a0",
+  "cursor_completed_utc": "2026-08-08T11:22:40Z",
+  "cursor_started_utc": "2026-08-08T11:10:50Z",
+  "head_sha": "079f06a490338fec8db10278f0bf9a3934555e71",
   "raw_stop_condition": null,
   "status": "COMPLETE",
-  "work_id": "V5-CANONICAL-ACTIVATION-GATE-1"
+  "work_id": "V5-CANONICAL-ACTIVATION-GATE-2"
 }

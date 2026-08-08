@@ -52,7 +52,11 @@ class SignalRegistry:
         return payload
 
     def _load(self) -> None:
+        from core.knowledge.canonical_runtime_activation_gate_v1 import (
+            canonical_frame_activation_exclusion_reason,
+        )
         from core.knowledge.package_runtime_eligibility_v1 import (
+            ELIGIBILITY_NON_REACHABLE,
             classify_package_runtime_eligibility,
             is_launch_critical_package_id,
             is_production_reachable,
@@ -60,9 +64,6 @@ class SignalRegistry:
         )
         from core.knowledge.frame_runtime_authority_v1 import (
             frame_runtime_exclusion_reason,
-        )
-        from core.knowledge.canonical_runtime_activation_gate_v1 import (
-            non_launch_frame_activation_exclusion_reason,
         )
         from core.knowledge.provenance_status_v1 import classify_package_provenance_status
 
@@ -100,15 +101,15 @@ class SignalRegistry:
                         "eligibility": eligibility,
                         "provenance_status": provenance_status,
                     }
-                    if launch_critical:
+                    if launch_critical and eligibility == ELIGIBILITY_NON_REACHABLE:
                         exclusions.append(row)
                     else:
                         unactivated_packages.append(row)
-                if launch_critical:
+                # Lineage-failed launch-critical packages stay unreachable (do not walk).
+                # Missing-register packages (any cohort) still walk so rejection /
+                # unactivated audit surfaces remain honest.
+                if launch_critical and eligibility == ELIGIBILITY_NON_REACHABLE:
                     continue
-                # Non-launch-critical packages are still walked frame-by-frame so the
-                # rejection authority keeps precedence on the audit surface. Nothing
-                # loads: every frame fails the per-frame activation gate below.
 
             payload = self._load_yaml(path)
             signal_items = payload.get("signals")
@@ -136,11 +137,10 @@ class SignalRegistry:
                         }
                     )
                     continue
-                # Non-launch governed cohort: sole activation GRANT is the canonical
-                # register gate (V5-CANONICAL-ACTIVATION-GATE-1). Launch-critical
-                # pkg_kb47_* remains a temporary ratified exception (Stage 2 fold).
-                if governed and not launch_critical:
-                    not_activated = non_launch_frame_activation_exclusion_reason(
+                # Estate-wide positive GRANT: canonical activation register (+ prohibition veto).
+                # Launch-critical lineage remains a package-level prerequisite/veto above.
+                if governed:
+                    not_activated = canonical_frame_activation_exclusion_reason(
                         activation_key
                     )
                     if not_activated is not None:

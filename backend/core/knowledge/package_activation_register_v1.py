@@ -1,13 +1,13 @@
 """
-ARCH-CONV-E — governed runtime activation boundary for Knowledge Bus packages.
+ARCH-CONV-E / V5-CANONICAL-ACTIVATION-GATE-2 — governed runtime activation boundary.
 
 Placement of a package under ``knowledge_bus/packages/`` is a promotion act, not an
-activation act. A non-launch-critical frame becomes production-reachable only when its
+activation act. A governed frame becomes production-reachable only when its
 ``activation_key`` is listed in the governed activation register.
 
-Launch-critical (``pkg_kb47_*``) packages keep their own lineage-based eligibility
-contract from ``package_runtime_eligibility_v1`` and are deliberately out of scope here,
-including under the launch-critical test opt-in.
+Launch-critical (``pkg_kb47_*``) frames are included in the register after Stage 2
+fold-in. Provenance/lineage eligibility remains a mandatory prerequisite/veto in
+``package_runtime_eligibility_v1`` and must not independently grant activation.
 
 Fail closed: a missing or malformed register raises rather than admitting every package
 on disk into the production registry.
