@@ -496,6 +496,7 @@ def run_day_one_architecture_validation(*, repo_root: Path | None = None) -> Lis
     validate_kb_util1_wave1_card_enrichment(errors)
     validate_signal_library_uniqueness(errors)
     validate_runtime_medical_authority_integrity(errors)
+    validate_canonical_runtime_activation_gate(errors)
     validate_medical_intelligence_architecture(errors)
     return errors
 
@@ -508,6 +509,47 @@ def validate_runtime_medical_authority_integrity(errors: List[str]) -> None:
     )
 
     errors.extend(run_runtime_medical_authority_integrity_validation(repo_root=_REPO))
+
+
+def validate_canonical_runtime_activation_gate(errors: List[str]) -> None:
+    """V5-CANONICAL-ACTIVATION-GATE-1 — non-launch grant == register; LC exception explicit."""
+    sys.path.insert(0, str(_REPO / "backend"))
+    from core.analytics.signal_evaluator import SignalRegistry  # noqa: PLC0415
+    from core.knowledge.canonical_runtime_activation_gate_v1 import (  # noqa: PLC0415
+        is_non_launch_critical_cohort,
+    )
+    from core.knowledge.package_activation_register_v1 import (  # noqa: PLC0415
+        activated_activation_keys,
+        clear_activation_register_cache,
+    )
+    from core.knowledge.package_runtime_eligibility_v1 import (  # noqa: PLC0415
+        is_launch_critical_package_id,
+    )
+
+    clear_activation_register_cache()
+    registry = SignalRegistry()
+    loaded_nl = {
+        row["activation_key"]
+        for row in registry.get_all_signals()
+        if is_non_launch_critical_cohort(str(row.get("package_id") or ""))
+    }
+    register_keys = set(activated_activation_keys())
+    if loaded_nl != register_keys:
+        missing = sorted(register_keys - loaded_nl)
+        extra = sorted(loaded_nl - register_keys)
+        _err(
+            errors,
+            "non-launch loaded activation keys must equal activation register "
+            f"(missing_from_load={missing[:10]!r} extra_loaded={extra[:10]!r})",
+        )
+
+    loaded_lc = {
+        row["package_id"]
+        for row in registry.get_all_signals()
+        if is_launch_critical_package_id(str(row.get("package_id") or ""))
+    }
+    if not loaded_lc:
+        _err(errors, "expected temporary launch-critical exception cohort to remain loadable")
 
 
 def validate_medical_intelligence_architecture(errors: List[str]) -> None:

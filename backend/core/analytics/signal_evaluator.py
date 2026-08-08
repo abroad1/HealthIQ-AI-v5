@@ -61,8 +61,8 @@ class SignalRegistry:
         from core.knowledge.frame_runtime_authority_v1 import (
             frame_runtime_exclusion_reason,
         )
-        from core.knowledge.package_activation_register_v1 import (
-            frame_activation_exclusion_reason,
+        from core.knowledge.canonical_runtime_activation_gate_v1 import (
+            non_launch_frame_activation_exclusion_reason,
         )
         from core.knowledge.provenance_status_v1 import classify_package_provenance_status
 
@@ -136,8 +136,13 @@ class SignalRegistry:
                         }
                     )
                     continue
+                # Non-launch governed cohort: sole activation GRANT is the canonical
+                # register gate (V5-CANONICAL-ACTIVATION-GATE-1). Launch-critical
+                # pkg_kb47_* remains a temporary ratified exception (Stage 2 fold).
                 if governed and not launch_critical:
-                    not_activated = frame_activation_exclusion_reason(activation_key)
+                    not_activated = non_launch_frame_activation_exclusion_reason(
+                        activation_key
+                    )
                     if not_activated is not None:
                         unactivated_frames.append(
                             {

@@ -1,13 +1,22 @@
 """
-ARCH-CONV-PKG2 — canonical package runtime eligibility (launch-critical cohort).
+ARCH-CONV-PKG2 / V5-CANONICAL-ACTIVATION-GATE-1 — package runtime eligibility.
 
-Production reachability for launch-critical packages (pkg_kb47_*) requires
-acceptable explicit lineage (EXPLICIT_SPEC or COMPILED_MANIFEST).
+This module is **not** the estate-wide activation-grant authority.
 
-ARCH-CONV-E — non-launch-critical packages are production-reachable only when they are
-explicitly activated in the governed runtime activation register. Presence on disk under
-``knowledge_bus/packages/`` is promotion, not activation, so an unregistered package stays
-ELIGIBILITY_OUT_OF_COHORT and does not load in production.
+Non-launch-critical cohort (ARCH-CONV-E):
+  Package-level eligibility mirrors membership in
+  ``package_runtime_activation_register_v1.yaml``. That register — via
+  ``canonical_runtime_activation_gate_v1`` — is the sole activation GRANT for
+  non-launch frames. This eligibility check is a package-level precondition /
+  mirror only; it must not be treated as an independent grant path.
+
+Launch-critical cohort (``pkg_kb47_*``) — TEMPORARY RATIFIED EXCEPTION:
+  Production reachability still requires acceptable explicit lineage
+  (EXPLICIT_SPEC or COMPILED_MANIFEST). This remains a second, disjoint grant
+  path until the immediately following Stage 2 package folds ``pkg_kb47_*`` into
+  the canonical activation register while preserving provenance/lineage safety.
+
+Presence on disk under ``knowledge_bus/packages/`` is promotion, not activation.
 """
 
 from __future__ import annotations
