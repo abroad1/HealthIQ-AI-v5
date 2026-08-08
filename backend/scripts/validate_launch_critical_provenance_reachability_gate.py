@@ -42,9 +42,11 @@ def main() -> int:
         ELIGIBILITY_NON_REACHABLE,
         ELIGIBILITY_UNKNOWN_FAIL_CLOSED,
         classify_package_runtime_eligibility,
+    )
+    from core.knowledge.provenance_status_v1 import (
+        classify_package_provenance_status,
         is_beta_eligible_explicit_lineage,
     )
-    from core.knowledge.provenance_status_v1 import classify_package_provenance_status
 
     prod = SignalRegistry()
     loaded_kb47 = {
@@ -74,13 +76,18 @@ def main() -> int:
     if len(excluded) != 14:
         return _fail(f"expected 14 excluded kb47 packages, got {len(excluded)}")
 
-    # Opt-in can still load blocked fixtures.
+    # Stage 2: opt-in relaxes lineage veto only; canonical register membership still required.
+    # Blocked kb47 packages without register entries must remain unloadable under opt-in.
     opted = SignalRegistry(allow_launch_critical_blocked=True)
-    opted_kb47 = [
-        row for row in opted.get_all_signals() if str(row.get("package_id") or "").startswith("pkg_kb47_")
-    ]
-    if len(opted_kb47) != 20:
-        return _fail(f"test opt-in must load 20 kb47 frames, got {len(opted_kb47)}")
+    opted_kb47 = {
+        str(row.get("package_id") or "").strip()
+        for row in opted.get_all_signals()
+        if str(row.get("package_id") or "").startswith("pkg_kb47_")
+    }
+    if opted_kb47 != WAVE1_INCLUDE:
+        return _fail(
+            f"test opt-in must load only register-activated Wave 1 kb47 frames, got {sorted(opted_kb47)}"
+        )
 
     # Unknown / empty package id fails closed.
     eligibility, _status = classify_package_runtime_eligibility(package_id="")
