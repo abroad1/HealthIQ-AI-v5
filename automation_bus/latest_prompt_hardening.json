@@ -1,62 +1,62 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "V5-RUNTIME-AUTHORITY-INTEGRITY-1",
+  "work_id": "V5-CANONICAL-ACTIVATION-GATE-1",
   "status": "HARDENED",
   "hardening_date": "2026-08-08",
   "hardened_by": "Claude Code",
   "risk_level": "HIGH",
-  "change_type": "MIXED",
+  "change_type": "BEHAVIOUR",
   "execution_model": "TWO_PHASE_START_FINISH",
-  "branch": "fix/v5-runtime-authority-integrity-1",
+  "branch": "refactor/v5-canonical-activation-gate-1",
   "source_prompt": "automation_bus/latest_cursor_prompt.md",
-  "prompt_sha256": "49c6d7b1a065e3d6fda81d52c9ac64a68dac2248b0841ff9168a7e2b4414106d",
+  "prompt_sha256": "acc5ee3f26e2e343d8640c1acb6c296eba07187c1f3be56dcbf2eee4e1e12c24",
 
   "verification_mode_used": {
     "mode": "batched direct verification, no fork",
-    "rationale": "Single bounded HIGH/MIXED integrity package built directly on findings already established this session (V5/V6 strategic reassessment); did not require disjoint parallel research."
+    "rationale": "Single bounded HIGH/BEHAVIOUR refactor package building directly on V5-RUNTIME-AUTHORITY-INTEGRITY-1's merged transition design; did not require disjoint parallel research."
   },
 
   "prompt_receipt_gate": {
     "front_matter_complete": "YES",
     "declared_risk_level": "HIGH",
-    "declared_change_type": "MIXED",
-    "files_in_scope": "6 named authority files (Stage 1A) + 4 new artefacts to produce -- enumerated, none open-ended",
-    "behaviour_changes_touch_intelligence_core": "YES -- signal_evaluator.py / SignalRegistry runtime activation, consistent with declared HIGH",
-    "tests_listed_for_behaviour_changes": "YES -- 7 canonical regression targets",
-    "scope_proportionality": "PASS -- bounded, single failure class, explicit non-scope list, 11 STOP conditions",
+    "declared_change_type": "BEHAVIOUR",
+    "files_in_scope": "4 named authority files (Stage 1A) + 2 new artefacts + 1 updated document -- enumerated",
+    "behaviour_changes_touch_intelligence_core": "YES -- SignalRegistry activation gating, consistent with declared HIGH",
+    "tests_listed_for_behaviour_changes": "YES -- 8 canonical regression targets + exact-set determinism proof",
+    "scope_proportionality": "PASS -- bounded, builds on a prior closed package's transition design, 9 STOP conditions",
     "advisory_duplication": "NO",
     "decision": "ACCEPT"
   },
 
   "stage_d_authority_verification": {
-    "baseline_defect_reproduced_this_pass": "YES -- fresh SignalRegistry() load confirms all three signals (signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_lipid_transport_dysfunction) still loaded",
-    "authority_files": {
-      "compiled_why_authority_register_v1.yaml": "exists -- read exact entries for all three disputed signals (lines ~354-370): authority_state LEGACY_RETIRED, gpt_decision NOT_AUTHORISED_WAVE2, anthony_decision NOT_AUTHORISED_WAVE2",
-      "package_runtime_activation_register_v1.yaml": "exists, unchanged",
-      "signal_evaluator.py (SignalRegistry._load)": "exists, unchanged",
-      "root_cause_compiler_v1.py": "exists -- PATH CORRECTION: resolve_frame_why_authority is called here (lines ~733,808) but DEFINED in backend/core/knowledge/why_authority_v1.py:128. Confirmed by direct read this function governs WHY-narrative selection only (compiled/legacy/skip/fail_closed for a firing signal's narrative), not activation/reachability. Minor stale-path note, not a blocker.",
-      "validate_day_one_architecture.py": "exists -- existing governed entry point identified: run_day_one_architecture_validation() at line 479, aggregates ~15 validate_*(errors) functions (lines 78-440)",
-      "test_runtime_medical_authority_integrity.py": "does not exist yet -- correct and expected, Scope B/E creates it; Stage 1A phrasing is prospective, not a claim of prior existence"
-    },
-    "stop_2_superseding_authority_check": "NOT FOUND -- searched for any later ratified decision reversing the Wave 2 lipid rejection; none found",
-    "stop_3_4_semantic_distinction_risk": {
-      "status": "DE-RISKED with concrete evidence, not eliminated as a Stage-D task",
-      "finding": "The distinguishing field already exists and is already ratified, just unconsumed for enforcement. Genuine activation prohibition (the three lipid signals) carries anthony_decision: NOT_AUTHORISED_WAVE2. Ordinary WHY-retirement where the signal legitimately still fires (checked signal_hepatic_alt_context::inv_alt_context, signal_homocysteine_elevation_context::inv_elevation_context) carries anthony_decision: APPROVED regardless of gpt_decision value (SUPERSEDED_BY_ARCH_CONV_I, WHY_SKIP_SIBLING_PRESERVE_PACKAGE_E2, FOLD_SUPPRESS_WHY_ONLY all seen with anthony_decision APPROVED). The invariant Cursor builds should key off anthony_decision != APPROVED as the activation-prohibition signal, not authority_state alone (authority_state: LEGACY_RETIRED is used in BOTH cases and is not the distinguishing field)."
-    }
+    "prior_package_merged": "V5-RUNTIME-AUTHORITY-INTEGRITY-1 confirmed merged to main at afa4dab",
+    "authority_files_confirmed_current": [
+      "docs/architecture/V5_RUNTIME_ACTIVATION_CANONICAL_GATE_TRANSITION.md",
+      "knowledge_bus/governance/package_runtime_activation_register_v1.yaml",
+      "backend/core/analytics/signal_evaluator.py",
+      "backend/core/knowledge/runtime_medical_authority_integrity_v1.py"
+    ],
+    "stage_1b_reality_check": "CONFIRMED -- more than one mechanism can currently grant activation independently. Not a no-op."
   },
 
-  "determinism_note": {
-    "status": "QUALIFIES a claim in docs/audit-papers/HEALTHIQ_V5_VS_V6_STRATEGIC_REASSESSMENT.md",
-    "finding": "That document reported the SignalRegistry loaded-count variance as fully cleared/not reproducible. Re-tested this pass: 9 of 10 fresh runs gave 183 (identical content hash), 1 isolated run gave 128. Not a confirmed deterministic-code defect (all 10 runs agreed the three disputed signals were loaded regardless of total count), but not fully clean either -- a low-frequency, uncharacterized flake.",
-    "recommendation_for_cursor": "Canonical regression target #6 (identical repository/input state produces identical validator and registry results) should be proven with multiple repeated runs, not a single run, given this observation."
+  "central_finding_flagged_for_cursor_stage_1a_1b": {
+    "status": "CANDIDATE STOP-2 TRIGGER -- not pre-resolved, flagged for Cursor's explicit classification",
+    "mechanism": "backend/core/knowledge/package_runtime_eligibility_v1.py:57-100 (classify_package_runtime_eligibility). Non-launch-critical packages (line 89-92) are gated by is_package_runtime_activated() -- genuinely consult the activation register, consistent with the transition document. Launch-critical packages (pkg_kb47_*) skip that branch entirely (line 89 condition false) and are eligible solely via is_beta_eligible_explicit_lineage(status) -- provenance/lineage quality. The activation register is never consulted for this cohort. Confirmed independently in SignalRegistry._load: line 139's 'if governed and not launch_critical' also skips the frame-level register check for launch-critical frames.",
+    "why_this_matters": "package_runtime_eligibility_v1.py's own docstring (line 2) calls itself 'canonical package runtime eligibility (launch-critical cohort)' -- a second, self-described canonical authority, separately ratified under ARCH-CONV-PKG2, governing a disjoint high-stakes cohort (TSH/FT3/FT4/eGFR-class signals). The prior transition document classified this only as a 'supporting constraint to fold Later' -- read strictly against the current code, that undersells it: for launch-critical packages, eligibility IS the entire grant decision, not a veto on top of the register's grant.",
+    "why_not_simply_foldable_this_sprint": "Folding would require either migrating ~150 pkg_kb47_* entries into the register (a 'broad package migration', explicitly named in STOP 9 as out of scope) or redefining what 'canonical' means per-cohort (new architecture policy, per STOP 4).",
+    "proposed_narrowest_safe_resolution": "Scope this sprint's 'canonical gate' claim to the non-launch-critical cohort only, and explicitly document the launch-critical eligibility path as a second, disjoint-cohort canonical authority this sprint does not touch -- rather than falsely claiming one universal gate now, or attempting the launch-critical fold and risking STOP 9. A full merge of the two cohorts under one gate is the genuinely 'Later' work the prior transition document already deferred.",
+    "instruction_to_cursor": "This is a proposal, not a directive. Cursor's Stage 1A item 5 classification must make this call explicitly and STOP under condition 2 if it disagrees that the disjoint-cohort framing is safe, rather than silently proceeding either way."
+  },
+
+  "other_findings": {
+    "governed_bypass": "backend/core/analytics/signal_evaluator.py:82 -- packages outside knowledge_bus/packages/ (e.g. test harness fixtures) bypass activation-register gating entirely, per a pre-existing documented comment. Narrower concern than the launch-critical finding, confined to non-estate test fixtures, unlikely to be STOP-relevant alone but worth Cursor citing in the pre-change map."
   },
 
   "canonical_artefacts_to_produce": [
-    "docs/architecture/V5_RUNTIME_AUTHORITY_INTEGRITY_prechange_evidence.md",
-    "docs/architecture/V5_RUNTIME_AUTHORITY_same_class_sweep.md",
-    "backend/tests/architecture/test_runtime_medical_authority_integrity.py",
-    "docs/architecture/V5_RUNTIME_ACTIVATION_CANONICAL_GATE_TRANSITION.md"
+    "docs/architecture/V5_CANONICAL_ACTIVATION_GATE_prechange_map.md",
+    "backend/tests/architecture/test_canonical_runtime_activation_gate.py",
+    "updated/superseded docs/architecture/V5_RUNTIME_ACTIVATION_CANONICAL_GATE_TRANSITION.md"
   ],
 
-  "evidence_checklist_status": "COMPLETE -- baseline defect reproduced fresh, all 6 Stage 1A authority paths verified (1 minor location correction), STOP 2 checked (not found), STOP 3/4 semantic-ambiguity risk de-risked with concrete register evidence showing the distinguishing field (anthony_decision) already exists, determinism claim in the dependency document re-tested and qualified for Cursor's awareness. Ready for kernel 'python backend/scripts/run_work_package.py start' once branch fix/v5-runtime-authority-integrity-1 is created/checked out."
+  "evidence_checklist_status": "COMPLETE -- prior package confirmed merged, all 4 authority files verified current, Stage 1B reality check confirmed (not a no-op), central STOP-2-candidate finding identified with exact line citations and a proposed narrowest-safe resolution left for Cursor to confirm or override with STOP. Ready for kernel 'python backend/scripts/run_work_package.py start' once branch refactor/v5-canonical-activation-gate-1 is created/checked out."
 }

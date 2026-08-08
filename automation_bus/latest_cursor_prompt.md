@@ -1,318 +1,248 @@
 ---
-work_id: V5-RUNTIME-AUTHORITY-INTEGRITY-1
-branch: fix/v5-runtime-authority-integrity-1
+work_id: V5-CANONICAL-ACTIVATION-GATE-1
+branch: refactor/v5-canonical-activation-gate-1
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: BEHAVIOUR
 ---
 
-# V5 Runtime Medical-Authority Integrity
+# V5 Canonical Runtime Activation Gate
 
 ## Objective
 
-Restore confidence that governed medical activation decisions control V5 runtime reachability.
+Implement the next bounded step in the ratified V5-retention architecture:
 
-This is a bounded architecture/integrity package. It must:
+> Runtime activation must have one canonical write-path authority. Other existing mechanisms may constrain eligibility, provenance, or safety, but must not independently grant activation.
 
-1. close the confirmed lipid rejection-versus-runtime contradiction;
-2. introduce a deterministic fail-closed validation invariant between governed medical activation authority and runtime activation state;
-3. perform a bounded estate sweep for other instances of the same failure class;
-4. add regression coverage capable of detecting this class of authority violation;
-5. document the transition path from the current multi-mechanism activation model toward one canonical runtime activation gate.
-
-Do not resume residual ARCH-CONV-A medical-content migration in this work package.
+Use the transition design produced by `V5-RUNTIME-AUTHORITY-INTEGRITY-1` as the starting architecture. Do not broaden this sprint into residual medical-content work or a full SignalRegistry rewrite.
 
 ## Stage 1A — Authority Preflight
 
-The current architectural authorities to preserve are:
+Before implementation, verify on the current merged `main`:
 
-- medical / compiled-WHY authority:
-  `knowledge_bus/governance/compiled_why_authority_register_v1.yaml`
-- runtime package activation authority:
-  `knowledge_bus/governance/package_runtime_activation_register_v1.yaml`
-- runtime loader:
-  `backend/core/analytics/signal_evaluator.py` (`SignalRegistry._load`)
-- compiled-WHY selector / consumer:
-  `backend/core/analytics/root_cause_compiler_v1.py`
-- existing day-one architecture guardrail:
-  `backend/scripts/validate_day_one_architecture.py`
-- canonical regression module for this work package:
-  `backend/tests/architecture/test_runtime_medical_authority_integrity.py`
+1. `docs/architecture/V5_RUNTIME_ACTIVATION_CANONICAL_GATE_TRANSITION.md` exists and still identifies the current activation mechanisms and the intended canonical future gate.
+2. `knowledge_bus/governance/package_runtime_activation_register_v1.yaml` is the intended canonical runtime activation authority.
+3. `backend/core/analytics/signal_evaluator.py` is the runtime loader/consumer path whose activation decisions must converge on that authority.
+4. `backend/core/knowledge/runtime_medical_authority_integrity_v1.py` remains the prohibition-integrity guard introduced by `V5-RUNTIME-AUTHORITY-INTEGRITY-1`.
+5. The other activation-related mechanisms identified in the transition document are classified correctly as either:
+   - supporting eligibility/provenance/safety constraints; or
+   - duplicate/parallel activation-granting paths requiring demotion.
+6. No proposed change creates a new activation SSOT.
 
-Architectural rule:
-
-These sources govern different dimensions and must not be replaced by a new parallel SSOT.
-
-This sprint may add a deterministic validator / enforcement check that reconciles them, but must not create a third medical activation authority.
-
-Important semantic boundary:
-
-`LEGACY_RETIRED`, WHY-skip, non-owning, or equivalent WHY-authority states must **not automatically be interpreted as "signal must not fire."**
-
-Runtime activation may be prohibited only where existing governed authority explicitly establishes that the signal / activation must not be active.
-
-If the current authority artefacts cannot express that distinction without inventing a new medical-policy meaning, STOP and escalate for GPT + Anthony architectural review.
-
-Claude Stage D must re-read the above files and verify their current repository paths and semantics before execution. If any stated path or authority assumption is stale, hardening must correct the prompt before HARDENED status.
+If current repository reality differs materially from the transition document, STOP for GPT architectural review rather than implementing the stale design.
 
 ## Stage 1B — Reality Check
 
-The current baseline is evidenced to contain a real unresolved defect:
+Confirm that the current baseline still contains more than one mechanism capable of independently causing a signal/package/frame to become runtime-active.
 
-- `signal_total_cholesterol_high`
-- `signal_lipid_transport_dysfunction`
-- `signal_apoa1_cardio_risk`
-
-were explicitly rejected for creation / activation by the ratified ARCH-CONV-A Wave 2 Gate 1 + Gate 2 decision, but were subsequently found runtime-loaded and present in `package_runtime_activation_register_v1.yaml`.
-
-The V5/V6 strategic reassessment independently identified the root architectural gap as absence of a cross-validation invariant between governed medical authority and runtime activation state.
-
-Therefore this is not a no-op sprint.
-
-Stage D must independently reproduce the contradiction before implementation. If the contradiction no longer exists on the current branch, STOP and return `NO_OP_OR_REBASE_REQUIRED`; do not implement speculative remediation.
+If the canonical-gate transition has already been completed by another merged change, STOP with `NO_OP_OR_REBASE_REQUIRED`.
 
 ## Stage 1C — Intelligence Preflight
 
-### Intelligence Core components potentially affected
+Affected Intelligence Core surface is limited to runtime activation eligibility/loading and the validators/tests governing that behaviour.
 
-- `backend/core/analytics/signal_evaluator.py`
-- runtime activation governance consumed by `SignalRegistry._load`
-- existing medical/WHY authority consumed by `root_cause_compiler_v1.py`
-- architecture validation / regression paths
+Expected behavioural result:
 
-### Behavioural surface
+- no currently authorised signal becomes inactive solely because supporting eligibility/provenance checks are retained;
+- no currently unauthorised signal becomes active;
+- activation permission is granted only through the canonical activation authority;
+- supporting mechanisms can veto/restrict activation where already governed to do so, but cannot independently activate;
+- identical governed inputs produce the identical complete activation-key set.
 
-Intended behaviour change is limited to preventing runtime activation where a pre-existing ratified authority explicitly prohibits that activation.
+Canonical regression module:
 
-No new signal may become active.
+`backend/tests/architecture/test_canonical_runtime_activation_gate.py`
 
-No threshold, comparator, biomarker identity, prioritisation rule, severity rule, WHY wording, research content, consumer narrative, or medical conclusion may be changed.
-
-### Expected output change
-
-For the three confirmed lipid violations, prohibited signals must no longer be runtime-reachable / emitted.
-
-For all other signals, behaviour must remain unchanged unless the bounded same-class sweep proves an equivalent explicit activation-authority violation.
-
-Any additional removal requires direct cited evidence of an already-ratified `DO_NOT_ACTIVATE`, `REJECTED_FOR_ACTIVATION`, or semantically equivalent decision.
-
-### Canonical regression targets
-
-At minimum prove:
-
-1. the three known lipid signals are not runtime-loaded after correction;
-2. existing approved lipid signals remain runtime-loadable and behaviourally unchanged;
-3. a deliberately rejected activation fixture fails validation / fails closed;
-4. a WHY-retired-but-still-legitimately-firing fixture is not incorrectly blocked;
-5. duplicate / conflicting authority data fails closed rather than silently choosing one;
-6. identical repository/input state produces identical validator and registry results;
-7. existing day-one architecture guardrails remain PASS.
-
-## Scope
-
-### A. Reproduce and trace the known violation
-
-Before mutation, produce a concise evidence report showing:
-
-- the ratified Wave 2 decision prohibiting the three signals;
-- their current entries in runtime activation authority;
-- the loader path by which they become runtime-reachable;
-- the commit / bootstrap mechanism if still verifiable;
-- why existing validators failed to detect the contradiction.
-
-Write:
-
-`docs/architecture/V5_RUNTIME_AUTHORITY_INTEGRITY_prechange_evidence.md`
-
-### B. Define the enforceable invariant
-
-Implement the narrowest safe deterministic rule that prevents an explicitly prohibited activation from being accepted into runtime authority.
-
-The invariant must operate at a governed validation/enforcement boundary and must be reusable estate-wide.
-
-It must:
-
-- fail closed on an explicit activation prohibition;
-- identify the exact signal / activation key and conflicting authorities;
-- return non-zero on violation;
-- be deterministic;
-- avoid medical inference;
-- not treat generic WHY retirement as signal deactivation;
-- not create another SSOT.
-
-Preferred implementation shape:
-
-- one read-only validator dedicated to runtime medical-authority integrity;
-- wired into the existing architecture validation path so future gate execution catches the violation.
-
-Stage D must verify the exact existing validation entry point before implementation.
-
-Do **not** modify:
-- `backend/scripts/run_work_package.py`
-- `backend/scripts/golden_gate_local.py`
-- `backend/scripts/update_cursor_status.py`
-
-unless hardening proves there is no safe existing validation hook. If one of those control-plane files becomes necessary, STOP and re-scope under the SOP control-plane execution-deferral rule.
-
-### C. Correct the known runtime-authority drift
-
-Correct the three confirmed lipid activation violations using existing ratified authority only:
-
-- `signal_total_cholesterol_high`
-- `signal_lipid_transport_dysfunction`
-- `signal_apoa1_cardio_risk`
-
-Do not author new lipid medical content.
-
-Do not reinterpret the original Wave 2 medical decision.
-
-Do not activate any replacement signal.
-
-If the current repository contains a later valid ratified decision explicitly superseding the Wave 2 prohibition, STOP and escalate the authority conflict rather than choosing one.
-
-### D. Bounded same-class estate sweep
-
-Search only for the same architectural failure class:
-
-> runtime-active / activation-registered signal or activation key that conflicts with an explicit pre-existing governed decision prohibiting its activation.
-
-Do not turn this into a general medical-content audit.
-
-For every candidate found, classify:
-
-- `CONFIRMED_VIOLATION`
-- `NO_CONFLICT`
-- `AMBIGUOUS_AUTHORITY_STOP`
-
-Additional runtime corrections are permitted only for `CONFIRMED_VIOLATION` with direct file + line evidence.
-
-Write:
-
-`docs/architecture/V5_RUNTIME_AUTHORITY_same_class_sweep.md`
-
-If any `AMBIGUOUS_AUTHORITY_STOP` candidate is found, do not infer medical intent. Record it and STOP before mutating that candidate.
-
-### E. Estate-level regression coverage
-
-Create:
+Also preserve and run:
 
 `backend/tests/architecture/test_runtime_medical_authority_integrity.py`
 
-Tests must cover the invariant semantically, not only the three current lipid IDs.
+## Required implementation
 
-Where practical, use generated/in-memory fixtures so the tests prove the rule class rather than hard-code only current production examples.
+### 1. Re-derive current gate topology
 
-Also add a direct estate test that runs the validator against current governed registries.
+Using live code, produce a short pre-change evidence map showing each mechanism identified in the transition document, where it is consumed, and whether it currently:
 
-### F. Canonical activation-gate transition decision
-
-Do not refactor all five current activation mechanisms in this sprint.
-
-Produce a short architecture decision / implementation map describing:
-
-- the five current runtime activation gates identified by the reassessment;
-- which one should become the canonical future gate;
-- which are supporting constraints rather than independent activation authorities;
-- the minimum safe transition sequence;
-- explicit retirement / demotion targets;
-- whether a later implementation package is genuinely required.
+- grants activation;
+- restricts eligibility;
+- verifies provenance;
+- protects launch-critical behaviour;
+- or performs another bounded function.
 
 Write:
 
-`docs/architecture/V5_RUNTIME_ACTIVATION_CANONICAL_GATE_TRANSITION.md`
+`docs/architecture/V5_CANONICAL_ACTIVATION_GATE_prechange_map.md`
 
-This document must be based on current code inspection, not prior report wording alone.
+Do not infer from names alone; cite code/config locations.
 
-## Explicit Non-Scope
+### 2. Enforce one canonical activation grant
+
+Refactor the narrowest safe runtime path so that:
+
+`package_runtime_activation_register_v1.yaml`
+
+is the single mechanism that grants runtime activation.
+
+Other existing mechanisms must be treated only as preconditions, vetoes, provenance checks, or safety constraints according to their already-governed semantics.
+
+Do not remove a supporting mechanism merely because it participates in loading.
+
+Do not change medical policy or activation content except where required to eliminate duplicate grant authority.
+
+### 3. Prevent parallel write paths
+
+Identify every repository path that can create/update runtime activation state.
+
+Ensure new activation entries cannot be introduced through an alternate write/bootstrap path without passing:
+
+- canonical activation-authority rules;
+- `runtime_medical_authority_integrity_v1` prohibition validation;
+- existing applicable provenance/eligibility constraints.
+
+If safe enforcement requires modifying Automation Bus control-plane scripts, STOP under SOP §13.
+
+### 4. Preserve fail-closed medical prohibition enforcement
+
+The invariant from `V5-RUNTIME-AUTHORITY-INTEGRITY-1` must remain effective.
+
+Explicit activation prohibitions must continue to block activation.
+
+Do not interpret:
+
+- `LEGACY_RETIRED`;
+- WHY retirement;
+- `SUPERSEDED_BY_*`;
+- non-owning WHY status
+
+as signal deactivation unless an existing governed activation authority explicitly says so.
+
+### 5. Add exact-set determinism proof
+
+Add regression coverage proving:
+
+> identical repository/governed inputs → identical complete runtime activation-key set
+
+Do not test only the numeric count.
+
+At minimum:
+
+- instantiate the real registry repeatedly under identical inputs;
+- compare sorted activation-key sets exactly;
+- fail on missing, added, or reordered/unstable membership;
+- run enough repeated fresh constructions to catch hidden state/order dependence without introducing probabilistic tests.
+
+### 6. Canonical-gate regression coverage
+
+Create:
+
+`backend/tests/architecture/test_canonical_runtime_activation_gate.py`
+
+Cover at minimum:
+
+1. canonical activation entry + all required constraints satisfied → loads;
+2. no canonical activation entry → cannot load solely because another mechanism permits it;
+3. explicit medical prohibition → cannot load even if canonical activation entry exists;
+4. valid WHY-retired-but-still-firing signal remains loadable when canonically activated;
+5. provenance/eligibility veto continues to veto where already governed;
+6. conflicting authority fails closed;
+7. repeated identical loads return the exact same activation-key set;
+8. no duplicate activation grant path exists in the tested runtime flow.
+
+### 7. Update transition evidence
+
+After implementation, update or supersede the transition document with the exact resulting architecture and remaining carry-forward, if any.
+
+The result must state clearly:
+
+- what now grants activation;
+- what only constrains/vetoes;
+- what legacy grant path was removed/demoted;
+- whether any further activation-gate consolidation sprint is still genuinely required.
+
+## Explicit non-scope
 
 Do not:
 
-- resume ARCH-CONV-A residual compiled-WHY migration;
-- perform thyroid, iron, bilirubin, metabolic or other medical research;
-- alter clinical prioritisation;
-- alter `clinical_concern_set`;
-- change signal thresholds or firing predicates except to enforce an existing explicit activation prohibition;
-- create new signal identities;
-- merge or split existing medical identities;
-- modify Knowledge Bus research;
-- regenerate packages;
-- redesign root-cause / WHY content;
-- change frontend or consumer copy;
-- perform general code cleanup;
-- rewrite `SignalRegistry`;
-- collapse all five activation mechanisms in this sprint;
-- reopen the V5/V6 strategic decision unless the STOP criteria below are triggered.
+- resume ARCH-CONV-A residual medical work;
+- add or research thyroid, iron, hepatic, metabolic or other clinical content;
+- change signal thresholds, comparators, clinical meaning, severity or prioritisation;
+- create/remove signal identities except where an already-governed activation entry is being structurally migrated without semantic change;
+- rewrite root-cause/WHY content;
+- change frontend or consumer narrative;
+- redesign the full Knowledge Bus;
+- rewrite `SignalRegistry` wholesale;
+- modify Automation Bus control-plane scripts;
+- change package activation decisions merely to make tests pass;
+- treat this as general cleanup.
 
-## STOP Conditions
+## STOP conditions
 
-STOP and escalate before further implementation if any of the following occurs:
+STOP and escalate before further implementation if:
 
-1. The three known lipid signals are no longer active on the current baseline and no equivalent confirmed violation remains.
-2. A later ratified authority is found that legitimately supersedes the Wave 2 `do not activate` decision.
-3. `compiled_why_authority_register_v1.yaml` cannot safely distinguish WHY retirement from signal-activation prohibition.
-4. Enforcing the invariant would require treating all `LEGACY_RETIRED` / WHY-skip states as runtime-deactivated.
-5. More than one materially different uncontrolled activation path is discovered that can bypass governed authority.
-6. The same-class sweep finds multiple independent leak mechanisms rather than one missing cross-authority invariant.
-7. Safe enforcement requires a redesign of `SignalRegistry` rather than a bounded validation/enforcement change.
-8. Safe integration requires changing Automation Bus control-plane scripts listed above.
-9. The proposed correction would alter medical policy, thresholds, prioritisation, or accepted clinical meaning.
-10. Regression evidence shows unrelated approved signals become non-reachable.
-11. The work reveals that the current five-gate activation model cannot be centralised without continuing distributed exception logic.
+1. the transition document is stale relative to current code in a way that changes the proposed canonical gate;
+2. more than one mechanism has legitimate, irreducible authority to grant activation and cannot be demoted without new architecture policy;
+3. making the activation register canonical would change medical meaning or deactivate currently-authorised signals without explicit authority;
+4. safe implementation requires inventing new activation policy;
+5. safe implementation requires changing:
+   - `backend/scripts/run_work_package.py`
+   - `backend/scripts/golden_gate_local.py`
+   - `backend/scripts/update_cursor_status.py`
+6. exact-set determinism fails for reasons not explained by governed repository/input differences;
+7. the runtime still contains an independent activation-granting bypass after the intended refactor;
+8. regression evidence shows unrelated authorised signals are lost or unauthorised signals become active;
+9. the work expands into a full loader rewrite or broad package migration.
 
-For STOP 5, 6, 7 or 11, explicitly state that the conditional `RETAIN_V5` decision requires GPT + Anthony reassessment before further repair work.
+STOP 2, 6, or 7 requires explicit GPT + Anthony reassessment of whether the conditional V5-retention premise still holds.
 
-## Success Criteria
+## Success criteria
 
-The work package is successful only if all are true:
+All must pass:
 
-- Current baseline defect reproduced before mutation.
-- The three confirmed lipid violations are corrected unless a superseding authority is proven.
-- A deterministic estate-wide invariant exists for explicit activation prohibitions.
-- The invariant is wired into an existing governed validation path.
-- Same-class estate sweep is complete and evidence-backed.
-- No ambiguous authority is silently resolved.
-- WHY-retired-but-valid signal activity is not accidentally blocked.
-- No new signal becomes active.
-- No medical policy is changed.
-- Canonical regression module passes.
-- Existing relevant architecture / signal-registry / lipid regressions pass.
-- Day-one architecture guardrails pass.
-- Determinism is demonstrated.
-- Canonical activation-gate transition document is produced.
-- Repository closure protocol passes.
-- Kernel finish returns PASS.
+- current multi-gate reality independently verified;
+- one canonical runtime activation grant established;
+- other mechanisms correctly retained only as constraints/vetoes where governed;
+- no new SSOT created;
+- prohibition validator remains effective;
+- no medical content/policy changed;
+- exact activation-key set deterministic across repeated identical loads;
+- canonical regression module passes;
+- prior runtime medical-authority integrity tests pass;
+- relevant existing architecture/regression suites pass;
+- day-one architecture validation passes;
+- no control-plane files changed;
+- post-implementation closure protocol passes;
+- kernel finish PASS.
 
-## Evidence Required for Finish
+## Finish evidence
 
-Cursor must include in implementation evidence:
+Cursor must provide:
 
-- pre-change reproduction commands and outputs;
-- post-change runtime registry evidence;
-- validator output on current estate;
-- same-class sweep summary with file + line citations;
-- targeted pytest results;
-- relevant existing regression results;
+- pre-change topology evidence with file + line citations;
+- exact files changed;
+- before/after activation-flow description;
+- proof that only the canonical authority grants activation;
+- proof that supporting gates still perform their existing constraint roles;
+- exact-set determinism outputs across repeated loads;
+- targeted and relevant regression results;
 - day-one architecture validator result;
 - `git diff --check`;
-- exact files changed;
-- confirmation that no medical research, threshold, prioritisation or consumer-output content changed.
+- confirmation that no medical research/content/threshold/prioritisation/frontend output changed.
 
-## Post-Implementation Closure
+Before `python backend/scripts/run_work_package.py finish`, run the mandatory Automation Bus post-implementation closure protocol.
 
-Before `python backend/scripts/run_work_package.py finish`, execute the mandatory Automation Bus post-implementation closure protocol from SOP v1.3.1, including branch/status/diff checks.
+After finish, Claude must independently audit the implementation and explicitly answer:
 
-After successful finish, Claude must independently audit the package and explicitly assess:
+1. Is there now exactly one runtime activation-grant authority?
+2. Can any supporting mechanism still independently activate?
+3. Are explicit medical prohibitions still fail-closed?
+4. Were WHY-retired-but-valid firing signals preserved correctly?
+5. Is exact activation-key membership deterministic under identical inputs?
+6. Does the conditional `RETAIN_V5` architecture decision remain supportable?
 
-- whether the authority invariant is semantically correct;
-- whether WHY-retirement was incorrectly conflated with signal deactivation;
-- whether the same-class sweep was genuinely bounded and complete;
-- whether any new uncontrolled activation path was discovered;
-- whether the conditional V5-retention premise remains supportable.
+HIGH-risk merge requires GPT architectural review and Anthony approval.
 
-HIGH-risk merge still requires GPT architectural review and Anthony approval.
-
-## Hardening Invocation
+## Hardening invocation
 
 Use exactly:
 
-`harden work_id: V5-RUNTIME-AUTHORITY-INTEGRITY-1 — verify source content and produce evidence checklist`
+`harden work_id: V5-CANONICAL-ACTIVATION-GATE-1 — verify source content and produce evidence checklist`
