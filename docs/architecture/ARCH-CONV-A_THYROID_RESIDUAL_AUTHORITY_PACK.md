@@ -281,7 +281,7 @@ This sprint did **not**:
 
 ---
 
-## Escalation banner
+## Escalation banner (historical — disposition sprint close)
 
 ```text
 STOP_1_TRIGGERED — ARCH-CONV-A-THYROID-RESIDUAL-DISPOSITION-1
@@ -291,3 +291,38 @@ Cursor did not select PROMOTE_COMPILE or REMAIN_DEFERRED.
 GPT architectural review + Anthony approval required before those dispositions
 or any runtime remediation.
 ```
+
+---
+
+## Addendum — Deferred-signal medical review evidence (2026-08-09)
+
+**Status recorded only; no runtime change; Anthony ratification not invented.**
+
+Medical review complete. Evidence artefacts on this parent branch:
+
+- `docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review.md` (initial review)
+- `docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md` (revised after canonical TgAb/TPOAb uploads; authoritative recommendation set)
+
+### Recommended dispositions (medical review — not yet Anthony-ratified)
+
+| Activation key | Medical recommendation |
+|---|---|
+| `signal_tgab_high::inv_tgab_high_autoimmune_hypothyroid_pattern` | `REFRAME` |
+| `signal_tgab_high::inv_tgab_high_euthyroid_autoimmune_risk` | `REFRAME` |
+| `signal_tpo_ab_high::inv_tpo_ab_high_euthyroid_autoimmune_risk` | `PROMOTE` |
+
+```text
+Medical review complete.
+Recommended dispositions:
+- signal_tgab_high::inv_tgab_high_autoimmune_hypothyroid_pattern → REFRAME
+- signal_tgab_high::inv_tgab_high_euthyroid_autoimmune_risk → REFRAME
+- signal_tpo_ab_high::inv_tpo_ab_high_euthyroid_autoimmune_risk → PROMOTE
+Anthony ratification: PENDING
+Graves-oriented follow-up gap: research completed separately; downstream KB ingestion not part of this parent branch.
+```
+
+**Anthony ratification:** `PENDING` — no repository evidence of Anthony ratification of this revised medical-review package was found on this branch. Prior Gate C ratification of the compiled TPO euthyroid WHY artefact is not treated as ratification of this addendum’s promotion/reframe package.
+
+**STOP 1 note:** the deferred-vs-runtime reachability conflict remains an architectural/governance fact until a ratified remediation package resolves it. Medical recommendations above do not by themselves authorise runtime activation, deactivation, reframe implementation, or consumer copy change.
+
+**Graves / TRAb-TSI follow-up:** the residual research gap identified in this pack has a separate research chain (Pass1–Pass3) intended for child-branch Knowledge Bus ingestion (`MR-KB-INGEST-GRAVES-FOLLOWUP-1`). That ingestion is **not** part of this parent branch’s evidence capture.

@@ -7,11 +7,19 @@
 
 work_id: ARCH-CONV-A-THYROID-RESIDUAL-DISPOSITION-1
 register_id: arch_conv_a_thyroid_residual_disposition_register_v1
-status: STOP_1_ESCALATED_PARTIAL
+status: MEDICAL_REVIEW_COMPLETE_ANTHONY_RATIFICATION_PENDING
 date_utc: "2026-08-08"
+addendum_date_utc: "2026-08-09"
 source_prompt: automation_bus/latest_cursor_prompt.md
 reconciliation_path_used: docs/audit-papers/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md
 reconciliation_path_prompt_cited_stale: docs/architecture/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md
+medical_review_evidence:
+  - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review.md
+  - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md
+anthony_ratification: PENDING
+graves_followup_note: >-
+  Graves-oriented follow-up research completed separately; downstream KB ingestion
+  is not part of this parent branch (intended child: MR-KB-INGEST-GRAVES-FOLLOWUP-1).
 
 allowed_disposition_values:
   - PROMOTE_COMPILE
@@ -21,10 +29,16 @@ allowed_disposition_values:
   - RETIRE_OR_SUBSUME
   - NO_FURTHER_WORK
 
+medical_review_recommendation_values:
+  - REFRAME
+  - PROMOTE
+
 stop_1_summary: >-
   Ratified medical deferral / non-authorisation conflicts with current runtime
   activation-register membership and SignalRegistry production reachability for
-  TgAb (both frames) and TPOAb euthyroid. Cursor must not pick a side.
+  TgAb (both frames) and TPOAb euthyroid. Medical review recommendations are
+  recorded below; Anthony ratification remains PENDING; runtime remediation is
+  not authorised by this register update alone.
 
 items:
   - item_id: THY-RES-TGAB-HYPO
@@ -46,10 +60,12 @@ items:
       Keep deferred (ADR-THYROID-MR-V2-ACTIVATION-1 Decision 4);
       Wave 1 Gate1/Gate2 explicit non-authorisation — no compilation or activation
     disposition: null
+    medical_review_recommendation: REFRAME
     disposition_selection_blocked: true
     stop_condition: STOP_1
     requires_medical_research: false
     requires_anthony_ratification: true
+    anthony_ratification: PENDING
     next_work_class: GOVERNANCE_ONLY
     evidence_refs:
       - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md:43
@@ -57,6 +73,7 @@ items:
       - knowledge_bus/governance/package_runtime_activation_register_v1.yaml:350-351
       - knowledge_bus/packages/pkg_kb59_tgab_high_autoimmune_hypothyroid_pattern/package_manifest.yaml:1-9
       - "SignalRegistry() 2026-08-08: activation_key present; eligibility=production_reachable"
+      - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md
 
   - item_id: THY-RES-TGAB-EUTH
     signal_id: signal_tgab_high
@@ -77,10 +94,12 @@ items:
       Keep deferred (ADR-THYROID-MR-V2-ACTIVATION-1 Decision 4);
       Wave 1 Gate1/Gate2 explicit non-authorisation — no compilation or activation
     disposition: null
+    medical_review_recommendation: REFRAME
     disposition_selection_blocked: true
     stop_condition: STOP_1
     requires_medical_research: false
     requires_anthony_ratification: true
+    anthony_ratification: PENDING
     next_work_class: GOVERNANCE_ONLY
     evidence_refs:
       - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md:43
@@ -88,6 +107,7 @@ items:
       - knowledge_bus/governance/package_runtime_activation_register_v1.yaml:352-353
       - knowledge_bus/packages/pkg_kb59_tgab_high_euthyroid_autoimmune_risk/package_manifest.yaml:1-9
       - "SignalRegistry() 2026-08-08: activation_key present; eligibility=production_reachable"
+      - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md
 
   - item_id: THY-RES-TPO-EUTH
     signal_id: signal_tpo_ab_high
@@ -112,10 +132,12 @@ items:
       (manifest notes Gate C Anthony-ratified compile) while identity-index notes still
       say not Anthony-ratified for promotion — layered conflict
     disposition: null
+    medical_review_recommendation: PROMOTE
     disposition_selection_blocked: true
     stop_condition: STOP_1
     requires_medical_research: false
     requires_anthony_ratification: true
+    anthony_ratification: PENDING
     next_work_class: GOVERNANCE_ONLY
     evidence_refs:
       - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md:43
@@ -125,6 +147,7 @@ items:
       - knowledge_bus/compiled/manifests/arch_conv_pkg3_tpo_euthyroid.yaml:1-8
       - backend/core/analytics/domain_score_assembler.py:69-78
       - "SignalRegistry() 2026-08-08: activation_key present; eligibility=production_reachable"
+      - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md
 
   - item_id: THY-RES-TPO-HYPO-CONFIRMATORY-COMPILE
     signal_id: signal_tpo_ab_high
@@ -190,6 +213,9 @@ items:
     disposition_selection_blocked: false
     stop_condition: null
     requires_medical_research: true
+    medical_research_status: >-
+      Graves-oriented follow-up research chain completed separately (Pass1–Pass3);
+      downstream Knowledge Bus ingestion is not part of this parent branch
     requires_anthony_ratification: false
     next_work_class: RESEARCH
     research_question: >-
@@ -197,11 +223,13 @@ items:
       marker guidance: define governed biomarker identity, synonyms, and non-diagnostic
       follow-up-testing framing for TSH-receptor antibody (TRAb/TSI) without inventing
       thresholds in this disposition sprint. Do not author claims here.
+      (Follow-up: child work package MR-KB-INGEST-GRAVES-FOLLOWUP-1 for KB ingestion.)
     evidence_refs:
       - docs/audit-papers/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md:23
       - docs/audit-papers/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md:51
       - "backend/ssot/biomarkers.yaml — no trab/tsi/tsh_receptor/thyrotropin_receptor entries"
       - "backend/ssot/biomarker_alias_registry.yaml — tgab/tpo_ab present; TRAb/TSI absent"
+      - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md
 
   - item_id: THY-RES-TSH-CONTEXT
     signal_id: signal_thyroid_tsh_context
