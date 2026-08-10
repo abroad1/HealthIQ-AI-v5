@@ -1,0 +1,306 @@
+# ARCH-CONV-A — Thyroid Residual Disposition Register
+# Work ID: ARCH-CONV-A-THYROID-RESIDUAL-DISPOSITION-1
+# Authority pack: docs/architecture/ARCH-CONV-A_THYROID_RESIDUAL_AUTHORITY_PACK.md
+# change_type: CONTENT
+# Note: Items with stop_condition STOP_1 do NOT assert a product disposition from the
+# six-value enum; disposition_selection is blocked until authority is reconciled.
+
+work_id: ARCH-CONV-A-THYROID-RESIDUAL-DISPOSITION-1
+register_id: arch_conv_a_thyroid_residual_disposition_register_v1
+status: MEDICAL_REVIEW_COMPLETE_ANTHONY_RATIFICATION_PENDING
+date_utc: "2026-08-08"
+addendum_date_utc: "2026-08-09"
+source_prompt: automation_bus/latest_cursor_prompt.md
+reconciliation_path_used: docs/audit-papers/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md
+reconciliation_path_prompt_cited_stale: docs/architecture/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md
+medical_review_evidence:
+  - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review.md
+  - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md
+anthony_ratification: PENDING
+graves_followup_note: >-
+  Graves-oriented follow-up research completed separately; downstream KB ingestion
+  is not part of this parent branch (intended child: MR-KB-INGEST-GRAVES-FOLLOWUP-1).
+
+allowed_disposition_values:
+  - PROMOTE_COMPILE
+  - REMAIN_DEFERRED
+  - RESEARCH_REQUIRED
+  - SEPARATE_PRESENTATION_OR_INTERVENTION_WORK
+  - RETIRE_OR_SUBSUME
+  - NO_FURTHER_WORK
+
+medical_review_recommendation_values:
+  - REFRAME
+  - PROMOTE
+
+stop_1_summary: >-
+  Ratified medical deferral / non-authorisation conflicts with current runtime
+  activation-register membership and SignalRegistry production reachability for
+  TgAb (both frames) and TPOAb euthyroid. Medical review recommendations are
+  recorded below; Anthony ratification remains PENDING; runtime remediation is
+  not authorised by this register update alone.
+
+items:
+  - item_id: THY-RES-TGAB-HYPO
+    signal_id: signal_tgab_high
+    frame_id: inv_tgab_high_autoimmune_hypothyroid_pattern
+    activation_key: signal_tgab_high::inv_tgab_high_autoimmune_hypothyroid_pattern
+    package_id: pkg_kb59_tgab_high_autoimmune_hypothyroid_pattern
+    source_authority:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/thyroid_antibodies_pass_3.json
+      - knowledge_bus/packages/pkg_kb59_tgab_high_autoimmune_hypothyroid_pattern/package_manifest.yaml
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md
+      - docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md
+    current_runtime_state: >-
+      production_reachable via SignalRegistry; listed in
+      package_runtime_activation_register_v1; NOT in compiled_why_authority_register;
+      not on thyroid domain-card launch allowlist; provenance SOURCE_DOCUMENT_DERIVED;
+      has_validated_canonical_inv_spec=false
+    prior_decision: >-
+      Keep deferred (ADR-THYROID-MR-V2-ACTIVATION-1 Decision 4);
+      Wave 1 Gate1/Gate2 explicit non-authorisation — no compilation or activation
+    disposition: null
+    medical_review_recommendation: REFRAME
+    disposition_selection_blocked: true
+    stop_condition: STOP_1
+    requires_medical_research: false
+    requires_anthony_ratification: true
+    anthony_ratification: PENDING
+    next_work_class: GOVERNANCE_ONLY
+    evidence_refs:
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md:43
+      - docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md:159
+      - knowledge_bus/governance/package_runtime_activation_register_v1.yaml:350-351
+      - knowledge_bus/packages/pkg_kb59_tgab_high_autoimmune_hypothyroid_pattern/package_manifest.yaml:1-9
+      - "SignalRegistry() 2026-08-08: activation_key present; eligibility=production_reachable"
+      - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md
+
+  - item_id: THY-RES-TGAB-EUTH
+    signal_id: signal_tgab_high
+    frame_id: inv_tgab_high_euthyroid_autoimmune_risk
+    activation_key: signal_tgab_high::inv_tgab_high_euthyroid_autoimmune_risk
+    package_id: pkg_kb59_tgab_high_euthyroid_autoimmune_risk
+    source_authority:
+      - knowledge_bus/research/investigation_specs/multi_llm_research/thyroid_antibodies_pass_3.json
+      - knowledge_bus/packages/pkg_kb59_tgab_high_euthyroid_autoimmune_risk/package_manifest.yaml
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md
+      - docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md
+    current_runtime_state: >-
+      production_reachable via SignalRegistry; listed in
+      package_runtime_activation_register_v1; NOT in compiled_why_authority_register;
+      not on thyroid domain-card launch allowlist; provenance SOURCE_DOCUMENT_DERIVED;
+      has_validated_canonical_inv_spec=false
+    prior_decision: >-
+      Keep deferred (ADR-THYROID-MR-V2-ACTIVATION-1 Decision 4);
+      Wave 1 Gate1/Gate2 explicit non-authorisation — no compilation or activation
+    disposition: null
+    medical_review_recommendation: REFRAME
+    disposition_selection_blocked: true
+    stop_condition: STOP_1
+    requires_medical_research: false
+    requires_anthony_ratification: true
+    anthony_ratification: PENDING
+    next_work_class: GOVERNANCE_ONLY
+    evidence_refs:
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md:43
+      - docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md:159
+      - knowledge_bus/governance/package_runtime_activation_register_v1.yaml:352-353
+      - knowledge_bus/packages/pkg_kb59_tgab_high_euthyroid_autoimmune_risk/package_manifest.yaml:1-9
+      - "SignalRegistry() 2026-08-08: activation_key present; eligibility=production_reachable"
+      - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md
+
+  - item_id: THY-RES-TPO-EUTH
+    signal_id: signal_tpo_ab_high
+    frame_id: inv_tpo_ab_high_euthyroid_autoimmune_risk
+    activation_key: signal_tpo_ab_high::inv_tpo_ab_high_euthyroid_autoimmune_risk
+    package_id: pkg_kb59_tpo_ab_high_euthyroid_autoimmune_risk
+    source_authority:
+      - knowledge_bus/research/investigation_specs/inv_tpo_ab_high_euthyroid_autoimmune_risk.yaml
+      - knowledge_bus/compiled/hypotheses/inv_tpo_ab_high_euthyroid_autoimmune_risk.yaml
+      - knowledge_bus/compiled/manifests/arch_conv_pkg3_tpo_euthyroid.yaml
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md
+      - knowledge_bus/governance/medical_frame_identity_index_v1.yaml
+      - knowledge_bus/governance/compiled_why_authority_register_v1.yaml
+    current_runtime_state: >-
+      production_reachable via SignalRegistry; listed in activation register;
+      compiled WHY artefact present and register row authority_state=COMPILED_ACTIVE;
+      medical_frame_identity_index promotion_state=deferred / runtime_authority_status=inactive;
+      signal_id is on thyroid domain-card launch allowlist
+    prior_decision: >-
+      Keep deferred for activation (ADR-THYROID-MR-V2-ACTIVATION-1 Decision 4);
+      identity index still deferred/inactive; PKG3 compiled WHY artefact exists
+      (manifest notes Gate C Anthony-ratified compile) while identity-index notes still
+      say not Anthony-ratified for promotion — layered conflict
+    disposition: null
+    medical_review_recommendation: PROMOTE
+    disposition_selection_blocked: true
+    stop_condition: STOP_1
+    requires_medical_research: false
+    requires_anthony_ratification: true
+    anthony_ratification: PENDING
+    next_work_class: GOVERNANCE_ONLY
+    evidence_refs:
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md:43
+      - knowledge_bus/governance/medical_frame_identity_index_v1.yaml:1460-1483
+      - knowledge_bus/governance/compiled_why_authority_register_v1.yaml:135-145
+      - knowledge_bus/governance/package_runtime_activation_register_v1.yaml:360-361
+      - knowledge_bus/compiled/manifests/arch_conv_pkg3_tpo_euthyroid.yaml:1-8
+      - backend/core/analytics/domain_score_assembler.py:69-78
+      - "SignalRegistry() 2026-08-08: activation_key present; eligibility=production_reachable"
+      - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md
+
+  - item_id: THY-RES-TPO-HYPO-CONFIRMATORY-COMPILE
+    signal_id: signal_tpo_ab_high
+    frame_id: inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+    activation_key: signal_tpo_ab_high::inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+    package_id: pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern
+    source_authority:
+      - knowledge_bus/research/investigation_specs/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml
+      - knowledge_bus/compiled/hypotheses/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md
+    current_runtime_state: >-
+      COMPILED_ACTIVE and production_reachable; hypothyroid frame medically activated
+      under ADR Decision 2; confirmatory_tests empty in compiled artefact
+    prior_decision: Activate hypothyroid TPOAb frame with strict gates (ADR Decision 2)
+    disposition: SEPARATE_PRESENTATION_OR_INTERVENTION_WORK
+    disposition_selection_blocked: false
+    stop_condition: null
+    gap_class: CLINICAL_INTELLIGENCE_COMPILATION_COMPLETENESS
+    requires_medical_research: false
+    requires_anthony_ratification: false
+    next_work_class: PROMOTION_COMPILATION
+    evidence_refs:
+      - knowledge_bus/research/investigation_specs/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml:83-87
+      - knowledge_bus/compiled/hypotheses/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml:22
+      - knowledge_bus/compiled/hypotheses/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml:43
+      - knowledge_bus/governance/compiled_why_authority_register_v1.yaml:123-133
+
+  - item_id: THY-RES-TPO-HYPO-CONFIRMATORY-INTERVENTION
+    signal_id: signal_tpo_ab_high
+    frame_id: inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+    activation_key: signal_tpo_ab_high::inv_tpo_ab_high_autoimmune_hypothyroid_pattern
+    package_id: pkg_kb59_tpo_ab_high_autoimmune_hypothyroid_pattern
+    source_authority:
+      - knowledge_bus/research/investigation_specs/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml
+      - knowledge_bus/interventions/intervention_library_v1.yaml
+    current_runtime_state: >-
+      Upstream confirmatory_tests exist in investigation spec; intervention_library_v1
+      has zero thyroid/TPO/antibody entries
+    prior_decision: Activate hypothyroid TPOAb frame (ADR Decision 2); intervention wiring never authorised in this programme
+    disposition: SEPARATE_PRESENTATION_OR_INTERVENTION_WORK
+    disposition_selection_blocked: false
+    stop_condition: null
+    gap_class: PRESENTATION_OR_INTERVENTION_WIRING
+    requires_medical_research: false
+    requires_anthony_ratification: false
+    next_work_class: INTERVENTION_PRESENTATION
+    evidence_refs:
+      - knowledge_bus/research/investigation_specs/inv_tpo_ab_high_autoimmune_hypothyroid_pattern.yaml:83-87
+      - "knowledge_bus/interventions/intervention_library_v1.yaml — ripgrep thyroid|tpo|tgab|antibody|ultrasound|confirmatory: no matches"
+
+  - item_id: THY-RES-TRAB-TSI
+    signal_id: null
+    frame_id: null
+    activation_key: null
+    package_id: null
+    source_authority:
+      - docs/audit-papers/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md
+      - backend/ssot/biomarkers.yaml
+      - backend/ssot/biomarker_alias_registry.yaml
+    current_runtime_state: ABSENT — no SSOT biomarker, package, investigation spec, or compiled WHY identity found
+    prior_decision: Provisional residual classified as genuine research gap in repository-reality reconciliation
+    disposition: RESEARCH_REQUIRED
+    disposition_selection_blocked: false
+    stop_condition: null
+    requires_medical_research: true
+    medical_research_status: >-
+      Graves-oriented follow-up research chain completed separately (Pass1–Pass3);
+      downstream Knowledge Bus ingestion is not part of this parent branch
+    requires_anthony_ratification: false
+    next_work_class: RESEARCH
+    research_question: >-
+      Narrow MR question only if product scope requires Graves'-specific confirmatory
+      marker guidance: define governed biomarker identity, synonyms, and non-diagnostic
+      follow-up-testing framing for TSH-receptor antibody (TRAb/TSI) without inventing
+      thresholds in this disposition sprint. Do not author claims here.
+      (Follow-up: child work package MR-KB-INGEST-GRAVES-FOLLOWUP-1 for KB ingestion.)
+    evidence_refs:
+      - docs/audit-papers/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md:23
+      - docs/audit-papers/ARCH-CONV-A_RESIDUAL_PROGRAMME_REPOSITORY_REALITY_RECONCILIATION.md:51
+      - "backend/ssot/biomarkers.yaml — no trab/tsi/tsh_receptor/thyrotropin_receptor entries"
+      - "backend/ssot/biomarker_alias_registry.yaml — tgab/tpo_ab present; TRAb/TSI absent"
+      - docs/Medical Research Documents/Thyroid_Deferred_Signal_Medical_Review_revised_after_canonical_uploads.md
+
+  - item_id: THY-RES-TSH-CONTEXT
+    signal_id: signal_thyroid_tsh_context
+    frame_id: inv_tsh_context
+    activation_key: signal_thyroid_tsh_context::inv_tsh_context
+    package_id: pkg_thyroid_tsh_context
+    source_authority:
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md
+      - docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md
+      - backend/core/analytics/domain_score_assembler.py
+      - knowledge_bus/governance/package_runtime_activation_register_v1.yaml
+    current_runtime_state: >-
+      Two-layer split unchanged: present in activation register and SignalRegistry
+      (production_reachable) BUT excluded from consumer thyroid domain-card presentation
+      via _THYROID_EXCLUDED_SIGNAL_IDS; not a later reopening
+    prior_decision: >-
+      Keep excluded (ADR Decision 3); Wave 1 explicit non-authorisation —
+      no compilation or activation of signal_thyroid_tsh_context
+    disposition: RETIRE_OR_SUBSUME
+    disposition_selection_blocked: false
+    stop_condition: null
+    disposition_note: NO FURTHER ARCH-CONV-A WORK — exclusion authority still closed for consumer domain-card surface
+    requires_medical_research: false
+    requires_anthony_ratification: false
+    next_work_class: NONE
+    evidence_refs:
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md:41
+      - docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md:158
+      - backend/core/analytics/domain_score_assembler.py:67-68
+      - backend/core/analytics/domain_score_assembler.py:80-84
+      - knowledge_bus/governance/package_runtime_activation_register_v1.yaml:354-355
+
+  - item_id: THY-RES-THY-U5-DISEASE-NAMING
+    signal_id: null
+    frame_id: null
+    activation_key: null
+    package_id: null
+    source_authority:
+      - docs/discussion documents/HEALTHIQ_THYROID_ENDOCRINE_PRIORITISATION_RULESET_v0_1.md
+      - docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md
+      - docs/architecture/ARCH-CONV-A_wave1_medical_decision_register.yaml
+    current_runtime_state: N/A — communication/governance question; no runtime change in this sprint
+    prior_decision: >-
+      Wave 1 ratified: no diagnosis / no implication of Hashimoto's or Graves';
+      ADR non-negotiable: no Hashimoto's / autoimmune thyroid disease / hypothyroidism
+      diagnosis from TPOAb alone; THY-U5 remains unresolved Blocking communication question
+    disposition: SEPARATE_PRESENTATION_OR_INTERVENTION_WORK
+    disposition_selection_blocked: false
+    stop_condition: null
+    requires_medical_research: false
+    requires_anthony_ratification: true
+    anthony_ratification_marker: ANTHONY_RATIFICATION_REQUIRED
+    next_work_class: GOVERNANCE_ONLY
+    evidence_refs:
+      - docs/discussion documents/HEALTHIQ_THYROID_ENDOCRINE_PRIORITISATION_RULESET_v0_1.md:302
+      - docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md:38
+      - docs/architecture/ARCH-CONV-A_wave1_thyroid_gate1_gate2_decision.md:113
+      - docs/architecture/ADR-THYROID-MR-V2-ACTIVATION-1.md:57
+      - docs/architecture/ARCH-CONV-A_wave1_medical_decision_register.yaml:27
+
+recommended_next_implementation_package:
+  work_id_proposal: THYROID-DEFERRED-RUNTIME-AUTHORITY-INTEGRITY-1
+  next_work_class: GOVERNANCE_ONLY
+  rationale: >-
+    STOP_1 blocks promotion/deferral disposition for TgAb and TPOAb euthyroid until
+    medical deferral authority and runtime activation-register reachability are
+    reconciled. Same failure class as lipid deferred/rejected-but-loaded drift, below
+    the explicit-prohibition token floor of runtime_medical_authority_integrity_v1.
+  must_not_include:
+    - TgAb compiled-WHY authorship
+    - TRAb/TSI research authorship in the integrity sprint
+    - consumer disease-naming copy changes
+    - intervention-library wiring
